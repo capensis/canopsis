@@ -5576,6 +5576,43 @@ definitions:
     required:
     - _id
     type: object
+  user.BulkPatchRequestItem:
+    properties:
+      _id:
+        type: string
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      ui_groups_navigation_type:
+        maxLength: 255
+        type: string
+      ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
+        type: string
+    required:
+    - _id
+    type: object
   user.BulkUpdateRequestItem:
     properties:
       _id:
