@@ -58,7 +58,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
     'c-alarm-tags-chips': [
-      ':alarm', ':selected-tag', 'name-filter', 'regex-filter', 'regex-filter-flags', 'closable-active', 'inline-count',
+      ':alarm', ':selected-tags', 'name-filter', 'regex-filter', 'regex-filter-flags', 'closable-active', 'inline-count',
       '@select', '@close',
     ],
     'c-entity-tags-chips': [':entity', 'inline-count'],
@@ -187,6 +187,7 @@ export const API_ROUTES = {
   alarmTag: {
     list: '/api/v4/alarm-tags',
     bulkList: '/api/v4/bulk/alarm-tags',
+    label: '/api/v4/alarm-tag-labels',
   },
   contextExport: '/api/v4/entity-export',
   event: '/api/v4/event',

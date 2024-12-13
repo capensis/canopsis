@@ -4,6 +4,7 @@
       v-field="form.message"
       :label="$t('maintenance.message')"
       name="message"
+      autofocus
       required
     />
     <c-color-picker-field v-field="form.color" />

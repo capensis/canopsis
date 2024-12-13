@@ -8,6 +8,7 @@
         <recurrence-rule-form
           v-model="form.rrule"
           :start="config.start"
+          autofocus
         />
         <pbehavior-recurrence-rule-exceptions-field
           v-model="form.exdates"

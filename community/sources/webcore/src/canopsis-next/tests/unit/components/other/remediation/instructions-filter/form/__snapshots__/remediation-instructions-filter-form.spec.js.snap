@@ -267,6 +267,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <input
               aria-readonly="false"
               autocomplete="off"
+              autofocus="autofocus"
               disabled="disabled"
               readonly="readonly"
               type="text"
@@ -708,6 +709,7 @@ exports[`remediation-instructions-filter-form Renders \`remediation-instructions
             <input
               aria-readonly="false"
               autocomplete="off"
+              autofocus="autofocus"
               readonly="readonly"
               type="text"
             />

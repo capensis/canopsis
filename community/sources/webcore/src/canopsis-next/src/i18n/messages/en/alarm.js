@@ -19,6 +19,7 @@ export default {
   hasBookmark: 'Alarm has bookmark',
   filterByBookmark: 'Filter by bookmark',
   runTest: 'Run test',
+  tagFilter: 'Tag filter',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
