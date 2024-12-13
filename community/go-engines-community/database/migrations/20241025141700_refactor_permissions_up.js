@@ -1663,15 +1663,6 @@ const updatedPerms = [
         }
     },
     {
-        "_id": "crudcontext_listPbehavior",
-        "description": "Browse pbehavior list",
-        "groups": ["widgets", "widgets_context", "widgets_context_entityactions"],
-        "name": "crudcontext_listPbehavior",
-        "api_permissions": {
-            "api_pbehavior": 4
-        }
-    },
-    {
         "_id": "crudcontext_massEnable",
         "description": "Mass action to enable selected entities",
         "groups": ["widgets", "widgets_context", "widgets_context_entityactions"],

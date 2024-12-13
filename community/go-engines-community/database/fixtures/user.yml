@@ -2342,17 +2342,6 @@ permission:
       - "@group_widgets_context_entityactions"
     api_permissions:
       "@permission_api_pbehavior": 8
-  permission_crudcontext_listPbehavior:
-    <<: *permission
-    _id: crudcontext_listPbehavior
-    name: <Current()._id>
-    description: Browse pbehavior list
-    groups:
-      - "@group_widgets"
-      - "@group_widgets_context"
-      - "@group_widgets_context_entityactions"
-    api_permissions:
-      "@permission_api_pbehavior": 4
   permission_crudcontext_massEnable:
     <<: *permission
     _id: crudcontext_massEnable
@@ -3408,7 +3397,6 @@ role:
       "@permission_crudcontext_duplicate": 1
       "@permission_crudcontext_delete": 1
       "@permission_crudcontext_pbehavior": 1
-      "@permission_crudcontext_listPbehavior": 1
       "@permission_crudcontext_filter": 1
       "@permission_crudcontext_userFilter": 1
       "@permission_crudcontext_category": 1
@@ -3578,7 +3566,6 @@ role_template:
       "@permission_crudcontext_duplicate": 1
       "@permission_crudcontext_delete": 1
       "@permission_crudcontext_pbehavior": 1
-      "@permission_crudcontext_listPbehavior": 1
       "@permission_crudcontext_filter": 1
       "@permission_crudcontext_userFilter": 1
       "@permission_crudcontext_category": 1
