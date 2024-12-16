@@ -32,6 +32,20 @@
         </v-checkbox>
       </v-list-item-action>
     </v-list-item>
+    <v-list-item>
+      <v-list-item-action>
+        <v-checkbox
+          v-field="value.enabled_sli_metrics"
+          color="primary"
+        >
+          <template #label="">
+            <span class="kpi-collection-settings-metrics-form__label ml-4">
+              {{ $t('kpi.collectionSetting.sliDuration') }}
+            </span>
+          </template>
+        </v-checkbox>
+      </v-list-item-action>
+    </v-list-item>
   </v-list>
 </template>
 

@@ -9,14 +9,18 @@ import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/me
 const stubs = {
   'c-id-field': true,
   'c-name-field': true,
-  'c-description-field': true,
+  'c-payload-textarea-field': true,
   'c-enabled-field': true,
+  'meta-alarm-rule-tags-form': true,
+  'meta-alarm-rule-infos-form': true,
 };
 
 const selectIdField = wrapper => wrapper.find('c-id-field-stub');
-const selectDescriptionField = wrapper => wrapper.find('c-description-field-stub');
+const selectPayloadTextareaField = wrapper => wrapper.find('c-payload-textarea-field-stub');
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
+const selectTagsForm = wrapper => wrapper.find('meta-alarm-rule-tags-form-stub');
+const selectInfosForm = wrapper => wrapper.find('meta-alarm-rule-infos-form-stub');
 
 describe('meta-alarm-rule-general-form', () => {
   const form = metaAlarmRuleToForm();
@@ -50,11 +54,11 @@ describe('meta-alarm-rule-general-form', () => {
       },
     });
 
-    const descriptionField = selectDescriptionField(wrapper);
+    const payloadTextareaField = selectPayloadTextareaField(wrapper);
 
     const outputTemplate = Faker.datatype.string();
 
-    descriptionField.triggerCustomEvent('input', outputTemplate);
+    payloadTextareaField.triggerCustomEvent('input', outputTemplate);
 
     expect(wrapper).toEmitInput({
       ...form,
@@ -101,6 +105,46 @@ describe('meta-alarm-rule-general-form', () => {
     expect(wrapper).toEmitInput({
       ...form,
       auto_resolve: newAutoResolve,
+    });
+  });
+
+  test('Tags changed after trigger tags form', async () => {
+    const copyFromChildren = Faker.datatype.boolean();
+    const wrapper = factory({
+      propsData: {
+        form: {
+          ...form,
+          tags: { copy_from_children: copyFromChildren },
+        },
+      },
+    });
+
+    const newTags = {
+      copy_from_children: !copyFromChildren,
+    };
+
+    await selectTagsForm(wrapper).triggerCustomEvent('input', newTags);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      tags: newTags,
+    });
+  });
+
+  test('Infos changed after trigger infos form', async () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newInfos = [{ key: Faker.datatype.string() }];
+
+    await selectInfosForm(wrapper).triggerCustomEvent('input', newInfos);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+      infos: newInfos,
     });
   });
 
