@@ -324,7 +324,7 @@ export const calendarEventToPbehaviorForm = (
   const {
     start,
     end,
-    data: { cachedForm = {}, pbehavior },
+    data: { cachedForm = {}, pbehavior = {} },
   } = event;
 
   const pbehaviorForm = pbehaviorToForm(pbehavior, entityPattern, timezone);
@@ -341,15 +341,15 @@ export const calendarEventToPbehaviorForm = (
   if (!form.timezone) {
     form.timezone = timezone;
   }
-  const isDifferentTimezone = pbehavior.timezone !== timezone;
+  const isDifferentTimezone = pbehaviorForm.timezone !== timezone;
 
   let preparedEnd = end;
 
   form.tstart = start;
 
-  if (isDifferentTimezone && pbehavior.timezone) {
-    form.tstart = convertDateToMoment(start).tz(timezone, true).tz(pbehavior.timezone).toDate();
-    preparedEnd = convertDateToMoment(preparedEnd).tz(timezone, true).tz(pbehavior.timezone).toDate();
+  if (isDifferentTimezone && pbehaviorForm.timezone) {
+    form.tstart = convertDateToMoment(start).tz(timezone, true).tz(pbehaviorForm.timezone).toDate();
+    preparedEnd = convertDateToMoment(preparedEnd).tz(timezone, true).tz(pbehaviorForm.timezone).toDate();
   }
 
   if (!pbehavior || pbehavior.tstop) {
