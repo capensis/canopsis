@@ -7,6 +7,7 @@
       :label="$tc('common.column', 1)"
       :error-messages="errors.collect('column')"
       name="column"
+      autofocus
     />
     <text-editor-field
       v-field="form.template"

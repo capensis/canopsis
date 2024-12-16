@@ -1,6 +1,7 @@
 package appinfo
 
 import (
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -28,9 +29,8 @@ type Store interface {
 	RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error)
 	RetrieveRemediationConfig(ctx context.Context) (RemediationConf, error)
 	UpdateUserInterfaceConfig(ctx context.Context, conf *UserInterfaceConf) error
-	DeleteUserInterfaceConfig(ctx context.Context) error
 	RetrieveMaintenanceState(ctx context.Context) (bool, error)
-	RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Response, error)
+	RetrieveDefaultColorTheme(ctx context.Context, id string) (colortheme.Response, error)
 	RetrieveSerialName(ctx context.Context) (string, error)
 }
 
@@ -194,6 +194,10 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 		model.PopupTimeout.Info = &defaultInterval
 	}
 
+	if model.DefaultColorTheme == "" {
+		model.DefaultColorTheme = colortheme.Canopsis
+	}
+
 	var updatedModel UserInterfaceConf
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedModel = UserInterfaceConf{}
@@ -215,13 +219,8 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 	return nil
 }
 
-func (s *store) DeleteUserInterfaceConfig(ctx context.Context) error {
-	_, err := s.configCollection.DeleteOne(ctx, bson.M{"_id": config.UserInterfaceKeyName})
-	return err
-}
-
-func (s *store) RetrieveDefaultColorTheme(ctx context.Context) (colortheme.Response, error) {
-	pipeline := []bson.M{{"$match": bson.M{"_id": colortheme.Canopsis}}}
+func (s *store) RetrieveDefaultColorTheme(ctx context.Context, id string) (colortheme.Response, error) {
+	pipeline := []bson.M{{"$match": bson.M{"_id": cmp.Or(id, colortheme.Canopsis)}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	response := colortheme.Response{}
