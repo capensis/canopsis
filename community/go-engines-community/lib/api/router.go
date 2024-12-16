@@ -130,6 +130,7 @@ func RegisterRoutes(
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	enableSameServiceNames bool,
 	eventGenerator libevent.Generator,
+	securityConfig libsecurity.Config,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -178,7 +179,7 @@ func RegisterRoutes(
 		accountRouter := protected.Group("/account/me")
 		{
 			accountRouter.Use(middleware.OnlyAuth())
-			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder(), authorProvider))
+			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder(), authorProvider, securityConfig))
 			accountRouter.GET("", accountAPI.Me)
 			accountRouter.PUT("", accountAPI.Update)
 		}
@@ -193,7 +194,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider),
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, securityConfig),
 			logger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{

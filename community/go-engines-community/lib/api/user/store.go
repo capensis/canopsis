@@ -3,6 +3,7 @@ package user
 import (
 	"cmp"
 	"context"
+	"errors"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -13,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -29,6 +31,7 @@ func NewStore(
 	passwordEncoder password.Encoder,
 	websocketStore websocket.Store,
 	authorProvider author.Provider,
+	securityConfig security.Config,
 ) Store {
 	return &store{
 		client:                 dbClient,
@@ -45,6 +48,7 @@ func NewStore(
 		passwordEncoder: passwordEncoder,
 		websocketStore:  websocketStore,
 		authorProvider:  authorProvider,
+		securityConfig:  securityConfig,
 
 		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
@@ -66,6 +70,7 @@ type store struct {
 	passwordEncoder password.Encoder
 	websocketStore  websocket.Store
 	authorProvider  author.Provider
+	securityConfig  security.Config
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -149,6 +154,11 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 			deletable := res.Data[i].ID != curUserID && (!onlyOneAdmin || res.Data[i].ID != lastAdminID)
 			res.Data[i].Deletable = &deletable
 		}
+
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsCfg(res.Data[i].Source)
+		if ok {
+			res.Data[i].IdpFields = idpFields
+		}
 	}
 
 	return &res, nil
@@ -171,6 +181,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		err := cursor.Decode(user)
 		if err != nil {
 			return nil, err
+		}
+
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsCfg(user.Source)
+		if ok {
+			user.IdpFields = idpFields
 		}
 
 		return user, nil
@@ -217,6 +232,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string) (
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+
 		onlyOneAdmin, lastAdminID, adminRoleID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
@@ -231,6 +247,19 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string) (
 				return common.NewValidationError("enable", "last admin cannot be disabled")
 			}
 		}
+
+		var prevUser security.User
+
+		err = s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevUser)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdpRoles)
 
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
@@ -264,6 +293,7 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+
 		onlyOneAdmin, lastAdminID, adminRoleID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
@@ -278,6 +308,19 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 				return common.NewValidationError("enable", "last admin cannot be disabled")
 			}
 		}
+
+		var prevUser security.User
+
+		err = s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevUser)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdpRoles)
 
 		res, err := s.collection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
@@ -296,6 +339,40 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 	}
 
 	return user, nil
+}
+
+func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, idpRoles []string) {
+	idpFields, allowExtraRoles, ok := s.securityConfig.GetIdpFieldsCfg(source)
+	if !ok {
+		return
+	}
+
+	for _, idpField := range idpFields {
+		delete(updateDoc, idpField)
+	}
+
+	if !allowExtraRoles {
+		updateDoc["roles"] = idpRoles
+		return
+	}
+
+	if len(requestRoles) != 0 {
+		mergedRoles := make([]string, 0, len(requestRoles)+len(idpRoles))
+
+		idpRolesMap := make(map[string]bool)
+		for _, role := range idpRoles {
+			idpRolesMap[role] = true
+			mergedRoles = append(mergedRoles, role)
+		}
+
+		for _, role := range requestRoles {
+			if !idpRolesMap[role] {
+				mergedRoles = append(mergedRoles, role)
+			}
+		}
+
+		updateDoc["roles"] = mergedRoles
+	}
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {

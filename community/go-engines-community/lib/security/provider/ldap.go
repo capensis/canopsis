@@ -218,7 +218,7 @@ func (p *ldapProvider) saveUser(
 	for field, attr := range p.config.Attributes {
 		v := entry.GetAttributeValue(attr)
 		switch field {
-		case "mail":
+		case "email":
 			user.Email = v
 		case "firstname":
 			user.Firstname = v

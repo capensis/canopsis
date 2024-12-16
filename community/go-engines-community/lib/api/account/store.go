@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -20,14 +21,16 @@ type store struct {
 	collection      mongo.DbCollection
 	passwordEncoder password.Encoder
 	authorProvider  author.Provider
+	securityConfig  security.Config
 }
 
-func NewStore(db mongo.DbClient, passwordEncoder password.Encoder, authorProvider author.Provider) Store {
+func NewStore(db mongo.DbClient, passwordEncoder password.Encoder, authorProvider author.Provider, securityConfig security.Config) Store {
 	return &store{
 		client:          db,
 		collection:      db.Collection(mongo.UserCollection),
 		passwordEncoder: passwordEncoder,
 		authorProvider:  authorProvider,
+		securityConfig:  securityConfig,
 	}
 }
 
@@ -179,6 +182,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 
 		for i, perm := range user.Permissions {
 			user.Permissions[i].Actions = role.TransformBitmaskToActions(perm.Bitmask, perm.Type)
+		}
+
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsCfg(user.Source)
+		if ok {
+			user.IdpFields = idpFields
 		}
 
 		return user, nil
