@@ -112,6 +112,7 @@ type SectionMetrics struct {
 	AllowedPerfDataUnits   []string `toml:"AllowedPerfDataUnits"`
 	EnabledInstructions    bool     `toml:"EnabledInstructions"`
 	EnabledNotAckedMetrics bool     `toml:"EnabledNotAckedMetrics"`
+	EnabledSliMetrics      bool     `toml:"EnabledSliMetrics"`
 }
 
 type SectionTechMetrics struct {
@@ -146,9 +147,10 @@ type CanopsisConf struct {
 type UserInterfaceConf struct {
 	IsAllowChangeSeverityToInfo bool `bson:"allow_change_severity_to_info"`
 	// MaxMatchedItems need to warn user when number of items that match patterns is above this value
-	MaxMatchedItems            int  `bson:"max_matched_items"`
-	CheckCountRequestTimeout   int  `bson:"check_count_request_timeout"`
-	RequiredInstructionApprove bool `bson:"required_instruction_approve"`
+	MaxMatchedItems            int    `bson:"max_matched_items"`
+	CheckCountRequestTimeout   int    `bson:"check_count_request_timeout"`
+	RequiredInstructionApprove bool   `bson:"required_instruction_approve"`
+	DefaultColorTheme          string `bson:"default_color_theme"`
 }
 
 type VersionConf struct {

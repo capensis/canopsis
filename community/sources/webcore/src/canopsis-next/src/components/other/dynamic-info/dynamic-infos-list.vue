@@ -12,12 +12,13 @@
     expand
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
+    <template #mass-actions="{ selected, selectedKeys }">
       <c-action-btn
         v-if="removable"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
+      <c-db-export-btn :ids="selectedKeys" dynamic-info />
     </template>
     <template #created="{ item }">
       {{ item.created | date }}
@@ -47,6 +48,7 @@
         />
         <pbehaviors-create-action-btn :entity="item" />
         <pbehaviors-list-action-btn :entity="item" />
+        <c-db-export-btn :id="item._id" dynamic-info />
       </v-layout>
     </template>
     <template #expand="{ item }">

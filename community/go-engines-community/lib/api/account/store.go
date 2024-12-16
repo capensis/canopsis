@@ -1,10 +1,14 @@
 package account
 
 import (
+	"cmp"
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,22 +20,29 @@ type Store interface {
 }
 
 type store struct {
-	client          mongo.DbClient
-	collection      mongo.DbCollection
-	passwordEncoder password.Encoder
-	authorProvider  author.Provider
+	client               mongo.DbClient
+	userCollection       mongo.DbCollection
+	passwordEncoder      password.Encoder
+	authorProvider       author.Provider
+	userInterfaceAdapter config.UserInterfaceAdapter
 }
 
-func NewStore(db mongo.DbClient, passwordEncoder password.Encoder, authorProvider author.Provider) Store {
+func NewStore(db mongo.DbClient, pe password.Encoder, ap author.Provider, uia config.UserInterfaceAdapter) Store {
 	return &store{
-		client:          db,
-		collection:      db.Collection(mongo.UserCollection),
-		passwordEncoder: passwordEncoder,
-		authorProvider:  authorProvider,
+		client:               db,
+		userCollection:       db.Collection(mongo.UserCollection),
+		passwordEncoder:      pe,
+		authorProvider:       ap,
+		userInterfaceAdapter: uia,
 	}
 }
 
 func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
+	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user interface config: %w", err)
+	}
+
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 		// Find permissions
@@ -129,7 +140,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
 							},
 						},
-						"then": "canopsis",
+						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
 						"else": "$ui_theme",
 					},
 				},
@@ -150,7 +161,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 	pipeline = append(pipeline, s.authorProvider.PipelineForField("ui_theme.author")...)
 
-	cursor, err := s.collection.Aggregate(ctx, pipeline)
+	cursor, err := s.userCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -196,7 +207,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*User, error) {
 			return err
 		}
 
-		res, err := s.collection.UpdateOne(ctx,
+		res, err := s.userCollection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
 			bson.M{"$set": updateDoc},
 		)
