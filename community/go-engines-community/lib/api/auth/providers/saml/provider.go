@@ -330,8 +330,11 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 			if !ok {
 				return
 			}
-		} else {
-			p.updateUser(c, relayUrl, assertionInfo, user)
+		} else if !user.IsEnabled {
+			c.AbortWithStatus(http.StatusForbidden)
+			return
+		} else if !p.updateUser(c, relayUrl, assertionInfo, user) {
+			return
 		}
 
 		maintenanceConf, err := p.maintenanceAdapter.GetConfig(c)
@@ -549,7 +552,9 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 		Firstname:  p.getAssocAttribute(assertionInfo.Values, "firstname", ""),
 		Lastname:   p.getAssocAttribute(assertionInfo.Values, "lastname", ""),
 		Email:      p.getAssocAttribute(assertionInfo.Values, "email", ""),
+		IdpRoles:   roles,
 	}
+
 	err = p.userProvider.Save(c, user)
 	if err != nil {
 		p.logger.Err(err).Msg("samlAcsHandler: userProvider Save error")
@@ -559,15 +564,15 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 	return user, true
 }
 
-func (p *provider) updateUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo, user *security.User) {
-	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(assertionInfo.Values, "role", user.Roles), p.config.DefaultRole)
+func (p *provider) updateUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo, user *security.User) bool {
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(assertionInfo.Values, "role", []string{}), p.config.DefaultRole)
 	if err != nil {
 		roleNotFoundError := roleprovider.ProviderError{}
 		if errors.As(err, &roleNotFoundError) {
 			p.logger.Err(roleNotFoundError).Msg("failed to get user roles from saml assertion")
 			p.errorRedirect(c, relayUrl, roleNotFoundError.Error())
 
-			return
+			return false
 		}
 
 		panic(err)
@@ -577,12 +582,14 @@ func (p *provider) updateUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 	user.Firstname = p.getAssocAttribute(assertionInfo.Values, "firstname", user.Firstname)
 	user.Lastname = p.getAssocAttribute(assertionInfo.Values, "lastname", user.Lastname)
 	user.Email = p.getAssocAttribute(assertionInfo.Values, "email", user.Email)
-	user.Roles = roles
+	user.SetRolesFromIdp(roles, p.config.AllowExtraRoles)
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
 		panic(fmt.Errorf("failed to update saml user: %w", err))
 	}
+
+	return true
 }
 
 func (p *provider) errorRedirect(c *gin.Context, relayUrl *url.URL, errorMessage string) {

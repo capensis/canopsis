@@ -312,8 +312,11 @@ func (p *provider) Callback(c *gin.Context) {
 		if !ok {
 			return
 		}
-	} else {
-		p.updateUser(c, redirectUrl, user, userInfo)
+	} else if !user.IsEnabled {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	} else if !p.updateUser(c, redirectUrl, user, userInfo) {
+		return
 	}
 
 	err = p.enforcer.LoadPolicy()
@@ -379,6 +382,7 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string,
 		Firstname:  p.getAssocAttribute(userInfo, "firstname", ""),
 		Lastname:   p.getAssocAttribute(userInfo, "lastname", ""),
 		Email:      p.getAssocAttribute(userInfo, "email", ""),
+		IdpRoles:   roles,
 	}
 
 	err = p.userProvider.Save(c, user)
@@ -390,7 +394,7 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string,
 	return user, true
 }
 
-func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *security.User, userInfo map[string]any) (*security.User, bool) {
+func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *security.User, userInfo map[string]any) bool {
 	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, "role", user.Roles), p.config.DefaultRole)
 	if err != nil {
 		roleNotFoundError := roleprovider.ProviderError{}
@@ -398,7 +402,7 @@ func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *securi
 			p.logger.Err(roleNotFoundError).Msg("failed to get user roles from openid/oauth2 user info")
 			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
 
-			return nil, false
+			return false
 		}
 
 		panic(err)
@@ -408,14 +412,14 @@ func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *securi
 	user.Firstname = p.getAssocAttribute(userInfo, "firstname", user.Firstname)
 	user.Lastname = p.getAssocAttribute(userInfo, "lastname", user.Lastname)
 	user.Email = p.getAssocAttribute(userInfo, "email", user.Email)
-	user.Roles = roles
+	user.SetRolesFromIdp(roles, p.config.AllowExtraRoles)
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
 		panic(fmt.Errorf("failed to update openid/oauth2 user: %w", err))
 	}
 
-	return user, true
+	return true
 }
 
 func (p *provider) getAssocAttribute(userInfo map[string]any, name, defaultValue string) string {
