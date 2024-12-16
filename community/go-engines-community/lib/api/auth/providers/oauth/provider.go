@@ -395,7 +395,7 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string,
 }
 
 func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *security.User, userInfo map[string]any) bool {
-	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, "role", user.Roles), p.config.DefaultRole)
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, "role", []string{}), p.config.DefaultRole)
 	if err != nil {
 		roleNotFoundError := roleprovider.ProviderError{}
 		if errors.As(err, &roleNotFoundError) {
