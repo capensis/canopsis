@@ -10,15 +10,15 @@ import { PERMISSIONS_TYPES_TO_ACTIONS, CRUD_ACTIONS, USER_PERMISSIONS_GROUPS } f
  * @returns {boolean}
  */
 export const checkUserAccess = (permission, action) => {
-  if (permission && permission.actions) {
-    const { actions } = permission;
-
-    return action === CRUD_ACTIONS.can
-      ? actions.length >= 0
-      : actions.includes(action);
+  if (!permission?.actions) {
+    return false;
   }
 
-  return false;
+  const { actions } = permission;
+
+  return action === CRUD_ACTIONS.can
+    ? actions.length >= 0
+    : actions.includes(action);
 };
 
 /**

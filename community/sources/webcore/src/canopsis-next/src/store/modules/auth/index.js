@@ -1,10 +1,11 @@
-import { keyBy } from 'lodash';
+import { groupBy, keyBy, filter } from 'lodash';
 
 import { API_ROUTES, DEFAULT_LOCALE, VUETIFY_ANIMATION_DELAY, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 
 import request from '@/services/request';
 import localStorageService from '@/services/local-storage';
+import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -28,6 +29,7 @@ export default {
     isLoggedIn: state => state.isLoggedIn,
     currentUser: state => state.currentUser,
     currentUserPermissionsById: state => keyBy(state.currentUser.permissions, '_id'),
+    currentUserViewPermissionsByViewId: state => viewPermissionsGroupedPermissions(state.currentUser.permissions),
     pending: state => state.pending,
   },
   mutations: {
