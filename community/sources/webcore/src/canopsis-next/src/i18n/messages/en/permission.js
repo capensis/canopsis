@@ -1,40 +1,6 @@
-import {
-  USER_PERMISSIONS_GROUPS,
-  USER_PERMISSIONS_PREFIXES,
-  USER_VIEWS_PERMISSIONS,
-  USER_PERMISSIONS,
-} from '@/constants';
+import { USER_PERMISSIONS_GROUPS, USER_VIEWS_PERMISSIONS, USER_PERMISSIONS } from '@/constants';
 
 export default {
-  technical: {
-    admin: 'Admin rights',
-    exploitation: 'Exploitation rights',
-    notification: 'Notification rights',
-    profile: 'Profile rights',
-  },
-  business: {
-    [USER_PERMISSIONS_PREFIXES.business.common]: 'Rights for common',
-    [USER_PERMISSIONS_PREFIXES.business.alarmsList]: 'Rights for Alarms List',
-    [USER_PERMISSIONS_PREFIXES.business.context]: 'Rights for Context Explorer',
-    [USER_PERMISSIONS_PREFIXES.business.serviceWeather]: 'Rights for Service Weather',
-    [USER_PERMISSIONS_PREFIXES.business.counter]: 'Rights for Counter',
-    [USER_PERMISSIONS_PREFIXES.business.testingWeather]: 'Rights for Testing Weather',
-    [USER_PERMISSIONS_PREFIXES.business.map]: 'Rights for Mapping',
-    [USER_PERMISSIONS_PREFIXES.business.barChart]: 'Rights for Bar Chart',
-    [USER_PERMISSIONS_PREFIXES.business.lineChart]: 'Rights for Line Chart',
-    [USER_PERMISSIONS_PREFIXES.business.pieChart]: 'Rights for Pie Chart',
-    [USER_PERMISSIONS_PREFIXES.business.numbers]: 'Rights for Numbers',
-    [USER_PERMISSIONS_PREFIXES.business.userStatistics]: 'Rights for User Statistics',
-    [USER_PERMISSIONS_PREFIXES.business.alarmStatistics]: 'Rights for Alarm Statistics',
-    [USER_PERMISSIONS_PREFIXES.business.availability]: 'Rights for Availability',
-  },
-  api: {
-    general: 'General',
-    rules: 'Rules',
-    remediation: 'Remediation',
-    pbehavior: 'PBehavior',
-    eventsRecord: 'Events record',
-  },
   title: {
     /**
      * VIEWS PERMISSIONS
@@ -106,8 +72,6 @@ export default {
     [USER_PERMISSIONS_GROUPS.technicalProfile]: 'Profile',
     [USER_PERMISSIONS_GROUPS.technicalToken]: 'Token',
 
-  },
-  permissions: {
     /**
      * Business Common Permissions
      */
@@ -132,742 +96,284 @@ export default {
     [USER_PERMISSIONS.business.alarmsList.actions.history]: 'View alarm history',
     [USER_PERMISSIONS.business.alarmsList.actions.manualMetaAlarmGroup]: 'Link to manual meta alarm rule / Unlink',
     [USER_PERMISSIONS.business.alarmsList.actions.comment]: 'Comment alarm',
-    [USER_PERMISSIONS.business.alarmsList.actions.filter]: 'Set alarm filters ',
+    [USER_PERMISSIONS.business.alarmsList.actions.filter]: 'Set alarm filters',
     [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: 'Filter alarms',
     [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: 'Set filters by remediation instructions',
     [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: 'Filter alarms by remediation instructions',
     [USER_PERMISSIONS.business.alarmsList.actions.links]: 'Follow link in alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.correlation]: 'Group correlated alarms (meta alarms)',
-    [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: 'Execute manual instructions ',
+    [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: 'Execute manual instructions',
     [USER_PERMISSIONS.business.alarmsList.actions.category]: 'Filter alarms by category',
     [USER_PERMISSIONS.business.alarmsList.actions.exportPdf]: 'Export in PDF',
     [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: 'Export alarm list as CSV',
     [USER_PERMISSIONS.business.alarmsList.actions.metaAlarmGroup]: 'Unlink alarm from auto meta alarm',
     [USER_PERMISSIONS.business.alarmsList.actions.bookmark]: 'Add / remove bookmark',
-    [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: 'Filter bookmarked alarms ',
+    [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: 'Filter bookmarked alarms',
 
     /**
      * Business Context Explorer Permissions
      */
-    [USER_PERMISSIONS.business.context.actions.createEntity]: {
-      name: 'Rights on context explorer: create entity',
-      description: 'Users with this permission can create new entities',
-    },
-    [USER_PERMISSIONS.business.context.actions.editEntity]: {
-      name: 'Rights on context explorer: edit entity',
-      description: 'Users with this permission can edit entities',
-    },
-    [USER_PERMISSIONS.business.context.actions.duplicateEntity]: {
-      name: 'Rights on context explorer: duplicate entity',
-      description: 'Users with this permission can duplicate entities',
-    },
-    [USER_PERMISSIONS.business.context.actions.deleteEntity]: {
-      name: 'Rights on context explorer: delete entity',
-      description: 'Users with this permission can delete entities',
-    },
-    [USER_PERMISSIONS.business.context.actions.massEnable]: {
-      name: 'Rights on context explorer: Mass enable action',
-      description: 'Users with this permission can perform mass action to enable selected entities',
-    },
-    [USER_PERMISSIONS.business.context.actions.massDisable]: {
-      name: 'Rights on context explorer: Mass disable action',
-      description: 'Users with this permission can perform mass action to disable selected entities',
-    },
-    [USER_PERMISSIONS.business.context.actions.pbehavior]: {
-      name: 'Rights on context explorer: Mass disable action',
-      description: 'Users with this permission can perform mass action to disable selected entities',
-    },
-    [USER_PERMISSIONS.business.context.actions.filter]: {
-      name: 'Rights on context explorer: view filters',
-      description: 'Users with this permission can see the list of filters available in the Context explorer',
-    },
-    [USER_PERMISSIONS.business.context.actions.userFilter]: {
-      name: 'Rights on context explorer: show filters',
-      description: 'The entity filter is shown for users with this permission',
-    },
-    [USER_PERMISSIONS.business.context.actions.category]: {
-      name: 'Rights on context explorer: Filter by category',
-      description: 'Users with this permission can filter entities by category',
-    },
-    [USER_PERMISSIONS.business.context.actions.exportAsCsv]: {
-      name: 'Rights on context explorer: Export as csv',
-      description: 'Users with this permission can export entities as CSV file',
-    },
+    [USER_PERMISSIONS.business.context.actions.createEntity]: 'Create entity',
+    [USER_PERMISSIONS.business.context.actions.editEntity]: 'Edit entity',
+    [USER_PERMISSIONS.business.context.actions.duplicateEntity]: 'Duplicate entity',
+    [USER_PERMISSIONS.business.context.actions.deleteEntity]: 'Delete entity',
+    [USER_PERMISSIONS.business.context.actions.massEnable]: 'Mass action to enable selected entities',
+    [USER_PERMISSIONS.business.context.actions.massDisable]: 'Mass action to disable selected entities',
+    [USER_PERMISSIONS.business.context.actions.pbehavior]: 'Set PBehavior',
+    [USER_PERMISSIONS.business.context.actions.filter]: 'Set entities filters',
+    [USER_PERMISSIONS.business.context.actions.userFilter]: 'Filter entities',
+    [USER_PERMISSIONS.business.context.actions.category]: 'Filter entities by category',
+    [USER_PERMISSIONS.business.context.actions.exportAsCsv]: 'Export entities as CSV file',
 
     /**
      * Business Service Weather Permissions
      */
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityAck]: {
-      name: 'Service weather: Access to \'Ack\' action',
-      description: 'Users with this permission can acknowledge alarms',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket]: {
-      name: 'Service weather: Access to \'Associate Ticket\' action',
-      description: 'Users with this permission can associate tickets for alarms',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: {
-      name: 'Service weather: Access to \'Declare Ticket\' action',
-      description: 'Users with this permission can declare tickets for alarms',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityComment]: {
-      name: 'Service weather: Access to \'Comment\' action',
-      description: 'Users with this permission can add comments',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityValidate]: {
-      name: 'Service weather: Access to \'Validate\' action',
-      description: 'Users with this permission can validate alarms and change their state to critical',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]: {
-      name: 'Service weather: Access to \'Invalidate\' action',
-      description: 'Users with this permission can invalidate alarms and cancel them',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]: {
-      name: 'Service weather: Access to \'Pause\' action',
-      description: 'Users with this permission can pause alarms (set the PBehavior type "Pause")',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: {
-      name: 'Service weather: Access to \'Play\' action',
-      description: 'Users with this permission can activate paused alarms (remove the PBehavior type "Pause")',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityCancel]: {
-      name: 'Service weather: Access to \'Cancel\' action',
-      description: 'Users with this permission can cancel alarms',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]: {
-      name: 'Service weather: Access to pbehaviors management',
-      description: 'Users with this permission can access the list of PBehaviors associated to services (in the subtab in the services modal windows)',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.executeInstruction]: {
-      name: 'Service weather: Access to execute instruction',
-      description: 'Users with this permission can execute instructions for alarms',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.entityLinks]: {
-      name: 'Service weather: Access to Links',
-      description: 'Users with this permission can see links associated with alarms',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.moreInfos]: {
-      name: 'Service weather: Access to \'More infos\' modal',
-      description: 'Users with this permission can access to "More infos" modal window',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]: {
-      name: 'Service weather: Access to \'Alarms list\' modal',
-      description: 'Users with this permission can open the list of alarms available for each service',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.pbehaviorList]: {
-      name: 'Service weather: Access to service pbehavior list',
-      description: 'Users with this permission can access the list of all PBehaviors of services (in the subtab in the service entities modal windows)',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.filter]: {
-      name: 'Rights on service weather: View filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: {
-      name: 'Rights on service weather: Show filter',
-      description: 'The filter is shown for users with this permission',
-    },
-    [USER_PERMISSIONS.business.serviceWeather.actions.category]: {
-      name: 'Rights on service weather: Filter by category',
-      description: 'Users with this permission can filter services by category',
-    },
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityAck]: 'Ack',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityAssocTicket]: 'Associate ticket',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: 'Declare ticket',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityComment]: 'Comment alarm',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityValidate]: 'Validate alarms and change their state to critical',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]: 'Invalidate alarms and cancel them',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPause]: 'Pause alarms (set the PBehavior type "Pause")',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityPlay]: 'Activate paused alarms (remove the PBehavior type "Pause")',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityCancel]: 'Access the list of PBehaviors associated to services (in the subtab in the services modal windows)',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]: 'View PBehaviors of services (in the subtab in the services modal windows)',
+    [USER_PERMISSIONS.business.serviceWeather.actions.executeInstruction]: 'Execute manual instructions',
+    [USER_PERMISSIONS.business.serviceWeather.actions.entityLinks]: 'Follow link in alarm',
+    [USER_PERMISSIONS.business.serviceWeather.actions.moreInfos]: 'Open "More infos" modal',
+    [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]: 'Open the list of alarms available for each service',
+    [USER_PERMISSIONS.business.serviceWeather.actions.pbehaviorList]: 'View PBehaviors of services (in the subtab in the service entities modal windows)',
+    [USER_PERMISSIONS.business.serviceWeather.actions.filter]: 'Set alarm filters',
+    [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: 'Filter alarms',
+    [USER_PERMISSIONS.business.serviceWeather.actions.category]: 'Filter alarms by category',
 
     /**
      * Business Counter Permissions
      */
-    [USER_PERMISSIONS.business.counter.actions.alarmsList]: {
-      name: 'Counter: Access to \'Alarms list\' modal',
-      description: 'Users with this permission can see the alarm list associated with counters',
-    },
+    [USER_PERMISSIONS.business.counter.actions.alarmsList]: 'View the alarm list associated with counters',
 
     /**
      * Business Testing Weather Permissions
      */
-    [USER_PERMISSIONS.business.testingWeather.actions.alarmsList]: {
-      name: 'Testing weather: Access to \'Alarms list\' modal',
-      description: 'Users with this permission can see the alarm list associated with testing weather',
-    },
+    [USER_PERMISSIONS.business.testingWeather.actions.alarmsList]: 'Open the list of alarms available',
 
     /**
-     * Business Testing Weather Permissions
+     * Business Map Permissions
      */
-    [USER_PERMISSIONS.business.map.actions.alarmsList]: {
-      name: 'Rights on maps: Access to \'Alarms list\' modal',
-      description: 'Users with this permission can see the alarm list associated with points on maps',
-    },
-    [USER_PERMISSIONS.business.map.actions.filter]: {
-      name: 'Rights on maps: View filter',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.map.actions.userFilter]: {
-      name: 'Rights on maps: Show filter',
-      description: 'The filter is shown for users with this permission',
-    },
-    [USER_PERMISSIONS.business.map.actions.category]: {
-      name: 'Rights on maps: Access to \'Category\' action',
-      description: 'Users with this permission can filter points by categories',
-    },
+    [USER_PERMISSIONS.business.map.actions.alarmsList]: 'View the alarm list associated with points on maps',
+    [USER_PERMISSIONS.business.map.actions.filter]: 'Set filters for points on maps',
+    [USER_PERMISSIONS.business.map.actions.userFilter]: 'Filter points on maps',
+    [USER_PERMISSIONS.business.map.actions.category]: 'Filter points on maps by categories',
 
     /**
      * Business Bar Chart Permissions
      */
-    [USER_PERMISSIONS.business.barChart.actions.interval]: {
-      name: 'Barchart: interval',
-      description: 'Users with this permission can edit time intervals for the data displayed',
-    },
-    [USER_PERMISSIONS.business.barChart.actions.sampling]: {
-      name: 'Barchart: sampling',
-      description: 'Users with this permission can change sampling for the data displayed',
-    },
-    [USER_PERMISSIONS.business.barChart.actions.filter]: {
-      name: 'Barchart: view filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.barChart.actions.userFilter]: {
-      name: 'Barchart: show filters',
-      description: 'The filter is shown for users with this permission',
-    },
+    [USER_PERMISSIONS.business.barChart.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.barChart.actions.sampling]: 'Edit sampling for the data displayed',
+    [USER_PERMISSIONS.business.barChart.actions.filter]: 'Set data filters',
+    [USER_PERMISSIONS.business.barChart.actions.userFilter]: 'Filter data',
 
     /**
      * Business Line Chart Permissions
      */
-    [USER_PERMISSIONS.business.lineChart.actions.interval]: {
-      name: 'Linechart: interval',
-      description: 'Users with this permission can change',
-    },
-    [USER_PERMISSIONS.business.lineChart.actions.sampling]: {
-      name: 'Linechart: sampling',
-      description: 'Users with this permission can change sampling for the data displayed',
-    },
-    [USER_PERMISSIONS.business.lineChart.actions.filter]: {
-      name: 'Linechart: view filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.lineChart.actions.userFilter]: {
-      name: 'Linechart: show filters',
-      description: 'The filter is shown for users with this permission',
-    },
+    [USER_PERMISSIONS.business.lineChart.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.lineChart.actions.sampling]: 'Edit sampling for the data displayed',
+    [USER_PERMISSIONS.business.lineChart.actions.filter]: 'Set data filters',
+    [USER_PERMISSIONS.business.lineChart.actions.userFilter]: 'Filter data',
 
     /**
      * Business Pie Chart Permissions
      */
-    [USER_PERMISSIONS.business.pieChart.actions.interval]: {
-      name: 'Piechart: interval',
-      description: 'Users with this permission can change time interval for the data displayed',
-    },
-    [USER_PERMISSIONS.business.pieChart.actions.sampling]: {
-      name: 'Piechart: sampling',
-      description: 'Users with this permission can change sampling for the data displayed',
-    },
-    [USER_PERMISSIONS.business.pieChart.actions.filter]: {
-      name: 'Piechart: view filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.pieChart.actions.userFilter]: {
-      name: 'Piechart: show filters',
-      description: 'The filter is shown for users with this permission',
-    },
+    [USER_PERMISSIONS.business.pieChart.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.pieChart.actions.sampling]: 'Edit sampling for the data displayed',
+    [USER_PERMISSIONS.business.pieChart.actions.filter]: 'Set data filters',
+    [USER_PERMISSIONS.business.pieChart.actions.userFilter]: 'Filter data',
 
     /**
      * Business Numbers Permissions
      */
-    [USER_PERMISSIONS.business.numbers.actions.interval]: {
-      name: 'Numbers: interval',
-      description: 'Users with this permission can change time interval for the data displayed',
-    },
-    [USER_PERMISSIONS.business.numbers.actions.sampling]: {
-      name: 'Numbers: sampling',
-      description: 'Users with this permission can change sampling for the data displayed',
-    },
-    [USER_PERMISSIONS.business.numbers.actions.filter]: {
-      name: 'Numbers: view filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.numbers.actions.userFilter]: {
-      name: 'Numbers: show filters',
-      description: 'The filter is shown for users with this permission',
-    },
+    [USER_PERMISSIONS.business.numbers.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.numbers.actions.sampling]: 'Edit sampling for the data displayed',
+    [USER_PERMISSIONS.business.numbers.actions.filter]: 'Set data filters',
+    [USER_PERMISSIONS.business.numbers.actions.userFilter]: 'Filter data',
 
     /**
      * Business User Statistics
      */
-    [USER_PERMISSIONS.business.userStatistics.actions.interval]: {
-      name: 'User Statistics: interval',
-      description: 'Users with this permission can change time interval for the data displayed',
-    },
-    [USER_PERMISSIONS.business.userStatistics.actions.filter]: {
-      name: 'User Statistics: view filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.userStatistics.actions.userFilter]: {
-      name: 'User Statistics: show filters',
-      description: 'The filter is shown for users with this permission',
-    },
+    [USER_PERMISSIONS.business.userStatistics.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.userStatistics.actions.filter]: 'Set data filters',
+    [USER_PERMISSIONS.business.userStatistics.actions.userFilter]: 'Filter data',
 
     /**
      * Business Alarm Statistics
      */
-    [USER_PERMISSIONS.business.alarmStatistics.actions.interval]: {
-      name: 'Alarm Statistics: interval',
-      description: 'Users with this permission can change time interval for the data displayed',
-    },
-    [USER_PERMISSIONS.business.alarmStatistics.actions.filter]: {
-      name: 'Alarm Statistics: view filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.alarmStatistics.actions.userFilter]: {
-      name: 'Alarm Statistics: show filters',
-      description: 'The filter is shown for users with this permission',
-    },
+    [USER_PERMISSIONS.business.alarmStatistics.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.alarmStatistics.actions.filter]: 'Set data filters',
+    [USER_PERMISSIONS.business.alarmStatistics.actions.userFilter]: 'Filter data',
 
     /**
      * Business Availability
      */
-    [USER_PERMISSIONS.business.availability.actions.interval]: {
-      name: 'Availability: interval',
-      description: 'Users with this permission can change time interval for the data displayed',
-    },
-    [USER_PERMISSIONS.business.availability.actions.filter]: {
-      name: 'Availability: view filters',
-      description: 'Users with this permission can see the list of filters available',
-    },
-    [USER_PERMISSIONS.business.availability.actions.userFilter]: {
-      name: 'Availability: show filters',
-      description: 'The filter is shown for users with this permission',
-    },
-    [USER_PERMISSIONS.business.availability.actions.exportAsCsv]: {
-      name: 'Availability: Export as csv',
-      description: 'Users with this permission can export availabilities as CSV file',
-    },
+    [USER_PERMISSIONS.business.availability.actions.interval]: 'Edit time intervals for the data displayed',
+    [USER_PERMISSIONS.business.availability.actions.filter]: 'Set data filters',
+    [USER_PERMISSIONS.business.availability.actions.userFilter]: 'Filter data',
+    [USER_PERMISSIONS.business.availability.actions.exportAsCsv]: 'Export availabilities as CSV file',
 
     /**
-     * Technical General Permissions
+     * Technical Admin Communication
      */
-    [USER_PERMISSIONS.technical.view]: {
-      name: 'Views',
-      description: 'This permission defines the access to the list of views',
-    },
-    [USER_PERMISSIONS.technical.privateView]: {
-      name: 'Private views',
-      description: 'This permission defines the access to the list of private views',
-    },
-    [USER_PERMISSIONS.technical.role]: {
-      name: 'Roles',
-      description: 'This permission defines the access to the list of roles',
-    },
-    [USER_PERMISSIONS.technical.permission]: {
-      name: 'Rights',
-      description: 'This permission defines the access to the list of Rights',
-    },
-    [USER_PERMISSIONS.technical.user]: {
-      name: 'Users',
-      description: 'This permission defines the access to the list of users',
-    },
-    [USER_PERMISSIONS.technical.parameters]: {
-      name: 'Parameters',
-      description: 'This permission defines the access to the Canopsis settings and parameters',
-    },
-    [USER_PERMISSIONS.technical.broadcastMessage]: {
-      name: 'Broadcast Messages',
-      description: 'This permission defines the access to the Broadcast messages admin panel',
-    },
-    [USER_PERMISSIONS.technical.playlist]: {
-      name: 'Playlists',
-      description: 'This permission defines the access to the Playlists settings',
-    },
-    [USER_PERMISSIONS.technical.planningType]: {
-      name: 'Planning type',
-      description: 'This permission defines the access to the PBehavior types',
-    },
-    [USER_PERMISSIONS.technical.planningReason]: {
-      name: 'Planning reason',
-      description: 'This permission defines the access to the PBehavior reasons',
-    },
-    [USER_PERMISSIONS.technical.planningExceptions]: {
-      name: 'Planning dates of exceptions',
-      description: 'This permission defines the access to exception dates for PBehaviors',
-    },
-    [USER_PERMISSIONS.technical.remediationInstruction]: {
-      name: 'Remediation instruction',
-      description: 'This permission defines the access to the list of Instructions',
-    },
-    [USER_PERMISSIONS.technical.remediationJob]: {
-      name: 'Remediation job',
-      description: 'This permission defines the access to the list of Jobs',
-    },
-    [USER_PERMISSIONS.technical.remediationConfiguration]: {
-      name: 'Remediation configuration',
-      description: 'This permission defines the access to the Remediation configuration',
-    },
-    [USER_PERMISSIONS.technical.remediationStatistic]: {
-      name: 'Remediation statistics',
-      description: 'This permission defines the access to the Remediation statistics',
-    },
-    [USER_PERMISSIONS.technical.healthcheck]: {
-      name: 'Healthcheck',
-      description: 'This permission defines the access to the Healthcheck functionality',
-    },
-    [USER_PERMISSIONS.technical.techmetrics]: {
-      name: 'Tech metrics',
-      description: 'This permission defines the access to the Tech metrics',
-    },
-    [USER_PERMISSIONS.technical.engine]: {
-      name: 'Engines',
-      description: 'This permission defines the access to the Engines configuration',
-    },
-    [USER_PERMISSIONS.technical.healthcheckStatus]: {
-      name: 'Healthcheck status',
-      description: 'The system healthcheck status is shown in the header for users with this permission',
-    },
-    [USER_PERMISSIONS.technical.kpi]: {
-      name: 'KPI',
-      description: 'This permission defines the access to KPI metrics',
-    },
-    [USER_PERMISSIONS.technical.kpiFilters]: {
-      name: 'KPI Filters',
-      description: 'This permission defines the access to filters for the KPI metrics',
-    },
-    [USER_PERMISSIONS.technical.kpiRatingSettings]: {
-      name: 'KPI Rating settings',
-      description: 'This permission defines the access to the KPI Rating settings',
-    },
-    [USER_PERMISSIONS.technical.kpiCollectionSettings]: {
-      name: 'KPI Collection settings',
-      description: 'This permission defines the access to the KPI Collection settings',
-    },
-    [USER_PERMISSIONS.technical.map]: {
-      name: 'Map editor',
-      description: 'This permission defines the access to the map editor',
-    },
-    [USER_PERMISSIONS.technical.shareToken]: {
-      name: 'Share token',
-      description: 'This permission defines the access to the Shared tokens settings',
-    },
-    [USER_PERMISSIONS.technical.widgetTemplate]: {
-      name: 'Widget templates',
-      description: 'This permission defines the access to the Widget templates',
-    },
-    [USER_PERMISSIONS.technical.maintenance]: {
-      name: 'Maintenance mode',
-      description: 'This permission defines the access to the Maintenance mode',
-    },
-    [USER_PERMISSIONS.technical.tag]: {
-      name: 'Tags management',
-      description: 'This permission defines the access to the Tags management',
-    },
-    [USER_PERMISSIONS.technical.eventsRecord]: {
-      name: 'Events record',
-      description: 'This permission defines the access to the Events records',
-    },
+    [USER_PERMISSIONS.technical.broadcastMessage]: 'Broadcast Messages',
+    [USER_PERMISSIONS.technical.playlist]: 'Playlists',
 
     /**
-     * Technical Exploitation Permissions
+     * Technical Admin General
      */
-    [USER_PERMISSIONS.technical.exploitation.eventFilter]: {
-      name: 'Exploitation: Event filters',
-      description: 'This permission defines the access to the event filters',
-    },
-    [USER_PERMISSIONS.technical.exploitation.pbehavior]: {
-      name: 'Exploitation: Pbehaviors',
-      description: 'This permission defines the access to the PBehavior events',
-    },
-    [USER_PERMISSIONS.technical.exploitation.snmpRule]: {
-      name: 'Exploitation: Snmp rules',
-      description: 'This permission defines the access to the SNMP rules',
-    },
-    [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: {
-      name: 'Exploitation: Dynamic information rules',
-      description: 'This permission defines the access to the dynamic infos functionality',
-    },
-    [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
-      name: 'Exploitation: Meta alarm rules',
-      description: 'This permission defines the access to the meta alarm rules and correlation',
-    },
-    [USER_PERMISSIONS.technical.exploitation.scenario]: {
-      name: 'Exploitation: Scenarios',
-      description: 'This permission defines the access to the scenarios functionalitiy',
-    },
-    [USER_PERMISSIONS.technical.exploitation.idleRules]: {
-      name: 'Exploitation: Idle rules',
-      description: 'This permission defines the access to the idle rules',
-    },
-    [USER_PERMISSIONS.technical.exploitation.flappingRules]: {
-      name: 'Exploitation: Flapping rules',
-      description: 'This permission defines the access to the flapping rules',
-    },
-    [USER_PERMISSIONS.technical.exploitation.resolveRules]: {
-      name: 'Exploitation: Resolve rules',
-      description: 'This permission defines the access to the resolve rules',
-    },
-    [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: {
-      name: 'Exploitation: Declare ticket rules',
-      description: 'This permission defines the access to the ticket declaration functionality',
-    },
-    [USER_PERMISSIONS.technical.exploitation.linkRule]: {
-      name: 'Exploitation: Link rules',
-      description: 'This permission defines the access to the links and link rules',
-    },
+    [USER_PERMISSIONS.technical.eventsRecord]: 'Events records',
+    [USER_PERMISSIONS.technical.healthcheck]: 'Healthcheck',
+    [USER_PERMISSIONS.technical.healthcheckStatus]: 'Healthcheck status',
+    [USER_PERMISSIONS.technical.icon]: 'Parameters - icons',
+    [USER_PERMISSIONS.technical.kpi]: 'KPI Graphs',
+    [USER_PERMISSIONS.technical.kpiCollectionSettings]: 'KPI Collection settings',
+    [USER_PERMISSIONS.technical.kpiFilters]: 'KPI Filters',
+    [USER_PERMISSIONS.technical.kpiRatingSettings]: 'KPI Rating settings',
+    [USER_PERMISSIONS.technical.maintenance]: 'Maintenance mode',
+    [USER_PERMISSIONS.technical.map]: 'Maps',
+    [USER_PERMISSIONS.technical.parameters]: 'Parameters - parameters tab',
+    [USER_PERMISSIONS.technical.planningExceptions]: 'Planning exceptions dates (Pbehavior)',
+    [USER_PERMISSIONS.technical.planningReason]: 'Planning reason (Pbehavior)',
+    [USER_PERMISSIONS.technical.planningType]: 'Planning type (Pbehavior)',
+    [USER_PERMISSIONS.technical.remediationConfiguration]: 'Instructions - configurations tab',
+    [USER_PERMISSIONS.technical.remediationInstruction]: 'Instructions - instructions tab',
+    [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
+    [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
+    [USER_PERMISSIONS.technical.storageSettings]: 'Storage settings',
+    [USER_PERMISSIONS.technical.tag]: 'Tags management',
+    [USER_PERMISSIONS.technical.techmetrics]: 'Healthcheck - engines\' metrics',
+    [USER_PERMISSIONS.technical.widgetTemplate]: 'Parameters - widget templates',
+    [USER_PERMISSIONS.technical.viewImportExport]: 'Parameters - import / export',
 
     /**
-     * Technical Notification Permissions
+     * Technical Admin Access
      */
-    [USER_PERMISSIONS.technical.notification.instructionStats]: {
-      name: 'Notifications: Instructions stats',
-      description: 'This permission defines the access to the notifications associated with instructions statistics',
-    },
+    [USER_PERMISSIONS.technical.permission]: 'Rights',
+    [USER_PERMISSIONS.technical.role]: 'Roles',
+    [USER_PERMISSIONS.technical.user]: 'Users',
 
     /**
-     * Technical Profile Permissions
+     * Technical Admin Exploitation
      */
-    [USER_PERMISSIONS.technical.profile.corporatePattern]: {
-      name: 'Profile: Corporate patterns',
-      description: 'This permission defines the access to the corporate patterns functionality',
-    },
-    [USER_PERMISSIONS.technical.profile.theme]: {
-      name: 'Themes',
-      description: 'This permission defines the access to the theme colors',
-    },
+    [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: 'Ticket declaration rules',
+    [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'Dynamic information rules',
+    [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'Event filters',
+    [USER_PERMISSIONS.technical.exploitation.flappingRules]: 'Flapping rules',
+    [USER_PERMISSIONS.technical.exploitation.idleRules]: 'Idle rules',
+    [USER_PERMISSIONS.technical.exploitation.linkRule]: 'Link generator',
+    [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'Meta alarm rules and correlation',
+    [USER_PERMISSIONS.technical.exploitation.pbehavior]: 'Pbehaviors',
+    [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Resolve rules',
+    [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
+    [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
 
     /**
-     * API Permissions
+     * Technical Admin Notification
      */
-    [USER_PERMISSIONS.api.general.acl]: {
-      name: 'Roles, permissions, users',
-      description: 'Access to API route to CRUD roles, permissions and users',
-    },
-    [USER_PERMISSIONS.api.general.alarmRead]: {
-      name: 'Read alarms',
-      description: 'Access to API route to read alarms',
-    },
-    [USER_PERMISSIONS.api.general.alarmUpdate]: {
-      name: 'Update alarms',
-      description: 'Access to API route to update alarms',
-    },
-    [USER_PERMISSIONS.api.general.entity]: {
-      name: 'Entity',
-      description: 'Access to API route to CRUD entities',
-    },
-    [USER_PERMISSIONS.api.general.entityservice]: {
-      name: 'Entity service',
-      description: 'Access to API route to CRUD services',
-    },
-    [USER_PERMISSIONS.api.general.entitycategory]: {
-      name: 'Entity categories',
-      description: 'Access to API route to CRUD entity categories',
-    },
-    [USER_PERMISSIONS.api.general.event]: {
-      name: 'Event',
-      description: 'Access to API route for events',
-    },
-    [USER_PERMISSIONS.api.general.view]: {
-      name: 'Views',
-      description: 'Access to API route to CRUD views',
-    },
-    [USER_PERMISSIONS.api.general.viewgroup]: {
-      name: 'View groups',
-      description: 'Access to API route to CRUD view groups',
-    },
-    [USER_PERMISSIONS.api.general.privateViewGroups]: {
-      name: 'Private view groups',
-      description: 'Access to API route to CRUD private view groups',
-    },
-    [USER_PERMISSIONS.api.general.userInterfaceUpdate]: {
-      name: 'Update user interface',
-      description: 'Access to API route to update user interface',
-    },
-    [USER_PERMISSIONS.api.general.userInterfaceDelete]: {
-      name: 'Delete user interface',
-      description: 'Access to API route to delete user interface',
-    },
-    [USER_PERMISSIONS.api.general.datastorageRead]: {
-      name: 'Data storage settings read',
-      description: 'Access to API route to read data storage settings',
-    },
-    [USER_PERMISSIONS.api.general.datastorageUpdate]: {
-      name: 'Data storage settings update',
-      description: 'Access to API route to edit data storage settings',
-    },
-    [USER_PERMISSIONS.api.general.associativeTable]: {
-      name: 'Associative table',
-      description: 'Access to API route with some associated data storage (dynamic infos templates, etc)',
-    },
-    [USER_PERMISSIONS.api.general.stateSettings]: {
-      name: 'State settings',
-      description: 'Access to API route to state settings',
-    },
-    [USER_PERMISSIONS.api.general.files]: {
-      name: 'File',
-      description: 'Access to API route to CRUD files',
-    },
-    [USER_PERMISSIONS.api.general.healthcheck]: {
-      name: 'Healthcheck',
-      description: 'Access to API route for healthcheck',
-    },
-    [USER_PERMISSIONS.api.general.techmetrics]: {
-      name: 'Tech Metrics',
-      description: 'Access to API route to tech metrics',
-    },
-    [USER_PERMISSIONS.api.general.contextgraph]: {
-      name: 'Context graph import',
-      description: 'Access to API route for the context graph import',
-    },
-    [USER_PERMISSIONS.api.general.broadcastMessage]: {
-      name: 'Broadcast Message',
-      description: 'Access to API route for broadcast messages',
-    },
-    [USER_PERMISSIONS.api.general.junit]: {
-      name: 'JUnit',
-      description: 'Access to API route to JUnit API',
-    },
-    [USER_PERMISSIONS.api.general.notifications]: {
-      name: 'Notification settings',
-      description: 'Access to API route for notification settings',
-    },
-    [USER_PERMISSIONS.api.general.metrics]: {
-      name: 'Metrics',
-      description: 'Access to API route for metrics',
-    },
-    [USER_PERMISSIONS.api.general.metricsSettings]: {
-      name: 'Metrics settings',
-      description: 'Access to API route for metric settings',
-    },
-    [USER_PERMISSIONS.api.general.ratingSettings]: {
-      name: 'Rating settings',
-      description: 'Access to API route for rating settings',
-    },
-    [USER_PERMISSIONS.api.general.filter]: {
-      name: 'KPI filters',
-      description: 'Access to API route to KPI filters',
-    },
-    [USER_PERMISSIONS.api.general.corporatePattern]: {
-      name: 'Corporate patterns',
-      description: 'Access to API route for corporate patterns',
-    },
-    [USER_PERMISSIONS.api.general.exportConfigurations]: {
-      name: 'Export configurations',
-      description: 'Access to API route to export configuration',
-    },
-    [USER_PERMISSIONS.api.general.map]: {
-      name: 'Map',
-      description: 'Access to API route to CRUD maps',
-    },
-    [USER_PERMISSIONS.api.general.shareToken]: {
-      name: 'Share token',
-      description: 'Access to API route to CRUD shared tokens',
-    },
-    [USER_PERMISSIONS.api.general.declareTicketExecution]: {
-      name: 'Run declare ticket rules',
-      description: 'Access to API route to run declare ticket rules',
-    },
-    [USER_PERMISSIONS.api.general.widgetTemplate]: {
-      name: 'Widget templates',
-      description: 'Access to API route to CRUD widget templates',
-    },
-    [USER_PERMISSIONS.api.general.maintenance]: {
-      name: 'Maintenance mode',
-      description: 'Access to API route to the maintenance mode',
-    },
-    [USER_PERMISSIONS.api.general.theme]: {
-      name: 'Themes',
-      description: 'Access to API route to the themes',
-    },
+    [USER_PERMISSIONS.technical.notification.common]: 'Parameters - notification settings ',
+    [USER_PERMISSIONS.technical.notification.instructionStats]: 'Instructions stats',
 
-    [USER_PERMISSIONS.api.rules.action]: {
-      name: 'Actions',
-      description: 'Users with this permission can CRUD actions by API',
-    },
-    [USER_PERMISSIONS.api.rules.dynamicinfos]: {
-      name: 'Dynamic infos',
-      description: 'Users with this permission can CRUD dynamic infos by API',
-    },
-    [USER_PERMISSIONS.api.rules.eventFilter]: {
-      name: 'Event filter',
-      description: 'Users with this permission can CRUD event filters by API',
-    },
-    [USER_PERMISSIONS.api.rules.idleRule]: {
-      name: 'Idle rule',
-      description: 'Users with this permission can CRUD idle rules by API',
-    },
-    [USER_PERMISSIONS.api.rules.metaalarmrule]: {
-      name: 'Meta alarm rule',
-      description: 'Users with this permission can CRUD meta alarm rules by API',
-    },
-    [USER_PERMISSIONS.api.rules.playlist]: {
-      name: 'Playlists',
-      description: 'Users with this permission can CRUD playlists by API',
-    },
-    [USER_PERMISSIONS.api.rules.flappingRule]: {
-      name: 'Flapping rule',
-      description: 'Users with this permission can CRUD flapping rules by API',
-    },
-    [USER_PERMISSIONS.api.rules.resolveRule]: {
-      name: 'Resolve rule',
-      description: 'Users with this permission can CRUD resolve rules by API',
-    },
-    [USER_PERMISSIONS.api.rules.snmpRule]: {
-      name: 'SNMP rule',
-      description: 'Users with this permission can CRUD SNMP rules by API',
-    },
-    [USER_PERMISSIONS.api.rules.snmpMib]: {
-      name: 'SNMP MIB',
-      description: 'Users with this permission can CRUD SNMP MIB by API',
-    },
-    [USER_PERMISSIONS.api.rules.declareTicketRule]: {
-      name: 'Declare ticket rule',
-      description: 'Users with this permission can CRUD declare ticket rules by API',
-    },
-    [USER_PERMISSIONS.api.rules.linkRule]: {
-      name: 'Link rule',
-      description: 'Users with this permission can CRUD links and link rules by API',
-    },
+    /**
+     * Technical Admin Views and widgets
+     */
+    [USER_PERMISSIONS.technical.privateView]: 'Private views',
+    [USER_PERMISSIONS.technical.view]: 'Views',
 
-    [USER_PERMISSIONS.api.remediation.instruction]: {
-      name: 'Instructions',
-      description: 'Users with this permission can CRUD instructions by API',
-    },
-    [USER_PERMISSIONS.api.remediation.jobConfig]: {
-      name: 'Job configs',
-      description: 'Users with this permission can CRUD job configurations by API',
-    },
-    [USER_PERMISSIONS.api.remediation.job]: {
-      name: 'Jobs',
-      description: 'Users with this permission can CRUD jobs by API',
-    },
-    [USER_PERMISSIONS.api.remediation.execution]: {
-      name: 'Runs instructions',
-      description: 'Users with this permission can run instructions by API',
-    },
-    [USER_PERMISSIONS.api.remediation.instructionApprove]: {
-      name: 'Instruction approve',
-      description: 'Users with this permission can approve instructions by API',
-    },
-    [USER_PERMISSIONS.api.remediation.messageRateStatsRead]: {
-      name: 'Message rate statistics',
-      description: 'Users with this permission can access message rate statistics by API',
-    },
+    /**
+     * Technical Admin Profile
+     */
+    [USER_PERMISSIONS.technical.profile.theme]: 'Theme colors',
+    [USER_PERMISSIONS.technical.profile.corporatePattern]: 'Corporate patterns',
 
-    [USER_PERMISSIONS.api.pbehavior.pbehavior]: {
-      name: 'PBehaviors',
-      description: 'Users with this permission can CRUD PBehavior events dates by API',
-    },
-    [USER_PERMISSIONS.api.pbehavior.pbehaviorException]: {
-      name: 'PBehavior exceptions',
-      description: 'Users with this permission can CRUD PBehavior exceptions dates by API',
-    },
-    [USER_PERMISSIONS.api.pbehavior.pbehaviorReason]: {
-      name: 'PBehavior reasons',
-      description: 'Users with this permission can CRUD PBehavior reasons dates by API',
-    },
-    [USER_PERMISSIONS.api.pbehavior.pbehaviorType]: {
-      name: 'PBehavior types',
-      description: 'Users with this permission can CRUD PBehavior types dates by API',
-    },
+    /**
+     * Technical Admin Token
+     */
+    [USER_PERMISSIONS.technical.shareToken]: 'Shared token settings',
 
-    [USER_PERMISSIONS.api.eventsRecord.launchEventRecording]: {
-      name: 'Launch events recording',
-      description: 'Access to API route to launching and fetching events recordings',
-    },
-    [USER_PERMISSIONS.api.eventsRecord.resendEvents]: {
-      name: 'Resend events',
-      description: 'Access to API route to resending events from events recordings',
-    },
+    /**
+     * API Permissions General
+     */
+    [USER_PERMISSIONS.api.general.acl]: 'Roles, permissions, users',
+    [USER_PERMISSIONS.api.general.alarmRead]: 'Read alarms',
+    [USER_PERMISSIONS.api.general.alarmTag]: 'Alarm tags',
+    [USER_PERMISSIONS.api.general.alarmUpdate]: 'Update alarms',
+    [USER_PERMISSIONS.api.general.associativeTable]: 'Associative tables',
+    [USER_PERMISSIONS.api.general.broadcastMessage]: 'Broadcast Message',
+    [USER_PERMISSIONS.api.general.theme]: 'Theme colors',
+    [USER_PERMISSIONS.api.general.contextgraph]: 'Context graph import',
+    [USER_PERMISSIONS.api.general.corporatePattern]: 'Corporate patterns',
+    [USER_PERMISSIONS.api.general.datastorageRead]: 'Data storage settings read',
+    [USER_PERMISSIONS.api.general.datastorageUpdate]: 'Data storage settings update',
+    [USER_PERMISSIONS.api.general.entity]: 'Entities',
+    [USER_PERMISSIONS.api.general.entitycategory]: 'Entity categories',
+    [USER_PERMISSIONS.api.general.entityservice]: 'Entity services',
+    [USER_PERMISSIONS.api.general.event]: 'Events',
+    [USER_PERMISSIONS.api.general.exportConfigurations]: 'Export configurations',
+    [USER_PERMISSIONS.api.general.files]: 'Files',
+    [USER_PERMISSIONS.api.general.healthcheck]: 'Healthcheck',
+    [USER_PERMISSIONS.api.general.icon]: 'Icons',
+    [USER_PERMISSIONS.api.general.junit]: 'JUnit',
+    [USER_PERMISSIONS.api.general.kpiFilter]: 'KPI Filters',
+    [USER_PERMISSIONS.api.general.launchEventRecording]: 'Launch events recording',
+    [USER_PERMISSIONS.api.general.maintenance]: 'Maintenance mode',
+    [USER_PERMISSIONS.api.general.map]: 'Maps',
+    [USER_PERMISSIONS.api.general.messageRateStatsRead]: 'Message rate statistics',
+    [USER_PERMISSIONS.api.general.metrics]: 'Metrics',
+    [USER_PERMISSIONS.api.general.metricsSettings]: 'Metrics settings',
+    [USER_PERMISSIONS.api.general.notifications]: 'Notification settings',
+    [USER_PERMISSIONS.api.general.playlist]: 'Playlists',
+    [USER_PERMISSIONS.api.general.privateViewGroups]: 'Private view groups',
+    [USER_PERMISSIONS.api.general.ratingSettings]: 'Rating settings',
+    [USER_PERMISSIONS.api.general.resendEvents]: 'Resend events',
+    [USER_PERMISSIONS.api.general.shareToken]: 'Share tokens',
+    [USER_PERMISSIONS.api.general.stateSettings]: 'State settings',
+    [USER_PERMISSIONS.api.general.techmetrics]: 'Tech metrics',
+    [USER_PERMISSIONS.api.general.techmetricsSettings]: 'Tech metrics settings',
+    [USER_PERMISSIONS.api.general.userInterfaceDelete]: 'Delete user interface',
+    [USER_PERMISSIONS.api.general.userInterfaceUpdate]: 'Update user interface',
+    [USER_PERMISSIONS.api.general.view]: 'Views',
+    [USER_PERMISSIONS.api.general.viewgroup]: 'View groups',
+    [USER_PERMISSIONS.api.general.widgetTemplate]: 'Widget templates',
+
+    /**
+     * API Permissions Rules
+     */
+    [USER_PERMISSIONS.api.rules.action]: 'Actions',
+    [USER_PERMISSIONS.api.rules.declareTicketExecution]: 'Run declare ticket rules',
+    [USER_PERMISSIONS.api.rules.declareTicketRule]: 'Declare ticket rules',
+    [USER_PERMISSIONS.api.rules.dynamicinfos]: 'Dynamic infos',
+    [USER_PERMISSIONS.api.rules.eventFilter]: 'Event filters',
+    [USER_PERMISSIONS.api.rules.flappingRule]: 'Flapping rules',
+    [USER_PERMISSIONS.api.rules.idleRule]: 'Idle rule',
+    [USER_PERMISSIONS.api.rules.linkRule]: 'Link generator',
+    [USER_PERMISSIONS.api.rules.metaalarmrule]: 'Meta alarm rules',
+    [USER_PERMISSIONS.api.rules.resolveRule]: 'Resolve rules',
+    [USER_PERMISSIONS.api.rules.snmpRule]: 'SNMP rules',
+    [USER_PERMISSIONS.api.rules.snmpMib]: 'SNMP MIB',
+
+    /**
+     * API Permissions Remediation
+     */
+    [USER_PERMISSIONS.api.remediation.execution]: 'Runs instructions',
+    [USER_PERMISSIONS.api.remediation.instruction]: 'Instructions',
+    [USER_PERMISSIONS.api.remediation.instructionApprove]: 'Approve instructions',
+    [USER_PERMISSIONS.api.remediation.job]: 'Jobs',
+    [USER_PERMISSIONS.api.remediation.jobConfig]: 'Job configs',
+
+    /**
+     * API Permissions Planning
+     */
+    [USER_PERMISSIONS.api.planning.pbehavior]: 'PBehaviors',
+    [USER_PERMISSIONS.api.planning.pbehaviorException]: 'PBehavior exceptions',
+    [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'PBehavior reasons',
+    [USER_PERMISSIONS.api.planning.pbehaviorType]: 'PBehavior types',
   },
 };

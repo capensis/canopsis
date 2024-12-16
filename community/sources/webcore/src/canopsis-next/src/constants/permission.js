@@ -179,6 +179,11 @@ export const USER_PERMISSIONS_GROUPS = {
 
 export const API_USER_PERMISSIONS_ROOT_GROUPS = [USER_PERMISSIONS_GROUPS.api];
 
+export const VIEW_USER_PERMISSIONS_NAMES = {
+  general: 'view_general',
+  actions: 'view_actions',
+};
+
 export const USER_PERMISSIONS = {
   technical: {
     view: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`,
@@ -212,6 +217,7 @@ export const USER_PERMISSIONS = {
     storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
+    viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -226,6 +232,7 @@ export const USER_PERMISSIONS = {
       linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
     },
     notification: {
+      common: USER_PERMISSIONS_PREFIXES.technical.notification,
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
     },
     profile: {
@@ -506,18 +513,21 @@ export const USER_PERMISSIONS = {
       metrics: `${USER_PERMISSIONS_PREFIXES.api}_metrics`,
       metricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_metrics_settings`,
       ratingSettings: `${USER_PERMISSIONS_PREFIXES.api}_rating_settings`,
-      filter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.api}_corporate_pattern`,
       exportConfigurations: `${USER_PERMISSIONS_PREFIXES.api}_export_configurations`,
       map: `${USER_PERMISSIONS_PREFIXES.api}_map`,
       shareToken: `${USER_PERMISSIONS_PREFIXES.api}_share_token`,
-      declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
       widgetTemplate: `${USER_PERMISSIONS_PREFIXES.api}_widgettemplate`,
       maintenance: `${USER_PERMISSIONS_PREFIXES.api}_maintenance`,
       alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
       theme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
       icon: `${USER_PERMISSIONS_PREFIXES.api}_icon`,
       techmetricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_techmetrics_settings`,
+      kpiFilter: `${USER_PERMISSIONS_PREFIXES.api}_kpi_filter`,
+      messageRateStatsRead: `${USER_PERMISSIONS_PREFIXES.api}_message_rate_stats_read`,
+      playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
+      launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
+      resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
 
       ...featuresService.get('constants.USER_PERMISSIONS.api.general'),
     },
@@ -527,12 +537,12 @@ export const USER_PERMISSIONS = {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.api}_eventfilter`,
       idleRule: `${USER_PERMISSIONS_PREFIXES.api}_idlerule`,
       metaalarmrule: `${USER_PERMISSIONS_PREFIXES.api}_metaalarmrule`,
-      playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
       flappingRule: `${USER_PERMISSIONS_PREFIXES.api}_flapping_rule`,
       resolveRule: `${USER_PERMISSIONS_PREFIXES.api}_resolve_rule`,
       snmpRule: `${USER_PERMISSIONS_PREFIXES.api}_snmprule`,
       snmpMib: `${USER_PERMISSIONS_PREFIXES.api}_snmpmib`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
+      declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
     },
     remediation: {
@@ -541,18 +551,12 @@ export const USER_PERMISSIONS = {
       job: `${USER_PERMISSIONS_PREFIXES.api}_job`,
       execution: `${USER_PERMISSIONS_PREFIXES.api}_execution`,
       instructionApprove: `${USER_PERMISSIONS_PREFIXES.api}_instruction_approve`,
-      messageRateStatsRead: `${USER_PERMISSIONS_PREFIXES.api}_message_rate_stats_read`,
     },
-    pbehavior: {
+    planning: {
       pbehavior: `${USER_PERMISSIONS_PREFIXES.api}_pbehavior`,
       pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
-    },
-
-    eventsRecord: {
-      launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
-      resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
     },
   },
 };
