@@ -4266,7 +4266,7 @@ paths:
       description: |
         Get context graph by id.
         
-        -  PERMISSIONS: `api_entity:get`
+        -  PERMISSIONS: `api_entity:read`
       operationId: entities-get-context-graph
       parameters:
         - name: _id
@@ -6147,6 +6147,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /eventfilter-db-export:
+    post:
+      tags:
+        - eventfilters
+      summary: Db export eventfilter rules
+      description: |
+        Export eventfilter rules in a db format.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
+      operationId: eventfilter-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-eventfilter-1",
+                    "cps-eventfilter-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
   /export-configuration:
     post:
       tags:
@@ -6563,6 +6598,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /flapping-rules-db-export:
+    post:
+      tags:
+        - flappingrules
+      summary: Db export flapping rules
+      description: |
+        Export flapping rules in a db format.
+        
+        -  PERMISSIONS: `api_flapping_rule:read`
+      operationId: flappingrules-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-flapping-rule-1",
+                    "cps-flapping-rule-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
   /healthcheck:
     get:
       tags:
@@ -7245,6 +7315,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /idle-rules-db-export:
+    post:
+      tags:
+        - idlerules
+      summary: Db export idle rules
+      description: |
+        Export idle rules in a db format.
+        
+        -  PERMISSIONS: `api_idlerule:read`
+      operationId: idlerules-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-idle-rule-1",
+                    "cps-idle-rule-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary                
   /internal/user_interface:
     put:
       tags:
@@ -9161,6 +9266,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /pbehaviors-db-export:
+    post:
+      tags:
+        - pbehaviors
+      summary: Db export pbehaviors
+      description: |
+        Export pbehaviors in a db format.
+        
+        -  PERMISSIONS: `api_pbehavior:read`
+      operationId: pbehaviors-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-pbehavior-1",
+                    "cps-pbehavior-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary                
   /permissions:
     get:
       tags:
@@ -10956,6 +11096,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /scenarios-db-export:
+    post:
+      tags:
+        - scenarios
+      summary: Db export scenarios
+      description: |
+        Export scenarios in a db format.
+        
+        -  PERMISSIONS: `api_action:read`
+      operationId: scenarios-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-scenario-1",
+                    "cps-scenario-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary                
   /share-tokens:
     get:
       tags:
@@ -11519,7 +11694,7 @@ paths:
       description: |
         Get list of distinct categories, empty list if no categories found.
         
-        -  PERMISSIONS: `api_link_rule:get`
+        -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-categories
       parameters:
         - $ref: '#/components/parameters/limit'
@@ -11553,7 +11728,7 @@ paths:
       description: |
         Get paginated list of link rule.
         
-        -  PERMISSIONS: `api_link_rule:get`
+        -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -11686,7 +11861,7 @@ paths:
       description: |
         Get link rule by id.
         
-        -  PERMISSIONS: `api_link_rule:get`
+        -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-get-by-id
       parameters:
         - $ref: '#/components/parameters/id'
@@ -11802,6 +11977,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /link-rules-db-export:
+    post:
+      tags:
+        - linkrules
+      summary: Db export link rules
+      description: |
+        Export link rules in a db format.
+        
+        -  PERMISSIONS: `api_link_rule:read`
+      operationId: linkrules-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-link-rule-1",
+                    "cps-link-rule-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
   /template-validator/declare-ticket-rules:
     post:
       tags:

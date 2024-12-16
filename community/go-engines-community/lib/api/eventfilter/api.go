@@ -8,7 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -18,23 +20,27 @@ type API interface {
 	common.BulkCrudAPI
 	ListFailures(c *gin.Context)
 	ReadFailures(c *gin.Context)
+	DBExport(c *gin.Context)
 }
 
 type api struct {
-	store       Store
-	logger      zerolog.Logger
-	transformer common.PatternFieldsTransformer
+	store         Store
+	mongoExporter dbexport.Exporter
+	logger        zerolog.Logger
+	transformer   common.PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
+	mongoExporter dbexport.Exporter,
 	logger zerolog.Logger,
 	transformer common.PatternFieldsTransformer,
 ) API {
 	return &api{
-		store:       store,
-		logger:      logger,
-		transformer: transformer,
+		store:         store,
+		mongoExporter: mongoExporter,
+		logger:        logger,
+		transformer:   transformer,
 	}
 }
 
@@ -253,6 +259,24 @@ func (a *api) ReadFailures(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// DBExport
+// @Param body body dbexport.Request true "body"
+func (a *api) DBExport(c *gin.Context) {
+	request := dbexport.Request{}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	b, err := a.mongoExporter.Export(c, mongo.EventFilterRuleCollection, request)
+	if err != nil {
+		panic(err)
+	}
+
+	dbexport.AttachFile(c, mongo.EventFilterRuleCollection, b)
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
