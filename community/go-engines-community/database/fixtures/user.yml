@@ -2064,17 +2064,6 @@ permission:
       - "@group_widgets_alarmslist_alarmactions"
     api_permissions:
       "@permission_api_alarm_update": 1
-  permission_listalarm_listPbehavior:
-    <<: *permission
-    _id: listalarm_listPbehavior
-    name: <Current()._id>
-    description: Browse pbehavior list
-    groups:
-      - "@group_widgets"
-      - "@group_widgets_alarmslist"
-      - "@group_widgets_alarmslist_alarmactions"
-    api_permissions:
-      "@permission_api_pbehavior": 4
   permission_listalarm_declareanIncident:
     <<: *permission
     _id: listalarm_declareanIncident
@@ -3352,7 +3341,6 @@ role:
       "@permission_listalarm_pbehavior": 1
       "@permission_listalarm_fastPbehavior": 1
       "@permission_listalarm_snoozeAlarm": 1
-      "@permission_listalarm_listPbehavior": 1
       "@permission_listalarm_declareanIncident": 1
       "@permission_listalarm_assignTicketNumber": 1
       "@permission_listalarm_removeAlarm": 1
@@ -3521,7 +3509,6 @@ role_template:
       "@permission_listalarm_pbehavior": 1
       "@permission_listalarm_fastPbehavior": 1
       "@permission_listalarm_snoozeAlarm": 1
-      "@permission_listalarm_listPbehavior": 1
       "@permission_listalarm_declareanIncident": 1
       "@permission_listalarm_assignTicketNumber": 1
       "@permission_listalarm_removeAlarm": 1

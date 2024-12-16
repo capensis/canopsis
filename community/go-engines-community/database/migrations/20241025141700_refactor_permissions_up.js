@@ -1442,15 +1442,6 @@ const updatedPerms = [
         }
     },
     {
-        "_id": "listalarm_listPbehavior",
-        "description": "Browse pbehavior list",
-        "groups": ["widgets", "widgets_alarmslist", "widgets_alarmslist_alarmactions"],
-        "name": "listalarm_listPbehavior",
-        "api_permissions": {
-            "api_pbehavior": 4
-        }
-    },
-    {
         "_id": "listalarm_declareanIncident",
         "description": "Declare ticket",
         "groups": ["widgets", "widgets_alarmslist", "widgets_alarmslist_alarmactions"],
