@@ -4,7 +4,7 @@ import { createNamespacedHelpers } from 'vuex';
 const { mapActions } = createNamespacedHelpers('pbehavior/comment');
 
 /**
- * @mixin
+ * @deprecated Use `usePbehaviorComment` hook instead
  */
 export const entitiesPbehaviorCommentMixin = {
   methods: {

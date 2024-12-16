@@ -13,6 +13,7 @@ const stubs = {
   'c-action-btn': true,
   'c-enabled': true,
   'c-table-pagination': true,
+  'c-db-export-btn': true,
 };
 
 describe('declare-ticket-rules-list', () => {

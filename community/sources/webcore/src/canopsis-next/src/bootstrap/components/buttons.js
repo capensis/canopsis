@@ -9,3 +9,4 @@ export { default as CRefreshBtn } from '@/components/common/buttons/c-refresh-bt
 export { default as CSpeedDial } from '@/components/common/buttons/c-speed-dial.vue';
 export { default as CDensityBtnToggle } from '@/components/common/groups/c-density-btn-toggle.vue';
 export { default as CBtnWithError } from '@/components/common/buttons/c-btn-with-error.vue';
+export { default as CDbExportBtn } from '@/components/common/buttons/c-db-export-btn.vue';
