@@ -696,7 +696,10 @@ func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem)
 				"entity": r.Entity,
 				"origin": r.Origin,
 				"tstart": bson.M{"$lte": now},
-				"tstop":  bson.M{"$gte": now},
+				"$or": bson.A{
+					bson.M{"tstop": nil},
+					bson.M{"tstop": bson.M{"$gte": now}},
+				},
 			}, options.FindOneAndDelete().SetProjection(bson.M{"_id": 1})).
 			Decode(&pbh)
 		if err != nil {

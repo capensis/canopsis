@@ -20,6 +20,7 @@ exports[`text-editor Renders \`text-editor\` with empty modal 1`] = `
       class="text"
     >
       <text-editor-field-stub
+        autofocus=""
         error-messages=""
         name="text"
         value=""

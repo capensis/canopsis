@@ -16,6 +16,7 @@ configuration:
     max_matched_items: 10000
     check_count_request_timeout: 30
     app_title: Canopsis
+    default_color_theme: canopsis
   data_storage:
     _id: data_storage
     config:

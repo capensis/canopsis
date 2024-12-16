@@ -11,12 +11,13 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
+    <template #mass-actions="{ selected, selectedKeys }">
       <c-action-btn
         v-if="removable"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
+      <c-db-export-btn :ids="selectedKeys" idle-rule />
     </template>
     <template #type="{ item }">
       {{ $t(`idleRules.types.${item.type}`) }}
@@ -50,6 +51,7 @@
           type="delete"
           @click="$emit('remove', item._id)"
         />
+        <c-db-export-btn :id="item._id" idle-rule />
       </v-layout>
     </template>
     <template #expand="{ item }">

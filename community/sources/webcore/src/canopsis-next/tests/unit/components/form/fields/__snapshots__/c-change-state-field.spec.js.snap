@@ -34,6 +34,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
               Note
             </label>
             <textarea
+              autofocus="autofocus"
               name="changeState.output"
               rows="5"
             />
@@ -99,6 +100,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
               Custom label
             </label>
             <textarea
+              autofocus="autofocus"
               name="customLabelFieldName.output"
               rows="5"
             />
@@ -157,6 +159,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
               Note
             </label>
             <textarea
+              autofocus="autofocus"
               name="customLabelFieldName.output"
               rows="5"
             />
@@ -215,6 +218,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
               Note
             </label>
             <textarea
+              autofocus="autofocus"
               name="customName.output"
               rows="5"
             />
@@ -280,6 +284,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
               Custom label
             </label>
             <textarea
+              autofocus="autofocus"
               name="changeState.output"
               rows="5"
             />

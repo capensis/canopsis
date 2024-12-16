@@ -32,6 +32,7 @@ type UserInterfaceConf struct {
 	RequiredInstructionApprove bool          `json:"required_instruction_approve" bson:"required_instruction_approve"`
 	DisabledTransitions        bool          `json:"disabled_transitions" bson:"disabled_transitions"`
 	AutoSuggestPbehaviorName   bool          `json:"auto_suggest_pbehavior_name" bson:"auto_suggest_pbehavior_name"`
+	DefaultColorTheme          string        `json:"default_color_theme" bson:"default_color_theme"`
 }
 
 type GlobalConf struct {
