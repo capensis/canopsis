@@ -82,9 +82,7 @@ export default {
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },
-  mixins: {
-    authMixin,
-  },
+  mixins: [authMixin],
   props: {
     widget: {
       type: Object,

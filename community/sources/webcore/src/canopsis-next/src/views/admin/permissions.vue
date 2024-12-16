@@ -39,7 +39,14 @@
 </template>
 
 <script>
-import { keyBy, omit, isEqual, filter, cloneDeep } from 'lodash';
+import {
+  keyBy,
+  omit,
+  isEqual,
+  filter,
+  cloneDeep,
+  sortBy,
+} from 'lodash';
 import { computed, ref, set, onMounted } from 'vue';
 
 import { API_USER_PERMISSIONS_ROOT_GROUPS, MAX_LIMIT, MODALS, ROLE_TYPES } from '@/constants';
@@ -86,7 +93,9 @@ export default {
       resetRolesById();
     });
 
-    const treeviewPermissions = computed(() => permissionsToTreeview(permissions.value));
+    const treeviewPermissions = computed(() => (
+      sortBy(Object.values(permissionsToTreeview(permissions.value)), 'position')
+    ));
     const isApiPermissionsTab = computed(() => API_USER_PERMISSIONS_ROOT_GROUPS.includes(activeTab.value));
     const uiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.ui]));
     const apiRoles = computed(() => filter(Object.values(rolesById.value), ['type', ROLE_TYPES.api]));
