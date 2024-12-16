@@ -41,22 +41,24 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 		condQueries := make([]bson.M, len(group))
 		for j, cond := range group {
 			if infoName := pattern.GetAlarmInfoName(cond.Field); infoName != "" {
-				mongoField := prefix + "v.infos_array.v." + infoName
+				mongoArrayField := prefix + "v.infos_array"
+				mongoArrayItemField := "v." + infoName
 
 				switch cond.FieldType {
 				case pattern.FieldTypeString:
-					condQueries[j], err = cond.Condition.StringToMongoQuery(mongoField, true)
+					condQueries[j], err = cond.Condition.StringInArrayToMongoQuery(mongoArrayField, mongoArrayItemField, true)
 				case pattern.FieldTypeInt:
-					condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, true)
+					condQueries[j], err = cond.Condition.IntInArrayToMongoQuery(mongoArrayField, mongoArrayItemField, true)
 				case pattern.FieldTypeBool:
-					condQueries[j], err = cond.Condition.BoolToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.BoolInArrayToMongoQuery(mongoArrayField, mongoArrayItemField)
 				case pattern.FieldTypeStringArray:
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, true)
+					condQueries[j], err = cond.Condition.StringArrayInArrayToMongoQuery(mongoArrayField, mongoArrayItemField, true)
 				case "":
-					condQueries[j], err = cond.Condition.RefToMongoQuery(mongoField)
+					condQueries[j], err = cond.Condition.RefInArrayToMongoQuery(mongoArrayField, mongoArrayItemField)
 				default:
 					return nil, fmt.Errorf("invalid field type for %q field: %s", cond.Field, cond.FieldType)
 				}
+
 				if err != nil {
 					return nil, fmt.Errorf("invalid condition for %q field: %w", cond.Field, err)
 				}

@@ -8,9 +8,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -26,27 +28,31 @@ type API interface {
 	BulkEntityDelete(c *gin.Context)
 	BulkConnectorCreate(c *gin.Context)
 	BulkConnectorDelete(c *gin.Context)
+	DBExport(c *gin.Context)
 }
 
 type api struct {
-	store       Store
-	computeChan chan<- rpc.PbehaviorRecomputeEvent
-	logger      zerolog.Logger
+	store         Store
+	mongoExporter dbexport.Exporter
+	computeChan   chan<- rpc.PbehaviorRecomputeEvent
+	logger        zerolog.Logger
 
 	transformer common.PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
+	mongoExporter dbexport.Exporter,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:       store,
-		computeChan: computeChan,
-		transformer: transformer,
-		logger:      logger,
+		store:         store,
+		mongoExporter: mongoExporter,
+		computeChan:   computeChan,
+		transformer:   transformer,
+		logger:        logger,
 	}
 }
 
@@ -529,6 +535,24 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 			Initiator: types.InitiatorExternal,
 		})
 	}
+}
+
+// DBExport
+// @Param body body dbexport.Request true "body"
+func (a *api) DBExport(c *gin.Context) {
+	request := dbexport.Request{}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	b, err := a.mongoExporter.Export(c, mongo.PbehaviorMongoCollection, request)
+	if err != nil {
+		panic(err)
+	}
+
+	dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
 }
 
 func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {

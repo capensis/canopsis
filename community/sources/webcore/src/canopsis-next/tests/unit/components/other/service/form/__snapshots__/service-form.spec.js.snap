@@ -5,6 +5,7 @@ exports[`service-form Renders \`service-form\` with custom props 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     required=""
     value="service-form"
   />
@@ -155,6 +156,7 @@ exports[`service-form Renders \`service-form\` with default props 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     required=""
   />
   <div

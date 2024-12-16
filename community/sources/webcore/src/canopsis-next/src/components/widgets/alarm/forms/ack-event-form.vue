@@ -19,6 +19,7 @@
       :label="$t('common.note')"
       :required="isNoteRequired"
       name="comment"
+      autofocus
     />
   </v-layout>
 </template>

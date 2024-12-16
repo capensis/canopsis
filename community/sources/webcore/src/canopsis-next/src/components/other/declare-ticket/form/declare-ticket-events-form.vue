@@ -9,13 +9,14 @@
         :alarms="alarms"
         :tickets-by-alarms="ticketsByAlarms"
         :hide-ticket-resource="hideTicketResource"
+        autofocus
         hide-row-select
         @input="updateCommonValue"
       />
     </c-information-block>
     <template v-else>
       <c-information-block
-        v-for="group in groups"
+        v-for="(group, index) in groups"
         :key="group.ticketId"
         :title="$t('declareTicket.applyRules')"
       >
@@ -34,6 +35,7 @@
           :alarms="group.alarms"
           :tickets-by-alarms="group.ticketsByAlarms"
           :hide-ticket-resource="hideTicketResource"
+          :autofocus="!index"
           hide-tickets
           @input="updateGroup(group.ticketId, $event)"
         />

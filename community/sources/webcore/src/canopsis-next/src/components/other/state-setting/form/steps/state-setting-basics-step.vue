@@ -10,6 +10,7 @@
           :label="$t('common.title')"
           class="mr-2"
           name="title"
+          autofocus
           required
         />
       </v-flex>

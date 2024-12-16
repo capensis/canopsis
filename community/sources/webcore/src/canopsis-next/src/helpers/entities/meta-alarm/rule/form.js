@@ -10,6 +10,7 @@ import {
 import { durationToForm } from '@/helpers/date/duration';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { formToPrimitiveArray, primitiveArrayToForm } from '@/helpers/entities/shared/form';
+import { addKeyInEntity, removeKeyFromEntities } from '@/helpers/array';
 
 /**
  * @typedef {
@@ -23,15 +24,21 @@ import { formToPrimitiveArray, primitiveArrayToForm } from '@/helpers/entities/s
  */
 
 /**
- * @typedef {Object} MetaAlarmRuleAttributeConfig
+ * @typedef {Object} MetaAlarmRuleTemplatesConfig
+ * @property {string} component_template
+ * @property {string} resource_template
  */
 
 /**
- * @typedef {Object} MetaAlarmRuleAttributeConfigForm
+ * @typedef {MetaAlarmRuleTemplatesConfig} MetaAlarmRuleAttributeConfig
  */
 
 /**
- * @typedef {Object} MetaAlarmRuleTimeBasedConfig
+ * @typedef {MetaAlarmRuleAttributeConfig} MetaAlarmRuleAttributeConfigForm
+ */
+
+/**
+ * @typedef {MetaAlarmRuleTemplatesConfig} MetaAlarmRuleTimeBasedConfig
  * @property {Object} time_interval
  */
 
@@ -48,25 +55,22 @@ import { formToPrimitiveArray, primitiveArrayToForm } from '@/helpers/entities/s
  */
 
 /**
- * @typedef {
- *   MetaAlarmRuleTimeBasedConfigForm &
- *   MetaAlarmRuleAttributeConfigForm
- * } MetaAlarmRuleComplexConfigForm
+ * @typedef { MetaAlarmRuleTimeBasedConfigForm & MetaAlarmRuleAttributeConfigForm } MetaAlarmRuleComplexConfigForm
  * @property { 'thresholdRate' | 'thresholdCount' } threshold_type
  */
 
 /**
- * @typedef {MetaAlarmRuleComplexConfig} MetaAlarmRuleValueGroupConfig
+ * @typedef {MetaAlarmRuleComplexConfig & MetaAlarmRuleTemplatesConfig} MetaAlarmRuleValueGroupConfig
  * @property {string[]} value_paths
  */
 
 /**
- * @typedef {MetaAlarmRuleComplexConfigForm} MetaAlarmRuleValueGroupConfigForm
+ * @typedef {MetaAlarmRuleComplexConfigForm & MetaAlarmRuleTemplatesConfig} MetaAlarmRuleValueGroupConfigForm
  * @property {{ key: string, value: string }[]} value_paths
  */
 
 /**
- * @typedef {MetaAlarmRuleAttributeConfig} MetaAlarmRuleCorelConfig
+ * @typedef {Object} MetaAlarmRuleCorelConfig
  * @property {string} corel_id
  * @property {string} corel_status
  * @property {string} corel_parent
@@ -99,18 +103,44 @@ import { formToPrimitiveArray, primitiveArrayToForm } from '@/helpers/entities/s
  */
 
 /**
+ * @typedef {Object} MetaAlarmRuleTags
+ * @property {boolean} copy_from_children
+ * @property {string[]} filter_by_label
+ */
+
+/**
+ * @typedef {MetaAlarmRuleTags} MetaAlarmRuleTagsForm
+ */
+
+/**
+ * @typedef {Object} MetaAlarmRuleInfosItem
+ * @property {string} name
+ * @property {string | boolean | number | null} value
+ * @property {string} description
+ * @property {boolean} copy_from_children
+ */
+
+/**
  * @typedef {FilterPatterns} MetaAlarmRule
  * @property {string} _id
  * @property {MetaAlarmRuleType} type
  * @property {string} name
  * @property {boolean} auto_resolve
  * @property {string} output_template
+ * @property {MetaAlarmRuleTags} tags
+ * @property {MetaAlarmRuleInfosItem[]} infos
  * @property {MetaAlarmRuleConfig} [config]
+ */
+
+/**
+ * @typedef {MetaAlarmRuleInfosItem} MetaAlarmRuleInfosItemForm
+ * @property {string} key
  */
 
 /**
  * @typedef {MetaAlarmRule} MetaAlarmRuleForm
  * @property {FilterPatternsForm} patterns
+ * @property {MetaAlarmRuleInfosItemForm[]} infos
  * @property {MetaAlarmRuleConfigForm} [config]
  */
 
@@ -202,6 +232,30 @@ export const metaAlarmFilterPatternsToForm = rule => filterPatternsToForm(
 );
 
 /**
+ * Convert meta alarm rule tags to form
+ *
+ * @param {MetaAlarmRuleTags} [tags = {}]
+ * @returns {MetaAlarmRuleTagsForm}
+ */
+export const metaAlarmRuleTagsToForm = (tags = {}) => ({
+  copy_from_children: !!tags.copy_from_children,
+  filter_by_label: tags.filter_by_label ?? [],
+});
+
+/**
+ * Convert meta alarm rule infos item to form
+ *
+ * @param {MetaAlarmRuleInfosItem} [item = {}]
+ * @returns {MetaAlarmRuleInfosItemForm}
+ */
+export const metaAlarmRuleInfosItemToForm = (item = {}) => addKeyInEntity({
+  copy_from_children: !!item.copy_from_children,
+  name: item.name ?? '',
+  value: item.value ?? '',
+  description: item.description ?? '',
+});
+
+/**
  * Convert meta alarm rule to form
  *
  * @param {MetaAlarmRule} [rule={}]
@@ -215,8 +269,10 @@ export const metaAlarmRuleToForm = (rule = {}) => {
     type: rule.type ?? META_ALARMS_RULE_TYPES.attribute,
     name: rule.name ?? '',
     auto_resolve: !!rule.auto_resolve,
-    output_template: rule.output_template ?? '{{ .Children.Alarm.Value.State.Message }}',
+    output_template: rule.output_template ?? '{{ .LastChild.Alarm.Value.State.Message }}',
     patterns: metaAlarmFilterPatternsToForm(rule),
+    tags: metaAlarmRuleTagsToForm(rule.tags || {}),
+    infos: (rule.infos || []).map(metaAlarmRuleInfosItemToForm),
     config: {
       value_paths: config.value_paths ? primitiveArrayToForm(config.value_paths) : [],
       threshold_rate: config.threshold_rate ? config.threshold_rate * 100 : 100,
@@ -230,8 +286,39 @@ export const metaAlarmRuleToForm = (rule = {}) => {
         : META_ALARMS_THRESHOLD_TYPES.thresholdRate,
       time_interval: durationToForm(config.time_interval ?? DEFAULT_TIME_INTERVAL),
       child_inactive_delay: config.child_inactive_delay ? durationToForm(config.child_inactive_delay) : undefined,
+      component_template: config.component_template ?? '',
+      resource_template: config.resource_template ?? '',
     },
   };
+};
+
+/**
+ * Checks if the given alarm rule type has template configuration fields.
+ *
+ * @param {string} type - The type of the alarm rule to check.
+ * @returns {boolean} Returns `true` if the `type` has template configuration fields, otherwise `false`.
+ */
+export const hasTemplateConfigFields = type => [
+  META_ALARMS_RULE_TYPES.timebased,
+  META_ALARMS_RULE_TYPES.attribute,
+  META_ALARMS_RULE_TYPES.complex,
+  META_ALARMS_RULE_TYPES.valuegroup,
+].includes(type);
+
+/**
+ * Convert form to meta alarm rule tags
+ *
+ * @param {MetaAlarmRuleTagsForm} form
+ * @returns {MetaAlarmRuleTags}
+ */
+export const formToMetaAlarmRuleTags = (form = {}) => {
+  const result = pick(form, ['copy_from_children']);
+
+  if (result.copy_from_children && form.filter_by_label?.length) {
+    result.filter_by_label = form.filter_by_label;
+  }
+
+  return result;
 };
 
 /**
@@ -251,14 +338,17 @@ export const formToMetaAlarmRule = (form = {}) => {
   }
 
   const metaAlarmRule = {
-    ...omit(form, ['config', 'patterns']),
+    ...omit(form, ['config', 'patterns', 'infos', 'tags']),
     ...formFilterToPatterns(form.patterns, patternsFields),
+
+    infos: removeKeyFromEntities(form.infos),
+    tags: formToMetaAlarmRuleTags(form.tags),
   };
 
   switch (form.type) {
-    case META_ALARMS_RULE_TYPES.corel:
     case META_ALARMS_RULE_TYPES.complex:
-    case META_ALARMS_RULE_TYPES.valuegroup: {
+    case META_ALARMS_RULE_TYPES.valuegroup:
+    case META_ALARMS_RULE_TYPES.corel: {
       const isComplex = isComplexMetaAlarmRuleType(form.type);
       const isValueGroup = isValueGroupMetaAlarmRuleType(form.type);
       const isCorel = isCorelMetaAlarmRuleType(form.type);
@@ -267,7 +357,7 @@ export const formToMetaAlarmRule = (form = {}) => {
         ? 'threshold_rate'
         : 'threshold_count';
 
-      const fields = ['threshold_type', thresholdField];
+      const fields = ['threshold_type', 'component_template', 'resource_template', thresholdField];
 
       if (isComplex || isCorel) {
         fields.push('value_paths');
@@ -283,15 +373,19 @@ export const formToMetaAlarmRule = (form = {}) => {
         config.threshold_rate /= 100;
       }
 
-      return {
-        config,
-
-        ...metaAlarmRule,
-      };
+      metaAlarmRule.config = config;
+      break;
     }
     case META_ALARMS_RULE_TYPES.timebased:
       metaAlarmRule.config = pick(form.config, ['time_interval']);
       break;
+  }
+
+  if (hasTemplateConfigFields(metaAlarmRule.type)) {
+    metaAlarmRule.config = {
+      ...metaAlarmRule.config,
+      ...pick(form.config, ['component_template', 'resource_template']),
+    };
   }
 
   return metaAlarmRule;

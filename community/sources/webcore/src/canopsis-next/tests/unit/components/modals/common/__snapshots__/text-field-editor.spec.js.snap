@@ -38,6 +38,7 @@ exports[`text-field-editor Renders \`text-field-editor\` with all parameters 1`]
                 field-label
               </label>
               <input
+                autofocus="autofocus"
                 name="field-name"
                 type="text"
               />
@@ -123,6 +124,7 @@ exports[`text-field-editor Renders \`text-field-editor\` with empty modal 1`] = 
                 Text
               </label>
               <input
+                autofocus="autofocus"
                 name="text"
                 type="text"
               />
