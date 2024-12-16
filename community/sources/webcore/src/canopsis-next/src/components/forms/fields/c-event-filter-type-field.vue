@@ -6,6 +6,7 @@
     :error-messages="errors.collect(name)"
     :label="label || $t('common.type')"
     :name="name"
+    :autofocus="autofocus"
   />
 </template>
 
@@ -30,6 +31,10 @@ export default {
     name: {
       type: String,
       default: 'type',
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

@@ -317,7 +317,6 @@ func GetForbiddenFieldsInEntityPattern(collection string) []string {
 func GetForbiddenFieldsInAlarmPattern(collection string) []string {
 	switch collection {
 	case mongo.IdleRuleMongoCollection,
-		mongo.DynamicInfosRulesMongoCollection,
 		mongo.MetaAlarmRulesMongoCollection,
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
@@ -326,8 +325,10 @@ func GetForbiddenFieldsInAlarmPattern(collection string) []string {
 		mongo.DeclareTicketRuleMongoCollection,
 		mongo.LinkRuleMongoCollection:
 		return []string{"v.last_event_date", "v.last_update_date", "v.resolved"}
+	case mongo.DynamicInfosRulesMongoCollection:
+		return []string{"v.last_event_date", "v.last_update_date", "v.resolved", "v.duration", "v.infos"}
 	case mongo.AlarmTagCollection:
-		return []string{"v.last_event_date", "v.last_update_date", "v.resolved", "tags"}
+		return []string{"v.last_event_date", "v.last_update_date", "v.resolved", "v.duration", "tags"}
 	default:
 		return nil
 	}

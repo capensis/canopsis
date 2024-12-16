@@ -4,6 +4,7 @@
       v-field="form.system_name"
       :label="$t('common.systemName')"
       :name="systemNameFieldName"
+      autofocus
     />
     <v-layout>
       <v-flex

@@ -101,7 +101,7 @@ definitions:
         maxLength: 255
         type: string
       output:
-        maxLength: 255
+        maxLength: 1000
         type: string
       reason:
         description: Reason is used in pbehavior action.
@@ -1070,6 +1070,8 @@ definitions:
         type: boolean
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        type: string
       disabled_transitions:
         type: boolean
       footer:
@@ -1582,6 +1584,15 @@ definitions:
     required:
     - unit
     - value
+    type: object
+  dbexport.Request:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
     type: object
   entity.ArchiveDisabledRequest:
     properties:
@@ -5582,6 +5593,43 @@ definitions:
   user.BulkDeleteRequestItem:
     properties:
       _id:
+        type: string
+    required:
+    - _id
+    type: object
+  user.BulkPatchRequestItem:
+    properties:
+      _id:
+        type: string
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      ui_groups_navigation_type:
+        maxLength: 255
+        type: string
+      ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - _id

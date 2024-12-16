@@ -17,6 +17,7 @@ type Validator interface {
 	ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel)
 	ValidatePatchRequest(ctx context.Context, sl validator.StructLevel)
 	ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel)
+	ValidateBulkPatchRequestItem(ctx context.Context, sl validator.StructLevel)
 }
 
 type baseValidator struct {
@@ -40,6 +41,12 @@ func (v *baseValidator) ValidateBulkUpdateRequestItem(ctx context.Context, sl va
 
 	v.validateEditRequest(ctx, sl, r.ID, r.EditRequest)
 	v.validatePassword(sl, r.EditRequest, r.ID)
+}
+
+func (v *baseValidator) ValidateBulkPatchRequestItem(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(BulkPatchRequestItem)
+
+	v.validatePatchEditRequest(ctx, sl, r.ID, r.PatchEditRequest)
 }
 
 func (v *baseValidator) ValidateCreateRequest(ctx context.Context, sl validator.StructLevel) {
@@ -76,6 +83,10 @@ func (v *baseValidator) ValidateUpdateRequest(ctx context.Context, sl validator.
 func (v *baseValidator) ValidatePatchRequest(ctx context.Context, sl validator.StructLevel) {
 	r := sl.Current().Interface().(PatchRequest)
 
+	v.validatePatchEditRequest(ctx, sl, r.ID, r.PatchEditRequest)
+}
+
+func (v *baseValidator) validatePatchEditRequest(ctx context.Context, sl validator.StructLevel, id string, r PatchEditRequest) {
 	// to avoid code duplication, use validation functions for EditRequest
 	editReq := EditRequest{
 		Roles: r.Roles,
@@ -97,8 +108,8 @@ func (v *baseValidator) ValidatePatchRequest(ctx context.Context, sl validator.S
 		editReq.Password = *r.Password
 	}
 
-	v.validateEditRequest(ctx, sl, r.ID, editReq)
-	v.validatePassword(sl, editReq, r.ID)
+	v.validateEditRequest(ctx, sl, id, editReq)
+	v.validatePassword(sl, editReq, id)
 }
 
 func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.StructLevel, id string, r EditRequest) {

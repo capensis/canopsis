@@ -6,6 +6,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with custom p
 >
   <!---->
   <c-name-field-stub
+    autofocus=""
     required=""
     value="pbehavior"
   />
@@ -85,6 +86,7 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
     hide-details=""
   />
   <c-name-field-stub
+    autofocus=""
     required=""
     value="pbehavior"
   />
