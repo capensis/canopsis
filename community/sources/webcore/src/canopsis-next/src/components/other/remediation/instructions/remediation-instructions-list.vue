@@ -10,12 +10,13 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
+    <template #mass-actions="{ selected, selectedKeys }">
       <c-action-btn
         v-if="removable"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
+      <c-db-export-btn :ids="selectedKeys" instruction />
     </template>
     <template #headerCell="{ header }">
       <span class="c-table-header__text--multiline">{{ header.text }}</span>
@@ -66,6 +67,7 @@
           type="delete"
           @click="$emit('remove', item)"
         />
+        <c-db-export-btn :id="item._id" instruction />
       </v-layout>
     </template>
   </c-advanced-data-table>
