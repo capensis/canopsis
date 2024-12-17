@@ -530,11 +530,11 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 		return nil, false
 	}
 
-	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(assertionInfo.Values, "role", []string{}), p.config.DefaultRole)
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(assertionInfo.Values, security.UserRole, []string{}), p.config.DefaultRole)
 	if err != nil {
 		roleNotFoundError := roleprovider.ProviderError{}
 		if errors.As(err, &roleNotFoundError) {
-			p.logger.Err(roleNotFoundError).Msg("user registration failed")
+			p.logger.Err(roleNotFoundError).Str("external_id", assertionInfo.NameID).Msg("failed to get user roles from saml assertion")
 			p.errorRedirect(c, relayUrl, roleNotFoundError.Error())
 
 			return nil, false
@@ -544,32 +544,31 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 	}
 
 	user := &security.User{
-		Name:       p.getAssocAttribute(assertionInfo.Values, "name", assertionInfo.NameID),
+		Name:       p.getAssocAttribute(assertionInfo.Values, security.UserName, assertionInfo.NameID),
 		Roles:      roles,
 		IsEnabled:  true,
 		ExternalID: assertionInfo.NameID,
 		Source:     security.SourceSaml,
-		Firstname:  p.getAssocAttribute(assertionInfo.Values, "firstname", ""),
-		Lastname:   p.getAssocAttribute(assertionInfo.Values, "lastname", ""),
-		Email:      p.getAssocAttribute(assertionInfo.Values, "email", ""),
+		Firstname:  p.getAssocAttribute(assertionInfo.Values, security.UserFirstName, ""),
+		Lastname:   p.getAssocAttribute(assertionInfo.Values, security.UserLastName, ""),
+		Email:      p.getAssocAttribute(assertionInfo.Values, security.UserEmail, ""),
 		IdpRoles:   roles,
 	}
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		p.logger.Err(err).Msg("samlAcsHandler: userProvider Save error")
-		panic(fmt.Errorf("cannot save user: %w", err))
+		panic(fmt.Errorf("failed to save saml user with external_id = %s: %w", user.ExternalID, err))
 	}
 
 	return user, true
 }
 
 func (p *provider) updateUser(c *gin.Context, relayUrl *url.URL, assertionInfo *saml2.AssertionInfo, user *security.User) bool {
-	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(assertionInfo.Values, "role", []string{}), p.config.DefaultRole)
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(assertionInfo.Values, security.UserRole, []string{}), p.config.DefaultRole)
 	if err != nil {
 		roleNotFoundError := roleprovider.ProviderError{}
 		if errors.As(err, &roleNotFoundError) {
-			p.logger.Err(roleNotFoundError).Msg("failed to get user roles from saml assertion")
+			p.logger.Err(roleNotFoundError).Str("external_id", user.ExternalID).Msg("failed to get user roles from saml assertion")
 			p.errorRedirect(c, relayUrl, roleNotFoundError.Error())
 
 			return false
@@ -578,15 +577,15 @@ func (p *provider) updateUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 		panic(err)
 	}
 
-	user.Name = p.getAssocAttribute(assertionInfo.Values, "name", user.Name)
-	user.Firstname = p.getAssocAttribute(assertionInfo.Values, "firstname", user.Firstname)
-	user.Lastname = p.getAssocAttribute(assertionInfo.Values, "lastname", user.Lastname)
-	user.Email = p.getAssocAttribute(assertionInfo.Values, "email", user.Email)
+	user.Name = p.getAssocAttribute(assertionInfo.Values, security.UserName, user.Name)
+	user.Firstname = p.getAssocAttribute(assertionInfo.Values, security.UserFirstName, user.Firstname)
+	user.Lastname = p.getAssocAttribute(assertionInfo.Values, security.UserLastName, user.Lastname)
+	user.Email = p.getAssocAttribute(assertionInfo.Values, security.UserEmail, user.Email)
 	user.SetRolesFromIdp(roles, p.config.AllowExtraRoles)
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		panic(fmt.Errorf("failed to update saml user: %w", err))
+		panic(fmt.Errorf("failed to update saml user with external_id = %s: %w", user.ExternalID, err))
 	}
 
 	return true
