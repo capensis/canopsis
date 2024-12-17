@@ -449,7 +449,7 @@ export default {
     },
 
     setNewEvent(event) {
-      const timed = !!event.time;
+      const timed = !!event.hasTime;
 
       const eventDate = this.getDateByEvent(event);
       const start = this.getStartDate(eventDate, timed);

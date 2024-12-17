@@ -324,7 +324,7 @@ export const calendarEventToPbehaviorForm = (
   const {
     start,
     end,
-    data: { cachedForm = {}, pbehavior = {} },
+    data: { cachedForm = {}, pbehavior },
   } = event;
 
   const pbehaviorForm = pbehaviorToForm(pbehavior, entityPattern, timezone);
@@ -341,27 +341,28 @@ export const calendarEventToPbehaviorForm = (
   if (!form.timezone) {
     form.timezone = timezone;
   }
-  const isDifferentTimezone = pbehaviorForm.timezone !== timezone;
+  const localTimezone = getLocalTimezone();
 
-  let preparedEnd = end;
+  /**
+   * @description The following code converts start and stop date objects to new date objects with timezone shifting.
+   *  1. Convert timezone WITHOUT time shifting
+   *  2. Convert timezone to pbehavior's timezone WITH time shifting
+   *  3. Convert timezone to local timezone WITHOUT time shifting
+   *
+   *  We need it to avoiding problem with different timezones on client computer/calendar/pbehavior's form
+   */
+  form.tstart = convertDateToMoment(start)
+    .tz(timezone, true)
+    .tz(pbehavior.timezone)
+    .tz(localTimezone, true)
+    .toDate();
 
-  form.tstart = start;
-
-  if (isDifferentTimezone && pbehaviorForm.timezone) {
-    form.tstart = convertDateToMoment(start).tz(timezone, true).tz(pbehaviorForm.timezone).toDate();
-    preparedEnd = convertDateToMoment(preparedEnd).tz(timezone, true).tz(pbehaviorForm.timezone).toDate();
-  }
-
-  if (!pbehavior || pbehavior.tstop) {
-    if (event.durationUnit === 'days') {
-      if (preparedEnd.date.diff(start.date, 'hours') <= 24) {
-        form.tstop = start.date.clone().endOf('day').toDate();
-      } else {
-        form.tstop = preparedEnd.date.clone().subtract(1, 'millisecond').toDate();
-      }
-    } else {
-      form.tstop = preparedEnd;
-    }
+  if (!pbehavior || pbehavior?.tstop) {
+    form.tstop = convertDateToMoment(end)
+      .tz(timezone, true)
+      .tz(pbehavior.timezone)
+      .tz(localTimezone, true)
+      .toDate();
   }
 
   return form;
@@ -385,6 +386,7 @@ export const isFullDayEvent = (start, stop) => {
  *
  * @param {PbehaviorForm} form
  * @param {Object} event
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {Object}
  */
 export const formToCalendarEvent = (form, event) => {

@@ -183,8 +183,8 @@ export default {
     fetchTimespansForPbehavior(pbehavior) {
       const { start, end } = this.$refs.calendar.filled;
 
-      const from = convertDateToTimestampByTimezone(start, this.timezone);
-      const to = convertDateToTimestampByTimezone(end, this.timezone);
+      const from = convertDateToTimestampByTimezone(start, this.timezone, true);
+      const to = convertDateToTimestampByTimezone(end, this.timezone, true);
 
       const timespan = pbehaviorToTimespanRequest({
         pbehavior,
@@ -416,10 +416,9 @@ export default {
       const { pbehavior } = event.data;
 
       if (!pbehavior.rrule) {
-        const timezone = pbehavior.timezone || this.timezone;
-        const tstart = convertDateToTimestampByTimezone(event.start, timezone);
+        const tstart = convertDateToTimestampByTimezone(event.start, this.timezone);
         const tstop = pbehavior.tstop
-          ? convertDateToTimestampByTimezone(event.end, timezone)
+          ? convertDateToTimestampByTimezone(event.end, this.timezone)
           : null;
 
         await this.updatePbehavior({
