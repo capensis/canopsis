@@ -7,6 +7,15 @@ const (
 	SourceOauth2 = "oauth2"
 )
 
+// User field constants to unify values to map fields from external identity providers.
+const (
+	UserName      = "name"
+	UserFirstName = "firstname"
+	UserLastName  = "lastname"
+	UserEmail     = "email"
+	UserRole      = "role"
+)
+
 // User represents user model.
 type User struct {
 	ID             string   `bson:"_id"`
@@ -32,21 +41,21 @@ type User struct {
 
 func (u *User) SetRolesFromIdp(newIdpRoles []string, mergeRoles bool) {
 	if mergeRoles {
-		oldIdpRolesMap := make(map[string]bool)
+		idpRolesMap := make(map[string]bool, len(u.IdpRoles)+len(newIdpRoles))
+
 		for _, role := range u.IdpRoles {
-			oldIdpRolesMap[role] = true
+			idpRolesMap[role] = true
 		}
 
-		newIdpRolesMap := make(map[string]bool)
 		for _, role := range newIdpRoles {
-			newIdpRolesMap[role] = true
+			idpRolesMap[role] = true
 		}
 
 		u.IdpRoles = make([]string, len(newIdpRoles))
 		copy(u.IdpRoles, newIdpRoles)
 
 		for _, role := range u.Roles {
-			if !oldIdpRolesMap[role] && !newIdpRolesMap[role] {
+			if !idpRolesMap[role] {
 				newIdpRoles = append(newIdpRoles, role)
 			}
 		}

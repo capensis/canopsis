@@ -168,7 +168,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 			res.Data[i].Deletable = &deletable
 		}
 
-		idpFields, _, ok := s.securityConfig.GetIdpFieldsCfg(res.Data[i].Source)
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(res.Data[i].Source)
 		if ok {
 			res.Data[i].IdpFields = idpFields
 		}
@@ -202,7 +202,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			return nil, err
 		}
 
-		idpFields, _, ok := s.securityConfig.GetIdpFieldsCfg(user.Source)
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(user.Source)
 		if ok {
 			user.IdpFields = idpFields
 		}
@@ -361,7 +361,7 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 }
 
 func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, idpRoles []string) {
-	idpFields, allowExtraRoles, ok := s.securityConfig.GetIdpFieldsCfg(source)
+	idpFields, allowExtraRoles, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(source)
 	if !ok {
 		return
 	}
@@ -376,12 +376,12 @@ func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, i
 	}
 
 	if len(requestRoles) != 0 {
-		mergedRoles := make([]string, 0, len(requestRoles)+len(idpRoles))
+		mergedRoles := make([]string, len(idpRoles), len(requestRoles)+len(idpRoles))
+		copy(mergedRoles, idpRoles)
 
-		idpRolesMap := make(map[string]bool)
+		idpRolesMap := make(map[string]bool, len(idpRoles))
 		for _, role := range idpRoles {
 			idpRolesMap[role] = true
-			mergedRoles = append(mergedRoles, role)
 		}
 
 		for _, role := range requestRoles {

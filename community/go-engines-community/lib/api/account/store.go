@@ -195,7 +195,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 			user.Permissions[i].Actions = role.TransformBitmaskToActions(perm.Bitmask, perm.Type)
 		}
 
-		idpFields, _, ok := s.securityConfig.GetIdpFieldsCfg(user.Source)
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(user.Source)
 		if ok {
 			user.IdpFields = idpFields
 		}

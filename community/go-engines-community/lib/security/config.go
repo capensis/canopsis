@@ -36,7 +36,7 @@ type Config struct {
 	} `yaml:"security"`
 }
 
-func (c *Config) GetIdpFieldsCfg(source string) ([]string, bool, bool) {
+func (c *Config) GetIdpFieldsExtraRolesAllowed(source string) ([]string, bool, bool) {
 	if source == "" {
 		return nil, false, false
 	}
