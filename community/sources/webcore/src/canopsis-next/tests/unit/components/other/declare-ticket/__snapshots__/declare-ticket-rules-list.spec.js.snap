@@ -18,15 +18,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        >
-          <c-action-btn-stub
-            class="ml-3"
-            type="delete"
-          />
-        </div>
+        <!---->
       </transition-stub>
     </div>
   </div>
@@ -1064,10 +1056,7 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with de
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
     </div>
   </div>

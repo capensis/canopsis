@@ -552,7 +552,25 @@ describe('alarms-list', () => {
 
   it('Instruction filters updated after trigger filter field', async () => {
     const wrapper = factory({
-      store,
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        serviceModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
       propsData: {
         widget,
       },
@@ -653,7 +671,25 @@ describe('alarms-list', () => {
 
   it('Locked instruction filters updated after trigger filter field', async () => {
     const wrapper = factory({
-      store,
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        serviceModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
       propsData: {
         widget,
       },
@@ -1683,7 +1719,7 @@ describe('alarms-list', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list` with default props and user filter permission and correlation and bookmark', async () => {
+  it('Renders `alarms-list` with default props and user filter permissions and correlation and bookmark', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget,
@@ -1702,6 +1738,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: { actions: [] },
               [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
               [USER_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
               [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },

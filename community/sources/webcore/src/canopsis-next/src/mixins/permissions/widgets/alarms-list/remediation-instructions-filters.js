@@ -6,7 +6,7 @@ export const permissionsWidgetsAlarmsListRemediationInstructionsFilters = {
   mixins: [authMixin],
   computed: {
     hasAccessToRemediationInstructionsFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilters);
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter);
     },
 
     hasAccessToUserRemediationInstructionsFilter() {

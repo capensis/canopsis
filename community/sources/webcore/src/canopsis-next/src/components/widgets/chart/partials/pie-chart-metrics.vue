@@ -16,7 +16,7 @@
       :height="400"
       class="pie-chart-metrics__chart kpi-widget__chart"
     >
-      <template v-if="hideActions" #actions="{ chart }">
+      <template v-if="!hideActions" #actions="{ chart }">
         <chart-export-actions
           :downloading="downloading"
           :chart="chart"

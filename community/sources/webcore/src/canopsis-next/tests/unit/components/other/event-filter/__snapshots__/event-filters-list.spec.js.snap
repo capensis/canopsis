@@ -18,14 +18,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with custom props 1`]
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        >
-          <c-action-btn-stub
-            type="delete"
-          />
-        </div>
+        <!---->
       </transition-stub>
     </div>
   </div>
@@ -1689,10 +1682,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with default props 1`
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
     </div>
   </div>
@@ -2047,10 +2037,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with expanded panel 1
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
     </div>
   </div>
@@ -3300,10 +3287,7 @@ exports[`event-filters-list Renders \`event-filters-list\` with updatable and ol
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        />
+        <!---->
       </transition-stub>
     </div>
   </div>
