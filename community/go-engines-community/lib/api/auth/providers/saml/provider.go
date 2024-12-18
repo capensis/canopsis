@@ -15,8 +15,10 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -47,7 +49,6 @@ type Provider interface {
 }
 
 type provider struct {
-	samlSP             *saml2.SAMLServiceProvider
 	userProvider       security.UserProvider
 	roleProvider       security.RoleProvider
 	sessionStore       libsession.Store
@@ -56,6 +57,15 @@ type provider struct {
 	tokenService       apisecurity.TokenService
 	maintenanceAdapter config.MaintenanceAdapter
 	logger             zerolog.Logger
+	keyStore           dsig.X509KeyStore
+	acsUrl             string
+	sloUrl             string
+	metadataUrl        string
+
+	samlMx           sync.Mutex
+	samlSP           *saml2.SAMLServiceProvider
+	samlSPValidUntil time.Time
+	samlSPAvailable  bool
 }
 
 func NewProvider(
@@ -64,91 +74,180 @@ func NewProvider(
 	roleValidator security.RoleProvider,
 	sessionStore libsession.Store,
 	enforcer security.Enforcer,
-	config security.Config,
+	config security.SamlConfig,
 	tokenService apisecurity.TokenService,
 	maintenanceAdapter config.MaintenanceAdapter,
 	logger zerolog.Logger,
 ) (Provider, error) {
-	if config.Security.Saml.IdpMetadataUrl != "" && config.Security.Saml.IdpMetadataXml != "" {
+	if config.IdpMetadataUrl != "" && config.IdpMetadataXml != "" {
 		return nil, errors.New("should provide only idp metadata url or xml, not both")
 	}
 
-	if config.Security.Saml.CanopsisSSOBinding != BindingRedirect && config.Security.Saml.CanopsisSSOBinding != BindingPOST {
+	if config.CanopsisSSOBinding != BindingRedirect && config.CanopsisSSOBinding != BindingPOST {
 		return nil, errors.New("wrong canopsis_sso_binding value, should be post or redirect")
 	}
 
-	if config.Security.Saml.CanopsisACSBinding != BindingRedirect && config.Security.Saml.CanopsisACSBinding != BindingPOST {
+	if config.CanopsisACSBinding != BindingRedirect && config.CanopsisACSBinding != BindingPOST {
 		return nil, errors.New("wrong canopsis_acs_binding value, should be post or redirect")
 	}
 
-	keyPair, err := tls.LoadX509KeyPair(config.Security.Saml.X509Cert, config.Security.Saml.X509Key)
+	keyPair, err := tls.LoadX509KeyPair(config.X509Cert, config.X509Key)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to load x509 key pair: %w", err)
 	}
 
-	idpMetadata := &samltypes.EntityDescriptor{}
-	if config.Security.Saml.IdpMetadataUrl != "" {
-		dt, ok := http.DefaultTransport.(*http.Transport)
-		if !ok {
-			return nil, errors.New("unknown type of http.DefaultTransport")
-		}
+	p := &provider{
+		userProvider:       userProvider,
+		roleProvider:       roleValidator,
+		sessionStore:       sessionStore,
+		enforcer:           enforcer,
+		config:             config,
+		tokenService:       tokenService,
+		maintenanceAdapter: maintenanceAdapter,
+		logger:             logger,
+		keyStore:           dsig.TLSCertKeyStore(keyPair),
+		acsUrl:             config.CanopsisSamlUrl + "/acs",
+		sloUrl:             config.CanopsisSamlUrl + "/slo",
+		metadataUrl:        config.CanopsisSamlUrl + "/metadata",
+	}
 
-		tr := dt.Clone()
-		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: config.Security.Saml.InsecureSkipVerify} //nolint:gosec
-
-		hc := &http.Client{Timeout: MetadataReqTimeout, Transport: tr}
-		req, err := http.NewRequestWithContext(ctx, http.MethodGet, config.Security.Saml.IdpMetadataUrl, nil)
+	if config.IdpMetadataXml != "" {
+		err = p.loadXmlMetadata()
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to load idp metadata by xml: %w", err)
 		}
-
-		res, err := hc.Do(req)
+	} else {
+		err = p.loadUrlMetadata(ctx)
 		if err != nil {
-			return nil, err
-		}
-
-		defer res.Body.Close()
-
-		rawMetadata, err := io.ReadAll(res.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		err = xml.Unmarshal(rawMetadata, idpMetadata)
-		if err != nil {
-			return nil, err
+			logger.Warn().Str("err", err.Error()).Msg("failed to load idp metadata by url")
 		}
 	}
 
-	if config.Security.Saml.IdpMetadataXml != "" {
-		rawMetadata, err := os.ReadFile(config.Security.Saml.IdpMetadataXml)
-		if err != nil {
-			return nil, err
-		}
+	return p, nil
+}
 
-		err = xml.Unmarshal(rawMetadata, idpMetadata)
-		if err != nil {
-			return nil, err
-		}
+func (p *provider) loadXmlMetadata() error {
+	rawMetadata, err := os.ReadFile(p.config.IdpMetadataXml)
+	if err != nil {
+		return fmt.Errorf("failed to read idp metadata xml file: %w", err)
 	}
 
-	certStore := dsig.MemoryX509CertificateStore{
-		Roots: []*x509.Certificate{},
+	idpMetadata := samltypes.EntityDescriptor{}
+	err = xml.Unmarshal(rawMetadata, &idpMetadata)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal idp metadata xml file: %w", err)
 	}
+
+	ssoLocation, sloLocation, certStore, err := processIdpMetadata(idpMetadata)
+	if err != nil {
+		return fmt.Errorf("failed to process idp metadata xml file: %w", err)
+	}
+
+	p.samlSP = &saml2.SAMLServiceProvider{
+		IdentityProviderSSOURL:         ssoLocation,
+		IdentityProviderSLOURL:         sloLocation,
+		IdentityProviderIssuer:         idpMetadata.EntityID,
+		IDPCertificateStore:            &certStore,
+		NameIdFormat:                   p.config.NameIdFormat,
+		AssertionConsumerServiceURL:    p.acsUrl,
+		ServiceProviderSLOURL:          p.sloUrl,
+		ServiceProviderIssuer:          p.metadataUrl,
+		AudienceURI:                    p.metadataUrl,
+		SignAuthnRequests:              p.config.SignAuthRequest,
+		SPKeyStore:                     p.keyStore,
+		SkipSignatureValidation:        p.config.SkipSignatureValidation,
+		SignAuthnRequestsCanonicalizer: dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(""),
+	}
+	p.samlSPAvailable = true
+
+	return nil
+}
+
+func (p *provider) loadUrlMetadata(ctx context.Context) error {
+	// recreate service provider on load without an idp data for canopsis metadata endpoint.
+	// the canopsis saml metadata endpoint should work even if an idp is unavailable.
+	p.samlSP = &saml2.SAMLServiceProvider{
+		AssertionConsumerServiceURL:    p.acsUrl,
+		ServiceProviderSLOURL:          p.sloUrl,
+		ServiceProviderIssuer:          p.metadataUrl,
+		AudienceURI:                    p.metadataUrl,
+		SignAuthnRequests:              p.config.SignAuthRequest,
+		SPKeyStore:                     p.keyStore,
+		NameIdFormat:                   p.config.NameIdFormat,
+		SkipSignatureValidation:        p.config.SkipSignatureValidation,
+		SignAuthnRequestsCanonicalizer: dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(""),
+	}
+
+	dt, ok := http.DefaultTransport.(*http.Transport)
+	if !ok {
+		return errors.New("unknown type of http.DefaultTransport")
+	}
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.config.IdpMetadataUrl, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create idp metadata request: %w", err)
+	}
+
+	tr := dt.Clone()
+	tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: p.config.InsecureSkipVerify} //nolint:gosec
+
+	hc := http.Client{Timeout: MetadataReqTimeout, Transport: tr}
+
+	res, err := hc.Do(req)
+	if err != nil {
+		return fmt.Errorf("failed to send idp metadata request: %w", err)
+	}
+
+	defer res.Body.Close()
+
+	rawMetadata, err := io.ReadAll(res.Body)
+	if err != nil {
+		return fmt.Errorf("failed to read idp metadata response: %w", err)
+	}
+
+	idpMetadata := samltypes.EntityDescriptor{}
+	err = xml.Unmarshal(rawMetadata, &idpMetadata)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal idp metadata response: %w", err)
+	}
+
+	ssoLocation, sloLocation, certStore, err := processIdpMetadata(idpMetadata)
+	if err != nil {
+		return fmt.Errorf("failed to process idp metadata response: %w", err)
+	}
+
+	p.samlSP.IdentityProviderSSOURL = ssoLocation
+	p.samlSP.IdentityProviderSLOURL = sloLocation
+	p.samlSP.IdentityProviderIssuer = idpMetadata.EntityID
+	p.samlSP.IDPCertificateStore = &certStore
+	p.samlSPAvailable = true
+
+	now := time.Now()
+	if !idpMetadata.ValidUntil.Before(now) {
+		p.samlSPValidUntil = idpMetadata.ValidUntil
+	} else {
+		p.samlSPValidUntil = now.Add(providers.DefaultMetaValidDuration)
+	}
+
+	return nil
+}
+
+func processIdpMetadata(idpMetadata samltypes.EntityDescriptor) (string, string, dsig.MemoryX509CertificateStore, error) {
+	certStore := dsig.MemoryX509CertificateStore{Roots: []*x509.Certificate{}}
 
 	for _, kd := range idpMetadata.IDPSSODescriptor.KeyDescriptors {
-		for idx, xcert := range kd.KeyInfo.X509Data.X509Certificates {
-			if xcert.Data == "" {
+		for idx, xCert := range kd.KeyInfo.X509Data.X509Certificates {
+			if xCert.Data == "" {
 				panic(fmt.Errorf("metadata certificate(%d) must not be empty", idx))
 			}
-			certData, err := base64.StdEncoding.DecodeString(xcert.Data)
+			certData, err := base64.StdEncoding.DecodeString(xCert.Data)
 			if err != nil {
-				return nil, err
+				return "", "", dsig.MemoryX509CertificateStore{}, fmt.Errorf("failed to decode metadata certificate(%d) data: %w", idx, err)
 			}
 
 			idpCert, err := x509.ParseCertificate(certData)
 			if err != nil {
-				return nil, err
+				return "", "", dsig.MemoryX509CertificateStore{}, fmt.Errorf("failed to parse metadata certificate(%d) data: %w", idx, err)
 			}
 
 			certStore.Roots = append(certStore.Roots, idpCert)
@@ -166,31 +265,21 @@ func NewProvider(
 		sloLocation = idpMetadata.IDPSSODescriptor.SingleLogoutServices[0].Location
 	}
 
-	return &provider{
-		samlSP: &saml2.SAMLServiceProvider{
-			IdentityProviderSSOURL:         ssoLocation,
-			IdentityProviderSLOURL:         sloLocation,
-			IdentityProviderIssuer:         idpMetadata.EntityID,
-			AssertionConsumerServiceURL:    fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "acs"),
-			ServiceProviderSLOURL:          fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "slo"),
-			ServiceProviderIssuer:          fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "metadata"),
-			SignAuthnRequests:              config.Security.Saml.SignAuthRequest,
-			AudienceURI:                    fmt.Sprintf("%s/%s", config.Security.Saml.CanopsisSamlUrl, "metadata"),
-			IDPCertificateStore:            &certStore,
-			SPKeyStore:                     dsig.TLSCertKeyStore(keyPair),
-			NameIdFormat:                   config.Security.Saml.NameIdFormat,
-			SkipSignatureValidation:        config.Security.Saml.SkipSignatureValidation,
-			SignAuthnRequestsCanonicalizer: dsig.MakeC14N10ExclusiveCanonicalizerWithPrefixList(""),
-		},
-		userProvider:       userProvider,
-		roleProvider:       roleValidator,
-		sessionStore:       sessionStore,
-		enforcer:           enforcer,
-		config:             config.Security.Saml,
-		tokenService:       tokenService,
-		maintenanceAdapter: maintenanceAdapter,
-		logger:             logger,
-	}, nil
+	return ssoLocation, sloLocation, certStore, nil
+}
+
+func (p *provider) isServiceProviderAvailable(c *gin.Context) bool {
+	if p.config.IdpMetadataUrl != "" && (!p.samlSPAvailable || p.samlSPValidUntil.Before(time.Now())) {
+		err := p.loadUrlMetadata(c)
+		if err != nil {
+			p.logger.Warn().Str("error", err.Error()).Msg("failed to load idp metadata")
+			c.AbortWithStatus(http.StatusServiceUnavailable)
+
+			return false
+		}
+	}
+
+	return true
 }
 
 func (p *provider) SamlMetadataHandler() gin.HandlerFunc {
@@ -227,6 +316,14 @@ type samlLoginRequest struct {
 
 func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		p.samlMx.Lock()
+		defer p.samlMx.Unlock()
+
+		ok := p.isServiceProviderAvailable(c)
+		if !ok {
+			return
+		}
+
 		if p.samlSP.IdentityProviderSSOURL == "" {
 			c.AbortWithStatus(http.StatusForbidden)
 			return
@@ -281,6 +378,14 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 
 func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		p.samlMx.Lock()
+		defer p.samlMx.Unlock()
+
+		ok := p.isServiceProviderAvailable(c)
+		if !ok {
+			return
+		}
+
 		samlResponse, exists := c.GetPostForm("SAMLResponse")
 		if !exists {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("SAMLResponse doesn't exist")))
@@ -392,6 +497,14 @@ func (p *provider) getAssocArrayAttribute(attrs saml2.Values, canopsisName strin
 
 func (p *provider) SamlSloHandler() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		p.samlMx.Lock()
+		defer p.samlMx.Unlock()
+
+		ok := p.isServiceProviderAvailable(c)
+		if !ok {
+			return
+		}
+
 		if p.samlSP.IdentityProviderSLOURL == "" {
 			c.AbortWithStatus(http.StatusForbidden)
 			return
