@@ -36,6 +36,7 @@
         :sampling="query.sampling"
         :stacked="widget.parameters.stacked"
         :downloading="downloading"
+        :hide-actions="hideActions"
         @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
       />
@@ -101,6 +102,10 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

@@ -2,13 +2,13 @@
   <card-with-see-alarms-btn
     :class="itemClasses"
     :style="itemStyle"
-    :show-button="hasAlarmsListAccess"
+    :show-button="!hideActions && hasAlarmsListAccess"
     class="counter-item"
     tile
     @show:alarms="showAlarmListModal"
   >
     <v-btn
-      v-if="hasVariablesHelpAccess"
+      v-if="!hideActions && hasVariablesHelpAccess"
       class="counter-item__help-btn ma-0"
       icon
       small
@@ -72,6 +72,10 @@ export default {
     query: {
       type: Object,
       default: () => ({}),
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

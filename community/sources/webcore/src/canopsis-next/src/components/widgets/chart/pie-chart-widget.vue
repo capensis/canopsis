@@ -98,6 +98,10 @@ export default {
       type: String,
       default: '',
     },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {

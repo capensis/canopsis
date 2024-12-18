@@ -104,8 +104,8 @@
             :action-required-icon="actionRequiredSettings.icon_name"
             :no-action-required-color="noActionRequiredSettings.color"
             :no-action-required-icon="noActionRequiredSettings.icon_name"
-            :show-alarms-button="isBothModalType && hasAlarmsListAccess"
-            :show-variables-help-button="hasVariablesHelpAccess"
+            :show-alarms-button="!hideActions && isBothModalType && hasAlarmsListAccess"
+            :show-variables-help-button="!hideActions && hasVariablesHelpAccess"
             :template="widget.parameters.blockTemplate"
             :height-factor="widget.parameters.heightFactor"
             :color-indicator="widget.parameters.colorIndicator"
@@ -165,6 +165,10 @@ export default {
       type: Object,
       required: true,
     },
+    hideActions: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
     flexSize() {
@@ -220,6 +224,10 @@ export default {
   },
   methods: {
     showAdditionalInfoModal(service) {
+      if (this.hideActions) {
+        return;
+      }
+
       if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
         this.showAlarmListModal(service);
       } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {

@@ -43,6 +43,37 @@ export const getPermissionActions = permission => (PERMISSIONS_TYPES_TO_ACTIONS[
   ? PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
   : [CRUD_ACTIONS.can]);
 
+/**
+ * Converts a flat permissions array into a hierarchical tree structure
+ *
+ * @param {Array} [permissions=[]] - Array of permission objects containing groups and actions
+ * @returns {Object} Tree structure where:
+ *   - Each node contains group/permission data
+ *   - Groups have `children`, `allChildren`, and `actions` properties
+ *   - Leaf nodes (permissions) contain the permission data and `actions`
+ *   - Group nodes use group._id as keys
+ *   - Permission nodes use permission._id as keys
+ *
+ * @example
+ * const permissions = [{
+ *   _id: 'perm1',
+ *   groups: [{ _id: 'group1', name: 'Group 1' }],
+ *   type: 'crud'
+ * }];
+ * const tree = permissionsToTreeview(permissions);
+ * // Returns:
+ * // {
+ * //   group1: {
+ * //     _id: 'group1',
+ * //     name: 'Group 1',
+ * //     children: {
+ * //       perm1: { _id: 'perm1', actions: ['create', 'read', 'update', 'delete'] }
+ * //     },
+ * //     allChildren: [{ _id: 'perm1', actions: ['create', 'read', 'update', 'delete'] }],
+ * //     actions: ['can']
+ * //   }
+ * // }
+ */
 export const permissionsToTreeview = (permissions = []) => permissions.reduce((acc, permission) => {
   let activeGroup = acc;
 
@@ -98,5 +129,10 @@ export const getPermissionCheckboxProps = (role, permission, action) => {
   };
 };
 
-// TODO: add jsdoc
+/**
+ * Checks if a permission ID belongs to the API permission group
+ *
+ * @param {string} [permissionId=''] - The permission ID to check
+ * @returns {boolean} True if the permission belongs to API group, false otherwise
+ */
 export const isApiPermission = (permissionId = '') => permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);

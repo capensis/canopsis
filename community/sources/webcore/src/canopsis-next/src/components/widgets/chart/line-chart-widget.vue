@@ -35,6 +35,7 @@
         :title="widget.parameters.chart_title"
         :sampling="query.sampling"
         :downloading="downloading"
+        :hide-actions="hideActions"
         @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
       />
@@ -100,6 +101,10 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

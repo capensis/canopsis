@@ -6,7 +6,8 @@
     :meta="contextEntitiesMeta"
     :query.sync="query"
     :columns="widget.parameters.widgetColumns"
-    selectable
+    :selectable="!hideMassSelection"
+    :hide-actions="hideActions"
   >
     <template #toolbar="">
       <v-layout class="gap-4 py-4 pt-0" wrap align-end>
@@ -63,17 +64,19 @@
             @change="updateNoEvents"
           />
         </v-flex>
-        <v-flex v-if="hasAccessToCreateEntity">
-          <context-fab />
-        </v-flex>
-        <v-flex v-if="hasAccessToExportAsCsv">
-          <c-action-btn
-            :loading="downloading"
-            :tooltip="$t('settings.exportAsCsv')"
-            icon="cloud_download"
-            @click="exportContextList"
-          />
-        </v-flex>
+        <template v-if="!hideActions">
+          <v-flex v-if="hasAccessToCreateEntity">
+            <context-fab />
+          </v-flex>
+          <v-flex v-if="hasAccessToExportAsCsv">
+            <c-action-btn
+              :loading="downloading"
+              :tooltip="$t('settings.exportAsCsv')"
+              icon="cloud_download"
+              @click="exportContextList"
+            />
+          </v-flex>
+        </template>
       </v-layout>
     </template>
   </entities-list-table-with-pagination>
@@ -129,6 +132,14 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassSelection: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

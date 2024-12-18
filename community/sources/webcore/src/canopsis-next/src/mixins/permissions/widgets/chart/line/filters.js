@@ -6,7 +6,7 @@ export const permissionsWidgetsLineChartFilters = {
   mixins: [authMixin],
   computed: {
     hasAccessToFilter() {
-      return this.checkAccess(USER_PERMISSIONS.business.lineChart.actions.listFilters);
+      return this.checkAccess(USER_PERMISSIONS.business.lineChart.actions.filter);
     },
 
     hasAccessToUserFilter() {

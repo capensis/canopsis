@@ -15,7 +15,7 @@ import {
   LIVE_REPORTING_QUICK_RANGES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
 } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -378,7 +378,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
             },
           },
         },
@@ -439,7 +439,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
             },
           },
         },
@@ -500,7 +500,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
             },
           },
         },
@@ -822,7 +822,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.category]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.category]: { actions: [] },
             },
           },
         },
@@ -961,7 +961,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1045,7 +1045,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1112,7 +1112,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1195,7 +1195,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1269,7 +1269,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1317,7 +1317,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1369,7 +1369,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1702,9 +1702,9 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
             },
           },
         },
@@ -1742,7 +1742,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
             },
           },
         },

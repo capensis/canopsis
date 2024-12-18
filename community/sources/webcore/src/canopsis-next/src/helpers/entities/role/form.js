@@ -1,12 +1,6 @@
 import { omit } from 'lodash';
 
-import {
-  API_USER_PERMISSIONS_ROOT_GROUPS,
-  CRUD_ACTIONS,
-  ROLE_TYPES,
-  TIME_UNITS,
-  USER_PERMISSIONS_GROUPS
-} from '@/constants';
+import { CRUD_ACTIONS, ROLE_TYPES, TIME_UNITS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
 import { isApiPermission } from '@/helpers/entities/permissions/list';
@@ -174,7 +168,13 @@ export const formToRole = (form = {}) => ({
   auth_config: authConfigFormToRolePermissions(form.auth_config),
 });
 
-export const formToRolePermissions = (form = {}) => ({ // TODO: add jsdoc
+/**
+ * Convert role form to role permissions object
+ *
+ * @param {RoleForm | {}} [form = {}]
+ * @returns {{_id: string, permissions: PermissionsForm}}
+ */
+export const formToRolePermissions = (form = {}) => ({
   _id: form._id,
   permissions: permissionsFormToRolePermissions(form),
 });
