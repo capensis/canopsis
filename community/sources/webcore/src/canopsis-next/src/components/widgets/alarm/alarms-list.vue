@@ -72,13 +72,12 @@
           @change="updateOnlyBookmarks"
         />
       </v-flex>
-      <v-flex>
+      <v-flex v-if="hasAccessToUserRemediationInstructionsFilter">
         <alarms-list-remediation-instructions-filters
           :filters.sync="remediationInstructionsFilters"
           :locked-filters.sync="widgetRemediationInstructionsFilters"
-          :editable="hasAccessToEditRemediationInstructionsFilter"
-          :addable="hasAccessToUserRemediationInstructionsFilter"
-          :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
+          editable
+          addable
         />
       </v-flex>
       <v-flex>

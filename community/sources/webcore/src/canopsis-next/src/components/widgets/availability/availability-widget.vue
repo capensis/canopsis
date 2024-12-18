@@ -15,7 +15,7 @@
       :filters="query.filter"
       :show-interval="hasAccessToInterval"
       :show-filter="hasAccessToUserFilter"
-      :show-export="hasAccessToExportAsCsv"
+      :show-export="!hideActions && hasAccessToExportAsCsv"
       :exporting="exporting"
       :max-value-filter-seconds="maxValueFilterSeconds"
       class="px-3 pt-3"
@@ -97,6 +97,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

@@ -9,7 +9,7 @@ import {
   MODALS,
   PATTERN_TABS,
   PATTERN_TYPES,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
 } from '@/constants';
 
 import Patterns from '@/views/profile/patterns.vue';
@@ -371,7 +371,7 @@ describe('patterns', () => {
 
   it('Renders `patterns` with permissions', () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.technical.profile.corporatePattern]: {
+      [USER_PERMISSIONS.technical.profile.corporatePattern]: {
         actions: [
           CRUD_ACTIONS.create,
           CRUD_ACTIONS.update,
@@ -393,7 +393,7 @@ describe('patterns', () => {
 
   it('Renders `patterns` corporate tab with permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.technical.profile.corporatePattern]: {
+      [USER_PERMISSIONS.technical.profile.corporatePattern]: {
         actions: [
           CRUD_ACTIONS.create,
           CRUD_ACTIONS.update,

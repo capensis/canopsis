@@ -19,7 +19,7 @@ import {
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
   TIME_UNITS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
   WIDGET_TYPES,
@@ -627,7 +627,7 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.filter]: {
                 actions: [],
               },
             },
@@ -675,7 +675,7 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.filter]: {
                 actions: [],
               },
             },
@@ -723,7 +723,7 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
                 actions: [],
               },
             },
@@ -1452,20 +1452,12 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.editFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.addFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.filter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
                 actions: [],
               },
-              [USERS_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: {
-                actions: [],
-              },
-              [USERS_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: {
-                actions: [],
-              },
-              [USERS_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
                 actions: [],
               },
             },

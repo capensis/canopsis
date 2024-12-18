@@ -12,7 +12,7 @@ import {
   QUICK_RANGES,
   SAMPLINGS,
   SIDE_BARS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 
@@ -240,7 +240,7 @@ describe('line-chart', () => {
 
   test('Renders `line-chart` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.lineChart.actions.listFilters]: { actions: [] },
+      [USER_PERMISSIONS.business.lineChart.actions.filter]: { actions: [] },
     });
 
     const wrapper = snapshotFactory({

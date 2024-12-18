@@ -34,6 +34,7 @@
         :show-trend="widget.parameters.show_trend"
         :font-size="valueFontSize"
         :downloading="downloading"
+        :hide-actions="hideActions"
         @export:csv="exportMetricsAsCsv"
       />
     </v-layout>
@@ -103,6 +104,10 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
