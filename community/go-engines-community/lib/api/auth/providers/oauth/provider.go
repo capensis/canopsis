@@ -8,7 +8,10 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"sync"
+	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -43,15 +46,15 @@ type provider struct {
 	maintenanceAdapter config.MaintenanceAdapter
 	enforcer           security.Enforcer
 	logger             zerolog.Logger
+	name               string
+	source             string
+	maxResponseSize    int64
 
 	// only for OpenID type of providers
-	oidcVerifier *oidc.IDTokenVerifier
-	provider     *oidc.Provider
-
-	name   string
-	source string
-
-	maxResponseSize int64
+	oidcMx                 sync.Mutex
+	oidcVerifier           *oidc.IDTokenVerifier
+	oidcProvider           *oidc.Provider
+	oidcProviderValidUntil time.Time
 }
 
 func NewProvider(
@@ -92,30 +95,62 @@ func NewProvider(
 	}
 
 	if config.OpenID {
-		var err error
-
-		p.provider, err = oidc.NewProvider(ctx, config.Issuer)
+		err := p.loadOpenIDMetadata(ctx)
 		if err != nil {
-			return nil, fmt.Errorf("failed to connect to %s authentication provider: %w", name, err)
+			p.logger.Warn().Str("err", err.Error()).Msg("failed to load openid metadata")
 		}
-
-		var claims oidcClaims
-		if err := p.provider.Claims(&claims); err != nil {
-			return nil, fmt.Errorf("failed to decode %s provider claims: %w", name, err)
-		}
-
-		if !claims.ValidateScopes(config.Scopes) {
-			return nil, fmt.Errorf("scopes are not supported for %s provider", name)
-		}
-
-		p.oidcVerifier = p.provider.Verifier(&oidc.Config{ClientID: config.ClientID})
-		p.oauth2Config.Endpoint = p.provider.Endpoint()
 	}
 
 	return p, nil
 }
 
+func (p *provider) loadOpenIDMetadata(ctx context.Context) error {
+	var err error
+
+	p.oidcProvider, err = oidc.NewProvider(ctx, p.config.Issuer)
+	if err != nil {
+		return fmt.Errorf("failed to connect to %s authentication provider: %w", p.source, err)
+	}
+
+	var claims oidcClaims
+	if err := p.oidcProvider.Claims(&claims); err != nil {
+		return fmt.Errorf("failed to decode %s provider claims: %w", p.source, err)
+	}
+
+	if !claims.ValidateScopes(p.config.Scopes) {
+		return fmt.Errorf("scopes are not supported for %s provider", p.source)
+	}
+
+	p.oidcVerifier = p.oidcProvider.Verifier(&oidc.Config{ClientID: p.config.ClientID})
+	p.oauth2Config.Endpoint = p.oidcProvider.Endpoint()
+	p.oidcProviderValidUntil = time.Now().Add(providers.DefaultMetaValidDuration)
+
+	return nil
+}
+
+func (p *provider) isOpenIDProviderAvailable(c *gin.Context) bool {
+	if p.config.OpenID && (p.oidcProvider == nil || p.oidcProviderValidUntil.Before(time.Now())) {
+		err := p.loadOpenIDMetadata(c)
+		if err != nil {
+			p.logger.Warn().Str("error", err.Error()).Msg("failed to load openid metadata")
+			c.AbortWithStatus(http.StatusServiceUnavailable)
+
+			return false
+		}
+	}
+
+	return true
+}
+
 func (p *provider) Login(c *gin.Context) {
+	p.oidcMx.Lock()
+	defer p.oidcMx.Unlock()
+
+	ok := p.isOpenIDProviderAvailable(c)
+	if !ok {
+		return
+	}
+
 	request := loginRequest{}
 	if err := c.ShouldBindQuery(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -164,6 +199,14 @@ func (p *provider) Login(c *gin.Context) {
 }
 
 func (p *provider) Callback(c *gin.Context) {
+	p.oidcMx.Lock()
+	defer p.oidcMx.Unlock()
+
+	ok := p.isOpenIDProviderAvailable(c)
+	if !ok {
+		return
+	}
+
 	session, err := p.store.Get(c.Request, oauthSessionPrefix+p.name)
 	if err != nil {
 		panic(err)
@@ -486,7 +529,7 @@ func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idT
 		userInfo["token."+k] = v
 	}
 
-	userInfoResp, err := p.provider.UserInfo(c, oauth2.StaticTokenSource(token))
+	userInfoResp, err := p.oidcProvider.UserInfo(c, oauth2.StaticTokenSource(token))
 	if err != nil {
 		return "", userInfo, fmt.Errorf("failed to get userinfo: %w", err)
 	}
