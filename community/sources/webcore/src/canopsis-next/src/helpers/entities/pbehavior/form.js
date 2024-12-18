@@ -353,14 +353,14 @@ export const calendarEventToPbehaviorForm = (
    */
   form.tstart = convertDateToMoment(start)
     .tz(timezone, true)
-    .tz(pbehavior.timezone)
+    .tz(pbehaviorForm.timezone)
     .tz(localTimezone, true)
     .toDate();
 
-  if (!pbehavior || pbehavior?.tstop) {
+  if (!pbehavior || pbehaviorForm?.tstop) {
     form.tstop = convertDateToMoment(end)
       .tz(timezone, true)
-      .tz(pbehavior.timezone)
+      .tz(pbehaviorForm.timezone)
       .tz(localTimezone, true)
       .toDate();
   }
