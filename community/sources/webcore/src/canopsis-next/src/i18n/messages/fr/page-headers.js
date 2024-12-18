@@ -67,6 +67,7 @@ export default {
    */
   [USER_PERMISSIONS.technical.permission]: {
     title: 'Droits',
+    message: 'Les droits Entreprise, Affichage et Technique s\'appliquent uniquement aux utilisateurs de l\'interface utilisateur. Les droits API s\'appliquent uniquement aux utilisateurs API.',
   },
   [USER_PERMISSIONS.technical.role]: {
     title: 'Rôles',

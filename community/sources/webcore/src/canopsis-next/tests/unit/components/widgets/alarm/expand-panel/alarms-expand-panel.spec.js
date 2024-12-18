@@ -46,7 +46,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     name: 'auth',
     getters: {
       currentUserPermissionsById: {
-        [USER_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [] },
+        [USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: { actions: [] },
       },
     },
   };

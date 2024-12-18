@@ -316,6 +316,8 @@ export const createAuthModule = () => {
     .mockReturnValue({});
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
+  const currentUserViewPermissionsByViewId = jest.fn()
+    .mockReturnValue({});
   const login = jest.fn();
   const fetchCurrentUser = jest.fn();
 
@@ -324,6 +326,7 @@ export const createAuthModule = () => {
     getters: {
       currentUser,
       currentUserPermissionsById,
+      currentUserViewPermissionsByViewId,
     },
     actions: {
       login,
@@ -342,6 +345,7 @@ export const createAuthModule = () => {
     authModule,
     currentUser,
     currentUserPermissionsById,
+    currentUserViewPermissionsByViewId,
     login,
     fetchCurrentUser,
   };
