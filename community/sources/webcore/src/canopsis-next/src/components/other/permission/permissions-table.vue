@@ -77,7 +77,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
 
-    const items = computed(() => sortBy(Object.values(props.treeviewPermissions), 'position').map((item) => {
+    const items = computed(() => sortBy(Object.values(props.treeviewPermissions).map((item) => {
       let { title } = item;
 
       if (!title) {
@@ -89,7 +89,7 @@ export default {
 
         title,
       };
-    }));
+    }), ['position', 'title']));
 
     const headers = computed(() => [
       { text: '', sortable: false },
