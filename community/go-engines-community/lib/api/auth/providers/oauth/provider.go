@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -63,6 +64,7 @@ func NewProvider(
 	maintenanceAdapter config.MaintenanceAdapter,
 	enforcer security.Enforcer,
 	tokenService apisecurity.TokenService,
+	logger zerolog.Logger,
 	maxResponseSize int64,
 ) (Provider, error) {
 	p := &provider{
@@ -86,6 +88,7 @@ func NewProvider(
 		config:          config,
 		source:          name,
 		maxResponseSize: maxResponseSize,
+		logger:          logger,
 	}
 
 	if config.OpenID {
@@ -462,14 +465,24 @@ func (p *provider) getUserInfoOAuth2(c context.Context, token *oauth2.Token) (st
 
 func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idToken *oidc.IDToken) (string, map[string]any, error) {
 	userInfo := make(map[string]any)
-	claims := make(map[string]any)
+	tokenClaims := make(map[string]any)
+	userInfoClaims := make(map[string]any)
 
-	err := idToken.Claims(&claims)
+	err := idToken.Claims(&tokenClaims)
 	if err != nil {
 		return "", userInfo, fmt.Errorf("failed to decode token claims: %w", err)
 	}
 
-	for k, v := range claims {
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		b, err := json.Marshal(tokenClaims)
+		if err != nil {
+			return "", userInfo, fmt.Errorf("failed to json marshal token claims: %w", err)
+		}
+
+		p.logger.Debug().RawJSON("token_claims", b).Msg("token claims")
+	}
+
+	for k, v := range tokenClaims {
 		userInfo["token."+k] = v
 	}
 
@@ -478,13 +491,31 @@ func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idT
 		return "", userInfo, fmt.Errorf("failed to get userinfo: %w", err)
 	}
 
-	err = userInfoResp.Claims(&claims)
+	err = userInfoResp.Claims(&userInfoClaims)
 	if err != nil {
 		return "", userInfo, fmt.Errorf("failed to decode user info claims: %w", err)
 	}
 
-	for k, v := range claims {
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		b, err := json.Marshal(userInfoClaims)
+		if err != nil {
+			return "", userInfo, fmt.Errorf("failed to json marshal user info response: %w", err)
+		}
+
+		p.logger.Debug().RawJSON("user_info_response", b).Msg("user info response")
+	}
+
+	for k, v := range userInfoClaims {
 		userInfo["user."+k] = v
+	}
+
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		b, err := json.Marshal(userInfo)
+		if err != nil {
+			return "", userInfo, fmt.Errorf("failed to json marshal user info map: %w", err)
+		}
+
+		p.logger.Debug().RawJSON("user_info_map", b).Msg("user info map")
 	}
 
 	return idToken.Subject, userInfo, nil

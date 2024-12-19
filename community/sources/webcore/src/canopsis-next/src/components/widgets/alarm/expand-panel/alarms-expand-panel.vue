@@ -81,9 +81,9 @@
             :alarm="alarm"
             :template="widget.parameters.moreInfoTemplate"
             :template-id="moreInfosTemplateId"
-            :selected-tag="selectedTag"
+            :selected-tags="selectedTags"
             @select:tag="$emit('select:tag', $event)"
-            @clear:tag="$emit('clear:tag')"
+            @remove:tag="$emit('remove:tag', $event)"
           />
         </alarms-expand-panel-tab-item-wrapper>
       </v-tab-item>
@@ -283,9 +283,9 @@ export default {
       type: String,
       default: '',
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

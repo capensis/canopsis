@@ -33,6 +33,7 @@ const stubs = {
   'c-pagination': true,
   'c-density-btn-toggle': true,
   'c-table-pagination': true,
+  'c-alarm-tag-field': true,
   'mass-actions-panel': true,
   'alarms-list-table': {
     template: `
@@ -55,12 +56,14 @@ const snapshotStubs = {
   'alarms-list-table': true,
   'c-table-pagination': true,
   'c-density-btn-toggle': true,
+  'c-alarm-tag-field': true,
   'mass-actions-panel': true,
 };
 
 const selectVSwitch = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
+const selectAlarmTagField = wrapper => wrapper.find('c-alarm-tag-field-stub');
 const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
 const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
@@ -479,6 +482,51 @@ describe('alarms-list', () => {
 
           page: 1,
           only_bookmarks: !userPreferences.content.onlyBookmarks,
+        },
+      },
+    );
+  });
+
+  it('Tags updated after trigger alarm tag field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    const newTags = [Faker.datatype.string(), Faker.datatype.string()];
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const tagField = selectAlarmTagField(wrapper);
+
+    tagField.triggerCustomEvent('input', newTags);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            tags: newTags,
+          },
+        },
+      },
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+
+          page: 1,
+          tags: newTags,
         },
       },
     );

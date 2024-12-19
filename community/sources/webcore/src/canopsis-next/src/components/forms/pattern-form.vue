@@ -4,6 +4,7 @@
       v-field="form.title"
       :label="$t('common.title')"
       name="title"
+      autofocus
       required
     />
     <c-alarm-patterns-field

@@ -93,7 +93,10 @@ type BaseFilterRequest struct {
 	Opened      *bool             `form:"opened" json:"opened"`
 	OnlyParents bool              `form:"correlation" json:"correlation"`
 	Category    string            `form:"category" json:"category"`
-	Tag         string            `form:"tag" json:"tag"`
+
+	// Tag is deprecated, please use tags[] parameter
+	Tag  string   `form:"tag" json:"tag"`
+	Tags []string `form:"tags[]" json:"tags"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
@@ -320,6 +323,7 @@ type AlarmValue struct {
 	ChangeState *common.AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []common.AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	Ticket      *common.AlarmStep  `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Comments    []common.AlarmStep `bson:"comments,omitempty" json:"comments,omitempty"`
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	Steps       []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
 

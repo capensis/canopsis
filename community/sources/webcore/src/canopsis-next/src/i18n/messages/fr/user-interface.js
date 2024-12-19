@@ -15,6 +15,7 @@ export default {
   disabledTransitions: 'Désactivez certaines animations',
   disabledTransitionsTooltip: 'Cela aidera à améliorer les performances de l\'application',
   autoSuggestPbehaviorName: 'Proposer automatiquement un nom de comportement périodique',
+  defaultTheme: 'Thème par défaut',
   tooltips: {
     maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
     checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',

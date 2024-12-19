@@ -4,6 +4,7 @@
       v-field="form.comment"
       :label="$tc('common.comment')"
       name="comment"
+      autofocus
       required
     />
     <c-pbehavior-reason-field

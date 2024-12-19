@@ -160,6 +160,7 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
     category,
     mainFilter,
     isCorrelationEnabled,
+    tags,
     onlyBookmarks = false,
   } = content;
 
@@ -167,6 +168,7 @@ export function convertAlarmUserPreferenceToQuery({ content }) {
     category,
     filter: mainFilter,
     only_bookmarks: onlyBookmarks,
+    tags,
   };
 
   if (!isUndefined(isCorrelationEnabled)) {

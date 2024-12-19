@@ -365,6 +365,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="delete"
                 />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-0"
+                />
               </div>
             </td>
           </tr>
@@ -439,6 +443,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="delete"
                 />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-1"
+                />
               </div>
             </td>
           </tr>
@@ -510,6 +518,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 />
                 <c-action-btn-stub
                   type="delete"
+                />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-2"
                 />
               </div>
             </td>
@@ -585,6 +597,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="delete"
                 />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-3"
+                />
               </div>
             </td>
           </tr>
@@ -656,6 +672,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 />
                 <c-action-btn-stub
                   type="delete"
+                />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-4"
                 />
               </div>
             </td>
@@ -731,6 +751,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="delete"
                 />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-5"
+                />
               </div>
             </td>
           </tr>
@@ -802,6 +826,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 />
                 <c-action-btn-stub
                   type="delete"
+                />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-6"
                 />
               </div>
             </td>
@@ -877,6 +905,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 <c-action-btn-stub
                   type="delete"
                 />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-7"
+                />
               </div>
             </td>
           </tr>
@@ -948,6 +980,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 />
                 <c-action-btn-stub
                   type="delete"
+                />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-8"
                 />
               </div>
             </td>
@@ -1022,6 +1058,10 @@ exports[`declare-ticket-rules-list Renders \`declare-ticket-rules-list\` with cu
                 />
                 <c-action-btn-stub
                   type="delete"
+                />
+                <c-db-export-btn-stub
+                  declare-ticket=""
+                  id="c0ed9d92-67eb-4dc7-a2ab-9a551d45b9bf-9"
                 />
               </div>
             </td>

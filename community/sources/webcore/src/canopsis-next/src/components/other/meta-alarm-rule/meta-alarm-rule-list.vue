@@ -12,12 +12,13 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
+    <template #mass-actions="{ selected, selectedKeys }">
       <c-action-btn
         v-if="removable"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
+      <c-db-export-btn :ids="selectedKeys" meta-alarm-rule />
     </template>
     <template #auto_resolve="{ item }">
       <c-enabled :value="item.auto_resolve" />
@@ -54,6 +55,7 @@
           type="delete"
           @click="$emit('remove', item._id)"
         />
+        <c-db-export-btn :id="item._id" meta-alarm-rule />
       </v-layout>
     </template>
     <template #expand="{ item }">

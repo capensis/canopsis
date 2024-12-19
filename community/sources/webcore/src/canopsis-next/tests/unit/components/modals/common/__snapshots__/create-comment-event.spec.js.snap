@@ -24,6 +24,7 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
       >
         <!---->
         <c-name-field
+          autofocus=""
           label="Comment"
           name="comment"
           required=""
@@ -89,6 +90,7 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
           role="separator"
         />
         <c-name-field
+          autofocus=""
           label="Comment"
           name="comment"
           required=""

@@ -8,6 +8,7 @@
       v-field="form.name"
       :disabled="!!form._id"
       required
+      autofocus
     />
     <role-type-field v-field="form.type" />
     <v-text-field

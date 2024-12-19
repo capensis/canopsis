@@ -20,6 +20,7 @@
     <c-name-field
       v-field="form.name"
       :disabled="disabledCommon"
+      autofocus
     />
     <v-text-field
       v-field="form.description"
@@ -39,6 +40,7 @@
           :label="$t('remediation.instruction.timeoutAfterExecution')"
           :units-label="$t('common.unit')"
           :disabled="disabled"
+          :autofocus="disabledCommon"
           name="timeout_after_execution"
           required
         />

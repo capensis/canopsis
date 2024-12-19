@@ -14,6 +14,7 @@
             v-model="form.comment"
             :label="$tc('common.comment')"
             name="comment"
+            autofocus
             required
           />
         </v-layout>

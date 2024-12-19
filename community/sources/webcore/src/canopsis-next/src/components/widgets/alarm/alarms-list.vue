@@ -72,6 +72,15 @@
           @change="updateOnlyBookmarks"
         />
       </v-flex>
+      <v-flex xs3>
+        <c-alarm-tag-field
+          :value="query.tags"
+          :label="$tc('common.tag', 2)"
+          :show-count="2"
+          combobox
+          @input="updateTags"
+        />
+      </v-flex>
       <v-flex v-if="hasAccessToUserRemediationInstructionsFilter">
         <alarms-list-remediation-instructions-filters
           :filters.sync="remediationInstructionsFilters"
@@ -118,7 +127,7 @@
       :sticky-header="widget.parameters.sticky_header"
       :dense="dense"
       :refresh-alarms-list="fetchList"
-      :selected-tag="query.tag"
+      :selected-tags="query.tags"
       :search="query.search"
       :selectable="!hideMassSelection"
       :hide-actions="hideActions"
@@ -135,7 +144,7 @@
       @update:items-per-page="updateItemsPerPage"
       @update:columns-settings="updateColumnsSettings"
       @update:pagination-options="updatePaginationOptions"
-      @clear:tag="clearTag"
+      @remove:tag="removeTag"
     />
   </div>
 </template>
@@ -297,23 +306,6 @@ export default {
       }
     },
 
-    selectTag(tag) {
-      this.query = {
-        ...this.query,
-
-        page: 1,
-        tag,
-      };
-    },
-
-    clearTag() {
-      const newQuery = omit(this.query, ['tag']);
-
-      newQuery.page = 1;
-
-      this.query = newQuery;
-    },
-
     updateColumnsSettings(columnsSettings) {
       this.updateContentInUserPreference({ columns_settings: columnsSettings });
     },
@@ -327,6 +319,25 @@ export default {
         page: 1,
         correlation,
       };
+    },
+
+    updateTags(tags) {
+      this.updateContentInUserPreference({ tags });
+
+      this.query = {
+        ...this.query,
+
+        page: 1,
+        tags,
+      };
+    },
+
+    selectTag(tag) {
+      this.updateTags([...(this.query.tags || []), tag]);
+    },
+
+    removeTag(tag) {
+      this.updateTags((this.query.tags || []).filter(queryTag => queryTag !== tag));
     },
 
     updateOnlyBookmarks(onlyBookmarks) {

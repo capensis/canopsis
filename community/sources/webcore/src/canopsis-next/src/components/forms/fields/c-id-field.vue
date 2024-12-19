@@ -2,6 +2,7 @@
   <v-text-field
     v-validate="rules"
     v-field="value"
+    v-bind="$attrs"
     :label="label || $t('common.id')"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
@@ -25,6 +26,7 @@
 <script>
 export default {
   inject: ['$validator'],
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',

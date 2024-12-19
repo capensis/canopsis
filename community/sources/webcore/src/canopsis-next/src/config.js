@@ -58,7 +58,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
     'router-link': ['href', 'name', 'target', 'to'],
     'c-alarm-chip': ['value'],
     'c-alarm-tags-chips': [
-      ':alarm', ':selected-tag', 'name-filter', 'regex-filter', 'regex-filter-flags', 'closable-active', 'inline-count',
+      ':alarm', ':selected-tags', 'name-filter', 'regex-filter', 'regex-filter-flags', 'closable-active', 'inline-count',
       '@select', '@close',
     ],
     'c-entity-tags-chips': [':entity', 'inline-count'],
@@ -187,6 +187,7 @@ export const API_ROUTES = {
   alarmTag: {
     list: '/api/v4/alarm-tags',
     bulkList: '/api/v4/bulk/alarm-tags',
+    label: '/api/v4/alarm-tag-labels',
   },
   contextExport: '/api/v4/entity-export',
   event: '/api/v4/event',
@@ -301,6 +302,24 @@ export const API_ROUTES = {
     status: '/api/v4/healthcheck/status',
     enginesOrder: '/api/v4/healthcheck/engines-order',
     parameters: '/api/v4/healthcheck/parameters',
+  },
+  dbExport: {
+    pbehaviors: '/api/v4/pbehaviors-db-export',
+    eventFilters: '/api/v4/eventfilter-db-export',
+    linkRules: '/api/v4/link-rules-db-export',
+    idleRules: '/api/v4/idle-rules-db-export',
+    flappingRules: '/api/v4/flapping-rules-db-export',
+    scenarios: '/api/v4/scenarios-db-export',
+
+    /**
+     * Cat routes for export
+     */
+    dynamicInfos: '/api/v4/cat/dynamic-infos-db-export',
+    declareTickets: '/api/v4/cat/declare-ticket-rules-db-export',
+    metaAlarmRules: '/api/v4/cat/metaalarmrules-db-export',
+    instructions: '/api/v4/cat/instructions-db-export',
+    jobs: '/api/v4/cat/jobs-db-export',
+    jobConfigs: '/api/v4/cat/job-configs-db-export',
   },
 
   /**
