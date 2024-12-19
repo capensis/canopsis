@@ -169,7 +169,7 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 			router.GET("/api/v4/saml/slo", p.SamlSloHandler())
 		case libsecurity.AuthMethodOAuth2:
 			for name, conf := range s.config.Security.OAuth2.Providers {
-				p, err := oauth.NewProvider(
+				p := oauth.NewProvider(
 					ctx,
 					name,
 					roleprovider.NewRoleProvider(client),
@@ -182,10 +182,6 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 					s.logger,
 					s.globalConfig.Global.MaxExternalResponseSize,
 				)
-				if err != nil {
-					s.logger.Err(err).Str("provider", name).Msg("RegisterCallbackRoutes: failed to create oauth2 provider")
-					panic(err)
-				}
 
 				router.GET("/api/v4/oauth/"+name+"/login", p.Login)
 				router.GET("/api/v4/oauth/"+name+"/callback", p.Callback)
