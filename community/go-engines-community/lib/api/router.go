@@ -228,7 +228,7 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
-		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider))
+		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider), logger)
 		roleRouter := protected.Group("/roles")
 		{
 			roleRouter.POST("",
@@ -1862,6 +1862,14 @@ func RegisterRoutes(
 					entityserviceAPI.BulkDelete,
 				)
 			}
+
+			bulkRouter.PUT(
+				"/role-permissions",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
+				middleware.PreProcessBulk(apiConfigProvider, false),
+				roleApi.BulkUpdatePermissions,
+				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			)
 
 			userRouter := bulkRouter.Group("/users")
 			{

@@ -325,7 +325,7 @@ const permGroups = [
         "position": 59
     },
     {
-        "_id": "api_pbehavior",
+        "_id": "api_planning",
         "position": 60
     }
 ];
@@ -727,28 +727,28 @@ const updatedPerms = [
     {
         "_id": "api_pbehavior",
         "description": "PBehaviors",
-        "groups": ["api", "api_pbehavior"],
+        "groups": ["api", "api_planning"],
         "name": "api_pbehavior",
         "type": "CRUD"
     },
     {
         "_id": "api_pbehaviortype",
         "description": "PBehavior types",
-        "groups": ["api", "api_pbehavior"],
+        "groups": ["api", "api_planning"],
         "name": "api_pbehaviortype",
         "type": "CRUD"
     },
     {
         "_id": "api_pbehaviorreason",
         "description": "PBehavior reasons",
-        "groups": ["api", "api_pbehavior"],
+        "groups": ["api", "api_planning"],
         "name": "api_pbehaviorreason",
         "type": "CRUD"
     },
     {
         "_id": "api_pbehaviorexception",
         "description": "PBehavior exceptions",
-        "groups": ["api", "api_pbehavior"],
+        "groups": ["api", "api_planning"],
         "name": "api_pbehaviorexception",
         "type": "CRUD"
     },
@@ -1442,15 +1442,6 @@ const updatedPerms = [
         }
     },
     {
-        "_id": "listalarm_listPbehavior",
-        "description": "Browse pbehavior list",
-        "groups": ["widgets", "widgets_alarmslist", "widgets_alarmslist_alarmactions"],
-        "name": "listalarm_listPbehavior",
-        "api_permissions": {
-            "api_pbehavior": 4
-        }
-    },
-    {
         "_id": "listalarm_declareanIncident",
         "description": "Declare ticket",
         "groups": ["widgets", "widgets_alarmslist", "widgets_alarmslist_alarmactions"],
@@ -1660,15 +1651,6 @@ const updatedPerms = [
         "name": "crudcontext_pbehavior",
         "api_permissions": {
             "api_pbehavior": 8
-        }
-    },
-    {
-        "_id": "crudcontext_listPbehavior",
-        "description": "Browse pbehavior list",
-        "groups": ["widgets", "widgets_context", "widgets_context_entityactions"],
-        "name": "crudcontext_listPbehavior",
-        "api_permissions": {
-            "api_pbehavior": 4
         }
     },
     {

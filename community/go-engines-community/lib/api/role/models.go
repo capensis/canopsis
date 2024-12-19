@@ -31,6 +31,11 @@ type EditRequest struct {
 	Author     string                  `json:"author" swaggerignore:"true"`
 }
 
+type BulkUpdatePermissionsRequestItem struct {
+	ID          string              `json:"_id" binding:"required"`
+	Permissions map[string][]string `json:"permissions"`
+}
+
 type Response struct {
 	ID          string       `bson:"_id" json:"_id"`
 	Name        string       `bson:"name" json:"name"`
@@ -49,15 +54,15 @@ type Response struct {
 }
 
 type Permission struct {
-	ID          string   `bson:"_id" json:"_id"`
-	Name        string   `bson:"name" json:"name"`
-	Description string   `bson:"description" json:"description"`
-	Type        string   `bson:"type" json:"type"`
-	Actions     []string `bson:"actions" json:"actions"`
+	ID      string   `bson:"_id" json:"_id"`
+	Name    string   `bson:"name" json:"name"`
+	View    string   `bson:"view" json:"view,omitempty"`
+	Type    string   `bson:"type" json:"type"`
+	Actions []string `bson:"actions" json:"actions"`
 
-	Bitmask               int64                      `bson:"bitmask" json:"-"`
-	ApiPermissions        map[string]int64           `bson:"api_permissions" json:"-"`
-	ApiPermissionsBitmask map[int64]map[string]int64 `bson:"api_permissions_bitmask" json:"-"`
+	Bitmask               int8                     `bson:"bitmask" json:"-"`
+	ApiPermissions        map[string]int8          `bson:"api_permissions" json:"-"`
+	ApiPermissionsBitmask map[int8]map[string]int8 `bson:"api_permissions_bitmask" json:"-"`
 }
 
 type View struct {
