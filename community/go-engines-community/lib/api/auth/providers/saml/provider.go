@@ -18,7 +18,7 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -91,6 +91,11 @@ func NewProvider(
 		return nil, errors.New("wrong canopsis_acs_binding value, should be post or redirect")
 	}
 
+	parsedSamlURL, err := url.Parse(config.CanopsisSamlUrl)
+	if err != nil {
+		return nil, fmt.Errorf("invalid canopsis_saml_url: %w", err)
+	}
+
 	keyPair, err := tls.LoadX509KeyPair(config.X509Cert, config.X509Key)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load x509 key pair: %w", err)
@@ -106,9 +111,9 @@ func NewProvider(
 		maintenanceAdapter: maintenanceAdapter,
 		logger:             logger,
 		keyStore:           dsig.TLSCertKeyStore(keyPair),
-		acsUrl:             config.CanopsisSamlUrl + "/acs",
-		sloUrl:             config.CanopsisSamlUrl + "/slo",
-		metadataUrl:        config.CanopsisSamlUrl + "/metadata",
+		acsUrl:             parsedSamlURL.JoinPath("acs").String(),
+		sloUrl:             parsedSamlURL.JoinPath("slo").String(),
+		metadataUrl:        parsedSamlURL.JoinPath("metadata").String(),
 	}
 
 	if config.IdpMetadataXml != "" {
@@ -119,7 +124,7 @@ func NewProvider(
 	} else {
 		err = p.loadUrlMetadata(ctx)
 		if err != nil {
-			logger.Warn().Str("err", err.Error()).Msg("failed to load idp metadata by url")
+			logger.Warn().Err(err).Msg("failed to load idp metadata by url")
 		}
 	}
 
@@ -127,13 +132,15 @@ func NewProvider(
 }
 
 func (p *provider) loadXmlMetadata() error {
-	rawMetadata, err := os.ReadFile(p.config.IdpMetadataXml)
+	f, err := os.Open(p.config.IdpMetadataXml)
 	if err != nil {
-		return fmt.Errorf("failed to read idp metadata xml file: %w", err)
+		return fmt.Errorf("failed to open idp metadata xml file: %w", err)
 	}
 
+	defer f.Close()
+
 	idpMetadata := samltypes.EntityDescriptor{}
-	err = xml.Unmarshal(rawMetadata, &idpMetadata)
+	err = xml.NewDecoder(f).Decode(&idpMetadata)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal idp metadata xml file: %w", err)
 	}
@@ -200,13 +207,8 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 
 	defer res.Body.Close()
 
-	rawMetadata, err := io.ReadAll(res.Body)
-	if err != nil {
-		return fmt.Errorf("failed to read idp metadata response: %w", err)
-	}
-
 	idpMetadata := samltypes.EntityDescriptor{}
-	err = xml.Unmarshal(rawMetadata, &idpMetadata)
+	err = xml.NewDecoder(res.Body).Decode(&idpMetadata)
 	if err != nil {
 		return fmt.Errorf("failed to unmarshal idp metadata response: %w", err)
 	}
@@ -223,10 +225,10 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 	p.samlSPAvailable = true
 
 	now := time.Now()
-	if !idpMetadata.ValidUntil.Before(now) {
+	if idpMetadata.ValidUntil.After(now) {
 		p.samlSPValidUntil = idpMetadata.ValidUntil
 	} else {
-		p.samlSPValidUntil = now.Add(providers.DefaultMetaValidDuration)
+		p.samlSPValidUntil = now.Add(auth.DefaultMetaValidDuration)
 	}
 
 	return nil
@@ -269,7 +271,7 @@ func processIdpMetadata(idpMetadata samltypes.EntityDescriptor) (string, string,
 }
 
 func (p *provider) isServiceProviderAvailable(c *gin.Context) bool {
-	if p.config.IdpMetadataUrl != "" && (!p.samlSPAvailable || p.samlSPValidUntil.Before(time.Now())) {
+	if p.config.IdpMetadataUrl != "" && (!p.samlSPAvailable || p.isSamlSPExpired()) {
 		err := p.loadUrlMetadata(c)
 		if err != nil {
 			p.logger.Warn().Str("error", err.Error()).Msg("failed to load idp metadata")
@@ -280,6 +282,10 @@ func (p *provider) isServiceProviderAvailable(c *gin.Context) bool {
 	}
 
 	return true
+}
+
+func (p *provider) isSamlSPExpired() bool {
+	return time.Now().After(p.samlSPValidUntil)
 }
 
 func (p *provider) SamlMetadataHandler() gin.HandlerFunc {
