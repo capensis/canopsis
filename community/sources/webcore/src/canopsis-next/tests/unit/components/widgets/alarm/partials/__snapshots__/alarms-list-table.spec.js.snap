@@ -270,6 +270,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <!---->
   <!---->
@@ -376,6 +377,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <c-table-pagination-stub
     items="5,10,20,50,100,200"
@@ -469,6 +471,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <c-table-pagination-stub
     items="5,10,20,50,100,200"
@@ -562,6 +565,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <c-table-pagination-stub
     items="5,10,20,50,100,200"
@@ -656,6 +660,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <c-table-pagination-stub
     items="5,10,20,50,100,200"
@@ -775,6 +780,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <c-table-pagination-stub
     items="5,10,20,50,100,200"
@@ -895,6 +901,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <c-table-pagination-stub
     items="5,10,20,50,100,200"
@@ -1109,6 +1116,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
         </table>
       </div>
     </div>
+    <!---->
   </div>
   <c-table-pagination-stub
     items="5,10,20,50,100,200"

@@ -221,6 +221,7 @@ export default {
       + '</dl>',
   },
   stickyHeader: 'En-tête collant',
+  stickyHorizontalScroll: 'Défilement horizontal fixe',
   reportFileRegexp: {
     title: 'Masque de fichier de rapport',
     helpText: '<dl>'
