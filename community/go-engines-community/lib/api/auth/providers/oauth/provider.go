@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth/providers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -69,7 +69,7 @@ func NewProvider(
 	tokenService apisecurity.TokenService,
 	logger zerolog.Logger,
 	maxResponseSize int64,
-) (Provider, error) {
+) Provider {
 	p := &provider{
 		name:               name,
 		roleProvider:       roleValidator,
@@ -97,11 +97,11 @@ func NewProvider(
 	if config.OpenID {
 		err := p.loadOpenIDMetadata(ctx)
 		if err != nil {
-			p.logger.Warn().Str("err", err.Error()).Msg("failed to load openid metadata")
+			p.logger.Warn().Err(err).Msg("failed to load openid metadata")
 		}
 	}
 
-	return p, nil
+	return p
 }
 
 func (p *provider) loadOpenIDMetadata(ctx context.Context) error {
@@ -123,13 +123,13 @@ func (p *provider) loadOpenIDMetadata(ctx context.Context) error {
 
 	p.oidcVerifier = p.oidcProvider.Verifier(&oidc.Config{ClientID: p.config.ClientID})
 	p.oauth2Config.Endpoint = p.oidcProvider.Endpoint()
-	p.oidcProviderValidUntil = time.Now().Add(providers.DefaultMetaValidDuration)
+	p.oidcProviderValidUntil = time.Now().Add(auth.DefaultMetaValidDuration)
 
 	return nil
 }
 
 func (p *provider) isOpenIDProviderAvailable(c *gin.Context) bool {
-	if p.config.OpenID && (p.oidcProvider == nil || p.oidcProviderValidUntil.Before(time.Now())) {
+	if p.config.OpenID && (p.oidcProvider == nil || p.isOpenIDProviderExpired()) {
 		err := p.loadOpenIDMetadata(c)
 		if err != nil {
 			p.logger.Warn().Str("error", err.Error()).Msg("failed to load openid metadata")
@@ -140,6 +140,10 @@ func (p *provider) isOpenIDProviderAvailable(c *gin.Context) bool {
 	}
 
 	return true
+}
+
+func (p *provider) isOpenIDProviderExpired() bool {
+	return time.Now().After(p.oidcProviderValidUntil)
 }
 
 func (p *provider) Login(c *gin.Context) {
