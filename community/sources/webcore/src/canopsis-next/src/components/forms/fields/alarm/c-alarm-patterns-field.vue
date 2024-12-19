@@ -511,6 +511,10 @@ export default {
           options: this.initiatorOptions,
         },
         {
+          value: ALARM_PATTERN_FIELDS.lastCommentAuthor,
+          options: this.stringWithOneOfOptions,
+        },
+        {
           value: ALARM_PATTERN_FIELDS.tags,
           options: this.tagsOptions,
         },

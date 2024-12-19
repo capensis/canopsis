@@ -25,6 +25,7 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {number} [check_count_request_timeout]
  * @property {boolean} [disabled_transitions]
  * @property {boolean} [auto_suggest_pbehavior_name]
+ * @property {string} [default_color_theme = '']
  */
 
 /**
@@ -75,4 +76,5 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   popup_timeout: userInterfacePopupTimeoutToForm(userInterface.popup_timeout),
   disabled_transitions: userInterface.disabled_transitions ?? false,
   auto_suggest_pbehavior_name: userInterface.auto_suggest_pbehavior_name ?? false,
+  default_color_theme: userInterface.default_color_theme?._id ?? '',
 });

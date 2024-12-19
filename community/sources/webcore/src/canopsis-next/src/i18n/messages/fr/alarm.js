@@ -19,6 +19,7 @@ export default {
   hasBookmark: 'L\'alarme a un signet',
   filterByBookmark: 'Filtrer par signet',
   runTest: 'Exécuter le test',
+  tagFilter: 'Filtre de balises',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
     addBookmarkSuccess: 'Le signet a été ajouté',
@@ -177,6 +178,7 @@ export default {
     initialOutput: 'Sortie initiale longue',
     initialLongOutput: 'Sortie longue initiale',
     lastCommentInitiator: 'Initiateur du dernier commentaire',
+    lastCommentAuthor: 'Auteur du dernier commentaire',
     ackBy: 'Acquitté par',
     ackMessage: 'Message de l\'acquittement',
     ackInitiator: 'Origine de l\'acquittement',

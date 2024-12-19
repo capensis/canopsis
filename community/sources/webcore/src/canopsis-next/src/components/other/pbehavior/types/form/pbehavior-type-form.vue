@@ -3,6 +3,7 @@
     <c-name-field
       v-field="form.name"
       :disabled="onlyColor"
+      autofocus
     />
     <v-text-field
       v-field="form.description"

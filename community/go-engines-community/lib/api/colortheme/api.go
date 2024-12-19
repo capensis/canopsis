@@ -116,7 +116,7 @@ func (a *api) Update(c *gin.Context) {
 
 	theme, err := a.store.Update(c, request)
 	if err != nil {
-		if errors.Is(err, ErrDefaultTheme) {
+		if errors.Is(err, ErrCanopsisDefaultTheme) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
@@ -141,7 +141,7 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
-		if errors.Is(err, ErrDefaultTheme) {
+		if errors.Is(err, ErrCanopsisDefaultTheme) || errors.Is(err, ErrDefaultTheme) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
