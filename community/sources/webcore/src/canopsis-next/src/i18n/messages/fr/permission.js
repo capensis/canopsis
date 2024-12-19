@@ -314,6 +314,7 @@ export default {
     [USER_PERMISSIONS.api.general.datastorageUpdate]: 'Mise à jour des paramètres de stockage des données',
     [USER_PERMISSIONS.api.general.entity]: 'Entités',
     [USER_PERMISSIONS.api.general.entitycategory]: 'Catégories d\'entités',
+    [USER_PERMISSIONS.api.general.entitycomment]: 'Commentaires d\'entités',
     [USER_PERMISSIONS.api.general.entityservice]: 'Services d\'entités',
     [USER_PERMISSIONS.api.general.event]: 'Événements',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Exporter les configurations',
