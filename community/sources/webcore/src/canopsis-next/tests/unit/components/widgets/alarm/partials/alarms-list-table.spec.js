@@ -213,7 +213,7 @@ describe('alarms-list-table', () => {
     expect(addEventListener).toHaveBeenNthCalledWith(
       6,
       'scroll',
-      wrapper.vm.changeHeaderPosition,
+      wrapper.vm.stickyScrollHandler,
     );
 
     expect(addEventListener).toHaveBeenNthCalledWith(
@@ -249,7 +249,7 @@ describe('alarms-list-table', () => {
       stickyHeader: false,
     });
 
-    expect(removeEventListener).toHaveBeenNthCalledWith(1, 'scroll', wrapper.vm.changeHeaderPosition);
+    expect(removeEventListener).toHaveBeenNthCalledWith(1, 'scroll', wrapper.vm.stickyScrollHandler);
     removeEventListener.mockClear();
 
     wrapper.destroy();
@@ -259,7 +259,7 @@ describe('alarms-list-table', () => {
     expect(removeEventListener).toHaveBeenNthCalledWith(
       1,
       'scroll',
-      wrapper.vm.changeHeaderPosition,
+      wrapper.vm.stickyScrollHandler,
     );
     expect(removeEventListener).toHaveBeenNthCalledWith(
       2,

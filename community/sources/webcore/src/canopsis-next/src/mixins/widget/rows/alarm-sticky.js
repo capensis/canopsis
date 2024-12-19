@@ -209,8 +209,11 @@ export const widgetStickyAlarmMixin = {
 
       this.calculateStickyPositions();
       this.setHeaderPosition();
-      this.setHorizontalScrollbarWidth();
-      this.setHorizontalScrollPosition();
+
+      if (this.stickyHorizontalScroll) {
+        this.setHorizontalScrollbarWidth();
+        this.setHorizontalScrollPosition();
+      }
 
       if (!this.actionsTranslateY || !this.translateY) {
         this.finishScrollingForHeader();
