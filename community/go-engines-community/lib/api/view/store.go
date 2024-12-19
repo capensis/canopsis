@@ -20,7 +20,12 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
-const defaultTabTitle = "Default"
+const (
+	defaultTabTitle = "Default"
+
+	permNameGeneral = "view_general"
+	permNameActions = "view_actions"
+)
 
 type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
@@ -238,7 +243,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		if !oldView.IsPrivate {
-			err = s.updatePermissions(ctx, *response)
+			err = s.updatePermissions(ctx, response.ID, response.Group.ID, response.Title)
 		}
 
 		return err
@@ -312,6 +317,7 @@ func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (boo
 		res = false
 		var err error
 		res, err = s.updatePositions(ctx, r)
+
 		return err
 	})
 
@@ -333,6 +339,13 @@ func (s *store) updatePositions(ctx context.Context, r EditPositionRequest) (boo
 	err = s.writePositions(ctx, newGroupPositions, newViewPositions, changedViewGroup)
 	if err != nil {
 		return false, err
+	}
+
+	for id, groupID := range changedViewGroup {
+		err = s.updatePermissions(ctx, id, groupID, "")
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return true, nil
@@ -840,22 +853,40 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	newPermissions := make([]interface{}, 0, len(views))
 	setRole := bson.M{}
 	for viewID, viewTitle := range views {
-		newPermissions = append(newPermissions, bson.M{
-			"_id":         viewID,
-			"name":        viewID,
-			"description": viewTitle,
-			"type":        securitymodel.ObjectTypeRW,
-			"groups": []string{
-				libview.PermissionGroupCommonViews,
-				viewGroups[viewID],
+		newPermActionsID := utils.NewID()
+		newPermissions = append(newPermissions,
+			bson.M{
+				"_id":         viewID,
+				"name":        permNameGeneral,
+				"view":        viewID,
+				"description": viewTitle,
+				"type":        securitymodel.ObjectTypeRW,
+				"groups": []string{
+					libview.PermissionGroupCommonViews,
+					viewGroups[viewID],
+					viewID,
+				},
 			},
-		})
+			bson.M{
+				"_id":         newPermActionsID,
+				"name":        permNameActions,
+				"view":        viewID,
+				"description": viewTitle,
+				"groups": []string{
+					libview.PermissionGroupCommonViews,
+					viewGroups[viewID],
+					viewID,
+				},
+			},
+		)
 		setRole["permissions."+viewID] = securitymodel.PermissionBitmaskRead |
 			securitymodel.PermissionBitmaskUpdate |
 			securitymodel.PermissionBitmaskDelete
+		setRole["permissions."+newPermActionsID] = securitymodel.PermissionBitmaskCan
 		setRole["author"] = userID
 		setRole["updated"] = datetime.NewCpsTime()
 	}
+
 	_, err := s.permissionCollection.InsertMany(ctx, newPermissions)
 	if err != nil {
 		return err
@@ -888,16 +919,21 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	return err
 }
 
-func (s *store) updatePermissions(ctx context.Context, view Response) error {
-	_, err := s.permissionCollection.UpdateOne(ctx,
-		bson.M{"_id": view.ID},
-		bson.M{"$set": bson.M{
-			"description": view.Title,
-			"groups": []string{
-				libview.PermissionGroupCommonViews,
-				view.Group.ID,
-			},
-		}},
+func (s *store) updatePermissions(ctx context.Context, viewID, viewGroupID, viewTitle string) error {
+	set := bson.M{
+		"groups": []string{
+			libview.PermissionGroupCommonViews,
+			viewGroupID,
+			viewID,
+		},
+	}
+	if viewTitle != "" {
+		set["description"] = viewTitle
+	}
+
+	_, err := s.permissionCollection.UpdateMany(ctx,
+		bson.M{"view": viewID},
+		bson.M{"$set": set},
 	)
 
 	return err
@@ -937,7 +973,7 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID], viewID)
 
 	viewPositions := make([]string, 0)
-	for id := range viewPositionsByGroup {
+	for _, id := range groupPositions {
 		viewPositions = append(viewPositions, viewPositionsByGroup[id]...)
 	}
 

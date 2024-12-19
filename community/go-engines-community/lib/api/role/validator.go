@@ -10,10 +10,12 @@ import (
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Validator interface {
 	ValidateEditRequest(ctx context.Context, sl validator.StructLevel)
+	ValidateBulkUpdatePermissionsRequestItem(ctx context.Context, sl validator.StructLevel)
 }
 
 type baseValidator struct {
@@ -43,25 +45,46 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 			}
 		}
 	}
-	// Validate permissions
-	if len(r.Permissions) == 0 {
+
+	v.validatePermissions(ctx, sl, r.Type, r.Permissions)
+}
+
+func (v *baseValidator) ValidateBulkUpdatePermissionsRequestItem(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(BulkUpdatePermissionsRequestItem)
+	var roleType string
+	if r.ID != "" {
+		var role Response
+		err := v.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}, options.FindOne().SetProjection(bson.M{"type": 1})).
+			Decode(&role)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			panic(err)
+		}
+
+		roleType = role.Type
+	}
+
+	v.validatePermissions(ctx, sl, roleType, r.Permissions)
+}
+
+func (v *baseValidator) validatePermissions(ctx context.Context, sl validator.StructLevel, roleType string, permissions map[string][]string) {
+	if len(permissions) == 0 {
 		return
 	}
 
-	perms, _, err := getPermissions(ctx, v.dbPermissionCollection, r.Permissions)
+	perms, _, err := getPermissions(ctx, v.dbPermissionCollection, permissions)
 	if err != nil {
 		panic(err)
 	}
 
-	for id, actions := range r.Permissions {
-		switch r.Type {
+	for id, actions := range permissions {
+		switch roleType {
 		case TypeUI:
 			if strings.HasPrefix(id, PermissionAPIPrefix) {
-				sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "not_ui_perm", "")
+				sl.ReportError(permissions[id], "Permissions."+id, "Permissions."+id, "not_ui_perm", "")
 			}
 		case TypeAPI:
 			if !strings.HasPrefix(id, PermissionAPIPrefix) {
-				sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "not_api_perm", "")
+				sl.ReportError(permissions[id], "Permissions."+id, "Permissions."+id, "not_api_perm", "")
 			}
 		}
 
@@ -70,7 +93,7 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 			switch perm.Type {
 			case "":
 				if len(actions) > 0 {
-					sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "must_be_empty", "")
+					sl.ReportError(permissions[id], "Permissions."+id, "Permissions."+id, "must_be_empty", "")
 				}
 			case securitymodel.ObjectTypeCRUD:
 				validActions = []string{
@@ -98,12 +121,12 @@ func (v *baseValidator) ValidateEditRequest(ctx context.Context, sl validator.St
 					}
 
 					if !found {
-						sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "oneof", strings.Join(validActions, " "))
+						sl.ReportError(permissions[id], "Permissions."+id, "Permissions."+id, "oneof", strings.Join(validActions, " "))
 					}
 				}
 			}
 		} else {
-			sl.ReportError(r.Permissions[id], "Permissions."+id, "Permissions."+id, "not_exist", "")
+			sl.ReportError(permissions[id], "Permissions."+id, "Permissions."+id, "not_exist", "")
 		}
 	}
 }

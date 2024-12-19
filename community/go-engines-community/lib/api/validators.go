@@ -197,6 +197,7 @@ func RegisterValidators(client mongo.DbClient) {
 
 	roleValidator := role.NewValidator(client)
 	v.RegisterStructValidationCtx(roleValidator.ValidateEditRequest, role.EditRequest{})
+	v.RegisterStructValidationCtx(roleValidator.ValidateBulkUpdatePermissionsRequestItem, role.BulkUpdatePermissionsRequestItem{})
 
 	userValidator := user.NewValidator(client)
 	v.RegisterStructValidationCtx(userValidator.ValidateUpdateRequest, user.UpdateRequest{})

@@ -25,6 +25,7 @@ type Store interface {
 	GetOneBy(ctx context.Context, id string) (*Response, error)
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, id string, r EditRequest) (*Response, error)
+	UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRequestItem, userID string) (bool, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	GetTemplates(ctx context.Context) ([]Template, error)
 }
@@ -186,7 +187,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 		}
 
 		if oldRole.Name == security.RoleAdmin {
-			return ErrUpdateAdminRole
+			return common.NewValidationError("name", "Admin cannot be updated.")
 		}
 
 		if oldRole.Name != r.Name {
@@ -205,7 +206,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 			}},
 		)
 		if err != nil || res.MatchedCount == 0 {
-			return nil
+			return err
 		}
 
 		role, err = s.GetOneBy(ctx, id)
@@ -217,6 +218,45 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 	}
 
 	return role, nil
+}
+
+func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRequestItem, userID string) (bool, error) {
+	now := datetime.NewCpsTime()
+	perms, widgetPerms, err := getPermissions(ctx, s.dbPermissionCollection, r.Permissions)
+	if err != nil {
+		return false, err
+	}
+
+	var res bool
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		oldRole, err := s.GetOneBy(ctx, r.ID)
+		if err != nil || oldRole == nil {
+			return err
+		}
+
+		if oldRole.Name == security.RoleAdmin {
+			return common.NewValidationError("_id", "Admin cannot be updated.")
+		}
+
+		updateRes, err := s.dbCollection.UpdateOne(ctx,
+			bson.M{"_id": r.ID},
+			bson.M{"$set": bson.M{
+				"permissions": transformPermissionsToDoc(r.Permissions, perms, widgetPerms),
+				"author":      userID,
+				"updated":     now,
+			}},
+		)
+		if err != nil || updateRes.MatchedCount == 0 {
+			return err
+		}
+
+		res = true
+
+		return nil
+	})
+
+	return res, err
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
@@ -351,11 +391,11 @@ func fillRolePermissions(role *Response) {
 	}
 }
 
-func TransformBitmaskToActions(bitmask int64, permType string) []string {
+func TransformBitmaskToActions(bitmask int8, permType string) []string {
 	actions := make([]string, 0)
 	switch permType {
 	case securitymodel.ObjectTypeCRUD:
-		actionsBitmasks := map[string]int64{
+		actionsBitmasks := map[string]int8{
 			securitymodel.PermissionCreate: securitymodel.PermissionBitmaskCreate,
 			securitymodel.PermissionRead:   securitymodel.PermissionBitmaskRead,
 			securitymodel.PermissionUpdate: securitymodel.PermissionBitmaskUpdate,
@@ -367,7 +407,7 @@ func TransformBitmaskToActions(bitmask int64, permType string) []string {
 			}
 		}
 	case securitymodel.ObjectTypeRW:
-		actionsBitmasks := map[string]int64{
+		actionsBitmasks := map[string]int8{
 			securitymodel.PermissionRead:   securitymodel.PermissionBitmaskRead,
 			securitymodel.PermissionUpdate: securitymodel.PermissionBitmaskUpdate,
 			securitymodel.PermissionDelete: securitymodel.PermissionBitmaskDelete,
@@ -384,9 +424,9 @@ func TransformBitmaskToActions(bitmask int64, permType string) []string {
 	return actions
 }
 
-func transformPermissionsToDoc(rolePermissions map[string][]string, permissions map[string]Permission, widgetPermissions map[string][]Permission) map[string]int64 {
-	doc := make(map[string]int64, len(rolePermissions))
-	actionsBitmasks := map[string]int64{
+func transformPermissionsToDoc(rolePermissions map[string][]string, permissions map[string]Permission, widgetPermissions map[string][]Permission) map[string]int8 {
+	doc := make(map[string]int8, len(rolePermissions))
+	actionsBitmasks := map[string]int8{
 		securitymodel.PermissionCreate: securitymodel.PermissionBitmaskCreate,
 		securitymodel.PermissionRead:   securitymodel.PermissionBitmaskRead,
 		securitymodel.PermissionUpdate: securitymodel.PermissionBitmaskUpdate,
@@ -399,7 +439,7 @@ func transformPermissionsToDoc(rolePermissions map[string][]string, permissions 
 			continue
 		}
 
-		bitmask := int64(0)
+		bitmask := int8(0)
 		if len(actions) == 0 {
 			if perm.Type != "" {
 				continue

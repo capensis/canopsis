@@ -5,25 +5,31 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 type API interface {
 	common.CrudAPI
 	ListTemplates(c *gin.Context)
+	BulkUpdatePermissions(c *gin.Context)
 }
 
 type api struct {
-	store Store
+	store  Store
+	logger zerolog.Logger
 }
 
 func NewApi(
 	store Store,
+	logger zerolog.Logger,
 ) API {
 	return &api{
-		store: store,
+		store:  store,
+		logger: logger,
 	}
 }
 
@@ -108,12 +114,6 @@ func (a *api) Update(c *gin.Context) {
 
 	role, err := a.store.Update(c, id, request)
 	if err != nil {
-		if errors.Is(err, ErrUpdateAdminRole) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-
-			return
-		}
-
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
@@ -152,6 +152,20 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// BulkUpdatePermissions
+// @Param body body []BulkUpdatePermissionsRequestItem true "body"
+func (a *api) BulkUpdatePermissions(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	bulk.Handler(c, func(request BulkUpdatePermissionsRequestItem) (string, error) {
+		ok, err := a.store.UpdatePermissions(c, request, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
 }
 
 // ListTemplates
