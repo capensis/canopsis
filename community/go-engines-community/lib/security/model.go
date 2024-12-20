@@ -35,15 +35,15 @@ type User struct {
 	ExternalID string `bson:"external_id"`
 	Source     string `bson:"source"`
 
-	// IdpRoles field show roles from idp, and they should be used ONLY in idp/canopsis role merging, see SetRolesFromIdp.
-	IdpRoles []string `bson:"idp_roles"`
+	// IdPRoles field show roles from idp, and they should be used ONLY in idp/canopsis role merging, see SetRolesFromIdP.
+	IdPRoles []string `bson:"idp_roles"`
 }
 
-func (u *User) SetRolesFromIdp(newIdpRoles []string, mergeRoles bool) {
+func (u *User) SetRolesFromIdP(newIdpRoles []string, mergeRoles bool) {
 	if mergeRoles {
-		idpRolesMap := make(map[string]bool, len(u.IdpRoles)+len(newIdpRoles))
+		idpRolesMap := make(map[string]bool, len(u.IdPRoles)+len(newIdpRoles))
 
-		for _, role := range u.IdpRoles {
+		for _, role := range u.IdPRoles {
 			idpRolesMap[role] = true
 		}
 
@@ -51,8 +51,8 @@ func (u *User) SetRolesFromIdp(newIdpRoles []string, mergeRoles bool) {
 			idpRolesMap[role] = true
 		}
 
-		u.IdpRoles = make([]string, len(newIdpRoles))
-		copy(u.IdpRoles, newIdpRoles)
+		u.IdPRoles = make([]string, len(newIdpRoles))
+		copy(u.IdPRoles, newIdpRoles)
 
 		for _, role := range u.Roles {
 			if !idpRolesMap[role] {
@@ -62,7 +62,7 @@ func (u *User) SetRolesFromIdp(newIdpRoles []string, mergeRoles bool) {
 
 		u.Roles = newIdpRoles
 	} else {
-		u.IdpRoles = newIdpRoles
+		u.IdPRoles = newIdpRoles
 		u.Roles = newIdpRoles
 	}
 }
