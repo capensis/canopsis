@@ -509,25 +509,26 @@ type AlarmValue struct {
 	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	Steps  AlarmSteps `bson:"steps" json:"steps"`
 
-	Component         string            `bson:"component" json:"component"`
-	Connector         string            `bson:"connector" json:"connector"`
-	ConnectorName     string            `bson:"connector_name" json:"connector_name"`
-	CreationDate      datetime.CpsTime  `bson:"creation_date" json:"creation_date"`
-	ActivationDate    *datetime.CpsTime `bson:"activation_date,omitempty" json:"activation_date,omitempty"`
-	DisplayName       string            `bson:"display_name" json:"display_name"`
-	HardLimit         *CpsNumber        `bson:"hard_limit,omitempty" json:"hard_limit,omitempty"`
-	InitialOutput     string            `bson:"initial_output" json:"initial_output"`
-	Output            string            `bson:"output" json:"output"`
-	InitialLongOutput string            `bson:"initial_long_output" json:"initial_long_output"`
-	LongOutput        string            `bson:"long_output" json:"long_output"`
-	LongOutputHistory []string          `bson:"long_output_history" json:"long_output_history"`
-	LastUpdateDate    datetime.CpsTime  `bson:"last_update_date" json:"last_update_date"`
-	LastEventDate     datetime.CpsTime  `bson:"last_event_date" json:"last_event_date"`
-	Resource          string            `bson:"resource,omitempty" json:"resource,omitempty"`
-	Resolved          *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
-	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Meta              string            `bson:"meta,omitempty" json:"meta,omitempty"`
-	MetaValuePath     string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
+	Component                   string            `bson:"component" json:"component"`
+	Connector                   string            `bson:"connector" json:"connector"`
+	ConnectorName               string            `bson:"connector_name" json:"connector_name"`
+	CreationDate                datetime.CpsTime  `bson:"creation_date" json:"creation_date"`
+	ActivationDate              *datetime.CpsTime `bson:"activation_date,omitempty" json:"activation_date,omitempty"`
+	DisplayName                 string            `bson:"display_name" json:"display_name"`
+	HardLimit                   *CpsNumber        `bson:"hard_limit,omitempty" json:"hard_limit,omitempty"`
+	InitialOutput               string            `bson:"initial_output" json:"initial_output"`
+	Output                      string            `bson:"output" json:"output"`
+	InitialLongOutput           string            `bson:"initial_long_output" json:"initial_long_output"`
+	LongOutput                  string            `bson:"long_output" json:"long_output"`
+	LongOutputHistory           []string          `bson:"long_output_history" json:"long_output_history"`
+	LastUpdateDate              datetime.CpsTime  `bson:"last_update_date" json:"last_update_date"`
+	LastEventDate               datetime.CpsTime  `bson:"last_event_date" json:"last_event_date"`
+	LastStateOrStatusUpdateDate datetime.CpsTime  `bson:"last_st_upd_dt" json:"last_state_or_status_update_date"`
+	Resource                    string            `bson:"resource,omitempty" json:"resource,omitempty"`
+	Resolved                    *datetime.CpsTime `bson:"resolved,omitempty" json:"resolved,omitempty"`
+	PbehaviorInfo               PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	Meta                        string            `bson:"meta,omitempty" json:"meta,omitempty"`
+	MetaValuePath               string            `bson:"meta_value_path,omitempty" json:"meta_value_path,omitempty"`
 
 	Parents         []string `bson:"parents" json:"parents"`
 	Children        []string `bson:"children" json:"children"`

@@ -65,7 +65,8 @@ func (p *unsnoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 					"$v.inactive_start",
 				}},
 			}},
-			"v.inactive_start": updateInactiveStart(event.Parameters.Timestamp, false, true, true, true),
+			"v.inactive_start":   updateInactiveStart(event.Parameters.Timestamp, false, true, true, true),
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 		{"$unset": "v.snooze"},
 	}
