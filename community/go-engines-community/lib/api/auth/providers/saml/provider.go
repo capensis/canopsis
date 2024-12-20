@@ -79,8 +79,8 @@ func NewProvider(
 	maintenanceAdapter config.MaintenanceAdapter,
 	logger zerolog.Logger,
 ) (Provider, error) {
-	if config.IdpMetadataUrl != "" && config.IdpMetadataXml != "" {
-		return nil, errors.New("should provide only idp metadata url or xml, not both")
+	if config.IdPMetadataUrl != "" && config.IdPMetadataXml != "" {
+		return nil, errors.New("should provide only IdP metadata url or xml, not both")
 	}
 
 	if config.CanopsisSSOBinding != BindingRedirect && config.CanopsisSSOBinding != BindingPOST {
@@ -116,15 +116,15 @@ func NewProvider(
 		metadataUrl:        parsedSamlURL.JoinPath("metadata").String(),
 	}
 
-	if config.IdpMetadataXml != "" {
+	if config.IdPMetadataXml != "" {
 		err = p.loadXmlMetadata()
 		if err != nil {
-			return nil, fmt.Errorf("failed to load idp metadata by xml: %w", err)
+			return nil, fmt.Errorf("failed to load IdP metadata by xml: %w", err)
 		}
 	} else {
 		err = p.loadUrlMetadata(ctx)
 		if err != nil {
-			logger.Warn().Err(err).Msg("failed to load idp metadata by url")
+			logger.Warn().Err(err).Msg("failed to load IdP metadata by url")
 		}
 	}
 
@@ -132,9 +132,9 @@ func NewProvider(
 }
 
 func (p *provider) loadXmlMetadata() error {
-	f, err := os.Open(p.config.IdpMetadataXml)
+	f, err := os.Open(p.config.IdPMetadataXml)
 	if err != nil {
-		return fmt.Errorf("failed to open idp metadata xml file: %w", err)
+		return fmt.Errorf("failed to open IdP metadata xml file: %w", err)
 	}
 
 	defer f.Close()
@@ -142,12 +142,12 @@ func (p *provider) loadXmlMetadata() error {
 	idpMetadata := samltypes.EntityDescriptor{}
 	err = xml.NewDecoder(f).Decode(&idpMetadata)
 	if err != nil {
-		return fmt.Errorf("failed to unmarshal idp metadata xml file: %w", err)
+		return fmt.Errorf("failed to unmarshal IdP metadata xml file: %w", err)
 	}
 
-	ssoLocation, sloLocation, certStore, err := processIdpMetadata(idpMetadata)
+	ssoLocation, sloLocation, certStore, err := processIdPMetadata(idpMetadata)
 	if err != nil {
-		return fmt.Errorf("failed to process idp metadata xml file: %w", err)
+		return fmt.Errorf("failed to process IdP metadata xml file: %w", err)
 	}
 
 	p.samlSP = &saml2.SAMLServiceProvider{
@@ -171,8 +171,8 @@ func (p *provider) loadXmlMetadata() error {
 }
 
 func (p *provider) loadUrlMetadata(ctx context.Context) error {
-	// recreate service provider on load without an idp data for canopsis metadata endpoint.
-	// the canopsis saml metadata endpoint should work even if an idp is unavailable.
+	// recreate service provider on load without an IdP data for canopsis metadata endpoint.
+	// the canopsis saml metadata endpoint should work even if an IdP is unavailable.
 	p.samlSP = &saml2.SAMLServiceProvider{
 		AssertionConsumerServiceURL:    p.acsUrl,
 		ServiceProviderSLOURL:          p.sloUrl,
@@ -190,9 +190,9 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 		return errors.New("unknown type of http.DefaultTransport")
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.config.IdpMetadataUrl, nil)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, p.config.IdPMetadataUrl, nil)
 	if err != nil {
-		return fmt.Errorf("failed to create idp metadata request: %w", err)
+		return fmt.Errorf("failed to create IdP metadata request: %w", err)
 	}
 
 	tr := dt.Clone()
@@ -202,7 +202,7 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 
 	res, err := hc.Do(req)
 	if err != nil {
-		return fmt.Errorf("failed to send idp metadata request: %w", err)
+		return fmt.Errorf("failed to send IdP metadata request: %w", err)
 	}
 
 	defer res.Body.Close()
@@ -210,12 +210,12 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 	idpMetadata := samltypes.EntityDescriptor{}
 	err = xml.NewDecoder(res.Body).Decode(&idpMetadata)
 	if err != nil {
-		return fmt.Errorf("failed to unmarshal idp metadata response: %w", err)
+		return fmt.Errorf("failed to unmarshal IdP metadata response: %w", err)
 	}
 
-	ssoLocation, sloLocation, certStore, err := processIdpMetadata(idpMetadata)
+	ssoLocation, sloLocation, certStore, err := processIdPMetadata(idpMetadata)
 	if err != nil {
-		return fmt.Errorf("failed to process idp metadata response: %w", err)
+		return fmt.Errorf("failed to process IdP metadata response: %w", err)
 	}
 
 	p.samlSP.IdentityProviderSSOURL = ssoLocation
@@ -234,7 +234,7 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 	return nil
 }
 
-func processIdpMetadata(idpMetadata samltypes.EntityDescriptor) (string, string, dsig.MemoryX509CertificateStore, error) {
+func processIdPMetadata(idpMetadata samltypes.EntityDescriptor) (string, string, dsig.MemoryX509CertificateStore, error) {
 	certStore := dsig.MemoryX509CertificateStore{Roots: []*x509.Certificate{}}
 
 	for _, kd := range idpMetadata.IDPSSODescriptor.KeyDescriptors {
@@ -271,10 +271,10 @@ func processIdpMetadata(idpMetadata samltypes.EntityDescriptor) (string, string,
 }
 
 func (p *provider) isServiceProviderAvailable(c *gin.Context) bool {
-	if p.config.IdpMetadataUrl != "" && (!p.samlSPAvailable || p.isSamlSPExpired()) {
+	if p.config.IdPMetadataUrl != "" && (!p.samlSPAvailable || p.isSamlSPExpired()) {
 		err := p.loadUrlMetadata(c)
 		if err != nil {
-			p.logger.Warn().Str("error", err.Error()).Msg("failed to load idp metadata")
+			p.logger.Warn().Str("error", err.Error()).Msg("failed to load IdP metadata")
 			c.AbortWithStatus(http.StatusServiceUnavailable)
 
 			return false
@@ -484,11 +484,11 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 }
 
 func (p *provider) getAssocAttribute(attrs saml2.Values, canopsisName, defaultValue string) string {
-	return cmp.Or(attrs.Get(p.config.IdpAttributesMap[canopsisName]), defaultValue)
+	return cmp.Or(attrs.Get(p.config.IdPAttributesMap[canopsisName]), defaultValue)
 }
 
 func (p *provider) getAssocArrayAttribute(attrs saml2.Values, canopsisName string, defaultValue []string) []string {
-	v := attrs.GetAll(p.config.IdpAttributesMap[canopsisName])
+	v := attrs.GetAll(p.config.IdPAttributesMap[canopsisName])
 	if len(v) != 0 {
 		return v
 	}
