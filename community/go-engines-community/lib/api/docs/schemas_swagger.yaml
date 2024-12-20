@@ -43,13 +43,13 @@ definitions:
       firstname:
         type: string
       idp_fields:
-        description: IdpFields field shows immutable user fields, because they are
+        description: IdPFields field shows immutable user fields, because they are
           defined by IdP.
         items:
           type: string
         type: array
       idp_roles:
-        description: IdpRoles field shows roles defined in IdP, which shouldn't be
+        description: IdPRoles field shows roles defined in IdP, which shouldn't be
           modified for a user.
         items:
           type: string
@@ -5824,13 +5824,13 @@ definitions:
       firstname:
         type: string
       idp_fields:
-        description: IdpFields field shows immutable user fields, because they are
+        description: IdPFields field shows immutable user fields, because they are
           defined by IdP.
         items:
           type: string
         type: array
       idp_roles:
-        description: IdpRoles field shows roles defined in IdP, which shouldn't be
+        description: IdPRoles field shows roles defined in IdP, which shouldn't be
           modified for a user.
         items:
           type: string

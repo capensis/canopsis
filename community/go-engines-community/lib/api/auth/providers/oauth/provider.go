@@ -432,7 +432,7 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, externalID s
 		Firstname:  p.getAssocAttribute(userInfo, security.UserFirstName, ""),
 		Lastname:   p.getAssocAttribute(userInfo, security.UserLastName, ""),
 		Email:      p.getAssocAttribute(userInfo, security.UserEmail, ""),
-		IdpRoles:   roles,
+		IdPRoles:   roles,
 	}
 
 	err = p.userProvider.Save(c, user)
@@ -461,7 +461,7 @@ func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *securi
 	user.Firstname = p.getAssocAttribute(userInfo, security.UserFirstName, user.Firstname)
 	user.Lastname = p.getAssocAttribute(userInfo, security.UserLastName, user.Lastname)
 	user.Email = p.getAssocAttribute(userInfo, security.UserEmail, user.Email)
-	user.SetRolesFromIdp(roles, p.config.AllowExtraRoles)
+	user.SetRolesFromIdP(roles, p.config.AllowExtraRoles)
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
