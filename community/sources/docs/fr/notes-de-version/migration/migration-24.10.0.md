@@ -49,7 +49,18 @@ La restructuration apportée dans les bases de données pour cette version de Ca
 
     === "Helm"
 
-        A venir
+        Les commandes ci-dessous s'appliquent uniquement si votre instance MongoDB est hébergée sur votre cluster Kubernetes.
+        Dans le cas contraire, veuillez vous référer à l'onglet "Paquets RHEL 8".
+
+        ```sh
+        export MONGODB_ROOT_PASSWORD=$(kubectl get secret canopsis-mongodb -o jsonpath='{.data.mongodb-root-password}' | base64 --decode)
+        
+        kubectl exec canopsis-mongodb-0 -- mongosh -u root -p $MONGODB_ROOT_PASSWORD --eval 'db.adminCommand({ getParameter: 1, featureCompatibilityVersion: 1 })'
+        ```
+
+        Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "7.0" }, "ok" : 1 }`
+        Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
+
 
 ### Arrêt de l'environnement en cours de lancement
 
@@ -73,7 +84,10 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
 === "Helm"
 
-    A venir
+    ```sh
+    kubectl get deployments | grep -v timescaledb | awk 'NR>1 {print $1}' | xargs kubectl delete deployment
+    ```
+
 
 ## Mise à jour Canopsis
 
@@ -112,7 +126,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
 === "Helm"
 
-    A venir
+    Non concerné car ces configurations sont livrées directement dans les charts Helm.
 
 ### Mise à jour de TimescaleDB
 
@@ -341,7 +355,121 @@ Deux étapes sont à suivre :
 
 === "Helm"
 
-    A venir
+    Sauvegarder les bases de données :
+
+    ```sh
+    kubectl exec canopsis-timescaledb-7f6cb44d6b-q9s76 -- pg_dump postgresql://cpspostgres:canopsis@canopsis-timescaledb:5432/canopsis -Ft -f /tmp/postgres_canopsis_dump.tar
+    kubectl exec canopsis-timescaledb-7f6cb44d6b-q9s76 -- pg_dump postgresql://cpspostgres:canopsis@canopsis-timescaledb:5432/canopsis-techmetrics -Ft -f /tmp/postgres_canopsis_techmetrics_dump.tar
+
+    kubectl cp canopsis-timescaledb-7f6cb44d6b-q9s76:/tmp/postgres_canopsis_dump.tar postgres_canopsis_dump.tar
+    kubectl cp canopsis-timescaledb-7f6cb44d6b-q9s76:/tmp/postgres_canopsis_techmetrics_dump.tar postgres_canopsis_techmetrics_dump.tar
+    ```
+
+    Arrêt de TimescaleDB :
+
+    ```sh
+    kubectl delete deployment canopsis-timescaledb
+    ```
+
+    Déploiement de PostgreSQL 15 - TimescaleDB 2.14.2
+
+    ```sh
+    kubectl apply -f - <<EOF
+    ---
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+    name: canopsis-timescaledb
+    spec:
+    selector:
+        matchLabels: 
+        app.kubernetes.io/name: canopsis-pro
+    serviceName: canopsis-timescaledb-headless
+    updateStrategy:
+        type: RollingUpdate
+    template:
+        metadata:
+        labels:
+            app.kubernetes.io/name: canopsis-pro
+        spec:
+        containers:
+            - name: timescaledb
+            image: docker.io/timescale/timescaledb:2.14.2-pg15
+            ports:
+                - containerPort: 5432
+            env:
+                - name: TIMESCALEDB_TELEMETRY
+                value: "off"
+                - name: POSTGRES_DB
+                value: "canopsis"
+                - name: POSTGRES_USER
+                value: "cpspostgres"
+                - name: POSTGRES_PASSWORD
+                valueFrom:
+                    secretKeyRef:
+                    name: canopsis-timescaledb
+                    key: timescaledb-password
+            readinessProbe:
+                exec:
+                command:
+                    - /bin/bash
+                    - -c
+                    - pg_isready -d $POSTGRES_DB -U $POSTGRES_USER
+                initialDelaySeconds: 5
+                periodSeconds: 10
+                timeoutSeconds: 5
+            volumeMounts:
+                - name: datadir
+                mountPath: /var/lib/postgresql/data
+        imagePullSecrets:
+            - name: canopsisregistry
+    volumeClaimTemplates:
+        - metadata:
+            name: datadir
+            annotations:
+            helm.sh/resource-policy: "keep"
+        spec:
+            accessModes:
+            - ReadWriteOnce
+            resources:
+            requests:
+                storage: 8Gi
+    EOF
+    ```
+
+    Création de la base de données techmetrics :
+
+    ```sh
+    export POSTGRES_PASSWORD=$(kubectl get secret canopsis-timescaledb -o jsonpath='{.data.timescaledb-password}' | base64 --decode)
+
+    kubectl exec canopsis-timescaledb-0 -it -- sh -c 'export PGPASSWORD=$POSTGRES_PASSWORD; psql postgresql://cpspostgres:$PGPASSWORD@canopsis-timescaledb-0:5432/postgres'
+
+    CREATE database canopsis_tech_metrics;
+    \c canopsis_tech_metrics
+    CREATE EXTENSION IF NOT EXISTS timescaledb;
+    SET password_encryption = 'scram-sha-256';
+    CREATE USER cpspostgres_tech_metrics WITH PASSWORD 'canopsis';
+    exit
+    ```
+
+    Restauration des dumps : 
+
+    ```sh
+    kubectl cp postgres_canopsis_dump.tar canopsis-timescaledb-0:/tmp
+
+    kubectl cp postgres_canopsis_techmetrics_dump.tar canopsis-timescaledb-0:/tmp
+
+    kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis --no-owner -Ft -v /tmp/postgres_canopsis_dump.tar
+
+    kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis_tech_metrics --no-owner -Ft -v /tmp/postgres_canopsis_techmetrics_dump.tar
+    ```
+
+    Suppression du statefulset PostgreSQL : 
+
+    ```sh
+    kubectl delete statefulset canopsis-timescaledb
+    ```
+
 
 ### Lancement du provisioning `canopsis-reconfigure`
 
@@ -389,7 +517,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
 === "Helm"
 
-    A venir
+   Non concerné, `canopsis-reconfigure` est lancé automatiquement lors de l'upgrade
 
 ### Mise à jour et démarrage final de Canopsis
 
@@ -470,9 +598,17 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
 === "Helm"
 
-    A venir
+    Définir le nom de votre instance :
+    
+    ```sh
+    export RELEASE_NAME="canopsis-prod"
+
+    Mise à jour de Canopsis
+    ```sh
+    helm upgrade --install ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
+    ```
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
 
-![Healthcheck](./img/24.10-healthcheck.png)
+![Healthcheck](./img/24.10.0-healthcheck.png)
 
