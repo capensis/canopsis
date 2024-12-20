@@ -369,6 +369,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		}
 		set["v.state"] = stateStep
 		set["v.last_update_date"] = params.Timestamp
+		set["v.last_st_upd_dt"] = params.Timestamp
 		inc["v.total_state_changes"] = 1
 
 		if alarm.IsStateLocked() {
@@ -482,20 +483,21 @@ func (p *checkProcessor) newAlarm(
 		Tags:         tags,
 		ExternalTags: tags,
 		Value: types.AlarmValue{
-			CreationDate:      timestamp,
-			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
-			InitialOutput:     params.Output,
-			Output:            params.Output,
-			InitialLongOutput: params.LongOutput,
-			LongOutput:        params.LongOutput,
-			LongOutputHistory: []string{params.LongOutput},
-			LastUpdateDate:    params.Timestamp,
-			LastEventDate:     timestamp,
-			Parents:           []string{},
-			Children:          []string{},
-			UnlinkedParents:   []string{},
-			Infos:             map[string]map[string]interface{}{},
-			RuleVersion:       map[string]string{},
+			CreationDate:                timestamp,
+			DisplayName:                 types.GenDisplayName(alarmConfig.DisplayNameScheme),
+			InitialOutput:               params.Output,
+			Output:                      params.Output,
+			InitialLongOutput:           params.LongOutput,
+			LongOutput:                  params.LongOutput,
+			LongOutputHistory:           []string{params.LongOutput},
+			LastUpdateDate:              params.Timestamp,
+			LastStateOrStatusUpdateDate: params.Timestamp,
+			LastEventDate:               timestamp,
+			Parents:                     []string{},
+			Children:                    []string{},
+			UnlinkedParents:             []string{},
+			Infos:                       map[string]map[string]interface{}{},
+			RuleVersion:                 map[string]string{},
 		},
 	}
 

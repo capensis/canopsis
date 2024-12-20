@@ -51,9 +51,10 @@ func (p *assocTicketProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.ticket":  newStepQuery,
-			"v.steps":   addStepUpdateQuery(newStepQuery),
-			"v.tickets": addTicketUpdateQuery(newStepQuery),
+			"v.ticket":           newStepQuery,
+			"v.steps":            addStepUpdateQuery(newStepQuery),
+			"v.tickets":          addTicketUpdateQuery(newStepQuery),
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

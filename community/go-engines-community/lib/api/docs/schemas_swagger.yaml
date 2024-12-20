@@ -269,6 +269,8 @@ definitions:
         $ref: '#/definitions/common.AlarmStep'
       last_event_date:
         type: integer
+      last_state_or_status_update_date:
+        type: integer
       last_update_date:
         type: integer
       long_output:

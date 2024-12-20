@@ -112,6 +112,8 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 				"$unset": bson.M{"v.pbehavior_info": ""},
 			}
 
+			set := bson.M{"v.last_update_date": event.Parameters.Timestamp}
+
 			if !alarm.Value.PbehaviorInfo.IsActive() {
 				update["$inc"] = bson.M{
 					"v.pbh_inactive_duration": int64(event.Parameters.Timestamp.Sub(alarm.Value.PbehaviorInfo.Timestamp.Time).Seconds()),
@@ -122,19 +124,16 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 				if alarm.Value.Snooze != nil || alarm.InactiveAutoInstructionInProgress || alarm.InactiveDelayMetaAlarmInProgress {
 					inactiveStart = &event.Parameters.Timestamp
 				}
-
-				set := bson.M{
-					"v.inactive_start": inactiveStart,
-					"not_acked_since":  event.Parameters.Timestamp,
-				}
-
 				snoozeVal := resolveSnoozeAfterPbhLeave(event.Parameters.Timestamp, alarm)
 				if snoozeVal > 0 {
 					set["v.snooze.val"] = snoozeVal
 				}
 
-				update["$set"] = set
+				set["v.inactive_start"] = inactiveStart
+				set["not_acked_since"] = event.Parameters.Timestamp
 			}
+
+			update["$set"] = set
 
 			alarm = types.Alarm{}
 			err = p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
