@@ -64,8 +64,9 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepAck, event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.ack":   newStepQuery,
-			"v.steps": addStepUpdateQuery(newStepQuery),
+			"v.ack":              newStepQuery,
+			"v.steps":            addStepUpdateQuery(newStepQuery),
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 		{"$unset": bson.A{
 			"not_acked_metric_type",
