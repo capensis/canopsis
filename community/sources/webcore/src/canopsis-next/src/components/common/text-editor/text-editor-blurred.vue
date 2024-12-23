@@ -42,6 +42,10 @@ export default {
   },
   methods: {
     wrapperClickHandler(e) {
+      if (e.target.tagName !== 'IMG') {
+        return;
+      }
+
       e.preventDefault();
       e.stopPropagation();
 
