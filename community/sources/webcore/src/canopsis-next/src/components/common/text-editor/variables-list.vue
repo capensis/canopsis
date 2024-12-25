@@ -4,30 +4,38 @@
     class="pa-0"
   >
     <slot name="append" />
-    <v-list-item
-      v-for="item in items"
-      :key="item.value"
-      :input-value="isActiveVariable(item)"
-      @click="selectVariable(item)"
-      @mouseenter="handleMouseEnter(item, $event)"
-    >
-      <v-list-item-content>
-        <v-list-item-title>
-          <v-layout class="gap-4" justify-space-between>
-            <span v-if="item.text">{{ item.text }}</span>
-            <span
-              v-if="showValue"
-              class="grey--text lighten-1"
-            >
+    <template v-for="item in items">
+      <v-subheader
+        v-if="item.header"
+        :key="item.header"
+      >
+        {{ item.header }}
+      </v-subheader>
+      <v-list-item
+        v-else
+        :key="item.value"
+        :input-value="isActiveVariable(item)"
+        @click="selectVariable(item)"
+        @mouseenter="handleMouseEnter(item, $event)"
+      >
+        <v-list-item-content>
+          <v-list-item-title>
+            <v-layout class="gap-4" justify-space-between>
+              <span v-if="item.text">{{ item.text }}</span>
+              <span
+                v-if="showValue"
+                class="grey--text lighten-1"
+              >
               {{ item.value }}
             </span>
-          </v-layout>
-        </v-list-item-title>
-      </v-list-item-content>
-      <v-list-item-action v-if="item[childrenKey]">
-        <v-icon>arrow_right</v-icon>
-      </v-list-item-action>
-    </v-list-item>
+            </v-layout>
+          </v-list-item-title>
+        </v-list-item-content>
+        <v-list-item-action v-if="item[childrenKey]">
+          <v-icon>arrow_right</v-icon>
+        </v-list-item-action>
+      </v-list-item>
+    </template>
     <slot v-if="!items.length" name="no-data" />
     <v-menu
       v-if="subItemsShown"
@@ -131,3 +139,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-subheader {
+  font-size: 16px;
+  font-weight: 700;
+  color: inherit;
+}
+</style>
