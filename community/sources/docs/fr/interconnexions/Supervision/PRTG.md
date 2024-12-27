@@ -33,7 +33,6 @@ Cet exemple de configuration est fait avec une interface utilisateur de PRTG en 
 
 Il faut tout d'abord `Ajouter un modèle de notification` depuis le menu `Modèles de notifications`
 
-Pour accéder à ce menu aller dans `Configuration` puis `Paramètres de compte` et enfin `Modèles de notifications`
 
 ![Menu](img/PRTG_notifications.png)
 
@@ -59,9 +58,13 @@ Il ne vous reste plus qu'à utiliser ce modèle dans vos `Déclencheurs de notif
 
 Maintenant que PRTG envoie ses alertes vers Canopsis il faut les enrichir afin qu'elles puissent être correctement traitées par Canopsis.
 
-Il faut pour cela créer une première règle d'enrichissment qui permet d'activer l'enrichissement
+Il faut pour cela créer une première règle d'enrichissment qui permet d'activer l'enrichissement. Pour cela rendez-vous sur Exploitation -> Filtres d'evenements -> Créer une règle
+
+![Enrichissement](img/PRTG_enrichissement.png)
 
 ![Options pour la copie de l'entité](img/PRTG_canopsis_entity_copy_options.png)
+
+![Choix du modèle des entités](img/PRTG_choix_modele.png)
 
 ![Données externe pour la copie de l'entité](img/PRTG_canopsis_entity_copy_external_data.png)
 
