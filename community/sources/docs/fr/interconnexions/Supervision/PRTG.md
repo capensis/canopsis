@@ -58,26 +58,30 @@ Il ne vous reste plus qu'à utiliser ce modèle dans vos `Déclencheurs de notif
 
 Maintenant que PRTG envoie ses alertes vers Canopsis il faut les enrichir afin qu'elles puissent être correctement traitées par Canopsis.
 
-Il faut pour cela créer une première règle d'enrichissment qui permet d'activer l'enrichissement. Pour cela rendez-vous sur Exploitation -> Filtres d'evenements -> Créer une règle
+Il faut pour cela créer une première règle d'enrichissment qui permet de sauvegarder un attribut spécifique à PRTG dans l'entitié Canopsis visée par l'alarme. 
 
-![Enrichissement](img/PRTG_enrichissement.png)
+Pour cela rendez-vous sur 'Exploitation' -> 'Filtres d'événements' -> 'Créer une règle' ( en lui attribuant une priorité, `10` par exemple, ainsi qu'un filtre )
 
-![Options pour la copie de l'entité](img/PRTG_canopsis_entity_copy_options.png)
+![Options pour la règle d'enrichissement de l'entitié](img/PRTG_enrichissement.png)
 
-![Choix du modèle des entités](img/PRTG_choix_modele.png)
+Il faudra ensuite ajouter une action afin de copier et sauvegarder dans l'entité visée par l'évènement la valeur de la criticité au sens PRTG ( elle est contenue dans une variable particulière de l'évènement : `{{ .Event.ExtraInfos.prtg_state }}` )
 
-![Données externe pour la copie de l'entité](img/PRTG_canopsis_entity_copy_external_data.png)
+![Actions pour la copie de l'attribut dans l'entité](img/PRTG_enrichissement-action.png)
 
-![Action pour la copie de l'entité](img/PRTG_canopsis_entity_copy_action.png)
+Une fois cette règle créée, il reste à créer une règle par statut et par langue de PRTG. 
 
-Puis ajouter une règle afin d'enrichir le contexte de l'entité avec le `prtg_state`
+Exemple ici avec le statut `Unknown` de PRTG qui doit devenir une criticité `3/Critical` dans Canopsis. 
 
-![Options pour l'enrichessement de l'entité](img/PRTG_canopsis_context_enrich_options.png)
+Chaque règle doit avoir une priorité supérieure à la règle précédente ( ici nous utiliserons la priorité `11`)
 
-![Action pour l'enrichissement de l'entité](img/PRTG_canopsis_context_enrich_action.png)
+![Options pour l'enrichissement de l'evènement](img/PRTG-regle-unknown-1.png)
 
-Une fois ces deux règles créées il reste à créer une règle par statut et par langue de PRTG
+![Action pour l'enrichissement de l'alarme](img/PRTG-regle-unknown-2.png)
 
-![Options pour l'enrichissement de l'alarme](img/PRTG_canopsis_entity_enrich_options.png)
+Ou avec cette autre règle de priorité `12` qui va faire correspondre le statut `Down` de PRTG en une criticité `2/Major` dans Canopsis
 
-![Action pour l'enrichissement de l'alarme](img/PRTG_canopsis_entity_enrich_action.png)
+![Options pour l'enrichissement de l'evènement](img/PRTG-regle-down-1.png)
+
+![Action pour l'enrichissement de l'alarme](img/PRTG-regle-down-2.png)
+
+NB: Il est possible de dupliquer les règles pour gagner du temps lors de l'élaboration de celles-ci.
