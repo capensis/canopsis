@@ -133,23 +133,13 @@ EventsCountTriggerDefaultThreshold = 10
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.file]
-# Local storage for Upload artifacts. Upload artifacts are used in Remedaiton and Administration -> Parameters.
+# Local storage for file artifacts.
 # This directory must have write permissions for canopsis-api
 # Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition
 # when instances run on different servers
-Upload = "/opt/canopsis/var/lib/upload-files"
+Dir = "/opt/canopsis/var/lib"
 UploadMaxSize = 314572800 # 300Mb
-# Local storage for Icon artifacts. Icon artifacts are used in pbehavior types and widget templates.
-# This directory must have write permissions for canopsis-api
-# Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition
-# when instances run on different servers
-Icon = "/opt/canopsis/var/lib/icons"
 IconMaxSize = 10240 # 10Kb
-# Local storage for Export artifacts. Export artifacts are used in export csv and export metrics.
-# This directory must have write permissions for canopsis-api
-# Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition
-# when instances run on different servers
-Export = "/opt/canopsis/var/lib/export-files"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.alarm]
@@ -183,7 +173,6 @@ MongoClientTimeout = "1m"
 [Canopsis.import_ctx]
 ThdWarnMinPerImport = "30m"
 ThdCritMinPerImport = "60m"
-FilePattern = "/tmp/import_%s.json"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.api]
