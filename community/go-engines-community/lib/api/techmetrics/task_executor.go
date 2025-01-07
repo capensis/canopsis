@@ -22,9 +22,10 @@ const (
 )
 
 const (
-	filenameDumpPattern   = "cps_tech_metrics_*.bak"
-	abandonedTickInterval = 4 * time.Minute
-	abandonedInterval     = 5 * time.Minute
+	filenameDumpPattern               = "cps_tech_metrics_*.bak"
+	abandonedTickInterval             = 4 * time.Minute
+	abandonedInterval                 = 5 * time.Minute
+	dirPerm               os.FileMode = 0770
 )
 
 // TaskExecutor is used to implement export task executor.
@@ -372,6 +373,11 @@ func (e *taskExecutor) dumpDb(
 
 		var pgConnStr string
 		pgConnStr, err = postgres.GetTechConnStr()
+		if err != nil {
+			return
+		}
+
+		err = os.MkdirAll(e.dir, os.ModeDir|dirPerm)
 		if err != nil {
 			return
 		}
