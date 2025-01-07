@@ -13,6 +13,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
+const dirPerm os.FileMode = 0770
+
 // ToCsv fetches data and saves it in csv file.
 func ToCsv(
 	ctx context.Context,
@@ -27,6 +29,12 @@ func ToCsv(
 			resErr = err
 		}
 	}()
+
+	err := os.MkdirAll(dir, os.ModeDir|dirPerm)
+	if err != nil {
+		return "", err
+	}
+
 	file, err := os.CreateTemp(dir, "export.*.csv")
 	if err != nil {
 		return "", err
