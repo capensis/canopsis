@@ -4,14 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"sync"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
+)
+
+const (
+	FilePerm    = 0o644
+	FilePattern = "import_%s.json"
 )
 
 const (
@@ -47,7 +53,7 @@ func NewImportWorker(
 	w := &worker{
 		publisher:   publisher,
 		reporter:    reporter,
-		filePattern: conf.ImportCtx.FilePattern,
+		filePattern: filepath.Join(conf.File.Dir, canopsis.SubDirImport, FilePattern),
 		workerV1:    workerV1,
 		workerV2:    workerV2,
 		logger:      logger,
