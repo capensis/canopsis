@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
 
@@ -52,25 +51,15 @@ func main() {
 	}
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
-	// Init security ACL enforcer.
-	enforcer, err := security.NewEnforcer(flags.ConfigDir, dbClient)
-	if err != nil {
-		logger.Fatal().Err(err).Msg("cannot create security enforce")
-	}
 
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
-	providers := &api.ConfigProviders{}
 	server, _, err := api.Default(
 		ctx,
 		flags,
-		enforcer,
-		providers,
 		logger,
 		pgPoolProvider,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
-		nil,
-		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {

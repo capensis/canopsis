@@ -26,6 +26,7 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -61,6 +62,9 @@ const (
 
 	websocketReadBufferSize  = 1024
 	websocketWriteBufferSize = 2048
+
+	jobKeyExport = "export"
+	jobKeyImport = "import"
 )
 
 //go:embed swaggerui/*
@@ -69,7 +73,12 @@ var docsUiFile embed.FS
 //go:embed docs/*.yaml
 var docsFile embed.FS
 
-type ConfigProviders struct {
+type Services struct {
+	ExportTaskExecutor *export.TaskExecutor
+	LinkGenerator      link.Generator
+	Enforcer           libsecurity.Enforcer
+	DocsFile           fs.ReadFileFS
+
 	DataStorageConfigProvider   *config.BaseDataStorageConfigProvider
 	TimezoneConfigProvider      *config.BaseTimezoneConfigProvider
 	ApiConfigProvider           *config.BaseApiConfigProvider
@@ -80,84 +89,81 @@ type ConfigProviders struct {
 func Default(
 	ctx context.Context,
 	flags Flags,
-	enforcer libsecurity.Enforcer,
-	p *ConfigProviders,
 	logger zerolog.Logger,
 	pgPoolProvider postgres.PoolProvider,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
-	exportExecutor export.TaskExecutor,
-	linkGenerator link.Generator,
 	deferFunc DeferFunc,
 	overrideDocs bool,
-) (API, fs.ReadFileFS, error) {
+) (API, Services, error) {
+	services := Services{
+		DocsFile: docsFile,
+	}
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to mongodb: %w", err)
+		return nil, services, fmt.Errorf("cannot connect to mongodb: %w", err)
 	}
 	configAdapter := config.NewAdapter(dbClient)
 	cfg, err := configAdapter.GetConfig(ctx)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot load config: %w", err)
+		return nil, services, fmt.Errorf("cannot load config: %w", err)
 	}
-	if p.TimezoneConfigProvider == nil {
-		p.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
+
+	services.Enforcer, err = libsecurity.NewEnforcer(flags.ConfigDir, dbClient)
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot create security enforcer: %w", err)
 	}
-	if p.DataStorageConfigProvider == nil {
-		p.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
-	}
-	if p.TemplateConfigProvider == nil {
-		p.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
-	}
+
+	services.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
+	services.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
+	services.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
 	// Set mongodb setting.
 	config.SetDbClientRetry(dbClient, cfg)
 	// Connect to rmq.
 	amqpConn, err := libamqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to rmq: %w", err)
+		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
 	amqpChannel, err := amqpConn.Channel()
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to rmq: %w", err)
+		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
 	// Connect to redis.
 	pbhRedisSession, err := libredis.NewSession(ctx, libredis.PBehaviorLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
+		return nil, services, fmt.Errorf("cannot connect to redis: %w", err)
 	}
 	lockRedisSession, err := libredis.NewSession(ctx, libredis.EngineLockStorage, logger,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
+		return nil, services, fmt.Errorf("cannot connect to redis: %w", err)
 	}
 	runInfoClient, err := libredis.NewSession(ctx, libredis.EngineRunInfo, logger, -1, -1)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to redis: %w", err)
+		return nil, services, fmt.Errorf("cannot connect to redis: %w", err)
 	}
 	securityConfig, err := libsecurity.LoadConfig(flags.ConfigDir)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot load security config: %w", err)
+		return nil, services, fmt.Errorf("cannot load security config: %w", err)
 	}
 
 	cookieOptions := DefaultCookieOptions()
 	sessionStore := mongostore.NewStore(dbClient, GetSessionKeyVar(logger))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
-	if p.ApiConfigProvider == nil {
-		p.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
-	}
-	security := NewSecurity(securityConfig, cfg, dbClient, sessionStore, enforcer, p.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
+	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
+	security := NewSecurity(securityConfig, cfg, dbClient, sessionStore, services.Enforcer, services.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
 	}
 
 	dbExportClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
-		p.ApiConfigProvider.Get().ExportMongoClientTimeout, logger)
+		services.ApiConfigProvider.Get().ExportMongoClientTimeout, logger)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot connect to mongodb: %w", err)
+		return nil, services, fmt.Errorf("cannot connect to mongodb: %w", err)
 	}
 
 	// Create pbehavior computer.
@@ -169,6 +175,28 @@ func Default(
 	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
 		canopsis.JsonContentType, canopsis.FIFOAckExchangeName, canopsis.FIFOQueueName, canopsis.ApiConnector, logger)
 
+	entityCleanerTaskChan := make(chan entity.CleanTask)
+	disabledEntityCleaner := entity.NewDisabledCleaner(
+		lockRedisSession,
+		datastorage.NewAdapter(dbClient),
+		services.DataStorageConfigProvider,
+		metricsEntityMetaUpdater,
+		logger,
+	)
+
+	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
+	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return nil, services, fmt.Errorf("cannot load user interface config: %w", err)
+	}
+
+	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
+	workersRunner := workers.NewRunner(amqpChannel, amqpChannel, logger)
+	// Create csv exporter.
+	services.ExportTaskExecutor = export.NewTaskExecutor(dbClient, workers.NewJobPublisher(jobKeyExport, workersRunner), services.TimezoneConfigProvider, logger)
+	workersRunner.AddJobExecutor(jobKeyExport, func(ctx context.Context, id string) error {
+		return services.ExportTaskExecutor.ExecuteTask(ctx, id)
+	})
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
 		contextgraph.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
@@ -180,35 +208,14 @@ func Default(
 			canopsis.ApiConnector,
 			logger,
 		),
+		workers.NewJobPublisher(jobKeyImport, workersRunner),
 		logger,
 	)
-
-	entityCleanerTaskChan := make(chan entity.CleanTask)
-	disabledEntityCleaner := entity.NewDisabledCleaner(
-		lockRedisSession,
-		datastorage.NewAdapter(dbClient),
-		p.DataStorageConfigProvider,
-		metricsEntityMetaUpdater,
-		logger,
-	)
-
-	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
-	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
-	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return nil, nil, fmt.Errorf("cannot load user interface config: %w", err)
-	}
-	if p.UserInterfaceConfigProvider == nil {
-		p.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	}
-
-	// Create csv exporter.
-	if exportExecutor == nil {
-		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
-	}
-
-	tplExecutor := template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider)
+	workersRunner.AddJobExecutor(jobKeyImport, func(ctx context.Context, _ string) error {
+		return importWorker.ProcessFirstJob(ctx)
+	})
+	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
 	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
-
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  websocketReadBufferSize,
 		WriteBufferSize: websocketWriteBufferSize,
@@ -217,15 +224,16 @@ func Default(
 		},
 	})
 
-	websocketAuthorizer := websocket.NewAuthorizer(enforcer, security.GetTokenProviders())
+	websocketAuthorizer := websocket.NewAuthorizer(services.Enforcer, security.GetTokenProviders())
 	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, logger)
 	err = registerWebsocketRooms(websocketHub)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot register websocket rooms: %w", err)
+		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
 	}
 
-	authorProvider := author.NewProvider(p.ApiConfigProvider)
-	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, linkGenerator, p.TimezoneConfigProvider,
+	services.LinkGenerator = link.NewGenerator(dbClient, tplExecutor, logger)
+	authorProvider := author.NewProvider(services.ApiConfigProvider)
+	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, services.LinkGenerator, services.TimezoneConfigProvider,
 		authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
@@ -234,7 +242,7 @@ func Default(
 
 	err = registerWebsocketGroups(websocketHub, alarmWatcher, messageRateWatcher)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot register websocket groups: %w", err)
+		return nil, services, fmt.Errorf("cannot register websocket groups: %w", err)
 	}
 
 	broadcastMessageChan := make(chan bool)
@@ -247,7 +255,7 @@ func Default(
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(dbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
 	if err != nil {
-		return nil, nil, fmt.Errorf("cannot load healthcheck config: %w", err)
+		return nil, services, fmt.Errorf("cannot load healthcheck config: %w", err)
 	}
 
 	healthCheckConfigProvider := config.NewBaseHealthCheckConfigProvider(healthCheckCfg, logger)
@@ -304,10 +312,6 @@ func Default(
 		logger,
 	)
 
-	if linkGenerator == nil {
-		linkGenerator = link.NewGenerator(dbClient, tplExecutor, logger)
-	}
-
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
 
 	api.AddRouter(func(router *gin.Engine) {
@@ -333,23 +337,23 @@ func Default(
 			cfg,
 			router,
 			security,
-			enforcer,
-			linkGenerator,
+			services.Enforcer,
+			services.LinkGenerator,
 			dbClient,
 			dbExportClient,
 			pgPoolProvider,
 			amqpChannel,
-			p.ApiConfigProvider,
-			p.TimezoneConfigProvider,
-			p.TemplateConfigProvider,
+			services.ApiConfigProvider,
+			services.TimezoneConfigProvider,
+			services.TemplateConfigProvider,
 			pbhEntityTypeResolver,
 			pbhComputeChan,
 			entityPublChan,
 			entityCleanerTaskChan,
-			exportExecutor,
+			services.ExportTaskExecutor,
 			techMetricsTaskExecutor,
 			amqpChannel,
-			p.UserInterfaceConfigProvider,
+			services.UserInterfaceConfigProvider,
 			websocketHub,
 			websocketStore,
 			broadcastMessageChan,
@@ -361,6 +365,7 @@ func Default(
 			stateSettingsUpdatesChan,
 			flags.EnableSameServiceNames,
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
+			workersRunner,
 			logger,
 		)
 	})
@@ -373,11 +378,11 @@ func Default(
 		if !overrideDocs {
 			content, err := docsFile.ReadFile("docs/swagger.yaml")
 			if err != nil {
-				return nil, nil, fmt.Errorf("cannot read swagger: %w", err)
+				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
 			schemasContent, err := docsFile.ReadFile("docs/schemas_swagger.yaml")
 			if err != nil {
-				return nil, nil, fmt.Errorf("cannot read swagger: %w", err)
+				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
 			api.AddRouter(func(router *gin.Engine) {
 				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
@@ -401,6 +406,13 @@ func Default(
 		}
 	})
 
+	api.AddWorker("amqp_workers", func(ctx context.Context) {
+		err = workersRunner.Run(ctx)
+		if err != nil {
+			panic(err)
+		}
+	})
+
 	api.AddWorker("tech_metrics", func(ctx context.Context) {
 		techMetricsSender.Run(ctx)
 	})
@@ -408,7 +420,7 @@ func Default(
 		security.GetSessionStore().StartAutoClean(ctx, flags.PeriodicalWaitTime)
 	})
 	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
-		enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
+		services.Enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 
@@ -426,14 +438,20 @@ func Default(
 	api.AddWorker("entity_cleaner", func(ctx context.Context) {
 		disabledEntityCleaner.RunCleanerProcess(ctx, entityCleanerTaskChan)
 	})
-	api.AddWorker("import_job", func(ctx context.Context) {
-		importWorker.Run(ctx)
+	api.AddWorker("data_import_abandoned", func(ctx context.Context) {
+		importWorker.ProcessAbandonedJob(ctx)
 	})
-	api.AddWorker("config_reload", updateConfig(p.TimezoneConfigProvider, p.DataStorageConfigProvider, p.ApiConfigProvider,
-		p.TemplateConfigProvider, techMetricsConfigProvider, configAdapter, p.UserInterfaceConfigProvider,
-		userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
-	api.AddWorker("data_export", func(ctx context.Context) {
-		exportExecutor.Execute(ctx)
+	api.AddWorker("data_import_delete_old", func(ctx context.Context) {
+		importWorker.DeleteOldJobs(ctx)
+	})
+	api.AddWorker("config_reload", updateConfig(services.TimezoneConfigProvider, services.DataStorageConfigProvider,
+		services.ApiConfigProvider, services.TemplateConfigProvider, techMetricsConfigProvider, configAdapter,
+		services.UserInterfaceConfigProvider, userInterfaceAdapter, flags.PeriodicalWaitTime, logger))
+	api.AddWorker("data_export_abandoned", func(ctx context.Context) {
+		services.ExportTaskExecutor.ProcessAbandonedTasks(ctx)
+	})
+	api.AddWorker("data_export_delete_old", func(ctx context.Context) {
+		services.ExportTaskExecutor.DeleteOldTasks(ctx)
 	})
 	api.AddWorker("tech_metrics_export", func(ctx context.Context) {
 		techMetricsTaskExecutor.Run(ctx)
@@ -463,7 +481,7 @@ func Default(
 			case <-ctx.Done():
 				return
 			case <-ticker.C:
-				err := linkGenerator.Load(ctx)
+				err := services.LinkGenerator.Load(ctx)
 				if err != nil {
 					logger.Err(err).Msg("cannot load links")
 				}
@@ -474,7 +492,7 @@ func Default(
 		healthcheckStore.Load(ctx)
 	})
 
-	return api, docsFile, nil
+	return api, services, nil
 }
 
 func registerWebsocketRooms(websocketHub websocket.Hub) error {

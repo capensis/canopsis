@@ -68,6 +68,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -116,7 +117,7 @@ func RegisterRoutes(
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
-	exportExecutor export.TaskExecutor,
+	exportTaskExecutor *export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
@@ -131,6 +132,7 @@ func RegisterRoutes(
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	enableSameServiceNames bool,
 	eventGenerator libevent.Generator,
+	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -290,7 +292,7 @@ func RegisterRoutes(
 
 		alarmStore := alarm.NewStore(dbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider,
 			tplExecutor, json.NewDecoder(), logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, "",
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger), logger)
 		alarmRouter := protected.Group("/alarms")
@@ -396,7 +398,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.GetDisplayNames,
 		)
-		exportExecutor.RegisterType("alarm", alarmStore.Export)
+		exportTaskExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")
 		{
 			alarmExportRouter.POST(
@@ -427,7 +429,7 @@ func RegisterRoutes(
 		entityStore := entity.NewStore(dbClient, dbExportClient, timezoneConfigProvider, authorProvider, json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
-			exportExecutor,
+			exportTaskExecutor,
 			entityCleanerTaskChan,
 			entityPublChan,
 			metricsEntityMetaUpdater,
@@ -435,7 +437,7 @@ func RegisterRoutes(
 			logger,
 		)
 
-		exportExecutor.RegisterType("entity", entityStore.Export)
+		exportTaskExecutor.RegisterType("entity", entityStore.Export)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -1474,7 +1476,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
 			scenarioAPI.DBExport)
 
-		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), workers.NewJobPublisher(jobKeyImport, workersRunner), logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),

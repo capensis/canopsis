@@ -5,9 +5,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
-	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -20,15 +20,10 @@ import (
 
 const fileNameTimeLayout = "2006-01-02T15-04-05-MST"
 
-// TaskExecutor is used to implement export task executor.
-type TaskExecutor interface {
-	RegisterType(t string, fetch FetchData)
-	// Execute receives tasks from channel and save its result to storage.
-	Execute(ctx context.Context)
-	// StartExecute creates new export task.
-	StartExecute(ctx context.Context, t TaskParameters) (*Task, error)
+// TaskCreator is used to create export task.
+type TaskCreator interface {
+	Create(ctx context.Context, t TaskParameters) (*Task, error)
 	Get(ctx context.Context, id string) (*Task, error)
-	SetFormatter(t string, f OutputFormatter)
 }
 
 type FetchData func(ctx context.Context, t Task) (DataCursor, error)
@@ -51,18 +46,20 @@ type FieldsSeparatorGetter interface {
 
 func NewTaskExecutor(
 	client mongo.DbClient,
+	jobPublisher workers.JobPublisher,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	logger zerolog.Logger,
-) TaskExecutor {
-	return &taskExecutor{
-		client:      client,
-		collection:  client.Collection(mongo.ExportTaskMongoCollection),
-		logger:      logger,
-		workerCount: 10,
+) *TaskExecutor {
+	return &TaskExecutor{
+		client:       client,
+		collection:   client.Collection(mongo.ExportTaskMongoCollection),
+		jobPublisher: jobPublisher,
+		logger:       logger,
+		workerCount:  10,
 
 		abandonedInterval:         time.Minute,
 		abandonedLaunchedInterval: 5 * time.Minute,
-		removeInterval:            5 * time.Minute,
+		removeInterval:            time.Hour,
 
 		fetches: make(map[string]FetchData),
 
@@ -72,11 +69,12 @@ func NewTaskExecutor(
 	}
 }
 
-type taskExecutor struct {
-	client      mongo.DbClient
-	collection  mongo.DbCollection
-	workerCount int
-	logger      zerolog.Logger
+type TaskExecutor struct {
+	client       mongo.DbClient
+	collection   mongo.DbCollection
+	jobPublisher workers.JobPublisher
+	workerCount  int
+	logger       zerolog.Logger
 
 	fetches map[string]FetchData
 
@@ -84,15 +82,12 @@ type taskExecutor struct {
 	abandonedLaunchedInterval time.Duration
 	removeInterval            time.Duration
 
-	taskCh   chan<- string
-	taskChMx sync.Mutex
-
 	formatter              OutputFormatter
 	customFormatter        map[string]OutputFormatter
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
-func (e *taskExecutor) RegisterType(t string, fetch FetchData) {
+func (e *TaskExecutor) RegisterType(t string, fetch FetchData) {
 	if _, ok := e.fetches[t]; ok {
 		panic(fmt.Errorf("type %q is already registered", t))
 	}
@@ -100,100 +95,7 @@ func (e *taskExecutor) RegisterType(t string, fetch FetchData) {
 	e.fetches[t] = fetch
 }
 
-func (e *taskExecutor) Execute(parentCtx context.Context) {
-	ctx, cancel := context.WithCancel(parentCtx)
-	defer cancel()
-
-	ch := make(chan string)
-	e.taskChMx.Lock()
-	e.taskCh = ch
-	e.taskChMx.Unlock()
-
-	defer func() {
-		e.taskChMx.Lock()
-		e.taskCh = nil
-		close(ch)
-		e.taskChMx.Unlock()
-	}()
-
-	wg := sync.WaitGroup{}
-	// Run export workers
-	for i := 0; i < e.workerCount; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-
-			for {
-				select {
-				case <-ctx.Done():
-					return
-				case t, ok := <-ch:
-					if !ok {
-						return
-					}
-
-					err := e.executeTask(ctx, t)
-					if err != nil {
-						e.logger.Err(err).Msg("cannot execute export task")
-					}
-				}
-			}
-		}()
-	}
-
-	// Fetch tasks
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
-		ticker := time.NewTicker(time.Minute)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				err := e.fetchTasks(ctx)
-				if err != nil {
-					e.logger.Err(err).Msg("cannot fetch export tasks")
-				}
-			}
-		}
-	}()
-
-	// Run delete worker
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
-		ticker := time.NewTicker(time.Minute)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				err := e.deleteTasks(ctx)
-				if err != nil {
-					e.logger.Err(err).Msg("cannot delete export tasks")
-				}
-			}
-		}
-	}()
-
-	wg.Wait()
-}
-
-func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) (*Task, error) {
-	e.taskChMx.Lock()
-	defer e.taskChMx.Unlock()
-
-	if e.taskCh == nil {
-		return nil, errors.New("execute is not running")
-	}
-
+func (e *TaskExecutor) Create(ctx context.Context, params TaskParameters) (*Task, error) {
 	location := e.timezoneConfigProvider.Get().Location
 	now := datetime.NewCpsTime().In(location)
 	t := Task{
@@ -214,24 +116,15 @@ func (e *taskExecutor) StartExecute(ctx context.Context, params TaskParameters) 
 		return nil, err
 	}
 
-	select {
-	case e.taskCh <- t.ID:
-	default:
+	err = e.jobPublisher.Publish(ctx, t.ID)
+	if err != nil {
+		return nil, err
 	}
 
 	return &t, nil
 }
 
-func (e *taskExecutor) getFormatter(t string) OutputFormatter {
-	formatter, ok := e.customFormatter[t]
-	if !ok {
-		formatter = e.formatter
-	}
-
-	return formatter
-}
-
-func (e *taskExecutor) Get(ctx context.Context, id string) (*Task, error) {
+func (e *TaskExecutor) Get(ctx context.Context, id string) (*Task, error) {
 	res := e.collection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -250,7 +143,7 @@ func (e *taskExecutor) Get(ctx context.Context, id string) (*Task, error) {
 	return &t, nil
 }
 
-func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
+func (e *TaskExecutor) ExecuteTask(ctx context.Context, id string) error {
 	t := Task{}
 	err := e.collection.FindOneAndUpdate(
 		ctx,
@@ -324,14 +217,45 @@ func (e *taskExecutor) executeTask(ctx context.Context, id string) error {
 	return nil
 }
 
-func (e *taskExecutor) fetchTasks(ctx context.Context) error {
-	e.taskChMx.Lock()
-	defer e.taskChMx.Unlock()
+func (e *TaskExecutor) ProcessAbandonedTasks(ctx context.Context) {
+	ticker := time.NewTicker(time.Minute)
+	defer ticker.Stop()
 
-	if e.taskCh == nil {
-		return errors.New("execute is not running")
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			err := e.fetchTasks(ctx)
+			if err != nil {
+				e.logger.Err(err).Msg("cannot fetch export tasks")
+			}
+		}
 	}
+}
 
+func (e *TaskExecutor) DeleteOldTasks(ctx context.Context) {
+	ticker := time.NewTicker(time.Hour)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			err := e.deleteTasks(ctx)
+			if err != nil {
+				e.logger.Err(err).Msg("cannot delete export tasks")
+			}
+		}
+	}
+}
+
+func (e *TaskExecutor) SetFormatter(t string, f OutputFormatter) {
+	e.customFormatter[t] = f
+}
+
+func (e *TaskExecutor) fetchTasks(ctx context.Context) error {
 	cursor, err := e.collection.Find(ctx, bson.M{"$or": []bson.M{
 		{
 			"status":   TaskStatusRunning,
@@ -358,17 +282,16 @@ func (e *taskExecutor) fetchTasks(ctx context.Context) error {
 			return err
 		}
 
-		select {
-		case <-ctx.Done():
-			return nil
-		case e.taskCh <- t.ID:
+		err = e.jobPublisher.Publish(ctx, t.ID)
+		if err != nil {
+			return err
 		}
 	}
 
 	return nil
 }
 
-func (e *taskExecutor) deleteTasks(ctx context.Context) error {
+func (e *TaskExecutor) deleteTasks(ctx context.Context) error {
 	cursor, err := e.collection.Find(ctx, bson.M{
 		"status":    bson.M{"$in": bson.A{TaskStatusSucceeded, TaskStatusFailed}},
 		"completed": bson.M{"$lte": datetime.CpsTime{Time: time.Now().Add(-e.removeInterval)}},
@@ -416,6 +339,11 @@ func (e *taskExecutor) deleteTasks(ctx context.Context) error {
 	return nil
 }
 
-func (e *taskExecutor) SetFormatter(t string, f OutputFormatter) {
-	e.customFormatter[t] = f
+func (e *TaskExecutor) getFormatter(t string) OutputFormatter {
+	formatter, ok := e.customFormatter[t]
+	if !ok {
+		formatter = e.formatter
+	}
+
+	return formatter
 }
