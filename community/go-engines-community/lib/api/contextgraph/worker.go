@@ -2,22 +2,21 @@ package contextgraph
 
 import (
 	"context"
-	"errors"
 	"fmt"
-	"sync"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/rs/zerolog"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
 	defaultThdWarnMinPerImport = 30 * time.Minute
 	defaultThdCritMinPerImport = 60 * time.Minute
 
-	queueCheckTickInterval  = time.Second
 	reportCleanTickInterval = time.Hour
 	reportCleanInterval     = 24 * time.Hour
 	abandonedTickInterval   = 4 * time.Minute
@@ -32,6 +31,7 @@ type worker struct {
 	thdWarnMinPerImport time.Duration
 	thdCritMinPerImport time.Duration
 	worker              importcontextgraph.Worker
+	jobPublisher        workers.JobPublisher
 }
 
 func NewImportWorker(
@@ -39,14 +39,16 @@ func NewImportWorker(
 	publisher EventPublisher,
 	reporter StatusReporter,
 	importWorker importcontextgraph.Worker,
+	jobPublisher workers.JobPublisher,
 	logger zerolog.Logger,
 ) ImportWorker {
 	w := &worker{
-		publisher:   publisher,
-		reporter:    reporter,
-		filePattern: conf.ImportCtx.FilePattern,
-		worker:      importWorker,
-		logger:      logger,
+		publisher:    publisher,
+		reporter:     reporter,
+		filePattern:  conf.ImportCtx.FilePattern,
+		worker:       importWorker,
+		jobPublisher: jobPublisher,
+		logger:       logger,
 	}
 
 	thdWarnMinPerImport, err := time.ParseDuration(conf.ImportCtx.ThdWarnMinPerImport)
@@ -67,110 +69,115 @@ func NewImportWorker(
 	return w
 }
 
-func (w *worker) Run(ctx context.Context) {
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+func (w *worker) ProcessAbandonedJob(ctx context.Context) {
+	ticker := time.NewTicker(abandonedTickInterval)
+	defer ticker.Stop()
 
-		ticker := time.NewTicker(queueCheckTickInterval)
-		defer ticker.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			ok, err := w.reporter.HasAbandoned(ctx, abandonedInterval)
+			if err != nil {
+				w.logger.Err(err).Msg("failed to get import job")
+				continue
+			}
 
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				w.processFirstJob(ctx)
+			if !ok {
+				continue
+			}
+
+			err = w.jobPublisher.Publish(ctx, "")
+			if err != nil {
+				w.logger.Err(err).Msg("failed to publish import job")
+				continue
 			}
 		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-
-		ticker := time.NewTicker(reportCleanTickInterval)
-		defer ticker.Stop()
-
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				err := w.reporter.Clean(ctx, reportCleanInterval)
-				if err != nil {
-					w.logger.Err(err).Msg("Import-ctx: Failed to clean import reports")
-				}
-			}
-		}
-	}()
-
-	wg.Wait()
+	}
 }
 
-func (w *worker) processFirstJob(ctx context.Context) {
+func (w *worker) DeleteOldJobs(ctx context.Context) {
+	ticker := time.NewTicker(reportCleanTickInterval)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return
+		case <-ticker.C:
+			err := w.reporter.Clean(ctx, reportCleanInterval)
+			if err != nil {
+				w.logger.Err(err).Msg("failed to clean import reports")
+			}
+		}
+	}
+}
+
+func (w *worker) ProcessFirstJob(ctx context.Context) error {
 	job, err := w.reporter.GetFirst(ctx, abandonedInterval)
 	if err != nil {
-		w.logger.Err(err).Msg("Import-ctx: Failed to get import info")
-		return
+		return err
 	}
 
 	if job.ID == "" {
-		return
+		return nil
 	}
 
 	done := make(chan struct{})
-	go func() {
-		w.processJob(ctx, job)
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		err = w.processJob(ctx, job)
 		close(done)
-	}()
 
-	ticket := time.NewTicker(abandonedTickInterval)
-	defer ticket.Stop()
-	for {
-		select {
-		case <-done:
-			return
-		case <-ticket.C:
-			err := w.reporter.ReportOngoing(ctx, job)
-			if err != nil {
-				w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
+		return err
+	})
+
+	g.Go(func() error {
+		ticket := time.NewTicker(abandonedTickInterval)
+		defer ticket.Stop()
+		for {
+			select {
+			case <-done:
+				return nil
+			case <-ticket.C:
+				err = w.reporter.ReportOngoing(ctx, job)
+				if err != nil {
+					return err
+				}
 			}
 		}
-	}
+	})
+
+	return g.Wait()
 }
 
-func (w *worker) processJob(ctx context.Context, job ImportJob) {
+func (w *worker) processJob(ctx context.Context, job ImportJob) error {
 	startTime := time.Now()
-	stats, err := w.doJob(ctx, job)
+	stats, jobErr := w.doJob(ctx, job)
 	stats.ExecTime = time.Since(startTime)
 
 	resultState := types.AlarmStateOK
-	if err != nil {
-		w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Error during the import.")
-
+	if jobErr != nil {
+		w.logger.Err(jobErr).Str("job_id", job.ID).Msg("error during the import")
 		resultState = types.AlarmStateCritical
-		if errors.Is(err, importcontextgraph.ErrNotImplemented) {
-			resultState = types.AlarmStateMinor
+		ok, err := w.reporter.ReportError(ctx, job, stats.ExecTime, jobErr)
+		if err != nil {
+			return fmt.Errorf("failed to update import info: %w", err)
 		}
 
-		ok, err := w.reporter.ReportError(ctx, job, stats.ExecTime, err)
-		if err != nil {
-			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
-		}
 		if !ok {
-			return
+			return nil
 		}
 	} else {
-		w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: import done")
-
+		w.logger.Info().Str("job_id", job.ID).Msg("import done")
 		ok, err := w.reporter.ReportDone(ctx, job, stats)
 		if err != nil {
-			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to update import info")
+			return fmt.Errorf("failed to update import info: %w", err)
 		}
+
 		if !ok {
-			return
+			return nil
 		}
 	}
 
@@ -182,22 +189,24 @@ func (w *worker) processJob(ctx context.Context, job ImportJob) {
 	}
 
 	if perfDataState != types.AlarmStateOK {
-		err = w.publisher.SendPerfDataEvent(ctx, job.ID, stats, types.CpsNumber(perfDataState))
+		err := w.publisher.SendPerfDataEvent(ctx, job.ID, stats, types.CpsNumber(perfDataState))
 		if err != nil {
-			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send perf data")
+			return fmt.Errorf("failed to send perf data: %w", err)
 		}
 	}
 
 	if resultState != types.AlarmStateOK {
-		err = w.publisher.SendImportResultEvent(ctx, job.ID, stats.ExecTime, types.CpsNumber(resultState))
+		err := w.publisher.SendImportResultEvent(ctx, job.ID, stats.ExecTime, types.CpsNumber(resultState))
 		if err != nil {
-			w.logger.Err(err).Str("job_id", job.ID).Msg("Import-ctx: Failed to send import result event")
+			return fmt.Errorf("failed to send import result event: %w", err)
 		}
 	}
+
+	return nil
 }
 
 func (w *worker) doJob(ctx context.Context, job ImportJob) (importcontextgraph.Stats, error) {
-	w.logger.Info().Str("job_id", job.ID).Msg("Import-ctx: Processing import")
+	w.logger.Info().Str("job_id", job.ID).Msg("processing import")
 	filename := fmt.Sprintf(w.filePattern, job.ID)
 
 	if job.IsPartial {

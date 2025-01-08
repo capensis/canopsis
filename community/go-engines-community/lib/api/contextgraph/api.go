@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -17,20 +18,23 @@ import (
 const filePerm = 0o644
 
 type api struct {
-	reporter    StatusReporter
-	filePattern string
-	logger      zerolog.Logger
+	reporter     StatusReporter
+	jobPublisher workers.JobPublisher
+	filePattern  string
+	logger       zerolog.Logger
 }
 
 func NewApi(
 	conf config.CanopsisConf,
 	reporter StatusReporter,
+	jobPublisher workers.JobPublisher,
 	logger zerolog.Logger,
 ) API {
 	a := &api{
-		filePattern: conf.ImportCtx.FilePattern,
-		reporter:    reporter,
-		logger:      logger,
+		filePattern:  conf.ImportCtx.FilePattern,
+		reporter:     reporter,
+		jobPublisher: jobPublisher,
+		logger:       logger,
 	}
 
 	return a
@@ -104,6 +108,11 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 	}
 
 	err = os.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, filePerm)
+	if err != nil {
+		return "", err
+	}
+
+	err = a.jobPublisher.Publish(ctx, "")
 	if err != nil {
 		return "", err
 	}

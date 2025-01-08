@@ -83,6 +83,38 @@ func (r *mongoReporter) GetFirst(ctx context.Context, abandonedInterval time.Dur
 	return job, err
 }
 
+func (r *mongoReporter) HasAbandoned(ctx context.Context, abandonedInterval time.Duration) (bool, error) {
+	ongoingJob := ImportJob{}
+	err := r.collection.FindOne(ctx, bson.M{"status": StatusOngoing}).Decode(&ongoingJob)
+	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+		return false, err
+	}
+
+	if ongoingJob.ID != "" {
+		if ongoingJob.LastPing != nil && ongoingJob.LastPing.After(time.Now().Add(-abandonedInterval)) {
+			return false, nil
+		}
+
+		return true, nil
+	}
+
+	pendingJob := ImportJob{}
+	err = r.collection.FindOne(ctx, bson.M{"status": StatusPending}).Decode(&pendingJob)
+	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+		return false, err
+	}
+
+	if pendingJob.ID != "" {
+		if pendingJob.Creation.After(time.Now().Add(-abandonedInterval)) {
+			return false, nil
+		}
+
+		return true, nil
+	}
+
+	return false, nil
+}
+
 func (r *mongoReporter) ReportOngoing(ctx context.Context, job ImportJob) error {
 	_, err := r.collection.UpdateOne(ctx, bson.M{
 		"_id":    job.ID,

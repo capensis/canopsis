@@ -88,8 +88,10 @@ const (
 
 	FacetLimit = 1000
 
-	ApiName      = "api"
-	ApiConnector = "api"
+	ApiName                = "api"
+	ApiConnector           = "api"
+	ApiWorkersExchangeName = ""
+	ApiWorkersQueueName    = "api_workers"
 
 	DefaultEventWorkers = 10
 
