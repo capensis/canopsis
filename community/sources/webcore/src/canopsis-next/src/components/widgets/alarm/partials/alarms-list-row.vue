@@ -84,6 +84,7 @@
           :column="header"
           :selected-tags="selectedTags"
           :small="small"
+          :parent-alarm="parentAlarm"
           @activate="activateRow"
           @select:tag="$emit('select:tag', $event)"
           @remove:tag="$emit('remove:tag', $event)"
