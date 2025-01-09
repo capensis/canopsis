@@ -85,6 +85,10 @@ func (p *parser) Parse(content []byte) (map[string][]interface{}, error) {
 				return nil, fmt.Errorf("%+v not string key", v.Key)
 			}
 
+			if len(key) > 0 && key[0] == '.' {
+				continue
+			}
+
 			val, ok := v.Value.(yaml.MapSlice)
 			if !ok {
 				return nil, fmt.Errorf("cannot decode content: %q must be object", key)

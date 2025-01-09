@@ -233,7 +233,7 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
-		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider))
+		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider), logger)
 		roleRouter := protected.Group("/roles")
 		{
 			roleRouter.POST("",
@@ -1237,16 +1237,6 @@ func RegisterRoutes(
 			viewGroupRouter.GET(
 				"",
 				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, apisecurity.NewViewOwnedObjectsProvider(dbClient)),
-				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
-					{
-						Obj: apisecurity.ObjViewGroup,
-						Act: model.PermissionRead,
-					},
-					{
-						Obj: apisecurity.PermPrivateViewGroups,
-						Act: model.PermissionCan,
-					},
-				}, enforcer),
 				viewGroupAPI.List,
 			)
 			viewGroupRouter.GET(
@@ -1552,7 +1542,6 @@ func RegisterRoutes(
 			)
 			playlistRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionRead, enforcer),
 				middleware.ProvideAuthorizedIds(model.PermissionRead, enforcer, nil),
 				playlistApi.List,
 			)
@@ -1903,6 +1892,14 @@ func RegisterRoutes(
 					entityserviceAPI.BulkDelete,
 				)
 			}
+
+			bulkRouter.PUT(
+				"/role-permissions",
+				middleware.Authorize(apisecurity.PermAcl, model.PermissionUpdate, enforcer),
+				middleware.PreProcessBulk(apiConfigProvider, false),
+				roleApi.BulkUpdatePermissions,
+				middleware.ReloadEnforcerPolicyOnChange(enforcer),
+			)
 
 			userRouter := bulkRouter.Group("/users")
 			{
