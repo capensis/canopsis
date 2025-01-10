@@ -15,9 +15,14 @@
               :items="fields"
               :active="item.key === activeKey"
               item-text="text"
+              multiple
               @input="selectItem"
               @focusout="resetActive(item)"
               @mousedown="makeActive(item)"
+            />
+            <advanced-search-multiple-chip
+              :value="['a', 's', 'd']"
+              closable
             />
           </div>
           <advanced-search-chip
@@ -53,6 +58,7 @@ import { uid } from '@/helpers/uid';
 import { useI18n } from '@/hooks/i18n';
 
 import AdvancedSearchChip from './partials/new/advanced-search-chip.vue';
+import AdvancedSearchMultipleChip from './partials/new/advanced-search-multiple-chip.vue';
 
 const ADVANCED_SEARCH_STEP_TYPES = {
   field: 'field',
@@ -62,14 +68,6 @@ const ADVANCED_SEARCH_STEP_TYPES = {
   valueSecond: 'valueSecond',
   union: 'union',
 };
-
-const groupedAdvancedSearchFieldsToArray = () => (
-  Object.entries(ALARM_GROUPED_ADVANCED_SEARCH_FIELDS).reduce((acc, [group, items]) => {
-    acc.push({ header: group }, ...items);
-
-    return acc;
-  }, {})
-);
 
 const generateUntypicalDateTypes = () => [
   ALARM_FIELDS.creationDate,
@@ -158,7 +156,7 @@ export const useAlarmAdvancedSearchVariables = () => {
 
   const INITIATOR_OPTIONS = {
     operators: USER_OPERATORS,
-    items: Object.values(ALARM_EVENT_INITIATORS),
+    items: Object.values(ALARM_EVENT_INITIATORS).map(initiator => ({ value: initiator, text: initiator })),
   };
 
   const ADVANCED_SEARCH_OPTIONS_MAP = {
@@ -332,8 +330,16 @@ export const useAdvancedSearchFieldVariables = () => {
   }, []));
 };
 
+const groupedAdvancedSearchFieldsToArray = () => (
+  Object.entries(ALARM_GROUPED_ADVANCED_SEARCH_FIELDS).reduce((acc, [group, items]) => {
+    acc.push({ header: group }, ...items);
+
+    return acc;
+  }, {})
+);
+
 export default {
-  components: { AdvancedSearchChip },
+  components: { AdvancedSearchChip, AdvancedSearchMultipleChip },
   mixins: [Themeable],
   props: {
     isMenuActive: {
@@ -415,6 +421,7 @@ export default {
     };
 
     const makeActive = (item) => {
+      console.log(fields);
       activeKey.value = item.key;
     };
 
@@ -446,14 +453,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .c-new-advanced-search { // TODO: remove new
-  --input-min-width: 240px;
   --v-chip-gap: 4px;
+  --input-min-inline-size: 20ch;
 
   &::v-deep {
     input {
       flex: 0 1 auto;
-      min-width: var(--input-min-width);
-      width: var(--input-min-width);
+      field-sizing: content;
+      min-inline-size: var(--input-min-inline-size);
     }
 
     .layout {
