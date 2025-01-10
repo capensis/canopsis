@@ -29,6 +29,7 @@ import { useModelField } from '@/hooks/form';
  * fetch per page.
  * @param {Function} options.fetchHandler - The asynchronous function used to fetch data from the server.
  * @param {boolean} options.addable - The flag for indicating possibility to add new item.
+ * @param {boolean} options.multiple - The flag for indicating possibility to choose more than one item.
  * @param {Function} emit - The emit function for Vue events, used to update the model.
  * @returns {Object} An object containing methods and properties for managing search and selection:
  * - `selectedItems`: {Ref<Array>} A reactive reference to the currently selected items.
@@ -40,7 +41,15 @@ import { useModelField } from '@/hooks/form';
  * - `changeSelectedItems`: {Function} A function to update the selected items and emit changes.
  * - `updateSearch`: {Function} A function to update the search query and trigger a fetch.
  */
-export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LIMIT, fetchHandler, addable }, emit) => {
+export const useLazySearch = ({
+  value,
+  idKey,
+  idParamsKey,
+  limit = PAGINATION_LIMIT,
+  fetchHandler,
+  addable,
+  multiple, // TODO: add true for all places
+}, emit) => {
   const pageCount = ref(1);
   const itemsByValue = ref({});
   const selectedItems = ref([]);
@@ -150,19 +159,28 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
 
   /**
    * Function to update the selected items and emit changes.
-   * @param {Array} newSelectedTags - The new list of selected tags.
+   * @param {Array} newSelectedItems - The new list of selected items.
    */
-  const changeSelectedItems = (newSelectedTags) => {
+  const changeSelectedItems = (newSelectedItems) => {
     const unwrappedIdKey = unref(idKey);
     const unwrappedAddable = unref(addable);
+    const unwrappedMultiple = unref(multiple);
+
+    let preparedNewSelectedItems = newSelectedItems;
+
+    if (!isArray(newSelectedItems)) {
+      preparedNewSelectedItems = [newSelectedItems];
+    } else {
+      preparedNewSelectedItems = unwrappedMultiple ? newSelectedItems.slice(1) : newSelectedItems;
+    }
 
     selectedItems.value = (
       unwrappedAddable
-        ? newSelectedTags
-        : newSelectedTags.filter(tag => !isString(tag))
+        ? preparedNewSelectedItems
+        : preparedNewSelectedItems.filter(tag => !isString(tag))
     ).map(tag => (tag[unwrappedIdKey] ? tag : { [unwrappedIdKey]: tag }));
 
-    updateModel(mapIds(selectedItems.value, unwrappedIdKey));
+    updateModel(unwrappedMultiple ? mapIds(selectedItems.value, unwrappedIdKey) : selectedItems.value[0]);
   };
 
   /**

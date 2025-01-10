@@ -2,25 +2,31 @@
   <v-menu v-bind="menuProps" bottom>
     <template #activator="{ on }">
       <span>
-        <input
-          v-if="active"
-          v-model="inputValue"
-          ref="inputEl"
-          type="text"
-          class="ml-1"
-          autocomplete="off"
-          v-on="on"
-          @keydown="keydown"
-          @focusout="focusout"
-        >
         <v-chip
-          v-else
           :close="closable"
-          v-on="on"
+          class="c-new-advanced-search__array-chip"
+          @click.prevent=""
           @click:close="close"
-          @mousedown.prevent="mousedown"
         >
-          {{ chipText }}
+          <v-chip
+            v-for="item in value"
+            :key="item"
+            close
+            @close="removeValueItem(item)"
+          >
+            {{ item }}
+          </v-chip>
+          <span>
+            <input
+              v-model="inputValue"
+              ref="inputEl"
+              type="text"
+              class="ml-1"
+              autocomplete="off"
+              @keydown="keydown"
+              @focusout="focusout"
+            >
+          </span>
         </v-chip>
       </span>
     </template>
@@ -46,14 +52,18 @@ export default {
   },
   props: {
     value: {
-      type: Object,
-      default: () => ({}),
+      type: Array,
+      default: () => [],
     },
     items: {
       type: Array,
       default: () => [],
     },
     closable: {
+      type: Boolean,
+      default: false,
+    },
+    multiple: {
       type: Boolean,
       default: false,
     },
@@ -104,6 +114,7 @@ export default {
     const mousedown = () => emit('mousedown');
     const close = () => emit('remove');
     const focusout = () => emit('focusout');
+    const removeValueItem = () => emit('input', props.value.filter());
 
     watch(() => props.value, (newValue) => {
       if (!newValue.value) {
@@ -133,6 +144,7 @@ export default {
       mousedown,
       focusout,
       close,
+      removeValueItem,
     };
   },
 };
