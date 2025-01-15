@@ -15,7 +15,7 @@ import (
 )
 
 const (
-	InitiatorTag = "initiator"
+	InitiatorJSONTag = "initiator"
 )
 
 // event initiators

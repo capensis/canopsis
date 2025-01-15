@@ -77,7 +77,7 @@ func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
 	return nil
 }
 
-func (c *rpcClient) Consume(ctx context.Context) error {
+func (c *rpcClient) Consume(ctx context.Context) (err error) {
 	if c.connection == nil {
 		return errors.New("connection is nil")
 	}
@@ -88,7 +88,10 @@ func (c *rpcClient) Consume(ctx context.Context) error {
 	}
 
 	defer func() {
-		_ = consumeCh.Close()
+		closeError := consumeCh.Close()
+		if err == nil {
+			err = closeError
+		}
 	}()
 
 	g, ctx := errgroup.WithContext(ctx)

@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -57,7 +58,7 @@ type Options struct {
 	RecomputeAllOnInit       bool
 }
 
-func ParseOptions() Options {
+func ParseOptions() (Options, []string) {
 	opts := Options{}
 
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
@@ -79,7 +80,7 @@ func ParseOptions() Options {
 
 	flag.Parse()
 
-	return opts
+	return opts, libflag.FindDeprecatedFlags([]string{"workers", "withRemediation", "publishQueue"})
 }
 
 func NewEngine(

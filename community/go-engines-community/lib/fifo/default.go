@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
@@ -33,7 +34,7 @@ type Options struct {
 	Workers                int
 }
 
-func ParseOptions() Options {
+func ParseOptions() (Options, []string) {
 	var opts Options
 
 	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
@@ -50,7 +51,7 @@ func ParseOptions() Options {
 
 	flag.Parse()
 
-	return opts
+	return opts, libflag.FindDeprecatedFlags([]string{"eventsStatsFlushInterval"})
 }
 
 func Default(

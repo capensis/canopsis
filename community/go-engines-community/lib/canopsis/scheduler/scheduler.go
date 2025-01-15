@@ -2,6 +2,7 @@ package scheduler
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"sync"
@@ -106,7 +107,7 @@ func (s *scheduler) Stop(ctx context.Context) {
 	}
 
 	err = s.pubsub.Close()
-	if err != nil {
+	if err != nil && !errors.Is(err, redismod.ErrClosed) {
 		s.logger.Error().Err(err).Msg("close pubsub")
 	}
 
@@ -235,7 +236,7 @@ func (s *scheduler) getInitiator(event []byte) (string, error) {
 		return "", fmt.Errorf("failed to get initiator: %w", err)
 	}
 
-	initiator := string(msg.GetStringBytes(types.InitiatorTag))
+	initiator := string(msg.GetStringBytes(types.InitiatorJSONTag))
 	if !types.IsValidInitiator(initiator) {
 		initiator = types.InitiatorExternal
 	}
