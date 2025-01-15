@@ -34,6 +34,13 @@ export default {
     + 'Are you sure to proceed with it?\n',
   selectType: 'Select meta alarm rule type',
   valuePathHelpText: 'Custom attribute for grouping alarms defined by a value path',
+  componentTemplate: 'Component template',
+  resourceTemplate: 'Resource template',
+  copyTagsFromChildren: 'Copy tags from children alarms',
+  filterByLabelEnabled: 'Filter by label',
+  filterByLabelEnabledTooltip: 'Some tags can be defined in the format Tag:Value, e.g. Env:Prod.\nWith filter by label, only tags with the defined label will be copied from children alarms to the meta alarm.',
+  copyFromLastChild: 'Copy from last child',
+  copyFromLastChildTooltip: 'When enabled, the infos value is copied from an infos of a last child alarm. The child alarm infos name shall be defined in this case.',
   steps: {
     basics: 'Basics',
     defineType: 'Define type',
@@ -83,5 +90,9 @@ export default {
   },
   errors: {
     noValuePaths: 'You have to add at least 1 value path',
+  },
+  field: {
+    title: 'Meta alarm rule',
+    noData: 'No meta alarm rules is found according to the patterns defined',
   },
 };

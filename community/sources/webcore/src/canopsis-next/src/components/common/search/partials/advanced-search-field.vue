@@ -237,7 +237,7 @@ export default {
         ? activeItem.value?.value
         : internalSearch.value;
 
-      return t(`advancedSearch.${!valueToCheck ? 'valueTypeListEmptyMessage' : 'valueTypeListMessage'}`);
+      return t(!valueToCheck ? 'advancedSearch.valueTypeListEmptyMessage' : 'common.pressEnterToApply');
     });
 
     watch(() => props.value, (newValue) => {

@@ -1,5 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { randomDurationValue } from '@unit/utils/duration';
+import { randomDurationEnabledValue } from '@unit/utils/duration';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -44,7 +44,7 @@ describe('storage-settings-alarm-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectAlarmArchiveAfterField(wrapper).triggerCustomEvent('input', newValue);
 
@@ -59,7 +59,7 @@ describe('storage-settings-alarm-form', () => {
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectAlarmDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 

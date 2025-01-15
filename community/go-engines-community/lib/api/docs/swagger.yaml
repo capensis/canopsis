@@ -29,7 +29,7 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-    post:
+    put:
       tags:
         - account
       summary: Update account
@@ -84,14 +84,6 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-get-counts
       parameters:
-        - name: active_columns[]
-          in: query
-          style: form
-          explode: true
-          schema:
-            type: array
-            items:
-              type: string
         - name: filters[]
           in: query
           style: form
@@ -259,12 +251,7 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-export-get
       parameters:
-        - name: id
-          in: path
-          description: export task id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -295,12 +282,7 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-export-download
       parameters:
-        - name: id
-          in: path
-          description: export task id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -414,6 +396,18 @@ paths:
                 type: array
                 items:
                   $ref: 'schemas_swagger.yaml#/definitions/link.Link'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /alarm-tags:
     get:
       tags:
@@ -791,12 +785,7 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: alarm id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -1386,12 +1375,7 @@ paths:
         -  PERMISSIONS: `api_broadcast_message:read`
       operationId: broadcast-messages-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: broadcast-message id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -1415,12 +1399,7 @@ paths:
         -  PERMISSIONS: `api_broadcast_message:update`
       operationId: broadcast-messages-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: broadcast-message id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -1457,12 +1436,7 @@ paths:
         -  PERMISSIONS: `api_broadcast_message:delete`
       operationId: broadcast-messages-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: broadcast-message id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -3407,6 +3381,46 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    patch:
+      tags:
+        - users
+      summary: Bulk patch users
+      description: |
+        Bulk patch users.
+        
+        -  PERMISSIONS: `api_acl:update`
+      operationId: users-bulk-patch
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/user.BulkPatchRequestItem'
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/user.BulkPatchRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
     delete:
       tags:
         - users
@@ -3554,12 +3568,7 @@ paths:
         -  PERMISSIONS: `api_color_theme:read`
       operationId: color-themes-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: color theme id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -3583,12 +3592,7 @@ paths:
         -  PERMISSIONS: `api_color_theme:update`
       operationId: color-themes-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: color theme id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -3658,12 +3662,7 @@ paths:
         -  PERMISSIONS: `api_color_theme:delete`
       operationId: color-themes-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: color theme id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -4044,12 +4043,7 @@ paths:
         -  PERMISSIONS: `api_contextgraph:read`
       operationId: contextgraph-import-get-status-by-id
       parameters:
-        - name: id
-          in: path
-          description: import id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -4312,7 +4306,7 @@ paths:
       description: |
         Get context graph by id.
         
-        -  PERMISSIONS: `api_entity:get`
+        -  PERMISSIONS: `api_entity:read`
       operationId: entities-get-context-graph
       parameters:
         - name: _id
@@ -4532,12 +4526,7 @@ paths:
         -  PERMISSIONS: `api_entitycategory:read`
       operationId: entity-categories-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: category id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -4561,12 +4550,7 @@ paths:
         -  PERMISSIONS: `api_entitycategory:update`
       operationId: entity-categories-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: category id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -4610,12 +4594,7 @@ paths:
         -  PERMISSIONS: `api_entitycategory:delete`
       operationId: entity-categories-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: category id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -4724,12 +4703,7 @@ paths:
         -  PERMISSIONS: `api_entitycomment`
       operationId: entity-comments-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: comment id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -4805,12 +4779,7 @@ paths:
         -  PERMISSIONS: `api_entity:read`
       operationId: entities-export-get
       parameters:
-        - name: id
-          in: path
-          description: export task id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -4841,12 +4810,7 @@ paths:
         -  PERMISSIONS: `api_entity:read`
       operationId: entities-export-download
       parameters:
-        - name: id
-          in: path
-          description: export task id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -5215,12 +5179,7 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarms-find-service-alarms
       parameters:
-        - name: id
-          in: path
-          description: entity service id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
         - name: search
           in: query
           required: false
@@ -5352,12 +5311,7 @@ paths:
         -  PERMISSIONS: `api_entityservice:read`
       operationId: entityservices-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: entity service id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -5381,12 +5335,7 @@ paths:
         -  PERMISSIONS: `api_entityservice:update`
       operationId: entityservices-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: entity service id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -5470,12 +5419,7 @@ paths:
         -  PERMISSIONS: `api_entityservice:delete`
       operationId: entityservices-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: entity service id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -6082,12 +6026,7 @@ paths:
         -  PERMISSIONS: `api_eventfilter:read`
       operationId: eventfilters-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: eventfilter id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -6111,12 +6050,7 @@ paths:
         -  PERMISSIONS: `api_eventfilter:update`
       operationId: eventfilters-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: eventfilter id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -6185,12 +6119,7 @@ paths:
         -  PERMISSIONS: `api_eventfilter:delete`
       operationId: eventfilters-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: eventfilter id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -6258,6 +6187,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /eventfilter-db-export:
+    post:
+      tags:
+        - eventfilters
+      summary: Db export eventfilter rules
+      description: |
+        Export eventfilter rules in a db format.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
+      operationId: eventfilter-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-eventfilter-1",
+                    "cps-eventfilter-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
   /export-configuration:
     post:
       tags:
@@ -6416,12 +6380,7 @@ paths:
         -  PERMISSIONS (for private files): `api_file:read`
       operationId: files-get
       parameters:
-        - name: id
-          in: path
-          description: file id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -6446,12 +6405,7 @@ paths:
         -  PERMISSIONS: `api_file:delete`
       operationId: files-delete
       parameters:
-        - name: id
-          in: path
-          description: file id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -6577,12 +6531,7 @@ paths:
         -  PERMISSIONS: `api_flapping_rule:read`
       operationId: flappingrules-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: flapping rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -6606,12 +6555,7 @@ paths:
         -  PERMISSIONS: `api_flapping_rule:update`
       operationId: flappingrules-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: flapping rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -6684,12 +6628,7 @@ paths:
         -  PERMISSIONS: `api_flapping_rule:delete`
       operationId: flappingrules-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: flapping rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -6699,6 +6638,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /flapping-rules-db-export:
+    post:
+      tags:
+        - flappingrules
+      summary: Db export flapping rules
+      description: |
+        Export flapping rules in a db format.
+        
+        -  PERMISSIONS: `api_flapping_rule:read`
+      operationId: flappingrules-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-flapping-rule-1",
+                    "cps-flapping-rule-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
   /healthcheck:
     get:
       tags:
@@ -7235,12 +7209,7 @@ paths:
         -  PERMISSIONS: `api_idlerule:read`
       operationId: idlerules-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -7264,12 +7233,7 @@ paths:
         -  PERMISSIONS: `api_idlerule:update`
       operationId: idlerules-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -7381,12 +7345,7 @@ paths:
         -  PERMISSIONS: `api_idlerule:delete`
       operationId: idlerules-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -7396,6 +7355,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /idle-rules-db-export:
+    post:
+      tags:
+        - idlerules
+      summary: Db export idle rules
+      description: |
+        Export idle rules in a db format.
+        
+        -  PERMISSIONS: `api_idlerule:read`
+      operationId: idlerules-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-idle-rule-1",
+                    "cps-idle-rule-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary                
   /internal/user_interface:
     put:
       tags:
@@ -8014,12 +8008,7 @@ paths:
         -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: pattern id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -8043,12 +8032,7 @@ paths:
         -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: pattern id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -8122,12 +8106,7 @@ paths:
         -  PERMISSIONS (for corporate patterns): `api_corporate_pattern`
       operationId: saved-patterns-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: pattern id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -8186,12 +8165,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehavior-comment-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: pbehavior comment id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -8352,12 +8326,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviorexception:read`
       operationId: pbehavior-exceptions-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: exception id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -8381,12 +8350,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviorexception:update`
       operationId: pbehavior-exceptions-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: exception id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -8448,12 +8412,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviorexception:delete`
       operationId: pbehavior-exceptions-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: exception id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -8480,12 +8439,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehavior-ics-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: pbehavior id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -8593,12 +8547,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviorreason:read`
       operationId: pbehavior-reasons-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: reason id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -8622,12 +8571,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviorreason:update`
       operationId: pbehavior-reasons-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: reason id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -8672,12 +8616,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviorreason:delete`
       operationId: pbehavior-reasons-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: reason id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -8831,12 +8770,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviortype:read`
       operationId: pbehavior-types-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: type id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -8860,12 +8794,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviortype:update`
       operationId: pbehavior-types-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: type id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -8913,12 +8842,7 @@ paths:
         -  PERMISSIONS: `api_pbehaviortype:delete`
       operationId: pbehavior-types-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: type id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -9187,12 +9111,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: pbehavior id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -9216,12 +9135,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehaviors-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: pbehavior id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -9290,12 +9204,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:delete`
       operationId: pbehaviors-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: pbehavior id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -9315,12 +9224,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehaviors-patch-by-id
       parameters:
-        - name: id
-          in: path
-          description: pbehavior id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -9366,12 +9270,7 @@ paths:
         -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-find-entities
       parameters:
-        - name: id
-          in: path
-          description: pbehavior id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
@@ -9407,6 +9306,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /pbehaviors-db-export:
+    post:
+      tags:
+        - pbehaviors
+      summary: Db export pbehaviors
+      description: |
+        Export pbehaviors in a db format.
+        
+        -  PERMISSIONS: `api_pbehavior:read`
+      operationId: pbehaviors-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-pbehavior-1",
+                    "cps-pbehavior-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary                
   /permissions:
     get:
       tags:
@@ -9527,12 +9461,7 @@ paths:
         -  PERMISSIONS: `api_playlist:read` `{id}:read`
       operationId: playlists-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: playlist id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -9556,12 +9485,7 @@ paths:
         -  PERMISSIONS: `api_playlist:update` `{id}:update`
       operationId: playlists-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: playlist id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -9598,12 +9522,7 @@ paths:
         -  PERMISSIONS: `api_playlist:delete` `{id}:update`
       operationId: playlists-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: playlist id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -9722,12 +9641,7 @@ paths:
         -  PERMISSIONS: `api_resolve_rule:read`
       operationId: resolverules-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: resolve rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -9751,12 +9665,7 @@ paths:
         -  PERMISSIONS: `api_resolve_rule:update`
       operationId: resolverules-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: resolve rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -9828,12 +9737,7 @@ paths:
         -  PERMISSIONS: `api_resolve_rule:delete`
       operationId: resolverules-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: resolve rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -10004,12 +9908,7 @@ paths:
         -  PERMISSIONS: `api_acl:read`
       operationId: roles-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: role id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -10033,12 +9932,7 @@ paths:
         -  PERMISSIONS: `api_acl:update`
       operationId: roles-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: role id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -10075,12 +9969,7 @@ paths:
         -  PERMISSIONS: `api_acl:delete`
       operationId: roles-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: role id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -10676,12 +10565,7 @@ paths:
         -  PERMISSIONS: `api_action:read`
       operationId: scenarios-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: scenario id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -10705,12 +10589,7 @@ paths:
         -  PERMISSIONS: `api_action:update`
       operationId: scenarios-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: scenario id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -11247,12 +11126,7 @@ paths:
         -  PERMISSIONS: `api_action:delete`
       operationId: scenarios-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: scenario id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -11262,6 +11136,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /scenarios-db-export:
+    post:
+      tags:
+        - scenarios
+      summary: Db export scenarios
+      description: |
+        Export scenarios in a db format.
+        
+        -  PERMISSIONS: `api_action:read`
+      operationId: scenarios-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-scenario-1",
+                    "cps-scenario-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary                
   /share-tokens:
     get:
       tags:
@@ -11353,12 +11262,7 @@ paths:
         -  PERMISSIONS: `api_share_token:delete`
       operationId: share-tokens-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -11520,12 +11424,7 @@ paths:
         -  PERMISSIONS: `api_state_settings:read`
       operationId: state-settings-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: state setting id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -11549,12 +11448,7 @@ paths:
         -  PERMISSIONS: `api_state_settings:update`
       operationId: state-settings-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: state setting id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -11701,12 +11595,7 @@ paths:
         -  PERMISSIONS: `api_state_settings:delete`
       operationId: state-settings-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: state setting id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -11791,6 +11680,52 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /tech-metrics-settings:
+    get:
+      tags:
+        - tech-metrics-settings
+      summary: Get tech metrics settings
+      description: |
+        Get tech metrics settings.
+
+        -  PERMISSIONS: `api_techmetrics_settings:read`
+      operationId: tech-metrics-settings-get
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
+    put:
+      tags:
+        - tech-metrics-settings
+      summary: Update tech metrics settings
+      description: |
+        Update tech metrics settings.
+
+        -  PERMISSIONS: `api_techmetrics_settings:update`
+      operationId: tech-metrics-settings-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/techmetrics.Settings'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /link-categories:
     get:
       tags:
@@ -11799,7 +11734,7 @@ paths:
       description: |
         Get list of distinct categories, empty list if no categories found.
         
-        -  PERMISSIONS: `api_link_rule:get`
+        -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-categories
       parameters:
         - $ref: '#/components/parameters/limit'
@@ -11833,7 +11768,7 @@ paths:
       description: |
         Get paginated list of link rule.
         
-        -  PERMISSIONS: `api_link_rule:get`
+        -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-find-all
       parameters:
         - $ref: '#/components/parameters/page'
@@ -11966,15 +11901,10 @@ paths:
       description: |
         Get link rule by id.
         
-        -  PERMISSIONS: `api_link_rule:get`
+        -  PERMISSIONS: `api_link_rule:read`
       operationId: linkrules-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: link rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -11998,12 +11928,7 @@ paths:
         -  PERMISSIONS: `api_link_rule:update`
       operationId: linkrules-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: link rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -12082,12 +12007,7 @@ paths:
         -  PERMISSIONS: `api_link_rule:delete`
       operationId: linkrules-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: link rule id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -12097,6 +12017,41 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /link-rules-db-export:
+    post:
+      tags:
+        - linkrules
+      summary: Db export link rules
+      description: |
+        Export link rules in a db format.
+        
+        -  PERMISSIONS: `api_link_rule:read`
+      operationId: linkrules-db-export
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/dbexport.Request'
+            examples:
+              Export:
+                summary: Export example
+                description: Export example.
+                value: {
+                  "ids": [
+                    "cps-link-rule-1",
+                    "cps-link-rule-2"
+                  ]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
   /template-validator/declare-ticket-rules:
     post:
       tags:
@@ -12282,12 +12237,7 @@ paths:
         -  PERMISSIONS: `{view_id}:read`
       operationId: userpreference-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: widget id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -12387,12 +12337,7 @@ paths:
         -  PERMISSIONS: `api_acl:read`
       operationId: users-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -12416,12 +12361,7 @@ paths:
         -  PERMISSIONS: `api_acl:update`
       operationId: users-patch-by-id
       parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -12477,12 +12417,7 @@ paths:
         -  PERMISSIONS: `api_acl:update`
       operationId: users-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -12519,12 +12454,7 @@ paths:
         -  PERMISSIONS: `api_acl:delete`
       operationId: users-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: user id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -12545,12 +12475,7 @@ paths:
         -  PERMISSIONS: `api_view:create` `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-copy
       parameters:
-        - name: id
-          in: path
-          description: view id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -12732,12 +12657,7 @@ paths:
         -  PERMISSIONS: `api_viewgroup:read`
       operationId: viewgroups-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: viewgroup id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -12761,12 +12681,7 @@ paths:
         -  PERMISSIONS: `api_viewgroup:update`
       operationId: viewgroups-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: view group id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -12810,12 +12725,7 @@ paths:
         -  PERMISSIONS: `api_viewgroup:delete`
       operationId: viewgroups-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: view group id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -13085,12 +12995,7 @@ paths:
         -  PERMISSIONS: `api_view:update` `{view_id}:read` or `api_private_view_groups:can`
       operationId: viewtabs-copy
       parameters:
-        - name: id
-          in: path
-          description: tab id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -13216,12 +13121,7 @@ paths:
         -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: viewtabs-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: tab id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -13245,12 +13145,7 @@ paths:
         -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: tab id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -13294,12 +13189,7 @@ paths:
         -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: viewtabs-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: tab id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -13310,39 +13200,6 @@ paths:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /views:
-    get:
-      tags:
-        - views
-      summary: Find views
-      description: |
-        Get paginated list of views.
-        
-        -  PERMISSIONS: `api_view:read` `{id}:read` or `api_private_view_groups:can`
-      operationId: views-find-all
-      parameters:
-        - $ref: '#/components/parameters/page'
-        - $ref: '#/components/parameters/limit'
-        - $ref: '#/components/parameters/search'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
-                  - type: object
-                    properties:
-                      data:
-                        type: array
-                        items:
-                          $ref: 'schemas_swagger.yaml#/definitions/view.Response'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
     post:
       tags:
         - views
@@ -13401,12 +13258,7 @@ paths:
         -  PERMISSIONS: `api_view:read` `{id}:read` or `api_private_view_groups:can`
       operationId: views-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: view id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -13430,12 +13282,7 @@ paths:
         -  PERMISSIONS: `api_view:update` `{id}:update` or `api_private_view_groups:can`
       operationId: views-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: view id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -13490,12 +13337,7 @@ paths:
         -  PERMISSIONS: `api_view:delete` `{id}:delete` or `api_private_view_groups:can`
       operationId: views-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: view id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -13582,12 +13424,7 @@ paths:
         -  PERMISSIONS: `api_entityservice:read`
       operationId: weather-services-find-all-entities
       parameters:
-        - name: id
-          in: path
-          description: service id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/sort'
@@ -13637,12 +13474,7 @@ paths:
         -  PERMISSIONS: `api_view:update` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgets-copy
       parameters:
-        - name: id
-          in: path
-          description: widget id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -13880,12 +13712,7 @@ paths:
         -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: filter id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -13909,12 +13736,7 @@ paths:
         -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: filter id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -13992,12 +13814,7 @@ paths:
         -  PERMISSIONS: `api_view:read` or `api_private_view_groups:can`
       operationId: widgetfilters-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: filter id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -14228,12 +14045,7 @@ paths:
       description: Get widget template by id
       operationId: widgettemplates-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: template id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -14254,12 +14066,7 @@ paths:
       description: Update widget template by id
       operationId: widgettemplates-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: template id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -14312,12 +14119,7 @@ paths:
       description: Delete widget template by id
       operationId: widgettemplates-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: template id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK
@@ -14486,12 +14288,7 @@ paths:
         -  PERMISSIONS: `api_view:read` `{view_id}:read` or `api_private_view_groups:can`
       operationId: widgets-get-by-id
       parameters:
-        - name: id
-          in: path
-          description: widget id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         200:
           description: OK
@@ -14515,12 +14312,7 @@ paths:
         -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-update-by-id
       parameters:
-        - name: id
-          in: path
-          description: widget id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       requestBody:
         description: body
         content:
@@ -14632,12 +14424,7 @@ paths:
         -  PERMISSIONS: `api_view:update` `{view_id}:update` or `api_private_view_groups:can`
       operationId: widgets-delete-by-id
       parameters:
-        - name: id
-          in: path
-          description: widget id
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/id'
       responses:
         204:
           description: OK

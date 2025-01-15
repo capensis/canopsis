@@ -42,6 +42,18 @@ definitions:
         type: string
       firstname:
         type: string
+      idp_fields:
+        description: IdpFields field shows immutable user fields, because they are
+          defined by IdP.
+        items:
+          type: string
+        type: array
+      idp_roles:
+        description: IdpRoles field shows roles defined in IdP, which shouldn't be
+          modified for a user.
+        items:
+          type: string
+        type: array
       lastname:
         type: string
       name:
@@ -89,7 +101,7 @@ definitions:
         maxLength: 255
         type: string
       output:
-        maxLength: 255
+        maxLength: 1000
         type: string
       reason:
         description: Reason is used in pbehavior action.
@@ -245,6 +257,10 @@ definitions:
         items:
           type: string
         type: array
+      comments:
+        items:
+          $ref: '#/definitions/common.AlarmStep'
+        type: array
       component:
         type: string
       connector:
@@ -383,6 +399,8 @@ definitions:
         type: integer
       total_active:
         type: integer
+      unack:
+        type: integer
     type: object
   alarm.Details:
     properties:
@@ -491,7 +509,12 @@ definitions:
       separator:
         type: string
       tag:
+        description: Tag is deprecated, please use tags[] parameter
         type: string
+      tags:
+        items:
+          type: string
+        type: array
       time_field:
         type: string
       time_format:
@@ -936,10 +959,14 @@ definitions:
         type: boolean
       app_title:
         type: string
+      auto_suggest_pbehavior_name:
+        type: boolean
       check_count_request_timeout:
         type: integer
       default_color_theme:
         $ref: '#/definitions/colortheme.Response'
+      disabled_transitions:
+        type: boolean
       edition:
         type: string
       events_count_trigger_default_threshold:
@@ -966,6 +993,8 @@ definitions:
         $ref: '#/definitions/appinfo.RemediationConf'
       required_instruction_approve:
         type: boolean
+      serial_name:
+        type: string
       show_header_on_kiosk_mode:
         type: boolean
       stack:
@@ -1037,8 +1066,14 @@ definitions:
         type: boolean
       app_title:
         type: string
+      auto_suggest_pbehavior_name:
+        type: boolean
       check_count_request_timeout:
         type: integer
+      default_color_theme:
+        type: string
+      disabled_transitions:
+        type: boolean
       footer:
         type: string
       language:
@@ -1419,6 +1454,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      event_records:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithUnit'
+        type: object
       health_check:
         properties:
           delete_after:
@@ -1482,6 +1522,8 @@ definitions:
         $ref: '#/definitions/datastorage.HistoryWithCount'
       event_filter_failure:
         type: integer
+      event_records:
+        type: integer
       health_check:
         type: integer
       junit:
@@ -1542,6 +1584,15 @@ definitions:
     required:
     - unit
     - value
+    type: object
+  dbexport.Request:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
     type: object
   entity.ArchiveDisabledRequest:
     properties:
@@ -2485,6 +2536,8 @@ definitions:
       collection:
         description: are used in mongo external data
         type: string
+      optional:
+        type: boolean
       regexp:
         additionalProperties:
           type: string
@@ -5484,6 +5537,11 @@ definitions:
             * `4` - Disabled
         type: integer
     type: object
+  techmetrics.Settings:
+    properties:
+      enabled:
+        type: boolean
+    type: object
   template.Request:
     properties:
       text:
@@ -5535,6 +5593,43 @@ definitions:
   user.BulkDeleteRequestItem:
     properties:
       _id:
+        type: string
+    required:
+    - _id
+    type: object
+  user.BulkPatchRequestItem:
+    properties:
+      _id:
+        type: string
+      defaultview:
+        type: string
+      email:
+        type: string
+      enable:
+        type: boolean
+      firstname:
+        maxLength: 255
+        type: string
+      lastname:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      password:
+        type: string
+      roles:
+        items:
+          type: string
+        type: array
+      ui_groups_navigation_type:
+        maxLength: 255
+        type: string
+      ui_language:
+        maxLength: 255
+        type: string
+      ui_theme:
+        maxLength: 255
         type: string
     required:
     - _id
@@ -5728,6 +5823,18 @@ definitions:
         type: string
       firstname:
         type: string
+      idp_fields:
+        description: IdpFields field shows immutable user fields, because they are
+          defined by IdP.
+        items:
+          type: string
+        type: array
+      idp_roles:
+        description: IdpRoles field shows roles defined in IdP, which shouldn't be
+          modified for a user.
+        items:
+          type: string
+        type: array
       lastname:
         type: string
       name:

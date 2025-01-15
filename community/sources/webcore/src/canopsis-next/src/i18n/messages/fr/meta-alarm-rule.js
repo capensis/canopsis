@@ -34,6 +34,13 @@ export default {
     + 'Êtes-vous sûr de continuer?',
   selectType: 'Sélectionnez le type de règle de méta-alarme',
   valuePathHelpText: 'Attribut personnalisé pour regrouper les alarmes définies par un chemin de valeur',
+  componentTemplate: 'Modèle de composant',
+  resourceTemplate: 'Modèle de ressource',
+  copyTagsFromChildren: 'Copier les balises des alarmes pour enfants',
+  filterByLabelEnabled: 'Filtrer par étiquette',
+  filterByLabelEnabledTooltip: 'Certaines balises peuvent être définies au format Tag:Value, par exemple Env:Prod.\nAvec le filtre par libellé, seules les balises avec le libellé défini seront copiées des alarmes enfants vers la méta-alarme.',
+  copyFromLastChild: 'Copie du dernier enfant',
+  copyFromLastChildTooltip: 'Lorsque cette option est activée, la valeur infos est copiée à partir d\'une infos d\'une dernière alarme enfant. Le nom infos de l\'alarme enfant doit être défini dans ce cas.',
   steps: {
     basics: 'Les bases',
     defineType: 'Définir le type',
@@ -83,5 +90,9 @@ export default {
   },
   errors: {
     noValuePaths: 'Vous devez ajouter au moins un chemin de valeur',
+  },
+  field: {
+    title: 'Règle de méta-alarme',
+    noData: 'Aucune règle de méta-alarme n\'est trouvée selon les modèles définis',
   },
 };

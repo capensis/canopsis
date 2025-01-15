@@ -24,7 +24,7 @@ func TestConcurrentConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", "", "", 10,
+		"", "", "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -63,7 +63,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMes
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		nextExchange, nextQueue, "", "", 10,
+		nextExchange, nextQueue, "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -113,7 +113,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPu
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", fifoExchange, fifoQueue, 10,
+		"", "", fifoExchange, fifoQueue, 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -165,7 +165,7 @@ func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextMessage_Should
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		nextExchange, nextQueue, fifoExchange, fifoQueue, 10,
+		nextExchange, nextQueue, fifoExchange, fifoQueue, 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -213,7 +213,7 @@ func TestConcurrentConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *te
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", "", "", 10,
+		"", "", "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -253,7 +253,7 @@ func TestConcurrentConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testi
 	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", "", "", 10,
+		"", "", "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},

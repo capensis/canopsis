@@ -24,6 +24,7 @@
           v-model="phrase"
           :label="$t('modals.confirmationPhrase.phrase')"
           class="mt-2"
+          autofocus
         />
       </template>
       <template #actions="">

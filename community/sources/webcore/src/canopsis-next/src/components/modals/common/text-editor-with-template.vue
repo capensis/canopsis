@@ -12,6 +12,7 @@
           :rules="config.rules"
           :label="config.label"
           :sanitize-options="config.sanitizeOptions"
+          autofocus
         />
       </template>
       <template #actions="">

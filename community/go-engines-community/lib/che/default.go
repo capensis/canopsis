@@ -52,6 +52,7 @@ func NewEngine(
 
 	m := DependencyMaker{}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
+	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	entityAdapter := entity.NewAdapter(mongoClient)
@@ -197,6 +198,7 @@ func NewEngine(
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,
 		AlarmConfigProvider:      alarmConfigProvider,
+		MetricsConfigProvider:    metricsConfigProvider,
 		TechMetricsSender:        techMetricsSender,
 		MetricsSender:            metricsSender,
 		AmqpPublisher:            m.DepAMQPChannelPub(amqpConnection),
@@ -218,6 +220,7 @@ func NewEngine(
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
 		options.ExternalWorkers,
+		false,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
@@ -233,6 +236,7 @@ func NewEngine(
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
 		options.SystemWorkers,
+		false,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
@@ -248,6 +252,7 @@ func NewEngine(
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
 		options.UserWorkers,
+		false,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
@@ -278,6 +283,7 @@ func NewEngine(
 		config.NewAdapter(mongoClient),
 		logger,
 		alarmConfigProvider,
+		metricsConfigProvider,
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		templateConfigProvider,

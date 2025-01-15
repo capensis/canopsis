@@ -121,6 +121,7 @@ export const USERS_PERMISSIONS = {
     tag: `${USER_PERMISSIONS_PREFIXES.technical.admin}_tag`,
     storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
+    eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -149,6 +150,7 @@ export const USERS_PERMISSIONS = {
         fastAck: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastAck`,
         ackRemove: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_cancelAck`,
         pbehaviorAdd: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_pbehavior`,
+        fastPbehaviorAdd: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_fastPbehavior`,
         snooze: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_snoozeAlarm`,
         declareTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_declareanIncident`,
         associateTicket: `${USER_PERMISSIONS_PREFIXES.business.alarmsList}_assignTicketNumber`,
@@ -408,6 +410,7 @@ export const USERS_PERMISSIONS = {
       alarmTag: `${USER_PERMISSIONS_PREFIXES.api}_alarm_tag`,
       theme: `${USER_PERMISSIONS_PREFIXES.api}_color_theme`,
       icon: `${USER_PERMISSIONS_PREFIXES.api}_icon`,
+      techmetricsSettings: `${USER_PERMISSIONS_PREFIXES.api}_techmetrics_settings`,
 
       ...featuresService.get('constants.USERS_PERMISSIONS.api.general'),
     },
@@ -439,6 +442,11 @@ export const USERS_PERMISSIONS = {
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
     },
+
+    eventsRecord: {
+      launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
+      resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
+    },
   },
 };
 
@@ -453,6 +461,7 @@ export const BUSINESS_USER_PERMISSIONS_ACTIONS_MAP = {
     [ALARM_LIST_ACTIONS_TYPES.fastAck]: USERS_PERMISSIONS.business.alarmsList.actions.fastAck,
     [ALARM_LIST_ACTIONS_TYPES.ackRemove]: USERS_PERMISSIONS.business.alarmsList.actions.ackRemove,
     [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: USERS_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd,
+    [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: USERS_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd,
     [ALARM_LIST_ACTIONS_TYPES.snooze]: USERS_PERMISSIONS.business.alarmsList.actions.snooze,
     [ALARM_LIST_ACTIONS_TYPES.declareTicket]: USERS_PERMISSIONS.business.alarmsList.actions.declareTicket,
     [ALARM_LIST_ACTIONS_TYPES.associateTicket]: USERS_PERMISSIONS.business.alarmsList.actions.associateTicket,

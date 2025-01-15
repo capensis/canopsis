@@ -306,9 +306,8 @@ func benchmarkMessageProcessor(
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
-	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, metaAlarmStatesService,
-		template.NewExecutor(templateConfigProvider, tzConfigProvider), libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), logger)
+	metaAlarmPostProcessor := event.NewMetaAlarmPostProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+		alarmStatusService, correlation.NewMetaAlarmStateService(dbClient), json.NewEncoder(), libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), nil, metricsSender, logger)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -336,7 +335,7 @@ func benchmarkMessageProcessor(
 			calculator.NewEntityServiceCountersCalculator(dbClient, template.NewExecutor(templateConfigProvider, tzConfigProvider), eventsSender),
 			calculator.NewComponentCountersCalculator(dbClient, eventsSender),
 			eventsSender,
-			metaAlarmEventProcessor,
+			metaAlarmPostProcessor,
 			metaAlarmStatesService,
 			metricsSender,
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
@@ -345,6 +344,7 @@ func benchmarkMessageProcessor(
 			alarmtag.NewInternalTagAlarmMatcher(dbClient),
 			amqpChannel,
 			libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
+			template.NewExecutor(templateConfigProvider, tzConfigProvider),
 			logger,
 		),
 		TechMetricsSender: techmetrics.NewSender(canopsis.AxeEngineName+"/"+utils.NewID(), techMetricsConfigProvider, time.Minute, 0, 0, logger),

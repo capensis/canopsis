@@ -68,7 +68,6 @@ describe('kpi-rating-settings', () => {
           page: 1,
         },
       },
-      undefined,
     );
   });
 
@@ -128,7 +127,6 @@ describe('kpi-rating-settings', () => {
           page,
         },
       },
-      undefined,
     );
   });
 

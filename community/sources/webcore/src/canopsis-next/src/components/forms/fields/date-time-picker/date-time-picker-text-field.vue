@@ -7,6 +7,7 @@
           :label="label"
           :name="name"
           :error-messages="errorMessages"
+          :autofocus="autofocus"
           @focus="focus"
           @blur="blur"
         />
@@ -71,6 +72,10 @@ export default {
     dateObjectPreparer: {
       type: Function,
       default: value => convertDateToDateObject(value, DATETIME_FORMATS.dateTimePicker),
+    },
+    autofocus: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

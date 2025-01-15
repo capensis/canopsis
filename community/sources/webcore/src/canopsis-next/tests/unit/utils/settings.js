@@ -49,7 +49,6 @@ export const submitWithExpects = async (wrapper, { fetchActiveView, hideSidebar,
   expect(widgetMethod).toHaveBeenLastCalledWith(
     expect.any(Object),
     expectData,
-    undefined,
   );
   expect(fetchActiveView).toHaveBeenCalledTimes(1);
   expect(hideSidebar).toHaveBeenCalledTimes(1);

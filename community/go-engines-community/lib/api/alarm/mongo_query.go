@@ -18,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
@@ -269,18 +270,16 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	now datetime.CpsTime,
 	userID string,
 	opened int,
-	onlyParents bool,
 ) ([]bson.M, error) {
 	q.clear(now, userID)
 	q.handleOpened(opened)
 	q.handleDependencies(true)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
-	if onlyParents {
-		q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
-		q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
-		q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
-		q.excludedFields = append(q.excludedFields, "resolved_children")
-	}
+
+	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
+	q.lookups = append(q.lookups, lookupWithKey{key: "meta_alarm_rule", pipeline: getMetaAlarmRuleLookup()})
+	q.lookups = append(q.lookups, lookupWithKey{key: "children", pipeline: getChildrenCountLookup()})
+	q.excludedFields = append(q.excludedFields, "resolved_children")
 
 	query := pagination.Query{
 		Page:  1,
@@ -609,7 +608,7 @@ func (q *MongoQueryBuilder) handleFilter(ctx context.Context, r FilterRequest, u
 	q.addStartFromFilter(r, &alarmMatch)
 	q.addStartToFilter(r, &alarmMatch)
 	q.addOnlyParentsFilter(r, &alarmMatch)
-	q.addTagFilter(r, &alarmMatch)
+	q.addTagsFilter(r, &alarmMatch)
 	q.addBookmarkFilter(r, userID, &alarmMatch)
 	searchMarch, withLookups, err := q.addSearchFilter(r)
 	if err != nil {
@@ -910,12 +909,13 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 	*match = append(*match, bson.M{entityDbPrefix + ".category": bson.M{"$eq": r.Category}})
 }
 
-func (q *MongoQueryBuilder) addTagFilter(r FilterRequest, match *[]bson.M) {
-	if r.Tag == "" {
-		return
+func (q *MongoQueryBuilder) addTagsFilter(r FilterRequest, match *[]bson.M) {
+	if len(r.Tags) != 0 {
+		*match = append(*match, bson.M{"tags": bson.M{"$in": r.Tags}})
+	} else if r.Tag != "" {
+		// @todo: backward compatibility, tag parameter is deprecated, should be removed in 25.04.
+		*match = append(*match, bson.M{"tags": r.Tag})
 	}
-
-	*match = append(*match, bson.M{"tags": r.Tag})
 }
 
 func (q *MongoQueryBuilder) addBookmarkFilter(r FilterRequest, userID string, match *[]bson.M) {
@@ -1488,36 +1488,66 @@ func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 		"v.duration": bson.M{"$ifNull": bson.A{
 			"$v.duration",
 			bson.M{"$subtract": bson.A{
-				bson.M{"$cond": bson.M{
-					"if":   "$v.resolved",
-					"then": "$v.resolved",
-					"else": now,
-				}},
+				bson.M{"$ifNull": bson.A{"$v.resolved", now}},
 				"$v.creation_date",
 			}},
 		}},
 		"v.current_state_duration": bson.M{"$ifNull": bson.A{
 			"$v.current_state_duration",
 			bson.M{"$subtract": bson.A{
-				bson.M{"$cond": bson.M{
-					"if":   "$v.resolved",
-					"then": "$v.resolved",
-					"else": now,
-				}},
+				bson.M{"$ifNull": bson.A{"$v.resolved", now}},
 				"$v.state.t",
 			}},
 		}},
 		"v.active_duration": bson.M{"$ifNull": bson.A{
 			"$v.active_duration",
-			bson.M{"$subtract": bson.A{
-				bson.M{"$cond": bson.M{
-					"if":   "$v.resolved",
-					"then": "$v.resolved",
-					"else": now,
+			bson.M{"$cond": bson.M{
+				"if": "$v.resolved",
+				"then": bson.M{"$subtract": bson.A{
+					"$v.resolved",
+					bson.M{"$sum": bson.A{
+						"$v.creation_date",
+						"$v.inactive_duration",
+					}},
 				}},
-				bson.M{"$sum": bson.A{
-					"$v.creation_date",
-					"$v.inactive_duration",
+				"else": bson.M{"$subtract": bson.A{
+					now,
+					bson.M{"$sum": bson.A{
+						"$v.creation_date",
+						"$v.inactive_duration",
+						bson.M{"$cond": bson.M{
+							"if":   "$v.inactive_start",
+							"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+							"else": 0,
+						}},
+					}},
+				}},
+			}},
+		}},
+		"v.snooze_duration": bson.M{"$cond": bson.M{
+			"if":   "$v.resolved",
+			"then": "$v.snooze_duration",
+			"else": bson.M{"$sum": bson.A{
+				"$v.snooze_duration",
+				bson.M{"$cond": bson.M{
+					"if":   "$v.snooze",
+					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+					"else": 0,
+				}},
+			}},
+		}},
+		"v.pbh_inactive_duration": bson.M{"$cond": bson.M{
+			"if":   "$v.resolved",
+			"then": "$v.pbh_inactive_duration",
+			"else": bson.M{"$sum": bson.A{
+				"$v.pbh_inactive_duration",
+				bson.M{"$cond": bson.M{
+					"if": bson.M{"$not": bson.M{"$in": bson.A{
+						bson.M{"$ifNull": bson.A{"$v.pbehavior_info.canonical_type", nil}},
+						bson.A{nil, "", pbehavior.TypeActive},
+					}}},
+					"then": bson.M{"$subtract": bson.A{now, "$v.inactive_start"}},
+					"else": 0,
 				}},
 			}},
 		}},
@@ -1530,10 +1560,9 @@ func getComputedFields(now datetime.CpsTime, userID string) bson.M {
 						"if": "$pbehavior.last_comment",
 						"then": bson.M{"$mergeObjects": bson.A{
 							"$pbehavior.last_comment",
-							bson.M{"author": bson.M{"$cond": bson.M{
-								"if":   "$pbehavior.last_comment.origin",
-								"then": "$pbehavior.last_comment.origin",
-								"else": "$pbehavior.last_comment.author.display_name",
+							bson.M{"author": bson.M{"$ifNull": bson.A{
+								"$pbehavior.last_comment.origin",
+								"$pbehavior.last_comment.author.display_name",
 							}}},
 						}},
 						"else": nil,
@@ -1639,11 +1668,7 @@ func getOnlyParentsSearchPipeline(
 		{"$unwind": bson.M{"path": "$meta_alarm", "preserveNullAndEmptyArrays": true}},
 		{"$unwind": bson.M{"path": "$alarms", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
-			"alarm": bson.M{"$cond": bson.M{
-				"if":   "$meta_alarm",
-				"then": "$meta_alarm",
-				"else": "$alarms",
-			}},
+			"alarm": bson.M{"$ifNull": bson.A{"$meta_alarm", "$alarms"}},
 		}},
 		{"$match": bson.M{"alarm": bson.M{"$ne": nil}}},
 		{"$group": bson.M{

@@ -60,3 +60,11 @@ func (f *Fields) Labels() []string {
 
 	return labels
 }
+
+func (t Task) GetFields() Fields {
+	return t.Fields
+}
+
+func (t Task) GetSeparator() rune {
+	return t.Separator
+}

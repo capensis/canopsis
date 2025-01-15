@@ -28,6 +28,7 @@ export default {
     rules: 'Règles',
     remediation: 'Remédiation',
     pbehavior: 'Comportements périodiques',
+    eventsRecord: 'Enregistrement des événements',
   },
   permissions: {
     /**
@@ -68,6 +69,10 @@ export default {
     [USERS_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: {
       name: 'Droits sur le bac à alarmes : ajouter un comportement périodique',
       description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Comportement périodique" et modifier les comportements périodiques pour les alarmes',
+    },
+    [USERS_PERMISSIONS.business.alarmsList.actions.fastPbehaviorAdd]: {
+      name: 'Droits sur la liste d\'alarmes : Ajouter un comportement périodique rapidemment',
+      description: 'Les utilisateurs disposant de cette autorisation peuvent accéder à l\'action "Définir un comportement périodique rapidemment"',
     },
     [USERS_PERMISSIONS.business.alarmsList.actions.snooze]: {
       name: 'Droits sur le bac à alarmes : mettre en veille une alarme',
@@ -665,6 +670,10 @@ export default {
       name: 'Gestion des tags',
       description: 'Cette autorisation définit l\'accès à la gestion des tags',
     },
+    [USERS_PERMISSIONS.technical.eventsRecord]: {
+      name: 'Enregistrement des événements',
+      description: 'Cette autorisation définit l\'accès aux enregistrements d\'événements',
+    },
 
     /**
      * Technical Exploitation Permissions
@@ -971,6 +980,15 @@ export default {
     [USERS_PERMISSIONS.api.pbehavior.pbehaviorType]: {
       name: 'Comportements périodiques : Types',
       description: 'Les utilisateurs disposant de cette autorisation peuvent gérer les types de comportements périodiques par API',
+    },
+
+    [USERS_PERMISSIONS.api.eventsRecord.launchEventRecording]: {
+      name: 'Lancement d\'un enregistrement d\'événements',
+      description: 'Accès à la route API pour lancer et récupérer les enregistrements d\'événements',
+    },
+    [USERS_PERMISSIONS.api.eventsRecord.resendEvents]: {
+      name: 'Renvoyer les événements',
+      description: 'Accès à la route API pour renvoyer les événements à partir des enregistrements d\'événements',
     },
   },
 };

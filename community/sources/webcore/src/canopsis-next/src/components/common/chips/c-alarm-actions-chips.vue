@@ -94,6 +94,10 @@ export default {
       type: String,
       required: false,
     },
+    activeItems: {
+      type: Array,
+      default: () => [],
+    },
     inlineCount: {
       type: [Number, String],
       default: 2,
@@ -123,7 +127,7 @@ export default {
       default: 'text',
     },
     itemClass: {
-      type: String,
+      type: [String, Object],
       required: false,
     },
     returnObject: {
@@ -143,11 +147,11 @@ export default {
   computed: {
     sortedItems() {
       return [...this.items].sort((first, second) => {
-        if (first[this.itemValue] === this.activeItem) {
+        if (first[this.itemValue] === this.activeItem || this.activeItems.includes(first[this.itemValue])) {
           return -1;
         }
 
-        if (second[this.itemValue] === this.activeItem) {
+        if (second[this.itemValue] === this.activeItem || this.activeItems.includes(second[this.itemValue])) {
           return 0;
         }
 
@@ -186,7 +190,9 @@ export default {
     },
 
     isClosableItem(item) {
-      return this.closable || (this.closableActive && this.activeItem === item[this.itemValue]);
+      const isActive = this.activeItem === item[this.itemValue] || this.activeItems.includes(item[this.itemValue]);
+
+      return this.closable || (this.closableActive && isActive);
     },
   },
 };

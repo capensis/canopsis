@@ -318,6 +318,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.tags,
   ALARM_PATTERN_FIELDS.lastComment,
   ALARM_PATTERN_FIELDS.lastCommentInitiator,
+  ALARM_PATTERN_FIELDS.lastCommentAuthor,
   ALARM_PATTERN_FIELDS.ticketMessage,
   ALARM_PATTERN_FIELDS.ticketValue,
   ALARM_PATTERN_FIELDS.ticketInitiator,
@@ -386,7 +387,7 @@ export const isDurationPatternRuleField = value => value === ALARM_PATTERN_FIELD
  */
 export const isExtraInfosPatternRuleField = (value) => {
   /**
-   * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+   * @TODO: update babel-eslint for resolving problem with templates inside optional chaining function call
    */
   const start = `${EVENT_FILTER_PATTERN_FIELDS.extraInfos}.`;
 
@@ -403,7 +404,7 @@ export const isExtraInfosPatternRuleField = (value) => {
 export const getObjectPatternRuleField = value => [ALARM_PATTERN_FIELDS.ticketData]
   .find((field) => {
     /**
-     * @TODO: update babel-eslint for resolving problem with templates inside optional chaiging function call
+     * @TODO: update babel-eslint for resolving problem with templates inside optional chaining function call
      */
     const start = `${field}.`;
 
@@ -728,11 +729,15 @@ export const patternRuleToForm = (rule = {}) => {
       if (isBoolean(rule.cond.value)) {
         if (rule.field === SERVICE_WEATHER_PATTERN_FIELDS.grey) {
           form.operator = rule.cond.value ? PATTERN_OPERATORS.isGrey : PATTERN_OPERATORS.isNotGrey;
+        } else if (rule.field === ALARM_PATTERN_FIELDS.meta) {
+          form.operator = PATTERN_OPERATORS.ruleIs;
         }
       }
 
       if (!form.operator) {
-        form.operator = PATTERN_OPERATORS.equal;
+        form.operator = {
+          [ALARM_PATTERN_FIELDS.meta]: PATTERN_OPERATORS.ruleIs,
+        }[rule.field] ?? PATTERN_OPERATORS.equal;
         form.value = rule.cond.value;
       }
       break;
@@ -1004,6 +1009,7 @@ export const formRuleToPatternRule = (rule) => {
 
   switch (rule.operator) {
     case PATTERN_OPERATORS.equal:
+    case PATTERN_OPERATORS.ruleIs:
       pattern.cond.type = PATTERN_CONDITIONS.equal;
       break;
     case PATTERN_OPERATORS.notEqual:

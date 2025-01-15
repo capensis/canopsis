@@ -19,6 +19,7 @@ export default {
   hasBookmark: 'Alarm has bookmark',
   filterByBookmark: 'Filter by bookmark',
   runTest: 'Run test',
+  tagFilter: 'Tag filter',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
@@ -32,6 +33,7 @@ export default {
       fastAck: 'Fast ack',
       ackRemove: 'Cancel ack',
       pbehavior: 'Periodical behavior',
+      fastPbehaviorAdd: 'Fast periodical behavior',
       snooze: 'Snooze alarm',
       declareTicket: 'Declare ticket',
       associateTicket: 'Associate ticket',
@@ -176,6 +178,7 @@ export default {
     initialOutput: 'Initial output',
     initialLongOutput: 'Initial long output',
     lastCommentInitiator: 'Last comment initiator',
+    lastCommentAuthor: 'Last comment author',
     ackBy: 'Acked by',
     ackMessage: 'Acked message',
     ackInitiator: 'Acked initiator',

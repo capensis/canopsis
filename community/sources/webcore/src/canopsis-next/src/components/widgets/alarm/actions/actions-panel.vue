@@ -1,5 +1,9 @@
 <template>
-  <shared-actions-panel v-bind="$attrs" :actions="preparedActions" />
+  <shared-actions-panel
+    ref="sharedActionsPanel"
+    v-bind="$attrs"
+    :actions="preparedActions"
+  />
 </template>
 
 <script>
@@ -329,6 +333,11 @@ export default {
             method: this.showSnoozeModal,
           },
           {
+            type: ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd,
+            title: this.$t('alarm.actions.titles.fastPbehaviorAdd'),
+            method: this.fastAddPbehavior,
+          },
+          {
             type: ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd,
             title: this.$t('alarm.actions.titles.pbehavior'),
             method: this.showAddPbehaviorModal,
@@ -422,6 +431,7 @@ export default {
   methods: {
     afterSubmit() {
       this.refreshAlarmsList();
+      this.$refs.sharedActionsPanel?.closeMenu?.();
     },
 
     showCreateChangeStateEventModal() {
@@ -487,7 +497,11 @@ export default {
     },
 
     showAddPbehaviorModal() {
-      this.showAddPbehaviorModalByAlarms(this.item);
+      this.showAddPbehaviorModalByAlarms([this.item]);
+    },
+
+    fastAddPbehavior() {
+      this.addFastPbehaviorByAlarms([this.item]);
     },
 
     showHistoryModal() {

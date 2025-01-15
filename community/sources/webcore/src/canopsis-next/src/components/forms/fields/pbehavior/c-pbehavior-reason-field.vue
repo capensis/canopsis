@@ -8,6 +8,7 @@
     :error-messages="errors.collect(name)"
     :name="name"
     :return-object="returnObject"
+    :clearable="clearable"
     item-text="name"
     item-value="_id"
   />
@@ -39,6 +40,10 @@ export default {
       default: false,
     },
     returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
       type: Boolean,
       default: false,
     },

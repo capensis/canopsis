@@ -141,6 +141,9 @@ const (
 
 	JsonContentType = "application/json"
 
+	RecorderConsumerName    = "recorder"
+	RecorderRPCConsumerName = "recorder_rpc"
+
 	PeriodicalWaitTime       = time.Minute
 	TechMetricsFlushInterval = time.Second * 10
 	DefaultFlushInterval     = time.Second * 5

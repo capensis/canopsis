@@ -13,7 +13,7 @@
           v-field="form.name"
           disabled
         />
-        <c-description-field v-field="form.description" />
+        <c-description-field v-field="form.description" autofocus />
         <v-layout justify-space-between>
           <v-flex xs3>
             <c-enabled-field v-field="form.enabled" />

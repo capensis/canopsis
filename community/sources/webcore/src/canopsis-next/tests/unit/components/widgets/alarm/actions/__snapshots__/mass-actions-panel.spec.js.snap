@@ -27,6 +27,11 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
   class="shared-actions-panel"
 >
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -89,6 +94,11 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
   class="shared-actions-panel"
 >
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -146,6 +156,11 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with non empty items 
   class="shared-actions-panel"
 >
   <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
+  <button
     class="action-pbehaviorAdd"
   >
     Periodical behavior|pause|pbehaviorAdd
@@ -202,6 +217,11 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with one item 1`] = `
 <div
   class="shared-actions-panel"
 >
+  <button
+    class="action-fastPbehaviorAdd"
+  >
+    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
+  </button>
   <button
     class="action-pbehaviorAdd"
   >

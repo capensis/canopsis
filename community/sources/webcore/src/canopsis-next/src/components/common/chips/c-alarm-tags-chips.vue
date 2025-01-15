@@ -1,7 +1,7 @@
 <template>
   <c-alarm-actions-chips
-    :items="tags"
-    :active-item="selectedTag"
+    :items="preparedTags"
+    :active-items="selectedTags"
     :small="small"
     :inline-count="inlineCount"
     :closable-active="closableActive"
@@ -23,9 +23,9 @@ export default {
       type: Object,
       required: true,
     },
-    selectedTag: {
-      type: String,
-      required: false,
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
     inlineCount: {
       type: [Number, String],
@@ -39,10 +39,41 @@ export default {
       type: Boolean,
       default: false,
     },
+    nameFilter: {
+      type: String,
+      default: '',
+    },
+    regexFilter: {
+      type: String,
+      default: '',
+    },
+    regexFilterFlags: {
+      type: String,
+      default: '',
+    },
   },
   computed: {
-    tags() {
-      return (this.alarm.tags ?? []).map(tag => ({
+    filteredTags() {
+      const tags = (this.alarm.tags ?? []);
+      const regexps = [];
+
+      if (this.nameFilter) {
+        regexps.push(new RegExp(this.nameFilter));
+      }
+
+      if (this.regexFilter) {
+        regexps.push(new RegExp(this.regexFilter, this.regexFilterFlags));
+      }
+
+      if (regexps.length) {
+        return tags.filter(tag => regexps.every(regex => tag.match(regex)));
+      }
+
+      return tags;
+    },
+
+    preparedTags() {
+      return this.filteredTags.map(tag => ({
         text: tag,
         color: this.getTagColor(tag),
       }));

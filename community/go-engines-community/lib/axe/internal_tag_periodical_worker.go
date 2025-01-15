@@ -84,24 +84,30 @@ func (w *internalTagPeriodicalWorker) addTag(
 		},
 		"itags": bson.M{"$nin": bson.A{tag.Value}},
 	}
+	var pipeline []bson.M
 	if len(tag.AlarmPattern) > 0 {
 		q, err := db.AlarmPatternToMongoQuery(tag.AlarmPattern, "")
 		if err != nil {
 			return err
 		}
+
+		if alarmPatternFields := tag.AlarmPattern.GetMongoFields(""); len(alarmPatternFields) > 0 {
+			pipeline = append(pipeline, bson.M{"$addFields": alarmPatternFields})
+		}
+
 		alarmMatch = bson.M{"$and": []bson.M{alarmMatch, q}}
 	}
-	pipeline := []bson.M{
-		{"$match": alarmMatch},
-		{"$replaceRoot": bson.M{"newRoot": bson.M{"alarm": "$$ROOT"}}},
-		{"$lookup": bson.M{
+	pipeline = append(pipeline,
+		bson.M{"$match": alarmMatch},
+		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"alarm": "$$ROOT"}}},
+		bson.M{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "alarm.d",
 			"foreignField": "_id",
 			"as":           "entity",
 		}},
-		{"$unwind": "$entity"},
-	}
+		bson.M{"$unwind": "$entity"},
+	)
 	if len(tag.EntityPattern) > 0 {
 		q, err := db.EntityPatternToMongoQuery(tag.EntityPattern, "entity")
 		if err != nil {

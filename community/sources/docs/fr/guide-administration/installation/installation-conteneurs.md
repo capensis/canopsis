@@ -26,22 +26,28 @@ Cette procédure décrit l'installation de Canopsis avec Docker Compose.
 
 ### Utilisation de Docker Compose
 
-[Docker Compose](https://docs.docker.com/compose/) est actuellement l'orchestrateur Docker à utiliser pour Canopsis.
+[Docker Compose](https://docs.docker.com/compose/) est l'orchestrateur Docker couramment supporté pour Canopsis.
 
 !!! important
-    Les conteneurs Docker et configurations Docker Compose fournies par Canopsis sont maintenues et testées seulement avec Docker Compose. La compatibilité directe avec d'autres outils d'orchestration tels que Kubernetes, Docker Swarm, Consul, OpenShift, etc. n'est à ce jour pas assurée.
+    Les configurations Docker Compose fournies par Canopsis sont maintenues et testées seulement avec Docker Compose. La compatibilité directe de ces configurations avec d'autres outils d'orchestration tels que Kubernetes, Docker Swarm, Consul, OpenShift, etc. n'est à ce jour pas assurée.
+
+    Les clients disposant d'une souscription Canopsis Pro qui souhaitent déployer dans un cluster Kubernetes peuvent en revanche se tourner vers le [chart Helm][helm] maintenu par Capensis.
+
+[helm]: ./installation-helm.md
 
 ### Prérequis de version du noyau Linux
 
 Lors de l'utilisation de Docker, Canopsis nécessite **un noyau Linux 4.4 minimum sur votre système hôte**.
 
-Vérifiez votre version du noyau à l'aide de la commande suivante :
+De nos jours, ce point est acquis à partir du moment où vous utilisez une version supportée d'une de ces distributions majeures orientées « serveur » : EL, Debian, Ubuntu LTS, SLES, OpenSUSE Leap.
+
+En cas de doute, vérifiez votre version du noyau à l'aide de la commande suivante :
 
 ```sh
 uname -r
 ```
 
-Si la version affichée est inférieure à 4.4, vous devez soit utiliser une distribution plus à jour, ou bien installer un noyau plus récent (par exemple *via* [ELRepo](https://elrepo.org/tiki/kernel-lt).
+Si la version affichée est inférieure à 4.4, vous devez soit utiliser une distribution GNU/Linux plus à jour, ou bien installer un noyau plus récent via des dépôts spécifiques, lorsque c'est possible.
 
 !!! important
     L'utilisation de Docker Compose avec un noyau inférieur à 4.4 n'est pas prise en charge.
@@ -72,79 +78,58 @@ Les environnements Docker Compose de référence pour Canopsis sont disponibles 
 git :
 
 === "Canopsis Pro"
+
     Pour Canopsis Pro, les fichiers sont dans le
-    [dépôt git des sources de canopsis-pro][canopsis-pro-sources].
+    [dépôt git canopsis-pro][canopsis-pro] dans la partie "Release"..
 
-    Récupération du dépôt via Git+HTTPS :
-    ```sh
-    git clone https://git.canopsis.net/sources/canopsis-pro-sources.git
+    Décompressez l'archive :
+
     ```
-    Récupération du dépôt via Git+SSH :
-    ```sh
-    git clone git@git.canopsis.net:sources/canopsis-pro-sources.git
+    tar -xvzf canopsis-pro-docker-compose-XX.XX.X.tar.gz
     ```
 
-    Déplacez-vous ensuite dans le dossier contenant l'environnement :
-    ```sh
-    cd canopsis-pro-sources/pro/deployment/canopsis/docker
+    Déplacez-vous ensuite dans le dossier contenant l'environnement :
+
+    ```
+    cd canopsis-pro-docker-compose-XX.XX.X
     ```
 
 === "Canopsis Community"
+
     Pour Canopsis Community, les fichiers sont dans le
-    [dépôt git canopsis-community][canopsis-community].
+    [dépôt git canopsis-community][canopsis-community] dans la partie "Release".
 
-    Récupération du dépôt via Git+HTTPS :
-    ```sh
-    git clone https://git.canopsis.net/canopsis/canopsis-community.git
+    Décompressez l'archive :
+
     ```
-    Récupération du dépôt via Git+SSH :
-    ```sh
-    git clone git@git.canopsis.net:canopsis/canopsis-community.git
+    tar -xvzf canopsis-community-docker-compose-XX.XX.X.tar.gz
     ```
 
-    Déplacez-vous ensuite dans le dossier contenant l'environnement :
+    Déplacez-vous ensuite dans le dossier contenant l'environnement :
+
     ```
-    cd canopsis-community/community/deployment/canopsis/docker
+    cd canopsis-community-docker-compose-XX.XX.X
     ```
 
 ### Lancement de l'environnement
 
 Récupérez les dernières images disponibles :
 
-=== "Canopsis Pro"
-    ```sh
-    CPS_EDITION=pro docker compose pull
-    ```
-
-=== "Canopsis Community"
-    ```sh
-    CPS_EDITION=community docker compose pull
-    ```
+```sh
+docker compose pull
+```
 
 Lancez ensuite la commande suivante, afin de démarrer un environnement Canopsis
 complet :
 
-=== "Canopsis Pro"
-    ```sh
-    CPS_EDITION=pro docker compose up -d
-    ```
-
-=== "Canopsis Community"
-    ```sh
-    CPS_EDITION=community docker compose up -d
-    ```
-
+```sh
+docker compose up -d
+```
 ## Vérification du bon fonctionnement
 
-=== "Canopsis Pro"
-    ```sh
-    CPS_EDITION=pro docker compose ps
-    ```
-
-=== "Canopsis Community"
-    ```sh
-    CPS_EDITION=community docker compose ps
-    ```
+```sh
+docker compose ps
+```
 
 Les services doivent être en état `Up`, `Up (healthy)` ou `Exit 0`. En fonction
 des ressources de votre machine, il peut être nécessaire d'attendre quelques
@@ -154,15 +139,9 @@ Vous pouvez ensuite procéder à votre [première connexion à l'interface Canop
 
 ## Arrêt de l'environnement Docker Compose
 
-=== "Canopsis Pro"
-    ```sh
-    CPS_EDITION=pro docker compose down
-    ```
-
-=== "Canopsis Community"
-    ```sh
-    CPS_EDITION=community docker compose down
-    ```
+```sh
+docker compose down
+```
 
 ## Rétention des logs
 
@@ -198,5 +177,5 @@ logrotate -fv /etc/logrotate.d/docker-container
 [prereq-versions]: https://doc.canopsis.net/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
 [compose-spec]: https://docs.docker.com/compose/compose-file/
 [docker-compose]: https://docs.docker.com/compose/install/#install-compose
-[canopsis-pro-sources]: https://git.canopsis.net/sources/canopsis-pro-sources
-[canopsis-community]: https://git.canopsis.net/canopsis/canopsis-community
+[canopsis-pro]: https://git.canopsis.net/canopsis/canopsis-pro/-/releases
+[canopsis-community]: https://git.canopsis.net/canopsis/canopsis-community/-/releases

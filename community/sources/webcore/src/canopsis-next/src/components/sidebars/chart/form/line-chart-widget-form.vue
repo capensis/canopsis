@@ -3,6 +3,7 @@
     <field-title
       v-field="form.title"
       :required="requiredTitle"
+      autofocus
     />
     <field-periodic-refresh
       v-if="withPeriodicRefresh"

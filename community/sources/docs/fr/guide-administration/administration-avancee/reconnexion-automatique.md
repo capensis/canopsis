@@ -40,7 +40,7 @@ Le comportement est identique à celui de Redis.
 
 ### Processus périodique
 
-En cas d'incident de connexion, le processus exécute de nouveau la commande autant de fois que la valeur de `ReconnectRetries`. Si l'incident subsiste à l'issue des nouvelles tentatives, il inscrit l'erreur dans les logs et attend le prochain [battement](../../../guide-utilisation/vocabulaire/#battement).
+En cas d'incident de connexion, le processus exécute de nouveau la commande autant de fois que la valeur de `ReconnectRetries`. Si l'incident subsiste à l'issue des nouvelles tentatives, il inscrit l'erreur dans les logs et attend le prochain [battement](../../guide-utilisation/vocabulaire/index.md#battement).
 
 ### Processus de travail
 
