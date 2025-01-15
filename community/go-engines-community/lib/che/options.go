@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 )
 
 type Options struct {
@@ -25,7 +26,7 @@ type Options struct {
 	UserWorkers             int
 }
 
-func ParseOptions() Options {
+func ParseOptions() (Options, []string) {
 	opts := Options{}
 	flag.BoolVar(&opts.FeatureEventProcessing, "processEvent", true, "enable event processing. enabled by default.")
 	flag.BoolVar(&opts.FeatureContextCreation, "createContext", true, "enable context graph creation. enabled by default. WARNING: disable the old context-graph engine when using this.")
@@ -49,5 +50,5 @@ func ParseOptions() Options {
 
 	flag.Parse()
 
-	return opts
+	return opts, libflag.FindDeprecatedFlags([]string{"workers", "publishQueue", "consumeQueue"})
 }

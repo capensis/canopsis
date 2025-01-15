@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -43,8 +44,9 @@ type DependencyMaker struct {
 	depmake.DependencyMaker
 }
 
-func ParseOptions() Options {
+func ParseOptions() (Options, []string) {
 	opts := Options{}
+
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
@@ -63,7 +65,7 @@ func ParseOptions() Options {
 
 	flag.Parse()
 
-	return opts
+	return opts, libflag.FindDeprecatedFlags([]string{"workers", "withWebhook"})
 }
 
 // NewEngineAction returns the default Action engine with default connections.
