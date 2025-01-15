@@ -9,7 +9,7 @@ import (
 	"syscall"
 )
 
-const dirPerm os.FileMode = 0770
+const dirPerm os.FileMode = 0o770
 
 func NewStorage(filesRoot string, etagEncoder EtagEncoder) Storage {
 	return &storage{
