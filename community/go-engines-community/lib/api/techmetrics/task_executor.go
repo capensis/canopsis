@@ -26,7 +26,7 @@ const (
 	filenameDumpPattern               = "cps_tech_metrics_*.bak"
 	abandonedTickInterval             = 4 * time.Minute
 	abandonedInterval                 = 5 * time.Minute
-	dirPerm               os.FileMode = 0770
+	dirPerm               os.FileMode = 0o770
 )
 
 // TaskExecutor is used to implement export task executor.
