@@ -13,7 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
-const dirPerm os.FileMode = 0770
+const dirPerm os.FileMode = 0o770
 
 // ToCsv fetches data and saves it in csv file.
 func ToCsv(
