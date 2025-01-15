@@ -512,7 +512,7 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 	}
 
 	if event.Parameters.Duration != nil {
-		seconds, err := event.Parameters.Duration.To("s")
+		seconds, err := event.Parameters.Duration.To(datetime.DurationUnitSecond)
 		if err == nil {
 			childEvent.Duration = types.CpsNumber(seconds.Value)
 		}
