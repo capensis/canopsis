@@ -5,6 +5,7 @@ exports[`pattern-form Renders \`pattern-form\` with alarm type 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     label="Title"
     name="title"
     required=""
@@ -24,6 +25,7 @@ exports[`pattern-form Renders \`pattern-form\` with default props 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     label="Title"
     name="title"
     required=""
@@ -37,6 +39,7 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     label="Title"
     name="title"
     required=""
@@ -56,6 +59,7 @@ exports[`pattern-form Renders \`pattern-form\` with entity type 2`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     label="Title"
     name="title"
     required=""

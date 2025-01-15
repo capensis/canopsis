@@ -1,9 +1,11 @@
 import { computed } from 'vue';
 
-import { usePendingHandler } from '@/hooks/query/pending';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
-import { useI18n } from '@/hooks/i18n';
-import { usePopups } from '@/hooks/popups';
+import { promisedTimeout } from '@/helpers/async';
+
+import { usePendingHandler } from './query/pending';
+import { useValidationFormErrors } from './validator/validation-form-errors';
+import { useI18n } from './i18n';
+import { usePopups } from './popups';
 
 /**
  * Creates a submittable form handler with validation and error handling.
@@ -66,15 +68,15 @@ export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
      * to avoid combobox lag. Otherwise, `submitHandler` is called directly.
      */
     withTimeout
-      ? (...args) => setTimeout(() => submitHandler(...args), 0)
+      ? (...args) => promisedTimeout(() => submitHandler(...args), 0)
       : submitHandler,
   );
 
   const isDisabled = computed(() => submitting.value || validator.errors?.any?.());
 
   return {
-    submit,
     submitting,
     isDisabled,
+    submit,
   };
 };

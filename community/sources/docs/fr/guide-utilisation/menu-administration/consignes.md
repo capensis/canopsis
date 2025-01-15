@@ -110,7 +110,7 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
 ![Liste consignes](./img/consignes_creer_06.png)
 
-[templates-payload]: ../../templates-go/
+[templates-payload]: ../../guide-utilisation/templates-go/index.md
 
 
 | Type de consigne | Description |
@@ -121,7 +121,7 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 
 ### Déclenchement d'une consigne et activation d'une alarme
 
-L'option [ActivateAlarmAfterAutoRemediation](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
+L'option [ActivateAlarmAfterAutoRemediation](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
 
 ??? note "Schémas de fonctionnement"
 
@@ -163,7 +163,7 @@ L'option [ActivateAlarmAfterAutoRemediation](../../../guide-administration/admin
         J --> F
     ```
 
-Par ailleurs, les remédiations automatiques peuvent à présent [être déclenchées](../../../guide-administration/architecture-interne/triggers/#triggers-go) sur
+Par ailleurs, les remédiations automatiques peuvent à présent [être déclenchées](../../guide-administration/architecture-interne/triggers.md#triggers-go) sur
 
 * Création d'une alarme
 * Activation d'une alarme
@@ -292,3 +292,19 @@ exécutés.
 
 Cette vue simple, permet d'afficher les statistiques de traitement de vos consignes.  
 ![Statistiques vue graphique](./img/consignes_statistiques_liste.png)
+
+
+Il existe une possibilité de supprimer l'ensemble des statistiques de remédiation.  
+Le moteur `engine-remediation` peut être exécuté avec l'option `-cleanUp`.  
+
+```
+./engine-remediation -cleanUp
+```
+
+Les logs associés avertissent de la fin de l'opération :
+
+```
+canopsis-pro-remediation-1  | 2024-06-12T12:40:10Z INF git.canopsis.net/canopsis/canopsis-pro/pro/go-engines-pro/cmd/engine-remediation/dependencies.go:409 > instruction execution data cleaned up
+```
+
+Vous pouvez alors redémarrer le moteur sans l'option pour un fonctionnement normal.

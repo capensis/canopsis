@@ -32,7 +32,8 @@ type EntityCounters struct {
 	Rule *statesetting.StateSetting `bson:"rule"`
 }
 
-func (s *EntityCounters) Reset() {
+func (s *EntityCounters) Reset(id string) {
+	s.ID = id
 	s.All = 0
 	s.Active = 0
 	s.State = StateCounters{}

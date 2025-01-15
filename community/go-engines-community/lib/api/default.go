@@ -154,7 +154,7 @@ func Default(
 		logger.Info().Msg("Non-unique names for services ENABLED")
 	}
 
-	dbExportClient, err := mongo.NewClientWithOptions(ctx, 0, 0, 0,
+	dbExportClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
 		p.ApiConfigProvider.Get().ExportMongoClientTimeout, logger)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot connect to mongodb: %w", err)
@@ -242,7 +242,7 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(dbClient), logger)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(dbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
@@ -361,6 +361,7 @@ func Default(
 			stateSettingsUpdatesChan,
 			flags.EnableSameServiceNames,
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
+			securityConfig,
 			logger,
 		)
 	})

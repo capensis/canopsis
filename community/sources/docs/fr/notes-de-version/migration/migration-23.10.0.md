@@ -220,7 +220,7 @@ Si votre installation utilise un noeud unique MongoDB, vous devez le migrer vers
 
     * Suppression du moteur `engine-service`. Les calculs effectués par ce moteur sont à présent répartis entre `engine-che` et `engine-axe`.
     * Suppression du paramètre `EnableLastEventDate` du fichier canopsis.toml. Ce paramètre est désormais appliqué quoi qu'il arrive.
-    * Les paramètres `launch_job_retries_*` et  `wait_job_complete_retries_*` de la section [Remédiation](../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-remediation) n'existent plus.
+    * Les paramètres `launch_job_retries_*` et  `wait_job_complete_retries_*` de la section [Remédiation](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-remediation) n'existent plus.
 
 === "Docker Compose"
 
@@ -331,7 +331,7 @@ Si vous avez modifié le fichier `canopsis.toml` (vous le voyez via une définit
 
 !!! information "Information"
 
-    Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../../guide-administration/administration-avancee/modification-canopsis-toml/). 
+    Pour éviter ce type de synchronisation fastidieuse, la bonne pratique est d'utiliser [un fichier de surcharge de cette configuration](../../guide-administration/administration-avancee/modification-canopsis-toml.md). 
 
 
 Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, uniquement continuer à le présenter dans un volume.

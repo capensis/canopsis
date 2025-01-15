@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -254,11 +255,12 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		return nil, nil, fmt.Errorf("invalid action parameters, tstart with tstop or start_on_trigger with duration must be defined: %+v", params)
 	}
 
+	name := params.Name + " " + entity.ID + " " + strconv.FormatInt(start.Unix(), 10) + "-" + strconv.FormatInt(stop.Unix(), 10)
 	pbehavior := libpbehavior.PBehavior{
 		ID:       utils.NewID(),
 		Enabled:  true,
 		Comments: make([]libpbehavior.Comment, 0),
-		Name:     params.Name,
+		Name:     name,
 		Reason:   params.Reason,
 		RRule:    params.RRule,
 		Start:    &start,
@@ -323,7 +325,14 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 
 		_, err = collection.InsertOne(ctx, pbehavior)
 		if err != nil {
-			return fmt.Errorf("create new pbehavior failed: %w", err)
+			if mongodriver.IsDuplicateKeyError(err) {
+				pbehavior.Name = params.Name + " " + utils.NewID()
+				_, err = collection.InsertOne(ctx, pbehavior)
+			}
+
+			if err != nil {
+				return fmt.Errorf("create new pbehavior failed: %w", err)
+			}
 		}
 
 		return nil

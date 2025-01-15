@@ -6,6 +6,7 @@
         :disabled="disabled"
         :label="$t('userInterface.appTitle')"
         class="fill-width"
+        with-default-variables
       />
     </v-layout>
     <c-duration-field
@@ -104,11 +105,26 @@
       </v-flex>
     </v-layout>
     <v-layout>
+      <v-flex xs6>
+        <c-enabled-field
+          v-field="form.auto_suggest_pbehavior_name"
+          :label="$t('userInterface.autoSuggestPbehaviorName')"
+        />
+      </v-flex>
+      <v-flex xs6>
+        <c-theme-field
+          v-field="form.default_color_theme"
+          :label="$t('userInterface.defaultTheme')"
+        />
+      </v-flex>
+    </v-layout>
+    <v-layout>
       <v-flex>
         <text-editor-field
           v-field="form.footer"
           :label="$t('userInterface.footer')"
           :config="textEditorConfig"
+          with-default-variables
           public
         />
       </v-flex>
@@ -119,6 +135,7 @@
           v-field="form.login_page_description"
           :label="$t('userInterface.description')"
           :config="textEditorConfig"
+          with-default-variables
           public
         />
       </v-flex>

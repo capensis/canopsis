@@ -63,6 +63,8 @@ import tagModule from './tag';
 import themeModule from './theme';
 import iconModule from './icon';
 import availabilityModule from './availability';
+import eventsRecordModule from './events-record';
+import dbExportModule from './db-export';
 
 export default {
   alarm: alarmModule,
@@ -130,4 +132,6 @@ export default {
   theme: themeModule,
   icon: iconModule,
   availability: availabilityModule,
+  eventsRecord: eventsRecordModule,
+  dbExport: dbExportModule,
 };

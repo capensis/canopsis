@@ -2,6 +2,7 @@ package oauth
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"net/http"
@@ -63,6 +64,7 @@ func NewProvider(
 	maintenanceAdapter config.MaintenanceAdapter,
 	enforcer security.Enforcer,
 	tokenService apisecurity.TokenService,
+	logger zerolog.Logger,
 	maxResponseSize int64,
 ) (Provider, error) {
 	p := &provider{
@@ -86,6 +88,7 @@ func NewProvider(
 		config:          config,
 		source:          name,
 		maxResponseSize: maxResponseSize,
+		logger:          logger,
 	}
 
 	if config.OpenID {
@@ -312,6 +315,11 @@ func (p *provider) Callback(c *gin.Context) {
 		if !ok {
 			return
 		}
+	} else if !user.IsEnabled {
+		c.AbortWithStatus(http.StatusForbidden)
+		return
+	} else if !p.updateUser(c, redirectUrl, user, userInfo) {
+		return
 	}
 
 	err = p.enforcer.LoadPolicy()
@@ -354,12 +362,12 @@ func (p *provider) Callback(c *gin.Context) {
 	c.Redirect(http.StatusPermanentRedirect, redirectUrl.String())
 }
 
-func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string, userInfo map[string]any) (*security.User, bool) {
-	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, "role", []string{}), p.config.DefaultRole)
+func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, externalID string, userInfo map[string]any) (*security.User, bool) {
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, security.UserRole, []string{}), p.config.DefaultRole)
 	if err != nil {
 		roleNotFoundError := roleprovider.ProviderError{}
 		if errors.As(err, &roleNotFoundError) {
-			p.logger.Err(roleNotFoundError).Msg("user registration failed")
+			p.logger.Err(roleNotFoundError).Str("external_id", externalID).Msg("failed to get user roles from openid/oauth2 user info or token")
 			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
 
 			return nil, false
@@ -369,23 +377,51 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, subj string,
 	}
 
 	user := &security.User{
-		Name:       p.getAssocAttribute(userInfo, "name", subj),
+		Name:       p.getAssocAttribute(userInfo, security.UserName, externalID),
 		Roles:      roles,
 		IsEnabled:  true,
-		ExternalID: subj,
+		ExternalID: externalID,
 		Source:     p.source,
-		Firstname:  p.getAssocAttribute(userInfo, "firstname", ""),
-		Lastname:   p.getAssocAttribute(userInfo, "lastname", ""),
-		Email:      p.getAssocAttribute(userInfo, "email", ""),
+		Firstname:  p.getAssocAttribute(userInfo, security.UserFirstName, ""),
+		Lastname:   p.getAssocAttribute(userInfo, security.UserLastName, ""),
+		Email:      p.getAssocAttribute(userInfo, security.UserEmail, ""),
+		IdpRoles:   roles,
 	}
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		p.logger.Err(err).Msg("user registration failed")
-		panic(fmt.Errorf("cannot save user: %w", err))
+		panic(fmt.Errorf("failed to save openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
 	}
 
 	return user, true
+}
+
+func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *security.User, userInfo map[string]any) bool {
+	roles, err := p.roleProvider.GetValidRoleIDs(c, p.getAssocArrayAttribute(userInfo, security.UserRole, []string{}), p.config.DefaultRole)
+	if err != nil {
+		roleNotFoundError := roleprovider.ProviderError{}
+		if errors.As(err, &roleNotFoundError) {
+			p.logger.Err(roleNotFoundError).Str("external_id", user.ExternalID).Msg("failed to get user roles from openid/oauth2 user info or token")
+			p.errorRedirect(c, redirectUrl, roleNotFoundError.Error())
+
+			return false
+		}
+
+		panic(err)
+	}
+
+	user.Name = p.getAssocAttribute(userInfo, security.UserName, user.Name)
+	user.Firstname = p.getAssocAttribute(userInfo, security.UserFirstName, user.Firstname)
+	user.Lastname = p.getAssocAttribute(userInfo, security.UserLastName, user.Lastname)
+	user.Email = p.getAssocAttribute(userInfo, security.UserEmail, user.Email)
+	user.SetRolesFromIdp(roles, p.config.AllowExtraRoles)
+
+	err = p.userProvider.Save(c, user)
+	if err != nil {
+		panic(fmt.Errorf("failed to update openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
+	}
+
+	return true
 }
 
 func (p *provider) getAssocAttribute(userInfo map[string]any, name, defaultValue string) string {
@@ -462,14 +498,24 @@ func (p *provider) getUserInfoOAuth2(c context.Context, token *oauth2.Token) (st
 
 func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idToken *oidc.IDToken) (string, map[string]any, error) {
 	userInfo := make(map[string]any)
-	claims := make(map[string]any)
+	tokenClaims := make(map[string]any)
+	userInfoClaims := make(map[string]any)
 
-	err := idToken.Claims(&claims)
+	err := idToken.Claims(&tokenClaims)
 	if err != nil {
 		return "", userInfo, fmt.Errorf("failed to decode token claims: %w", err)
 	}
 
-	for k, v := range claims {
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		b, err := json.Marshal(tokenClaims)
+		if err != nil {
+			return "", userInfo, fmt.Errorf("failed to json marshal token claims: %w", err)
+		}
+
+		p.logger.Debug().RawJSON("token_claims", b).Msg("token claims")
+	}
+
+	for k, v := range tokenClaims {
 		userInfo["token."+k] = v
 	}
 
@@ -478,13 +524,31 @@ func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idT
 		return "", userInfo, fmt.Errorf("failed to get userinfo: %w", err)
 	}
 
-	err = userInfoResp.Claims(&claims)
+	err = userInfoResp.Claims(&userInfoClaims)
 	if err != nil {
 		return "", userInfo, fmt.Errorf("failed to decode user info claims: %w", err)
 	}
 
-	for k, v := range claims {
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		b, err := json.Marshal(userInfoClaims)
+		if err != nil {
+			return "", userInfo, fmt.Errorf("failed to json marshal user info response: %w", err)
+		}
+
+		p.logger.Debug().RawJSON("user_info_response", b).Msg("user info response")
+	}
+
+	for k, v := range userInfoClaims {
 		userInfo["user."+k] = v
+	}
+
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		b, err := json.Marshal(userInfo)
+		if err != nil {
+			return "", userInfo, fmt.Errorf("failed to json marshal user info map: %w", err)
+		}
+
+		p.logger.Debug().RawJSON("user_info_map", b).Msg("user info map")
 	}
 
 	return idToken.Subject, userInfo, nil

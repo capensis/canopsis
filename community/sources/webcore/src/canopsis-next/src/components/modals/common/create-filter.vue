@@ -8,6 +8,7 @@
         <patterns-form
           v-model="form"
           v-bind="patternsProps"
+          autofocus
         />
       </template>
       <template #actions="">

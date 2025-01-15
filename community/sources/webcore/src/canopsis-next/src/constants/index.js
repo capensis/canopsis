@@ -37,3 +37,4 @@ export * from './availability';
 export * from './meta-alarm-rule';
 export * from './advanced-search';
 export * from './sanitize';
+export * from './events-record';

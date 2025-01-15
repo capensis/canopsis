@@ -48,6 +48,8 @@ type SectionGlobal struct {
 	InfosDictionaryLimit        int  `toml:"InfosDictionaryLimit"`
 
 	EventsCountTriggerDefaultThreshold int `toml:"EventsCountTriggerDefaultThreshold"`
+
+	EventsRecorderLimit int `toml:"EventsRecorderLimit"`
 }
 
 func (s *SectionGlobal) GetReconnectTimeout() time.Duration {
@@ -86,6 +88,8 @@ type SectionApi struct {
 	ExportMongoClientTimeout string   `toml:"ExportMongoClientTimeout"`
 	AuthorScheme             []string `toml:"AuthorScheme"`
 	MetricsCacheExpiration   string   `toml:"MetricsCacheExpiration"`
+	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
+	EventsRecorderFetchStatusTimeout string `toml:"EventsRecorderFetchStatusTimeout"`
 }
 
 type SectionLogger struct {
@@ -101,12 +105,14 @@ type ConsoleWriter struct {
 }
 
 type SectionMetrics struct {
-	Enabled                bool   `toml:"Enabled"`
-	FlushInterval          string `toml:"FlushInterval"`
-	SliInterval            string `toml:"SliInterval"`
-	UserSessionGapInterval string `toml:"UserSessionGapInterval"`
-	EnabledInstructions    bool   `toml:"EnabledInstructions"`
-	EnabledNotAckedMetrics bool   `toml:"EnabledNotAckedMetrics"`
+	Enabled                bool     `toml:"Enabled"`
+	FlushInterval          string   `toml:"FlushInterval"`
+	SliInterval            string   `toml:"SliInterval"`
+	UserSessionGapInterval string   `toml:"UserSessionGapInterval"`
+	AllowedPerfDataUnits   []string `toml:"AllowedPerfDataUnits"`
+	EnabledInstructions    bool     `toml:"EnabledInstructions"`
+	EnabledNotAckedMetrics bool     `toml:"EnabledNotAckedMetrics"`
+	EnabledSliMetrics      bool     `toml:"EnabledSliMetrics"`
 }
 
 type SectionTechMetrics struct {
@@ -141,13 +147,14 @@ type CanopsisConf struct {
 type UserInterfaceConf struct {
 	IsAllowChangeSeverityToInfo bool `bson:"allow_change_severity_to_info"`
 	// MaxMatchedItems need to warn user when number of items that match patterns is above this value
-	MaxMatchedItems            int  `bson:"max_matched_items"`
-	CheckCountRequestTimeout   int  `bson:"check_count_request_timeout"`
-	RequiredInstructionApprove bool `bson:"required_instruction_approve"`
+	MaxMatchedItems            int    `bson:"max_matched_items"`
+	CheckCountRequestTimeout   int    `bson:"check_count_request_timeout"`
+	RequiredInstructionApprove bool   `bson:"required_instruction_approve"`
+	DefaultColorTheme          string `bson:"default_color_theme"`
 }
 
 type VersionConf struct {
-	Edition string `bson:"edition"`
+	Edition string `bson:"edition,omitempty"`
 	Stack   string `bson:"stack"`
 
 	Version        string            `bson:"version"`

@@ -5,8 +5,8 @@ import { MODALS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 
-import { useModals } from '@/hooks/modals';
-import { useRegisterClickOutsideHandler } from '@/hooks/click-outside';
+import { useModals } from './modals';
+import { useRegisterClickOutsideHandler } from './click-outside';
 
 /**
  * Hook to manage modal confirmation on unsaved form changes when attempting to close the modal.

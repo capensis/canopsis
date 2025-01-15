@@ -91,4 +91,9 @@ export default {
       deletedCount: 'Balises externes d\'alarme supprimées : {count}.',
     },
   },
+  eventsRecords: {
+    title: 'Stockage des données des enregistrements d\'événements',
+    titleHelp: 'Tous les enregistrements plus anciens que la période définie seront supprimés',
+    deleteAfter: 'Supprimer les enregistrements d\'événements après',
+  },
 };

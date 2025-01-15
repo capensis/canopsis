@@ -28,6 +28,7 @@
           >
             <slot
               :selected="selected"
+              :selected-keys="selectedKeys"
               :count="selected.length"
               :clear-selected="clearSelected"
               name="mass-actions"
@@ -51,7 +52,7 @@
       :show-expand="expand"
       :item-selectable="isItemSelectable"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
-      :table-class="tableClass"
+      :class="tableClass"
       :dense="dense"
       :loader-height="loaderHeight"
       :ellipsis-headers="ellipsisHeaders"
@@ -128,6 +129,8 @@
 </template>
 
 <script>
+import { mapIds } from '@/helpers/array';
+
 export default {
   model: {
     prop: 'selected',
@@ -271,6 +274,10 @@ export default {
       set(selected) {
         this.selectedItems = selected;
       },
+    },
+
+    selectedKeys() {
+      return mapIds(this.selected, this.itemKey);
     },
 
     visibleItems() {

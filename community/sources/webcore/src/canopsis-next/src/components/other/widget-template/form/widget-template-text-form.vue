@@ -7,6 +7,7 @@
       :error-messages="errors.collect('title')"
       class="mb-2"
       name="title"
+      autofocus
     />
     <text-editor-field
       v-field="form.content"

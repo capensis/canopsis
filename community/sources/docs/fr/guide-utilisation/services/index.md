@@ -9,7 +9,7 @@ Il permet de regrouper d'autres entités à partir d'un filtre/pattern et ainsi 
 
 Le schéma ci-après propose un exemple d'arbre de dépendances, pouvant être porté par les `Services` Canopsis.
 
-Un [cas d'usage complet](./cas-d-usage-complet.md) est disponible.
+Un [cas d'usage complet](cas-d-usage-complet.md) est disponible.
 
 ```mermaid
 flowchart TD
@@ -34,7 +34,7 @@ flowchart TD
 
 ## Explorateur de contexte
 
-C'est [l'explorateur de contexte](../interface/widgets/contexte/) qui permet de manipuler les services.
+C'est [l'explorateur de contexte](../interface/widgets/contexte/index.md) qui permet de manipuler les services.
 
 ![services-explorateur-contexte1](./img/services-explorateur-contexte1.png)
 
@@ -66,7 +66,7 @@ Ces règles, qui sont personnalisables, peuvent être définies dans [« Admini
 
 ## Représentation dans l'interface graphique
 
-Les services sont représentés par l'intermédiaire du [widget Météo des Services](../interface/widgets/meteo-des-services/) sous forme de tuile.  
+Les services sont représentés par l'intermédiaire du [widget Météo des Services](../interface/widgets/meteo-des-services/index.md) sous forme de tuile.  
 
 Une tuile représente un Service. Elle est accompagnée d'un jeu de couleurs et d'icônes qui correspondent à l'état courant du Service :
 

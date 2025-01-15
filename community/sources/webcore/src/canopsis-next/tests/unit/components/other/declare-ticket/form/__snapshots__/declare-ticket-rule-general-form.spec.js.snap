@@ -30,6 +30,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       class="flex mr-3 xs8"
     >
       <c-name-field-stub
+        autofocus=""
         required=""
         value=""
       />
@@ -81,6 +82,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
       class="flex mr-3 xs8"
     >
       <c-name-field-stub
+        autofocus=""
         required=""
         value="name"
       />

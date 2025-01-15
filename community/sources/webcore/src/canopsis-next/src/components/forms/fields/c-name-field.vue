@@ -6,7 +6,18 @@
     :label="label || $t('common.name')"
     :error-messages="errors.collect(name)"
     :name="name"
-  />
+  >
+    <template v-if="tooltip" #append>
+      <c-help-icon
+        :text="tooltip"
+        icon="help"
+        left
+      />
+    </template>
+    <template #append-outer>
+      <slot name="append-outer" />
+    </template>
+  </v-text-field>
 </template>
 
 <script>
@@ -36,6 +47,10 @@ export default {
     },
     maxLength: {
       type: Number,
+      required: false,
+    },
+    tooltip: {
+      type: String,
       required: false,
     },
   },

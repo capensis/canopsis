@@ -176,6 +176,7 @@ func Default(
 		"",
 		"",
 		1, // TODO: 1 worker for now, to think about making fifo concurrent
+		false,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
@@ -191,6 +192,7 @@ func Default(
 		"",
 		"",
 		options.Workers,
+		false,
 		amqpConnection,
 		&ackMessageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,

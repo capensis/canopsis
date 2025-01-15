@@ -5,6 +5,7 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
   title="Ticket URL and ID"
 >
   <c-name-field-stub
+    autofocus=""
     label="System name"
     name="system_name"
     value="System name"

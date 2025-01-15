@@ -17,10 +17,10 @@
       :widget="widget"
       :column="column"
       :small="small"
-      :selected-tag="selectedTag"
+      :selected-tags="selectedTags"
       @activate="$emit('activate', $event)"
       @select:tag="$emit('select:tag', $event)"
-      @clear:tag="$emit('clear:tag')"
+      @remove:tag="$emit('remove:tag', $event)"
       @click:state="$emit('click:state', $event)"
     />
   </color-indicator-wrapper>
@@ -30,10 +30,10 @@
     :widget="widget"
     :column="column"
     :small="small"
-    :selected-tag="selectedTag"
+    :selected-tags="selectedTags"
     @activate="$emit('activate', $event)"
     @select:tag="$emit('select:tag', $event)"
-    @clear:tag="$emit('clear:tag')"
+    @remove:tag="$emit('remove:tag', $event)"
     @click:state="$emit('click:state', $event)"
   />
 </template>
@@ -65,9 +65,9 @@ export default {
       type: Object,
       required: true,
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
     small: {
       type: Boolean,

@@ -19,6 +19,7 @@ export const ROUTES_NAMES = {
   adminTags: 'admin-tags',
   adminStorageSettings: 'admin-storage-settings',
   adminStateSettings: 'admin-state-settings',
+  adminEventsRecords: 'admin-events-records',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
   exploitationSnmpRules: 'exploitation-snmp-rules',
@@ -57,6 +58,7 @@ export const ROUTES = {
   adminTags: '/admin/tags',
   adminStorageSettings: '/admin/storage-settings',
   adminStateSettings: '/admin/state-settings',
+  adminEventsRecords: '/admin/events-records',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -307,7 +309,7 @@ export const WORKFLOW_TYPES = {
   continue: false,
 };
 
-export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}}})/g;
+export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}?}})/g;
 
 export const PAYLOAD_OPERATORS = ['range', 'end'];
 

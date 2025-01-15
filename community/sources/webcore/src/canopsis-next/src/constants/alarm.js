@@ -16,6 +16,7 @@ export const ALARM_FIELDS = {
   resource: 'v.resource',
   lastComment: 'v.last_comment.m',
   lastCommentInitiator: 'v.last_comment.initiator',
+  lastCommentAuthor: 'v.last_comment.a',
   ackBy: 'v.ack.a',
   ackMessage: 'v.ack.m',
   ackInitiator: 'v.ack.initiator',
@@ -238,6 +239,7 @@ export const ALARM_STATUSES_TEXTS = {
 
 export const ALARM_LIST_ACTIONS_TYPES = {
   pbehaviorAdd: 'pbehaviorAdd',
+  fastPbehaviorAdd: 'fastPbehaviorAdd',
   moreInfos: 'moreInfos',
   snooze: 'snooze',
   declareTicket: 'declareTicket',
@@ -281,6 +283,7 @@ export const ALARM_LIST_ACTIONS_TYPES = {
 
 export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'pause',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: '$vuetify.icons.motion_photos_paused',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm',
   [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'note_add',
   [ALARM_LIST_ACTIONS_TYPES.associateTicket]: '$vuetify.icons.sticky_note_2',
@@ -687,6 +690,7 @@ export const ALARM_PATTERN_FIELDS = {
   snooze: ALARM_FIELDS.snooze,
   lastComment: ALARM_FIELDS.lastComment,
   lastCommentInitiator: ALARM_FIELDS.lastCommentInitiator,
+  lastCommentAuthor: ALARM_FIELDS.lastCommentAuthor,
   longOutput: ALARM_FIELDS.longOutput,
   initialOutput: ALARM_FIELDS.initialOutput,
   initialLongOutput: ALARM_FIELDS.initialLongOutput,
@@ -795,6 +799,7 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.resource]: 'common.resource',
   [ALARM_FIELDS.lastComment]: 'common.lastComment',
   [ALARM_FIELDS.lastCommentInitiator]: 'alarm.fields.lastCommentInitiator',
+  [ALARM_FIELDS.lastCommentAuthor]: 'alarm.fields.lastCommentAuthor',
   [ALARM_FIELDS.ackBy]: 'alarm.fields.ackBy',
   [ALARM_FIELDS.ackMessage]: 'alarm.fields.ackMessage',
   [ALARM_FIELDS.ackInitiator]: 'alarm.fields.ackInitiator',

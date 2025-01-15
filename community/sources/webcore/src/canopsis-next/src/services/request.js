@@ -63,6 +63,10 @@ function requestHandler(config) {
  * @returns {Object}
  */
 function successResponseHandler(response) {
+  if (response.data instanceof Blob) {
+    return response;
+  }
+
   if (get(response, 'data.errors', []).length) {
     return Promise.reject(response.data.errors);
   }
@@ -96,7 +100,7 @@ function errorResponseHandler(responseWithError) {
       const params = queryParams.toString();
       const href = `${origin}${pathname}${params ? `?${params}` : ''}`;
 
-      if (hasAccessToken && window.location.href === href) {
+      if (hasAccessToken && window.location.href !== href) {
         window.location.replace(href);
       }
     }

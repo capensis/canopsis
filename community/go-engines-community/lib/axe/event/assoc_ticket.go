@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -17,27 +16,27 @@ import (
 
 func NewAssocTicketProcessor(
 	client mongo.DbClient,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) Processor {
 	return &assocTicketProcessor{
-		client:                  client,
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:        client.Collection(mongo.EntityMongoCollection),
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		metricsSender:           metricsSender,
-		logger:                  logger,
+		client:                 client,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		metricsSender:          metricsSender,
+		logger:                 logger,
 	}
 }
 
 type assocTicketProcessor struct {
-	client                  mongo.DbClient
-	alarmCollection         mongo.DbCollection
-	entityCollection        mongo.DbCollection
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	metricsSender           metrics.Sender
-	logger                  zerolog.Logger
+	client                 mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	metaAlarmPostProcessor MetaAlarmPostProcessor
+	metricsSender          metrics.Sender
+	logger                 zerolog.Logger
 }
 
 func (p *assocTicketProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -113,7 +112,7 @@ func (p *assocTicketProcessor) postProcess(
 		"",
 	)
 
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})

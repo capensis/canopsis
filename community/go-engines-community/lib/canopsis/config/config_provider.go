@@ -133,6 +133,8 @@ type ApiConfig struct {
 	ExportMongoClientTimeout time.Duration
 	AuthorScheme             []string
 	MetricsCacheExpiration   time.Duration
+	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
+	EventsRecorderFetchStatusTimeout time.Duration
 }
 
 type RemediationConfig struct {
@@ -161,8 +163,10 @@ type MetricsConfig struct {
 	FlushInterval          time.Duration
 	SliInterval            time.Duration
 	UserSessionGapInterval time.Duration
+	AllowedPerfDataUnits   []string
 	EnabledInstructions    bool
 	EnabledNotAckedMetrics bool
+	EnabledSliMetrics      bool
 }
 
 type ScheduledTime struct {
@@ -409,10 +413,11 @@ func (p *BaseTimezoneConfigProvider) Get() TimezoneConfig {
 func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfigProvider {
 	sectionName := "api"
 	conf := ApiConfig{
-		TokenSigningMethod:       parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
-		BulkMaxSize:              parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
-		ExportMongoClientTimeout: parseTimeDurationByStr(cfg.API.ExportMongoClientTimeout, ApiExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, logger),
-		MetricsCacheExpiration:   parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
+		TokenSigningMethod:               parseJwtSigningMethod(cfg.API.TokenSigningMethod, jwt.GetSigningMethod(ApiTokenSigningMethod), "TokenSigningMethod", sectionName, logger),
+		BulkMaxSize:                      parseInt(cfg.API.BulkMaxSize, ApiBulkMaxSize, "BulkMaxSize", sectionName, logger),
+		ExportMongoClientTimeout:         parseTimeDurationByStr(cfg.API.ExportMongoClientTimeout, ApiExportMongoClientTimeout, "ExportMongoClientTimeout", sectionName, logger),
+		MetricsCacheExpiration:           parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
+		EventsRecorderFetchStatusTimeout: parseTimeDurationByStr(cfg.API.EventsRecorderFetchStatusTimeout, ApiEventsRecorderFetchStatusTimeout, "EventsRecorderFetchStatusTimeout", sectionName, logger),
 	}
 
 	if len(cfg.API.AuthorScheme) == 0 {
@@ -475,6 +480,11 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	d, ok = parseUpdatedTimeDurationByStr(cfg.API.MetricsCacheExpiration, p.conf.MetricsCacheExpiration, "MetricsCacheExpiration", sectionName, p.logger)
 	if ok {
 		p.conf.MetricsCacheExpiration = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.API.EventsRecorderFetchStatusTimeout, p.conf.EventsRecorderFetchStatusTimeout, "EventsRecorderFetchStatusTimeout", sectionName, p.logger)
+	if ok {
+		p.conf.EventsRecorderFetchStatusTimeout = d
 	}
 }
 
@@ -818,11 +828,19 @@ func (p *BaseHealthCheckConfigProvider) Get() HealthCheckConf {
 }
 
 func GetMetricsConfig(cfg CanopsisConf, logger zerolog.Logger) MetricsConfig {
-	return MetricsConfig{
-		FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", "metrics", logger),
-		SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
-		UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
+	sectionName := "metrics"
+	config := MetricsConfig{
+		FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
+		SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", sectionName, logger),
+		UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", sectionName, logger),
+		AllowedPerfDataUnits:   cfg.Metrics.AllowedPerfDataUnits,
 	}
+
+	logger.Info().
+		Strs("value", config.AllowedPerfDataUnits).
+		Msgf("AllowedPerfDataUnits of %s config section is used", sectionName)
+
+	return config
 }
 
 func parseScheduledTime(
@@ -1406,6 +1424,7 @@ func NewMetricsConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseMetr
 			Enabled:                parseBool(cfg.Metrics.Enabled, "Enabled", sectionName, logger),
 			EnabledNotAckedMetrics: parseBool(cfg.Metrics.EnabledNotAckedMetrics, "EnabledNotAckedMetrics", sectionName, logger),
 			EnabledInstructions:    parseBool(cfg.Metrics.EnabledInstructions, "EnabledInstructions", sectionName, logger),
+			EnabledSliMetrics:      parseBool(cfg.Metrics.EnabledSliMetrics, "EnabledSliMetrics", sectionName, logger),
 			FlushInterval:          parseTimeDurationByStr(cfg.Metrics.FlushInterval, MetricsFlushInterval, "FlushInterval", sectionName, logger),
 			SliInterval:            parseTimeDurationByStrWithMax(cfg.Metrics.SliInterval, MetricsSliInterval, MetricsMaxSliInterval, "SliInterval", "metrics", logger),
 			UserSessionGapInterval: parseTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, MetricsUserSessionGapInterval, "UserSessionGapInterval", "metrics", logger),
@@ -1435,6 +1454,11 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 		p.conf.EnabledInstructions = b
 	}
 
+	b, ok = parseUpdatedBool(cfg.Metrics.EnabledSliMetrics, p.conf.EnabledSliMetrics, "EnabledSliMetrics", sectionName, p.logger)
+	if ok {
+		p.conf.EnabledSliMetrics = b
+	}
+
 	d, ok := parseUpdatedTimeDurationByStr(cfg.Metrics.FlushInterval, p.conf.FlushInterval, "FlushInterval", sectionName, p.logger)
 	if ok {
 		p.conf.FlushInterval = d
@@ -1448,6 +1472,13 @@ func (p *BaseMetricsSettingsConfigProvider) Update(cfg CanopsisConf) {
 	d, ok = parseUpdatedTimeDurationByStr(cfg.Metrics.UserSessionGapInterval, p.conf.UserSessionGapInterval, "UserSessionGapInterval", sectionName, p.logger)
 	if ok {
 		p.conf.UserSessionGapInterval = d
+	}
+
+	if !slices.Equal(p.conf.AllowedPerfDataUnits, cfg.Metrics.AllowedPerfDataUnits) {
+		p.conf.AllowedPerfDataUnits = cfg.Metrics.AllowedPerfDataUnits
+		p.logger.Info().
+			Strs("new", p.conf.AllowedPerfDataUnits).
+			Msgf("AllowedPerfDataUnits of %s config section is loaded", sectionName)
 	}
 }
 

@@ -106,10 +106,8 @@
           <alarm-header-cell
             :key="`header.${item.value}`"
             :header="header"
-            :selected-tag="selectedTag"
             :resizing="resizingMode"
             :ellipsis-headers="isCellContentTruncated"
-            @clear:tag="$emit('clear:tag')"
           />
           <template>
             <span
@@ -141,7 +139,7 @@
             :parent-alarm="parentAlarm"
             :refresh-alarms-list="refreshAlarmsList"
             :selecting="selecting"
-            :selected-tag="selectedTag"
+            :selected-tags="selectedTags"
             :medium="isMediumDense"
             :small="isSmallDense"
             :resizing="resizingMode"
@@ -156,7 +154,7 @@
             v-on="rowListeners"
             @start:resize="startColumnResize"
             @select:tag="$emit('select:tag', $event)"
-            @clear:tag="$emit('clear:tag')"
+            @remove:tag="$emit('remove:tag', $event)"
             @click:state="openRootCauseDiagram"
             @expand="expand"
             @input="select"
@@ -165,13 +163,13 @@
         <template #expanded-item="{ item }">
           <alarms-expand-panel
             :alarm="item"
-            :selected-tag="selectedTag"
+            :selected-tags="selectedTags"
             :parent-alarm-id="parentAlarmId"
             :widget="widget"
             :search="search"
             :hide-children="hideChildren"
             @select:tag="$emit('select:tag', $event)"
-            @clear:tag="$emit('clear:tag')"
+            @remove:tag="$emit('remove:tag', $event)"
           />
         </template>
       </v-data-table>
@@ -304,9 +302,9 @@ export default {
       type: Function,
       default: () => {},
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
     hideChildren: {
       type: Boolean,
@@ -392,10 +390,6 @@ export default {
 
     needToAddLeftActionsCell() {
       return (this.expandable || this.hasInstructionsAlarms) && !this.selectable;
-    },
-
-    hasLeftActions() {
-      return this.selectable || this.needToAddLeftActionsCell;
     },
 
     headers() {
@@ -498,19 +492,10 @@ export default {
       };
     },
 
-    leftActionsWidth() {
-      /**
-       * left expand/instruction icon/select actions width
-       */
-      return this.isMediumDense || this.isSmallDense ? 100 : 120;
-    },
-
     vDataTableStyle() {
       if (this.resizableColumn) {
-        const actionsWidth = this.hasLeftActions ? this.leftActionsWidth : 0;
-
         return {
-          '--alarms-list-table-width': `calc(${actionsWidth}px + ${this.sumOfColumnsWidth}px)`,
+          '--alarms-list-table-width': `${this.sumOfColumnsWidth}px`,
         };
       }
 
@@ -605,6 +590,12 @@ export default {
         this.$intersectionObserver?.disconnect();
       },
       immediate: true,
+    },
+
+    dense() {
+      if (!this.resizableColumn) {
+        this.$nextTick(() => this.calculateColumnsWidths());
+      }
     },
   },
 

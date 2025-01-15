@@ -27,6 +27,7 @@ import (
 type messageProcessor struct {
 	FeaturePrintEventOnError bool
 	AlarmConfigProvider      config.AlarmConfigProvider
+	MetricsConfigProvider    config.MetricsConfigProvider
 	MetricsSender            metrics.Sender
 	MetaUpdater              metrics.MetaUpdater
 	TechMetricsSender        techmetrics.Sender
@@ -206,7 +207,7 @@ func (p *messageProcessor) handlePerfData(ctx context.Context, event *types.Even
 		return
 	}
 
-	perfData := event.GetPerfData()
+	perfData := event.GetPerfData(p.MetricsConfigProvider.Get().AllowedPerfDataUnits)
 	now := time.Now()
 	names := make([]string, len(perfData))
 	for i, v := range perfData {

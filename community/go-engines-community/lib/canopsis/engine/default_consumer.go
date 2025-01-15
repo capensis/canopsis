@@ -18,6 +18,7 @@ type defaultConsumer struct {
 	queue                                     string
 	consumePrefetchCount, consumePrefetchSize int
 	purgeQueue                                bool
+	exclusive                                 bool
 	// processor handles AMQP messages.
 	processor MessageProcessor
 	// nextQueue is name of AMQP queue to where consumer sends message after succeeded processing.
@@ -51,13 +52,13 @@ func (c *defaultConsumer) getConsumeChannel() (libamqp.Channel, <-chan amqp.Deli
 	}
 
 	msgs, err := channel.Consume(
-		c.queue, // queue
-		c.name,  // consumer
-		false,   // auto-ack
-		false,   // exclusive
-		false,   // no-local
-		false,   // no-wait
-		nil,     // args
+		c.queue,     // queue
+		c.name,      // consumer
+		false,       // auto-ack
+		c.exclusive, // exclusive
+		false,       // no-local
+		false,       // no-wait
+		nil,         // args
 	)
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot consume messages: %w", err)
