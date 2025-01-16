@@ -194,7 +194,8 @@ func Default(
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	workersRunner := workers.NewRunner(amqpChannel, amqpChannel, logger)
 	// Create csv exporter.
-	services.ExportTaskExecutor = export.NewTaskExecutor(dbClient, workers.NewJobPublisher(jobKeyExport, workersRunner), services.TimezoneConfigProvider, logger)
+	services.ExportTaskExecutor = export.NewTaskExecutor(dbClient, workers.NewJobPublisher(jobKeyExport, workersRunner),
+		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 	workersRunner.AddJobExecutor(jobKeyExport, func(ctx context.Context, id string) error {
 		return services.ExportTaskExecutor.ExecuteTask(ctx, id)
 	})
