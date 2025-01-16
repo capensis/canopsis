@@ -13,25 +13,35 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 )
 
-type csvFormatter struct{}
+const dirPerm os.FileMode = 0o770
+
+type csvFormatter struct {
+	dir string
+}
 
 func (f *csvFormatter) GetFileExtension() string {
 	return ".csv"
 }
 
 func (f *csvFormatter) DataFetcher(ctx context.Context, t FieldsSeparatorGetter, cursor DataCursor) (string, error) {
-	return ToCsv(ctx, t, cursor)
+	return ToCsv(ctx, t, cursor, f.dir)
 }
 
 // ToCsv fetches data and saves it in csv file.
-func ToCsv(ctx context.Context, fsg FieldsSeparatorGetter, dataCursor DataCursor) (resFileName string, resErr error) {
+func ToCsv(ctx context.Context, fsg FieldsSeparatorGetter, dataCursor DataCursor, dir string) (resFileName string, resErr error) {
 	defer func() {
 		err := dataCursor.Close(ctx)
 		if err != nil && resErr == nil {
 			resErr = err
 		}
 	}()
-	file, err := os.CreateTemp("", "export.*.csv")
+
+	err := os.MkdirAll(dir, os.ModeDir|dirPerm)
+	if err != nil {
+		return "", err
+	}
+
+	file, err := os.CreateTemp(dir, "export.*.csv")
 	if err != nil {
 		return "", err
 	}
