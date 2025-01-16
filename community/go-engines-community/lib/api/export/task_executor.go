@@ -48,6 +48,7 @@ func NewTaskExecutor(
 	client mongo.DbClient,
 	jobPublisher workers.JobPublisher,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	dir string,
 	logger zerolog.Logger,
 ) *TaskExecutor {
 	return &TaskExecutor{
@@ -63,7 +64,7 @@ func NewTaskExecutor(
 
 		fetches: make(map[string]FetchData),
 
-		formatter:              &csvFormatter{}, // default formatter, can be changed by SetFormatter
+		formatter:              &csvFormatter{dir: dir}, // default formatter, can be changed by SetFormatter
 		customFormatter:        make(map[string]OutputFormatter),
 		timezoneConfigProvider: timezoneConfigProvider,
 	}

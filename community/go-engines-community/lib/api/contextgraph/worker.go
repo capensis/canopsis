@@ -3,9 +3,11 @@ package contextgraph
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -45,7 +47,7 @@ func NewImportWorker(
 	w := &worker{
 		publisher:    publisher,
 		reporter:     reporter,
-		filePattern:  conf.ImportCtx.FilePattern,
+		filePattern:  filepath.Join(conf.File.Dir, canopsis.SubDirImport, filePattern),
 		worker:       importWorker,
 		jobPublisher: jobPublisher,
 		logger:       logger,
