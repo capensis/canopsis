@@ -368,8 +368,16 @@ export const isInfosPatternRuleField = value => [
    */
   const start = `${field}.`;
 
-  return value === field || value?.startsWith(start);
+  return value === field || value?.startsWith?.(start);
 });
+
+/**
+ * Check pattern field is infos value
+ *
+ * @param {string} [value = '']
+ * @return {boolean}
+ */
+export const isValueInfosPatternRuleField = value => isInfosPatternRuleField(value) && value?.endsWith?.('.value');
 
 /**
  * Check pattern field is duration

@@ -5,14 +5,7 @@
   >
     <slot name="append" />
     <template v-for="item in items">
-      <v-subheader
-        v-if="item.header"
-        :key="item.header"
-      >
-        {{ item.header }}
-      </v-subheader>
       <v-list-item
-        v-else
         :key="item.value"
         :input-value="isActiveVariable(item)"
         @click="selectVariable(item)"
@@ -26,8 +19,8 @@
                 v-if="showValue"
                 class="grey--text lighten-1"
               >
-              {{ item.value }}
-            </span>
+                {{ item.value }}
+              </span>
             </v-layout>
           </v-list-item-title>
         </v-list-item-content>
@@ -139,11 +132,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.v-subheader {
-  font-size: 16px;
-  font-weight: 700;
-  color: inherit;
-}
-</style>
