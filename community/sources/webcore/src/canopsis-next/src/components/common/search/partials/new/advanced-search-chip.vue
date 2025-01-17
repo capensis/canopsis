@@ -1,57 +1,130 @@
 <template>
-  <v-menu v-bind="menuProps" bottom>
+  <v-menu
+    v-bind="menuProps"
+    v-model="opened"
+    bottom
+    @input="toggleMenu"
+  >
     <template #activator="{ on }">
-      <span>
+      <span v-if="multiple">
+        <v-chip
+          :close="closable"
+          :color="color"
+          class="c-new-advanced-search__array-chip"
+          @click.prevent=""
+          @click:close="close"
+        >
+          <v-chip
+            v-for="item in selectedItems"
+            :key="item[itemValue]"
+            close
+          >
+            {{ item[itemText] ?? item[itemValue] }}
+          </v-chip>
+          <span>
+            <input
+              v-model="inputValue"
+              ref="inputEl"
+              type="text"
+              class="ml-1"
+              autocomplete="off"
+              @keydown="keydown"
+              @focus="focus"
+              @input="updateInputValue"
+            >
+          </span>
+        </v-chip>
+      </span>
+      <span v-else>
         <input
           v-if="active"
-          v-model="inputValue"
           ref="inputEl"
+          :value="inputValue"
           type="text"
           class="ml-1"
           autocomplete="off"
           v-on="on"
           @keydown="keydown"
-          @focusout="focusout"
+          @focus="focus"
+          @input="updateInputValue"
         >
         <v-chip
           v-else
+          :color="color"
           :close="closable"
-          v-on="on"
+          @click="click"
           @click:close="close"
-          @mousedown.prevent="mousedown"
         >
           {{ chipText }}
         </v-chip>
       </span>
     </template>
-    <variables-list
-      :items="items"
-      children-key="items"
-      return-object
+    <advanced-search-lazy-list
+      :value="selectedItems"
+      :items="lazyItems"
+      :search="inputValue"
+      :pending="pending"
       @input="select"
-    />
+    >
+      <template v-if="allowText" #no-data="">
+        <v-list-item>
+          <v-list-item-content>
+            <v-list-item-title v-html="$t('common.pressEnterToApply')" />
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+    </advanced-search-lazy-list>
   </v-menu>
 </template>
 
 <script>
-import { computed, ref, watch, nextTick } from 'vue';
+import { isUndefined } from 'lodash';
+import { computed, ref, watch, toRef, nextTick } from 'vue';
 
-import VariablesList from '@/components/common/text-editor/variables-list.vue';
+import AdvancedSearchLazyList from '@/components/common/search/partials/new/advanced-search-lazy-list.vue';
+import { useLazySearch } from '@/hooks/form/lazy-search';
+import { KEY_CODES } from '@/constants';
+
+export const filterItems = (items, condition) => {
+  let lastHeaderIndex;
+
+  return items.reduce((acc, item, index) => {
+    if (item.header) {
+      lastHeaderIndex = index;
+
+      return acc;
+    }
+
+    if (condition(item)) {
+      if (!isUndefined(lastHeaderIndex)) {
+        acc.push(items[lastHeaderIndex]);
+      }
+
+      acc.push(item);
+    }
+
+    return acc;
+  }, []);
+};
 
 export default {
-  components: { VariablesList },
+  components: { AdvancedSearchLazyList },
   model: {
     prop: 'value',
     event: 'input',
   },
   props: {
     value: {
-      type: Object,
-      default: () => ({}),
+      type: [String, Number, Array],
+      default: '',
     },
     items: {
       type: Array,
       default: () => [],
+    },
+    fetchItems: {
+      type: Function,
+      required: false,
     },
     closable: {
       type: Boolean,
@@ -59,11 +132,15 @@ export default {
     },
     itemText: {
       type: String,
-      required: false,
+      default: 'text',
     },
     itemValue: {
       type: String,
-      required: false,
+      default: 'value',
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
     },
     active: {
       type: Boolean,
@@ -73,13 +150,26 @@ export default {
       type: Boolean,
       default: false,
     },
+    alwaysActive: {
+      type: Boolean,
+      default: false,
+    },
+    focusOnMount: {
+      type: Boolean,
+      default: false,
+    },
+    color: {
+      type: String,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const inputEl = ref(null);
     const inputValue = ref('');
+    const opened = ref(false);
 
     const menuProps = computed(() => ({
-      // openOnClick: false,
+      openOnClick: false,
       disableKeys: true,
       closeOnContentClick: false,
       ignoreClickOutsideOnActivator: true,
@@ -90,50 +180,125 @@ export default {
       transition: false,
     }));
 
-    const chipText = computed(() => (props.itemText ? props.value[props.itemText] : props.value));
+    const showMenu = () => opened.value = true;
 
     const apply = (event) => {
-      console.log(event);
+      console.log('APPLY:', event);
     };
-    const select = item => emit('input', item);
+
+    const defaultFetchItems = ({ params = {} } = {}) => {
+      let data = props.items;
+
+      if (params?.search) {
+        const lowerSearch = String(params.search).toLowerCase();
+
+        data = filterItems(data, item => item[props.itemText]?.toLowerCase().includes(lowerSearch));
+      }
+
+      return {
+        data,
+        meta: { total_count: data.length, page_count: 1 },
+      };
+    };
+
+    const {
+      selectedItems,
+      items: lazyItems,
+      changeSelectedItems,
+      updateSearch,
+      wholePending: pending,
+    } = useLazySearch({
+      value: toRef(props, 'value'),
+      addable: props.allowText,
+      idKey: 'value',
+      idParamsKey: 'ids',
+      fetchHandler: props.fetchItems ?? defaultFetchItems,
+      multiple: props.multiple,
+    }, emit);
+
+    const chipText = computed(() => selectedItems.value.map(item => item[props.itemText] ?? item[props.itemValue]).join(','));
+
+    const click = () => emit('click');
+    const close = () => emit('close');
+    const focus = () => {
+      showMenu();
+      emit('focus');
+    };
+    // const focusout = () => emit('focusout');
+
+    const updateInputValue = (event) => {
+      inputValue.value = event.target.value;
+
+      updateSearch(inputValue.value);
+    };
+
+    const toggleMenu = (value) => {
+      if (!value) {
+        emit('focusout');
+        inputValue.value = '';
+      }
+    };
+
+    const select = (value) => {
+      opened.value = false;
+
+      changeSelectedItems(props.multiple ? [...(props.value || []), value] : value);
+
+      if (!props.multiple) {
+        toggleMenu();
+        emit('next');
+      } else {
+        toggleMenu();
+        showMenu(); // TODO: think about it
+      }
+    };
 
     const keydown = (event) => {
-      console.log(event);
+      if (event.keyCode === KEY_CODES.enter && props.allowText) { // TODO: try to find in items
+        select(inputValue.value ?? '');
+
+        return;
+      }
+      console.log('KEYDOWN:', event);
     };
 
-    const mousedown = () => emit('mousedown');
-    const close = () => emit('remove');
-    const focusout = () => emit('focusout');
+    watch(() => [props.active, selectedItems.value], ([active, newSelectedItems]) => {
+      if (!active || props.alwaysActive) {
+        inputValue.value = '';
+        updateSearch(inputValue.value);
 
-    watch(() => props.value, (newValue) => {
-      if (!newValue.value) {
         return;
       }
 
-      inputValue.value = newValue[props.itemText] ?? '';
-    }, { immediate: true });
-
-    watch(() => props.active, (active) => {
-      if (!active) {
-        return;
-      }
-
+      inputValue.value = newSelectedItems[0]?.[props.itemText] ?? newSelectedItems[0]?.[props.itemValue] ?? '';
       nextTick(() => inputEl.value?.focus());
     }, { immediate: true });
 
     return {
+      selectedItems,
+      opened,
       inputEl,
       inputValue,
       menuProps,
       chipText,
+      lazyItems,
+      pending,
 
       apply,
       select,
       keydown,
-      mousedown,
-      focusout,
+      click,
+      focus,
+      toggleMenu,
       close,
+      updateInputValue,
     };
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.v-chip.error input {
+  color: var(--v-text-dark-primary, #FFFFFF);
+}
+</style>

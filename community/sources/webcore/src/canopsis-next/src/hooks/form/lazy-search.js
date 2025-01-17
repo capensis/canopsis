@@ -69,6 +69,10 @@ export const useLazySearch = ({
   const arrayValue = computed(() => {
     const unwrappedValue = unref(value);
 
+    if (!unwrappedValue) {
+      return [];
+    }
+
     if (isArray(unwrappedValue)) {
       return unwrappedValue;
     }
@@ -166,21 +170,25 @@ export const useLazySearch = ({
     const unwrappedAddable = unref(addable);
     const unwrappedMultiple = unref(multiple);
 
-    let preparedNewSelectedItems = newSelectedItems;
+    let preparedNewSelectedItems;
 
     if (!isArray(newSelectedItems)) {
       preparedNewSelectedItems = [newSelectedItems];
     } else {
-      preparedNewSelectedItems = unwrappedMultiple ? newSelectedItems.slice(1) : newSelectedItems;
+      preparedNewSelectedItems = unwrappedMultiple ? newSelectedItems : newSelectedItems.slice(1);
     }
 
     selectedItems.value = (
       unwrappedAddable
         ? preparedNewSelectedItems
-        : preparedNewSelectedItems.filter(tag => !isString(tag))
-    ).map(tag => (tag[unwrappedIdKey] ? tag : { [unwrappedIdKey]: tag }));
+        : preparedNewSelectedItems.filter(item => !isString(item))
+    ).map(item => (item[unwrappedIdKey] ? item : { [unwrappedIdKey]: item }));
 
-    updateModel(unwrappedMultiple ? mapIds(selectedItems.value, unwrappedIdKey) : selectedItems.value[0]);
+    updateModel(
+      unwrappedMultiple
+        ? mapIds(selectedItems.value, unwrappedIdKey)
+        : selectedItems.value[0]?.[unwrappedIdKey],
+    );
   };
 
   /**
