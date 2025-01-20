@@ -4,6 +4,8 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 // The .env:GOLANG_VERSION be greater than or equal to the version below.
 go 1.22
 
+toolchain go1.22.11
+
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
 // licenses, since it's a proprietary product.
@@ -51,17 +53,18 @@ require (
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.4
 	go.mongodb.org/mongo-driver v1.14.0
-	golang.org/x/sync v0.7.0
-	golang.org/x/text v0.14.0
+	golang.org/x/sync v0.10.0
+	golang.org/x/text v0.21.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	github.com/coreos/go-oidc/v3 v3.10.0
+	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 	github.com/jellydator/ttlcache/v2 v2.11.1
 	github.com/prometheus/procfs v0.13.0
-	golang.org/x/crypto v0.22.0
-	golang.org/x/oauth2 v0.19.0
+	golang.org/x/crypto v0.32.0
+	golang.org/x/oauth2 v0.25.0
 )
 
 require (
@@ -74,7 +77,6 @@ require (
 	github.com/chenzhuoyu/iasm v0.9.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0 // indirect
 	github.com/fatih/color v1.10.0 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
@@ -118,7 +120,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/arch v0.7.0 // indirect
 	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/xerrors v0.0.0-20231012003039-104605ab7028 // indirect
 	google.golang.org/protobuf v1.33.0 // indirect
 )
