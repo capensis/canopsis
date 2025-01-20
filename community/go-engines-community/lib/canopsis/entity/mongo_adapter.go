@@ -3,6 +3,7 @@ package entity
 import (
 	"context"
 	"errors"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
@@ -125,7 +126,13 @@ func (a *mongoAdapter) UpsertMany(ctx context.Context, entities []types.Entity) 
 
 		insertModels = append(insertModels, mongodriver.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": entity.ID}).
-			SetUpdate(bson.M{"$setOnInsert": insert, "$unset": bson.M{"soft_deleted": ""}}).
+			SetUpdate(bson.M{
+				"$setOnInsert": insert,
+				"$unset": bson.M{
+					"soft_deleted":                    "",
+					"resolve_deleted_event_sent":      "",
+					"resolve_deleted_event_processed": "",
+				}}).
 			SetUpsert(true))
 	}
 	res, err := a.dbCollection.BulkWrite(ctx, insertModels)
