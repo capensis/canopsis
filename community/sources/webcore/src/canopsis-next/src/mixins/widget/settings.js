@@ -47,6 +47,16 @@ export const widgetSettingsMixin = {
     },
   },
   methods: {
+    scrollToFirstError() {
+      let el = this.$el.querySelector('.v-messages.error--text:first-of-type');
+
+      if (!el.checkVisibility()) {
+        el = this.$el.querySelector('.v-list-item__title.validation-header.error--text:first-of-type');
+      }
+
+      el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    },
+
     /**
      * Submit settings form
      *
@@ -80,7 +90,11 @@ export const widgetSettingsMixin = {
         await this.fetchActiveView();
 
         this.$sidebar.hide();
+
+        return;
       }
+
+      this.scrollToFirstError();
     },
   },
 };
