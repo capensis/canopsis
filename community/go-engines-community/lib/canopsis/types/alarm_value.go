@@ -44,6 +44,7 @@ type AlarmStep struct {
 type TicketInfo struct {
 	Ticket            string            `bson:"ticket,omitempty" json:"ticket,omitempty"`
 	TicketURL         string            `bson:"ticket_url,omitempty" json:"ticket_url,omitempty"`
+	TicketURLTitle    string            `bson:"ticket_url_title,omitempty" json:"ticket_url_title,omitempty"`
 	TicketComment     string            `bson:"ticket_comment,omitempty" json:"ticket_comment,omitempty"`
 	TicketSystemName  string            `bson:"ticket_system_name,omitempty" json:"ticket_system_name,omitempty"`
 	TicketMetaAlarmID string            `bson:"ticket_meta_alarm_id,omitempty" json:"ticket_meta_alarm_id,omitempty"`
@@ -68,7 +69,14 @@ func (t TicketInfo) GetStepMessage() string {
 		if t.TicketRuleName != "" || extraData {
 			builder.WriteString(". ")
 		}
-		builder.WriteString("Ticket URL: ")
+
+		if t.TicketURLTitle == "" {
+			builder.WriteString("Ticket URL: ")
+		} else {
+			builder.WriteString(t.TicketURLTitle)
+			builder.WriteString(": ")
+		}
+
 		builder.WriteString(t.TicketURL)
 		extraData = true
 	}
