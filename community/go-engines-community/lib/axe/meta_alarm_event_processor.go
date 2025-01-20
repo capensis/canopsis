@@ -339,7 +339,7 @@ func (p *metaAlarmEventProcessor) processParentRpc(ctx context.Context, event rp
 	}
 
 	if event.Parameters.Duration != nil {
-		seconds, err := event.Parameters.Duration.To("s")
+		seconds, err := event.Parameters.Duration.To(types.DurationUnitSecond)
 		if err == nil {
 			childEvent.Duration = types.CpsNumber(seconds.Value)
 		}
