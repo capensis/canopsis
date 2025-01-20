@@ -7,12 +7,13 @@ import (
 )
 
 type WebhookDeclareTicket struct {
-	EmptyResponse bool              `bson:"empty_response" json:"empty_response"`
-	IsRegexp      bool              `bson:"is_regexp" json:"is_regexp"`
-	TicketID      string            `bson:"ticket_id,omitempty" json:"ticket_id"`
-	TicketUrl     string            `bson:"ticket_url,omitempty" json:"ticket_url"`
-	TicketUrlTpl  string            `bson:"ticket_url_tpl,omitempty" json:"ticket_url_tpl"`
-	CustomFields  map[string]string `bson:",inline"`
+	EmptyResponse  bool              `bson:"empty_response" json:"empty_response"`
+	IsRegexp       bool              `bson:"is_regexp" json:"is_regexp"`
+	TicketID       string            `bson:"ticket_id,omitempty" json:"ticket_id"`
+	TicketURL      string            `bson:"ticket_url,omitempty" json:"ticket_url"`
+	TicketURLTpl   string            `bson:"ticket_url_tpl,omitempty" json:"ticket_url_tpl"`
+	TicketURLTitle string            `bson:"ticket_url_title,omitempty" json:"ticket_url_title"`
+	CustomFields   map[string]string `bson:",inline"`
 }
 
 func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
@@ -47,9 +48,11 @@ func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
 			case "ticket_id":
 				t.TicketID = strVal
 			case "ticket_url":
-				t.TicketUrl = strVal
+				t.TicketURL = strVal
 			case "ticket_url_tpl":
-				t.TicketUrlTpl = strVal
+				t.TicketURLTpl = strVal
+			case "ticket_url_title":
+				t.TicketURLTitle = strVal
 			default:
 				customFields[k] = strVal
 			}
@@ -64,11 +67,12 @@ func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
 
 func (t WebhookDeclareTicket) MarshalJSON() ([]byte, error) {
 	m := map[string]interface{}{
-		"empty_response": t.EmptyResponse,
-		"is_regexp":      t.IsRegexp,
-		"ticket_id":      t.TicketID,
-		"ticket_url":     t.TicketUrl,
-		"ticket_url_tpl": t.TicketUrlTpl,
+		"empty_response":   t.EmptyResponse,
+		"is_regexp":        t.IsRegexp,
+		"ticket_id":        t.TicketID,
+		"ticket_url":       t.TicketURL,
+		"ticket_url_tpl":   t.TicketURLTpl,
+		"ticket_url_title": t.TicketURLTitle,
 	}
 
 	for k, v := range t.CustomFields {
