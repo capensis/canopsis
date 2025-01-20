@@ -187,7 +187,8 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 
 	ticketInfo := types.TicketInfo{
 		Ticket:           r.Ticket,
-		TicketURL:        r.Url,
+		TicketURL:        r.URL,
+		TicketURLTitle:   r.URLTitle,
 		TicketComment:    r.Comment,
 		TicketSystemName: r.SystemName,
 		TicketData:       r.Data,
