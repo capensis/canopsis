@@ -303,6 +303,7 @@ export default {
   loadingItems: 'Chargement d\'éléments...',
   lastComment: 'Dernier commentaire',
   serialName: 'Nom de série',
+  width: 'Largeur',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
