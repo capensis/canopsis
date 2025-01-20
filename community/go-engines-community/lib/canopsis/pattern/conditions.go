@@ -135,7 +135,7 @@ func NewTimeIntervalCondition(t string, from, to int64) Condition {
 
 func NewDurationCondition(t string, d types.DurationWithUnit) (Condition, error) {
 	var err error
-	d, err = d.To("s")
+	d, err = d.To(types.DurationUnitSecond)
 	if err != nil {
 		return Condition{}, err
 	}
@@ -1039,7 +1039,7 @@ func (c *Condition) parseValue() {
 	}
 
 	if d, err := getDurationValue(c.Value); err == nil {
-		dBySec, err := d.To("s")
+		dBySec, err := d.To(types.DurationUnitSecond)
 		if err == nil {
 			c.Value = d
 			c.valueDuration = &dBySec.Value
