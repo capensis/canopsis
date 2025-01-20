@@ -1,5 +1,7 @@
 package auth
 
+import "time"
+
 const (
 	// UserKey is the context name for user credential.
 	UserKey  = "user_id"
@@ -9,3 +11,5 @@ const (
 	// RolesKey is the context name for user's roles
 	RolesKey = "roles"
 )
+
+const DefaultMetaValidDuration = time.Hour
