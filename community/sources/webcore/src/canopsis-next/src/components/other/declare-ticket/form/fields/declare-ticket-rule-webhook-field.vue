@@ -5,7 +5,7 @@
   >
     <template #header="">
       <request-url-field
-        v-field="value.request"
+        v-field="form.request"
         :help-text="$t('common.request.urlHelp')"
         :name="requestFormName"
         :disabled="disabled"
@@ -13,14 +13,14 @@
       />
     </template>
     <request-form
-      v-field="value.request"
+      v-field="form.request"
       :name="requestFormName"
       :headers-variables="payloadVariables"
       :payload-variables="payloadVariables"
       hide-url
     />
     <declare-ticket-rule-ticket-mapping-field
-      v-field="value.declare_ticket"
+      v-field="form"
       :name="`${name}.declare_ticket`"
       :is-declare-ticket-exist="isDeclareTicketExist"
       class="mb-2"
@@ -29,7 +29,7 @@
       only-one-ticket-id
     />
     <c-workflow-field
-      v-field="value.stop_on_fail"
+      v-field="form.stop_on_fail"
       :disabled="disabled"
       :label="$t('declareTicket.workflowIfStepFails')"
       :continue-label="$t('declareTicket.continueWithNextStep')"
@@ -51,17 +51,17 @@ export default {
   mixins: [
     payloadVariablesMixin,
     confirmableFormMixinCreator({
-      field: 'value',
+      field: 'form',
       method: 'removeWebhook',
       cloning: true,
     }),
   ],
   model: {
-    prop: 'value',
+    prop: 'form',
     event: 'input',
   },
   props: {
-    value: {
+    form: {
       type: Object,
       required: true,
     },
