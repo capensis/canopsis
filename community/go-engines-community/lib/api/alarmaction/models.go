@@ -18,7 +18,8 @@ type SnoozeRequest struct {
 
 type AssocTicketRequest struct {
 	Ticket          string            `json:"ticket" binding:"required"`
-	Url             string            `json:"url" binding:"max=255"`
+	URL             string            `json:"url" binding:"max=255"`
+	URLTitle        string            `json:"url_title" binding:"max=255"`
 	Comment         string            `json:"comment" binding:"max=255"`
 	SystemName      string            `json:"system_name" binding:"max=255"`
 	Data            map[string]string `json:"data"`
