@@ -44,6 +44,8 @@ export const entitiesInfoMixin = {
       eventsCountTriggerDefaultThreshold: 'eventsCountTriggerDefaultThreshold',
       disabledTransitions: 'disabledTransitions',
       autoSuggestPbehaviorName: 'autoSuggestPbehaviorName',
+      userTimezones: 'userTimezones',
+      shownUserTimezone: 'shownUserTimezone',
     }),
 
     isProVersion() {
