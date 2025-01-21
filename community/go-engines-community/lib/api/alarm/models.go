@@ -340,7 +340,7 @@ type AlarmValue struct {
 	LongOutputHistory           []string              `bson:"long_output_history" json:"long_output_history"`
 	LastUpdateDate              datetime.CpsTime      `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
 	LastEventDate               datetime.CpsTime      `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
-	LastStateOrStatusUpdateDate datetime.CpsTime      `bson:"last_st_upd_dt" json:"last_state_or_status_update_date" swaggertype:"integer"`
+	LastStateOrStatusUpdateDate datetime.CpsTime      `bson:"last_st_upd_dt" json:"last_st_upd_dt" swaggertype:"integer"`
 	Resource                    string                `bson:"resource,omitempty" json:"resource,omitempty"`
 	Resolved                    *datetime.CpsTime     `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
 	PbehaviorInfo               *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
