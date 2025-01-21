@@ -2756,6 +2756,57 @@ definitions:
           type: string
         type: array
     type: object
+  externaldata.CreateRequest:
+    properties:
+      description:
+        maxLength: 255
+        type: string
+      name:
+        type: string
+      type:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - name
+    - type
+    type: object
+  externaldata.ImportCompleteRequest:
+    properties:
+      columns:
+        additionalProperties:
+          type: integer
+        type: object
+    required:
+    - columns
+    type: object
+  externaldata.ImportJob:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  externaldata.Response:
+    properties:
+      _id:
+        type: string
+      columns:
+        additionalProperties:
+          type: integer
+        type: object
+      created:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      type:
+        type: integer
+      updated:
+        type: integer
+    type: object
   file.File:
     properties:
       _id:

@@ -1033,6 +1033,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_rules"
+  permission_api_external_data_table:
+    <<: *permission_crud
+    _id: api_external_data_table
+    name: <Current()._id>
+    description: External data table
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
 
   # api -> remediation
   permission_api_job_config:
