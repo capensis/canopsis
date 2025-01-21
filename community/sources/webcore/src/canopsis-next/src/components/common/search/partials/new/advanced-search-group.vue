@@ -3,8 +3,9 @@
     :class="{ 'c-new-advanced-search__group--union': union }"
     class="c-new-advanced-search__group"
   >
-    <advanced-search-chip
+    <component
       v-for="chip in chips"
+      :is="chip.component"
       v-bind="chip.bind"
       :key="chip.key"
       v-on="chip.on"
@@ -13,7 +14,7 @@
 </template>
 
 <script>
-import { keyBy, uniq } from 'lodash';
+import { keyBy, uniq, difference, pick } from 'lodash';
 import { computed, ref, watch, nextTick, onMounted, onBeforeUnmount, inject } from 'vue';
 import { Validator } from 'vee-validate';
 
@@ -23,13 +24,15 @@ import {
   PATTERN_DURATION_OPERATORS,
   PATTERN_FIELD_TYPES,
   PATTERN_OPERATORS,
-  PATTERN_QUICK_RANGES,
+  PATTERN_QUICK_RANGES, QUICK_RANGES,
 } from '@/constants';
 
 import AdvancedSearchChip from './advanced-search-chip.vue';
+import AdvancedSearchRangeChip from './advanced-search-range-chip.vue';
 import {
   isArrayCondition,
-  isDatePatternRuleField, isDurationPatternRuleField,
+  isDatePatternRuleField,
+  isDurationPatternRuleField,
   isInfosPatternRuleField,
   isValueInfosPatternRuleField
 } from '@/helpers/entities/pattern/form';
@@ -37,6 +40,7 @@ import {
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 import { uid } from '@/helpers/uid';
+import { advancedSearchRuleToForm } from '@/helpers/search/new-advanced-search';
 
 
 const patterns = {
@@ -76,10 +80,11 @@ const ADVANCED_SEARCH_CHIP_TYPES = {
   value: 'value',
   duration: 'duration',
   range: 'range',
+  rangeValue: 'rangeValue',
   union: 'union',
 };
 
-export const getNextType = (attribute, type) => {
+export const getNextType = ({ attribute, range }, type) => {
   if (type === ADVANCED_SEARCH_CHIP_TYPES.union) {
     return null;
   }
@@ -114,13 +119,21 @@ export const getNextType = (attribute, type) => {
       }
 
       return ADVANCED_SEARCH_CHIP_TYPES.value;
+
+    case ADVANCED_SEARCH_CHIP_TYPES.range:
+      if (range === QUICK_RANGES.custom.value) {
+        return ADVANCED_SEARCH_CHIP_TYPES.rangeValue;
+      }
+
+      return null;
+
     default:
       return null;
   }
 };
 
 export default {
-  components: { AdvancedSearchChip },
+  components: { AdvancedSearchChip, AdvancedSearchRangeChip },
   model: {
     prop: 'rule',
     event: 'input',
@@ -171,11 +184,11 @@ export default {
     const { updateField, updateModel } = useModelField(props, emit);
     const activeType = ref(props.union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute);
 
-    const nextType = computed(() => getNextType(props.rule.attribute, activeType.value));
     const attributesMap = computed(() => keyBy(props.attributes, 'value'));
+    const currentAttribute = computed(() => attributesMap.value[props.rule.attribute]);
     const isFinishedGroup = computed(() => !activeType.value);
     const preparedOperators = computed(() => (
-      (attributesMap.value[props.rule.attribute]?.operators ?? []).map(operator => ({
+      (currentAttribute.value?.operators ?? []).map(operator => ({
         text: t(`common.operators.${operator}`),
         value: operator,
       }))
@@ -212,11 +225,57 @@ export default {
 
     const goToNextType = (steps = 1) => {
       for (let i = 0; i < steps; i += 1) {
-        activeType.value = getNextType(props.rule.attribute, activeType.value);
+        activeType.value = getNextType(props.rule, activeType.value);
       }
     };
 
-    const selectChipItem = (value, type) => updateField(type, value);
+    const selectChipItem = (value, type) => {
+      const newRule = { ...props.rule, [type]: value };
+      const oldRuleNextType = getNextType(props.rule, type);
+      let nextType = getNextType(newRule, type);
+      if (!nextType) {
+        if (oldRuleNextType) {
+          const typesForClear = [oldRuleNextType];
+          updateModel({
+            ...props.rule,
+            ...pick(advancedSearchRuleToForm(), typesForClear),
+            [type]: value,
+            filled: difference(props.rule.filled, typesForClear),
+          });
+
+          return;
+        }
+
+        updateField(type, value);
+
+        return;
+      }
+
+      activeType.value = nextType;
+
+      const typesForClear = [nextType];
+
+      while (nextType = getNextType(newRule, nextType)) {
+        typesForClear.push(nextType);
+      }
+
+      const filled = difference(props.rule.filled, typesForClear);
+
+      if (type === ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
+        filled.push(ADVANCED_SEARCH_CHIP_TYPES.value);
+      }
+
+      if (type === ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
+        filled.push(ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+      }
+
+      updateModel({
+        ...props.rule,
+        ...pick(advancedSearchRuleToForm(), typesForClear),
+        [type]: value,
+        filled: uniq(filled),
+      });
+    };
 
     const selectItem = (value) => {
       const filled = [...(props.rule.filled ?? []), activeType.value];
@@ -229,12 +288,16 @@ export default {
         actionTypeSteps = 2;
       }
 
+      if (activeType.value === ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
+        filled.push(ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+        actionTypeSteps = 2;
+      }
+
       updateModel({
         ...preparedRule,
         filled: uniq(filled),
         [activeType.value]: value,
       });
-
 
       if (!isFinishedGroup.value) {
         nextTick(() => goToNextType(actionTypeSteps));
@@ -243,14 +306,17 @@ export default {
 
     const clickChip = key => emit('click:chip', key);
 
-    const remove = () => console.log('REMOVE') || emit('remove');
+    const remove = () => emit('remove');
 
     const chips = computed(() => {
       const result = (props.rule.filled ?? []).map((type, index, filled) => {
         const key = `${props.rule.key}.${type}`;
+        const multiple = type === ADVANCED_SEARCH_CHIP_TYPES.value && isArrayCondition(props.rule.operator);
+        const fetchItems = type === ADVANCED_SEARCH_CHIP_TYPES.value ? currentAttribute.value?.fetchValues : undefined;
 
         return {
           key,
+          component: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue ? 'advanced-search-range-chip' : 'advanced-search-chip',
           bind: {
             value: props.rule[type],
             active: key === props.activeKey,
@@ -258,31 +324,49 @@ export default {
             allowText: !itemsByType.value[type]?.length,
             closable: index === filled.length - 1 && !props.union,
             disabled: props.disabled,
-            multiple: type === ADVANCED_SEARCH_CHIP_TYPES.value && isArrayCondition(props.rule.operator),
+            fetchItems,
+            itemText: fetchItems ? 'name' : 'text',
+            itemValue: fetchItems ? '_id' : 'value',
+            multiple,
             color: validator.errors.has(props.rule.key) ? 'error' : undefined,
           },
           on: {
             input: value => selectChipItem(value, type),
             click: () => clickChip(key),
             focusout: () => emit('focusout'),
-            next: () => setTimeout(() => emit('next', isFinishedGroup.value)), // TODO: refactor
+            next: () => setTimeout(() => emit('next', getNextType(
+              props.rule,
+              multiple
+                ? getNextType(props.rule, type)
+                : type,
+            ))), // TODO: refactor
             close: remove,
           },
         };
       });
 
-      if (!isFinishedGroup.value) {
+      if (!isFinishedGroup.value && !props.rule.filled.includes(activeType.value)) {
+        const type = activeType.value;
+        const key = `${props.rule.key}.${type}`;
+
+        const fetchItems = type === ADVANCED_SEARCH_CHIP_TYPES.value ? currentAttribute.value?.fetchValues : undefined;
+
         result.push({
-          key: uid(),
+          key,
+          component: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue ? 'advanced-search-range-chip' : 'advanced-search-chip',
           bind: {
-            active: true,
+            value: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue ? props.rule[type] : undefined,
+            active: key === props.activeKey,
             alwaysActive: true,
-            items: itemsByType.value[activeType.value],
-            allowText: !itemsByType.value[activeType.value]?.length,
+            items: itemsByType.value[type],
+            itemText: fetchItems ? 'name' : 'text',
+            itemValue: fetchItems ? '_id' : 'value',
+            fetchItems,
+            allowText: !itemsByType.value[type]?.length,
           },
           on: {
             input: selectItem,
-            next: () => setTimeout(() => emit('next', isFinishedGroup.value)), // TODO: refactor
+            next: () => setTimeout(() => emit('next', getNextType(props.rule, type))), // TODO: refactor
           },
         });
       }
@@ -308,8 +392,6 @@ export default {
 
     return {
       activeType,
-      nextType,
-      isFinishedGroup,
       chips,
       remove,
       selectChipItem,

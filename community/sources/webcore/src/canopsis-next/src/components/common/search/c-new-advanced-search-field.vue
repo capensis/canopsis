@@ -18,7 +18,7 @@
               @input="update($event, index)"
               @click:chip="makeActive"
               @focusout="resetActive"
-              @next="next(index, $event)"
+              @next="next($event, index)"
               @remove="remove(index)"
             />
           </v-layout>
@@ -57,12 +57,13 @@
 import { computed, ref, set } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
-import { ALARM_FIELDS, PATTERN_OPERATORS, PATTERN_STRING_OPERATORS } from '@/constants';
+import { ALARM_FIELDS, PATTERN_OPERATORS, PATTERN_QUICK_RANGES, PATTERN_STRING_OPERATORS } from '@/constants';
 
 import { advancedSearchRuleToForm } from '@/helpers/search/new-advanced-search';
 
 import AdvancedSearchGroup from '@/components/common/search/partials/new/advanced-search-group.vue';
 import { useComponentInstance } from '@/hooks/vue';
+import { useEntity } from '@/hooks/store/modules/entity';
 
 const ALARM_ENTITY_FIELDS_PREFIX = 'entity';
 const ALARM_PBEHAVIOR_FIELDS_PREFIX = 'v.pbehavior_info';
@@ -80,6 +81,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const { fetchContextEntitiesListWithoutStore } = useEntity();
     const instance = useComponentInstance();
     const rules = ref([advancedSearchRuleToForm()]);
     const activeKey = ref();
@@ -110,6 +112,22 @@ export default {
         ],
         text: 'Output',
       },
+      {
+        value: ALARM_FIELDS.creationDate,
+        text: 'Creation date',
+        operators: PATTERN_QUICK_RANGES,
+      },
+      {
+        value: ALARM_FIELDS.component,
+        operators: [
+          ...PATTERN_STRING_OPERATORS,
+
+          PATTERN_OPERATORS.isOneOf,
+          PATTERN_OPERATORS.isNotOneOf,
+        ],
+        fetchValues: fetchContextEntitiesListWithoutStore,
+        text: 'Component',
+      },
     ]);
 
     const update = (value, index) => {
@@ -125,10 +143,17 @@ export default {
       activeKey.value = null;
     };
 
-    const next = (index, finished) => {
-      if (finished && !rules.value[index + 1]) {
-        rules.value.push(advancedSearchRuleToForm());
+    const next = (nextStep, index) => {
+      console.log(nextStep, rules.value[index + 1]);
+      if (!nextStep && !rules.value[index + 1]) {
+        const newRule = advancedSearchRuleToForm();
+
+        rules.value.push(newRule);
+        activeKey.value = `${newRule.key}.attribute`;
+        return;
       }
+
+      activeKey.value = !nextStep ? `${rules.value[index + 1].key}.attribute` : `${rules.value[index].key}.${nextStep}`;
     };
 
     const remove = (index) => {

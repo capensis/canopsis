@@ -8,14 +8,16 @@
     right
   >
     <template #activator="{ on }">
-      <v-btn
-        icon
-        fab
-        small
-        v-on="on"
-      >
-        <v-icon>calendar_today</v-icon>
-      </v-btn>
+      <slot :value="value" :on="on" name="activator">
+        <v-btn
+          icon
+          fab
+          small
+          v-on="on"
+        >
+          <v-icon>calendar_today</v-icon>
+        </v-btn>
+      </slot>
     </template>
     <date-time-picker
       v-field="value"

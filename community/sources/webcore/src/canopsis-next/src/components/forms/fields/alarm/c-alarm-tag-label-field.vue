@@ -106,6 +106,7 @@ export default {
       idParamsKey: 'ids',
       fetchHandler: fetchAlarmTagsLabelsListWithoutStore,
       addable: true,
+      multiple: true,
     }, emit);
 
     return {
