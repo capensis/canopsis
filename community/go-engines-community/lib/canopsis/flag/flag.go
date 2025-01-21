@@ -7,11 +7,14 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func FindDeprecatedFlags(list []string) []string {
+func FindDeprecatedFlags(flags ...string) []string {
 	var deprecatedFlags []string
+	if len(flags) == 0 {
+		return deprecatedFlags
+	}
 
 	flag.Visit(func(f *flag.Flag) {
-		if slices.Contains(list, f.Name) {
+		if slices.Contains(flags, f.Name) {
 			deprecatedFlags = append(deprecatedFlags, f.Name)
 		}
 	})
@@ -20,7 +23,5 @@ func FindDeprecatedFlags(list []string) []string {
 }
 
 func LogDeprecatedFlags(logger zerolog.Logger, deprecatedFlags []string) {
-	for _, f := range deprecatedFlags {
-		logger.Warn().Msgf("The flag %q is deprecated and will be removed in a future versions.", f)
-	}
+	logger.Warn().Strs("flags", deprecatedFlags).Msg("Deprecated flags will be removed in a future versions.")
 }

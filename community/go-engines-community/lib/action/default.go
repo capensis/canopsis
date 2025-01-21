@@ -65,7 +65,7 @@ func ParseOptions() (Options, []string) {
 
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags([]string{"workers", "withWebhook"})
+	return opts, libflag.FindDeprecatedFlags("workers", "withWebhook")
 }
 
 // NewEngineAction returns the default Action engine with default connections.
