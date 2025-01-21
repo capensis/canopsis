@@ -50,7 +50,7 @@
               hide-details
             />
           </v-flex>
-          <v-flex xs5>
+          <v-flex :xs5="!noTimezone" :xs8="noTimezone">
             <date-time-splitted-range-picker-field
               :start="form.tstart"
               :end="form.tstop"
@@ -66,7 +66,7 @@
               @update:end="updateField('tstop', $event)"
             />
           </v-flex>
-          <v-flex xs3>
+          <v-flex v-if="!noTimezone" xs3>
             <c-timezone-field
               v-field="form.timezone"
               server
@@ -181,6 +181,10 @@ export default {
       default: false,
     },
     noComments: {
+      type: Boolean,
+      default: false,
+    },
+    noTimezone: {
       type: Boolean,
       default: false,
     },

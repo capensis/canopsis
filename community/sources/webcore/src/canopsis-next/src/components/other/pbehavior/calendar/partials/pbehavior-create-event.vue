@@ -7,6 +7,7 @@
     <pbehavior-form
       v-model="form"
       :no-pattern="!!entityPattern"
+      :no-timezone="noTimezone"
       class="py-3"
     />
     <v-layout
@@ -76,6 +77,10 @@ export default {
     timezone: {
       type: String,
       default: getLocalTimezone(),
+    },
+    noTimezone: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

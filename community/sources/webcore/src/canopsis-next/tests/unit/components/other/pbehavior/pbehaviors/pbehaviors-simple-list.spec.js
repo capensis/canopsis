@@ -2,8 +2,8 @@ import { range } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
-import { mockModals } from '@unit/utils/mock-hooks';
+import { createInfoModule, createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
+import { mockModals, mockRouter } from '@unit/utils/mock-hooks';
 
 import { MODALS } from '@/constants';
 
@@ -29,6 +29,7 @@ const selectCalendarButton = wrapper => wrapper.find('c-action-fab-btn-stub[icon
 
 describe('pbehaviors-simple-list', () => {
   const $modals = mockModals();
+  const $router = mockRouter();
 
   const totalItems = 7;
   const pbehaviorsItems = range(totalItems).map(index => ({
@@ -53,13 +54,14 @@ describe('pbehaviors-simple-list', () => {
     is_active_status: !(index % 2),
   }));
 
+  const { infoModule, shownUserTimezone } = createInfoModule();
   const { pbehaviorModule, fetchPbehaviorsByEntityIdWithoutStore } = createPbehaviorModule();
 
-  const store = createMockedStoreModules([pbehaviorModule]);
+  const store = createMockedStoreModules([infoModule, pbehaviorModule]);
 
   const factory = generateShallowRenderer(PbehaviorsSimpleList, {
     stubs,
-    mocks: { $modals },
+    mocks: { $modals, $router },
     parentComponent: {
       provide: {
         $system: {
@@ -71,7 +73,7 @@ describe('pbehaviors-simple-list', () => {
   const snapshotFactory = generateRenderer(PbehaviorsSimpleList, {
 
     stubs,
-    mocks: { $modals },
+    mocks: { $modals, $router },
     parentComponent: {
       provide: {
         $system: {
@@ -180,7 +182,27 @@ describe('pbehaviors-simple-list', () => {
   test('Renders `pbehaviors-simple-list` with pbehaviors', async () => {
     fetchPbehaviorsByEntityIdWithoutStore.mockResolvedValueOnce(pbehaviorsItems);
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([pbehaviorModule]),
+      store: createMockedStoreModules([infoModule, pbehaviorModule]),
+      propsData: {
+        entity: {},
+        withActiveStatus: true,
+        updatable: true,
+        removable: true,
+        addable: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `pbehaviors-simple-list` with pbehaviors and shownUserTimezone', async () => {
+    fetchPbehaviorsByEntityIdWithoutStore.mockResolvedValueOnce(pbehaviorsItems);
+    shownUserTimezone.mockReturnValueOnce(true);
+
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([infoModule, pbehaviorModule]),
       propsData: {
         entity: {},
         withActiveStatus: true,

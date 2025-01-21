@@ -15,6 +15,7 @@
             @click="setToday"
           />
           <c-timezone-field
+            v-if="!noTimezone"
             v-model="localTimezone"
             server
             hide-details
@@ -152,6 +153,7 @@
             :close="clearPlaceholder"
             :event="newEvent || editEvent || popoverEvent"
             :timezone="localTimezone"
+            :no-timezone="noTimezone"
             name="form-event"
           />
         </v-card-text>
@@ -207,6 +209,10 @@ export default {
     timezone: {
       type: String,
       default: getLocalTimezone(),
+    },
+    noTimezone: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

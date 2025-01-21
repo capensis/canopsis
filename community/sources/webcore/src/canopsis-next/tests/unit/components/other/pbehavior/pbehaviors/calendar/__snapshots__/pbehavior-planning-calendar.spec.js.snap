@@ -8,6 +8,30 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     class="c-calendar"
     color="primary"
     events=""
+    no-timezone="true"
+    timezone="Europe/Paris"
+  >
+    <pbehavior-create-event-stub
+      defaultname=""
+      event="[object Object]"
+      notimezone="true"
+      timezone="Europe/Paris"
+    />
+    <pbehavior-planning-calendar-legend-stub
+      exceptiontypes=""
+    />
+  </div>
+</div>
+`;
+
+exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` with required props and with shownUserTimezone 1`] = `
+<div
+  class="fill-height"
+>
+  <div
+    class="c-calendar"
+    color="primary"
+    events=""
     timezone="Europe/Paris"
   >
     <pbehavior-create-event-stub

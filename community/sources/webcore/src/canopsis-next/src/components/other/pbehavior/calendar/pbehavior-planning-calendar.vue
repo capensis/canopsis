@@ -5,6 +5,7 @@
       :events="events"
       :loading="pending"
       :timezone="timezone"
+      :no-timezone="!shownUserTimezone"
       color="primary"
       @update:timezone="handleUpdateTimezone"
       @change:event="handleUpdateEvent"
@@ -18,6 +19,7 @@
           :entity-pattern="entityPattern"
           :default-name="defaultName"
           :timezone="timezone"
+          :no-timezone="!shownUserTimezone"
           @close="close"
           @submit="addEventWithClose($event, close)"
           @remove="removePbehavior"
@@ -55,6 +57,7 @@ import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/tim
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
 
+const { mapGetters: infoMapGetters } = createNamespacedHelpers('info');
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
 export default {
@@ -108,6 +111,8 @@ export default {
     };
   },
   computed: {
+    ...infoMapGetters(['shownUserTimezone']),
+
     allPbehaviorsById() {
       return {
         ...this.pbehaviorsById,

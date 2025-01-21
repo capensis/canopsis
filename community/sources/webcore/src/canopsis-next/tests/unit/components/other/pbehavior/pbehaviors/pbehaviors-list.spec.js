@@ -2,6 +2,8 @@ import { range } from 'lodash';
 
 import { generateRenderer } from '@unit/utils/vue';
 import { selectRowExpandButtonByIndex } from '@unit/utils/table';
+import { mockRouter } from '@unit/utils/mock-hooks';
+import { createInfoModule, createMockedStoreModules } from '@unit/utils/store';
 
 import CAdvancedDataTable from '@/components/common/table/c-advanced-data-table.vue';
 import PbehaviorsList from '@/components/other/pbehavior/pbehaviors/pbehaviors-list.vue';
@@ -21,6 +23,8 @@ const stubs = {
 };
 
 describe('pbehaviors-list', () => {
+  const $router = mockRouter();
+
   const totalItems = 11;
 
   const pbehaviorsItems = range(totalItems).map(index => ({
@@ -41,8 +45,12 @@ describe('pbehaviors-list', () => {
     },
   }));
 
+  const { infoModule, shownUserTimezone } = createInfoModule();
+  const store = createMockedStoreModules([infoModule]);
+
   const snapshotFactory = generateRenderer(PbehaviorsList, {
     stubs,
+    mocks: { $router },
     parentComponent: {
       provide: {
         $system: {
@@ -54,6 +62,7 @@ describe('pbehaviors-list', () => {
 
   test('Renders `pbehaviors-list` with default props', () => {
     const wrapper = snapshotFactory({
+      store,
       propsData: {
         pbehaviors: [],
         options: {},
@@ -65,6 +74,34 @@ describe('pbehaviors-list', () => {
 
   test('Renders `pbehaviors-list` with custom props', () => {
     const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        pbehaviors: pbehaviorsItems,
+        options: {
+          page: 2,
+          itemsPerPage: 10,
+          search: 'Filter',
+          sortBy: ['created'],
+          sortDesc: [true],
+        },
+        totalItems: 50,
+        pending: true,
+        removable: true,
+        updatable: true,
+        duplicable: true,
+        enablable: true,
+        disablable: true,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `pbehaviors-list` with custom props and with shownUserTimezone', () => {
+    shownUserTimezone.mockReturnValueOnce(true);
+
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([infoModule]),
       propsData: {
         pbehaviors: pbehaviorsItems,
         options: {
@@ -89,6 +126,7 @@ describe('pbehaviors-list', () => {
 
   test('Renders `pbehaviors-list` with expanded panel', async () => {
     const wrapper = snapshotFactory({
+      store,
       propsData: {
         pbehaviors: pbehaviorsItems,
         options: {
