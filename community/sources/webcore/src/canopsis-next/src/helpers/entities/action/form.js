@@ -5,10 +5,10 @@ import { ALARM_STATES, ACTION_TYPES, PATTERNS_FIELDS } from '@/constants';
 import { uid } from '@/helpers/uid';
 import { durationToForm } from '@/helpers/date/duration';
 import { getLocalTimezone } from '@/helpers/date/date';
+import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from '../pbehavior/form';
 import { requestToForm, formToRequest } from '../shared/request/form';
-import { eventToAssociateTicketForm, formToAssociateTicketEvent } from '../associate-ticket/event/form';
 import {
   declareTicketRuleWebhookDeclareTicketToForm,
   formToDeclareTicketRuleWebhookDeclareTicket,
@@ -52,7 +52,22 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  */
 
 /**
- * @typedef {ActionDefaultParameters & AssociateTicketEvent} ActionAssocTicketParameters
+ * @typedef {ActionDefaultParameters} AssociateTicketParameters
+ * @property {string} ticket
+ * @property {string} ticket_url
+ * @property {string} ticket_url_title
+ * @property {string} ticket_system_name
+ * @property {Object} ticket_data
+ * @property {boolean} ticket_resources
+ */
+
+/**
+ * @typedef {ActionDefaultParameters & AssociateTicketParameters} ActionAssocTicketParameters
+ */
+
+/**
+ * @typedef {AssociateTicketParameters} ActionAssocTicketParametersForm
+ * @property {TextPairObject[]} mapping
  */
 
 /**
@@ -60,9 +75,11 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @property {Request} request
  * @property {?DeclareTicketRuleWebhookDeclareTicket} [declare_ticket]
  * @property {boolean} [forward_author]
+ * @property {boolean} [empty_response]
  * @property {boolean} skip_for_child
  * @property {boolean} skip_for_instruction
  * @property {string} [author]
+ * @property {string} [ticket_system_name]
  */
 
 /**
@@ -98,7 +115,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  *   ActionSnoozeParameters |
  *   ActionChangeStateParameters |
  *   ActionWebhookFormParameters |
- *   ActionAssocTicketParameters
+ *   ActionAssocTicketParametersForm
  * } ActionFormParameters
  */
 
@@ -174,6 +191,7 @@ const webhookActionParametersToForm = (parameters = {}) => ({
   request: requestToForm(parameters.request),
   skip_for_child: parameters.skip_for_child ?? false,
   skip_for_instruction: parameters.skip_for_instruction ?? false,
+  ticket_system_name: parameters.ticket_system_name ?? '',
 });
 
 /**
@@ -202,11 +220,16 @@ const changeStateActionParametersToForm = (parameters = {}) => ({
  * Convert action assoc ticket parameters to form
  *
  * @param {ActionAssocTicketParameters | {}} [parameters = {}]
- * @returns {ActionAssocTicketParameters}
+ * @returns {ActionAssocTicketParametersForm}
  */
 const assocTicketActionParametersToForm = (parameters = {}) => ({
   ...defaultActionParametersToForm(parameters),
-  ...omit(eventToAssociateTicketForm(parameters), ['ticket_comment']),
+  ticket: parameters.ticket ?? '',
+  ticket_url: parameters.ticket_url ?? '',
+  ticket_url_title: parameters.ticket_url_title ?? '',
+  ticket_resources: parameters.ticket_resources ?? false,
+  ticket_system_name: parameters.ticket_system_name ?? '',
+  mapping: objectToTextPairs(parameters.ticket_data),
 });
 
 /**
@@ -303,8 +326,10 @@ export const actionToForm = (action = {}, timezone = getLocalTimezone()) => ({
 export const formToWebhookActionParameters = (parameters = {}) => ({
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
   request: formToRequest(parameters.request),
+  empty_response: parameters.empty_response,
   skip_for_child: parameters.skip_for_child,
   skip_for_instruction: parameters.skip_for_instruction,
+  ticket_system_name: parameters.ticket_system_name,
 });
 
 /**
@@ -326,6 +351,17 @@ export const formToPbehaviorActionParameters = (parameters = {}, timezone = getL
 };
 
 /**
+ * Convert form object to associate ticket action parameters object
+ *
+ * @param {ActionAssocTicketParametersForm} form
+ * @return {ActionAssocTicketParameters}
+ */
+export const formToAssociateTicketParameters = form => ({
+  ...omit(form, ['mapping']),
+  ticket_data: textPairsToObject(form.mapping),
+});
+
+/**
  * Convert form to action parameters
  *
  * @param {ActionForm} form
@@ -342,7 +378,7 @@ const formToActionParameters = (form, timezone) => {
   const parametersPreparers = {
     [ACTION_TYPES.webhook]: formToWebhookActionParameters,
     [ACTION_TYPES.pbehavior]: formToPbehaviorActionParameters,
-    [ACTION_TYPES.assocticket]: formToAssociateTicketEvent,
+    [ACTION_TYPES.assocticket]: formToAssociateTicketParameters,
   };
 
   const prepareParametersToAction = parametersPreparers[form.type];

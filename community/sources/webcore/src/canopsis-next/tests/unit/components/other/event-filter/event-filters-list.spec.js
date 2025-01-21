@@ -15,6 +15,7 @@ const stubs = {
   'c-action-btn': true,
   'c-enabled': true,
   'c-table-pagination': true,
+  'c-db-export-btn': true,
   'pbehaviors-create-action-btn': true,
   'pbehaviors-list-action-btn': true,
   'event-filters-list-expand-panel': true,
