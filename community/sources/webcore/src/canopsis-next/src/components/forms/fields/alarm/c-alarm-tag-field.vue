@@ -130,6 +130,7 @@ export default {
       idKey: 'value',
       idParamsKey: 'values',
       fetchHandler: fetchAlarmTagsListWithoutStore,
+      multiple: true,
     }, emit);
 
     return {

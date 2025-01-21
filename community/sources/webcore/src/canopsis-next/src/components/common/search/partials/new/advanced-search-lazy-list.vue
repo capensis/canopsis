@@ -1,6 +1,13 @@
 <template>
-  <v-list class="pa-0">
-    <slot name="append" />
+  <v-list class="pa-0 advanced-search-lazy-list">
+    <v-fade-transition>
+      <v-progress-linear
+        v-if="pending"
+        class="advanced-search-lazy-list__progress"
+        color="primary"
+        indeterminate
+      />
+    </v-fade-transition>
     <template v-for="item in items">
       <v-subheader
         v-if="item.header"
@@ -29,6 +36,10 @@
         </v-list-item-content>
       </v-list-item>
     </template>
+    <div
+      ref="appendElement"
+      class="advanced-search-lazy-list__append-item"
+    />
     <slot v-if="!items.length" name="no-data" />
     <v-menu
       v-if="subItemsShown"
@@ -54,7 +65,7 @@
 </template>
 <script>
 import { uniqBy } from 'lodash';
-import { ref } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   name: 'advanced-search-lazy-list', // TODO: see variables-list
@@ -105,6 +116,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const appendElement = ref(null);
     const subItemsShown = ref(false);
     const parentItem = ref(undefined);
     const subItemsPosition = ref({ x: 0, y: 0 });
@@ -138,7 +150,24 @@ export default {
       }
     };
 
+    const intersectionHandler = (entries) => {
+      const [entry] = entries;
+
+      if (entry.isIntersecting) {
+        emit('fetch:more');
+      }
+    };
+
+    const observer = new IntersectionObserver(intersectionHandler);
+
+    onMounted(() => observer.observe(appendElement.value));
+    onBeforeUnmount(() => {
+      observer.unobserve(appendElement.value);
+      observer.disconnect();
+    });
+
     return {
+      appendElement,
       subItemsShown,
       subItemsPosition,
       parentItem,
@@ -154,9 +183,30 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.v-subheader {
-  font-size: 16px;
-  font-weight: 700;
-  color: inherit;
+.advanced-search-lazy-list {
+  position: relative;
+
+  .v-subheader {
+    font-size: 16px;
+    font-weight: 700;
+    color: inherit;
+  }
+
+  &__progress {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  &__append-item {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 48px;
+    pointer-events: none;
+  }
 }
 </style>

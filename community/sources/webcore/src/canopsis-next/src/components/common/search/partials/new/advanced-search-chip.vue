@@ -37,7 +37,7 @@
       </span>
       <span v-else>
         <input
-          v-if="active"
+          v-if="active || alwaysActive"
           ref="inputEl"
           :value="inputValue"
           type="text"
@@ -64,7 +64,10 @@
       :items="lazyItems"
       :search="inputValue"
       :pending="pending"
+      :item-text="itemText"
+      :item-value="itemValue"
       @input="select"
+      @fetch:more="showMore"
     >
       <template v-if="allowText" #no-data="">
         <v-list-item>
@@ -165,6 +168,7 @@ export default {
   },
   setup(props, { emit }) {
     const inputEl = ref(null);
+    const appendEl = ref(null);
     const inputValue = ref('');
     const opened = ref(false);
 
@@ -181,6 +185,7 @@ export default {
     }));
 
     const showMenu = () => opened.value = true;
+    const hideMenu = () => opened.value = false;
 
     const apply = (event) => {
       console.log('APPLY:', event);
@@ -207,10 +212,12 @@ export default {
       changeSelectedItems,
       updateSearch,
       wholePending: pending,
+      hasMoreItems,
+      fetchMoreItems,
     } = useLazySearch({
       value: toRef(props, 'value'),
       addable: props.allowText,
-      idKey: 'value',
+      idKey: toRef(props, 'itemValue'),
       idParamsKey: 'ids',
       fetchHandler: props.fetchItems ?? defaultFetchItems,
       multiple: props.multiple,
@@ -262,21 +269,31 @@ export default {
       console.log('KEYDOWN:', event);
     };
 
-    watch(() => [props.active, selectedItems.value], ([active, newSelectedItems]) => {
-      if (!active || props.alwaysActive) {
+    watch(() => [props.active, selectedItems.value], ([active, newSelectedItems], [prevActive] = []) => {
+      if (!active) {
         inputValue.value = '';
         updateSearch(inputValue.value);
 
         return;
       }
 
+      if (prevActive !== active && active) {
+        nextTick(() => inputEl.value?.focus());
+      }
+
       inputValue.value = newSelectedItems[0]?.[props.itemText] ?? newSelectedItems[0]?.[props.itemValue] ?? '';
-      nextTick(() => inputEl.value?.focus());
     }, { immediate: true });
+
+    const showMore = () => {
+      if (hasMoreItems.value) {
+        fetchMoreItems();
+      }
+    };
 
     return {
       selectedItems,
       opened,
+      appendEl,
       inputEl,
       inputValue,
       menuProps,
@@ -292,6 +309,7 @@ export default {
       toggleMenu,
       close,
       updateInputValue,
+      showMore,
     };
   },
 };

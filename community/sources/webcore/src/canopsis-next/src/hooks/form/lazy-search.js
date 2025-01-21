@@ -1,11 +1,17 @@
 import {
+  keyBy,
+  pick,
+  isArray,
+  isString,
+  debounce,
+} from 'lodash';
+import {
   computed,
   ref,
   unref,
   watch,
   onMounted,
 } from 'vue';
-import { keyBy, pick, isArray, isString } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -30,6 +36,7 @@ import { useModelField } from '@/hooks/form';
  * @param {Function} options.fetchHandler - The asynchronous function used to fetch data from the server.
  * @param {boolean} options.addable - The flag for indicating possibility to add new item.
  * @param {boolean} options.multiple - The flag for indicating possibility to choose more than one item.
+ * @param {number} options.delay - The delay number value for debouncing.
  * @param {Function} emit - The emit function for Vue events, used to update the model.
  * @returns {Object} An object containing methods and properties for managing search and selection:
  * - `selectedItems`: {Ref<Array>} A reactive reference to the currently selected items.
@@ -49,6 +56,7 @@ export const useLazySearch = ({
   fetchHandler,
   addable,
   multiple, // TODO: add true for all places
+  delay = 100,
 }, emit) => {
   const pageCount = ref(1);
   const itemsByValue = ref({});
@@ -121,8 +129,8 @@ export const useLazySearch = ({
     pending,
     query,
     fetchHandlerWithQuery: fetchItems,
+    updateQuery,
     updateQueryPage,
-    updateQuerySearch,
   } = usePendingWithLocalQuery({
     initialQuery: {
       page: 1,
@@ -143,6 +151,20 @@ export const useLazySearch = ({
       };
     },
   });
+
+  /**
+   * Update search field in query with page updating
+   *
+   * @param {string} [newSearch = '']
+   */
+  const updateSearch = debounce((newSearch = '') => {
+    if (query.value.search !== newSearch) {
+      updateQuery({
+        search: newSearch,
+        page: 1,
+      });
+    }
+  }, unref(delay));
 
   /**
    * Computed property to determine if there are more items to fetch.
@@ -223,6 +245,6 @@ export const useLazySearch = ({
     fetchMoreItems,
     changeSelectedItems,
     removeItemFromSelectedItemsByIndex,
-    updateSearch: updateQuerySearch,
+    updateSearch,
   };
 };
