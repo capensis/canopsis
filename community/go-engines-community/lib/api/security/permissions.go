@@ -73,6 +73,8 @@ const (
 	PermPrivateViewGroups = "api_private_view_groups"
 
 	PermIcon = "api_icon"
+
+	ObjExternalDataTable = "api_external_data_table"
 )
 
 // PermCheck defines the permission check configuration where Obj is an object and Act is an action
