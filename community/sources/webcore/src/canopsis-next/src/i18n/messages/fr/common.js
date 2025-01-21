@@ -306,6 +306,7 @@ export default {
   local: 'Local',
   server: 'Serveur',
   pressEnterToApply: 'Appuyez sur <kbd>Entrée</kbd> pour appliquer',
+  width: 'Largeur',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

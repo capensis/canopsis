@@ -1,6 +1,6 @@
 <template>
   <settings-button-field
-    :title="$t('settings.liveReporting.title')"
+    :title="$t('settings.liveReporting.field')"
     :is-empty="isValueEmpty"
     addable
     removable

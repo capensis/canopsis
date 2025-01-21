@@ -306,6 +306,7 @@ export default {
   local: 'Local',
   server: 'Server',
   pressEnterToApply: 'Press <kbd>enter</kbd> to apply',
+  width: 'Width',
   variableTypes: {
     string: 'String',
     number: 'Number',
