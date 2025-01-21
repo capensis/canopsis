@@ -92,6 +92,7 @@ type Parameters struct {
 	// AssocTicket
 	Ticket           string            `json:"ticket,omitempty" bson:"ticket"`
 	TicketURL        string            `json:"ticket_url,omitempty" bson:"ticket_url"`
+	TicketURLTitle   string            `json:"ticket_url_title,omitempty" bson:"ticket_url_title"`
 	TicketSystemName string            `json:"ticket_system_name,omitempty" bson:"ticket_system_name"`
 	TicketData       map[string]string `json:"ticket_data,omitempty" bson:"ticket_data"`
 	// Snooze and Pbehavior

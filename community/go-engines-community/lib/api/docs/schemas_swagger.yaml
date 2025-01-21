@@ -125,6 +125,10 @@ definitions:
         description: TicketURL is used in assocticket action.
         maxLength: 255
         type: string
+      ticket_url_title:
+        description: TicketURLTitle is used in assocticket action.
+        maxLength: 255
+        type: string
       tstart:
         description: Tstart is used in pbehavior action.
         type: integer
@@ -614,6 +618,8 @@ definitions:
               type: string
             ticket_url:
               type: string
+            ticket_url_title:
+              type: string
             user_id:
               type: string
             val:
@@ -639,6 +645,8 @@ definitions:
       ticket_system_name:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       user_id:
         type: string
@@ -696,6 +704,9 @@ definitions:
       url:
         maxLength: 255
         type: string
+      url_title:
+        maxLength: 255
+        type: string
     required:
     - ticket
     type: object
@@ -730,6 +741,9 @@ definitions:
       ticket_resources:
         type: boolean
       url:
+        maxLength: 255
+        type: string
+      url_title:
         maxLength: 255
         type: string
     required:
@@ -1282,6 +1296,8 @@ definitions:
       ticket_system_name:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       user_id:
         type: string
@@ -3132,6 +3148,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_title:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -4388,6 +4406,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_title:
+        type: string
       ticket_url_tpl:
         type: string
     type: object
@@ -4820,6 +4840,8 @@ definitions:
         description: AssocTicket and Webhook
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       tstart:
         type: integer

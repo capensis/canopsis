@@ -54,6 +54,8 @@ type Parameters struct {
 	Ticket string `json:"ticket,omitempty" binding:"max=255" bson:"ticket,omitempty"`
 	// TicketURL is used in assocticket action.
 	TicketURL string `json:"ticket_url,omitempty" binding:"max=255" bson:"ticket_url,omitempty"`
+	// TicketURLTitle is used in assocticket action.
+	TicketURLTitle string `json:"ticket_url_title,omitempty" binding:"max=255" bson:"ticket_url_title,omitempty"`
 	// TicketSystemName is used in assocticket action.
 	TicketSystemName string `json:"ticket_system_name,omitempty" binding:"max=255" bson:"ticket_system_name,omitempty"`
 	// TicketData is used in assocticket action.
