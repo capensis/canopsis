@@ -439,6 +439,8 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 		return a.Value.Component, true
 	case "v.resource":
 		return a.Value.Resource, true
+	case "v.state.initiator":
+		return a.Value.State.GetInitiator(), true
 	case "v.last_comment.m":
 		if a.Value.LastComment == nil {
 			return "", true
@@ -476,6 +478,14 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 		return a.Value.ACK.GetInitiator(), true
 	case "v.canceled.initiator":
 		return a.Value.Canceled.GetInitiator(), true
+	case "v.snooze.a":
+		if a.Value.Snooze == nil {
+			return "", true
+		}
+
+		return a.Value.Snooze.Author, true
+	case "v.snooze.initiator":
+		return a.Value.Snooze.GetInitiator(), true
 	default:
 		if n := strings.TrimPrefix(f, "v.ticket.ticket_data."); n != f {
 			if a.Value.Ticket == nil || a.Value.Ticket.TicketData == nil {
