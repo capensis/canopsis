@@ -2733,7 +2733,7 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.LastEventDate).UnmarshalJSON(data))
 			}
-		case "last_state_or_status_update_date":
+		case "last_st_upd_dt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.LastStateOrStatusUpdateDate).UnmarshalJSON(data))
 			}
@@ -3145,7 +3145,7 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.Raw((in.LastEventDate).MarshalJSON())
 	}
 	{
-		const prefix string = ",\"last_state_or_status_update_date\":"
+		const prefix string = ",\"last_st_upd_dt\":"
 		out.RawString(prefix)
 		out.Raw((in.LastStateOrStatusUpdateDate).MarshalJSON())
 	}
