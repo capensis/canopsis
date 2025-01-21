@@ -37,21 +37,21 @@ type Options struct {
 func ParseOptions() (Options, []string) {
 	var opts Options
 
-	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
-	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
-	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process each event flow")
+	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process fifo_ack events flow")
 
 	flag.Duration("eventsStatsFlushInterval", 60*time.Second, "Deprecated: interval between saving statistics from redis to mongo")
+	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
+	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
 
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags([]string{"eventsStatsFlushInterval"})
+	return opts, libflag.FindDeprecatedFlags("eventsStatsFlushInterval", "consumeQueue", "publishQueue")
 }
 
 func Default(

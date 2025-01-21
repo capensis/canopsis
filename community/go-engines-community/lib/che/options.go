@@ -50,5 +50,5 @@ func ParseOptions() (Options, []string) {
 
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags([]string{"workers", "publishQueue", "consumeQueue"})
+	return opts, libflag.FindDeprecatedFlags("workers", "publishQueue", "consumeQueue")
 }
