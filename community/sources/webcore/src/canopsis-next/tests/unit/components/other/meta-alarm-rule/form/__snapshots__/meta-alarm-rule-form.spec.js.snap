@@ -94,6 +94,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
             class="pa-4"
             disabledidfield="true"
             form="[object Object]"
+            variables="[object Object],[object Object],[object Object],[object Object],[object Object]"
           />
         </div>
       </div>
@@ -112,8 +113,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
           <div
             class="pa-4"
           >
-            <meta-alarm-rule-type-field-stub
-              value="attribute"
+            <meta-alarm-rule-type-form-stub
+              form="[object Object]"
+              variables="[object Object],[object Object],[object Object],[object Object]"
             />
           </div>
         </div>
@@ -234,6 +236,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
           <meta-alarm-rule-general-form-stub
             class="pa-4"
             form="[object Object]"
+            variables="[object Object],[object Object],[object Object],[object Object],[object Object]"
           />
         </div>
       </div>
@@ -252,8 +255,9 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
           <div
             class="pa-4"
           >
-            <meta-alarm-rule-type-field-stub
-              value="attribute"
+            <meta-alarm-rule-type-form-stub
+              form="[object Object]"
+              variables="[object Object],[object Object],[object Object],[object Object]"
             />
           </div>
         </div>

@@ -3,6 +3,7 @@
 ARG ALPINE_VERSION
 ARG ALPINE_BUILD_VERSION
 ARG GOLANG_VERSION
+ARG DEBIAN_VERSION
 
 #
 # Build the engines
@@ -59,17 +60,13 @@ CMD ["/bin/sh", "-c", "/${CMD}"]
 # canopsis-reconfigure override
 #
 
-FROM debian:bullseye-20221004-slim AS canopsis-reconfigure
+FROM debian:${DEBIAN_VERSION} AS canopsis-reconfigure
 
 USER root
 RUN addgroup --system canopsis && adduser --system --disabled-password --shell /sbin/nologin --no-create-home --home /opt/canopsis --ingroup canopsis canopsis
 RUN mkdir -p /opt/canopsis/bin /opt/canopsis/etc /opt/canopsis/share
-RUN apt update && apt install gnupg2 wget musl -y 
+RUN apt update && apt install musl -y && apt clean
 RUN ln -sf /usr/lib/x86_64-linux-musl/libc.so /lib/libc.musl-x86_64.so.1
-RUN wget -qO - https://www.mongodb.org/static/pgp/server-7.0.asc | apt-key add -
-RUN echo "deb http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | tee /etc/apt/sources.list.d/mongodb-org-7.0.list
-RUN apt update && apt install mongodb-mongosh -y
-RUN apt clean 
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-community.toml /canopsis-community.toml
 COPY community/go-engines-community/cmd/canopsis-reconfigure/canopsis-pro.toml /canopsis-pro.toml
 RUN mkdir -p /opt/canopsis/share
@@ -85,24 +82,6 @@ ENV CMD ${CMD}
 
 # note: CPS_EDITION is defined at Docker Compose runtime in the .env file
 CMD ["/bin/sh", "-c", "/${CMD} -edition ${CPS_EDITION:-community} -conf /canopsis-${CPS_EDITION:-community}.toml -migrate-postgres=true -override /opt/canopsis/etc/conf.d/canopsis-override.toml"]
-
-#
-# engine-che override (Community and Pro)
-#
-
-FROM final-container AS engine-che
-
-USER root
-RUN mkdir -p /opt/canopsis/lib/go/plugins
-# XXX: horrible work around the fact that COPY can't be conditional, while mongo.so
-# only exists when CANOPSIS_EDITION is 'pro', so we use a pattern that will always
-# copy something AND mongo.so by accident if we're on Pro (sigh). The best solution
-# would be to move the condition to the 'make install' target, and just use that.
-# But conflicting Community/Pro binaries were added even though we warned that the
-# build system wasn't ready for this yet...
-COPY --from=builder /monorepo/${CANOPSIS_EDITION}/go-engines-${CANOPSIS_EDITION}/build/*/*ce* /opt/canopsis/lib/go/plugins/
-RUN find /opt/canopsis/lib/go/plugins \( \! -name mongo.so \) -type f -delete
-USER canopsis:canopsis
 
 #
 # engine-webhook override

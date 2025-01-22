@@ -10,6 +10,7 @@
             :date-object-preparer="startDateObjectPreparer"
             :round-hours="roundHours"
             name="tstart"
+            autofocus
             @update:objectValue="$emit('update:startObjectValue', $event)"
           />
           <date-time-picker-text-field

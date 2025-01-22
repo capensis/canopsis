@@ -36,6 +36,7 @@ import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 import { isAlarmStateNotOk } from '@/helpers/entities/alarm/form';
+import { metaAlarmLinkToForm, formToMetaAlarmLinkRequest } from '@/helpers/entities/meta-alarm/link/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -67,11 +68,7 @@ export default {
   ],
   data() {
     return {
-      form: {
-        metaAlarm: null,
-        comment: '',
-        auto_resolve: false,
-      },
+      form: metaAlarmLinkToForm(),
     };
   },
   computed: {
@@ -85,16 +82,10 @@ export default {
 
       if (isFormValid) {
         const data = {
-          comment: this.form.comment,
-          auto_resolve: this.form.auto_resolve,
+          ...formToMetaAlarmLinkRequest(this.form),
+
           alarms: mapIds(this.alarms),
         };
-
-        if (this.form.metaAlarm?._id) {
-          data.id = this.form.metaAlarm?._id;
-        } else {
-          data.name = this.form.metaAlarm;
-        }
 
         await this.config?.action?.(data);
 

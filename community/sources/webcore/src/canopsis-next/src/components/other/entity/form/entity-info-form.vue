@@ -5,7 +5,8 @@
       v-validate="nameRules"
       :label="$t('common.name')"
       :error-messages="errors.collect('name')"
-      name
+      name="name"
+      autofocus
     />
     <v-text-field
       v-field="form.description"

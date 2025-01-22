@@ -1,4 +1,5 @@
 import Faker from 'faker';
+import { Validator } from 'vee-validate';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createInputStub } from '@unit/stubs/input';
@@ -9,11 +10,15 @@ import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-
 const stubs = {
   'v-combobox': createInputStub('v-combobox'),
   'v-text-field': createInputStub('v-text-field'),
+  'meta-alarm-rule-tags-form': true,
+  'meta-alarm-rule-infos-form': true,
   'c-enabled-field': true,
   'c-help-icon': true,
 };
 
 const snapshotStubs = {
+  'meta-alarm-rule-tags-form': true,
+  'meta-alarm-rule-infos-form': true,
   'c-enabled-field': true,
   'c-help-icon': true,
 };
@@ -28,8 +33,18 @@ describe('link-meta-alarm-form', () => {
     metaAlarmModule,
   ]);
 
-  const factory = generateShallowRenderer(LinkMetaAlarmForm, { stubs });
-  const snapshotFactory = generateRenderer(LinkMetaAlarmForm, { stubs: snapshotStubs });
+  const factory = generateShallowRenderer(LinkMetaAlarmForm, {
+    stubs,
+    provide: {
+      validator: new Validator(),
+    },
+  });
+  const snapshotFactory = generateRenderer(LinkMetaAlarmForm, {
+    stubs: snapshotStubs,
+    provide: {
+      validator: new Validator(),
+    },
+  });
 
   test('Alarms fetched after mount', () => {
     factory({

@@ -27,6 +27,7 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 1`] =
           </label>
           <input
             autocomplete="off"
+            autofocus="autofocus"
             type="text"
           />
           <div
@@ -107,6 +108,89 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with alarms 1`] =
       </div>
     </div>
   </div>
+  <div
+    class="v-input theme--light v-text-field"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Component
+          </label>
+          <input
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input theme--light v-text-field"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Resource
+          </label>
+          <input
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <meta-alarm-rule-tags-form-stub
+    form="[object Object]"
+    variables=""
+  />
+  <meta-alarm-rule-infos-form-stub
+    infos=""
+  />
   <c-enabled-field-stub
     label="Auto resolve"
   />
@@ -170,6 +254,7 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default prop
           </label>
           <input
             autocomplete="off"
+            autofocus="autofocus"
             type="text"
           />
           <div
@@ -251,6 +336,89 @@ exports[`link-meta-alarm-form Renders \`link-meta-alarm-form\` with default prop
       </div>
     </div>
   </div>
+  <div
+    class="v-input theme--light v-text-field"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Component
+          </label>
+          <input
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="v-input theme--light v-text-field"
+  >
+    <div
+      class="v-input__control"
+    >
+      <div
+        class="v-input__slot"
+      >
+        <div
+          class="v-text-field__slot"
+        >
+          <label
+            class="v-label theme--light"
+            style="left: 0px; position: absolute;"
+          >
+            Resource
+          </label>
+          <input
+            type="text"
+          />
+        </div>
+      </div>
+      <div
+        class="v-text-field__details"
+      >
+        <div
+          class="v-messages theme--light"
+        >
+          <transition-group-stub
+            class="v-messages__wrapper"
+            name="message-transition"
+            tag="div"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <meta-alarm-rule-tags-form-stub
+    form="[object Object]"
+    variables=""
+  />
+  <meta-alarm-rule-infos-form-stub
+    infos=""
+  />
   <c-enabled-field-stub
     label="Auto resolve"
     value="true"

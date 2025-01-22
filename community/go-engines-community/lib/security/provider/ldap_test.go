@@ -238,7 +238,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 		Url:          "ldaps://test",
 		UsernameAttr: "testnameattr",
 		Attributes: map[string]string{
-			"mail":      "testemailattr",
+			"email":     "testemailattr",
 			"firstname": "testfirstnameattr",
 			"lastname":  "testlastnameattr",
 		},
@@ -309,7 +309,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUs
 		Url:          "ldaps://test",
 		UsernameAttr: "testnameattr",
 		Attributes: map[string]string{
-			"mail":      "testemailattr",
+			"email":     "testemailattr",
 			"firstname": "testfirstnameattr",
 			"lastname":  "testlastnameattr",
 		},
@@ -389,7 +389,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNotFoundRole_ShouldReturnE
 		Url:          "ldaps://test",
 		UsernameAttr: "testnameattr",
 		Attributes: map[string]string{
-			"mail":      "testemailattr",
+			"email":     "testemailattr",
 			"firstname": "testfirstnameattr",
 			"lastname":  "testlastnameattr",
 		},
