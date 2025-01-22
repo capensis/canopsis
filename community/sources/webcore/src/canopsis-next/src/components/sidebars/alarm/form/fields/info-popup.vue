@@ -1,15 +1,13 @@
 <template>
-  <widget-settings-flat-item :title="$t('settings.infoPopup.title')">
-    <template #actions>
-      <v-btn
-        class="primary"
-        small
-        @click="edit"
-      >
-        {{ $t('common.create') }}/{{ $t('common.edit') }}
-      </v-btn>
-    </template>
-  </widget-settings-flat-item>
+  <widget-settings-item :title="$t('settings.infoPopup.title')">
+    <v-btn
+      class="primary"
+      small
+      @click="edit"
+    >
+      {{ $t('common.create') }}/{{ $t('common.edit') }}
+    </v-btn>
+  </widget-settings-item>
 </template>
 
 <script>
@@ -17,10 +15,10 @@ import { MODALS } from '@/constants';
 
 import { formMixin } from '@/mixins/form';
 
-import WidgetSettingsFlatItem from '@/components/sidebars/partials/widget-settings-flat-item.vue';
+import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
 export default {
-  components: { WidgetSettingsFlatItem },
+  components: { WidgetSettingsItem },
   mixins: [formMixin],
   model: {
     prop: 'popups',

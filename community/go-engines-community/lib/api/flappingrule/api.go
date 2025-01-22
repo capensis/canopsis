@@ -7,13 +7,33 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 )
 
+type API interface {
+	DBExport(c *gin.Context)
+	common.CrudAPI
+}
+
 type api struct {
-	store       Store
-	transformer common.PatternFieldsTransformer
+	store         Store
+	mongoExporter dbexport.Exporter
+	transformer   common.PatternFieldsTransformer
+}
+
+func NewApi(
+	store Store,
+	mongoExporter dbexport.Exporter,
+	transformer common.PatternFieldsTransformer,
+) API {
+	return &api{
+		store:         store,
+		mongoExporter: mongoExporter,
+		transformer:   transformer,
+	}
 }
 
 // Create
@@ -134,14 +154,22 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func NewApi(
-	store Store,
-	transformer common.PatternFieldsTransformer,
-) common.CrudAPI {
-	return &api{
-		store:       store,
-		transformer: transformer,
+// DBExport
+// @Param body body dbexport.Request true "body"
+func (a *api) DBExport(c *gin.Context) {
+	request := dbexport.Request{}
+
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
 	}
+
+	b, err := a.mongoExporter.Export(c, mongo.FlappingRuleMongoCollection, request)
+	if err != nil {
+		panic(err)
+	}
+
+	dbexport.AttachFile(c, mongo.FlappingRuleMongoCollection, b)
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

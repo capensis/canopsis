@@ -153,7 +153,7 @@ export default {
           text: this.$t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
           sortable: false,
-          width: 150,
+          width: 120,
         },
         {
           text: this.$t('remediation.instructionStat.alarmStates'),
@@ -171,7 +171,7 @@ export default {
           text: this.$tc('common.rating'),
           value: 'rating',
           sortable: false,
-          width: 250,
+          width: 240,
         },
         {
           text: this.$t('common.actionsLabel'),
@@ -194,9 +194,7 @@ export default {
 </script>
 
 <style lang="scss">
-.c-remediation-instruction-stats {
-  &__table {
-    table-layout: fixed !important;
-  }
+.c-remediation-instruction-stats__table > .v-data-table__wrapper > table {
+  table-layout: fixed !important;
 }
 </style>

@@ -3,9 +3,11 @@
     <c-id-field
       v-field="form._id"
       :disabled="isDisabledIdField"
+      autofocus
     />
     <c-name-field
       v-field="form.name"
+      :autofocus="isDisabledIdField"
       required
     />
     <c-enabled-field v-field="form.enabled" />
