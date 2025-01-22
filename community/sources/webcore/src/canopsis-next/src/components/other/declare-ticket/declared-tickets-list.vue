@@ -2,6 +2,7 @@
   <c-advanced-data-table
     :headers="headers"
     :items="tickets"
+    :total-items="tickets.length"
     hide-actions
     disable-initial-sort
   >
@@ -10,8 +11,9 @@
         <a
           v-if="isValidTicketUrl(item.ticket_url)"
           :href="item.ticket_url"
+          :title="item.ticket_url_title"
           target="_blank"
-        >{{ item.ticket_url }}</a>
+        >{{ item.ticket_url_title || item.ticket_url }}</a>
         <span v-else>{{ item.ticket_url }}</span>
       </template>
     </template>

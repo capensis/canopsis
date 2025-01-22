@@ -1,7 +1,7 @@
 <template>
   <c-information-block :title="$t('declareTicket.ticketUrlAndId')">
     <c-name-field
-      v-field="form.system_name"
+      v-field="form.ticket_system_name"
       :label="$t('common.systemName')"
       :name="systemNameFieldName"
       autofocus
@@ -12,8 +12,8 @@
         xs6
       >
         <declare-ticket-rule-ticket-id-text-field
-          v-field="form.ticket_id"
-          :name="ticketIdFieldName"
+          v-field="form.ticket"
+          :name="ticketFieldName"
           required
         />
       </v-flex>
@@ -24,6 +24,7 @@
         />
       </v-flex>
     </v-layout>
+    <declare-ticket-rule-ticket-url-title-field v-field="form.ticket_url_title" />
     <declare-ticket-rule-ticket-custom-fields-field
       v-field="form.mapping"
       :name="name"
@@ -35,9 +36,11 @@
 import DeclareTicketRuleTicketIdTextField from './fields/declare-ticket-rule-ticket-id-text-field.vue';
 import DeclareTicketRuleTicketUrlTextField from './fields/declare-ticket-rule-ticket-url-text-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './fields/declare-ticket-rule-ticket-custom-fields-field.vue';
+import DeclareTicketRuleTicketUrlTitleField from './fields/declare-ticket-rule-ticket-url-title-field.vue';
 
 export default {
   components: {
+    DeclareTicketRuleTicketUrlTitleField,
     DeclareTicketRuleTicketCustomFieldsField,
     DeclareTicketRuleTicketUrlTextField,
     DeclareTicketRuleTicketIdTextField,
@@ -61,8 +64,8 @@ export default {
       return this.prepareFieldName('system_name');
     },
 
-    ticketIdFieldName() {
-      return this.prepareFieldName('ticket_id');
+    ticketFieldName() {
+      return this.prepareFieldName('ticket');
     },
 
     ticketUrlFieldName() {
