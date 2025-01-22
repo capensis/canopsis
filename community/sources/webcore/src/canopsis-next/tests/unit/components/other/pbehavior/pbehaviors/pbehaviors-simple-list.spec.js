@@ -2,7 +2,12 @@ import { range } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createInfoModule, createMockedStoreModules, createPbehaviorModule } from '@unit/utils/store';
+import {
+  createInfoModule,
+  createMockedStoreModules,
+  createPbehaviorCommentModule,
+  createPbehaviorModule,
+} from '@unit/utils/store';
 import { mockModals, mockRouter } from '@unit/utils/mock-hooks';
 
 import { MODALS } from '@/constants';
@@ -56,8 +61,9 @@ describe('pbehaviors-simple-list', () => {
 
   const { infoModule, shownUserTimezone } = createInfoModule();
   const { pbehaviorModule, fetchPbehaviorsByEntityIdWithoutStore } = createPbehaviorModule();
+  const { pbehaviorCommentModule } = createPbehaviorCommentModule();
 
-  const store = createMockedStoreModules([infoModule, pbehaviorModule]);
+  const store = createMockedStoreModules([infoModule, pbehaviorModule, pbehaviorCommentModule]);
 
   const factory = generateShallowRenderer(PbehaviorsSimpleList, {
     stubs,
@@ -182,7 +188,7 @@ describe('pbehaviors-simple-list', () => {
   test('Renders `pbehaviors-simple-list` with pbehaviors', async () => {
     fetchPbehaviorsByEntityIdWithoutStore.mockResolvedValueOnce(pbehaviorsItems);
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([infoModule, pbehaviorModule]),
+      store: createMockedStoreModules([infoModule, pbehaviorModule, pbehaviorCommentModule]),
       propsData: {
         entity: {},
         withActiveStatus: true,
@@ -202,7 +208,7 @@ describe('pbehaviors-simple-list', () => {
     shownUserTimezone.mockReturnValueOnce(true);
 
     const wrapper = snapshotFactory({
-      store: createMockedStoreModules([infoModule, pbehaviorModule]),
+      store: createMockedStoreModules([infoModule, pbehaviorModule, pbehaviorCommentModule]),
       propsData: {
         entity: {},
         withActiveStatus: true,
