@@ -29,7 +29,7 @@ func (c *RuleConfig) GetTimeIntervalInSeconds() int64 {
 	var timeInterval int64
 
 	if c.TimeInterval != nil {
-		v, err := c.TimeInterval.To("s")
+		v, err := c.TimeInterval.To(datetime.DurationUnitSecond)
 		if err == nil {
 			timeInterval = v.Value
 		}
