@@ -16,6 +16,12 @@ export default {
   disabledTransitionsTooltip: 'Cela aidera à améliorer les performances de l\'application',
   autoSuggestPbehaviorName: 'Proposer automatiquement un nom de comportement périodique',
   defaultTheme: 'Thème par défaut',
+  versionDescriptionTooltip: 'Info-bulle contextuelle sur la bannière de version',
+  defaultVersionDescription: `<div>
+  <div>@:common.edition:<strong> {{ edition }}</strong></div>
+  <div>@:common.serialName:<strong> {{ serialName }}</strong></div>
+  <div>@:common.versionUpdated:<strong> {{ timestamp versionUpdated }}</strong></div>
+</div>`,
   tooltips: {
     maxMatchedItems: 'Avertit l\'utilisateur lorsque le nombre d\'éléments correspondant aux modèles est supérieur à cette valeur',
     checkCountRequestTimeout: 'Définit le délai d\'expiration (en secondes) de la demande d\'éléments correspondants',

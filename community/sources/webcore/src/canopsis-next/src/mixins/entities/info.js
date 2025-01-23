@@ -22,7 +22,6 @@ export const entitiesInfoMixin = {
       checkCountRequestTimeout: 'checkCountRequestTimeout',
       footer: 'footer',
       edition: 'edition',
-      stack: 'stack',
       description: 'description',
       language: 'language',
       allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
@@ -66,10 +65,7 @@ export const entitiesInfoMixin = {
         return true;
       }
 
-      const appInfo = {
-        edition: this.edition,
-        stack: this.stack,
-      };
+      const appInfo = { edition: this.edition };
 
       return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[permission]);
     },

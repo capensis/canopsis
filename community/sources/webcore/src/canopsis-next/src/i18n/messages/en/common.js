@@ -103,7 +103,6 @@ export default {
   startDate: 'Start date',
   endDate: 'End date',
   link: 'Link | Links',
-  stack: 'Stack',
   edition: 'Edition',
   icon: 'Icon | Icons',
   fullscreen: 'Fullscreen',
@@ -305,6 +304,7 @@ export default {
   serialName: 'Serial name',
   pressEnterToApply: 'Press <kbd>enter</kbd> to apply',
   width: 'Width',
+  versionUpdated: 'Version updated',
   variableTypes: {
     string: 'String',
     number: 'Number',
