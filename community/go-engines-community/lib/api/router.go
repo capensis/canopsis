@@ -2340,15 +2340,57 @@ func RegisterRoutes(
 		externalDataTableRouter := protected.Group("/external-data-tables")
 		{
 			externalDataTableRouter.POST(
+				"/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.CreateData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ListData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.GetData,
+			)
+			externalDataTableRouter.PUT(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.UpdateData,
+			)
+			externalDataTableRouter.DELETE(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.Delete,
+			)
+			externalDataTableRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
 				middleware.SetAuthor(),
 				externalDataTableAPI.Create,
 			)
 			externalDataTableRouter.GET(
-				"/:id/data",
+				"",
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
-				externalDataTableAPI.ListData,
+				externalDataTableAPI.List,
+			)
+			externalDataTableRouter.GET(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.Get,
+			)
+			externalDataTableRouter.PUT(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.Update,
+			)
+			externalDataTableRouter.DELETE(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionDelete, enforcer),
+				externalDataTableAPI.Delete,
 			)
 		}
 

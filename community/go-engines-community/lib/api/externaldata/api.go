@@ -3,7 +3,9 @@ package externaldata
 import (
 	"errors"
 	"net/http"
+	"sort"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
@@ -16,6 +18,10 @@ type API interface {
 	ImportData(*gin.Context)
 	ImportComplete(*gin.Context)
 	ListData(c *gin.Context)
+	GetData(c *gin.Context)
+	CreateData(c *gin.Context)
+	UpdateData(c *gin.Context)
+	DeleteData(c *gin.Context)
 }
 
 func NewAPI(store Store, importWorker ImportWorker) API {
@@ -31,17 +37,17 @@ type api struct {
 }
 
 // Create
-// @Param body body CreateRequest true "body"
+// @Param body body EditRequest true "body"
 // @Success 200 {array} Response
 func (a *api) Create(c *gin.Context) {
-	request := CreateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	r := EditRequest{}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 
 		return
 	}
 
-	res, err := a.store.Create(c, request)
+	res, err := a.store.Create(c, r)
 	if err != nil {
 		validationError := common.ValidationError{}
 		if errors.As(err, &validationError) {
@@ -56,21 +62,23 @@ func (a *api) Create(c *gin.Context) {
 	c.JSON(http.StatusCreated, res)
 }
 
+// List
+// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
-	var request ListRequest
-	request.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	var r ListRequest
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c, request)
+	aggregationResult, err := a.store.Find(c, r)
 	if err != nil {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(request.Query, aggregationResult)
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 
@@ -80,28 +88,80 @@ func (a *api) List(c *gin.Context) {
 	c.JSON(http.StatusOK, res)
 }
 
+// Get
+// @Success 200 {array} Response
 func (a *api) Get(c *gin.Context) {
-	panic("not implemented")
+	res, err := a.store.FindOne(c, c.Param("table"))
+	if err != nil {
+		panic(err)
+	}
+
+	if res.ID == "" {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }
 
+// Update
+// @Param body body EditRequest true "body"
+// @Success 200 {array} Response
 func (a *api) Update(c *gin.Context) {
-	panic("not implemented")
+	r := EditRequest{
+		ID: c.Param("table"),
+	}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	res, err := a.store.Update(c, r)
+	if err != nil {
+		validationError := common.ValidationError{}
+		if errors.As(err, &validationError) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	if res.ID == "" {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
 }
 
 func (a *api) Delete(c *gin.Context) {
-	panic("not implemented")
+	ok, err := a.store.Delete(c, c.Param("table"), c.MustGet(auth.UserKey).(string))
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }
 
 // Import
 // @Success 200 {array} ImportJob
 func (a *api) Import(c *gin.Context) {
 	id := c.Param("id")
-	f, fh, err := c.Request.FormFile("file")
+	f, _, err := c.Request.FormFile("file")
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{
-				"file": "File is missing.",
-			}})
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationError("file", "File is missing.").ValidationErrorResponse())
 
 			return
 		}
@@ -121,12 +181,13 @@ func (a *api) Import(c *gin.Context) {
 	}
 
 	if len(valErrors) > 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: valErrors})
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrors(valErrors).ValidationErrorResponse())
+
 		return
 	}
 
 	delimiter := rune(delimiterStr[0])
-	job, err := a.importWorker.CreateJob(c, id, delimiter, f, fh)
+	job, err := a.importWorker.CreateJob(c, id, delimiter, f)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -159,10 +220,10 @@ func (a *api) ImportStatus(c *gin.Context) {
 }
 
 func (a *api) ImportData(c *gin.Context) {
-	var request ListDataRequest
-	request.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	var r ListDataRequest
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 
 		return
 	}
@@ -178,7 +239,15 @@ func (a *api) ImportData(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.FindData(c, job.Table, job.Type, job.Columns, request)
+	columns := make([]string, len(job.ColumnLengths))
+	i := 0
+	for col := range job.ColumnLengths {
+		columns[i] = col
+		i++
+	}
+
+	sort.Strings(columns)
+	aggregationResult, err := a.store.FindData(c, job.Table, job.Type, columns, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -190,7 +259,7 @@ func (a *api) ImportData(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(request.Query, aggregationResult)
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 
@@ -203,14 +272,14 @@ func (a *api) ImportData(c *gin.Context) {
 // ImportComplete
 // @Param body body ImportCompleteRequest true "body"
 func (a *api) ImportComplete(c *gin.Context) {
-	request := ImportCompleteRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	r := ImportCompleteRequest{}
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 
 		return
 	}
 
-	ok, err := a.importWorker.CompleteJob(c, c.Param("id"), request.Columns)
+	ok, err := a.importWorker.CompleteJob(c, c.Param("id"), r.ColumnTypes)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -231,16 +300,45 @@ func (a *api) ImportComplete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) ListData(c *gin.Context) {
-	var request ListDataRequest
-	request.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+func (a *api) CreateData(c *gin.Context) {
+	r := make(map[string]string)
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 
 		return
 	}
 
-	table, err := a.store.FindOne(c, c.Param("id"))
+	res, err := a.store.CreateData(c, c.Param("table"), r)
+	if err != nil {
+		validationError := common.ValidationError{}
+		if errors.As(err, &validationError) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	if len(res) == 0 {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.JSON(http.StatusCreated, res)
+}
+
+func (a *api) ListData(c *gin.Context) {
+	var r ListDataRequest
+	r.Query = pagination.GetDefaultQuery()
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	table, err := a.store.FindOne(c, c.Param("table"))
 	if err != nil {
 		panic(err)
 	}
@@ -251,14 +349,15 @@ func (a *api) ListData(c *gin.Context) {
 		return
 	}
 
-	columns := make([]string, len(table.Columns))
+	columns := make([]string, len(table.ColumnTypes))
 	i := 0
-	for col := range table.Columns {
+	for col := range table.ColumnTypes {
 		columns[i] = col
 		i++
 	}
 
-	aggregationResult, err := a.store.FindData(c, table.Name, table.Type, columns, request)
+	sort.Strings(columns)
+	aggregationResult, err := a.store.FindData(c, table.Name, table.Type, columns, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -270,7 +369,7 @@ func (a *api) ListData(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(request.Query, aggregationResult)
+	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 
@@ -278,4 +377,63 @@ func (a *api) ListData(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) GetData(c *gin.Context) {
+	res, err := a.store.FindOneData(c, c.Param("table"), c.Param("id"))
+	if err != nil {
+		panic(err)
+	}
+
+	if len(res) == 0 {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) UpdateData(c *gin.Context) {
+	r := make(map[string]string)
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	res, err := a.store.UpdateData(c, c.Param("table"), c.Param("id"), r)
+	if err != nil {
+		validationError := common.ValidationError{}
+		if errors.As(err, &validationError) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	if len(res) == 0 {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) DeleteData(c *gin.Context) {
+	ok, err := a.store.DeleteData(c, c.Param("table"), c.Param("id"))
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.Status(http.StatusNoContent)
 }

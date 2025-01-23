@@ -39,7 +39,8 @@ type ListRequest struct {
 	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name description type"`
 }
 
-type CreateRequest struct {
+type EditRequest struct {
+	ID          string `json:"-"`
 	Type        *int   `json:"type" binding:"required,oneof=0 1"`
 	Name        string `json:"name" binding:"required,table_name"`
 	Description string `json:"description" binding:"max=255"`
@@ -47,7 +48,7 @@ type CreateRequest struct {
 }
 
 type ImportCompleteRequest struct {
-	Columns map[string]int `json:"columns" binding:"required"`
+	ColumnTypes map[string]int `json:"column_types" binding:"required"`
 }
 
 type ListDataRequest struct {
@@ -56,24 +57,26 @@ type ListDataRequest struct {
 }
 
 type Response struct {
-	ID          string           `bson:"_id" json:"_id"`
-	Type        int              `bson:"type" json:"type"`
-	Name        string           `bson:"name" json:"name"`
-	Description string           `bson:"description" json:"description"`
-	Columns     map[string]int   `bson:"columns" json:"columns"`
-	Created     datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated     datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	ID            string           `bson:"_id" json:"_id"`
+	Type          int              `bson:"type" json:"type"`
+	Name          string           `bson:"name" json:"name"`
+	Description   string           `bson:"description" json:"description"`
+	ColumnTypes   map[string]int   `bson:"column_types" json:"column_types"`
+	ColumnLengths map[string]int   `bson:"column_lengths" json:"-"`
+	Created       datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Updated       datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
 type Document struct {
-	ID          string           `bson:"_id"`
-	Type        int              `bson:"type"`
-	Name        string           `bson:"name"`
-	Description string           `bson:"description"`
-	Columns     map[string]int   `bson:"columns"`
-	Author      string           `bson:"author"`
-	Created     datetime.CpsTime `bson:"created"`
-	Updated     datetime.CpsTime `bson:"updated"`
+	ID            string           `bson:"_id,omitempty"`
+	Type          int              `bson:"type"`
+	Name          string           `bson:"name"`
+	Description   string           `bson:"description"`
+	ColumnTypes   map[string]int   `bson:"column_types,omitempty"`
+	ColumnLengths map[string]int   `bson:"column_lengths,omitempty"`
+	Author        string           `bson:"author"`
+	Created       datetime.CpsTime `bson:"created,omitempty"`
+	Updated       datetime.CpsTime `bson:"updated"`
 }
 
 type AggregationResult struct {
@@ -110,7 +113,7 @@ type ImportJob struct {
 	ExternalDataTable string            `bson:"exdt" json:"-"`
 	Delimiter         rune              `bson:"delimiter" json:"-"`
 	Filepath          string            `bson:"filepath" json:"-"`
-	Columns           []string          `bson:"columns" json:"-"`
+	ColumnLengths     map[string]int    `bson:"column_lengths" json:"-"`
 	Created           datetime.CpsTime  `bson:"created" json:"-"`
 	LastPing          *datetime.CpsTime `bson:"last_ping" json:"-"`
 	Retries           int64             `bson:"retries" json:"-"`
