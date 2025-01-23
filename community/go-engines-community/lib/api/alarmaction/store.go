@@ -118,7 +118,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userId, use
 }
 
 func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, username string) (bool, error) {
-	d, err := r.Duration.To("s")
+	d, err := r.Duration.To(types.DurationUnitSecond)
 	if err != nil {
 		return false, common.NewValidationError("duration", "Duration is invalid.")
 	}
