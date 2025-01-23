@@ -2756,7 +2756,7 @@ definitions:
           type: string
         type: array
     type: object
-  externaldata.CreateRequest:
+  externaldata.EditRequest:
     properties:
       description:
         maxLength: 255
@@ -2774,12 +2774,12 @@ definitions:
     type: object
   externaldata.ImportCompleteRequest:
     properties:
-      columns:
+      column_types:
         additionalProperties:
           type: integer
         type: object
     required:
-    - columns
+    - column_types
     type: object
   externaldata.ImportJob:
     properties:
@@ -2792,7 +2792,7 @@ definitions:
     properties:
       _id:
         type: string
-      columns:
+      column_types:
         additionalProperties:
           type: integer
         type: object
