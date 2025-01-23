@@ -137,10 +137,13 @@ type Alarm struct {
 	Time     datetime.CpsTime `bson:"t" json:"t"`
 	EntityID string           `bson:"d" json:"d"`
 
-	Tags                []string           `bson:"tags,omitempty" json:"tags,omitempty"`
-	ExternalTags        []string           `bson:"etags,omitempty" json:"etags,omitempty"`
-	InternalTags        []string           `bson:"itags,omitempty" json:"itags,omitempty"`
-	InternalTagsUpdated datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
+	Tags                      []string           `bson:"tags,omitempty" json:"tags,omitempty"`
+	ExternalTags              []string           `bson:"etags,omitempty" json:"etags,omitempty"`
+	InternalTags              []string           `bson:"itags,omitempty" json:"itags,omitempty"`
+	InternalTagsUpdated       datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
+	CopyTagsFromChildren      bool               `bson:"copy_ctags,omitempty" json:"copy_ctags,omitempty"`
+	FilterChildrenTagsByLabel []string           `bson:"filter_ctags,omitempty" json:"filter_ctags,omitempty"`
+	EntityInfosFromChildren   []string           `bson:"cinfos,omitempty" json:"cinfos,omitempty"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 

@@ -227,6 +227,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		return result, err
 	}
 
+	result.NewExternalTags = alarm.ExternalTags
 	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Author = author
 	stateStep.Value = *params.State
@@ -421,7 +422,9 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	if len(newExternalTags) > 0 {
 		addToSet["tags"] = bson.M{"$each": newExternalTags}
 		addToSet["etags"] = bson.M{"$each": newExternalTags}
+		result.NewExternalTags = newExternalTags
 	}
+
 	newAlarm := types.Alarm{}
 	err := p.alarmCollection.FindOneAndUpdate(ctx, match, bson.M{
 		"$set":      set,
@@ -612,6 +615,7 @@ func (p *checkProcessor) postProcess(
 	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
+		NewExternalTags: result.NewExternalTags,
 	})
 	if err != nil {
 		p.logger.Err(err).Msg("cannot process meta alarm")

@@ -1737,6 +1737,11 @@ func RegisterRoutes(
 				alarmTagAPI.Delete,
 			)
 		}
+		protected.GET(
+			"alarm-tag-labels",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+			alarmTagAPI.ListLabels,
+		)
 
 		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient, authorProvider, userInterfaceAdapter), logger)
 		colorThemeRouter := protected.Group("/color-themes")
