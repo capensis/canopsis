@@ -137,8 +137,8 @@ systemctl enable --now disable-transparent-huge-pages
     name=modern-erlang-el8
     # Use a set of mirrors maintained by the RabbitMQ core team.
     # The mirrors have significantly higher bandwidth quotas.
-    baseurl=https://yum1.novemberain.com/erlang/el/8/$basearch
-            https://yum2.novemberain.com/erlang/el/8/$basearch
+    baseurl=https://yum1.novemberain.com/erlang/el/8/\$basearch
+            https://yum2.novemberain.com/erlang/el/8/\$basearch
     repo_gpgcheck=1
     enabled=1
     gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
@@ -156,8 +156,8 @@ systemctl enable --now disable-transparent-huge-pages
 
     [rabbitmq-el8-noarch]
     name=rabbitmq-el8-noarch
-    baseurl=https://yum2.novemberain.com/rabbitmq/el/8/noarch
-            https://yum1.novemberain.com/rabbitmq/el/8/noarch
+    baseurl=https://yum1.rabbitmq.com/erlang/el/8/SRPMS
+            https://yum2.rabbitmq.com/erlang/el/8/SRPMS
     repo_gpgcheck=1
     enabled=1
     # Cloudsmith's repository key and RabbitMQ package signing key
@@ -190,6 +190,22 @@ systemctl enable --now disable-transparent-huge-pages
     metadata_expire=300
     EOF
     ```
+
+    Ajout des dépôts pour nginx : 
+
+    ```sh
+    cat << EOF > /etc/yum.repos.d/nginx-stable.repo
+    [nginx-stable]
+    name=nginx stable repo
+    baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
+    repo_gpgcheck=1
+    gpgcheck=1
+    enabled=1
+    gpgkey=https://nginx.org/keys/nginx_signing.key
+    module_hotfixes=true
+    EOF
+    ```
+
 === "RHEL 9"
 
     Ajout du dépôt pour PostgreSQL :
@@ -230,9 +246,8 @@ systemctl enable --now disable-transparent-huge-pages
     name=modern-erlang-el9
     # Use a set of mirrors maintained by the RabbitMQ core team.
     # The mirrors have significantly higher bandwidth quotas.
-    baseurl=https://yum1.novemberain.com/erlang/el/9/$basearch
-            https://yum2.novemberain.com/erlang/el/9/$basearch
-            https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/rpm/el/9/$basearch
+    baseurl=https://yum1.rabbitmq.com/erlang/el/9/\$basearch
+            https://yum2.rabbitmq.com/erlang/el/9/\$basearch
     repo_gpgcheck=1
     enabled=1
     gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
@@ -250,9 +265,8 @@ systemctl enable --now disable-transparent-huge-pages
 
     [rabbitmq-el9-noarch]
     name=rabbitmq-el9-noarch
-    baseurl=https://yum1.novemberain.com/rabbitmq/el/9/noarch
-            https://yum2.novemberain.com/rabbitmq/el/9/noarch
-            https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/rpm/el/9/noarch
+    baseurl=https://yum1.rabbitmq.com/erlang/el/9/noarch
+            https://yum2.rabbitmq.com/erlang/el/9/noarch
     repo_gpgcheck=1
     enabled=1
     # Cloudsmith's repository key and RabbitMQ package signing key
@@ -286,6 +300,21 @@ systemctl enable --now disable-transparent-huge-pages
     EOF
     ```
 
+    Ajout des dépôts pour nginx : 
+
+    ```sh
+    cat << EOF > /etc/yum.repos.d/nginx-stable.repo
+    [nginx-stable]
+    name=nginx stable repo
+    baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
+    repo_gpgcheck=1
+    gpgcheck=1
+    enabled=1
+    gpgkey=https://nginx.org/keys/nginx_signing.key
+    module_hotfixes=true
+    EOF
+    ```
+
 ### Configuration des dépôts
 
 Exécuter la commande suivante et vérifier dans la sortie que les dépôts ajoutés
@@ -301,14 +330,13 @@ Désactiver le module PostgreSQL ([requis pour l'installation de TimescaleDB sur
 dnf module disable postgresql
 ```
 
+Désactiver le module nginx:
+
+```sh
+dnf module disable nginx php
+```
+
 === "RHEL 8"
-
-    Activer le module Nginx 1.20.* :
-
-    ```sh
-    dnf module disable php
-    dnf module enable nginx:1.20
-    ```
 
     Activer le module Redis 6.0.* :
 
@@ -317,13 +345,6 @@ dnf module disable postgresql
     ```
 
 === "RHEL 9"
-
-    Activer le module Nginx 1.22.* :
-
-    ```sh
-    dnf module disable php
-    dnf module enable nginx:1.22
-    ```
 
     Activer le module Redis 7.0.* :
 
