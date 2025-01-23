@@ -300,9 +300,8 @@ func benchmarkMessageProcessor(
 	userInterfaceConfigProvider := config.NewUserInterfaceConfigProvider(config.UserInterfaceConf{}, logger)
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 	metaAlarmStatesService := correlation.NewMetaAlarmStateService(dbClient)
-	metaAlarmEventProcessor := NewMetaAlarmEventProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
-		alarmStatusService, alarmConfigProvider, json.NewEncoder(), nil, metricsSender, correlation.NewMetaAlarmStateService(dbClient),
-		template.NewExecutor(templateConfigProvider, tzConfigProvider), logger)
+	metaAlarmPostProcessor := event.NewMetaAlarmPostProcessor(dbClient, alarm.NewAdapter(dbClient), correlation.NewRuleAdapter(dbClient),
+		alarmStatusService, correlation.NewMetaAlarmStateService(dbClient), json.NewEncoder(), nil, metricsSender)
 	pbhRedisSession, err := redis.NewSession(ctx, redis.PBehaviorLockStorage, logger, 0, 0)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -326,7 +325,7 @@ func benchmarkMessageProcessor(
 			pbehavior.NewEntityTypeResolver(pbhStore, pbehavior.NewEntityMatcher(dbClient), logger),
 			event.NewNullAutoInstructionMatcher(),
 			statecounters.NewStateCountersService(dbClient, amqpChannel, canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), template.NewExecutor(templateConfigProvider, tzConfigProvider), logger),
-			metaAlarmEventProcessor,
+			metaAlarmPostProcessor,
 			metaAlarmStatesService,
 			metrics.NewNullSender(),
 			statistics.NewEventStatisticsSender(dbClient, logger, tzConfigProvider),
@@ -334,6 +333,7 @@ func benchmarkMessageProcessor(
 			alarmtag.NewExternalUpdater(dbClient),
 			alarmtag.NewInternalTagAlarmMatcher(dbClient),
 			amqpChannel,
+			template.NewExecutor(templateConfigProvider, tzConfigProvider),
 			logger,
 		),
 		TechMetricsSender: techmetrics.NewSender(canopsis.AxeEngineName+"/"+utils.NewID(), techMetricsConfigProvider, time.Minute, 0, 0, logger),

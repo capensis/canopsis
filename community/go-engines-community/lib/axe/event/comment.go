@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 
-	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -19,22 +18,22 @@ import (
 func NewCommentProcessor(
 	client mongo.DbClient,
 	configProvider config.AlarmConfigProvider,
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	logger zerolog.Logger,
 ) Processor {
 	return &commentProcessor{
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		configProvider:          configProvider,
-		metaAlarmEventProcessor: metaAlarmEventProcessor,
-		logger:                  logger,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		configProvider:         configProvider,
+		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		logger:                 logger,
 	}
 }
 
 type commentProcessor struct {
-	alarmCollection         mongo.DbCollection
-	configProvider          config.AlarmConfigProvider
-	metaAlarmEventProcessor libalarm.MetaAlarmEventProcessor
-	logger                  zerolog.Logger
+	alarmCollection        mongo.DbCollection
+	configProvider         config.AlarmConfigProvider
+	metaAlarmPostProcessor MetaAlarmPostProcessor
+	logger                 zerolog.Logger
 }
 
 func (p *commentProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -79,7 +78,7 @@ func (p *commentProcessor) postProcess(
 	event rpc.AxeEvent,
 	result Result,
 ) {
-	err := p.metaAlarmEventProcessor.ProcessAxeRpc(ctx, event, rpc.AxeResultEvent{
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,
 		AlarmChangeType: result.AlarmChange.Type,
 	})
