@@ -6,9 +6,11 @@ import (
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -22,18 +24,21 @@ type API interface {
 	CreateData(c *gin.Context)
 	UpdateData(c *gin.Context)
 	DeleteData(c *gin.Context)
+	BulkDeleteData(c *gin.Context)
 }
 
-func NewAPI(store Store, importWorker ImportWorker) API {
+func NewAPI(store Store, importWorker ImportWorker, logger zerolog.Logger) API {
 	return &api{
 		store:        store,
 		importWorker: importWorker,
+		logger:       logger,
 	}
 }
 
 type api struct {
 	store        Store
 	importWorker ImportWorker
+	logger       zerolog.Logger
 }
 
 // Create
@@ -424,7 +429,18 @@ func (a *api) UpdateData(c *gin.Context) {
 }
 
 func (a *api) DeleteData(c *gin.Context) {
-	ok, err := a.store.DeleteData(c, c.Param("table"), c.Param("id"))
+	table, err := a.store.FindOne(c, c.Param("table"))
+	if err != nil {
+		panic(err)
+	}
+
+	if table.ID == "" {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	ok, err := a.store.DeleteData(c, table, c.Param("id"))
 	if err != nil {
 		panic(err)
 	}
@@ -436,4 +452,28 @@ func (a *api) DeleteData(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// BulkDeleteData
+// @Param body body []BulkDeleteRequestItem true "body"
+func (a *api) BulkDeleteData(c *gin.Context) {
+	table, err := a.store.FindOne(c, c.Param("table"))
+	if err != nil {
+		panic(err)
+	}
+
+	if table.ID == "" {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.DeleteData(c, table, request.ID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
 }

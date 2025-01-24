@@ -20,7 +20,10 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
-const pgErrCodeDuplicateTable = "42P07"
+const (
+	pgErrCodeDuplicateTable     = "42P07"
+	mongoErrCodeNamespaceExists = 48
+)
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
@@ -32,7 +35,7 @@ type Store interface {
 	FindOneData(ctx context.Context, tableID, id string) (map[string]string, error)
 	CreateData(ctx context.Context, tableID string, r map[string]string) (map[string]string, error)
 	UpdateData(ctx context.Context, tableID, id string, r map[string]string) (map[string]string, error)
-	DeleteData(ctx context.Context, tableID, id string) (bool, error)
+	DeleteData(ctx context.Context, table Response, id string) (bool, error)
 }
 
 func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider) Store {
@@ -142,26 +145,58 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Response, error) {
 }
 
 func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
+	res := Response{}
 	if r.Type == nil {
-		return Response{}, errors.New("type is required")
+		return res, errors.New("type is required")
 	}
 
-	response := Response{}
+	oldTable, err := s.FindOne(ctx, r.ID)
+	if err != nil || oldTable.ID == "" {
+		return res, err
+	}
+
+	if oldTable.Type != *r.Type {
+		return res, common.NewValidationError("type", "Type cannot be changed.")
+	}
+
+	if oldTable.Name != r.Name {
+		switch oldTable.Type {
+		case TypeMongoDB:
+			err = s.dbClient.RunAdminCommand(ctx, bson.D{
+				{Key: "renameCollection", Value: s.dbClient.Name() + "." + getCollectionName(oldTable.Name)},
+				{Key: "to", Value: s.dbClient.Name() + "." + getCollectionName(r.Name)},
+			}).Err()
+			if err != nil {
+				commErr := mongodriver.CommandError{}
+				if errors.As(err, &commErr) && commErr.Code == mongoErrCodeNamespaceExists {
+					return res, common.NewValidationError("name", "MongoDB collection already exists.")
+				}
+
+				return res, fmt.Errorf("failed to rename mongo collection: %w", err)
+			}
+		case TypePostgreSQL:
+			pgPool, err := s.pgPoolProvider.Get(ctx)
+			if err != nil {
+				return res, fmt.Errorf("failed to get postgres pool: %w", err)
+			}
+
+			_, err = pgPool.Exec(ctx, "ALTER TABLE "+getPostgresTableName(oldTable.Name)+" RENAME TO "+pgx.Identifier{r.Name}.Sanitize())
+			if err != nil {
+				pgErr := &pgconn.PgError{}
+				if errors.As(err, &pgErr) && pgErr.Code == pgErrCodeDuplicateTable {
+					return res, common.NewValidationError("name", "PostgreSQL table already exists.")
+				}
+
+				return res, fmt.Errorf("failed to rename postgres table: %w", err)
+			}
+		default:
+			return res, fmt.Errorf("invalid table type: %q", oldTable.Type)
+		}
+	}
+
 	now := datetime.NewCpsTime()
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		response = Response{}
-		oldTable, err := s.FindOne(ctx, r.ID)
-		if err != nil || oldTable.ID == "" {
-			return err
-		}
-
-		if oldTable.Name != r.Name {
-			return common.NewValidationError("name", "Name cannot be changed.")
-		}
-
-		if oldTable.Type != *r.Type {
-			return common.NewValidationError("type", "Type cannot be changed.")
-		}
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		res = Response{}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": Document{
 			Type:        *r.Type,
@@ -174,12 +209,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 			return fmt.Errorf("failed to update external data table: %w", err)
 		}
 
-		response, err = s.FindOne(ctx, r.ID)
+		res, err = s.FindOne(ctx, r.ID)
 
 		return err
 	})
 
-	return response, err
+	return res, err
 }
 
 func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
@@ -439,12 +474,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 	return doc, err
 }
 
-func (s *store) DeleteData(ctx context.Context, tableID, id string) (bool, error) {
-	table, err := s.FindOne(ctx, tableID)
-	if err != nil || table.ID == "" {
-		return false, err
-	}
-
+func (s *store) DeleteData(ctx context.Context, table Response, id string) (bool, error) {
 	switch table.Type {
 	case TypeMongoDB:
 		deleted, err := s.dbClient.Collection(getCollectionName(table.Name)).DeleteOne(ctx, bson.M{"_id": id})
