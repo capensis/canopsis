@@ -2756,6 +2756,13 @@ definitions:
           type: string
         type: array
     type: object
+  externaldata.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   externaldata.EditRequest:
     properties:
       description:

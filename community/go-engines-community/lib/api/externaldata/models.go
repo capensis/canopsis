@@ -56,6 +56,10 @@ type ListDataRequest struct {
 	SortBy string `json:"sort_by" form:"sort_by"`
 }
 
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
+
 type Response struct {
 	ID            string           `bson:"_id" json:"_id"`
 	Type          int              `bson:"type" json:"type"`

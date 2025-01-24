@@ -1797,6 +1797,88 @@ func RegisterRoutes(
 			)
 		}
 
+		externalDataTableAPI := externaldata.NewAPI(externaldata.NewStore(dbClient, pgPoolProvider), exdataImportWorker, logger)
+		externalDataTableRouter := protected.Group("/external-data-tables")
+		{
+			externalDataTableRouter.POST(
+				"/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.CreateData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ListData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.GetData,
+			)
+			externalDataTableRouter.PUT(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.UpdateData,
+			)
+			externalDataTableRouter.DELETE(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.Delete,
+			)
+			externalDataTableRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.Create,
+			)
+			externalDataTableRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.List,
+			)
+			externalDataTableRouter.GET(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.Get,
+			)
+			externalDataTableRouter.PUT(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.Update,
+			)
+			externalDataTableRouter.DELETE(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionDelete, enforcer),
+				externalDataTableAPI.Delete,
+			)
+		}
+
+		externalDataImportRouter := protected.Group("/external-data-import")
+		{
+			externalDataImportRouter.POST(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.Import,
+			)
+			externalDataImportRouter.GET(
+				"/:id/status",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.ImportStatus,
+			)
+			externalDataImportRouter.GET(
+				"/:id/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.ImportData,
+			)
+			externalDataImportRouter.PUT(
+				"/:id/complete",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.ImportComplete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -2078,6 +2160,13 @@ func RegisterRoutes(
 					colorThemeApi.BulkDelete,
 				)
 			}
+
+			bulkRouter.DELETE(
+				"/external-data-tables/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.PreProcessBulk(apiConfigProvider, false),
+				externalDataTableAPI.BulkDeleteData,
+			)
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -2335,87 +2424,5 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermMaintenance, model.PermissionCan, enforcer),
 			maintenanceApi.Maintenance,
 		)
-
-		externalDataTableAPI := externaldata.NewAPI(externaldata.NewStore(dbClient, pgPoolProvider), exdataImportWorker)
-		externalDataTableRouter := protected.Group("/external-data-tables")
-		{
-			externalDataTableRouter.POST(
-				"/:table/data",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
-				middleware.SetAuthor(),
-				externalDataTableAPI.CreateData,
-			)
-			externalDataTableRouter.GET(
-				"/:table/data",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
-				externalDataTableAPI.ListData,
-			)
-			externalDataTableRouter.GET(
-				"/:table/data/:id",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
-				externalDataTableAPI.GetData,
-			)
-			externalDataTableRouter.PUT(
-				"/:table/data/:id",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
-				externalDataTableAPI.UpdateData,
-			)
-			externalDataTableRouter.DELETE(
-				"/:table/data/:id",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
-				externalDataTableAPI.Delete,
-			)
-			externalDataTableRouter.POST(
-				"",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
-				middleware.SetAuthor(),
-				externalDataTableAPI.Create,
-			)
-			externalDataTableRouter.GET(
-				"",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
-				externalDataTableAPI.List,
-			)
-			externalDataTableRouter.GET(
-				"/:table",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
-				externalDataTableAPI.Get,
-			)
-			externalDataTableRouter.PUT(
-				"/:table",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
-				middleware.SetAuthor(),
-				externalDataTableAPI.Update,
-			)
-			externalDataTableRouter.DELETE(
-				"/:table",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionDelete, enforcer),
-				externalDataTableAPI.Delete,
-			)
-		}
-
-		externalDataImportRouter := protected.Group("/external-data-import")
-		{
-			externalDataImportRouter.POST(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
-				externalDataTableAPI.Import,
-			)
-			externalDataImportRouter.GET(
-				"/:id/status",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
-				externalDataTableAPI.ImportStatus,
-			)
-			externalDataImportRouter.GET(
-				"/:id/data",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
-				externalDataTableAPI.ImportData,
-			)
-			externalDataImportRouter.PUT(
-				"/:id/complete",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
-				externalDataTableAPI.ImportComplete,
-			)
-		}
 	}
 }
