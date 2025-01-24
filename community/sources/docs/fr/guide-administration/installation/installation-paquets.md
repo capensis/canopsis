@@ -562,6 +562,11 @@ Installer le paquet :
 dnf install canopsis-webui
 ```
 
+Activation de https dans Canopsis:
+
+Une configuration HTTPS est proposée avec Nginx, mais elle n'est cependant pas encore activée par défaut.  
+Vous pouvez suivre la procédure suivante: [activation de https dans Canopsis](../administration-avancee/configuration-composants/reverse-proxy-nginx-https.md)
+
 Activer et démarrer Nginx :
 
 ```sh
