@@ -59,7 +59,7 @@ type Adapter interface {
 	GetOpenedAlarmsByIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error
 	GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids []string, alarms *[]types.AlarmWithEntity) error
 	GetCountOpenedAlarmsByIDs(ctx context.Context, ids []string) (int64, error)
-	GetOpenedAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error)
+	GetOpenedOkAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error)
 
 	// GetOpenedAlarmsByAlarmIDs gets ongoing alarms related the provided alarm ids
 	GetOpenedAlarmsByAlarmIDs(ctx context.Context, ids []string, alarms *[]types.Alarm) error

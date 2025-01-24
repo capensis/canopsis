@@ -665,7 +665,11 @@ func (m *manager) HandleEvent(ctx context.Context, event types.Event) (types.Ent
 
 func (m *manager) UpdateImpactedServicesFromDependencies(ctx context.Context) error {
 	cursor, err := m.collection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"connector": bson.M{"$nin": bson.A{nil, ""}}}},
+		{"$match": bson.M{
+			"enabled":   true,
+			"connector": bson.M{"$nin": bson.A{nil, ""}},
+			"services":  bson.M{"$nin": bson.A{nil, bson.A{}}},
+		}},
 		{"$unwind": "$services"},
 		{"$group": bson.M{
 			"_id":               "$connector",
