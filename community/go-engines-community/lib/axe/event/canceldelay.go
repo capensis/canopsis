@@ -74,7 +74,7 @@ func (p *cancelDelayProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 
 		_, err := p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": event.AlarmID})
 		if err != nil {
-			return fmt.Errorf("failed to delete cancel_delay job: %w", err)
+			return fmt.Errorf("failed to delete cancel_delay job on cancel_delay event: %w", err)
 		}
 
 		err = p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)

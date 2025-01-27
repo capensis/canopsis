@@ -323,7 +323,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 			},
 		}, options.Update().SetUpsert(true))
 		if err != nil {
-			return result, fmt.Errorf("cannot upsert cancel delay job: %w", err)
+			return result, fmt.Errorf("cannot upsert cancel delay job on alarm create: %w", err)
 		}
 	}
 
@@ -419,7 +419,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 				},
 			}, options.Update().SetUpsert(true))
 			if err != nil {
-				return result, fmt.Errorf("cannot upsert cancel delay job: %w", err)
+				return result, fmt.Errorf("cannot upsert cancel delay job on alarm update: %w", err)
 			}
 		}
 	}
@@ -427,7 +427,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	if params.CancelDelay != nil && *params.CancelDelay == 0 {
 		_, err := p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
 		if err != nil {
-			return result, fmt.Errorf("cannot upsert cancel delay job: %w", err)
+			return result, fmt.Errorf("cannot delete cancel delay job on alarm update: %w", err)
 		}
 	}
 

@@ -1,5 +1,7 @@
 package canceldelay
 
+//go:generate mockgen -destination=../../../mocks/lib/canopsis/canceldelay/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/canceldelay Service
+
 import (
 	"context"
 	"fmt"
@@ -23,7 +25,6 @@ type Service interface {
 }
 
 type service struct {
-	client         mongo.DbClient
 	collection     mongo.DbCollection
 	eventGenerator libevent.Generator
 
@@ -33,7 +34,6 @@ type service struct {
 
 func NewService(client mongo.DbClient, generator libevent.Generator, periodicalInterval time.Duration) Service {
 	return &service{
-		client:             client,
 		collection:         client.Collection(mongo.CancelDelayJobCollection),
 		eventGenerator:     generator,
 		periodicalInterval: periodicalInterval,
@@ -43,7 +43,17 @@ func NewService(client mongo.DbClient, generator libevent.Generator, periodicalI
 func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 	now := datetime.NewCpsTime()
 
-	cursor, err := s.collection.Find(ctx, bson.M{"exec_time": bson.M{"$lte": now}})
+	cursor, err := s.collection.Find(ctx, bson.M{
+		"exec_time": bson.M{"$lte": now},
+		"$or": bson.A{
+			bson.M{
+				"resend_at": bson.M{"$exists": false},
+			},
+			bson.M{
+				"resend_at": bson.M{"$lte": now},
+			},
+		},
+	})
 	if err != nil {
 		return nil, fmt.Errorf("failed to find cancel delay jobs: %w", err)
 	}
@@ -77,12 +87,12 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 
 		events = append(events, event)
 
-		writeModel := mongodriver.
-			NewUpdateOneModel().
-			SetFilter(bson.M{"_id": job.ID}).
-			SetUpdate(bson.M{"$set": bson.M{"resend_at": now.Add(PeriodsUntilResend * s.periodicalInterval)}})
-
-		writeModels = append(writeModels, writeModel)
+		writeModels = append(
+			writeModels,
+			mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": job.ID}).
+				SetUpdate(bson.M{"$set": bson.M{"resend_at": now.Add(PeriodsUntilResend * s.periodicalInterval).Unix()}}),
+		)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err := s.collection.BulkWrite(ctx, writeModels)
