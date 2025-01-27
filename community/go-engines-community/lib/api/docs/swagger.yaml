@@ -6841,6 +6841,37 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-tables/{table}/schema:
+    get:
+      tags:
+        - externaldata
+      summary: Get schema of external data table
+      description: |
+        Get schema of external data table.
+        
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldatatable-schema
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /external-data-tables/{table}/data/{id}:
     get:
       tags:
