@@ -130,7 +130,7 @@ describe('kpi-alarms-filters', () => {
     expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: {
-        from: nowSubtractYearTimestamp + 1,
+        from: nowSubtractYearTimestamp,
         to: initialQuery.interval.to,
       },
       sampling: SAMPLINGS.hour,
