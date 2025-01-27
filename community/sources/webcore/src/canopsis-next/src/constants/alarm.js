@@ -784,6 +784,7 @@ export const ALARM_PATTERN_FIELDS = {
   ticketData: ALARM_FIELDS.ticketData,
   changeState: ALARM_FIELDS.changeState,
   meta: ALARM_FIELDS.meta,
+  entityInfos: ALARM_FIELDS.entityInfos,
 };
 
 export const ALARM_EVENT_INITIATORS = {

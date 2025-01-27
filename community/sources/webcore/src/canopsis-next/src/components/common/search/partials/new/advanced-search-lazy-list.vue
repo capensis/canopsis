@@ -20,6 +20,7 @@
         :key="item.value"
         :input-value="isActiveItem(item)"
         @click="selectVariable(item)"
+        @mouseenter="handleMouseEnter(item, $event)"
       >
         <v-list-item-content>
           <v-list-item-title>
@@ -34,6 +35,9 @@
             </v-layout>
           </v-list-item-title>
         </v-list-item-content>
+        <v-list-item-action v-if="item[childrenKey]">
+          <v-icon>arrow_right</v-icon>
+        </v-list-item-action>
       </v-list-item>
     </template>
     <div
@@ -65,7 +69,7 @@
 </template>
 <script>
 import { uniqBy } from 'lodash';
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
   name: 'advanced-search-lazy-list', // TODO: see variables-list
@@ -96,7 +100,7 @@ export default {
     },
     childrenKey: {
       type: String,
-      default: 'children',
+      default: 'items',
     },
     selectedItems: {
       type: Array,
@@ -132,12 +136,15 @@ export default {
     const selectVariable = item => emit('input', props.multiple ? uniqBy([...props.value, item], props.itemValue) : item); // TODO: refactor
 
     const selectSubVariable = (item) => {
-      selectVariable(item);
+      selectVariable({
+        ...item,
+        [props.itemValue]: `${parentItem.value[props.itemValue]}.${item[props.itemValue]}`,
+      });
       subItemsShown.value = false;
     };
 
     const handleMouseEnter = (item, event) => {
-      if (item[this.childrenKey]) {
+      if (item[props.childrenKey]) {
         const { left, top, width } = event.target.getBoundingClientRect();
 
         subItemsPosition.value.x = left + width;
