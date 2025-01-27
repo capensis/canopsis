@@ -30,6 +30,7 @@
 
 <script>
 import {
+  DATETIME_INTERVAL_TYPES,
   KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS,
   METRICS_QUICK_RANGES,
   SAMPLINGS,
@@ -37,7 +38,11 @@ import {
 } from '@/constants';
 
 import { getDiffBetweenDates, subtractUnitFromDate } from '@/helpers/date/date';
-import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import {
+  convertDateIntervalToMoment,
+  convertStartDateIntervalToTimestamp,
+  convertStopDateIntervalToTimestamp,
+} from '@/helpers/date/date-intervals';
 import { fromSeconds } from '@/helpers/date/duration';
 
 import { formMixin } from '@/mixins/form';
@@ -82,7 +87,7 @@ export default {
 
     getDateWithMaxIntervalDiff(to) {
       return subtractUnitFromDate(
-        to,
+        convertDateIntervalToMoment(to, DATETIME_INTERVAL_TYPES.start, undefined, TIME_UNITS.day),
         KPI_METRICS_MAX_ALARM_YEAR_INTERVAL_DIFF_IN_YEARS,
         TIME_UNITS.year,
       );
