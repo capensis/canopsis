@@ -37,7 +37,7 @@
       </span>
       <span v-else>
         <input
-          v-if="active || alwaysActive"
+          v-show="active || alwaysActive"
           ref="inputEl"
           :value="inputValue"
           type="text"
@@ -49,7 +49,7 @@
           @input="updateInputValue"
         >
         <v-chip
-          v-else
+          v-if="!active && !alwaysActive"
           :color="color"
           :close="closable"
           @click="click"
@@ -63,7 +63,7 @@
       :value="selectedItems"
       :items="lazyItems"
       :search="inputValue"
-      :pending="pending"
+      :pending="fetchItems && pending"
       :item-text="itemText"
       :item-value="itemValue"
       @input="select"
@@ -82,11 +82,20 @@
 
 <script>
 import { isUndefined } from 'lodash';
-import { computed, ref, watch, toRef, nextTick } from 'vue';
+import {
+  computed,
+  ref,
+  watch,
+  toRef,
+  nextTick,
+  onMounted,
+} from 'vue';
+
+import { KEY_CODES } from '@/constants';
+
+import { useLazySearch } from '@/hooks/form/lazy-search';
 
 import AdvancedSearchLazyList from '@/components/common/search/partials/new/advanced-search-lazy-list.vue';
-import { useLazySearch } from '@/hooks/form/lazy-search';
-import { KEY_CODES } from '@/constants';
 
 export const filterItems = (items, condition) => {
   let lastHeaderIndex;
@@ -164,6 +173,10 @@ export default {
     color: {
       type: String,
       required: false,
+    },
+    first: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {
@@ -277,7 +290,9 @@ export default {
         return;
       }
 
-      if (prevActive !== active && active) {
+      console.log(active, prevActive, props.items, inputEl.value);
+
+      if (prevActive !== active) {
         nextTick(() => inputEl.value?.focus());
       }
 
@@ -289,6 +304,12 @@ export default {
         fetchMoreItems();
       }
     };
+
+    onMounted(() => {
+      if (!props.first) {
+        setTimeout(() => inputEl.value?.focus(), 100);
+      }
+    });
 
     return {
       selectedItems,

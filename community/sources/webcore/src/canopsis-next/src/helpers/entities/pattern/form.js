@@ -360,6 +360,7 @@ export const isArrayPatternRuleField = value => [
  */
 export const isInfosPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.infos,
+  ALARM_PATTERN_FIELDS.entityInfos,
   ENTITY_PATTERN_FIELDS.componentInfos,
   ENTITY_PATTERN_FIELDS.infos,
 ].some((field) => {

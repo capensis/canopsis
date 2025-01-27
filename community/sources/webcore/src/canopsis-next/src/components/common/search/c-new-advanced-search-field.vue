@@ -15,6 +15,7 @@
               :attributes="items"
               :active-key="activeKey"
               :union="index % 2 === 1"
+              :first="index === 0"
               @input="update($event, index)"
               @click:chip="makeActive"
               @focusout="resetActive"
@@ -61,9 +62,10 @@ import { ALARM_FIELDS, PATTERN_OPERATORS, PATTERN_QUICK_RANGES, PATTERN_STRING_O
 
 import { advancedSearchRuleToForm } from '@/helpers/search/new-advanced-search';
 
-import AdvancedSearchGroup from '@/components/common/search/partials/new/advanced-search-group.vue';
 import { useComponentInstance } from '@/hooks/vue';
 import { useEntity } from '@/hooks/store/modules/entity';
+
+import AdvancedSearchGroup from '@/components/common/search/partials/new/advanced-search-group.vue';
 
 const ALARM_ENTITY_FIELDS_PREFIX = 'entity';
 const ALARM_PBEHAVIOR_FIELDS_PREFIX = 'v.pbehavior_info';
@@ -128,6 +130,22 @@ export default {
         fetchValues: fetchContextEntitiesListWithoutStore,
         text: 'Component',
       },
+      {
+        value: ALARM_FIELDS.entityInfos,
+        text: 'Entity infos',
+        items: [
+          {
+            value: 'dictionary1',
+            text: 'dictionary1',
+            items: [{ value: 'value', text: 'Value' }, { value: 'name', text: 'Name' }],
+          },
+          {
+            value: 'dictionary2',
+            text: 'dictionary2',
+            items: [{ value: 'value', text: 'Value' }, { value: 'name', text: 'Name' }],
+          },
+        ],
+      },
     ]);
 
     const update = (value, index) => {
@@ -144,12 +162,13 @@ export default {
     };
 
     const next = (nextStep, index) => {
-      console.log(nextStep, rules.value[index + 1]);
       if (!nextStep && !rules.value[index + 1]) {
         const newRule = advancedSearchRuleToForm();
 
+        console.log(newRule, `${newRule.key}.${index % 2 === 0 ? 'union' : 'attribute'}`);
+
         rules.value.push(newRule);
-        activeKey.value = `${newRule.key}.attribute`;
+        activeKey.value = `${newRule.key}.${index % 2 === 0 ? 'union' : 'attribute'}`;
         return;
       }
 
