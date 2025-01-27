@@ -139,7 +139,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		if beforeAlarm.ID != "" {
 			_, err = p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": beforeAlarm.ID})
 			if err != nil {
-				return fmt.Errorf("failed to delete cancel_delay job: %w", err)
+				return fmt.Errorf("failed to delete cancel_delay job on entitytoggled event: %w", err)
 			}
 
 			if beforeAlarm.NotAckedMetricSendTime != nil {

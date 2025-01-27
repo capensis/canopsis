@@ -432,7 +432,7 @@ func processResolve(
 
 		_, err = cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
 		if err != nil {
-			return fmt.Errorf("failed to delete cancel_delay job: %w", err)
+			return fmt.Errorf("failed to delete cancel_delay job on resolve: %w", err)
 		}
 
 		return removeMetaAlarmStateOnResolve(ctx, metaAlarmRuleCollection, metaAlarmStatesService, result.Alarm)
