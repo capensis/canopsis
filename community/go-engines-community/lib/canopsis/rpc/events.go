@@ -83,6 +83,7 @@ type AxeParameters struct {
 	DisplayName         string   `json:"display_name,omitempty"`
 	MetaAlarmChildren   []string `json:"meta_alarm_children,omitempty"`
 	StateSettingUpdated bool     `json:"state_setting_updated,omitempty"`
+	CancelDelay         *int64   `json:"cancel_delay,omitempty"`
 }
 
 // AxeResultEvent

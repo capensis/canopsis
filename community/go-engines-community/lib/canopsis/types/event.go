@@ -40,6 +40,7 @@ const (
 	EventTypeAckremove   = "ackremove"
 	EventTypeAssocTicket = "assocticket"
 	EventTypeCancel      = "cancel"
+	EventTypeCancelDelay = "canceldelay"
 	EventTypeCheck       = "check"
 	EventTypeComment     = "comment"
 	EventTypeChangestate = "changestate"
@@ -205,6 +206,8 @@ type Event struct {
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"healthcheck,omitempty"`
 
 	StateSettingUpdated bool `bson:"state_setting_updated,omitempty" json:"state_setting_updated,omitempty"`
+
+	CancelDelay *int64 `bson:"cancel_delay,omitempty" json:"cancel_delay,omitempty"`
 }
 
 // Format an event
@@ -601,6 +604,7 @@ func isValidEventType(t string) bool {
 		EventTypeTrigger,
 		EventTypeAutoInstructionActivate,
 		EventTypeMetaAlarmChildActivate,
+		EventTypeCancelDelay,
 		EventTypeMetaAlarmChildDeactivate:
 		return true
 	}

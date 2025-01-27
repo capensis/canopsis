@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -14,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -36,6 +38,7 @@ func NewEntityToggledProcessor(
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
 		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
+		cancelDelayJobCollection:        dbClient.Collection(mongo.CancelDelayJobCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -55,6 +58,7 @@ type entityToggledProcessor struct {
 	resolvedAlarmCollection         mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
 	metaAlarmRuleCollection         mongo.DbCollection
+	cancelDelayJobCollection        mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
@@ -133,6 +137,11 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 		entity := *event.Entity
 		if beforeAlarm.ID != "" {
+			_, err = p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": beforeAlarm.ID})
+			if err != nil {
+				return fmt.Errorf("failed to delete cancel_delay job: %w", err)
+			}
+
 			if beforeAlarm.NotAckedMetricSendTime != nil {
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}

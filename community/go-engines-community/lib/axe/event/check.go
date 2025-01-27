@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/canceldelay"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -52,6 +53,7 @@ func NewCheckProcessor(
 		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
 		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
+		cancelDelayJobCollection:        client.Collection(mongo.CancelDelayJobCollection),
 		alarmConfigProvider:             alarmConfigProvider,
 		alarmStatusService:              alarmStatusService,
 		pbhTypeResolver:                 pbhTypeResolver,
@@ -75,6 +77,7 @@ type checkProcessor struct {
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
+	cancelDelayJobCollection        mongo.DbCollection
 	alarmConfigProvider             config.AlarmConfigProvider
 	alarmStatusService              alarmstatus.Service
 	pbhTypeResolver                 pbehavior.EntityTypeResolver
@@ -307,6 +310,23 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		}
 	}
 
+	if event.Parameters.CancelDelay != nil && *event.Parameters.CancelDelay > 0 {
+		_, err = p.cancelDelayJobCollection.UpdateOne(ctx, bson.M{
+			"_id": alarm.ID,
+		}, bson.M{
+			"$set": canceldelay.Job{
+				Name:      entity.Name,
+				Component: alarm.Value.Component,
+				Type:      entity.Type,
+				Delay:     *event.Parameters.CancelDelay,
+				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CancelDelay,
+			},
+		}, options.Update().SetUpsert(true))
+		if err != nil {
+			return result, fmt.Errorf("cannot upsert cancel delay job: %w", err)
+		}
+	}
+
 	result.Alarm = alarm
 	result.AlarmChange = alarmChange
 
@@ -384,6 +404,30 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		if alarm.IsStateLocked() {
 			alarm.Value.ChangeState = nil
 			unset["v.change_state"] = ""
+		}
+
+		if params.CancelDelay != nil && *params.CancelDelay > 0 {
+			_, err = p.cancelDelayJobCollection.UpdateOne(ctx, bson.M{
+				"_id": alarm.ID,
+			}, bson.M{
+				"$set": canceldelay.Job{
+					Name:      entity.Name,
+					Component: alarm.Value.Component,
+					Type:      entity.Type,
+					Delay:     *params.CancelDelay,
+					ExecTime:  params.Timestamp.Unix() + *params.CancelDelay,
+				},
+			}, options.Update().SetUpsert(true))
+			if err != nil {
+				return result, fmt.Errorf("cannot upsert cancel delay job: %w", err)
+			}
+		}
+	}
+
+	if params.CancelDelay != nil && *params.CancelDelay == 0 {
+		_, err := p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
+		if err != nil {
+			return result, fmt.Errorf("cannot upsert cancel delay job: %w", err)
 		}
 	}
 

@@ -298,6 +298,16 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Healthcheck = bool(in.Bool())
 		case "state_setting_updated":
 			out.StateSettingUpdated = bool(in.Bool())
+		case "cancel_delay":
+			if in.IsNull() {
+				in.Skip()
+				out.CancelDelay = nil
+			} else {
+				if out.CancelDelay == nil {
+					out.CancelDelay = new(int64)
+				}
+				*out.CancelDelay = int64(in.Int64())
+			}
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -669,6 +679,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"state_setting_updated\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.StateSettingUpdated))
+	}
+	if in.CancelDelay != nil {
+		const prefix string = ",\"cancel_delay\":"
+		out.RawString(prefix)
+		out.Int64(int64(*in.CancelDelay))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

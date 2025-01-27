@@ -150,6 +150,7 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		DisplayName:         event.DisplayName,
 		MetaAlarmChildren:   event.MetaAlarmChildren,
 		StateSettingUpdated: event.StateSettingUpdated,
+		CancelDelay:         event.CancelDelay,
 	}
 
 	if event.Duration > 0 {

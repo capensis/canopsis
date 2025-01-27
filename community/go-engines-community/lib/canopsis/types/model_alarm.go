@@ -33,6 +33,7 @@ const (
 	AlarmStatusFlapping
 	AlarmStatusCancelled
 	AlarmStatusNoEvents
+	AlarmStatusCancelledWithDelay = 6
 )
 
 const (
@@ -86,6 +87,8 @@ const (
 	// Following alarm steps are used for junit.
 	AlarmStepJunitTestSuiteUpdate = "junittestsuiteupdate"
 	AlarmStepJunitTestCaseUpdate  = "junittestcaseupdate"
+
+	AlarmStepCancelDelay = "canceldelay"
 )
 
 func GetAlarmStepTypes() []string {
