@@ -29,7 +29,7 @@ describe('kpi-alarms-filters', () => {
   /**
    * Year ago date
    */
-  const nowSubtractYearTimestamp = 1354834800;
+  const nowSubtractYearTimestamp = 1354899600;
 
   const factory = generateShallowRenderer(KpiAlarmsFilters, { stubs });
   const snapshotFactory = generateRenderer(KpiAlarmsFilters, { stubs });
@@ -124,7 +124,7 @@ describe('kpi-alarms-filters', () => {
     expect(eventData).toEqual({
       ...initialQuery,
       interval: {
-        from: nowSubtractYearTimestamp,
+        from: 1354921199, // We are not using nowSubtractYearTimestamp because `today` interval value is not `now`
         to: initialQuery.interval.to,
       },
       sampling: SAMPLINGS.hour,
@@ -160,7 +160,7 @@ describe('kpi-alarms-filters', () => {
     expect(eventData).toEqual({
       ...initialQuery,
       interval: {
-        from: nowSubtractYearTimestamp + 1,
+        from: 1354921199, // We are not using nowSubtractYearTimestamp because `today` interval value is not `now`
         to: initialQuery.interval.to,
       },
       sampling: SAMPLINGS.hour,
