@@ -101,7 +101,7 @@ describe('kpi-alarms-filters', () => {
     expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: {
-        from: nowSubtractYearTimestamp,
+        from: 1354921199, // We are not using nowSubtractYearTimestamp because `today` interval value is not `now`
         to: initialQuery.interval.to,
       },
       sampling: SAMPLINGS.hour,
@@ -130,7 +130,7 @@ describe('kpi-alarms-filters', () => {
     expect(wrapper).toEmitInput({
       ...initialQuery,
       interval: {
-        from: nowSubtractYearTimestamp,
+        from: 1354921199, // We are not using nowSubtractYearTimestamp because `today` interval value is not `now`
         to: initialQuery.interval.to,
       },
       sampling: SAMPLINGS.hour,
