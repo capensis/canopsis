@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -87,7 +88,7 @@ func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune,
 	}()
 
 	job := ImportJob{}
-	externalDataTable := Document{}
+	externalDataTable := externaldata.Table{}
 	err := w.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&externalDataTable)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -218,7 +219,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) error {
 				fields = make([]string, len(record))
 				copy(fields, record)
 				columns = make([]string, len(record)+1)
-				columns[0] = idColumnName
+				columns[0] = externaldata.IDColumnName
 				copy(columns[1:], record)
 				err = w.validateColumns(fields)
 				if err != nil {
@@ -228,7 +229,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) error {
 
 				columnLengths = make(map[string]int, len(fields))
 				for _, field := range fields {
-					columnLengths[field] = postgresDefaultColumnLen
+					columnLengths[field] = externaldata.PostgresDefaultColumnLen
 				}
 
 				err = w.createTable(ctx, job, fields, columnLengths)
@@ -250,15 +251,15 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) error {
 			}
 
 			switch job.Type {
-			case TypeMongoDB:
+			case externaldata.TypeMongoDB:
 				doc := make(map[string]string, len(record)+1)
-				doc[idColumnName] = utils.NewID()
+				doc[externaldata.IDColumnName] = utils.NewID()
 				for j, field := range fields {
 					doc[field] = record[j]
 				}
 
 				docs = append(docs, doc)
-			case TypePostgreSQL:
+			case externaldata.TypePostgreSQL:
 				row := make([]any, len(record)+1)
 				row[0] = utils.NewID()
 				for j, v := range record {
@@ -404,12 +405,12 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 		}
 
 		switch t {
-		case ColumnTypeNoType, ColumnTypeFilter, ColumnTypeContext:
+		case externaldata.ColumnTypeNoType, externaldata.ColumnTypeFilter, externaldata.ColumnTypeContext:
 		default:
 			valErrMsgs["column_types."+col] = col + " must be one of [" +
-				strconv.Itoa(ColumnTypeNoType) + " " +
-				strconv.Itoa(ColumnTypeFilter) + " " +
-				strconv.Itoa(ColumnTypeContext) +
+				strconv.Itoa(externaldata.ColumnTypeNoType) + " " +
+				strconv.Itoa(externaldata.ColumnTypeFilter) + " " +
+				strconv.Itoa(externaldata.ColumnTypeContext) +
 				"]."
 		}
 	}
@@ -422,13 +423,17 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 		return false, common.NewValidationError("column_types", "ColumnTypes is invalid.")
 	}
 
-	table := Document{}
+	table := externaldata.Table{}
+	update := bson.M{
+		"column_types": columnTypes,
+	}
+	if job.Type == externaldata.TypePostgreSQL {
+		update["column_lengths"] = job.ColumnLengths
+	}
+
 	err = w.dbCollection.FindOneAndUpdate(ctx,
 		bson.M{"_id": job.ExternalDataTable},
-		bson.M{"$set": bson.M{
-			"column_types":   columnTypes,
-			"column_lengths": job.ColumnLengths,
-		}},
+		bson.M{"$set": update},
 	).Decode(&table)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -439,27 +444,27 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 	}
 
 	switch table.Type {
-	case TypeMongoDB:
+	case externaldata.TypeMongoDB:
 		err = w.dbClient.RunAdminCommand(ctx, bson.D{
-			{Key: "renameCollection", Value: w.dbClient.Name() + "." + getCollectionName(job.Table)},
-			{Key: "to", Value: w.dbClient.Name() + "." + getCollectionName(table.Name)},
+			{Key: "renameCollection", Value: w.dbClient.Name() + "." + job.getDBTableName()},
+			{Key: "to", Value: w.dbClient.Name() + "." + externaldata.GetMongoCollectionName(table.Name, table.FromConfig)},
 			{Key: "dropTarget", Value: true},
 		}).Err()
 		if err != nil {
 			return false, fmt.Errorf("failed to rename mongo collection: %w", err)
 		}
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return false, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, "DROP TABLE IF EXISTS "+getPostgresTableName(table.Name))
+		_, err = pgPool.Exec(ctx, "DROP TABLE IF EXISTS "+externaldata.GetPostgresTableName(table.Name))
 		if err != nil {
 			return false, fmt.Errorf("failed to drop postgres table: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, "ALTER TABLE "+getPostgresTableName(job.Table)+" RENAME TO "+pgx.Identifier{table.Name}.Sanitize())
+		_, err = pgPool.Exec(ctx, "ALTER TABLE "+job.getDBTableName()+" RENAME TO "+pgx.Identifier{table.Name}.Sanitize())
 		if err != nil {
 			return false, fmt.Errorf("failed to rename postgres table: %w", err)
 		}
@@ -615,7 +620,7 @@ func (w *importWorker) deleteJobFile(job ImportJob) error {
 
 func (w *importWorker) validateColumns(columns []string) error {
 	for _, c := range columns {
-		if !common.IsTableName(c) || c == idColumnName {
+		if !common.IsTableName(c) || c == externaldata.IDColumnName {
 			return fmt.Errorf("invalid field name: %q", c)
 		}
 	}
@@ -625,17 +630,17 @@ func (w *importWorker) validateColumns(columns []string) error {
 
 func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns []string, columnLens map[string]int) error {
 	switch job.Type {
-	case TypeMongoDB:
+	case externaldata.TypeMongoDB:
 		// clean collection if job is retried
-		_, err := w.dbClient.Collection(getCollectionName(job.Table)).DeleteMany(ctx, bson.M{})
+		_, err := w.dbClient.Collection(job.getDBTableName()).DeleteMany(ctx, bson.M{})
 		if err != nil {
 			return fmt.Errorf("failed to clean collection: %w", err)
 		}
 
 		return nil
-	case TypePostgreSQL:
-		sql := "CREATE TABLE IF NOT EXISTS " + getPostgresTableName(job.Table) + " ( " +
-			idColumnName + " VARCHAR(" + strconv.Itoa(uuidLen) + ") PRIMARY KEY, "
+	case externaldata.TypePostgreSQL:
+		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
+			externaldata.IDColumnName + " VARCHAR(" + strconv.Itoa(externaldata.PostgresIDColumnLen) + ") PRIMARY KEY, "
 		for i, field := range columns {
 			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + strconv.Itoa(columnLens[field]) + ") "
 			if i != len(columns)-1 {
@@ -655,7 +660,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 		}
 
 		// clean table if job is retried
-		_, err = pgPool.Exec(ctx, "TRUNCATE TABLE "+getPostgresTableName(job.Table))
+		_, err = pgPool.Exec(ctx, "TRUNCATE TABLE "+job.getDBTableName())
 		if err != nil {
 			return fmt.Errorf("failed to truncate postgres table: %w", err)
 		}
@@ -668,20 +673,20 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 
 func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 	switch job.Type {
-	case TypeMongoDB:
-		err := w.dbClient.Collection(getCollectionName(job.Table)).Drop(ctx)
+	case externaldata.TypeMongoDB:
+		err := w.dbClient.Collection(job.getDBTableName()).Drop(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to drop mongo collection: %w", err)
 		}
 
 		return nil
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, "DROP TABLE IF EXISTS "+getPostgresTableName(job.Table))
+		_, err = pgPool.Exec(ctx, "DROP TABLE IF EXISTS "+job.getDBTableName())
 		if err != nil {
 			return fmt.Errorf("failed to create postgres table: %w", err)
 		}
@@ -712,16 +717,16 @@ func (w *importWorker) alterColumnLengths(
 	}
 
 	switch job.Type {
-	case TypeMongoDB:
+	case externaldata.TypeMongoDB:
 		return columnLens, nil
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return columnLens, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
 		for c, l := range updatedLengths {
-			sql := "ALTER TABLE " + getPostgresTableName(job.Table) +
+			sql := "ALTER TABLE " + job.getDBTableName() +
 				" ALTER COLUMN " + pgx.Identifier{c}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(l) + ")"
 			_, err = pgPool.Exec(ctx, sql)
 			if err != nil {
@@ -743,20 +748,20 @@ func (w *importWorker) insertIntoTable(
 	rows [][]any,
 ) error {
 	switch job.Type {
-	case TypeMongoDB:
-		_, err := w.dbClient.Collection(getCollectionName(job.Table)).InsertMany(ctx, docs)
+	case externaldata.TypeMongoDB:
+		_, err := w.dbClient.Collection(job.getDBTableName()).InsertMany(ctx, docs)
 		if err != nil {
 			return fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
 		}
 
 		return nil
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		pgPool, err := w.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.CopyFrom(ctx, getPostgresTableIdentifier(job.Table), columns, pgx.CopyFromRows(rows))
+		_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columns, pgx.CopyFromRows(rows))
 		if err != nil {
 			return fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
 		}
