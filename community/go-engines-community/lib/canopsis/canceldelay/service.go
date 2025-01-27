@@ -1,0 +1,110 @@
+package canceldelay
+
+import (
+	"context"
+	"fmt"
+	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+)
+
+// PeriodsUntilResend defines the number of periodical intervals to wait
+// before the task needs to be resent.
+const PeriodsUntilResend = 5
+
+type Service interface {
+	Process(ctx context.Context) ([]types.Event, error)
+}
+
+type service struct {
+	client         mongo.DbClient
+	collection     mongo.DbCollection
+	eventGenerator libevent.Generator
+
+	// periodicalInterval is used to calculate a date when the task needs to be resent.
+	periodicalInterval time.Duration
+}
+
+func NewService(client mongo.DbClient, generator libevent.Generator, periodicalInterval time.Duration) Service {
+	return &service{
+		client:             client,
+		collection:         client.Collection(mongo.CancelDelayJobCollection),
+		eventGenerator:     generator,
+		periodicalInterval: periodicalInterval,
+	}
+}
+
+func (s *service) Process(ctx context.Context) ([]types.Event, error) {
+	now := datetime.NewCpsTime()
+
+	cursor, err := s.collection.Find(ctx, bson.M{"exec_time": bson.M{"$lte": now}})
+	if err != nil {
+		return nil, fmt.Errorf("failed to find cancel delay jobs: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	var events []types.Event
+	writeModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
+
+	for cursor.Next(ctx) {
+		var job Job
+
+		err := cursor.Decode(&job)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode cancel delay job: %w", err)
+		}
+
+		event, err := s.eventGenerator.Generate(types.Entity{
+			Type:      job.Type,
+			Name:      job.Name,
+			Component: job.Component,
+		})
+		if err != nil {
+			return nil, fmt.Errorf("failed to generate cancel delay event: %w", err)
+		}
+
+		event.AlarmID = job.ID
+		event.EventType = types.EventTypeCancelDelay
+		event.Timestamp = now
+		event.Output = fmt.Sprintf("canceled after %d seconds delay", job.Delay)
+
+		events = append(events, event)
+
+		writeModel := mongodriver.
+			NewUpdateOneModel().
+			SetFilter(bson.M{"_id": job.ID}).
+			SetUpdate(bson.M{"$set": bson.M{"resend_at": now.Add(PeriodsUntilResend * s.periodicalInterval)}})
+
+		writeModels = append(writeModels, writeModel)
+
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err := s.collection.BulkWrite(ctx, writeModels)
+			if err != nil {
+				return nil, fmt.Errorf("failed to bulk update cancel delay jobs: %w", err)
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if len(writeModels) > 0 {
+		_, err := s.collection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return nil, fmt.Errorf("failed to bulk update cancel delay jobs: %w", err)
+		}
+	}
+
+	err = cursor.Err()
+	if err != nil {
+		return nil, fmt.Errorf("failed to process cancel delay jobs cursor: %w", err)
+	}
+
+	return events, nil
+}

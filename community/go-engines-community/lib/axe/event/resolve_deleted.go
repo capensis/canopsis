@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -39,6 +40,7 @@ func NewResolveDeletedProcessor(
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
 		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
+		cancelDelayJobCollection:        dbClient.Collection(mongo.CancelDelayJobCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -58,6 +60,7 @@ type resolveDeletedProcessor struct {
 	resolvedAlarmCollection         mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
 	metaAlarmRuleCollection         mongo.DbCollection
+	cancelDelayJobCollection        mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
@@ -95,6 +98,11 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 
 		entityUpdate := bson.M{}
 		if beforeAlarm.ID != "" {
+			_, err = p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": beforeAlarm.ID})
+			if err != nil {
+				return fmt.Errorf("failed to delete cancel_delay job: %w", err)
+			}
+
 			if beforeAlarm.NotAckedMetricSendTime != nil {
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}

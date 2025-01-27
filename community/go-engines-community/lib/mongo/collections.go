@@ -103,4 +103,6 @@ const (
 	EngineNotificationCollection = "engine_notification"
 
 	IconCollection = "icon"
+
+	CancelDelayJobCollection = "cancel_delay_job"
 )

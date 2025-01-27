@@ -14,12 +14,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewCancelProcessor(
+func NewCancelDelayProcessor(
 	client mongo.DbClient,
 	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	logger zerolog.Logger,
 ) Processor {
-	return &cancelProcessor{
+	return &cancelDelayProcessor{
 		client:                   client,
 		alarmCollection:          client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:         client.Collection(mongo.EntityMongoCollection),
@@ -29,7 +29,7 @@ func NewCancelProcessor(
 	}
 }
 
-type cancelProcessor struct {
+type cancelDelayProcessor struct {
 	client                   mongo.DbClient
 	alarmCollection          mongo.DbCollection
 	entityCollection         mongo.DbCollection
@@ -38,66 +38,60 @@ type cancelProcessor struct {
 	logger                   zerolog.Logger
 }
 
-func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+func (p *cancelDelayProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
+
 	if event.Entity == nil || !event.Entity.Enabled {
 		return result, nil
 	}
 
-	entity := *event.Entity
 	match := getOpenAlarmMatch(event)
 	match["v.canceled"] = nil
-	newStatus := types.CpsNumber(types.AlarmStatusCancelled)
+	newStatus := types.CpsNumber(types.AlarmStatusCancelledWithDelay)
 	newIncStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusIncrease, newStatus,
 		event.Parameters.Output, event.Parameters)
 	newDecStepStatusQuery := valStepUpdateQueryWithInPbhInterval(types.AlarmStepStatusDecrease, newStatus,
 		event.Parameters.Output, event.Parameters)
-	newStepQuery := bson.M{"$cond": bson.M{
+	newStatusStepQuery := bson.M{"$cond": bson.M{
 		"if":   bson.M{"$gt": bson.A{newStatus, "$v.status.val"}},
 		"then": newIncStepStatusQuery,
 		"else": newDecStepStatusQuery,
 	}}
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.canceled":                          newStepQuery,
-			"v.status":                            newStepQuery,
-			"v.steps":                             addStepUpdateQuery(newStepQuery),
+			"v.canceled":                          newStatusStepQuery,
+			"v.status":                            newStatusStepQuery,
+			"v.steps":                             addStepUpdateQuery(newStatusStepQuery),
 			"v.state_changes_since_status_update": 0,
 			"v.last_update_date":                  event.Parameters.Timestamp,
+			"v.last_st_upd_dt":                    event.Parameters.Timestamp,
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		alarm := types.Alarm{}
-		err := p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
+
+		_, err := p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": event.AlarmID})
+		if err != nil {
+			return fmt.Errorf("failed to delete cancel_delay job: %w", err)
+		}
+
+		err = p.alarmCollection.FindOneAndUpdate(ctx, match, update, opts).Decode(&alarm)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
 			}
 
-			return err
+			return fmt.Errorf("failed to find alarm on cancel_delay event: %w", err)
 		}
 
 		alarmChange := types.NewAlarmChange()
 		alarmChange.Type = types.AlarmChangeTypeCancel
+
 		result.Forward = true
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
-
-		if event.Parameters.IdleRuleApply != "" {
-			result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$set": bson.M{
-				"last_idle_rule_apply": event.Parameters.IdleRuleApply,
-			}}, p.entityCollection)
-			if err != nil {
-				return err
-			}
-		}
-
-		_, err = p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
-		if err != nil {
-			return fmt.Errorf("failed to delete cancel_delay job: %w", err)
-		}
 
 		return nil
 	})
@@ -111,7 +105,7 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 	return result, nil
 }
 
-func (p *cancelProcessor) postProcess(
+func (p *cancelDelayProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,

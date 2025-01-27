@@ -13,6 +13,7 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/canceldelay"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
@@ -425,6 +426,11 @@ func NewEngine(
 				json.NewEncoder(),
 				logger,
 			),
+			CancelDelayService: canceldelay.NewService(
+				dbClient,
+				eventGenerator,
+				options.PeriodicalWaitTime,
+			),
 			AlarmConfigProvider: alarmConfigProvider,
 			Logger:              logger,
 		},
@@ -539,6 +545,7 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeAckremove, event.NewAckRemoveProcessor(dbClient, entityServiceCountersCalculator, eventsSender, metaAlarmPostProcessor, metricsSender, logger))
 	container.Set(types.EventTypeActivate, event.NewActivateProcessor(dbClient, autoInstructionMatcher, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeAssocTicket, event.NewAssocTicketProcessor(dbClient, metaAlarmPostProcessor, metricsSender, logger))
+	container.Set(types.EventTypeCancelDelay, event.NewCancelDelayProcessor(dbClient, metaAlarmPostProcessor, logger))
 	container.Set(types.EventTypeCancel, event.NewCancelProcessor(dbClient, metaAlarmPostProcessor, logger))
 	container.Set(types.EventTypeChangestate, event.NewChangeStateProcessor(dbClient, userInterfaceConfigProvider,
 		alarmStatusService, autoInstructionMatcher, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmPostProcessor, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
