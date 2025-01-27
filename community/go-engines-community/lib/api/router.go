@@ -1824,7 +1824,12 @@ func RegisterRoutes(
 			externalDataTableRouter.DELETE(
 				"/:table/data/:id",
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
-				externalDataTableAPI.Delete,
+				externalDataTableAPI.DeleteData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/schema",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.GetSchema,
 			)
 			externalDataTableRouter.POST(
 				"",

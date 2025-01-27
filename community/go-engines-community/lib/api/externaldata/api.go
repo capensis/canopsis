@@ -1,7 +1,10 @@
 package externaldata
 
 import (
+	"bytes"
+	"encoding/csv"
 	"errors"
+	"fmt"
 	"net/http"
 	"sort"
 
@@ -25,6 +28,7 @@ type API interface {
 	UpdateData(c *gin.Context)
 	DeleteData(c *gin.Context)
 	BulkDeleteData(c *gin.Context)
+	GetSchema(c *gin.Context)
 }
 
 func NewAPI(store Store, importWorker ImportWorker, logger zerolog.Logger) API {
@@ -476,4 +480,36 @@ func (a *api) BulkDeleteData(c *gin.Context) {
 
 		return request.ID, nil
 	}, a.logger)
+}
+
+func (a *api) GetSchema(c *gin.Context) {
+	t, err := a.store.FindOne(c, c.Param("table"))
+	if err != nil {
+		panic(err)
+	}
+
+	if t.ID == "" {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	fields := make([]string, len(t.ColumnTypes))
+	i := 0
+	for f := range t.ColumnTypes {
+		fields[i] = f
+		i++
+	}
+
+	sort.Strings(fields)
+	b := &bytes.Buffer{}
+	w := csv.NewWriter(b)
+	err = w.Write(fields)
+	if err != nil {
+		panic(err)
+	}
+
+	w.Flush()
+	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, t.Name+".csv"))
+	c.Data(http.StatusOK, "text/csv", b.Bytes())
 }
