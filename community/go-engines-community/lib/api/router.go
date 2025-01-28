@@ -779,6 +779,7 @@ func RegisterRoutes(
 		exceptionAPI := pbehaviorexception.NewApi(
 			pbehaviorexception.NewStore(dbClient, timezoneConfigProvider, authorProvider),
 			pbhComputeChan,
+			conf.File.ImportMaxSize,
 			logger,
 		)
 		exceptionRouter := protected.Group("/pbehavior-exceptions")
@@ -1469,7 +1470,8 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
 			scenarioAPI.DBExport)
 
-		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), workers.NewJobPublisher(jobKeyImport, workersRunner), logger)
+		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient),
+			workers.NewJobPublisher(jobKeyImport, workersRunner), conf.File.ImportMaxSize, logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
@@ -1797,7 +1799,8 @@ func RegisterRoutes(
 			)
 		}
 
-		externalDataTableAPI := externaldata.NewAPI(externaldata.NewStore(dbClient, pgPoolProvider), exdataImportWorker, logger)
+		externalDataTableAPI := externaldata.NewAPI(externaldata.NewStore(dbClient, pgPoolProvider), exdataImportWorker,
+			conf.File.ImportMaxSize, logger)
 		externalDataTableRouter := protected.Group("/external-data-tables")
 		{
 			externalDataTableRouter.POST(
