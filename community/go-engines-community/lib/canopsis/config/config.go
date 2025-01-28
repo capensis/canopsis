@@ -69,6 +69,7 @@ type SectionFile struct {
 	Dir           string   `toml:"Dir"`
 	UploadMaxSize int64    `toml:"UploadMaxSize"`
 	IconMaxSize   int64    `toml:"IconMaxSize"`
+	ImportMaxSize int64    `toml:"ImportMaxSize"`
 	SnmpMib       []string `toml:"SnmpMib"`
 }
 

@@ -959,6 +959,8 @@ definitions:
         type: string
       events_count_trigger_default_threshold:
         type: integer
+      file_import_max_size:
+        type: integer
       file_upload_max_size:
         type: integer
       footer:
