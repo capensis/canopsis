@@ -42,3 +42,15 @@ export const ADVANCED_SEARCH_UNION_FIELDS = [
     text: ADVANCED_SEARCH_UNION_CONDITIONS.or,
   },
 ];
+
+export const ADVANCED_SEARCH_CHIP_TYPES = {
+  attribute: 'attribute',
+  dictionary: 'dictionary',
+  operator: 'operator',
+  fieldType: 'fieldType',
+  value: 'value',
+  duration: 'duration',
+  range: 'range',
+  rangeValue: 'rangeValue',
+  union: 'union',
+};

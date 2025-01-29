@@ -16,6 +16,7 @@
               :active-key="activeKey"
               :union="index % 2 === 1"
               :first="index === 0"
+              :allow-or="allowOr"
               @input="update($event, index)"
               @click:chip="makeActive"
               @focusout="resetActive"
@@ -60,7 +61,7 @@ import Themeable from 'vuetify/lib/mixins/themeable';
 
 import { ALARM_FIELDS, PATTERN_OPERATORS, PATTERN_QUICK_RANGES, PATTERN_STRING_OPERATORS } from '@/constants';
 
-import { advancedSearchRuleToForm } from '@/helpers/search/new-advanced-search';
+import { advancedSearchRulesToForm, formToAdvancedSearchRules, advancedSearchItemToForm } from '@/helpers/search/new-advanced-search';
 
 import { useComponentInstance } from '@/hooks/vue';
 import { useEntity } from '@/hooks/store/modules/entity';
@@ -85,12 +86,31 @@ export default {
   setup(props, { emit }) {
     const { fetchContextEntitiesListWithoutStore } = useEntity();
     const instance = useComponentInstance();
-    const rules = ref([advancedSearchRuleToForm()]);
+    const rules = ref([advancedSearchItemToForm()]);
     const activeKey = ref();
 
-    const hasAlarmField = computed(() => rules.value.some(({ attribute }) => !attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX) && !attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX)));
-    const hasEntityField = computed(() => rules.value.some(({ attribute }) => attribute.startsWith(ALARM_ENTITY_FIELDS_PREFIX)));
-    const hasPbehaviorField = computed(() => rules.value.some(({ attribute }) => attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX)));
+    const hasEntityField = computed(() => (
+      rules.value.some(({ attribute }) => attribute.startsWith(ALARM_ENTITY_FIELDS_PREFIX))
+    ));
+    const hasPbehaviorField = computed(() => (
+      rules.value.some(({ attribute }) => attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX))
+    ));
+    const hasAlarmField = computed(() => (
+      rules.value.some(({ attribute }) => (
+        !attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX)
+        && !attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX)
+      ))
+    ));
+    const hasOr = computed(() => rules.value.some(({ union }) => union === 'OR'));
+
+    const allowOr = computed(() => [
+      hasEntityField.value,
+      hasPbehaviorField.value,
+      hasAlarmField.value,
+    ].filter(Boolean).length <= 1);
+    const allowAlarmFields = computed(() => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value));
+    const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
+    const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
 
     const items = computed(() => [
       { header: 'Common' },
@@ -129,10 +149,12 @@ export default {
         ],
         fetchValues: fetchContextEntitiesListWithoutStore,
         text: 'Component',
+        disabled: !allowAlarmFields.value,
       },
       {
         value: ALARM_FIELDS.entityInfos,
         text: 'Entity infos',
+        disabled: !allowEntityFields.value,
         items: [
           {
             value: 'dictionary1',
@@ -163,7 +185,7 @@ export default {
 
     const next = (nextStep, index) => {
       if (!nextStep && !rules.value[index + 1]) {
-        const newRule = advancedSearchRuleToForm();
+        const newRule = advancedSearchItemToForm();
 
         console.log(newRule, `${newRule.key}.${index % 2 === 0 ? 'union' : 'attribute'}`);
 
@@ -177,7 +199,7 @@ export default {
 
     const remove = (index) => {
       if (index === rules.value.length - 1) {
-        set(rules.value, index, advancedSearchRuleToForm());
+        set(rules.value, index, advancedSearchItemToForm());
 
         return;
       }
@@ -187,18 +209,23 @@ export default {
 
     const submit = async () => {
       const isValid = await instance.$validator.validateAll();
+      const json = '[{"key":"0e79fcb6573","attribute":"v.display_name","operator":"equal","field":"","fieldType":"string","dictionary":"","value":"fdsfdsf","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":["attribute","operator","value"],"rangeValue":{"from":0,"to":0},"union":null},{"key":"e79fcb65731","attribute":"","operator":"","field":"","fieldType":"string","dictionary":"","value":"","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":["union"],"rangeValue":{"from":0,"to":0},"union":"OR"},{"key":"79fcb657318","attribute":"v.output","operator":"contains","field":"","fieldType":"string","dictionary":"","value":"gfdgdfg","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":["attribute","operator","value"],"rangeValue":{"from":0,"to":0},"union":null},{"key":"9fcb6573188","attribute":"","operator":"","field":"","fieldType":"string","dictionary":"","value":"","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":[],"rangeValue":{"from":0,"to":0},"union":null}]';
+      const json2 = '{"positions":["alarm_pattern","alarm_pattern"],"alarm_pattern":[[{"field":"v.display_name","cond":{"value":"fdsfdsf","type":"eq"}}],[{"field":"v.output","cond":{"value":"gfdgdfg","type":"contain"}}]],"entity_pattern":[],"pbehavior_pattern":[]}';
+      console.log(advancedSearchRulesToForm(JSON.parse(json2)));
+      // console.log(advancedSearchRulesToForm(JSON.parse(json2)));
 
       if (isValid) {
-        emit('submit', rules.value);
+        emit('submit', formToAdvancedSearchRules(rules.value));
       }
     };
 
     const clear = () => {
       instance.errors.clear();
-      rules.value = [advancedSearchRuleToForm()];
+      rules.value = [advancedSearchRulesToForm()];
     };
 
     return {
+      allowOr,
       rules,
       activeKey,
 
@@ -211,6 +238,16 @@ export default {
       remove,
       submit,
       clear,
+
+      // TODO: remove code below
+      hasOr,
+      hasEntityField,
+      hasPbehaviorField,
+      hasAlarmField,
+
+      allowAlarmFields,
+      allowEntityFields,
+      allowPbehaviorFields,
     };
   },
 };
