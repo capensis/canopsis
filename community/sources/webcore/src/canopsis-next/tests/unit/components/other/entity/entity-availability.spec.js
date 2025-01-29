@@ -91,7 +91,7 @@ describe('entity-availability', () => {
       params: {
         _id: entityId,
         from: 1383865200,
-        to: 1386370800,
+        to: 1386457199,
       },
     });
   });
@@ -153,7 +153,7 @@ describe('entity-availability', () => {
       params: {
         _id: entityId,
         from: 1383865200,
-        to: 1386370800,
+        to: 1386457199,
       },
     });
   });
