@@ -226,6 +226,7 @@ export default {
       updateSearch,
       wholePending: pending,
       hasMoreItems,
+      fetchItems,
       fetchMoreItems,
     } = useLazySearch({
       value: toRef(props, 'value'),
@@ -298,6 +299,8 @@ export default {
 
       inputValue.value = newSelectedItems[0]?.[props.itemText] ?? newSelectedItems[0]?.[props.itemValue] ?? '';
     }, { immediate: true });
+
+    watch(() => props.items, fetchItems);
 
     const showMore = () => {
       if (hasMoreItems.value) {

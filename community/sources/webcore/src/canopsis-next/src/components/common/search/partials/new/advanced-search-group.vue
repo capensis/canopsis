@@ -48,7 +48,7 @@ import {
   isInfosPatternRuleField,
   isValueInfosPatternRuleField,
 } from '@/helpers/entities/pattern/form';
-import { advancedSearchRuleToForm } from '@/helpers/search/new-advanced-search';
+import { advancedSearchRulesToForm } from '@/helpers/search/new-advanced-search';
 
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
@@ -255,6 +255,7 @@ export default {
       Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).map(value => ({
         value,
         text: value,
+        disabled: value === ADVANCED_SEARCH_UNION_CONDITIONS.or && !props.allowOr,
       }))
     ));
 
@@ -290,7 +291,7 @@ export default {
           const typesForClear = [oldRuleNextType];
           updateModel({
             ...props.rule,
-            ...pick(advancedSearchRuleToForm(), typesForClear),
+            ...pick(advancedSearchRulesToForm(), typesForClear),
             [type]: value,
             filled: difference(props.rule.filled, typesForClear),
           });
@@ -323,7 +324,7 @@ export default {
 
       updateModel({
         ...props.rule,
-        ...pick(advancedSearchRuleToForm(), typesForClear),
+        ...pick(advancedSearchRulesToForm(), typesForClear),
         [type]: value,
         filled: uniq(filled),
       });

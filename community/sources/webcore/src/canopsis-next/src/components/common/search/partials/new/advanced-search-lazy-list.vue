@@ -8,6 +8,15 @@
         indeterminate
       />
     </v-fade-transition>
+    <v-list-item v-if="hasAnyDisabledItem" class="font-italic grey--text">
+      <v-list-item-content>
+        <v-list-item-title>
+          Not possible to combine patterns
+          (alarm, entity and pbehavior) with OR (only AND)
+        </v-list-item-title>
+      </v-list-item-content>
+    </v-list-item>
+    <v-divider />
     <template v-for="item in items">
       <v-subheader
         v-if="item.header"
@@ -19,6 +28,7 @@
         v-else
         :key="item.value"
         :input-value="isActiveItem(item)"
+        :disabled="item.disabled"
         @click="selectVariable(item)"
         @mouseenter="handleMouseEnter(item, $event)"
       >
@@ -125,6 +135,8 @@ export default {
     const parentItem = ref(undefined);
     const subItemsPosition = ref({ x: 0, y: 0 });
 
+    const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
+
     const isActiveItem = (item = {}) => props.value.find((selectedItem) => {
       if (selectedItem[props.itemValue].length > String(item[props.itemValue]).length) {
         return selectedItem[props.itemValue].startsWith(`${item[props.itemValue]}.`);
@@ -144,6 +156,10 @@ export default {
     };
 
     const handleMouseEnter = (item, event) => {
+      if (item.disabled) {
+        return;
+      }
+
       if (item[props.childrenKey]) {
         const { left, top, width } = event.target.getBoundingClientRect();
 
@@ -178,6 +194,7 @@ export default {
       subItemsShown,
       subItemsPosition,
       parentItem,
+      hasAnyDisabledItem,
 
       handleMouseEnter,
 
