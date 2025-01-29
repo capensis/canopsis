@@ -100,6 +100,10 @@ Requires: nginx >= 1:1.20
 Canopsis WebUI RPM Package
 
 %pre webui
+echo "Disabling default.conf if existing"
+if [ -f "/etc/nginx/conf.d/default.conf" ]; then
+   mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+fi
 
 %preun webui
 
@@ -109,7 +113,7 @@ Canopsis WebUI RPM Package
 
 %files webui
 /opt/canopsis/srv
-%config(noreplace) /etc/nginx/conf.d/default.conf
+%config(noreplace) /etc/nginx/conf.d/canopsis.conf
 %config(noreplace) /etc/nginx/cors.inc
 %config(noreplace) /etc/nginx/https.inc
 %config(noreplace) /etc/nginx/rundeck.inc
