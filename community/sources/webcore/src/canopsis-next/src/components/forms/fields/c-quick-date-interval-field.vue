@@ -51,9 +51,15 @@
 </template>
 
 <script>
-import { DATETIME_FORMATS, QUICK_RANGES } from '@/constants';
+import { DATETIME_FORMATS, QUICK_RANGES, TIME_UNITS } from '@/constants';
 
-import { convertDateToString, convertDateToTimestamp, getNowTimestamp, getWeekdayNumber } from '@/helpers/date/date';
+import {
+  convertDateToEndOfUnitTimestamp,
+  convertDateToString,
+  convertDateToTimestamp,
+  getNowTimestamp,
+  getWeekdayNumber,
+} from '@/helpers/date/date';
 import {
   convertStartDateIntervalToTimestamp,
   convertStopDateIntervalToTimestamp,
@@ -163,6 +169,10 @@ export default {
       return dateTimestamp <= getNowTimestamp();
     },
 
+    isLessFutureDay(dateTimestamp) {
+      return dateTimestamp <= convertDateToEndOfUnitTimestamp(Date.now(), TIME_UNITS.day);
+    },
+
     isGreaterFromDate(dateTimestamp) {
       return dateTimestamp > this.intervalFromAsTimestamp;
     },
@@ -213,7 +223,7 @@ export default {
 
       return this.isGreaterMinDate(startTimestamp)
         && this.isAllowedAccumulatedFromDate(startTimestamp)
-        && this.isLessNowDate(stopTimestamp)
+        && this.isLessFutureDay(stopTimestamp)
         && this.isAllowedAccumulatedToDate(stopTimestamp);
     },
 
