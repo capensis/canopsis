@@ -12,6 +12,7 @@ import {
   convertDateToMomentByTimezone,
   convertDateToStartOfDayMoment,
   convertDateToStartOfUnitMoment,
+  convertDateToEndOfUnitMoment,
   convertDateToStartOfUnitString,
   convertDateToTimestampByTimezone,
   getLocaleTimezone,
@@ -50,9 +51,13 @@ export const convertStringToDateInterval = (string, type) => {
     const isToday = initial === 'today';
     const isStart = type === DATETIME_INTERVAL_TYPES.start;
 
-    const result = isToday
-      ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
-      : moment();
+    let result = moment();
+
+    if (isToday) {
+      result = isStart || deltaValue
+        ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
+        : convertDateToEndOfUnitMoment(getNowTimestamp(), TIME_UNITS.day);
+    }
 
     if (preparedRoundUnit) {
       if (isStart) {
