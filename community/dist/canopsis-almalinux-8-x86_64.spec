@@ -100,14 +100,14 @@ Requires: nginx >= 1:1.20
 Canopsis WebUI RPM Package
 
 %pre webui
-
-%preun webui
-
-%post webui
 if [ -f "/etc/nginx/conf.d/default.conf" ]; then
   echo "Disabling default.conf if existing"
   mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
 fi
+
+%preun webui
+
+%post webui
 
 %postun webui
 
