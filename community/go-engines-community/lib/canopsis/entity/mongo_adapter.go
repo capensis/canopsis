@@ -408,10 +408,10 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbeh
 	if len(idsWithPbehaviors) > 0 {
 		filter["$or"] = []bson.M{
 			{"_id": bson.M{"$in": idsWithPbehaviors}},
-			{"pbehavior_info": bson.M{"$ne": nil}},
+			{"pbehavior_info.id": bson.M{"$ne": nil}},
 		}
 	} else {
-		filter["pbehavior_info"] = bson.M{"$ne": nil}
+		filter["pbehavior_info.id"] = bson.M{"$ne": nil}
 	}
 
 	opts := &options.FindOptions{}

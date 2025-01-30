@@ -54,7 +54,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 		return nil, nil
 	}
 
-	cursor, err := s.adapter.GetOpenedAlarmsWithEntity(ctx)
+	cursor, err := s.adapter.GetOpenedOkAlarmsWithEntity(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch open alarms: %w", err)
 	}
@@ -76,15 +76,11 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Alarm, error) {
 			}
 
 			if matched {
-				alarmState := alarmWithEntity.Alarm.Value.State.Value
+				lastStep := alarmWithEntity.Alarm.Value.Steps[len(alarmWithEntity.Alarm.Value.Steps)-1]
+				before := rule.Duration.SubFrom(now)
 
-				if alarmState == types.AlarmStateOK {
-					lastStep := alarmWithEntity.Alarm.Value.Steps[len(alarmWithEntity.Alarm.Value.Steps)-1]
-					before := rule.Duration.SubFrom(now)
-
-					if lastStep.Timestamp.Before(before) {
-						alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
-					}
+				if lastStep.Timestamp.Before(before) {
+					alarmsToResolve = append(alarmsToResolve, alarmWithEntity.Alarm)
 				}
 
 				break
