@@ -58,7 +58,7 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Event, error) {
 		return nil, nil
 	}
 
-	cursor, err := s.adapter.GetOpenedAlarmsWithEntity(ctx)
+	cursor, err := s.adapter.GetOpenedOkAlarmsWithEntity(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("cannot fetch open alarms: %w", err)
 	}
@@ -80,23 +80,20 @@ func (s *service) ResolveClosed(ctx context.Context) ([]types.Event, error) {
 			}
 
 			if matched {
-				alarmState := alarm.Alarm.Value.State.Value
-				if alarmState == types.AlarmStateOK {
-					lastStep := alarm.Alarm.Value.Steps[len(alarm.Alarm.Value.Steps)-1]
-					before := rule.Duration.SubFrom(now)
+				lastStep := alarm.Alarm.Value.Steps[len(alarm.Alarm.Value.Steps)-1]
+				before := rule.Duration.SubFrom(now)
 
-					if lastStep.Timestamp.Before(before) {
-						event, err := s.eventGenerator.Generate(alarm.Entity)
-						if err != nil {
-							s.logger.Err(err).Msg("cannot generate event")
-							continue
-						}
-
-						event.EventType = types.EventTypeResolveClose
-						event.Timestamp = datetime.NewCpsTime()
-						event.Output = types.RuleNameRulePrefix + rule.Name
-						events = append(events, event)
+				if lastStep.Timestamp.Before(before) {
+					event, err := s.eventGenerator.Generate(alarm.Entity)
+					if err != nil {
+						s.logger.Err(err).Msg("cannot generate event")
+						continue
 					}
+
+					event.EventType = types.EventTypeResolveClose
+					event.Timestamp = datetime.NewCpsTime()
+					event.Output = types.RuleNameRulePrefix + rule.Name
+					events = append(events, event)
 				}
 
 				break
