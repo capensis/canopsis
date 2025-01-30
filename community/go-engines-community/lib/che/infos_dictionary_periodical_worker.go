@@ -118,7 +118,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 	stopListLen := len(stopList)
 
 	defer func(ctx context.Context) {
-		if len(stopList) != stopListLen {
+		if len(stopList) != stopListLen || slices.Compare(stopValues.Values, stopList) != 0 {
 			_, errUpd := w.entityInfosDictCollection.UpdateOne(
 				ctx, bson.M{"_id": stopListId},
 				bson.M{"$set": bson.M{"stop_values": stopList, "limit": limit}},
@@ -171,7 +171,6 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 
 		writeModels = writeModels[:0]
 		bulkBytesSize := 0
-		modelsOrdered := false
 
 		for i := range infoDictDocs {
 			key, value := infoDictDocs[i].ID.Key, infoDictDocs[i].ID.Value
@@ -197,21 +196,19 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 
 				newModel = mongodriver.
 					NewDeleteManyModel().
-					SetFilter(bson.M{"_id.k": key})
-				modelsOrdered = true
+					SetFilter(bson.M{"_id.k": key, "last_update": t}) // current generation of values
 				delete(keysCounts, key)
 			} else {
 				newModel = getUpsertOneModel(infoDictDocs[i].ID, t)
 			}
-			writeModels, bulkBytesSize, err = w.appendWriteModel(ctx, newModel, writeModels, bulkBytesSize, modelsOrdered)
+			writeModels, bulkBytesSize, err = w.appendWriteModel(ctx, writeModels, newModel, bulkBytesSize)
 			if err != nil {
 				return err
 			}
 		}
 
 		if len(writeModels) > 0 {
-			_, err = w.entityInfosDictCollection.BulkWrite(ctx, writeModels,
-				options.BulkWrite().SetOrdered(modelsOrdered))
+			_, err = w.entityInfosDictCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return fmt.Errorf("unable to bulk write entity infos dictionary: %w", err)
 			}
@@ -219,22 +216,21 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 		lastEntityID = infoDictDocs[len(infoDictDocs)-1].EntID
 	}
 
-	if len(stopList) != stopListLen {
+	if len(stopList) != 0 {
 		writeModels = writeModels[:0]
 		bulkBytesSize := 0
 
 		for _, key := range stopList {
 			newModel := getUpsertOneModel(infosDictID{Key: key, Value: ""}, t)
 
-			writeModels, bulkBytesSize, err = w.appendWriteModel(ctx, newModel, writeModels, bulkBytesSize, false)
+			writeModels, bulkBytesSize, err = w.appendWriteModel(ctx, writeModels, newModel, bulkBytesSize)
 			if err != nil {
 				return err
 			}
 		}
 
 		if len(writeModels) > 0 {
-			_, err = w.entityInfosDictCollection.BulkWrite(ctx, writeModels,
-				options.BulkWrite().SetOrdered(false))
+			_, err = w.entityInfosDictCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
 				return fmt.Errorf("unable to bulk write entity infos dictionary: %w", err)
 			}
@@ -243,7 +239,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 	return nil
 }
 
-func (w *infosDictionaryPeriodicalWorker) appendWriteModel(ctx context.Context, newModel mongodriver.WriteModel, writeModels []mongodriver.WriteModel, bulkBytesSize int, isModelsOrdered bool) ([]mongodriver.WriteModel, int, error) {
+func (w *infosDictionaryPeriodicalWorker) appendWriteModel(ctx context.Context, writeModels []mongodriver.WriteModel, newModel mongodriver.WriteModel, bulkBytesSize int) ([]mongodriver.WriteModel, int, error) {
 	b, err := bson.Marshal(newModel)
 	if err != nil {
 		return writeModels, bulkBytesSize, err
@@ -252,8 +248,7 @@ func (w *infosDictionaryPeriodicalWorker) appendWriteModel(ctx context.Context, 
 	newModelLen := len(b)
 	if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize ||
 		len(writeModels) == canopsis.DefaultBulkSize {
-		_, err = w.entityInfosDictCollection.BulkWrite(ctx, writeModels,
-			options.BulkWrite().SetOrdered(isModelsOrdered))
+		_, err = w.entityInfosDictCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
 			return writeModels, bulkBytesSize, fmt.Errorf("unable to bulk write entity infos dictionary: %w", err)
 		}
