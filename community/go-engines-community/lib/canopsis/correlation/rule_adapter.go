@@ -21,6 +21,7 @@ func (a mongoAdapter) Get(ctx context.Context) ([]Rule, error) {
 		"type": bson.M{
 			"$ne": RuleTypeManualGroup,
 		},
+		"soft_deleted": nil,
 	})
 	if err != nil {
 		return nil, err
@@ -60,18 +61,13 @@ func (a mongoAdapter) GetManualRule(ctx context.Context, autoResolve bool) (Rule
 }
 
 func (a mongoAdapter) GetRule(ctx context.Context, id string) (Rule, error) {
-	res := a.dbCollection.FindOne(ctx, bson.M{"_id": id})
-	if err := res.Err(); err != nil {
+	var rule Rule
+	err := a.dbCollection.FindOne(ctx, bson.M{"_id": id, "soft_deleted": nil}).Decode(&rule)
+	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return Rule{}, nil
 		}
 
-		return Rule{}, err
-	}
-
-	var rule Rule
-	err := res.Decode(&rule)
-	if err != nil {
 		return Rule{}, err
 	}
 
