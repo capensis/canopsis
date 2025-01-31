@@ -1,13 +1,13 @@
 <template>
   <div
     :class="[themeClasses]"
-    class="c-new-advanced-search v-input v-input--hide-details theme--light
+    class="c-advanced-search v-input v-input--hide-details theme--light
     v-text-field v-text-field--single-line v-text-field--is-booted v-select v-autocomplete primary--text"
   >
     <div class="v-input__control">
       <div class="v-input__slot">
         <div class="v-text-field__slot">
-          <v-layout class="c-new-advanced-search__groups-wrapper gap-1" align-center wrap>
+          <v-layout class="c-advanced-search__groups-wrapper gap-1" align-center wrap>
             <advanced-search-group
               v-for="(rule, index) in rules"
               v-model="rules[index]"
@@ -17,6 +17,7 @@
               :union="index % 2 === 1"
               :first="index === 0"
               :allow-or="allowOr"
+              disabled
               @input="update($event, index)"
               @click:chip="makeActive"
               @focusout="resetActive"
@@ -38,20 +39,18 @@
         </div>
       </div>
     </div>
-    <div class="v-input__append-outer">
-      <div class="v-input__icon v-input__icon--append-outer">
-        <c-action-btn
-          :tooltip="$t('common.search')"
-          icon="search"
-          @click="submit"
-        />
-        <c-action-btn
-          :tooltip="$t('common.clearSearch')"
-          icon="clear"
-          @click="clear"
-        />
-      </div>
-    </div>
+    <v-layout>
+      <c-action-btn
+        :tooltip="$t('common.search')"
+        icon="search"
+        @click="submit"
+      />
+      <c-action-btn
+        :tooltip="$t('common.clearSearch')"
+        icon="clear"
+        @click="clear"
+      />
+    </v-layout>
   </div>
 </template>
 
@@ -59,17 +58,27 @@
 import { computed, ref, set } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
-import { ALARM_FIELDS, PATTERN_OPERATORS, PATTERN_QUICK_RANGES, PATTERN_STRING_OPERATORS } from '@/constants';
+import {
+  ADVANCED_SEARCH_UNION_CONDITIONS,
+  ALARM_FIELDS,
+  PATTERN_OPERATORS,
+  PATTERN_QUICK_RANGES,
+  PATTERN_STRING_OPERATORS,
+} from '@/constants';
 
-import { advancedSearchRulesToForm, formToAdvancedSearchRules, advancedSearchItemToForm } from '@/helpers/search/new-advanced-search';
+import {
+  advancedSearchToForm,
+  advancedSearchRuleItemToFormItem,
+  formToAdvancedSearch,
+  isAlarmPatternField,
+  isEntityPatternField,
+  isPbehaviorPatternField,
+} from '@/helpers/search/new-advanced-search';
 
 import { useComponentInstance } from '@/hooks/vue';
 import { useEntity } from '@/hooks/store/modules/entity';
 
 import AdvancedSearchGroup from '@/components/common/search/partials/new/advanced-search-group.vue';
-
-const ALARM_ENTITY_FIELDS_PREFIX = 'entity';
-const ALARM_PBEHAVIOR_FIELDS_PREFIX = 'v.pbehavior_info';
 
 export default {
   $_veeValidate: {
@@ -86,28 +95,22 @@ export default {
   setup(props, { emit }) {
     const { fetchContextEntitiesListWithoutStore } = useEntity();
     const instance = useComponentInstance();
-    const rules = ref([advancedSearchItemToForm()]);
+    const json3 = '{"positions":["alarm_pattern","alarm_pattern"],"alarm_pattern":[[{"field":"v.display_name","cond":{"value":"fdsfdsf","type":"eq"}}],[{"field":"v.output","cond":{"value":"gfdgdfg","type":"contain"}}]],"entity_pattern":[],"pbehavior_pattern":[]}';
+
+    const rules = ref([...advancedSearchToForm(JSON.parse(json3)), advancedSearchRuleItemToFormItem()]);
     const activeKey = ref();
 
-    const hasEntityField = computed(() => (
-      rules.value.some(({ attribute }) => attribute.startsWith(ALARM_ENTITY_FIELDS_PREFIX))
-    ));
-    const hasPbehaviorField = computed(() => (
-      rules.value.some(({ attribute }) => attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX))
-    ));
-    const hasAlarmField = computed(() => (
-      rules.value.some(({ attribute }) => (
-        !attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX)
-        && !attribute.startsWith(ALARM_PBEHAVIOR_FIELDS_PREFIX)
-      ))
-    ));
-    const hasOr = computed(() => rules.value.some(({ union }) => union === 'OR'));
+    const hasOr = computed(() => rules.value.some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
+    const hasAlarmField = computed(() => rules.value.some(({ attribute }) => isAlarmPatternField(attribute)));
+    const hasEntityField = computed(() => rules.value.some(({ attribute }) => isEntityPatternField(attribute)));
+    const hasPbehaviorField = computed(() => rules.value.some(({ attribute }) => isPbehaviorPatternField(attribute)));
 
     const allowOr = computed(() => [
       hasEntityField.value,
       hasPbehaviorField.value,
       hasAlarmField.value,
     ].filter(Boolean).length <= 1);
+
     const allowAlarmFields = computed(() => !hasOr.value || (!hasEntityField.value && !hasPbehaviorField.value));
     const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
     const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
@@ -185,9 +188,7 @@ export default {
 
     const next = (nextStep, index) => {
       if (!nextStep && !rules.value[index + 1]) {
-        const newRule = advancedSearchItemToForm();
-
-        console.log(newRule, `${newRule.key}.${index % 2 === 0 ? 'union' : 'attribute'}`);
+        const newRule = advancedSearchRuleItemToFormItem();
 
         rules.value.push(newRule);
         activeKey.value = `${newRule.key}.${index % 2 === 0 ? 'union' : 'attribute'}`;
@@ -199,7 +200,7 @@ export default {
 
     const remove = (index) => {
       if (index === rules.value.length - 1) {
-        set(rules.value, index, advancedSearchItemToForm());
+        set(rules.value, index, advancedSearchRuleItemToFormItem());
 
         return;
       }
@@ -209,19 +210,15 @@ export default {
 
     const submit = async () => {
       const isValid = await instance.$validator.validateAll();
-      const json = '[{"key":"0e79fcb6573","attribute":"v.display_name","operator":"equal","field":"","fieldType":"string","dictionary":"","value":"fdsfdsf","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":["attribute","operator","value"],"rangeValue":{"from":0,"to":0},"union":null},{"key":"e79fcb65731","attribute":"","operator":"","field":"","fieldType":"string","dictionary":"","value":"","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":["union"],"rangeValue":{"from":0,"to":0},"union":"OR"},{"key":"79fcb657318","attribute":"v.output","operator":"contains","field":"","fieldType":"string","dictionary":"","value":"gfdgdfg","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":["attribute","operator","value"],"rangeValue":{"from":0,"to":0},"union":null},{"key":"9fcb6573188","attribute":"","operator":"","field":"","fieldType":"string","dictionary":"","value":"","range":"last1Hour","duration":{"value":1,"unit":"s"},"filled":[],"rangeValue":{"from":0,"to":0},"union":null}]';
-      const json2 = '{"positions":["alarm_pattern","alarm_pattern"],"alarm_pattern":[[{"field":"v.display_name","cond":{"value":"fdsfdsf","type":"eq"}}],[{"field":"v.output","cond":{"value":"gfdgdfg","type":"contain"}}]],"entity_pattern":[],"pbehavior_pattern":[]}';
-      console.log(advancedSearchRulesToForm(JSON.parse(json2)));
-      // console.log(advancedSearchRulesToForm(JSON.parse(json2)));
 
       if (isValid) {
-        emit('submit', formToAdvancedSearchRules(rules.value));
+        emit('submit', formToAdvancedSearch(rules.value));
       }
     };
 
     const clear = () => {
       instance.errors.clear();
-      rules.value = [advancedSearchRulesToForm()];
+      rules.value = [advancedSearchRuleItemToFormItem()];
     };
 
     return {
@@ -238,23 +235,13 @@ export default {
       remove,
       submit,
       clear,
-
-      // TODO: remove code below
-      hasOr,
-      hasEntityField,
-      hasPbehaviorField,
-      hasAlarmField,
-
-      allowAlarmFields,
-      allowEntityFields,
-      allowPbehaviorFields,
     };
   },
 };
 </script>
 
 <style lang="scss" scoped>
-.c-new-advanced-search { // TODO: remove new
+.c-advanced-search { // TODO: remove new
   --v-chip-gap: 4px;
   --input-min-inline-size: 20ch;
 

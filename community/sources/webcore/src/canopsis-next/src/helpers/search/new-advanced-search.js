@@ -2,6 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import {
   ADVANCED_SEARCH_CHIP_TYPES,
+  ADVANCED_SEARCH_PATTERNS_PREFIXES,
   ADVANCED_SEARCH_UNION_CONDITIONS,
   ALARM_PATTERN_FIELDS,
   PATTERN_FIELD_TYPES,
@@ -18,7 +19,67 @@ import {
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
 
-export const getNextType = ({ attribute, fieldType, range, operator }, type) => {
+/**
+ * @typedef {'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern'} AdvancedSearchRuleItemPosition
+ */
+
+/**
+ * @typedef {AdvancedSearchRuleItemPosition[]} AdvancedSearchPositions
+ */
+
+/**
+ * @typedef {Object} AdvancedSearchPatterns
+ * @property {PatternGroups} alarm_pattern
+ * @property {PatternGroups} entity_pattern
+ * @property {PatternGroups} pbehavior_pattern
+ */
+
+/**
+ * @typedef {AdvancedSearchPatterns & AdvancedSearchPositions} AdvancedSearch
+ */
+
+/**
+ * @typedef {
+ * 'union'
+ * | 'attribute'
+ * | 'operator'
+ * | 'fieldType'
+ * | 'dictionary'
+ * | 'range'
+ * | 'rangeValue'
+ * | 'value'
+ * | 'duration'
+ * } AdvancedSearchChipType
+ */
+
+/**
+ * @typedef {'OR' | 'AND'} AdvancedSearchUnion
+ */
+
+/**
+ * @typedef {PatternRuleForm} AdvancedSearchFormItem
+ * @property {AdvancedSearchUnion} union
+ * @property {string} range
+ * @property {{ from: number, to: number }} rangeValue
+ * @property {AdvancedSearchChipType[]} filled
+ */
+
+/**
+ * @typedef {AdvancedSearchFormItem[]} AdvancedSearchForm
+ */
+
+/**
+ * Determines the next chip type for an advanced search form item based on the current type and attributes.
+ *
+ * @param {Object} [params = {}] - The parameters for determining the next chip type.
+ * @param {string} [params.attribute] - The attribute of the rule item.
+ * @param {string} [params.fieldType] - The field type of the rule item.
+ * @param {string} [params.range] - The range of the rule item.
+ * @param {string} [params.operator] - The operator of the rule item.
+ * @param {AdvancedSearchChipType | null} [type = null] - The current chip type.
+ * @returns {AdvancedSearchChipType | null} - The next chip type, or null if there is no next type.
+ */
+export const getNextForFormItemType = ({ attribute, fieldType, range, operator } = {}, type = null) => {
   if (type === ADVANCED_SEARCH_CHIP_TYPES.union) {
     return null;
   }
@@ -76,42 +137,76 @@ export const getNextType = ({ attribute, fieldType, range, operator }, type) => 
   }
 };
 
-export const getFilledForAdvancedSearchFormItem = (formItem) => {
+/**
+ * Generates an array of chip types for an advanced search form item, filling it based on the item's attributes.
+ *
+ * @param {Object} formItem - The form item for which to generate the filled array.
+ * @returns {Array<AdvancedSearchChipType>} - An array of chip types representing the filled state of the form item.
+ */
+export const getFilledArrayForAdvancedSearchFormItem = (formItem) => {
   const filled = [];
+  let type = getNextForFormItemType(formItem);
 
-  for (let type = getNextType(formItem); type; type = getNextType(formItem, type)) {
-    if (type === getNextType(formItem, type)) {
+  while (type) {
+    const newType = getNextForFormItemType(formItem, type);
+
+    if (newType === type) {
       break;
     }
 
-    filled.push(type);
+    type = newType;
+
+    if (type) {
+      filled.push(type);
+    }
   }
 
   return filled;
 };
 
-export const advancedSearchItemToForm = (advancedSearchItem) => {
-  const form = patternRuleToForm(advancedSearchItem);
+/**
+ * Converts an advanced search rule item into a form item.
+ *
+ * @param {Object} [advancedSearchRuleItem = {}] - The advanced search rule item to be converted.
+ * @returns {AdvancedSearchFormItem} - The converted form item with filled attributes and range values.
+ */
+export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) => {
+  const formItem = patternRuleToForm(advancedSearchRuleItem);
 
-  form.filled = getFilledForAdvancedSearchFormItem(form);
-  form.rangeValue = {
-    from: form.range.from,
-    to: form.range.to,
+  formItem.filled = getFilledArrayForAdvancedSearchFormItem(formItem);
+  formItem.rangeValue = {
+    from: formItem.range.from,
+    to: formItem.range.to,
   };
-  form.range = form.range.type;
-  form.union = null;
+  formItem.range = formItem.range.type;
+  formItem.union = null;
 
-  return form;
+  return formItem;
 };
 
+/**
+ * Creates an advanced search union item with a specified union condition.
+ *
+ * @param {AdvancedSearchUnion} [union = ADVANCED_SEARCH_UNION_CONDITIONS.and] - The union condition to be applied.
+ * @returns {AdvancedSearchFormItem} - The advanced search union item with the specified
+ *                                     union condition and filled attributes.
+ */
 export const getAdvancedSearchUnionItem = (union = ADVANCED_SEARCH_UNION_CONDITIONS.and) => ({
-  ...advancedSearchItemToForm(),
+  ...advancedSearchRuleItemToFormItem(),
   union,
 
   filled: [ADVANCED_SEARCH_CHIP_TYPES.union],
 });
 
-export const advancedSearchRulesToForm = ({ positions = [], ...patterns } = {}) => {
+/**
+ * Converts advanced search into a form structure.
+ *
+ * @param {AdvancedSearch} params - The parameters for the conversion.
+ * @param {AdvancedSearchPositions} params.positions - The positions of the patterns.
+ * @param {AdvancedSearchPatterns} params.patterns - The advanced search patterns.
+ * @returns {AdvancedSearchForm} - The form structure representing the advanced search rules.
+ */
+export const advancedSearchToForm = ({ positions = [], ...patterns } = {}) => {
   const clonedPatterns = cloneDeep(patterns);
 
   return positions.reduce((acc, key, index) => {
@@ -123,13 +218,44 @@ export const advancedSearchRulesToForm = ({ positions = [], ...patterns } = {}) 
       acc.push(getAdvancedSearchUnionItem(ADVANCED_SEARCH_UNION_CONDITIONS.and));
     }
 
-    acc.push(advancedSearchItemToForm(clonedPatterns[key][0]?.pop?.()));
+    acc.push(advancedSearchRuleItemToFormItem(clonedPatterns[key][0]?.pop?.()));
 
     return acc;
   }, []);
 };
 
-export const formToAdvancedSearchRules = (form = []) => {
+/**
+ * Checks if a given field is an entity pattern field.
+ *
+ * @param {string} [field = ''] - The field string to be checked.
+ * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
+ */
+export const isEntityPatternField = (field = '') => field.startsWith(ADVANCED_SEARCH_PATTERNS_PREFIXES.entity);
+
+/**
+ * Checks if a given field is a pbehavior pattern field.
+ *
+ * @param {string} [field = ''] - The field string to be checked.
+ * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
+ */
+export const isPbehaviorPatternField = (field = '') => field.startsWith(ADVANCED_SEARCH_PATTERNS_PREFIXES.pbehavior);
+
+/**
+ * Checks if a given field is an alarm pattern field.
+ *
+ * @param {string} [field = ''] - The field string to be checked.
+ * @returns {boolean} - Returns true if the field is an entity pattern field, otherwise false.
+ */
+export const isAlarmPatternField = (field = '') => !isEntityPatternField(field) && !isPbehaviorPatternField(field);
+
+/**
+ * Transforms a form structure into an advanced search pattern structure.
+ *
+ * @param {AdvancedSearchForm} [form = []] - The form array to be transformed.
+ * @returns {AdvancedSearch} - The structured advanced search pattern object, including positions
+ *                     and categorized pattern arrays (alarm, entity, pbehavior).
+ */
+export const formToAdvancedSearch = (form = []) => {
   let firstPatternKey = null;
 
   return form.reduce((acc, { union, rangeValue, range, filled, ...item }) => {
@@ -157,9 +283,9 @@ export const formToAdvancedSearchRules = (form = []) => {
 
     let key = PATTERNS_FIELDS.alarm;
 
-    if (preparedItem.field.startsWith('entity')) { // TODO: changed to constants
+    if (isEntityPatternField(preparedItem.field)) {
       key = PATTERNS_FIELDS.entity;
-    } else if (preparedItem.field.startsWith('v.pbehavior_info')) { // TODO: changed to constants
+    } else if (isPbehaviorPatternField(preparedItem.field)) {
       key = PATTERNS_FIELDS.pbehavior;
     }
 

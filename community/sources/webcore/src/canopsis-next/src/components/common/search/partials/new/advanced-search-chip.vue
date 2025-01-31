@@ -8,16 +8,15 @@
     <template #activator="{ on }">
       <span v-if="multiple">
         <v-chip
-          :close="closable"
+          :close="closable && !disabled"
           :color="color"
           class="c-new-advanced-search__array-chip"
-          @click.prevent=""
-          @click:close="close"
+          v-on="multipleChipListeners"
         >
           <v-chip
             v-for="item in selectedItems"
             :key="item[itemValue]"
-            close
+            :close="!disabled"
           >
             {{ item[itemText] ?? item[itemValue] }}
           </v-chip>
@@ -51,9 +50,8 @@
         <v-chip
           v-if="!active && !alwaysActive"
           :color="color"
-          :close="closable"
-          @click="click"
-          @click:close="close"
+          :close="closable && !disabled"
+          v-on="chipListeners"
         >
           {{ chipText }}
         </v-chip>
@@ -178,6 +176,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const inputEl = ref(null);
@@ -195,6 +197,7 @@ export default {
       bottom: true,
       offsetY: true,
       transition: false,
+      disabled: props.disabled,
     }));
 
     const showMenu = () => opened.value = true;
@@ -239,7 +242,7 @@ export default {
 
     const chipText = computed(() => selectedItems.value.map(item => item[props.itemText] ?? item[props.itemValue]).join(','));
 
-    const click = () => emit('click');
+    const click = () => !props.disabled && emit('click');
     const close = () => emit('close');
     const focus = () => {
       showMenu();
@@ -259,6 +262,28 @@ export default {
         inputValue.value = '';
       }
     };
+
+    const chipListeners = computed(() => {
+      const listeners = {};
+
+      if (!props.disabled) {
+        listeners.clisk = click;
+        listeners['close:click'] = close;
+      }
+
+      return listeners;
+    });
+
+    const multipleChipListeners = computed(() => {
+      const listeners = {};
+
+      if (!props.disabled) {
+        listeners['click.prevent'] = () => {};
+        listeners['close:click'] = close;
+      }
+
+      return listeners;
+    });
 
     const select = (value) => {
       opened.value = false;
@@ -324,6 +349,8 @@ export default {
       chipText,
       lazyItems,
       pending,
+      chipListeners,
+      multipleChipListeners,
 
       apply,
       select,

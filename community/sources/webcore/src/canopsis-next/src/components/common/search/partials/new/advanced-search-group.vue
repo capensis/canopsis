@@ -28,11 +28,9 @@ import { Validator } from 'vee-validate';
 
 import {
   ADVANCED_SEARCH_UNION_CONDITIONS,
-  ALARM_FIELDS,
-  ALARM_PATTERN_FIELDS,
+  ADVANCED_SEARCH_CHIP_TYPES,
   PATTERN_ARRAY_OPERATORS,
   PATTERN_CONDITIONS,
-  PATTERN_DURATION_OPERATORS,
   PATTERN_FIELD_TYPES,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
@@ -41,119 +39,14 @@ import {
   QUICK_RANGES,
 } from '@/constants';
 
-import {
-  isArrayCondition,
-  isDatePatternRuleField,
-  isDurationPatternRuleField,
-  isInfosPatternRuleField,
-  isValueInfosPatternRuleField,
-} from '@/helpers/entities/pattern/form';
-import { advancedSearchRulesToForm } from '@/helpers/search/new-advanced-search';
+import { isArrayCondition } from '@/helpers/entities/pattern/form';
+import { advancedSearchRuleItemToFormItem, getNextForFormItemType } from '@/helpers/search/new-advanced-search';
 
 import { useModelField } from '@/hooks/form/model-field';
 import { useI18n } from '@/hooks/i18n';
 
 import AdvancedSearchChip from './advanced-search-chip.vue';
 import AdvancedSearchRangeChip from './advanced-search-range-chip.vue';
-
-const patterns = {
-  groups: [
-    {
-      key: 'group1',
-      rules: [
-        {
-          filled: ['attribute', 'operation', 'value'],
-          key: 'd42ace4e0d3',
-          attribute: '',
-          dictionary: '',
-          duration: {
-            unit: 's',
-            value: 1,
-          },
-          field: '',
-          fieldType: 'string',
-          operator: '',
-          range: {
-            from: 0,
-            to: 0,
-            type: 'last1Hour',
-          },
-          value: '',
-        },
-      ],
-    },
-  ],
-};
-
-const ADVANCED_SEARCH_CHIP_TYPES = {
-  attribute: 'attribute',
-  dictionary: 'dictionary',
-  operator: 'operator',
-  fieldType: 'fieldType',
-  value: 'value',
-  duration: 'duration',
-  range: 'range',
-  rangeValue: 'rangeValue',
-  union: 'union',
-};
-
-export const getNextType = ({ attribute, fieldType, range, operator }, type) => {
-  if (type === ADVANCED_SEARCH_CHIP_TYPES.union) {
-    return null;
-  }
-
-  if (!attribute) {
-    return ADVANCED_SEARCH_CHIP_TYPES.attribute;
-  }
-
-  switch (type) {
-    case ADVANCED_SEARCH_CHIP_TYPES.attribute:
-      if (isDatePatternRuleField(attribute)) {
-        return ADVANCED_SEARCH_CHIP_TYPES.range;
-      }
-
-      if (isValueInfosPatternRuleField(attribute)) {
-        return ADVANCED_SEARCH_CHIP_TYPES.fieldType;
-      }
-
-      if (attribute === ALARM_PATTERN_FIELDS.ticketData) {
-        return ADVANCED_SEARCH_CHIP_TYPES.dictionary;
-      }
-
-      return ADVANCED_SEARCH_CHIP_TYPES.operator;
-
-    case ADVANCED_SEARCH_CHIP_TYPES.fieldType:
-      if (fieldType === PATTERN_FIELD_TYPES.boolean) {
-        return ADVANCED_SEARCH_CHIP_TYPES.value;
-      }
-
-      return ADVANCED_SEARCH_CHIP_TYPES.operator;
-
-    case ADVANCED_SEARCH_CHIP_TYPES.dictionary:
-      return ADVANCED_SEARCH_CHIP_TYPES.operator;
-
-    case ADVANCED_SEARCH_CHIP_TYPES.operator:
-      if (isDurationPatternRuleField(attribute)) {
-        return ADVANCED_SEARCH_CHIP_TYPES.duration;
-      }
-
-      if ([PATTERN_OPERATORS.isEmpty, PATTERN_OPERATORS.isNotEmpty].includes(operator)) {
-        return null;
-      }
-
-      return ADVANCED_SEARCH_CHIP_TYPES.value;
-
-    case ADVANCED_SEARCH_CHIP_TYPES.range:
-      if (range === QUICK_RANGES.custom.value) {
-        return ADVANCED_SEARCH_CHIP_TYPES.rangeValue;
-      }
-
-      return null;
-
-    default:
-      return null;
-  }
-};
 
 export default {
   components: { AdvancedSearchChip, AdvancedSearchRangeChip },
@@ -278,20 +171,20 @@ export default {
 
     const goToNextType = (steps = 1) => {
       for (let i = 0; i < steps; i += 1) {
-        activeType.value = getNextType(props.rule, activeType.value);
+        activeType.value = getNextForFormItemType(props.rule, activeType.value);
       }
     };
 
     const selectChipItem = (value, type) => {
       const newRule = { ...props.rule, [type]: value };
-      const oldRuleNextType = getNextType(props.rule, type);
-      let nextType = getNextType(newRule, type);
+      const oldRuleNextType = getNextForFormItemType(props.rule, type);
+      let nextType = getNextForFormItemType(newRule, type);
       if (!nextType) {
         if (oldRuleNextType) {
           const typesForClear = [oldRuleNextType];
           updateModel({
             ...props.rule,
-            ...pick(advancedSearchRulesToForm(), typesForClear),
+            ...pick(advancedSearchRuleItemToFormItem(), typesForClear),
             [type]: value,
             filled: difference(props.rule.filled, typesForClear),
           });
@@ -308,7 +201,7 @@ export default {
 
       const typesForClear = [nextType];
 
-      while (nextType = getNextType(newRule, nextType)) {
+      while (nextType = getNextForFormItemType(newRule, nextType)) {
         typesForClear.push(nextType);
       }
 
@@ -324,7 +217,7 @@ export default {
 
       updateModel({
         ...props.rule,
-        ...pick(advancedSearchRulesToForm(), typesForClear),
+        ...pick(advancedSearchRuleItemToFormItem(), typesForClear),
         [type]: value,
         filled: uniq(filled),
       });
@@ -396,10 +289,10 @@ export default {
             input: value => selectChipItem(value, type),
             click: () => clickChip(key),
             focusout: () => emit('focusout'),
-            next: () => setTimeout(() => emit('next', getNextType(
+            next: () => setTimeout(() => emit('next', getNextForFormItemType(
               props.rule,
               multiple
-                ? getNextType(props.rule, type)
+                ? getNextForFormItemType(props.rule, type)
                 : type,
             ))), // TODO: refactor
             close: remove,
@@ -420,6 +313,7 @@ export default {
             first: props.first && !result.length,
             value: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue ? props.rule[type] : undefined,
             active: key === props.activeKey,
+            disabled: props.disabled,
             alwaysActive: true,
             items: itemsByType.value[type],
             itemText: fetchItems ? 'name' : 'text',
@@ -429,7 +323,7 @@ export default {
           },
           on: {
             input: selectItem,
-            next: () => setTimeout(() => emit('next', getNextType(props.rule, type))), // TODO: refactor
+            next: () => setTimeout(() => emit('next', getNextForFormItemType(props.rule, type))), // TODO: refactor
           },
         });
       }
