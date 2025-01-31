@@ -26,6 +26,8 @@ type Provider interface {
 	Pipeline() []bson.M
 	PipelineForField(field string) []bson.M
 	GetDisplayNameQuery(field string) bson.M
+	// AddAuthorStr converts object result after Pipeline() into string author with display_name by default
+	AddAuthorStr(field string) bson.M
 }
 
 func NewProvider(configProvider config.ApiConfigProvider) Provider {
@@ -92,6 +94,33 @@ func (p *provider) GetDisplayNameQuery(field string) bson.M {
 	}
 
 	return bson.M{"$concat": concat}
+}
+
+func (p *provider) AddAuthorStr(field string) bson.M {
+	refField := "$" + field
+	return bson.M{
+		"$addFields": bson.M{
+			field: bson.M{
+				"$cond": bson.M{
+					"if":   bson.M{"$in": []any{refField, []any{bson.M{}, nil}}},
+					"then": "",
+					"else": bson.M{
+						"$cond": bson.M{
+							"if":   bson.M{"$ne": []string{refField + ".display_name", ""}},
+							"then": refField + ".display_name",
+							"else": bson.M{
+								"$cond": bson.M{
+									"if":   bson.M{"$ne": []string{refField + ".name", ""}},
+									"then": refField + ".name",
+									"else": "",
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	}
 }
 
 // getTempField returns a field name with "_" prefix and 3 random characters

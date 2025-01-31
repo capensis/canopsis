@@ -1,7 +1,6 @@
 package pbehavior
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -88,7 +87,7 @@ func NewPBehaviorInfo(time datetime.CpsTime, result ResolveResult) types.Pbehavi
 		CanonicalType: result.Type.Type,
 		IconName:      result.Type.IconName,
 		Color:         color,
-		Author:        canopsis.DefaultEventAuthor,
+		Author:        result.Author,
 	}
 
 	return pbhInfo
