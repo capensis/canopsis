@@ -19,6 +19,11 @@ export const ADVANCED_SEARCH_UNION_CONDITIONS = {
   or: 'OR',
 };
 
+export const ADVANCED_SEARCH_PATTERNS_PREFIXES = {
+  entity: 'entity.',
+  pbehavior: 'v.pbehavior_info.',
+};
+
 export const ADVANCED_SEARCH_CONDITIONS = {
   less: '<',
   more: '>',
