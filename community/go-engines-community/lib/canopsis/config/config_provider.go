@@ -469,7 +469,7 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.logger.Error().
 			Strs("invalid", cfg.API.AuthorScheme).
 			Msgf("bad value AuthorScheme of %s config section, previous value is used", sectionName)
-	} else if !reflect.DeepEqual(cfg.API.AuthorScheme, p.conf.AuthorScheme) {
+	} else if !slices.Equal(cfg.API.AuthorScheme, p.conf.AuthorScheme) {
 		p.logger.Info().
 			Strs("previous", p.conf.AuthorScheme).
 			Strs("new", cfg.API.AuthorScheme).
