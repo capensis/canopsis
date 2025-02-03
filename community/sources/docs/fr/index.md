@@ -41,7 +41,8 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **23.10.9**  | [:material-file-document:](notes-de-version/23.10.9.md)  | 13/11/2024 ||
+    | **23.10.10** | [:material-file-document:](notes-de-version/23.10.10.md) | 31/01/2025 ||
+    | 23.10.9      | [:material-file-document:](notes-de-version/23.10.9.md)  | 13/11/2024 ||
     | 23.10.8      | [:material-file-document:](notes-de-version/23.10.8.md)  | 28/06/2024 ||
     | 23.10.7      | [:material-file-document:](notes-de-version/23.10.7.md)  | 02/05/2024 ||
     | 23.10.6      | [:material-file-document:](notes-de-version/23.10.6.md)  | 12/04/2024 ||
