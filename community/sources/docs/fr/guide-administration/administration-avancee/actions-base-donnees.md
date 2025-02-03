@@ -69,7 +69,8 @@ mongodump --username cpsmongo --password canopsis --db canopsis --out /chemin/ve
 !!! attention
     Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
 
-Avant de procéder à la restauration, arrêtez l'hyperviseur.
+Avant de procéder à la restauration, arrêtez l'hyperviseur.  
+
 === "Canopsis Community (édition open-source)"
 
     ```sh
@@ -108,7 +109,8 @@ mongorestore --username cpsmongo --password canopsis --db canopsis /chemin/vers/
 !!! note
     Lors de la sauvegarde de la base, la commande crée un sous-dossier dans `/chemin/vers/sauvegarde` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au chemin dans la commande `mongorestore`.
 
-Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.
+Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.  
+
 === "Canopsis Community (édition open-source)"
 
     ```sh
