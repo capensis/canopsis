@@ -1,4 +1,4 @@
-%define debug_package %{nil} 
+%define debug_package %{nil}
 Name: canopsis
 Version: %{version}
 Release: 1%{?dist}
@@ -63,7 +63,7 @@ fi
 /opt/canopsis/share/database/migrations/*.js
 /opt/canopsis/share/database/postgres_migrations/*.sql
 /opt/canopsis/share/database/tech_postgres_migrations/*.sql
-/opt/canopsis/var/lib/upload-files
+/opt/canopsis/var/lib
 %defattr(0644, root, root, 0755)
 /usr/lib/systemd/system/canopsis-*
 /usr/lib/systemd/system/canopsis.service
