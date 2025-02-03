@@ -101,8 +101,10 @@ Canopsis WebUI RPM Package
 
 %pre webui
 if [ -f "/etc/nginx/conf.d/default.conf" ]; then
-  echo "Disabling default.conf if existing"
+if rpm -qf /etc/nginx/conf.d/default.conf  | grep -q canopsis-webui;then 
+  echo "Disabling default.conf from previous existing Canopsis WebUI installation"
   mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+fi
 fi
 
 %preun webui
