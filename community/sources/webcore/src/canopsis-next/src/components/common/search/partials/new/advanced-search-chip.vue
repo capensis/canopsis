@@ -53,7 +53,14 @@
           :close="closable && !disabled"
           v-on="chipListeners"
         >
-          {{ chipText }}
+          <v-progress-circular
+            v-if="valuesPending"
+            color="primary"
+            size="16"
+            width="2"
+            indeterminate
+          />
+          <span v-else>{{ chipText }}</span>
         </v-chip>
       </span>
     </template>
@@ -227,6 +234,7 @@ export default {
       items: lazyItems,
       changeSelectedItems,
       updateSearch,
+      valuesPending,
       wholePending: pending,
       hasMoreItems,
       fetchItems,
@@ -267,8 +275,8 @@ export default {
       const listeners = {};
 
       if (!props.disabled) {
-        listeners.clisk = click;
-        listeners['close:click'] = close;
+        listeners.click = click;
+        listeners['click:close'] = close;
       }
 
       return listeners;
@@ -279,7 +287,7 @@ export default {
 
       if (!props.disabled) {
         listeners['click.prevent'] = () => {};
-        listeners['close:click'] = close;
+        listeners['click:close'] = close;
       }
 
       return listeners;
@@ -348,6 +356,7 @@ export default {
       menuProps,
       chipText,
       lazyItems,
+      valuesPending,
       pending,
       chipListeners,
       multipleChipListeners,

@@ -266,8 +266,17 @@ export default {
     const chips = computed(() => {
       const result = (props.rule.filled ?? []).map((type, index, filled) => {
         const key = `${props.rule.key}.${type}`;
-        const multiple = type === ADVANCED_SEARCH_CHIP_TYPES.value && (isArrayCondition(props.rule.operator));
-        const fetchItems = type === ADVANCED_SEARCH_CHIP_TYPES.value ? currentAttribute.value?.fetchValues : undefined;
+        let multiple = false;
+        let itemText;
+        let itemValue;
+        let fetchItems;
+
+        if (type === ADVANCED_SEARCH_CHIP_TYPES.value) {
+          multiple = isArrayCondition(props.rule.operator);
+          itemText = currentAttribute.value?.itemText;
+          itemValue = currentAttribute.value?.itemValue;
+          fetchItems = currentAttribute.value?.fetchValues;
+        }
 
         return {
           key,
@@ -279,9 +288,9 @@ export default {
             allowText: !itemsByType.value[type]?.length,
             closable: index === filled.length - 1 && !props.union,
             disabled: props.disabled,
+            itemText: itemText ?? 'text',
+            itemValue: itemValue ?? 'value',
             fetchItems,
-            itemText: fetchItems ? 'name' : 'text',
-            itemValue: fetchItems ? '_id' : 'value',
             multiple,
             color: validator.errors.has(props.rule.key) ? 'error' : undefined,
           },
@@ -304,7 +313,15 @@ export default {
         const type = activeType.value;
         const key = `${props.rule.key}.${type}`;
 
-        const fetchItems = type === ADVANCED_SEARCH_CHIP_TYPES.value ? currentAttribute.value?.fetchValues : undefined;
+        let itemText;
+        let itemValue;
+        let fetchItems;
+
+        if (type === ADVANCED_SEARCH_CHIP_TYPES.value) {
+          itemText = currentAttribute.value?.itemText;
+          itemValue = currentAttribute.value?.itemValue;
+          fetchItems = currentAttribute.value?.fetchValues;
+        }
 
         result.push({
           key,
@@ -316,8 +333,8 @@ export default {
             disabled: props.disabled,
             alwaysActive: true,
             items: itemsByType.value[type],
-            itemText: fetchItems ? 'name' : 'text',
-            itemValue: fetchItems ? '_id' : 'value',
+            itemText: itemText ?? 'text',
+            itemValue: itemValue ?? 'value',
             fetchItems,
             allowText: !itemsByType.value[type]?.length,
           },

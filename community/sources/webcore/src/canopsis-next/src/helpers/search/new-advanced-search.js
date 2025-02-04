@@ -154,11 +154,11 @@ export const getFilledArrayForAdvancedSearchFormItem = (formItem) => {
       break;
     }
 
-    type = newType;
-
     if (type) {
       filled.push(type);
     }
+
+    type = newType;
   }
 
   return filled;

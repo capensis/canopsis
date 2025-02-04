@@ -17,7 +17,6 @@
               :union="index % 2 === 1"
               :first="index === 0"
               :allow-or="allowOr"
-              disabled
               @input="update($event, index)"
               @click:chip="makeActive"
               @focusout="resetActive"
@@ -58,13 +57,7 @@
 import { computed, ref, set } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
-import {
-  ADVANCED_SEARCH_UNION_CONDITIONS,
-  ALARM_FIELDS,
-  PATTERN_OPERATORS,
-  PATTERN_QUICK_RANGES,
-  PATTERN_STRING_OPERATORS,
-} from '@/constants';
+import { ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
 
 import {
   advancedSearchToForm,
@@ -76,9 +69,9 @@ import {
 } from '@/helpers/search/new-advanced-search';
 
 import { useComponentInstance } from '@/hooks/vue';
-import { useEntity } from '@/hooks/store/modules/entity';
 
-import AdvancedSearchGroup from '@/components/common/search/partials/new/advanced-search-group.vue';
+import { useAdvancedSearchAttributes } from './hooks/new-advanced-search';
+import AdvancedSearchGroup from './partials/new/advanced-search-group.vue';
 
 export default {
   $_veeValidate: {
@@ -93,11 +86,9 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { fetchContextEntitiesListWithoutStore } = useEntity();
     const instance = useComponentInstance();
-    const json3 = '{"positions":["alarm_pattern","alarm_pattern"],"alarm_pattern":[[{"field":"v.display_name","cond":{"value":"fdsfdsf","type":"eq"}}],[{"field":"v.output","cond":{"value":"gfdgdfg","type":"contain"}}]],"entity_pattern":[],"pbehavior_pattern":[]}';
 
-    const rules = ref([...advancedSearchToForm(JSON.parse(json3)), advancedSearchRuleItemToFormItem()]);
+    const rules = ref([advancedSearchRuleItemToFormItem()]);
     const activeKey = ref();
 
     const hasOr = computed(() => rules.value.some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
@@ -115,63 +106,11 @@ export default {
     const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
     const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
 
-    const items = computed(() => [
-      { header: 'Common' },
-      {
-        value: ALARM_FIELDS.displayName,
-        operators: [
-          ...PATTERN_STRING_OPERATORS,
-
-          PATTERN_OPERATORS.isOneOf,
-          PATTERN_OPERATORS.isNotOneOf,
-        ],
-        text: 'Display name',
-      },
-      {
-        value: ALARM_FIELDS.output,
-        operators: [
-          ...PATTERN_STRING_OPERATORS,
-
-          PATTERN_OPERATORS.isOneOf,
-          PATTERN_OPERATORS.isNotOneOf,
-        ],
-        text: 'Output',
-      },
-      {
-        value: ALARM_FIELDS.creationDate,
-        text: 'Creation date',
-        operators: PATTERN_QUICK_RANGES,
-      },
-      {
-        value: ALARM_FIELDS.component,
-        operators: [
-          ...PATTERN_STRING_OPERATORS,
-
-          PATTERN_OPERATORS.isOneOf,
-          PATTERN_OPERATORS.isNotOneOf,
-        ],
-        fetchValues: fetchContextEntitiesListWithoutStore,
-        text: 'Component',
-        disabled: !allowAlarmFields.value,
-      },
-      {
-        value: ALARM_FIELDS.entityInfos,
-        text: 'Entity infos',
-        disabled: !allowEntityFields.value,
-        items: [
-          {
-            value: 'dictionary1',
-            text: 'dictionary1',
-            items: [{ value: 'value', text: 'Value' }, { value: 'name', text: 'Name' }],
-          },
-          {
-            value: 'dictionary2',
-            text: 'dictionary2',
-            items: [{ value: 'value', text: 'Value' }, { value: 'name', text: 'Name' }],
-          },
-        ],
-      },
-    ]);
+    const { attributes: items } = useAdvancedSearchAttributes({
+      allowAlarmFields,
+      allowEntityFields,
+      allowPbehaviorFields,
+    });
 
     const update = (value, index) => {
       instance.errors.clear();

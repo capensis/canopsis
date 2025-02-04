@@ -111,7 +111,7 @@ export const ALARM_ADVANCED_SEARCH_GROUPS = {
 
 export const ALARM_GROUPED_ADVANCED_SEARCH_FIELDS = {
   [ALARM_ADVANCED_SEARCH_GROUPS.basic]: [
-    ALARM_FIELDS.displayName, // string with is on of
+    ALARM_FIELDS.displayName,
     ALARM_FIELDS.connector,
     ALARM_FIELDS.connectorName,
     ALARM_FIELDS.component,
