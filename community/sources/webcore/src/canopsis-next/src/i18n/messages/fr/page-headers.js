@@ -72,9 +72,11 @@ export default {
   },
   [USER_PERMISSIONS.technical.role]: {
     title: 'Rôles',
+    message: 'Gestion des rôles des utilisateurs de Canopsis',
   },
   [USER_PERMISSIONS.technical.user]: {
     title: 'Utilisateurs',
+    message: 'Gestion des utilisateurs de Canopsis',
   },
 
   /**
@@ -94,6 +96,7 @@ export default {
    */
   [USER_PERMISSIONS.technical.parameters]: {
     title: 'Paramètres',
+    message: 'Paramètres divers et variés de l\'interface de Canopsis',
   },
   [USER_PERMISSIONS.technical.healthcheck]: {
     title: 'Bilan de santé',
