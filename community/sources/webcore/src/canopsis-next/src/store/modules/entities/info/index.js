@@ -54,7 +54,8 @@ export default {
     autoSuggestPbehaviorName: state => state.appInfo?.auto_suggest_pbehavior_name,
     userTimezones: state => state.appInfo?.user_timezones ?? [],
     shownUserTimezone: (state, getters) => (
-      getters.userTimezones.length > 1 || !getters.userTimezones.includes(getLocalTimezone())
+      getters.userTimezones.length > 1
+      || (getters.userTimezones.length && !getters.userTimezones.includes(getLocalTimezone()))
     ),
   },
   mutations: {
