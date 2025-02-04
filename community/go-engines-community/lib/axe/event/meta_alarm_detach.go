@@ -99,7 +99,6 @@ func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Conte
 		eventsCount := types.CpsNumber(0)
 		writeModels := make([]mongodriver.WriteModel, 0, len(alarms))
 		childrenIds := make([]string, 0, len(alarms))
-
 		for _, childAlarm := range alarms {
 			if childAlarm.Alarm.RemoveParent(event.Entity.ID) {
 				metaAlarm.RemoveChild(childAlarm.Entity.ID)
@@ -159,7 +158,8 @@ func (p *metaAlarmDetachProcessor) detachChildrenFromMetaAlarm(ctx context.Conte
 			Count: int64(len(metaAlarmChildren)),
 		}
 		if len(metaAlarmChildren) > 0 {
-			infos.Children = metaAlarmChildren[len(metaAlarmChildren)-1]
+			infos.LastChild = metaAlarmChildren[len(metaAlarmChildren)-1]
+			infos.Children = infos.LastChild
 		}
 
 		output := ""

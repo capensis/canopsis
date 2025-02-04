@@ -150,9 +150,23 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                 newGroup.push(ackCond);
                                 break;
                             case "canceled":
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {initiator: true});
+                                if (!stepCond) {
+                                    return null;
+                                }
+
+                                newGroup.push(stepCond);
+                                break;
                             case "ticket":
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {m: true, initiator: true});
+                                if (!stepCond) {
+                                    return null;
+                                }
+
+                                newGroup.push(stepCond);
+                                break;
                             case "snooze":
-                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {});
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {a: true, initiator: true});
                                 if (!stepCond) {
                                     return null;
                                 }
@@ -160,8 +174,15 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                 newGroup.push(stepCond);
                                 break;
                             case "state":
+                                var sCond = migrateOldStateAndStatusAlarmStepPattern(vValue, newField, {initiator: true})
+                                if (!sCond) {
+                                    return null;
+                                }
+
+                                newGroup.push(sCond);
+                                break;
                             case "status":
-                                var sCond = migrateOldStateAndStatusAlarmStepPattern(vValue, newField)
+                                var sCond = migrateOldStateAndStatusAlarmStepPattern(vValue, newField, {})
                                 if (!sCond) {
                                     return null;
                                 }
@@ -538,16 +559,33 @@ function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowedField
     return res;
 }
 
-function migrateOldStateAndStatusAlarmStepPattern(oldAlarmStepPattern, stepField) {
+function migrateOldStateAndStatusAlarmStepPattern(oldAlarmStepPattern, stepField, allowedFields) {
     if (oldAlarmStepPattern === null) {
         return null;
     }
 
     var res = null;
     for (var field of Object.keys(oldAlarmStepPattern)) {
+        var value = oldAlarmStepPattern[field];
         switch (field) {
             case "val":
-                var cond = migrateOldIntPattern(oldAlarmStepPattern.val);
+                var cond = migrateOldIntPattern(value);
+                if (!cond) {
+                    return null;
+                }
+                res = {
+                    field: stepField + "." + field,
+                    cond: cond,
+                };
+                break;
+            case "a":
+            case "m":
+            case "initiator":
+                if (!allowedFields || !allowedFields[field]) {
+                    return null;
+                }
+
+                var cond = migrateOldStringPattern(value);
                 if (!cond) {
                     return null;
                 }

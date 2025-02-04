@@ -469,10 +469,16 @@ function migrateOldGroupForAlarmList(oldGroup) {
                 case "v.long_output":
                 case "v.initial_output":
                 case "v.initial_long_output":
-                case "v.ack._t":
+                case "v.state.initiator":
+                case "v.ack.t":
                 case "v.ack.a":
                 case "v.ack.m":
                 case "v.ack.initiator":
+                case "v.canceled.initiator":
+                case "v.ticket.m":
+                case "v.ticket.initiator":
+                case "v.snooze.a":
+                case "v.snooze.initiator":
                     if (typeof value === "object" && value && typeof value["$exists"] === "boolean") {
                         newAlarmGroup.push({
                             field: field,
