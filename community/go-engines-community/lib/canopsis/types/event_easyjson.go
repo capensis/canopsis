@@ -2710,6 +2710,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.LastEventDate).UnmarshalJSON(data))
 			}
+		case "last_st_upd_dt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.LastStateOrStatusUpdateDate).UnmarshalJSON(data))
+			}
 		case "resource":
 			out.Resource = string(in.String())
 		case "resolved":
@@ -3097,6 +3101,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"last_event_date\":"
 		out.RawString(prefix)
 		out.Raw((in.LastEventDate).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"last_st_upd_dt\":"
+		out.RawString(prefix)
+		out.Raw((in.LastStateOrStatusUpdateDate).MarshalJSON())
 	}
 	if in.Resource != "" {
 		const prefix string = ",\"resource\":"
