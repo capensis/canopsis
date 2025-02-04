@@ -43,7 +43,7 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/account.EditRequest'
         required: true
       responses:
-        201:
+        200:
           description: Created
           content:
             application/json:
@@ -408,6 +408,48 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarm-tag-labels:
+    get:
+      tags:
+        - alarm-tag-labels
+      summary: Get labels of alarm tags
+      description: |
+        Get paginated list of labels of alarm tags.
+
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tag-labels-get
+      parameters:
+        - name: ids[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarmtag.LabelResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarm-tags:
     get:
       tags:
@@ -434,7 +476,7 @@ paths:
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
-        201:
+        200:
           description: OK
           content:
             application/json:

@@ -304,6 +304,7 @@ export default {
   lastComment: 'Dernier commentaire',
   serialName: 'Nom de série',
   pressEnterToApply: 'Appuyez sur <kbd>Entrée</kbd> pour appliquer',
+  width: 'Largeur',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
