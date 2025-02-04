@@ -77,7 +77,8 @@ func (w *internalTagPeriodicalWorker) addTag(
 	microNow datetime.MicroTime,
 ) error {
 	alarmMatch := bson.M{
-		"t": bson.M{"$lt": secNow},
+		"v.resolved": nil,
+		"t":          bson.M{"$lt": secNow},
 		"$or": []bson.M{
 			{"itags_upd": bson.M{"$lt": microNow}},
 			{"itags_upd": nil},
@@ -135,9 +136,10 @@ func (w *internalTagPeriodicalWorker) removeTag(
 	microNow datetime.MicroTime,
 ) error {
 	alarmMatch := bson.M{
-		"t":         bson.M{"$lt": secNow},
-		"itags_upd": bson.M{"$lt": microNow},
-		"itags":     tag.Value,
+		"v.resolved": nil,
+		"t":          bson.M{"$lt": secNow},
+		"itags_upd":  bson.M{"$lt": microNow},
+		"itags":      tag.Value,
 	}
 	if len(tag.AlarmPattern) > 0 && len(tag.EntityPattern) == 0 {
 		q, err := db.AlarmPatternToNegativeMongoQuery(tag.AlarmPattern, "")
