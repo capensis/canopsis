@@ -20,9 +20,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -995,11 +995,7 @@ func (s *store) updateLinkedModels(ctx context.Context, tableID, tableName strin
 		_, err := c.UpdateMany(ctx,
 			bson.M{"external_data.table": tableID},
 			bson.M{"$set": bson.M{"external_data.$[exdata].table_name": tableName}},
-			options.Update().SetArrayFilters(options.ArrayFilters{
-				Filters: []interface{}{
-					bson.M{"exdata.table": tableID},
-				},
-			}),
+			options.UpdateMany().SetArrayFilters([]any{bson.M{"exdata.table": tableID}}),
 		)
 		if err != nil {
 			return err

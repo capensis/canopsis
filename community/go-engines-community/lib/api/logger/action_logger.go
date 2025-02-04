@@ -1,10 +1,12 @@
 package logger
 
 import (
+	"bytes"
 	"cmp"
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -14,8 +16,8 @@ import (
 	"github.com/bsm/redislock"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -376,11 +378,21 @@ func (l *logger) runWatcher(ctx context.Context, g *errgroup.Group) (<-chan Acti
 		}()
 
 		for stream.Next(ctx) {
-			var event ActionLogEvent
+			var raw bson.Raw
 
-			err := stream.Decode(&event)
+			err := stream.Decode(&raw)
 			if err != nil {
 				l.zLog.Err(err).Msg("failed to decode change stream event")
+				continue
+			}
+
+			var event ActionLogEvent
+
+			decoder := bson.NewDecoder(bson.NewDocumentReader(bytes.NewReader(raw)))
+			decoder.ObjectIDAsHexString()
+
+			if err := decoder.Decode(&event); err != nil {
+				log.Println("Custom decoding error:", err)
 				continue
 			}
 

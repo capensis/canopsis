@@ -57,7 +57,7 @@ import (
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const (

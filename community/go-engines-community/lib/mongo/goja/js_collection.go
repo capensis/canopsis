@@ -10,9 +10,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/dop251/goja"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type jsCollection struct {
@@ -122,11 +122,13 @@ func (c *jsCollection) CreateIndex(ctx context.Context, orderedKeys, opts, commi
 		Keys:    dbKeys,
 		Options: dbIndexOpts,
 	}
+
 	dbOpts := options.CreateIndexes()
-	dbOpts.CommitQuorum, err = transformValue(c.vm, commitQuorum)
+	dbOptsCommitQuorumInt, err := transformCommitQuorum(commitQuorum)
 	if err != nil {
 		return "", fmt.Errorf("invalid commit quorum: %w", err)
 	}
+	dbOpts.SetCommitQuorumInt(dbOptsCommitQuorumInt)
 
 	name, err := c.dbCollection.Indexes().CreateOne(ctx, dbIndexModel, dbOpts)
 	if err != nil {
@@ -136,16 +138,13 @@ func (c *jsCollection) CreateIndex(ctx context.Context, orderedKeys, opts, commi
 	return name, nil
 }
 
-func (c *jsCollection) DropIndex(ctx context.Context, name string) (map[string]int64, error) {
-	res, err := c.dbCollection.Indexes().DropOne(ctx, name)
+func (c *jsCollection) DropIndex(ctx context.Context, name string) error {
+	err := c.dbCollection.Indexes().DropOne(ctx, name)
 	if err != nil {
-		return nil, fmt.Errorf("error dropping index: %w", err)
+		return fmt.Errorf("error dropping index: %w", err)
 	}
 
-	return map[string]int64{
-		"nIndexesWas": res.Lookup("nIndexesWas").AsInt64(),
-		"ok":          1,
-	}, nil
+	return nil
 }
 
 func (c *jsCollection) GetIndexes(ctx context.Context) (map[string]any, error) {
@@ -170,7 +169,7 @@ func (c *jsCollection) DeleteOne(ctx context.Context, filter, opts goja.Value) (
 		dbFilter = bson.M{}
 	}
 
-	dbOpts := options.Delete()
+	dbOpts := options.DeleteOne()
 	err = transformOptions(c.vm, opts, dbOpts)
 	if err != nil {
 		return nil, fmt.Errorf("invalid delete options: %w", err)
@@ -194,7 +193,7 @@ func (c *jsCollection) DeleteMany(ctx context.Context, filter, opts goja.Value) 
 		dbFilter = bson.M{}
 	}
 
-	dbOpts := options.Delete()
+	dbOpts := options.DeleteMany()
 	err = transformOptions(c.vm, opts, dbOpts)
 	if err != nil {
 		return nil, fmt.Errorf("invalid delete options: %w", err)
@@ -236,10 +235,7 @@ func (c *jsCollection) Find(ctx context.Context, filter, projection, opts goja.V
 	dbOpts.SetProjection(dbProjection)
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"maxAwaitTimeMS": func(v any) error {
-			return setMaxAwaitTimeMS[*options.FindOptions](v, dbOpts)
-		},
-		"maxTimeMS": func(v any) error {
-			return setMaxTimeMS[*options.FindOptions](v, dbOpts)
+			return setMaxAwaitTimeMS[*options.FindOptionsBuilder](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -261,10 +257,7 @@ func (c *jsCollection) Aggregate(ctx context.Context, pipeline, opts goja.Value)
 	dbOpts := options.Aggregate()
 	err := transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"maxAwaitTimeMS": func(v any) error {
-			return setMaxAwaitTimeMS[*options.AggregateOptions](v, dbOpts)
-		},
-		"maxTimeMS": func(v any) error {
-			return setMaxTimeMS[*options.AggregateOptions](v, dbOpts)
+			return setMaxAwaitTimeMS[*options.AggregateOptionsBuilder](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -298,11 +291,7 @@ func (c *jsCollection) FindOne(ctx context.Context, filter, opts goja.Value) (an
 	}
 
 	dbOpts := options.FindOne()
-	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
-		"maxTimeMS": func(v any) error {
-			return setMaxTimeMS[*options.FindOneOptions](v, dbOpts)
-		},
-	})
+	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{})
 	if err != nil {
 		return 0, fmt.Errorf("invalid find one options: %w", err)
 	}
@@ -331,11 +320,7 @@ func (c *jsCollection) FindOneAndDelete(ctx context.Context, filter, opts goja.V
 	}
 
 	dbOpts := options.FindOneAndDelete()
-	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
-		"maxTimeMS": func(v any) error {
-			return setMaxTimeMS[*options.FindOneAndDeleteOptions](v, dbOpts)
-		},
-	})
+	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{})
 	if err != nil {
 		return 0, fmt.Errorf("invalid find one and delete options: %w", err)
 	}
@@ -365,11 +350,8 @@ func (c *jsCollection) FindOneAndReplace(ctx context.Context, filter, opts goja.
 
 	dbOpts := options.FindOneAndReplace()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
-		"maxTimeMS": func(v any) error {
-			return setMaxTimeMS[*options.FindOneAndReplaceOptions](v, dbOpts)
-		},
 		"returnDocument": func(v any) error {
-			return setReturnDocument[*options.FindOneAndReplaceOptions](v, dbOpts)
+			return setReturnDocument[*options.FindOneAndReplaceOptionsBuilder](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -402,13 +384,10 @@ func (c *jsCollection) FindOneAndUpdate(ctx context.Context, filter, opts goja.V
 	dbOpts := options.FindOneAndUpdate()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"arrayFilters": func(v any) error {
-			return setArrayFilters[*options.FindOneAndUpdateOptions](v, dbOpts)
-		},
-		"maxTimeMS": func(v any) error {
-			return setMaxTimeMS[*options.FindOneAndUpdateOptions](v, dbOpts)
+			return setArrayFilters[*options.FindOneAndUpdateOptionsBuilder](v, dbOpts)
 		},
 		"returnDocument": func(v any) error {
-			return setReturnDocument[*options.FindOneAndUpdateOptions](v, dbOpts)
+			return setReturnDocument[*options.FindOneAndUpdateOptionsBuilder](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -488,10 +467,10 @@ func (c *jsCollection) UpdateOne(ctx context.Context, filter, update, opts goja.
 		return nil, fmt.Errorf("invalid update: %w", err)
 	}
 
-	dbOpts := options.Update()
+	dbOpts := options.UpdateOne()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"arrayFilters": func(v any) error {
-			return setArrayFilters[*options.UpdateOptions](v, dbOpts)
+			return setArrayFilters[*options.UpdateOneOptionsBuilder](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -526,10 +505,10 @@ func (c *jsCollection) UpdateMany(ctx context.Context, filter, update, opts goja
 		return nil, fmt.Errorf("invalid update: %w", err)
 	}
 
-	dbOpts := options.Update()
+	dbOpts := options.UpdateMany()
 	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
 		"arrayFilters": func(v any) error {
-			return setArrayFilters[*options.UpdateOptions](v, dbOpts)
+			return setArrayFilters[*options.UpdateManyOptionsBuilder](v, dbOpts)
 		},
 	})
 	if err != nil {
@@ -594,11 +573,7 @@ func (c *jsCollection) CountDocuments(ctx context.Context, filter, opts goja.Val
 	}
 
 	dbOpts := options.Count()
-	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{
-		"maxTimeMS": func(v any) error {
-			return setMaxTimeMS[*options.CountOptions](v, dbOpts)
-		},
-	})
+	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{})
 	if err != nil {
 		return 0, fmt.Errorf("invalid count options: %w", err)
 	}
@@ -717,7 +692,7 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 	}, nil
 }
 
-func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter goja.Value) ([]any, error) {
+func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter goja.Value) (any, error) {
 	dbFilter, err := transformValue(c.vm, filter)
 	if err != nil {
 		return nil, fmt.Errorf("invalid filter: %w", err)
@@ -727,9 +702,9 @@ func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter go
 		dbFilter = bson.M{}
 	}
 
-	res, err := c.dbCollection.Distinct(ctx, fieldName, dbFilter)
-	if err != nil {
-		return nil, fmt.Errorf("error distinct: %w", err)
+	res := c.dbCollection.Distinct(ctx, fieldName, dbFilter)
+	if res.Err() != nil {
+		return nil, fmt.Errorf("error distinct: %w", res.Err())
 	}
 
 	return res, nil
@@ -740,7 +715,7 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 		"createIndex": func(orderedKeys, opts, commitQuorum goja.Value) (string, error) {
 			return c.CreateIndex(ctx, orderedKeys, opts, commitQuorum)
 		},
-		"dropIndex": func(name string) (map[string]int64, error) {
+		"dropIndex": func(name string) error {
 			return c.DropIndex(ctx, name)
 		},
 		"getIndexes": func() (map[string]any, error) {
@@ -797,14 +772,14 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 		"bulkWrite": func(operations, opts goja.Value) (map[string]any, error) {
 			return c.BulkWrite(ctx, operations, opts)
 		},
-		"distinct": func(fieldName string, filter goja.Value) ([]any, error) {
+		"distinct": func(fieldName string, filter goja.Value) (any, error) {
 			return c.Distinct(ctx, fieldName, filter)
 		},
 	}
 }
 
 type arrayFiltersSetter[T any] interface {
-	SetArrayFilters(filters options.ArrayFilters) T
+	SetArrayFilters(filters []any) T
 }
 
 func setArrayFilters[T any](v any, setter arrayFiltersSetter[T]) error {
@@ -813,9 +788,7 @@ func setArrayFilters[T any](v any, setter arrayFiltersSetter[T]) error {
 		return errors.New("invalid type for arrayFilters")
 	}
 
-	setter.SetArrayFilters(options.ArrayFilters{
-		Filters: filters,
-	})
+	setter.SetArrayFilters(filters)
 
 	return nil
 }
@@ -831,21 +804,6 @@ func setMaxAwaitTimeMS[T any](v any, setter maxAwaitTimeMSSetter[T]) error {
 	}
 
 	setter.SetMaxAwaitTime(time.Duration(i) * time.Millisecond)
-
-	return nil
-}
-
-type maxTimeMSSetter[T any] interface {
-	SetMaxTime(d time.Duration) T
-}
-
-func setMaxTimeMS[T any](v any, setter maxTimeMSSetter[T]) error {
-	i, ok := v.(int64)
-	if !ok {
-		return errors.New("invalid type for maxTimeMS")
-	}
-
-	setter.SetMaxTime(time.Duration(i) * time.Millisecond)
 
 	return nil
 }
