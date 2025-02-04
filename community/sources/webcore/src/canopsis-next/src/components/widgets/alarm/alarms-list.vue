@@ -138,6 +138,7 @@
       :draggable-column="draggableColumn"
       :cells-content-behavior="cellsContentBehavior"
       :columns-settings="columnsSettings"
+      :parent-alarm="parentAlarm"
       class="mt-2"
       expandable
       densable
@@ -253,6 +254,10 @@ export default {
     hideToolbar: {
       type: Boolean,
       default: false,
+    },
+    parentAlarm: {
+      type: Object,
+      default: null,
     },
   },
   data() {

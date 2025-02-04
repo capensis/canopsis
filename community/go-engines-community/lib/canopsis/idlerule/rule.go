@@ -102,7 +102,7 @@ func (r *Rule) matchesByAlarmLastUpdateDate(alarm types.Alarm, now datetime.CpsT
 	before := r.Duration.SubFrom(now)
 
 	return r.Type != RuleTypeAlarm || r.AlarmCondition != RuleAlarmConditionLastUpdate ||
-		alarm.Value.LastUpdateDate.Before(before)
+		alarm.Value.LastStateOrStatusUpdateDate.Before(before)
 }
 
 func (r *Rule) matchesByEntityLastEventDate(entity types.Entity, now datetime.CpsTime) bool {
