@@ -7,8 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/valyala/fastjson"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsonrw"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type Exporter interface {
@@ -34,15 +33,8 @@ func (e *exporter) Export(ctx context.Context, collection string, r Request) ([]
 	defer cursor.Close(ctx)
 
 	buf := new(bytes.Buffer)
-	vw, err := bsonrw.NewExtJSONValueWriter(buf, true, false)
-	if err != nil {
-		panic(err)
-	}
 
-	encoder, err := bson.NewEncoder(vw)
-	if err != nil {
-		panic(err)
-	}
+	encoder := bson.NewEncoder(bson.NewExtJSONValueWriter(buf, true, false))
 
 	// bson.MarshalExtJSON doesn't support arrays, using fastjson to help with that.
 	var arena fastjson.Arena
