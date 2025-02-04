@@ -726,7 +726,11 @@ func (w *worker) createEntity(ci EntityConfiguration) mongo.WriteModel {
 		SetUpdate(bson.M{
 			"$set":         ci,
 			"$setOnInsert": bson.M{"created": datetime.NewCpsTime()},
-			"$unset":       bson.M{"soft_deleted": ""},
+			"$unset": bson.M{
+				"soft_deleted":                    "",
+				"resolve_deleted_event_sent":      "",
+				"resolve_deleted_event_processed": "",
+			},
 		}).
 		SetUpsert(true)
 }
@@ -759,7 +763,11 @@ func (w *worker) updateEntity(ci *EntityConfiguration, oldEntity EntityConfigura
 		SetUpdate(bson.M{
 			"$set":         ci,
 			"$setOnInsert": bson.M{"created": datetime.NewCpsTime()},
-			"$unset":       bson.M{"soft_deleted": ""},
+			"$unset": bson.M{
+				"soft_deleted":                    "",
+				"resolve_deleted_event_sent":      "",
+				"resolve_deleted_event_processed": "",
+			},
 		}).
 		SetUpsert(true)
 }

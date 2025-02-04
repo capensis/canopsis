@@ -131,7 +131,7 @@ func (a *api) Export(c *gin.Context) {
 }
 
 func (a *api) addContents(c *gin.Context, contents map[string]ExportDocuments, collectionName string) error {
-	cursor, err := a.client.Collection(collectionName).Find(c, bson.M{})
+	cursor, err := a.client.Collection(collectionName).Find(c, bson.M{"soft_deleted": nil})
 	if err != nil {
 		return err
 	}
