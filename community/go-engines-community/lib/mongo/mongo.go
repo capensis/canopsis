@@ -11,12 +11,12 @@ import (
 	"time"
 
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/description"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"go.mongodb.org/mongo-driver/x/mongo/driver/topology"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
+	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/description"
+	"go.mongodb.org/mongo-driver/v2/x/mongo/driver/topology"
 )
 
 const (
@@ -38,7 +38,7 @@ type contextKey string
 
 type SingleResultHelper interface {
 	Decode(v interface{}) error
-	DecodeBytes() (bson.Raw, error)
+	Raw() (bson.Raw, error)
 	Err() error
 }
 
@@ -54,52 +54,52 @@ type ChangeStream interface {
 
 type DbCollection interface {
 	Name() string
-	Aggregate(ctx context.Context, pipeline interface{}, opts ...*options.AggregateOptions) (Cursor, error)
-	BulkWrite(ctx context.Context, models []mongo.WriteModel, opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error)
-	CountDocuments(ctx context.Context, filter interface{}, opts ...*options.CountOptions) (int64, error)
-	DeleteOne(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (int64, error)
-	DeleteMany(ctx context.Context, filter interface{}, opts ...*options.DeleteOptions) (int64, error)
+	Aggregate(ctx context.Context, pipeline interface{}, opts ...options.Lister[options.AggregateOptions]) (Cursor, error)
+	BulkWrite(ctx context.Context, models []mongo.WriteModel, opts ...options.Lister[options.BulkWriteOptions]) (*mongo.BulkWriteResult, error)
+	CountDocuments(ctx context.Context, filter interface{}, opts ...options.Lister[options.CountOptions]) (int64, error)
+	DeleteOne(ctx context.Context, filter interface{}, opts ...options.Lister[options.DeleteOneOptions]) (int64, error)
+	DeleteMany(ctx context.Context, filter interface{}, opts ...options.Lister[options.DeleteManyOptions]) (int64, error)
 	Distinct(ctx context.Context, fieldName string, filter interface{},
-		opts ...*options.DistinctOptions) ([]interface{}, error)
+		opts ...options.Lister[options.DistinctOptions]) *mongo.DistinctResult
 	Drop(ctx context.Context) error
 	Find(ctx context.Context, filter interface{},
-		opts ...*options.FindOptions) (Cursor, error)
-	FindOne(ctx context.Context, filter interface{}, opts ...*options.FindOneOptions) SingleResultHelper
+		opts ...options.Lister[options.FindOptions]) (Cursor, error)
+	FindOne(ctx context.Context, filter interface{}, opts ...options.Lister[options.FindOneOptions]) SingleResultHelper
 	FindOneAndDelete(ctx context.Context, filter interface{},
-		opts ...*options.FindOneAndDeleteOptions) SingleResultHelper
+		opts ...options.Lister[options.FindOneAndDeleteOptions]) SingleResultHelper
 	FindOneAndReplace(ctx context.Context, filter interface{}, replacement interface{},
-		opts ...*options.FindOneAndReplaceOptions) SingleResultHelper
+		opts ...options.Lister[options.FindOneAndReplaceOptions]) SingleResultHelper
 	FindOneAndUpdate(ctx context.Context, filter interface{}, update interface{},
-		opts ...*options.FindOneAndUpdateOptions) SingleResultHelper
+		opts ...options.Lister[options.FindOneAndUpdateOptions]) SingleResultHelper
 	Indexes() mongo.IndexView
 	InsertOne(ctx context.Context, document interface{},
-		opts ...*options.InsertOneOptions) (interface{}, error)
+		opts ...options.Lister[options.InsertOneOptions]) (interface{}, error)
 	InsertMany(ctx context.Context, documents []interface{},
-		opts ...*options.InsertManyOptions) ([]interface{}, error)
+		opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error)
 	ReplaceOne(ctx context.Context, filter interface{},
-		replacement interface{}, opts ...*options.ReplaceOptions) (*mongo.UpdateResult, error)
+		replacement interface{}, opts ...options.Lister[options.ReplaceOptions]) (*mongo.UpdateResult, error)
 	UpdateMany(ctx context.Context, filter interface{}, update interface{},
-		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+		opts ...options.Lister[options.UpdateManyOptions]) (*mongo.UpdateResult, error)
 	UpdateOne(ctx context.Context, filter interface{}, update interface{},
-		opts ...*options.UpdateOptions) (*mongo.UpdateResult, error)
+		opts ...options.Lister[options.UpdateOneOptions]) (*mongo.UpdateResult, error)
 	Watch(ctx context.Context, pipeline interface{},
-		opts ...*options.ChangeStreamOptions) (ChangeStream, error)
+		opts ...options.Lister[options.ChangeStreamOptions]) (ChangeStream, error)
 }
 
 // DbClient connected MongoDB client settings
 type DbClient interface {
 	Name() string
-	Watch(ctx context.Context, pipeline interface{}, opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error)
+	Watch(ctx context.Context, pipeline interface{}, opts ...options.Lister[options.ChangeStreamOptions]) (*mongo.ChangeStream, error)
 	Collection(string) DbCollection
-	CreateCollection(ctx context.Context, name string, opts ...*options.CreateCollectionOptions) error
+	CreateCollection(ctx context.Context, name string, opts ...options.Lister[options.CreateCollectionOptions]) error
 	Disconnect(ctx context.Context) error
 	SetRetry(count int, timeout time.Duration)
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
-	ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error)
+	ListCollectionNames(ctx context.Context, filter interface{}, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error)
 	IsDistributed() bool
-	RunCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper
-	RunAdminCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper
+	RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
+	RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
 }
 
 type dbClient struct {
@@ -124,7 +124,7 @@ func (c *dbCollection) Name() string {
 }
 
 func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},
-	opts ...*options.AggregateOptions) (Cursor, error) {
+	opts ...options.Lister[options.AggregateOptions]) (Cursor, error) {
 	var mongoCursor *mongo.Cursor
 	var err error
 
@@ -141,7 +141,7 @@ func (c *dbCollection) Aggregate(ctx context.Context, pipeline interface{},
 }
 
 func (c *dbCollection) BulkWrite(ctx context.Context, models []mongo.WriteModel,
-	opts ...*options.BulkWriteOptions) (*mongo.BulkWriteResult, error) {
+	opts ...options.Lister[options.BulkWriteOptions]) (*mongo.BulkWriteResult, error) {
 	var res *mongo.BulkWriteResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -153,7 +153,7 @@ func (c *dbCollection) BulkWrite(ctx context.Context, models []mongo.WriteModel,
 }
 
 func (c *dbCollection) CountDocuments(ctx context.Context, filter interface{},
-	opts ...*options.CountOptions) (int64, error) {
+	opts ...options.Lister[options.CountOptions]) (int64, error) {
 	var res int64
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -165,7 +165,7 @@ func (c *dbCollection) CountDocuments(ctx context.Context, filter interface{},
 }
 
 func (c *dbCollection) DeleteMany(ctx context.Context, filter interface{},
-	opts ...*options.DeleteOptions) (int64, error) {
+	opts ...options.Lister[options.DeleteManyOptions]) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -180,15 +180,15 @@ func (c *dbCollection) DeleteMany(ctx context.Context, filter interface{},
 }
 
 func (c *dbCollection) Distinct(ctx context.Context, fieldName string, filter interface{},
-	opts ...*options.DistinctOptions) ([]interface{}, error) {
-	var res []interface{}
-	var err error
+	opts ...options.Lister[options.DistinctOptions]) *mongo.DistinctResult {
+	var res *mongo.DistinctResult
+
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
-		res, err = c.mongoCollection.Distinct(ctx, fieldName, filter, opts...)
-		return err
+		res = c.mongoCollection.Distinct(ctx, fieldName, filter, opts...)
+		return res.Err()
 	})
 
-	return res, err
+	return res
 }
 
 func (c *dbCollection) Drop(ctx context.Context) error {
@@ -202,7 +202,7 @@ func (c *dbCollection) Drop(ctx context.Context) error {
 }
 
 func (c *dbCollection) Find(ctx context.Context, filter interface{},
-	opts ...*options.FindOptions) (Cursor, error) {
+	opts ...options.Lister[options.FindOptions]) (Cursor, error) {
 	var mongoCursor *mongo.Cursor
 	var err error
 
@@ -219,7 +219,7 @@ func (c *dbCollection) Find(ctx context.Context, filter interface{},
 }
 
 func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
-	opts ...*options.FindOneOptions) SingleResultHelper {
+	opts ...options.Lister[options.FindOneOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOne(ctx, filter, opts...)
@@ -230,7 +230,7 @@ func (c *dbCollection) FindOne(ctx context.Context, filter interface{},
 }
 
 func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
-	opts ...*options.FindOneAndDeleteOptions) SingleResultHelper {
+	opts ...options.Lister[options.FindOneAndDeleteOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndDelete(ctx, filter, opts...)
@@ -241,7 +241,7 @@ func (c *dbCollection) FindOneAndDelete(ctx context.Context, filter interface{},
 }
 
 func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacement interface{},
-	opts ...*options.FindOneAndReplaceOptions) SingleResultHelper {
+	opts ...options.Lister[options.FindOneAndReplaceOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndReplace(ctx, filter, replacement, opts...)
@@ -252,7 +252,7 @@ func (c *dbCollection) FindOneAndReplace(ctx context.Context, filter, replacemen
 }
 
 func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update interface{},
-	opts ...*options.FindOneAndUpdateOptions) SingleResultHelper {
+	opts ...options.Lister[options.FindOneAndUpdateOptions]) SingleResultHelper {
 	var res *mongo.SingleResult
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
 		res = c.mongoCollection.FindOneAndUpdate(ctx, filter, update, opts...)
@@ -263,7 +263,7 @@ func (c *dbCollection) FindOneAndUpdate(ctx context.Context, filter, update inte
 }
 
 func (c *dbCollection) DeleteOne(ctx context.Context, filter interface{},
-	opts ...*options.DeleteOptions) (int64, error) {
+	opts ...options.Lister[options.DeleteOneOptions]) (int64, error) {
 	var res *mongo.DeleteResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -282,7 +282,7 @@ func (c *dbCollection) Indexes() mongo.IndexView {
 }
 
 func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
-	opts ...*options.InsertOneOptions) (interface{}, error) {
+	opts ...options.Lister[options.InsertOneOptions]) (interface{}, error) {
 	var res *mongo.InsertOneResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -298,7 +298,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 }
 
 func (c *dbCollection) InsertMany(ctx context.Context, documents []interface{},
-	opts ...*options.InsertManyOptions) ([]interface{}, error) {
+	opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error) {
 	var res *mongo.InsertManyResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -313,7 +313,7 @@ func (c *dbCollection) InsertMany(ctx context.Context, documents []interface{},
 }
 
 func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement interface{},
-	opts ...*options.ReplaceOptions) (*mongo.UpdateResult, error) {
+	opts ...options.Lister[options.ReplaceOptions]) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -328,7 +328,7 @@ func (c *dbCollection) ReplaceOne(ctx context.Context, filter, replacement inter
 }
 
 func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, update interface{},
-	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+	opts ...options.Lister[options.UpdateManyOptions]) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -343,12 +343,12 @@ func (c *dbCollection) UpdateMany(ctx context.Context, filter interface{}, updat
 }
 
 func (c *dbCollection) Watch(ctx context.Context, pipeline interface{},
-	opts ...*options.ChangeStreamOptions) (ChangeStream, error) {
+	opts ...options.Lister[options.ChangeStreamOptions]) (ChangeStream, error) {
 	return c.mongoCollection.Watch(ctx, pipeline, opts...)
 }
 
 func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update interface{},
-	opts ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+	opts ...options.Lister[options.UpdateOneOptions]) (*mongo.UpdateResult, error) {
 	var res *mongo.UpdateResult
 	var err error
 	retry(ctx, c.retryCount, c.minRetryTimeout, func(ctx context.Context) error {
@@ -373,11 +373,16 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 		dbName = DB
 	}
 
-	clientOptions := options.Client().ApplyURI(mongoURL)
-	if clientOptions.Timeout == nil {
-		clientOptions.SetTimeout(DefaultClientTimeout)
+	bsonOpts := &options.BSONOptions{
+		DefaultDocumentM:    true,
+		ObjectIDAsHexString: true,
 	}
-	client, err := mongo.Connect(ctx, clientOptions)
+
+	clientOptions := options.Client().ApplyURI(mongoURL).SetBSONOptions(bsonOpts)
+	//if clientOptions.Timeout == nil {
+	//	clientOptions.SetTimeout(DefaultClientTimeout)
+	//}
+	client, err := mongo.Connect(clientOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -418,7 +423,12 @@ func NewClientWithOptions(
 		dbName = DB
 	}
 
-	clientOptions := options.Client().ApplyURI(mongoURL)
+	bsonOpts := &options.BSONOptions{
+		DefaultDocumentM:    true,
+		ObjectIDAsHexString: true,
+	}
+
+	clientOptions := options.Client().ApplyURI(mongoURL).SetBSONOptions(bsonOpts)
 	if serverSelectionTimeout < 0 {
 		serverSelectionTimeout = DefaultServerSelectionTimeout
 	}
@@ -429,7 +439,7 @@ func NewClientWithOptions(
 	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
 	clientOptions.SetTimeout(clientTimeout)
 
-	client, err := mongo.Connect(ctx, clientOptions)
+	client, err := mongo.Connect(clientOptions)
 	if err != nil {
 		return nil, err
 	}
@@ -459,7 +469,7 @@ func (c *dbClient) Name() string {
 }
 
 func (c *dbClient) Watch(ctx context.Context, pipeline interface{},
-	opts ...*options.ChangeStreamOptions) (*mongo.ChangeStream, error) {
+	opts ...options.Lister[options.ChangeStreamOptions]) (*mongo.ChangeStream, error) {
 	return c.Database.Watch(ctx, pipeline, opts...)
 }
 
@@ -471,7 +481,7 @@ func (c *dbClient) Collection(name string) DbCollection {
 	}
 }
 
-func (c *dbClient) CreateCollection(ctx context.Context, name string, opts ...*options.CreateCollectionOptions) error {
+func (c *dbClient) CreateCollection(ctx context.Context, name string, opts ...options.Lister[options.CreateCollectionOptions]) error {
 	return c.Database.CreateCollection(ctx, name, opts...)
 }
 
@@ -483,7 +493,7 @@ func (c *dbClient) Ping(ctx context.Context, rp *readpref.ReadPref) error {
 	return c.Client.Ping(ctx, rp)
 }
 
-func (c *dbClient) ListCollectionNames(ctx context.Context, filter interface{}, opts ...*options.ListCollectionsOptions) ([]string, error) {
+func (c *dbClient) ListCollectionNames(ctx context.Context, filter interface{}, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error) {
 	return c.Database.ListCollectionNames(ctx, filter, opts...)
 }
 
@@ -497,20 +507,21 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 		return f(ctx)
 	}
 
-	opts := options.Session().SetDefaultReadPreference(readpref.Primary())
+	txnOpts := options.Transaction().SetReadPreference(readpref.Primary())
+	sessOpts := options.Session().SetDefaultTransactionOptions(txnOpts)
 
-	var session mongo.Session
+	var session *mongo.Session
 	var err error
 
 	retry(ctx, c.RetryCount, c.MinRetryTimeout, func(ctx context.Context) error {
-		session, err = c.Client.StartSession(opts)
+		session, err = c.Client.StartSession(sessOpts)
 		if err != nil {
 			return err
 		}
 
 		defer session.EndSession(ctx)
 
-		_, err = session.WithTransaction(ctx, func(sessCtx mongo.SessionContext) (interface{}, error) { // nolint:contextcheck
+		_, err = session.WithTransaction(ctx, func(sessCtx context.Context) (interface{}, error) {
 			return nil, f(context.WithValue(sessCtx, disableRetries, true))
 		})
 
@@ -543,11 +554,11 @@ func (c *dbClient) IsDistributed() bool {
 	return c.isDistributed
 }
 
-func (c *dbClient) RunCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper {
+func (c *dbClient) RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper {
 	return c.Database.RunCommand(ctx, runCommand, opts...)
 }
 
-func (c *dbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) SingleResultHelper {
+func (c *dbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper {
 	return c.Database.Client().Database("admin").RunCommand(ctx, runCommand, opts...)
 }
 
@@ -599,10 +610,10 @@ func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
 			switch desc.Kind {
 			case description.Unknown:
 				continue
-			case description.Sharded,
-				description.ReplicaSet,
-				description.ReplicaSetNoPrimary,
-				description.ReplicaSetWithPrimary:
+			case description.TopologyKindSharded,
+				description.TopologyKindReplicaSet,
+				description.TopologyKindReplicaSetNoPrimary,
+				description.TopologyKindReplicaSetWithPrimary:
 				return true, nil
 			default:
 				return false, nil

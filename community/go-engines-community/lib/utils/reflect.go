@@ -1,6 +1,6 @@
 package utils
 
-import "go.mongodb.org/mongo-driver/bson"
+import "go.mongodb.org/mongo-driver/v2/bson"
 
 func IsStringSlice(arg any) ([]string, bool) {
 	switch v := arg.(type) {

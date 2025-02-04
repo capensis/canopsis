@@ -23,9 +23,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const (
@@ -205,7 +204,7 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesReque
 	match := bson.M{"v.resolved": nil}
 
 	if r.Search != "" {
-		match["v.display_name"] = primitive.Regex{
+		match["v.display_name"] = bson.Regex{
 			Pattern: fmt.Sprintf(".*%s.*", r.Search),
 			Options: "i",
 		}
@@ -824,7 +823,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 		return resolvedQuery, extraLookups, nil
 	}
 
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", r.Search),
 		Options: "i",
 	}

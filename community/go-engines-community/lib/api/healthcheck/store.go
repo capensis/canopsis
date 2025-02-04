@@ -17,8 +17,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	libredis "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Store interface {
