@@ -41,8 +41,9 @@ func (p *commentProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Res
 	newStepQuery := stepUpdateQueryWithInPbhInterval(types.AlarmStepComment, event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.last_comment": newStepQuery,
-			"v.steps":        addStepUpdateQuery(newStepQuery),
+			"v.last_comment":     newStepQuery,
+			"v.steps":            addStepUpdateQuery(newStepQuery),
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

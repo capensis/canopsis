@@ -71,9 +71,9 @@ type SamlConfig struct {
 	Title                   string            `yaml:"title"`
 	X509Cert                string            `yaml:"x509_cert"`
 	X509Key                 string            `yaml:"x509_key"`
-	IdpMetadataUrl          string            `yaml:"idp_metadata_url"`
-	IdpMetadataXml          string            `yaml:"idp_metadata_xml"`
-	IdpAttributesMap        map[string]string `yaml:"idp_attributes_map"`
+	IdPMetadataUrl          string            `yaml:"idp_metadata_url"`
+	IdPMetadataXml          string            `yaml:"idp_metadata_xml"`
+	IdPAttributesMap        map[string]string `yaml:"idp_attributes_map"`
 	CanopsisSamlUrl         string            `yaml:"canopsis_saml_url"`
 	DefaultRole             string            `yaml:"default_role"`
 	InsecureSkipVerify      bool              `yaml:"insecure_skip_verify"`
