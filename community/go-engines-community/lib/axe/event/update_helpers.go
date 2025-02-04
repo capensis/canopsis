@@ -781,6 +781,7 @@ func updateMetaAlarmState(
 
 		alarm.Value.TotalStateChanges++
 		alarm.Value.LastUpdateDate = timestamp
+		alarm.Value.LastStateOrStatusUpdateDate = timestamp
 	}
 
 	newStatus, statusRuleName := service.ComputeStatus(*alarm, entity)
@@ -797,6 +798,7 @@ func updateMetaAlarmState(
 				"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
 				"v.total_state_changes":               alarm.Value.TotalStateChanges,
 				"v.last_update_date":                  alarm.Value.LastUpdateDate,
+				"v.last_st_upd_dt":                    alarm.Value.LastStateOrStatusUpdateDate,
 			},
 			bson.M{"v.steps": alarm.Value.State},
 			nil
@@ -819,11 +821,13 @@ func updateMetaAlarmState(
 
 	alarm.Value.StateChangesSinceStatusUpdate = 0
 	alarm.Value.LastUpdateDate = timestamp
+	alarm.Value.LastStateOrStatusUpdateDate = timestamp
 
 	set := bson.M{
 		"v.status":                            alarm.Value.Status,
 		"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
 		"v.last_update_date":                  alarm.Value.LastUpdateDate,
+		"v.last_st_upd_dt":                    alarm.Value.LastStateOrStatusUpdateDate,
 	}
 	newSteps := bson.A{}
 	if state != currentState {
