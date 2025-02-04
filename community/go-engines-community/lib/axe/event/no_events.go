@@ -289,8 +289,10 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		if err != nil {
 			return result, fmt.Errorf("cannot add alarm steps: %w", err)
 		}
+
 		set["v.state"] = stateStep
-		inc["v.last_update_date"] = params.Timestamp
+		set["v.last_update_date"] = params.Timestamp
+		set["v.last_st_upd_dt"] = params.Timestamp
 
 		if alarm.IsStateLocked() {
 			alarm.Value.ChangeState = nil
@@ -391,20 +393,21 @@ func (p *noEventsProcessor) newAlarm(
 		ID:       utils.NewID(),
 		Time:     timestamp,
 		Value: types.AlarmValue{
-			CreationDate:      timestamp,
-			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
-			InitialOutput:     params.Output,
-			Output:            params.Output,
-			InitialLongOutput: params.LongOutput,
-			LongOutput:        params.LongOutput,
-			LongOutputHistory: []string{params.LongOutput},
-			LastUpdateDate:    params.Timestamp,
-			LastEventDate:     timestamp,
-			Parents:           []string{},
-			Children:          []string{},
-			UnlinkedParents:   []string{},
-			Infos:             map[string]map[string]interface{}{},
-			RuleVersion:       map[string]string{},
+			CreationDate:                timestamp,
+			DisplayName:                 types.GenDisplayName(alarmConfig.DisplayNameScheme),
+			InitialOutput:               params.Output,
+			Output:                      params.Output,
+			InitialLongOutput:           params.LongOutput,
+			LongOutput:                  params.LongOutput,
+			LongOutputHistory:           []string{params.LongOutput},
+			LastUpdateDate:              params.Timestamp,
+			LastStateOrStatusUpdateDate: params.Timestamp,
+			LastEventDate:               timestamp,
+			Parents:                     []string{},
+			Children:                    []string{},
+			UnlinkedParents:             []string{},
+			Infos:                       map[string]map[string]interface{}{},
+			RuleVersion:                 map[string]string{},
 		},
 	}
 
