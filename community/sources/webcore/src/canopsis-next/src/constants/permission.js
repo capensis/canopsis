@@ -643,27 +643,27 @@ export const DOCUMENTATION_LINKS = {
   /**
    * Exploitation
    */
-  [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'guide-utilisation/menu-exploitation/filtres-evenements/',
-  [USER_PERMISSIONS.technical.exploitation.pbehavior]: 'guide-utilisation/cas-d-usage/comportements_periodiques/',
-  [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'interconnexions/Supervision/SNMPtrap/',
-  [USER_PERMISSIONS.technical.exploitation.idleRules]: 'guide-utilisation/menu-exploitation/regles-inactivite/',
-  [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'guide-utilisation/menu-exploitation/regles-resolution/',
-  [USER_PERMISSIONS.technical.exploitation.flappingRules]: 'guide-utilisation/menu-exploitation/regles-bagot/',
-  [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'guide-utilisation/menu-exploitation/informations-dynamiques/',
-  [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'guide-utilisation/menu-exploitation/regles-metaalarme/',
-  [USER_PERMISSIONS.technical.exploitation.scenario]: 'guide-utilisation/menu-exploitation/scenarios/',
+  [USER_PERMISSIONS.technical.exploitation.eventFilter]: 'latest/guide-utilisation/menu-exploitation/filtres-evenements/',
+  [USER_PERMISSIONS.technical.exploitation.pbehavior]: 'latest/guide-utilisation/cas-d-usage/comportements_periodiques/',
+  [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'latest/guide-utilisation/menu-exploitation/regles-snmp/',
+  [USER_PERMISSIONS.technical.exploitation.idleRules]: 'latest/guide-utilisation/menu-exploitation/regles-inactivite/',
+  [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'latest/guide-utilisation/menu-exploitation/regles-resolution/',
+  [USER_PERMISSIONS.technical.exploitation.flappingRules]: 'latest/guide-utilisation/menu-exploitation/regles-bagot/',
+  [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: 'latest/guide-utilisation/menu-exploitation/informations-dynamiques/',
+  [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: 'latest/guide-utilisation/menu-exploitation/regles-metaalarme/',
+  [USER_PERMISSIONS.technical.exploitation.scenario]: 'latest/guide-utilisation/menu-exploitation/scenarios/',
 
   /**
    * Admin
    */
-  [USER_PERMISSIONS.technical.broadcastMessage]: 'guide-utilisation/interface/broadcast-messages/',
-  [USER_PERMISSIONS.technical.playlist]: 'guide-utilisation/interface/playlists/',
+  [USER_PERMISSIONS.technical.broadcastMessage]: 'latest/guide-utilisation/menu-administration/diffusion-de-messages/',
+  [USER_PERMISSIONS.technical.playlist]: 'latest/guide-utilisation/menu-administration/listes-de-lecture/',
 
   /**
    * Grouped
    */
-  [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'guide-administration/moteurs/moteur-pbehavior/#adminitration-de-la-planification',
-  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'guide-utilisation/remediation/',
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-administration/moteurs/moteur-pbehavior/#adminitration-de-la-planification',
+  [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
 
   /**
    * Notifications
