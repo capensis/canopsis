@@ -127,7 +127,7 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (Response, error) {
 	return response, err
 }
 
-func (s *store) FindData(ctx context.Context, tableName string, tableType int, columns []string, request ListDataRequest) (*AggregationDataResult, error) {
+func (s *store) FindData(ctx context.Context, tableName string, tableType int, columns []string, request ListDataRequest) (res *AggregationDataResult, err error) {
 	foundSort := false
 	for _, col := range columns {
 		if request.SortBy == col {
@@ -140,8 +140,6 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 		return nil, common.NewValidationError("sort_by", "SortBy must be one of ["+strings.Join(columns, " ")+"].")
 	}
 
-	var res *AggregationDataResult
-	var err error
 	switch tableType {
 	case TypeMongoDB:
 		res, err = s.findDataFromMongo(ctx, tableName, columns, request)
