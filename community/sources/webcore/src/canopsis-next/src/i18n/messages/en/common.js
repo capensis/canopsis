@@ -304,6 +304,7 @@ export default {
   lastComment: 'Last comment',
   serialName: 'Serial name',
   pressEnterToApply: 'Press <kbd>enter</kbd> to apply',
+  width: 'Width',
   variableTypes: {
     string: 'String',
     number: 'Number',

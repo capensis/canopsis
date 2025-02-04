@@ -61,6 +61,7 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 
 			return nil
 		})
+		cursor.EXPECT().Err().Return(nil)
 		cursor.EXPECT().Close(gomock.Any()).Return(nil)
 
 		return cursor, nil

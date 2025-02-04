@@ -14,6 +14,11 @@ type ListRequest struct {
 	Values []string `form:"values[]" json:"values"`
 }
 
+type ListLabelsRequest struct {
+	pagination.FilteredQuery
+	IDs []string `form:"ids[]" json:"ids"`
+}
+
 type CreateRequest struct {
 	Value  string `json:"value" binding:"required,max=255"`
 	Color  string `json:"color" binding:"required,iscolor"`
@@ -46,6 +51,11 @@ type Response struct {
 	savedpattern.AlarmPatternFields  `bson:",inline"`
 }
 
+type LabelResponse struct {
+	ID    string `bson:"_id" json:"_id"`
+	Color string `bson:"color" json:"color"`
+}
+
 type AggregationResult struct {
 	Data       []Response `bson:"data" json:"data"`
 	TotalCount int64      `bson:"total_count" json:"total_count"`
@@ -56,6 +66,19 @@ func (r *AggregationResult) GetData() interface{} {
 }
 
 func (r *AggregationResult) GetTotal() int64 {
+	return r.TotalCount
+}
+
+type AggregationLabelResult struct {
+	Data       []LabelResponse `bson:"data" json:"data"`
+	TotalCount int64           `bson:"total_count" json:"total_count"`
+}
+
+func (r *AggregationLabelResult) GetData() interface{} {
+	return r.Data
+}
+
+func (r *AggregationLabelResult) GetTotal() int64 {
 	return r.TotalCount
 }
 

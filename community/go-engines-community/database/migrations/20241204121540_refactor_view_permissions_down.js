@@ -56,10 +56,10 @@ db.permission.aggregate([
     });
 });
 
-db.permission_group.updateMany({name: {$ne: null}}, [
+db.permission_group.updateMany({name: {$ne: null}},
     {
         $unset: {
             name: ""
         }
     }
-]);
+);

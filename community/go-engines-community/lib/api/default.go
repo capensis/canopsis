@@ -75,7 +75,7 @@ var docsUiFile embed.FS
 var docsFile embed.FS
 
 type Services struct {
-	ExportTaskExecutor *export.TaskExecutor
+	ExportTaskExecutor export.TaskExecutor
 	LinkGenerator      link.Generator
 	Enforcer           libsecurity.Enforcer
 	DocsFile           fs.ReadFileFS
@@ -367,6 +367,7 @@ func Default(
 			stateSettingsUpdatesChan,
 			flags.EnableSameServiceNames,
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
+			securityConfig,
 			workersRunner,
 			logger,
 		)
