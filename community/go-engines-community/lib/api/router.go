@@ -117,7 +117,7 @@ func RegisterRoutes(
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
-	exportTaskExecutor *export.TaskExecutor,
+	exportTaskExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
