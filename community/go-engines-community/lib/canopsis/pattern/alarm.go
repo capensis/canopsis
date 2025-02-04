@@ -454,6 +454,12 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		return alarm.Value.Component, true
 	case "v.resource":
 		return alarm.Value.Resource, true
+	case "v.state.initiator":
+		if alarm.Value.State == nil {
+			return "", true
+		}
+
+		return alarm.Value.State.Initiator, true
 	case "v.last_comment.m":
 		if alarm.Value.LastComment == nil {
 			return "", true
@@ -500,6 +506,18 @@ func getAlarmStringField(alarm types.Alarm, f string) (string, bool) {
 		}
 
 		return alarm.Value.ACK.Initiator, true
+	case "v.snooze.a":
+		if alarm.Value.Snooze == nil {
+			return "", true
+		}
+
+		return alarm.Value.Snooze.Author, true
+	case "v.snooze.initiator":
+		if alarm.Value.Snooze == nil {
+			return "", true
+		}
+
+		return alarm.Value.Snooze.Initiator, true
 	case "v.canceled.initiator":
 		if alarm.Value.Canceled == nil {
 			return "", true

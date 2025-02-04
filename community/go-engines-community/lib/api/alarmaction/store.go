@@ -118,7 +118,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userId, use
 }
 
 func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userId, username string) (bool, error) {
-	d, err := r.Duration.To("s")
+	d, err := r.Duration.To(types.DurationUnitSecond)
 	if err != nil {
 		return false, common.NewValidationError("duration", "Duration is invalid.")
 	}
@@ -197,7 +197,8 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 
 	ticketInfo := types.TicketInfo{
 		Ticket:           r.Ticket,
-		TicketURL:        r.Url,
+		TicketURL:        r.URL,
+		TicketURLTitle:   r.URLTitle,
 		TicketComment:    r.Comment,
 		TicketSystemName: r.SystemName,
 		TicketData:       r.Data,

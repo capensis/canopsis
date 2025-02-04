@@ -4,7 +4,7 @@
   )
     div.v-input__control(@click="$emit('click', $event)")
       div.v-input__slot
-        div.v-text-field__slot
+        div.v-text-field__slot(@click="wrapperClickHandler")
           label.v-label(:class="[{ 'v-label--active': value }, themeClasses]") {{ label }}
           c-compiled-template(ref="content", :template="value", :class="{ 'v-text-field--input__disabled': disabled }")
       div.v-text-field__details(v-if="!hideDetails")
@@ -40,32 +40,12 @@ export default {
       default: () => [],
     },
   },
-  watch: {
-    value() {
-      this.addImagesListeners();
-    },
-  },
-  mounted() {
-    this.addImagesListeners();
-  },
-  beforeDestroy() {
-    this.removeImagesListeners();
-  },
   methods: {
-    addImagesListeners() {
-      this.removeImagesListeners();
-
-      this.imagesElements = this.$refs.content.$el.querySelectorAll('img');
-      this.imagesElements.forEach(image => image.addEventListener('click', this.clickHandler));
-    },
-
-    removeImagesListeners() {
-      if (this.imagesElements) {
-        this.imagesElements.forEach(image => image.removeEventListener('click', this.clickHandler));
+    wrapperClickHandler(e) {
+      if (e.target.tagName !== 'IMG') {
+        return;
       }
-    },
 
-    clickHandler(e) {
       e.preventDefault();
       e.stopPropagation();
 
