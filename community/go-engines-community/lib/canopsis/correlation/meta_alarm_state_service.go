@@ -66,13 +66,14 @@ func (a *metaAlarmStateService) UpdateOpenedState(
 	upsert bool,
 ) (bool, error) {
 	set := bson.M{
-		"expired_at":          state.ExpiredAt,
-		"children_entity_ids": state.ChildrenEntityIDs,
-		"children_timestamps": state.ChildrenTimestamps,
-		"parents_entity_ids":  state.ParentsEntityIDs,
-		"parents_timestamps":  state.ParentsTimestamps,
-		"meta_alarm_name":     state.MetaAlarmName,
-		"state":               Opened,
+		"expired_at":                state.ExpiredAt,
+		"children_entity_ids":       state.ChildrenEntityIDs,
+		"children_timestamps":       state.ChildrenTimestamps,
+		"parents_entity_ids":        state.ParentsEntityIDs,
+		"parents_timestamps":        state.ParentsTimestamps,
+		"meta_alarm_component_name": state.MetaAlarmComponentName,
+		"meta_alarm_name":           state.MetaAlarmName,
+		"state":                     Opened,
 	}
 	if state.ChildInactiveExpireAt != nil {
 		set["child_inactive_expire_at"] = state.ChildInactiveExpireAt
@@ -105,7 +106,7 @@ func (a *metaAlarmStateService) UpdateOpenedState(
 }
 
 func (a *metaAlarmStateService) ArchiveState(ctx context.Context, state MetaAlarmState) (bool, error) {
-	state.ID = state.ID + "-" + state.MetaAlarmName
+	state.ID = state.ID + "-" + state.GetEntityID()
 	_, err := a.metaAlarmStatesCollection.InsertOne(ctx, state)
 	if err != nil {
 		if mongodriver.IsDuplicateKeyError(err) {
@@ -140,14 +141,15 @@ func (a *metaAlarmStateService) SwitchStateToReady(
 		},
 		bson.M{
 			"$set": bson.M{
-				"expired_at":          state.ExpiredAt,
-				"state":               Ready,
-				"children_entity_ids": state.ChildrenEntityIDs,
-				"children_timestamps": state.ChildrenTimestamps,
-				"parents_entity_ids":  state.ParentsEntityIDs,
-				"parents_timestamps":  state.ParentsTimestamps,
-				"meta_alarm_name":     state.MetaAlarmName,
-				"version":             0,
+				"expired_at":                state.ExpiredAt,
+				"state":                     Ready,
+				"children_entity_ids":       state.ChildrenEntityIDs,
+				"children_timestamps":       state.ChildrenTimestamps,
+				"parents_entity_ids":        state.ParentsEntityIDs,
+				"parents_timestamps":        state.ParentsTimestamps,
+				"meta_alarm_component_name": state.MetaAlarmComponentName,
+				"meta_alarm_name":           state.MetaAlarmName,
+				"version":                   0,
 			},
 		},
 		options.Update().SetUpsert(upsert),

@@ -24,6 +24,16 @@ const fileNameTimeLayout = "2006-01-02T15-04-05-MST"
 type TaskCreator interface {
 	Create(ctx context.Context, t TaskParameters) (*Task, error)
 	Get(ctx context.Context, id string) (*Task, error)
+	SetFormatter(t string, f OutputFormatter)
+	GetFormatter(t string) OutputFormatter
+}
+
+type TaskExecutor interface {
+	TaskCreator
+	RegisterType(t string, fetch FetchData)
+	ExecuteTask(ctx context.Context, id string) error
+	ProcessAbandonedTasks(ctx context.Context)
+	DeleteOldTasks(ctx context.Context)
 }
 
 type FetchData func(ctx context.Context, t Task) (DataCursor, error)
@@ -50,8 +60,8 @@ func NewTaskExecutor(
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	dir string,
 	logger zerolog.Logger,
-) *TaskExecutor {
-	return &TaskExecutor{
+) TaskExecutor {
+	return &taskExecutor{
 		client:       client,
 		collection:   client.Collection(mongo.ExportTaskMongoCollection),
 		jobPublisher: jobPublisher,
@@ -70,7 +80,7 @@ func NewTaskExecutor(
 	}
 }
 
-type TaskExecutor struct {
+type taskExecutor struct {
 	client       mongo.DbClient
 	collection   mongo.DbCollection
 	jobPublisher workers.JobPublisher
@@ -88,7 +98,7 @@ type TaskExecutor struct {
 	timezoneConfigProvider config.TimezoneConfigProvider
 }
 
-func (e *TaskExecutor) RegisterType(t string, fetch FetchData) {
+func (e *taskExecutor) RegisterType(t string, fetch FetchData) {
 	if _, ok := e.fetches[t]; ok {
 		panic(fmt.Errorf("type %q is already registered", t))
 	}
@@ -96,7 +106,7 @@ func (e *TaskExecutor) RegisterType(t string, fetch FetchData) {
 	e.fetches[t] = fetch
 }
 
-func (e *TaskExecutor) Create(ctx context.Context, params TaskParameters) (*Task, error) {
+func (e *taskExecutor) Create(ctx context.Context, params TaskParameters) (*Task, error) {
 	location := e.timezoneConfigProvider.Get().Location
 	now := datetime.NewCpsTime().In(location)
 	t := Task{
@@ -107,7 +117,7 @@ func (e *TaskExecutor) Create(ctx context.Context, params TaskParameters) (*Task
 		Fields:     params.Fields,
 		Separator:  params.Separator,
 		Filename: params.FilenamePrefix + "-" + now.Time.Format(fileNameTimeLayout) +
-			e.getFormatter(params.Type).GetFileExtension(),
+			e.GetFormatter(params.Type).GetFileExtension(),
 		User:    params.UserID,
 		Created: now,
 	}
@@ -125,7 +135,7 @@ func (e *TaskExecutor) Create(ctx context.Context, params TaskParameters) (*Task
 	return &t, nil
 }
 
-func (e *TaskExecutor) Get(ctx context.Context, id string) (*Task, error) {
+func (e *taskExecutor) Get(ctx context.Context, id string) (*Task, error) {
 	res := e.collection.FindOne(ctx, bson.M{"_id": id})
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -144,7 +154,7 @@ func (e *TaskExecutor) Get(ctx context.Context, id string) (*Task, error) {
 	return &t, nil
 }
 
-func (e *TaskExecutor) ExecuteTask(ctx context.Context, id string) error {
+func (e *taskExecutor) ExecuteTask(ctx context.Context, id string) error {
 	t := Task{}
 	err := e.collection.FindOneAndUpdate(
 		ctx,
@@ -192,7 +202,7 @@ func (e *TaskExecutor) ExecuteTask(ctx context.Context, id string) error {
 		return err
 	}
 
-	fileName, err := e.getFormatter(t.Type).DataFetcher(ctx, t, cursor)
+	fileName, err := e.GetFormatter(t.Type).DataFetcher(ctx, t, cursor)
 	if err != nil {
 		_, updateErr := e.collection.UpdateOne(ctx, updateFilter, bson.M{"$set": bson.M{
 			"status":      TaskStatusFailed,
@@ -218,7 +228,7 @@ func (e *TaskExecutor) ExecuteTask(ctx context.Context, id string) error {
 	return nil
 }
 
-func (e *TaskExecutor) ProcessAbandonedTasks(ctx context.Context) {
+func (e *taskExecutor) ProcessAbandonedTasks(ctx context.Context) {
 	ticker := time.NewTicker(time.Minute)
 	defer ticker.Stop()
 
@@ -235,7 +245,7 @@ func (e *TaskExecutor) ProcessAbandonedTasks(ctx context.Context) {
 	}
 }
 
-func (e *TaskExecutor) DeleteOldTasks(ctx context.Context) {
+func (e *taskExecutor) DeleteOldTasks(ctx context.Context) {
 	ticker := time.NewTicker(time.Hour)
 	defer ticker.Stop()
 
@@ -252,11 +262,20 @@ func (e *TaskExecutor) DeleteOldTasks(ctx context.Context) {
 	}
 }
 
-func (e *TaskExecutor) SetFormatter(t string, f OutputFormatter) {
+func (e *taskExecutor) SetFormatter(t string, f OutputFormatter) {
 	e.customFormatter[t] = f
 }
 
-func (e *TaskExecutor) fetchTasks(ctx context.Context) error {
+func (e *taskExecutor) GetFormatter(t string) OutputFormatter {
+	formatter, ok := e.customFormatter[t]
+	if !ok {
+		formatter = e.formatter
+	}
+
+	return formatter
+}
+
+func (e *taskExecutor) fetchTasks(ctx context.Context) error {
 	cursor, err := e.collection.Find(ctx, bson.M{"$or": []bson.M{
 		{
 			"status":   TaskStatusRunning,
@@ -292,7 +311,7 @@ func (e *TaskExecutor) fetchTasks(ctx context.Context) error {
 	return nil
 }
 
-func (e *TaskExecutor) deleteTasks(ctx context.Context) error {
+func (e *taskExecutor) deleteTasks(ctx context.Context) error {
 	cursor, err := e.collection.Find(ctx, bson.M{
 		"status":    bson.M{"$in": bson.A{TaskStatusSucceeded, TaskStatusFailed}},
 		"completed": bson.M{"$lte": datetime.CpsTime{Time: time.Now().Add(-e.removeInterval)}},
@@ -338,13 +357,4 @@ func (e *TaskExecutor) deleteTasks(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func (e *TaskExecutor) getFormatter(t string) OutputFormatter {
-	formatter, ok := e.customFormatter[t]
-	if !ok {
-		formatter = e.formatter
-	}
-
-	return formatter
 }

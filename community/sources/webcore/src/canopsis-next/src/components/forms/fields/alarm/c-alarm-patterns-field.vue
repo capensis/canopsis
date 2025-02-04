@@ -495,6 +495,18 @@ export default {
           options: this.snoozeOptions,
         },
         {
+          value: ALARM_PATTERN_FIELDS.snooze,
+          options: this.snoozeOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.snoozeAuthor,
+          options: this.stringWithOneOfOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.snoozeInitiator,
+          options: this.initiatorOptions,
+        },
+        {
           value: ALARM_PATTERN_FIELDS.canceled,
           options: this.canceledOptions,
         },
@@ -537,6 +549,10 @@ export default {
         {
           value: ALARM_PATTERN_FIELDS.initialLongOutput,
           options: this.stringWithOneOfOptions,
+        },
+        {
+          value: ALARM_PATTERN_FIELDS.stateInitiator,
+          options: this.initiatorOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.changeState,

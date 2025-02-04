@@ -78,11 +78,13 @@ type AxeParameters struct {
 	// Idle events
 	IdleRuleApply string `json:"idle_rule_apply,omitempty"`
 	// Meta alarm create
-	MetaAlarmRuleID     string   `json:"meta_alarm_rule_id,omitempty"`
-	MetaAlarmValuePath  string   `json:"meta_alarm_value_path,omitempty"`
-	DisplayName         string   `json:"display_name,omitempty"`
-	MetaAlarmChildren   []string `json:"meta_alarm_children,omitempty"`
-	StateSettingUpdated bool     `json:"state_setting_updated,omitempty"`
+	MetaAlarmRuleID     string                      `json:"meta_alarm_rule_id,omitempty"`
+	MetaAlarmValuePath  string                      `json:"meta_alarm_value_path,omitempty"`
+	MetaAlarmTags       *types.CorrelationRuleTags  `json:"ma_tags,omitempty"`
+	MetaAlarmInfos      []types.CorrelationRuleInfo `json:"ma_infos,omitempty"`
+	DisplayName         string                      `json:"display_name,omitempty"`
+	MetaAlarmChildren   []string                    `json:"meta_alarm_children,omitempty"`
+	StateSettingUpdated bool                        `json:"state_setting_updated,omitempty"`
 }
 
 // AxeResultEvent
@@ -94,6 +96,8 @@ type AxeResultEvent struct {
 	Error           *Error                `json:"error"`
 
 	Origin *types.Event `json:"origin,omitempty"`
+
+	NewExternalTags []string `json:"-"`
 }
 
 // WebhookEvent
