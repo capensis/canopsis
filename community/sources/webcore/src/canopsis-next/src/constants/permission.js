@@ -660,25 +660,24 @@ export const DOCUMENTATION_LINKS = {
    */
   [USER_PERMISSIONS.technical.broadcastMessage]: 'latest/guide-utilisation/menu-administration/diffusion-de-messages/',
   [USER_PERMISSIONS.technical.playlist]: 'latest/guide-utilisation/menu-administration/listes-de-lecture/',
-  [USER_PERMISSIONS.technical.roles]: 'latest/guide-utilisation/menu-administration/roles/',
+  [USER_PERMISSIONS.technical.role]: 'latest/guide-utilisation/menu-administration/roles/',
   [USER_PERMISSIONS.technical.user]: 'latest/guide-utilisation/menu-administration/utilisateurs/',
   [USER_PERMISSIONS.technical.permission]: 'latest/guide-utilisation/menu-administration/droits/',
   [USER_PERMISSIONS.technical.broadcastMessage]: 'latest/guide-utilisation/menu-administration/diffusion-de-messages/',
-  [USER_PERMISSIONS.technical.playlist]: 'latest/guide-utilisation/menu-administration/listes-de-lectures/',
   [USER_PERMISSIONS.technical.parameters]: 'latest/guide-utilisation/menu-administration/parametres/',
-  [USER_PERMISSIONS.technical.healtchcheck]: 'latest/guide-utilisation/menu-administration/bilan-de-sante/',
+  [USER_PERMISSIONS.technical.healthcheck]: 'latest/guide-utilisation/menu-administration/bilan-de-sante/',
   [USER_PERMISSIONS.technical.kpi]: 'latest/guide-utilisation/menu-administration/kpi/',
   [USER_PERMISSIONS.technical.map]: 'latest/guide-utilisation/menu-administration/cartographie/',
   [USER_PERMISSIONS.technical.maintenance]: 'latest/guide-utilisation/menu-administration/mode-maintenance/',
   [USER_PERMISSIONS.technical.tag]: 'latest/guide-utilisation/menu-administration/gestion-des-tags/',
   [USER_PERMISSIONS.technical.storageSettings]: 'latest/guide-utilisation/menu-administration/parametres-de-stockage/',
-  [USER_PERMISSIONS.technical.stateSettings]: 'latest/guide-utilisation/menu-administration/parametres-de-calculd-etat-sévérité/',
-  [USER_PERMISSIONS.technical.eventsRecords]: 'latest/guide-utilisation/menu-administration/enregistrements-d-evenements/',
+  [USER_PERMISSIONS.technical.stateSetting]: 'latest/guide-utilisation/menu-administration/parametres-de-calculd-etat-sévérité/',
+  [USER_PERMISSIONS.technical.eventsRecord]: 'latest/guide-utilisation/menu-administration/enregistrements-d-evenements/',
 
   /**
    * Grouped
    */
-  [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-administration/moteurs/moteur-pbehavior/#adminitration-de-la-planification',
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-utilisation/menu-administration/planification/',
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
 
   /**
