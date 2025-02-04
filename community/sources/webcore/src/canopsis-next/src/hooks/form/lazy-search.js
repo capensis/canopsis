@@ -239,6 +239,7 @@ export const useLazySearch = ({
   return {
     selectedItems,
     items,
+    valuesPending,
     wholePending,
     hasMoreItems,
     fetchItems,

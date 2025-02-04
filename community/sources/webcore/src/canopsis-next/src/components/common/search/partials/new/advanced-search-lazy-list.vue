@@ -78,7 +78,7 @@
   </v-list>
 </template>
 <script>
-import { uniqBy } from 'lodash';
+import { get, uniqBy } from 'lodash';
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
@@ -138,14 +138,20 @@ export default {
     const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
 
     const isActiveItem = (item = {}) => props.value.find((selectedItem) => {
-      if (selectedItem[props.itemValue].length > String(item[props.itemValue]).length) {
-        return selectedItem[props.itemValue].startsWith(`${item[props.itemValue]}.`);
+      const selectedValue = String(selectedItem[props.itemValue] ?? '');
+      const value = String(item[[props.itemValue]] ?? '');
+
+      if (selectedValue.length > value.length) {
+        return selectedValue.startsWith(`${value}.`);
       }
 
-      return selectedItem[props.itemValue] === item[props.itemValue];
+      return selectedValue === value;
     });
 
-    const selectVariable = item => emit('input', props.multiple ? uniqBy([...props.value, item], props.itemValue) : item); // TODO: refactor
+    const selectVariable = item => emit(
+      'input',
+      props.multiple ? uniqBy([...props.value, item], props.itemValue) : item,
+    );
 
     const selectSubVariable = (item) => {
       selectVariable({
