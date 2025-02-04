@@ -29,10 +29,6 @@ CMDS = $(notdir $(wildcard $(CURRENT_ROOT_DIR)/cmd/*))
 # List of cmd binary paths (eg: build/cmd/engine-che build/cmd/connector-junit...)
 CMDS_BINARY_TARGETS = $(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/cmd/,$(CMDS))
 
-# List of plugins to build and install (eg: datasource/mongo.so)
-PLUGINS = $(addsuffix .so,$(patsubst $(CURRENT_ROOT_DIR)/plugins/%,%,$(wildcard $(CURRENT_ROOT_DIR)/plugins/*/*)))
-PLUGINS_BINARY_TARGETS = $(addprefix $(CURRENT_BUILD_OUTPUT_DIR)/plugins/,$(PLUGINS))
-
 # List of Docker containers targets
 DOCKER_CMD_TARGETS = $(addprefix docker-cmd-,$(CMDS))
 
@@ -51,7 +47,6 @@ LINKPKG=git.canopsis.net/canopsis/canopsis-$(CANOPSIS_EDITION)/$(CANOPSIS_EDITIO
 VERSION ?= $(shell (git -C "$(MONOREPO_ROOT)" tag --list --sort=-taggerdate --merged 2>/dev/null || echo "0.0.0") | head -1)
 # Metadata for the binaries
 CUSTOM_LDFLAGS=
-# TODO: simplify this after Go 1.18 with https://utcc.utoronto.ca/~cks/space/blog/programming/GoVersionOfYourSource
 LDFLAGS:=-ldflags "\
 	-X '$(LINKPKG).Version=$(VERSION)' \
 	-X '$(LINKPKG).BuildDate=$(SOURCE_DATE_EPOCH)' $(CUSTOM_LDFLAGS)"
@@ -77,7 +72,7 @@ DOCKERFILE_PATH = $(COMMUNITY_ROOT_DIR)/Dockerfile
 DOCKER_IMAGE_BASE_PATH = docker.canopsis.net/docker/$(CANOPSIS_EDITION)
 
 .PHONY: all docker-images deps
-all: $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS) $(SCRIPT_SUPPORT_TOOLS_TARGETS)
+all: $(CMDS_BINARY_TARGETS) $(SCRIPT_SUPPORT_TOOLS_TARGETS)
 .DEFAULT_GOAL:=all
 docker-images: $(DOCKER_CMD_TARGETS) $(DOCKER_SUPPORT_TOOLS_TARGETS)
 
@@ -94,16 +89,7 @@ deps:
 
 # Make make treat cmds as viable build targets (for single-engine build)
 $(CMDS_BINARY_TARGETS):
-$(PLUGINS_BINARY_TARGETS):
 # Tell make where to find the binaries
-
-# Plugin build job template
-$(CURRENT_BUILD_OUTPUT_DIR)/plugins/%.so: $(CURRENT_ROOT_DIR)/plugins/% $(CURRENT_ROOT_DIR)/plugins/%/*
-	@echo "==> Building $@ for $(CANOPSIS_EDITION)"
-	cd -- "$(CURRENT_ROOT_DIR)" && \
-	go build $(GO_BUILD_FLAGS) $(GO_BUILD_CUSTOM_FLAGS) $(LDFLAGS) \
-		-buildmode=plugin \
-		-o "$(abspath $@)" "$(abspath $<)"
 
 # Build job template
 $(CURRENT_BUILD_OUTPUT_DIR)/cmd/%: $(CURRENT_ROOT_DIR)/cmd/% $(CURRENT_ROOT_DIR)/cmd/%/*
@@ -123,6 +109,7 @@ define DOCKER_BUILD_ARGS
 --platform linux/amd64 \
 --build-arg "ALPINE_VERSION=$(DOCKER_ALPINE_VERSION)" \
 --build-arg "ALPINE_BUILD_VERSION=$(DOCKER_ALPINE_BUILD_VERSION)" \
+--build-arg "DEBIAN_VERSION=$(DEBIAN_VERSION)" \
 --build-arg "GOLANG_VERSION=$(GOLANG_VERSION)" \
 --build-arg "CANOPSIS_EDITION=$(CANOPSIS_EDITION)" \
 --build-arg "VERSION=$(VERSION)" \
@@ -173,7 +160,6 @@ $(DOCKER_CMD_TARGETS): $(MONOREPO_ROOT)/.dockerignore docker-go-builder
 docker-cmd-canopsis-api-community: TARGET=canopsis-api-community
 docker-cmd-canopsis-api-pro: TARGET=canopsis-api-pro
 docker-cmd-canopsis-reconfigure: TARGET=canopsis-reconfigure
-docker-cmd-engine-che: TARGET=engine-che
 docker-cmd-engine-webhook: TARGET=engine-webhook
 docker-cmd-import-context-graph: TARGET=import-context-graph
 
@@ -200,10 +186,10 @@ docker-support-tools: $(DOCKER_SUPPORT_TOOLS_TARGETS)
 
 .PHONY: install
 
-# You can modify the content of the CMDS and PLUGINS variables to change what will be built/installed
-# Example : make install DESTDIR=/tmp/installroot PLUGINS=datasource/mongo.so CMDS="engine-che connector-junit"
+# You can modify the content of the CMDS variable to change what will be built/installed
+# Example : make install DESTDIR=/tmp/installroot CMDS="engine-che connector-junit"
 # will only install the mongo datasource plugin, engine-che and connector-junit
-install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml $(CMDS_BINARY_TARGETS) $(PLUGINS_BINARY_TARGETS)
+install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPSIS_EDITION).toml $(CMDS_BINARY_TARGETS)
 	# This targets install files that are common between Pro and Community editions
 	@echo "==> Installing commons files for $(CANOPSIS_EDITION)"
 	
@@ -212,9 +198,6 @@ install-common: $(COMMUNITY_ROOT_DIR)/cmd/canopsis-reconfigure/canopsis-$(CANOPS
 	install -d -m 755 -- "$(DESTDIR)/opt/canopsis/bin"
 	install -c -m 755 -p -- $(foreach cmd,$(CMDS),"$(CURRENT_BUILD_OUTPUT_DIR)/cmd/$(cmd)") "$(DESTDIR)/opt/canopsis/bin/"
 	( cd -- "$(DESTDIR)/opt/canopsis/bin" && ln -sf "canopsis-api-$(CANOPSIS_EDITION)" canopsis-api )
-	@echo "==> Installing Canopsis plugins"
-	# Install plugins
-	$(foreach plugin,$(PLUGINS),install -d -m 755 -- "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))" && install -c -m 644 -- "$(CURRENT_BUILD_OUTPUT_DIR)/plugins/$(plugin)" "$(DESTDIR)/opt/canopsis/lib/go/plugins/$(dir $(plugin))")
 	
 	# Create configuration directories
 	@echo "==> Creating configuration directories"

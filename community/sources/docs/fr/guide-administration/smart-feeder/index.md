@@ -59,7 +59,8 @@ events:
       - "ticket is added"
 
 entities:
-  parse_db: false
+  parse_db:
+    enabled: false
 
   default_connector: feeder_connector
   default_component: feeder_component
@@ -74,6 +75,21 @@ entities:
           resources:
             CPU:
               max_index: 2
+              perf_data:
+                name: cpu
+                unit: "%"
+                mean: 50
+                deviation: 20
+                min: 0
+                max: 100
+              tags:
+                tag-1:
+                  values:
+                    - value-1-1
+                    - value-1-2
+                tag-2:
+                  values:
+                    - value-2-1
             PING:
               max_index: 4
     nagios:
@@ -92,6 +108,40 @@ entities:
 - `event_rate` - débit d'événements par seconde.
 - `events` - configuration des événements.
 - `entities` - configuration des entités.
+
+#### Perf data
+
+La section `perf_data` contient les options suivantes :
+
+* `name` - nom de la perf_data.
+* `unit` - unité de mesure de la perf_data.
+* `mean` - définit une espérance mathématique, la valeur la plus attendue.
+* `deviation` - définit une variation de la valeur.
+* `min` - définit une valeur minimale.
+* `max` - définit une valeur maximale.
+
+Une nouvelle valeur de `perf_data` est générée à chaque événement de type `check`. Les valeurs de `perf_data` sont générées selon une loi de distribution normale. Cela signifie que les valeurs possibles seront dans la plage = [mean - 3 * deviation; mean + 3 * deviation], avec les valeurs les plus attendues autour de la valeur moyenne et les valeurs les moins attendues autour de mean ± 3 * deviation. Par exemple, si vous avez mean=50 et deviation=20, vous pouvez vous attendre à des valeurs de [-10; 110]. Les valeurs min et max définissent les limites inférieures et supérieures pour les valeurs générées.
+
+#### Tags
+
+En raison de la logique spécifique des tags, ils sont générés une seule fois pour chaque entité et ne changent pas pendant le processus du feeder. Par exemple :
+
+```yaml
+tags:
+  tag-1:
+    values:
+      - value-1-1
+      - value-1-2
+```
+
+Cette configuration choisit aléatoirement la valeur pour un tag avec le nom `tag-1`. Si vous n'avez pas besoin d'une valeur pour un tag, ne définissez pas de valeurs :
+
+```yaml
+tags:
+  tag-1:
+```
+
+Cela générera un tag sans valeur.
 
 ### Events
 
@@ -136,7 +186,7 @@ La section `entities` respecte la structure suivante :
 * `default_connector` - nom du connecteur par défaut associé à une nouvelle entité.
 * `default_component` - nom du composant par défaut associé à une nouvelle entité.
 * `default_resource` - nom de la ressource par défaut associée à une nouvelle entité.
-* `parse_db` - si positionné à `true` alors le smart-feeder lira les données déjà présentes en base pour générer les événements.
+* `parse_db` - si enabled est à `true` alors le smart-feeder lira les données déjà présentes en base pour générer les événements.
 
 Chaque `connectors` respecte la structure suivante :
 

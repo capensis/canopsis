@@ -11,26 +11,32 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
 type resourceProcessor struct {
 	dbClient            libmongo.DbClient
-	dbCollection        libmongo.DbCollection
+	dbEntityCollection  libmongo.DbCollection
+	dbAlarmCollection   libmongo.DbCollection
 	contextGraphManager contextgraph.Manager
 	eventFilterService  eventfilter.Service
+	logger              zerolog.Logger
 }
 
 func NewResourceProcessor(
 	dbClient libmongo.DbClient,
 	contextGraphManager contextgraph.Manager,
 	eventFilterService eventfilter.Service,
+	logger zerolog.Logger,
 ) Processor {
 	return &resourceProcessor{
 		dbClient:            dbClient,
-		dbCollection:        dbClient.Collection(libmongo.EntityMongoCollection),
+		dbEntityCollection:  dbClient.Collection(libmongo.EntityMongoCollection),
+		dbAlarmCollection:   dbClient.Collection(libmongo.AlarmMongoCollection),
 		contextGraphManager: contextGraphManager,
 		eventFilterService:  eventFilterService,
+		logger:              logger,
 	}
 }
 
@@ -47,7 +53,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 	}
 
 	var report contextgraph.Report
-	commRegister := libmongo.NewCommandsRegister(p.dbCollection, canopsis.DefaultBulkSize)
+	commRegister := libmongo.NewCommandsRegister(p.dbEntityCollection, canopsis.DefaultBulkSize)
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		commRegister.Clear()
@@ -84,7 +90,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		}
 
 		if isInfosUpdated {
-			_, err = p.dbCollection.UpdateOne(
+			_, err = p.dbEntityCollection.UpdateOne(
 				ctx,
 				bson.M{"_id": event.Entity.ID},
 				bson.M{"$set": bson.M{"infos": event.Entity.Infos}},
@@ -140,7 +146,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 		var component types.Entity
 		var connector types.Entity
 
-		cursor, err := p.dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": entityIdsToCheck}})
+		cursor, err := p.dbEntityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": entityIdsToCheck}})
 		if err != nil {
 			return err
 		}
@@ -217,6 +223,15 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 	})
 	if err != nil {
 		return nil, nil, eventMetric, err
+	}
+
+	if eventMetric.IsInfosUpdated {
+		go func() {
+			err = updateMetaAlarmInfos(ctx, event.Entity.ID, event.Entity.Infos, p.dbAlarmCollection, p.dbEntityCollection)
+			if err != nil {
+				p.logger.Err(err).Str("entity", event.Entity.ID).Msg("cannot update meta alarm infos")
+			}
+		}()
 	}
 
 	return toCountersUpdate, entityIdsToUpdateMetrics, eventMetric, nil

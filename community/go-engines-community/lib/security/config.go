@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"gopkg.in/yaml.v3"
@@ -33,6 +34,51 @@ type Config struct {
 		Saml          SamlConfig   `yaml:"saml"`
 		OAuth2        OAuth2Config `yaml:"oauth2"`
 	} `yaml:"security"`
+}
+
+func (c *Config) GetIdpFieldsExtraRolesAllowed(source string) ([]string, bool, bool) {
+	if source == "" {
+		return nil, false, false
+	}
+
+	var idpAttributesMap map[string]string
+	var allowExtraRoles bool
+
+	switch source {
+	case SourceSaml:
+		if !slices.Contains(c.Security.AuthProviders, SourceSaml) {
+			return nil, false, false
+		}
+
+		idpAttributesMap = c.Security.Saml.IdPAttributesMap
+		allowExtraRoles = c.Security.Saml.AllowExtraRoles
+	case SourceLdap:
+		if !slices.Contains(c.Security.AuthProviders, SourceLdap) {
+			return nil, false, false
+		}
+
+		idpAttributesMap = c.Security.Ldap.Attributes
+		allowExtraRoles = true
+	default:
+		if !slices.Contains(c.Security.AuthProviders, SourceOauth2) {
+			return nil, false, false
+		}
+
+		cfg, ok := c.Security.OAuth2.Providers[source]
+		if !ok {
+			return nil, false, false
+		}
+
+		idpAttributesMap = cfg.AttributesMap
+		allowExtraRoles = cfg.AllowExtraRoles
+	}
+
+	idpFields := make([]string, 0, len(idpAttributesMap))
+	for k := range idpAttributesMap {
+		idpFields = append(idpFields, k)
+	}
+
+	return idpFields, allowExtraRoles, true
 }
 
 type BasicConfig struct {
@@ -71,9 +117,9 @@ type SamlConfig struct {
 	Title                   string            `yaml:"title"`
 	X509Cert                string            `yaml:"x509_cert"`
 	X509Key                 string            `yaml:"x509_key"`
-	IdpMetadataUrl          string            `yaml:"idp_metadata_url"`
-	IdpMetadataXml          string            `yaml:"idp_metadata_xml"`
-	IdpAttributesMap        map[string]string `yaml:"idp_attributes_map"`
+	IdPMetadataUrl          string            `yaml:"idp_metadata_url"`
+	IdPMetadataXml          string            `yaml:"idp_metadata_xml"`
+	IdPAttributesMap        map[string]string `yaml:"idp_attributes_map"`
 	CanopsisSamlUrl         string            `yaml:"canopsis_saml_url"`
 	DefaultRole             string            `yaml:"default_role"`
 	InsecureSkipVerify      bool              `yaml:"insecure_skip_verify"`
@@ -84,6 +130,7 @@ type SamlConfig struct {
 	SkipSignatureValidation bool              `yaml:"skip_signature_validation"`
 	ACSIndex                *int              `yaml:"acs_index"`
 	AutoUserRegistration    bool              `yaml:"auto_user_registration"`
+	AllowExtraRoles         bool              `yaml:"allow_extra_roles"`
 }
 
 type OAuth2Config struct {
@@ -98,6 +145,7 @@ type OAuth2ProviderConfig struct {
 	ClientSecret       string            `yaml:"client_secret"`
 	RedirectURL        string            `yaml:"redirect_url"`
 	DefaultRole        string            `yaml:"default_role"`
+	AllowExtraRoles    bool              `yaml:"allow_extra_roles"`
 	AuthURL            string            `yaml:"auth_url"`
 	TokenURL           string            `yaml:"token_url"`
 	UserURL            string            `yaml:"user_url"`
