@@ -249,6 +249,10 @@ export default {
       this.createJodit();
     },
     value(newValue) {
+      if (newValue === this.$editor.value) {
+        return;
+      }
+
       if (this.value && !this.sanitized) {
         this.$editor.setEditorValue(this.sanitizedValue);
         this.sanitized = true;

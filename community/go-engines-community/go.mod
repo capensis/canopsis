@@ -4,7 +4,7 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 // The .env:GOLANG_VERSION be greater than or equal to the version below.
 go 1.23
 
-toolchain go1.23.1
+toolchain go1.23.5
 
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
@@ -53,8 +53,8 @@ require (
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.4
 	go.mongodb.org/mongo-driver v1.16.1
-	golang.org/x/sync v0.8.0
-	golang.org/x/text v0.18.0
+	golang.org/x/sync v0.10.0
+	golang.org/x/text v0.21.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -63,8 +63,8 @@ require (
 	github.com/dustinkirkland/golang-petname v0.0.0-20240428194347-eebcea082ee0
 	github.com/jellydator/ttlcache/v2 v2.11.1
 	github.com/prometheus/procfs v0.15.1
-	golang.org/x/crypto v0.27.0
-	golang.org/x/oauth2 v0.23.0
+	golang.org/x/crypto v0.32.0
+	golang.org/x/oauth2 v0.25.0
 )
 
 require (
@@ -122,7 +122,7 @@ require (
 	go.uber.org/atomic v1.11.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/net v0.29.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 	golang.org/x/xerrors v0.0.0-20240903120638-7835f813f4da // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
 )
