@@ -60,6 +60,7 @@ type store struct {
 	configProvider *config.BaseHealthCheckConfigProvider
 	websocketHub   websocket.Hub
 
+	mxConn         sync.Mutex
 	mongoClient    mongo.DbClient
 	redisClient    libredis.UniversalClient
 	amqpConnection amqp.Connection
@@ -272,6 +273,7 @@ func (s *store) loadConfig(ctx context.Context) {
 }
 
 func (s *store) loadServices(ctx context.Context) {
+	s.mxConn.Lock()
 	services := []Service{
 		{
 			Name:      ServiceMongoDB,
@@ -290,6 +292,7 @@ func (s *store) loadServices(ctx context.Context) {
 			IsRunning: s.checkTimescaleDB(ctx),
 		},
 	}
+	s.mxConn.Unlock()
 
 	s.mxServices.Lock()
 	defer s.mxServices.Unlock()
@@ -297,6 +300,8 @@ func (s *store) loadServices(ctx context.Context) {
 }
 
 func (s *store) closeConnections(ctx context.Context) {
+	s.mxConn.Lock()
+	defer s.mxConn.Unlock()
 	if s.mongoClient != nil {
 		err := s.mongoClient.Disconnect(ctx)
 		if err != nil {

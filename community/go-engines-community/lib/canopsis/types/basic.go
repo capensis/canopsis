@@ -28,6 +28,17 @@ const (
 	DurationUnitWeek   = "w"
 	DurationUnitMonth  = "M"
 	DurationUnitYear   = "y"
+
+	daysInWeek      = 7
+	hoursInDay      = 24
+	minutesInHour   = 60
+	secondsInMinute = minutesInHour
+	secondsInHour   = secondsInMinute * minutesInHour
+	secondsInDay    = hoursInDay * secondsInHour
+	minutesInDay    = hoursInDay * minutesInHour
+	hoursInWeek     = daysInWeek * hoursInDay
+	minutesInWeek   = hoursInWeek * minutesInHour
+	secondsInWeek   = minutesInWeek * secondsInMinute
 )
 
 // CpsNumber is here for compatibility with old python engines.
@@ -306,61 +317,69 @@ func (d DurationWithUnit) SubFrom(t CpsTime) CpsTime {
 }
 
 func (d DurationWithUnit) To(unit string) (DurationWithUnit, error) {
+	if d.Unit == unit {
+		return d, nil
+	}
+
 	newDuration := DurationWithUnit{
 		Value: d.Value,
 		Unit:  unit,
 	}
 
-	if d.Unit == unit || d.Value == 0 {
+	if d.Value == 0 {
 		return newDuration, nil
 	}
 
-	in := int64(0)
+	var scale int64
 
 	switch d.Unit {
 	case DurationUnitMinute:
 		if unit == DurationUnitSecond {
-			in = 60
+			scale = secondsInMinute
 		}
 	case DurationUnitHour:
 		switch unit {
 		case DurationUnitMinute:
-			in = 60
+			scale = minutesInHour
 		case DurationUnitSecond:
-			in = 60 * 60
+			scale = secondsInHour
 		}
 	case DurationUnitDay:
 		switch unit {
 		case DurationUnitHour:
-			in = 24
+			scale = hoursInDay
 		case DurationUnitMinute:
-			in = 24 * 60
+			scale = minutesInDay
 		case DurationUnitSecond:
-			in = 24 * 60 * 60
+			scale = secondsInDay
 		}
 	case DurationUnitWeek:
 		switch unit {
 		case DurationUnitDay:
-			in = 7
+			scale = daysInWeek
 		case DurationUnitHour:
-			in = 7 * 24
+			scale = hoursInWeek
 		case DurationUnitMinute:
-			in = 7 * 24 * 60
+			scale = minutesInWeek
 		case DurationUnitSecond:
-			in = 7 * 24 * 60 * 60
+			scale = secondsInWeek
 		}
 	}
 
-	if in > 0 {
-		newDuration.Value *= in
-		return newDuration, nil
+	if scale == 0 {
+		return DurationWithUnit{}, fmt.Errorf("cannot transform unit %q to %q", d.Unit, unit)
 	}
 
-	return DurationWithUnit{}, fmt.Errorf("cannot transform unit %q to %q", d.Unit, unit)
+	newDuration.Value *= scale
+	return newDuration, nil
 }
 
 func (d DurationWithUnit) String() string {
-	return fmt.Sprintf("%d%s", d.Value, d.Unit)
+	unit := d.Unit
+	if unit == DurationUnitMonth {
+		unit = "mons"
+	}
+	return fmt.Sprintf("%d%s", d.Value, unit)
 }
 
 func (d DurationWithUnit) IsZero() bool {
