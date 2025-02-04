@@ -276,6 +276,10 @@ html {
   fill: currentColor;
 }
 
+.overflow-visible {
+  overflow: visible !important;
+}
+
 *[aria-required="true"] label:before {
   content: '*';
   padding-right: 4px;
