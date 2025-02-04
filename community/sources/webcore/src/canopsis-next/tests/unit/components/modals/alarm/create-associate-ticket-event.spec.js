@@ -67,6 +67,7 @@ describe('create-associate-ticket-event', () => {
     system_name: '',
     ticket_resources: false,
     url: '',
+    url_title: '',
   };
 
   const createEvent = jest.fn();
@@ -156,6 +157,7 @@ describe('create-associate-ticket-event', () => {
       system_name: '',
       ticket_resources: false,
       url: '',
+      url_title: '',
     });
     expect($modals.hide).toBeCalledWith();
   });
@@ -196,9 +198,8 @@ describe('create-associate-ticket-event', () => {
 
   test('Errors added after trigger submit button with action errors', async () => {
     const formErrors = {
-      ticket_id: 'Ticket id error',
+      ticket: 'Ticket id error',
       ticket_url: 'Ticket url error',
-      system_name: 'System name error',
     };
     const action = jest.fn().mockRejectedValueOnce({ ...formErrors, unavailableField: 'Error' });
     const wrapper = factory({

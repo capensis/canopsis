@@ -362,6 +362,7 @@ func Default(
 			stateSettingsUpdatesChan,
 			flags.EnableSameServiceNames,
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
+			securityConfig,
 			logger,
 		)
 	})

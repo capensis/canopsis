@@ -13,7 +13,14 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     withlivewatching="true"
   />
   <widget-settings-group-stub
-    title="Advanced settings"
+    title="Live reporting"
+  >
+    <field-live-reporting-stub
+      value="[object Object]"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Columns"
   >
     <field-default-sort-column-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -30,9 +37,6 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       withhtml="true"
       withtemplate="true"
     />
-    <field-resize-column-behavior-stub
-      value="[object Object]"
-    />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for meta alarms"
@@ -45,22 +49,26 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     />
     <field-columns-stub
       columns="[object Object],[object Object]"
-      label="Track alarm source columns"
+      label="Column names for alarm track source"
       template="Symbol(custom)"
       templates=""
       type="entity"
       withcolorindicator="true"
     />
-    <field-default-elements-per-page-stub
-      value="10"
+    <field-resize-column-behavior-stub
+      value="[object Object]"
     />
-    <field-density-stub
-      name="dense"
-      value="0"
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
     />
-    <field-opened-resolved-filter-stub
-      value="true"
+    <field-info-popup-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      popups=""
     />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Filter"
+  >
     <field-filters-stub
       addable="true"
       editable="true"
@@ -70,37 +78,95 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       withentity="true"
       withpbehavior="true"
     />
+    <field-opened-resolved-filter-stub
+      value="true"
+    />
     <field-remediation-instructions-filters-stub
       addable="true"
       editable="true"
       filters=""
     />
     <field-switcher-stub
-      title="Disable possibility to clear selected filter"
+      title="Correlation"
     />
-    <field-availability-graph-settings-stub
+    <field-switcher-stub
+      title="Clear of selected filter allowed"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="View"
+  >
+    <field-default-elements-per-page-stub
+      value="10"
+    />
+    <field-density-stub
+      name="dense"
+      value="0"
+    />
+    <widget-settings-group-stub
+      title="Kiosk mode"
+    >
+      <field-switcher-stub
+        title="Hide actions"
+      />
+      <field-switcher-stub
+        title="Hide mass selection"
+      />
+      <field-switcher-stub
+        title="Hide toolbar"
+      />
+    </widget-settings-group-stub>
+    <field-switcher-stub
+      title="Sticky header"
+    />
+    <field-switcher-stub
+      title="Render elements on scroll"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Actions"
+  >
+    <widget-settings-group-stub
+      title="Ack"
+    >
+      <field-switcher-stub
+        title="Ack - note field required"
+      />
+      <field-switcher-stub
+        title="Multiple ack"
+      />
+      <field-fast-action-output-stub
+        label="Fast-ack output"
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Cancel"
+    >
+      <field-fast-action-output-stub
+        label="Fast-cancel output"
+        value="[object Object]"
+      />
+      <field-switcher-stub
+        title="Uncancel - comment field required"
+        value="true"
+      />
+    </widget-settings-group-stub>
+    <fast-pbehavior-form-stub
       form="[object Object]"
-      name="availability"
     />
-    <field-root-cause-settings-stub
-      parameters="[object Object]"
+    <field-switcher-stub
+      title="Snooze - note field required"
     />
-    <field-live-reporting-stub
-      value="[object Object]"
+    <field-switcher-stub
+      title="Remove alarms from manual meta alarm - comment field required"
+      value="true"
     />
-    <field-info-popup-stub
-      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      popups=""
+    <field-switcher-stub
+      title="Multiple declare ticket"
     />
-    <field-text-editor-with-template-stub
-      addable="true"
-      defaultvalue=""
-      removable="true"
-      template="Symbol(custom)"
-      templates=""
-      title="\\"More Infos\\" Popup"
-      value=""
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    <field-switcher-stub
+      title="Actions allowed when state OK"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -517,92 +583,51 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-    <field-grid-range-size-stub
-      max="12"
-      min="0"
-      step="1"
-      title="Expand card (more infos) width"
-      value="0,12"
-    />
-    <field-switcher-stub
-      title="HTML enabled on timeline?"
-      value="true"
-    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Expand panel"
+  >
     <widget-settings-group-stub
-      title="Ack"
+      title="More infos"
     >
-      <field-switcher-stub
-        title="Note field required when ack?"
+      <field-text-editor-with-template-stub
+        addable="true"
+        defaultvalue=""
+        removable="true"
+        template="Symbol(custom)"
+        templates=""
+        title="Infos"
+        value=""
+        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
-      <field-switcher-stub
-        title="Multiple ack"
-      />
-      <field-fast-action-output-stub
-        label="Fast-ack output"
-        value="[object Object]"
+      <field-grid-range-size-stub
+        inline="true"
+        max="12"
+        min="0"
+        step="1"
+        title="Width"
+        value="0,12"
       />
     </widget-settings-group-stub>
-    <widget-settings-group-stub
-      title="Cancel"
-    >
-      <field-fast-action-output-stub
-        label="Fast-cancel output"
-        value="[object Object]"
-      />
-    </widget-settings-group-stub>
-    <fast-pbehavior-form-stub
+    <field-availability-graph-settings-stub
       form="[object Object]"
+      name="availability"
     />
     <field-switcher-stub
-      title="Note field required when snooze?"
-    />
-    <field-switcher-stub
-      title="Comment field required when remove alarms from manual meta alarm?"
+      title="HTML enabled on timeline"
       value="true"
-    />
-    <field-switcher-stub
-      title="Comment field required when uncancel?"
-      value="true"
-    />
-    <field-switcher-stub
-      title="Multiple declare ticket"
-    />
-    <export-csv-form-stub
-      datetimeformat="true"
-      form="[object Object]"
-      optionalinfosattributes="true"
-      templates=""
-      type="alarm"
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      withinstructions="true"
-      withsimpletemplate="true"
-    />
-    <field-switcher-stub
-      title="Sticky header"
-    />
-    <widget-settings-group-stub
-      title="Kiosk mode"
-    >
-      <field-switcher-stub
-        title="Hide actions"
-      />
-      <field-switcher-stub
-        title="Hide mass selection"
-      />
-      <field-switcher-stub
-        title="Hide toolbar"
-      />
-    </widget-settings-group-stub>
-    <field-switcher-stub
-      title="Actions allowed when state OK?"
-    />
-    <field-switcher-stub
-      title="Virtual scroll enabled"
-    />
-    <field-switcher-stub
-      title="Is correlation enabled by default?"
     />
   </widget-settings-group-stub>
+  <export-csv-form-stub
+    datetimeformat="true"
+    form="[object Object]"
+    optionalinfosattributes="true"
+    templates=""
+    type="alarm"
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    withinstructions="true"
+    withsimpletemplate="true"
+  />
   <charts-form-stub
     charts=""
   />
@@ -622,7 +647,14 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     withlivewatching="true"
   />
   <widget-settings-group-stub
-    title="Advanced settings"
+    title="Live reporting"
+  >
+    <field-live-reporting-stub
+      value="[object Object]"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Columns"
   >
     <field-default-sort-column-stub
       columns="[object Object]"
@@ -639,9 +671,6 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       withhtml="true"
       withtemplate="true"
     />
-    <field-resize-column-behavior-stub
-      value="[object Object]"
-    />
     <field-columns-stub
       columns="[object Object]"
       label="Column names for meta alarms"
@@ -654,12 +683,41 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     />
     <field-columns-stub
       columns="[object Object]"
-      label="Track alarm source columns"
+      label="Column names for alarm track source"
       template="Symbol(custom)"
       templates=""
       type="entity"
       withcolorindicator="true"
     />
+    <field-resize-column-behavior-stub
+      value="[object Object]"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-info-popup-stub
+      columns="[object Object]"
+      popups=""
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Filter"
+  >
+    <!---->
+    <field-opened-resolved-filter-stub
+      value="true"
+    />
+    <!---->
+    <field-switcher-stub
+      title="Correlation"
+    />
+    <field-switcher-stub
+      title="Clear of selected filter allowed"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="View"
+  >
     <field-default-elements-per-page-stub
       value="12"
     />
@@ -667,37 +725,74 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       name="dense"
       value="0"
     />
-    <field-opened-resolved-filter-stub
+    <widget-settings-group-stub
+      title="Kiosk mode"
+    >
+      <field-switcher-stub
+        title="Hide actions"
+      />
+      <field-switcher-stub
+        title="Hide mass selection"
+      />
+      <field-switcher-stub
+        title="Hide toolbar"
+      />
+    </widget-settings-group-stub>
+    <field-switcher-stub
+      title="Sticky header"
       value="true"
     />
-    <!---->
-    <!---->
     <field-switcher-stub
-      title="Disable possibility to clear selected filter"
+      title="Render elements on scroll"
     />
-    <field-availability-graph-settings-stub
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Actions"
+  >
+    <widget-settings-group-stub
+      title="Ack"
+    >
+      <field-switcher-stub
+        title="Ack - note field required"
+        value="true"
+      />
+      <field-switcher-stub
+        title="Multiple ack"
+        value="true"
+      />
+      <field-fast-action-output-stub
+        label="Fast-ack output"
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Cancel"
+    >
+      <field-fast-action-output-stub
+        label="Fast-cancel output"
+        value="[object Object]"
+      />
+      <field-switcher-stub
+        title="Uncancel - comment field required"
+        value="true"
+      />
+    </widget-settings-group-stub>
+    <fast-pbehavior-form-stub
       form="[object Object]"
-      name="availability"
     />
-    <field-root-cause-settings-stub
-      parameters="[object Object]"
+    <field-switcher-stub
+      title="Snooze - note field required"
+      value="true"
     />
-    <field-live-reporting-stub
-      value="[object Object]"
+    <field-switcher-stub
+      title="Remove alarms from manual meta alarm - comment field required"
+      value="true"
     />
-    <field-info-popup-stub
-      columns="[object Object]"
-      popups=""
+    <field-switcher-stub
+      title="Multiple declare ticket"
     />
-    <field-text-editor-with-template-stub
-      addable="true"
-      defaultvalue=""
-      removable="true"
-      template="Symbol(custom)"
-      templates=""
-      title="\\"More Infos\\" Popup"
-      value="More info template"
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    <field-switcher-stub
+      title="Actions allowed when state OK"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -1114,96 +1209,51 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-    <field-grid-range-size-stub
-      max="12"
-      min="0"
-      step="1"
-      title="Expand card (more infos) width"
-      value="1,11"
-    />
-    <field-switcher-stub
-      title="HTML enabled on timeline?"
-      value="true"
-    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Expand panel"
+  >
     <widget-settings-group-stub
-      title="Ack"
+      title="More infos"
     >
-      <field-switcher-stub
-        title="Note field required when ack?"
-        value="true"
+      <field-text-editor-with-template-stub
+        addable="true"
+        defaultvalue=""
+        removable="true"
+        template="Symbol(custom)"
+        templates=""
+        title="Infos"
+        value="More info template"
+        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
-      <field-switcher-stub
-        title="Multiple ack"
-        value="true"
-      />
-      <field-fast-action-output-stub
-        label="Fast-ack output"
-        value="[object Object]"
+      <field-grid-range-size-stub
+        inline="true"
+        max="12"
+        min="0"
+        step="1"
+        title="Width"
+        value="1,11"
       />
     </widget-settings-group-stub>
-    <widget-settings-group-stub
-      title="Cancel"
-    >
-      <field-fast-action-output-stub
-        label="Fast-cancel output"
-        value="[object Object]"
-      />
-    </widget-settings-group-stub>
-    <fast-pbehavior-form-stub
+    <field-availability-graph-settings-stub
       form="[object Object]"
+      name="availability"
     />
     <field-switcher-stub
-      title="Note field required when snooze?"
+      title="HTML enabled on timeline"
       value="true"
-    />
-    <field-switcher-stub
-      title="Comment field required when remove alarms from manual meta alarm?"
-      value="true"
-    />
-    <field-switcher-stub
-      title="Comment field required when uncancel?"
-      value="true"
-    />
-    <field-switcher-stub
-      title="Multiple declare ticket"
-    />
-    <export-csv-form-stub
-      datetimeformat="true"
-      form="[object Object]"
-      optionalinfosattributes="true"
-      templates=""
-      type="alarm"
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      withinstructions="true"
-      withsimpletemplate="true"
-    />
-    <field-switcher-stub
-      title="Sticky header"
-      value="true"
-    />
-    <widget-settings-group-stub
-      title="Kiosk mode"
-    >
-      <field-switcher-stub
-        title="Hide actions"
-      />
-      <field-switcher-stub
-        title="Hide mass selection"
-      />
-      <field-switcher-stub
-        title="Hide toolbar"
-      />
-    </widget-settings-group-stub>
-    <field-switcher-stub
-      title="Actions allowed when state OK?"
-    />
-    <field-switcher-stub
-      title="Virtual scroll enabled"
-    />
-    <field-switcher-stub
-      title="Is correlation enabled by default?"
     />
   </widget-settings-group-stub>
+  <export-csv-form-stub
+    datetimeformat="true"
+    form="[object Object]"
+    optionalinfosattributes="true"
+    templates=""
+    type="alarm"
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    withinstructions="true"
+    withsimpletemplate="true"
+  />
   <charts-form-stub
     charts=""
   />
@@ -1223,7 +1273,14 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     withlivewatching="true"
   />
   <widget-settings-group-stub
-    title="Advanced settings"
+    title="Live reporting"
+  >
+    <field-live-reporting-stub
+      value="[object Object]"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Columns"
   >
     <field-default-sort-column-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
@@ -1240,9 +1297,6 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       withhtml="true"
       withtemplate="true"
     />
-    <field-resize-column-behavior-stub
-      value="[object Object]"
-    />
     <field-columns-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       label="Column names for meta alarms"
@@ -1255,12 +1309,41 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-columns-stub
       columns="[object Object],[object Object]"
-      label="Track alarm source columns"
+      label="Column names for alarm track source"
       template="Symbol(custom)"
       templates=""
       type="entity"
       withcolorindicator="true"
     />
+    <field-resize-column-behavior-stub
+      value="[object Object]"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-info-popup-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      popups=""
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Filter"
+  >
+    <!---->
+    <field-opened-resolved-filter-stub
+      value="true"
+    />
+    <!---->
+    <field-switcher-stub
+      title="Correlation"
+    />
+    <field-switcher-stub
+      title="Clear of selected filter allowed"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="View"
+  >
     <field-default-elements-per-page-stub
       value="10"
     />
@@ -1268,37 +1351,70 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       name="dense"
       value="0"
     />
-    <field-opened-resolved-filter-stub
+    <widget-settings-group-stub
+      title="Kiosk mode"
+    >
+      <field-switcher-stub
+        title="Hide actions"
+      />
+      <field-switcher-stub
+        title="Hide mass selection"
+      />
+      <field-switcher-stub
+        title="Hide toolbar"
+      />
+    </widget-settings-group-stub>
+    <field-switcher-stub
+      title="Sticky header"
+    />
+    <field-switcher-stub
+      title="Render elements on scroll"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Actions"
+  >
+    <widget-settings-group-stub
+      title="Ack"
+    >
+      <field-switcher-stub
+        title="Ack - note field required"
+      />
+      <field-switcher-stub
+        title="Multiple ack"
+      />
+      <field-fast-action-output-stub
+        label="Fast-ack output"
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Cancel"
+    >
+      <field-fast-action-output-stub
+        label="Fast-cancel output"
+        value="[object Object]"
+      />
+      <field-switcher-stub
+        title="Uncancel - comment field required"
+        value="true"
+      />
+    </widget-settings-group-stub>
+    <fast-pbehavior-form-stub
+      form="[object Object]"
+    />
+    <field-switcher-stub
+      title="Snooze - note field required"
+    />
+    <field-switcher-stub
+      title="Remove alarms from manual meta alarm - comment field required"
       value="true"
     />
-    <!---->
-    <!---->
     <field-switcher-stub
-      title="Disable possibility to clear selected filter"
+      title="Multiple declare ticket"
     />
-    <field-availability-graph-settings-stub
-      form="[object Object]"
-      name="availability"
-    />
-    <field-root-cause-settings-stub
-      parameters="[object Object]"
-    />
-    <field-live-reporting-stub
-      value="[object Object]"
-    />
-    <field-info-popup-stub
-      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      popups=""
-    />
-    <field-text-editor-with-template-stub
-      addable="true"
-      defaultvalue=""
-      removable="true"
-      template="Symbol(custom)"
-      templates=""
-      title="\\"More Infos\\" Popup"
-      value=""
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    <field-switcher-stub
+      title="Actions allowed when state OK"
     />
     <field-text-editor-with-template-stub
       addable="true"
@@ -1715,92 +1831,51 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
 "
       variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
-    <field-grid-range-size-stub
-      max="12"
-      min="0"
-      step="1"
-      title="Expand card (more infos) width"
-      value="0,12"
-    />
-    <field-switcher-stub
-      title="HTML enabled on timeline?"
-      value="true"
-    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Expand panel"
+  >
     <widget-settings-group-stub
-      title="Ack"
+      title="More infos"
     >
-      <field-switcher-stub
-        title="Note field required when ack?"
+      <field-text-editor-with-template-stub
+        addable="true"
+        defaultvalue=""
+        removable="true"
+        template="Symbol(custom)"
+        templates=""
+        title="Infos"
+        value=""
+        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
-      <field-switcher-stub
-        title="Multiple ack"
-      />
-      <field-fast-action-output-stub
-        label="Fast-ack output"
-        value="[object Object]"
+      <field-grid-range-size-stub
+        inline="true"
+        max="12"
+        min="0"
+        step="1"
+        title="Width"
+        value="0,12"
       />
     </widget-settings-group-stub>
-    <widget-settings-group-stub
-      title="Cancel"
-    >
-      <field-fast-action-output-stub
-        label="Fast-cancel output"
-        value="[object Object]"
-      />
-    </widget-settings-group-stub>
-    <fast-pbehavior-form-stub
+    <field-availability-graph-settings-stub
       form="[object Object]"
+      name="availability"
     />
     <field-switcher-stub
-      title="Note field required when snooze?"
-    />
-    <field-switcher-stub
-      title="Comment field required when remove alarms from manual meta alarm?"
+      title="HTML enabled on timeline"
       value="true"
-    />
-    <field-switcher-stub
-      title="Comment field required when uncancel?"
-      value="true"
-    />
-    <field-switcher-stub
-      title="Multiple declare ticket"
-    />
-    <export-csv-form-stub
-      datetimeformat="true"
-      form="[object Object]"
-      optionalinfosattributes="true"
-      templates=""
-      type="alarm"
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-      withinstructions="true"
-      withsimpletemplate="true"
-    />
-    <field-switcher-stub
-      title="Sticky header"
-    />
-    <widget-settings-group-stub
-      title="Kiosk mode"
-    >
-      <field-switcher-stub
-        title="Hide actions"
-      />
-      <field-switcher-stub
-        title="Hide mass selection"
-      />
-      <field-switcher-stub
-        title="Hide toolbar"
-      />
-    </widget-settings-group-stub>
-    <field-switcher-stub
-      title="Actions allowed when state OK?"
-    />
-    <field-switcher-stub
-      title="Virtual scroll enabled"
-    />
-    <field-switcher-stub
-      title="Is correlation enabled by default?"
     />
   </widget-settings-group-stub>
+  <export-csv-form-stub
+    datetimeformat="true"
+    form="[object Object]"
+    optionalinfosattributes="true"
+    templates=""
+    type="alarm"
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    withinstructions="true"
+    withsimpletemplate="true"
+  />
   <charts-form-stub
     charts=""
   />
