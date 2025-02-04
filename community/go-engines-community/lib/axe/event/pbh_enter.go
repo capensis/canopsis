@@ -91,7 +91,8 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 						"else": 0,
 					}},
 				}},
-				"v.inactive_start": event.Parameters.Timestamp,
+				"v.inactive_start":   event.Parameters.Timestamp,
+				"v.last_update_date": event.Parameters.Timestamp,
 			}},
 			{"$unset": bson.A{
 				"not_acked_metric_type",
