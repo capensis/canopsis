@@ -36,6 +36,14 @@ func (s *service) GenICSFrom(
 	maxPriority, minPriority int64,
 ) (ics.Calendar, error) {
 	location := s.timezoneConfigProvider.Get().Location
+	var err error
+	if pbh.Timezone != "" {
+		location, err = time.LoadLocation(pbh.Timezone)
+		if err != nil {
+			return nil, fmt.Errorf("invalid timezone %q: %w", pbh.Timezone, err)
+		}
+	}
+
 	e := ics.NewEvent()
 	e.SetUID(pbh.ID)
 	e.SetCreated(pbh.Created.Time.In(location))
