@@ -3,6 +3,8 @@
 exports[`availability-widget-filters Renders \`availability-widget-filters\` with custom props 1`] = `
 <div
   class="availability-widget-filters col-gap-6 row-gap-3"
+  filteraddable="true"
+  filtereditable="true"
 >
   <c-advanced-search-stub
     class="pa-0 availability-widget-filters__search"

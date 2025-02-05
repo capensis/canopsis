@@ -65,7 +65,8 @@ func (p *webhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEve
 			event.Parameters.Output, event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.steps": addStepUpdateQuery(newStepQuery),
+				"v.steps":            addStepUpdateQuery(newStepQuery),
+				"v.last_update_date": event.Parameters.Timestamp,
 			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeWebhookComplete
@@ -76,9 +77,10 @@ func (p *webhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEve
 			event.Parameters.RuleExecution, event.Parameters.TicketInfo.GetStepMessage(), event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.ticket":  newTicketStepQuery,
-				"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
-				"v.steps":   addStepUpdateQuery(newStepQuery, newTicketStepQuery),
+				"v.ticket":           newTicketStepQuery,
+				"v.tickets":          addTicketUpdateQuery(newTicketStepQuery),
+				"v.steps":            addStepUpdateQuery(newStepQuery, newTicketStepQuery),
+				"v.last_update_date": event.Parameters.Timestamp,
 			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeDeclareTicketWebhook

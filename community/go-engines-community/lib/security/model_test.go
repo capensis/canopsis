@@ -40,7 +40,7 @@ func TestUser_SetRolesFromIdp(t *testing.T) {
 		{
 			user: security.User{
 				Roles:    []string{"role-1", "role-2"},
-				IdpRoles: []string{"role-1", "role-2"},
+				IdPRoles: []string{"role-1", "role-2"},
 			},
 			newIdpRoles:   []string{},
 			expectedRoles: []string{},
@@ -63,7 +63,7 @@ func TestUser_SetRolesFromIdp(t *testing.T) {
 		{
 			user: security.User{
 				Roles:    []string{"role-1", "role-2", "role-3"},
-				IdpRoles: []string{"role-1", "role-2"},
+				IdPRoles: []string{"role-1", "role-2"},
 			},
 			newIdpRoles:   []string{"role-1"},
 			expectedRoles: []string{"role-1", "role-3"},
@@ -72,7 +72,7 @@ func TestUser_SetRolesFromIdp(t *testing.T) {
 		{
 			user: security.User{
 				Roles:    []string{"role-1", "role-2", "role-3"},
-				IdpRoles: []string{"role-1", "role-3"},
+				IdPRoles: []string{"role-1", "role-3"},
 			},
 			newIdpRoles:   []string{},
 			expectedRoles: []string{"role-2"},
@@ -81,13 +81,13 @@ func TestUser_SetRolesFromIdp(t *testing.T) {
 	}
 
 	for i, set := range dataSets {
-		set.user.SetRolesFromIdp(set.newIdpRoles, set.mergeRoles)
+		set.user.SetRolesFromIdP(set.newIdpRoles, set.mergeRoles)
 		t.Run(fmt.Sprintf("test %d", i), func(t *testing.T) {
 			if diff := pretty.Compare(set.expectedRoles, set.user.Roles); diff != "" {
 				t.Errorf("unexpected roles: %s", diff)
 			}
 
-			if diff := pretty.Compare(set.newIdpRoles, set.user.IdpRoles); diff != "" {
+			if diff := pretty.Compare(set.newIdpRoles, set.user.IdPRoles); diff != "" {
 				t.Errorf("unexpected idp roles: %s", diff)
 			}
 		})

@@ -590,11 +590,6 @@ func (m DependencyMaker) EventProcessor(
 		alarmStatusService, templateExecutor, metricsSender, json.NewEncoder(), eventGenerator, amqpPublisher, logger))
 	container.Set(types.EventTypeMetaAlarmDetachChildren, event.NewMetaAlarmDetachProcessor(dbClient, ruleAdapter, alarmAdapter,
 		alarmStatusService, templateExecutor))
-	container.Set(types.EventTypeMetaAlarmUngroup, event.NewForwardProcessor())
-	container.Set(types.EventTypeMetaAlarmUpdate, event.NewForwardProcessor())
-	container.Set(types.EventTypeManualMetaAlarmGroup, event.NewForwardProcessor())
-	container.Set(types.EventTypeManualMetaAlarmUngroup, event.NewForwardProcessor())
-	container.Set(types.EventTypeManualMetaAlarmUpdate, event.NewForwardProcessor())
 	container.Set(types.EventTypeTrigger, event.NewTriggerProcessor(dbClient))
 
 	return event.NewCombinedProcessor(container)

@@ -62,6 +62,7 @@ func (p *snoozeProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 					"else": 0,
 				}},
 			}},
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

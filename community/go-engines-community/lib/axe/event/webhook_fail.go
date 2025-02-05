@@ -51,7 +51,8 @@ func (p *webhookFailProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			outputBuilder.String(), event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.steps": addStepUpdateQuery(newStepQuery),
+				"v.steps":            addStepUpdateQuery(newStepQuery),
+				"v.last_update_date": event.Parameters.Timestamp,
 			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeWebhookFail
@@ -70,8 +71,9 @@ func (p *webhookFailProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			event.Parameters.RuleExecution, ticketOutput, event.Parameters)
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.steps":   addStepUpdateQuery(newStepQuery, newTicketStepQuery),
-				"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
+				"v.steps":            addStepUpdateQuery(newStepQuery, newTicketStepQuery),
+				"v.tickets":          addTicketUpdateQuery(newTicketStepQuery),
+				"v.last_update_date": event.Parameters.Timestamp,
 			}},
 		}
 		alarmChange.Type = types.AlarmChangeTypeDeclareTicketWebhookFail

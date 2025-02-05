@@ -43,13 +43,13 @@ definitions:
       firstname:
         type: string
       idp_fields:
-        description: IdpFields field shows immutable user fields, because they are
+        description: IdPFields field shows immutable user fields, because they are
           defined by IdP.
         items:
           type: string
         type: array
       idp_roles:
-        description: IdpRoles field shows roles defined in IdP, which shouldn't be
+        description: IdPRoles field shows roles defined in IdP, which shouldn't be
           modified for a user.
         items:
           type: string
@@ -144,6 +144,10 @@ definitions:
         type: string
       ticket_url:
         description: TicketURL is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url_title:
+        description: TicketURLTitle is used in assocticket action.
         maxLength: 255
         type: string
       tstart:
@@ -293,6 +297,8 @@ definitions:
       last_comment:
         $ref: '#/definitions/common.AlarmStep'
       last_event_date:
+        type: integer
+      last_st_upd_dt:
         type: integer
       last_update_date:
         type: integer
@@ -644,6 +650,8 @@ definitions:
               type: string
             ticket_url:
               type: string
+            ticket_url_title:
+              type: string
             user_id:
               type: string
             val:
@@ -669,6 +677,8 @@ definitions:
       ticket_system_name:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       user_id:
         type: string
@@ -726,6 +736,9 @@ definitions:
       url:
         maxLength: 255
         type: string
+      url_title:
+        maxLength: 255
+        type: string
     required:
     - ticket
     type: object
@@ -760,6 +773,9 @@ definitions:
       ticket_resources:
         type: boolean
       url:
+        maxLength: 255
+        type: string
+      url_title:
         maxLength: 255
         type: string
     required:
@@ -891,6 +907,13 @@ definitions:
     - color
     - value
     type: object
+  alarmtag.LabelResponse:
+    properties:
+      _id:
+        type: string
+      color:
+        type: string
+    type: object
   alarmtag.Response:
     properties:
       _id:
@@ -997,11 +1020,16 @@ definitions:
         type: string
       show_header_on_kiosk_mode:
         type: boolean
-      stack:
-        type: string
       timezone:
         type: string
+      user_timezones:
+        items:
+          type: string
+        type: array
       version:
+        type: string
+      version_description:
+        maxLength: 500
         type: string
       version_updated:
         type: integer
@@ -1090,6 +1118,9 @@ definitions:
         type: boolean
       show_header_on_kiosk_mode:
         type: boolean
+      version_description:
+        maxLength: 500
+        type: string
     type: object
   associativetable.AssociativeTable:
     properties:
@@ -1335,6 +1366,8 @@ definitions:
       ticket_system_name:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       user_id:
         type: string
@@ -3205,6 +3238,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_title:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -3826,6 +3861,8 @@ definitions:
         type: string
       rrule:
         type: string
+      timezone:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -3886,6 +3923,8 @@ definitions:
         type: string
       rrule:
         type: string
+      timezone:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -3926,6 +3965,8 @@ definitions:
       reason:
         type: string
       rrule:
+        type: string
+      timezone:
         type: string
       tstart:
         type: integer
@@ -4009,6 +4050,8 @@ definitions:
         type: string
       rrule_end:
         type: integer
+      timezone:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -4072,6 +4115,8 @@ definitions:
       reason:
         type: string
       rrule:
+        type: string
+      timezone:
         type: string
       tstart:
         type: integer
@@ -4263,6 +4308,8 @@ definitions:
         type: string
       start_at:
         type: integer
+      timezone:
+        type: string
       type:
         type: string
       view_from:
@@ -4377,49 +4424,32 @@ definitions:
     - priority
     - type
     type: object
+  permission.Group:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+      position:
+        type: integer
+      title:
+        type: string
+    type: object
   permission.Permission:
     properties:
       _id:
         type: string
       description:
         type: string
+      groups:
+        items:
+          $ref: '#/definitions/permission.Group'
+        type: array
       name:
         type: string
-      playlist:
-        $ref: '#/definitions/permission.Playlist'
-        description: Playlist is used only for playlist permissions.
+      title:
+        type: string
       type:
-        type: string
-      view:
-        $ref: '#/definitions/permission.View'
-        description: View is used only for view permissions.
-      view_group:
-        $ref: '#/definitions/permission.ViewGroup'
-        description: ViewGroup is used only for view permissions.
-    type: object
-  permission.Playlist:
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
-    type: object
-  permission.View:
-    properties:
-      _id:
-        type: string
-      position:
-        type: integer
-      title:
-        type: string
-    type: object
-  permission.ViewGroup:
-    properties:
-      _id:
-        type: string
-      position:
-        type: integer
-      title:
         type: string
     type: object
   playlist.EditRequest:
@@ -4525,6 +4555,8 @@ definitions:
       ticket_id_tpl:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       ticket_url_tpl:
         type: string
@@ -4638,17 +4670,9 @@ definitions:
     - name
     - priority
     type: object
-  role.CreateRequest:
+  role.BulkUpdatePermissionsRequestItem:
     properties:
-      auth_config:
-        $ref: '#/definitions/security.AuthMethodConf'
-      defaultview:
-        type: string
-      description:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
+      _id:
         type: string
       permissions:
         additionalProperties:
@@ -4657,7 +4681,7 @@ definitions:
           type: array
         type: object
     required:
-    - name
+    - _id
     type: object
   role.EditRequest:
     properties:
@@ -4668,12 +4692,23 @@ definitions:
       description:
         maxLength: 255
         type: string
+      name:
+        maxLength: 255
+        type: string
       permissions:
         additionalProperties:
           items:
             type: string
           type: array
         type: object
+      type:
+        enum:
+        - ui
+        - api
+        type: string
+    required:
+    - name
+    - type
     type: object
   role.Permission:
     properties:
@@ -4683,11 +4718,11 @@ definitions:
         items:
           type: string
         type: array
-      description:
-        type: string
       name:
         type: string
       type:
+        type: string
+      view:
         type: string
     type: object
   role.Response:
@@ -4714,6 +4749,8 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+      type:
+        type: string
       updated:
         type: integer
     type: object
@@ -4729,6 +4766,8 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+      type:
+        type: string
     type: object
   role.TemplateResponse:
     properties:
@@ -4966,6 +5005,8 @@ definitions:
         description: AssocTicket and Webhook
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       tstart:
         type: integer
@@ -5824,13 +5865,13 @@ definitions:
       firstname:
         type: string
       idp_fields:
-        description: IdpFields field shows immutable user fields, because they are
+        description: IdPFields field shows immutable user fields, because they are
           defined by IdP.
         items:
           type: string
         type: array
       idp_roles:
-        description: IdpRoles field shows roles defined in IdP, which shouldn't be
+        description: IdPRoles field shows roles defined in IdP, which shouldn't be
           modified for a user.
         items:
           type: string
