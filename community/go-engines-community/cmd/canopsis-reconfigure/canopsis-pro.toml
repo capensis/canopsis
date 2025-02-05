@@ -271,6 +271,7 @@ EventsRecorderLimit = 10000
 Dir = "/opt/canopsis/var/lib"
 UploadMaxSize = 314572800 # 300Mb
 IconMaxSize = 10240 # 10Kb
+ImportMaxSize = 314572800 # 300Mb
 # Paths to SNMP MIB modules fetched by API
 SnmpMib = ["/usr/share/snmp/mibs"]
 # Another example when MIBs installed by snmp-mibs-downloader.deb package:

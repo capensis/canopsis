@@ -30,7 +30,7 @@ type API interface {
 func NewApi(
 	store Store,
 	websocketHub websocket.Hub,
-	maxSize int64,
+	maxSize uint64,
 	mimeTypes []string,
 ) API {
 	return &api{
@@ -44,7 +44,7 @@ func NewApi(
 type api struct {
 	store        Store
 	websocketHub websocket.Hub
-	maxSize      int64
+	maxSize      uint64
 	mimeTypes    []string
 }
 
@@ -239,7 +239,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) validateFile(file *multipart.FileHeader) (string, *common.ValidationError) {
-	if file.Size > a.maxSize {
+	if uint64(file.Size) > a.maxSize {
 		err := common.NewValidationError("file", fmt.Sprintf("File size %d exceeds limit %d", file.Size, a.maxSize))
 		return "", &err
 	}

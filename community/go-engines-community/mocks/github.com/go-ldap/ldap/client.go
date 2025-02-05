@@ -137,6 +137,21 @@ func (mr *MockClientMockRecorder) DirSyncAsync(arg0, arg1, arg2, arg3, arg4, arg
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DirSyncAsync", reflect.TypeOf((*MockClient)(nil).DirSyncAsync), arg0, arg1, arg2, arg3, arg4, arg5)
 }
 
+// Extended mocks base method.
+func (m *MockClient) Extended(arg0 *ldap.ExtendedRequest) (*ldap.ExtendedResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Extended", arg0)
+	ret0, _ := ret[0].(*ldap.ExtendedResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Extended indicates an expected call of Extended.
+func (mr *MockClientMockRecorder) Extended(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Extended", reflect.TypeOf((*MockClient)(nil).Extended), arg0)
+}
+
 // ExternalBind mocks base method.
 func (m *MockClient) ExternalBind() error {
 	m.ctrl.T.Helper()

@@ -203,6 +203,11 @@ type User struct {
 	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
 
 	Deletable *bool `bson:"-" json:"deletable,omitempty"`
+
+	// IdPRoles field shows roles defined in IdP, which shouldn't be modified for a user.
+	IdPRoles []string `bson:"idp_roles,omitempty" json:"idp_roles,omitempty"`
+	// IdPFields field shows immutable user fields, because they are defined by IdP.
+	IdPFields []string `bson:"-" json:"idp_fields,omitempty"`
 }
 
 type Role struct {
