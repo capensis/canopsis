@@ -6,9 +6,7 @@ import (
 )
 
 type VersionConf struct {
-	Edition string `json:"edition" bson:"edition"`
-	Stack   string `json:"stack" bson:"stack"`
-
+	Edition        string            `json:"edition" bson:"edition"`
 	Version        string            `json:"version" bson:"version"`
 	VersionUpdated *datetime.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
 }
@@ -33,6 +31,7 @@ type UserInterfaceConf struct {
 	DisabledTransitions        bool          `json:"disabled_transitions" bson:"disabled_transitions"`
 	AutoSuggestPbehaviorName   bool          `json:"auto_suggest_pbehavior_name" bson:"auto_suggest_pbehavior_name"`
 	DefaultColorTheme          string        `json:"default_color_theme" bson:"default_color_theme"`
+	VersionDescription         string        `json:"version_description" bson:"version_description" binding:"max=500"`
 }
 
 type GlobalConf struct {

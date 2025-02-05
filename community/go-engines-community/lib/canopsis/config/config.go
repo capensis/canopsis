@@ -152,7 +152,6 @@ type UserInterfaceConf struct {
 
 type VersionConf struct {
 	Edition string `bson:"edition,omitempty"`
-	Stack   string `bson:"stack"`
 
 	Version        string            `bson:"version"`
 	VersionUpdated *datetime.CpsTime `bson:"version_updated,omitempty"`
