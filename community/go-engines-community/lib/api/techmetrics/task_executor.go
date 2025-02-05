@@ -23,9 +23,10 @@ const (
 )
 
 const (
-	filenameDumpPattern   = "cps_tech_metrics_*.bak"
-	abandonedTickInterval = 4 * time.Minute
-	abandonedInterval     = 5 * time.Minute
+	filenameDumpPattern               = "cps_tech_metrics_*.bak"
+	abandonedTickInterval             = 4 * time.Minute
+	abandonedInterval                 = 5 * time.Minute
+	dirPerm               os.FileMode = 0o770
 )
 
 // TaskExecutor is used to implement export task executor.
@@ -49,16 +50,19 @@ type Task struct {
 
 func NewTaskExecutor(
 	store Store,
+	dir string,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
 		store:  store,
+		dir:    dir,
 		logger: logger,
 	}
 }
 
 type taskExecutor struct {
 	store  Store
+	dir    string
 	logger zerolog.Logger
 
 	pgPoolMx     sync.Mutex
@@ -406,8 +410,13 @@ func (e *taskExecutor) dumpDb(
 			return
 		}
 
+		err = os.MkdirAll(e.dir, os.ModeDir|dirPerm)
+		if err != nil {
+			return
+		}
+
 		var f *os.File
-		f, err = os.CreateTemp("", filenameDumpPattern)
+		f, err = os.CreateTemp(e.dir, filenameDumpPattern)
 		if err != nil {
 			return
 		}
