@@ -29,16 +29,25 @@ const (
 )
 
 type Table struct {
-	ID            string           `bson:"_id,omitempty"`
-	Type          int              `bson:"type"`
-	Name          string           `bson:"name"`
-	Description   string           `bson:"description,omitempty"`
-	ColumnTypes   map[string]int   `bson:"column_types,omitempty"`
-	ColumnLengths map[string]int   `bson:"column_lengths,omitempty"`
-	FromConfig    bool             `bson:"from_config,omitempty"`
-	Author        string           `bson:"author,omitempty"`
-	Created       datetime.CpsTime `bson:"created,omitempty"`
-	Updated       datetime.CpsTime `bson:"updated"`
+	ID                string           `bson:"_id,omitempty"`
+	Type              int              `bson:"type"`
+	Name              string           `bson:"name"`
+	Description       string           `bson:"description,omitempty"`
+	ColumnTypes       map[string]int   `bson:"column_types,omitempty"`
+	ColumnLengths     map[string]int   `bson:"column_lengths,omitempty"`
+	FromConfig        bool             `bson:"from_config,omitempty"`
+	RemovedFromConfig bool             `bson:"removed_from_config,omitempty"`
+	Author            string           `bson:"author,omitempty"`
+	Created           datetime.CpsTime `bson:"created,omitempty"`
+	Updated           datetime.CpsTime `bson:"updated"`
+}
+
+func (t *Table) GetDBName() string {
+	if t.Type == TypeMongoDB {
+		return GetMongoCollectionName(t.Name, t.FromConfig)
+	}
+
+	return GetPostgresTableName(t.Name)
 }
 
 func GetMongoCollectionName(name string, fromConfig bool) string {

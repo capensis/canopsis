@@ -7,11 +7,13 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
+	mock_externaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/externaldata"
 	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
 )
@@ -21,7 +23,7 @@ func TestChangeEntityApply(t *testing.T) {
 	defer ctrl.Finish()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	applicator := eventfilter.NewChangeEntityApplicator(eventfilter.NewExternalDataGetterContainer(), mockFailureService, tplExecutor)
+	applicator := eventfilter.NewChangeEntityApplicator(externaldata.NewGetterContainer(), mockFailureService, tplExecutor)
 
 	var dataSets = []struct {
 		testName      string
@@ -338,11 +340,11 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockGetter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
-	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-		Return(types.Entity{ID: "test_value"}, nil)
+	mockGetter := mock_externaldata.NewMockGetter(ctrl)
+	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(map[string]any{"ID": "test_value"}, nil)
 
-	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
+	externalDataContainer := externaldata.NewGetterContainer()
 	externalDataContainer.Set("test", mockGetter)
 
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
@@ -350,9 +352,11 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 
 	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockFailureService, tplExecutor)
 
-	externalData := make(map[string]eventfilter.ParsedExternalDataParameters)
-	externalData["test"] = eventfilter.ParsedExternalDataParameters{
-		Type: "test",
+	externalData := []externaldata.ParsedRefParameters{
+		{
+			Reference: "test",
+			Type:      "test",
+		},
 	}
 
 	event := types.Event{

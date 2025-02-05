@@ -20,7 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldata"
+	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
@@ -36,6 +36,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/importcontextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -87,6 +88,7 @@ type Services struct {
 	ApiConfigProvider           *config.BaseApiConfigProvider
 	TemplateConfigProvider      *config.BaseTemplateConfigProvider
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
+	ExternalDataContainer       *externaldata.GetterContainer
 }
 
 func Default(
@@ -235,7 +237,8 @@ func Default(
 		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
 	}
 
-	services.LinkGenerator = link.NewGenerator(dbClient, tplExecutor, logger)
+	services.ExternalDataContainer = externaldata.NewGetterContainer()
+	services.LinkGenerator = link.NewGenerator(dbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
 	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, services.LinkGenerator, services.TimezoneConfigProvider,
 		authorProvider, tplExecutor, json.NewDecoder(), logger)
@@ -272,7 +275,7 @@ func Default(
 		websocketHub,
 	)
 
-	exdataImportWorker := externaldata.NewImportWorker(dbClient, pgPoolProvider,
+	exdataImportWorker := apiexternaldata.NewImportWorker(dbClient, pgPoolProvider,
 		filepath.Join(cfg.File.Dir, canopsis.SubDirExDataImport), workers.NewJobPublisher(jobKeyExtDataImport, workersRunner),
 		logger)
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {

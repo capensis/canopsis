@@ -5929,20 +5929,21 @@ paths:
                     "on_failure": "pass"
                   }
                 }
-              CreateEnrichmentRuleWithExternalMongoData:
-                summary: Create an enrichment rule with external mongo data
-                description: Create an enrichment rule with external mongo data.
+              CreateEnrichmentRuleWithExternalTableData:
+                summary: Create an enrichment rule with external table data
+                description: Create an enrichment rule with external table data.
                 value: {
                   "type": "enrichment",
-                  "external_data": {
-                    "component": {
-                      "type": "mongo",
+                  "external_data": [
+                    {
+                      "reference": "component",
+                      "type": "table",
+                      "table": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
                       "select": {
                         "component_customer": "{{ .Event.Component }}"
-                      },
-                      "collection": "assets"
+                      }
                     }
-                  },
+                  ],
                   "event_pattern": [
                     [
                       {
@@ -5954,7 +5955,7 @@ paths:
                       }
                     ]
                   ],
-                  "description": "enruchment rule with external mongo data",
+                  "description": "enruchment rule with external table data",
                   "priority": 1,
                   "enabled": true,
                   "config": {
@@ -5975,15 +5976,16 @@ paths:
                 description: Create an enrichment rule with external api data.
                 value: {
                   "type": "enrichment",
-                  "external_data": {
-                    "title": {
+                  "external_data": [
+                    {
+                      "reference": "title",
                       "type": "api",
                       "request": {
                         "url": "http://localhost:3000/api/external_data",
                         "method": "GET"
                       }
                     }
-                  },
+                  ],
                   "event_pattern": [
                     [
                       {

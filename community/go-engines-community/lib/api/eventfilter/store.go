@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -30,12 +31,13 @@ type Store interface {
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	dbCollection          mongo.DbCollection
-	dbFailureCollection   mongo.DbCollection
-	authorProvider        author.Provider
-	defaultSearchByFields []string
-	defaultSortBy         string
+	dbClient                mongo.DbClient
+	dbCollection            mongo.DbCollection
+	dbFailureCollection     mongo.DbCollection
+	dbExdataTableCollection mongo.DbCollection
+	authorProvider          author.Provider
+	defaultSearchByFields   []string
+	defaultSortBy           string
 }
 
 func NewStore(
@@ -43,17 +45,22 @@ func NewStore(
 	authorProvider author.Provider,
 ) Store {
 	return &store{
-		dbClient:              dbClient,
-		dbCollection:          dbClient.Collection(mongo.EventFilterRuleCollection),
-		dbFailureCollection:   dbClient.Collection(mongo.EventFilterFailureCollection),
-		authorProvider:        authorProvider,
-		defaultSearchByFields: []string{"_id", "author.name", "description", "type"},
-		defaultSortBy:         "created",
+		dbClient:                dbClient,
+		dbCollection:            dbClient.Collection(mongo.EventFilterRuleCollection),
+		dbFailureCollection:     dbClient.Collection(mongo.EventFilterFailureCollection),
+		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
+		authorProvider:          authorProvider,
+		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
+		defaultSortBy:           "created",
 	}
 }
 
 func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, error) {
-	model := s.transformRequestToDocument(request.EditRequest)
+	model, err := s.transformRequestToDocument(ctx, request.EditRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	model.ID = request.ID
 	if model.ID == "" {
 		model.ID = utils.NewID()
@@ -64,7 +71,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	model.Updated = &now
 
 	var response *Response
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		_, err := s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
@@ -85,18 +92,9 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 
 func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{
-		{
-			"$match": bson.M{"_id": id},
-		},
-		{
-			"$lookup": bson.M{
-				"from":         mongo.PbehaviorExceptionMongoCollection,
-				"localField":   "exceptions",
-				"foreignField": "_id",
-				"as":           "exceptions",
-			},
-		},
+		{"$match": bson.M{"_id": id}},
 	}
+	pipeline = append(pipeline, s.getResponseLookups()...)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
@@ -105,7 +103,6 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	}
 
 	defer cursor.Close(ctx)
-
 	if cursor.Next(ctx) {
 		var rule Response
 		err = cursor.Decode(&rule)
@@ -114,6 +111,10 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 		}
 
 		return &rule, nil
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return nil, nil
@@ -126,18 +127,13 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	project := []bson.M{
-		{"$lookup": bson.M{
-			"from":         mongo.PbehaviorExceptionMongoCollection,
-			"localField":   "exceptions",
-			"foreignField": "_id",
-			"as":           "exceptions",
-		}},
-	}
+	sort := common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
+	project := s.getResponseLookups()
+	project = append(project, sort)
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort),
+		sort,
 		project,
 	))
 
@@ -153,12 +149,21 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 			return nil, err
 		}
 	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return &result, nil
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, error) {
 	updated := datetime.NewCpsTime()
-	model := s.transformRequestToDocument(request.EditRequest)
+	model, err := s.transformRequestToDocument(ctx, request.EditRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	model.ID = request.ID
 	model.Created = nil
 	model.Updated = &updated
@@ -183,7 +188,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	}
 
 	var response *Response
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		_, err := s.dbCollection.UpdateOne(
 			ctx,
@@ -274,6 +279,11 @@ func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (
 			return nil, err
 		}
 	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return &result, nil
 }
 
@@ -308,11 +318,16 @@ func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
 	return ruleExists, err
 }
 
-func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
+func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (eventfilter.Rule, error) {
 	exdates := make([]types.Exdate, len(r.Exdates))
 	for i := range r.Exdates {
 		exdates[i].Begin = r.Exdates[i].Begin
 		exdates[i].End = r.Exdates[i].End
+	}
+
+	externalData, err := apiexternaldata.TransformRefParameters(ctx, r.ExternalData, s.dbExdataTableCollection)
+	if err != nil {
+		return eventfilter.Rule{}, err
 	}
 
 	return eventfilter.Rule{
@@ -322,7 +337,7 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		Priority:            r.Priority,
 		Enabled:             r.Enabled,
 		Config:              r.Config,
-		ExternalData:        r.ExternalData,
+		ExternalData:        externalData,
 		EventPattern:        r.EventPattern,
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
 		RRule:               r.RRule,
@@ -332,5 +347,19 @@ func (s *store) transformRequestToDocument(r EditRequest) eventfilter.Rule {
 		ResolvedStop:        r.Stop,
 		Exdates:             exdates,
 		Exceptions:          r.Exceptions,
-	}
+	}, nil
+}
+
+func (s *store) getResponseLookups() []bson.M {
+	pipeline := apiexternaldata.GetRefParametersLookups()
+	pipeline = append(pipeline, bson.M{
+		"$lookup": bson.M{
+			"from":         mongo.PbehaviorExceptionMongoCollection,
+			"localField":   "exceptions",
+			"foreignField": "_id",
+			"as":           "exceptions",
+		},
+	})
+
+	return pipeline
 }

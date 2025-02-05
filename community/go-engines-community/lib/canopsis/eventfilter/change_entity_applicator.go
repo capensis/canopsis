@@ -3,18 +3,19 @@ package eventfilter
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type changeEntityApplicator struct {
-	externalDataContainer *ExternalDataContainer
+	externalDataContainer *externaldata.GetterContainer
 	failureService        FailureService
 	templateExecutor      template.Executor
 }
 
 func NewChangeEntityApplicator(
-	externalDataContainer *ExternalDataContainer,
+	externalDataContainer *externaldata.GetterContainer,
 	failureService FailureService,
 	templateExecutor template.Executor,
 ) RuleApplicator {

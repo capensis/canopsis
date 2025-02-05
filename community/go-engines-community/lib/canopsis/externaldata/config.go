@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	apicommon "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -14,39 +15,79 @@ import (
 
 const maxMongoDocsToCheck = 10
 
-func SyncMongoCollections(ctx context.Context, client mongo.DbClient, collectionNames []string, logger zerolog.Logger) error {
-	dbCollection := client.Collection(mongo.ExternalDataTableCollection)
-	d, err := dbCollection.DeleteMany(ctx, bson.M{
-		"name":        bson.M{"$nin": collectionNames},
-		"from_config": true,
-	})
-	if err != nil {
-		return fmt.Errorf("could not remove from list external data tables: %w", err)
-	}
-
-	unprocessedCollNames, err := findUnprocessedTables(ctx, dbCollection, collectionNames)
+func SyncMongoCollections(
+	ctx context.Context,
+	client mongo.DbClient,
+	collectionNames []string,
+	refCollectionNames []string,
+	logger zerolog.Logger,
+) error {
+	collection := client.Collection(mongo.ExternalDataTableCollection)
+	delCount, delErrCount, err := deleteMissingTables(ctx, client, collection, collectionNames, refCollectionNames, logger)
 	if err != nil {
 		return err
 	}
 
+	_, err = collection.UpdateMany(ctx, bson.M{"name": bson.M{"$in": collectionNames}, "from_config": true}, bson.M{"$unset": bson.M{
+		"removed_from_config": "",
+	}})
+	if err != nil {
+		return fmt.Errorf("failed to update external data tables: %w", err)
+	}
+
+	unprocessedCollNames, err := findUnprocessedTables(ctx, collection, collectionNames)
+	if err != nil {
+		return err
+	}
+
+	newCount, newErrCount, err := insertNewTables(ctx, client, collection, unprocessedCollNames, logger)
+	if err != nil {
+		return err
+	}
+
+	logger.Info().
+		Int("deleted", delCount).
+		Int("deleted_errors", delErrCount).
+		Int("created", newCount).
+		Int("created_errors", newErrCount).
+		Int("unmodified", len(collectionNames)-len(unprocessedCollNames)).
+		Msg("external data tables successfully updated")
+
+	return nil
+}
+
+func insertNewTables(
+	ctx context.Context,
+	client mongo.DbClient,
+	collection mongo.DbCollection,
+	unprocessedCollNames []string,
+	logger zerolog.Logger,
+) (int, int, error) {
 	now := datetime.NewCpsTime()
 	docs := make([]any, 0, len(unprocessedCollNames))
+	errCount := 0
 	for _, collName := range unprocessedCollNames {
 		cursor, err := client.Collection(collName).Find(ctx, bson.M{}, options.Find().SetLimit(maxMongoDocsToCheck))
 		if err != nil {
-			return fmt.Errorf("failed to read collection %q: %w", collName, err)
+			return 0, 0, fmt.Errorf("failed to read collection %q: %w", collName, err)
 		}
 
 		columnTypes := make(map[string]int)
+		invalidFields := make([]string, 0)
 		nonStrFields := make([]string, 0)
 		for cursor.Next(ctx) {
 			var collDoc map[string]any
 			if err := cursor.Decode(&collDoc); err != nil {
-				return fmt.Errorf("failed to decode doc: %w", err)
+				return 0, 0, fmt.Errorf("failed to decode doc: %w", err)
 			}
 
 			for f, v := range collDoc {
 				if f == IDColumnName {
+					continue
+				}
+
+				if !apicommon.IsTableName(f) {
+					invalidFields = append(invalidFields, f)
 					continue
 				}
 
@@ -60,19 +101,27 @@ func SyncMongoCollections(ctx context.Context, client mongo.DbClient, collection
 		}
 
 		if err = cursor.Err(); err != nil {
-			return fmt.Errorf("failed to fetch docs from collection: %w", err)
+			return 0, 0, fmt.Errorf("failed to fetch docs from collection: %w", err)
 		}
 
 		if err = cursor.Close(ctx); err != nil {
-			return fmt.Errorf("failed to close cursor: %w", err)
+			return 0, 0, fmt.Errorf("failed to close cursor: %w", err)
+		}
+
+		if len(invalidFields) > 0 {
+			errCount++
+			logger.Error().Str("collection_name", collName).Strs("fields", invalidFields).Msg("MongoDB collection contains fields with invalid names")
+			continue
 		}
 
 		if len(nonStrFields) > 0 {
+			errCount++
 			logger.Error().Str("collection_name", collName).Strs("fields", nonStrFields).Msg("MongoDB collection contains non string fields")
 			continue
 		}
 
 		if len(columnTypes) == 0 {
+			errCount++
 			logger.Error().Str("collection_name", collName).Msg("MongoDB collection does not exist or empty")
 			continue
 		}
@@ -88,20 +137,17 @@ func SyncMongoCollections(ctx context.Context, client mongo.DbClient, collection
 		})
 	}
 
+	count := 0
 	if len(docs) > 0 {
-		_, err = dbCollection.InsertMany(ctx, docs)
+		r, err := collection.InsertMany(ctx, docs)
 		if err != nil {
-			return fmt.Errorf("failed to insert external data tables: %w", err)
+			return 0, 0, fmt.Errorf("failed to insert external data tables: %w", err)
 		}
+
+		count = len(r)
 	}
 
-	logger.Info().
-		Int64("deleted", d).
-		Int("created", len(docs)).
-		Int("unmodified", len(collectionNames)-len(unprocessedCollNames)).
-		Msg("external data tables successfully updated")
-
-	return nil
+	return count, errCount, nil
 }
 
 func findUnprocessedTables(ctx context.Context, dbCollection mongo.DbCollection, names []string) ([]string, error) {
@@ -140,4 +186,116 @@ func findUnprocessedTables(ctx context.Context, dbCollection mongo.DbCollection,
 	}
 
 	return res, nil
+}
+
+func deleteMissingTables(
+	ctx context.Context,
+	client mongo.DbClient,
+	collection mongo.DbCollection,
+	collectionNames []string,
+	refCollectionNames []string,
+	logger zerolog.Logger,
+) (int, int, error) {
+	cursor, err := collection.Find(ctx, bson.M{
+		"name":        bson.M{"$nin": collectionNames},
+		"from_config": true,
+	}, options.Find().SetProjection(bson.M{"_id": 1, "name": 1}))
+	if err != nil {
+		return 0, 0, fmt.Errorf("failed to find external data tables to removed: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	ids := make([]string, 0)
+	names := make(map[string]string)
+	for cursor.Next(ctx) {
+		t := Table{}
+		err := cursor.Decode(&t)
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to decode external data table: %w", err)
+		}
+
+		ids = append(ids, t.ID)
+		names[t.ID] = t.Name
+	}
+
+	if err = cursor.Err(); err != nil {
+		return 0, 0, fmt.Errorf("failed to fetch external data tables to removed: %w", err)
+	}
+
+	if len(ids) == 0 {
+		return 0, 0, nil
+	}
+
+	ruleExists := make(map[string]bool, len(ids))
+	for _, c := range refCollectionNames {
+		ruleCursor, err := client.Collection(c).Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"external_data.table": bson.M{"$in": ids}}},
+			{"$unwind": "$external_data"},
+			{"$match": bson.M{"external_data.table": bson.M{"$in": ids}}},
+			{"$group": bson.M{
+				"_id": "$external_data.table",
+			}},
+		})
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to find linked rules: %w", err)
+		}
+
+		for ruleCursor.Next(ctx) {
+			r := struct {
+				ID string `bson:"_id"`
+			}{}
+			err := ruleCursor.Decode(&r)
+			if err != nil {
+				return 0, 0, fmt.Errorf("failed to decode linked rule: %w", err)
+			}
+
+			ruleExists[r.ID] = true
+		}
+
+		if err = ruleCursor.Err(); err != nil {
+			return 0, 0, fmt.Errorf("failed to fetch linked rules: %w", err)
+		}
+
+		if err = ruleCursor.Close(ctx); err != nil {
+			return 0, 0, fmt.Errorf("failed to close rule cursor: %w", err)
+		}
+	}
+
+	i := 0
+	blockedIDs := make([]string, 0)
+	for _, id := range ids {
+		if ruleExists[id] {
+			logger.Error().Str("collection_name", names[id]).Msg("MongoDB collection cannot be removed from external data list because it's used in rules")
+			blockedIDs = append(blockedIDs, id)
+			continue
+		}
+
+		ids[i] = id
+		i++
+	}
+
+	ids = ids[:i]
+	count := 0
+	if len(ids) > 0 {
+		d, err := collection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to delete external data tables: %w", err)
+		}
+
+		count = int(d)
+	}
+
+	errCount := 0
+	if len(blockedIDs) > 0 {
+		r, err := collection.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": blockedIDs}}, bson.M{"$set": bson.M{
+			"removed_from_config": true,
+		}})
+		if err != nil {
+			return 0, 0, fmt.Errorf("failed to update external data tables: %w", err)
+		}
+
+		errCount = int(r.MatchedCount)
+	}
+
+	return count, errCount, nil
 }
