@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/url"
+	"path/filepath"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
@@ -111,7 +112,6 @@ func RegisterRoutes(
 	actionLogger logger.ActionLogger,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
-	filesRoot string,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
 	broadcastMessageChan chan<- bool,
@@ -2007,7 +2007,7 @@ func RegisterRoutes(
 		fileRouter := protected.Group("/file")
 		{
 			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
-				filesRoot,
+				filepath.Join(conf.File.Dir, canopsis.SubDirUpload),
 				libfile.NewEtagEncoder(),
 			), conf.File.UploadMaxSize))
 			fileRouter.POST(

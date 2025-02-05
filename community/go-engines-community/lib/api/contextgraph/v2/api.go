@@ -6,10 +6,12 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -17,6 +19,7 @@ import (
 
 type api struct {
 	reporter    contextgraph.StatusReporter
+	dir         string
 	filePattern string
 	logger      zerolog.Logger
 }
@@ -27,7 +30,8 @@ func NewApi(
 	logger zerolog.Logger,
 ) contextgraph.API {
 	a := &api{
-		filePattern: conf.ImportCtx.FilePattern,
+		dir:         filepath.Join(conf.File.Dir, canopsis.SubDirImport),
+		filePattern: contextgraph.FilePattern,
 		reporter:    reporter,
 		logger:      logger,
 	}
@@ -102,7 +106,12 @@ func (a *api) createImportJob(ctx context.Context, job contextgraph.ImportJob, r
 		return "", err
 	}
 
-	err = os.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, os.ModePerm)
+	err = os.MkdirAll(a.dir, os.ModeDir|contextgraph.FilePerm)
+	if err != nil {
+		return "", err
+	}
+
+	err = os.WriteFile(filepath.Join(a.dir, fmt.Sprintf(a.filePattern, job.ID)), raw, contextgraph.FilePerm)
 	if err != nil {
 		return "", err
 	}

@@ -80,4 +80,10 @@ const (
 	ApiName = "api"
 
 	DefaultEventWorkers = 10
+
+	SubDirUpload   = "upload-files"
+	SubDirExport   = "export-files"
+	SubDirImport   = "import-files"
+	SubDirJunit    = "junit-files"
+	SubDirJunitAPI = "junit-api-files"
 )
