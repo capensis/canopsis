@@ -32,35 +32,27 @@ export const PERMISSIONS_TYPES_TO_ACTIONS = {
   ],
 };
 
-export const CANOPSIS_STACK = {
-  go: 'go',
-  python: 'python',
-};
-
 export const CANOPSIS_EDITION = {
   community: 'community',
   pro: 'pro',
 };
 
 export const EXPLOITATION_PAGES_RULES = {
-  eventFilter: { stack: CANOPSIS_STACK.go },
   snmpRule: { edition: CANOPSIS_EDITION.pro },
   dynamicInfo: { edition: CANOPSIS_EDITION.pro },
-  metaAlarmRule: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
-  scenario: { stack: CANOPSIS_STACK.go },
+  metaAlarmRule: { edition: CANOPSIS_EDITION.pro },
   declareTicketRule: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const ADMIN_PAGES_RULES = {
-  remediation: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
-  healthcheck: { stack: CANOPSIS_STACK.go },
-  kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
-  tag: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  remediation: { edition: CANOPSIS_EDITION.pro },
+  kpi: { edition: CANOPSIS_EDITION.pro },
+  tag: { edition: CANOPSIS_EDITION.pro },
   map: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
-  instructionStats: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
+  instructionStats: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const USER_PERMISSIONS_PREFIXES = {
