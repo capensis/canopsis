@@ -4,9 +4,6 @@
     :tab-id="tabId"
     :show-filter="hasAccessToUserFilter"
     :show-interval="hasAccessToInterval"
-    :filter-disabled="!hasAccessToListFilters"
-    :filter-addable="hasAccessToAddFilter"
-    :filter-editable="hasAccessToEditFilter"
   />
 </template>
 

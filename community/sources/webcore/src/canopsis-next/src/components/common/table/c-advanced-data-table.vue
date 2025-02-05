@@ -23,7 +23,7 @@
       >
         <v-expand-transition>
           <v-layout
-            v-show="selected.length"
+            v-if="selected.length"
             class="px-2 mt-1"
           >
             <slot

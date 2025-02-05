@@ -15,7 +15,7 @@ import {
   COLOR_INDICATOR_TYPES,
   MODALS,
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 import { DEFAULT_WEATHER_LIMIT } from '@/config';
@@ -166,7 +166,7 @@ describe('service-weather', () => {
 
   test('Category query updated after trigger category field', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.category]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.category]: { actions: [] },
     });
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -211,7 +211,7 @@ describe('service-weather', () => {
 
   test('Filter updated after trigger filter field', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.userFilter]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: { actions: [] },
     });
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -296,7 +296,7 @@ describe('service-weather', () => {
     };
 
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]: { actions: [] },
     });
     getServicesListByWidgetId.mockReturnValueOnce([service]);
 
@@ -348,7 +348,7 @@ describe('service-weather', () => {
       name: Faker.datatype.string(),
     };
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.alarmsList]: { actions: [] },
     });
     getServicesListByWidgetId.mockReturnValueOnce([service]);
 
@@ -421,7 +421,7 @@ describe('service-weather', () => {
       is_grey: true,
     };
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.moreInfos]: { actions: [] },
     });
     getServicesListByWidgetId.mockReturnValueOnce([service]);
 
@@ -481,10 +481,9 @@ describe('service-weather', () => {
 
   test('Renders `service-weather` with full access', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.category]: { actions: [] },
-      [USERS_PERMISSIONS.business.serviceWeather.actions.userFilter]: { actions: [] },
-      [USERS_PERMISSIONS.business.serviceWeather.actions.addFilter]: { actions: [] },
-      [USERS_PERMISSIONS.business.serviceWeather.actions.editFilter]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.category]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.userFilter]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.filter]: { actions: [] },
     });
     getServicesListByWidgetId.mockReturnValueOnce([{}]);
     const wrapper = snapshotFactory({
