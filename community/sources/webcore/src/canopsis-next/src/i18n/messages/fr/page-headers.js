@@ -24,7 +24,7 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.idleRules]: {
     title: 'Règles d\'inactivité',
-    message: 'Règles permettant de réagir en cas de \"non événement\". Utile pour gérer les lignes de vie des sources de données par exemple.',
+    message: 'Règles permettant de réagir en cas de "non événement". Utile pour gérer les lignes de vie des sources de données par exemple.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.flappingRules]: {
@@ -60,7 +60,7 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.linkRule]: {
     title: 'Générateur de liens',
-    message: 'Permet de définir les règles d\'association de liens aux alarmes', 
+    message: 'Permet de définir les règles d\'association de liens aux alarmes',
   },
 
   /**
@@ -161,6 +161,6 @@ export default {
    */
   [USER_PERMISSIONS.technical.profile.theme]: {
     title: 'Thèmes graphiques',
-     message: 'Permet de définir des thèmes graphiques pour l\'interface graphique.',
+    message: 'Permet de définir des thèmes graphiques pour l\'interface graphique.',
   },
 };
