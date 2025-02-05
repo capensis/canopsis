@@ -4,6 +4,7 @@ import { POPUP_TYPES } from '@/constants';
 import request from '@/services/request';
 
 import { durationToSeconds } from '@/helpers/date/duration';
+import { getLocalTimezone } from '@/helpers/date/date';
 
 const types = {
   FETCH_APP_INFO: 'FETCH_APP_INFO',
@@ -51,6 +52,11 @@ export default {
     disabledTransitions: state => state.appInfo?.disabled_transitions,
     serialName: state => state.appInfo?.serial_name,
     autoSuggestPbehaviorName: state => state.appInfo?.auto_suggest_pbehavior_name,
+    userTimezones: state => state.appInfo?.user_timezones ?? [],
+    shownUserTimezone: (state, getters) => (
+      getters.userTimezones.length > 1
+      || (getters.userTimezones.length && !getters.userTimezones.includes(getLocalTimezone()))
+    ),
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {

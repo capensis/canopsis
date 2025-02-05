@@ -95,10 +95,10 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
   >
     <!---->
     <div
-      class="layout align-center"
+      class="layout gap-2 align-center"
     >
       <div
-        class="flex xs3"
+        class="flex xs2"
       >
         <div
           class="v-input mt-0 v-input--hide-details theme--light v-input--selection-controls v-input--checkbox"
@@ -138,9 +138,13 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
           </div>
         </div>
       </div>
-      <!---->
       <div
-        class="flex xs6"
+        class="flex xs2"
+      >
+        <!---->
+      </div>
+      <div
+        class="flex xs5"
       >
         <date-time-splitted-range-picker-field-stub
           end="Thu Mar 04 2021 13:33:20 GMT+0100 (Central European Standard Time)"
@@ -152,6 +156,13 @@ exports[`pbehavior-general-form Renders \`pbehavior-general-form\` with required
           start="Thu Mar 04 2021 13:30:00 GMT+0100 (Central European Standard Time)"
           startlabel="Start"
           startrules="[object Object]"
+        />
+      </div>
+      <div
+        class="flex xs3"
+      >
+        <c-timezone-field-stub
+          server=""
         />
       </div>
     </div>
