@@ -1,4 +1,4 @@
-%define debug_package %{nil} 
+%define debug_package %{nil}
 Name: canopsis
 Version: %{version}
 Release: 1%{?dist}

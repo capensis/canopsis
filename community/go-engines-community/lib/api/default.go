@@ -8,6 +8,7 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -215,7 +216,7 @@ func Default(
 
 	// Create csv exporter.
 	if exportExecutor == nil {
-		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, logger)
+		exportExecutor = export.NewTaskExecutor(dbClient, p.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 	}
 
 	tplExecutor := template.NewExecutor(p.TemplateConfigProvider, p.TimezoneConfigProvider)
@@ -233,7 +234,7 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(techMetricsConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 
 	healthCheckConfigAdapter := config.NewHealthCheckAdapter(dbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
@@ -344,7 +345,6 @@ func Default(
 			apilogger.NewActionLogger(dbClient, logger),
 			amqpChannel,
 			p.UserInterfaceConfigProvider,
-			cfg.File.Upload,
 			websocketHub,
 			websocketStore,
 			broadcastMessageChan,
