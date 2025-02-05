@@ -1037,7 +1037,7 @@ permission:
     <<: *permission_crud
     _id: api_external_data_table
     name: <Current()._id>
-    description: External data table
+    description: External data
     groups:
       - "@group_api"
       - "@group_api_rules"
@@ -3482,6 +3482,7 @@ role:
       "@permission_api_kpi_filter": 15
       "@permission_api_snmprule": 15
       "@permission_api_snmpmib": 15
+      "@permission_api_external_data_table": 15
       "@permission_api_corporate_pattern": 1
       "@permission_api_map": 15
       "@permission_api_share_token": 15
