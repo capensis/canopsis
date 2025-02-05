@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -6,19 +6,19 @@ export const permissionsTechnicalKpiCollectionSettingsMixin = {
   mixins: [authMixin],
   computed: {
     hasCreateAnyKpiCollectionSettingsAccess() {
-      return this.checkCreateAccess(USERS_PERMISSIONS.technical.kpiCollectionSettings);
+      return this.checkCreateAccess(USER_PERMISSIONS.technical.kpiCollectionSettings);
     },
 
     hasReadAnyKpiCollectionSettingsAccess() {
-      return this.checkReadAccess(USERS_PERMISSIONS.technical.kpiCollectionSettings);
+      return this.checkReadAccess(USER_PERMISSIONS.technical.kpiCollectionSettings);
     },
 
     hasUpdateAnyKpiCollectionSettingsAccess() {
-      return this.checkUpdateAccess(USERS_PERMISSIONS.technical.kpiCollectionSettings);
+      return this.checkUpdateAccess(USER_PERMISSIONS.technical.kpiCollectionSettings);
     },
 
     hasDeleteAnyKpiCollectionSettingsAccess() {
-      return this.checkDeleteAccess(USERS_PERMISSIONS.technical.kpiCollectionSettings);
+      return this.checkDeleteAccess(USER_PERMISSIONS.technical.kpiCollectionSettings);
     },
   },
 };

@@ -43,7 +43,7 @@ paths:
               $ref: 'schemas_swagger.yaml#/definitions/account.EditRequest'
         required: true
       responses:
-        201:
+        200:
           description: Created
           content:
             application/json:
@@ -70,7 +70,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                  $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
       security:
         - { }
   /alarm-counters:
@@ -408,6 +408,48 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /alarm-tag-labels:
+    get:
+      tags:
+        - alarm-tag-labels
+      summary: Get labels of alarm tags
+      description: |
+        Get paginated list of labels of alarm tags.
+
+        -  PERMISSIONS: `api_alarm_tag:read`
+      operationId: alarm-tag-labels-get
+      parameters:
+        - name: ids[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/search'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/alarmtag.LabelResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarm-tags:
     get:
       tags:
@@ -434,7 +476,7 @@ paths:
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
       responses:
-        201:
+        200:
           description: OK
           content:
             application/json:
@@ -1328,7 +1370,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                          $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         400:
           description: Bad Request
           content:
@@ -1349,7 +1391,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.CreateRequest'
         required: true
       responses:
         201:
@@ -1357,7 +1399,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         400:
           description: Bad Request
           content:
@@ -1382,7 +1424,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         404:
           description: Not Found
           content:
@@ -1405,7 +1447,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Payload'
+              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.UpdateRequest'
         required: true
       responses:
         200:
@@ -1413,7 +1455,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         400:
           description: Bad Request
           content:
@@ -3057,6 +3099,67 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/role-permissions:
+    put:
+      tags:
+        - roles
+      summary: Bulk update role permissions
+      description: |
+        Bulk update role permissions.
+
+        -  PERMISSIONS: `api_acl:update`
+      operationId: roles-bulk-update-permissions
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/role.BulkUpdatePermissionsRequestItem'
+            examples:
+              update:
+                summary: Update roles.
+                description: Update roles.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
+                    "permissions": {
+                      "api_alarm_read": [ ],
+                      "api_entity": [ "read" ]
+                    }
+                  },
+                  {
+                    "_id": "3b46e648-f7c0-4c94-8167-30e78728706e",
+                    "permissions": {
+                      "53010391-8f34-4e00-a493-0264431eddd6": [ "read" ],
+                      "f8d6373b-15f0-42a0-9cbe-25249343e5a7": [ ]
+                    }
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/role.BulkUpdatePermissionsRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/scenarios:
     put:
       tags:
@@ -3488,7 +3591,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                          $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         400:
           description: Bad Request
           content:
@@ -3550,7 +3653,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         400:
           description: Bad Request
           content:
@@ -3575,7 +3678,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         404:
           description: Not Found
           content:
@@ -3639,7 +3742,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         400:
           description: Bad Request
           content:
@@ -8209,7 +8312,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8254,7 +8357,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8275,7 +8378,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -8308,7 +8411,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8333,7 +8436,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         404:
           description: Not Found
           content:
@@ -8356,7 +8459,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -8389,7 +8492,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8492,7 +8595,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         400:
           description: Bad Request
           content:
@@ -8513,7 +8616,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -8529,7 +8632,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         400:
           description: Bad Request
           content:
@@ -8554,7 +8657,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         404:
           description: Not Found
           content:
@@ -8577,7 +8680,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -8593,7 +8696,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         400:
           description: Bad Request
           content:
@@ -9876,7 +9979,53 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/role.CreateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/role.EditRequest'
+            examples:
+              create_api:
+                summary: Create an API role.
+                description: Create an API role.
+                value: {
+                  "name": "cps role",
+                  "type": "api",
+                  "description": "cps role",
+                  "permissions": {
+                    "api_alarm_read": [ ],
+                    "api_entity": [ "read" ]
+                  },
+                  "auth_config": {
+                    "expiration_interval": {
+                      "value": 1,
+                      "unit": "m"
+                    },
+                    "inactivity_interval": {
+                      "value": 8,
+                      "unit": "h"
+                    }
+                  }
+                }
+              create_ui:
+                summary: Create a UI role.
+                description: Create a UI role.
+                value: {
+                  "name": "cps role",
+                  "type": "ui",
+                  "description": "cps role",
+                  "defaultview": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "permissions": {
+                    "53010391-8f34-4e00-a493-0264431eddd6": [ "read" ],
+                    "f8d6373b-15f0-42a0-9cbe-25249343e5a7": [ ]
+                  },
+                  "auth_config": {
+                    "expiration_interval": {
+                      "value": 1,
+                      "unit": "m"
+                    },
+                    "inactivity_interval": {
+                      "value": 8,
+                      "unit": "h"
+                    }
+                  }
+                }
         required: true
       responses:
         201:
@@ -9939,6 +10088,30 @@ paths:
           application/json:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/role.EditRequest'
+            examples:
+              update:
+                summary: Update a role.
+                description: Update a role.
+                value: {
+                  "name": "cps role",
+                  "type": "ui",
+                  "description": "cps role",
+                  "defaultview": "53010391-8f34-4e00-a493-0264431eddd6",
+                  "permissions": {
+                    "53010391-8f34-4e00-a493-0264431eddd6": [ "read" ],
+                    "f8d6373b-15f0-42a0-9cbe-25249343e5a7": [ ]
+                  },
+                  "auth_config": {
+                    "expiration_interval": {
+                      "value": 1,
+                      "unit": "m"
+                    },
+                    "inactivity_interval": {
+                      "value": 8,
+                      "unit": "h"
+                    }
+                  }
+                }
         required: true
       responses:
         200:

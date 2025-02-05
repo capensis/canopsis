@@ -302,6 +302,8 @@ export default {
   loadingItems: 'Chargement d\'éléments...',
   lastComment: 'Dernier commentaire',
   serialName: 'Nom de série',
+  local: 'Local',
+  server: 'Serveur',
   pressEnterToApply: 'Appuyez sur <kbd>Entrée</kbd> pour appliquer',
   width: 'Largeur',
   versionUpdated: 'Version mise à jour',

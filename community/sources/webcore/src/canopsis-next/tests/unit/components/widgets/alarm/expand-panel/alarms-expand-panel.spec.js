@@ -8,7 +8,7 @@ import {
   ENTITY_TYPES,
   JUNIT_ALARM_CONNECTOR,
   QUICK_RANGES,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
 } from '@/constants';
 
 import AlarmsExpandPanel from '@/components/widgets/alarm/expand-panel/alarms-expand-panel.vue';
@@ -46,7 +46,7 @@ describe('alarms-expand-panel', () => { // TODO: add tests for children, timelin
     name: 'auth',
     getters: {
       currentUserPermissionsById: {
-        [USERS_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [] },
+        [USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd]: { actions: [] },
       },
     },
   };

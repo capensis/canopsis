@@ -337,1183 +337,2958 @@ widget_filters:
             type: eq
             value: service
 
-permission:
-  # UI permissions
-  permission_models_userview:
-    <<: *permission_crud
-    _id: models_userview
-    name: <Current()._id>
-    description: Userviews
-  permission_models_role:
-    <<: *permission_crud
-    _id: models_role
-    name: <Current()._id>
-    description: Roles
-  permission_models_permission:
-    <<: *permission_crud
-    _id: models_permission
-    name: <Current()._id>
-    description: Rights
-  permission_models_user:
-    <<: *permission_crud
-    _id: models_user
-    name: <Current()._id>
-    description: Users
-  permission_models_parameters:
-    <<: *permission_rw
-    _id: models_parameters
-    name: <Current()._id>
-    description: Parameters
-  permission_models_broadcastMessage:
-    <<: *permission_crud
-    _id: models_broadcastMessage
-    name: <Current()._id>
-    description: Broadcast Messages
-  permission_models_playlist:
-    <<: *permission_crud
-    _id: models_playlist
-    name: <Current()._id>
-    description: Playlists
-  permission_models_planning:
-    <<: *permission_crud
-    _id: models_planning
-    name: <Current()._id>
-    description: Planning
-  permission_models_planningType:
-    <<: *permission_crud
-    _id: models_planningType
-    name: <Current()._id>
-    description: Planning type
-  permission_models_planningReason:
-    <<: *permission_crud
-    _id: models_planningReason
-    name: <Current()._id>
-    description: Planning reason
-  permission_models_planningExceptions:
-    <<: *permission_crud
-    _id: models_planningExceptions
-    name: <Current()._id>
-    description: Planning dates of exceptions
-  permission_models_remediation:
-    <<: *permission_crud
-    _id: models_remediation
-    name: <Current()._id>
-    description: Remediation
-  permission_models_remediationInstruction:
-    <<: *permission_crud
-    _id: models_remediationInstruction
-    name: <Current()._id>
-    description: Remediation instruction
-  permission_models_remediationJob:
-    <<: *permission_crud
-    _id: models_remediationJob
-    name: <Current()._id>
-    description: Remediation job
-  permission_models_remediationConfiguration:
-    <<: *permission_crud
-    _id: models_remediationConfiguration
-    name: <Current()._id>
-    description: Remediation configuration
-  permission_models_engine:
-    <<: *permission
-    _id: models_engine
-    name: <Current()._id>
-    description: Engines
-  permission_models_exploitation_eventFilter:
-    <<: *permission_crud
-    _id: models_exploitation_eventFilter
-    name: <Current()._id>
-    description: "Exploitation: Event filter"
-  permission_models_exploitation_pbehavior:
-    <<: *permission_crud
-    _id: models_exploitation_pbehavior
-    name: <Current()._id>
-    description: "Exploitation: Pbehavior"
-  permission_models_exploitation_snmpRule:
-    <<: *permission_crud
-    _id: models_exploitation_snmpRule
-    name: <Current()._id>
-    description: "Exploitation: Snmp rule"
-  permission_models_exploitation_dynamicInfo:
-    <<: *permission_crud
-    _id: models_exploitation_dynamicInfo
-    name: <Current()._id>
-    description: "Exploitation: Dynamic information rule"
-  permission_models_exploitation_metaAlarmRule:
-    <<: *permission_crud
-    _id: models_exploitation_metaAlarmRule
-    name: <Current()._id>
-    description: "Exploitation: Meta alarm rule"
-  permission_models_exploitation_scenario:
-    <<: *permission_crud
-    _id: models_exploitation_scenario
-    name: <Current()._id>
-    description: "Exploitation: Scenario"
-  permission_models_exploitation_idleRules:
-    <<: *permission_crud
-    _id: models_exploitation_idleRules
-    name: <Current()._id>
-    description: "Exploitation: Idle rule"
-  permission_models_exploitation_flappingRules:
-    <<: *permission_crud
-    _id: models_exploitation_flappingRules
-    name: <Current()._id>
-    description: "Exploitation: Flapping rule"
-  permission_models_exploitation_resolveRules:
-    <<: *permission_crud
-    _id: models_exploitation_resolveRules
-    name: <Current()._id>
-    description: "Exploitation: Resolve rule"
-  permission_models_exploitation_declareTicketRule:
-    <<: *permission_crud
-    _id: models_exploitation_declareTicketRule
-    name: <Current()._id>
-    description: "Exploitation: Declare ticket rule"
-  permission_models_exploitation_linkRule:
-    <<: *permission_crud
-    _id: models_exploitation_linkRule
-    name: <Current()._id>
-    description: "Exploitation: Link rule"
-  permission_models_healthcheck:
-    <<: *permission
-    _id: models_healthcheck
-    name: <Current()._id>
-    description: Healthcheck
-  permission_models_healthcheckStatus:
-    <<: *permission
-    _id: models_healthcheckStatus
-    name: <Current()._id>
-    description: Healthcheck status
-  permission_models_kpi:
-    <<: *permission
-    _id: models_kpi
-    name: <Current()._id>
-    description: KPI
-  permission_models_kpiFilters:
-    <<: *permission_crud
-    _id: models_kpiFilters
-    name: <Current()._id>
-    description: KPI Filters
-  permission_models_kpiRatingSettings:
-    <<: *permission_crud
-    _id: models_kpiRatingSettings
-    name: <Current()._id>
-    description: KPI Rating settings
-  permission_models_kpiCollectionSettings:
-    <<: *permission_crud
-    _id: models_kpiCollectionSettings
-    name: <Current()._id>
-    description: KPI collection settings
-  permission_models_notification_instructionStats:
-    <<: *permission_crud
-    _id: models_notification_instructionStats
-    name: <Current()._id>
-    description: "Notifications: Instructions stats"
-  permission_models_profile_corporatePattern:
-    <<: *permission_crud
-    _id: models_profile_corporatePattern
-    name: <Current()._id>
-    description: "Profile: Corporate patterns"
-  permission_models_map:
-    <<: *permission_crud
-    _id: models_map
-    name: <Current()._id>
-    description: Map
-  permission_models_shareToken:
-    <<: *permission_crud
-    _id: models_shareToken
-    name: <Current()._id>
-    description: "Share token"
-  permission_models_techmetrics:
-    <<: *permission
-    _id: models_techmetrics
-    name: <Current()._id>
-    description: "Tech metrics"
-  permission_models_widgetTemplate:
-    <<: *permission_crud
-    _id: models_widgetTemplate
-    name: <Current()._id>
-    description: "Widget templates"
-  permission_models_tag:
-    <<: *permission_crud
-    _id: models_tag
-    name: <Current()._id>
-    description: "Alarm tags"
-  permission_models_eventsRecord:
-    <<: *permission
-    _id: models_eventsRecord
-    name: <Current()._id>
-    description: "Events record"
-  permission_listalarm_ack:
-    <<: *permission
-    _id: listalarm_ack
-    name: <Current()._id>
-    description: "Rights on listalarm: ack"
-  permission_listalarm_fastAck:
-    <<: *permission
-    _id: listalarm_fastAck
-    name: <Current()._id>
-    description: "Rights on listalarm: fast ack"
-  permission_listalarm_cancelAck:
-    <<: *permission
-    _id: listalarm_cancelAck
-    name: <Current()._id>
-    description: "Rights on listalarm: cancel ack"
-  permission_listalarm_pbehavior:
-    <<: *permission
-    _id: listalarm_pbehavior
-    name: <Current()._id>
-    description: "Rights on listalarm: pbehavior"
-  permission_listalarm_fastPbehavior:
-    <<: *permission
-    _id: listalarm_fastPbehavior
-    name: <Current()._id>
-    description: "Rights on listalarm: fast pbehavior"
-  permission_listalarm_snoozeAlarm:
-    <<: *permission
-    _id: listalarm_snoozeAlarm
-    name: <Current()._id>
-    description: "Rights on listalarm: snooze alarm"
-  permission_listalarm_listPbehavior:
-    <<: *permission
-    _id: listalarm_listPbehavior
-    name: <Current()._id>
-    description: "Rights on listalarm: list pbehavior"
-  permission_listalarm_declareanIncident:
-    <<: *permission
-    _id: listalarm_declareanIncident
-    name: <Current()._id>
-    description: "Rights on listalarm: declare an incident"
-  permission_listalarm_assignTicketNumber:
-    <<: *permission
-    _id: listalarm_assignTicketNumber
-    name: <Current()._id>
-    description: "Rights on listalarm: assign ticket number"
-  permission_listalarm_removeAlarm:
-    <<: *permission
-    _id: listalarm_removeAlarm
-    name: <Current()._id>
-    description: "Rights on listalarm: remove alarm"
-  permission_listalarm_fastRemoveAlarm:
-    <<: *permission
-    _id: listalarm_fastRemoveAlarm
-    name: <Current()._id>
-    description: "Rights on listalarm: fast remove alarm"
-  permission_listalarm_unCancel:
-    <<: *permission
-    _id: listalarm_unCancel
-    name: <Current()._id>
-    description: "Rights on listalarm: uncancel alarm"
-  permission_listalarm_changeState:
-    <<: *permission
-    _id: listalarm_changeState
-    name: <Current()._id>
-    description: "Rights on listalarm: change state"
-  permission_listalarm_history:
-    <<: *permission
-    _id: listalarm_history
-    name: <Current()._id>
-    description: "Rights on listalarm: history"
-  permission_listalarm_groupRequest:
-    <<: *permission
-    _id: listalarm_groupRequest
-    name: <Current()._id>
-    description: "Rights on listalarm: group request"
-  permission_listalarm_manualMetaAlarmGroup:
-    <<: *permission
-    _id: listalarm_manualMetaAlarmGroup
-    name: <Current()._id>
-    description: "Rights on listalarm: Manual meta alarm actions"
-  permission_listalarm_metaAlarmGroup:
-    <<: *permission
-    _id: listalarm_metaAlarmGroup
-    name: <Current()._id>
-    description: "Rights on listalarm: Meta alarm actions"
-  permission_listalarm_comment:
-    <<: *permission
-    _id: listalarm_comment
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Comment' action"
-  permission_listalarm_listFilters:
-    <<: *permission
-    _id: listalarm_listFilters
-    name: <Current()._id>
-    description: "Rights on listalarm: list filters"
-  permission_listalarm_editFilter:
-    <<: *permission
-    _id: listalarm_editFilter
-    name: <Current()._id>
-    description: "Rights on listalarm: edit filters"
-  permission_listalarm_addFilter:
-    <<: *permission
-    _id: listalarm_addFilter
-    name: <Current()._id>
-    description: "Rights on listalarm: add filter"
-  permission_listalarm_userFilter:
-    <<: *permission
-    _id: listalarm_userFilter
-    name: <Current()._id>
-    description: "Rights on listalarm: User filter"
-  permission_listalarm_addBookmark:
-    <<: *permission
-    _id: listalarm_addBookmark
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Add bookmark' action"
-  permission_listalarm_filterByBookmark:
-    <<: *permission
-    _id: listalarm_filterByBookmark
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Filter by bookmark' action"
-  permission_listalarm_removeBookmark:
-    <<: *permission
-    _id: listalarm_removeBookmark
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Remove bookmark' action"
-  permission_listalarm_listRemediationInstructionsFilters:
-    <<: *permission
-    _id: listalarm_listRemediationInstructionsFilters
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Remediation instructions filters: list' action"
-  permission_listalarm_editRemediationInstructionsFilter:
-    <<: *permission
-    _id: listalarm_editRemediationInstructionsFilter
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Remediation instructions filters: edit' action"
-  permission_listalarm_addRemediationInstructionsFilter:
-    <<: *permission
-    _id: listalarm_addRemediationInstructionsFilter
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Remediation instructions filters: add' action"
-  permission_listalarm_userRemediationInstructionsFilter:
-    <<: *permission
-    _id: listalarm_userRemediationInstructionsFilter
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Remediation instructions filters: user' action"
-  permission_listalarm_links:
-    <<: *permission
-    _id: listalarm_links
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to Links"
-  permission_listalarm_correlation:
-    <<: *permission
-    _id: listalarm_correlation
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Correlation' action"
-  permission_listalarm_executeInstruction:
-    <<: *permission
-    _id: listalarm_executeInstruction
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Execute instruction' action"
-  permission_listalarm_category:
-    <<: *permission
-    _id: listalarm_category
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Category' action"
-  permission_listalarm_exportAsCsv:
-    <<: *permission
-    _id: listalarm_exportAsCsv
-    name: <Current()._id>
-    description: "Rights on listalarm: Access to 'Export as csv' action"
-  permission_serviceweather_entityAck:
-    <<: *permission
-    _id: serviceweather_entityAck
-    name: <Current()._id>
-    description: "Service weather: Access to 'Ack' action"
-  permission_serviceweather_entityAssocTicket:
-    <<: *permission
-    _id: serviceweather_entityAssocTicket
-    name: <Current()._id>
-    description: "Service weather: Access to 'Assoc Ticket' action"
-  permission_serviceweather_entityComment:
-    <<: *permission
-    _id: serviceweather_entityComment
-    name: <Current()._id>
-    description: "Service weather: Access to 'Comment' action"
-  permission_serviceweather_entityValidate:
-    <<: *permission
-    _id: serviceweather_entityValidate
-    name: <Current()._id>
-    description: "Service weather: Access to 'Validate' action"
-  permission_serviceweather_entityInvalidate:
-    <<: *permission
-    _id: serviceweather_entityInvalidate
-    name: <Current()._id>
-    description: "Service weather: Access to 'Invalidate' action"
-  permission_serviceweather_entityPause:
-    <<: *permission
-    _id: serviceweather_entityPause
-    name: <Current()._id>
-    description: "Service weather: Access to 'Pause' action"
-  permission_serviceweather_entityPlay:
-    <<: *permission
-    _id: serviceweather_entityPlay
-    name: <Current()._id>
-    description: "Service weather: Access to 'Play' action"
-  permission_serviceweather_entityCancel:
-    <<: *permission
-    _id: serviceweather_entityCancel
-    name: <Current()._id>
-    description: "Service weather: Access to 'Cancel' action"
-  permission_serviceweather_entityManagePbehaviors:
-    <<: *permission
-    _id: serviceweather_entityManagePbehaviors
-    name: <Current()._id>
-    description: "Service weather: Access to pbehaviors management"
-  permission_serviceweather_entityLinks:
-    <<: *permission
-    _id: serviceweather_entityLinks
-    name: <Current()._id>
-    description: "Service weather: Access to Links"
-  permission_serviceweather_entityDeclareTicket:
-    <<: *permission
-    _id: serviceweather_entityDeclareTicket
-    name: <Current()._id>
-    description: "Service weather: Access to 'Declare Ticket' action"
-  permission_serviceweather_moreInfos:
-    <<: *permission
-    _id: serviceweather_moreInfos
-    name: <Current()._id>
-    description: "Service weather: Access to 'More infos' modal"
-  permission_serviceweather_alarmsList:
-    <<: *permission
-    _id: serviceweather_alarmsList
-    name: <Current()._id>
-    description: "Service weather: Access to 'Alarms list' modal"
-  permission_serviceweather_pbehaviorList:
-    <<: *permission
-    _id: serviceweather_pbehaviorList
-    name: <Current()._id>
-    description: "Service weather: Access to watcher pbehavior list"
-  permission_serviceweather_listFilters:
-    <<: *permission
-    _id: serviceweather_listFilters
-    name: <Current()._id>
-    description: "Rights on service weather: List filters"
-  permission_serviceweather_editFilter:
-    <<: *permission
-    _id: serviceweather_editFilter
-    name: <Current()._id>
-    description: "Rights on service weather: Edit filters"
-  permission_serviceweather_addFilter:
-    <<: *permission
-    _id: serviceweather_addFilter
-    name: <Current()._id>
-    description: "Rights on service weather: Add filter"
-  permission_serviceweather_userFilter:
-    <<: *permission
-    _id: serviceweather_userFilter
-    name: <Current()._id>
-    description: "Rights on service weather: User filter"
-  permission_serviceweather_category:
-    <<: *permission
-    _id: serviceweather_category
-    name: <Current()._id>
-    description: "Rights on service weather: Access to 'Category' action"
-  permission_serviceweather_executeInstruction:
-    <<: *permission
-    _id: serviceweather_executeInstruction
-    name: <Current()._id>
-    description: "Service weather: Access to execute instruction"
-  permission_crudcontext_createEntity:
-    <<: *permission
-    _id: crudcontext_createEntity
-    name: <Current()._id>
-    description: "Rights on context: create entity"
-  permission_crudcontext_edit:
-    <<: *permission
-    _id: crudcontext_edit
-    name: <Current()._id>
-    description: "Rights on context: edit entity"
-  permission_crudcontext_duplicate:
-    <<: *permission
-    _id: crudcontext_duplicate
-    name: <Current()._id>
-    description: "Rights on context: duplicate entity"
-  permission_crudcontext_delete:
-    <<: *permission
-    _id: crudcontext_delete
-    name: <Current()._id>
-    description: "Rights on context: delete entity"
-  permission_crudcontext_pbehavior:
-    <<: *permission
-    _id: crudcontext_pbehavior
-    name: <Current()._id>
-    description: "Rights on context: pbehavior"
-  permission_crudcontext_listPbehavior:
-    <<: *permission
-    _id: crudcontext_listPbehavior
-    name: <Current()._id>
-    description: "Rights on context: List Pbehaviors"
-  permission_crudcontext_deletePbehavior:
-    <<: *permission
-    _id: crudcontext_deletePbehavior
-    name: <Current()._id>
-    description: "Rights on context: Delete Pbehaviors"
-  permission_crudcontext_listFilters:
-    <<: *permission
-    _id: crudcontext_listFilters
-    name: <Current()._id>
-    description: "Rights on context: List filters"
-  permission_crudcontext_editFilter:
-    <<: *permission
-    _id: crudcontext_editFilter
-    name: <Current()._id>
-    description: "Rights on context: Edit filter"
-  permission_crudcontext_addFilter:
-    <<: *permission
-    _id: crudcontext_addFilter
-    name: <Current()._id>
-    description: "Rights on context: Add filter"
-  permission_crudcontext_userFilter:
-    <<: *permission
-    _id: crudcontext_userFilter
-    name: <Current()._id>
-    description: "Rights on context: User filter"
-  permission_crudcontext_category:
-    <<: *permission
-    _id: crudcontext_category
-    name: <Current()._id>
-    description: "Rights on context: Access to 'Category' action"
-  permission_crudcontext_exportAsCsv:
-    <<: *permission
-    _id: crudcontext_exportAsCsv
-    name: <Current()._id>
-    description: "Rights on context: Export as csv"
-  permission_crudcontext_massEnable:
-    <<: *permission
-    _id: crudcontext_massEnable
-    name: <Current()._id>
-    description: "Rights on context: Mass enable"
-  permission_crudcontext_massDisable:
-    <<: *permission
-    _id: crudcontext_massDisable
-    name: <Current()._id>
-    description: "Rights on context: Mass disable"
-  permission_common_variablesHelp:
-    <<: *permission
-    _id: common_variablesHelp
-    name: <Current()._id>
-    description: Access to available variables list
-  permission_counter_alarmsList:
-    <<: *permission
-    _id: counter_alarmsList
-    name: <Current()._id>
-    description: "Counter: Access to 'Alarms list' modal"
-  permission_testingweather_alarmsList:
-    <<: *permission
-    _id: testingweather_alarmsList
-    name: <Current()._id>
-    description: "Testing weather: Access to 'Alarms list' modal"
-  permission_map_alarmsList:
-    <<: *permission
-    _id: map_alarmsList
-    name: <Current()._id>
-    description: "Map: Access to 'Alarms list' modal"
-  permission_map_listFilters:
-    <<: *permission
-    _id: map_listFilters
-    name: <Current()._id>
-    description: "Rights on map: List filters"
-  permission_map_editFilter:
-    <<: *permission
-    _id: map_editFilter
-    name: <Current()._id>
-    description: "Rights on map: Edit filters"
-  permission_map_addFilter:
-    <<: *permission
-    _id: map_addFilter
-    name: <Current()._id>
-    description: "Rights on map: Add filter"
-  permission_map_userFilter:
-    <<: *permission
-    _id: map_userFilter
-    name: <Current()._id>
-    description: "Rights on map: User filter"
-  permission_map_category:
-    <<: *permission
-    _id: map_category
-    name: <Current()._id>
-    description: "Rights on map: Access to 'Category' action"
-  permission_userStatistics_interval:
-    <<: *permission
-    _id: userStatistics_interval
-    name: <Current()._id>
-    description: "Rights on user statistics: Interval"
-  permission_userStatistics_listFilters:
-    <<: *permission
-    _id: userStatistics_listFilters
-    name: <Current()._id>
-    description: "Rights on user statistics: List filters"
-  permission_userStatistics_editFilter:
-    <<: *permission
-    _id: userStatistics_editFilter
-    name: <Current()._id>
-    description: "Rights on user statistics: Edit filters"
-  permission_userStatistics_addFilter:
-    <<: *permission
-    _id: userStatistics_addFilter
-    name: <Current()._id>
-    description: "Rights on user statistics: Add filter"
-  permission_userStatistics_userFilter:
-    <<: *permission
-    _id: userStatistics_userFilter
-    name: <Current()._id>
-    description: "Rights on user statistics: User filter"
-  permission_alarmStatistics_interval:
-    <<: *permission
-    _id: alarmStatistics_interval
-    name: <Current()._id>
-    description: "Rights on alarm statistics: Interval"
-  permission_alarmStatistics_listFilters:
-    <<: *permission
-    _id: alarmStatistics_listFilters
-    name: <Current()._id>
-    description: "Rights on alarm statistics: List filters"
-  permission_alarmStatistics_editFilter:
-    <<: *permission
-    _id: alarmStatistics_editFilter
-    name: <Current()._id>
-    description: "Rights on alarm statistics: Edit filters"
-  permission_alarmStatistics_addFilter:
-    <<: *permission
-    _id: alarmStatistics_addFilter
-    name: <Current()._id>
-    description: "Rights on alarm statistics: Add filter"
-  permission_alarmStatistics_userFilter:
-    <<: *permission
-    _id: alarmStatistics_userFilter
-    name: <Current()._id>
-    description: "Rights on alarm statistics: User filter"
-  permission_models_remediation_statistics:
-    <<: *permission
-    _id: models_remediationStatistic
-    name: <Current()._id>
-    description: Remediation statistics
-  permission_barchart_interval:
-    <<: *permission
-    _id: barchart_interval
-    name: <Current()._id>
-    description: Barchart interval
-  permission_barchart_sampling:
-    <<: *permission
-    _id: barchart_sampling
-    name: <Current()._id>
-    description: Barchart sampling
-  permission_barchart_listFilters:
-    <<: *permission
-    _id: barchart_listFilters
-    name: <Current()._id>
-    description: Barchart list filters
-  permission_barchart_editFilter:
-    <<: *permission
-    _id: barchart_editFilter
-    name: <Current()._id>
-    description: Barchart edit filter
-  permission_barchart_addFilter:
-    <<: *permission
-    _id: barchart_addFilter
-    name: <Current()._id>
-    description: Barchart add filter
-  permission_barchart_userFilter:
-    <<: *permission
-    _id: barchart_userFilter
-    name: <Current()._id>
-    description: Barchart user filter
-  permission_linechart_interval:
-    <<: *permission
-    _id: linechart_interval
-    name: <Current()._id>
-    description: Linechart interval
-  permission_linechart_sampling:
-    <<: *permission
-    _id: linechart_sampling
-    name: <Current()._id>
-    description: Linechart sampling
-  permission_linechart_listFilters:
-    <<: *permission
-    _id: linechart_listFilters
-    name: <Current()._id>
-    description: Linechart list filters
-  permission_linechart_editFilter:
-    <<: *permission
-    _id: linechart_editFilter
-    name: <Current()._id>
-    description: Linechart edit filter
-  permission_linechart_addFilter:
-    <<: *permission
-    _id: linechart_addFilter
-    name: <Current()._id>
-    description: Linechart add filter
-  permission_linechart_userFilter:
-    <<: *permission
-    _id: linechart_userFilter
-    name: <Current()._id>
-    description: Linechart user filter
-  permission_piechart_interval:
-    <<: *permission
-    _id: piechart_interval
-    name: <Current()._id>
-    description: Piechart interval
-  permission_piechart_sampling:
-    <<: *permission
-    _id: piechart_sampling
-    name: <Current()._id>
-    description: Piechart sampling
-  permission_piechart_listFilters:
-    <<: *permission
-    _id: piechart_listFilters
-    name: <Current()._id>
-    description: Piechart list filters
-  permission_piechart_editFilter:
-    <<: *permission
-    _id: piechart_editFilter
-    name: <Current()._id>
-    description: Piechart edit filter
-  permission_piechart_addFilter:
-    <<: *permission
-    _id: piechart_addFilter
-    name: <Current()._id>
-    description: Piechart add filter
-  permission_piechart_userFilter:
-    <<: *permission
-    _id: piechart_userFilter
-    name: <Current()._id>
-    description: Piechart user filter
-  permission_numbers_interval:
-    <<: *permission
-    _id: numbers_interval
-    name: <Current()._id>
-    description: Numbers interval
-  permission_numbers_sampling:
-    <<: *permission
-    _id: numbers_sampling
-    name: <Current()._id>
-    description: Numbers sampling
-  permission_numbers_listFilters:
-    <<: *permission
-    _id: numbers_listFilters
-    name: <Current()._id>
-    description: Numbers list filters
-  permission_numbers_editFilter:
-    <<: *permission
-    _id: numbers_editFilter
-    name: <Current()._id>
-    description: Numbers edit filter
-  permission_numbers_addFilter:
-    <<: *permission
-    _id: numbers_addFilter
-    name: <Current()._id>
-    description: Numbers add filter
-  permission_numbers_userFilter:
-    <<: *permission
-    _id: numbers_userFilter
-    name: <Current()._id>
-    description: Numbers user filter
-  permission_models_maintenance:
-    <<: *permission
-    _id: models_maintenance
-    name: <Current()._id>
-    description: Maintenance
-  permission_models_profile_color_theme:
-    <<: *permission_crud
-    _id: models_profile_color_theme
-    name: <Current()._id>
-    description: Color theme
-  permission_models_stateSetting:
-    <<: *permission_crud
-    _id: models_stateSetting
-    name: <Current()._id>
-    description: State settings
-  permission_models_icon:
-    <<: *permission_crud
-    _id: models_icon
-    name: <Current()._id>
-    description: Icons
-  permission_availability_interval:
-    <<: *permission
-    _id: availability_interval
-    name: <Current()._id>
-    description: Availability interval
-  permission_availability_listFilters:
-    <<: *permission
-    _id: availability_listFilters
-    name: <Current()._id>
-    description: Availability list filters
-  permission_availability_editFilter:
-    <<: *permission
-    _id: availability_editFilter
-    name: <Current()._id>
-    description: Availability edit filter
-  permission_availability_addFilter:
-    <<: *permission
-    _id: availability_addFilter
-    name: <Current()._id>
-    description: Availability add filter
-  permission_availability_userFilter:
-    <<: *permission
-    _id: availability_userFilter
-    name: <Current()._id>
-    description: Availability user filter
-  permission_availability_exportAsCsv:
-    <<: *permission
-    _id: availability_exportAsCsv
-    name: <Current()._id>
-    description: Availability export as csv
-  permission_common_entityCommentsList:
-    <<: *permission
-    _id: common_entityCommentsList
-    name: <Current()._id>
-    description: Entity comments list
-  permission_common_createEntityComment:
-    <<: *permission
-    _id: common_createEntityComment
-    name: <Current()._id>
-    description: Create entity comment
-  permission_common_editEntityComment:
-    <<: *permission
-    _id: common_editEntityComment
-    name: <Current()._id>
-    description: Edit entity comment
+permission_group:
+  group_widgets:
+    _id: widgets
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_common:
+    _id: widgets_common
+    name: <Current()._id>
+    position: <Index()>
 
+  group_widgets_alarmslist:
+    _id: widgets_alarmslist
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_alarmslist_widgetsettings:
+    _id: widgets_alarmslist_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_alarmslist_viewsettings:
+    _id: widgets_alarmslist_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_alarmslist_alarmactions:
+    _id: widgets_alarmslist_alarmactions
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_alarmslist_actions:
+    _id: widgets_alarmslist_actions
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_context:
+    _id: widgets_context
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_context_widgetsettings:
+    _id: widgets_context_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_context_viewsettings:
+    _id: widgets_context_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_context_entityactions:
+    _id: widgets_context_entityactions
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_context_actions:
+    _id: widgets_context_actions
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_serviceweather:
+    _id: widgets_serviceweather
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_serviceweather_widgetsettings:
+    _id: widgets_serviceweather_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_serviceweather_viewsettings:
+    _id: widgets_serviceweather_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_serviceweather_alarmactions:
+    _id: widgets_serviceweather_alarmactions
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_counter:
+    _id: widgets_counter
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_testingweather:
+    _id: widgets_testingweather
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_map:
+    _id: widgets_map
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_map_widgetsettings:
+    _id: widgets_map_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_map_viewsettings:
+    _id: widgets_map_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_barchart:
+    _id: widgets_barchart
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_barchart_widgetsettings:
+    _id: widgets_barchart_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_barchart_viewsettings:
+    _id: widgets_barchart_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_linechart:
+    _id: widgets_linechart
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_linechart_widgetsettings:
+    _id: widgets_linechart_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_linechart_viewsettings:
+    _id: widgets_linechart_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_piechart:
+    _id: widgets_piechart
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_piechart_widgetsettings:
+    _id: widgets_piechart_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_piechart_viewsettings:
+    _id: widgets_piechart_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_numbers:
+    _id: widgets_numbers
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_numbers_widgetsettings:
+    _id: widgets_numbers_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_numbers_viewsettings:
+    _id: widgets_numbers_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_userstatistics:
+    _id: widgets_userstatistics
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_userstatistics_widgetsettings:
+    _id: widgets_userstatistics_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_userstatistics_viewsettings:
+    _id: widgets_userstatistics_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_alarmstatistics:
+    _id: widgets_alarmstatistics
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_alarmstatistics_widgetsettings:
+    _id: widgets_alarmstatistics_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_alarmstatistics_viewsettings:
+    _id: widgets_alarmstatistics_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+
+  group_widgets_availability:
+    _id: widgets_availability
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_availability_widgetsettings:
+    _id: widgets_availability_widgetsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_availability_viewsettings:
+    _id: widgets_availability_viewsettings
+    name: <Current()._id>
+    position: <Index()>
+  group_widgets_availability_actions:
+    _id: widgets_availability_actions
+    name: <Current()._id>
+    position: <Index()>
+
+  group_commonviews:
+    _id: commonviews
+    name: <Current()._id>
+    position: <Index()>
+
+  group_commonviews_playlist:
+    _id: commonviews_playlist
+    position: -1
+
+  group_technical:
+    _id: technical
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_admin:
+    _id: technical_admin
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_admin_access:
+    _id: technical_admin_access
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_admin_communication:
+    _id: technical_admin_communication
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_admin_general:
+    _id: technical_admin_general
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_viewsandwidgets:
+    _id: technical_viewsandwidgets
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_token:
+    _id: technical_token
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_exploitation:
+    _id: technical_exploitation
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_notification:
+    _id: technical_notification
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_profile:
+    _id: technical_profile
+    name: <Current()._id>
+    position: <Index()>
+
+  group_api:
+    _id: api
+    name: <Current()._id>
+    position: <Index()>
+  group_api_general:
+    _id: api_general
+    name: <Current()._id>
+    position: <Index()>
+  group_api_rules:
+    _id: api_rules
+    name: <Current()._id>
+    position: <Index()>
+  group_api_remediation:
+    _id: api_remediation
+    name: <Current()._id>
+    position: <Index()>
+  group_api_planning:
+    _id: api_planning
+    name: <Current()._id>
+    position: <Index()>
+
+permission:
   # API permissions
+
+  # api -> general
   permission_api_alarm_read:
     <<: *permission
     _id: api_alarm_read
     name: <Current()._id>
     description: Read alarms
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_alarm_update:
     <<: *permission
     _id: api_alarm_update
     name: <Current()._id>
     description: Update alarms
-  permission_api_idlerule:
-    <<: *permission_crud
-    _id: api_idlerule
-    name: <Current()._id>
-    description: Idle rules
-  permission_api_eventfilter:
-    <<: *permission_crud
-    _id: api_eventfilter
-    name: <Current()._id>
-    description: Event filters
-  permission_api_action:
-    <<: *permission_crud
-    _id: api_action
-    name: <Current()._id>
-    description: Actions
-  permission_api_metaalarmrule:
-    <<: *permission_crud
-    _id: api_metaalarmrule
-    name: <Current()._id>
-    description: Meta-alarm rules
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_playlist:
     <<: *permission_crud
     _id: api_playlist
     name: <Current()._id>
     description: Playlists
-  permission_api_dynamicinfos:
-    <<: *permission_crud
-    _id: api_dynamicinfos
-    name: <Current()._id>
-    description: Dynamic infos
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_entityservice:
     <<: *permission_crud
     _id: api_entityservice
     name: <Current()._id>
     description: Entity service
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_entitycategory:
     <<: *permission_crud
     _id: api_entitycategory
     name: <Current()._id>
     description: Entity categories
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_entitycomment:
     <<: *permission
     _id: api_entitycomment
     name: <Current()._id>
     description: Entity comments
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_viewgroup:
     <<: *permission_crud
     _id: api_viewgroup
     name: <Current()._id>
     description: View groups
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_view:
     <<: *permission_crud
     _id: api_view
     name: <Current()._id>
     description: Views
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_widgettemplate:
     <<: *permission_crud
     _id: api_widgettemplate
     name: <Current()._id>
     description: Widget templates
-  permission_api_pbehavior:
-    <<: *permission_crud
-    _id: api_pbehavior
-    name: <Current()._id>
-    description: PBehaviors
-  permission_api_pbehaviortype:
-    <<: *permission_crud
-    _id: api_pbehaviortype
-    name: <Current()._id>
-    description: PBehaviorTypes
-  permission_api_pbehaviorreason:
-    <<: *permission_crud
-    _id: api_pbehaviorreason
-    name: <Current()._id>
-    description: PBehaviorReasons
-  permission_api_pbehaviorexception:
-    <<: *permission_crud
-    _id: api_pbehaviorexception
-    name: <Current()._id>
-    description: PBehaviorExceptions
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_event:
     <<: *permission
     _id: api_event
     name: <Current()._id>
     description: Event
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_healthcheck:
     <<: *permission
     _id: api_healthcheck
     name: <Current()._id>
     description: Healthcheck
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_message_rate_stats_read:
     <<: *permission
     _id: api_message_rate_stats_read
     name: <Current()._id>
     description: Message rate statistics
-  permission_api_execution:
-    <<: *permission
-    _id: api_execution
-    name: <Current()._id>
-    description: Runs instructions
-  permission_api_job_config:
-    <<: *permission_crud
-    _id: api_job_config
-    name: <Current()._id>
-    description: Job configs
-  permission_api_job:
-    <<: *permission_crud
-    _id: api_job
-    name: <Current()._id>
-    description: Jobs
-  permission_api_instruction:
-    <<: *permission_crud
-    _id: api_instruction
-    name: <Current()._id>
-    description: Instructions
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_file:
     <<: *permission_crud
     _id: api_file
     name: <Current()._id>
     description: File
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_entity:
     <<: *permission_crud
     _id: api_entity
     name: <Current()._id>
     description: Entity
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_contextgraph:
     <<: *permission_crud
     _id: api_contextgraph
     name: <Current()._id>
     description: Context graph import
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_acl:
     <<: *permission_crud
     _id: api_acl
     name: <Current()._id>
     description: Roles, permissions, users
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_state_settings:
     <<: *permission_crud
     _id: api_state_settings
     name: <Current()._id>
     description: State settings
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_broadcast_message:
     <<: *permission_crud
     _id: api_broadcast_message
     name: <Current()._id>
     description: Broadcast Message
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_associative_table:
     <<: *permission_crud
     _id: api_associative_table
     name: <Current()._id>
     description: Associative table
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_user_interface_update:
     <<: *permission
     _id: api_user_interface_update
     name: <Current()._id>
     description: Update user interface
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_user_interface_delete:
     <<: *permission
     _id: api_user_interface_delete
     name: <Current()._id>
     description: Delete user interface
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_junit:
     <<: *permission_crud
     _id: api_junit
     name: <Current()._id>
     description: JUnit API
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_datastorage_read:
     <<: *permission
     _id: api_datastorage_read
     name: <Current()._id>
     description: Data storage settings read
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_datastorage_update:
     <<: *permission
     _id: api_datastorage_update
     name: <Current()._id>
     description: Data storage settings update
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_notification:
     <<: *permission
     _id: api_notification
     name: <Current()._id>
     description: Notification settings
-  permission_api_instruction_approve:
-    <<: *permission
-    _id: api_instruction_approve
-    name: <Current()._id>
-    description: Instruction approve
-  permission_api_resolve_rule:
-    <<: *permission_crud
-    _id: api_resolve_rule
-    name: <Current()._id>
-    description: Resolve rule
-  permission_api_flapping_rule:
-    <<: *permission_crud
-    _id: api_flapping_rule
-    name: <Current()._id>
-    description: Flapping rule
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_metrics:
     <<: *permission
     _id: api_metrics
     name: <Current()._id>
     description: Metrics
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_rating_settings:
     <<: *permission_crud
     _id: api_rating_settings
     name: <Current()._id>
     description: Rating settings
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_metrics_settings:
     <<: *permission_crud
     _id: api_metrics_settings
     name: <Current()._id>
     description: Metrics settings
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_kpi_filter:
     <<: *permission_crud
     _id: api_kpi_filter
     name: <Current()._id>
     description: KPI filters
-  permission_api_snmprule:
-    <<: *permission_crud
-    _id: api_snmprule
-    name: <Current()._id>
-    description: SNMP
-  permission_api_snmpmib:
-    <<: *permission_crud
-    _id: api_snmpmib
-    name: <Current()._id>
-    description: SNMP MIB
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_corporate_pattern:
     <<: *permission
     _id: api_corporate_pattern
     name: <Current()._id>
     description: Corporate patterns
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_map:
     <<: *permission_crud
     _id: api_map
     name: <Current()._id>
     description: Map
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_share_token:
     <<: *permission_crud
     _id: api_share_token
     name: <Current()._id>
     description: Share token
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_techmetrics:
     <<: *permission
     _id: api_techmetrics
     name: <Current()._id>
-    description: Tech Metrics
+    description: Tech metrics
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_export_configurations:
     <<: *permission
     _id: api_export_configurations
     name: <Current()._id>
     description: Export configurations
-  permission_api_declare_ticket_rule:
-    <<: *permission_crud
-    _id: api_declare_ticket_rule
-    name: <Current()._id>
-    description: Declare ticket rule
-  permission_api_declare_ticket_execution:
-    <<: *permission
-    _id: api_declare_ticket_execution
-    name: <Current()._id>
-    description: Run declare ticket rules
-  permission_api_link_rule:
-    <<: *permission_crud
-    _id: api_link_rule
-    name: <Current()._id>
-    description: Link rule
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_alarm_tag:
     <<: *permission_crud
     _id: api_alarm_tag
     name: <Current()._id>
     description: Alarm tags
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_maintenance:
     <<: *permission
     _id: api_maintenance
     name: <Current()._id>
     description: Trigger maintenance mode
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_color_theme:
     <<: *permission_crud
     _id: api_color_theme
     name: <Current()._id>
-    description: Color theme
+    description: Theme color
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_private_view_groups:
     <<: *permission
     _id: api_private_view_groups
     name: <Current()._id>
     description: Create private view groups
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_icon:
     <<: *permission
     _id: api_icon
     name: <Current()._id>
     description: Create icons
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_techmetrics_settings:
     <<: *permission_crud
     _id: api_techmetrics_settings
     name: <Current()._id>
     description: Tech metrics settings
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_launch_event_recording:
     <<: *permission
     _id: api_launch_event_recording
     name: <Current()._id>
     description: Launch event recording
+    groups:
+      - "@group_api"
+      - "@group_api_general"
   permission_api_resend_events:
     <<: *permission
     _id: api_resend_events
     name: <Current()._id>
     description: Event recorder resend events
+    groups:
+      - "@group_api"
+      - "@group_api_general"
+
+  # api -> rules
+  permission_api_dynamicinfos:
+    <<: *permission_crud
+    _id: api_dynamicinfos
+    name: <Current()._id>
+    description: Dynamic infos
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_idlerule:
+    <<: *permission_crud
+    _id: api_idlerule
+    name: <Current()._id>
+    description: Idle rules
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_eventfilter:
+    <<: *permission_crud
+    _id: api_eventfilter
+    name: <Current()._id>
+    description: Event filters
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_action:
+    <<: *permission_crud
+    _id: api_action
+    name: <Current()._id>
+    description: Actions
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_resolve_rule:
+    <<: *permission_crud
+    _id: api_resolve_rule
+    name: <Current()._id>
+    description: Resolve rule
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_flapping_rule:
+    <<: *permission_crud
+    _id: api_flapping_rule
+    name: <Current()._id>
+    description: Flapping rule
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_link_rule:
+    <<: *permission_crud
+    _id: api_link_rule
+    name: <Current()._id>
+    description: Link rule
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_metaalarmrule:
+    <<: *permission_crud
+    _id: api_metaalarmrule
+    name: <Current()._id>
+    description: Meta-alarm rules
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_declare_ticket_rule:
+    <<: *permission_crud
+    _id: api_declare_ticket_rule
+    name: <Current()._id>
+    description: Declare ticket rule
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_declare_ticket_execution:
+    <<: *permission
+    _id: api_declare_ticket_execution
+    name: <Current()._id>
+    description: Run declare ticket rules
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_snmprule:
+    <<: *permission_crud
+    _id: api_snmprule
+    name: <Current()._id>
+    description: SNMP
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_snmpmib:
+    <<: *permission_crud
+    _id: api_snmpmib
+    name: <Current()._id>
+    description: SNMP MIB
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+
+  # api -> remediation
+  permission_api_job_config:
+    <<: *permission_crud
+    _id: api_job_config
+    name: <Current()._id>
+    description: Job configs
+    groups:
+      - "@group_api"
+      - "@group_api_remediation"
+  permission_api_job:
+    <<: *permission_crud
+    _id: api_job
+    name: <Current()._id>
+    description: Jobs
+    groups:
+      - "@group_api"
+      - "@group_api_remediation"
+  permission_api_instruction:
+    <<: *permission_crud
+    _id: api_instruction
+    name: <Current()._id>
+    description: Instructions
+    groups:
+      - "@group_api"
+      - "@group_api_remediation"
+  permission_api_instruction_approve:
+    <<: *permission
+    _id: api_instruction_approve
+    name: <Current()._id>
+    description: Instruction approve
+    groups:
+      - "@group_api"
+      - "@group_api_remediation"
+  permission_api_execution:
+    <<: *permission
+    _id: api_execution
+    name: <Current()._id>
+    description: Runs instructions
+    groups:
+      - "@group_api"
+      - "@group_api_remediation"
+
+  # api -> pbehavior
+  permission_api_pbehavior:
+    <<: *permission_crud
+    _id: api_pbehavior
+    name: <Current()._id>
+    description: PBehaviors
+    groups:
+      - "@group_api"
+      - "@group_api_planning"
+  permission_api_pbehaviortype:
+    <<: *permission_crud
+    _id: api_pbehaviortype
+    name: <Current()._id>
+    description: PBehavior types
+    groups:
+      - "@group_api"
+      - "@group_api_planning"
+  permission_api_pbehaviorreason:
+    <<: *permission_crud
+    _id: api_pbehaviorreason
+    name: <Current()._id>
+    description: PBehavior reasons
+    groups:
+      - "@group_api"
+      - "@group_api_planning"
+  permission_api_pbehaviorexception:
+    <<: *permission_crud
+    _id: api_pbehaviorexception
+    name: <Current()._id>
+    description: PBehavior exceptions
+    groups:
+      - "@group_api"
+      - "@group_api_planning"
+
+  # UI permissions
+  .api_permissions_entity_pattern: &api_permissions_entity_pattern {
+    "@permission_api_entity": 4,
+    "@permission_api_entitycategory": 4
+  }
+
+  .api_permissions_alarm_pattern: &api_permissions_alarm_pattern {
+    "@permission_api_alarm_read": 1,
+    "@permission_api_entity": 4
+  }
+
+  .api_permissions_event_pattern: &api_permissions_event_pattern {
+    "@permission_api_entity": 4
+  }
+
+  .api_permissions_pbehavior_pattern: &api_permissions_pbehavior_pattern {
+    "@permission_api_pbehavior": 4,
+    "@permission_api_pbehaviortype": 4,
+    "@permission_api_pbehaviorreason": 4
+  }
+
+  .api_permissions_service_weather_pattern: &api_permissions_service_weather_pattern {
+    "@permission_api_pbehaviortype": 4
+  }
+
+  .api_permissions_view_read: &api_permissions_view_read {
+    "@permission_api_view": 4,
+    "@permission_api_associative_table": 4
+  }
+
+  .api_permissions_view_update: &api_permissions_view_update {
+    "@permission_api_view": 2,
+    "@permission_api_widgettemplate": 4
+  }
+
+  .api_permissions_view_delete: &api_permissions_view_delete {
+    "@permission_api_view": 1
+  }
+
+  .api_permissions_alarmslist_modal: &api_permissions_alarmslist_modal {
+    "@permission_api_alarm_read": 1,
+    "@permission_api_entityservice": 4,
+    "@permission_api_state_settings": 4,
+    "@permission_api_entity": 4,
+    "@permission_api_pbehavior": 4,
+    "@permission_api_junit": 4
+  }
+
+  .api_permissions_entitieslist_modal: &api_permissions_entitieslist_modal {
+    "@permission_api_entityservice": 4,
+    "@permission_api_alarm_read": 1,
+    "@permission_api_entity": 4,
+    "@permission_api_pbehavior": 4
+  }
+
+  .api_permissions_widget_AlarmsList_read: &api_permissions_widget_AlarmsList_read {
+    "@permission_api_alarm_read": 1,
+    "@permission_api_entity": 4,
+    "@permission_api_entityservice": 4,
+    "@permission_api_state_settings": 4,
+    "@permission_api_pbehavior": 4,
+    "@permission_api_junit": 4,
+    "@permission_api_metrics": 1
+  }
+
+  .api_permissions_widget_AlarmsList_update: &api_permissions_widget_AlarmsList_update {
+    "@permission_api_dynamicinfos": 4
+  }
+
+  .api_permissions_widget_Context_read: &api_permissions_widget_Context_read {
+    "@permission_api_entity": 4,
+    "@permission_api_alarm_read": 1,
+    "@permission_api_entityservice": 4,
+    "@permission_api_state_settings": 4,
+    "@permission_api_pbehavior": 4,
+    "@permission_api_metrics": 1
+  }
+
+  .api_permissions_widget_Context_update: &api_permissions_widget_Context_update {
+    "@permission_api_dynamicinfos": 4
+  }
+
+  .api_permissions_widget_ServiceWeather_read: &api_permissions_widget_ServiceWeather_read {
+    "@permission_api_entityservice": 4,
+    "@permission_api_alarm_read": 1,
+    "@permission_api_state_settings": 4
+  }
+
+  .api_permissions_widget_ServiceWeather_update: &api_permissions_widget_ServiceWeather_update {
+    "@permission_api_entity": 4,
+    "@permission_api_dynamicinfos": 4,
+    "@permission_api_pbehaviortype": 4
+  }
+
+  .api_permissions_widget_StatsCalendar_read: &api_permissions_widget_StatsCalendar_read {
+    "@permission_api_alarm_read": 1,
+    <<: *api_permissions_alarmslist_modal
+  }
+
+  .api_permissions_widget_StatsCalendar_update: &api_permissions_widget_StatsCalendar_update
+    "@permission_api_dynamicinfos": 4
+    <<: [
+      *api_permissions_alarm_pattern,
+      *api_permissions_entity_pattern,
+      *api_permissions_pbehavior_pattern
+    ]
+
+  .api_permissions_widget_Counter_read: &api_permissions_widget_Counter_read {
+    "@permission_api_alarm_read": 1
+  }
+
+  .api_permissions_widget_Counter_update: &api_permissions_widget_Counter_update
+    "@permission_api_entity": 4
+    "@permission_api_dynamicinfos": 4
+    <<: [
+      *api_permissions_alarm_pattern,
+      *api_permissions_entity_pattern,
+      *api_permissions_pbehavior_pattern
+    ]
+
+  .api_permissions_widget_Junit_read: &api_permissions_widget_Junit_read {
+    "@permission_api_junit": 4
+  }
+
+  .api_permissions_widget_Map_read: &api_permissions_widget_Map_read
+    "@permission_api_map": 4
+    "@permission_api_entityservice": 4
+    <<: *api_permissions_entitieslist_modal
+
+  .api_permissions_widget_Map_update: &api_permissions_widget_Map_update {
+    "@permission_api_alarm_read": 1,
+    "@permission_api_entity": 4,
+    "@permission_api_dynamicinfos": 4
+  }
+
+  .api_permissions_widget_BarChart_read: &api_permissions_widget_BarChart_read {
+    "@permission_api_metrics": 1
+  }
+
+  .api_permissions_widget_LineChart_read: &api_permissions_widget_LineChart_read {
+    "@permission_api_metrics": 1
+  }
+
+  .api_permissions_widget_PieChart_read: &api_permissions_widget_PieChart_read {
+    "@permission_api_metrics": 1
+  }
+
+  .api_permissions_widget_Numbers_read: &api_permissions_widget_Numbers_read {
+    "@permission_api_metrics": 1
+  }
+
+  .api_permissions_widget_UserStatistics_read: &api_permissions_widget_UserStatistics_read {
+    "@permission_api_metrics": 1,
+    "@permission_api_rating_settings": 4
+  }
+
+  .api_permissions_widget_AlarmStatistics_read: &api_permissions_widget_AlarmStatistics_read {
+    "@permission_api_metrics": 1,
+    "@permission_api_rating_settings": 4
+  }
+
+  .api_permissions_widget_Availability_read: &api_permissions_widget_Availability_read {
+    "@permission_api_metrics": 1
+  }
+
+  # technical -> admin -> access
+  permission_models_permission:
+    <<: *permission_crud
+    _id: models_permission
+    name: <Current()._id>
+    description: Rights
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_access"
+    api_permissions:
+      "@permission_api_acl": 0
+  permission_models_role:
+    <<: *permission_crud
+    _id: models_role
+    name: <Current()._id>
+    description: Roles
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_access"
+    api_permissions:
+      "@permission_api_acl": 0
+  permission_models_user:
+    <<: *permission_crud
+    _id: models_user
+    name: <Current()._id>
+    description: Users
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_access"
+    api_permissions:
+      "@permission_api_acl": 0
+
+  # technical -> admin -> communication
+  permission_models_broadcastMessage:
+    <<: *permission_crud
+    _id: models_broadcastMessage
+    name: <Current()._id>
+    description: Broadcast messages
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_communication"
+    api_permissions:
+      "@permission_api_broadcast_message": 0
+  permission_models_playlist:
+    <<: *permission_crud
+    _id: models_playlist
+    name: <Current()._id>
+    description: Playlists
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_communication"
+    api_permissions:
+      "@permission_api_playlist": 0
+
+  # technical -> admin -> general
+  permission_models_healthcheck:
+    <<: *permission
+    _id: models_healthcheck
+    name: <Current()._id>
+    description: Healthcheck
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_healthcheck": 1
+      "@permission_api_message_rate_stats_read": 1
+  permission_models_healthcheckStatus:
+    <<: *permission
+    _id: models_healthcheckStatus
+    name: <Current()._id>
+    description: Healthcheck status
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_healthcheck": 1
+  permission_models_techmetrics:
+    <<: *permission
+    _id: models_techmetrics
+    name: <Current()._id>
+    description: Healthcheck - engines' metrics
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_techmetrics": 1
+  permission_models_remediationInstruction:
+    <<: *permission_crud
+    _id: models_remediationInstruction
+    name: <Current()._id>
+    description: Instructions - instructions tab
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_instruction": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_remediationJob:
+    <<: *permission_crud
+    _id: models_remediationJob
+    name: <Current()._id>
+    description: Instructions - jobs tab
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_job": 0
+  permission_models_remediationConfiguration:
+    <<: *permission_crud
+    _id: models_remediationConfiguration
+    name: <Current()._id>
+    description: Instructions - configurations tab
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_job_config": 0
+  permission_models_remediation_statistics:
+    <<: *permission
+    _id: models_remediationStatistic
+    name: <Current()._id>
+    description: Instructions - remediation statistics tab
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_instruction": 4
+      "@permission_api_metrics": 1
+  permission_models_kpi:
+    <<: *permission
+    _id: models_kpi
+    name: <Current()._id>
+    description: KPI graphs
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_metrics": 1
+      "@permission_api_kpi_filter": 4
+      "@permission_api_rating_settings": 4
+      "@permission_api_healthcheck": 1
+  permission_models_kpiFilters:
+    <<: *permission_crud
+    _id: models_kpiFilters
+    name: <Current()._id>
+    description: KPI filters
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_kpi_filter": 0
+      <<: *api_permissions_entity_pattern
+  permission_models_kpiRatingSettings:
+    <<: *permission_crud
+    _id: models_kpiRatingSettings
+    name: <Current()._id>
+    description: KPI rating settings
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_rating_settings": 0
+  permission_models_kpiCollectionSettings:
+    <<: *permission_crud
+    _id: models_kpiCollectionSettings
+    name: <Current()._id>
+    description: KPI collection settings
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_metrics_settings": 0
+  permission_models_maintenance:
+    <<: *permission
+    _id: models_maintenance
+    name: <Current()._id>
+    description: Maintenance
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_maintenance": 1
+  permission_models_map:
+    <<: *permission_crud
+    _id: models_map
+    name: <Current()._id>
+    description: Maps
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_map": 0
+      "@permission_api_entity": 4
+  permission_models_parameters:
+    <<: *permission_rw
+    _id: models_parameters
+    name: <Current()._id>
+    description: Parameters - parameters tab
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions_bitmask:
+      2:
+        "@permission_api_user_interface_update": 1
+      1:
+        "@permission_api_user_interface_delete": 1
+  permission_models_widgetTemplate:
+    <<: *permission_crud
+    _id: models_widgetTemplate
+    name: <Current()._id>
+    description: Parameters - widget templates
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_widgettemplate": 0
+      "@permission_api_alarm_read": 1
+      "@permission_api_entity": 4
+      "@permission_api_dynamicinfos": 4
+  permission_models_icon:
+    <<: *permission_crud
+    _id: models_icon
+    name: <Current()._id>
+    description: Parameters - icons
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions_bitmask:
+      8:
+        "@permission_api_icon": 1
+      2:
+        "@permission_api_icon": 1
+      1:
+        "@permission_api_icon": 1
+  permission_models_view_import_export:
+    <<: *permission
+    _id: models_view_import_export
+    name: <Current()._id>
+    description: Parameters - import / export
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_viewgroup": 3
+      "@permission_api_view": 3
+  permission_models_notification:
+    <<: *permission
+    _id: models_notification
+    name: <Current()._id>
+    description: Parameters - notification settings
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_notification": 1
+  permission_models_planningType:
+    <<: *permission_crud
+    _id: models_planningType
+    name: <Current()._id>
+    description: Planning type (Pbehavior)
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_pbehaviortype": 0
+  permission_models_planningReason:
+    <<: *permission_crud
+    _id: models_planningReason
+    name: <Current()._id>
+    description: Planning reason (Pbehavior)
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_pbehaviorreason": 0
+  permission_models_planningExceptions:
+    <<: *permission_crud
+    _id: models_planningExceptions
+    name: <Current()._id>
+    description: Planning exceptions dates (Pbehavior)
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_pbehaviorexception": 0
+  permission_models_stateSetting:
+    <<: *permission_crud
+    _id: models_stateSetting
+    name: <Current()._id>
+    description: State settings
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_state_settings": 0
+  permission_models_storageSettings:
+    <<: *permission_rw
+    _id: models_storageSettings
+    name: <Current()._id>
+    description: Storage settings
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions_bitmask:
+      4:
+        "@permission_api_datastorage_read": 1
+      2:
+        "@permission_api_datastorage_update": 1
+  permission_models_tag:
+    <<: *permission_crud
+    _id: models_tag
+    name: <Current()._id>
+    description: Tags management
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_alarm_tag": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_eventsRecord:
+    <<: *permission
+    _id: models_eventsRecord
+    name: <Current()._id>
+    description: Events recording
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_launch_event_recording": 1
+      "@permission_api_resend_events": 1
+
+  # technical -> viewsandwidgets
+  permission_models_privateView:
+    <<: *permission
+    _id: models_privateView
+    name: <Current()._id>
+    description: Private views
+    groups:
+      - "@group_technical"
+      - "@group_technical_viewsandwidgets"
+    api_permissions:
+      "@permission_api_private_view_groups": 1
+      <<: [
+        *api_permissions_widget_AlarmsList_read,
+        *api_permissions_widget_AlarmsList_update,
+        *api_permissions_widget_Context_read,
+        *api_permissions_widget_Context_update,
+        *api_permissions_widget_ServiceWeather_read,
+        *api_permissions_widget_ServiceWeather_update,
+        *api_permissions_widget_StatsCalendar_read,
+        *api_permissions_widget_StatsCalendar_update,
+        *api_permissions_widget_Counter_read,
+        *api_permissions_widget_Counter_update,
+        *api_permissions_widget_Junit_read,
+        *api_permissions_widget_Map_read,
+        *api_permissions_widget_Map_update,
+        *api_permissions_widget_BarChart_read,
+        *api_permissions_widget_LineChart_read,
+        *api_permissions_widget_PieChart_read,
+        *api_permissions_widget_Numbers_read,
+        *api_permissions_widget_UserStatistics_read,
+        *api_permissions_widget_AlarmStatistics_read,
+        *api_permissions_widget_Availability_read
+      ]
+  permission_models_userview:
+    <<: *permission_crud
+    _id: models_userview
+    name: <Current()._id>
+    description: Views
+    groups:
+      - "@group_technical"
+      - "@group_technical_viewsandwidgets"
+    api_permissions:
+      "@permission_api_viewgroup": 0
+      "@permission_api_view": 0
+
+  # technical -> token
+  permission_models_shareToken:
+    <<: *permission_crud
+    _id: models_shareToken
+    name: <Current()._id>
+    description: Shared token settings
+    groups:
+      - "@group_technical"
+      - "@group_technical_token"
+    api_permissions_bitmask:
+      8:
+        "@permission_api_share_token": 8
+
+  # technical -> exploitation
+  permission_models_exploitation_eventFilter:
+    <<: *permission_crud
+    _id: models_exploitation_eventFilter
+    name: <Current()._id>
+    description: Event filters
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_eventfilter": 0
+      <<: [
+        *api_permissions_event_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_pbehavior:
+    <<: *permission_crud
+    _id: models_exploitation_pbehavior
+    name: <Current()._id>
+    description: Pbehaviors
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_pbehavior": 0
+      <<: *api_permissions_entity_pattern
+  permission_models_exploitation_snmpRule:
+    <<: *permission_crud
+    _id: models_exploitation_snmpRule
+    name: <Current()._id>
+    description: Snmp rules
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_snmprule": 0
+  permission_models_exploitation_dynamicInfo:
+    <<: *permission_crud
+    _id: models_exploitation_dynamicInfo
+    name: <Current()._id>
+    description: Dynamic information rules
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_dynamicinfos": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_metaAlarmRule:
+    <<: *permission_crud
+    _id: models_exploitation_metaAlarmRule
+    name: <Current()._id>
+    description: Meta alarm rules and correlation
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_metaalarmrule": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_scenario:
+    <<: *permission_crud
+    _id: models_exploitation_scenario
+    name: <Current()._id>
+    description: Scenarios
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_action": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_idleRules:
+    <<: *permission_crud
+    _id: models_exploitation_idleRules
+    name: <Current()._id>
+    description: Idle rules
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_idlerule": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_flappingRules:
+    <<: *permission_crud
+    _id: models_exploitation_flappingRules
+    name: <Current()._id>
+    description: Flapping rules
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_flapping_rule": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_resolveRules:
+    <<: *permission_crud
+    _id: models_exploitation_resolveRules
+    name: <Current()._id>
+    description: Resolve rules
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_resolve_rule": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+  permission_models_exploitation_declareTicketRule:
+    <<: *permission_crud
+    _id: models_exploitation_declareTicketRule
+    name: <Current()._id>
+    description: Ticket declaration rules
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_declare_ticket_rule": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
+  permission_models_exploitation_linkRule:
+    <<: *permission_crud
+    _id: models_exploitation_linkRule
+    name: <Current()._id>
+    description: Link generator
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_link_rule": 0
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern
+      ]
+
+  # technical -> notification
+  permission_models_notification_instructionStats:
+    <<: *permission_crud
+    _id: models_notification_instructionStats
+    name: <Current()._id>
+    description: Instructions statistics
+    groups:
+      - "@group_technical"
+      - "@group_technical_notification"
+    api_permissions_bitmask:
+      4:
+        "@permission_api_instruction": 4
+
+  # technical -> profile
+  permission_models_profile_corporatePattern:
+    <<: *permission_crud
+    _id: models_profile_corporatePattern
+    name: <Current()._id>
+    description: Corporate patterns
+    groups:
+      - "@group_technical"
+      - "@group_technical_profile"
+    api_permissions:
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern,
+        *api_permissions_service_weather_pattern
+      ]
+  permission_models_profile_color_theme:
+    <<: *permission_crud
+    _id: models_profile_color_theme
+    name: <Current()._id>
+    description: Theme colors
+    groups:
+      - "@group_technical"
+      - "@group_technical_profile"
+    api_permissions:
+      "@permission_api_color_theme": 0
+
+  # widgets -> common
+  permission_common_variablesHelp:
+    <<: *permission
+    _id: common_variablesHelp
+    name: <Current()._id>
+    description: See the list of variables (in all widgets)
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_common"
+  permission_common_entityComment:
+    <<: *permission
+    _id: common_entityComment
+    name: <Current()._id>
+    description: Manage entity comments (view, create, edit, delete)
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_common"
+    api_permissions:
+      "@permission_api_entity": 4
+      "@permission_api_entitycomment": 1
+
+  # widgets -> alarmslist -> widgetsettings
+  permission_listalarm_filter:
+    <<: *permission
+    _id: listalarm_filter
+    name: <Current()._id>
+    description: Set alarm filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_widgetsettings"
+    api_permissions:
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
+  permission_listalarm_remediationInstructionsFilter:
+    <<: *permission
+    _id: listalarm_remediationInstructionsFilter
+    name: <Current()._id>
+    description: Set filters by remediation instructions
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_widgetsettings"
+    api_permissions:
+      "@permission_api_instruction": 4
+
+  # widgets -> alarmslist -> viewsettings
+  permission_listalarm_userFilter:
+    <<: *permission
+    _id: listalarm_userFilter
+    name: <Current()._id>
+    description: Filter alarms
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
+  permission_listalarm_userRemediationInstructionsFilter:
+    <<: *permission
+    _id: listalarm_userRemediationInstructionsFilter
+    name: <Current()._id>
+    description: Filter alarms by remediation instructions
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_viewsettings"
+    api_permissions:
+      "@permission_api_instruction": 4
+  permission_listalarm_category:
+    <<: *permission
+    _id: listalarm_category
+    name: <Current()._id>
+    description: Filter alarms by category
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_viewsettings"
+    api_permissions:
+      "@permission_api_entitycategory": 4
+  permission_listalarm_filterByBookmark:
+    <<: *permission
+    _id: listalarm_filterByBookmark
+    name: <Current()._id>
+    description: Filter bookmarked alarms
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_viewsettings"
+  permission_listalarm_correlation:
+    <<: *permission
+    _id: listalarm_correlation
+    name: <Current()._id>
+    description: Group correlated alarms (meta alarms)
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_viewsettings"
+
+  # widgets -> alarmslist -> alarmactions
+  permission_listalarm_ack:
+    <<: *permission
+    _id: listalarm_ack
+    name: <Current()._id>
+    description: Ack
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_fastAck:
+    <<: *permission
+    _id: listalarm_fastAck
+    name: <Current()._id>
+    description: Fast ack
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_cancelAck:
+    <<: *permission
+    _id: listalarm_cancelAck
+    name: <Current()._id>
+    description: Cancel ack
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_pbehavior:
+    <<: *permission
+    _id: listalarm_pbehavior
+    name: <Current()._id>
+    description: Edit PBhaviours for alarm
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_pbehavior": 8
+  permission_listalarm_fastPbehavior:
+    <<: *permission
+    _id: listalarm_fastPbehavior
+    name: <Current()._id>
+    description: Fast create PBehavior
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_pbehavior": 8
+  permission_listalarm_snoozeAlarm:
+    <<: *permission
+    _id: listalarm_snoozeAlarm
+    name: <Current()._id>
+    description: Snooze
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_declareanIncident:
+    <<: *permission
+    _id: listalarm_declareanIncident
+    name: <Current()._id>
+    description: Declare ticket
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_declare_ticket_execution": 1
+      "@permission_api_declare_ticket_rule": 4
+  permission_listalarm_assignTicketNumber:
+    <<: *permission
+    _id: listalarm_assignTicketNumber
+    name: <Current()._id>
+    description: Associate ticket
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_removeAlarm:
+    <<: *permission
+    _id: listalarm_removeAlarm
+    name: <Current()._id>
+    description: Cancel
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_fastRemoveAlarm:
+    <<: *permission
+    _id: listalarm_fastRemoveAlarm
+    name: <Current()._id>
+    description: Fast cancel
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_unCancel:
+    <<: *permission
+    _id: listalarm_unCancel
+    name: <Current()._id>
+    description: Uncancel
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_changeState:
+    <<: *permission
+    _id: listalarm_changeState
+    name: <Current()._id>
+    description: Check and lock severity
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_history:
+    <<: *permission
+    _id: listalarm_history
+    name: <Current()._id>
+    description: View entity history
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_read": 1
+  permission_listalarm_manualMetaAlarmGroup:
+    <<: *permission
+    _id: listalarm_manualMetaAlarmGroup
+    name: <Current()._id>
+    description: Link to / unlink from manual meta alarm
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_metaAlarmGroup:
+    <<: *permission
+    _id: listalarm_metaAlarmGroup
+    name: <Current()._id>
+    description: Unlink from meta alarm created by rule
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_comment:
+    <<: *permission
+    _id: listalarm_comment
+    name: <Current()._id>
+    description: Comment
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_bookmark:
+    <<: *permission
+    _id: listalarm_bookmark
+    name: <Current()._id>
+    description: Add / remove bookmark
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_listalarm_links:
+    <<: *permission
+    _id: listalarm_links
+    name: <Current()._id>
+    description: Follow links in alarm
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+  permission_listalarm_executeInstruction:
+    <<: *permission
+    _id: listalarm_executeInstruction
+    name: <Current()._id>
+    description: Execute manual instructions
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+    api_permissions:
+      "@permission_api_execution": 1
+  permission_listalarm_exportPdf:
+    <<: *permission
+    _id: listalarm_exportPdf
+    name: <Current()._id>
+    description: Export in PDF
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_alarmactions"
+
+  # widgets -> alarmslist -> actions
+  permission_listalarm_exportAsCsv:
+    <<: *permission
+    _id: listalarm_exportAsCsv
+    name: <Current()._id>
+    description: Export alarm list as CSV file
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmslist"
+      - "@group_widgets_alarmslist_actions"
+
+  # widgets -> context -> widgetsettings
+  permission_crudcontext_filter:
+    <<: *permission
+    _id: crudcontext_filter
+    name: <Current()._id>
+    description: Set entity filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_widgetsettings"
+    api_permissions:
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
+
+  # widgets -> context -> viewsettings
+  permission_crudcontext_userFilter:
+    <<: *permission
+    _id: crudcontext_userFilter
+    name: <Current()._id>
+    description: Filter entities
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
+  permission_crudcontext_category:
+    <<: *permission
+    _id: crudcontext_category
+    name: <Current()._id>
+    description: Filter entities by category
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_viewsettings"
+    api_permissions:
+      "@permission_api_entitycategory": 4
+
+  # widgets -> context -> entityactions
+  permission_crudcontext_createEntity:
+    <<: *permission
+    _id: crudcontext_createEntity
+    name: <Current()._id>
+    description: Create entity
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_entityactions"
+    api_permissions:
+      "@permission_api_entityservice": 8
+  permission_crudcontext_edit:
+    <<: *permission
+    _id: crudcontext_edit
+    name: <Current()._id>
+    description: Edit entity
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_entityactions"
+    api_permissions:
+      "@permission_api_entity": 2
+      "@permission_api_entityservice": 2
+  permission_crudcontext_duplicate:
+    <<: *permission
+    _id: crudcontext_duplicate
+    name: <Current()._id>
+    description: Duplicate entity
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_entityactions"
+    api_permissions:
+      "@permission_api_entityservice": 8
+  permission_crudcontext_delete:
+    <<: *permission
+    _id: crudcontext_delete
+    name: <Current()._id>
+    description: Delete entity
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_entityactions"
+    api_permissions:
+      "@permission_api_entity": 1
+      "@permission_api_entityservice": 1
+  permission_crudcontext_pbehavior:
+    <<: *permission
+    _id: crudcontext_pbehavior
+    name: <Current()._id>
+    description: Create / edit pbehavior
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_entityactions"
+    api_permissions:
+      "@permission_api_pbehavior": 8
+  permission_crudcontext_massEnable:
+    <<: *permission
+    _id: crudcontext_massEnable
+    name: <Current()._id>
+    description: Mass action to enable selected entities
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_entityactions"
+    api_permissions:
+      "@permission_api_entity": 2
+  permission_crudcontext_massDisable:
+    <<: *permission
+    _id: crudcontext_massDisable
+    name: <Current()._id>
+    description: Mass action to disable selected entities
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_entityactions"
+    api_permissions:
+      "@permission_api_entity": 2
+
+  # widgets -> context -> actions
+  permission_crudcontext_exportAsCsv:
+    <<: *permission
+    _id: crudcontext_exportAsCsv
+    name: <Current()._id>
+    description: Export entities as CSV file
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_context"
+      - "@group_widgets_context_actions"
+
+  # widgets -> serviceweather -> widgetsettings
+  permission_serviceweather_filter:
+    <<: *permission
+    _id: serviceweather_filter
+    name: <Current()._id>
+    description: Set entity filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_widgetsettings"
+    api_permissions:
+      <<: [
+        *api_permissions_entity_pattern,
+        *api_permissions_service_weather_pattern
+      ]
+
+  # widgets -> serviceweather -> viewsettings
+  permission_serviceweather_userFilter:
+    <<: *permission
+    _id: serviceweather_userFilter
+    name: <Current()._id>
+    description: Filter entities
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: [
+        *api_permissions_entity_pattern,
+        *api_permissions_service_weather_pattern
+      ]
+  permission_serviceweather_category:
+    <<: *permission
+    _id: serviceweather_category
+    name: <Current()._id>
+    description: Filter entities by category
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_viewsettings"
+    api_permissions:
+      "@permission_api_entitycategory": 4
+
+  # widgets -> serviceweather -> alarmactions
+  permission_serviceweather_entityAck:
+    <<: *permission
+    _id: serviceweather_entityAck
+    name: <Current()._id>
+    description: Ack
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_serviceweather_entityAssocTicket:
+    <<: *permission
+    _id: serviceweather_entityAssocTicket
+    name: <Current()._id>
+    description: Associate ticket
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_serviceweather_entityComment:
+    <<: *permission
+    _id: serviceweather_entityComment
+    name: <Current()._id>
+    description: Comment alarm
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_serviceweather_entityValidate:
+    <<: *permission
+    _id: serviceweather_entityValidate
+    name: <Current()._id>
+    description: Validate alarms and change their state to critical
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_serviceweather_entityInvalidate:
+    <<: *permission
+    _id: serviceweather_entityInvalidate
+    name: <Current()._id>
+    description: Invalidate alarms and cancel them
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_serviceweather_entityPause:
+    <<: *permission
+    _id: serviceweather_entityPause
+    name: <Current()._id>
+    description: Pause alarms (set the PBehavior type "Pause")
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_pbehavior": 8
+  permission_serviceweather_entityPlay:
+    <<: *permission
+    _id: serviceweather_entityPlay
+    name: <Current()._id>
+    description: Activate paused alarms (remove the PBehavior type "Pause")
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_pbehavior": 1
+  permission_serviceweather_entityCancel:
+    <<: *permission
+    _id: serviceweather_entityCancel
+    name: <Current()._id>
+    description: Cancel
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_update": 1
+  permission_serviceweather_entityManagePbehaviors:
+    <<: *permission
+    _id: serviceweather_entityManagePbehaviors
+    name: <Current()._id>
+    description: View PBehaviors of services (in the subtab in the services modal windows)
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_pbehavior": 7
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
+      "@permission_api_pbehaviorexception": 4
+  permission_serviceweather_entityLinks:
+    <<: *permission
+    _id: serviceweather_entityLinks
+    name: <Current()._id>
+    description: Follow links in alarm
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+  permission_serviceweather_entityDeclareTicket:
+    <<: *permission
+    _id: serviceweather_entityDeclareTicket
+    name: <Current()._id>
+    description: Declare ticket
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_declare_ticket_execution": 1
+      "@permission_api_alarm_read": 1
+      "@permission_api_declare_ticket_rule": 4
+  permission_serviceweather_moreInfos:
+    <<: *permission
+    _id: serviceweather_moreInfos
+    name: <Current()._id>
+    description: Open "More infos" modal
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_alarm_read": 1
+  permission_serviceweather_alarmsList:
+    <<: *permission
+    _id: serviceweather_alarmsList
+    name: <Current()._id>
+    description: Open the list of alarms available for each service
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      <<: *api_permissions_alarmslist_modal
+  permission_serviceweather_pbehaviorList:
+    <<: *permission
+    _id: serviceweather_pbehaviorList
+    name: <Current()._id>
+    description: View PBehaviors of services (in the subtab in the service entities modal windows)
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_pbehavior": 15
+      "@permission_api_pbehaviortype": 4
+      "@permission_api_pbehaviorreason": 4
+      "@permission_api_pbehaviorexception": 4
+  permission_serviceweather_executeInstruction:
+    <<: *permission
+    _id: serviceweather_executeInstruction
+    name: <Current()._id>
+    description: Execute manual instructions
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_serviceweather"
+      - "@group_widgets_serviceweather_alarmactions"
+    api_permissions:
+      "@permission_api_execution": 1
+
+  # widgets -> counter
+  permission_counter_alarmsList:
+    <<: *permission
+    _id: counter_alarmsList
+    name: <Current()._id>
+    description: View the alarm list associated with counters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_counter"
+    api_permissions:
+      <<: *api_permissions_alarmslist_modal
+
+  # widgets -> testingweather
+  permission_testingweather_alarmsList:
+    <<: *permission
+    _id: testingweather_alarmsList
+    name: <Current()._id>
+    description: View the alarm list associated with testing weather
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_testingweather"
+    api_permissions:
+      "@permission_api_alarm_read": 1
+
+  # widgets -> map -> widgetsettings
+  permission_map_filter:
+    <<: *permission
+    _id: map_filter
+    name: <Current()._id>
+    description: Set filters for points on maps
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_map"
+      - "@group_widgets_map_widgetsettings"
+    api_permissions:
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
+  # widgets -> map -> viewsettings
+  permission_map_alarmsList:
+    <<: *permission
+    _id: map_alarmsList
+    name: <Current()._id>
+    description: View the alarm list associated with points on maps
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_map"
+      - "@group_widgets_map_viewsettings"
+    api_permissions:
+      <<: *api_permissions_alarmslist_modal
+  permission_map_userFilter:
+    <<: *permission
+    _id: map_userFilter
+    name: <Current()._id>
+    description: Filter points on maps
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_map"
+      - "@group_widgets_map_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: [
+        *api_permissions_alarm_pattern,
+        *api_permissions_entity_pattern,
+        *api_permissions_pbehavior_pattern
+      ]
+  permission_map_category:
+    <<: *permission
+    _id: map_category
+    name: <Current()._id>
+    description: Filter points on maps by categories
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_map"
+      - "@group_widgets_map_viewsettings"
+    api_permissions:
+      "@permission_api_entitycategory": 4
+
+  # widgets -> barchart -> widgetsettings
+  permission_barchart_filter:
+    <<: *permission
+    _id: barchart_filter
+    name: <Current()._id>
+    description: Set data filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_barchart"
+      - "@group_widgets_barchart_widgetsettings"
+    api_permissions:
+      <<: *api_permissions_entity_pattern
+  # widgets -> barchart -> viewsettings
+  permission_barchart_interval:
+    <<: *permission
+    _id: barchart_interval
+    name: <Current()._id>
+    description: Edit time intervals for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_barchart"
+      - "@group_widgets_barchart_viewsettings"
+  permission_barchart_sampling:
+    <<: *permission
+    _id: barchart_sampling
+    name: <Current()._id>
+    description: Edit sampling for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_barchart"
+      - "@group_widgets_barchart_viewsettings"
+  permission_barchart_userFilter:
+    <<: *permission
+    _id: barchart_userFilter
+    name: <Current()._id>
+    description: Filter data
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_barchart"
+      - "@group_widgets_barchart_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: *api_permissions_entity_pattern
+
+  # widgets -> linechart -> widgetsettings
+  permission_linechart_filter:
+    <<: *permission
+    _id: linechart_filter
+    name: <Current()._id>
+    description: Set data filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_linechart"
+      - "@group_widgets_linechart_widgetsettings"
+    api_permissions:
+      <<: *api_permissions_entity_pattern
+  # widgets -> linechart -> viewsettings
+  permission_linechart_interval:
+    <<: *permission
+    _id: linechart_interval
+    name: <Current()._id>
+    description: Edit time intervals for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_linechart"
+      - "@group_widgets_linechart_viewsettings"
+  permission_linechart_sampling:
+    <<: *permission
+    _id: linechart_sampling
+    name: <Current()._id>
+    description: Edit sampling for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_linechart"
+      - "@group_widgets_linechart_viewsettings"
+  permission_linechart_userFilter:
+    <<: *permission
+    _id: linechart_userFilter
+    name: <Current()._id>
+    description: Filter data
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_linechart"
+      - "@group_widgets_linechart_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: *api_permissions_entity_pattern
+
+  # widgets -> piechart -> widgetsettings
+  permission_piechart_filter:
+    <<: *permission
+    _id: piechart_filter
+    name: <Current()._id>
+    description: Set data filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_piechart"
+      - "@group_widgets_piechart_widgetsettings"
+    api_permissions:
+      <<: *api_permissions_entity_pattern
+  # widgets -> piechart -> viewsettings
+  permission_piechart_interval:
+    <<: *permission
+    _id: piechart_interval
+    name: <Current()._id>
+    description: Edit time intervals for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_piechart"
+      - "@group_widgets_piechart_viewsettings"
+  permission_piechart_sampling:
+    <<: *permission
+    _id: piechart_sampling
+    name: <Current()._id>
+    description: Edit sampling for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_piechart"
+      - "@group_widgets_piechart_viewsettings"
+  permission_piechart_userFilter:
+    <<: *permission
+    _id: piechart_userFilter
+    name: <Current()._id>
+    description: Filter data
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_piechart"
+      - "@group_widgets_piechart_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: *api_permissions_entity_pattern
+
+  # widgets -> numbers -> widgetsettings
+  permission_numbers_filter:
+    <<: *permission
+    _id: numbers_filter
+    name: <Current()._id>
+    description: Set data filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_numbers"
+      - "@group_widgets_numbers_widgetsettings"
+    api_permissions:
+      <<: *api_permissions_entity_pattern
+  # widgets -> numbers -> viewsettings
+  permission_numbers_interval:
+    <<: *permission
+    _id: numbers_interval
+    name: <Current()._id>
+    description: Edit time intervals for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_numbers"
+      - "@group_widgets_numbers_viewsettings"
+  permission_numbers_sampling:
+    <<: *permission
+    _id: numbers_sampling
+    name: <Current()._id>
+    description: Edit sampling for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_numbers"
+      - "@group_widgets_numbers_viewsettings"
+  permission_numbers_userFilter:
+    <<: *permission
+    _id: numbers_userFilter
+    name: <Current()._id>
+    description: Filter data
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_numbers"
+      - "@group_widgets_numbers_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: *api_permissions_entity_pattern
+
+  # widgets -> userstatistics -> widgetsettings
+  permission_userStatistics_filter:
+    <<: *permission
+    _id: userStatistics_filter
+    name: <Current()._id>
+    description: Set data filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_userstatistics"
+      - "@group_widgets_userstatistics_widgetsettings"
+    api_permissions:
+      <<: *api_permissions_entity_pattern
+  # widgets -> userstatistics -> viewsettings
+  permission_userStatistics_interval:
+    <<: *permission
+    _id: userStatistics_interval
+    name: <Current()._id>
+    description: Edit time intervals for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_userstatistics"
+      - "@group_widgets_userstatistics_viewsettings"
+  permission_userStatistics_userFilter:
+    <<: *permission
+    _id: userStatistics_userFilter
+    name: <Current()._id>
+    description: Filter data
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_userstatistics"
+      - "@group_widgets_userstatistics_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: *api_permissions_entity_pattern
+
+  # widgets -> alarmstatistics -> widgetsettings
+  permission_alarmStatistics_filter:
+    <<: *permission
+    _id: alarmStatistics_filter
+    name: <Current()._id>
+    description: Set data filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmstatistics"
+      - "@group_widgets_alarmstatistics_widgetsettings"
+    api_permissions:
+      <<: *api_permissions_entity_pattern
+  # widgets -> alarmstatistics -> viewsettings
+  permission_alarmStatistics_interval:
+    <<: *permission
+    _id: alarmStatistics_interval
+    name: <Current()._id>
+    description: Edit time intervals for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmstatistics"
+      - "@group_widgets_alarmstatistics_viewsettings"
+  permission_alarmStatistics_userFilter:
+    <<: *permission
+    _id: alarmStatistics_userFilter
+    name: <Current()._id>
+    description: Filter data
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_alarmstatistics"
+      - "@group_widgets_alarmstatistics_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: *api_permissions_entity_pattern
+
+  # widgets -> availability -> widgetsettings
+  permission_availability_filter:
+    <<: *permission
+    _id: availability_filter
+    name: <Current()._id>
+    description: Set data filters
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_availability"
+      - "@group_widgets_availability_widgetsettings"
+    api_permissions:
+      <<: *api_permissions_entity_pattern
+  # widgets -> availability -> viewsettings
+  permission_availability_interval:
+    <<: *permission
+    _id: availability_interval
+    name: <Current()._id>
+    description: Edit time intervals for the data displayed
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_availability"
+      - "@group_widgets_availability_viewsettings"
+  permission_availability_userFilter:
+    <<: *permission
+    _id: availability_userFilter
+    name: <Current()._id>
+    description: Filter data
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_availability"
+      - "@group_widgets_availability_viewsettings"
+    api_permissions:
+      "@permission_api_view": 4
+      <<: *api_permissions_entity_pattern
+  # widgets -> availability -> actions
+  permission_availability_exportAsCsv:
+    <<: *permission
+    _id: availability_exportAsCsv
+    name: <Current()._id>
+    description: Export availabilities as CSV file
+    groups:
+      - "@group_widgets"
+      - "@group_widgets_availability"
+      - "@group_widgets_availability_actions"
 
   # Views permissions
-  permission_view_open_alarms:
+  permission_view_open_alarms_general:
     <<: *permission_rw
     _id: "@view_open_alarms"
-    name: <Current()._id>
-    description: "Rights on view: alarmes en cours"
-  permission_view_resolved_alarms:
+    view: "@view_open_alarms"
+    name: view_general
+    description: "En cours"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_alarms"
+      - "@view_open_alarms"
+  permission_view_open_alarms_actions:
+    <<: *permission
+    view: "@view_open_alarms"
+    name: view_actions
+    description: "En cours"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_alarms"
+      - "@view_open_alarms"
+  permission_view_resolved_alarms_general:
     <<: *permission_rw
     _id: "@view_resolved_alarms"
-    name: <Current()._id>
-    description: "Rights on view: alarmes resolues"
-  permission_view_context_explorer:
+    view: "@view_resolved_alarms"
+    name: view_general
+    description: "Résolues"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_alarms"
+      - "@view_resolved_alarms"
+  permission_view_resolved_alarms_actions:
+    <<: *permission
+    view: "@view_resolved_alarms"
+    name: view_actions
+    description: "Résolues"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_alarms"
+      - "@view_resolved_alarms"
+  permission_view_context_explorer_general:
     <<: *permission_rw
     _id: "@view_context_explorer"
+    view: "@view_context_explorer"
+    name: view_general
+    description: "Explorateur de Contexte"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_admin"
+      - "@view_context_explorer"
+  permission_view_context_explorer_actions:
+    <<: *permission
+    view: "@view_context_explorer"
+    name: view_actions
+    description: "Explorateur de Contexte"
+    groups:
+      - "@group_commonviews"
+      - "@view_group_admin"
+      - "@view_context_explorer"
+
+  # Hidden widget permissions for api permissions mapping
+  permission_widget_AlarmsList:
+    <<: *permission
+    _id: AlarmsList
     name: <Current()._id>
-    description: "Rights on view: Explorateur de Contexte"
+    description: API permissions for AlarmsList widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_AlarmsList_read
+        ]
+      2:
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_AlarmsList_update
+        ]
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_Context:
+    <<: *permission
+    _id: Context
+    name: <Current()._id>
+    description: API permissions for Context widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Context_read
+        ]
+      2:
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_Context_update
+        ]
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_ServiceWeather:
+    <<: *permission
+    _id: ServiceWeather
+    name: <Current()._id>
+    description: API permissions for ServiceWeather widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_ServiceWeather_read
+        ]
+      2:
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_ServiceWeather_update
+        ]
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_StatsCalendar:
+    <<: *permission
+    _id: StatsCalendar
+    name: <Current()._id>
+    description: API permissions for StatsCalendar widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_StatsCalendar_read
+        ]
+      2:
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_StatsCalendar_update
+        ]
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_Text:
+    <<: *permission
+    _id: Text
+    name: <Current()._id>
+    description: API permissions for Text widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: *api_permissions_view_read
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_Counter:
+    <<: *permission
+    _id: Counter
+    name: <Current()._id>
+    description: API permissions for Counter widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Counter_read
+        ]
+      2:
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_Counter_update
+        ]
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_Junit:
+    <<: *permission
+    _id: Junit
+    name: <Current()._id>
+    description: API permissions for Junit widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Junit_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_Map:
+    <<: *permission
+    _id: Map
+    name: <Current()._id>
+    description: API permissions for Map widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Map_read
+        ]
+      2:
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_Map_update
+        ]
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_BarChart:
+    <<: *permission
+    _id: BarChart
+    name: <Current()._id>
+    description: API permissions for BarChart widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_BarChart_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_LineChart:
+    <<: *permission
+    _id: LineChart
+    name: <Current()._id>
+    description: API permissions for LineChart widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_LineChart_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_PieChart:
+    <<: *permission
+    _id: PieChart
+    name: <Current()._id>
+    description: API permissions for PieChart widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_PieChart_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_Numbers:
+    <<: *permission
+    _id: Numbers
+    name: <Current()._id>
+    description: API permissions for Numbers widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Numbers_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_UserStatistics:
+    <<: *permission
+    _id: UserStatistics
+    name: <Current()._id>
+    description: API permissions for UserStatistics widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_UserStatistics_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_AlarmStatistics:
+    <<: *permission
+    _id: AlarmStatistics
+    name: <Current()._id>
+    description: API permissions for AlarmStatistics widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_AlarmStatistics_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
+
+  permission_widget_Availability:
+    <<: *permission
+    _id: Availability
+    name: <Current()._id>
+    description: API permissions for Availability widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_Availability_read
+        ]
+      2:
+        <<: *api_permissions_view_update
+      1:
+        <<: *api_permissions_view_delete
 
 role:
   role_admin:
     <<: *role
     _id: admin
     name: admin
+    type: ui
     defaultview: "@view_open_alarms"
     permissions:
       # UI permissions
@@ -1524,15 +3299,12 @@ role:
       "@permission_models_parameters": 7
       "@permission_models_broadcastMessage": 15
       "@permission_models_playlist": 15
-      "@permission_models_planning": 15
       "@permission_models_planningType": 15
       "@permission_models_planningReason": 15
       "@permission_models_planningExceptions": 15
-      "@permission_models_remediation": 15
       "@permission_models_remediationInstruction": 15
       "@permission_models_remediationJob": 15
       "@permission_models_remediationConfiguration": 15
-      "@permission_models_engine": 1
       "@permission_models_exploitation_eventFilter": 15
       "@permission_models_exploitation_pbehavior": 15
       "@permission_models_exploitation_snmpRule": 15
@@ -1561,10 +3333,9 @@ role:
       "@permission_models_stateSetting": 15
       "@permission_models_icon": 15
       "@permission_models_eventsRecord": 1
+      "@permission_models_privateView": 1
       "@permission_availability_interval": 1
-      "@permission_availability_listFilters": 1
-      "@permission_availability_editFilter": 1
-      "@permission_availability_addFilter": 1
+      "@permission_availability_filter": 1
       "@permission_availability_userFilter": 1
       "@permission_availability_exportAsCsv": 1
       "@permission_listalarm_ack": 1
@@ -1573,7 +3344,6 @@ role:
       "@permission_listalarm_pbehavior": 1
       "@permission_listalarm_fastPbehavior": 1
       "@permission_listalarm_snoozeAlarm": 1
-      "@permission_listalarm_listPbehavior": 1
       "@permission_listalarm_declareanIncident": 1
       "@permission_listalarm_assignTicketNumber": 1
       "@permission_listalarm_removeAlarm": 1
@@ -1581,25 +3351,19 @@ role:
       "@permission_listalarm_unCancel": 1
       "@permission_listalarm_changeState": 1
       "@permission_listalarm_history": 1
-      "@permission_listalarm_groupRequest": 1
       "@permission_listalarm_manualMetaAlarmGroup": 1
       "@permission_listalarm_metaAlarmGroup": 1
       "@permission_listalarm_comment": 1
-      "@permission_listalarm_listFilters": 1
-      "@permission_listalarm_editFilter": 1
-      "@permission_listalarm_addFilter": 1
+      "@permission_listalarm_filter": 1
       "@permission_listalarm_userFilter": 1
-      "@permission_listalarm_listRemediationInstructionsFilters": 1
-      "@permission_listalarm_editRemediationInstructionsFilter": 1
-      "@permission_listalarm_addRemediationInstructionsFilter": 1
+      "@permission_listalarm_remediationInstructionsFilter": 1
       "@permission_listalarm_userRemediationInstructionsFilter": 1
       "@permission_listalarm_links": 1
       "@permission_listalarm_correlation": 1
       "@permission_listalarm_executeInstruction": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
-      "@permission_listalarm_addBookmark": 1
-      "@permission_listalarm_removeBookmark": 1
+      "@permission_listalarm_bookmark": 1
       "@permission_listalarm_filterByBookmark": 1
       "@permission_serviceweather_entityAck": 1
       "@permission_serviceweather_entityAssocTicket": 1
@@ -1615,9 +3379,7 @@ role:
       "@permission_serviceweather_moreInfos": 1
       "@permission_serviceweather_alarmsList": 1
       "@permission_serviceweather_pbehaviorList": 1
-      "@permission_serviceweather_listFilters": 1
-      "@permission_serviceweather_editFilter": 1
-      "@permission_serviceweather_addFilter": 1
+      "@permission_serviceweather_filter": 1
       "@permission_serviceweather_userFilter": 1
       "@permission_serviceweather_category": 1
       "@permission_serviceweather_executeInstruction": 1
@@ -1626,62 +3388,42 @@ role:
       "@permission_crudcontext_duplicate": 1
       "@permission_crudcontext_delete": 1
       "@permission_crudcontext_pbehavior": 1
-      "@permission_crudcontext_listPbehavior": 1
-      "@permission_crudcontext_deletePbehavior": 1
-      "@permission_crudcontext_listFilters": 1
-      "@permission_crudcontext_editFilter": 1
-      "@permission_crudcontext_addFilter": 1
+      "@permission_crudcontext_filter": 1
       "@permission_crudcontext_userFilter": 1
       "@permission_crudcontext_category": 1
       "@permission_crudcontext_exportAsCsv": 1
       "@permission_crudcontext_massEnable": 1
       "@permission_crudcontext_massDisable": 1
       "@permission_common_variablesHelp": 1
-      "@permission_common_entityCommentsList": 1
-      "@permission_common_createEntityComment": 1
-      "@permission_common_editEntityComment": 1
+      "@permission_common_entityComment": 1
       "@permission_counter_alarmsList": 1
       "@permission_testingweather_alarmsList": 1
       "@permission_map_alarmsList": 1
-      "@permission_map_listFilters": 1
-      "@permission_map_editFilter": 1
-      "@permission_map_addFilter": 1
+      "@permission_map_filter": 1
       "@permission_map_userFilter": 1
       "@permission_map_category": 1
       "@permission_userStatistics_interval": 1
-      "@permission_userStatistics_listFilters": 1
-      "@permission_userStatistics_editFilter": 1
-      "@permission_userStatistics_addFilter": 1
+      "@permission_userStatistics_filter": 1
       "@permission_userStatistics_userFilter": 1
       "@permission_alarmStatistics_interval": 1
-      "@permission_alarmStatistics_listFilters": 1
-      "@permission_alarmStatistics_editFilter": 1
-      "@permission_alarmStatistics_addFilter": 1
+      "@permission_alarmStatistics_filter": 1
       "@permission_alarmStatistics_userFilter": 1
       "@permission_models_remediation_statistics": 1
       "@permission_barchart_interval": 1
       "@permission_barchart_sampling": 1
-      "@permission_barchart_listFilters": 1
-      "@permission_barchart_editFilter": 1
-      "@permission_barchart_addFilter": 1
+      "@permission_barchart_filter": 1
       "@permission_barchart_userFilter": 1
       "@permission_linechart_interval": 1
       "@permission_linechart_sampling": 1
-      "@permission_linechart_listFilters": 1
-      "@permission_linechart_editFilter": 1
-      "@permission_linechart_addFilter": 1
+      "@permission_linechart_filter": 1
       "@permission_linechart_userFilter": 1
       "@permission_piechart_interval": 1
       "@permission_piechart_sampling": 1
-      "@permission_piechart_listFilters": 1
-      "@permission_piechart_editFilter": 1
-      "@permission_piechart_addFilter": 1
+      "@permission_piechart_filter": 1
       "@permission_piechart_userFilter": 1
       "@permission_numbers_interval": 1
       "@permission_numbers_sampling": 1
-      "@permission_numbers_listFilters": 1
-      "@permission_numbers_editFilter": 1
-      "@permission_numbers_addFilter": 1
+      "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       "@permission_models_maintenance": 1
       # API permissions
@@ -1749,14 +3491,18 @@ role:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
       # Views permissions
-      "@permission_view_open_alarms": 15
-      "@permission_view_resolved_alarms": 15
-      "@permission_view_context_explorer": 15
+      "@permission_view_open_alarms_general": 7
+      "@permission_view_open_alarms_actions": 1
+      "@permission_view_resolved_alarms_general": 7
+      "@permission_view_resolved_alarms_actions": 1
+      "@permission_view_context_explorer_general": 7
+      "@permission_view_context_explorer_actions": 1
 
 role_template:
   tpl_pilot:
     <<: *role_tpl
     name: Pilotes
+    type: ui
     description: Profil de pilotage
     permissions:
       # UI permissions
@@ -1766,7 +3512,6 @@ role_template:
       "@permission_listalarm_pbehavior": 1
       "@permission_listalarm_fastPbehavior": 1
       "@permission_listalarm_snoozeAlarm": 1
-      "@permission_listalarm_listPbehavior": 1
       "@permission_listalarm_declareanIncident": 1
       "@permission_listalarm_assignTicketNumber": 1
       "@permission_listalarm_removeAlarm": 1
@@ -1774,20 +3519,14 @@ role_template:
       "@permission_listalarm_unCancel": 1
       "@permission_listalarm_changeState": 1
       "@permission_listalarm_history": 1
-      "@permission_listalarm_groupRequest": 1
       "@permission_listalarm_manualMetaAlarmGroup": 1
       "@permission_listalarm_metaAlarmGroup": 1
       "@permission_listalarm_comment": 1
-      "@permission_listalarm_listFilters": 1
-      "@permission_listalarm_editFilter": 1
-      "@permission_listalarm_addFilter": 1
-      "@permission_listalarm_addBookmark": 1
+      "@permission_listalarm_filter": 1
+      "@permission_listalarm_bookmark": 1
       "@permission_listalarm_filterByBookmark": 1
-      "@permission_listalarm_removeBookmark": 1
       "@permission_listalarm_userFilter": 1
-      "@permission_listalarm_listRemediationInstructionsFilters": 1
-      "@permission_listalarm_editRemediationInstructionsFilter": 1
-      "@permission_listalarm_addRemediationInstructionsFilter": 1
+      "@permission_listalarm_remediationInstructionsFilter": 1
       "@permission_listalarm_userRemediationInstructionsFilter": 1
       "@permission_listalarm_links": 1
       "@permission_listalarm_correlation": 1
@@ -1808,9 +3547,7 @@ role_template:
       "@permission_serviceweather_moreInfos": 1
       "@permission_serviceweather_alarmsList": 1
       "@permission_serviceweather_pbehaviorList": 1
-      "@permission_serviceweather_listFilters": 1
-      "@permission_serviceweather_editFilter": 1
-      "@permission_serviceweather_addFilter": 1
+      "@permission_serviceweather_filter": 1
       "@permission_serviceweather_userFilter": 1
       "@permission_serviceweather_category": 1
       "@permission_serviceweather_executeInstruction": 1
@@ -1819,11 +3556,7 @@ role_template:
       "@permission_crudcontext_duplicate": 1
       "@permission_crudcontext_delete": 1
       "@permission_crudcontext_pbehavior": 1
-      "@permission_crudcontext_listPbehavior": 1
-      "@permission_crudcontext_deletePbehavior": 1
-      "@permission_crudcontext_listFilters": 1
-      "@permission_crudcontext_editFilter": 1
-      "@permission_crudcontext_addFilter": 1
+      "@permission_crudcontext_filter": 1
       "@permission_crudcontext_userFilter": 1
       "@permission_crudcontext_category": 1
       "@permission_crudcontext_exportAsCsv": 1
@@ -1833,45 +3566,31 @@ role_template:
       "@permission_counter_alarmsList": 1
       "@permission_testingweather_alarmsList": 1
       "@permission_map_alarmsList": 1
-      "@permission_map_listFilters": 1
-      "@permission_map_editFilter": 1
-      "@permission_map_addFilter": 1
+      "@permission_map_filter": 1
       "@permission_map_userFilter": 1
       "@permission_map_category": 1
       "@permission_userStatistics_interval": 1
-      "@permission_userStatistics_listFilters": 1
-      "@permission_userStatistics_editFilter": 1
-      "@permission_userStatistics_addFilter": 1
+      "@permission_userStatistics_filter": 1
       "@permission_userStatistics_userFilter": 1
       "@permission_alarmStatistics_interval": 1
-      "@permission_alarmStatistics_listFilters": 1
-      "@permission_alarmStatistics_editFilter": 1
-      "@permission_alarmStatistics_addFilter": 1
+      "@permission_alarmStatistics_filter": 1
       "@permission_alarmStatistics_userFilter": 1
       "@permission_models_remediation_statistics": 1
       "@permission_barchart_interval": 1
       "@permission_barchart_sampling": 1
-      "@permission_barchart_listFilters": 1
-      "@permission_barchart_editFilter": 1
-      "@permission_barchart_addFilter": 1
+      "@permission_barchart_filter": 1
       "@permission_barchart_userFilter": 1
       "@permission_linechart_interval": 1
       "@permission_linechart_sampling": 1
-      "@permission_linechart_listFilters": 1
-      "@permission_linechart_editFilter": 1
-      "@permission_linechart_addFilter": 1
+      "@permission_linechart_filter": 1
       "@permission_linechart_userFilter": 1
       "@permission_piechart_interval": 1
       "@permission_piechart_sampling": 1
-      "@permission_piechart_listFilters": 1
-      "@permission_piechart_editFilter": 1
-      "@permission_piechart_addFilter": 1
+      "@permission_piechart_filter": 1
       "@permission_piechart_userFilter": 1
       "@permission_numbers_interval": 1
       "@permission_numbers_sampling": 1
-      "@permission_numbers_listFilters": 1
-      "@permission_numbers_editFilter": 1
-      "@permission_numbers_addFilter": 1
+      "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       # API permissions
       "@permission_api_alarm_read": 1

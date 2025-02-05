@@ -13,337 +13,361 @@ import (
 )
 
 func TestGetTimeSpans(t *testing.T) {
-	for suiteName, data := range dataSetsForGetTimeSpans() {
-		for caseName, caseData := range data.cases {
-			output, err := pbehavior.GetTimeSpans(data.event, caseData.viewSpan)
+	f := func(event pbehavior.Event, viewSpan timespan.Span, expected []timespan.Span) {
+		t.Helper()
+		output, err := pbehavior.GetTimeSpans(event, viewSpan)
+		if len(output) != len(expected) || len(output) > 0 && !reflect.DeepEqual(output, expected) {
+			t.Errorf(
+				"expected result: (len %d)\n%s\nbut got: (len %d)\n%s\n",
+				len(expected),
+				sprintSpans(expected),
+				len(output),
+				sprintSpans(output),
+			)
+		}
 
-			if len(output) != len(caseData.expected) || len(output) > 0 && !reflect.DeepEqual(output, caseData.expected) {
-				t.Errorf(
-					"%s %s: expected result: (len %d)\n%s\nbut got: (len %d)\n%s\n",
-					suiteName,
-					caseName,
-					len(caseData.expected),
-					sprintSpans(caseData.expected),
-					len(output),
-					sprintSpans(output),
-				)
-			}
-
-			if err != nil {
-				t.Errorf("%s %s: expected no error but got %v", suiteName, caseName, err)
-			}
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
 		}
 	}
-}
 
-type intervalSuitDataSet struct {
-	event pbehavior.Event
-	cases map[string]intervalCaseDataSet
-}
+	// single event
+	event := pbehavior.NewEvent(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00"))
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")), // current day
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("02-06-2020 00:00"), genTime("02-06-2020 23:59")), // tomorrow
+		[]timespan.Span{},
+	)
+	f(
+		event,
+		timespan.New(genTime("31-05-2020 00:00"), genTime("31-05-2020 23:59")), // yesterday
+		[]timespan.Span{},
+	)
 
-type intervalCaseDataSet struct {
-	viewSpan timespan.Span
-	expected []timespan.Span
-}
+	// workday event
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 09:00"),
+		genTime("01-06-2020 18:00"),
+		&rrule.ROption{
+			Freq: rrule.DAILY,
+			Byweekday: []rrule.Weekday{
+				rrule.MO,
+				rrule.TU,
+				rrule.WE,
+				rrule.TH,
+				rrule.FR,
+			},
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 00:00")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
+			timespan.New(genTime("02-06-2020 09:00"), genTime("02-06-2020 18:00")),
+			timespan.New(genTime("03-06-2020 09:00"), genTime("03-06-2020 18:00")),
+			timespan.New(genTime("04-06-2020 09:00"), genTime("04-06-2020 18:00")),
+			timespan.New(genTime("05-06-2020 09:00"), genTime("05-06-2020 18:00")),
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("08-06-2020 00:00"), genTime("14-06-2020 00:00")), // next week
+		[]timespan.Span{
+			timespan.New(genTime("08-06-2020 09:00"), genTime("08-06-2020 18:00")),
+			timespan.New(genTime("09-06-2020 09:00"), genTime("09-06-2020 18:00")),
+			timespan.New(genTime("10-06-2020 09:00"), genTime("10-06-2020 18:00")),
+			timespan.New(genTime("11-06-2020 09:00"), genTime("11-06-2020 18:00")),
+			timespan.New(genTime("12-06-2020 09:00"), genTime("12-06-2020 18:00")),
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("25-05-2020 00:00"), genTime("31-05-2020 00:00")), // prev week
+		[]timespan.Span{},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")), // current day
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("06-06-2020 00:00"), genTime("06-06-2020 23:59")), // weekend
+		[]timespan.Span{},
+	)
 
-func dataSetsForGetTimeSpans() map[string]intervalSuitDataSet {
-	return map[string]intervalSuitDataSet{
-		"Given single event": {
-			event: pbehavior.NewEvent(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return one day span": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
-					},
-				},
-				"and current day span Should return one day span": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
-					},
-				},
-				"and tomorrow span Should return 0 spans": {
-					viewSpan: timespan.New(genTime("02-06-2020 00:00"), genTime("02-06-2020 23:59")),
-					expected: []timespan.Span{},
-				},
-				"and yesterday span Should return 0 spans": {
-					viewSpan: timespan.New(genTime("31-05-2020 00:00"), genTime("31-05-2020 23:59")),
-					expected: []timespan.Span{},
-				},
+	// workday event for 1 and half week
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 09:00"),
+		genTime("01-06-2020 18:00"),
+		&rrule.ROption{
+			Freq:  rrule.DAILY,
+			Count: 7,
+			Byweekday: []rrule.Weekday{
+				rrule.MO,
+				rrule.TU,
+				rrule.WE,
+				rrule.TH,
+				rrule.FR,
 			},
 		},
-		"Given workday event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 09:00"),
-				genTime("01-06-2020 18:00"),
-				&rrule.ROption{
-					Freq: rrule.DAILY,
-					Byweekday: []rrule.Weekday{
-						rrule.MO,
-						rrule.TU,
-						rrule.WE,
-						rrule.TH,
-						rrule.FR,
-					},
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return 5 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 00:00")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
-						timespan.New(genTime("02-06-2020 09:00"), genTime("02-06-2020 18:00")),
-						timespan.New(genTime("03-06-2020 09:00"), genTime("03-06-2020 18:00")),
-						timespan.New(genTime("04-06-2020 09:00"), genTime("04-06-2020 18:00")),
-						timespan.New(genTime("05-06-2020 09:00"), genTime("05-06-2020 18:00")),
-					},
-				},
-				"and next week span Should return 5 spans": {
-					viewSpan: timespan.New(genTime("08-06-2020 00:00"), genTime("14-06-2020 00:00")),
-					expected: []timespan.Span{
-						timespan.New(genTime("08-06-2020 09:00"), genTime("08-06-2020 18:00")),
-						timespan.New(genTime("09-06-2020 09:00"), genTime("09-06-2020 18:00")),
-						timespan.New(genTime("10-06-2020 09:00"), genTime("10-06-2020 18:00")),
-						timespan.New(genTime("11-06-2020 09:00"), genTime("11-06-2020 18:00")),
-						timespan.New(genTime("12-06-2020 09:00"), genTime("12-06-2020 18:00")),
-					},
-				},
-				"and prev week span Should return 0 spans": {
-					viewSpan: timespan.New(genTime("25-05-2020 00:00"), genTime("31-05-2020 00:00")),
-					expected: []timespan.Span{},
-				},
-				"and current day span Should return 1 span": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 09:00"), genTime("01-06-2020 18:00")),
-					},
-				},
-				"and weekend span Should return 0 spans": {
-					viewSpan: timespan.New(genTime("06-06-2020 00:00"), genTime("06-06-2020 23:59")),
-					expected: []timespan.Span{},
-				},
-			},
+	)
+	f(
+		event,
+		timespan.New(genTime("08-06-2020 00:00"), genTime("14-06-2020 23:59")), // next week
+		[]timespan.Span{
+			timespan.New(genTime("08-06-2020 09:00"), genTime("08-06-2020 18:00")),
+			timespan.New(genTime("09-06-2020 09:00"), genTime("09-06-2020 18:00")),
 		},
-		"Given workday event for 1 and half week": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 09:00"),
-				genTime("01-06-2020 18:00"),
-				&rrule.ROption{
-					Freq:  rrule.DAILY,
-					Count: 7,
-					Byweekday: []rrule.Weekday{
-						rrule.MO,
-						rrule.TU,
-						rrule.WE,
-						rrule.TH,
-						rrule.FR,
-					},
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and next week span Should return 2 spans": {
-					viewSpan: timespan.New(genTime("08-06-2020 00:00"), genTime("14-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("08-06-2020 09:00"), genTime("08-06-2020 18:00")),
-						timespan.New(genTime("09-06-2020 09:00"), genTime("09-06-2020 18:00")),
-					},
-				},
-			},
+	)
+
+	// midnight/midday event
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 00:00"),
+		genTime("01-06-2020 02:00"),
+		&rrule.ROption{
+			Freq:     rrule.HOURLY,
+			Interval: 12,
 		},
-		"Given midnight/midday event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 00:00"),
-				genTime("01-06-2020 02:00"),
-				&rrule.ROption{
-					Freq:     rrule.HOURLY,
-					Interval: 12,
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return current 14 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
-						timespan.New(genTime("01-06-2020 12:00"), genTime("01-06-2020 14:00")),
-						timespan.New(genTime("02-06-2020 00:00"), genTime("02-06-2020 02:00")),
-						timespan.New(genTime("02-06-2020 12:00"), genTime("02-06-2020 14:00")),
-						timespan.New(genTime("03-06-2020 00:00"), genTime("03-06-2020 02:00")),
-						timespan.New(genTime("03-06-2020 12:00"), genTime("03-06-2020 14:00")),
-						timespan.New(genTime("04-06-2020 00:00"), genTime("04-06-2020 02:00")),
-						timespan.New(genTime("04-06-2020 12:00"), genTime("04-06-2020 14:00")),
-						timespan.New(genTime("05-06-2020 00:00"), genTime("05-06-2020 02:00")),
-						timespan.New(genTime("05-06-2020 12:00"), genTime("05-06-2020 14:00")),
-						timespan.New(genTime("06-06-2020 00:00"), genTime("06-06-2020 02:00")),
-						timespan.New(genTime("06-06-2020 12:00"), genTime("06-06-2020 14:00")),
-						timespan.New(genTime("07-06-2020 00:00"), genTime("07-06-2020 02:00")),
-						timespan.New(genTime("07-06-2020 12:00"), genTime("07-06-2020 14:00")),
-					},
-				},
-				"and current day span Should return current 2 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
-						timespan.New(genTime("01-06-2020 12:00"), genTime("01-06-2020 14:00")),
-					},
-				},
-			},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
+			timespan.New(genTime("01-06-2020 12:00"), genTime("01-06-2020 14:00")),
+			timespan.New(genTime("02-06-2020 00:00"), genTime("02-06-2020 02:00")),
+			timespan.New(genTime("02-06-2020 12:00"), genTime("02-06-2020 14:00")),
+			timespan.New(genTime("03-06-2020 00:00"), genTime("03-06-2020 02:00")),
+			timespan.New(genTime("03-06-2020 12:00"), genTime("03-06-2020 14:00")),
+			timespan.New(genTime("04-06-2020 00:00"), genTime("04-06-2020 02:00")),
+			timespan.New(genTime("04-06-2020 12:00"), genTime("04-06-2020 14:00")),
+			timespan.New(genTime("05-06-2020 00:00"), genTime("05-06-2020 02:00")),
+			timespan.New(genTime("05-06-2020 12:00"), genTime("05-06-2020 14:00")),
+			timespan.New(genTime("06-06-2020 00:00"), genTime("06-06-2020 02:00")),
+			timespan.New(genTime("06-06-2020 12:00"), genTime("06-06-2020 14:00")),
+			timespan.New(genTime("07-06-2020 00:00"), genTime("07-06-2020 02:00")),
+			timespan.New(genTime("07-06-2020 12:00"), genTime("07-06-2020 14:00")),
 		},
-		"Given getTimeSpansForSingleEvent in 2 days event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 00:00"),
-				genTime("01-06-2020 02:00"),
-				&rrule.ROption{
-					Freq:     rrule.DAILY,
-					Interval: 2,
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return 4 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
-						timespan.New(genTime("03-06-2020 00:00"), genTime("03-06-2020 02:00")),
-						timespan.New(genTime("05-06-2020 00:00"), genTime("05-06-2020 02:00")),
-						timespan.New(genTime("07-06-2020 00:00"), genTime("07-06-2020 02:00")),
-					},
-				},
-				"and current day span Should return 1 span": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
-					},
-				},
-				"and next day span Should return 0 spans": {
-					viewSpan: timespan.New(genTime("02-06-2020 00:00"), genTime("02-06-2020 23:59")),
-					expected: []timespan.Span{},
-				},
-			},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")), // current day
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
+			timespan.New(genTime("01-06-2020 12:00"), genTime("01-06-2020 14:00")),
 		},
-		"Given midday to next midday getTimeSpansForSingleEvent in 3 days event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 12:00"),
-				genTime("02-06-2020 12:00"),
-				&rrule.ROption{
-					Freq:     rrule.DAILY,
-					Interval: 3,
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return 3 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 12:00"), genTime("02-06-2020 12:00")),
-						timespan.New(genTime("04-06-2020 12:00"), genTime("05-06-2020 12:00")),
-						timespan.New(genTime("07-06-2020 12:00"), genTime("07-06-2020 23:59")),
-					},
-				},
-			},
+	)
+
+	// recurrent event for 2 days
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 00:00"),
+		genTime("01-06-2020 02:00"),
+		&rrule.ROption{
+			Freq:     rrule.DAILY,
+			Interval: 2,
 		},
-		"Given 2 days getTimeSpansForSingleEvent in 3 days event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 12:00"),
-				genTime("03-06-2020 12:00"),
-				&rrule.ROption{
-					Freq:     rrule.DAILY,
-					Interval: 3,
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return 3 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 12:00"), genTime("03-06-2020 12:00")),
-						timespan.New(genTime("04-06-2020 12:00"), genTime("06-06-2020 12:00")),
-						timespan.New(genTime("07-06-2020 12:00"), genTime("07-06-2020 23:59")),
-					},
-				},
-			},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
+			timespan.New(genTime("03-06-2020 00:00"), genTime("03-06-2020 02:00")),
+			timespan.New(genTime("05-06-2020 00:00"), genTime("05-06-2020 02:00")),
+			timespan.New(genTime("07-06-2020 00:00"), genTime("07-06-2020 02:00")),
 		},
-		"Given 3 days getTimeSpansForSingleEvent in 4 days event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 12:00"),
-				genTime("04-06-2020 12:00"),
-				&rrule.ROption{
-					Freq:     rrule.DAILY,
-					Interval: 4,
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return 2 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 12:00"), genTime("04-06-2020 12:00")),
-						timespan.New(genTime("05-06-2020 12:00"), genTime("07-06-2020 23:59")),
-					},
-				},
-			},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")), // current day
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 02:00")),
 		},
-		"Given full day getTimeSpansForSingleEvent in 3 days event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 00:00"),
-				genTime("01-06-2020 23:59"),
-				&rrule.ROption{
-					Freq:     rrule.DAILY,
-					Interval: 3,
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current week span Should return 2 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")),
-						timespan.New(genTime("04-06-2020 00:00"), genTime("04-06-2020 23:59")),
-						timespan.New(genTime("07-06-2020 00:00"), genTime("07-06-2020 23:59")),
-					},
-				},
-			},
+	)
+	f(
+		event,
+		timespan.New(genTime("02-06-2020 00:00"), genTime("02-06-2020 23:59")), // next day
+		[]timespan.Span{},
+	)
+
+	// midday to next midday event for 3 days
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 12:00"),
+		genTime("02-06-2020 12:00"),
+		&rrule.ROption{
+			Freq:     rrule.DAILY,
+			Interval: 3,
 		},
-		"Given getTimeSpansForSingleEvent in 30 minutes 4 times event": {
-			event: pbehavior.NewRecEvent(
-				genTime("01-06-2020 00:00"),
-				genTime("01-06-2020 00:20"),
-				&rrule.ROption{
-					Freq:     rrule.MINUTELY,
-					Interval: 30,
-					Count:    4,
-				},
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current day span Should return 4 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 00:20")),
-						timespan.New(genTime("01-06-2020 00:30"), genTime("01-06-2020 00:50")),
-						timespan.New(genTime("01-06-2020 01:00"), genTime("01-06-2020 01:20")),
-						timespan.New(genTime("01-06-2020 01:30"), genTime("01-06-2020 01:50")),
-					},
-				},
-			},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 12:00"), genTime("02-06-2020 12:00")),
+			timespan.New(genTime("04-06-2020 12:00"), genTime("05-06-2020 12:00")),
+			timespan.New(genTime("07-06-2020 12:00"), genTime("07-06-2020 23:59")),
 		},
-		"Given MONTHLY event from 2020-06-27 17:00:00 UTC to 2020-06-30 16:59:59 UTC": {
-			event: pbehavior.NewRecEvent(
-				genTime("27-06-2020 17:00"),
-				genTime("30-06-2020 16:59"),
-				resolveROption("FREQ=MONTHLY;BYMONTHDAY=27"),
-			),
-			cases: map[string]intervalCaseDataSet{
-				"and current day span Should return 2 spans": {
-					viewSpan: timespan.New(genTime("01-06-2020 00:00"), genTime("01-08-2020 16:59")),
-					expected: []timespan.Span{
-						timespan.New(genTime("27-06-2020 17:00"), genTime("30-06-2020 16:59")),
-						timespan.New(genTime("27-07-2020 17:00"), genTime("30-07-2020 16:59")),
-					},
-				},
-			},
+	)
+
+	// 2 days event for 3 days
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 12:00"),
+		genTime("03-06-2020 12:00"),
+		&rrule.ROption{
+			Freq:     rrule.DAILY,
+			Interval: 3,
 		},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 12:00"), genTime("03-06-2020 12:00")),
+			timespan.New(genTime("04-06-2020 12:00"), genTime("06-06-2020 12:00")),
+			timespan.New(genTime("07-06-2020 12:00"), genTime("07-06-2020 23:59")),
+		},
+	)
+
+	// 3 days event for 4 days
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 12:00"),
+		genTime("04-06-2020 12:00"),
+		&rrule.ROption{
+			Freq:     rrule.DAILY,
+			Interval: 4,
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 12:00"), genTime("04-06-2020 12:00")),
+			timespan.New(genTime("05-06-2020 12:00"), genTime("07-06-2020 23:59")),
+		},
+	)
+
+	// full day event for 3 days
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 00:00"),
+		genTime("01-06-2020 23:59"),
+		&rrule.ROption{
+			Freq:     rrule.DAILY,
+			Interval: 3,
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("07-06-2020 23:59")), // current week
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")),
+			timespan.New(genTime("04-06-2020 00:00"), genTime("04-06-2020 23:59")),
+			timespan.New(genTime("07-06-2020 00:00"), genTime("07-06-2020 23:59")),
+		},
+	)
+
+	// event each 30 minutes for 4 times
+	event = pbehavior.NewRecEvent(
+		genTime("01-06-2020 00:00"),
+		genTime("01-06-2020 00:20"),
+		&rrule.ROption{
+			Freq:     rrule.MINUTELY,
+			Interval: 30,
+			Count:    4,
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 23:59")), // current day
+		[]timespan.Span{
+			timespan.New(genTime("01-06-2020 00:00"), genTime("01-06-2020 00:20")),
+			timespan.New(genTime("01-06-2020 00:30"), genTime("01-06-2020 00:50")),
+			timespan.New(genTime("01-06-2020 01:00"), genTime("01-06-2020 01:20")),
+			timespan.New(genTime("01-06-2020 01:30"), genTime("01-06-2020 01:50")),
+		},
+	)
+
+	// monthly event from 2020-06-27 17:00:00 UTC to 2020-06-30 16:59:59 UTC
+	event = pbehavior.NewRecEvent(
+		genTime("27-06-2020 17:00"),
+		genTime("30-06-2020 16:59"),
+		resolveROption("FREQ=MONTHLY;BYMONTHDAY=27"),
+	)
+	f(
+		event,
+		timespan.New(genTime("01-06-2020 00:00"), genTime("01-08-2020 16:59")), // 2 months
+		[]timespan.Span{
+			timespan.New(genTime("27-06-2020 17:00"), genTime("30-06-2020 16:59")),
+			timespan.New(genTime("27-07-2020 17:00"), genTime("30-07-2020 16:59")),
+		},
+	)
+
+	// event during summer/winter time change
+	parisTZ, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		t.Fatalf("failed to load timezone %v", err)
 	}
+
+	event = pbehavior.NewRecEvent(
+		genTime("01-01-2020 09:00", parisTZ),
+		genTime("01-01-2020 18:00", parisTZ),
+		&rrule.ROption{
+			Freq: rrule.DAILY,
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("26-03-2020 00:00"), genTime("02-04-2020 00:00")), // summer change
+		[]timespan.Span{
+			timespan.New(genTime("26-03-2020 09:00", parisTZ), genTime("26-03-2020 18:00", parisTZ)),
+			timespan.New(genTime("27-03-2020 09:00", parisTZ), genTime("27-03-2020 18:00", parisTZ)),
+			timespan.New(genTime("28-03-2020 09:00", parisTZ), genTime("28-03-2020 18:00", parisTZ)),
+			timespan.New(genTime("29-03-2020 09:00", parisTZ), genTime("29-03-2020 18:00", parisTZ)),
+			timespan.New(genTime("30-03-2020 09:00", parisTZ), genTime("30-03-2020 18:00", parisTZ)),
+			timespan.New(genTime("31-03-2020 09:00", parisTZ), genTime("31-03-2020 18:00", parisTZ)),
+			timespan.New(genTime("01-04-2020 09:00", parisTZ), genTime("01-04-2020 18:00", parisTZ)),
+		},
+	)
+	f(
+		event,
+		timespan.New(genTime("22-10-2020 00:00"), genTime("29-10-2020 00:00")), // winter change
+		[]timespan.Span{
+			timespan.New(genTime("22-10-2020 09:00", parisTZ), genTime("22-10-2020 18:00", parisTZ)),
+			timespan.New(genTime("23-10-2020 09:00", parisTZ), genTime("23-10-2020 18:00", parisTZ)),
+			timespan.New(genTime("24-10-2020 09:00", parisTZ), genTime("24-10-2020 18:00", parisTZ)),
+			timespan.New(genTime("25-10-2020 09:00", parisTZ), genTime("25-10-2020 18:00", parisTZ)),
+			timespan.New(genTime("26-10-2020 09:00", parisTZ), genTime("26-10-2020 18:00", parisTZ)),
+			timespan.New(genTime("27-10-2020 09:00", parisTZ), genTime("27-10-2020 18:00", parisTZ)),
+			timespan.New(genTime("28-10-2020 09:00", parisTZ), genTime("28-10-2020 18:00", parisTZ)),
+		},
+	)
 }
 
-func genTime(value string) time.Time {
+func genTime(value string, l ...*time.Location) time.Time {
 	format := "02-01-2006 15:04"
-	date, err := time.Parse(format, value)
+	location := time.UTC
+	if len(l) > 0 {
+		location = l[0]
+	}
 
+	date, err := time.ParseInLocation(format, value, location)
 	if err != nil {
 		panic(err)
 	}

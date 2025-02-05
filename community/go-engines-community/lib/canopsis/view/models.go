@@ -33,6 +33,8 @@ const (
 	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
 )
 
+const PermissionGroupCommonViews = "commonviews"
+
 type Group struct {
 	ID       string           `bson:"_id"`
 	Title    string           `bson:"title"`

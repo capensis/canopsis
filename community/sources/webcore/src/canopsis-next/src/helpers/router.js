@@ -1,11 +1,18 @@
-import { isEmpty, isFunction, isMatch } from 'lodash';
+import {
+  isEmpty,
+  isFunction,
+  isMatch,
+  isArray,
+  pick,
+} from 'lodash';
 
 import { USER_PERMISSIONS_TO_PAGES_RULES, POPUP_TYPES, CRUD_ACTIONS } from '@/constants';
 
 import store from '@/store';
 import i18n from '@/i18n';
 
-import { checkUserAccess } from '@/helpers/entities/permissions/list';
+import { checkUserAnyAccess } from '@/helpers/entities/permissions/list';
+import { groupedPermissionToPermission } from '@/helpers/permission';
 
 /**
  * Get app info value promise by key
@@ -36,7 +43,12 @@ export async function checkAppInfoAccessForRoute(to = {}) {
     return true;
   }
 
-  const permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
+  let permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
+
+  if (isArray(permissionId)) {
+    permissionId = groupedPermissionToPermission(permissionId);
+  }
+
   const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permissionId];
 
   if (!permissionAppInfoRules) {
@@ -69,8 +81,8 @@ export async function checkUserAccessForRoute(to = {}) {
     return true;
   }
 
-  const permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
   const permissionAction = requiresPermission.action ? requiresPermission.action : CRUD_ACTIONS.read;
+  let permissionId = isFunction(requiresPermission.id) ? requiresPermission.id(to) : requiresPermission.id;
 
   const currentUser = store.getters['auth/currentUser'];
 
@@ -84,7 +96,11 @@ export async function checkUserAccessForRoute(to = {}) {
 
   const currentUserPermissionsById = store.getters['auth/currentUserPermissionsById'];
 
-  if (checkUserAccess(currentUserPermissionsById[permissionId], permissionAction)) {
+  if (!isArray(permissionId)) {
+    permissionId = [permissionId];
+  }
+
+  if (checkUserAnyAccess(pick(currentUserPermissionsById, permissionId), permissionAction)) {
     return true;
   }
 

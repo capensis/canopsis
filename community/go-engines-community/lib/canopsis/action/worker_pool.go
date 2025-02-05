@@ -334,7 +334,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		return nil, false, err
 	}
 
-	history := libwebhook.History{
+	history, historyResult := libwebhook.History{
 		ID:        utils.NewID(),
 		Alarms:    []string{task.Alarm.ID},
 		Scenario:  task.ScenarioID,
@@ -354,7 +354,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		EventInitiator: additionalData.Initiator,
 		EventOutput:    additionalData.Output,
 		Trigger:        additionalData.Trigger,
-	}
+	}, libwebhook.History{}
 
 	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,
 		bson.M{
@@ -366,13 +366,13 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 			"$setOnInsert": history,
 		},
 		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After),
-	).Decode(&history)
+	).Decode(&historyResult)
 	if err != nil {
 		return nil, false, fmt.Errorf("cannot save webhook history scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	return &rpc.WebhookEvent{
-		Execution: history.ID,
+		Execution: historyResult.ID,
 	}, false, nil
 }
 

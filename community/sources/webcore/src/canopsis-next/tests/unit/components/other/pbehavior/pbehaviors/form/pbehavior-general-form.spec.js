@@ -21,6 +21,7 @@ const stubs = {
   'c-pbehavior-type-field': true,
   'c-color-picker-field': true,
   'c-collapse-panel': true,
+  'c-timezone-field': true,
   'v-checkbox': createCheckboxInputStub('v-checkbox'),
 };
 
@@ -36,6 +37,7 @@ const snapshotStubs = {
   'c-pbehavior-type-field': true,
   'c-enabled-color-picker-field': true,
   'c-collapse-panel': true,
+  'c-timezone-field': true,
 };
 
 const selectNameField = wrapper => wrapper.find('c-name-field-stub');
@@ -55,6 +57,7 @@ const selectNoEndingCheckbox = wrapper => selectCheckboxFields(wrapper)
   .at(1);
 const selectPbehaviorCommentsField = wrapper => wrapper.find('pbehavior-comments-field-stub');
 const selectEnabledColorPickerField = wrapper => wrapper.find('c-enabled-color-picker-field-stub');
+const selectTimezoneField = wrapper => wrapper.find('c-timezone-field-stub');
 
 describe('pbehavior-general-form', () => {
   const { pbehaviorTypesModule } = createPbehaviorTypesModule();
@@ -544,6 +547,29 @@ describe('pbehavior-general-form', () => {
       ...form,
 
       color: newColor,
+    });
+  });
+
+  test('Timezone changed after trigger timezone field', () => {
+    const wrapper = factory({
+      propsData: {
+        form: {
+          ...form,
+
+          start_on_trigger: false,
+        },
+      },
+    });
+
+    const newTimezone = Faker.address.timeZone();
+
+    selectTimezoneField(wrapper).triggerCustomEvent('input', newTimezone);
+
+    expect(wrapper).toEmitInput({
+      ...form,
+
+      start_on_trigger: false,
+      timezone: newTimezone,
     });
   });
 
