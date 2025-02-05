@@ -55,15 +55,9 @@ export async function checkAppInfoAccessForRoute(to = {}) {
     return true;
   }
 
-  const [edition, stack] = await Promise.all([
-    getAppInfoValuePromiseByKey('edition'),
-    getAppInfoValuePromiseByKey('stack'),
-  ]);
+  const edition = await getAppInfoValuePromiseByKey('edition');
 
-  const appInfo = {
-    edition,
-    stack,
-  };
+  const appInfo = { edition };
 
   if (isMatch(appInfo, permissionAppInfoRules)) {
     return true;

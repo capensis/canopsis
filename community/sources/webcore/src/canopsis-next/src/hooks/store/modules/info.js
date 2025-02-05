@@ -54,7 +54,6 @@ export const useShownHeader = () => {
  * @property {Ref<number>} checkCountRequestTimeout - Timeout for count requests
  * @property {Ref<Object>} footer - Footer configuration
  * @property {Ref<string>} edition - Application edition (pro/community)
- * @property {Ref<string>} stack - Application stack information
  * @property {Ref<string>} description - Application description
  * @property {Ref<string>} language - Application language
  * @property {Ref<boolean>} allowChangeSeverityToInfo - Permission flag for severity changes
@@ -78,6 +77,9 @@ export const useShownHeader = () => {
  * @property {Ref<boolean>} autoSuggestPbehaviorName - Auto-suggestion settings
  * @property {Ref<Array>} userTimezones - Available user timezones
  * @property {Ref<boolean>} shownUserTimezone - User timezone display preference
+ * @property {Ref<string>} serialName - Build serial name
+ * @property {Ref<number>} versionUpdated - Version updated timestamp
+ * @property {Ref<string>} versionDescription - Version description template
  *
  * @returns {Object} Hook return object
  * @property {InfoGetters} getters - All available getters
@@ -102,7 +104,6 @@ export const useInfo = () => {
     checkCountRequestTimeout: 'checkCountRequestTimeout',
     footer: 'footer',
     edition: 'edition',
-    stack: 'stack',
     description: 'description',
     language: 'language',
     allowChangeSeverityToInfo: 'allowChangeSeverityToInfo',
@@ -126,6 +127,9 @@ export const useInfo = () => {
     autoSuggestPbehaviorName: 'autoSuggestPbehaviorName',
     userTimezones: 'userTimezones',
     shownUserTimezone: 'shownUserTimezone',
+    serialName: 'serialName',
+    versionUpdated: 'versionUpdated',
+    versionDescription: 'versionDescription',
   });
 
   const isProVersion = computed(() => getters.edition.value === CANOPSIS_EDITION.pro);
@@ -150,10 +154,7 @@ export const useInfo = () => {
       return true;
     }
 
-    const appInfo = {
-      edition: getters.edition.value,
-      stack: getters.stack.value,
-    };
+    const appInfo = { edition: getters.edition.value };
 
     return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[permission]);
   };

@@ -103,7 +103,6 @@ export default {
   startDate: 'Date de début',
   endDate: 'Date de fin',
   link: 'Lien | Liens',
-  stack: 'Pile',
   edition: 'Édition',
   icon: 'Icône | Icônes',
   fullscreen: 'Plein écran',
@@ -307,6 +306,7 @@ export default {
   server: 'Serveur',
   pressEnterToApply: 'Appuyez sur <kbd>Entrée</kbd> pour appliquer',
   width: 'Largeur',
+  versionUpdated: 'Version mise à jour',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

@@ -1,15 +1,6 @@
 <template>
-  <v-layout
-    v-if="!form"
-    class="my-2"
-    justify-center
-  >
-    <v-progress-circular
-      color="primary"
-      indeterminate
-    />
-  </v-layout>
-  <v-flex v-else>
+  <v-layout column>
+    <c-progress-overlay :pending="appInfoPending" />
     <v-layout>
       <v-flex class="text-center">
         <div class="text-h6">
@@ -45,7 +36,7 @@
         </v-layout>
       </template>
     </v-form>
-  </v-flex>
+  </v-layout>
 </template>
 
 <script>
