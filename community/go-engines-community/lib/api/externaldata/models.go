@@ -3,18 +3,8 @@ package externaldata
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"github.com/jackc/pgx/v5"
-)
-
-const (
-	TypeMongoDB = iota
-	TypePostgreSQL
-)
-
-const (
-	ColumnTypeNoType = iota
-	ColumnTypeFilter
-	ColumnTypeContext
 )
 
 const (
@@ -24,15 +14,7 @@ const (
 	ImportStatusFailed
 )
 
-const (
-	mongoPrefix              = "externaldata_"
-	postgresSchema           = "externaldata"
-	postgresDefaultColumnLen = 255
-	tmpTablePrefix           = "tmp_"
-	// Use "_id" because it's not possible to change primary field name in MongoDB.
-	idColumnName = "_id"
-	uuidLen      = 36
-)
+const tmpTablePrefix = "tmp_"
 
 type ListRequest struct {
 	pagination.FilteredQuery
@@ -67,20 +49,25 @@ type Response struct {
 	Description   string           `bson:"description" json:"description"`
 	ColumnTypes   map[string]int   `bson:"column_types" json:"column_types"`
 	ColumnLengths map[string]int   `bson:"column_lengths" json:"-"`
+	FromConfig    bool             `bson:"from_config" json:"from_config"`
 	Created       datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
 	Updated       datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
 }
 
-type Document struct {
-	ID            string           `bson:"_id,omitempty"`
-	Type          int              `bson:"type"`
-	Name          string           `bson:"name"`
-	Description   string           `bson:"description"`
-	ColumnTypes   map[string]int   `bson:"column_types,omitempty"`
-	ColumnLengths map[string]int   `bson:"column_lengths,omitempty"`
-	Author        string           `bson:"author"`
-	Created       datetime.CpsTime `bson:"created,omitempty"`
-	Updated       datetime.CpsTime `bson:"updated"`
+func (r *Response) getDBTableName() string {
+	if r.Type == externaldata.TypeMongoDB {
+		return externaldata.GetMongoCollectionName(r.Name, r.FromConfig)
+	}
+
+	return externaldata.GetPostgresTableName(r.Name)
+}
+
+func (r *Response) getPostgresTableIdentifier() pgx.Identifier {
+	if r.FromConfig {
+		return pgx.Identifier{r.Name}
+	}
+
+	return externaldata.GetPostgresTableIdentifier(r.Name)
 }
 
 type AggregationResult struct {
@@ -97,8 +84,8 @@ func (r *AggregationResult) GetTotal() int64 {
 }
 
 type AggregationDataResult struct {
-	Data       []map[string]string `bson:"data" json:"data"`
-	TotalCount int64               `bson:"total_count" json:"total_count"`
+	Data       []map[string]any `bson:"data" json:"data"`
+	TotalCount int64            `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationDataResult) GetData() interface{} {
@@ -123,14 +110,10 @@ type ImportJob struct {
 	Retries           int64             `bson:"retries" json:"-"`
 }
 
-func getCollectionName(name string) string {
-	return mongoPrefix + name
-}
+func (j *ImportJob) getDBTableName() string {
+	if j.Type == externaldata.TypeMongoDB {
+		return externaldata.GetMongoCollectionName(j.Table, false)
+	}
 
-func getPostgresTableName(name string) string {
-	return getPostgresTableIdentifier(name).Sanitize()
-}
-
-func getPostgresTableIdentifier(name string) pgx.Identifier {
-	return pgx.Identifier{postgresSchema, name}
+	return externaldata.GetPostgresTableName(j.Table)
 }

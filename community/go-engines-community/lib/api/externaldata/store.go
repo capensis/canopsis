@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -32,7 +33,7 @@ type Store interface {
 	Update(ctx context.Context, r EditRequest) (Response, error)
 	Delete(ctx context.Context, id, author string) (bool, error)
 	FindData(ctx context.Context, tableName string, tableType int, columns []string, r ListDataRequest) (*AggregationDataResult, error)
-	FindOneData(ctx context.Context, tableID, id string) (map[string]string, error)
+	FindOneData(ctx context.Context, tableID, id string) (map[string]any, error)
 	CreateData(ctx context.Context, tableID string, r map[string]string) (map[string]string, error)
 	UpdateData(ctx context.Context, tableID, id string, r map[string]string) (map[string]string, error)
 	DeleteData(ctx context.Context, table Response, id string) (bool, error)
@@ -106,9 +107,9 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Response, error) {
 
 	var err error
 	switch *r.Type {
-	case TypeMongoDB:
+	case externaldata.TypeMongoDB:
 		err = s.createMongoCollection(ctx, r.Name)
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		err = s.createPostgresTable(ctx, r.Name)
 	default:
 		err = fmt.Errorf("unknown external data type %d", r.Type)
@@ -123,7 +124,7 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Response, error) {
 	now := datetime.NewCpsTime()
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = Response{}
-		_, err = s.dbCollection.InsertOne(ctx, Document{
+		_, err = s.dbCollection.InsertOne(ctx, externaldata.Table{
 			ID:          id,
 			Type:        *r.Type,
 			Name:        r.Name,
@@ -160,11 +161,15 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 	}
 
 	if oldTable.Name != r.Name {
+		if oldTable.FromConfig {
+			return res, common.NewValidationError("name", "Name cannot be changed.")
+		}
+
 		switch oldTable.Type {
-		case TypeMongoDB:
+		case externaldata.TypeMongoDB:
 			err = s.dbClient.RunAdminCommand(ctx, bson.D{
-				{Key: "renameCollection", Value: s.dbClient.Name() + "." + getCollectionName(oldTable.Name)},
-				{Key: "to", Value: s.dbClient.Name() + "." + getCollectionName(r.Name)},
+				{Key: "renameCollection", Value: s.dbClient.Name() + "." + oldTable.getDBTableName()},
+				{Key: "to", Value: s.dbClient.Name() + "." + externaldata.GetMongoCollectionName(r.Name, false)},
 			}).Err()
 			if err != nil {
 				commErr := mongodriver.CommandError{}
@@ -174,13 +179,13 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 
 				return res, fmt.Errorf("failed to rename mongo collection: %w", err)
 			}
-		case TypePostgreSQL:
+		case externaldata.TypePostgreSQL:
 			pgPool, err := s.pgPoolProvider.Get(ctx)
 			if err != nil {
 				return res, fmt.Errorf("failed to get postgres pool: %w", err)
 			}
 
-			_, err = pgPool.Exec(ctx, "ALTER TABLE "+getPostgresTableName(oldTable.Name)+" RENAME TO "+pgx.Identifier{r.Name}.Sanitize())
+			_, err = pgPool.Exec(ctx, "ALTER TABLE "+oldTable.getDBTableName()+" RENAME TO "+pgx.Identifier{r.Name}.Sanitize())
 			if err != nil {
 				pgErr := &pgconn.PgError{}
 				if errors.As(err, &pgErr) && pgErr.Code == pgErrCodeDuplicateTable {
@@ -198,7 +203,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = Response{}
 
-		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": Document{
+		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": externaldata.Table{
 			Type:        *r.Type,
 			Name:        r.Name,
 			Description: r.Description,
@@ -218,33 +223,50 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
-	var table Document
+	var res externaldata.Table
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		table = Document{}
-		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": author}})
-		if err != nil || res.MatchedCount == 0 {
+		res = externaldata.Table{}
+
+		table := externaldata.Table{}
+		err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&table)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
 			return err
 		}
 
-		err = s.dbCollection.FindOneAndDelete(ctx, bson.M{"_id": id}).Decode(&table)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		if table.FromConfig {
+			return ErrConfigNotDeletable
+		}
+
+		// required to get the author in action log listener.
+		ur, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id, "from_config": bson.M{"$ne": true}}, bson.M{"$set": bson.M{"author": author}})
+		if err != nil || ur.MatchedCount == 0 {
 			return err
 		}
+
+		d, err := s.dbCollection.DeleteOne(ctx, bson.M{"_id": id, "from_config": bson.M{"$ne": true}})
+		if err != nil || d == 0 {
+			return err
+		}
+
+		res = table
 
 		return nil
 	})
-	if err != nil || table.ID == "" {
+	if err != nil || res.ID == "" {
 		return false, err
 	}
 
-	switch table.Type {
-	case TypeMongoDB:
-		err = s.deleteMongoCollection(ctx, table.Name)
-	case TypePostgreSQL:
-		err = s.deletePostgresTable(ctx, table.Name)
+	switch res.Type {
+	case externaldata.TypeMongoDB:
+		err = s.deleteMongoCollection(ctx, res.Name)
+	case externaldata.TypePostgreSQL:
+		err = s.deletePostgresTable(ctx, res.Name)
 	default:
-		err = fmt.Errorf("unknown external data type %d", table.Type)
+		err = fmt.Errorf("unknown external data type %d", res.Type)
 	}
 
 	return err == nil, err
@@ -264,9 +286,9 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 	}
 
 	switch tableType {
-	case TypeMongoDB:
+	case externaldata.TypeMongoDB:
 		res, err = s.findDataFromMongo(ctx, tableName, columns, r)
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		res, err = s.findDataFromPostgres(ctx, tableName, columns, r)
 	default:
 		err = fmt.Errorf("unknown external data type %d", tableType)
@@ -275,22 +297,22 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 	return res, err
 }
 
-func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string]string, error) {
+func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string]any, error) {
 	table, err := s.FindOne(ctx, tableID)
 	if err != nil || table.ID == "" {
 		return nil, err
 	}
 
-	var res map[string]string
+	var res map[string]any
 	switch table.Type {
-	case TypeMongoDB:
-		err = s.dbClient.Collection(getCollectionName(table.Name)).FindOne(ctx, bson.M{"_id": id}).Decode(&res)
+	case externaldata.TypeMongoDB:
+		err = s.dbClient.Collection(table.getDBTableName()).FindOne(ctx, bson.M{"_id": id}).Decode(&res)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, err
 		}
 
 		return res, nil
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		pgPool, err := s.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
@@ -305,9 +327,9 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 			sql += pgx.Identifier{col}.Sanitize() + ", "
 		}
 
-		columnsWithID[i] = idColumnName
-		sql += idColumnName
-		sql += " FROM " + getPostgresTableName(table.Name) + " WHERE " + idColumnName + " = $1"
+		columnsWithID[i] = externaldata.IDColumnName
+		sql += externaldata.IDColumnName
+		sql += " FROM " + table.getDBTableName() + " WHERE " + externaldata.IDColumnName + " = $1"
 		rows, err := pgPool.Query(ctx, sql, id)
 		if err != nil {
 			return nil, err
@@ -342,17 +364,17 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 		return nil, err
 	}
 
-	doc := make(map[string]string, len(table.ColumnLengths)+1)
-	row := make([]any, len(table.ColumnLengths)+1)
-	columnsWithID := make([]string, len(table.ColumnLengths)+1)
-	doc[idColumnName] = utils.NewID()
-	row[0] = doc[idColumnName]
-	columnsWithID[0] = idColumnName
+	doc := make(map[string]string, len(table.ColumnTypes)+1)
+	row := make([]any, len(table.ColumnTypes)+1)
+	columnsWithID := make([]string, len(table.ColumnTypes)+1)
+	doc[externaldata.IDColumnName] = utils.NewID()
+	row[0] = doc[externaldata.IDColumnName]
+	columnsWithID[0] = externaldata.IDColumnName
 	i := 1
 	var ok bool
 	updatedLengths := make(map[string]int)
 	valErrMsgs := make(map[string]string)
-	for col, l := range table.ColumnLengths {
+	for col := range table.ColumnTypes {
 		doc[col], ok = r[col]
 		if !ok {
 			valErrMsgs[col] = col + " is missing."
@@ -363,7 +385,7 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 		columnsWithID[i] = col
 		i++
 
-		if len(doc[col]) > l {
+		if l, ok := table.ColumnLengths[col]; ok && len(doc[col]) > l {
 			updatedLengths[col] = len(doc[col])
 		}
 	}
@@ -373,13 +395,12 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 	}
 
 	switch table.Type {
-	case TypeMongoDB:
-		_, err = s.dbClient.Collection(getCollectionName(table.Name)).InsertOne(ctx, doc)
-		if err != nil {
-			return nil, err
-		}
-	case TypePostgreSQL:
-		err = s.alterPostgresColumns(ctx, table.Name, updatedLengths)
+	case externaldata.TypeMongoDB:
+		_, err = s.dbClient.Collection(table.getDBTableName()).InsertOne(ctx, doc)
+
+		return doc, err
+	case externaldata.TypePostgreSQL:
+		err = s.alterPostgresColumns(ctx, table.getDBTableName(), updatedLengths)
 		if err != nil {
 			return nil, err
 		}
@@ -389,17 +410,17 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.CopyFrom(ctx, getPostgresTableIdentifier(table.Name), columnsWithID, pgx.CopyFromRows([][]any{row}))
+		_, err = pgPool.CopyFrom(ctx, table.getPostgresTableIdentifier(), columnsWithID, pgx.CopyFromRows([][]any{row}))
 		if err != nil {
 			return nil, err
 		}
+
+		err = s.updateColumnLengths(ctx, table, updatedLengths)
+
+		return doc, err
 	default:
 		return nil, fmt.Errorf("unknown external data type %d", table.Type)
 	}
-
-	err = s.updateColumnLengths(ctx, table.ID, updatedLengths)
-
-	return doc, err
 }
 
 func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string]string) (map[string]string, error) {
@@ -408,14 +429,14 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		return nil, err
 	}
 
-	doc := make(map[string]string, len(table.ColumnLengths)+1)
-	querySql := "UPDATE " + getPostgresTableName(table.Name) + " SET "
-	queryArgs := make([]any, len(table.ColumnLengths)+1)
+	doc := make(map[string]string, len(table.ColumnTypes)+1)
+	querySql := "UPDATE " + table.getDBTableName() + " SET "
+	queryArgs := make([]any, len(table.ColumnTypes)+1)
 	i := 0
 	var ok bool
 	updatedLengths := make(map[string]int)
 	valErrMsgs := make(map[string]string)
-	for col, l := range table.ColumnLengths {
+	for col := range table.ColumnTypes {
 		doc[col], ok = r[col]
 		if !ok {
 			valErrMsgs[col] = col + " is missing."
@@ -424,12 +445,12 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 
 		queryArgs[i] = doc[col]
 		querySql += pgx.Identifier{col}.Sanitize() + " = $" + strconv.Itoa(i+1)
-		if i < len(table.ColumnLengths)-1 {
+		if i < len(table.ColumnTypes)-1 {
 			querySql += ", "
 		}
 
 		i++
-		if len(doc[col]) > l {
+		if l, ok := table.ColumnLengths[col]; ok && len(doc[col]) > l {
 			updatedLengths[col] = len(doc[col])
 		}
 	}
@@ -439,15 +460,15 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 	}
 
 	queryArgs[i] = id
-	querySql += " WHERE " + idColumnName + " = $" + strconv.Itoa(len(queryArgs))
+	querySql += " WHERE " + externaldata.IDColumnName + " = $" + strconv.Itoa(len(queryArgs))
 	switch table.Type {
-	case TypeMongoDB:
-		updateRes, err := s.dbClient.Collection(getCollectionName(table.Name)).UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": doc})
+	case externaldata.TypeMongoDB:
+		updateRes, err := s.dbClient.Collection(table.getDBTableName()).UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": doc})
 		if err != nil || updateRes.MatchedCount == 0 {
 			return nil, err
 		}
-	case TypePostgreSQL:
-		err = s.alterPostgresColumns(ctx, table.Name, updatedLengths)
+	case externaldata.TypePostgreSQL:
+		err = s.alterPostgresColumns(ctx, table.getDBTableName(), updatedLengths)
 		if err != nil {
 			return nil, err
 		}
@@ -465,25 +486,25 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		return nil, fmt.Errorf("unknown external data type %d", table.Type)
 	}
 
-	doc[idColumnName] = id
-	err = s.updateColumnLengths(ctx, tableID, updatedLengths)
+	doc[externaldata.IDColumnName] = id
+	err = s.updateColumnLengths(ctx, table, updatedLengths)
 
 	return doc, err
 }
 
 func (s *store) DeleteData(ctx context.Context, table Response, id string) (bool, error) {
 	switch table.Type {
-	case TypeMongoDB:
-		deleted, err := s.dbClient.Collection(getCollectionName(table.Name)).DeleteOne(ctx, bson.M{"_id": id})
+	case externaldata.TypeMongoDB:
+		deleted, err := s.dbClient.Collection(table.getDBTableName()).DeleteOne(ctx, bson.M{"_id": id})
 
 		return deleted > 0, err
-	case TypePostgreSQL:
+	case externaldata.TypePostgreSQL:
 		pgPool, err := s.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return false, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		sql := "DELETE FROM " + getPostgresTableName(table.Name) + " WHERE " + idColumnName + " = $1"
+		sql := "DELETE FROM " + table.getDBTableName() + " WHERE " + externaldata.IDColumnName + " = $1"
 		execRes, err := pgPool.Exec(ctx, sql, id)
 		if err != nil {
 			return false, err
@@ -496,7 +517,7 @@ func (s *store) DeleteData(ctx context.Context, table Response, id string) (bool
 }
 
 func (s *store) createMongoCollection(ctx context.Context, name string) error {
-	collName := getCollectionName(name)
+	collName := externaldata.GetMongoCollectionName(name, false)
 	collections, err := s.dbClient.ListCollectionNames(ctx, bson.M{"name": collName})
 	if err != nil {
 		return fmt.Errorf("failed to get collections: %w", err)
@@ -515,7 +536,7 @@ func (s *store) createMongoCollection(ctx context.Context, name string) error {
 }
 
 func (s *store) deleteMongoCollection(ctx context.Context, name string) error {
-	err := s.dbClient.Collection(getCollectionName(name)).Drop(ctx)
+	err := s.dbClient.Collection(externaldata.GetMongoCollectionName(name, false)).Drop(ctx)
 	if err != nil {
 		return fmt.Errorf("failed to drop mongo collection: %w", err)
 	}
@@ -529,7 +550,8 @@ func (s *store) createPostgresTable(ctx context.Context, name string) error {
 		return fmt.Errorf("failed to get postgres pool: %w", err)
 	}
 
-	sql := "CREATE TABLE " + getPostgresTableName(name) + " ( " + idColumnName + " VARCHAR(" + strconv.Itoa(uuidLen) + ") PRIMARY KEY )"
+	sql := "CREATE TABLE " + externaldata.GetPostgresTableName(name) +
+		" ( " + externaldata.IDColumnName + " VARCHAR(" + strconv.Itoa(externaldata.PostgresIDColumnLen) + ") PRIMARY KEY )"
 	_, err = pgPool.Exec(ctx, sql)
 	if err != nil {
 		pgErr := &pgconn.PgError{}
@@ -549,7 +571,7 @@ func (s *store) deletePostgresTable(ctx context.Context, name string) error {
 		return fmt.Errorf("failed to get postgres pool: %w", err)
 	}
 
-	sql := "DROP TABLE IF EXISTS " + getPostgresTableName(name)
+	sql := "DROP TABLE IF EXISTS " + externaldata.GetPostgresTableName(name)
 	_, err = pgPool.Exec(ctx, sql)
 	if err != nil {
 		return fmt.Errorf("failed to delete postgres table: %w", err)
@@ -569,7 +591,7 @@ func (s *store) alterPostgresColumns(ctx context.Context, name string, columnLen
 	}
 
 	for col, l := range columnLengths {
-		sql := "ALTER TABLE " + getPostgresTableName(name) +
+		sql := "ALTER TABLE " + name +
 			" ALTER COLUMN " + pgx.Identifier{col}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(l) + ")"
 		_, err = pgPool.Exec(ctx, sql)
 		if err != nil {
@@ -580,7 +602,7 @@ func (s *store) alterPostgresColumns(ctx context.Context, name string, columnLen
 	return nil
 }
 
-func (s *store) updateColumnLengths(ctx context.Context, id string, columnLengths map[string]int) error {
+func (s *store) updateColumnLengths(ctx context.Context, table Response, columnLengths map[string]int) error {
 	if len(columnLengths) == 0 {
 		return nil
 	}
@@ -590,7 +612,7 @@ func (s *store) updateColumnLengths(ctx context.Context, id string, columnLength
 		update["column_lengths."+k] = v
 	}
 
-	_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": update})
+	_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": table.ID}, bson.M{"$set": update})
 
 	return err
 }
@@ -602,10 +624,10 @@ func (s *store) findDataFromMongo(ctx context.Context, collectionName string, co
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	cursor, err := s.dbClient.Collection(getCollectionName(collectionName)).Aggregate(ctx, pagination.CreateAggregationPipeline(
+	cursor, err := s.dbClient.Collection(collectionName).Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(request.SortBy, idColumnName), request.Sort),
+		common.GetSortQuery(cmp.Or(request.SortBy, externaldata.IDColumnName), request.Sort),
 	))
 	if err != nil {
 		return nil, err
@@ -627,18 +649,17 @@ func (s *store) findDataFromMongo(ctx context.Context, collectionName string, co
 	return &result, nil
 }
 
-func (s *store) findDataFromPostgres(ctx context.Context, tableNameWOPrefix string, columns []string, request ListDataRequest) (*AggregationDataResult, error) {
+func (s *store) findDataFromPostgres(ctx context.Context, tableName string, columns []string, r ListDataRequest) (*AggregationDataResult, error) {
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 	}
 
-	tableName := getPostgresTableName(tableNameWOPrefix)
 	whereStmts := make([]string, 0)
 	queryArgs := make([]any, 0)
-	if request.Search != "" {
+	if r.Search != "" {
 		orStmts := make([]string, len(columns))
-		queryArgs = append(queryArgs, request.Search)
+		queryArgs = append(queryArgs, r.Search)
 		for i, col := range columns {
 			orStmts[i] = pgx.Identifier{col}.Sanitize() + " ~ $" + strconv.Itoa(len(queryArgs))
 		}
@@ -652,18 +673,18 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableNameWOPrefix stri
 	}
 
 	limitStmt := ""
-	if request.Paginate {
-		limitStmt = "OFFSET " + strconv.FormatInt(request.Limit*(request.Page-1), 10) +
-			" LIMIT " + strconv.FormatInt(request.Limit, 10)
+	if r.Paginate {
+		limitStmt = "OFFSET " + strconv.FormatInt(r.Limit*(r.Page-1), 10) +
+			" LIMIT " + strconv.FormatInt(r.Limit, 10)
 	}
 
-	orderStmt := "ORDER BY " + pgx.Identifier{cmp.Or(request.SortBy, idColumnName)}.Sanitize()
-	if request.Sort == mongo.SortDesc {
+	orderStmt := "ORDER BY " + pgx.Identifier{cmp.Or(r.SortBy, externaldata.IDColumnName)}.Sanitize()
+	if r.Sort == mongo.SortDesc {
 		orderStmt = orderStmt + " DESC"
 	}
 
 	columnsWithID := make([]string, len(columns)+1)
-	columnsWithID[0] = idColumnName
+	columnsWithID[0] = externaldata.IDColumnName
 	copy(columnsWithID[1:], columns)
 	sql := "SELECT "
 	for i, col := range columnsWithID {
@@ -676,7 +697,7 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableNameWOPrefix stri
 	sql += " FROM " + tableName + " " + whereStmt + " " + orderStmt + " " + limitStmt
 	countSql := "SELECT count(*) FROM " + tableName + " " + whereStmt
 	result := &AggregationDataResult{
-		Data: make([]map[string]string, 0),
+		Data: make([]map[string]any, 0, r.Limit),
 	}
 
 	rows, err := pgPool.Query(ctx, sql, queryArgs...)
@@ -711,8 +732,8 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableNameWOPrefix stri
 	return result, nil
 }
 
-func (s *store) transformPostgresResToData(vals []any, columns []string) (map[string]string, error) {
-	res := make(map[string]string, len(vals))
+func (s *store) transformPostgresResToData(vals []any, columns []string) (map[string]any, error) {
+	res := make(map[string]any, len(vals))
 	var ok bool
 	for i, val := range vals {
 		res[columns[i]], ok = val.(string)
