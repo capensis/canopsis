@@ -9,6 +9,7 @@
     :name="name"
     :error-messages="errors.collect(name)"
     :disabled="disabled"
+    :item-disabled="isDisabledItems"
     :multiple="multiple"
     :chips="chips"
     :small-chips="chips"
@@ -64,6 +65,10 @@ export default {
     permission: {
       type: String,
       default: '',
+    },
+    isDisabledItems: {
+      type: Function,
+      required: false,
     },
   },
   data() {

@@ -43,6 +43,8 @@ security:
 #        pkce: true
 #        # default role for user.
 #        default_role: admin
+#        # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.
+#        allow_extra_roles: false
 #        # attributes map allows to fill canopsis user fields from the OpenID token and user claims,
 #        # use token.claim_name for token claims and user.claim_name for user claims,
 #        # token claims are only supported if open_id is set to true.
@@ -78,7 +80,7 @@ security:
 #    username_attr: uid
 #    # attrs defines extra user's attributes.
 #    attrs:
-#      mail: mail
+#      email: mail
 #      firstname: givenName
 #      lastname: sn
 #    # default_role defines role of new users which are created on successful LDAP login.
@@ -122,6 +124,8 @@ security:
 #    canopsis_saml_url: http://canopsis/api/v4/saml
 #    # default_role defines role of new users which are created on successful SAML login.
 #    default_role: Visualisation
+#    # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.
+#    allow_extra_roles: false
 #    # insecure_skip_verify controls whether a client verifies the server's
 #    #	certificate chain and host name. If true, crypto/tls
 #    #	accepts any certificate presented by the server and any host name in that
