@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -22,6 +23,9 @@ const (
 	SortAsc     = "asc"
 	SortDesc    = "desc"
 	MaxIDLength = 255
+
+	tableNameRegexString = "^[a-z][a-z0-9_]+$"
+	tableNameMaxLen      = 63
 )
 
 var timeFormats = map[string]string{
@@ -31,6 +35,8 @@ var timeFormats = map[string]string{
 	"DD MMM YYYY hh:mm:ss ZZ":    "02 Jan 2006 15:04 MST",
 	"W, DD MMM YYYY hh:mm:ss ZZ": "Mon, 02 Jan 2006 15:04:05 MST",
 }
+
+var tableNameRegex = regexp.MustCompile(tableNameRegexString)
 
 // ValidateCpsTimeType implements CustomTypeFunc and returns value to validate.
 func ValidateCpsTimeType(field reflect.Value) interface{} {
@@ -133,6 +139,14 @@ func ValidateFilteredQuery(sl validator.StructLevel) {
 			sl.ReportError(r.Sort, "Sort", "sort", "oneof", param)
 		}
 	}
+}
+
+func ValidateTableName(fl validator.FieldLevel) bool {
+	return IsTableName(fl.Field().String())
+}
+
+func IsTableName(s string) bool {
+	return tableNameRegex.MatchString(s) && len(s) <= tableNameMaxLen
 }
 
 type FieldValidator interface {

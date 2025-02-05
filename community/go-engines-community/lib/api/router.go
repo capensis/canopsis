@@ -30,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
@@ -134,6 +135,7 @@ func RegisterRoutes(
 	enableSameServiceNames bool,
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
+	exdataImportWorker externaldata.ImportWorker,
 	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
@@ -2339,5 +2341,45 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermMaintenance, model.PermissionCan, enforcer),
 			maintenanceApi.Maintenance,
 		)
+
+		externalDataTableAPI := externaldata.NewAPI(externaldata.NewStore(dbClient, pgPoolProvider), exdataImportWorker)
+		externalDataTableRouter := protected.Group("/external-data-tables")
+		{
+			externalDataTableRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.Create,
+			)
+			externalDataTableRouter.GET(
+				"/:id/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ListData,
+			)
+		}
+
+		externalDataImportRouter := protected.Group("/external-data-import")
+		{
+			externalDataImportRouter.POST(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.Import,
+			)
+			externalDataImportRouter.GET(
+				"/:id/status",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.ImportStatus,
+			)
+			externalDataImportRouter.GET(
+				"/:id/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.ImportData,
+			)
+			externalDataImportRouter.PUT(
+				"/:id/complete",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				externalDataTableAPI.ImportComplete,
+			)
+		}
 	}
 }

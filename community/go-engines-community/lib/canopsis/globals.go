@@ -97,10 +97,11 @@ const (
 
 	DefaultSystemAlarmConnector = "system"
 
-	SubDirUpload   = "upload-files"
-	SubDirIcons    = "icons"
-	SubDirExport   = "export-files"
-	SubDirImport   = "import-files"
-	SubDirJunit    = "junit-files"
-	SubDirJunitAPI = "junit-api-files"
+	SubDirUpload       = "upload-files"
+	SubDirIcons        = "icons"
+	SubDirExport       = "export-files"
+	SubDirImport       = "import-files"
+	SubDirJunit        = "junit-files"
+	SubDirJunitAPI     = "junit-api-files"
+	SubDirExDataImport = "exdataimport"
 )
