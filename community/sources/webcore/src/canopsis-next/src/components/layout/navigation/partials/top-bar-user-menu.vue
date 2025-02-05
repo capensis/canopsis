@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { MODALS, ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesUserMixin } from '@/mixins/entities/user';
@@ -63,7 +63,7 @@ export default {
           icon: 'palette',
           title: this.$t('theme.themes'),
           route: { name: ROUTES_NAMES.profileThemes },
-          permission: USERS_PERMISSIONS.technical.profile.theme,
+          permission: USER_PERMISSIONS.technical.profile.theme,
         },
         {
           icon: 'exit_to_app',

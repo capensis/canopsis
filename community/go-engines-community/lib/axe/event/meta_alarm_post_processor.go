@@ -214,6 +214,11 @@ func (p *metaAlarmPostProcessor) processChild(ctx context.Context, event rpc.Axe
 			return fmt.Errorf("cannot update parent alarms: %w", err)
 		}
 
+		err = p.updateParentTags(ctx, eventRes.Alarm.Value.Parents, eventRes.NewExternalTags)
+		if err != nil {
+			return fmt.Errorf("cannot update parent alarms: %w", err)
+		}
+
 		err = p.adapter.UpdateLastEventDate(ctx, eventRes.Alarm.Value.Parents, event.Parameters.Timestamp)
 		if err != nil {
 			return fmt.Errorf("cannot update parent alarms: %w", err)
@@ -224,6 +229,10 @@ func (p *metaAlarmPostProcessor) processChild(ctx context.Context, event rpc.Axe
 }
 
 func (p *metaAlarmPostProcessor) incrementParentEventsCount(ctx context.Context, parentIDs []string, count types.CpsNumber) error {
+	if len(parentIDs) == 0 {
+		return nil
+	}
+
 	_, err := p.alarmCollection.UpdateMany(
 		ctx,
 		bson.M{
@@ -231,6 +240,70 @@ func (p *metaAlarmPostProcessor) incrementParentEventsCount(ctx context.Context,
 			"v.resolved": nil,
 		},
 		bson.M{"$inc": bson.M{"v.events_count": count}},
+	)
+
+	return err
+}
+
+func (p *metaAlarmPostProcessor) updateParentTags(ctx context.Context, parentIDs, externalTags []string) error {
+	if len(externalTags) == 0 || len(parentIDs) == 0 {
+		return nil
+	}
+
+	_, err := p.alarmCollection.UpdateMany(
+		ctx,
+		bson.M{
+			"d":          bson.M{"$in": parentIDs},
+			"v.resolved": nil,
+			"copy_ctags": true,
+		},
+		[]bson.M{
+			{"$set": bson.M{
+				"etags": bson.M{"$setUnion": bson.A{
+					bson.M{"$ifNull": bson.A{"$etags", bson.A{}}},
+					bson.M{"$cond": bson.M{
+						"if": bson.M{"$eq": bson.A{
+							bson.M{"$ifNull": bson.A{"$filter_ctags", bson.A{}}},
+							bson.A{},
+						}},
+						"then": externalTags,
+						"else": bson.M{"$map": bson.M{
+							"in": "$$this.tag",
+							"input": bson.M{"$filter": bson.M{
+								"input": bson.M{"$map": bson.M{
+									"input": externalTags,
+									"in": bson.M{
+										"tag": "$$this",
+										"label": bson.M{"$arrayElemAt": bson.A{
+											bson.M{"$split": bson.A{"$$this", ": "}},
+											0,
+										}},
+									},
+								}},
+								"as": "tag",
+								"cond": bson.M{"$ne": bson.A{
+									bson.M{"$filter": bson.M{
+										"input": "$filter_ctags",
+										"as":    "label",
+										"cond": bson.M{"$eq": bson.A{
+											"$$tag.label",
+											"$$label",
+										}},
+									}},
+									bson.A{},
+								}},
+							}},
+						}},
+					}},
+				}},
+			}},
+			{"$set": bson.M{
+				"tags": bson.M{"$setUnion": bson.A{
+					bson.M{"$ifNull": bson.A{"$etags", bson.A{}}},
+					bson.M{"$ifNull": bson.A{"$itags", bson.A{}}},
+				}},
+			}},
+		},
 	)
 
 	return err
@@ -380,7 +453,7 @@ func (p *metaAlarmPostProcessor) updateParentState(ctx context.Context, childAla
 						return nil
 					}
 
-					setUpdate, pushUpdate, err := updateMetaAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastUpdateDate,
+					setUpdate, pushUpdate, err := updateMetaAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastStateOrStatusUpdateDate,
 						newState, parentAlarm.Alarm.Value.Output, p.alarmStatusService)
 					if err != nil {
 						return fmt.Errorf("cannot update parent: %w", err)
@@ -512,7 +585,7 @@ func (p *metaAlarmPostProcessor) getChildEventByMetaAlarmEvent(
 	}
 
 	if event.Parameters.Duration != nil {
-		seconds, err := event.Parameters.Duration.To("s")
+		seconds, err := event.Parameters.Duration.To(datetime.DurationUnitSecond)
 		if err == nil {
 			childEvent.Duration = types.CpsNumber(seconds.Value)
 		}
