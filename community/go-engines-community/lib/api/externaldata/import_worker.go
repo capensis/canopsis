@@ -608,7 +608,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 
 	var columns []string
 	var columnsWithID []string
-	var columnLengths []int
+	var columnLengths map[string]int
 	i := 0
 	rows := make([][]any, 0, canopsis.DefaultBulkSize)
 	for {
@@ -636,9 +636,9 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 				return nil, err.Error(), nil
 			}
 
-			columnLengths = make([]int, len(columns))
-			for j := range columns {
-				columnLengths[j] = postgresDefaultColumnLen
+			columnLengths = make(map[string]int, len(columns))
+			for _, c := range columns {
+				columnLengths[c] = postgresDefaultColumnLen
 			}
 
 			err = w.createTable(ctx, job, columns, columnLengths)
