@@ -1,10 +1,11 @@
-package externaldata
+package externaldatatable
 
 import (
 	"cmp"
 	"context"
 	"errors"
 	"fmt"
+	"sort"
 	"strconv"
 	"strings"
 
@@ -19,12 +20,20 @@ import (
 	"github.com/jackc/pgx/v5/pgconn"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 const (
 	pgErrCodeDuplicateTable     = "42P07"
 	mongoErrCodeNamespaceExists = 48
+
+	limitLinkedRules = 11
 )
+
+var linkedCollections = []string{
+	mongo.EventFilterRuleCollection,
+	mongo.LinkRuleMongoCollection,
+}
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
@@ -40,18 +49,25 @@ type Store interface {
 }
 
 func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider) Store {
+	linkedDbCollections := make([]mongo.DbCollection, len(linkedCollections))
+	for i, c := range linkedCollections {
+		linkedDbCollections[i] = dbClient.Collection(c)
+	}
+
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.ExternalDataTableCollection),
 		pgPoolProvider:        pgPoolProvider,
 		defaultSearchByFields: []string{"name", "description"},
 		defaultSortBy:         "name",
+		linkedDbCollections:   linkedDbCollections,
 	}
 }
 
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
+	linkedDbCollections   []mongo.DbCollection
 	pgPoolProvider        postgres.PoolProvider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -64,10 +80,54 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
+	project := make([]bson.M, 0)
+	if r.WithFlags {
+		for _, c := range s.linkedDbCollections {
+			project = append(project,
+				bson.M{"$lookup": bson.M{
+					"from":         c.Name(),
+					"localField":   "_id",
+					"foreignField": "external_data.table",
+					"as":           "linked_rules." + c.Name(),
+					"pipeline": []bson.M{
+						{"$limit": limitLinkedRules},
+						{"$project": bson.M{
+							"name": 1,
+						}},
+					},
+				}},
+				bson.M{"$unwind": bson.M{"path": "$linked_rules." + c.Name(), "preserveNullAndEmptyArrays": true}},
+				bson.M{"$sort": bson.M{"linked_rules." + c.Name() + ".name": 1}},
+				bson.M{"$group": bson.M{
+					"_id":  "$_id",
+					"data": bson.M{"$first": "$$ROOT"},
+					"tmp_linked_rules": bson.M{"$push": bson.M{"$cond": bson.M{
+						"if":   "$linked_rules." + c.Name(),
+						"then": "$linked_rules." + c.Name(),
+						"else": "$$REMOVE",
+					}}},
+				}},
+				bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+					"$data",
+					bson.M{"linked_rules": bson.M{"$mergeObjects": bson.A{
+						"$data.linked_rules",
+						bson.M{c.Name(): "$tmp_linked_rules"},
+					}}},
+				}}}},
+			)
+		}
+	}
+
+	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	if len(project) > 0 {
+		project = append(project, sort)
+	}
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+		sort,
+		project,
 	))
 
 	if err != nil {
@@ -215,8 +275,15 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 		}
 
 		res, err = s.FindOne(ctx, r.ID)
+		if err != nil {
+			return err
+		}
 
-		return err
+		if oldTable.Name != res.Name {
+			return s.updateLinkedModels(ctx, res.ID, res.getDBTableName())
+		}
+
+		return nil
 	})
 
 	return res, err
@@ -239,6 +306,19 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 
 		if table.FromConfig {
 			return ErrConfigNotDeletable
+		}
+
+		for _, c := range s.linkedDbCollections {
+			err = c.
+				FindOne(ctx, bson.M{"external_data.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
+				Err()
+			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return err
+			}
+
+			if err == nil {
+				return ErrLinkedNotDeletable
+			}
 		}
 
 		// required to get the author in action log listener.
@@ -743,4 +823,143 @@ func (s *store) transformPostgresResToData(vals []any, columns []string) (map[st
 	}
 
 	return res, nil
+}
+
+func (s *store) updateLinkedModels(ctx context.Context, tableID, tableName string) error {
+	for _, c := range s.linkedDbCollections {
+		_, err := c.UpdateMany(ctx,
+			bson.M{"external_data.table": tableID},
+			bson.M{"$set": bson.M{"external_data.$[exdata].table_name": tableName}},
+			options.Update().SetArrayFilters(options.ArrayFilters{
+				Filters: []interface{}{
+					bson.M{"exdata.table": tableID},
+				},
+			}),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters, dbCollection mongo.DbCollection) ([]externaldata.RefParameters, error) {
+	ids := make([]string, 0, len(r))
+	for _, params := range r {
+		if params.Type == externaldata.RefTypeTable {
+			ids = append(ids, params.Table)
+		}
+	}
+
+	cursor, err := dbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	if err != nil {
+		return nil, err
+	}
+
+	defer cursor.Close(ctx)
+	tables := make(map[string]externaldata.Table, len(ids))
+	for cursor.Next(ctx) {
+		t := externaldata.Table{}
+		err = cursor.Decode(&t)
+		if err != nil {
+			return nil, err
+		}
+
+		tables[t.ID] = t
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	res := make([]externaldata.RefParameters, len(r))
+	valErrMsgs := make(map[string]string)
+	for i, params := range r {
+		if params.Type != externaldata.RefTypeTable {
+			res[i] = params
+			continue
+		}
+
+		t, ok := tables[params.Table]
+		if !ok {
+			valErrMsgs["external_data."+strconv.Itoa(i)+".table"] = "Table doesn't exist."
+			continue
+		}
+
+		if len(t.ColumnTypes) == 0 {
+			valErrMsgs["external_data."+strconv.Itoa(i)+".table"] = "Table is empty."
+			continue
+		}
+
+		columns := make([]string, len(t.ColumnTypes))
+		j := 0
+		for c := range t.ColumnTypes {
+			columns[j] = c
+			j++
+		}
+
+		sort.Strings(columns)
+		if _, ok = t.ColumnTypes[params.SortBy]; params.SortBy != "" && !ok {
+			valErrMsgs["external_data."+strconv.Itoa(i)+".sort_by"] = "SortBy must be one of [" + strings.Join(columns, " ") + "]."
+		}
+
+		for f := range params.Select {
+			if _, ok = t.ColumnTypes[f]; !ok {
+				valErrMsgs["external_data."+strconv.Itoa(i)+".select."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
+			}
+		}
+
+		for f := range params.Regexp {
+			if _, ok = t.ColumnTypes[f]; !ok {
+				valErrMsgs["external_data."+strconv.Itoa(i)+".regexp."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
+			}
+		}
+
+		if len(valErrMsgs) > 0 {
+			continue
+		}
+
+		params.TableName = t.GetDBName()
+		params.TableType = &t.Type
+		params.TableColumns = columns
+		res[i] = params
+	}
+
+	if len(valErrMsgs) > 0 {
+		return nil, common.NewValidationErrors(valErrMsgs)
+	}
+
+	return res, nil
+}
+
+func GetRefParametersLookups() []bson.M {
+	return []bson.M{
+		{"$unwind": bson.M{
+			"path":                       "$external_data",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "exdata_index",
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.ExternalDataTableCollection,
+			"localField":   "external_data.table",
+			"foreignField": "_id",
+			"as":           "external_data.table",
+		}},
+		{"$unwind": bson.M{"path": "$external_data.table", "preserveNullAndEmptyArrays": true}},
+		{"$sort": bson.M{"exdata_index": 1}},
+		{"$group": bson.M{
+			"_id":  "$_id",
+			"data": bson.M{"$first": "$$ROOT"},
+			"external_data": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$external_data.reference",
+				"then": "$external_data",
+				"else": "$$REMOVE",
+			}}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$data",
+			bson.M{"external_data": "$external_data"},
+		}}}},
+	}
 }
