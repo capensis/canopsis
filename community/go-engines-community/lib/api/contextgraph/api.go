@@ -27,7 +27,7 @@ type api struct {
 	jobPublisher  workers.JobPublisher
 	dir           string
 	filePattern   string
-	maxImportSize int64
+	maxImportSize uint64
 	logger        zerolog.Logger
 }
 
@@ -35,7 +35,7 @@ func NewApi(
 	conf config.CanopsisConf,
 	reporter StatusReporter,
 	jobPublisher workers.JobPublisher,
-	maxImportSize int64,
+	maxImportSize uint64,
 	logger zerolog.Logger,
 ) API {
 	a := &api{
@@ -72,7 +72,7 @@ func (a *api) ImportAll(c *gin.Context) {
 		return
 	}
 
-	if a.maxImportSize > 0 && len(raw) > int(a.maxImportSize) {
+	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
 		return
 	}
@@ -108,7 +108,7 @@ func (a *api) ImportPartial(c *gin.Context) {
 		return
 	}
 
-	if a.maxImportSize > 0 && len(raw) > int(a.maxImportSize) {
+	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
 		return
 	}

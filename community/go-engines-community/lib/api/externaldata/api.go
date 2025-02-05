@@ -31,7 +31,7 @@ type API interface {
 	GetSchema(c *gin.Context)
 }
 
-func NewAPI(store Store, importWorker ImportWorker, maxFileSize int64, logger zerolog.Logger) API {
+func NewAPI(store Store, importWorker ImportWorker, maxFileSize uint64, logger zerolog.Logger) API {
 	return &api{
 		store:        store,
 		importWorker: importWorker,
@@ -43,7 +43,7 @@ func NewAPI(store Store, importWorker ImportWorker, maxFileSize int64, logger ze
 type api struct {
 	store        Store
 	importWorker ImportWorker
-	maxFileSize  int64
+	maxFileSize  uint64
 	logger       zerolog.Logger
 }
 
@@ -184,7 +184,7 @@ func (a *api) Import(c *gin.Context) {
 
 	defer f.Close()
 	valErrors := make(map[string]string)
-	if a.maxFileSize > 0 && fh.Size > a.maxFileSize {
+	if a.maxFileSize > 0 && uint64(fh.Size) > a.maxFileSize {
 		valErrors["file"] = fmt.Sprintf("File size %d exceeds limit %d", fh.Size, a.maxFileSize)
 	}
 
@@ -501,14 +501,16 @@ func (a *api) GetSchema(c *gin.Context) {
 	}
 
 	fields := make([]string, len(t.ColumnTypes))
-	i := 0
+	i, n := 0, len(t.ColumnTypes)
 	for f := range t.ColumnTypes {
 		fields[i] = f
 		i++
+		n += len(f)
 	}
 
 	sort.Strings(fields)
 	b := &bytes.Buffer{}
+	b.Grow(n)
 	w := csv.NewWriter(b)
 	err = w.Write(fields)
 	if err != nil {
