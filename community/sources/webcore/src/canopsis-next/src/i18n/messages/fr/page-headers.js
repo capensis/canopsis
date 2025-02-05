@@ -54,7 +54,7 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: {
     title: 'Règles de déclaration des tickets',
-    message: 'Permet de définir les règles de création de tickets d\'incidents à destination de plusieurs outils de gestion d\'incidents. Ces tickets sont créés par un pilote depuis la WebUI, et Canopsis se charge ensuite de contacter l\'outil de gestion d\'incident pour l\'enregistrement du ticket.\n',
+    message: 'Permet de définir les règles de création de tickets d\'incidents à destination de plusieurs outils de gestion d\'incidents. Ces tickets sont créés par un pilote depuis la WebUI, et Canopsis se charge ensuite de contacter l\'outil de gestion d\'incident pour l\'enregistrement du ticket.',
 
   },
 

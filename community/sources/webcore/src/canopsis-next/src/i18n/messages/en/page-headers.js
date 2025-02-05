@@ -54,12 +54,12 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: {
     title: 'Ticket declaration rules',
-    // message: '', // TODO: need to put description
+    message: 'Allows you to define the rules for creating incident tickets for multiple incident management tools. These tickets are created by a driver from the WebUI, and Canopsis then takes care of contacting the incident management tool to record the ticket.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.linkRule]: {
     title: 'Links generator',
-    // message: '', // TODO: need to put description
+    message: 'Allows you to define the rules for associating links with alarms',
   },
 
   /**
@@ -71,9 +71,11 @@ export default {
   },
   [USER_PERMISSIONS.technical.role]: {
     title: 'Roles',
+    message: 'Canopsis User Role Management',
   },
   [USER_PERMISSIONS.technical.user]: {
     title: 'Users',
+    message: 'Canopsis User Management',
   },
 
   /**
@@ -91,11 +93,9 @@ export default {
   /**
    * Admin general
    */
-  [USER_PERMISSIONS.technical.eventsRecord]: {
-    title: 'Events recordings',
-  },
   [USER_PERMISSIONS.technical.parameters]: {
     title: 'Parameters',
+    message: 'Various and varied parameters of the Canopsis interface',
   },
   [USER_PERMISSIONS.technical.healthcheck]: {
     title: 'Healthcheck',
@@ -107,31 +107,31 @@ export default {
   },
   [USER_PERMISSIONS.technical.kpi]: {
     title: 'KPI',
-    // message: '', // TODO: add correct message
+    message: 'Allows you to present indicators in the form of graphs',
   },
   [USER_PERMISSIONS.technical.map]: {
     title: 'Maps',
-    // message: '', // TODO: add correct message
+    message: 'Module to define and display maps (geographic, logical, mermaid, etc.) via the "Map" widget.',
   },
   [USER_PERMISSIONS.technical.maintenance]: {
     title: 'Maintenance mode',
-    // message: '', // TODO: add correct message
+    message: 'Switches Canopsis to maintenance mode. All users except administrators will be logged out.',
   },
   [USER_PERMISSIONS.technical.tag]: {
     title: 'Tags management',
-    // message: '', // TODO: add correct message
+    message: 'Allows you to define rules for assigning tags to alarms',
   },
   [USER_PERMISSIONS.technical.storageSettings]: {
     title: 'Storage settings',
-    // message: '', // TODO: add correct message
+    message: 'Allows you to define data retention policies.',
   },
   [USER_PERMISSIONS.technical.stateSetting]: {
     title: 'State settings',
-    // message: '', // TODO: add correct message
+    message: 'Allows you to define methods for calculating the state/severity of components and/or services.\nUseful for modeling dependency trees.',
   },
   [USER_PERMISSIONS.technical.eventsRecord]: {
     title: 'Events records',
-    // message: '', // TODO: add correct message
+    message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
   },
 
   /**
@@ -159,6 +159,6 @@ export default {
    */
   [USER_PERMISSIONS.technical.profile.theme]: {
     title: 'Theme',
-    // message: '', // TODO: add correct message
+    message: 'Allows you to define graphical themes for the GUI.',
   },
 };
