@@ -3,12 +3,12 @@ package playlist
 import (
 	"cmp"
 	"context"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -16,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const permissionPrefix = "Rights on playlist :"
+const PermissionGroupPlaylist = "commonviews_playlist"
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
@@ -223,9 +223,13 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 func (s *store) createPermission(ctx context.Context, userID, playlistID, playlistName string) error {
 	_, err := s.permissionCollection.InsertOne(ctx, bson.M{
 		"_id":         playlistID,
-		"name":        playlistID,
-		"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+		"title":       playlistName,
+		"description": playlistName,
 		"type":        securitymodel.ObjectTypeRW,
+		"groups": []string{
+			view.PermissionGroupCommonViews,
+			PermissionGroupPlaylist,
+		},
 	})
 	if err != nil {
 		return err
@@ -268,7 +272,8 @@ func (s *store) updatePermission(ctx context.Context, playlistID, playlistName s
 		bson.M{"_id": playlistID},
 		bson.M{
 			"$set": bson.M{
-				"description": fmt.Sprintf("%s %s", permissionPrefix, playlistName),
+				"title":       playlistName,
+				"description": playlistName,
 			},
 		},
 	)
