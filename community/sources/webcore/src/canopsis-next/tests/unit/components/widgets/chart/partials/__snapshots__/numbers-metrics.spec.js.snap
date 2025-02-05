@@ -85,3 +85,18 @@ exports[`numbers-metrics Renders \`numbers-metrics\` with default props 1`] = `
   </div>
 </div>
 `;
+
+exports[`numbers-metrics Renders \`numbers-metrics\` with hide actions 1`] = `
+<div
+  class="layout kpi-widget column align-center"
+>
+  <h4
+    class="kpi-widget__title"
+  >
+  </h4>
+  <div
+    class="layout kpi-widget__list wrap"
+  />
+  <!---->
+</div>
+`;

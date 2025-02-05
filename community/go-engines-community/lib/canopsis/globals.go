@@ -149,4 +149,11 @@ const (
 	DefaultFlushInterval     = time.Second * 5
 
 	FacetLimit = 1000
+
+	SubDirUpload   = "upload-files"
+	SubDirIcons    = "icons"
+	SubDirExport   = "export-files"
+	SubDirImport   = "import-files"
+	SubDirJunit    = "junit-files"
+	SubDirJunitAPI = "junit-api-files"
 )

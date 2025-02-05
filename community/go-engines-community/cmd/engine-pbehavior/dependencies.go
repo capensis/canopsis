@@ -80,10 +80,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			runInfoPeriodicalWorker.Work(ctx)
 			pbhService := pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
-			now := time.Now().In(timezoneConfigProvider.Get().Location)
+			now := time.Now()
 			newSpan := timespan.New(now, now.Add(frameDuration))
-
-			_, count, err := pbhService.Compute(ctx, newSpan)
+			_, count, err := pbhService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -177,6 +176,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Publisher:                amqpChannel,
 			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
+			TimezoneConfigProvider:   timezoneConfigProvider,
 			Logger:                   logger,
 		},
 		logger,

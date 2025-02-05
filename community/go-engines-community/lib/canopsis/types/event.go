@@ -30,7 +30,6 @@ const (
 	SourceTypeComponent = "component"
 	SourceTypeConnector = "connector"
 	SourceTypeService   = "service"
-	SourceTypeMetaAlarm = "metaalarm"
 )
 
 // Event types.
@@ -68,11 +67,6 @@ const (
 	EventTypeMetaAlarm               = "metaalarm"
 	EventTypeMetaAlarmAttachChildren = "metaalarmattachchildren"
 	EventTypeMetaAlarmDetachChildren = "metaalarmdetachchildren"
-	EventTypeMetaAlarmUngroup        = "metaalarm_ungroup"
-	EventTypeMetaAlarmUpdate         = "metaalarm_update"
-	EventTypeManualMetaAlarmGroup    = "manual_metaalarm_group"
-	EventTypeManualMetaAlarmUngroup  = "manual_metaalarm_ungroup"
-	EventTypeManualMetaAlarmUpdate   = "manual_metaalarm_update"
 
 	// Following event types are used to add manual instruction execution to alarm steps.
 	EventTypeInstructionStarted   = "instructionstarted"
@@ -163,11 +157,11 @@ type Event struct {
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id,omitempty" json:"metaalarm_rule_id,omitempty"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path,omitempty" json:"metaalarm_value_path,omitempty"`
 
-	MetaAlarmParents  []string `bson:"ma_parents,omitempty" json:"ma_parents,omitempty"`
-	MetaAlarmChildren []string `bson:"ma_children,omitempty" json:"ma_children,omitempty"`
+	MetaAlarmParents  []string              `bson:"ma_parents,omitempty" json:"ma_parents,omitempty"`
+	MetaAlarmChildren []string              `bson:"ma_children,omitempty" json:"ma_children,omitempty"`
+	MetaAlarmTags     *CorrelationRuleTags  `bson:"ma_tags,omitempty" json:"ma_tags,omitempty"`
+	MetaAlarmInfos    []CorrelationRuleInfo `bson:"ma_infos,omitempty" json:"ma_infos,omitempty"`
 
-	// ManualMetaAlarmAutoResolve is used for manual meta alarms.
-	ManualMetaAlarmAutoResolve bool `bson:"manual_meta_alarm_auto_resolve,omitempty" json:"manual_meta_alarm_auto_resolve,omitempty"`
 	// DisplayName is used for manual meta alarms.
 	DisplayName string `bson:"display_name,omitempty" json:"display_name,omitempty"`
 
@@ -308,7 +302,7 @@ func (e *Event) IsValid() error {
 	switch e.SourceType {
 	case SourceTypeConnector:
 		/*do nothing*/
-	case SourceTypeComponent, SourceTypeMetaAlarm, SourceTypeService:
+	case SourceTypeComponent, SourceTypeService:
 		if e.Component == "" {
 			return errors.New("missing component")
 		}
@@ -574,11 +568,6 @@ func isValidEventType(t string) bool {
 		EventTypeMetaAlarm,
 		EventTypeMetaAlarmAttachChildren,
 		EventTypeMetaAlarmDetachChildren,
-		EventTypeMetaAlarmUngroup,
-		EventTypeMetaAlarmUpdate,
-		EventTypeManualMetaAlarmGroup,
-		EventTypeManualMetaAlarmUngroup,
-		EventTypeManualMetaAlarmUpdate,
 		EventTypeRecomputeEntityService,
 		EventTypeEntityUpdated,
 		EventTypeEntityToggled,

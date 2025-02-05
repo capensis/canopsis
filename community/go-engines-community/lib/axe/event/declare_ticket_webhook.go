@@ -55,9 +55,10 @@ func (p *declareTicketWebhookProcessor) Process(ctx context.Context, event rpc.A
 		event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.ticket":  newTicketStepQuery,
-			"v.tickets": addTicketUpdateQuery(newTicketStepQuery),
-			"v.steps":   addStepUpdateQuery(newTicketStepQuery),
+			"v.ticket":           newTicketStepQuery,
+			"v.tickets":          addTicketUpdateQuery(newTicketStepQuery),
+			"v.steps":            addStepUpdateQuery(newTicketStepQuery),
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 	}
 

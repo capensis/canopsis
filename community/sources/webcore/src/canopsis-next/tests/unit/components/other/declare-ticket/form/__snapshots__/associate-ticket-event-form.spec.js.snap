@@ -8,7 +8,6 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
     autofocus=""
     label="System name"
     name="system_name"
-    value="System name"
   />
   <div
     class="layout"
@@ -17,7 +16,7 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
       class="flex mr-3 xs6"
     >
       <declare-ticket-rule-ticket-id-text-field-stub
-        name="ticket_id"
+        name="ticket"
         required="true"
         value="Ticket ID"
       />
@@ -31,6 +30,9 @@ exports[`associate-ticket-event-form Renders \`associate-ticket-event-form\` wit
       />
     </div>
   </div>
+  <declare-ticket-rule-ticket-url-title-field-stub
+    value="Ticket URL"
+  />
   <declare-ticket-rule-ticket-custom-fields-field-stub
     name="declare_ticket"
     value="[object Object]"

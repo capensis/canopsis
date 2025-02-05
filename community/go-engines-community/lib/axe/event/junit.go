@@ -54,7 +54,8 @@ func (p *junitProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	newStepQuery := stepUpdateQueryWithInPbhInterval(alarmStepType, event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.steps": addStepUpdateQuery(newStepQuery),
+			"v.steps":            addStepUpdateQuery(newStepQuery),
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

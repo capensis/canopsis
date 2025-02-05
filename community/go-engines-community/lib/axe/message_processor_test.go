@@ -315,7 +315,7 @@ func benchmarkMessageProcessor(
 	pbhLockClient := redis.NewLockClient(pbhRedisSession)
 	pbhStore := pbehavior.NewStore(redisClient, json.NewEncoder(), json.NewDecoder())
 	_, _, err = pbehavior.NewService(dbClient, pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder()), pbhStore, pbhLockClient, logger).
-		Compute(ctx, timespan.New(time.Now(), time.Now().Add(time.Hour)))
+		Compute(ctx, timespan.New(time.Now(), time.Now().Add(time.Hour)), time.UTC)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}

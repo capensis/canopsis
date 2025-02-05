@@ -6,6 +6,8 @@ import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 import request from '@/services/request';
 import localStorageService from '@/services/local-storage';
 
+import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
+
 const types = {
   LOGIN: 'LOGIN',
   LOGIN_COMPLETED: 'LOGIN_COMPLETED',
@@ -28,6 +30,7 @@ export default {
     isLoggedIn: state => state.isLoggedIn,
     currentUser: state => state.currentUser,
     currentUserPermissionsById: state => keyBy(state.currentUser.permissions, '_id'),
+    currentUserViewPermissionsByViewId: state => viewPermissionsGroupedPermissions(state.currentUser.permissions),
     pending: state => state.pending,
   },
   mutations: {
@@ -116,14 +119,14 @@ export default {
         if (redirect) {
           await redirect();
         }
-
+      } catch (err) {
+        console.error(err);
+      } finally {
         /**
          * We've added timeout for the correct layout padding displaying with transition.
          * And we've added location.reload for refreshing every js objects (store, components states and etc.)
          */
         setTimeout(() => window.location.reload(), VUETIFY_ANIMATION_DELAY);
-      } catch (err) {
-        console.error(err);
       }
     },
 

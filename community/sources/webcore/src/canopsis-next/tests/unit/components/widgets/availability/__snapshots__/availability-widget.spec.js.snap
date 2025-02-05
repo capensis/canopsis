@@ -8,6 +8,7 @@ exports[`availability-widget Renders \`availability-widget\` with default props 
     class="px-3 pt-3"
     columns="[object Object],[object Object]"
     maxvaluefilterseconds="86400"
+    showfilter="true"
     widgetfilters=""
     widgetid="Availability_id"
   />
