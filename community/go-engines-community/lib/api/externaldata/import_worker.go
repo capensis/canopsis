@@ -34,7 +34,7 @@ const (
 )
 
 type ImportWorker interface {
-	CreateJob(ctx context.Context, id string, delimiter rune, f multipart.File, fh *multipart.FileHeader) (_ ImportJob, resErr error)
+	CreateJob(ctx context.Context, id string, delimiter rune, f multipart.File) (_ ImportJob, resErr error)
 	ProcessJob(ctx context.Context, id string) error
 	GetJob(ctx context.Context, id string) (ImportJob, error)
 	CompleteJob(ctx context.Context, id string, columnTypes map[string]int) (bool, error)
@@ -78,7 +78,7 @@ type importWorker struct {
 	logger                  zerolog.Logger
 }
 
-func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune, f multipart.File, fh *multipart.FileHeader) (_ ImportJob, resErr error) {
+func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune, f multipart.File) (_ ImportJob, resErr error) {
 	defer func() {
 		err := f.Close()
 		if err != nil && resErr == nil {
@@ -178,7 +178,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 
 	g, ctx := errgroup.WithContext(ctx)
 	done := make(chan struct{})
-	g.Go(func() error {
+	g.Go(func() (resErr error) {
 		defer close(done)
 		rmFile := false
 		f, err := os.Open(job.Filepath)
@@ -202,13 +202,13 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 		r := csv.NewReader(f)
 		r.Comma = job.Delimiter
 		r.ReuseRecord = true
-		var columns []string
+		var columnLengths map[string]int
 		var failReason string
 		switch job.Type {
 		case TypeMongoDB:
-			columns, failReason, err = w.writeToMongo(ctx, job, r)
+			columnLengths, failReason, err = w.writeToMongo(ctx, job, r)
 		case TypePostgreSQL:
-			columns, failReason, err = w.writeToPostgres(ctx, job, r)
+			columnLengths, failReason, err = w.writeToPostgres(ctx, job, r)
 		}
 
 		if err != nil {
@@ -218,8 +218,8 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 		var update bson.M
 		if failReason == "" {
 			update = bson.M{
-				"status":  ImportStatusSucceeded,
-				"columns": columns,
+				"status":         ImportStatusSucceeded,
+				"column_lengths": columnLengths,
 			}
 		} else {
 			w.logger.Err(errors.New(failReason)).Str("job", job.ID).Msg("failed to import external data")
@@ -320,31 +320,40 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 		return false, nil
 	}
 
-	for _, col := range job.Columns {
+	valErrMsgs := make(map[string]string)
+	for col := range job.ColumnLengths {
 		t, ok := columnTypes[col]
 		if !ok {
-			return false, common.NewValidationError("columns."+col, "Column is required.")
+			valErrMsgs["column_types."+col] = col + " is missing."
+			continue
 		}
 
 		switch t {
 		case ColumnTypeNoType, ColumnTypeFilter, ColumnTypeContext:
 		default:
-			return false, common.NewValidationError("columns."+col, "Column must be one of ["+
-				strconv.Itoa(ColumnTypeNoType)+" "+
-				strconv.Itoa(ColumnTypeFilter)+" "+
-				strconv.Itoa(ColumnTypeContext)+
-				"].")
+			valErrMsgs["column_types."+col] = col + " must be one of [" +
+				strconv.Itoa(ColumnTypeNoType) + " " +
+				strconv.Itoa(ColumnTypeFilter) + " " +
+				strconv.Itoa(ColumnTypeContext) +
+				"]."
 		}
 	}
 
-	if len(columnTypes) > len(job.Columns) {
-		return false, common.NewValidationError("columns", "Columns is invalid.")
+	if len(valErrMsgs) > 0 {
+		return false, common.NewValidationErrors(valErrMsgs)
+	}
+
+	if len(columnTypes) > len(job.ColumnLengths) {
+		return false, common.NewValidationError("column_types", "ColumnTypes is invalid.")
 	}
 
 	table := Document{}
 	err = w.dbCollection.FindOneAndUpdate(ctx,
 		bson.M{"_id": job.ExternalDataTable},
-		bson.M{"$set": bson.M{"columns": columnTypes}},
+		bson.M{"$set": bson.M{
+			"column_types":   columnTypes,
+			"column_lengths": job.ColumnLengths,
+		}},
 	).Decode(&table)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -520,7 +529,7 @@ func (w *importWorker) DeleteOldJobs(ctx context.Context) {
 	}
 }
 
-func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) ([]string, string, error) {
+func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) (map[string]int, string, error) {
 	var columns []string
 	i := 0
 	docs := make([]any, 0, canopsis.DefaultBulkSize)
@@ -583,10 +592,15 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 		}
 	}
 
-	return columns, "", nil
+	columnLengths := make(map[string]int, len(columns))
+	for _, c := range columns {
+		columnLengths[c] = postgresDefaultColumnLen
+	}
+
+	return columnLengths, "", nil
 }
 
-func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) ([]string, string, error) {
+func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) (map[string]int, string, error) {
 	pgPool, err := w.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return nil, "", fmt.Errorf("failed to get postgres pool: %w", err)
@@ -594,7 +608,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 
 	var columns []string
 	var columnsWithID []string
-	var maxColumnValLens []int
+	var columnLengths map[string]int
 	i := 0
 	rows := make([][]any, 0, canopsis.DefaultBulkSize)
 	for {
@@ -622,12 +636,12 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 				return nil, err.Error(), nil
 			}
 
-			maxColumnValLens = make([]int, len(columns))
-			for j := range columns {
-				maxColumnValLens[j] = postgresDefaultColumnLen
+			columnLengths = make(map[string]int, len(columns))
+			for _, c := range columns {
+				columnLengths[c] = postgresDefaultColumnLen
 			}
 
-			err = w.createTable(ctx, job, columns, maxColumnValLens)
+			err = w.createTable(ctx, job, columns, columnLengths)
 			if err != nil {
 				return nil, "", err
 			}
@@ -639,7 +653,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 			return nil, "invalid record " + strconv.Itoa(i) + ": not match fields", nil
 		}
 
-		maxColumnValLens, err = w.alterColumnLengths(ctx, getPostgresTableName(job.Table), columns, maxColumnValLens, record)
+		columnLengths, err = w.alterColumnLengths(ctx, getPostgresTableName(job.Table), columns, columnLengths, record)
 		if err != nil {
 			return nil, "", err
 		}
@@ -669,7 +683,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 		}
 	}
 
-	return columns, "", nil
+	return columnLengths, "", nil
 }
 
 func (w *importWorker) validateColumns(columns []string) error {
@@ -682,7 +696,7 @@ func (w *importWorker) validateColumns(columns []string) error {
 	return nil
 }
 
-func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns []string, columnLens []int) error {
+func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns []string, columnLens map[string]int) error {
 	switch job.Type {
 	case TypeMongoDB:
 		// clean collection if job is retried
@@ -696,7 +710,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 		sql := "CREATE TABLE IF NOT EXISTS " + getPostgresTableName(job.Table) + " ( " +
 			idColumnName + " VARCHAR(" + strconv.Itoa(uuidLen) + ") PRIMARY KEY, "
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + strconv.Itoa(columnLens[i]) + ") "
+			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + strconv.Itoa(columnLens[field]) + ") "
 			if i != len(columns)-1 {
 				sql += ","
 			}
@@ -755,14 +769,14 @@ func (w *importWorker) alterColumnLengths(
 	ctx context.Context,
 	tableName string,
 	columns []string,
-	columnLens []int,
+	columnLens map[string]int,
 	record []string,
-) ([]int, error) {
-	updatedLengths := make(map[string]int, len(columns))
+) (map[string]int, error) {
+	updatedLengths := make(map[string]int)
 	for i, v := range record {
-		if len(v) > columnLens[i] {
-			columnLens[i] = len(v)
-			updatedLengths[columns[i]] = columnLens[i]
+		if len(v) > columnLens[columns[i]] {
+			columnLens[columns[i]] = len(v)
+			updatedLengths[columns[i]] = columnLens[columns[i]]
 		}
 	}
 

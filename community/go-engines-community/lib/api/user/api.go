@@ -181,7 +181,7 @@ func (a *api) Delete(c *gin.Context) {
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
 			return
 		}
