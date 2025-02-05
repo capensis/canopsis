@@ -14,9 +14,6 @@
       :min-interval-date="minAvailableDate"
       :show-interval="showInterval"
       :show-filter="showFilter"
-      :filter-disabled="filterDisabled"
-      :filter-addable="filterAddable"
-      :filter-editable="filterEditable"
       class="mx-3"
       @update:filters="updateSelectedFilter"
       @update:interval="updateInterval"
@@ -96,18 +93,6 @@ export default {
       default: false,
     },
     showFilter: {
-      type: Boolean,
-      default: false,
-    },
-    filterAddable: {
-      type: Boolean,
-      default: false,
-    },
-    filterEditable: {
-      type: Boolean,
-      default: false,
-    },
-    filterDisabled: {
       type: Boolean,
       default: false,
     },

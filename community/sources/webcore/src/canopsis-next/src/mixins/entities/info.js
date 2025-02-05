@@ -1,11 +1,12 @@
 import { createNamespacedHelpers } from 'vuex';
-import { isMatch } from 'lodash';
+import { isMatch, isArray } from 'lodash';
 
 import { DEFAULT_APP_TITLE } from '@/config';
 import { CANOPSIS_EDITION, ROUTES_NAMES, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
 import { sanitizeHtml } from '@/helpers/html';
 import { compile } from '@/helpers/handlebars';
+import { groupedPermissionToPermission } from '@/helpers/permission';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
@@ -60,7 +61,8 @@ export const entitiesInfoMixin = {
     ...mapActions(['fetchAppInfo', 'updateUserInterface']),
 
     checkAppInfoAccessByPermission(permission) {
-      const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[permission];
+      const preparedPermission = isArray(permission) ? groupedPermissionToPermission(permission) : permission;
+      const permissionAppInfoRules = USER_PERMISSIONS_TO_PAGES_RULES[preparedPermission];
 
       if (!permissionAppInfoRules) {
         return true;
@@ -71,7 +73,7 @@ export const entitiesInfoMixin = {
         stack: this.stack,
       };
 
-      return isMatch(appInfo, USER_PERMISSIONS_TO_PAGES_RULES[permission]);
+      return isMatch(appInfo, permissionAppInfoRules);
     },
 
     async setTitle() {

@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES, ROUTES_NAMES, VIEW_USER_PERMISSIONS_NAMES } from '@/constants';
 
 import { checkUserAccess } from '@/helpers/entities/permissions/list';
 
@@ -8,7 +8,7 @@ const { mapGetters, mapActions } = createNamespacedHelpers('auth');
 
 export const authMixin = {
   computed: {
-    ...mapGetters(['isLoggedIn', 'currentUser', 'currentUserPermissionsById']),
+    ...mapGetters(['isLoggedIn', 'currentUser', 'currentUserPermissionsById', 'currentUserViewPermissionsByViewId']),
     ...mapGetters({
       currentUserPending: 'pending',
     }),
@@ -37,6 +37,19 @@ export const authMixin = {
       const isLaptop = this.$options.filters.mq(this.$mq, { l: true });
 
       return isSelectedTopBar && isLaptop;
+    },
+
+    hasCurrentViewActionsAccess() {
+      const { name, params } = this.$route;
+
+      if (name !== ROUTES_NAMES.view) {
+        return false;
+      }
+
+      return checkUserAccess(
+        this.currentUserViewPermissionsByViewId[params.id]?.[VIEW_USER_PERMISSIONS_NAMES.actions],
+        CRUD_ACTIONS.can,
+      );
     },
   },
   methods: {
