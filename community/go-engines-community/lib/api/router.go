@@ -119,7 +119,7 @@ func RegisterRoutes(
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
-	exportTaskExecutor *export.TaskExecutor,
+	exportTaskExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
@@ -134,6 +134,7 @@ func RegisterRoutes(
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	enableSameServiceNames bool,
 	eventGenerator libevent.Generator,
+	securityConfig libsecurity.Config,
 	exdataImportWorker externaldata.ImportWorker,
 	workersRunner *workers.Runner,
 	logger zerolog.Logger,
@@ -186,7 +187,7 @@ func RegisterRoutes(
 		accountRouter := protected.Group("/account/me")
 		{
 			accountRouter.Use(middleware.OnlyAuth())
-			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder(), authorProvider, userInterfaceAdapter))
+			accountAPI := account.NewApi(account.NewStore(dbClient, security.GetPasswordEncoder(), authorProvider, userInterfaceAdapter, securityConfig))
 			accountRouter.GET("", accountAPI.Me)
 			accountRouter.PUT("", accountAPI.Update)
 		}
@@ -201,7 +202,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, userInterfaceAdapter),
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, userInterfaceAdapter, securityConfig),
 			logger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
@@ -1732,6 +1733,11 @@ func RegisterRoutes(
 				alarmTagAPI.Delete,
 			)
 		}
+		protected.GET(
+			"alarm-tag-labels",
+			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
+			alarmTagAPI.ListLabels,
+		)
 
 		colorThemeApi := colortheme.NewApi(colortheme.NewStore(dbClient, authorProvider, userInterfaceAdapter), logger)
 		colorThemeRouter := protected.Group("/color-themes")

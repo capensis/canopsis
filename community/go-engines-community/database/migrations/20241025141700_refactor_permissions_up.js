@@ -2519,6 +2519,12 @@ db.permission.aggregate([
     },
     {$unwind: {path: "$playlist", preserveNullAndEmptyArrays: true}},
 ]).forEach(function (doc) {
+    if (doc.groups !== undefined || doc.hidden !== undefined) {
+        delete updatedPermsByID[doc._id];
+
+        return;
+    }
+
     if (doc.view) {
         db.permission.updateOne({_id: doc._id}, {$set: {
             description: doc.view.title,
