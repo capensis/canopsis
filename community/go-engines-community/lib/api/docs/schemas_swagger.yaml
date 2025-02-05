@@ -1024,6 +1024,10 @@ definitions:
         type: string
       timezone:
         type: string
+      user_timezones:
+        items:
+          type: string
+        type: array
       version:
         type: string
       version_updated:
@@ -3853,6 +3857,8 @@ definitions:
         type: string
       rrule:
         type: string
+      timezone:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -3913,6 +3919,8 @@ definitions:
         type: string
       rrule:
         type: string
+      timezone:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -3953,6 +3961,8 @@ definitions:
       reason:
         type: string
       rrule:
+        type: string
+      timezone:
         type: string
       tstart:
         type: integer
@@ -4036,6 +4046,8 @@ definitions:
         type: string
       rrule_end:
         type: integer
+      timezone:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -4099,6 +4111,8 @@ definitions:
       reason:
         type: string
       rrule:
+        type: string
+      timezone:
         type: string
       tstart:
         type: integer
@@ -4290,6 +4304,8 @@ definitions:
         type: string
       start_at:
         type: integer
+      timezone:
+        type: string
       type:
         type: string
       view_from:

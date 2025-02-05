@@ -36,8 +36,9 @@ type UserInterfaceConf struct {
 }
 
 type GlobalConf struct {
-	Timezone          string `json:"timezone,omitempty"`
-	FileUploadMaxSize int64  `json:"file_upload_max_size"`
+	Timezone          string   `json:"timezone,omitempty"`
+	UserTimezones     []string `json:"user_timezones,omitempty"`
+	FileUploadMaxSize int64    `json:"file_upload_max_size"`
 
 	EventsCountTriggerDefaultThreshold int `json:"events_count_trigger_default_threshold"`
 }
