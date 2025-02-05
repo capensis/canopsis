@@ -7,13 +7,9 @@ volumes:
     driver: local
   timescaledata:
     driver: local
-  junitsharedata:
-    driver: local
   nginxcerts:
     driver: local
   uploadfiles:
-    driver: local
-  uploadicons:
     driver: local
 
 #
@@ -154,7 +150,7 @@ services:
     command: /canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition ${CPS_EDITION} -conf /canopsis-${CPS_EDITION}.toml -override /opt/canopsis/etc/conf.d/canopsis-override.toml
     volumes:
       - ./files/canopsis/reconfigure/conf.d/:/opt/canopsis/etc/conf.d/
-      
+
   #
   # Canopsis Community components
   #
@@ -192,9 +188,7 @@ services:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
     volumes:
-      - junitsharedata:/tmp/canopsis/junit
-      - uploadfiles:/opt/canopsis/var/lib/upload-files
-      - uploadicons:/opt/canopsis/var/lib/icons
+      - uploadfiles:/opt/canopsis/var/lib
     ports:
       - "8082:8082"
     healthcheck:

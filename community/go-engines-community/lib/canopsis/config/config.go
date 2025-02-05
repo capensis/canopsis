@@ -61,17 +61,13 @@ type SectionTimezone struct {
 type SectionImportCtx struct {
 	ThdWarnMinPerImport string `toml:"ThdWarnMinPerImport"`
 	ThdCritMinPerImport string `toml:"ThdCritMinPerImport"`
-	FilePattern         string `toml:"FilePattern"`
 }
 
 type SectionFile struct {
-	Upload        string   `toml:"Upload"`
+	Dir           string   `toml:"Dir"`
 	UploadMaxSize int64    `toml:"UploadMaxSize"`
-	Junit         string   `toml:"Junit"`
-	JunitApi      string   `toml:"JunitApi"`
-	SnmpMib       []string `toml:"SnmpMib"`
-	Icon          string   `toml:"Icon"`
 	IconMaxSize   int64    `toml:"IconMaxSize"`
+	SnmpMib       []string `toml:"SnmpMib"`
 }
 
 type SectionDataStorage struct {
