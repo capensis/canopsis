@@ -4404,49 +4404,32 @@ definitions:
     - priority
     - type
     type: object
+  permission.Group:
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+      position:
+        type: integer
+      title:
+        type: string
+    type: object
   permission.Permission:
     properties:
       _id:
         type: string
       description:
         type: string
+      groups:
+        items:
+          $ref: '#/definitions/permission.Group'
+        type: array
       name:
         type: string
-      playlist:
-        $ref: '#/definitions/permission.Playlist'
-        description: Playlist is used only for playlist permissions.
+      title:
+        type: string
       type:
-        type: string
-      view:
-        $ref: '#/definitions/permission.View'
-        description: View is used only for view permissions.
-      view_group:
-        $ref: '#/definitions/permission.ViewGroup'
-        description: ViewGroup is used only for view permissions.
-    type: object
-  permission.Playlist:
-    properties:
-      _id:
-        type: string
-      name:
-        type: string
-    type: object
-  permission.View:
-    properties:
-      _id:
-        type: string
-      position:
-        type: integer
-      title:
-        type: string
-    type: object
-  permission.ViewGroup:
-    properties:
-      _id:
-        type: string
-      position:
-        type: integer
-      title:
         type: string
     type: object
   playlist.EditRequest:
@@ -4667,17 +4650,9 @@ definitions:
     - name
     - priority
     type: object
-  role.CreateRequest:
+  role.BulkUpdatePermissionsRequestItem:
     properties:
-      auth_config:
-        $ref: '#/definitions/security.AuthMethodConf'
-      defaultview:
-        type: string
-      description:
-        maxLength: 255
-        type: string
-      name:
-        maxLength: 255
+      _id:
         type: string
       permissions:
         additionalProperties:
@@ -4686,7 +4661,7 @@ definitions:
           type: array
         type: object
     required:
-    - name
+    - _id
     type: object
   role.EditRequest:
     properties:
@@ -4697,12 +4672,23 @@ definitions:
       description:
         maxLength: 255
         type: string
+      name:
+        maxLength: 255
+        type: string
       permissions:
         additionalProperties:
           items:
             type: string
           type: array
         type: object
+      type:
+        enum:
+        - ui
+        - api
+        type: string
+    required:
+    - name
+    - type
     type: object
   role.Permission:
     properties:
@@ -4712,11 +4698,11 @@ definitions:
         items:
           type: string
         type: array
-      description:
-        type: string
       name:
         type: string
       type:
+        type: string
+      view:
         type: string
     type: object
   role.Response:
@@ -4743,6 +4729,8 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+      type:
+        type: string
       updated:
         type: integer
     type: object
@@ -4758,6 +4746,8 @@ definitions:
         items:
           $ref: '#/definitions/role.Permission'
         type: array
+      type:
+        type: string
     type: object
   role.TemplateResponse:
     properties:

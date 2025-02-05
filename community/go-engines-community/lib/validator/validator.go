@@ -331,6 +331,18 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("excluded_unless", fe.StructField(), fe.Param())
 		return t
 	})
+	_ = v.RegisterTranslation("not_ui_perm", trans, func(ut ut.Translator) error {
+		return ut.Add("not_ui_perm", "{0} is not UI permission.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("not_ui_perm", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("not_api_perm", trans, func(ut ut.Translator) error {
+		return ut.Add("not_api_perm", "{0} is not API permission.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("not_api_perm", fe.StructField(), fe.Param())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.
