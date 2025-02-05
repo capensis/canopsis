@@ -2846,6 +2846,8 @@ definitions:
         type: integer
       description:
         type: string
+      from_config:
+        type: boolean
       name:
         type: string
       type:

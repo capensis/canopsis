@@ -6772,6 +6772,12 @@ paths:
       responses:
         204:
           description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
         404:
           description: Not Found
           content:

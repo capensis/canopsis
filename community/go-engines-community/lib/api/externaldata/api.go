@@ -153,6 +153,12 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("table"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
+		if errors.Is(err, ErrConfigNotDeletable) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+
+			return
+		}
+
 		panic(err)
 	}
 
@@ -262,7 +268,7 @@ func (a *api) ImportData(c *gin.Context) {
 	}
 
 	sort.Strings(columns)
-	aggregationResult, err := a.store.FindData(c, job.Table, job.Type, columns, r)
+	aggregationResult, err := a.store.FindData(c, job.getDBTableName(), job.Type, columns, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -372,7 +378,7 @@ func (a *api) ListData(c *gin.Context) {
 	}
 
 	sort.Strings(columns)
-	aggregationResult, err := a.store.FindData(c, table.Name, table.Type, columns, r)
+	aggregationResult, err := a.store.FindData(c, table.getDBTableName(), table.Type, columns, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {

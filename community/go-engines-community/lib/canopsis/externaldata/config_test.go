@@ -1,0 +1,168 @@
+package externaldata_test
+
+import (
+	"context"
+	"slices"
+	"strings"
+	"testing"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
+	"github.com/golang/mock/gomock"
+	"github.com/kylelemons/godebug/pretty"
+	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/mongo/options"
+)
+
+func TestSyncMongoCollections(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	collNames := []string{
+		"test_coll_1",
+		"test_coll_2",
+		"test_coll_3",
+	}
+	collNamesToIgnore := []string{
+		"test_coll_2",
+	}
+	tablesToCreate := []externaldata.Table{
+		{
+			Name: "test_coll_1",
+			ColumnTypes: map[string]int{
+				"test_field_1": externaldata.ColumnTypeNoType,
+				"test_field_2": externaldata.ColumnTypeNoType,
+			},
+		},
+		{
+			Name: "test_coll_3",
+			ColumnTypes: map[string]int{
+				"test_field_3": externaldata.ColumnTypeNoType,
+				"test_field_4": externaldata.ColumnTypeNoType,
+				"test_field_5": externaldata.ColumnTypeNoType,
+			},
+		},
+	}
+	mockClient := mock_mongo.NewMockDbClient(ctrl)
+	mockExdataTableCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockClient.EXPECT().Collection(gomock.Eq(mongo.ExternalDataTableCollection)).Return(mockExdataTableCollection)
+	mockExdataTableCollection.EXPECT().DeleteMany(gomock.Any(), gomock.Any()).Return(int64(0), nil)
+	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, collNamesToIgnore), nil)
+	mockExdataTableCollection.EXPECT().InsertMany(gomock.Any(), gomock.Any()).Return(nil, nil).Do(checkInsertedTables(t, tablesToCreate))
+	newMockCollections(ctrl, mockClient, tablesToCreate, "test")
+	err := externaldata.SyncMongoCollections(ctx, mockClient, collNames, zerolog.Nop())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	collNames := []string{
+		"test_coll_1",
+		"test_coll_2",
+	}
+	tablesToIgnore := []externaldata.Table{
+		{
+			Name:        "test_coll_1",
+			ColumnTypes: map[string]int{},
+		},
+		{
+			Name: "test_coll_2",
+			ColumnTypes: map[string]int{
+				"test_field_3": externaldata.ColumnTypeNoType,
+				"test_field_4": externaldata.ColumnTypeNoType,
+				"test_field_5": externaldata.ColumnTypeNoType,
+			},
+		},
+	}
+	mockClient := mock_mongo.NewMockDbClient(ctrl)
+	mockExdataTableCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockClient.EXPECT().Collection(gomock.Eq(mongo.ExternalDataTableCollection)).Return(mockExdataTableCollection)
+	mockExdataTableCollection.EXPECT().DeleteMany(gomock.Any(), gomock.Any()).Return(int64(0), nil)
+	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, nil), nil)
+	newMockCollections(ctrl, mockClient, tablesToIgnore, 1)
+	err := externaldata.SyncMongoCollections(ctx, mockClient, collNames, zerolog.Nop())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func newMockCursorTables(ctrl *gomock.Controller, collNames []string) mongo.Cursor {
+	mockTableCursor := mock_mongo.NewMockCursor(ctrl)
+	for i := range collNames {
+		name := collNames[i]
+		mockTableCursor.EXPECT().Next(gomock.Any()).Return(true)
+		mockTableCursor.EXPECT().Decode(gomock.Any()).DoAndReturn(func(v *externaldata.Table) error {
+			v.Name = name
+
+			return nil
+		})
+	}
+
+	mockTableCursor.EXPECT().Next(gomock.Any()).Return(false)
+	mockTableCursor.EXPECT().Err().Return(nil)
+	mockTableCursor.EXPECT().Close(gomock.Any()).Return(nil)
+
+	return mockTableCursor
+}
+
+func newMockCollections(
+	ctrl *gomock.Controller,
+	mockClient *mock_mongo.MockDbClient,
+	tables []externaldata.Table,
+	fieldVal any,
+) {
+	for _, table := range tables {
+		doc := make(map[string]any, len(table.ColumnTypes)+1)
+		doc[externaldata.IDColumnName] = "test"
+		for s := range table.ColumnTypes {
+			doc[s] = fieldVal
+		}
+
+		mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
+		mockClient.EXPECT().Collection(gomock.Eq(table.Name)).Return(mockDbCollection)
+		mockCursor := mock_mongo.NewMockCursor(ctrl)
+		mockCursor.EXPECT().Next(gomock.Any()).Return(true)
+		mockCursor.EXPECT().Decode(gomock.Any()).Do(func(v *map[string]any) {
+			*v = doc
+		})
+		mockCursor.EXPECT().Next(gomock.Any()).Return(false)
+		mockCursor.EXPECT().Err().Return(nil)
+		mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
+		mockDbCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockCursor, nil)
+	}
+}
+
+func checkInsertedTables(t *testing.T, expected []externaldata.Table) func(context.Context, []any, ...*options.InsertManyOptions) {
+	return func(_ context.Context, docs []any, _ ...*options.InsertManyOptions) {
+		res := make([]externaldata.Table, len(docs))
+		for i, doc := range docs {
+			if table, ok := doc.(externaldata.Table); ok {
+				res[i] = externaldata.Table{
+					Name:        table.Name,
+					ColumnTypes: table.ColumnTypes,
+				}
+			} else {
+				t.Fatalf("unknown doc: %T %+v", doc, doc)
+			}
+		}
+
+		cmp := func(l, f externaldata.Table) int {
+			return strings.Compare(l.Name, f.Name)
+		}
+
+		slices.SortFunc(res, cmp)
+		slices.SortFunc(expected, cmp)
+		if diff := pretty.Compare(res, expected); diff != "" {
+			t.Fatal("unexpected result: " + diff)
+		}
+	}
+}
