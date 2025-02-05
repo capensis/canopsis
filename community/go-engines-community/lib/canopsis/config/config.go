@@ -67,8 +67,9 @@ type SectionImportCtx struct {
 
 type SectionFile struct {
 	Dir           string   `toml:"Dir"`
-	UploadMaxSize int64    `toml:"UploadMaxSize"`
-	IconMaxSize   int64    `toml:"IconMaxSize"`
+	UploadMaxSize uint64   `toml:"UploadMaxSize"`
+	IconMaxSize   uint64   `toml:"IconMaxSize"`
+	ImportMaxSize uint64   `toml:"ImportMaxSize"`
 	SnmpMib       []string `toml:"SnmpMib"`
 }
 

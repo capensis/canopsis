@@ -31,10 +31,11 @@ type API interface {
 	GetSchema(c *gin.Context)
 }
 
-func NewAPI(store Store, importWorker ImportWorker, logger zerolog.Logger) API {
+func NewAPI(store Store, importWorker ImportWorker, maxFileSize uint64, logger zerolog.Logger) API {
 	return &api{
 		store:        store,
 		importWorker: importWorker,
+		maxFileSize:  maxFileSize,
 		logger:       logger,
 	}
 }
@@ -42,6 +43,7 @@ func NewAPI(store Store, importWorker ImportWorker, logger zerolog.Logger) API {
 type api struct {
 	store        Store
 	importWorker ImportWorker
+	maxFileSize  uint64
 	logger       zerolog.Logger
 }
 
@@ -173,7 +175,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Success 200 {array} ImportJob
 func (a *api) Import(c *gin.Context) {
 	id := c.Param("id")
-	f, _, err := c.Request.FormFile("file")
+	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationError("file", "File is missing.").ValidationErrorResponse())
@@ -187,8 +189,12 @@ func (a *api) Import(c *gin.Context) {
 	}
 
 	defer f.Close()
-	delimiterStr := c.Request.FormValue("delimiter")
 	valErrors := make(map[string]string)
+	if a.maxFileSize > 0 && uint64(fh.Size) > a.maxFileSize {
+		valErrors["file"] = fmt.Sprintf("File size %d exceeds limit %d", fh.Size, a.maxFileSize)
+	}
+
+	delimiterStr := c.Request.FormValue("delimiter")
 	if delimiterStr == "" {
 		valErrors["delimiter"] = "Delimiter is missing."
 	} else if len(delimiterStr) > 1 {
@@ -501,14 +507,16 @@ func (a *api) GetSchema(c *gin.Context) {
 	}
 
 	fields := make([]string, len(t.ColumnTypes))
-	i := 0
+	i, n := 0, len(t.ColumnTypes)
 	for f := range t.ColumnTypes {
 		fields[i] = f
 		i++
+		n += len(f)
 	}
 
 	sort.Strings(fields)
 	b := &bytes.Buffer{}
+	b.Grow(n)
 	w := csv.NewWriter(b)
 	err = w.Write(fields)
 	if err != nil {

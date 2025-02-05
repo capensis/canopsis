@@ -128,9 +128,13 @@ func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune,
 		}
 	}()
 
-	_, err = io.Copy(df, f)
+	n, err := io.Copy(df, f)
 	if err != nil {
 		return job, fmt.Errorf("failed to copy to file %q: %w", job.Filepath, err)
+	}
+
+	if n == 0 {
+		return job, fmt.Errorf("failed to copy to file %q: source file is empty", job.Filepath)
 	}
 
 	_, err = w.dbImportCollection.InsertOne(ctx, job)
@@ -146,7 +150,7 @@ func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune,
 	return job, nil
 }
 
-func (w *importWorker) ProcessJob(ctx context.Context, id string) error {
+func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error) {
 	job := ImportJob{}
 	err := w.dbImportCollection.FindOneAndUpdate(ctx,
 		bson.M{
@@ -177,6 +181,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) error {
 	done := make(chan struct{})
 	g.Go(func() (resErr error) {
 		defer close(done)
+		rmFile := false
 		f, err := os.Open(job.Filepath)
 		if err != nil {
 			return fmt.Errorf("failed to open file %q: %w", job.Filepath, err)
@@ -187,104 +192,28 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) error {
 			if err != nil && resErr == nil {
 				resErr = fmt.Errorf("failed to close file %q: %w", job.Filepath, err)
 			}
+
+			if err == nil && rmFile {
+				err = os.Remove(job.Filepath)
+				if err != nil && resErr == nil {
+					resErr = fmt.Errorf("failed to remove file %q for job %q: %w", job.Filepath, job.ID, err)
+				}
+			}
 		}()
 		r := csv.NewReader(f)
 		r.Comma = job.Delimiter
 		r.ReuseRecord = true
-		var fields []string
-		var columns []string
 		var columnLengths map[string]int
 		var failReason string
-		i := 0
-		docs := make([]any, 0, canopsis.DefaultBulkSize)
-		rows := make([][]any, 0, canopsis.DefaultBulkSize)
-		for {
-			i++
-			record, err := r.Read()
-			if err != nil {
-				if errors.Is(err, io.EOF) {
-					break
-				}
-
-				failReason = err.Error()
-				break
-			}
-
-			if len(record) == 0 {
-				failReason = "empty record " + strconv.Itoa(i)
-				break
-			}
-
-			if len(fields) == 0 {
-				fields = make([]string, len(record))
-				copy(fields, record)
-				columns = make([]string, len(record)+1)
-				columns[0] = externaldata.IDColumnName
-				copy(columns[1:], record)
-				err = w.validateColumns(fields)
-				if err != nil {
-					failReason = err.Error()
-					break
-				}
-
-				columnLengths = make(map[string]int, len(fields))
-				for _, field := range fields {
-					columnLengths[field] = externaldata.PostgresDefaultColumnLen
-				}
-
-				err = w.createTable(ctx, job, fields, columnLengths)
-				if err != nil {
-					return err
-				}
-
-				continue
-			}
-
-			if len(fields) != len(record) {
-				failReason = "invalid record " + strconv.Itoa(i) + ": not match fields"
-				break
-			}
-
-			columnLengths, err = w.alterColumnLengths(ctx, job, fields, columnLengths, record)
-			if err != nil {
-				return err
-			}
-
-			switch job.Type {
-			case externaldata.TypeMongoDB:
-				doc := make(map[string]string, len(record)+1)
-				doc[externaldata.IDColumnName] = utils.NewID()
-				for j, field := range fields {
-					doc[field] = record[j]
-				}
-
-				docs = append(docs, doc)
-			case externaldata.TypePostgreSQL:
-				row := make([]any, len(record)+1)
-				row[0] = utils.NewID()
-				for j, v := range record {
-					row[j+1] = v
-				}
-
-				rows = append(rows, row)
-			}
-
-			if len(docs) == canopsis.DefaultBulkSize || len(rows) == canopsis.DefaultBulkSize {
-				err = w.insertIntoTable(ctx, job, docs, columns, rows)
-				if err != nil {
-					return err
-				}
-
-				docs = docs[:0]
-				rows = rows[:0]
-			}
+		switch job.Type {
+		case externaldata.TypeMongoDB:
+			columnLengths, failReason, err = w.writeToMongo(ctx, job, r)
+		case externaldata.TypePostgreSQL:
+			columnLengths, failReason, err = w.writeToPostgres(ctx, job, r)
 		}
 
-		if len(docs) > 0 || len(rows) > 0 {
-			err = w.insertIntoTable(ctx, job, docs, columns, rows)
-			if err != nil {
-				return err
-			}
+		if err != nil {
+			return err
 		}
 
 		var update bson.M
@@ -316,11 +245,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) error {
 			return errors.New("import job is processing by another worker")
 		}
 
-		err = w.deleteJobFile(job)
-		if err != nil {
-			return err
-		}
-
+		rmFile = true
 		if failReason != "" {
 			err = w.deleteTable(ctx, job)
 			if err != nil {
@@ -609,13 +534,161 @@ func (w *importWorker) DeleteOldJobs(ctx context.Context) {
 	}
 }
 
-func (w *importWorker) deleteJobFile(job ImportJob) error {
-	err := os.Remove(job.Filepath)
-	if err != nil {
-		return fmt.Errorf("failed to remove file %q: %w", job.Filepath, err)
+func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) (map[string]int, string, error) {
+	var columns []string
+	i := 0
+	docs := make([]any, 0, canopsis.DefaultBulkSize)
+	for {
+		i++
+		record, err := r.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+
+			return nil, err.Error(), nil
+		}
+
+		if len(record) == 0 {
+			return nil, "empty record " + strconv.Itoa(i), nil
+		}
+
+		if len(columns) == 0 {
+			columns = make([]string, len(record))
+			copy(columns, record)
+			err = w.validateColumns(columns)
+			if err != nil {
+				return nil, err.Error(), nil
+			}
+
+			err = w.createTable(ctx, job, columns, nil)
+			if err != nil {
+				return nil, "", err
+			}
+
+			continue
+		}
+
+		if len(columns) != len(record) {
+			return nil, "invalid record " + strconv.Itoa(i) + ": not match fields", nil
+		}
+
+		doc := make(map[string]string, len(record)+1)
+		doc[externaldata.IDColumnName] = utils.NewID()
+		for j, c := range columns {
+			doc[c] = record[j]
+		}
+
+		docs = append(docs, doc)
+		if len(docs) == canopsis.DefaultBulkSize {
+			_, err = w.dbClient.Collection(job.getDBTableName()).InsertMany(ctx, docs)
+			if err != nil {
+				return nil, "", fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
+			}
+
+			docs = docs[:0]
+		}
 	}
 
-	return nil
+	if len(docs) > 0 {
+		_, err := w.dbClient.Collection(job.getDBTableName()).InsertMany(ctx, docs)
+		if err != nil {
+			return nil, "", fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
+		}
+	}
+
+	columnLengths := make(map[string]int, len(columns))
+	for _, c := range columns {
+		columnLengths[c] = externaldata.PostgresDefaultColumnLen
+	}
+
+	return columnLengths, "", nil
+}
+
+func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) (map[string]int, string, error) {
+	pgPool, err := w.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return nil, "", fmt.Errorf("failed to get postgres pool: %w", err)
+	}
+
+	var columns []string
+	var columnsWithID []string
+	var columnLengths map[string]int
+	i := 0
+	rows := make([][]any, 0, canopsis.DefaultBulkSize)
+	for {
+		i++
+		record, err := r.Read()
+		if err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+
+			return nil, err.Error(), nil
+		}
+
+		if len(record) == 0 {
+			return nil, "empty record " + strconv.Itoa(i), nil
+		}
+
+		if len(columns) == 0 {
+			columnsWithID = make([]string, len(record)+1)
+			columnsWithID[0] = externaldata.IDColumnName
+			copy(columnsWithID[1:], record)
+			columns = columnsWithID[1:]
+			err = w.validateColumns(columns)
+			if err != nil {
+				return nil, err.Error(), nil
+			}
+
+			columnLengths = make(map[string]int, len(columns))
+			for _, c := range columns {
+				columnLengths[c] = externaldata.PostgresDefaultColumnLen
+			}
+
+			err = w.createTable(ctx, job, columns, columnLengths)
+			if err != nil {
+				return nil, "", err
+			}
+
+			continue
+		}
+
+		if len(columns) != len(record) {
+			return nil, "invalid record " + strconv.Itoa(i) + ": not match fields", nil
+		}
+
+		columnLengths, err = w.alterColumnLengths(ctx, job.getDBTableName(), columns, columnLengths, record)
+		if err != nil {
+			return nil, "", err
+		}
+
+		row := make([]any, len(record)+1)
+		row[0] = utils.NewID()
+		for j, v := range record {
+			row[j+1] = v
+		}
+
+		rows = append(rows, row)
+
+		if len(rows) == canopsis.DefaultBulkSize {
+			_, err = pgPool.CopyFrom(ctx, job.getDBTableName(), columnsWithID, pgx.CopyFromRows(rows))
+			if err != nil {
+				return nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
+			}
+
+			rows = rows[:0]
+		}
+	}
+
+	if len(rows) > 0 {
+		_, err = pgPool.CopyFrom(ctx, job.getDBTableName(), columnsWithID, pgx.CopyFromRows(rows))
+		if err != nil {
+			return nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
+		}
+	}
+
+	return columnLengths, "", nil
 }
 
 func (w *importWorker) validateColumns(columns []string) error {
@@ -699,7 +772,7 @@ func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 
 func (w *importWorker) alterColumnLengths(
 	ctx context.Context,
-	job ImportJob,
+	tableName string,
 	columns []string,
 	columnLens map[string]int,
 	record []string,
@@ -716,58 +789,19 @@ func (w *importWorker) alterColumnLengths(
 		return columnLens, nil
 	}
 
-	switch job.Type {
-	case externaldata.TypeMongoDB:
-		return columnLens, nil
-	case externaldata.TypePostgreSQL:
-		pgPool, err := w.pgPoolProvider.Get(ctx)
-		if err != nil {
-			return columnLens, fmt.Errorf("failed to get postgres pool: %w", err)
-		}
-
-		for c, l := range updatedLengths {
-			sql := "ALTER TABLE " + job.getDBTableName() +
-				" ALTER COLUMN " + pgx.Identifier{c}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(l) + ")"
-			_, err = pgPool.Exec(ctx, sql)
-			if err != nil {
-				return columnLens, fmt.Errorf("failed to alter postgres table: %w", err)
-			}
-		}
-
-		return columnLens, nil
-	default:
-		return columnLens, fmt.Errorf("invalid job type: %q", job.Type)
+	pgPool, err := w.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return columnLens, fmt.Errorf("failed to get postgres pool: %w", err)
 	}
-}
 
-func (w *importWorker) insertIntoTable(
-	ctx context.Context,
-	job ImportJob,
-	docs []any,
-	columns []string,
-	rows [][]any,
-) error {
-	switch job.Type {
-	case externaldata.TypeMongoDB:
-		_, err := w.dbClient.Collection(job.getDBTableName()).InsertMany(ctx, docs)
+	for c, l := range updatedLengths {
+		sql := "ALTER TABLE " + tableName +
+			" ALTER COLUMN " + pgx.Identifier{c}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(l) + ")"
+		_, err = pgPool.Exec(ctx, sql)
 		if err != nil {
-			return fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
+			return columnLens, fmt.Errorf("failed to alter postgres table: %w", err)
 		}
-
-		return nil
-	case externaldata.TypePostgreSQL:
-		pgPool, err := w.pgPoolProvider.Get(ctx)
-		if err != nil {
-			return fmt.Errorf("failed to get postgres pool: %w", err)
-		}
-
-		_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columns, pgx.CopyFromRows(rows))
-		if err != nil {
-			return fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
-		}
-
-		return nil
-	default:
-		return fmt.Errorf("invalid job type: %q", job.Type)
 	}
+
+	return columnLens, nil
 }

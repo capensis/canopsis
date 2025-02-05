@@ -2964,6 +2964,7 @@ permission:
   # Views permissions
   permission_view_open_alarms_general:
     <<: *permission_rw
+    _id: "@view_open_alarms"
     view: "@view_open_alarms"
     name: view_general
     description: "En cours"
@@ -2982,6 +2983,7 @@ permission:
       - "@view_open_alarms"
   permission_view_resolved_alarms_general:
     <<: *permission_rw
+    _id: "@view_resolved_alarms"
     view: "@view_resolved_alarms"
     name: view_general
     description: "Résolues"
@@ -3000,6 +3002,7 @@ permission:
       - "@view_resolved_alarms"
   permission_view_context_explorer_general:
     <<: *permission_rw
+    _id: "@view_context_explorer"
     view: "@view_context_explorer"
     name: view_general
     description: "Explorateur de Contexte"

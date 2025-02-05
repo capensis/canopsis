@@ -84,32 +84,23 @@ func (r *mongoReporter) GetFirst(ctx context.Context, abandonedInterval time.Dur
 }
 
 func (r *mongoReporter) HasAbandoned(ctx context.Context, abandonedInterval time.Duration) (bool, error) {
-	ongoingJob := ImportJob{}
-	err := r.collection.FindOne(ctx, bson.M{"status": StatusOngoing}).Decode(&ongoingJob)
+	job := ImportJob{}
+	err := r.collection.
+		FindOne(ctx, bson.M{"status": bson.M{"$in": bson.A{StatusOngoing, StatusPending}}}, options.FindOne().SetSort(bson.M{"status": 1})).
+		Decode(&job)
 	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
 		return false, err
 	}
 
-	if ongoingJob.ID != "" {
-		if ongoingJob.LastPing != nil && ongoingJob.LastPing.After(time.Now().Add(-abandonedInterval)) {
-			return false, nil
-		}
-
-		return true, nil
+	if job.ID == "" {
+		return false, nil
 	}
 
-	pendingJob := ImportJob{}
-	err = r.collection.FindOne(ctx, bson.M{"status": StatusPending}).Decode(&pendingJob)
-	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-		return false, err
-	}
-
-	if pendingJob.ID != "" {
-		if pendingJob.Creation.After(time.Now().Add(-abandonedInterval)) {
-			return false, nil
-		}
-
-		return true, nil
+	switch job.Status {
+	case StatusOngoing:
+		return job.LastPing == nil || job.LastPing.Before(time.Now().Add(-abandonedInterval)), nil
+	case StatusPending:
+		return job.Creation.Before(time.Now().Add(-abandonedInterval)), nil
 	}
 
 	return false, nil

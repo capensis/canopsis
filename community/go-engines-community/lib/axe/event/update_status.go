@@ -76,6 +76,7 @@ func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 				"v.status":                            newStepStatusQuery,
 				"v.state_changes_since_status_update": 0,
 				"v.last_update_date":                  event.Parameters.Timestamp,
+				"v.last_st_upd_dt":                    event.Parameters.Timestamp,
 				"v.steps":                             addStepUpdateQuery(newStepStatusQuery),
 			}},
 		}

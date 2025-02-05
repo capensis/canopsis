@@ -272,7 +272,7 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 	return err == nil, err
 }
 
-func (s *store) FindData(ctx context.Context, tableName string, tableType int, columns []string, r ListDataRequest) (*AggregationDataResult, error) {
+func (s *store) FindData(ctx context.Context, tableName string, tableType int, columns []string, r ListDataRequest) (res *AggregationDataResult, err error) {
 	foundSort := false
 	for _, col := range columns {
 		if r.SortBy == col {
@@ -285,8 +285,6 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 		return nil, common.NewValidationError("sort_by", "SortBy must be one of ["+strings.Join(columns, " ")+"].")
 	}
 
-	var res *AggregationDataResult
-	var err error
 	switch tableType {
 	case externaldata.TypeMongoDB:
 		res, err = s.findDataFromMongo(ctx, tableName, columns, r)
@@ -369,11 +367,10 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 	doc := make(map[string]string, len(table.ColumnTypes)+1)
 	row := make([]any, len(table.ColumnTypes)+1)
 	columnsWithID := make([]string, len(table.ColumnTypes)+1)
-	i := 0
 	doc[externaldata.IDColumnName] = utils.NewID()
-	row[i] = doc[externaldata.IDColumnName]
-	columnsWithID[i] = externaldata.IDColumnName
-	i++
+	row[0] = doc[externaldata.IDColumnName]
+	columnsWithID[0] = externaldata.IDColumnName
+	i := 1
 	var ok bool
 	updatedLengths := make(map[string]int)
 	valErrMsgs := make(map[string]string)
