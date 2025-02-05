@@ -1020,8 +1020,6 @@ definitions:
         type: string
       show_header_on_kiosk_mode:
         type: boolean
-      stack:
-        type: string
       timezone:
         type: string
       user_timezones:
@@ -1029,6 +1027,9 @@ definitions:
           type: string
         type: array
       version:
+        type: string
+      version_description:
+        maxLength: 500
         type: string
       version_updated:
         type: integer
@@ -1117,6 +1118,9 @@ definitions:
         type: boolean
       show_header_on_kiosk_mode:
         type: boolean
+      version_description:
+        maxLength: 500
+        type: string
     type: object
   associativetable.AssociativeTable:
     properties:
