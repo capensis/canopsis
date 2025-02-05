@@ -672,7 +672,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 		rows = append(rows, row)
 
 		if len(rows) == canopsis.DefaultBulkSize {
-			_, err = pgPool.CopyFrom(ctx, job.getDBTableName(), columnsWithID, pgx.CopyFromRows(rows))
+			_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columnsWithID, pgx.CopyFromRows(rows))
 			if err != nil {
 				return nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
 			}
@@ -682,7 +682,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 	}
 
 	if len(rows) > 0 {
-		_, err = pgPool.CopyFrom(ctx, job.getDBTableName(), columnsWithID, pgx.CopyFromRows(rows))
+		_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columnsWithID, pgx.CopyFromRows(rows))
 		if err != nil {
 			return nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
 		}
