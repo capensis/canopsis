@@ -2509,17 +2509,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        >
-          <pbehaviors-mass-actions-panel-stub
-            disablable="true"
-            enablable="true"
-            items=""
-            removable="true"
-          />
-        </div>
+        <!---->
       </transition-stub>
     </div>
   </div>
