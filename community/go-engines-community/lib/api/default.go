@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
@@ -64,8 +65,9 @@ const (
 	websocketReadBufferSize  = 1024
 	websocketWriteBufferSize = 2048
 
-	jobKeyExport = "export"
-	jobKeyImport = "import"
+	jobKeyExport        = "export"
+	jobKeyImport        = "import"
+	jobKeyExtDataImport = "extdataimport"
 )
 
 //go:embed swaggerui/*
@@ -270,6 +272,13 @@ func Default(
 		websocketHub,
 	)
 
+	exdataImportWorker := externaldata.NewImportWorker(dbClient, pgPoolProvider,
+		filepath.Join(cfg.File.Dir, canopsis.SubDirExDataImport), workers.NewJobPublisher(jobKeyExtDataImport, workersRunner),
+		logger)
+	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
+		return exdataImportWorker.ProcessJob(ctx, id)
+	})
+
 	// Create api.
 	api := New(
 		fmt.Sprintf(":%d", flags.Port),
@@ -368,6 +377,7 @@ func Default(
 			flags.EnableSameServiceNames,
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
 			securityConfig,
+			exdataImportWorker,
 			workersRunner,
 			logger,
 		)
@@ -490,6 +500,12 @@ func Default(
 				}
 			}
 		}
+	})
+	api.AddWorker("data_exdata_import_abandoned", func(ctx context.Context) {
+		exdataImportWorker.ProcessAbandonedJobs(ctx)
+	})
+	api.AddWorker("data_extdata_import_delete_old", func(ctx context.Context) {
+		exdataImportWorker.DeleteOldJobs(ctx)
 	})
 	api.AddWorker("healthcheck", func(ctx context.Context) {
 		healthcheckStore.Load(ctx)

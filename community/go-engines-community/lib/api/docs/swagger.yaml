@@ -6375,6 +6375,200 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}:
+    post:
+      tags:
+        - externdaldata
+      summary: Create external data import job
+      description: |
+        Create external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externdaldataimport-create
+      parameters:
+        - name: id
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - delimiter
+                - file
+              properties:
+                delimiter:
+                  type: string
+                  maxLength: 1
+                file:
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldata.ImportJob'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/complete:
+    get:
+      tags:
+        - externdaldata
+      summary: Complete external data import job
+      description: |
+        Complete external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externdaldataimport-complete
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldata.ImportCompleteRequest'
+            examples:
+              complete:
+                summary: Complete import job
+                description: Complete import job
+                value: {
+                  "columns": {
+                    "col-1-not-type": 0,
+                    "col-2-filter": 1,
+                    "col-3-context": 2
+                  }
+                }
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/data:
+    get:
+      tags:
+        - externdaldata
+      summary: Get data of external data import job
+      description: |
+        Get data of external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externdaldataimport-data
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/status:
+    get:
+      tags:
+        - externdaldata
+      summary: Get status of external data import job
+      description: |
+        Get status of external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externdaldataimport-status
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldata.ImportJob'
+  /external-data-tables:
+    post:
+      tags:
+        - externdaldata
+      summary: Create external data table
+      description: |
+        Create external data table.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externdaldatatables-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldata.CreateRequest'
+            examples:
+              create:
+                summary: Create external data table
+                description: Create external data table
+                value: {
+                  "type": 0,
+                  "name": "some_data",
+                  "description": "Data for enrichment"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldata.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /file:
     get:
       tags:
