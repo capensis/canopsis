@@ -347,11 +347,10 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 	doc := make(map[string]string, len(table.ColumnLengths)+1)
 	row := make([]any, len(table.ColumnLengths)+1)
 	columnsWithID := make([]string, len(table.ColumnLengths)+1)
-	i := 0
 	doc[idColumnName] = utils.NewID()
-	row[i] = doc[idColumnName]
-	columnsWithID[i] = idColumnName
-	i++
+	row[0] = doc[idColumnName]
+	columnsWithID[0] = idColumnName
+	i := 1
 	var ok bool
 	updatedLengths := make(map[string]int)
 	valErrMsgs := make(map[string]string)

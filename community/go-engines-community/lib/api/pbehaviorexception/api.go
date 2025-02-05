@@ -21,7 +21,7 @@ type API interface {
 func NewApi(
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
-	maxFileSize int64,
+	maxFileSize uint64,
 	logger zerolog.Logger,
 ) API {
 	return &api{
@@ -35,7 +35,7 @@ func NewApi(
 type api struct {
 	store       Store
 	computeChan chan<- rpc.PbehaviorRecomputeEvent
-	maxFileSize int64
+	maxFileSize uint64
 	logger      zerolog.Logger
 }
 
@@ -185,7 +185,7 @@ func (a *api) Import(c *gin.Context) {
 	name := c.Request.FormValue("name")
 	pbhType := c.Request.FormValue("type")
 	valErrors := make(map[string]string)
-	if a.maxFileSize > 0 && fh.Size > a.maxFileSize {
+	if a.maxFileSize > 0 && uint64(fh.Size) > a.maxFileSize {
 		valErrors["file"] = fmt.Sprintf("File size %d exceeds limit %d", fh.Size, a.maxFileSize)
 	}
 
