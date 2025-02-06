@@ -11,11 +11,11 @@ Lisez l'ensemble de ce document avant de procéder à toute manipulation.
 
 Vous devez tout d'abord lire **chacune** des [notes de version](../../index.md#notes-de-version) publiée entre votre version actuelle et celle que vous ciblez. [En savoir plus sur les numéros de version de Canopsis](numeros-version-canopsis.md).
 
-Par exemple, si vous effectuez une mise à jour de Canopsis 22.10 à 24.04, vous devez :
+Par exemple, si vous effectuez une mise à jour de Canopsis 23.10 à 24.10, vous devez :
 
-*  consulter et appliquer toute procédure donnée dans les notes de version de Canopsis 23.04,
-*  puis celles de Canopsis 23.10,
+*  consulter et appliquer toute procédure donnée dans les notes de version de Canopsis 23.10,
 *  puis celles de Canopsis 24.04,
+*  puis celles de Canopsis 24.10,
 *  puis suivre le reste de cette procédure, selon votre méthode d'installation (paquets RPM, Docker Compose, charts Helm pour Kubernetes).
 
 Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant été spécifiquement développés pour votre installation), assurez-vous de suivre toute procédure complémentaire vous ayant été communiquée.
@@ -29,20 +29,20 @@ Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant �
 
 Les commandes suivantes doivent être réalisées avec l'utilisateur `root`.
 
-Appliquez la mise à jour des paquets Canopsis :
+Appliquez la mise à jour des paquets Canopsis :
 
 ```sh
 dnf makecache
 dnf --disablerepo="*" --enablerepo="canopsis*" update
 ```
 
-Après avoir pris en compte toute éventuelle remarque des notes de version au sujet de paramètres dans les fichiers de type `canopsis.toml`, appliquez les changements de configuration en fonction de votre édition de Canopsis (Community ou Pro) :
+Après avoir pris en compte toute éventuelle remarque des notes de version au sujet de paramètres dans les fichiers de type `canopsis.toml`, appliquez les changements de configuration en fonction de votre édition de Canopsis (Community ou Pro) :
 
 === "Canopsis Community"
 
     ```sh
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true
+    /opt/canopsis/bin/canopsis-reconfigure -edition community -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
     systemctl restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
     ```
 
@@ -50,7 +50,7 @@ Après avoir pris en compte toute éventuelle remarque des notes de version au s
 
     ```sh
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true
+    /opt/canopsis/bin/canopsis-reconfigure -edition pro -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
     systemctl restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-correlation.service canopsis-engine-go@engine-dynamic-infos.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service canopsis-engine-go@engine-remediation canopsis-engine-go@engine-webhook
     ```
 
@@ -58,11 +58,11 @@ Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite
 
 ### Mise à jour en environnement Docker Compose
 
-Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue :
+Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichiers Docker Compose avec les fichiers de référence correspondant à la version voulue :
 
-* Canopsis Community :  
+* Canopsis Community :  
   <https://git.canopsis.net/canopsis/canopsis-community/-/releases>
-* Canopsis Pro (autorisation nécessaire) :  
+* Canopsis Pro (autorisation nécessaire) :  
   <https://git.canopsis.net/canopsis/canopsis-pro/-/releases>
 
 Si vous aviez surchargé des paramètres dans `canopsis-override.toml`, vous
@@ -72,7 +72,7 @@ Si vous aviez d'autres personnalisations par rapport au modèle de configuration
 Docker Compose des releases Canopsis, il vous appartient naturellement
 d'étudier toute différence et de gérer la fusion des modifications.
 
-Une fois les éventuelles différences étudiées et résolues, exécutez la commande suivante :
+Une fois les éventuelles différences étudiées et résolues, exécutez la commande suivante :
 
 ```sh
 docker compose up -d
@@ -106,9 +106,9 @@ $ kubectl rollout restart deploy -l app.kubernetes.io/instance=my-release
 
 ## Après la mise à jour
 
-Durant le temps de coupure des services Canopsis, RabbitMQ se sera chargé de mettre en attente vos [évènements](../../guide-utilisation/vocabulaire/index.md#evenement). Ils seront alors « dépilés » et traités normalement par les moteurs Canopsis, dès leur redémarrage.
+Durant le temps de coupure des services Canopsis, RabbitMQ se sera chargé de mettre en attente vos [évènements](../../guide-utilisation/vocabulaire/index.md#evenement). Ils seront alors « dépilés » et traités normalement par les moteurs Canopsis, dès leur redémarrage.
 
-Cette accumulation d'évènements en attente peut, néanmoins, provoquer une latence des traitements, ou une augmentation de la consommation des ressources, en raison du rattrapage à effectuer. Cette incidence reste temporaire. Nous vous conseillons de [surveiller l'interface d'administration de RabbitMQ](../../guide-de-depannage/rabbitmq-webui/index.md) juste avant, durant et après la mise à jour, afin de mesurer l'état de « retour à la normale » de votre plateforme lors d'une période de maintenance de l'outil.
+Cette accumulation d'évènements en attente peut, néanmoins, provoquer une latence des traitements, ou une augmentation de la consommation des ressources, en raison du rattrapage à effectuer. Cette incidence reste temporaire. Nous vous conseillons de [surveiller l'interface d'administration de RabbitMQ](../../guide-de-depannage/rabbitmq-webui/index.md) juste avant, durant et après la mise à jour, afin de mesurer l'état de « retour à la normale » de votre plateforme lors d'une période de maintenance de l'outil.
 
 En revanche, tout appel fait aux API Canopsis durant cette période de maintenance n'aura pas été temporisé et devra donc être renouvelé s'il a échoué. Suivant les connecteurs ou configurations des sources envoyant ces évènements à destination de l'API HTTP de Canopsis, il peut donc exister un risque de perte d'évènements.
 
