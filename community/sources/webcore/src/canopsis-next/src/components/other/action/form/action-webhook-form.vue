@@ -7,7 +7,7 @@
       :payload-variables="payloadVariables",
       :url-variables="payloadVariables"
     )
-    declare-ticket-rule-ticket-mapping-field(v-field="webhook.declare_ticket")
+    declare-ticket-rule-ticket-mapping-field(v-field="webhook", with-ticket-system-name)
     v-layout(row, justify-end)
       v-btn(
         :loading="checking",
