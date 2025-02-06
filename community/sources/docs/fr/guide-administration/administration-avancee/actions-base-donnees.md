@@ -9,14 +9,14 @@ Cette section va lister différentes commandes pour purger des collections de la
 !!! attention
     Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. **Avant toute opération, il est vivement conseillé de faire une [sauvegarde de la base MongoDB](#sauvegarde)**.
 
-Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.count(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
+Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.countDocuments(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
 
 Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimer, vous pouvez utiliser la commande `db.<nom de la collection>.remove(<requête>)`. Au moment de la suppression, un message va indiquer le nombre d'éléments supprimés.
 
 ```js
-> db.periodical_alarm.remove({"t" : 1537894605})
+> db.periodical_alarm.deleteMany({"t" : 1537894605})
 WriteResult({ "nRemoved" : 3 })
-> db.entities.remove({"name": "foldable"})
+> db.entities.deleteMany({"name": "foldable"})
 WriteResult({ "nRemoved" : 17 })
 ```
 
@@ -108,6 +108,113 @@ mongorestore --username cpsmongo --password canopsis --db canopsis /chemin/vers/
 
 !!! note
     Lors de la sauvegarde de la base, la commande crée un sous-dossier dans `/chemin/vers/sauvegarde` pour y stocker les fichiers. Ce sous-dossier doit être ajouté au chemin dans la commande `mongorestore`.
+
+Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.  
+
+=== "Canopsis Community (édition open-source)"
+
+    ```sh
+    systemctl start --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis.service
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    ```sh
+    systemctl start --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-correlation.service \
+                           canopsis-engine-go@engine-dynamic-infos.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-engine-go@engine-remediation.service \
+                           canopsis-engine-go@engine-webhook.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis-engine-python-snmp.service \
+                           canopsis.service
+    ```
+
+## PostgreSQL (TimescaleDB)
+
+### Sauvegarde
+
+Utilisez la commande `pg_dump` via une tâche cron. De préférence, faites la sauvegarde sur un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.timescale.com/self-hosted/latest/backup-and-restore/logical-backup/).
+
+!!! note
+    Le mot de passe par défaut est `canopsis`, mais il peut être nécessaire d'adapter la commande selon votre contexte.
+
+```sh
+pg_dump -d "postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis" -Fc -f canopsis.dump
+```
+
+### Restauration
+
+!!! attention
+    Cette manipulation a une incidence métier importante et ne doit être réalisée que par une personne compétente. La restauration de la base de données ne doit être effectuée que si celle-ci est endommagée, pour corriger l'incident.
+
+Avant de procéder à la restauration, arrêtez l'hyperviseur.  
+
+=== "Canopsis Community (édition open-source)"
+
+    ```sh
+    systemctl stop --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis.service
+    ```
+
+=== "Canopsis Pro (souscription commerciale)"
+
+    ```sh
+    systemctl stop --now canopsis-engine-go@engine-action.service \
+                           canopsis-engine-go@engine-axe.service \
+                           canopsis-engine-go@engine-che.service \
+                           canopsis-engine-go@engine-correlation.service \
+                           canopsis-engine-go@engine-dynamic-infos.service \
+                           canopsis-engine-go@engine-fifo.service \
+                           canopsis-engine-go@engine-pbehavior.service \
+                           canopsis-engine-go@engine-remediation.service \
+                           canopsis-engine-go@engine-webhook.service \
+                           canopsis-service@canopsis-api.service \
+                           canopsis-engine-python-snmp.service \
+                           canopsis.service
+    ```
+
+Utilisez la commande `pg_restore`. De préférence, récupérez la sauvegarde depuis un système de fichiers externe à la machine (NAS, SAN). Vous pouvez consulter la documentation de la commande en suivant ce [lien](https://docs.timescale.com/self-hosted/latest/backup-and-restore/logical-backup/).
+
+Tout d'abord, il vous faut vous connecter à la base postgresql
+```sh
+sudo -u postgres psql
+```
+Puis créer la base Canopsis
+```sql
+CREATE DATABASE canopsis;
+\c canopsis
+CREATE EXTENSION IF NOT EXISTS timescaledb;
+SET password_encryption = 'scram-sha-256';
+CREATE USER cpspostgres WITH PASSWORD 'canopsis';
+```
+Vous devrez ensuite entrer notre base en mode restauration
+```sql
+SELECT timescaledb_pre_restore();
+```
+Une fois la base en mode restauration, vous pouvez importer votre dump
+```sh
+pg_restore -Fc -d "postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis" canopsis.dump
+```
+Une fois le dump importer, vous pouvez sortir du mode restauration
+```sql
+SELECT timescaledb_post_restore();
+```
 
 Si la restauration est réussie vous pouvez redémarrer l'hyperviseur.  
 
