@@ -1,8 +1,19 @@
 <template lang="pug">
-  c-advanced-data-table(:headers="headers", :items="tickets", hide-actions, disable-initial-sort)
+  c-advanced-data-table(
+    :headers="headers",
+    :items="tickets",
+    :total-items="tickets.length",
+    hide-actions,
+    disable-initial-sort
+  )
     template(#ticket_url="{ item }")
       template(v-if="item.ticket_url")
-        a(v-if="isValidTicketUrl(item.ticket_url)", :href="item.ticket_url", target="_blank") {{ item.ticket_url }}
+        a(
+          v-if="isValidTicketUrl(item.ticket_url)",
+          :href="item.ticket_url",
+          :title="item.ticket_url_title",
+          target="_blank"
+        ) {{ item.ticket_url_title || item.ticket_url }}
         span(v-else) {{ item.ticket_url }}
     template(#t="{ item }") {{ item.t | date }}
     template(#_t="{ item }")

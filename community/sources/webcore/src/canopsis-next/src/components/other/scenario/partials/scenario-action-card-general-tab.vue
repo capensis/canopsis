@@ -108,7 +108,7 @@ export default {
         this.outputItem,
         {
           icon: 'assignment',
-          label: this.$tc('declareTicket.ticketID'),
+          label: this.$t('declareTicket.ticketID'),
           value: this.action.parameters.ticket,
         },
       ];
@@ -116,15 +116,23 @@ export default {
       if (this.action.parameters.ticket_url) {
         items.push({
           icon: 'assignment',
-          label: this.$tc('declareTicket.ticketURL'),
+          label: this.$t('declareTicket.ticketURL'),
           value: this.action.parameters.ticket_url,
+        });
+      }
+
+      if (this.action.parameters.ticket_url_title) {
+        items.push({
+          icon: 'assignment',
+          label: this.$t('declareTicket.ticketURLTitle'),
+          value: this.action.parameters.ticket_url_title,
         });
       }
 
       if (this.action.parameters.ticket_system_name) {
         items.push({
           icon: 'assignment',
-          label: this.$tc('common.systemName'),
+          label: this.$t('common.systemName'),
           value: this.action.parameters.ticket_system_name,
         });
       }
