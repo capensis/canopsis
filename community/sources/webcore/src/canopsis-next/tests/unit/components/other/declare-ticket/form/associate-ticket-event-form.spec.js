@@ -9,19 +9,22 @@ const stubs = {
   'c-name-field': true,
   'declare-ticket-rule-ticket-id-field': true,
   'declare-ticket-rule-ticket-url-text-field': true,
+  'declare-ticket-rule-ticket-url-title-field': true,
   'declare-ticket-rule-ticket-custom-fields-field': true,
 };
 
 const selectSystemNameField = wrapper => wrapper.find('c-name-field-stub');
 const selectDeclareTicketRuleTicketIdField = wrapper => wrapper.find('declare-ticket-rule-ticket-id-field-stub');
 const selectDeclareTicketRuleTicketUrlTextField = wrapper => wrapper.find('declare-ticket-rule-ticket-url-text-field-stub');
+const selectDeclareTicketRuleTicketUrlTitleField = wrapper => wrapper.find('declare-ticket-rule-ticket-url-title-field-stub');
 const selectDeclareTicketRuleTicketCustomFieldsField = wrapper => wrapper.find('declare-ticket-rule-ticket-custom-fields-field-stub');
 
 describe('associate-ticket-event-form', () => {
   const form = {
     system_name: 'System name',
-    ticket_id: 'Ticket ID',
+    ticket: 'Ticket ID',
     ticket_url: 'Ticket URL',
+    ticket_url_title: 'Ticket URL',
     output: 'Output',
     mapping: [
       {
@@ -47,24 +50,24 @@ describe('associate-ticket-event-form', () => {
 
     expect(wrapper).toEmit('input', {
       ...form,
-      system_name: newName,
+      ticket_system_name: newName,
     });
   });
 
-  test('Ticket id changed after trigger ticket id field', () => {
+  test('Ticket changed after trigger ticket id field', () => {
     const wrapper = factory({
       propsData: {
         form,
       },
     });
 
-    const newTicketId = Faker.datatype.string();
+    const newTicket = Faker.datatype.string();
 
-    selectDeclareTicketRuleTicketIdField(wrapper).vm.$emit('input', newTicketId);
+    selectDeclareTicketRuleTicketIdField(wrapper).vm.$emit('input', newTicket);
 
     expect(wrapper).toEmit('input', {
       ...form,
-      ticket_id: newTicketId,
+      ticket: newTicket,
     });
   });
 
@@ -82,6 +85,23 @@ describe('associate-ticket-event-form', () => {
     expect(wrapper).toEmit('input', {
       ...form,
       ticket_url: newTicketUrl,
+    });
+  });
+
+  test('Ticket url title changed after trigger ticket url field', () => {
+    const wrapper = factory({
+      propsData: {
+        form,
+      },
+    });
+
+    const newTicketUrlTitle = Faker.datatype.string();
+
+    selectDeclareTicketRuleTicketUrlTitleField(wrapper).vm.$emit('input', newTicketUrlTitle);
+
+    expect(wrapper).toEmit('input', {
+      ...form,
+      ticket_url_title: newTicketUrlTitle,
     });
   });
 

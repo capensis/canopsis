@@ -20,6 +20,7 @@ import { uid } from '@/helpers/uid';
  * @property {string} ticket_id
  * @property {string} [ticket_url]
  * @property {string} [ticket_url_tpl]
+ * @property {string} [ticket_url_title]
  */
 
 /**
@@ -116,6 +117,7 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
     ticket_id: ticketId,
     ticket_url: ticketUrl = '',
     ticket_url_tpl: ticketUrlTpl = '',
+    ticket_url_title: ticketUrlTitle = '',
     ...fields
   } = declareTicket ?? {};
 
@@ -128,6 +130,7 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
       template: !!ticketUrlTpl,
       value: ticketUrlTpl || ticketUrl,
     },
+    ticket_url_title: ticketUrlTitle,
     mapping: objectToTextPairs(fields),
   };
 };
