@@ -39,7 +39,7 @@ type ImportWorker interface {
 	CreateJob(ctx context.Context, id string, delimiter rune, f multipart.File) (_ ImportJob, resErr error)
 	ProcessJob(ctx context.Context, id string) error
 	GetJob(ctx context.Context, id string) (ImportJob, error)
-	CompleteJob(ctx context.Context, id string, columnTypes map[string]int) (bool, error)
+	CompleteJob(ctx context.Context, id string, columnTypes []int) (bool, error)
 	ProcessAbandonedJobs(ctx context.Context)
 	DeleteOldJobs(ctx context.Context)
 }
@@ -51,10 +51,17 @@ func NewImportWorker(
 	jobPublisher workers.JobPublisher,
 	logger zerolog.Logger,
 ) ImportWorker {
+	linkedDbCollections := make([]mongo.DbCollection, len(linkedCollections))
+	for i, c := range linkedCollections {
+		linkedDbCollections[i] = dbClient.Collection(c)
+	}
+
 	return &importWorker{
 		dbClient:                dbClient,
 		dbCollection:            dbClient.Collection(mongo.ExternalDataTableCollection),
 		dbImportCollection:      dbClient.Collection(mongo.ExternalDataImportWorkerCollection),
+		dbWidgetCollection:      dbClient.Collection(mongo.WidgetMongoCollection),
+		linkedDbCollections:     linkedDbCollections,
 		pgPoolProvider:          pgPoolProvider,
 		tmpImportDir:            tmpImportDir,
 		jobPublisher:            jobPublisher,
@@ -70,6 +77,8 @@ type importWorker struct {
 	dbClient                mongo.DbClient
 	dbCollection            mongo.DbCollection
 	dbImportCollection      mongo.DbCollection
+	dbWidgetCollection      mongo.DbCollection
+	linkedDbCollections     []mongo.DbCollection
 	pgPoolProvider          postgres.PoolProvider
 	tmpImportDir            string
 	jobPublisher            workers.JobPublisher
@@ -209,13 +218,14 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 		r := csv.NewReader(f)
 		r.Comma = job.Delimiter
 		r.ReuseRecord = true
-		var columnLengths map[string]int
+		var columns []string
+		var columnLengths []int
 		var failReason string
 		switch job.Type {
 		case externaldata.TypeMongoDB:
-			columnLengths, failReason, err = w.writeToMongo(ctx, job, r)
+			columns, failReason, err = w.writeToMongo(ctx, job, r)
 		case externaldata.TypePostgreSQL:
-			columnLengths, failReason, err = w.writeToPostgres(ctx, job, r)
+			columns, columnLengths, failReason, err = w.writeToPostgres(ctx, job, r)
 		}
 
 		if err != nil {
@@ -226,6 +236,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 		if failReason == "" {
 			update = bson.M{
 				"status":         ImportStatusSucceeded,
+				"columns":        columns,
 				"column_lengths": columnLengths,
 			}
 		} else {
@@ -312,7 +323,7 @@ func (w *importWorker) GetJob(ctx context.Context, id string) (ImportJob, error)
 	return job, nil
 }
 
-func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes map[string]int) (bool, error) {
+func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes []int) (bool, error) {
 	job := ImportJob{}
 	err := w.dbImportCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&job)
 	if err != nil {
@@ -327,38 +338,16 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 		return false, nil
 	}
 
-	valErrMsgs := make(map[string]string)
-	for col := range job.ColumnLengths {
-		t, ok := columnTypes[col]
-		if !ok {
-			valErrMsgs["column_types."+col] = col + " is missing."
-			continue
-		}
-
-		switch t {
-		case externaldata.ColumnTypeNoType, externaldata.ColumnTypeFilter, externaldata.ColumnTypeContext:
-		default:
-			valErrMsgs["column_types."+col] = col + " must be one of [" +
-				strconv.Itoa(externaldata.ColumnTypeNoType) + " " +
-				strconv.Itoa(externaldata.ColumnTypeFilter) + " " +
-				strconv.Itoa(externaldata.ColumnTypeContext) +
-				"]."
-		}
-	}
-
-	if len(valErrMsgs) > 0 {
-		return false, common.NewValidationErrors(valErrMsgs)
-	}
-
-	if len(columnTypes) > len(job.ColumnLengths) {
-		return false, common.NewValidationError("column_types", "ColumnTypes is invalid.")
+	if len(columnTypes) != len(job.Columns) {
+		return false, common.NewValidationError("column_types", "ColumnTypes must contain "+strconv.Itoa(len(job.Columns))+" items.")
 	}
 
 	table := externaldata.Table{}
 	update := bson.M{
+		"columns":      job.Columns,
 		"column_types": columnTypes,
 	}
-	if job.Type == externaldata.TypePostgreSQL {
+	if len(job.ColumnLengths) > 0 {
 		update["column_lengths"] = job.ColumnLengths
 	}
 
@@ -402,16 +391,15 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 			return false, fmt.Errorf("failed to truncate postgres table: %w", err)
 		}
 
-		columns := make([]string, len(job.ColumnLengths)+1)
-		i := 0
-		columns[i] = externaldata.IDColumnName
-		i++
-		for c, newL := range job.ColumnLengths {
-			columns[i] = pgx.Identifier{c}.Sanitize()
-			i++
+		existedCols := make(map[string]int, len(table.Columns))
+		for i, c := range table.Columns {
+			existedCols[c] = table.ColumnLengths[i]
+		}
 
+		for i, c := range job.Columns {
+			newL := job.ColumnLengths[i]
 			sql := ""
-			if l, ok := table.ColumnLengths[c]; !ok {
+			if l, ok := existedCols[c]; !ok {
 				sql = "ALTER TABLE " + table.GetDBName() +
 					" ADD COLUMN " + pgx.Identifier{c}.Sanitize() + " VARCHAR(" + strconv.Itoa(newL) + ")"
 			} else if l != newL {
@@ -425,21 +413,27 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 					return false, fmt.Errorf("failed to alter postgres table: %w", err)
 				}
 			}
+
+			delete(existedCols, c)
 		}
 
-		for c := range table.ColumnLengths {
-			if _, ok := job.ColumnLengths[c]; !ok {
-				sql := "ALTER TABLE " + table.GetDBName() +
-					" DROP COLUMN " + pgx.Identifier{c}.Sanitize()
-				_, err = pgPool.Exec(ctx, sql)
-				if err != nil {
-					return false, fmt.Errorf("failed to alter postgres table: %w", err)
-				}
+		for c := range existedCols {
+			sql := "ALTER TABLE " + table.GetDBName() +
+				" DROP COLUMN " + pgx.Identifier{c}.Sanitize()
+			_, err = pgPool.Exec(ctx, sql)
+			if err != nil {
+				return false, fmt.Errorf("failed to alter postgres table: %w", err)
 			}
 		}
 
-		_, err = pgPool.Exec(ctx, "INSERT INTO "+table.GetDBName()+"("+strings.Join(columns, ",")+
-			") SELECT "+strings.Join(columns, ",")+" FROM "+job.getDBTableName())
+		sanColsWithID := make([]string, len(job.Columns)+1)
+		sanColsWithID[0] = externaldata.IDColumnName
+		for j, col := range job.Columns {
+			sanColsWithID[j+1] = pgx.Identifier{col}.Sanitize()
+		}
+
+		_, err = pgPool.Exec(ctx, "INSERT INTO "+table.GetDBName()+"("+strings.Join(sanColsWithID, ",")+
+			") SELECT "+strings.Join(sanColsWithID, ",")+" FROM "+job.getDBTableName())
 		if err != nil {
 			return false, fmt.Errorf("failed to copy to postgres table: %w", err)
 		}
@@ -589,7 +583,7 @@ func (w *importWorker) DeleteOldJobs(ctx context.Context) {
 	}
 }
 
-func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) (map[string]int, string, error) {
+func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) ([]string, string, error) {
 	var columns []string
 	i := 0
 	docs := make([]any, 0, canopsis.DefaultBulkSize)
@@ -647,23 +641,18 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 		}
 	}
 
-	columnLengths := make(map[string]int, len(columns))
-	for _, c := range columns {
-		columnLengths[c] = externaldata.PostgresDefaultColumnLen
-	}
-
-	return columnLengths, "", nil
+	return columns, "", nil
 }
 
-func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) (map[string]int, string, error) {
+func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) ([]string, []int, string, error) {
 	pgPool, err := w.pgPoolProvider.Get(ctx)
 	if err != nil {
-		return nil, "", fmt.Errorf("failed to get postgres pool: %w", err)
+		return nil, nil, "", fmt.Errorf("failed to get postgres pool: %w", err)
 	}
 
 	var columns []string
 	var columnsWithID []string
-	var columnLengths map[string]int
+	var columnLengths []int
 	i := 0
 	rows := make([][]any, 0, canopsis.DefaultBulkSize)
 	for {
@@ -674,11 +663,11 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 				break
 			}
 
-			return nil, err.Error(), nil
+			return nil, nil, err.Error(), nil
 		}
 
 		if len(record) == 0 {
-			return nil, "empty record " + strconv.Itoa(i), nil
+			return nil, nil, "empty record " + strconv.Itoa(i), nil
 		}
 
 		if len(columns) == 0 {
@@ -686,26 +675,26 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 			columnsWithID[0] = externaldata.IDColumnName
 			copy(columnsWithID[1:], record)
 			columns = columnsWithID[1:]
-			columnLengths = make(map[string]int, len(columns))
-			for _, c := range columns {
-				columnLengths[c] = externaldata.PostgresDefaultColumnLen
+			columnLengths = make([]int, len(columns))
+			for j := range columns {
+				columnLengths[j] = externaldata.PostgresDefaultColumnLen
 			}
 
 			err = w.createTable(ctx, job, columns, columnLengths)
 			if err != nil {
-				return nil, "", err
+				return nil, nil, "", err
 			}
 
 			continue
 		}
 
 		if len(columns) != len(record) {
-			return nil, "invalid record " + strconv.Itoa(i) + ": not match fields", nil
+			return nil, nil, "invalid record " + strconv.Itoa(i) + ": not match fields", nil
 		}
 
 		columnLengths, err = w.alterColumnLengths(ctx, job.getDBTableName(), columns, columnLengths, record)
 		if err != nil {
-			return nil, "", err
+			return nil, nil, "", err
 		}
 
 		row := make([]any, len(record)+1)
@@ -719,7 +708,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 		if len(rows) == canopsis.DefaultBulkSize {
 			_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columnsWithID, pgx.CopyFromRows(rows))
 			if err != nil {
-				return nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
+				return nil, nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
 			}
 
 			rows = rows[:0]
@@ -729,28 +718,20 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 	if len(rows) > 0 {
 		_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columnsWithID, pgx.CopyFromRows(rows))
 		if err != nil {
-			return nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
+			return nil, nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
 		}
 	}
 
-	return columnLengths, "", nil
+	return columns, columnLengths, "", nil
 }
 
 func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f multipart.File, delimiter rune) error {
-	ruleExists := false
-	if len(t.ColumnTypes) > 0 {
-		for _, c := range linkedCollections {
-			err := w.dbClient.Collection(c).
-				FindOne(ctx, bson.M{"external_data.table": t.ID}, options.FindOne().SetProjection(bson.M{"_id": 1})).
-				Err()
-			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-				return fmt.Errorf("cannot find linked rules: %w", err)
-			}
-
-			if err == nil {
-				ruleExists = true
-				break
-			}
+	isLinked := false
+	var err error
+	if len(t.Columns) > 0 {
+		isLinked, err = isTableLinked(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
+		if err != nil {
+			return err
 		}
 	}
 
@@ -779,8 +760,8 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	missingCols := make([]string, 0)
-	if ruleExists {
-		for c := range t.ColumnTypes {
+	if isLinked {
+		for _, c := range t.Columns {
 			if !existColumns[c] {
 				missingCols = append(missingCols, strconv.Quote(c))
 			}
@@ -799,7 +780,7 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	return nil
 }
 
-func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns []string, columnLens map[string]int) error {
+func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns []string, columnLens []int) error {
 	switch job.Type {
 	case externaldata.TypeMongoDB:
 		// clean collection if job is retried
@@ -813,7 +794,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
 			externaldata.IDColumnName + " VARCHAR(" + strconv.Itoa(externaldata.PostgresIDColumnLen) + ") PRIMARY KEY, "
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + strconv.Itoa(columnLens[field]) + ") "
+			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + strconv.Itoa(columnLens[i]) + ") "
 			if i != len(columns)-1 {
 				sql += ","
 			}
@@ -872,14 +853,14 @@ func (w *importWorker) alterColumnLengths(
 	ctx context.Context,
 	tableName string,
 	columns []string,
-	columnLens map[string]int,
+	columnLens []int,
 	record []string,
-) (map[string]int, error) {
+) ([]int, error) {
 	updatedLengths := make(map[string]int)
 	for i, v := range record {
-		if len(v) > columnLens[columns[i]] {
-			columnLens[columns[i]] = len(v)
-			updatedLengths[columns[i]] = columnLens[columns[i]]
+		if len(v) > columnLens[i] {
+			columnLens[i] = len(v)
+			updatedLengths[columns[i]] = columnLens[i]
 		}
 	}
 

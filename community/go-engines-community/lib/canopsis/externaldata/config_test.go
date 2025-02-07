@@ -34,17 +34,26 @@ func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
 	tablesToCreate := []externaldata.Table{
 		{
 			Name: "test_coll_1",
-			ColumnTypes: map[string]int{
-				"test_field_1": externaldata.ColumnTypeNoType,
-				"test_field_2": externaldata.ColumnTypeNoType,
+			Columns: []string{
+				"test_field_1",
+				"test_field_2",
+			},
+			ColumnTypes: []int{
+				externaldata.ColumnTypeNoType,
+				externaldata.ColumnTypeNoType,
 			},
 		},
 		{
 			Name: "test_coll_3",
-			ColumnTypes: map[string]int{
-				"test_field_3": externaldata.ColumnTypeNoType,
-				"test_field_4": externaldata.ColumnTypeNoType,
-				"test_field_5": externaldata.ColumnTypeNoType,
+			Columns: []string{
+				"test_field_3",
+				"test_field_4",
+				"test_field_5",
+			},
+			ColumnTypes: []int{
+				externaldata.ColumnTypeNoType,
+				externaldata.ColumnTypeNoType,
+				externaldata.ColumnTypeNoType,
 			},
 		},
 	}
@@ -75,14 +84,20 @@ func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *tes
 	tablesToIgnore := []externaldata.Table{
 		{
 			Name:        "test_coll_1",
-			ColumnTypes: map[string]int{},
+			Columns:     []string{},
+			ColumnTypes: []int{},
 		},
 		{
 			Name: "test_coll_2",
-			ColumnTypes: map[string]int{
-				"test_field_3": externaldata.ColumnTypeNoType,
-				"test_field_4": externaldata.ColumnTypeNoType,
-				"test_field_5": externaldata.ColumnTypeNoType,
+			Columns: []string{
+				"test_field_3",
+				"test_field_4",
+				"test_field_5",
+			},
+			ColumnTypes: []int{
+				externaldata.ColumnTypeNoType,
+				externaldata.ColumnTypeNoType,
+				externaldata.ColumnTypeNoType,
 			},
 		},
 	}
@@ -118,12 +133,14 @@ func TestSyncMongoCollections_GivenMissingCollections_ShouldDeleteUnlinked(t *te
 	collNamesToBlockDelete := []string{
 		"test_coll_4",
 		"test_coll_5",
+		"test_coll_6",
 	}
 	missingCollNames := []string{
 		"test_coll_2",
 		"test_coll_3",
 		"test_coll_4",
 		"test_coll_5",
+		"test_coll_6",
 	}
 	refCollNames := []string{
 		"test_ref_coll_1",
@@ -133,9 +150,12 @@ func TestSyncMongoCollections_GivenMissingCollections_ShouldDeleteUnlinked(t *te
 	mockRefCollection1 := mock_mongo.NewMockDbCollection(ctrl)
 	mockRefCollection1.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(newMockCursorRef(ctrl, collNamesToBlockDelete[:1]), nil)
 	mockRefCollection2 := mock_mongo.NewMockDbCollection(ctrl)
-	mockRefCollection2.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(newMockCursorRef(ctrl, collNamesToBlockDelete[1:]), nil)
+	mockRefCollection2.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(newMockCursorRef(ctrl, collNamesToBlockDelete[1:2]), nil)
+	mockWidgetCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockWidgetCollection.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(newMockCursorRef(ctrl, collNamesToBlockDelete[2:]), nil)
 	mockClient.EXPECT().Collection(gomock.Eq(refCollNames[0])).Return(mockRefCollection1)
 	mockClient.EXPECT().Collection(gomock.Eq(refCollNames[1])).Return(mockRefCollection2)
+	mockClient.EXPECT().Collection(gomock.Eq(mongo.WidgetMongoCollection)).Return(mockWidgetCollection)
 	mockExdataTableCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockClient.EXPECT().Collection(gomock.Eq(mongo.ExternalDataTableCollection)).Return(mockExdataTableCollection)
 	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, missingCollNames), nil)
@@ -175,20 +195,21 @@ func newMockCollections(
 	tables []externaldata.Table,
 	fieldVal any,
 ) {
+	count := 5
 	for _, table := range tables {
-		doc := make(map[string]any, len(table.ColumnTypes)+1)
-		doc[externaldata.IDColumnName] = "test"
-		for s := range table.ColumnTypes {
-			doc[s] = fieldVal
+		doc := make(bson.D, len(table.ColumnTypes)+1)
+		doc[0] = bson.E{Key: externaldata.IDColumnName, Value: "test"}
+		for i, s := range table.Columns {
+			doc[i+1] = bson.E{Key: s, Value: fieldVal}
 		}
 
 		mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 		mockClient.EXPECT().Collection(gomock.Eq(table.Name)).Return(mockDbCollection)
 		mockCursor := mock_mongo.NewMockCursor(ctrl)
-		mockCursor.EXPECT().Next(gomock.Any()).Return(true)
-		mockCursor.EXPECT().Decode(gomock.Any()).Do(func(v *map[string]any) {
+		mockCursor.EXPECT().Next(gomock.Any()).Return(true).Times(count)
+		mockCursor.EXPECT().Decode(gomock.Any()).Do(func(v *bson.D) {
 			*v = doc
-		})
+		}).Times(count)
 		mockCursor.EXPECT().Next(gomock.Any()).Return(false)
 		mockCursor.EXPECT().Err().Return(nil)
 		mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
@@ -203,6 +224,7 @@ func checkInsertedTables(t *testing.T, expected []externaldata.Table) func(conte
 			if table, ok := doc.(externaldata.Table); ok {
 				res[i] = externaldata.Table{
 					Name:        table.Name,
+					Columns:     table.Columns,
 					ColumnTypes: table.ColumnTypes,
 				}
 			} else {
@@ -216,7 +238,7 @@ func checkInsertedTables(t *testing.T, expected []externaldata.Table) func(conte
 
 		slices.SortFunc(res, cmp)
 		slices.SortFunc(expected, cmp)
-		if diff := pretty.Compare(res, expected); diff != "" {
+		if diff := pretty.Compare(expected, res); diff != "" {
 			t.Fatal("unexpected result: " + diff)
 		}
 	}

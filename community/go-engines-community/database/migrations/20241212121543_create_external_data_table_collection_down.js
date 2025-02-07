@@ -2,6 +2,8 @@ db.permission.deleteMany({
     _id: {
         $in: [
             "api_external_data_table",
+            "models_exploitation_externalData",
+            "ExternalData",
         ]
     }
 });
@@ -9,6 +11,13 @@ db.permission.deleteMany({
 db.role.updateMany({}, {
     $unset: {
         "permissions.api_external_data_table": "",
+        "permissions.models_exploitation_externalData": "",
+    }
+});
+
+db.permission.updateOne({_id: "models_privateView"}, {
+    $unset: {
+        "api_permissions.api_external_data_table": ""
     }
 });
 

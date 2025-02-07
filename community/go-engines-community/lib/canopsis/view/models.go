@@ -17,6 +17,7 @@ const (
 	WidgetTypeAlarmsStatsCalendar = "StatsCalendar"
 	WidgetTypeJunit               = "Junit"
 	WidgetTypeMap                 = "Map"
+	WidgetTypeExternalData        = "ExternalData"
 
 	WidgetInternalParamJunitTestSuites = "test_suites"
 
@@ -101,6 +102,9 @@ type Parameters struct {
 
 	// Map
 	Map string `bson:"map,omitempty" json:"map,omitempty"`
+
+	// ExternalData
+	Table string `bson:"table,omitempty" json:"table,omitempty"`
 
 	RemainParameters map[string]any `bson:",inline" json:"-"`
 }

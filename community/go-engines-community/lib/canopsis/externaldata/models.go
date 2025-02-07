@@ -33,8 +33,9 @@ type Table struct {
 	Type              int              `bson:"type"`
 	Name              string           `bson:"name"`
 	Description       string           `bson:"description,omitempty"`
-	ColumnTypes       map[string]int   `bson:"column_types,omitempty"`
-	ColumnLengths     map[string]int   `bson:"column_lengths,omitempty"`
+	Columns           []string         `bson:"columns,omitempty"`
+	ColumnTypes       []int            `bson:"column_types,omitempty"`
+	ColumnLengths     []int            `bson:"column_lengths,omitempty"`
 	FromConfig        bool             `bson:"from_config,omitempty"`
 	RemovedFromConfig bool             `bson:"removed_from_config,omitempty"`
 	Author            string           `bson:"author,omitempty"`
