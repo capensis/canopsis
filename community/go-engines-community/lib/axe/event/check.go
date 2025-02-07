@@ -316,7 +316,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		}, bson.M{
 			"$set": canceldelay.Job{
 				Name:      entity.Name,
-				Component: alarm.Value.Component,
+				Component: entity.Component,
 				Type:      entity.Type,
 				Delay:     *event.Parameters.CancelDelay,
 				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CancelDelay,
@@ -412,7 +412,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 			}, bson.M{
 				"$set": canceldelay.Job{
 					Name:      entity.Name,
-					Component: alarm.Value.Component,
+					Component: entity.Component,
 					Type:      entity.Type,
 					Delay:     *params.CancelDelay,
 					ExecTime:  params.Timestamp.Unix() + *params.CancelDelay,

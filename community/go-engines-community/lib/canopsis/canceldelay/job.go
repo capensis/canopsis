@@ -7,4 +7,5 @@ type Job struct {
 	Type      string `bson:"type" json:"type"`
 	Delay     int64  `bson:"delay" json:"delay"`
 	ExecTime  int64  `bson:"exec_time" json:"exec_time"`
+	ResendAt  int64  `bson:"resend_at,omitempty" json:"resend_at,omitempty"`
 }

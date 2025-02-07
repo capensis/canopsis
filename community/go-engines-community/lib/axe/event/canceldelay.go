@@ -68,9 +68,13 @@ func (p *cancelDelayProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
+
+	alarmChange := types.NewAlarmChange()
+
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		alarm := types.Alarm{}
+		alarmChange.Type = types.AlarmChangeTypeNone
 
 		_, err := p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": event.AlarmID})
 		if err != nil {
@@ -86,7 +90,6 @@ func (p *cancelDelayProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			return fmt.Errorf("failed to find alarm on cancel_delay event: %w", err)
 		}
 
-		alarmChange := types.NewAlarmChange()
 		alarmChange.Type = types.AlarmChangeTypeCancel
 
 		result.Forward = true
