@@ -352,7 +352,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$or": []bson.M{{"$and": []bson.M{
 			{"v.resource": bson.M{"$eq": "test-resource"}},
-			{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
+			{"v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}}}},
 		}}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
@@ -695,7 +695,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 					{"$and": []bson.M{
 						{"$or": []bson.M{{"$and": []bson.M{
 							{"v.duration": bson.M{"$gt": 600}},
-							{"v.infos_array.v.info_name": bson.M{"$eq": 3}},
+							{"v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}}}},
 						}}}},
 						{"$or": []bson.M{{"$and": []bson.M{
 							{"entity.category": bson.M{"$eq": "test-category"}},

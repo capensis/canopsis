@@ -237,20 +237,20 @@ func (s *pool) call(ctx context.Context, task Task, workerId int) (bool, error) 
 }
 
 func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
-	params := task.Action.Parameters
-	tplData := types.AlarmWithEntity{
-		Alarm:  task.Alarm,
-		Entity: task.Entity,
-	}
-	var err error
-	params.Output, err = s.templateExecutor.Execute(params.Output, tplData)
-	if err != nil {
-		return nil, fmt.Errorf("cannot render output template scenario=%s: %w", task.ScenarioID, err)
-	}
-
 	additionalData, err := s.resolveAuthor(task)
 	if err != nil {
 		return nil, err
+	}
+
+	params := task.Action.Parameters
+	tplData := map[string]any{
+		"Alarm":          task.Alarm,
+		"Entity":         task.Entity,
+		"AdditionalData": additionalData,
+	}
+	params.Output, err = s.templateExecutor.Execute(params.Output, tplData)
+	if err != nil {
+		return nil, fmt.Errorf("cannot render output template scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	axeParams := rpc.AxeParameters{
@@ -273,6 +273,7 @@ func (s *pool) getRPCAxeEvent(task Task) (*rpc.AxeEvent, error) {
 		axeParams.TicketInfo = types.TicketInfo{
 			Ticket:           params.Ticket,
 			TicketURL:        params.TicketURL,
+			TicketURLTitle:   params.TicketURLTitle,
 			TicketSystemName: params.TicketSystemName,
 			TicketRuleName:   axeParams.RuleName,
 			TicketRuleID:     task.ScenarioID,
@@ -329,7 +330,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		return nil, false, err
 	}
 
-	history := libwebhook.History{
+	history, historyResult := libwebhook.History{
 		ID:        utils.NewID(),
 		Alarms:    []string{task.Alarm.ID},
 		Scenario:  task.ScenarioID,
@@ -349,7 +350,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		EventInitiator: additionalData.Initiator,
 		EventOutput:    additionalData.Output,
 		Trigger:        additionalData.Trigger,
-	}
+	}, libwebhook.History{}
 
 	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,
 		bson.M{
@@ -361,13 +362,13 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 			"$setOnInsert": history,
 		},
 		options.FindOneAndUpdate().SetUpsert(true).SetReturnDocument(options.After),
-	).Decode(&history)
+	).Decode(&historyResult)
 	if err != nil {
 		return nil, false, fmt.Errorf("cannot save webhook history scenario=%s: %w", task.ScenarioID, err)
 	}
 
 	return &rpc.WebhookEvent{
-		Execution: history.ID,
+		Execution: historyResult.ID,
 	}, false, nil
 }
 

@@ -147,11 +147,11 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	alarm := types.Alarm{
 		ID: "test-alarm",
 		Value: types.AlarmValue{
-			LastUpdateDate: datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
-			Connector:      "test-connector",
-			ConnectorName:  "test-connector",
-			Component:      "test-component",
-			Resource:       "test-resource",
+			LastStateOrStatusUpdateDate: datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
+			Connector:                   "test-connector",
+			ConnectorName:               "test-connector",
+			Component:                   "test-component",
+			Resource:                    "test-resource",
 		},
 	}
 	rule := idlerule.Rule{

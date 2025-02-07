@@ -154,9 +154,23 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                 newGroup.push(ackCond);
                                 break;
                             case "canceled":
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {initiator: true});
+                                if (!stepCond) {
+                                    return null;
+                                }
+
+                                newGroup.push(stepCond);
+                                break;
                             case "ticket":
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {m: true, initiator: true});
+                                if (!stepCond) {
+                                    return null;
+                                }
+
+                                newGroup.push(stepCond);
+                                break;
                             case "snooze":
-                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {});
+                                var stepCond = migrateOldAlarmStepPattern(vValue, newField, {a: true, initiator: true});
                                 if (!stepCond) {
                                     return null;
                                 }
@@ -164,8 +178,15 @@ function migrateOldAlarmPatterns(oldAlarmPatterns) {
                                 newGroup.push(stepCond);
                                 break;
                             case "state":
+                                var sCond = migrateOldStateAndStatusAlarmStepPattern(vValue, newField, {initiator: true})
+                                if (!sCond) {
+                                    return null;
+                                }
+
+                                newGroup.push(sCond);
+                                break;
                             case "status":
-                                var sCond = migrateOldStateAndStatusAlarmStepPattern(vValue, newField)
+                                var sCond = migrateOldStateAndStatusAlarmStepPattern(vValue, newField, {})
                                 if (!sCond) {
                                     return null;
                                 }
@@ -263,7 +284,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
     }
 
     var newPattern = [];
-    var newEntityPattern = null;
+    var newEntityPatterns = [];
     for (var group of oldEventPatterns) {
         var newGroup = [];
 
@@ -278,6 +299,7 @@ function migrateOldEventPatterns(oldEventPatterns) {
                 case "long_output":
                 case "event_type":
                 case "source_type":
+                case "author":
                     var cond = migrateOldStringPattern(value);
                     if (!cond) {
                         return null;
@@ -288,14 +310,16 @@ function migrateOldEventPatterns(oldEventPatterns) {
                     });
                     break;
                 case "current_entity":
-                    if (oldEventPatterns.length > 1) {
+                    // skip entity pattern migration when more than one event pattern is found 
+                    if (newPattern.length > 1) {
                         return null;
                     }
 
-                    newEntityPattern = migrateOldEntityPatterns([value])
+                    var newEntityPattern = migrateOldEntityPatterns([value])
                     if (!newEntityPattern) {
                         return null;
                     }
+                    newEntityPatterns.push(newEntityPattern[0]);
 
                     break;
                 case "state":
@@ -312,7 +336,6 @@ function migrateOldEventPatterns(oldEventPatterns) {
                 case "perf_data":
                 case "status":
                 case "timestamp":
-                case "author":
                 case "routing_key":
                 case "ack_resources":
                 case "duration":
@@ -429,16 +452,88 @@ function migrateOldEventPatterns(oldEventPatterns) {
             }
         }
 
-        if (newGroup.length > 0) {
+        if (newGroup.length > 0 && itemIsDifferent(newGroup, newPattern)) {
             newPattern.push(newGroup)
         }
     }
 
+    if (newEntityPatterns.length == 0) {
+        newEntityPatterns = null;
+    }
     if (newPattern.length > 0) {
-        return [newPattern, newEntityPattern];
+        return [newPattern, newEntityPatterns];
     }
 
-    return [null, newEntityPattern];
+    return [null, newEntityPatterns];
+}
+
+function itemIsDifferent(item, groups) {
+    sortItems(item);
+    for (var group of groups) {
+        if (group.length === item.length) {
+            sortItems(group);
+            var isDifferent = false;
+            for (var i = 0; i < group.length; i++) {
+                if (objectsAreDifferent(group[i], item[i])) {
+                    isDifferent = true;
+                    break;
+                }
+            }
+
+            if (!isDifferent) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+function sortItems(items) {
+    items.sort(function(a, b) {
+        return a.field.localeCompare(b.field);
+    });
+}
+
+// compare two objects with various set of fields and various levels of nesting
+function objectsAreDifferent(obj1, obj2) {
+    if (obj1 === null || obj2 === null) {
+        return obj1 !== obj2;
+    }
+
+    if (typeof obj1 !== "object" || typeof obj2 !== "object") {
+        return obj1 !== obj2;
+    }
+
+    if (Array.isArray(obj1) || Array.isArray(obj2)) {
+        if (!Array.isArray(obj1) || !Array.isArray(obj2)) {
+            return true;
+        }
+
+        if (obj1.length !== obj2.length) {
+            return true;
+        }
+
+        for (var i = 0; i < obj1.length; i++) {
+            if (objectsAreDifferent(obj1[i], obj2[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
+        return true;
+    }
+
+    for (var key of Object.keys(obj1)) {
+        if (!objectsAreDifferent(obj1[key], obj2[key])) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 function migrateOldStringPattern(oldStringPattern) {
@@ -542,16 +637,33 @@ function migrateOldAlarmStepPattern(oldAlarmStepPattern, stepField, allowedField
     return res;
 }
 
-function migrateOldStateAndStatusAlarmStepPattern(oldAlarmStepPattern, stepField) {
+function migrateOldStateAndStatusAlarmStepPattern(oldAlarmStepPattern, stepField, allowedFields) {
     if (oldAlarmStepPattern === null) {
         return null;
     }
 
     var res = null;
     for (var field of Object.keys(oldAlarmStepPattern)) {
+        var value = oldAlarmStepPattern[field];
         switch (field) {
             case "val":
-                var cond = migrateOldIntPattern(oldAlarmStepPattern.val);
+                var cond = migrateOldIntPattern(value);
+                if (!cond) {
+                    return null;
+                }
+                res = {
+                    field: stepField + "." + field,
+                    cond: cond,
+                };
+                break;
+            case "a":
+            case "m":
+            case "initiator":
+                if (!allowedFields || !allowedFields[field]) {
+                    return null;
+                }
+
+                var cond = migrateOldStringPattern(value);
                 if (!cond) {
                     return null;
                 }
@@ -569,29 +681,33 @@ function migrateOldStateAndStatusAlarmStepPattern(oldAlarmStepPattern, stepField
 }
 
 function migrateOldIntPattern(oldIntPattern) {
-    if (oldIntPattern["<="]) {
-        return {
-            type: "lt",
-            value: oldIntPattern["<="] + 1,
-        };
-    }
-    if (oldIntPattern[">="]) {
-        return {
-            type: "gt",
-            value: oldIntPattern[">="] - 1,
-        };
-    }
-    if (oldIntPattern["<"]) {
-        return {
-            type: "lt",
-            value: oldIntPattern["<"],
-        };
-    }
-    if (oldIntPattern[">"]) {
-        return {
-            type: "gt",
-            value: oldIntPattern[">"],
-        };
+    if (Object.keys(oldIntPattern).length > 0) {
+        for (var key of Object.keys(oldIntPattern)) {
+            switch (key) {
+                case ">":
+                    return {
+                        type: "gt",
+                        value: oldIntPattern[">"],
+                    };
+                case ">=":
+                    return {
+                        type: "gt",
+                        value: oldIntPattern[">="] - 1,
+                    };
+                case "<":
+                    return {
+                        type: "lt",
+                        value: oldIntPattern["<"],
+                    };
+                case "<=":
+                    return {
+                        type: "lt",
+                        value: oldIntPattern["<="] + 1,
+                    };
+                default:
+                    return null;
+            }
+        }
     }
 
     if (isInt(oldIntPattern)) {
