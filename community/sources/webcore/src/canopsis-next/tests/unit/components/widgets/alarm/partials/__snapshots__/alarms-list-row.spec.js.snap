@@ -130,7 +130,9 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
 <tr
   class="alarm-list-row"
 >
-  <!---->
+  <td
+    colspan="3"
+  />
   <!---->
 </tr>
 `;
