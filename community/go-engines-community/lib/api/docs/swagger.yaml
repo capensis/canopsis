@@ -553,7 +553,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarm-tags/{id}:
     get:
       tags:
@@ -882,7 +882,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -923,7 +923,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -985,7 +985,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1067,7 +1067,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1109,7 +1109,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1150,7 +1150,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1195,7 +1195,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1236,7 +1236,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1317,7 +1317,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
     delete:
       tags:
         - associativetables
@@ -1405,7 +1405,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /broadcast-message/{id}:
     get:
       tags:
@@ -2592,7 +2592,7 @@ paths:
             schema:
               type: array
               items:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldata.BulkDeleteRequestItem'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.BulkDeleteRequestItem'
             examples:
               delete:
                 summary: Delete
@@ -2618,7 +2618,7 @@ paths:
                       - type: object
                         properties:
                           item:
-                            $ref: 'schemas_swagger.yaml#/definitions/externaldata.BulkDeleteRequestItem'
+                            $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.BulkDeleteRequestItem'
         400:
           description: Bad Request
           content:
@@ -3716,7 +3716,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /color-themes/{id}:
     get:
       tags:
@@ -4845,7 +4845,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -4891,7 +4891,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -5765,7 +5765,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /eventfilter/rules:
     get:
       tags:
@@ -6176,7 +6176,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /eventfilter/rules/{id}:
     get:
       tags:
@@ -6434,6 +6434,109 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-export/{id}:
+    post:
+      tags:
+        - externaldata
+      summary: Create external data export job
+      description: |
+        Create external data export job.
+
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldataexport-create
+      parameters:
+        - name: id
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    get:
+      tags:
+        - externaldata
+      summary: Get status of external data export job
+      description: |
+        Get status of external data export job.
+
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldataexport-status
+      parameters:
+        - name: id
+          in: path
+          description: external data export job id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-export/{id}/download:
+    get:
+      tags:
+        - externaldata
+      summary: Get result of external data export job
+      description: |
+        Get result of external data export job.
+
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldataexport-download
+      parameters:
+        - name: id
+          in: path
+          description: external data export job id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /external-data-import/{id}:
     post:
       tags:
@@ -6474,13 +6577,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldata.ImportJob'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
         400:
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -6509,7 +6612,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/externaldata.ImportCompleteRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportCompleteRequest'
             examples:
               complete:
                 summary: Complete import job
@@ -6529,7 +6632,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -6578,7 +6681,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -6608,7 +6711,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldata.ImportJob'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
         404:
           description: Not Found
           content:
@@ -6644,13 +6747,13 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/externaldata.Response'
+                          $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
         400:
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
     post:
       tags:
         - externaldata
@@ -6665,7 +6768,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/externaldata.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.EditRequest'
             examples:
               create:
                 summary: Create external data table
@@ -6682,13 +6785,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldata.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
         400:
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /external-data-tables/{id}:
     get:
       tags:
@@ -6707,7 +6810,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldata.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
         404:
           description: Not Found
           content:
@@ -6730,7 +6833,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/externaldata.EditRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.UpdateRequest'
             examples:
               update:
                 summary: Update external data table
@@ -6747,13 +6850,13 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldata.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
         400:
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -6779,7 +6882,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -6806,8 +6909,10 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/search_by'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/withFlags'
       responses:
         200:
           description: OK
@@ -6829,7 +6934,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -6884,7 +6989,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -7004,7 +7109,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -7284,7 +7389,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /flapping-rules/{id}:
     get:
       tags:
@@ -10394,7 +10499,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /resolve-rules/{id}:
     get:
       tags:
@@ -12247,7 +12352,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /state-settings/{id}:
     get:
       tags:
@@ -12727,7 +12832,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /link-rules/{id}:
     get:
       tags:
@@ -12926,7 +13031,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /template-validator/event-filter-rules:
     post:
       tags:
@@ -12966,7 +13071,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /template-validator/scenarios:
     post:
       tags:
@@ -13006,7 +13111,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /template-vars:
     get:
       tags:
@@ -15300,6 +15405,16 @@ components:
       description: search query
       schema:
         type: string
+    search_by:
+      name: search_by[]
+      in: query
+      style: form
+      explode: true
+      description: search by fields
+      schema:
+        type: array
+        items:
+          type: string
     sort:
       name: sort
       in: query

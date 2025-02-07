@@ -2823,12 +2823,34 @@ definitions:
     - name
     - type
     type: object
+  externaldatatable.ExportRequest:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/export.Field'
+        type: array
+      search:
+        type: string
+      search_by:
+        items:
+          type: string
+        type: array
+      separator:
+        type: string
+    type: object
+  externaldatatable.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
   externaldatatable.ImportCompleteRequest:
     properties:
       column_types:
-        additionalProperties:
+        items:
           type: integer
-        type: object
+        type: array
     required:
     - column_types
     type: object
@@ -2871,9 +2893,13 @@ definitions:
       _id:
         type: string
       column_types:
-        additionalProperties:
+        items:
           type: integer
-        type: object
+        type: array
+      columns:
+        items:
+          type: string
+        type: array
       created:
         type: integer
       description:
@@ -2899,6 +2925,27 @@ definitions:
         type: integer
       updated:
         type: integer
+    type: object
+  externaldatatable.UpdateRequest:
+    properties:
+      column_types:
+        items:
+          type: integer
+        type: array
+      description:
+        maxLength: 500
+        type: string
+      name:
+        type: string
+      type:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - column_types
+    - name
+    - type
     type: object
   file.File:
     properties:
@@ -6138,6 +6185,9 @@ definitions:
           type: string
         type: array
       screenshot_filemask:
+        type: string
+      table:
+        description: ExternalData
         type: string
       video_directories:
         items:

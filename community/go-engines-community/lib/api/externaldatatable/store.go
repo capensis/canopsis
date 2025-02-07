@@ -5,14 +5,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"sort"
 	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -39,16 +41,17 @@ type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
 	FindOne(ctx context.Context, id string) (Response, error)
 	Create(ctx context.Context, r EditRequest) (Response, error)
-	Update(ctx context.Context, r EditRequest) (Response, error)
+	Update(ctx context.Context, r UpdateRequest) (Response, error)
 	Delete(ctx context.Context, id, author string) (bool, error)
 	FindData(ctx context.Context, tableName string, tableType int, columns []string, r ListDataRequest) (*AggregationDataResult, error)
 	FindOneData(ctx context.Context, tableID, id string) (map[string]any, error)
 	CreateData(ctx context.Context, tableID string, r map[string]string) (map[string]string, error)
 	UpdateData(ctx context.Context, tableID, id string, r map[string]string) (map[string]string, error)
 	DeleteData(ctx context.Context, table Response, id string) (bool, error)
+	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 }
 
-func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider) Store {
+func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider, dbExportClient mongo.DbClient, exportDecoder encoding.Decoder) Store {
 	linkedDbCollections := make([]mongo.DbCollection, len(linkedCollections))
 	for i, c := range linkedCollections {
 		linkedDbCollections[i] = dbClient.Collection(c)
@@ -57,20 +60,26 @@ func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider) Sto
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.ExternalDataTableCollection),
+		dbWidgetCollection:    dbClient.Collection(mongo.WidgetMongoCollection),
+		linkedDbCollections:   linkedDbCollections,
 		pgPoolProvider:        pgPoolProvider,
 		defaultSearchByFields: []string{"name", "description"},
 		defaultSortBy:         "name",
-		linkedDbCollections:   linkedDbCollections,
+		dbExportClient:        dbExportClient,
+		exportDecoder:         exportDecoder,
 	}
 }
 
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
+	dbWidgetCollection    mongo.DbCollection
 	linkedDbCollections   []mongo.DbCollection
 	pgPoolProvider        postgres.PoolProvider
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dbExportClient        mongo.DbClient
+	exportDecoder         encoding.Decoder
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -82,13 +91,48 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 	project := make([]bson.M, 0)
 	if r.WithFlags {
+		project = append(project,
+			bson.M{"$lookup": bson.M{
+				"from":         s.dbWidgetCollection.Name(),
+				"localField":   "_id",
+				"foreignField": "parameters.table",
+				"as":           "tmp_linked_widgets",
+				"pipeline": []bson.M{
+					{"$match": bson.M{"type": view.WidgetTypeExternalData}},
+					{"$limit": limitLinkedRules},
+					{"$project": bson.M{
+						"name": "$title",
+					}},
+				},
+			}},
+			bson.M{"$unwind": bson.M{"path": "$tmp_linked_widgets", "preserveNullAndEmptyArrays": true}},
+			bson.M{"$sort": bson.M{"tmp_linked_widgets.name": 1}},
+			bson.M{"$group": bson.M{
+				"_id":  "$_id",
+				"data": bson.M{"$first": "$$ROOT"},
+				"tmp_linked_widgets": bson.M{"$push": bson.M{"$cond": bson.M{
+					"if":   "$tmp_linked_widgets",
+					"then": "$tmp_linked_widgets",
+					"else": "$$REMOVE",
+				}}},
+			}},
+			bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+				"$data",
+				bson.M{"linked_rules": bson.M{"$mergeObjects": bson.A{
+					"$data.linked_rules",
+					bson.M{"widget": "$tmp_linked_widgets"},
+				}}},
+			}}}},
+		)
+
 		for _, c := range s.linkedDbCollections {
+			k := strings.ReplaceAll(strings.ToLower(c.Name()), "_", "")
 			project = append(project,
 				bson.M{"$lookup": bson.M{
 					"from":         c.Name(),
 					"localField":   "_id",
 					"foreignField": "external_data.table",
-					"as":           "linked_rules." + c.Name(),
+					"as":           "tmp_linked_rules",
 					"pipeline": []bson.M{
 						{"$limit": limitLinkedRules},
 						{"$project": bson.M{
@@ -96,14 +140,14 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 						}},
 					},
 				}},
-				bson.M{"$unwind": bson.M{"path": "$linked_rules." + c.Name(), "preserveNullAndEmptyArrays": true}},
-				bson.M{"$sort": bson.M{"linked_rules." + c.Name() + ".name": 1}},
+				bson.M{"$unwind": bson.M{"path": "$tmp_linked_rules", "preserveNullAndEmptyArrays": true}},
+				bson.M{"$sort": bson.M{"tmp_linked_rules" + ".name": 1}},
 				bson.M{"$group": bson.M{
 					"_id":  "$_id",
 					"data": bson.M{"$first": "$$ROOT"},
 					"tmp_linked_rules": bson.M{"$push": bson.M{"$cond": bson.M{
-						"if":   "$linked_rules." + c.Name(),
-						"then": "$linked_rules." + c.Name(),
+						"if":   "$tmp_linked_rules",
+						"then": "$tmp_linked_rules",
 						"else": "$$REMOVE",
 					}}},
 				}},
@@ -111,7 +155,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 					"$data",
 					bson.M{"linked_rules": bson.M{"$mergeObjects": bson.A{
 						"$data.linked_rules",
-						bson.M{c.Name(): "$tmp_linked_rules"},
+						bson.M{k: "$tmp_linked_rules"},
 					}}},
 				}}}},
 			)
@@ -205,7 +249,7 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Response, error) {
 	return response, err
 }
 
-func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest) (Response, error) {
 	res := Response{}
 	if r.Type == nil {
 		return res, errors.New("type is required")
@@ -218,6 +262,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 
 	if oldTable.Type != *r.Type {
 		return res, common.NewValidationError("type", "Type cannot be changed.")
+	}
+
+	if len(oldTable.ColumnTypes) != len(r.ColumnTypes) {
+		return res, common.NewValidationError("column_types", "ColumnTypes must contain "+strconv.Itoa(len(oldTable.Columns))+" items.")
 	}
 
 	if oldTable.Name != r.Name {
@@ -267,6 +315,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (Response, error) {
 			Type:        *r.Type,
 			Name:        r.Name,
 			Description: r.Description,
+			ColumnTypes: r.ColumnTypes,
 			Author:      r.Author,
 			Updated:     now,
 		}})
@@ -308,17 +357,13 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 			return ErrConfigNotDeletable
 		}
 
-		for _, c := range s.linkedDbCollections {
-			err = c.
-				FindOne(ctx, bson.M{"external_data.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
-				Err()
-			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-				return err
-			}
+		isLinked, err := isTableLinked(ctx, id, s.dbWidgetCollection, s.linkedDbCollections)
+		if err != nil {
+			return err
+		}
 
-			if err == nil {
-				return ErrLinkedNotDeletable
-			}
+		if isLinked {
+			return ErrLinkedNotDeletable
 		}
 
 		// required to get the author in action log listener.
@@ -353,23 +398,38 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 }
 
 func (s *store) FindData(ctx context.Context, tableName string, tableType int, columns []string, r ListDataRequest) (res *AggregationDataResult, err error) {
-	foundSort := false
-	for _, col := range columns {
-		if r.SortBy == col {
-			foundSort = true
-			break
+	valErrMsgs := make(map[string]string)
+	if len(r.SearchBy) > 0 || r.SortBy != "" {
+		hasCol := make(map[string]bool, len(columns))
+		for _, c := range columns {
+			hasCol[c] = true
+		}
+
+		if r.SortBy != "" && !hasCol[r.SortBy] {
+			valErrMsgs["sort_by"] = "SortBy must be one of [" + strings.Join(columns, " ") + "]."
+		}
+
+		for i, v := range r.SearchBy {
+			if !hasCol[v] {
+				valErrMsgs["search_by."+strconv.Itoa(i)] = "SearchBy must be one of [" + strings.Join(columns, " ") + "]."
+			}
 		}
 	}
 
-	if r.SortBy != "" && !foundSort {
-		return nil, common.NewValidationError("sort_by", "SortBy must be one of ["+strings.Join(columns, " ")+"].")
+	if len(valErrMsgs) > 0 {
+		return nil, common.NewValidationErrors(valErrMsgs)
+	}
+
+	searchBy := r.SearchBy
+	if len(searchBy) == 0 {
+		searchBy = columns
 	}
 
 	switch tableType {
 	case externaldata.TypeMongoDB:
-		res, err = s.findDataFromMongo(ctx, tableName, columns, r)
+		res, err = s.findDataFromMongo(ctx, tableName, searchBy, r)
 	case externaldata.TypePostgreSQL:
-		res, err = s.findDataFromPostgres(ctx, tableName, columns, r)
+		res, err = s.findDataFromPostgres(ctx, tableName, searchBy, r)
 	default:
 		err = fmt.Errorf("unknown external data type %d", tableType)
 	}
@@ -399,16 +459,16 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 		}
 
 		sql := "SELECT "
-		columnsWithID := make([]string, len(table.ColumnTypes)+1)
-		i := 0
-		for col := range table.ColumnTypes {
-			columnsWithID[i] = col
-			i++
-			sql += pgx.Identifier{col}.Sanitize() + ", "
+		columnsWithID := make([]string, len(table.Columns)+1)
+		columnsWithID[0] = externaldata.IDColumnName
+		copy(columnsWithID[1:], table.Columns)
+		for i, col := range columnsWithID {
+			sql += pgx.Identifier{col}.Sanitize()
+			if i < len(columnsWithID)-1 {
+				sql += ", "
+			}
 		}
 
-		columnsWithID[i] = externaldata.IDColumnName
-		sql += externaldata.IDColumnName
 		sql += " FROM " + table.getDBTableName() + " WHERE " + externaldata.IDColumnName + " = $1"
 		rows, err := pgPool.Query(ctx, sql, id)
 		if err != nil {
@@ -444,29 +504,35 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 		return nil, err
 	}
 
-	doc := make(map[string]string, len(table.ColumnTypes)+1)
-	row := make([]any, len(table.ColumnTypes)+1)
-	columnsWithID := make([]string, len(table.ColumnTypes)+1)
+	columnsWithID := make([]string, len(table.Columns)+1)
+	columnsWithID[0] = externaldata.IDColumnName
+	copy(columnsWithID[1:], table.Columns)
+	doc := make(map[string]string, len(columnsWithID))
+	row := make([]any, len(columnsWithID))
 	doc[externaldata.IDColumnName] = utils.NewID()
 	row[0] = doc[externaldata.IDColumnName]
-	columnsWithID[0] = externaldata.IDColumnName
-	i := 1
 	var ok bool
+	var newColLens []int
 	updatedLengths := make(map[string]int)
 	valErrMsgs := make(map[string]string)
-	for col := range table.ColumnTypes {
+	for i, col := range table.Columns {
 		doc[col], ok = r[col]
 		if !ok {
 			valErrMsgs[col] = col + " is missing."
 			continue
 		}
 
-		row[i] = doc[col]
-		columnsWithID[i] = col
-		i++
+		row[i+1] = doc[col]
+		if len(table.ColumnLengths) > 0 {
+			if len(doc[col]) > table.ColumnLengths[i] {
+				updatedLengths[col] = len(doc[col])
+				if newColLens == nil {
+					newColLens = make([]int, len(table.ColumnLengths))
+					copy(newColLens, table.ColumnLengths)
+				}
 
-		if l, ok := table.ColumnLengths[col]; ok && len(doc[col]) > l {
-			updatedLengths[col] = len(doc[col])
+				newColLens[i] = updatedLengths[col]
+			}
 		}
 	}
 
@@ -495,7 +561,7 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 			return nil, err
 		}
 
-		err = s.updateColumnLengths(ctx, table, updatedLengths)
+		err = s.updateColumnLengths(ctx, table, newColLens)
 
 		return doc, err
 	default:
@@ -509,14 +575,14 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		return nil, err
 	}
 
-	doc := make(map[string]string, len(table.ColumnTypes)+1)
+	doc := make(map[string]string, len(table.Columns)+1)
 	querySql := "UPDATE " + table.getDBTableName() + " SET "
-	queryArgs := make([]any, len(table.ColumnTypes)+1)
-	i := 0
+	queryArgs := make([]any, len(table.Columns)+1)
 	var ok bool
+	var newColLens []int
 	updatedLengths := make(map[string]int)
 	valErrMsgs := make(map[string]string)
-	for col := range table.ColumnTypes {
+	for i, col := range table.Columns {
 		doc[col], ok = r[col]
 		if !ok {
 			valErrMsgs[col] = col + " is missing."
@@ -525,13 +591,20 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 
 		queryArgs[i] = doc[col]
 		querySql += pgx.Identifier{col}.Sanitize() + " = $" + strconv.Itoa(i+1)
-		if i < len(table.ColumnTypes)-1 {
+		if i < len(table.Columns)-1 {
 			querySql += ", "
 		}
 
-		i++
-		if l, ok := table.ColumnLengths[col]; ok && len(doc[col]) > l {
-			updatedLengths[col] = len(doc[col])
+		if len(table.ColumnLengths) > 0 {
+			if len(doc[col]) > table.ColumnLengths[i] {
+				updatedLengths[col] = len(doc[col])
+				if newColLens == nil {
+					newColLens = make([]int, len(table.ColumnLengths))
+					copy(newColLens, table.ColumnLengths)
+				}
+
+				newColLens[i] = updatedLengths[col]
+			}
 		}
 	}
 
@@ -539,7 +612,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		return nil, common.NewValidationErrors(valErrMsgs)
 	}
 
-	queryArgs[i] = id
+	queryArgs[len(queryArgs)-1] = id
 	querySql += " WHERE " + externaldata.IDColumnName + " = $" + strconv.Itoa(len(queryArgs))
 	switch table.Type {
 	case externaldata.TypeMongoDB:
@@ -567,7 +640,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 	}
 
 	doc[externaldata.IDColumnName] = id
-	err = s.updateColumnLengths(ctx, table, updatedLengths)
+	err = s.updateColumnLengths(ctx, table, newColLens)
 
 	return doc, err
 }
@@ -593,6 +666,95 @@ func (s *store) DeleteData(ctx context.Context, table Response, id string) (bool
 		return execRes.RowsAffected() > 0, nil
 	default:
 		return false, fmt.Errorf("unknown external data type %d", table.Type)
+	}
+}
+
+func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, error) {
+	r := ExportFetchParameters{}
+	err := s.exportDecoder.Decode([]byte(t.Parameters), &r)
+	if err != nil {
+		return nil, err
+	}
+
+	table, err := s.FindOne(ctx, r.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	if table.ID == "" {
+		return nil, fmt.Errorf("table not found id=%q", r.ID)
+	}
+
+	searchBy := r.SearchBy
+	if len(searchBy) == 0 {
+		searchBy = table.Columns
+	}
+
+	var selectColumns []string
+	if len(t.Fields) > 0 {
+		selectColumns = make([]string, len(t.Fields))
+		for i, f := range t.Fields {
+			selectColumns[i] = f.Name
+		}
+	} else {
+		selectColumns = table.Columns
+	}
+
+	switch table.Type {
+	case externaldata.TypeMongoDB:
+		pipeline := make([]bson.M, 0)
+		filter := common.GetSearchQuery(r.Search, searchBy)
+		if len(filter) > 0 {
+			pipeline = append(pipeline, bson.M{"$match": filter})
+		}
+
+		project := bson.M{}
+		for _, c := range selectColumns {
+			project[c] = 1
+		}
+
+		pipeline = append(pipeline, bson.M{"$project": project})
+		cursor, err := s.dbExportClient.Collection(table.getDBTableName()).Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
+		if err != nil {
+			return nil, err
+		}
+
+		return export.NewMongoCursor(cursor, selectColumns, nil), nil
+	case externaldata.TypePostgreSQL:
+		pgPool, err := s.pgPoolProvider.Get(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
+		}
+
+		sql := "SELECT "
+		for i, c := range selectColumns {
+			sql += pgx.Identifier{c}.Sanitize()
+			if i < len(selectColumns)-1 {
+				sql += ", "
+			}
+		}
+
+		sql += " FROM " + table.getDBTableName()
+		queryArgs := make([]any, 0)
+		if r.Search != "" {
+			sql += " WHERE "
+			queryArgs = append(queryArgs, r.Search)
+			for i, col := range searchBy {
+				sql += pgx.Identifier{col}.Sanitize() + " ~ $" + strconv.Itoa(len(queryArgs))
+				if i < len(searchBy)-1 {
+					sql += " OR "
+				}
+			}
+		}
+
+		rows, err := pgPool.Query(ctx, sql, queryArgs...)
+		if err != nil {
+			return nil, err
+		}
+
+		return export.NewPostgresCursor(rows, selectColumns, nil), nil
+	default:
+		return nil, fmt.Errorf("unknown external data type %d", table.Type)
 	}
 }
 
@@ -682,17 +844,12 @@ func (s *store) alterPostgresColumns(ctx context.Context, name string, columnLen
 	return nil
 }
 
-func (s *store) updateColumnLengths(ctx context.Context, table Response, columnLengths map[string]int) error {
+func (s *store) updateColumnLengths(ctx context.Context, table Response, columnLengths []int) error {
 	if len(columnLengths) == 0 {
 		return nil
 	}
 
-	update := make(bson.M, len(columnLengths))
-	for k, v := range columnLengths {
-		update["column_lengths."+k] = v
-	}
-
-	_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": table.ID}, bson.M{"$set": update})
+	_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": table.ID}, bson.M{"$set": bson.M{"column_lengths": columnLengths}})
 
 	return err
 }
@@ -887,32 +1044,29 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 			continue
 		}
 
-		if len(t.ColumnTypes) == 0 {
+		if len(t.Columns) == 0 {
 			valErrMsgs["external_data."+strconv.Itoa(i)+".table"] = "Table is empty."
 			continue
 		}
 
-		columns := make([]string, len(t.ColumnTypes))
-		j := 0
-		for c := range t.ColumnTypes {
-			columns[j] = c
-			j++
+		hasCol := make(map[string]bool, len(t.Columns))
+		for _, c := range t.Columns {
+			hasCol[c] = true
 		}
 
-		sort.Strings(columns)
-		if _, ok = t.ColumnTypes[params.SortBy]; params.SortBy != "" && !ok {
-			valErrMsgs["external_data."+strconv.Itoa(i)+".sort_by"] = "SortBy must be one of [" + strings.Join(columns, " ") + "]."
+		if params.SortBy != "" && !hasCol[params.SortBy] {
+			valErrMsgs["external_data."+strconv.Itoa(i)+".sort_by"] = "SortBy must be one of [" + strings.Join(t.Columns, " ") + "]."
 		}
 
 		for f := range params.Select {
-			if _, ok = t.ColumnTypes[f]; !ok {
-				valErrMsgs["external_data."+strconv.Itoa(i)+".select."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
+			if !hasCol[f] {
+				valErrMsgs["external_data."+strconv.Itoa(i)+".select."+f] = f + " must be one of [" + strings.Join(t.Columns, " ") + "]."
 			}
 		}
 
 		for f := range params.Regexp {
-			if _, ok = t.ColumnTypes[f]; !ok {
-				valErrMsgs["external_data."+strconv.Itoa(i)+".regexp."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
+			if !hasCol[f] {
+				valErrMsgs["external_data."+strconv.Itoa(i)+".regexp."+f] = f + " must be one of [" + strings.Join(t.Columns, " ") + "]."
 			}
 		}
 
@@ -922,7 +1076,7 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 
 		params.TableName = t.GetDBName()
 		params.TableType = &t.Type
-		params.TableColumns = columns
+		params.TableColumns = t.Columns
 		res[i] = params
 	}
 
@@ -962,4 +1116,32 @@ func GetRefParametersLookups() []bson.M {
 			bson.M{"external_data": "$external_data"},
 		}}}},
 	}
+}
+
+func isTableLinked(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections []mongo.DbCollection) (bool, error) {
+	err := dbWidgetCollection.
+		FindOne(ctx, bson.M{"type": view.WidgetTypeExternalData, "parameters.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
+		Err()
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return false, err
+	}
+
+	if err == nil {
+		return true, nil
+	}
+
+	for _, c := range linkedDbCollections {
+		err = c.
+			FindOne(ctx, bson.M{"external_data.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
+			Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return false, err
+		}
+
+		if err == nil {
+			return true, nil
+		}
+	}
+
+	return false, nil
 }

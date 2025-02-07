@@ -34,6 +34,8 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 		validateJunitParametersRequest(sl, r.Parameters)
 	case view.WidgetTypeMap:
 		validateMapParametersRequest(sl, r.Parameters)
+	case view.WidgetTypeExternalData:
+		validateExternalDataParametersRequest(sl, r.Parameters)
 	}
 	validateTemplateParametersRequest(sl, r)
 }
@@ -87,6 +89,12 @@ func validateJunitParametersRequest(sl validator.StructLevel, r view.Parameters)
 func validateMapParametersRequest(sl validator.StructLevel, r view.Parameters) {
 	if r.Map == "" {
 		sl.ReportError(r.Map, "parameters.map", "Map", "required", "")
+	}
+}
+
+func validateExternalDataParametersRequest(sl validator.StructLevel, r view.Parameters) {
+	if r.Table == "" {
+		sl.ReportError(r.Table, "parameters.table", "Table", "required", "")
 	}
 }
 

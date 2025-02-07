@@ -1,6 +1,7 @@
 package externaldatatable
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -23,24 +24,42 @@ type ListRequest struct {
 }
 
 type EditRequest struct {
-	ID          string `json:"-"`
 	Type        *int   `json:"type" binding:"required,oneof=0 1"`
 	Name        string `json:"name" binding:"required,table_name"`
 	Description string `json:"description" binding:"max=500"`
 	Author      string `json:"author" swaggerignore:"true"`
 }
 
+type UpdateRequest struct {
+	EditRequest
+	ID          string `json:"-"`
+	ColumnTypes []int  `json:"column_types" binding:"required,dive,oneof=0 1 2"`
+}
+
 type ImportCompleteRequest struct {
-	ColumnTypes map[string]int `json:"column_types" binding:"required"`
+	ColumnTypes []int `json:"column_types" binding:"required,dive,oneof=0 1 2"`
 }
 
 type ListDataRequest struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by"`
+	SearchBy []string `json:"search_by" form:"search_by[]"`
+	SortBy   string   `json:"sort_by" form:"sort_by"`
 }
 
 type BulkDeleteRequestItem struct {
 	ID string `json:"_id" binding:"required"`
+}
+
+type ExportFetchParameters struct {
+	ID       string   `json:"_id" swaggerignore:"true"`
+	Search   string   `json:"search"`
+	SearchBy []string `json:"search_by"`
+}
+
+type ExportRequest struct {
+	ExportFetchParameters
+	Fields    export.Fields `json:"fields"`
+	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
 type Response struct {
@@ -48,8 +67,9 @@ type Response struct {
 	Type              int              `bson:"type" json:"type"`
 	Name              string           `bson:"name" json:"name"`
 	Description       string           `bson:"description" json:"description"`
-	ColumnTypes       map[string]int   `bson:"column_types" json:"column_types"`
-	ColumnLengths     map[string]int   `bson:"column_lengths" json:"-"`
+	Columns           []string         `bson:"columns" json:"columns"`
+	ColumnTypes       []int            `bson:"column_types" json:"column_types"`
+	ColumnLengths     []int            `bson:"column_lengths" json:"-"`
 	FromConfig        bool             `bson:"from_config" json:"from_config"`
 	RemovedFromConfig bool             `bson:"removed_from_config" json:"removed_from_config"`
 	Created           datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
@@ -111,7 +131,8 @@ type ImportJob struct {
 	ExternalDataTable string            `bson:"exdt" json:"-"`
 	Delimiter         rune              `bson:"delimiter" json:"-"`
 	Filepath          string            `bson:"filepath" json:"-"`
-	ColumnLengths     map[string]int    `bson:"column_lengths" json:"-"`
+	Columns           []string          `bson:"columns" json:"-"`
+	ColumnLengths     []int             `bson:"column_lengths" json:"-"`
 	Created           datetime.CpsTime  `bson:"created" json:"-"`
 	LastPing          *datetime.CpsTime `bson:"last_ping" json:"-"`
 	Retries           int64             `bson:"retries" json:"-"`
@@ -123,6 +144,11 @@ func (j *ImportJob) getDBTableName() string {
 	}
 
 	return externaldata.GetPostgresTableName(j.Table)
+}
+
+type ExportResponse struct {
+	ID     string `json:"_id"`
+	Status int64  `json:"status"`
 }
 
 type RefResponse struct {
