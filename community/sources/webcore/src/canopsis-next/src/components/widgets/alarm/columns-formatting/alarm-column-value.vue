@@ -41,7 +41,7 @@
 <script>
 import { get } from 'lodash';
 
-import { getAlarmWidgetColumnTemplateId } from '@/helpers/entities/alarm/list';
+import { getAlarmWidgetColumnTemplateId, getAlarmWidgetGroupColumnTemplateId } from '@/helpers/entities/alarm/list';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -65,6 +65,10 @@ export default {
       type: Object,
       required: true,
     },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
     selectedTag: {
       type: String,
       default: '',
@@ -76,7 +80,9 @@ export default {
   },
   computed: {
     templateId() {
-      return getAlarmWidgetColumnTemplateId(this.widget._id, this.column.value);
+      return this.parentAlarm
+        ? getAlarmWidgetGroupColumnTemplateId(this.widget._id, this.column.value)
+        : getAlarmWidgetColumnTemplateId(this.widget._id, this.column.value);
     },
 
     templateContext() {

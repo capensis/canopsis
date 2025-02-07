@@ -1074,6 +1074,60 @@ exports[`declared-tickets-list Renders \`declared-tickets-list\` with tickets 1`
         ticket-comment-9
             </td>
           </tr>
+          <tr
+            class=""
+          >
+            <td
+              class="text-start"
+            >
+              <a
+                href="https://ticket-url.com/10"
+                target="_blank"
+              >
+                https://ticket-url.com/10
+              </a>
+            </td>
+            <td
+              class="text-start"
+            >
+        ticket-10
+            </td>
+            <td
+              class="text-start"
+            >
+        ticket-system-name-10
+            </td>
+            <td
+              class="text-start"
+            >
+        ticket-rule-name-10
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:58
+            </td>
+            <td
+              class="text-start"
+            >
+              <c-help-icon-stub
+                color="primary"
+                icon="check_circle"
+                maxwidth="400"
+                top=""
+              />
+            </td>
+            <td
+              class="text-start"
+            >
+        author-10
+            </td>
+            <td
+              class="text-start"
+            >
+        ticket-comment-10
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

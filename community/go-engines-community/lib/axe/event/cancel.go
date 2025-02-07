@@ -61,6 +61,7 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 			"v.steps":                             addStepUpdateQuery(newStepQuery),
 			"v.state_changes_since_status_update": 0,
 			"v.last_update_date":                  event.Parameters.Timestamp,
+			"v.last_st_upd_dt":                    event.Parameters.Timestamp,
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

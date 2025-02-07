@@ -116,14 +116,14 @@ export default {
         if (redirect) {
           await redirect();
         }
-
+      } catch (err) {
+        console.error(err);
+      } finally {
         /**
          * We've added timeout for the correct layout padding displaying with transition.
          * And we've added location.reload for refreshing every js objects (store, components states and etc.)
          */
         setTimeout(() => window.location.reload(), VUETIFY_ANIMATION_DELAY);
-      } catch (err) {
-        console.error(err);
       }
     },
 
