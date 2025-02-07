@@ -45,7 +45,7 @@ export class TableIntersectionObserver {
 
   unobserve(key) {
     if (this.targets[key]) {
-      this.observer.observe(this.targets[key].element);
+      this.observer?.unobserve?.(this.targets[key].element);
       delete this.targets[key];
     }
   }
