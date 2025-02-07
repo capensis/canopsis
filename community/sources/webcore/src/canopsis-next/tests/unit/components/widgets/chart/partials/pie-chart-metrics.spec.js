@@ -24,6 +24,14 @@ describe('pie-chart-metrics', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `pie-chart-metrics` with hide actions', async () => {
+    const wrapper = snapshotFactory({
+      propsData: { hideActions: true },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `pie-chart-metrics` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {

@@ -19,6 +19,7 @@ function parseField(value) {
   const path = [];
   let hasString = false;
   let isPoint = true;
+  let isBracket = false;
   let startPos = 0;
   let endPos;
 
@@ -40,6 +41,7 @@ function parseField(value) {
 
       hasString = false;
       isPoint = false;
+      isBracket = true;
       startPos = index + 1;
 
       /**
@@ -66,6 +68,7 @@ function parseField(value) {
       }
 
       startPos = index + 1;
+      isBracket = false;
       /**
        * If there is '.' char symbol. It is saying us that it's start of point field
        */
@@ -76,12 +79,19 @@ function parseField(value) {
        * `form.field.anotherField` this condition will happened on second '.' char symbol and we will save 'field'
        */
       if (isPoint) {
-        path.push(JSON.stringify(value.slice(startPos, index)));
+        if (isBracket) {
+          path.push(value.slice(startPos, index));
+        } else {
+          path.push(JSON.stringify(value.slice(startPos, index)));
+        }
 
         startPos = index + 1;
       }
 
-      startPos = index + 1;
+      if (!isBracket) {
+        startPos = index + 1;
+      }
+
       isPoint = true;
     }
   }
@@ -90,7 +100,7 @@ function parseField(value) {
    * If we had point field at the last position we will save it here
    * Example: `form.field.anotherField` -> 'anotherField'
    */
-  if (isPoint) {
+  if (isPoint && startPos !== value.length) {
     path.push(JSON.stringify(value.slice(startPos)));
   }
 

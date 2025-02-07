@@ -1,7 +1,7 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
-import { CANOPSIS_EDITION, WIDGET_TYPES } from '@/constants';
+import { CANOPSIS_EDITION, ROUTES_NAMES, VIEW_USER_PERMISSIONS_NAMES, WIDGET_TYPES } from '@/constants';
 
 import WidgetWrapper from '@/components/widgets/widget-wrapper.vue';
 
@@ -27,16 +27,39 @@ const stubs = {
 
 describe('widget-wrapper', () => {
   const types = Object.values(WIDGET_TYPES);
+  const viewId = 'view-id';
   const tabId = 'tab-id';
 
-  const snapshotFactory = generateRenderer(WidgetWrapper, {
+  const { authModule } = createAuthModule();
+  const authModuleWithAccess = {
+    ...authModule,
+    getters: {
+      currentUserViewPermissionsByViewId: {
+        [viewId]: {
+          [VIEW_USER_PERMISSIONS_NAMES.actions]: {
+            _id: viewId,
+            view: viewId,
+            name: VIEW_USER_PERMISSIONS_NAMES.actions,
+            actions: [],
+          },
+        },
+      },
+    },
+  };
 
+  const snapshotFactory = generateRenderer(WidgetWrapper, {
     stubs,
     parentComponent: {
       provide: {
         $system: {},
       },
     },
+    mocks: {
+      $route: { name: ROUTES_NAMES.view, params: { id: viewId } },
+    },
+    store: createMockedStoreModules([
+      authModule,
+    ]),
   });
 
   it('Renders `widget-wrapper` with default props', () => {
@@ -50,12 +73,40 @@ describe('widget-wrapper', () => {
         },
         editing: false,
       },
-      store: createMockedStoreModules([{
-        name: 'info',
-        getters: {
-          edition: CANOPSIS_EDITION.pro,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.pro,
+          },
         },
-      }]),
+      ]),
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `widget-wrapper` with default props and without actions access', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        widget: {
+          type: WIDGET_TYPES.alarmList,
+        },
+        tab: {
+          _id: tabId,
+        },
+        editing: false,
+      },
+      store: createMockedStoreModules([
+        authModule,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.pro,
+          },
+        },
+      ]),
     });
 
     expect(wrapper).toMatchSnapshot();
@@ -72,12 +123,40 @@ describe('widget-wrapper', () => {
         },
         editing: false,
       },
-      store: createMockedStoreModules([{
-        name: 'info',
-        getters: {
-          edition: CANOPSIS_EDITION.community,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.community,
+          },
         },
-      }]),
+      ]),
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it.each(types)('Renders `widget-wrapper` with type %s and core edition without actions access', (type) => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        widget: {
+          type,
+        },
+        tab: {
+          _id: tabId,
+        },
+        editing: false,
+      },
+      store: createMockedStoreModules([
+        authModule,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.community,
+          },
+        },
+      ]),
     });
 
     expect(wrapper).toMatchSnapshot();
@@ -94,12 +173,40 @@ describe('widget-wrapper', () => {
         },
         editing: false,
       },
-      store: createMockedStoreModules([{
-        name: 'info',
-        getters: {
-          edition: CANOPSIS_EDITION.pro,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.pro,
+          },
         },
-      }]),
+      ]),
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it.each(types)('Renders `widget-wrapper` with type %s and cat edition without actions access', (type) => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        widget: {
+          type,
+        },
+        tab: {
+          _id: tabId,
+        },
+        editing: false,
+      },
+      store: createMockedStoreModules([
+        authModule,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.pro,
+          },
+        },
+      ]),
     });
 
     expect(wrapper).toMatchSnapshot();
@@ -117,12 +224,15 @@ describe('widget-wrapper', () => {
         },
         editing: false,
       },
-      store: createMockedStoreModules([{
-        name: 'info',
-        getters: {
-          edition: CANOPSIS_EDITION.pro,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.pro,
+          },
         },
-      }]),
+      ]),
     });
 
     expect(wrapper).toMatchSnapshot();
@@ -139,12 +249,15 @@ describe('widget-wrapper', () => {
         },
         editing: true,
       },
-      store: createMockedStoreModules([{
-        name: 'info',
-        getters: {
-          edition: CANOPSIS_EDITION.pro,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.pro,
+          },
         },
-      }]),
+      ]),
     });
 
     expect(wrapper).toMatchSnapshot();
@@ -162,12 +275,15 @@ describe('widget-wrapper', () => {
         },
         editing: true,
       },
-      store: createMockedStoreModules([{
-        name: 'info',
-        getters: {
-          edition: CANOPSIS_EDITION.pro,
+      store: createMockedStoreModules([
+        authModuleWithAccess,
+        {
+          name: 'info',
+          getters: {
+            edition: CANOPSIS_EDITION.pro,
+          },
         },
-      }]),
+      ]),
     });
 
     expect(wrapper).toMatchSnapshot();

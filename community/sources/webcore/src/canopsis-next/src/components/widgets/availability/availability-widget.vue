@@ -14,10 +14,8 @@
       :locked-filter="query.lockedFilter"
       :filters="query.filter"
       :show-interval="hasAccessToInterval"
-      :show-filter="hasAccessToListFilters"
-      :show-export="hasAccessToExportAsCsv"
-      :filter-addable="hasAccessToAddFilter"
-      :filter-editable="hasAccessToEditFilter"
+      :show-filter="hasAccessToUserFilter"
+      :show-export="!hideActions && hasAccessToExportAsCsv"
       :exporting="exporting"
       :max-value-filter-seconds="maxValueFilterSeconds"
       class="px-3 pt-3"
@@ -99,6 +97,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

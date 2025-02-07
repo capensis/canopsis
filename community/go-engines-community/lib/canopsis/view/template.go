@@ -162,15 +162,24 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeServiceWeatherEntity: {
 				"entityTemplate",
 			},
+			WidgetTemplateTypeAlarmMoreInfos: {
+				"alarmsList.moreInfoTemplate",
+			},
 		},
 		WidgetTypeAlarmsCounter: {
 			WidgetTemplateTypeAlarmColumns: {
 				"alarmsList.widgetColumns",
 			},
+			WidgetTemplateTypeAlarmMoreInfos: {
+				"alarmsList.moreInfoTemplate",
+			},
 		},
 		WidgetTypeAlarmsStatsCalendar: {
 			WidgetTemplateTypeAlarmColumns: {
 				"alarmsList.widgetColumns",
+			},
+			WidgetTemplateTypeAlarmMoreInfos: {
+				"alarmsList.moreInfoTemplate",
 			},
 		},
 		WidgetTypeMap: {

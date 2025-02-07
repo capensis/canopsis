@@ -3,29 +3,31 @@
     <c-id-field
       v-field="form._id"
       :disabled="onlyUserPrefs || !isNew"
+      autofocus
     />
     <c-name-field
       v-field="form.name"
       :label="$t('common.username')"
-      :disabled="onlyUserPrefs"
+      :disabled="onlyUserPrefs || idpFieldsMap['name']"
+      :autofocus="!isNew"
       autocomplete="new-password"
       required
     />
     <v-text-field
       v-field="form.firstname"
       :label="$t('user.firstName')"
-      :disabled="onlyUserPrefs"
+      :disabled="onlyUserPrefs || idpFieldsMap['firstname']"
     />
     <v-text-field
       v-field="form.lastname"
       :label="$t('user.lastName')"
-      :disabled="onlyUserPrefs"
+      :disabled="onlyUserPrefs || idpFieldsMap['lastname']"
     />
     <v-text-field
       v-field="form.email"
       v-validate="'required|email'"
       :label="$t('user.email')"
-      :disabled="onlyUserPrefs"
+      :disabled="onlyUserPrefs || idpFieldsMap['email']"
       :error-messages="errors.collect('email')"
       name="email"
       autocomplete="new-password"
@@ -34,12 +36,14 @@
       v-if="hasPassword"
       v-field="form.password"
       :required="isNew"
+      :autofocus="onlyUserPrefs"
       autocomplete="new-password"
     />
     <c-role-field
       v-field="form.roles"
-      :disabled="onlyUserPrefs"
+      :disabled="onlyUserPrefs || idpFieldsMap['roles']"
       :label="$tc('common.role', 2)"
+      :is-disabled-items="isDisabledRoleItem"
       required
       multiple
       chips
@@ -79,7 +83,12 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AUTH_SOURCES_WITH_PASSWORD_CHANGING, GROUPS_NAVIGATION_TYPES } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
@@ -110,26 +119,38 @@ export default {
       default: false,
     },
   },
-  computed: {
-    hasPassword() {
-      return Object.values(AUTH_SOURCES_WITH_PASSWORD_CHANGING).includes(this.user?.source ?? '');
-    },
+  setup(props) {
+    const { t } = useI18n();
+    const popups = usePopups();
 
-    groupsNavigationItems() {
-      return Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
-        text: this.$t(`user.navigationTypes.${type}`),
-        value: type,
-      }));
-    },
-  },
-  methods: {
-    showCopyAuthKeySuccessPopup() {
-      this.$popups.success({ text: this.$t('success.authKeyCopied') });
-    },
+    const hasPassword = computed(() => (
+      Object.values(AUTH_SOURCES_WITH_PASSWORD_CHANGING).includes(props.user?.source ?? '')
+    ));
 
-    showCopyAuthKeyErrorPopup() {
-      this.$popups.error({ text: this.$t('errors.default') });
-    },
+    const groupsNavigationItems = computed(() => Object.values(GROUPS_NAVIGATION_TYPES).map(type => ({
+      text: t(`user.navigationTypes.${type}`),
+      value: type,
+    })));
+
+    const idpFieldsMap = computed(() => (props.user?.idp_fields ?? []).reduce((acc, field) => {
+      acc[field] = true;
+
+      return acc;
+    }, {}));
+
+    const isDisabledRoleItem = item => (props.user?.idp_roles ?? []).includes(item._id);
+    const showCopyAuthKeySuccessPopup = () => popups.success({ text: t('success.authKeyCopied') });
+    const showCopyAuthKeyErrorPopup = () => popups.error({ text: t('errors.default') });
+
+    return {
+      hasPassword,
+      groupsNavigationItems,
+      idpFieldsMap,
+
+      isDisabledRoleItem,
+      showCopyAuthKeySuccessPopup,
+      showCopyAuthKeyErrorPopup,
+    };
   },
 };
 </script>

@@ -3,7 +3,7 @@ import Faker from 'faker';
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import { CRUD_ACTIONS, USERS_PERMISSIONS } from '@/constants';
+import { CRUD_ACTIONS, USER_PERMISSIONS } from '@/constants';
 
 import KpiRatingSettings from '@/components/other/kpi/rating-settings/kpi-rating-settings.vue';
 
@@ -156,7 +156,7 @@ describe('kpi-rating-settings', () => {
         name: 'auth',
         getters: {
           currentUserPermissionsById: {
-            [USERS_PERMISSIONS.technical.kpiRatingSettings]: {
+            [USER_PERMISSIONS.technical.kpiRatingSettings]: {
               actions: [
                 CRUD_ACTIONS.update,
                 CRUD_ACTIONS.read,

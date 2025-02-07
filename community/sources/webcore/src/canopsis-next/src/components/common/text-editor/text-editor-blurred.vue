@@ -8,13 +8,12 @@
       @click="$emit('click', $event)"
     >
       <div class="v-input__slot">
-        <div class="v-text-field__slot">
+        <div class="v-text-field__slot" @click="wrapperClickHandler">
           <label
             :class="[{ 'v-label--active': value }, themeClasses]"
             class="v-label"
           >{{ label }}</label>
           <c-compiled-template
-            ref="content"
             :template="value"
             :class="{ 'v-text-field--input__disabled': disabled }"
           />
@@ -39,7 +38,7 @@ import Themeable from 'vuetify/lib/mixins/themeable';
 import { MODALS } from '@/constants';
 
 export default {
-  mixins: [Themeable],
+  mixins: [Themeable], // TODO: rewrite it to composition in the future
   props: {
     value: {
       type: String,
@@ -62,32 +61,12 @@ export default {
       default: () => [],
     },
   },
-  watch: {
-    value() {
-      this.addImagesListeners();
-    },
-  },
-  mounted() {
-    this.addImagesListeners();
-  },
-  beforeDestroy() {
-    this.removeImagesListeners();
-  },
   methods: {
-    addImagesListeners() {
-      this.removeImagesListeners();
-
-      this.imagesElements = this.$refs.content.$el.querySelectorAll('img');
-      this.imagesElements.forEach(image => image.addEventListener('click', this.clickHandler));
-    },
-
-    removeImagesListeners() {
-      if (this.imagesElements) {
-        this.imagesElements.forEach(image => image.removeEventListener('click', this.clickHandler));
+    wrapperClickHandler(e) {
+      if (e.target.tagName !== 'IMG') {
+        return;
       }
-    },
 
-    clickHandler(e) {
       e.preventDefault();
       e.stopPropagation();
 

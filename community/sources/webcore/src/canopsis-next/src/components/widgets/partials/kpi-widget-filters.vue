@@ -28,17 +28,15 @@
         :locked-filters="widgetFilters"
         :locked-value="lockedFilters"
         :value="filters"
-        :disabled="filterDisabled"
         class="kpi-widget-filters__filter-selector mr-4"
         clearable
         hide-details
         @input="$emit('update:filters', $event)"
       />
       <filters-list-btn
-        v-if="filterAddable || filterEditable"
         :widget-id="widgetId"
-        :addable="filterAddable"
-        :editable="filterEditable"
+        addable
+        editable
         private
         with-entity
       />
@@ -96,18 +94,6 @@ export default {
       default: false,
     },
     showInterval: {
-      type: Boolean,
-      default: false,
-    },
-    filterAddable: {
-      type: Boolean,
-      default: false,
-    },
-    filterEditable: {
-      type: Boolean,
-      default: false,
-    },
-    filterDisabled: {
       type: Boolean,
       default: false,
     },

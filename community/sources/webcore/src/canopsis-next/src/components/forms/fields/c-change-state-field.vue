@@ -13,6 +13,7 @@
         :label="label || $t('common.note')"
         :error-messages="errors.collect(outputFieldName)"
         :name="outputFieldName"
+        autofocus
       />
     </v-layout>
   </div>

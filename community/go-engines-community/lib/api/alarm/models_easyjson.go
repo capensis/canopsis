@@ -106,6 +106,29 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Category = string(in.String())
 		case "tag":
 			out.Tag = string(in.String())
+		case "tags":
+			if in.IsNull() {
+				in.Skip()
+				out.Tags = nil
+			} else {
+				in.Delim('[')
+				if out.Tags == nil {
+					if !in.IsDelim(']') {
+						out.Tags = make([]string, 0, 4)
+					} else {
+						out.Tags = []string{}
+					}
+				} else {
+					out.Tags = (out.Tags)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v2 string
+					v2 = string(in.String())
+					out.Tags = append(out.Tags, v2)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "alarm_pattern":
 			out.AlarmPattern = string(in.String())
 		case "entity_pattern":
@@ -128,9 +151,9 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Instructions = (out.Instructions)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v2 InstructionFilterRequest
-					easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(in, &v2)
-					out.Instructions = append(out.Instructions, v2)
+					var v3 InstructionFilterRequest
+					easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(in, &v3)
+					out.Instructions = append(out.Instructions, v3)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -163,11 +186,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v3, v4 := range in.Filters {
-				if v3 > 0 {
+			for v4, v5 := range in.Filters {
+				if v4 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v4))
+				out.String(string(v5))
 			}
 			out.RawByte(']')
 		}
@@ -225,6 +248,22 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.String(string(in.Tag))
 	}
 	{
+		const prefix string = ",\"tags\":"
+		out.RawString(prefix)
+		if in.Tags == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v6, v7 := range in.Tags {
+				if v6 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v7))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
 		const prefix string = ",\"alarm_pattern\":"
 		out.RawString(prefix)
 		out.String(string(in.AlarmPattern))
@@ -246,11 +285,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v5, v6 := range in.Instructions {
-				if v5 > 0 {
+			for v8, v9 := range in.Instructions {
+				if v8 > 0 {
 					out.RawByte(',')
 				}
-				easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(out, v6)
+				easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(out, v9)
 			}
 			out.RawByte(']')
 		}
@@ -317,9 +356,9 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.IncludeTypes = (out.IncludeTypes)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v7 int
-					v7 = int(in.Int())
-					out.IncludeTypes = append(out.IncludeTypes, v7)
+					var v10 int
+					v10 = int(in.Int())
+					out.IncludeTypes = append(out.IncludeTypes, v10)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -340,9 +379,9 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.ExcludeTypes = (out.ExcludeTypes)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v8 int
-					v8 = int(in.Int())
-					out.ExcludeTypes = append(out.ExcludeTypes, v8)
+					var v11 int
+					v11 = int(in.Int())
+					out.ExcludeTypes = append(out.ExcludeTypes, v11)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -363,9 +402,9 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Include = (out.Include)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v9 string
-					v9 = string(in.String())
-					out.Include = append(out.Include, v9)
+					var v12 string
+					v12 = string(in.String())
+					out.Include = append(out.Include, v12)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -386,9 +425,9 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					out.Exclude = (out.Exclude)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v10 string
-					v10 = string(in.String())
-					out.Exclude = append(out.Exclude, v10)
+					var v13 string
+					v13 = string(in.String())
+					out.Exclude = append(out.Exclude, v13)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -423,11 +462,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v11, v12 := range in.IncludeTypes {
-				if v11 > 0 {
+			for v14, v15 := range in.IncludeTypes {
+				if v14 > 0 {
 					out.RawByte(',')
 				}
-				out.Int(int(v12))
+				out.Int(int(v15))
 			}
 			out.RawByte(']')
 		}
@@ -439,11 +478,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v13, v14 := range in.ExcludeTypes {
-				if v13 > 0 {
+			for v16, v17 := range in.ExcludeTypes {
+				if v16 > 0 {
 					out.RawByte(',')
 				}
-				out.Int(int(v14))
+				out.Int(int(v17))
 			}
 			out.RawByte(']')
 		}
@@ -455,11 +494,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v15, v16 := range in.Include {
-				if v15 > 0 {
+			for v18, v19 := range in.Include {
+				if v18 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v16))
+				out.String(string(v19))
 			}
 			out.RawByte(']')
 		}
@@ -471,11 +510,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v17, v18 := range in.Exclude {
-				if v17 > 0 {
+			for v20, v21 := range in.Exclude {
+				if v20 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v18))
+				out.String(string(v21))
 			}
 			out.RawByte(']')
 		}

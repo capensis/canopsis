@@ -1,6 +1,7 @@
 package importcontextgraph
 
 import (
+	"cmp"
 	"context"
 	"encoding/json"
 	"errors"
@@ -514,7 +515,7 @@ func (w *worker) parseEntities(
 		if withEvents && eventType != "" {
 			switch ci.Type {
 			case types.EntityTypeService:
-				serviceEvents = append(serviceEvents, w.createServiceEvent(oldEntity.EntityConfiguration, eventType, now))
+				serviceEvents = append(serviceEvents, w.createServiceEvent(cmp.Or(oldEntity.EntityConfiguration.ID, ci.ID), eventType, now))
 			case types.EntityTypeResource:
 				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.Name, ci.Component, now))
 			case types.EntityTypeComponent:
@@ -726,7 +727,11 @@ func (w *worker) createEntity(ci EntityConfiguration) mongo.WriteModel {
 		SetUpdate(bson.M{
 			"$set":         ci,
 			"$setOnInsert": bson.M{"created": datetime.NewCpsTime()},
-			"$unset":       bson.M{"soft_deleted": ""},
+			"$unset": bson.M{
+				"soft_deleted":                    "",
+				"resolve_deleted_event_sent":      "",
+				"resolve_deleted_event_processed": "",
+			},
 		}).
 		SetUpsert(true)
 }
@@ -759,7 +764,11 @@ func (w *worker) updateEntity(ci *EntityConfiguration, oldEntity EntityConfigura
 		SetUpdate(bson.M{
 			"$set":         ci,
 			"$setOnInsert": bson.M{"created": datetime.NewCpsTime()},
-			"$unset":       bson.M{"soft_deleted": ""},
+			"$unset": bson.M{
+				"soft_deleted":                    "",
+				"resolve_deleted_event_sent":      "",
+				"resolve_deleted_event_processed": "",
+			},
 		}).
 		SetUpsert(true)
 }
@@ -788,14 +797,14 @@ func (w *worker) updateComponentInfos(componentID string, infos map[string]types
 		SetUpdate(bson.M{"$set": bson.M{"component_infos": infos}})
 }
 
-func (w *worker) createServiceEvent(ci EntityConfiguration, eventType string, now datetime.CpsTime) types.Event {
+func (w *worker) createServiceEvent(id, eventType string, now datetime.CpsTime) types.Event {
 	return types.Event{
 		EventType:     eventType,
 		Timestamp:     now,
 		Author:        canopsis.DefaultEventAuthor,
 		Connector:     w.connector,
 		ConnectorName: w.connector,
-		Component:     ci.ID,
+		Component:     id,
 		SourceType:    types.SourceTypeService,
 		Initiator:     types.InitiatorSystem,
 	}

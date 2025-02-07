@@ -97,8 +97,16 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	now := datetime.NewCpsTime()
 	doc := s.transformRequestToDocument(r.EditRequest)
 	doc.ID = cmp.Or(r.ID, utils.NewID())
+	loc := s.timezoneConfigProvider.Get().Location
+	var err error
+	if doc.Timezone != "" {
+		loc, err = time.LoadLocation(doc.Timezone)
+		if err != nil {
+			return nil, fmt.Errorf("invalid timezone %q: %w", doc.Timezone, err)
+		}
+	}
 
-	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
+	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, loc)
 	if err != nil {
 		return nil, err
 	}
@@ -202,9 +210,8 @@ func (s *store) CalendarByEntityID(ctx context.Context, entity libtypes.Entity, 
 		return nil, err
 	}
 
-	location := s.timezoneConfigProvider.Get().Location
-	span := timespan.New(r.From.In(location).Time, r.To.In(location).Time)
-	computed, err := s.pbhTypeComputer.ComputeByIds(ctx, span, pbhIDs)
+	span := timespan.New(r.From.Time, r.To.Time)
+	computed, err := s.pbhTypeComputer.ComputeByIds(ctx, span, pbhIDs, s.timezoneConfigProvider.Get().Location)
 	if err != nil {
 		return nil, err
 	}
@@ -323,7 +330,16 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		unset["tstop"] = ""
 	}
 
-	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, s.timezoneConfigProvider.Get().Location)
+	loc := s.timezoneConfigProvider.Get().Location
+	var err error
+	if doc.Timezone != "" {
+		loc, err = time.LoadLocation(doc.Timezone)
+		if err != nil {
+			return nil, fmt.Errorf("invalid timezone %q: %w", doc.Timezone, err)
+		}
+	}
+
+	rruleEnd, err := pbehavior.GetRruleEnd(*r.Start, r.RRule, loc)
 	if err != nil {
 		return nil, err
 	}
@@ -354,7 +370,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 
 			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
-			if !*r.Enabled || r.RRule != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
+			if !*r.Enabled || r.RRule != "" || r.Timezone != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
 				return valErr
 			}
 
@@ -401,6 +417,10 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 	}
 	if r.RRule != nil {
 		set["rrule"] = *r.RRule
+		rruleUpdated = true
+	}
+	if r.Timezone != nil {
+		set["timezone"] = *r.Timezone
 		rruleUpdated = true
 	}
 	if r.Start != nil {
@@ -467,6 +487,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
 			if r.Enabled != nil && !*r.Enabled ||
 				r.RRule != nil && *r.RRule != "" ||
+				r.Timezone != nil && *r.Timezone != "" ||
 				len(r.Exdates) > 0 ||
 				len(r.Exceptions) > 0 ||
 				r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "" {
@@ -496,7 +517,15 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, e
 		}
 
 		if rruleUpdated {
-			pbh.RRuleEnd, err = pbehavior.GetRruleEnd(*pbh.Start, pbh.RRule, s.timezoneConfigProvider.Get().Location)
+			loc := s.timezoneConfigProvider.Get().Location
+			if pbh.Timezone != "" {
+				loc, err = time.LoadLocation(pbh.Timezone)
+				if err != nil {
+					return fmt.Errorf("invalid timezone %q: %w", pbh.Timezone, err)
+				}
+			}
+
+			pbh.RRuleEnd, err = pbehavior.GetRruleEnd(*pbh.Start, pbh.RRule, loc)
 			if err != nil {
 				return err
 			}
@@ -667,7 +696,10 @@ func (s *store) EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem)
 				"entity": r.Entity,
 				"origin": r.Origin,
 				"tstart": bson.M{"$lte": now},
-				"tstop":  bson.M{"$gte": now},
+				"$or": bson.A{
+					bson.M{"tstop": nil},
+					bson.M{"tstop": bson.M{"$gte": now}},
+				},
 			}, options.FindOneAndDelete().SetProjection(bson.M{"_id": 1})).
 			Decode(&pbh)
 		if err != nil {
@@ -904,6 +936,7 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Name:       r.Name,
 		Reason:     r.Reason,
 		RRule:      r.RRule,
+		Timezone:   r.Timezone,
 		Start:      r.Start,
 		Stop:       r.Stop,
 		Type:       r.Type,
@@ -921,12 +954,26 @@ func (s *store) transformResponse(ctx context.Context, result []Response) error 
 		return err
 	}
 
-	loc := s.timezoneConfigProvider.Get().Location
-	after := time.Now().In(loc)
+	defLoc := s.timezoneConfigProvider.Get().Location
+	after := time.Now().In(defLoc)
 	before := after.AddDate(0, nextEventMaxMonths, 0)
+	locs := make(map[string]*time.Location)
 	for i, v := range result {
 		if v.RRule == "" || v.RRuleEnd != nil && v.RRuleEnd.Time.Before(after) {
 			continue
+		}
+
+		loc := defLoc
+		if v.Timezone != "" {
+			var ok bool
+			if loc, ok = locs[v.Timezone]; !ok {
+				loc, err = time.LoadLocation(v.Timezone)
+				if err != nil {
+					return fmt.Errorf("invalid timezone %q for pbehavior id=%q: %w", v.Timezone, v.ID, err)
+				}
+
+				locs[v.Timezone] = loc
+			}
 		}
 
 		rOption, err := librrule.StrToROption(v.RRule)
@@ -971,8 +1018,7 @@ func (s *store) transformResponse(ctx context.Context, result []Response) error 
 }
 
 func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error {
-	location := s.timezoneConfigProvider.Get().Location
-	now := time.Now().In(location)
+	now := time.Now()
 	ids := make([]string, len(result))
 	for i, pbh := range result {
 		ids[i] = pbh.ID
@@ -1015,33 +1061,26 @@ func (s *store) parseDupError(err error) error {
 
 func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 	return func(i, j int) bool {
-		dateLeft := utils.DateOf(response[i].From.Time)
-		dateRight := utils.DateOf(response[j].From.Time)
-
-		if dateLeft.Before(dateRight) {
+		if response[i].From.Before(response[j].From) {
 			return true
 		}
-		if dateLeft.After(dateRight) {
+
+		if response[i].From.After(response[j].From) {
 			return false
 		}
 
 		if response[i].Type.Priority > response[j].Type.Priority {
 			return true
 		}
-		if response[i].Type.Priority < response[j].Type.Priority {
-			return false
-		}
 
-		if response[i].From.Before(response[j].From) {
-			return true
-		}
-		if response[i].From.After(response[j].From) {
+		if response[i].Type.Priority < response[j].Type.Priority {
 			return false
 		}
 
 		if response[i].To.Before(response[j].To) {
 			return true
 		}
+
 		if response[i].To.After(response[j].To) {
 			return false
 		}

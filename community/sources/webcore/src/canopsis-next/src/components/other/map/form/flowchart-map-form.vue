@@ -5,6 +5,7 @@
   >
     <c-name-field
       v-field="form.name"
+      autofocus
       required
     />
     <flowchart-editor v-field="form.parameters" />

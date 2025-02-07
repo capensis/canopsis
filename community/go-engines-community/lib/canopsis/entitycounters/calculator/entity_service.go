@@ -57,15 +57,11 @@ func (s *entityServiceCountersCalculator) getServicesInfo(ctx context.Context, e
 func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context, service *types.Entity) (map[string]entitycounters.UpdatedServicesInfo, error) {
 	var counters entitycounters.EntityCounters
 	err := s.serviceCountersCollection.FindOne(ctx, bson.M{"_id": service.ID}).Decode(&counters)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
-		}
-
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, err
 	}
 
-	counters.Reset()
+	counters.Reset(service.ID)
 
 	cursor, err := s.entityCollection.Aggregate(ctx, []bson.M{
 		{
