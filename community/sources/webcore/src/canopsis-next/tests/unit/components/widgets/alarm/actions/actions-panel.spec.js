@@ -1226,7 +1226,13 @@ describe('actions-panel', () => {
 
   test('Export PDF action', async () => {
     const wrapper = factory({
-      store,
+      store: createMockedStoreModules([
+        metaAlarmModule,
+        authModuleWithAccess,
+        alarmModule,
+        alarmDetailsModule,
+        declareTicketRuleModule,
+      ]),
       propsData: {
         item: alarm,
         widget,

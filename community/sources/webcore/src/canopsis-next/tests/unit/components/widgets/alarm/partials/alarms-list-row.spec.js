@@ -307,7 +307,7 @@ describe('alarms-list-row', () => {
         widget: {},
         headers: [{ value: 'value1' }, { value: 'value2' }, { value: 'actions' }],
         columnsFilters: [{}, {}],
-        selectedTag: 'tag',
+        selectedTags: ['tag'],
       },
     });
 

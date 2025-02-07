@@ -3,16 +3,21 @@ package user
 import (
 	"cmp"
 	"context"
+	"errors"
+	"fmt"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
 
 type Store interface {
@@ -29,10 +34,12 @@ func NewStore(
 	passwordEncoder password.Encoder,
 	websocketStore websocket.Store,
 	authorProvider author.Provider,
+	userInterfaceAdapter config.UserInterfaceAdapter,
+	securityConfig security.Config,
 ) Store {
 	return &store{
 		client:                 dbClient,
-		collection:             dbClient.Collection(mongo.UserCollection),
+		userCollection:         dbClient.Collection(mongo.UserCollection),
 		userPrefCollection:     dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		patternCollection:      dbClient.Collection(mongo.PatternMongoCollection),
 		viewGroupsCollection:   dbClient.Collection(mongo.ViewGroupMongoCollection),
@@ -42,9 +49,11 @@ func NewStore(
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 
-		passwordEncoder: passwordEncoder,
-		websocketStore:  websocketStore,
-		authorProvider:  authorProvider,
+		passwordEncoder:      passwordEncoder,
+		websocketStore:       websocketStore,
+		authorProvider:       authorProvider,
+		userInterfaceAdapter: userInterfaceAdapter,
+		securityConfig:       securityConfig,
 
 		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
@@ -53,7 +62,7 @@ func NewStore(
 
 type store struct {
 	client                 mongo.DbClient
-	collection             mongo.DbCollection
+	userCollection         mongo.DbCollection
 	userPrefCollection     mongo.DbCollection
 	patternCollection      mongo.DbCollection
 	viewGroupsCollection   mongo.DbCollection
@@ -63,9 +72,11 @@ type store struct {
 	widgetFilterCollection mongo.DbCollection
 	shareTokenCollection   mongo.DbCollection
 
-	passwordEncoder password.Encoder
-	websocketStore  websocket.Store
-	authorProvider  author.Provider
+	passwordEncoder      password.Encoder
+	websocketStore       websocket.Store
+	authorProvider       author.Provider
+	userInterfaceAdapter config.UserInterfaceAdapter
+	securityConfig       security.Config
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -99,12 +110,19 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 	}
 
 	project = append(project, getViewPipeline()...)
-	project = append(project, getUiThemePipeline(s.authorProvider)...)
 
-	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
+	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
+	if err != nil {
+		return nil, err
+	}
+
+	project = append(project, uiThemePipeline...)
+	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	project = append(project, sort)
+	cursor, err := s.userCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+		sort,
 		project,
 	))
 
@@ -149,6 +167,11 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 			deletable := res.Data[i].ID != curUserID && (!onlyOneAdmin || res.Data[i].ID != lastAdminID)
 			res.Data[i].Deletable = &deletable
 		}
+
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(res.Data[i].Source)
+		if ok {
+			res.Data[i].IdPFields = idpFields
+		}
 	}
 
 	return &res, nil
@@ -158,8 +181,14 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	pipeline := []bson.M{
 		{"$match": bson.M{"_id": id}},
 	}
-	pipeline = append(pipeline, getNestedObjectsPipeline(s.authorProvider)...)
-	cursor, err := s.collection.Aggregate(ctx, pipeline)
+
+	nestedObjectsPipeline, err := s.getNestedObjectsPipeline(ctx, s.authorProvider)
+	if err != nil {
+		return nil, err
+	}
+
+	pipeline = append(pipeline, nestedObjectsPipeline...)
+	cursor, err := s.userCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -171,6 +200,11 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		err := cursor.Decode(user)
 		if err != nil {
 			return nil, err
+		}
+
+		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(user.Source)
+		if ok {
+			user.IdPFields = idpFields
 		}
 
 		return user, nil
@@ -188,7 +222,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
-		_, err = s.collection.InsertOne(ctx, insertDoc)
+		_, err = s.userCollection.InsertOne(ctx, insertDoc)
 		if err != nil {
 			return err
 		}
@@ -217,6 +251,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string) (
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+
 		onlyOneAdmin, lastAdminID, adminRoleID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
@@ -232,7 +267,20 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string) (
 			}
 		}
 
-		res, err := s.collection.UpdateOne(ctx,
+		var prevUser security.User
+
+		err = s.userCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevUser)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdPRoles)
+
+		res, err := s.userCollection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
 			bson.M{"$set": updateDoc},
 		)
@@ -264,6 +312,7 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+
 		onlyOneAdmin, lastAdminID, adminRoleID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
@@ -279,7 +328,20 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 			}
 		}
 
-		res, err := s.collection.UpdateOne(ctx,
+		var prevUser security.User
+
+		err = s.userCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevUser)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil
+			}
+
+			return err
+		}
+
+		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdPRoles)
+
+		res, err := s.userCollection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
 			bson.M{"$set": updateDoc},
 		)
@@ -296,6 +358,40 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 	}
 
 	return user, nil
+}
+
+func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, idpRoles []string) {
+	idpFields, allowExtraRoles, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(source)
+	if !ok {
+		return
+	}
+
+	for _, idpField := range idpFields {
+		delete(updateDoc, idpField)
+	}
+
+	if !allowExtraRoles {
+		updateDoc["roles"] = idpRoles
+		return
+	}
+
+	if len(requestRoles) != 0 {
+		mergedRoles := make([]string, len(idpRoles), len(requestRoles)+len(idpRoles))
+		copy(mergedRoles, idpRoles)
+
+		idpRolesMap := make(map[string]bool, len(idpRoles))
+		for _, role := range idpRoles {
+			idpRolesMap[role] = true
+		}
+
+		for _, role := range requestRoles {
+			if !idpRolesMap[role] {
+				mergedRoles = append(mergedRoles, role)
+			}
+		}
+
+		updateDoc["roles"] = mergedRoles
+	}
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
@@ -317,12 +413,12 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		// required to get the author in action log listener.
-		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		res, err := s.userCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
 		if err != nil || res.MatchedCount == 0 {
 			return err
 		}
 
-		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		deleted, err = s.userCollection.DeleteOne(ctx, bson.M{"_id": id})
 
 		return err
 	})
@@ -424,7 +520,7 @@ func (s *store) deleteShareTokens(ctx context.Context, id string) error {
 }
 
 func (s *store) checkLastAdmin(ctx context.Context) (bool, string, string, error) {
-	cursor, err := s.collection.Aggregate(ctx, []bson.M{
+	cursor, err := s.userCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"enable": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
@@ -463,7 +559,7 @@ func (s *store) checkLastAdmin(ctx context.Context) (bool, string, string, error
 	return res.Count <= 1, res.LastID, res.AdminRoleID, nil
 }
 
-func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
+func (s *store) getNestedObjectsPipeline(ctx context.Context, authorProvider author.Provider) ([]bson.M, error) {
 	pipeline := []bson.M{
 		{"$addFields": bson.M{
 			"username": "$name",
@@ -474,10 +570,16 @@ func getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 	}
 	pipeline = append(pipeline, getRolePipeline()...)
 	pipeline = append(pipeline, getViewPipeline()...)
-	pipeline = append(pipeline, getUiThemePipeline(authorProvider)...)
+
+	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
+	if err != nil {
+		return nil, err
+	}
+
+	pipeline = append(pipeline, uiThemePipeline...)
 	pipeline = append(pipeline, authorProvider.Pipeline()...)
 
-	return pipeline
+	return pipeline, nil
 }
 
 func getRolePipeline() []bson.M {
@@ -528,7 +630,12 @@ func getViewPipeline() []bson.M {
 	}
 }
 
-func getUiThemePipeline(authorProvider author.Provider) []bson.M {
+func (s *store) getUiThemePipeline(ctx context.Context, authorProvider author.Provider) ([]bson.M, error) {
+	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user interface config: %w", err)
+	}
+
 	pipeline := []bson.M{
 		{
 			"$addFields": bson.M{
@@ -540,7 +647,7 @@ func getUiThemePipeline(authorProvider author.Provider) []bson.M {
 								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
 							},
 						},
-						"then": "canopsis",
+						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
 						"else": "$ui_theme",
 					},
 				},
@@ -559,5 +666,5 @@ func getUiThemePipeline(authorProvider author.Provider) []bson.M {
 		},
 	}
 
-	return append(pipeline, authorProvider.PipelineForField("ui_theme.author")...)
+	return append(pipeline, authorProvider.PipelineForField("ui_theme.author")...), nil
 }

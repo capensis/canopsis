@@ -29,7 +29,10 @@
     >
       {{ $t('alarm.tabs.ticketsDeclared') }}
     </v-tab>
-    <v-tab :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior}`">
+    <v-tab
+      v-if="hasAlarmsListPbehaviorAccess"
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior}`"
+    >
       {{ $tc('common.pbehavior', 2) }}
     </v-tab>
     <v-tab
@@ -78,9 +81,9 @@
             :alarm="alarm"
             :template="widget.parameters.moreInfoTemplate"
             :template-id="moreInfosTemplateId"
-            :selected-tag="selectedTag"
+            :selected-tags="selectedTags"
             @select:tag="$emit('select:tag', $event)"
-            @clear:tag="$emit('clear:tag')"
+            @remove:tag="$emit('remove:tag', $event)"
           />
         </alarms-expand-panel-tab-item-wrapper>
       </v-tab-item>
@@ -125,7 +128,10 @@
           />
         </alarms-expand-panel-tab-item-wrapper>
       </v-tab-item>
-      <v-tab-item :value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior">
+      <v-tab-item
+        v-if="hasAlarmsListPbehaviorAccess"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.pbehavior"
+      >
         <alarms-expand-panel-tab-item-wrapper :card-flex-class="cardFlexClass">
           <pbehaviors-simple-list
             :entity="alarm.entity"
@@ -207,7 +213,7 @@
 <script>
 import { isEqual, map } from 'lodash';
 
-import { ENTITY_TYPES, JUNIT_ALARM_CONNECTOR } from '@/constants';
+import { ENTITY_TYPES, JUNIT_ALARM_CONNECTOR, USER_PERMISSIONS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { setField } from '@/helpers/immutable';
@@ -217,6 +223,7 @@ import { convertWidgetChartsToPerfDataQuery } from '@/helpers/entities/metric/qu
 import { getFlexClassesForGridRangeSize } from '@/helpers/entities/shared/grid';
 import { getAlarmWidgetMoreInfoTemplateId } from '@/helpers/entities/alarm/list';
 
+import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetExpandPanelAlarmDetails } from '@/mixins/widget/expand-panel/alarm/details';
 import { permissionsTechnicalExploitationPbehaviorMixin } from '@/mixins/permissions/technical/exploitation/pbehavior';
@@ -250,6 +257,7 @@ export default {
     AlarmsExpandPanelRemediation,
   },
   mixins: [
+    authMixin,
     entitiesInfoMixin,
     widgetExpandPanelAlarmDetails,
     permissionsTechnicalExploitationPbehaviorMixin,
@@ -275,9 +283,9 @@ export default {
       type: String,
       default: '',
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {
@@ -287,6 +295,10 @@ export default {
     };
   },
   computed: {
+    hasAlarmsListPbehaviorAccess() {
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.pbehaviorAdd);
+    },
+
     cardFlexClass() {
       return getFlexClassesForGridRangeSize(this.widget.parameters.expandGridRangeSize);
     },

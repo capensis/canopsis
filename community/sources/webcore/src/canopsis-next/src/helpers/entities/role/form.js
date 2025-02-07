@@ -1,9 +1,16 @@
-import { CRUD_ACTIONS, TIME_UNITS } from '@/constants';
+import { omit } from 'lodash';
+
+import { CRUD_ACTIONS, ROLE_TYPES, TIME_UNITS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
+import { isApiPermission } from '@/helpers/entities/permissions/list';
 
 /**
  * @typedef {'create' | 'update' | 'reed' | 'delete'} Action
+ */
+
+/**
+ * @typedef {'ui' | 'api'} RoleType
  */
 
 /**
@@ -33,7 +40,9 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {Object} Role
  * @property {string} _id
  * @property {string} name
+ * @property {RoleType} type
  * @property {string} description
+ * @property {boolean} [editable]
  * @property {Permission[]} permissions
  * @property {DefaultView} defaultview
  * @property {AuthConfig} auth_config
@@ -49,6 +58,8 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {Role} RoleRequest
  * @property {string} defaultview
  */
+
+export const isApiRole = (role = {}) => role.type === ROLE_TYPES.api;
 
 /**
  * Convert role permissions to form permissions object
@@ -87,20 +98,38 @@ const roleAuthConfigToForm = (authConfig = {}) => ({
 export const roleToForm = (role = {}) => ({
   _id: role._id ?? '',
   name: role.name ?? '',
+  type: role.type ?? ROLE_TYPES.ui,
   description: role.description ?? '',
   defaultview: role.defaultview?._id,
-  permissions: rolePermissionsToForm(role.permissions),
+  editable: role.editable ?? true,
+  permissions: role.permissions ?? {},
   auth_config: roleAuthConfigToForm(role.auth_config),
 });
 
 /**
- * Convert form role permissions to role permissions object
+ * Convert role to permission form object
  *
- * @param {PermissionsForm} [permissionsForm={}]
+ * @param {Role} [role = {}]
+ * @returns {RoleForm}
+ */
+export const roleToPermissionForm = (role = {}) => ({
+  ...roleToForm(role),
+
+  permissions: rolePermissionsToForm(role.permissions),
+});
+
+/**
+ * Convert role form role permissions to role permissions object
+ *
+ * @param {RoleForm} [form = {}]
  * @return {PermissionsForm}
  */
-const permissionsFormToRolePermissions = (permissionsForm = {}) => Object.entries(permissionsForm)
+const permissionsFormToRolePermissions = (form = {}) => Object.entries(form.permissions ?? {})
   .reduce((acc, [id, actions]) => {
+    if (isApiPermission(id) !== isApiRole(form)) {
+      return acc;
+    }
+
     const [firstAction] = actions;
 
     if (firstAction === CRUD_ACTIONS.can) {
@@ -132,9 +161,20 @@ const authConfigFormToRolePermissions = (form = {}) => ({
  * @returns {RoleRequest}
  */
 export const formToRole = (form = {}) => ({
-  ...form,
+  ...omit(form, ['editable']),
 
   defaultview: form.defaultview,
   permissions: permissionsFormToRolePermissions(form.permissions),
   auth_config: authConfigFormToRolePermissions(form.auth_config),
+});
+
+/**
+ * Convert role form to role permissions object
+ *
+ * @param {RoleForm | {}} [form = {}]
+ * @returns {{_id: string, permissions: PermissionsForm}}
+ */
+export const formToRolePermissions = (form = {}) => ({
+  _id: form._id,
+  permissions: permissionsFormToRolePermissions(form),
 });

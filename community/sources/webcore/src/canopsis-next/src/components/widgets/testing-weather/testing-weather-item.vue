@@ -45,7 +45,7 @@
 <script>
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, USERS_PERMISSIONS, TEST_SUITE_COLORS } from '@/constants';
+import { MODALS, USER_PERMISSIONS, TEST_SUITE_COLORS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
@@ -75,7 +75,7 @@ export default {
   },
   computed: {
     hasAlarmsListAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.testingWeather.actions.alarmsList);
+      return this.checkAccess(USER_PERMISSIONS.business.testingWeather.actions.alarmsList);
     },
 
     color() {

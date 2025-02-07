@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <c-page-header />
+    <c-page-header :name="$constants.GROUPED_USER_PERMISSIONS_KEYS.planning" />
     <v-layout wrap>
       <v-flex xs12>
         <v-card class="ma-2">
@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { MODALS, PLANNING_TABS } from '@/constants';
+import { GROUPED_USER_PERMISSIONS_KEYS, MODALS, PLANNING_TABS } from '@/constants';
 
 import { permissionsTechnicalPbehaviorTypesMixin } from '@/mixins/permissions/technical/pbehavior-types';
 import { permissionsTechnicalPbehaviorReasonsMixin } from '@/mixins/permissions/technical/pbehavior-reasons';
@@ -108,6 +108,9 @@ export default {
     };
   },
   computed: {
+    GROUPED_USER_PERMISSIONS_KEYS() {
+      return GROUPED_USER_PERMISSIONS_KEYS;
+    },
     tooltipText() {
       return {
         [PLANNING_TABS.types]: this.$t('modals.createPbehaviorType.title'),

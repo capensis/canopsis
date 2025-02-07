@@ -71,7 +71,7 @@ describe('alarm-column-value', () => {
           colorIndicator: COLOR_INDICATOR_TYPES.impactState,
           colorIndicatorEnabled: true,
         },
-        selectedTag: 'tag',
+        selectedTags: ['tag'],
       },
     });
 

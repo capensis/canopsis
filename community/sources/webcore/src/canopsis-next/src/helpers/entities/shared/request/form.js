@@ -19,7 +19,6 @@ import { durationToForm, isValidDuration } from '@/helpers/date/duration';
  * @property {Duration} [timeout]
  * @property {number} [retry_count]
  * @property {?Duration} [retry_delay]
- * @property {boolean} [empty_response]
  * @property {string} payload
  */
 
@@ -50,7 +49,6 @@ export const requestToForm = (request = {}) => ({
   method: request.method ?? '',
   url: request.url ?? '',
   skip_verify: !!request.skip_verify,
-  empty_response: !!request.empty_response,
   timeout: request.timeout
     ? durationToForm(request.timeout)
     : { value: undefined, unit: undefined },

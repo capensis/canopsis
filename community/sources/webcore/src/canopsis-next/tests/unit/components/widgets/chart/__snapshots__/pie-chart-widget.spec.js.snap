@@ -6,7 +6,6 @@ exports[`pie-chart-widget Renders \`pie-chart-widget\` with custom props 1`] = `
 >
   <kpi-widget-filters-stub
     class="px-3"
-    filterdisabled="true"
     widgetfilters=""
     widgetid="pie-chart-widget-id"
   />
@@ -55,7 +54,6 @@ exports[`pie-chart-widget Renders \`pie-chart-widget\` with required props 1`] =
 >
   <kpi-widget-filters-stub
     class="px-3"
-    filterdisabled="true"
     widgetfilters=""
     widgetid="pie-chart-widget-id"
   />

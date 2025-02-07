@@ -11,6 +11,7 @@
           :label="config.label"
           :name="config.name"
           :variables="config.variables"
+          autofocus
         />
       </template>
       <template #actions>

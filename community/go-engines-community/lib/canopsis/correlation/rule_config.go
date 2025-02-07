@@ -21,13 +21,15 @@ type RuleConfig struct {
 	CorelChild string `bson:"corel_child,omitempty" json:"corel_child,omitempty"`
 
 	ChildInactiveDelay *datetime.DurationWithUnit `bson:"child_inactive_delay,omitempty" json:"child_inactive_delay,omitempty"`
+	ResourceTemplate   string                     `bson:"resource_template" json:"resource_template,omitempty"`
+	ComponentTemplate  string                     `bson:"component_template" json:"component_template,omitempty"`
 }
 
 func (c *RuleConfig) GetTimeIntervalInSeconds() int64 {
 	var timeInterval int64
 
 	if c.TimeInterval != nil {
-		v, err := c.TimeInterval.To("s")
+		v, err := c.TimeInterval.To(datetime.DurationUnitSecond)
 		if err == nil {
 			timeInterval = v.Value
 		}

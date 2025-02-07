@@ -14,9 +14,6 @@
       :show-filter="hasAccessToUserFilter"
       :show-interval="hasAccessToInterval"
       :show-sampling="hasAccessToSampling"
-      :filter-disabled="!hasAccessToListFilters"
-      :filter-addable="hasAccessToAddFilter"
-      :filter-editable="hasAccessToEditFilter"
       class="px-3"
       @update:filters="updateSelectedFilter"
       @update:sampling="updateSampling"
@@ -100,6 +97,10 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

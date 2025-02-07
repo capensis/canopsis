@@ -9,7 +9,7 @@ exports[`alarm-column-value Renders \`alarm-column-value\` with custom props 1`]
   <alarm-column-cell-stub
     alarm="[object Object]"
     column="[object Object]"
-    selectedtag="tag"
+    selectedtags="tag"
     widget="[object Object]"
   />
 </color-indicator-wrapper-stub>
@@ -27,7 +27,7 @@ exports[`alarm-column-value Renders \`alarm-column-value\` with required props 1
 <alarm-column-cell-stub
   alarm="[object Object]"
   column="[object Object]"
-  selectedtag=""
+  selectedtags=""
   widget="[object Object]"
 />
 `;
