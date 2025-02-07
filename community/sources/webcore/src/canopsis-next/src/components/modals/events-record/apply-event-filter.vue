@@ -39,6 +39,7 @@ import { ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
+import { promisedWait } from '@/helpers/async';
 import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
 
 import { useInnerModal } from '@/hooks/modals';
@@ -69,7 +70,12 @@ export default {
       form,
       method: async () => {
         await config.value.action?.(formGroupsToPatternRules(form.value?.groups));
-
+        /**
+         * We've added that to avoiding problem with async on the backend side.
+         * There is 3000ms timeout on the backend side for sync
+         */
+        await promisedWait(3000);
+        await config.value.afterSubmit?.();
         close();
       },
     });

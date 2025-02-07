@@ -40,12 +40,12 @@
     </template>
     <alarm-column-cell-popup-body
       :alarm="alarm"
-      :selected-tag="selectedTag"
+      :selected-tags="selectedTags"
       :template="column.popupTemplate"
       :template-id="popupTemplateId"
       @close="hideInfoPopup"
       @select:tag="$emit('select:tag', $event)"
-      @clear:tag="$emit('clear:tag')"
+      @remove:tag="$emit('remove:tag', $event)"
     />
   </v-menu>
   <div
@@ -108,6 +108,10 @@ export default {
     small: {
       type: Boolean,
       default: false,
+    },
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
   },
   data() {

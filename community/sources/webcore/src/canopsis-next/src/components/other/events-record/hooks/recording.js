@@ -1,5 +1,7 @@
 import { EVENT_FILTER_PATTERN_FIELDS, MODALS } from '@/constants';
 
+import { promisedWait } from '@/helpers/async';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useEventsRecordCurrent } from '@/hooks/store/modules/events-record-current';
@@ -33,11 +35,8 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
         { value: EVENT_FILTER_PATTERN_FIELDS.author },
         { value: EVENT_FILTER_PATTERN_FIELDS.initiator },
       ],
-      action: async (eventPattern) => {
-        await startEventsRecordCurrent({ data: { event_pattern: eventPattern } });
-
-        return fetchListHandler();
-      },
+      action: eventPattern => startEventsRecordCurrent({ data: { event_pattern: eventPattern } }),
+      afterSubmit: fetchListHandler,
     },
   });
 
@@ -49,6 +48,12 @@ export const useEventsRecordRecording = (fetchListHandler = () => {}) => {
     config: {
       action: async () => {
         await stopEventsRecordCurrent();
+
+        /**
+         * We've added that to avoiding problem with async on the backend side.
+         * There is 3000ms timeout on the backend side for sync
+         */
+        await promisedWait(3000);
 
         return fetchListHandler();
       },

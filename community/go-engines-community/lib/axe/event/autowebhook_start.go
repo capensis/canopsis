@@ -39,7 +39,8 @@ func (p *autoWebhookStartProcessor) Process(ctx context.Context, event rpc.AxeEv
 		event.Parameters.Output, event.Parameters)
 	update := []bson.M{
 		{"$set": bson.M{
-			"v.steps": addStepUpdateQuery(newStepQuery),
+			"v.steps":            addStepUpdateQuery(newStepQuery),
+			"v.last_update_date": event.Parameters.Timestamp,
 		}},
 	}
 
