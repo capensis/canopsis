@@ -93,7 +93,10 @@ type BaseFilterRequest struct {
 	Opened      *bool             `form:"opened" json:"opened"`
 	OnlyParents bool              `form:"correlation" json:"correlation"`
 	Category    string            `form:"category" json:"category"`
-	Tag         string            `form:"tag" json:"tag"`
+
+	// Tag is deprecated, please use tags[] parameter
+	Tag  string   `form:"tag" json:"tag"`
+	Tags []string `form:"tags[]" json:"tags"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
@@ -323,25 +326,26 @@ type AlarmValue struct {
 	LastComment *common.AlarmStep  `bson:"last_comment,omitempty" json:"last_comment,omitempty"`
 	Steps       []common.AlarmStep `bson:"steps,omitempty" json:"steps,omitempty"`
 
-	Component         string                `bson:"component" json:"component"`
-	Connector         string                `bson:"connector" json:"connector"`
-	ConnectorName     string                `bson:"connector_name" json:"connector_name"`
-	CreationDate      datetime.CpsTime      `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
-	ActivationDate    *datetime.CpsTime     `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
-	DisplayName       string                `bson:"display_name" json:"display_name"`
-	InitialOutput     string                `bson:"initial_output" json:"initial_output"`
-	Output            string                `bson:"output" json:"output"`
-	InitialLongOutput string                `bson:"initial_long_output" json:"initial_long_output"`
-	LongOutput        string                `bson:"long_output" json:"long_output"`
-	LongOutputHistory []string              `bson:"long_output_history" json:"long_output_history"`
-	LastUpdateDate    datetime.CpsTime      `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
-	LastEventDate     datetime.CpsTime      `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
-	Resource          string                `bson:"resource,omitempty" json:"resource,omitempty"`
-	Resolved          *datetime.CpsTime     `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
-	PbehaviorInfo     *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
-	Meta              string                `bson:"meta,omitempty" json:"meta,omitempty"`
-	Parents           []string              `bson:"parents" json:"parents"`
-	Children          []string              `bson:"children" json:"children"`
+	Component                   string                `bson:"component" json:"component"`
+	Connector                   string                `bson:"connector" json:"connector"`
+	ConnectorName               string                `bson:"connector_name" json:"connector_name"`
+	CreationDate                datetime.CpsTime      `bson:"creation_date" json:"creation_date" swaggertype:"integer"`
+	ActivationDate              *datetime.CpsTime     `bson:"activation_date,omitempty" json:"activation_date,omitempty" swaggertype:"integer"`
+	DisplayName                 string                `bson:"display_name" json:"display_name"`
+	InitialOutput               string                `bson:"initial_output" json:"initial_output"`
+	Output                      string                `bson:"output" json:"output"`
+	InitialLongOutput           string                `bson:"initial_long_output" json:"initial_long_output"`
+	LongOutput                  string                `bson:"long_output" json:"long_output"`
+	LongOutputHistory           []string              `bson:"long_output_history" json:"long_output_history"`
+	LastUpdateDate              datetime.CpsTime      `bson:"last_update_date" json:"last_update_date" swaggertype:"integer"`
+	LastEventDate               datetime.CpsTime      `bson:"last_event_date" json:"last_event_date" swaggertype:"integer"`
+	LastStateOrStatusUpdateDate datetime.CpsTime      `bson:"last_st_upd_dt" json:"last_st_upd_dt" swaggertype:"integer"`
+	Resource                    string                `bson:"resource,omitempty" json:"resource,omitempty"`
+	Resolved                    *datetime.CpsTime     `bson:"resolved,omitempty" json:"resolved,omitempty" swaggertype:"integer"`
+	PbehaviorInfo               *entity.PbehaviorInfo `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
+	Meta                        string                `bson:"meta,omitempty" json:"meta,omitempty"`
+	Parents                     []string              `bson:"parents" json:"parents"`
+	Children                    []string              `bson:"children" json:"children"`
 
 	StateChangesSinceStatusUpdate types.CpsNumber `bson:"state_changes_since_status_update,omitempty" json:"state_changes_since_status_update,omitempty"`
 	TotalStateChanges             types.CpsNumber `bson:"total_state_changes,omitempty" json:"total_state_changes,omitempty"`

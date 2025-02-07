@@ -49,7 +49,10 @@ func (p *activateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	match["v.activation_date"] = nil
 	newStep := NewAlarmStep(types.AlarmStepActivate, event.Parameters, false)
 	update := bson.M{
-		"$set":  bson.M{"v.activation_date": event.Parameters.Timestamp},
+		"$set": bson.M{
+			"v.activation_date":  event.Parameters.Timestamp,
+			"v.last_update_date": event.Parameters.Timestamp,
+		},
 		"$push": bson.M{"v.steps": newStep},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)

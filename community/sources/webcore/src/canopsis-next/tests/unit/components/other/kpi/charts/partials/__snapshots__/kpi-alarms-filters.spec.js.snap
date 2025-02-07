@@ -9,7 +9,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with hour sampling 1`
   >
     <c-quick-date-interval-field-stub
       class="mr-4"
-      min="1354834800"
+      min="1354921199"
       quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       value="[object Object]"
     />
@@ -38,7 +38,7 @@ exports[`kpi-alarms-filters Renders \`kpi-alarms-filters\` with hour sampling an
   >
     <c-quick-date-interval-field-stub
       class="mr-4"
-      min="1354834801"
+      min="1354921199"
       quick-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       value="[object Object]"
     />

@@ -89,7 +89,7 @@ definitions:
         maxLength: 255
         type: string
       output:
-        maxLength: 255
+        maxLength: 1000
         type: string
       reason:
         description: Reason is used in pbehavior action.
@@ -132,6 +132,10 @@ definitions:
         type: string
       ticket_url:
         description: TicketURL is used in assocticket action.
+        maxLength: 255
+        type: string
+      ticket_url_title:
+        description: TicketURLTitle is used in assocticket action.
         maxLength: 255
         type: string
       tstart:
@@ -277,6 +281,8 @@ definitions:
       last_comment:
         $ref: '#/definitions/common.AlarmStep'
       last_event_date:
+        type: integer
+      last_st_upd_dt:
         type: integer
       last_update_date:
         type: integer
@@ -493,7 +499,12 @@ definitions:
       separator:
         type: string
       tag:
+        description: Tag is deprecated, please use tags[] parameter
         type: string
+      tags:
+        items:
+          type: string
+        type: array
       time_field:
         type: string
       time_format:
@@ -623,6 +634,8 @@ definitions:
               type: string
             ticket_url:
               type: string
+            ticket_url_title:
+              type: string
             user_id:
               type: string
             val:
@@ -648,6 +661,8 @@ definitions:
       ticket_system_name:
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       user_id:
         type: string
@@ -705,6 +720,9 @@ definitions:
       url:
         maxLength: 255
         type: string
+      url_title:
+        maxLength: 255
+        type: string
     required:
     - ticket
     type: object
@@ -739,6 +757,9 @@ definitions:
       ticket_resources:
         type: boolean
       url:
+        maxLength: 255
+        type: string
+      url_title:
         maxLength: 255
         type: string
     required:
@@ -1313,6 +1334,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_title:
+        type: string
       user_id:
         type: string
       val:
@@ -1561,6 +1584,15 @@ definitions:
     required:
     - unit
     - value
+    type: object
+  dbexport.Request:
+    properties:
+      ids:
+        items:
+          type: string
+        type: array
+    required:
+    - ids
     type: object
   entity.ArchiveDisabledRequest:
     properties:
@@ -3173,6 +3205,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_title:
+        type: string
       tstart:
         type: integer
       tstop:
@@ -4494,6 +4528,8 @@ definitions:
         type: string
       ticket_url:
         type: string
+      ticket_url_title:
+        type: string
       ticket_url_tpl:
         type: string
     type: object
@@ -4934,6 +4970,8 @@ definitions:
         description: AssocTicket and Webhook
         type: string
       ticket_url:
+        type: string
+      ticket_url_title:
         type: string
       tstart:
         type: integer

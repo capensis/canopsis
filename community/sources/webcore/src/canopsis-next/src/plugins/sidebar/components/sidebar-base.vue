@@ -17,6 +17,7 @@ export default {
   provide() {
     return {
       $clickOutside: this.$clickOutside,
+      $sidebar: this.sidebar,
     };
   },
   components: { SidebarWrapper },

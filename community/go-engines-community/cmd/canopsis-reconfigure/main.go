@@ -58,7 +58,8 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to initialize rabbitmq")
 	}
 
-	client, err := mongo.NewClient(ctx, 0, 0, logger)
+	// remove timeout to not limit long migrations
+	client, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout, 0, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to connect to mongo")
 	}
@@ -226,6 +227,8 @@ func updateMongoConfig(ctx context.Context, conf Conf, dbClient mongo.DbClient) 
 	conf.Canopsis.Metrics.EnabledInstructions = prevGlobalConf.Metrics.EnabledInstructions
 	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
 	conf.Canopsis.TechMetrics.Enabled = prevGlobalConf.TechMetrics.Enabled
+	conf.Canopsis.Metrics.EnabledSliMetrics = prevGlobalConf.Metrics.EnabledSliMetrics
+
 	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)
 	if err != nil {
 		return fmt.Errorf("failed to update global config: %w", err)

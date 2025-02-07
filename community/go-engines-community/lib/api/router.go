@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"path/filepath"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -18,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
@@ -467,6 +469,7 @@ func RegisterRoutes(
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
 			eventfilter.NewStore(dbClient, authorProvider),
+			dbexport.NewExporter(dbClient),
 			logger,
 			common.NewPatternFieldsTransformer(dbClient),
 		)
@@ -503,6 +506,10 @@ func RegisterRoutes(
 			"/eventfilter/:id/failures",
 			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
 			eventFilterApi.ReadFailures)
+		protected.POST(
+			"eventfilter-db-export",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			eventFilterApi.DBExport)
 
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
@@ -512,6 +519,7 @@ func RegisterRoutes(
 				timezoneConfigProvider,
 				authorProvider,
 			),
+			dbexport.NewExporter(dbClient),
 			pbhComputeChan,
 			common.NewPatternFieldsTransformer(dbClient),
 			logger,
@@ -554,6 +562,11 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
 				pbehaviorApi.Delete)
 		}
+		protected.POST(
+			"pbehaviors-db-export",
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
+			pbehaviorApi.DBExport)
+
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
 			pbehaviorCommentAPI := pbehaviorcomment.NewApi(pbehaviorcomment.NewStore(dbClient, authorProvider))
@@ -1424,7 +1437,12 @@ func RegisterRoutes(
 			)
 		}
 
-		scenarioAPI := scenario.NewApi(scenario.NewStore(dbClient, authorProvider), common.NewPatternFieldsTransformer(dbClient), logger)
+		scenarioAPI := scenario.NewApi(
+			scenario.NewStore(dbClient, authorProvider),
+			dbexport.NewExporter(dbClient),
+			common.NewPatternFieldsTransformer(dbClient),
+			logger,
+		)
 		scenarioRouter := protected.Group("/scenarios")
 		{
 			scenarioRouter.POST(
@@ -1455,6 +1473,10 @@ func RegisterRoutes(
 				scenarioAPI.Delete,
 			)
 		}
+		protected.POST(
+			"scenarios-db-export",
+			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
+			scenarioAPI.DBExport)
 
 		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
 		protected.PUT(
@@ -1558,7 +1580,7 @@ func RegisterRoutes(
 			)
 		}
 
-		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient, authorProvider), common.NewPatternFieldsTransformer(dbClient), logger)
+		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(dbClient, authorProvider), dbexport.NewExporter(dbClient), common.NewPatternFieldsTransformer(dbClient), logger)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
 			idleRuleRouter.POST(
@@ -1589,6 +1611,10 @@ func RegisterRoutes(
 				idleRuleAPI.Delete,
 			)
 		}
+		protected.POST(
+			"idle-rules-db-export",
+			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer),
+			idleRuleAPI.DBExport)
 
 		patternAPI := pattern.NewApi(pattern.NewStore(dbClient, pbhComputeChan, entityPublChan, authorProvider, logger),
 			userInterfaceConfig, enforcer, logger)
@@ -1631,6 +1657,7 @@ func RegisterRoutes(
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(dbClient, authorProvider),
+			dbexport.NewExporter(dbClient),
 			common.NewPatternFieldsTransformer(dbClient),
 			logger,
 		)
@@ -1664,6 +1691,11 @@ func RegisterRoutes(
 				linkRuleAPI.Delete,
 			)
 		}
+		protected.POST(
+			"link-rules-db-export",
+			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
+			linkRuleAPI.DBExport)
+
 		linkCategoryRouter := protected.Group("/link-categories")
 		{
 			linkCategoryRouter.GET(
@@ -2069,7 +2101,7 @@ func RegisterRoutes(
 		fileRouter := protected.Group("/file")
 		{
 			fileAPI := file.NewApi(enforcer, file.NewStore(dbClient, libfile.NewStorage(
-				conf.File.Upload,
+				filepath.Join(conf.File.Dir, canopsis.SubDirUpload),
 				libfile.NewEtagEncoder(),
 			), conf.File.UploadMaxSize))
 			fileRouter.POST(
@@ -2099,7 +2131,7 @@ func RegisterRoutes(
 		{
 			iconStore := icon.NewStore(
 				dbClient,
-				libfile.NewStorage(conf.File.Icon, libfile.NewEtagEncoder()),
+				libfile.NewStorage(filepath.Join(conf.File.Dir, canopsis.SubDirIcons), libfile.NewEtagEncoder()),
 			)
 			iconApi := icon.NewApi(iconStore, websocketHub, conf.File.IconMaxSize, []string{mimeTypeSvg})
 			iconRouter.POST(
@@ -2174,9 +2206,13 @@ func RegisterRoutes(
 			)
 		}
 
+		flappingRuleAPI := flappingrule.NewApi(
+			flappingrule.NewStore(dbClient, authorProvider),
+			dbexport.NewExporter(dbClient),
+			common.NewPatternFieldsTransformer(dbClient),
+		)
 		flappingRuleRouter := protected.Group("/flapping-rules")
 		{
-			flappingRuleAPI := flappingrule.NewApi(flappingrule.NewStore(dbClient, authorProvider), common.NewPatternFieldsTransformer(dbClient))
 			flappingRuleRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionCreate, enforcer),
@@ -2205,6 +2241,10 @@ func RegisterRoutes(
 				flappingRuleAPI.Delete,
 			)
 		}
+		protected.POST(
+			"flapping-rules-db-export",
+			middleware.Authorize(apisecurity.ObjFlappingRule, model.PermissionRead, enforcer),
+			flappingRuleAPI.DBExport)
 
 		entityInfoDictionaryApi := entityinfodictionary.NewApi(entityinfodictionary.NewStore(dbClient), logger)
 		protected.GET("/entity-infos-dictionary/keys",

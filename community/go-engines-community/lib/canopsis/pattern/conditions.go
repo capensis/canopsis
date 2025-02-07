@@ -136,7 +136,7 @@ func NewTimeIntervalCondition(t string, from, to int64) Condition {
 
 func NewDurationCondition(t string, d datetime.DurationWithUnit) (Condition, error) {
 	var err error
-	d, err = d.To("s")
+	d, err = d.To(datetime.DurationUnitSecond)
 	if err != nil {
 		return Condition{}, err
 	}
@@ -487,6 +487,36 @@ func (c *Condition) StringToMongoQuery(f string, checkExists bool) (bson.M, erro
 	}
 }
 
+func (c *Condition) StringInArrayToMongoQuery(arrayField, arrayItemField string, checkExists bool) (bson.M, error) {
+	switch c.Type {
+	case ConditionExist:
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		if *c.valueBool {
+			break
+		}
+
+		return bson.M{"$or": []bson.M{
+			{arrayField: bson.M{"$in": bson.A{nil, bson.A{}}}},
+			{arrayField: bson.M{"$not": bson.M{"$elemMatch": bson.M{
+				arrayItemField: bson.M{
+					"$exists": true,
+					"$nin":    bson.A{nil, ""},
+				},
+			}}}},
+		}}, nil
+	}
+
+	cond, err := c.StringToMongoQuery(arrayItemField, checkExists)
+	if err != nil {
+		return nil, err
+	}
+
+	return bson.M{arrayField: bson.M{"$elemMatch": cond}}, nil
+}
+
 func (c *Condition) IntToMongoQuery(f string, checkExists bool) (bson.M, error) {
 	switch c.Type {
 	case ConditionEqual:
@@ -522,6 +552,15 @@ func (c *Condition) IntToMongoQuery(f string, checkExists bool) (bson.M, error) 
 	}
 }
 
+func (c *Condition) IntInArrayToMongoQuery(arrayField, arrayItemField string, checkExists bool) (bson.M, error) {
+	cond, err := c.IntToMongoQuery(arrayItemField, checkExists)
+	if err != nil {
+		return nil, err
+	}
+
+	return bson.M{arrayField: bson.M{"$elemMatch": cond}}, nil
+}
+
 func (c *Condition) BoolToMongoQuery(f string) (bson.M, error) {
 	switch c.Type {
 	case ConditionEqual:
@@ -533,6 +572,15 @@ func (c *Condition) BoolToMongoQuery(f string) (bson.M, error) {
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
+}
+
+func (c *Condition) BoolInArrayToMongoQuery(arrayField, arrayItemField string) (bson.M, error) {
+	cond, err := c.BoolToMongoQuery(arrayItemField)
+	if err != nil {
+		return nil, err
+	}
+
+	return bson.M{arrayField: bson.M{"$elemMatch": cond}}, nil
 }
 
 func (c *Condition) RefToMongoQuery(f string) (bson.M, error) {
@@ -556,6 +604,36 @@ func (c *Condition) RefToMongoQuery(f string) (bson.M, error) {
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
+}
+
+func (c *Condition) RefInArrayToMongoQuery(arrayField, arrayItemField string) (bson.M, error) {
+	switch c.Type {
+	case ConditionExist:
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		if *c.valueBool {
+			break
+		}
+
+		return bson.M{"$or": []bson.M{
+			{arrayField: bson.M{"$in": bson.A{nil, bson.A{}}}},
+			{arrayField: bson.M{"$not": bson.M{"$elemMatch": bson.M{
+				arrayItemField: bson.M{
+					"$exists": true,
+					"$ne":     nil,
+				},
+			}}}},
+		}}, nil
+	}
+
+	cond, err := c.RefToMongoQuery(arrayItemField)
+	if err != nil {
+		return nil, err
+	}
+
+	return bson.M{arrayField: bson.M{"$elemMatch": cond}}, nil
 }
 
 func (c *Condition) StringArrayToMongoQuery(f string, checkExists bool) (bson.M, error) {
@@ -598,6 +676,37 @@ func (c *Condition) StringArrayToMongoQuery(f string, checkExists bool) (bson.M,
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
+}
+
+func (c *Condition) StringArrayInArrayToMongoQuery(arrayField, arrayItemField string, checkExists bool) (bson.M, error) {
+	switch c.Type {
+	case ConditionIsEmpty:
+		if c.valueBool == nil {
+			return nil, ErrWrongConditionValue
+		}
+
+		if !*c.valueBool {
+			break
+		}
+
+		return bson.M{"$or": []bson.M{
+			{arrayField: bson.M{"$in": bson.A{nil, bson.A{}}}},
+			{arrayField: bson.M{"$not": bson.M{"$elemMatch": bson.M{
+				arrayItemField: bson.M{
+					"$exists": true,
+					"$type":   "array",
+					"$ne":     bson.A{},
+				},
+			}}}},
+		}}, nil
+	}
+
+	cond, err := c.StringArrayToMongoQuery(arrayItemField, checkExists)
+	if err != nil {
+		return nil, err
+	}
+
+	return bson.M{arrayField: bson.M{"$elemMatch": cond}}, nil
 }
 
 func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
@@ -1056,7 +1165,7 @@ func (c *Condition) parseValue() {
 	}
 
 	if d, err := getDurationValue(c.Value); err == nil {
-		dBySec, err := d.To("s")
+		dBySec, err := d.To(datetime.DurationUnitSecond)
 		if err == nil {
 			c.Value = d
 			c.valueDuration = &dBySec.Value
