@@ -63,7 +63,7 @@ Après avoir suivi les notes de version, resynchronisez l'ensemble de vos fichie
 * Canopsis Community :  
   <https://git.canopsis.net/canopsis/canopsis-community/-/releases>
 * Canopsis Pro (autorisation nécessaire) :  
-  <https://git.canopsis.net/canopsis/canopsis-pro/-/releases>
+  <https://git.canopsis.net/canopsis/canopsis-pro-sources/-/releases>
 
 Si vous aviez surchargé des paramètres dans `canopsis-override.toml`, vous
 souhaiterez certainement conserver votre propre fichier.
