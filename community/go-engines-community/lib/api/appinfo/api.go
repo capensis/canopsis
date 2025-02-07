@@ -11,7 +11,6 @@ import (
 type API interface {
 	GetAppInfo(c *gin.Context)
 	UpdateUserInterface(c *gin.Context)
-	DeleteUserInterface(c *gin.Context)
 }
 
 type api struct {
@@ -55,7 +54,7 @@ func (a *api) GetAppInfo(c *gin.Context) {
 		panic(err)
 	}
 
-	response.DefaultColorTheme, err = a.store.RetrieveDefaultColorTheme(c)
+	response.DefaultColorTheme, err = a.store.RetrieveDefaultColorTheme(c, response.UserInterfaceConf.DefaultColorTheme)
 	if err != nil {
 		panic(err)
 	}
@@ -86,12 +85,4 @@ func (a *api) UpdateUserInterface(c *gin.Context) {
 		panic(err)
 	}
 	c.JSON(http.StatusOK, request)
-}
-
-func (a *api) DeleteUserInterface(c *gin.Context) {
-	err := a.store.DeleteUserInterfaceConfig(c)
-	if err != nil {
-		panic(err)
-	}
-	c.JSON(http.StatusNoContent, nil)
 }

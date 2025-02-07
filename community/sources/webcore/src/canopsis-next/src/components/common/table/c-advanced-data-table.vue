@@ -23,7 +23,7 @@
       >
         <v-expand-transition>
           <v-layout
-            v-show="selected.length"
+            v-if="selected.length"
             class="px-2 mt-1"
           >
             <slot
@@ -52,7 +52,7 @@
       :show-expand="expand"
       :item-selectable="isItemSelectable"
       :hide-default-footer="hideActions || advancedPagination || noPagination"
-      :table-class="tableClass"
+      :class="tableClass"
       :dense="dense"
       :loader-height="loaderHeight"
       :ellipsis-headers="ellipsisHeaders"

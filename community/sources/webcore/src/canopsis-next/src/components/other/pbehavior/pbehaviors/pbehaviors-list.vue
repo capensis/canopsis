@@ -11,6 +11,16 @@
     expand
     @update:options="$emit('update:options', $event)"
   >
+    <template v-if="shownUserTimezone" #toolbar="">
+      <v-layout justify-end>
+        <v-flex xs3>
+          <c-timezone-field
+            v-model="timezone"
+            server
+          />
+        </v-flex>
+      </v-layout>
+    </template>
     <template #mass-actions="{ selected, clearSelected }">
       <pbehaviors-mass-actions-panel
         :items="selected"
@@ -36,13 +46,13 @@
       {{ formatRruleEndDate(item) }}
     </template>
     <template #last_alarm_date="{ item }">
-      {{ item.last_alarm_date | timezone($system.timezone) }}
+      {{ item.last_alarm_date | timezone(timezone) }}
     </template>
     <template #created="{ item }">
-      {{ item.created | date }}
+      {{ item.created | timezone(timezone) }}
     </template>
     <template #updated="{ item }">
-      {{ item.updated | date }}
+      {{ item.updated | timezone(timezone) }}
     </template>
     <template #rrule="{ item }">
       <v-icon>{{ item.rrule ? 'check' : 'clear' }}</v-icon>
@@ -73,7 +83,11 @@
 </template>
 
 <script>
-import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
+
+import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorActions from './partials/pbehavior-actions.vue';
@@ -86,7 +100,6 @@ export default {
     PbehaviorsListExpandItem,
     PbehaviorsMassActionsPanel,
   },
-  mixins: [pbehaviorsDateFormatMixin],
   props: {
     pbehaviors: {
       type: Array,
@@ -125,27 +138,37 @@ export default {
       default: false,
     },
   },
-  computed: {
-    headers() {
-      return [
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author.display_name' },
-        { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
-        { text: this.$t('pbehavior.begins'), value: 'tstart' },
-        { text: this.$t('pbehavior.ends'), value: 'tstop' },
-        { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end', sortable: false },
-        { text: this.$t('common.recurrence'), value: 'rrule' },
-        { text: this.$t('common.type'), value: 'type.name' },
-        { text: this.$t('common.reason'), value: 'reason.name' },
-        { text: this.$t('common.created'), value: 'created' },
-        { text: this.$t('common.updated'), value: 'updated' },
-        { text: this.$t('pbehavior.lastAlarmDate'), value: 'last_alarm_date' },
-        { text: this.$t('pbehavior.alarmCount'), value: 'alarm_count', sortable: false },
-        { text: this.$tc('common.icon', 1), value: 'type.icon_name' },
-        { text: this.$t('common.status'), value: 'is_active_status', sortable: false },
-        { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-      ];
-    },
+  setup() {
+    const { t, tc } = useI18n();
+    const { timezone, shownUserTimezone, formatIntervalDate, formatRruleEndDate } = usePbehaviorDateFormat();
+
+    const headers = computed(() => [
+      { text: t('common.name'), value: 'name' },
+      { text: t('common.author'), value: 'author.display_name' },
+      { text: t('pbehavior.isEnabled'), value: 'enabled' },
+      { text: t('pbehavior.begins'), value: 'tstart' },
+      { text: t('pbehavior.ends'), value: 'tstop' },
+      { text: t('pbehavior.rruleEnd'), value: 'rrule_end', sortable: false },
+      { text: t('common.recurrence'), value: 'rrule' },
+      { text: t('common.type'), value: 'type.name' },
+      { text: t('common.reason'), value: 'reason.name' },
+      { text: t('common.created'), value: 'created' },
+      { text: t('common.updated'), value: 'updated' },
+      { text: t('pbehavior.lastAlarmDate'), value: 'last_alarm_date' },
+      { text: t('pbehavior.alarmCount'), value: 'alarm_count', sortable: false },
+      { text: tc('common.icon', 1), value: 'type.icon_name' },
+      { text: t('common.status'), value: 'is_active_status', sortable: false },
+      { text: t('common.actionsLabel'), value: 'actions', sortable: false },
+    ]);
+
+    return {
+      timezone,
+      shownUserTimezone,
+      headers,
+
+      formatIntervalDate,
+      formatRruleEndDate,
+    };
   },
 };
 </script>

@@ -5,6 +5,9 @@ import { entitiesPbehaviorCommentMixin } from '@/mixins/entities/pbehavior/comme
 
 const { mapGetters, mapActions } = createNamespacedHelpers('pbehavior');
 
+/**
+ * @deprecated Use `usePbehavior` hook instead
+ */
 export const entitiesPbehaviorMixin = {
   mixins: [entitiesPbehaviorCommentMixin],
   computed: {

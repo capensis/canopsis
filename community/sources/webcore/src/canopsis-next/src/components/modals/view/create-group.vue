@@ -11,6 +11,7 @@
           :label="$t('common.title')"
           :error-messages="errors.collect('title')"
           name="title"
+          autofocus
         />
       </template>
       <template #actions="">

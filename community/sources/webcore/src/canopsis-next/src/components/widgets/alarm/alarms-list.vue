@@ -47,16 +47,14 @@
             :label="$t('settings.selectAFilter')"
             :filters="userPreference.filters"
             :locked-filters="widget.filters"
-            :disabled="!hasAccessToListFilters"
             :clearable="!widget.parameters.clearFilterDisabled"
             hide-details
             @input="updateSelectedFilter"
           />
           <filters-list-btn
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
             :widget-id="widget._id"
-            :addable="hasAccessToAddFilter"
-            :editable="hasAccessToEditFilter"
+            addable
+            editable
             private
             with-alarm
             with-entity
@@ -74,13 +72,21 @@
           @change="updateOnlyBookmarks"
         />
       </v-flex>
-      <v-flex>
+      <v-flex xs3>
+        <c-alarm-tag-field
+          :value="query.tags"
+          :label="$tc('common.tag', 2)"
+          :show-count="2"
+          combobox
+          @input="updateTags"
+        />
+      </v-flex>
+      <v-flex v-if="hasAccessToUserRemediationInstructionsFilter">
         <alarms-list-remediation-instructions-filters
           :filters.sync="remediationInstructionsFilters"
           :locked-filters.sync="widgetRemediationInstructionsFilters"
-          :editable="hasAccessToEditRemediationInstructionsFilter"
-          :addable="hasAccessToUserRemediationInstructionsFilter"
-          :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
+          editable
+          addable
         />
       </v-flex>
       <v-flex>
@@ -121,7 +127,7 @@
       :sticky-header="widget.parameters.sticky_header"
       :dense="dense"
       :refresh-alarms-list="fetchList"
-      :selected-tag="query.tag"
+      :selected-tags="query.tags"
       :search="query.search"
       :selectable="!hideMassSelection"
       :hide-actions="hideActions"
@@ -129,6 +135,7 @@
       :draggable-column="draggableColumn"
       :cells-content-behavior="cellsContentBehavior"
       :columns-settings="columnsSettings"
+      :parent-alarm="parentAlarm"
       class="mt-2"
       expandable
       densable
@@ -138,7 +145,7 @@
       @update:items-per-page="updateItemsPerPage"
       @update:columns-settings="updateColumnsSettings"
       @update:pagination-options="updatePaginationOptions"
-      @clear:tag="clearTag"
+      @remove:tag="removeTag"
     />
   </div>
 </template>
@@ -146,7 +153,7 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { LIVE_REPORTING_QUICK_RANGES, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -245,6 +252,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    parentAlarm: {
+      type: Object,
+      default: null,
+    },
   },
   data() {
     return {
@@ -263,7 +274,7 @@ export default {
     },
 
     hasAccessToExportAsCsv() {
-      return this.checkAccess(USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
 
     dense() {
@@ -300,23 +311,6 @@ export default {
       }
     },
 
-    selectTag(tag) {
-      this.query = {
-        ...this.query,
-
-        page: 1,
-        tag,
-      };
-    },
-
-    clearTag() {
-      const newQuery = omit(this.query, ['tag']);
-
-      newQuery.page = 1;
-
-      this.query = newQuery;
-    },
-
     updateColumnsSettings(columnsSettings) {
       this.updateContentInUserPreference({ columns_settings: columnsSettings });
     },
@@ -330,6 +324,25 @@ export default {
         page: 1,
         correlation,
       };
+    },
+
+    updateTags(tags) {
+      this.updateContentInUserPreference({ tags });
+
+      this.query = {
+        ...this.query,
+
+        page: 1,
+        tags,
+      };
+    },
+
+    selectTag(tag) {
+      this.updateTags([...(this.query.tags || []), tag]);
+    },
+
+    removeTag(tag) {
+      this.updateTags((this.query.tags || []).filter(queryTag => queryTag !== tag));
     },
 
     updateOnlyBookmarks(onlyBookmarks) {

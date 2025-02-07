@@ -12,7 +12,7 @@ func ReloadEnforcerPolicyOnChange(enforcer security.Enforcer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		s := c.Writer.Status()
 		switch s {
-		case http.StatusOK, http.StatusNoContent, http.StatusCreated:
+		case http.StatusOK, http.StatusNoContent, http.StatusCreated, http.StatusMultiStatus:
 			err := enforcer.LoadPolicy()
 
 			if err != nil {

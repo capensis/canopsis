@@ -19,6 +19,7 @@
       >
         <c-name-field
           v-field="form.name"
+          autofocus
           required
         />
       </v-flex>

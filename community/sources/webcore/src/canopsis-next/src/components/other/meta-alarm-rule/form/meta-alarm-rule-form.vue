@@ -44,6 +44,7 @@
         <meta-alarm-rule-general-form
           v-field="form"
           :disabled-id-field="disabledIdField"
+          :variables="outputTemplateVariables"
           class="pa-4"
         />
       </v-stepper-content>
@@ -53,7 +54,10 @@
         class="pa-0"
       >
         <div class="pa-4">
-          <meta-alarm-rule-type-field v-field="form.type" />
+          <meta-alarm-rule-type-form
+            v-field="form"
+            :variables="templateVariables"
+          />
         </div>
       </v-stepper-content>
       <v-stepper-content
@@ -92,13 +96,13 @@ import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-
 import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
 
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
-import MetaAlarmRuleTypeField from '@/components/other/meta-alarm-rule/form/fields/meta-alarm-rule-type-field.vue';
+import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
 import MetaAlarmRuleGeneralForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-general-form.vue';
 
 export default {
   components: {
     MetaAlarmRuleParametersForm,
-    MetaAlarmRuleTypeField,
+    MetaAlarmRuleTypeForm,
     MetaAlarmRuleGeneralForm,
   },
   model: {
@@ -147,6 +151,30 @@ export default {
       },
     ]);
 
+    const templateVariables = computed(() => [
+      {
+        value: `.LastChild${ENTITY_PAYLOADS_VARIABLES.entity}`,
+        variables: entityPayloadVariables.value,
+      },
+      {
+        value: `.LastChild${ALARM_PAYLOADS_VARIABLES.alarm}`,
+        variables: alarmPayloadVariables.value,
+      },
+      {
+        value: '.Rule.ID',
+      },
+      {
+        value: '.Rule.Name',
+      },
+    ]);
+
+    const outputTemplateVariables = computed(() => [
+      ...templateVariables.value,
+      {
+        value: '.Count',
+      },
+    ]);
+
     const generalStepElement = ref(null);
     const {
       hasChildrenError: hasGeneralError,
@@ -182,6 +210,8 @@ export default {
       typeStepElement,
       hasTypeError,
       variables,
+      templateVariables,
+      outputTemplateVariables,
       META_ALARMS_FORM_STEPS,
     };
   },

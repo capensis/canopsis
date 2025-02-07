@@ -5,6 +5,7 @@ exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     disabled="true"
     max-length="11"
     name="value"
@@ -22,6 +23,7 @@ exports[`tag-form Renders \`tag-form\` with default props 1`] = `
   class="layout column"
 >
   <c-name-field-stub
+    autofocus=""
     max-length="20"
     name="value"
     required=""

@@ -8,11 +8,8 @@
       v-model="form"
       :widget="widget"
       :type="$constants.KPI_RATING_SETTINGS_TYPES.entity"
-      :show-filter="hasAccessToListFilters"
+      :show-filter="hasAccessToFilter"
       :show-interval="hasAccessToInterval"
-      :filter-disabled="!hasAccessToListFilters"
-      :filter-addable="hasAccessToAddFilter"
-      :filter-editable="hasAccessToEditFilter"
     />
   </widget-settings>
 </template>

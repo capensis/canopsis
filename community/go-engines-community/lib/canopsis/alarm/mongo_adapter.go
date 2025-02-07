@@ -105,9 +105,10 @@ func (a *mongoAdapter) GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids [
 	return err
 }
 
-func (a *mongoAdapter) GetOpenedAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
+func (a *mongoAdapter) GetOpenedOkAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
 	filter := bson.M{
-		"v.resolved": nil,
+		"v.resolved":  nil,
+		"v.state.val": types.AlarmStateOK,
 	}
 
 	return a.entityAggregateCursor(ctx, filter)

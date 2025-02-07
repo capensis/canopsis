@@ -22,7 +22,7 @@
 import { ref, onMounted } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
@@ -50,7 +50,7 @@ export default {
       hasCreateAccess: hasCreateAnyBroadcastMessageAccess,
       hasUpdateAccess: hasUpdateAnyBroadcastMessageAccess,
       hasDeleteAccess: hasDeleteAnyBroadcastMessageAccess,
-    } = useCRUDPermissions(USERS_PERMISSIONS.technical.broadcastMessage);
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.broadcastMessage);
 
     /**
      * STORE

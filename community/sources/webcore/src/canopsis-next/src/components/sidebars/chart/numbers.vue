@@ -6,7 +6,7 @@
   >
     <numbers-widget-form
       v-model="form"
-      :with-filters="hasAccessToListFilters"
+      :with-filters="hasAccessToFilter"
       with-periodic-refresh
       with-preset
     />

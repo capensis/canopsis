@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -6,19 +6,19 @@ export const permissionsTechnicalWidgetTemplateMixin = {
   mixins: [authMixin],
   computed: {
     hasCreateAnyWidgetTemplateAccess() {
-      return this.checkCreateAccess(USERS_PERMISSIONS.technical.widgetTemplate);
+      return this.checkCreateAccess(USER_PERMISSIONS.technical.widgetTemplate);
     },
 
     hasReadAnyWidgetTemplateAccess() {
-      return this.checkReadAccess(USERS_PERMISSIONS.technical.widgetTemplate);
+      return this.checkReadAccess(USER_PERMISSIONS.technical.widgetTemplate);
     },
 
     hasUpdateAnyWidgetTemplateAccess() {
-      return this.checkUpdateAccess(USERS_PERMISSIONS.technical.widgetTemplate);
+      return this.checkUpdateAccess(USER_PERMISSIONS.technical.widgetTemplate);
     },
 
     hasDeleteAnyWidgetTemplateAccess() {
-      return this.checkDeleteAccess(USERS_PERMISSIONS.technical.widgetTemplate);
+      return this.checkDeleteAccess(USER_PERMISSIONS.technical.widgetTemplate);
     },
   },
 };

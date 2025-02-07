@@ -4,6 +4,7 @@ import { POPUP_TYPES } from '@/constants';
 import request from '@/services/request';
 
 import { durationToSeconds } from '@/helpers/date/duration';
+import { getLocalTimezone } from '@/helpers/date/date';
 
 const types = {
   FETCH_APP_INFO: 'FETCH_APP_INFO',
@@ -33,7 +34,6 @@ export default {
     requiredInstructionApprove: state => state.appInfo.required_instruction_approve,
     footer: state => state.appInfo.footer,
     edition: state => state.appInfo.edition,
-    stack: state => state.appInfo.stack,
     description: state => state.appInfo.login_page_description,
     language: state => state.appInfo.language,
     timezone: state => state.appInfo.timezone,
@@ -49,8 +49,15 @@ export default {
     isOauthAuthEnabled: state => !!state.appInfo?.login?.oauth2config?.enable,
     eventsCountTriggerDefaultThreshold: state => state.appInfo?.events_count_trigger_default_threshold,
     disabledTransitions: state => state.appInfo?.disabled_transitions,
-    serialName: state => state.appInfo?.serial_name,
     autoSuggestPbehaviorName: state => state.appInfo?.auto_suggest_pbehavior_name,
+    userTimezones: state => state.appInfo?.user_timezones ?? [],
+    shownUserTimezone: (state, getters) => (
+      getters.userTimezones.length > 1
+      || (getters.userTimezones.length && !getters.userTimezones.includes(getLocalTimezone()))
+    ),
+    serialName: state => state.appInfo?.serial_name,
+    versionUpdated: state => state.appInfo?.version_updated,
+    versionDescription: state => state.appInfo?.version_description ?? '',
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {
