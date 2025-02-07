@@ -27,16 +27,14 @@ type Service interface {
 type service struct {
 	collection     mongo.DbCollection
 	eventGenerator libevent.Generator
-
-	// periodicalInterval is used to calculate a date when the task needs to be resent.
-	periodicalInterval time.Duration
+	resendDelay    time.Duration
 }
 
 func NewService(client mongo.DbClient, generator libevent.Generator, periodicalInterval time.Duration) Service {
 	return &service{
-		collection:         client.Collection(mongo.CancelDelayJobCollection),
-		eventGenerator:     generator,
-		periodicalInterval: periodicalInterval,
+		collection:     client.Collection(mongo.CancelDelayJobCollection),
+		eventGenerator: generator,
+		resendDelay:    PeriodsUntilResend * periodicalInterval,
 	}
 }
 
@@ -91,7 +89,7 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 			writeModels,
 			mongodriver.NewUpdateOneModel().
 				SetFilter(bson.M{"_id": job.ID}).
-				SetUpdate(bson.M{"$set": bson.M{"resend_at": now.Add(PeriodsUntilResend * s.periodicalInterval).Unix()}}),
+				SetUpdate(bson.M{"$set": bson.M{"resend_at": now.Add(s.resendDelay).Unix()}}),
 		)
 
 		if len(writeModels) == canopsis.DefaultBulkSize {
