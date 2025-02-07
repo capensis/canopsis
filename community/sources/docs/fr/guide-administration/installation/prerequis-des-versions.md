@@ -22,7 +22,7 @@ Composant   | Version (Pour Canopsis 24.04)         |
 ------------|------------------|
 MongoDB     | 7.0              |
 Nginx       | 1.20 (uniquement pour l'installation via paquets RPM) |
-PostgreSQL  | >= 13               |
+PostgreSQL  | >= 15               |
 TimescaleDB | 2.14.2           |
 RabbitMQ    | >= 3.12             |
 Redis       | ≥ 5.0, < 7.0     |
