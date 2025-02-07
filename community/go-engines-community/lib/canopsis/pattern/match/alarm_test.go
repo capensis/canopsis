@@ -562,6 +562,56 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
+		"given match last comment's author condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.last_comment.a",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					LastComment: &types.AlarmStep{
+						Author: "test",
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given match last comment's author condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.last_comment.a",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test2"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{
+					LastComment: &types.AlarmStep{
+						Author: "test",
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given match last comment's author condition should not match because last comment doesn't exist": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "v.last_comment.a",
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "test"),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Value: types.AlarmValue{},
+			},
+			matchResult: false,
+		},
 	}
 }
 

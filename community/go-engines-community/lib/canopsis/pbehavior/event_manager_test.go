@@ -17,6 +17,25 @@ func TestGetEvent(t *testing.T) {
 		ctrl.Finish()
 	}()
 
+	f := func(entity types.Entity, resolveResult pbehavior.ResolveResult, expectedEventType string, expectedAlarmPbhInfo types.PbehaviorInfo) {
+		t.Helper()
+
+		manager := pbehavior.NewEventManager(libevent.NewGenerator("", ""))
+		event, err := manager.GetEvent(resolveResult, entity, datetime.NewCpsTime())
+		if err != nil {
+			t.Fatalf("expected no error but got %v", err)
+		}
+
+		if event.EventType != expectedEventType {
+			t.Errorf("expected %s event type, got %s", expectedEventType, event.EventType)
+		}
+
+		event.PbehaviorInfo.Timestamp = nil
+		if event.PbehaviorInfo != expectedAlarmPbhInfo {
+			t.Errorf("expected events's pbehavior info = %v, got %v", expectedAlarmPbhInfo, event.PbehaviorInfo)
+		}
+	}
+
 	canonicalActiveInfo := types.PbehaviorInfo{}
 	activeInfo := types.PbehaviorInfo{
 		ID:            "test-pbh-active",
@@ -105,142 +124,103 @@ func TestGetEvent(t *testing.T) {
 		ReasonName: "Another reason maintenance name",
 	}
 
-	var dataSets = []struct {
-		testName             string
-		entity               types.Entity
-		resolveResult        pbehavior.ResolveResult
-		expectedEventType    string
-		expectedAlarmPbhInfo types.PbehaviorInfo
-	}{
-		{
-			"An alarm has no behaviors and resolved type is canonical active behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: canonicalActiveInfo,
-			},
-			resolvedCanonicalActive,
-			"",
-			types.PbehaviorInfo{},
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: canonicalActiveInfo,
 		},
-		{
-			"An alarm has no behaviors and resolved type is active behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: canonicalActiveInfo,
-			},
-			resolvedActive,
-			types.EventTypePbhEnter,
-			activeInfo,
+		resolvedCanonicalActive,
+		"",
+		types.PbehaviorInfo{},
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: canonicalActiveInfo,
 		},
-		{
-			"An alarm has no behaviors and resolved type is maintenance behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: canonicalActiveInfo,
-			},
-			resolvedMaintenance,
-			types.EventTypePbhEnter,
-			maintenanceInfo,
+		resolvedActive,
+		types.EventTypePbhEnter,
+		activeInfo,
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: canonicalActiveInfo,
 		},
-		{
-			"An alarm has an active behavior and resolved type is canonical active behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: activeInfo,
-			},
-			resolvedCanonicalActive,
-			types.EventTypePbhLeave,
-			types.PbehaviorInfo{},
+		resolvedMaintenance,
+		types.EventTypePbhEnter,
+		maintenanceInfo,
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: activeInfo,
 		},
-		{
-			"An alarm has an active behavior and resolved type is maintenance behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: activeInfo,
-			},
-			resolvedMaintenance,
-			types.EventTypePbhLeaveAndEnter,
-			maintenanceInfo,
+		resolvedCanonicalActive,
+		types.EventTypePbhLeave,
+		types.PbehaviorInfo{},
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: activeInfo,
 		},
-		{
-			"An alarm has an active behavior and resolved type is the same behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: activeInfo,
-			},
-			resolvedActive,
-			"",
-			types.PbehaviorInfo{},
+		resolvedMaintenance,
+		types.EventTypePbhLeaveAndEnter,
+		maintenanceInfo,
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: activeInfo,
 		},
-		{
-			"An alarm has an active behavior and resolved type is another active behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: activeInfo,
-			},
-			resolvedAnotherActive,
-			types.EventTypePbhLeaveAndEnter,
-			anotherActiveInfo,
+		resolvedActive,
+		"",
+		types.PbehaviorInfo{},
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: activeInfo,
 		},
-		{
-			"An alarm has a maintenance behavior and resolved type is canonical active behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: maintenanceInfo,
-			},
-			resolvedCanonicalActive,
-			types.EventTypePbhLeave,
-			types.PbehaviorInfo{},
+		resolvedAnotherActive,
+		types.EventTypePbhLeaveAndEnter,
+		anotherActiveInfo,
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: maintenanceInfo,
 		},
-		{
-			"An alarm has a maintenance behavior and resolved type is the same behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: maintenanceInfo,
-			},
-			resolvedMaintenance,
-			"",
-			types.PbehaviorInfo{},
+		resolvedCanonicalActive,
+		types.EventTypePbhLeave,
+		types.PbehaviorInfo{},
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: maintenanceInfo,
 		},
-		{
-			"An alarm has a maintenance behavior and resolved type is active behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: maintenanceInfo,
-			},
-			resolvedActive,
-			types.EventTypePbhLeaveAndEnter,
-			activeInfo,
+		resolvedMaintenance,
+		"",
+		types.PbehaviorInfo{},
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: maintenanceInfo,
 		},
-		{
-			"An alarm has a maintenance behavior and resolved type is another maintenance behavior",
-			types.Entity{
-				Type:          types.EntityTypeResource,
-				PbehaviorInfo: maintenanceInfo,
-			},
-			resolvedAnotherMaintenance,
-			types.EventTypePbhLeaveAndEnter,
-			anotherMaintenanceInfo,
+		resolvedActive,
+		types.EventTypePbhLeaveAndEnter,
+		activeInfo,
+	)
+	f(
+		types.Entity{
+			Type:          types.EntityTypeResource,
+			PbehaviorInfo: maintenanceInfo,
 		},
-	}
-
-	for _, dataset := range dataSets {
-		t.Run(dataset.testName, func(t *testing.T) {
-			manager := pbehavior.NewEventManager(libevent.NewGenerator("", ""))
-
-			event, err := manager.GetEvent(dataset.resolveResult, dataset.entity, datetime.NewCpsTime())
-			if err != nil {
-				t.Fatalf("expected no error but got %v", err)
-			}
-
-			if event.EventType != dataset.expectedEventType {
-				t.Errorf("expected %s event type, got %s", dataset.expectedEventType, event.EventType)
-			}
-
-			event.PbehaviorInfo.Timestamp = nil
-			if event.PbehaviorInfo != dataset.expectedAlarmPbhInfo {
-				t.Errorf("expected events's pbehavior info = %v, got %v", dataset.expectedAlarmPbhInfo, event.PbehaviorInfo)
-			}
-		})
-	}
+		resolvedAnotherMaintenance,
+		types.EventTypePbhLeaveAndEnter,
+		anotherMaintenanceInfo,
+	)
 }

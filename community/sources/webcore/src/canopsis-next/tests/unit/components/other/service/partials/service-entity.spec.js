@@ -2,7 +2,7 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import { ENTITY_TYPES, MODALS, PBEHAVIOR_TYPE_TYPES, USERS_PERMISSIONS } from '@/constants';
+import { ENTITY_TYPES, MODALS, PBEHAVIOR_TYPE_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import ServiceEntity from '@/components/other/service/partials/service-entity.vue';
 
@@ -133,7 +133,7 @@ describe('service-entity', () => {
 
   test('Renders `service-entity` with default props and declare ticket permission', async () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: {
+      [USER_PERMISSIONS.business.serviceWeather.actions.entityDeclareTicket]: {
         actions: [],
       },
     }));
@@ -179,7 +179,7 @@ describe('service-entity', () => {
 
   test('Renders `service-entity` with pbehaviors tab', async () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]: {
+      [USER_PERMISSIONS.business.serviceWeather.actions.entityManagePbehaviors]: {
         actions: [],
       },
     }));

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { handlebarsLinksHelperCreator } from '@/mixins/handlebars/links-helper-creator';
 
@@ -15,7 +15,7 @@ export default {
   mixins: [
     handlebarsLinksHelperCreator(
       'entity.links',
-      USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks,
+      USER_PERMISSIONS.business.serviceWeather.actions.entityLinks,
     ),
   ],
   props: {

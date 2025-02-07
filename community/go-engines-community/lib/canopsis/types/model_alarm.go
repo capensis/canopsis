@@ -137,10 +137,13 @@ type Alarm struct {
 	Time     datetime.CpsTime `bson:"t" json:"t"`
 	EntityID string           `bson:"d" json:"d"`
 
-	Tags                []string           `bson:"tags,omitempty" json:"tags,omitempty"`
-	ExternalTags        []string           `bson:"etags,omitempty" json:"etags,omitempty"`
-	InternalTags        []string           `bson:"itags,omitempty" json:"itags,omitempty"`
-	InternalTagsUpdated datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
+	Tags                      []string           `bson:"tags,omitempty" json:"tags,omitempty"`
+	ExternalTags              []string           `bson:"etags,omitempty" json:"etags,omitempty"`
+	InternalTags              []string           `bson:"itags,omitempty" json:"itags,omitempty"`
+	InternalTagsUpdated       datetime.MicroTime `bson:"itags_upd" json:"itags_upd"`
+	CopyTagsFromChildren      bool               `bson:"copy_ctags,omitempty" json:"copy_ctags,omitempty"`
+	FilterChildrenTagsByLabel []string           `bson:"filter_ctags,omitempty" json:"filter_ctags,omitempty"`
+	EntityInfosFromChildren   []string           `bson:"cinfos,omitempty" json:"cinfos,omitempty"`
 	// todo move all field from Value to Alarm
 	Value AlarmValue `bson:"v" json:"v"`
 
@@ -438,11 +441,19 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 		return a.Value.Component, true
 	case "v.resource":
 		return a.Value.Resource, true
+	case "v.state.initiator":
+		return a.Value.State.GetInitiator(), true
 	case "v.last_comment.m":
 		if a.Value.LastComment == nil {
 			return "", true
 		}
 		return a.Value.LastComment.Message, true
+	case "v.last_comment.a":
+		if a.Value.LastComment == nil {
+			return "", true
+		}
+
+		return a.Value.LastComment.Author, true
 	case "v.last_comment.initiator":
 		return a.Value.LastComment.GetInitiator(), true
 	case "v.ticket.m":
@@ -475,6 +486,14 @@ func (a *Alarm) GetStringField(f string) (string, bool) {
 		return a.Value.ACK.GetInitiator(), true
 	case "v.canceled.initiator":
 		return a.Value.Canceled.GetInitiator(), true
+	case "v.snooze.a":
+		if a.Value.Snooze == nil {
+			return "", true
+		}
+
+		return a.Value.Snooze.Author, true
+	case "v.snooze.initiator":
+		return a.Value.Snooze.GetInitiator(), true
 	case "v.meta":
 		return a.Value.Meta, true
 	default:

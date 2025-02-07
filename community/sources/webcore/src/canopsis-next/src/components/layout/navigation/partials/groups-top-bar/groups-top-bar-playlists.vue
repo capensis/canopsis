@@ -15,7 +15,7 @@
         color="secondary lighten-1"
         v-on="on"
       >
-        <span>{{ $t(`pageHeaders.${$constants.USERS_PERMISSIONS.technical.playlist}.title`) }}</span>
+        <span>{{ $t(`pageHeaders.${$constants.USER_PERMISSIONS.technical.playlist}.title`) }}</span>
         <v-icon
           class="ml-0"
           right

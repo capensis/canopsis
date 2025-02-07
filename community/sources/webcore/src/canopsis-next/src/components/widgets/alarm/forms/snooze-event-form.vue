@@ -2,6 +2,7 @@
   <v-layout column>
     <c-duration-field
       v-field="form.duration"
+      autofocus
       required
     />
     <c-description-field

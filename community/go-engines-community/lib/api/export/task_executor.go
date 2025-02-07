@@ -52,6 +52,7 @@ type FieldsSeparatorGetter interface {
 func NewTaskExecutor(
 	client mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
+	dir string,
 	logger zerolog.Logger,
 ) TaskExecutor {
 	return &taskExecutor{
@@ -66,7 +67,7 @@ func NewTaskExecutor(
 
 		fetches: make(map[string]FetchData),
 
-		formatter:              &csvFormatter{}, // default formatter, can be changed by SetFormatter
+		formatter:              &csvFormatter{dir: dir}, // default formatter, can be changed by SetFormatter
 		customFormatter:        make(map[string]OutputFormatter),
 		timezoneConfigProvider: timezoneConfigProvider,
 	}

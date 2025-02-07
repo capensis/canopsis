@@ -16,6 +16,7 @@ import (
 type API interface {
 	common.BulkCrudAPI
 	Patch(c *gin.Context)
+	BulkPatch(c *gin.Context)
 }
 
 type api struct {
@@ -248,4 +249,22 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}, a.logger)
 
 	a.metricMetaUpdater.DeleteById(c, userIDs...)
+}
+
+// BulkPatch
+// @Param body body []BulkPatchRequestItem true "body"
+func (a *api) BulkPatch(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	userIDs := make([]string, 0)
+	bulk.Handler(c, func(request BulkPatchRequestItem) (string, error) {
+		user, err := a.store.Patch(c, PatchRequest(request), userID)
+		if err != nil || user == nil {
+			return "", err
+		}
+
+		userIDs = append(userIDs, user.ID)
+
+		return user.ID, nil
+	}, a.logger)
+	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }

@@ -6,7 +6,7 @@
   >
     <pie-chart-widget-form
       v-model="form"
-      :with-filters="hasAccessToListFilters"
+      :with-filters="hasAccessToFilter"
       with-periodic-refresh
       with-preset
     />
@@ -17,7 +17,7 @@
 import { SIDE_BARS } from '@/constants';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
-import { permissionsWidgetsLineChartFilters } from '@/mixins/permissions/widgets/chart/line/filters';
+import { permissionsWidgetsPieChartFilters } from '@/mixins/permissions/widgets/chart/pie/filters';
 
 import WidgetSettings from '../partials/widget-settings.vue';
 
@@ -31,7 +31,7 @@ export default {
   },
   mixins: [
     widgetSettingsMixin,
-    permissionsWidgetsLineChartFilters,
+    permissionsWidgetsPieChartFilters,
   ],
 };
 </script>

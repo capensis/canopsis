@@ -135,6 +135,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -151,13 +155,17 @@ export default {
     },
 
     headers() {
-      return this.columns.length
-        ? [
+      if (!this.columns.length) {
+        return [];
+      }
+
+      return this.hideActions
+        ? this.columns
+        : [
           ...this.columns,
 
           { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
-        ]
-        : [];
+        ];
     },
 
     showRootCauseByStateClick() {

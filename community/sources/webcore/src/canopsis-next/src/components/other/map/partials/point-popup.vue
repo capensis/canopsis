@@ -71,7 +71,7 @@
 import { isNumber } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 
@@ -113,7 +113,7 @@ export default {
     },
 
     hasAlarmsListAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.map.actions.alarmsList);
+      return this.checkAccess(USER_PERMISSIONS.business.map.actions.alarmsList);
     },
   },
   methods: {

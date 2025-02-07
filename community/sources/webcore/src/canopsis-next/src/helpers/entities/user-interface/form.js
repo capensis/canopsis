@@ -1,6 +1,8 @@
 import { DEFAULT_APP_TITLE, DEFAULT_LOCALE, POPUP_AUTO_CLOSE_DELAY } from '@/config';
 import { TIME_UNITS } from '@/constants';
 
+import i18n from '@/i18n';
+
 import { durationToForm } from '@/helpers/date/duration';
 
 /**
@@ -25,6 +27,8 @@ import { durationToForm } from '@/helpers/date/duration';
  * @property {number} [check_count_request_timeout]
  * @property {boolean} [disabled_transitions]
  * @property {boolean} [auto_suggest_pbehavior_name]
+ * @property {string} [default_color_theme = '']
+ * @property {string} [version_description = '']
  */
 
 /**
@@ -36,7 +40,6 @@ import { durationToForm } from '@/helpers/date/duration';
  * @typedef {UserInterface} UserInterfaceRequest
  * @property {string} edition
  * @property {string} logo
- * @property {string} stack
  * @property {string} version
  */
 
@@ -75,4 +78,6 @@ export const userInterfaceToForm = (userInterface = {}) => ({
   popup_timeout: userInterfacePopupTimeoutToForm(userInterface.popup_timeout),
   disabled_transitions: userInterface.disabled_transitions ?? false,
   auto_suggest_pbehavior_name: userInterface.auto_suggest_pbehavior_name ?? false,
+  default_color_theme: userInterface.default_color_theme?._id ?? '',
+  version_description: userInterface.version_description || i18n.t('userInterface.defaultVersionDescription'),
 });

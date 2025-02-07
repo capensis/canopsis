@@ -5,6 +5,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with custom pro
   class="layout"
 >
   <div
+    autofocus="autofocus"
     class="v-item-group theme--light v-btn-toggle v-btn-toggle--dense"
   >
     <button
@@ -49,6 +50,7 @@ exports[`state-criticity-field Renders \`state-criticity-field\` with default pr
   class="layout"
 >
   <div
+    autofocus="autofocus"
     class="v-item-group theme--light v-btn-toggle v-btn-toggle--dense"
   >
     <button

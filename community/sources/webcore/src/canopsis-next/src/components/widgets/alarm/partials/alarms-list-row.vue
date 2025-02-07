@@ -82,11 +82,12 @@
           :alarm="alarm"
           :widget="widget"
           :column="header"
-          :selected-tag="selectedTag"
+          :selected-tags="selectedTags"
           :small="small"
+          :parent-alarm="parentAlarm"
           @activate="activateRow"
           @select:tag="$emit('select:tag', $event)"
-          @clear:tag="$emit('clear:tag')"
+          @remove:tag="$emit('remove:tag', $event)"
           @click:state="$emit('click:state', $event)"
         />
         <span
@@ -171,9 +172,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
     },
     medium: {
       type: Boolean,

@@ -5,7 +5,7 @@ import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/
 import { createAuthModule, createMockedStoreModules, createAlarmTagModule } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import { CRUD_ACTIONS, MODALS, TAG_TYPES, USERS_PERMISSIONS } from '@/constants';
+import { CRUD_ACTIONS, MODALS, TAG_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import Tags from '@/views/admin/tags.vue';
 
@@ -308,7 +308,7 @@ describe('tags', () => {
 
   test('Renders `tags` with permissions', () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.technical.tag]: {
+      [USER_PERMISSIONS.technical.tag]: {
         actions: [
           CRUD_ACTIONS.create,
           CRUD_ACTIONS.update,

@@ -19,7 +19,7 @@ import {
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
   TIME_UNITS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
   WIDGET_TYPES,
@@ -112,21 +112,21 @@ const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRemediationInstructionsFilters = wrapper => wrapper.find('input.field-remediation-instructions-filters');
 const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-reporting');
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
-const selectFieldTextEditorWithTemplate = wrapper => wrapper.find('input.field-text-editor-with-template');
+const selectFieldMoreInfo = wrapper => wrapper.findAll('input.field-text-editor-with-template').at(1);
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
 const selectFieldClearFilterDisabled = wrapper => selectSwitcherFieldByTitle(
   wrapper,
-  'Disable possibility to clear selected filter',
+  'Clear of selected filter allowed',
 );
-const selectFieldHtmlEnabledSwitcher = wrapper => selectSwitcherFieldByTitle(wrapper, 'HTML enabled on timeline?');
-const selectFieldAckNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Note field required when ack?');
+const selectFieldHtmlEnabledSwitcher = wrapper => selectSwitcherFieldByTitle(wrapper, 'HTML enabled on timeline');
+const selectFieldAckNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Ack - note field required');
 const selectFieldMultiAckEnabled = wrapper => selectSwitcherFieldByTitle(wrapper, 'Multiple ack');
 const selectFieldFastAckOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(0);
 const selectFieldFastCancelOutput = wrapper => wrapper.findAll('input.field-fast-action-output').at(1);
-const selectFieldSnoozeNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Note field required when snooze?');
+const selectFieldSnoozeNoteRequired = wrapper => selectSwitcherFieldByTitle(wrapper, 'Snooze - note field required');
 const selectFieldRemoveAlarmsFromMetaAlarmCommentRequired = wrapper => selectSwitcherFieldByTitle(
   wrapper,
-  'Comment field required when remove alarms from manual meta alarm?',
+  'Remove alarms from manual meta alarm - comment field required',
 );
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => selectSwitcherFieldByTitle(wrapper, 'Sticky header');
@@ -135,11 +135,11 @@ const selectFieldKioskHideMassSelection = wrapper => selectSwitcherFieldByTitle(
 const selectFieldKioskHideToolbar = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide toolbar');
 const selectFieldActionsAllowWithOkState = wrapper => selectSwitcherFieldByTitle(
   wrapper,
-  'Actions allowed when state OK?',
+  'Actions allowed when state OK',
 );
 const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
   wrapper,
-  'Is correlation enabled by default?',
+  'Correlation',
 );
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
@@ -627,7 +627,7 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.filter]: {
                 actions: [],
               },
             },
@@ -675,7 +675,7 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.filter]: {
                 actions: [],
               },
             },
@@ -723,7 +723,7 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
                 actions: [],
               },
             },
@@ -844,7 +844,7 @@ describe('alarm', () => {
       },
     });
 
-    const fieldTextEditor = selectFieldTextEditorWithTemplate(wrapper);
+    const fieldTextEditor = selectFieldMoreInfo(wrapper);
 
     const moreInfoTemplate = 'More info template';
     const moreInfoTemplateTemplate = 'template-id';
@@ -1452,20 +1452,12 @@ describe('alarm', () => {
           ...authModule,
           getters: {
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.listFilters]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.editFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.addFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.listRemediationInstructionsFilters]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.filter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
                 actions: [],
               },
-              [USERS_PERMISSIONS.business.alarmsList.actions.addRemediationInstructionsFilter]: {
-                actions: [],
-              },
-              [USERS_PERMISSIONS.business.alarmsList.actions.editRemediationInstructionsFilter]: {
-                actions: [],
-              },
-              [USERS_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
                 actions: [],
               },
             },

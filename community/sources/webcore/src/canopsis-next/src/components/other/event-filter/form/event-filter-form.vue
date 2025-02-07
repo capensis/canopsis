@@ -7,11 +7,13 @@
           :disabled="isDisabledIdField"
           :help-text="$t('eventFilter.idHelp')"
           class="mr-3"
+          autofocus
         />
       </v-flex>
       <v-flex xs4>
         <c-event-filter-type-field
           v-field="form.type"
+          :autofocus="isDisabledIdField"
           class="ml-3"
         />
       </v-flex>

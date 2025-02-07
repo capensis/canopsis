@@ -6,6 +6,7 @@
       :label="$t('common.name')"
       :error-messages="errors.collect('title')"
       name="title"
+      autofocus
     />
     <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
     <v-flex xs12>

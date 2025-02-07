@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -6,19 +6,19 @@ export const permissionsTechnicalTagMixin = {
   mixins: [authMixin],
   computed: {
     hasCreateAnyTagAccess() {
-      return this.checkCreateAccess(USERS_PERMISSIONS.technical.tag);
+      return this.checkCreateAccess(USER_PERMISSIONS.technical.tag);
     },
 
     hasReadAnyTagAccess() {
-      return this.checkReadAccess(USERS_PERMISSIONS.technical.tag);
+      return this.checkReadAccess(USER_PERMISSIONS.technical.tag);
     },
 
     hasUpdateAnyTagAccess() {
-      return this.checkUpdateAccess(USERS_PERMISSIONS.technical.tag);
+      return this.checkUpdateAccess(USER_PERMISSIONS.technical.tag);
     },
 
     hasDeleteAnyTagAccess() {
-      return this.checkDeleteAccess(USERS_PERMISSIONS.technical.tag);
+      return this.checkDeleteAccess(USER_PERMISSIONS.technical.tag);
     },
   },
 };

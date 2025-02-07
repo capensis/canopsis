@@ -10,6 +10,7 @@
           v-validate="field.validationRules"
           v-bind="fieldProps"
           :error-messages="errors.collect(field.name)"
+          autofocus
         />
       </template>
       <template #actions="">
