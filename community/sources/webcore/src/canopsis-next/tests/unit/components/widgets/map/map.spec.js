@@ -16,7 +16,7 @@ import {
   ENTITY_TYPES,
   MAP_TYPES,
   MODALS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 
@@ -240,7 +240,7 @@ describe('map', () => {
 
   test('Category query updated after trigger category field', async () => {
     currentUserPermissionsById.mockReturnValue({
-      [USERS_PERMISSIONS.business.map.actions.category]: { actions: [] },
+      [USER_PERMISSIONS.business.map.actions.category]: { actions: [] },
     });
 
     getUserPreferenceByWidgetId.mockReturnValue(() => ({
@@ -435,11 +435,9 @@ describe('map', () => {
       _id: `${type}_id`,
     });
     currentUserPermissionsById.mockReturnValue({
-      [USERS_PERMISSIONS.business.map.actions.category]: { actions: [] },
-      [USERS_PERMISSIONS.business.map.actions.userFilter]: { actions: [] },
-      [USERS_PERMISSIONS.business.map.actions.listFilters]: { actions: [] },
-      [USERS_PERMISSIONS.business.map.actions.editFilter]: { actions: [] },
-      [USERS_PERMISSIONS.business.map.actions.addFilter]: { actions: [] },
+      [USER_PERMISSIONS.business.map.actions.category]: { actions: [] },
+      [USER_PERMISSIONS.business.map.actions.userFilter]: { actions: [] },
+      [USER_PERMISSIONS.business.map.actions.filter]: { actions: [] },
     });
     const wrapper = snapshotFactory({
       propsData: {

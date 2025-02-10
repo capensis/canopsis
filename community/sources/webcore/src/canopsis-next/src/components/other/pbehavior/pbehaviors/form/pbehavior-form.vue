@@ -4,6 +4,7 @@
     v-field="form"
     :no-enabled="noEnabled"
     :no-comments="noComments"
+    :no-timezone="noTimezone"
     :with-start-on-trigger="withStartOnTrigger"
     :name-label="nameLabel"
     :name-tooltip="nameTooltip"
@@ -27,6 +28,7 @@
         ref="general"
         :no-enabled="noEnabled"
         :no-comments="noComments"
+        :no-timezone="noTimezone"
         :with-start-on-trigger="withStartOnTrigger"
         :name-label="nameLabel"
         :name-tooltip="nameTooltip"
@@ -69,6 +71,10 @@ export default {
       default: false,
     },
     noComments: {
+      type: Boolean,
+      default: false,
+    },
+    noTimezone: {
       type: Boolean,
       default: false,
     },

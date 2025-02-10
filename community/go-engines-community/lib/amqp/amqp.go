@@ -35,3 +35,7 @@ func NewConnection(logger zerolog.Logger, reconnectCount int, minReconnectTimeou
 	}
 	return Dial(url, logger, reconnectCount, minReconnectTimeout)
 }
+
+func BuildRoutingKey(prefix string, initiator string) string {
+	return prefix + "_" + initiator
+}

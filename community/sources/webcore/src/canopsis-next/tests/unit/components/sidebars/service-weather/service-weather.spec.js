@@ -16,7 +16,7 @@ import {
   SERVICE_WEATHER_WIDGET_MODAL_TYPES,
   SIDE_BARS,
   SORT_ORDERS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 
@@ -286,7 +286,7 @@ describe('service-weather', () => {
 
   test('Filters changed after trigger field filters', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.listFilters]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.filter]: { actions: [] },
     });
     const wrapper = factory({
       store: createMockedStoreModules([

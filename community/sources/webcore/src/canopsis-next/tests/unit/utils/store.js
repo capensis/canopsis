@@ -316,6 +316,8 @@ export const createAuthModule = () => {
     .mockReturnValue({});
   const currentUserPermissionsById = jest.fn()
     .mockReturnValue({});
+  const currentUserViewPermissionsByViewId = jest.fn()
+    .mockReturnValue({});
   const login = jest.fn();
   const fetchCurrentUser = jest.fn();
 
@@ -324,6 +326,7 @@ export const createAuthModule = () => {
     getters: {
       currentUser,
       currentUserPermissionsById,
+      currentUserViewPermissionsByViewId,
     },
     actions: {
       login,
@@ -342,6 +345,7 @@ export const createAuthModule = () => {
     authModule,
     currentUser,
     currentUserPermissionsById,
+    currentUserViewPermissionsByViewId,
     login,
     fetchCurrentUser,
   };
@@ -737,6 +741,34 @@ export const createPbehaviorModule = () => {
     createEntityPbehaviors,
     removeEntityPbehaviors,
     pbehaviorModule,
+  };
+};
+
+export const createPbehaviorCommentModule = () => {
+  const createPbehaviorComment = jest.fn();
+  const updatePbehaviorComment = jest.fn();
+  const removePbehaviorComment = jest.fn();
+
+  const pbehaviorCommentModule = {
+    name: 'pbehavior/comment',
+    actions: {
+      create: createPbehaviorComment,
+      update: updatePbehaviorComment,
+      remove: removePbehaviorComment,
+    },
+  };
+
+  afterEach(() => {
+    createPbehaviorComment.mockClear();
+    updatePbehaviorComment.mockClear();
+    removePbehaviorComment.mockClear();
+  });
+
+  return {
+    createPbehaviorComment,
+    updatePbehaviorComment,
+    removePbehaviorComment,
+    pbehaviorCommentModule,
   };
 };
 
@@ -1172,6 +1204,8 @@ export const createInfoModule = () => {
   const isSAMLAuthEnabled = jest.fn().mockReturnValue(false);
   const isLDAPAuthEnabled = jest.fn().mockReturnValue(false);
   const isOauthAuthEnabled = jest.fn().mockReturnValue(false);
+  const userTimezones = jest.fn().mockReturnValue([]);
+  const shownUserTimezone = jest.fn().mockReturnValue(false);
 
   afterEach(() => {
     maintenance.mockClear();
@@ -1186,6 +1220,8 @@ export const createInfoModule = () => {
     isSAMLAuthEnabled.mockClear();
     isLDAPAuthEnabled.mockClear();
     isOauthAuthEnabled.mockClear();
+    userTimezones.mockClear();
+    shownUserTimezone.mockClear();
   });
 
   const infoModule = {
@@ -1204,6 +1240,8 @@ export const createInfoModule = () => {
       isSAMLAuthEnabled,
       isLDAPAuthEnabled,
       isOauthAuthEnabled,
+      userTimezones,
+      shownUserTimezone,
     },
   };
 
@@ -1222,6 +1260,8 @@ export const createInfoModule = () => {
     isSAMLAuthEnabled,
     isLDAPAuthEnabled,
     isOauthAuthEnabled,
+    userTimezones,
+    shownUserTimezone,
   };
 };
 

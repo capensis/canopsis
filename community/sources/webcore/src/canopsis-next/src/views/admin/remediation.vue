@@ -1,6 +1,6 @@
 <template>
   <div>
-    <c-page-header />
+    <c-page-header :name="$constants.GROUPED_USER_PERMISSIONS_KEYS.remediation" />
     <v-layout wrap>
       <v-flex xs12>
         <v-card class="ma-4 mt-0">

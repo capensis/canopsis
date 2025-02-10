@@ -2,13 +2,13 @@
   <card-with-see-alarms-btn
     :class="itemClasses"
     :style="itemStyle"
-    :show-button="hasAlarmsListAccess"
+    :show-button="!hideActions && hasAlarmsListAccess"
     class="counter-item"
     tile
     @show:alarms="showAlarmListModal"
   >
     <v-btn
-      v-if="hasVariablesHelpAccess"
+      v-if="!hideActions && hasVariablesHelpAccess"
       class="counter-item__help-btn ma-0"
       icon
       small
@@ -40,7 +40,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import {
   MODALS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   ALARM_STATES,
   COUNTER_STATES_ICONS,
   COUNTER_EXPORT_FILE_NAME_PREFIX,
@@ -73,6 +73,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     templateContext() {
@@ -98,11 +102,11 @@ export default {
     },
 
     hasVariablesHelpAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.counter.actions.variablesHelp);
+      return this.checkAccess(USER_PERMISSIONS.business.counter.actions.variablesHelp);
     },
 
     hasAlarmsListAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.counter.actions.alarmsList);
+      return this.checkAccess(USER_PERMISSIONS.business.counter.actions.alarmsList);
     },
 
     color() {

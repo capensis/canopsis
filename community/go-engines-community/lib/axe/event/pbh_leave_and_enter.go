@@ -111,7 +111,8 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 			newLeaveStep.Message = alarm.Value.PbehaviorInfo.GetStepMessage()
 			newEnterStep := NewPbhAlarmStep(types.AlarmStepPbhEnter, event.Parameters, event.Parameters.PbehaviorInfo)
 			set := bson.M{
-				"v.pbehavior_info": event.Parameters.PbehaviorInfo,
+				"v.pbehavior_info":   event.Parameters.PbehaviorInfo,
+				"v.last_update_date": event.Parameters.Timestamp,
 			}
 			update := bson.M{
 				"$push": bson.M{"v.steps": bson.M{"$each": bson.A{newLeaveStep, newEnterStep}}},

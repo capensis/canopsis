@@ -7,10 +7,11 @@ import (
 )
 
 type TimespansRequest struct {
-	StartAt datetime.CpsTime `json:"start_at" binding:"required" swaggertype:"integer"`
-	EndAt   datetime.CpsTime `json:"end_at" swaggertype:"integer"`
-	RRule   string           `json:"rrule"`
-	Type    string           `json:"type" binding:"required"`
+	Timezone string           `json:"timezone"`
+	StartAt  datetime.CpsTime `json:"start_at" binding:"required" swaggertype:"integer"`
+	EndAt    datetime.CpsTime `json:"end_at" swaggertype:"integer"`
+	RRule    string           `json:"rrule"`
+	Type     string           `json:"type" binding:"required"`
 
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
