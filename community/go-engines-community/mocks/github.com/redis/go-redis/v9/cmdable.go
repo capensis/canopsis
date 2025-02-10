@@ -2008,6 +2008,413 @@ func (mr *MockCmdableMockRecorder) FCallRo(arg0, arg1, arg2 interface{}, arg3 ..
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FCallRo", reflect.TypeOf((*MockCmdable)(nil).FCallRo), varargs...)
 }
 
+// FTAggregate mocks base method.
+func (m *MockCmdable) FTAggregate(arg0 context.Context, arg1, arg2 string) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAggregate", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// FTAggregate indicates an expected call of FTAggregate.
+func (mr *MockCmdableMockRecorder) FTAggregate(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAggregate", reflect.TypeOf((*MockCmdable)(nil).FTAggregate), arg0, arg1, arg2)
+}
+
+// FTAggregateWithArgs mocks base method.
+func (m *MockCmdable) FTAggregateWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTAggregateOptions) *redis.AggregateCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAggregateWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.AggregateCmd)
+	return ret0
+}
+
+// FTAggregateWithArgs indicates an expected call of FTAggregateWithArgs.
+func (mr *MockCmdableMockRecorder) FTAggregateWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAggregateWithArgs", reflect.TypeOf((*MockCmdable)(nil).FTAggregateWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTAliasAdd mocks base method.
+func (m *MockCmdable) FTAliasAdd(arg0 context.Context, arg1, arg2 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAliasAdd", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAliasAdd indicates an expected call of FTAliasAdd.
+func (mr *MockCmdableMockRecorder) FTAliasAdd(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAliasAdd", reflect.TypeOf((*MockCmdable)(nil).FTAliasAdd), arg0, arg1, arg2)
+}
+
+// FTAliasDel mocks base method.
+func (m *MockCmdable) FTAliasDel(arg0 context.Context, arg1 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAliasDel", arg0, arg1)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAliasDel indicates an expected call of FTAliasDel.
+func (mr *MockCmdableMockRecorder) FTAliasDel(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAliasDel", reflect.TypeOf((*MockCmdable)(nil).FTAliasDel), arg0, arg1)
+}
+
+// FTAliasUpdate mocks base method.
+func (m *MockCmdable) FTAliasUpdate(arg0 context.Context, arg1, arg2 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAliasUpdate", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAliasUpdate indicates an expected call of FTAliasUpdate.
+func (mr *MockCmdableMockRecorder) FTAliasUpdate(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAliasUpdate", reflect.TypeOf((*MockCmdable)(nil).FTAliasUpdate), arg0, arg1, arg2)
+}
+
+// FTAlter mocks base method.
+func (m *MockCmdable) FTAlter(arg0 context.Context, arg1 string, arg2 bool, arg3 []interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAlter", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAlter indicates an expected call of FTAlter.
+func (mr *MockCmdableMockRecorder) FTAlter(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAlter", reflect.TypeOf((*MockCmdable)(nil).FTAlter), arg0, arg1, arg2, arg3)
+}
+
+// FTConfigGet mocks base method.
+func (m *MockCmdable) FTConfigGet(arg0 context.Context, arg1 string) *redis.MapMapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTConfigGet", arg0, arg1)
+	ret0, _ := ret[0].(*redis.MapMapStringInterfaceCmd)
+	return ret0
+}
+
+// FTConfigGet indicates an expected call of FTConfigGet.
+func (mr *MockCmdableMockRecorder) FTConfigGet(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTConfigGet", reflect.TypeOf((*MockCmdable)(nil).FTConfigGet), arg0, arg1)
+}
+
+// FTConfigSet mocks base method.
+func (m *MockCmdable) FTConfigSet(arg0 context.Context, arg1 string, arg2 interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTConfigSet", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTConfigSet indicates an expected call of FTConfigSet.
+func (mr *MockCmdableMockRecorder) FTConfigSet(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTConfigSet", reflect.TypeOf((*MockCmdable)(nil).FTConfigSet), arg0, arg1, arg2)
+}
+
+// FTCreate mocks base method.
+func (m *MockCmdable) FTCreate(arg0 context.Context, arg1 string, arg2 *redis.FTCreateOptions, arg3 ...*redis.FieldSchema) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2}
+	for _, a := range arg3 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FTCreate", varargs...)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTCreate indicates an expected call of FTCreate.
+func (mr *MockCmdableMockRecorder) FTCreate(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTCreate", reflect.TypeOf((*MockCmdable)(nil).FTCreate), varargs...)
+}
+
+// FTCursorDel mocks base method.
+func (m *MockCmdable) FTCursorDel(arg0 context.Context, arg1 string, arg2 int) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTCursorDel", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTCursorDel indicates an expected call of FTCursorDel.
+func (mr *MockCmdableMockRecorder) FTCursorDel(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTCursorDel", reflect.TypeOf((*MockCmdable)(nil).FTCursorDel), arg0, arg1, arg2)
+}
+
+// FTCursorRead mocks base method.
+func (m *MockCmdable) FTCursorRead(arg0 context.Context, arg1 string, arg2, arg3 int) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTCursorRead", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// FTCursorRead indicates an expected call of FTCursorRead.
+func (mr *MockCmdableMockRecorder) FTCursorRead(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTCursorRead", reflect.TypeOf((*MockCmdable)(nil).FTCursorRead), arg0, arg1, arg2, arg3)
+}
+
+// FTDictAdd mocks base method.
+func (m *MockCmdable) FTDictAdd(arg0 context.Context, arg1 string, arg2 ...interface{}) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FTDictAdd", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// FTDictAdd indicates an expected call of FTDictAdd.
+func (mr *MockCmdableMockRecorder) FTDictAdd(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDictAdd", reflect.TypeOf((*MockCmdable)(nil).FTDictAdd), varargs...)
+}
+
+// FTDictDel mocks base method.
+func (m *MockCmdable) FTDictDel(arg0 context.Context, arg1 string, arg2 ...interface{}) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FTDictDel", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// FTDictDel indicates an expected call of FTDictDel.
+func (mr *MockCmdableMockRecorder) FTDictDel(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDictDel", reflect.TypeOf((*MockCmdable)(nil).FTDictDel), varargs...)
+}
+
+// FTDictDump mocks base method.
+func (m *MockCmdable) FTDictDump(arg0 context.Context, arg1 string) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTDictDump", arg0, arg1)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// FTDictDump indicates an expected call of FTDictDump.
+func (mr *MockCmdableMockRecorder) FTDictDump(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDictDump", reflect.TypeOf((*MockCmdable)(nil).FTDictDump), arg0, arg1)
+}
+
+// FTDropIndex mocks base method.
+func (m *MockCmdable) FTDropIndex(arg0 context.Context, arg1 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTDropIndex", arg0, arg1)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTDropIndex indicates an expected call of FTDropIndex.
+func (mr *MockCmdableMockRecorder) FTDropIndex(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDropIndex", reflect.TypeOf((*MockCmdable)(nil).FTDropIndex), arg0, arg1)
+}
+
+// FTDropIndexWithArgs mocks base method.
+func (m *MockCmdable) FTDropIndexWithArgs(arg0 context.Context, arg1 string, arg2 *redis.FTDropIndexOptions) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTDropIndexWithArgs", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTDropIndexWithArgs indicates an expected call of FTDropIndexWithArgs.
+func (mr *MockCmdableMockRecorder) FTDropIndexWithArgs(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDropIndexWithArgs", reflect.TypeOf((*MockCmdable)(nil).FTDropIndexWithArgs), arg0, arg1, arg2)
+}
+
+// FTExplain mocks base method.
+func (m *MockCmdable) FTExplain(arg0 context.Context, arg1, arg2 string) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTExplain", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// FTExplain indicates an expected call of FTExplain.
+func (mr *MockCmdableMockRecorder) FTExplain(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTExplain", reflect.TypeOf((*MockCmdable)(nil).FTExplain), arg0, arg1, arg2)
+}
+
+// FTExplainWithArgs mocks base method.
+func (m *MockCmdable) FTExplainWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTExplainOptions) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTExplainWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// FTExplainWithArgs indicates an expected call of FTExplainWithArgs.
+func (mr *MockCmdableMockRecorder) FTExplainWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTExplainWithArgs", reflect.TypeOf((*MockCmdable)(nil).FTExplainWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTInfo mocks base method.
+func (m *MockCmdable) FTInfo(arg0 context.Context, arg1 string) *redis.FTInfoCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTInfo", arg0, arg1)
+	ret0, _ := ret[0].(*redis.FTInfoCmd)
+	return ret0
+}
+
+// FTInfo indicates an expected call of FTInfo.
+func (mr *MockCmdableMockRecorder) FTInfo(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTInfo", reflect.TypeOf((*MockCmdable)(nil).FTInfo), arg0, arg1)
+}
+
+// FTSearch mocks base method.
+func (m *MockCmdable) FTSearch(arg0 context.Context, arg1, arg2 string) *redis.FTSearchCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSearch", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.FTSearchCmd)
+	return ret0
+}
+
+// FTSearch indicates an expected call of FTSearch.
+func (mr *MockCmdableMockRecorder) FTSearch(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSearch", reflect.TypeOf((*MockCmdable)(nil).FTSearch), arg0, arg1, arg2)
+}
+
+// FTSearchWithArgs mocks base method.
+func (m *MockCmdable) FTSearchWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTSearchOptions) *redis.FTSearchCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSearchWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.FTSearchCmd)
+	return ret0
+}
+
+// FTSearchWithArgs indicates an expected call of FTSearchWithArgs.
+func (mr *MockCmdableMockRecorder) FTSearchWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSearchWithArgs", reflect.TypeOf((*MockCmdable)(nil).FTSearchWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTSpellCheck mocks base method.
+func (m *MockCmdable) FTSpellCheck(arg0 context.Context, arg1, arg2 string) *redis.FTSpellCheckCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSpellCheck", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.FTSpellCheckCmd)
+	return ret0
+}
+
+// FTSpellCheck indicates an expected call of FTSpellCheck.
+func (mr *MockCmdableMockRecorder) FTSpellCheck(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSpellCheck", reflect.TypeOf((*MockCmdable)(nil).FTSpellCheck), arg0, arg1, arg2)
+}
+
+// FTSpellCheckWithArgs mocks base method.
+func (m *MockCmdable) FTSpellCheckWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTSpellCheckOptions) *redis.FTSpellCheckCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSpellCheckWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.FTSpellCheckCmd)
+	return ret0
+}
+
+// FTSpellCheckWithArgs indicates an expected call of FTSpellCheckWithArgs.
+func (mr *MockCmdableMockRecorder) FTSpellCheckWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSpellCheckWithArgs", reflect.TypeOf((*MockCmdable)(nil).FTSpellCheckWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTSynDump mocks base method.
+func (m *MockCmdable) FTSynDump(arg0 context.Context, arg1 string) *redis.FTSynDumpCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSynDump", arg0, arg1)
+	ret0, _ := ret[0].(*redis.FTSynDumpCmd)
+	return ret0
+}
+
+// FTSynDump indicates an expected call of FTSynDump.
+func (mr *MockCmdableMockRecorder) FTSynDump(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSynDump", reflect.TypeOf((*MockCmdable)(nil).FTSynDump), arg0, arg1)
+}
+
+// FTSynUpdate mocks base method.
+func (m *MockCmdable) FTSynUpdate(arg0 context.Context, arg1 string, arg2 interface{}, arg3 []interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSynUpdate", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTSynUpdate indicates an expected call of FTSynUpdate.
+func (mr *MockCmdableMockRecorder) FTSynUpdate(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSynUpdate", reflect.TypeOf((*MockCmdable)(nil).FTSynUpdate), arg0, arg1, arg2, arg3)
+}
+
+// FTSynUpdateWithArgs mocks base method.
+func (m *MockCmdable) FTSynUpdateWithArgs(arg0 context.Context, arg1 string, arg2 interface{}, arg3 *redis.FTSynUpdateOptions, arg4 []interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSynUpdateWithArgs", arg0, arg1, arg2, arg3, arg4)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTSynUpdateWithArgs indicates an expected call of FTSynUpdateWithArgs.
+func (mr *MockCmdableMockRecorder) FTSynUpdateWithArgs(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSynUpdateWithArgs", reflect.TypeOf((*MockCmdable)(nil).FTSynUpdateWithArgs), arg0, arg1, arg2, arg3, arg4)
+}
+
+// FTTagVals mocks base method.
+func (m *MockCmdable) FTTagVals(arg0 context.Context, arg1, arg2 string) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTTagVals", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// FTTagVals indicates an expected call of FTTagVals.
+func (mr *MockCmdableMockRecorder) FTTagVals(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTTagVals", reflect.TypeOf((*MockCmdable)(nil).FTTagVals), arg0, arg1, arg2)
+}
+
+// FT_List mocks base method.
+func (m *MockCmdable) FT_List(arg0 context.Context) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FT_List", arg0)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// FT_List indicates an expected call of FT_List.
+func (mr *MockCmdableMockRecorder) FT_List(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FT_List", reflect.TypeOf((*MockCmdable)(nil).FT_List), arg0)
+}
+
 // FlushAll mocks base method.
 func (m *MockCmdable) FlushAll(arg0 context.Context) *redis.StatusCmd {
 	m.ctrl.T.Helper()
@@ -9345,6 +9752,413 @@ func (mr *MockUniversalClientMockRecorder) FCallRo(arg0, arg1, arg2 interface{},
 	mr.mock.ctrl.T.Helper()
 	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FCallRo", reflect.TypeOf((*MockUniversalClient)(nil).FCallRo), varargs...)
+}
+
+// FTAggregate mocks base method.
+func (m *MockUniversalClient) FTAggregate(arg0 context.Context, arg1, arg2 string) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAggregate", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// FTAggregate indicates an expected call of FTAggregate.
+func (mr *MockUniversalClientMockRecorder) FTAggregate(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAggregate", reflect.TypeOf((*MockUniversalClient)(nil).FTAggregate), arg0, arg1, arg2)
+}
+
+// FTAggregateWithArgs mocks base method.
+func (m *MockUniversalClient) FTAggregateWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTAggregateOptions) *redis.AggregateCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAggregateWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.AggregateCmd)
+	return ret0
+}
+
+// FTAggregateWithArgs indicates an expected call of FTAggregateWithArgs.
+func (mr *MockUniversalClientMockRecorder) FTAggregateWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAggregateWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).FTAggregateWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTAliasAdd mocks base method.
+func (m *MockUniversalClient) FTAliasAdd(arg0 context.Context, arg1, arg2 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAliasAdd", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAliasAdd indicates an expected call of FTAliasAdd.
+func (mr *MockUniversalClientMockRecorder) FTAliasAdd(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAliasAdd", reflect.TypeOf((*MockUniversalClient)(nil).FTAliasAdd), arg0, arg1, arg2)
+}
+
+// FTAliasDel mocks base method.
+func (m *MockUniversalClient) FTAliasDel(arg0 context.Context, arg1 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAliasDel", arg0, arg1)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAliasDel indicates an expected call of FTAliasDel.
+func (mr *MockUniversalClientMockRecorder) FTAliasDel(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAliasDel", reflect.TypeOf((*MockUniversalClient)(nil).FTAliasDel), arg0, arg1)
+}
+
+// FTAliasUpdate mocks base method.
+func (m *MockUniversalClient) FTAliasUpdate(arg0 context.Context, arg1, arg2 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAliasUpdate", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAliasUpdate indicates an expected call of FTAliasUpdate.
+func (mr *MockUniversalClientMockRecorder) FTAliasUpdate(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAliasUpdate", reflect.TypeOf((*MockUniversalClient)(nil).FTAliasUpdate), arg0, arg1, arg2)
+}
+
+// FTAlter mocks base method.
+func (m *MockUniversalClient) FTAlter(arg0 context.Context, arg1 string, arg2 bool, arg3 []interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTAlter", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTAlter indicates an expected call of FTAlter.
+func (mr *MockUniversalClientMockRecorder) FTAlter(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTAlter", reflect.TypeOf((*MockUniversalClient)(nil).FTAlter), arg0, arg1, arg2, arg3)
+}
+
+// FTConfigGet mocks base method.
+func (m *MockUniversalClient) FTConfigGet(arg0 context.Context, arg1 string) *redis.MapMapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTConfigGet", arg0, arg1)
+	ret0, _ := ret[0].(*redis.MapMapStringInterfaceCmd)
+	return ret0
+}
+
+// FTConfigGet indicates an expected call of FTConfigGet.
+func (mr *MockUniversalClientMockRecorder) FTConfigGet(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTConfigGet", reflect.TypeOf((*MockUniversalClient)(nil).FTConfigGet), arg0, arg1)
+}
+
+// FTConfigSet mocks base method.
+func (m *MockUniversalClient) FTConfigSet(arg0 context.Context, arg1 string, arg2 interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTConfigSet", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTConfigSet indicates an expected call of FTConfigSet.
+func (mr *MockUniversalClientMockRecorder) FTConfigSet(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTConfigSet", reflect.TypeOf((*MockUniversalClient)(nil).FTConfigSet), arg0, arg1, arg2)
+}
+
+// FTCreate mocks base method.
+func (m *MockUniversalClient) FTCreate(arg0 context.Context, arg1 string, arg2 *redis.FTCreateOptions, arg3 ...*redis.FieldSchema) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1, arg2}
+	for _, a := range arg3 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FTCreate", varargs...)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTCreate indicates an expected call of FTCreate.
+func (mr *MockUniversalClientMockRecorder) FTCreate(arg0, arg1, arg2 interface{}, arg3 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1, arg2}, arg3...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTCreate", reflect.TypeOf((*MockUniversalClient)(nil).FTCreate), varargs...)
+}
+
+// FTCursorDel mocks base method.
+func (m *MockUniversalClient) FTCursorDel(arg0 context.Context, arg1 string, arg2 int) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTCursorDel", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTCursorDel indicates an expected call of FTCursorDel.
+func (mr *MockUniversalClientMockRecorder) FTCursorDel(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTCursorDel", reflect.TypeOf((*MockUniversalClient)(nil).FTCursorDel), arg0, arg1, arg2)
+}
+
+// FTCursorRead mocks base method.
+func (m *MockUniversalClient) FTCursorRead(arg0 context.Context, arg1 string, arg2, arg3 int) *redis.MapStringInterfaceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTCursorRead", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.MapStringInterfaceCmd)
+	return ret0
+}
+
+// FTCursorRead indicates an expected call of FTCursorRead.
+func (mr *MockUniversalClientMockRecorder) FTCursorRead(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTCursorRead", reflect.TypeOf((*MockUniversalClient)(nil).FTCursorRead), arg0, arg1, arg2, arg3)
+}
+
+// FTDictAdd mocks base method.
+func (m *MockUniversalClient) FTDictAdd(arg0 context.Context, arg1 string, arg2 ...interface{}) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FTDictAdd", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// FTDictAdd indicates an expected call of FTDictAdd.
+func (mr *MockUniversalClientMockRecorder) FTDictAdd(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDictAdd", reflect.TypeOf((*MockUniversalClient)(nil).FTDictAdd), varargs...)
+}
+
+// FTDictDel mocks base method.
+func (m *MockUniversalClient) FTDictDel(arg0 context.Context, arg1 string, arg2 ...interface{}) *redis.IntCmd {
+	m.ctrl.T.Helper()
+	varargs := []interface{}{arg0, arg1}
+	for _, a := range arg2 {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "FTDictDel", varargs...)
+	ret0, _ := ret[0].(*redis.IntCmd)
+	return ret0
+}
+
+// FTDictDel indicates an expected call of FTDictDel.
+func (mr *MockUniversalClientMockRecorder) FTDictDel(arg0, arg1 interface{}, arg2 ...interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]interface{}{arg0, arg1}, arg2...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDictDel", reflect.TypeOf((*MockUniversalClient)(nil).FTDictDel), varargs...)
+}
+
+// FTDictDump mocks base method.
+func (m *MockUniversalClient) FTDictDump(arg0 context.Context, arg1 string) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTDictDump", arg0, arg1)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// FTDictDump indicates an expected call of FTDictDump.
+func (mr *MockUniversalClientMockRecorder) FTDictDump(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDictDump", reflect.TypeOf((*MockUniversalClient)(nil).FTDictDump), arg0, arg1)
+}
+
+// FTDropIndex mocks base method.
+func (m *MockUniversalClient) FTDropIndex(arg0 context.Context, arg1 string) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTDropIndex", arg0, arg1)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTDropIndex indicates an expected call of FTDropIndex.
+func (mr *MockUniversalClientMockRecorder) FTDropIndex(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDropIndex", reflect.TypeOf((*MockUniversalClient)(nil).FTDropIndex), arg0, arg1)
+}
+
+// FTDropIndexWithArgs mocks base method.
+func (m *MockUniversalClient) FTDropIndexWithArgs(arg0 context.Context, arg1 string, arg2 *redis.FTDropIndexOptions) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTDropIndexWithArgs", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTDropIndexWithArgs indicates an expected call of FTDropIndexWithArgs.
+func (mr *MockUniversalClientMockRecorder) FTDropIndexWithArgs(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTDropIndexWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).FTDropIndexWithArgs), arg0, arg1, arg2)
+}
+
+// FTExplain mocks base method.
+func (m *MockUniversalClient) FTExplain(arg0 context.Context, arg1, arg2 string) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTExplain", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// FTExplain indicates an expected call of FTExplain.
+func (mr *MockUniversalClientMockRecorder) FTExplain(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTExplain", reflect.TypeOf((*MockUniversalClient)(nil).FTExplain), arg0, arg1, arg2)
+}
+
+// FTExplainWithArgs mocks base method.
+func (m *MockUniversalClient) FTExplainWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTExplainOptions) *redis.StringCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTExplainWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.StringCmd)
+	return ret0
+}
+
+// FTExplainWithArgs indicates an expected call of FTExplainWithArgs.
+func (mr *MockUniversalClientMockRecorder) FTExplainWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTExplainWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).FTExplainWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTInfo mocks base method.
+func (m *MockUniversalClient) FTInfo(arg0 context.Context, arg1 string) *redis.FTInfoCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTInfo", arg0, arg1)
+	ret0, _ := ret[0].(*redis.FTInfoCmd)
+	return ret0
+}
+
+// FTInfo indicates an expected call of FTInfo.
+func (mr *MockUniversalClientMockRecorder) FTInfo(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTInfo", reflect.TypeOf((*MockUniversalClient)(nil).FTInfo), arg0, arg1)
+}
+
+// FTSearch mocks base method.
+func (m *MockUniversalClient) FTSearch(arg0 context.Context, arg1, arg2 string) *redis.FTSearchCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSearch", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.FTSearchCmd)
+	return ret0
+}
+
+// FTSearch indicates an expected call of FTSearch.
+func (mr *MockUniversalClientMockRecorder) FTSearch(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSearch", reflect.TypeOf((*MockUniversalClient)(nil).FTSearch), arg0, arg1, arg2)
+}
+
+// FTSearchWithArgs mocks base method.
+func (m *MockUniversalClient) FTSearchWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTSearchOptions) *redis.FTSearchCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSearchWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.FTSearchCmd)
+	return ret0
+}
+
+// FTSearchWithArgs indicates an expected call of FTSearchWithArgs.
+func (mr *MockUniversalClientMockRecorder) FTSearchWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSearchWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).FTSearchWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTSpellCheck mocks base method.
+func (m *MockUniversalClient) FTSpellCheck(arg0 context.Context, arg1, arg2 string) *redis.FTSpellCheckCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSpellCheck", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.FTSpellCheckCmd)
+	return ret0
+}
+
+// FTSpellCheck indicates an expected call of FTSpellCheck.
+func (mr *MockUniversalClientMockRecorder) FTSpellCheck(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSpellCheck", reflect.TypeOf((*MockUniversalClient)(nil).FTSpellCheck), arg0, arg1, arg2)
+}
+
+// FTSpellCheckWithArgs mocks base method.
+func (m *MockUniversalClient) FTSpellCheckWithArgs(arg0 context.Context, arg1, arg2 string, arg3 *redis.FTSpellCheckOptions) *redis.FTSpellCheckCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSpellCheckWithArgs", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.FTSpellCheckCmd)
+	return ret0
+}
+
+// FTSpellCheckWithArgs indicates an expected call of FTSpellCheckWithArgs.
+func (mr *MockUniversalClientMockRecorder) FTSpellCheckWithArgs(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSpellCheckWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).FTSpellCheckWithArgs), arg0, arg1, arg2, arg3)
+}
+
+// FTSynDump mocks base method.
+func (m *MockUniversalClient) FTSynDump(arg0 context.Context, arg1 string) *redis.FTSynDumpCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSynDump", arg0, arg1)
+	ret0, _ := ret[0].(*redis.FTSynDumpCmd)
+	return ret0
+}
+
+// FTSynDump indicates an expected call of FTSynDump.
+func (mr *MockUniversalClientMockRecorder) FTSynDump(arg0, arg1 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSynDump", reflect.TypeOf((*MockUniversalClient)(nil).FTSynDump), arg0, arg1)
+}
+
+// FTSynUpdate mocks base method.
+func (m *MockUniversalClient) FTSynUpdate(arg0 context.Context, arg1 string, arg2 interface{}, arg3 []interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSynUpdate", arg0, arg1, arg2, arg3)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTSynUpdate indicates an expected call of FTSynUpdate.
+func (mr *MockUniversalClientMockRecorder) FTSynUpdate(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSynUpdate", reflect.TypeOf((*MockUniversalClient)(nil).FTSynUpdate), arg0, arg1, arg2, arg3)
+}
+
+// FTSynUpdateWithArgs mocks base method.
+func (m *MockUniversalClient) FTSynUpdateWithArgs(arg0 context.Context, arg1 string, arg2 interface{}, arg3 *redis.FTSynUpdateOptions, arg4 []interface{}) *redis.StatusCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTSynUpdateWithArgs", arg0, arg1, arg2, arg3, arg4)
+	ret0, _ := ret[0].(*redis.StatusCmd)
+	return ret0
+}
+
+// FTSynUpdateWithArgs indicates an expected call of FTSynUpdateWithArgs.
+func (mr *MockUniversalClientMockRecorder) FTSynUpdateWithArgs(arg0, arg1, arg2, arg3, arg4 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTSynUpdateWithArgs", reflect.TypeOf((*MockUniversalClient)(nil).FTSynUpdateWithArgs), arg0, arg1, arg2, arg3, arg4)
+}
+
+// FTTagVals mocks base method.
+func (m *MockUniversalClient) FTTagVals(arg0 context.Context, arg1, arg2 string) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FTTagVals", arg0, arg1, arg2)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// FTTagVals indicates an expected call of FTTagVals.
+func (mr *MockUniversalClientMockRecorder) FTTagVals(arg0, arg1, arg2 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FTTagVals", reflect.TypeOf((*MockUniversalClient)(nil).FTTagVals), arg0, arg1, arg2)
+}
+
+// FT_List mocks base method.
+func (m *MockUniversalClient) FT_List(arg0 context.Context) *redis.StringSliceCmd {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FT_List", arg0)
+	ret0, _ := ret[0].(*redis.StringSliceCmd)
+	return ret0
+}
+
+// FT_List indicates an expected call of FT_List.
+func (mr *MockUniversalClientMockRecorder) FT_List(arg0 interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FT_List", reflect.TypeOf((*MockUniversalClient)(nil).FT_List), arg0)
 }
 
 // FlushAll mocks base method.

@@ -71,6 +71,31 @@ exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with empty data 1`] = `
 </div>
 `;
 
+exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with hide actions 1`] = `
+<div
+  class="layout kpi-widget column align-center"
+>
+  <h4
+    class="kpi-widget__title"
+  >
+  </h4>
+  <div
+    class="pie-chart-metrics__chart kpi-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="0"
+        id="pie-chart"
+        style="display: block; box-sizing: border-box; height: 0px; width: 0px;"
+        width="0"
+      />
+    </div>
+  </div>
+</div>
+`;
+
 exports[`pie-chart-metrics Renders \`pie-chart-metrics\` with number labels props 1`] = `
 <div
   class="layout kpi-widget column align-center"

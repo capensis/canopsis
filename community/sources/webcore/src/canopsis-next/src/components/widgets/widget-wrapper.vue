@@ -42,6 +42,8 @@ import { prepareStatsCalendarAndCounterWidget } from '@/helpers/entities/widget/
 import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
 import { prepareAvailabilityWidget } from '@/helpers/entities/widget/forms/availability';
 
+import { authMixin } from '@/mixins/auth';
+
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
 import ServiceWeatherWidget from './service-weather/service-weather.vue';
@@ -80,6 +82,7 @@ export default {
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },
+  mixins: [authMixin],
   props: {
     widget: {
       type: Object,
@@ -149,6 +152,13 @@ export default {
       if (this.kiosk) {
         widgetSpecificsProp = {
           ...this.widget.parameters.kiosk,
+        };
+      }
+
+      if (!this.hasCurrentViewActionsAccess) {
+        widgetSpecificsProp = {
+          hideActions: true,
+          hideMassSelection: true,
         };
       }
 

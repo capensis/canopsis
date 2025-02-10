@@ -8,7 +8,7 @@ import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 
-import { CRUD_ACTIONS, DEFAULT_PERIODIC_REFRESH, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { CRUD_ACTIONS, DEFAULT_PERIODIC_REFRESH, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -52,7 +52,7 @@ describe('create-view', () => {
     [fakedView._id]: {
       actions: [CRUD_ACTIONS.update, CRUD_ACTIONS.delete],
     },
-    [USERS_PERMISSIONS.technical.view]: {
+    [USER_PERMISSIONS.technical.view]: {
       actions: [
         CRUD_ACTIONS.create,
         CRUD_ACTIONS.update,

@@ -147,6 +147,8 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		IdleRuleApply:       event.IdleRuleApply,
 		MetaAlarmRuleID:     event.MetaAlarmRuleID,
 		MetaAlarmValuePath:  event.MetaAlarmValuePath,
+		MetaAlarmTags:       event.MetaAlarmTags,
+		MetaAlarmInfos:      event.MetaAlarmInfos,
 		DisplayName:         event.DisplayName,
 		MetaAlarmChildren:   event.MetaAlarmChildren,
 		StateSettingUpdated: event.StateSettingUpdated,

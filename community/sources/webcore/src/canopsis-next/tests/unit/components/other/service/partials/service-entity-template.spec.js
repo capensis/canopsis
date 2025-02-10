@@ -1,7 +1,7 @@
 import { flushPromises, generateRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import CRuntimeTemplate from '@/components/common/runtime-template/c-runtime-template.vue';
 import ServiceEntityTemplate from '@/components/other/service/partials/service-entity-template.vue';
@@ -41,7 +41,7 @@ describe('service-entity-template', () => {
 
   test('Renders `service-entity-template` with custom props', async () => {
     currentUserPermissionsById.mockReturnValue({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.entityLinks]: { actions: [] },
+      [USER_PERMISSIONS.business.serviceWeather.actions.entityLinks]: { actions: [] },
     });
 
     const wrapper = snapshotFactory({

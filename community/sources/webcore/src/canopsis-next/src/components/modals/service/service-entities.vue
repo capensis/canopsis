@@ -39,13 +39,13 @@
             dense
           />
         </v-tab-item>
-        <template v-if="hasAccessToCommentsList">
+        <template v-if="hasAccessToComment">
           <v-tab>{{ $tc('common.comment', 2) }}</v-tab>
           <v-tab-item>
             <entity-comments
               :entity="service"
-              :addable="hasAccessToCreateComment"
-              :editable="hasAccessToEditComment"
+              addable
+              editable
             />
           </v-tab-item>
         </template>
@@ -97,7 +97,7 @@
 
 <script>
 import { PAGINATION_LIMIT } from '@/config';
-import { MODALS, PBEHAVIOR_ORIGINS, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, PBEHAVIOR_ORIGINS, USER_PERMISSIONS } from '@/constants';
 
 import Observer from '@/services/observer';
 
@@ -177,7 +177,7 @@ export default {
     },
 
     hasPbehaviorListAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.pbehaviorList);
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.pbehaviorList);
     },
   },
 

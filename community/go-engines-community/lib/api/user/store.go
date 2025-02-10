@@ -170,7 +170,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 
 		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(res.Data[i].Source)
 		if ok {
-			res.Data[i].IdpFields = idpFields
+			res.Data[i].IdPFields = idpFields
 		}
 	}
 
@@ -204,7 +204,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 
 		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(user.Source)
 		if ok {
-			user.IdpFields = idpFields
+			user.IdPFields = idpFields
 		}
 
 		return user, nil
@@ -278,7 +278,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string) (
 			return err
 		}
 
-		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdpRoles)
+		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdPRoles)
 
 		res, err := s.userCollection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},
@@ -339,7 +339,7 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*U
 			return err
 		}
 
-		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdpRoles)
+		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdPRoles)
 
 		res, err := s.userCollection.UpdateOne(ctx,
 			bson.M{"_id": r.ID},

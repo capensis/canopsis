@@ -230,10 +230,12 @@ EventsCountTriggerDefaultThreshold = 10
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.
 [Canopsis.file]
-# Local storage for Upload artifacts. Upload artifacts are used in Administration -> Parameters.
-Upload = "/opt/canopsis/var/lib/upload-files"
+# Local storage for file artifacts.
+# This directory must have write permissions for canopsis-api
+# Muli-instance canopsis-api configuration has to share storage via NFS directory or DRBD partition
+# when instances run on different servers
+Dir = "/opt/canopsis/var/lib"
 UploadMaxSize = 314572800 # 300Mb
-Icon = "/opt/canopsis/var/lib/icons"
 IconMaxSize = 10240 # 10Kb
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
@@ -252,7 +254,11 @@ EnableArraySortingInEntityInfos = true
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.timezone]
+# Timezone defines the timezone of the app.
+# All scheduled workers, pbehaviors, metrics are proccessed with the defined timezone.
 Timezone = "Europe/Paris"
+# UserTimezones defines timezones of calendar view in the UI. See /usr/share/zoneinfo for valid names.
+UserTimezones = []
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.data_storage]
@@ -268,7 +274,6 @@ MongoClientTimeout = "1m"
 [Canopsis.import_ctx]
 ThdWarnMinPerImport = "30m"
 ThdCritMinPerImport = "60m"
-FilePattern = "/tmp/import_%s.json"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.api]

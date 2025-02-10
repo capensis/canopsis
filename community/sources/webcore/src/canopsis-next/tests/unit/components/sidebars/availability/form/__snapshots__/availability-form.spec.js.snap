@@ -3,6 +3,8 @@
 exports[`availability-form Renders \`availability-form\` with custom props 1`] = `
 <div
   class="layout column"
+  filteraddable="true"
+  filtereditable="true"
 >
   <field-title-stub
     name="title"

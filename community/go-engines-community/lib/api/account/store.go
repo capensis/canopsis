@@ -47,7 +47,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	}
 
 	pipeline := []bson.M{
-		{"$match": bson.M{"_id": id}},
+		{"$match": bson.M{
+			"_id":    id,
+			"hidden": bson.M{"$in": bson.A{false, nil}},
+		}},
 		// Find permissions
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
@@ -197,7 +200,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 
 		idpFields, _, ok := s.securityConfig.GetIdpFieldsExtraRolesAllowed(user.Source)
 		if ok {
-			user.IdpFields = idpFields
+			user.IdPFields = idpFields
 		}
 
 		return user, nil
