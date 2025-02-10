@@ -25,7 +25,7 @@ Si vous bénéficiez d'un développement spécifique (modules ou add-ons ayant �
 
     Vous pouvez notamment utiliser la fonctionnalité de [diffusion de messages](../../guide-utilisation/menu-administration/diffusion-de-messages.md) afin de prévenir vos utilisateurs en amont.
 
-### Mise à jour en installation par paquets RHEL 8
+### Mise à jour en installation par paquets RHEL
 
 Les commandes suivantes doivent être réalisées avec l'utilisateur `root`.
 
@@ -37,6 +37,9 @@ dnf --disablerepo="*" --enablerepo="canopsis*" update
 ```
 
 Après avoir pris en compte toute éventuelle remarque des notes de version au sujet de paramètres dans les fichiers de type `canopsis.toml`, appliquez les changements de configuration en fonction de votre édition de Canopsis (Community ou Pro) :
+
+!!! attention
+    Dans le cas où des configurations spécifiques sont appliqués au travers d'un fichier `/opt/canopsis/etc/conf.d/canopsis-override.toml`. Il est nécessaire d'ajouter l'argument `-override /opt/canopsis/etc/conf.d/canopsis-override.toml` à la fin de votre commande `canopsis-reconfigure`.
 
 === "Canopsis Community"
 
