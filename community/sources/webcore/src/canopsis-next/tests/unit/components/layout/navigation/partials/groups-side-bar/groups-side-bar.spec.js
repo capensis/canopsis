@@ -11,7 +11,7 @@ import {
 } from '@unit/utils/store';
 import { mockPopups } from '@unit/utils/mock-hooks';
 
-import { CRUD_ACTIONS, MAX_LIMIT, USERS_PERMISSIONS } from '@/constants';
+import { CRUD_ACTIONS, MAX_LIMIT, USER_PERMISSIONS } from '@/constants';
 
 import GroupsSideBar from '@/components/layout/navigation/partials/groups-side-bar/groups-side-bar.vue';
 
@@ -99,7 +99,7 @@ describe('groups-side-bar', () => {
     ];
 
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
+      [USER_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
     });
     groups.mockReturnValueOnce(availableGroups);
 
@@ -138,7 +138,7 @@ describe('groups-side-bar', () => {
   it('Error popup showed after trigger submit button with error', async () => {
     updateViewsPositions.mockRejectedValueOnce();
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
+      [USER_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
     });
 
     const wrapper = factory({
@@ -182,7 +182,7 @@ describe('groups-side-bar', () => {
     ];
 
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
+      [USER_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
     });
     groups.mockReturnValueOnce(availableGroups);
 
@@ -222,7 +222,7 @@ describe('groups-side-bar', () => {
 
   it('Renders `groups-side-bar` with custom data', () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
+      [USER_PERMISSIONS.technical.view]: { actions: [CRUD_ACTIONS.read] },
     });
     groups.mockReturnValueOnce([
       { title: 'Group 1', views: [{}] },

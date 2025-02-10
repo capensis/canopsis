@@ -1,5 +1,5 @@
 <template>
-  <v-app id="app" :class="{ 'v-app--disabled-transitions': disabledTransitions }">
+  <v-app id="app" :class="appClass">
     <c-progress-overlay
       :pending="wholePending"
       :transition="false"
@@ -69,6 +69,12 @@ export default {
     };
   },
   computed: {
+    appClass() {
+      return {
+        'v-app--side-bar-groups': this.isShownGroupsSideBar,
+        'v-app--disabled-transitions': this.disabledTransitions,
+      };
+    },
     wholePending() {
       return this.currentUserLocalPending || this.appInfoLocalPending || this.templateVarsPending;
     },

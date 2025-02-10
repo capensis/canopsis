@@ -4,6 +4,7 @@ import (
 	"context"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
@@ -33,7 +34,7 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldRecomputePbeha
 		*event = rpc.PbehaviorRecomputeEvent{Ids: []string{pbehaviorID}}
 	})
 
-	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Eq([]string{pbehaviorID}))
+	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Eq([]string{pbehaviorID}), gomock.Any())
 
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -54,16 +55,17 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldRecomputePbeha
 	mockCursor.EXPECT().Close(gomock.Any()).Times(2)
 
 	p := recomputeMessageProcessor{
-		PbhService:          mockService,
-		PbehaviorCollection: mockPbhDbCollection,
-		EntityCollection:    mockEntityDbCollection,
-		EventManager:        mockEventManager,
-		Encoder:             mockEncoder,
-		Decoder:             mockDecoder,
-		Publisher:           mockPublisher,
-		Exchange:            "",
-		Queue:               "test-queue",
-		Logger:              zerolog.Nop(),
+		PbhService:             mockService,
+		PbehaviorCollection:    mockPbhDbCollection,
+		EntityCollection:       mockEntityDbCollection,
+		EventManager:           mockEventManager,
+		Encoder:                mockEncoder,
+		Decoder:                mockDecoder,
+		Publisher:              mockPublisher,
+		Exchange:               "",
+		Queue:                  "test-queue",
+		TimezoneConfigProvider: config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+		Logger:                 zerolog.Nop(),
 	}
 
 	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
@@ -87,19 +89,20 @@ func TestRecomputeMessageProcessor_Process_GivenEmptyPbehaviorID_ShouldRecompute
 
 	mockDecoder.EXPECT().Decode(gomock.Any(), gomock.Any())
 
-	mockService.EXPECT().Recompute(gomock.Any())
+	mockService.EXPECT().Recompute(gomock.Any(), gomock.Any())
 
 	p := recomputeMessageProcessor{
-		PbhService:          mockService,
-		PbehaviorCollection: mockPbhDbCollection,
-		EntityCollection:    mockEntityDbCollection,
-		EventManager:        mockEventManager,
-		Encoder:             mockEncoder,
-		Decoder:             mockDecoder,
-		Publisher:           mockPublisher,
-		Exchange:            "",
-		Queue:               "test-queue",
-		Logger:              zerolog.Nop(),
+		PbhService:             mockService,
+		PbehaviorCollection:    mockPbhDbCollection,
+		EntityCollection:       mockEntityDbCollection,
+		EventManager:           mockEventManager,
+		Encoder:                mockEncoder,
+		Decoder:                mockDecoder,
+		Publisher:              mockPublisher,
+		Exchange:               "",
+		Queue:                  "test-queue",
+		TimezoneConfigProvider: config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+		Logger:                 zerolog.Nop(),
 	}
 
 	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"\"}")})
@@ -142,7 +145,7 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorE
 	})
 
 	mockResolver := mock_pbehavior.NewMockComputedEntityTypeResolver(ctrl)
-	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Any()).Return(mockResolver, nil)
+	mockService.EXPECT().RecomputeByIds(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockResolver, nil)
 	mockResolver.EXPECT().Resolve(gomock.Any(), gomock.Any(), gomock.Any()).Return(resolveResult, nil)
 
 	mockPbhSingleResult := mock_mongo.NewMockSingleResultHelper(ctrl)
@@ -182,16 +185,17 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorE
 		}))
 
 	p := recomputeMessageProcessor{
-		PbhService:          mockService,
-		PbehaviorCollection: mockPbhDbCollection,
-		EntityCollection:    mockEntityDbCollection,
-		EventManager:        mockEventManager,
-		Encoder:             mockEncoder,
-		Decoder:             mockDecoder,
-		Publisher:           mockPublisher,
-		Exchange:            "",
-		Queue:               "test-queue",
-		Logger:              zerolog.Nop(),
+		PbhService:             mockService,
+		PbehaviorCollection:    mockPbhDbCollection,
+		EntityCollection:       mockEntityDbCollection,
+		EventManager:           mockEventManager,
+		Encoder:                mockEncoder,
+		Decoder:                mockDecoder,
+		Publisher:              mockPublisher,
+		Exchange:               "",
+		Queue:                  "test-queue",
+		TimezoneConfigProvider: config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+		Logger:                 zerolog.Nop(),
 	}
 
 	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})

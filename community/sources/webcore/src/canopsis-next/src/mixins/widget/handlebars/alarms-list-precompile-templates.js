@@ -2,6 +2,7 @@ import {
   getAlarmWidgetMoreInfoTemplateId,
   getAlarmWidgetColumnTemplateId,
   getAlarmWidgetColumnPopupTemplateId,
+  getAlarmWidgetGroupColumnTemplateId,
 } from '@/helpers/entities/alarm/list';
 import { registerTemplate, unregisterTemplate } from '@/helpers/handlebars';
 
@@ -19,6 +20,10 @@ export const widgetAlarmsListPrecompileHandlebarsTemplatesMixin = {
     },
     'widget.parameters.moreInfoTemplate': {
       handler: 'registerMoreInfosHandlebarsTemplates',
+      immediate: true,
+    },
+    'widget.parameters.widgetGroupColumns': {
+      handler: 'registerWidgetGroupColumnsHandlebarsTemplates',
       immediate: true,
     },
   },
@@ -41,6 +46,14 @@ export const widgetAlarmsListPrecompileHandlebarsTemplatesMixin = {
 
         if (popupTemplate) {
           this.registerHandlebarsTemplate(getAlarmWidgetColumnPopupTemplateId(this.widget._id, value), popupTemplate);
+        }
+      });
+    },
+
+    registerWidgetGroupColumnsHandlebarsTemplates(columns) {
+      columns.forEach(({ value, template }) => {
+        if (template) {
+          this.registerHandlebarsTemplate(getAlarmWidgetGroupColumnTemplateId(this.widget._id, value), template);
         }
       });
     },

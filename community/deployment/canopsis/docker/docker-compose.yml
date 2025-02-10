@@ -9,13 +9,9 @@ volumes:
     driver: local
   techmetricsdata:
     driver: local
-  junitsharedata:
-    driver: local
   nginxcerts:
     driver: local
   uploadfiles:
-    driver: local
-  uploadicons:
     driver: local
 
 #
@@ -200,9 +196,7 @@ services:
     <<: *app_service_base
     image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-api-${CPS_EDITION}:${CANOPSIS_IMAGE_TAG}
     volumes:
-      - junitsharedata:/tmp/canopsis/junit
-      - uploadfiles:/opt/canopsis/var/lib/upload-files
-      - uploadicons:/opt/canopsis/var/lib/icons
+      - uploadfiles:/opt/canopsis/var/lib
     ports:
       - "8082:8082"
     healthcheck:

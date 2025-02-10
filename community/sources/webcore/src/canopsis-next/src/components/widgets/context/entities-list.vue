@@ -6,7 +6,8 @@
     :meta="contextEntitiesMeta"
     :query.sync="query"
     :columns="widget.parameters.widgetColumns"
-    selectable
+    :selectable="!hideMassSelection"
+    :hide-actions="hideActions"
   >
     <template #toolbar="">
       <v-layout class="gap-4 py-4 pt-0" wrap align-end>
@@ -39,15 +40,13 @@
               :label="$t('settings.selectAFilter')"
               :filters="userPreference.filters"
               :locked-filters="widget.filters"
-              :disabled="!hasAccessToListFilters"
               hide-details
               @input="updateSelectedFilter"
             />
             <filters-list-btn
-              v-if="hasAccessToAddFilter || hasAccessToEditFilter"
               :widget-id="widget._id"
-              :addable="hasAccessToAddFilter"
-              :editable="hasAccessToEditFilter"
+              addable
+              editable
               private
               with-alarm
               with-entity
@@ -65,17 +64,19 @@
             @change="updateNoEvents"
           />
         </v-flex>
-        <v-flex v-if="hasAccessToCreateEntity">
-          <context-fab />
-        </v-flex>
-        <v-flex v-if="hasAccessToExportAsCsv">
-          <c-action-btn
-            :loading="downloading"
-            :tooltip="$t('settings.exportAsCsv')"
-            icon="cloud_download"
-            @click="exportContextList"
-          />
-        </v-flex>
+        <template v-if="!hideActions">
+          <v-flex v-if="hasAccessToCreateEntity">
+            <context-fab />
+          </v-flex>
+          <v-flex v-if="hasAccessToExportAsCsv">
+            <c-action-btn
+              :loading="downloading"
+              :tooltip="$t('settings.exportAsCsv')"
+              icon="cloud_download"
+              @click="exportContextList"
+            />
+          </v-flex>
+        </template>
       </v-layout>
     </template>
   </entities-list-table-with-pagination>
@@ -84,7 +85,7 @@
 <script>
 import { isObject } from 'lodash';
 
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { getContextExportDownloadFileUrl } from '@/helpers/entities/entity/url';
 
@@ -132,6 +133,14 @@ export default {
       type: Object,
       required: true,
     },
+    hideActions: {
+      type: Boolean,
+      default: false,
+    },
+    hideMassSelection: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -140,11 +149,11 @@ export default {
   },
   computed: {
     hasAccessToCreateEntity() {
-      return this.checkAccess(USERS_PERMISSIONS.business.context.actions.createEntity);
+      return this.checkAccess(USER_PERMISSIONS.business.context.actions.createEntity);
     },
 
     hasAccessToExportAsCsv() {
-      return this.checkAccess(USERS_PERMISSIONS.business.context.actions.exportAsCsv);
+      return this.checkAccess(USER_PERMISSIONS.business.context.actions.exportAsCsv);
     },
   },
   methods: {

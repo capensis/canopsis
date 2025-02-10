@@ -12,11 +12,14 @@
             <v-tab :href="`#${$constants.PARAMETERS_TABS.parameters}`">
               {{ $t('parameters.tabs.parameters') }}
             </v-tab>
-            <v-tab :href="`#${$constants.PARAMETERS_TABS.viewExportImport}`">
+            <v-tab
+              v-if="hasAccessToViewImportExport"
+              :href="`#${$constants.PARAMETERS_TABS.viewExportImport}`"
+            >
               {{ $t('parameters.tabs.importExportViews') }}
             </v-tab>
             <v-tab
-              v-if="isProVersion"
+              v-if="isProVersion && hasAccessToNotificationsSettings"
               :href="`#${$constants.PARAMETERS_TABS.notificationSettings}`"
             >
               {{ $t('parameters.tabs.notificationsSettings') }}
@@ -39,11 +42,14 @@
                   <user-interface :disabled="!hasUpdateParametersAccess" />
                 </v-card-text>
               </v-tab-item>
-              <v-tab-item :value="$constants.PARAMETERS_TABS.viewExportImport">
+              <v-tab-item
+                v-if="hasAccessToViewImportExport"
+                :value="$constants.PARAMETERS_TABS.viewExportImport"
+              >
                 <views-import-export />
               </v-tab-item>
               <v-tab-item
-                v-if="isProVersion"
+                v-if="isProVersion && hasAccessToNotificationsSettings"
                 :value="$constants.PARAMETERS_TABS.notificationSettings"
               >
                 <v-card-text>
@@ -91,6 +97,8 @@ import { entitiesIconMixin } from '@/mixins/entities/icon';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
 import { permissionsTechnicalIconMixin } from '@/mixins/permissions/technical/icon';
+import { permissionsTechnicalNotificationMixin } from '@/mixins/permissions/technical/notification';
+import { permissionsTechnicalViewImportExportMixin } from '@/mixins/permissions/technical/view-import-export';
 
 import UserInterface from '@/components/other/user-interface/user-interface.vue';
 import ViewsImportExport from '@/components/other/view/views-import-export.vue';
@@ -113,6 +121,8 @@ export default {
     permissionsTechnicalParametersMixin,
     permissionsTechnicalWidgetTemplateMixin,
     permissionsTechnicalIconMixin,
+    permissionsTechnicalNotificationMixin,
+    permissionsTechnicalViewImportExportMixin,
   ],
   data() {
     return {

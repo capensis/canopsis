@@ -1,3 +1,5 @@
+const path = require('path');
+
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 const sass = require('sass');
 
@@ -65,6 +67,17 @@ module.exports = {
       }]);
 
     return config;
+  },
+  configureWebpack: {
+    cache: {
+      type: 'filesystem',
+      buildDependencies: {
+        config: [
+          __filename,
+          path.resolve(__dirname, 'tools', 'update-field-directive.js'),
+        ],
+      },
+    },
   },
   devServer: {
     host: 'localhost',

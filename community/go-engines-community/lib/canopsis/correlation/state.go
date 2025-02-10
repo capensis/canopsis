@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 const (
@@ -17,8 +16,10 @@ const (
 )
 
 type EventExtraInfosMeta struct {
-	Rule     Rule
-	Count    int64
+	Rule      Rule
+	Count     int64
+	LastChild types.AlarmWithEntity
+	// deprecated
 	Children types.AlarmWithEntity
 }
 
@@ -26,7 +27,8 @@ type MetaAlarmState struct {
 	ID string `bson:"_id"`
 
 	// MetaAlarmName is meta alarm entity name
-	MetaAlarmName string `bson:"meta_alarm_name"`
+	MetaAlarmName          string `bson:"meta_alarm_name"`
+	MetaAlarmComponentName string `bson:"meta_alarm_component_name"`
 
 	Version int64 `bson:"version"`
 	State   int   `bson:"state"`
@@ -47,9 +49,10 @@ type MetaAlarmState struct {
 
 func (s *MetaAlarmState) Reset(id string) {
 	*s = MetaAlarmState{
-		ID:            id,
-		MetaAlarmName: DefaultMetaAlarmEntityPrefix + utils.NewID(),
-		State:         Opened,
+		ID:                     id,
+		MetaAlarmComponentName: "",
+		MetaAlarmName:          "",
+		State:                  Opened,
 		// 1 cap for a possible new alarm in the group
 		ChildrenEntityIDs:  make([]string, 0, 1),
 		ChildrenTimestamps: make([]int64, 0, 1),
@@ -230,4 +233,16 @@ func (s *MetaAlarmState) RemoveParentsBefore(timestamp int64) {
 
 	s.ParentsTimestamps = s.ParentsTimestamps[idx:]
 	s.ParentsEntityIDs = s.ParentsEntityIDs[idx:]
+}
+
+func (s *MetaAlarmState) GetEntityID() string {
+	if s.MetaAlarmName == "" {
+		return ""
+	}
+
+	if s.MetaAlarmComponentName == "" {
+		return s.MetaAlarmName
+	}
+
+	return s.MetaAlarmName + "/" + s.MetaAlarmComponentName
 }

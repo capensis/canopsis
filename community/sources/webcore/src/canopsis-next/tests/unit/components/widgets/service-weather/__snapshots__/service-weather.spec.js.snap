@@ -174,7 +174,6 @@ exports[`service-weather Renders \`service-weather\` with full access 1`] = `
       >
         <filter-selector-stub
           clearable="true"
-          disabled="true"
           filters=""
           itemtext="title"
           itemvalue="_id"

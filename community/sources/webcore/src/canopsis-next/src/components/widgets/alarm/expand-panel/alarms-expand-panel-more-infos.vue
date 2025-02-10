@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { handlebarsLinksHelperCreator } from '@/mixins/handlebars/links-helper-creator';
 
@@ -31,7 +31,7 @@ export default {
   mixins: [
     handlebarsLinksHelperCreator(
       'alarm.links',
-      USERS_PERMISSIONS.business.alarmsList.actions.links,
+      USER_PERMISSIONS.business.alarmsList.actions.links,
     ),
   ],
   props: {

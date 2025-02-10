@@ -121,6 +121,18 @@
     <v-layout>
       <v-flex>
         <text-editor-field
+          v-field="form.version_description"
+          :label="$t('userInterface.versionDescriptionTooltip')"
+          :config="textEditorConfig"
+          :variables="versionDescriptionVariables"
+          with-default-variables
+          public
+        />
+      </v-flex>
+    </v-layout>
+    <v-layout>
+      <v-flex>
+        <text-editor-field
           v-field="form.footer"
           :label="$t('userInterface.footer')"
           :config="textEditorConfig"
@@ -145,7 +157,7 @@
         <span class="v-label file-selector__label">{{ $t('userInterface.logo') }}</span>
         <v-layout>
           <file-selector
-            ref="fileSelector"
+            ref="fileSelectorElement"
             :max-file-size="maxFileSize"
             :disabled="disabled"
             class="mt-1"
@@ -161,9 +173,11 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MAX_ICON_SIZE_IN_KB } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -173,7 +187,6 @@ export default {
     FileSelector,
     TextEditorField,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -188,23 +201,45 @@ export default {
       default: false,
     },
   },
-  computed: {
-    maxFileSize() {
-      return MAX_ICON_SIZE_IN_KB;
-    },
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
 
-    textEditorConfig() {
-      return { disabled: this.disabled };
-    },
-  },
-  methods: {
-    async changeLogoFile([file] = []) {
-      this.updateField('logo', file);
-    },
+    const maxFileSize = MAX_ICON_SIZE_IN_KB;
 
-    reset() {
-      this.$refs.fileSelector.clear();
-    },
+    const fileSelectorElement = ref(null);
+
+    const versionDescriptionVariables = [
+      'edition',
+      'versionUpdated',
+      'serialName',
+    ].map(value => ({ value, text: value }));
+
+    const textEditorConfig = computed(() => ({ disabled: props.disabled }));
+
+    /**
+     * Updates the 'logo' field with the provided file.
+     *
+     * @param {Array} [file=[]] - An array containing the file to be set as the logo.
+     */
+    const changeLogoFile = ([file] = []) => updateField('logo', file);
+
+    /**
+     * Clears the file selector element.
+     *
+     * This function accesses the `fileSelectorElement` and calls its `clear` method,
+     * if the element is defined, to reset the file selection.
+     */
+    const reset = () => fileSelectorElement.value?.clear();
+
+    return {
+      maxFileSize,
+      fileSelectorElement,
+      textEditorConfig,
+      versionDescriptionVariables,
+
+      changeLogoFile,
+      reset,
+    };
   },
 };
 </script>

@@ -15,9 +15,6 @@
       :show-filter="hasAccessToUserFilter"
       :show-interval="hasAccessToInterval"
       :show-sampling="hasAccessToSampling"
-      :filter-disabled="!hasAccessToListFilters"
-      :filter-addable="hasAccessToAddFilter"
-      :filter-editable="hasAccessToEditFilter"
       class="mx-3"
       @update:filters="updateSelectedFilter"
       @update:sampling="updateSampling"
@@ -39,6 +36,7 @@
         :sampling="query.sampling"
         :stacked="widget.parameters.stacked"
         :downloading="downloading"
+        :hide-actions="hideActions"
         @export:png="exportMetricsAsPng"
         @export:csv="exportMetricsAsCsv"
       />
@@ -104,6 +102,10 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

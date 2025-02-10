@@ -86,10 +86,11 @@ const (
 
 	LinkRuleMongoCollection = "link_rule"
 
-	UserCollection         = "user"
-	RoleCollection         = "role"
-	RoleTemplateCollection = "role_template"
-	PermissionCollection   = "permission"
+	UserCollection            = "user"
+	RoleCollection            = "role"
+	RoleTemplateCollection    = "role_template"
+	PermissionCollection      = "permission"
+	PermissionGroupCollection = "permission_group"
 
 	EventFilterRuleCollection    = "eventfilter"
 	EventFilterFailureCollection = "eventfilter_failure"
