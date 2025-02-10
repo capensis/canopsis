@@ -56,6 +56,10 @@ func (p *modelProvider) GetTypes(ctx context.Context) (map[string]Type, error) {
 		typesByID[pbehaviorType.ID] = pbehaviorType
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return typesByID, nil
 }
 
@@ -104,6 +108,10 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 		pbehaviorsByID[pbehavior.ID] = pbehavior
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return pbehaviorsByID, nil
 }
 
@@ -149,6 +157,10 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 		pbehaviorsByID[pbehavior.ID] = pbehavior
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return pbehaviorsByID, nil
 }
 
@@ -189,6 +201,10 @@ func (p *modelProvider) GetReasons(ctx context.Context) (map[string]Reason, erro
 		}
 
 		reasonsByID[reason.ID] = reason
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return reasonsByID, nil
