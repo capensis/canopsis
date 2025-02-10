@@ -41,6 +41,31 @@ exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with empty data 1`] = `
 </div>
 `;
 
+exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with hide actions 1`] = `
+<div
+  class="layout kpi-widget column align-center"
+>
+  <h4
+    class="kpi-widget__title"
+  >
+  </h4>
+  <div
+    class="kpi-widget__chart"
+  >
+    <div
+      class=""
+    >
+      <canvas
+        height="0"
+        id="bar-chart"
+        style="display: block; box-sizing: border-box; user-select: none; webkit-user-drag: none; -webkit-tap-highlight-color: rgba(0, 0, 0, 0); height: 0px; width: 0px;"
+        width="0"
+      />
+    </div>
+  </div>
+</div>
+`;
+
 exports[`bar-chart-metrics Renders \`bar-chart-metrics\` with history data 1`] = `
 <div
   class="layout kpi-widget column align-center"

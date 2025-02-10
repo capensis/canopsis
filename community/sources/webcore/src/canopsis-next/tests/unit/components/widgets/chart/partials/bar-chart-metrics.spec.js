@@ -53,6 +53,14 @@ describe('bar-chart-metrics', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `bar-chart-metrics` with hide actions', async () => {
+    const wrapper = snapshotFactory({
+      propsData: { hideActions: true },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `bar-chart-metrics` with metrics', async () => {
     const wrapper = snapshotFactory({
       propsData: {

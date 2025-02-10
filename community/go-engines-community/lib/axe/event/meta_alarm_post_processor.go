@@ -453,7 +453,7 @@ func (p *metaAlarmPostProcessor) updateParentState(ctx context.Context, childAla
 						return nil
 					}
 
-					setUpdate, pushUpdate, err := updateMetaAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastUpdateDate,
+					setUpdate, pushUpdate, err := updateMetaAlarmState(&parentAlarm.Alarm, parentAlarm.Entity, childAlarm.Value.LastStateOrStatusUpdateDate,
 						newState, parentAlarm.Alarm.Value.Output, p.alarmStatusService)
 					if err != nil {
 						return fmt.Errorf("cannot update parent: %w", err)
@@ -604,7 +604,7 @@ func (p *metaAlarmPostProcessor) sendToFifo(ctx context.Context, event types.Eve
 
 	err = p.amqpPublisher.PublishWithContext(
 		ctx,
-		canopsis.FIFOExchangeName,
+		canopsis.DefaultExchangeName,
 		canopsis.FIFOQueueName,
 		false,
 		false,

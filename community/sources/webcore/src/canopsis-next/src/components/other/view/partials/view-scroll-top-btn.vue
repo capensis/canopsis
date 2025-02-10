@@ -1,7 +1,8 @@
 <template>
   <v-fade-transition>
-    <v-tooltip
+    <c-simple-tooltip
       v-if="pageScrolled"
+      :message="$t('common.toTheTop')"
       top
     >
       <template #activator="{ on }">
@@ -15,8 +16,7 @@
           <v-icon>arrow_upward</v-icon>
         </v-btn>
       </template>
-      <span>{{ $t('common.toTheTop') }}</span>
-    </v-tooltip>
+    </c-simple-tooltip>
   </v-fade-transition>
 </template>
 

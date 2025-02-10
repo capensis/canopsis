@@ -3,7 +3,7 @@ import Faker from 'faker';
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import { CRUD_ACTIONS, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { CRUD_ACTIONS, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import KpiFilters from '@/components/other/kpi/filters/kpi-filters.vue';
 
@@ -377,7 +377,7 @@ describe('kpi-filters', () => {
         name: 'auth',
         getters: {
           currentUserPermissionsById: () => ({
-            [USERS_PERMISSIONS.technical.kpiFilters]: {
+            [USER_PERMISSIONS.technical.kpiFilters]: {
               actions: [
                 CRUD_ACTIONS.create,
                 CRUD_ACTIONS.update,

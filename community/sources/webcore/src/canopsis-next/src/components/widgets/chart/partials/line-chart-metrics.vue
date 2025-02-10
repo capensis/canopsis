@@ -16,7 +16,7 @@
       :dark="$system.dark"
       class="kpi-widget__chart"
     >
-      <template #actions="{ chart }">
+      <template v-if="!hideActions" #actions="{ chart }">
         <chart-export-actions
           :downloading="downloading"
           :chart="chart"
@@ -81,6 +81,10 @@ export default {
     animation: {
       type: Boolean,
       default: true,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

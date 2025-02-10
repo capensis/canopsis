@@ -32,6 +32,7 @@
             :counter="counter"
             :widget="widget"
             :query="queryWithoutFilters"
+            :hide-actions="hideActions"
             class="weatherItem"
           />
         </v-flex>
@@ -62,6 +63,10 @@ export default {
     widget: {
       type: Object,
       required: true,
+    },
+    hideActions: {
+      type: Boolean,
+      required: false,
     },
   },
   computed: {
