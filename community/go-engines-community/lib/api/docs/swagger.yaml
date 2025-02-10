@@ -6618,11 +6618,12 @@ paths:
                 summary: Complete import job
                 description: Complete import job
                 value: {
-                  "column_types": {
-                    "col-1-no-type": 0,
-                    "col-2-filter": 1,
-                    "col-3-context": 2
-                  }
+                  "column_types": [
+                    0,
+                    1,
+                    1,
+                    2
+                  ]
                 }
       responses:
         204:
@@ -6841,7 +6842,8 @@ paths:
                 value: {
                   "type": 0,
                   "name": "some_data",
-                  "description": "Data for enrichment"
+                  "description": "Data for enrichment",
+                  "column_types": [0, 1, 1, 2]
                 }
         required: true
       responses:

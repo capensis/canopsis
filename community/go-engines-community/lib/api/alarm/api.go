@@ -3,7 +3,6 @@ package alarm
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -407,10 +406,8 @@ func (a *api) DownloadExport(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
-	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, t.Filename))
 	c.Header("Content-Type", "text/csv")
-	c.ContentType()
-	c.File(t.File)
+	c.FileAttachment(t.File, t.Filename)
 }
 
 // GetLinks

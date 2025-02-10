@@ -456,10 +456,8 @@ func (a *api) ExportDownload(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
-	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, t.Filename))
 	c.Header("Content-Type", "text/csv")
-	c.ContentType()
-	c.File(t.File)
+	c.FileAttachment(t.File, t.Filename)
 }
 
 func (a *api) CreateData(c *gin.Context) {
