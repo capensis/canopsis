@@ -54,7 +54,7 @@ func TestService_Process(t *testing.T) {
 	activationService := mock_alarm.NewMockActivationService(ctrl)
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
-		storage, json.NewEncoder(), json.NewDecoder(), amqpChannelMock, canopsis.FIFOAckExchangeName,
+		storage, json.NewEncoder(), json.NewDecoder(), amqpChannelMock, canopsis.DefaultExchangeName,
 		canopsis.FIFOAckQueueName, activationService, mockTechMetricsSender, logger)
 
 	var dataSets = []struct {
@@ -209,7 +209,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 			mockTechMetricsSender.EXPECT().SendActionEvent(gomock.Any()).Times(len(dataset.scenarioInfos))
 			actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
-				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
+				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.DefaultExchangeName,
 				canopsis.FIFOAckQueueName, activationService, mockTechMetricsSender, logger)
 
 			actionService.ListenScenarioFinish(ctx, scenarioInfoChannel)
@@ -484,7 +484,7 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 
 			mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 			actionService := action.NewService(alarmAdapter, scenarioExecChan, delayedScenarioManager,
-				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.FIFOAckExchangeName,
+				storage, encoderMock, decoderMock, amqpChannelMock, canopsis.DefaultExchangeName,
 				canopsis.FIFOAckQueueName, activationService, mockTechMetricsSender, logger)
 
 			var wg sync.WaitGroup

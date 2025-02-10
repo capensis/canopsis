@@ -25,18 +25,15 @@ type ActivationService interface {
 type baseActivationService struct {
 	encoder   encoding.Encoder
 	publisher amqplib.Publisher
-	queueName string
 }
 
 func NewActivationService(
 	encoder encoding.Encoder,
 	publisher amqplib.Publisher,
-	queueName string,
 ) ActivationService {
 	return &baseActivationService{
 		encoder:   encoder,
 		publisher: publisher,
-		queueName: queueName,
 	}
 }
 
@@ -83,8 +80,8 @@ func (s *baseActivationService) sendActivationEvent(
 
 	err = s.publisher.PublishWithContext(
 		ctx,
-		"",
-		s.queueName,
+		canopsis.EngineExchangeName,
+		canopsis.CheSystemQueueName,
 		false,
 		false,
 		amqp.Publishing{
