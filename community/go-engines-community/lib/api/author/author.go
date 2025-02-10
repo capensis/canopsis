@@ -108,13 +108,7 @@ func (p *provider) AddAuthorStr(field string) bson.M {
 						"$cond": bson.M{
 							"if":   bson.M{"$ne": []string{refField + ".display_name", ""}},
 							"then": refField + ".display_name",
-							"else": bson.M{
-								"$cond": bson.M{
-									"if":   bson.M{"$ne": []string{refField + ".name", ""}},
-									"then": refField + ".name",
-									"else": "",
-								},
-							},
+							"else": refField + ".name",
 						},
 					},
 				},
