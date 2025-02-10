@@ -4,65 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime/debug"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
 
-// NewDefaultConsumer creates consumer.
-func NewDefaultConsumer(
-	name, queue string,
-	consumePrefetchCount, consumePrefetchSize int,
-	purgeQueue bool,
-	nextExchange, nextQueue, fifoExchange, fifoQueue string,
-	connection libamqp.Connection,
-	processor MessageProcessor,
-	logger zerolog.Logger,
-) Consumer {
-	return &defaultConsumer{
-		name:                 name,
-		queue:                queue,
-		consumePrefetchCount: consumePrefetchCount,
-		consumePrefetchSize:  consumePrefetchSize,
-		purgeQueue:           purgeQueue,
-		nextExchange:         nextExchange,
-		nextQueue:            nextQueue,
-		fifoExchange:         fifoExchange,
-		fifoQueue:            fifoQueue,
-		connection:           connection,
-		processor:            processor,
-		logger:               logger,
-	}
-}
-
-func NewExclusiveDefaultConsumer(
-	name, queue string,
-	consumePrefetchCount, consumePrefetchSize int,
-	purgeQueue bool,
-	nextExchange, nextQueue, fifoExchange, fifoQueue string,
-	connection libamqp.Connection,
-	processor MessageProcessor,
-	logger zerolog.Logger,
-) Consumer {
-	return &defaultConsumer{
-		name:                 name,
-		queue:                queue,
-		consumePrefetchCount: consumePrefetchCount,
-		consumePrefetchSize:  consumePrefetchSize,
-		purgeQueue:           purgeQueue,
-		exclusive:            true,
-		nextExchange:         nextExchange,
-		nextQueue:            nextQueue,
-		fifoExchange:         fifoExchange,
-		fifoQueue:            fifoQueue,
-		connection:           connection,
-		processor:            processor,
-		logger:               logger,
-	}
-}
-
-// defaultConsumer implements AMQP consumer.
 type defaultConsumer struct {
 	// name is consumer name.
 	name string
@@ -85,43 +33,38 @@ type defaultConsumer struct {
 	logger     zerolog.Logger
 }
 
-func (c *defaultConsumer) Consume(ctx context.Context) error {
-	consumeCh, msgs, err := getConsumeChannel(c.connection, c.name, c.queue,
-		c.consumePrefetchCount, c.consumePrefetchSize, c.purgeQueue, c.exclusive)
+func (c *defaultConsumer) getConsumeChannel() (libamqp.Channel, <-chan amqp.Delivery, error) {
+	channel, err := c.connection.Channel()
 	if err != nil {
-		return err
+		return nil, nil, fmt.Errorf("cannot open channel: %w", err)
 	}
 
-	var publishCh libamqp.Channel
-	if c.nextQueue != "" || c.fifoQueue != "" {
-		publishCh, err = c.connection.Channel()
+	err = channel.Qos(c.consumePrefetchCount, c.consumePrefetchSize, false)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot set QoS: %w", err)
+	}
+
+	if c.purgeQueue {
+		_, err := channel.QueuePurge(c.queue, false)
 		if err != nil {
-			return err
+			return nil, nil, fmt.Errorf("error while purging queue: %w", err)
 		}
 	}
 
-	defer func() {
-		_ = consumeCh.Close()
-		if publishCh != nil {
-			_ = publishCh.Close()
-		}
-	}()
-
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case d, ok := <-msgs:
-			if !ok {
-				return errors.New("the rabbitmq channel has been closed")
-			}
-
-			err := c.processMessage(ctx, d, consumeCh, publishCh)
-			if err != nil {
-				return err
-			}
-		}
+	msgs, err := channel.Consume(
+		c.queue,     // queue
+		c.name,      // consumer
+		false,       // auto-ack
+		c.exclusive, // exclusive
+		false,       // no-local
+		false,       // no-wait
+		nil,         // args
+	)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot consume messages: %w", err)
 	}
+
+	return channel, msgs, nil
 }
 
 func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, consumeCh, publishCh libamqp.Channel) error {
@@ -130,7 +73,6 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, c
 		Str("msg", string(d.Body)).
 		Msgf("received")
 	msgToNext, err := c.processor.Process(ctx, d)
-
 	if err != nil {
 		nackErr := consumeCh.Nack(d.DeliveryTag, false, true)
 		if nackErr != nil {
@@ -146,12 +88,59 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, c
 	}
 
 	if c.nextQueue != "" && msgToNext != nil {
-		err := publishToChannel(ctx, publishCh, c.nextExchange, c.nextQueue, msgToNext)
+		err = publishCh.PublishWithContext(
+			ctx,
+			c.nextExchange,
+			c.nextQueue,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:  "application/json",
+				Body:         msgToNext,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
 		if err != nil {
 			return fmt.Errorf("cannot sent message to next queue: %w", err)
 		}
-	} else if c.fifoQueue != "" {
-		err := publishToChannel(ctx, publishCh, c.fifoExchange, c.fifoQueue, d.Body)
+
+		return nil
+	}
+
+	if d.ReplyTo != "" && msgToNext != nil {
+		err = publishCh.PublishWithContext(
+			ctx,
+			"",
+			d.ReplyTo,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:   "application/json",
+				CorrelationId: d.CorrelationId,
+				Body:          msgToNext,
+				DeliveryMode:  amqp.Persistent,
+			},
+		)
+		if err != nil {
+			return fmt.Errorf("cannot sent message result back to sender: %w", err)
+		}
+
+		return nil
+	}
+
+	if c.fifoQueue != "" {
+		err = publishCh.PublishWithContext(
+			ctx,
+			c.fifoExchange,
+			c.fifoQueue,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:  "application/json",
+				Body:         d.Body,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
 		if err != nil {
 			return fmt.Errorf("cannot sent message to fifo queue: %w", err)
 		}
@@ -160,56 +149,39 @@ func (c *defaultConsumer) processMessage(ctx context.Context, d amqp.Delivery, c
 	return nil
 }
 
-func getConsumeChannel(
-	connection libamqp.Connection,
-	name, queue string,
-	consumePrefetchCount, consumePrefetchSize int,
-	purgeQueue, exclusive bool,
-) (libamqp.Channel, <-chan amqp.Delivery, error) {
-	channel, err := connection.Channel()
-	if err != nil {
-		return nil, nil, err
-	}
+func (c *defaultConsumer) getWorkerFunc(
+	ctx context.Context,
+	ch <-chan amqp.Delivery,
+	consumeCh, publishCh libamqp.Channel,
+) func() error {
+	return func() (resErr error) {
+		defer func() {
+			if r := recover(); r != nil {
+				var err error
+				var ok bool
+				if err, ok = r.(error); !ok {
+					err = fmt.Errorf("%v", r)
+				}
 
-	err = channel.Qos(consumePrefetchCount, consumePrefetchSize, false)
-	if err != nil {
-		return nil, nil, err
-	}
+				c.logger.Err(err).Msgf("consumer recovered from panic\n%s\n", debug.Stack())
+				resErr = fmt.Errorf("consumer recovered from panic: %w", err)
+			}
+		}()
 
-	if purgeQueue {
-		_, err := channel.QueuePurge(queue, false)
-		if err != nil {
-			return nil, nil, fmt.Errorf("error while purging queue: %w", err)
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			case d, ok := <-ch:
+				if !ok {
+					return errors.New("the rabbitmq channel has been closed")
+				}
+
+				err := c.processMessage(ctx, d, consumeCh, publishCh)
+				if err != nil {
+					return err
+				}
+			}
 		}
 	}
-
-	msgs, err := channel.Consume(
-		queue,     // queue
-		name,      // consumer
-		false,     // auto-ack
-		exclusive, // exclusive
-		false,     // no-local
-		false,     // no-wait
-		nil,       // args
-	)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	return channel, msgs, nil
-}
-
-func publishToChannel(ctx context.Context, channel libamqp.Channel, exchange, queue string, body []byte) error {
-	return channel.PublishWithContext(
-		ctx,
-		exchange,
-		queue,
-		false,
-		false,
-		amqp.Publishing{
-			ContentType:  "application/json",
-			Body:         body,
-			DeliveryMode: amqp.Persistent,
-		},
-	)
 }

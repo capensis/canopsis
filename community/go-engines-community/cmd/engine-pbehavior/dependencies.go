@@ -59,7 +59,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", []string{canopsis.PBehaviorRPCQueueServerName}),
+		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", nil, []string{canopsis.PBehaviorRPCQueueServerName}),
 		amqpChannel,
 		logger,
 	)
@@ -147,6 +147,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		canopsis.PBehaviorRPCQueueServerName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
+		options.Workers,
 		amqpConnection,
 		rpcMessageProcessor,
 		logger,
@@ -162,6 +163,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		"",
 		"",
 		options.Workers,
+		false,
 		amqpConnection,
 		&recomputeMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
@@ -172,7 +174,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Publisher:                amqpChannel,
-			Exchange:                 canopsis.FIFOExchangeName,
+			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
 			TimezoneConfigProvider:   timezoneConfigProvider,
 			Logger:                   logger,
