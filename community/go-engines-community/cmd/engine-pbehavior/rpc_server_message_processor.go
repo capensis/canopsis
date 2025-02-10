@@ -270,7 +270,6 @@ func (p *rpcServerMessageProcessor) createPbehavior(
 		Created:  &now,
 		Updated:  &now,
 		Origin:   params.Origin,
-		Author:   cmp.Or(params.Author, canopsis.DefaultEventAuthor),
 		Entity:   entity.ID,
 		EntityPatternFields: savedpattern.EntityPatternFields{
 			EntityPattern: pattern.Entity{
