@@ -117,7 +117,7 @@ services:
 
   redis:
     <<: *backend_base
-    image: redis:${REDIS_TAG}
+    image: valkey/valkey:${VALKEY_TAG}
     ports:
       - "6379:6379"
     env_file:
