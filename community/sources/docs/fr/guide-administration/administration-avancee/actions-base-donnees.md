@@ -11,7 +11,7 @@ Cette section va lister différentes commandes pour purger des collections de la
 
 Avant de supprimer des documents, vous pouvez toujours vérifier la liste des documents concernés avec `db.<nom de la collection>.find(<requête>)` et voir leur nombre `db.<nom de la collection>.countDocuments(<requête>)`. Ces fonctions prennent en paramètre une requête, qui va filtrer sur les documents de la collection.
 
-Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimer, vous pouvez utiliser la commande `db.<nom de la collection>.remove(<requête>)`. Au moment de la suppression, un message va indiquer le nombre d'éléments supprimés.
+Une fois que vous avez vérifié que les documents correspondent à ce que vous voulez supprimer, vous pouvez utiliser la commande `db.<nom de la collection>.deleteMany(<requête>)`. Au moment de la suppression, un message va indiquer le nombre d'éléments supprimés.
 
 ```js
 > db.periodical_alarm.deleteMany({"t" : 1537894605})
@@ -203,7 +203,7 @@ CREATE EXTENSION IF NOT EXISTS timescaledb;
 SET password_encryption = 'scram-sha-256';
 CREATE USER cpspostgres WITH PASSWORD 'canopsis';
 ```
-Vous devrez ensuite entrer notre base en mode restauration
+Vous devrez ensuite entrer votre base en mode restauration
 ```sql
 SELECT timescaledb_pre_restore();
 ```
@@ -211,7 +211,7 @@ Une fois la base en mode restauration, vous pouvez importer votre dump
 ```sh
 pg_restore -Fc -d "postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis" canopsis.dump
 ```
-Une fois le dump importer, vous pouvez sortir du mode restauration
+Une fois le dump importé, vous pouvez sortir du mode restauration
 ```sql
 SELECT timescaledb_post_restore();
 ```
