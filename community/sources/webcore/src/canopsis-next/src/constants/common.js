@@ -309,7 +309,7 @@ export const WORKFLOW_TYPES = {
   continue: false,
 };
 
-export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}}})/g;
+export const PAYLOAD_VARIABLE_REGEXP = /({{(.){2,}?}})/g;
 
 export const PAYLOAD_OPERATORS = ['range', 'end'];
 
