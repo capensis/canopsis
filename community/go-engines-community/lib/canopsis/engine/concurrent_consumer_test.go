@@ -13,7 +13,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func TestDefaultConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
+func TestConcurrentConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	name := "test-consumer"
@@ -21,10 +21,10 @@ func TestDefaultConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	mockConnection := mock_amqp.NewMockConnection(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
-	consumer := engine.NewDefaultConsumer(
+	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", "", "",
+		"", "", "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -50,7 +50,7 @@ func TestDefaultConsumer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	}
 }
 
-func TestDefaultConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToNextQueue(t *testing.T) {
+func TestConcurrentConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToNextQueue(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	name := "test-consumer"
@@ -60,10 +60,10 @@ func TestDefaultConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMessag
 	mockConnection := mock_amqp.NewMockConnection(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
-	consumer := engine.NewDefaultConsumer(
+	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		nextExchange, nextQueue, "", "",
+		nextExchange, nextQueue, "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -100,7 +100,7 @@ func TestDefaultConsumer_Consume_GivenProcessedMessage_ShouldPublishResultMessag
 	}
 }
 
-func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPublishMessageToFIFOQueue(t *testing.T) {
+func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPublishMessageToFIFOQueue(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	name := "test-consumer"
@@ -110,10 +110,10 @@ func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPubli
 	mockConnection := mock_amqp.NewMockConnection(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
-	consumer := engine.NewDefaultConsumer(
+	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", fifoExchange, fifoQueue,
+		"", "", fifoExchange, fifoQueue, 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -150,7 +150,7 @@ func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextQueue_ShouldPubli
 	}
 }
 
-func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextMessage_ShouldPublishMessageToFIFOQueue(t *testing.T) {
+func TestConcurrentConsumer_Consume_GivenProcessedMessageAndNoNextMessage_ShouldPublishMessageToFIFOQueue(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	name := "test-consumer"
@@ -162,10 +162,10 @@ func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextMessage_ShouldPub
 	mockConnection := mock_amqp.NewMockConnection(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
-	consumer := engine.NewDefaultConsumer(
+	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		nextExchange, nextQueue, fifoExchange, fifoQueue,
+		nextExchange, nextQueue, fifoExchange, fifoQueue, 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -202,7 +202,7 @@ func TestDefaultConsumer_Consume_GivenProcessedMessageAndNoNextMessage_ShouldPub
 	}
 }
 
-func TestDefaultConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) {
+func TestConcurrentConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	name := "test-consumer"
@@ -210,10 +210,10 @@ func TestDefaultConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testi
 	mockConnection := mock_amqp.NewMockConnection(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
-	consumer := engine.NewDefaultConsumer(
+	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", "", "",
+		"", "", "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -242,7 +242,7 @@ func TestDefaultConsumer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testi
 	}
 }
 
-func TestDefaultConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
+func TestConcurrentConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	name := "test-consumer"
@@ -250,10 +250,10 @@ func TestDefaultConsumer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.
 	mockConnection := mock_amqp.NewMockConnection(ctrl)
 	mockChannel := mock_amqp.NewMockChannel(ctrl)
 	mockMessageProcessor := mock_engine.NewMockMessageProcessor(ctrl)
-	consumer := engine.NewDefaultConsumer(
+	consumer := engine.NewConcurrentConsumer(
 		name, queue,
 		1, 1, false,
-		"", "", "", "",
+		"", "", "", "", 10, false,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},

@@ -7,12 +7,13 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/debug"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fifo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 func main() {
-	opts := fifo.ParseOptions()
+	opts, deprecatedFlags := fifo.ParseOptions()
 
 	if opts.Version {
 		canopsis.PrintVersionInfo()
@@ -24,6 +25,8 @@ func main() {
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
+
+	libflag.LogDeprecatedFlags(logger, deprecatedFlags)
 
 	engine := NewEngine(ctx, opts, logger)
 	err := engine.Run(ctx)

@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
@@ -27,30 +28,30 @@ type Options struct {
 	Version                bool
 	PrintEventOnError      bool
 	ModeDebug              bool
-	ConsumeFromQueue       string
-	PublishToQueue         string
 	LockTtl                int
 	PeriodicalWaitTime     time.Duration
 	ExternalDataApiTimeout time.Duration
+	Workers                int
 }
 
-func ParseOptions() Options {
+func ParseOptions() (Options, []string) {
 	var opts Options
 
-	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.CheQueueName, "Publish event to this queue.")
-	flag.StringVar(&opts.ConsumeFromQueue, "consumeQueue", canopsis.FIFOQueueName, "Consume events from this queue.")
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.IntVar(&opts.LockTtl, "lockTtl", 10, "Redis lock ttl time in seconds")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
+	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process fifo_ack events flow")
 
 	flag.Duration("eventsStatsFlushInterval", 60*time.Second, "Deprecated: interval between saving statistics from redis to mongo")
+	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
+	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
 
 	flag.Parse()
 
-	return opts
+	return opts, libflag.FindDeprecatedFlags("eventsStatsFlushInterval", "consumeQueue", "publishQueue")
 }
 
 func Default(
@@ -80,7 +81,7 @@ func Default(
 		lockRedisClient,
 		queueRedisClient,
 		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg)),
-		options.PublishToQueue,
+		canopsis.CheQueuePrefix,
 		logger,
 		options.LockTtl,
 		json.NewDecoder(),
@@ -97,7 +98,7 @@ func Default(
 	runInfoPeriodicalWorker := libengine.NewRunInfoMetricsPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
-		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, canopsis.FIFOQueueName, canopsis.CheQueuePrefix, []string{canopsis.FIFOQueueName}),
 		amqpChannel,
 		techMetricsSender,
 		techmetrics.FIFOQueue,
@@ -163,9 +164,10 @@ func Default(
 		Decoder:            json.NewDecoder(),
 		Logger:             logger,
 	}
-	engine.AddConsumer(libengine.NewDefaultConsumer(
+
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOConsumerName,
-		options.ConsumeFromQueue,
+		canopsis.FIFOQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		false,
@@ -173,11 +175,13 @@ func Default(
 		"",
 		"",
 		"",
+		1, // TODO: 1 worker for now, to think about making fifo concurrent
+		false,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
 	))
-	engine.AddConsumer(libengine.NewDefaultConsumer(
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOAckConsumerName,
 		canopsis.FIFOAckQueueName,
 		cfg.Global.PrefetchCount,
@@ -187,6 +191,8 @@ func Default(
 		"",
 		"",
 		"",
+		options.Workers,
+		false,
 		amqpConnection,
 		&ackMessageProcessor{
 			FeaturePrintEventOnError: options.PrintEventOnError,
