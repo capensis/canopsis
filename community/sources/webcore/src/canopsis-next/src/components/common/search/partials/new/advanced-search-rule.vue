@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    :class="{ 'c-new-advanced-search__group--union': union }"
-    class="c-new-advanced-search__group"
+    :class="{ 'c-new-advanced-search__rule--union': union }"
+    class="c-new-advanced-search__rule"
   >
     <component
       v-for="chip in chips"
@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { keyBy, uniq, difference, pick } from 'lodash';
+import { keyBy, uniq, pick } from 'lodash';
 import {
   computed,
   ref,
@@ -23,6 +23,7 @@ import {
   onMounted,
   onBeforeUnmount,
   inject,
+  unref,
 } from 'vue';
 import { Validator } from 'vee-validate';
 
@@ -48,6 +49,35 @@ import { useI18n } from '@/hooks/i18n';
 import AdvancedSearchChip from './advanced-search-chip.vue';
 import AdvancedSearchRangeChip from './advanced-search-range-chip.vue';
 
+const isNeedChangeActive = (rule, type) => {
+
+};
+
+const useAdvancedSearchFieldType = ({ fieldType }) => {
+  const isStringFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.string);
+  const isNumberFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.number);
+  const isBooleanFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.boolean);
+  const isArrayFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.stringArray);
+
+  const operators = computed(() => ({
+    [isStringFieldType.value]: [
+      ...PATTERN_STRING_OPERATORS,
+
+      PATTERN_OPERATORS.isOneOf,
+      PATTERN_OPERATORS.isNotOneOf,
+    ],
+    [isNumberFieldType.value]: PATTERN_NUMBER_OPERATORS,
+    [isArrayFieldType.value]: PATTERN_ARRAY_OPERATORS,
+  }.true ?? []));
+
+  return {
+    isStringFieldType,
+    isNumberFieldType,
+    isBooleanFieldType,
+    isArrayFieldType,
+  };
+};
+
 export default {
   components: { AdvancedSearchChip, AdvancedSearchRangeChip },
   model: {
@@ -63,9 +93,9 @@ export default {
       type: Array,
       default: () => [],
     },
-    activeKey: {
-      type: String,
-      default: '',
+    active: {
+      type: Boolean,
+      default: false,
     },
     union: {
       type: Boolean,
@@ -101,12 +131,14 @@ export default {
     const validator = inject('$validator', new Validator());
 
     const { t } = useI18n();
-    const { updateField, updateModel } = useModelField(props, emit);
-    const activeType = ref(props.union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute);
+    const { updateModel } = useModelField(props, emit);
+    const inputType = ref(props.union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute);
+    const activeType = ref(null);
 
     const attributesMap = computed(() => keyBy(props.attributes, 'value'));
     const currentAttribute = computed(() => attributesMap.value[props.rule.attribute]);
-    const isFinishedGroup = computed(() => !activeType.value);
+    const isFinishedRule = computed(() => !inputType.value);
+
     const isStringFieldType = computed(() => props.rule.fieldType === PATTERN_FIELD_TYPES.string);
     const isNumberFieldType = computed(() => props.rule.fieldType === PATTERN_FIELD_TYPES.number);
     const isBooleanFieldType = computed(() => props.rule.fieldType === PATTERN_FIELD_TYPES.boolean);
@@ -169,43 +201,40 @@ export default {
       [ADVANCED_SEARCH_CHIP_TYPES.union]: preparedUnionItems.value,
     }));
 
-    const goToNextType = (steps = 1) => {
-      for (let i = 0; i < steps; i += 1) {
-        activeType.value = getNextForFormItemType(props.rule, activeType.value);
-      }
-    };
+    /**
+     * Navigates to the next form item type, optionally skipping the current type.
+     *
+     * @param {boolean} [skipType = false] - Whether to skip the current type and move to the next one.
+     */
+    const goToNextType = (skipType = false) => {
+      inputType.value = getNextForFormItemType(props.rule, inputType.value);
 
-    const selectChipItem = (value, type) => {
-      const newRule = { ...props.rule, [type]: value };
-      const oldRuleNextType = getNextForFormItemType(props.rule, type);
-      let nextType = getNextForFormItemType(newRule, type);
-      if (!nextType) {
-        if (oldRuleNextType) {
-          const typesForClear = [oldRuleNextType];
-          updateModel({
-            ...props.rule,
-            ...pick(advancedSearchRuleItemToFormItem(), typesForClear),
-            [type]: value,
-            filled: difference(props.rule.filled, typesForClear),
-          });
-
-          return;
-        }
-
-        updateField(type, value);
+      if (skipType) {
+        goToNextType();
 
         return;
       }
 
-      activeType.value = nextType;
-
-      const typesForClear = [nextType];
-
-      while (nextType = getNextForFormItemType(newRule, nextType)) {
-        typesForClear.push(nextType);
+      if (isFinishedRule.value) {
+        emit('next', isArrayCondition(props.rule.operator));
       }
+    };
 
-      const filled = difference(props.rule.filled, typesForClear);
+    const setInputType = type => inputType.value = type;
+
+    /**
+     * Updates the search rule's chip item based on the provided value and type.
+     *
+     * @param {*} value - The value to set for the specified type. This can vary depending on the type.
+     * @param {string} type - The type of the chip item being updated. It should be one of the predefined
+     *                        types in `ADVANCED_SEARCH_CHIP_TYPES`.
+     */
+    const updateChipItem = (value, type) => {
+      const oldFilled = props.rule.filled ?? [];
+      const typeIndex = oldFilled.indexOf(type);
+      const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
+      const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
+      let withoutNext = false;
 
       if (type === ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
         filled.push(ADVANCED_SEARCH_CHIP_TYPES.value);
@@ -217,51 +246,73 @@ export default {
 
       updateModel({
         ...props.rule,
-        ...pick(advancedSearchRuleItemToFormItem(), typesForClear),
+        ...pick(advancedSearchRuleItemToFormItem(), filledForRemove),
         [type]: value,
         filled: uniq(filled),
       });
-    };
 
-    const selectItem = (value) => {
-      const filled = [...(props.rule.filled ?? []), activeType.value];
-      const preparedRule = { ...props.rule };
-      let actionTypeSteps = 1;
-
-      if (
-        activeType.value === ADVANCED_SEARCH_CHIP_TYPES.operator
-        && [
-          PATTERN_CONDITIONS.hasNot,
-          PATTERN_CONDITIONS.hasOneOf,
-          PATTERN_CONDITIONS.isOneOf,
-          PATTERN_CONDITIONS.isNotOneOf,
-          PATTERN_CONDITIONS.hasEvery,
-        ].includes(value)
-      ) {
-        filled.push(ADVANCED_SEARCH_CHIP_TYPES.value);
-        preparedRule[ADVANCED_SEARCH_CHIP_TYPES.value] = [];
-        actionTypeSteps = 2;
+      if ([ADVANCED_SEARCH_CHIP_TYPES.rangeValue, ADVANCED_SEARCH_CHIP_TYPES.value].includes(type)) {
+        return;
       }
 
-      if (activeType.value === ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
+      setInputType(type);
+
+      if (!isFinishedRule.value) {
+        nextTick(() => goToNextType());
+      }
+    };
+
+    /**
+     * Updates the current search rule item with the specified value and manages the progression of filled criteria.
+     *
+     * @param {*} value - The value to set for the current active type. This can vary depending on the type.
+     */
+    const updateItem = (value) => {
+      const filled = [...(props.rule.filled ?? []), inputType.value];
+      const preparedRule = { ...props.rule };
+      let skipType = false;
+
+      if (inputType.value === ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
+        filled.push(ADVANCED_SEARCH_CHIP_TYPES.value);
+        preparedRule[ADVANCED_SEARCH_CHIP_TYPES.value] = [];
+        skipType = true;
+      }
+
+      if (inputType.value === ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
         filled.push(ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
-        actionTypeSteps = 2;
+        skipType = true;
       }
 
       updateModel({
         ...preparedRule,
         filled: uniq(filled),
-        [activeType.value]: value,
+        [inputType.value]: value,
       });
 
-      if (!isFinishedGroup.value) {
-        nextTick(() => goToNextType(actionTypeSteps));
+      if (!isFinishedRule.value) {
+        nextTick(() => goToNextType(skipType)); // TODO: analise nextTick
       }
     };
 
-    const clickChip = key => emit('click:chip', key);
+    const clickChip = (type) => {
+      activeType.value = type;
 
+      emit('make:active', props.rule.key);
+    };
+
+    const focusOutChip = (type) => {
+      if (type === activeType.value) {
+        activeType.value = null;
+        emit('reset:active', props.rule.key);
+      }
+    };
+
+    /**
+     * Emits a 'remove' event to notify the parent component that an item should be removed.
+     */
     const remove = () => emit('remove');
+
+    const isActiveType = type => props.active && activeType.value === type;
 
     const chips = computed(() => {
       const result = (props.rule.filled ?? []).map((type, index, filled) => {
@@ -283,10 +334,10 @@ export default {
           component: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue ? 'advanced-search-range-chip' : 'advanced-search-chip',
           bind: {
             value: props.rule[type],
-            active: key === props.activeKey,
+            active: isActiveType(type),
             items: itemsByType.value[type],
             allowText: !itemsByType.value[type]?.length,
-            closable: index === filled.length - 1 && !props.union,
+            closable: index === filled.length - 1,
             disabled: props.disabled,
             itemText: itemText ?? 'text',
             itemValue: itemValue ?? 'value',
@@ -295,22 +346,16 @@ export default {
             color: validator.errors.has(props.rule.key) ? 'error' : undefined,
           },
           on: {
-            input: value => selectChipItem(value, type),
-            click: () => clickChip(key),
-            focusout: () => emit('focusout'),
-            next: () => setTimeout(() => emit('next', getNextForFormItemType(
-              props.rule,
-              multiple
-                ? getNextForFormItemType(props.rule, type)
-                : type,
-            ))), // TODO: refactor
+            input: value => updateChipItem(value, type),
+            click: () => clickChip(type),
+            focusout: () => focusOutChip(type),
             close: remove,
           },
         };
       });
 
-      if (!isFinishedGroup.value && !props.rule.filled.includes(activeType.value)) {
-        const type = activeType.value;
+      if (!isFinishedRule.value && !props.rule.filled.includes(inputType.value)) {
+        const type = inputType.value;
         const key = `${props.rule.key}.${type}`;
 
         let itemText;
@@ -327,9 +372,8 @@ export default {
           key,
           component: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue ? 'advanced-search-range-chip' : 'advanced-search-chip',
           bind: {
-            first: props.first && !result.length,
+            first: !result.length,
             value: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue ? props.rule[type] : undefined,
-            active: key === props.activeKey,
             disabled: props.disabled,
             alwaysActive: true,
             items: itemsByType.value[type],
@@ -339,8 +383,7 @@ export default {
             allowText: !itemsByType.value[type]?.length,
           },
           on: {
-            input: selectItem,
-            next: () => setTimeout(() => emit('next', getNextForFormItemType(props.rule, type))), // TODO: refactor
+            input: updateItem,
           },
         });
       }
@@ -349,27 +392,20 @@ export default {
     });
 
     watch(() => props.union, (union) => {
-      activeType.value = union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute;
+      inputType.value = union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute;
     });
 
-    onMounted(() => {
-      validator.attach({
-        name: props.rule.key,
-        rules: 'required:true',
-        getter: () => isFinishedGroup.value,
-      });
-    });
+    onMounted(() => validator.attach({
+      name: props.rule.key,
+      rules: 'advancedSearchRule',
+      getter: () => ({ rule: props.rule, finished: isFinishedRule.value }),
+    }));
 
-    onBeforeUnmount(() => {
-      validator.detach(props.rule.key);
-    });
+    onBeforeUnmount(() => validator.detach(props.rule.key));
 
     return {
-      activeType,
       chips,
       remove,
-      selectChipItem,
-      selectItem,
       clickChip,
     };
   },
@@ -377,7 +413,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-new-advanced-search__group {
+.c-new-advanced-search__rule {
   &:hover ::v-deep {
     .theme--light.v-chip:before {
       opacity: 0.04;
@@ -397,6 +433,10 @@ export default {
 
       &.theme--dark {
         border: 1px solid var(--v-text-dark-primary, #FFFFFF);
+      }
+
+      &.error {
+        color: var(--v-error-base, red);
       }
     }
   }

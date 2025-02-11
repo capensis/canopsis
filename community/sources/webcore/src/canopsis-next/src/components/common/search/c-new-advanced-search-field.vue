@@ -7,20 +7,26 @@
     <div class="v-input__control">
       <div class="v-input__slot">
         <div class="v-text-field__slot">
-          <v-layout class="c-advanced-search__groups-wrapper gap-1" align-center wrap>
-            <advanced-search-group
+          <v-layout
+            ref="layoutElement"
+            class="c-advanced-search__groups-wrapper gap-1"
+            align-center
+            wrap
+            @click="clickLayout"
+          >
+            <advanced-search-rule
               v-for="(rule, index) in rules"
               v-model="rules[index]"
               :key="rule.key"
               :attributes="items"
-              :active-key="activeKey"
+              :active="rule.key === activeKey"
               :union="index % 2 === 1"
               :first="index === 0"
               :allow-or="allowOr"
               @input="update($event, index)"
-              @click:chip="makeActive"
-              @focusout="resetActive"
-              @next="next($event, index)"
+              @make:active="makeActive"
+              @reset:active="resetActive"
+              @next="nextRule"
               @remove="remove(index)"
             />
           </v-layout>
@@ -54,10 +60,10 @@
 </template>
 
 <script>
-import { computed, ref, set } from 'vue';
+import { computed, ref, set, provide, nextTick, onBeforeMount } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
-import { ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
+import { ADVANCED_SEARCH_CHIP_TYPES, ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
 
 import {
   advancedSearchToForm,
@@ -71,13 +77,13 @@ import {
 import { useComponentInstance } from '@/hooks/vue';
 
 import { useAdvancedSearchAttributes } from './hooks/new-advanced-search';
-import AdvancedSearchGroup from './partials/new/advanced-search-group.vue';
+import AdvancedSearchRule from './partials/new/advanced-search-rule.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AdvancedSearchGroup },
+  components: { AdvancedSearchRule },
   mixins: [Themeable],
   props: {
     searches: {
@@ -88,6 +94,7 @@ export default {
   setup(props, { emit }) {
     const instance = useComponentInstance();
 
+    const layoutElement = ref(null);
     const rules = ref([advancedSearchRuleItemToFormItem()]);
     const activeKey = ref();
 
@@ -112,31 +119,60 @@ export default {
       allowPbehaviorFields,
     });
 
+    const addNewRule = () => {
+      const newRule = advancedSearchRuleItemToFormItem();
+
+      rules.value.push(advancedSearchRuleItemToFormItem());
+
+      return newRule;
+    };
+
+    const makeActive = (key) => {
+      activeKey.value = key;
+    };
+
+    const resetActive = (key) => {
+      if (key === activeKey.value) {
+        activeKey.value = null;
+      }
+    };
+
+    let lastInputFocus = () => {};
+
+    const registerLastInputFocus = focus => lastInputFocus = focus;
+
+    provide('$registerLastInputFocus', registerLastInputFocus);
+
+    const clickLayout = event => event.target === layoutElement.value && lastInputFocus();
+
+    const nextRule = (withoutActive) => {
+      const newRule = addNewRule();
+
+      if (!withoutActive) {
+        makeActive(newRule.key);
+        nextTick(() => lastInputFocus());
+      }
+    };
+
+    /**
+     * Updates a rule at the specified index with the provided value and clears any existing errors.
+     *
+     * @param {*} value - The new value to set for the rule at the specified index. This can be any
+     *                    data type that represents a valid rule.
+     * @param {number} index - The index of the rule to be updated. This should be a valid index within
+     *                         the `rules` array.
+     */
     const update = (value, index) => {
       instance.errors.clear();
       set(rules.value, index, value);
     };
 
-    const makeActive = (key) => {
-      setTimeout(() => activeKey.value = key); // TODO: refactor it
-    };
-
-    const resetActive = () => {
-      activeKey.value = null;
-    };
-
-    const next = (nextStep, index) => {
-      if (!nextStep && !rules.value[index + 1]) {
-        const newRule = advancedSearchRuleItemToFormItem();
-
-        rules.value.push(newRule);
-        activeKey.value = `${newRule.key}.${index % 2 === 0 ? 'union' : 'attribute'}`;
-        return;
-      }
-
-      activeKey.value = !nextStep ? `${rules.value[index + 1].key}.attribute` : `${rules.value[index].key}.${nextStep}`;
-    };
-
+    /**
+     * Removes a rule from the rules array at the specified index, or resets it if it's the last rule.
+     *
+     * @param {number} index - The index of the rule to be removed or reset. This should be a valid
+     *                         index within the `rules` array.
+     */
     const remove = (index) => {
       if (index === rules.value.length - 1) {
         set(rules.value, index, advancedSearchRuleItemToFormItem());
@@ -147,20 +183,45 @@ export default {
       rules.value.splice(index, index === rules.value.length - 2 ? 1 : 2);
     };
 
-    const submit = async () => {
-      const isValid = await instance.$validator.validateAll();
-
-      if (isValid) {
-        emit('submit', formToAdvancedSearch(rules.value));
-      }
-    };
-
+    /**
+     * Clears the current search field errors and resets the rules to their initial state.
+     */
     const clear = () => {
       instance.errors.clear();
       rules.value = [advancedSearchRuleItemToFormItem()];
     };
 
+    /**
+     * Validates the form and emits a 'submit' event with the advanced search criteria if valid.
+     */
+    const submit = async () => {
+      const isValid = await instance.$validator.validateAll();
+
+      if (isValid) {
+        console.log('SUBMIT');
+        emit('submit', formToAdvancedSearch(rules.value));
+      }
+    };
+
+    const extendValidatorRule = () => instance.$validator.extend('advancedSearchRule', ({ rule, finished }) => {
+      if (rule.attribute && !finished) {
+        return false;
+      }
+
+      if (!rule.attribute && rule.union) {
+        const lastRule = rules.value.at(-1);
+        const preLastRule = rules.value.at(-2);
+
+        return !(!lastRule.attribute && preLastRule.key === rule.key);
+      }
+
+      return true;
+    });
+
+    onBeforeMount(extendValidatorRule);
+
     return {
+      layoutElement,
       allowOr,
       rules,
       activeKey,
@@ -170,10 +231,11 @@ export default {
       update,
       makeActive,
       resetActive,
-      next,
+      nextRule,
       remove,
       submit,
       clear,
+      clickLayout,
     };
   },
 };

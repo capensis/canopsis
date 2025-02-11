@@ -181,7 +181,6 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     PATTERN_OPERATORS.isNotOneOf,
   ];
 
-  const DATE_RANGE_OPTIONS = { operators: PATTERN_QUICK_RANGES };
   const DURATION_OPTIONS = { operators: PATTERN_DURATION_OPERATORS };
 
   const INITIATOR_OPTIONS = {
@@ -287,14 +286,14 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     },
 
     /**
-     * Ticket
+     * Date
      */
-    [ALARM_FIELDS.creationDate]: DATE_RANGE_OPTIONS,
-    [ALARM_FIELDS.lastUpdateDate]: DATE_RANGE_OPTIONS,
-    [ALARM_FIELDS.lastEventDate]: DATE_RANGE_OPTIONS,
-    [ALARM_FIELDS.ackAt]: DATE_RANGE_OPTIONS,
-    [ALARM_FIELDS.resolved]: DATE_RANGE_OPTIONS,
-    [ALARM_FIELDS.activationDate]: DATE_RANGE_OPTIONS,
+    [ALARM_FIELDS.creationDate]: {},
+    [ALARM_FIELDS.lastUpdateDate]: {},
+    [ALARM_FIELDS.lastEventDate]: {},
+    [ALARM_FIELDS.ackAt]: {},
+    [ALARM_FIELDS.resolved]: {},
+    [ALARM_FIELDS.activationDate]: {},
     [ALARM_FIELDS.duration]: DURATION_OPTIONS,
 
     /**

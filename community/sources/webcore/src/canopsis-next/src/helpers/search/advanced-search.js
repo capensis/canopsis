@@ -1,4 +1,4 @@
-import { orderBy, map } from 'lodash';
+import { orderBy, map, isUndefined } from 'lodash';
 
 import {
   ADVANCED_SEARCH_ITEM_TYPES,
@@ -252,3 +252,34 @@ export const prepareAdvancedSearchFields = (fields = []) => (
 export const prepareAdvancedSearchConditions = (conditions = []) => (
   conditions.map(condition => ({ value: condition, type: ADVANCED_SEARCH_ITEM_TYPES.condition, text: condition }))
 );
+
+/**
+ * Filters a list of items based on a specified condition, including the last header item before each matching item.
+ *
+ * @param {Array} [items = []] - The list of items to filter.
+ * @param {Function} [condition = () => true] - A function that takes an item as an argument and returns a boolean
+ *                                              indicating whether the item meets the condition.
+ * @returns {Array} - A new array containing items that meet the condition, along with the last header item preceding
+ *                    each matching item.
+ */
+export const filterAdvancedSearchItems = (items = [], condition = () => true) => {
+  let lastHeaderIndex;
+
+  return items.reduce((acc, item, index) => {
+    if (item.header) {
+      lastHeaderIndex = index;
+
+      return acc;
+    }
+
+    if (condition(item)) {
+      if (!isUndefined(lastHeaderIndex)) {
+        acc.push(items[lastHeaderIndex]);
+      }
+
+      acc.push(item);
+    }
+
+    return acc;
+  }, []);
+};

@@ -39,7 +39,7 @@ export default {
   },
   props: {
     value: {
-      type: Date,
+      type: [Date, Number],
       default: () => new Date(),
     },
     label: {
