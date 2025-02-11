@@ -230,8 +230,9 @@ systemctl enable --now disable-transparent-huge-pages
     name=modern-erlang-el9
     # Use a set of mirrors maintained by the RabbitMQ core team.
     # The mirrors have significantly higher bandwidth quotas.
-    baseurl=https://yum1.rabbitmq.com/erlang/el/9/$basearch
-            https://yum2.rabbitmq.com/erlang/el/9/$basearch
+    baseurl=https://yum1.novemberain.com/erlang/el/9/$basearch
+            https://yum2.novemberain.com/erlang/el/9/$basearch
+            https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-erlang/rpm/el/9/$basearch
     repo_gpgcheck=1
     enabled=1
     gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
@@ -249,8 +250,9 @@ systemctl enable --now disable-transparent-huge-pages
 
     [rabbitmq-el9-noarch]
     name=rabbitmq-el9-noarch
-    baseurl=https://yum1.rabbitmq.com/rabbitmq/el/9/noarch
-            https://yum2.rabbitmq.com/rabbitmq/el/9/noarch
+    baseurl=https://yum1.novemberain.com/rabbitmq/el/9/noarch
+            https://yum2.novemberain.com/rabbitmq/el/9/noarch
+            https://dl.cloudsmith.io/public/rabbitmq/rabbitmq-server/rpm/el/9/noarch
     repo_gpgcheck=1
     enabled=1
     # Cloudsmith's repository key and RabbitMQ package signing key
@@ -316,11 +318,11 @@ dnf module disable postgresql
 
 === "RHEL 9"
 
-    Activer le module Nginx 1.24.* :
+    Activer le module Nginx 1.22.* :
 
     ```sh
     dnf module disable php
-    dnf module enable nginx:1.24
+    dnf module enable nginx:1.22
     ```
 
     Activer le module Redis 7.0.* :
@@ -355,8 +357,8 @@ dnf module disable postgresql
 === "RHEL 9"
 
     ```sh
-    dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-16 timescaledb-2-loader-postgresql-16
-    dnf install erlang rabbitmq-server
+    dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1
+    dnf install erlang-26.2.5.6 rabbitmq-server-3.12.13
     ```
 
     Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
@@ -364,8 +366,9 @@ dnf module disable postgresql
 
     ```sh
     dnf install 'dnf-command(versionlock)'
-    dnf versionlock add timescaledb-2-loader-postgresql-16 timescaledb-2-postgresql-16
+    dnf versionlock add timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
     dnf versionlock add --raw 'rabbitmq-server-3.*'
+    dnf versionlock add --raw 'erlang-26.*'
     ```
 
     Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
@@ -514,15 +517,15 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
 
 === "RHEL 9"
     ```sh
-    postgresql-16-setup initdb
-    timescaledb-tune -yes --pg-config=/usr/pgsql-16/bin/pg_config
-    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
+    postgresql-15-setup initdb
+    timescaledb-tune -yes --pg-config=/usr/pgsql-15/bin/pg_config
+    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/15/data/postgresql.conf
     ```
 
     Activer et démarrer le service :
 
     ```sh
-    systemctl enable --now postgresql-16.service
+    systemctl enable --now postgresql-15.service
     ```
 
     Se connecter à l'instance PostgreSQL avec l'identité du superuser `postgres` :
@@ -698,7 +701,6 @@ CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost:5672/canopsis"
 CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"
 CPS_REDIS_URL="redis://localhost:6379/0"
 CPS_API_URL="http://localhost:8082"
-#CPS_OLD_API_URL="http://localhost:8081"
 CPS_POSTGRES_TECH_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis_tech_metrics"
 ```
 
@@ -812,13 +814,13 @@ d'une mise à jour de routine de l'ensemble des paquets système.
 === "Canopsis Community (édition open-source)"
 
     ```sh
-    dnf versionlock add --raw 'canopsis-24.04.*'
-    dnf versionlock add --raw 'canopsis-webui-24.04.*'
+    dnf versionlock add --raw 'canopsis-24.10.*'
+    dnf versionlock add --raw 'canopsis-webui-24.10.*'
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
-    dnf versionlock add --raw 'canopsis-pro-24.04.*'
-    dnf versionlock add --raw 'canopsis-webui-24.04.*'
+    dnf versionlock add --raw 'canopsis-pro-24.10.*'
+    dnf versionlock add --raw 'canopsis-webui-24.10.*'
     ```
