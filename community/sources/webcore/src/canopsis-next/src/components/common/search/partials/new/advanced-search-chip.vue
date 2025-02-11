@@ -1,9 +1,9 @@
 <template>
   <v-menu
     v-bind="menuProps"
-    v-model="opened"
+    :value="opened"
     bottom
-    @input="toggleMenu"
+    @input="updateMenuOpened"
   >
     <template #activator="{ on }">
       <span v-if="multiple">
@@ -23,7 +23,7 @@
           <span>
             <input
               v-model="inputValue"
-              ref="inputEl"
+              ref="inputElement"
               type="text"
               class="ml-1"
               autocomplete="off"
@@ -37,7 +37,7 @@
       <span v-else>
         <input
           v-show="active || alwaysActive"
-          ref="inputEl"
+          ref="inputElement"
           :value="inputValue"
           type="text"
           class="ml-1"
@@ -74,10 +74,18 @@
       @input="select"
       @fetch:more="showMore"
     >
-      <template v-if="allowText" #no-data="">
+      <template v-if="hasAnyDisabledItem" #prepend="">
+        <v-list-item class="font-italic grey--text">
+          <v-list-item-content>
+            <v-list-item-title>{{ $t('advancedSearch.listDisabledMessage') }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-divider />
+      </template>
+      <template #no-data="">
         <v-list-item>
           <v-list-item-content>
-            <v-list-item-title v-html="$t('common.pressEnterToApply')" />
+            <v-list-item-title v-html="noDataText" />
           </v-list-item-content>
         </v-list-item>
       </template>
@@ -86,43 +94,23 @@
 </template>
 
 <script>
-import { isUndefined } from 'lodash';
 import {
   computed,
   ref,
   watch,
   toRef,
-  nextTick,
+  inject,
   onMounted,
 } from 'vue';
 
 import { KEY_CODES } from '@/constants';
 
+import { filterAdvancedSearchItems } from '@/helpers/search/advanced-search';
+
+import { useI18n } from '@/hooks/i18n';
 import { useLazySearch } from '@/hooks/form/lazy-search';
 
 import AdvancedSearchLazyList from '@/components/common/search/partials/new/advanced-search-lazy-list.vue';
-
-export const filterItems = (items, condition) => {
-  let lastHeaderIndex;
-
-  return items.reduce((acc, item, index) => {
-    if (item.header) {
-      lastHeaderIndex = index;
-
-      return acc;
-    }
-
-    if (condition(item)) {
-      if (!isUndefined(lastHeaderIndex)) {
-        acc.push(items[lastHeaderIndex]);
-      }
-
-      acc.push(item);
-    }
-
-    return acc;
-  }, []);
-};
 
 export default {
   components: { AdvancedSearchLazyList },
@@ -189,8 +177,11 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const inputEl = ref(null);
-    const appendEl = ref(null);
+    const registerLastInputFocus = inject('$registerLastInputFocus', () => {});
+
+    const { t } = useI18n();
+
+    const inputElement = ref(null);
     const inputValue = ref('');
     const opened = ref(false);
 
@@ -207,20 +198,31 @@ export default {
       disabled: props.disabled,
     }));
 
-    const showMenu = () => opened.value = true;
-    const hideMenu = () => opened.value = false;
+    const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
 
-    const apply = (event) => {
-      console.log('APPLY:', event);
-    };
+    const noDataText = computed(() => t(
+      props.allowText
+        ? 'common.pressEnterToApply'
+        : 'common.noData',
+    ));
 
+    /**
+     * Fetches and filters items based on search parameters, returning the filtered data along with metadata about the
+     * total count and page count.
+     * We need it to simulate the same behavior as on real search request.
+     *
+     * @param {Object} [options = {}] - Options for fetching items.
+     * @param {Object} [options.params = {}] - Parameters for filtering items.
+     * @param {string} [options.params.search] - The search query used to filter items.
+     * @returns {{ data: [], meta: { total_count: Number, page_count: 1 } }}
+     */
     const defaultFetchItems = ({ params = {} } = {}) => {
       let data = props.items;
 
       if (params?.search) {
         const lowerSearch = String(params.search).toLowerCase();
 
-        data = filterItems(data, item => item[props.itemText]?.toLowerCase().includes(lowerSearch));
+        data = filterAdvancedSearchItems(data, item => item[props.itemText]?.toLowerCase().includes(lowerSearch));
       }
 
       return {
@@ -248,35 +250,42 @@ export default {
       multiple: props.multiple,
     }, emit);
 
-    const chipText = computed(() => selectedItems.value.map(item => item[props.itemText] ?? item[props.itemValue]).join(','));
-
-    const click = () => !props.disabled && emit('click');
-    const close = () => emit('close');
+    const showMenu = () => opened.value = true;
     const focus = () => {
       showMenu();
       emit('focus');
     };
-    // const focusout = () => emit('focusout');
 
-    const updateInputValue = (event) => {
-      inputValue.value = event.target.value;
+    const setInputValue = (newInputValue) => {
+      inputValue.value = newInputValue;
 
-      updateSearch(inputValue.value);
+      updateSearch(newInputValue);
     };
 
-    const toggleMenu = (value) => {
+    const updateInputValue = event => setInputValue(event.target.value);
+
+    const updateMenuOpened = (value) => {
       if (!value) {
         emit('focusout');
-        inputValue.value = '';
+        setInputValue('');
       }
+
+      opened.value = value;
     };
+
+    const clickChip = () => !props.disabled && emit('click');
+    const closeChip = () => emit('close');
+
+    const chipText = computed(() => selectedItems.value
+      .map(item => item[props.itemText] ?? item[props.itemValue])
+      .join(','));
 
     const chipListeners = computed(() => {
       const listeners = {};
 
       if (!props.disabled) {
-        listeners.click = click;
-        listeners['click:close'] = close;
+        listeners.click = clickChip;
+        listeners['click:close'] = closeChip;
       }
 
       return listeners;
@@ -287,7 +296,7 @@ export default {
 
       if (!props.disabled) {
         listeners['click.prevent'] = () => {};
-        listeners['click:close'] = close;
+        listeners['click:close'] = closeChip;
       }
 
       return listeners;
@@ -299,41 +308,32 @@ export default {
       changeSelectedItems(props.multiple ? [...(props.value || []), value] : value);
 
       if (!props.multiple) {
-        toggleMenu();
+        updateMenuOpened(false);
         emit('next');
-      } else {
-        toggleMenu();
-        showMenu(); // TODO: think about it
+
+        return;
       }
+
+      updateMenuOpened(false);
+      showMenu(); // TODO: think about it
     };
 
     const keydown = (event) => {
-      if (event.keyCode === KEY_CODES.enter && props.allowText) { // TODO: try to find in items
-        select(inputValue.value ?? '');
+      if (event.keyCode === KEY_CODES.enter) {
+        if (props.allowText) {
+          select(inputValue.value ?? '');
 
-        return;
+          return;
+        }
+
+        const lowerInputValue = inputValue.value.toLowerCase();
+        const selectedItem = props.items.find(item => item[props.itemText]?.toLowerCase().startsWith(lowerInputValue));
+
+        if (selectedItem) {
+          select(selectedItem);
+        }
       }
-      console.log('KEYDOWN:', event);
     };
-
-    watch(() => [props.active, selectedItems.value], ([active, newSelectedItems], [prevActive] = []) => {
-      if (!active) {
-        inputValue.value = '';
-        updateSearch(inputValue.value);
-
-        return;
-      }
-
-      console.log(active, prevActive, props.items, inputEl.value);
-
-      if (prevActive !== active) {
-        nextTick(() => inputEl.value?.focus());
-      }
-
-      inputValue.value = newSelectedItems[0]?.[props.itemText] ?? newSelectedItems[0]?.[props.itemValue] ?? '';
-    }, { immediate: true });
-
-    watch(() => props.items, fetchItems);
 
     const showMore = () => {
       if (hasMoreItems.value) {
@@ -341,17 +341,45 @@ export default {
       }
     };
 
-    onMounted(() => {
-      if (!props.first) {
-        setTimeout(() => inputEl.value?.focus(), 100);
+    const focusInput = () => setTimeout(() => inputElement.value?.focus(), 100); // TODO: check it
+
+    watch(() => props.active, (active, prevActive) => {
+      if (active && prevActive !== active) {
+        setInputValue(selectedItems.value[0]?.[props.itemText] ?? selectedItems.value[0]?.[props.itemValue] ?? '');
+        focusInput();
       }
     });
 
+    /* watch(() => [props.active, selectedItems.value], ([active, newSelectedItems], [prevActive] = []) => {
+      if (!active) {
+        setInputValue('');
+
+        return;
+      }
+
+      if (prevActive !== active) {
+        nextTick(() => inputElement.value?.focus());
+      }
+
+      setInputValue(newSelectedItems[0]?.[props.itemText] ?? newSelectedItems[0]?.[props.itemValue] ?? '');
+    }, { immediate: true }); */
+
+    watch(() => props.items, fetchItems);
+
+    onMounted(() => {
+      if (!props.first) {
+        setTimeout(() => inputElement.value?.focus(), 100);
+      }
+
+      registerLastInputFocus(focusInput);
+    });
+
     return {
+      noDataText,
+      hasAnyDisabledItem,
       selectedItems,
       opened,
-      appendEl,
-      inputEl,
+      inputElement,
       inputValue,
       menuProps,
       chipText,
@@ -361,13 +389,10 @@ export default {
       chipListeners,
       multipleChipListeners,
 
-      apply,
       select,
       keydown,
-      click,
       focus,
-      toggleMenu,
-      close,
+      updateMenuOpened,
       updateInputValue,
       showMore,
     };

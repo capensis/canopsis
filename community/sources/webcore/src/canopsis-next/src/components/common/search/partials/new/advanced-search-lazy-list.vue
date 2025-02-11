@@ -8,15 +8,7 @@
         indeterminate
       />
     </v-fade-transition>
-    <v-list-item v-if="hasAnyDisabledItem" class="font-italic grey--text">
-      <v-list-item-content>
-        <v-list-item-title>
-          Not possible to combine patterns
-          (alarm, entity and pbehavior) with OR (only AND)
-        </v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
-    <v-divider />
+    <slot :items="items" name="prepend" />
     <template v-for="item in items">
       <v-subheader
         v-if="item.header"
@@ -78,11 +70,15 @@
   </v-list>
 </template>
 <script>
-import { get, uniqBy } from 'lodash';
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { uniqBy } from 'lodash';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
-  name: 'advanced-search-lazy-list', // TODO: see variables-list
+  name: 'advanced-search-lazy-list', // We need it for recursive use
+  model: {
+    prop: 'value',
+    event: 'input',
+  },
   props: {
     value: {
       type: Array,
@@ -135,8 +131,12 @@ export default {
     const parentItem = ref(undefined);
     const subItemsPosition = ref({ x: 0, y: 0 });
 
-    const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
-
+    /**
+     * Determines if a given item is active based on the current selection.
+     *
+     * @param {Object} [item={}] - The item to check for activity status. Defaults to an empty object.
+     * @returns {boolean} - Returns `true` if the item is active, otherwise `false`.
+     */
     const isActiveItem = (item = {}) => props.value.find((selectedItem) => {
       const selectedValue = String(selectedItem[props.itemValue] ?? '');
       const value = String(item[[props.itemValue]] ?? '');
@@ -148,11 +148,24 @@ export default {
       return selectedValue === value;
     });
 
+    /**
+     * Emits an 'input' event with the selected item(s) based on the component's configuration.
+     *
+     * @param {Object} item - The item to be selected and emitted. This object should contain properties
+     *                        that can be identified by the `props.itemValue`.
+     */
     const selectVariable = item => emit(
       'input',
       props.multiple ? uniqBy([...props.value, item], props.itemValue) : item,
     );
 
+    /**
+     * Selects a sub-variable by modifying its value to include the parent item's value
+     * and then calls the `selectVariable` function with the modified item.
+     *
+     * @param {Object} item - The sub-item to be selected. This object should contain
+     *                        properties that can be identified by the `props.itemValue`.
+     */
     const selectSubVariable = (item) => {
       selectVariable({
         ...item,
@@ -161,6 +174,14 @@ export default {
       subItemsShown.value = false;
     };
 
+    /**
+     * Handles the mouse enter event on an item, updating the position and visibility
+     * of sub-items if applicable.
+     *
+     * @param {Object} item - The item that the mouse has entered. This object should
+     *                        contain properties that can be identified by the `props.childrenKey`.
+     * @param {MouseEvent} event - The mouse event triggered by entering the item.
+     */
     const handleMouseEnter = (item, event) => {
       if (item.disabled) {
         return;
@@ -179,6 +200,13 @@ export default {
       }
     };
 
+    /**
+     * Handles intersection events to determine when more data should be fetched.
+     *
+     * @param {IntersectionObserverEntry[]} entries - An array of IntersectionObserverEntry objects,
+     *                                                containing information about the intersection
+     *                                                changes for the observed target elements.
+     */
     const intersectionHandler = (entries) => {
       const [entry] = entries;
 
@@ -200,7 +228,6 @@ export default {
       subItemsShown,
       subItemsPosition,
       parentItem,
-      hasAnyDisabledItem,
 
       handleMouseEnter,
 

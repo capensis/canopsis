@@ -17,4 +17,6 @@ export default {
     [ALARM_ADVANCED_SEARCH_GROUPS.entity]: 'Entity',
     [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Pbehavior',
   },
+
+  listDisabledMessage: 'Not possible to combine patterns\n(alarm, entity and pbehavior) with OR (only AND)',
 };
