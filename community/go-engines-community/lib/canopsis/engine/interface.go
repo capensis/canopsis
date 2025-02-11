@@ -89,17 +89,18 @@ type RunInfo struct {
 
 // InstanceRunInfo is instance of engine run information.
 type InstanceRunInfo struct {
-	ID               string           `json:"_id"`
-	Name             string           `json:"name"`
-	ConsumeQueue     string           `json:"consume_queue"`
-	PublishQueue     string           `json:"publish_queue"`
-	RpcConsumeQueues []string         `json:"rpc_consume_queues"`
-	RpcPublishQueues []string         `json:"rpc_publish_queues"`
-	QueueLength      int              `json:"queue_length"`
-	Time             datetime.CpsTime `json:"time"`
+	ID                 string           `json:"_id"`
+	Name               string           `json:"name"`
+	ConsumeQueues      []string         `json:"consume_queues"`
+	ConsumeQueuePrefix string           `json:"consume_queue"`
+	PublishQueuePrefix string           `json:"publish_queue"`
+	RpcConsumeQueues   []string         `json:"rpc_consume_queues"`
+	RpcPublishQueues   []string         `json:"rpc_publish_queues"`
+	QueueLength        int              `json:"queue_length"`
+	Time               datetime.CpsTime `json:"time"`
 }
 
-func NewInstanceRunInfo(name, consumeQueue, publishQueue string, rpcQueues ...[]string) InstanceRunInfo {
+func NewInstanceRunInfo(name, consumeQueue, publishQueue string, consumeQueues []string, rpcQueues ...[]string) InstanceRunInfo {
 	var rpcConsumeQueues, rpcPublishQueues []string
 	if len(rpcQueues) > 0 {
 		if len(rpcQueues) > 2 {
@@ -113,11 +114,12 @@ func NewInstanceRunInfo(name, consumeQueue, publishQueue string, rpcQueues ...[]
 	}
 
 	return InstanceRunInfo{
-		ID:               utils.NewID(),
-		Name:             name,
-		ConsumeQueue:     consumeQueue,
-		PublishQueue:     publishQueue,
-		RpcConsumeQueues: rpcConsumeQueues,
-		RpcPublishQueues: rpcPublishQueues,
+		ID:                 utils.NewID(),
+		Name:               name,
+		ConsumeQueuePrefix: consumeQueue,
+		ConsumeQueues:      consumeQueues,
+		PublishQueuePrefix: publishQueue,
+		RpcConsumeQueues:   rpcConsumeQueues,
+		RpcPublishQueues:   rpcPublishQueues,
 	}
 }
