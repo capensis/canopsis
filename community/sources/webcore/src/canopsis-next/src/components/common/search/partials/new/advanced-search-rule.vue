@@ -20,10 +20,8 @@ import {
   ref,
   watch,
   nextTick,
-  onMounted,
-  onBeforeUnmount,
   inject,
-  unref,
+  onBeforeUnmount,
 } from 'vue';
 import { Validator } from 'vee-validate';
 
@@ -31,7 +29,6 @@ import {
   ADVANCED_SEARCH_UNION_CONDITIONS,
   ADVANCED_SEARCH_CHIP_TYPES,
   PATTERN_ARRAY_OPERATORS,
-  PATTERN_CONDITIONS,
   PATTERN_FIELD_TYPES,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
@@ -49,33 +46,13 @@ import { useI18n } from '@/hooks/i18n';
 import AdvancedSearchChip from './advanced-search-chip.vue';
 import AdvancedSearchRangeChip from './advanced-search-range-chip.vue';
 
-const isNeedChangeActive = (rule, type) => {
+// TODO: move to helpers
+const getInitialInputTypeForRule = (rule = {}, union = false) => {
+  if (rule.attribute || rule.union) {
+    return null;
+  }
 
-};
-
-const useAdvancedSearchFieldType = ({ fieldType }) => {
-  const isStringFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.string);
-  const isNumberFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.number);
-  const isBooleanFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.boolean);
-  const isArrayFieldType = computed(() => unref(fieldType) === PATTERN_FIELD_TYPES.stringArray);
-
-  const operators = computed(() => ({
-    [isStringFieldType.value]: [
-      ...PATTERN_STRING_OPERATORS,
-
-      PATTERN_OPERATORS.isOneOf,
-      PATTERN_OPERATORS.isNotOneOf,
-    ],
-    [isNumberFieldType.value]: PATTERN_NUMBER_OPERATORS,
-    [isArrayFieldType.value]: PATTERN_ARRAY_OPERATORS,
-  }.true ?? []));
-
-  return {
-    isStringFieldType,
-    isNumberFieldType,
-    isBooleanFieldType,
-    isArrayFieldType,
-  };
+  return union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute;
 };
 
 export default {
@@ -132,7 +109,7 @@ export default {
 
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
-    const inputType = ref(props.union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute);
+    const inputType = ref(getInitialInputTypeForRule(props.rule, props.union));
     const activeType = ref(null);
 
     const attributesMap = computed(() => keyBy(props.attributes, 'value'));
@@ -234,7 +211,6 @@ export default {
       const typeIndex = oldFilled.indexOf(type);
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
       const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
-      let withoutNext = false;
 
       if (type === ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
         filled.push(ADVANCED_SEARCH_CHIP_TYPES.value);
@@ -391,15 +367,15 @@ export default {
       return result;
     });
 
-    watch(() => props.union, (union) => {
-      inputType.value = union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute;
-    });
+    watch(() => props.union, union => (
+      inputType.value = union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute
+    ));
 
-    onMounted(() => validator.attach({
+    watch(() => props.disabled, disabled => !disabled && validator.attach({
       name: props.rule.key,
       rules: 'advancedSearchRule',
       getter: () => ({ rule: props.rule, finished: isFinishedRule.value }),
-    }));
+    }), { immediate: true });
 
     onBeforeUnmount(() => validator.detach(props.rule.key));
 
