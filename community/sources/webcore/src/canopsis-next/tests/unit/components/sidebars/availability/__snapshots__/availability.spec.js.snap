@@ -25,3 +25,17 @@ exports[`availability-settings Renders \`availability-settings\` widget settings
   />
 </widget-settings-stub>
 `;
+
+exports[`availability-settings Renders \`availability-settings\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+  divider="true"
+>
+  <availability-form-stub
+    alarmcolumnswidgettemplates=""
+    entitycolumnswidgettemplates=""
+    form="[object Object]"
+    widgetid="Availability_id"
+  />
+</widget-settings-stub>
+`;
