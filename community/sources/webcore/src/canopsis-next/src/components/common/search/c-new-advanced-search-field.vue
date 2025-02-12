@@ -7,29 +7,11 @@
     <div class="v-input__control">
       <div class="v-input__slot">
         <div class="v-text-field__slot">
-          <v-layout
-            ref="layoutElement"
-            class="c-advanced-search__groups-wrapper gap-1"
-            align-center
-            wrap
-            @click="clickLayout"
-          >
-            <advanced-search-rule
-              v-for="(rule, index) in rules"
-              v-model="rules[index]"
-              :key="rule.key"
-              :attributes="items"
-              :active="rule.key === activeKey"
-              :union="index % 2 === 1"
-              :first="index === 0"
-              :allow-or="allowOr"
-              @input="update($event, index)"
-              @make:active="makeActive"
-              @reset:active="resetActive"
-              @next="nextRule"
-              @remove="remove(index)"
-            />
-          </v-layout>
+          <advanced-search-rules
+            v-model="rules"
+            :attributes="attributes"
+            :allow-or="allowOr"
+          />
         </div>
         <div class="v-input__append-inner">
           <v-menu bottom>
@@ -40,6 +22,21 @@
                 v-on="on"
               />
             </template>
+            <v-list>
+              <v-list-item
+                v-for="search in preparedSearches"
+                :key="search.key"
+                @click="select(search)"
+              >
+                <v-list-item-content>
+                  <advanced-search-rules
+                    :rules="search.rules"
+                    :attributes="attributes"
+                    disabled
+                  />
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
           </v-menu>
         </div>
       </div>
@@ -60,10 +57,10 @@
 </template>
 
 <script>
-import { computed, ref, set, provide, nextTick, onBeforeMount } from 'vue';
+import { computed, ref, onBeforeMount } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
-import { ADVANCED_SEARCH_CHIP_TYPES, ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
+import { ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
 
 import {
   advancedSearchToForm,
@@ -77,26 +74,28 @@ import {
 import { useComponentInstance } from '@/hooks/vue';
 
 import { useAdvancedSearchAttributes } from './hooks/new-advanced-search';
-import AdvancedSearchRule from './partials/new/advanced-search-rule.vue';
+import AdvancedSearchRules from './partials/new/advanced-search-rules.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AdvancedSearchRule },
+  components: { AdvancedSearchRules },
   mixins: [Themeable],
   props: {
-    searches: {
+    /* searches: {
       type: Array,
       default: () => [],
-    },
+    }, */
   },
   setup(props, { emit }) {
+    const searches = JSON.parse('[{"_id":"asd","positions":["alarm_pattern","alarm_pattern","pbehavior_pattern","pbehavior_pattern"],"alarm_pattern":[[{"field":"v.ack.a","cond":{"value":"c78b6ba1-39c5-44a0-86df-50b0dab36845","type":"eq"}},{"field":"v.display_name","cond":{"value":"выфвфывфы","type":"eq"}}]],"entity_pattern":[],"pbehavior_pattern":[[{"field":"v.pbehavior_info.type","cond":{"value":"c6520636-8489-4f21-91ca-2a55317931ba","type":"eq"}},{"field":"v.pbehavior_info.name","cond":{"value":"0618be38-d661-4e30-a31b-cd195af03f6f","type":"eq"}}]]}]');
+    const preparedSearches = searches.map(search => ({
+      _id: search._id,
+      rules: advancedSearchToForm(search),
+    }));
     const instance = useComponentInstance();
-
-    const layoutElement = ref(null);
     const rules = ref([advancedSearchRuleItemToFormItem()]);
-    const activeKey = ref();
 
     const hasOr = computed(() => rules.value.some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
     const hasAlarmField = computed(() => rules.value.some(({ attribute }) => isAlarmPatternField(attribute)));
@@ -113,75 +112,11 @@ export default {
     const allowEntityFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasPbehaviorField.value));
     const allowPbehaviorFields = computed(() => !hasOr.value || (!hasAlarmField.value && !hasEntityField.value));
 
-    const { attributes: items } = useAdvancedSearchAttributes({
+    const { attributes } = useAdvancedSearchAttributes({
       allowAlarmFields,
       allowEntityFields,
       allowPbehaviorFields,
     });
-
-    const addNewRule = () => {
-      const newRule = advancedSearchRuleItemToFormItem();
-
-      rules.value.push(advancedSearchRuleItemToFormItem());
-
-      return newRule;
-    };
-
-    const makeActive = (key) => {
-      activeKey.value = key;
-    };
-
-    const resetActive = (key) => {
-      if (key === activeKey.value) {
-        activeKey.value = null;
-      }
-    };
-
-    let lastInputFocus = () => {};
-
-    const registerLastInputFocus = focus => lastInputFocus = focus;
-
-    provide('$registerLastInputFocus', registerLastInputFocus);
-
-    const clickLayout = event => event.target === layoutElement.value && lastInputFocus();
-
-    const nextRule = (withoutActive) => {
-      const newRule = addNewRule();
-
-      if (!withoutActive) {
-        makeActive(newRule.key);
-        nextTick(() => lastInputFocus());
-      }
-    };
-
-    /**
-     * Updates a rule at the specified index with the provided value and clears any existing errors.
-     *
-     * @param {*} value - The new value to set for the rule at the specified index. This can be any
-     *                    data type that represents a valid rule.
-     * @param {number} index - The index of the rule to be updated. This should be a valid index within
-     *                         the `rules` array.
-     */
-    const update = (value, index) => {
-      instance.errors.clear();
-      set(rules.value, index, value);
-    };
-
-    /**
-     * Removes a rule from the rules array at the specified index, or resets it if it's the last rule.
-     *
-     * @param {number} index - The index of the rule to be removed or reset. This should be a valid
-     *                         index within the `rules` array.
-     */
-    const remove = (index) => {
-      if (index === rules.value.length - 1) {
-        set(rules.value, index, advancedSearchRuleItemToFormItem());
-
-        return;
-      }
-
-      rules.value.splice(index, index === rules.value.length - 2 ? 1 : 2);
-    };
 
     /**
      * Clears the current search field errors and resets the rules to their initial state.
@@ -191,6 +126,10 @@ export default {
       rules.value = [advancedSearchRuleItemToFormItem()];
     };
 
+    const select = (search) => {
+      rules.value = [...search.rules, advancedSearchRuleItemToFormItem()];
+    };
+
     /**
      * Validates the form and emits a 'submit' event with the advanced search criteria if valid.
      */
@@ -198,7 +137,7 @@ export default {
       const isValid = await instance.$validator.validateAll();
 
       if (isValid) {
-        console.log('SUBMIT');
+        // console.log(JSON.stringify(formToAdvancedSearch(rules.value)));
         emit('submit', formToAdvancedSearch(rules.value));
       }
     };
@@ -212,7 +151,7 @@ export default {
         const lastRule = rules.value.at(-1);
         const preLastRule = rules.value.at(-2);
 
-        return !(!lastRule.attribute && preLastRule.key === rule.key);
+        return !(!lastRule?.attribute && preLastRule?.key === rule?.key);
       }
 
       return true;
@@ -221,21 +160,15 @@ export default {
     onBeforeMount(extendValidatorRule);
 
     return {
-      layoutElement,
-      allowOr,
       rules,
-      activeKey,
+      attributes,
+      allowOr,
 
-      items,
+      preparedSearches,
 
-      update,
-      makeActive,
-      resetActive,
-      nextRule,
-      remove,
-      submit,
+      select,
       clear,
-      clickLayout,
+      submit,
     };
   },
 };
@@ -245,10 +178,6 @@ export default {
 .c-advanced-search { // TODO: remove new
   --v-chip-gap: 4px;
   --input-min-inline-size: 20ch;
-
-  &__groups-wrapper > * {
-    flex: 0 1 auto;
-  }
 
   &::v-deep {
     input {
