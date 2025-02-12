@@ -18,6 +18,7 @@
       type="delete"
       @click="showDeletePbehaviorModal"
     />
+    <c-db-export-btn :id="pbehavior._id" pbehavior />
   </v-layout>
 </template>
 

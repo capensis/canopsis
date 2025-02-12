@@ -21,7 +21,7 @@ import {
   TIME_UNITS,
   WIDGET_TYPES,
 } from '@/constants';
-import { PAGINATION_LIMIT } from '@/config';
+import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 
 import { setSeveralFields } from '@/helpers/immutable';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
@@ -576,11 +576,12 @@ export const getAlarmsListWidgetColumnValueFilter = (value) => {
  * @param {boolean} [onlyIcon]
  * @param {number} [inlineLinksCount]
  * @param {boolean} [showRootCauseByStateClick]
+ * @param {boolean} [isCellContentTruncated]
  * @returns {Function}
  */
 export const getAlarmsListWidgetColumnComponentGetter = (
   { value, onlyIcon, inlineLinksCount },
-  { showRootCauseByStateClick } = {},
+  { showRootCauseByStateClick, isCellContentTruncated } = {},
 ) => {
   switch (value) {
     case ALARM_FIELDS.state:
@@ -656,7 +657,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
         bind: {
           is: 'c-alarm-tags-chips',
           alarm: context.alarm,
-          selectedTag: context.selectedTag,
+          selectedTags: context.selectedTags,
           small: context.small,
         },
         on: {
@@ -681,6 +682,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
       },
     });
   }
+  const maxLetters = isCellContentTruncated ? Infinity : EXPAND_DEFAULT_MAX_LETTERS;
 
   return context => ({
     bind: {
@@ -688,6 +690,7 @@ export const getAlarmsListWidgetColumnComponentGetter = (
       class: 'alarm-column-cell__text',
       title: context.value,
       text: context.value,
+      maxLetters,
     },
   });
 };

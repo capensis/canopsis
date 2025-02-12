@@ -3,60 +3,70 @@ package engine
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"golang.org/x/sync/errgroup"
 )
 
 // NewRPCClient creates new AMQP RPC client.
 func NewRPCClient(
 	name, serverQueueName, clientQueueName string,
 	consumePrefetchCount, consumePrefetchSize int,
+	workers int,
+	connection libamqp.Connection,
+	publishCh libamqp.Channel,
 	processor RPCMessageProcessor,
-	amqpChannel libamqp.Channel,
 	logger zerolog.Logger,
 ) RPCClient {
 	return &rpcClient{
-		name:                 name,
-		serverQueueName:      serverQueueName,
-		clientQueueName:      clientQueueName,
-		consumePrefetchCount: consumePrefetchCount,
-		consumePrefetchSize:  consumePrefetchSize,
-		processor:            processor,
-		amqpChannel:          amqpChannel,
-		logger:               logger,
+		defaultConsumer: defaultConsumer{
+			name:                 name,
+			queue:                clientQueueName,
+			consumePrefetchCount: consumePrefetchCount,
+			consumePrefetchSize:  consumePrefetchSize,
+			processor:            &rpcClientMessageProcessorWrapper{processor: processor},
+			connection:           connection,
+			logger:               logger,
+		},
+		serverQueueName: serverQueueName,
+		publishCh:       publishCh,
+		workers:         workers,
+	}
+}
+
+func NewRPCClientWithoutReply(
+	serverQueueName string,
+	publishCh libamqp.Channel,
+) RPCClient {
+	return &rpcClient{
+		serverQueueName: serverQueueName,
+		publishCh:       publishCh,
 	}
 }
 
 // rpcClient implements RPC client.
 type rpcClient struct {
-	// name is consumer name.
-	name string
+	defaultConsumer
 	// serverQueueName is name of AMQP queue to where client sends RPC requests.
 	serverQueueName string
-	// clientQueueName is name of AMQP queue from where client receives RPC response.
-	clientQueueName                           string
-	consumePrefetchCount, consumePrefetchSize int
-	// processor handles AMQP messages.
-	processor RPCMessageProcessor
-	// connection is AMQP connection.
-	amqpChannel libamqp.Channel
-	logger      zerolog.Logger
+	publishCh       libamqp.Channel
+	// amount of workers which process events.
+	workers int
 }
 
 func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
-	err := c.amqpChannel.PublishWithContext(
+	err := c.publishCh.PublishWithContext(
 		ctx,
-		"",                // exchange
-		c.serverQueueName, // routing key
-		false,             // mandatory
-		false,             // immediate
+		"",
+		c.serverQueueName,
+		false,
+		false,
 		amqp.Publishing{
 			ContentType:   "text/plain",
 			CorrelationId: m.CorrelationID,
-			ReplyTo:       c.clientQueueName,
+			ReplyTo:       c.queue,
 			Body:          m.Body,
 		},
 	)
@@ -67,50 +77,40 @@ func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
 	return nil
 }
 
-func (c *rpcClient) Consume(ctx context.Context) error {
-	msgs, err := c.amqpChannel.Consume(
-		c.clientQueueName, // queue
-		"",                // consumer
-		false,             // auto-ack
-		false,             // exclusive
-		false,             // no-local
-		false,             // no-wait
-		nil,               // args
-	)
+func (c *rpcClient) Consume(ctx context.Context) (err error) {
+	if c.connection == nil {
+		return errors.New("connection is nil")
+	}
+
+	consumeCh, msgs, err := c.getConsumeChannel()
 	if err != nil {
 		return err
 	}
 
-	for {
-		select {
-		case <-ctx.Done():
-			return nil
-		case d, ok := <-msgs:
-			if !ok {
-				return errors.New("the rabbitmq channel has been closed")
-			}
-
-			c.logger.Debug().
-				Str("consumer", c.name).Str("queue", c.clientQueueName).
-				Str("msg", string(d.Body)).
-				Msgf("received")
-			err := c.processor.Process(ctx, RPCMessage{
-				CorrelationID: d.CorrelationId,
-				Body:          d.Body,
-			})
-			if err != nil {
-				nackErr := c.amqpChannel.Nack(d.DeliveryTag, false, true)
-				if nackErr != nil {
-					c.logger.Err(nackErr).Msg("cannot nack amqp delivery")
-				}
-
-				return fmt.Errorf("cannot process message: %w", err)
-			}
-
-			err = c.amqpChannel.Ack(d.DeliveryTag, false)
-			if err != nil {
-				c.logger.Err(err).Msg("cannot ack amqp delivery")
-			}
+	defer func() {
+		closeError := consumeCh.Close()
+		if err == nil {
+			err = closeError
 		}
+	}()
+
+	g, ctx := errgroup.WithContext(ctx)
+	for i := 0; i < c.workers; i++ {
+		g.Go(c.getWorkerFunc(ctx, msgs, consumeCh, nil))
 	}
+
+	return g.Wait()
+}
+
+type rpcClientMessageProcessorWrapper struct {
+	processor RPCMessageProcessor
+}
+
+func (r *rpcClientMessageProcessorWrapper) Process(ctx context.Context, d amqp.Delivery) ([]byte, error) {
+	err := r.processor.Process(ctx, RPCMessage{
+		CorrelationID: d.CorrelationId,
+		Body:          d.Body,
+	})
+
+	return nil, err
 }

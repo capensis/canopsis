@@ -52,12 +52,12 @@
         @update:template="updateResolvedAlarmsColumnsTemplate"
       />
       <field-filters
-        v-if="hasAccessToListFilters"
+        v-if="hasAccessToFilter"
         v-model="form.parameters.mainFilter"
         :filters.sync="form.filters"
         :widget-id="widget._id"
-        :addable="hasAccessToAddFilter"
-        :editable="hasAccessToEditFilter"
+        addable
+        editable
         with-alarm
         with-entity
         with-pbehavior

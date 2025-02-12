@@ -5,6 +5,7 @@ exports[`snooze-event-form Renders \`snooze-event-form\` with custom props 1`] =
   class="layout column"
 >
   <c-duration-field-stub
+    autofocus=""
     required=""
     value="[object Object]"
   />
@@ -21,6 +22,7 @@ exports[`snooze-event-form Renders \`snooze-event-form\` with required props 1`]
   class="layout column"
 >
   <c-duration-field-stub
+    autofocus=""
     required=""
   />
   <c-description-field-stub

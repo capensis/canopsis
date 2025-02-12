@@ -128,8 +128,10 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		if newStatus == currentStatus {
 			update = bson.M{
 				"$set": bson.M{
-					"v.state":        newStepState,
-					"v.change_state": newStepState,
+					"v.state":            newStepState,
+					"v.change_state":     newStepState,
+					"v.last_update_date": event.Parameters.Timestamp,
+					"v.last_st_upd_dt":   event.Parameters.Timestamp,
 				},
 				"$push": bson.M{"v.steps": newStepState},
 			}
@@ -148,6 +150,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 					"v.status":                            newStepStatus,
 					"v.state_changes_since_status_update": 0,
 					"v.last_update_date":                  event.Parameters.Timestamp,
+					"v.last_st_upd_dt":                    event.Parameters.Timestamp,
 				},
 				"$push": bson.M{"v.steps": bson.M{"$each": bson.A{newStepState, newStepStatus}}},
 			}

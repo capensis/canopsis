@@ -8,6 +8,7 @@
     <v-textarea
       v-field="form.comment"
       :label="$tc('common.comment')"
+      autofocus
     />
   </div>
 </template>

@@ -9,6 +9,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
       class="flex xs8"
     >
       <c-id-field-stub
+        autofocus=""
         class="mr-3"
         help-text="If no id is specified, a unique id will be generated automatically on rule creation"
         value="event-filter-id"
@@ -69,6 +70,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
       class="flex xs8"
     >
       <c-id-field-stub
+        autofocus=""
         class="mr-3"
         help-text="If no id is specified, a unique id will be generated automatically on rule creation"
         value="event-filter-id"
@@ -154,6 +156,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
       class="flex xs8"
     >
       <c-id-field-stub
+        autofocus=""
         class="mr-3"
         help-text="If no id is specified, a unique id will be generated automatically on rule creation"
         value="event-filter-id"
@@ -214,6 +217,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
       class="flex xs8"
     >
       <c-id-field-stub
+        autofocus=""
         class="mr-3"
         help-text="If no id is specified, a unique id will be generated automatically on rule creation"
         value="event-filter-id"
@@ -300,6 +304,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
       class="flex xs8"
     >
       <c-id-field-stub
+        autofocus=""
         class="mr-3"
         help-text="If no id is specified, a unique id will be generated automatically on rule creation"
         value="event-filter-id"
@@ -360,6 +365,7 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
       class="flex xs8"
     >
       <c-id-field-stub
+        autofocus=""
         class="mr-3"
         help-text="If no id is specified, a unique id will be generated automatically on rule creation"
       />

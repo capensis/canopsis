@@ -227,6 +227,8 @@ func updateMongoConfig(ctx context.Context, conf Conf, dbClient mongo.DbClient) 
 	conf.Canopsis.Metrics.EnabledInstructions = prevGlobalConf.Metrics.EnabledInstructions
 	conf.Canopsis.Metrics.EnabledNotAckedMetrics = prevGlobalConf.Metrics.EnabledNotAckedMetrics
 	conf.Canopsis.TechMetrics.Enabled = prevGlobalConf.TechMetrics.Enabled
+	conf.Canopsis.Metrics.EnabledSliMetrics = prevGlobalConf.Metrics.EnabledSliMetrics
+
 	err = globalConfAdapter.UpsertConfig(ctx, conf.Canopsis)
 	if err != nil {
 		return fmt.Errorf("failed to update global config: %w", err)
@@ -255,7 +257,6 @@ func updateVersionConfig(ctx context.Context, f flags, dbClient mongo.DbClient) 
 	buildInfo := canopsis.GetBuildInfo()
 	conf := config.VersionConf{
 		Version: buildInfo.Version,
-		Stack:   "go",
 	}
 	if f.edition != "" {
 		conf.Edition = f.edition

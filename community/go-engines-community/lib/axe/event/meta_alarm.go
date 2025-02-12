@@ -25,6 +25,7 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func NewMetaAlarmProcessor(
@@ -116,7 +117,6 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 	var updatedChildrenAlarms []types.Alarm
 	var metaAlarm types.Alarm
 	var alarmChange types.AlarmChange
-	var entity types.Entity
 	var result Result
 	var activateChildEvents []types.Event
 
@@ -125,7 +125,6 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		activateChildEvents = activateChildEvents[:0]
 		metaAlarm = types.Alarm{}
 		alarmChange = types.NewAlarmChange()
-		entity = types.Entity{}
 		result = Result{Forward: true}
 
 		rule, err := p.ruleAdapter.GetRule(ctx, event.Parameters.MetaAlarmRuleID)
@@ -135,6 +134,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			return fmt.Errorf("meta alarm rule id=%q not found", event.Parameters.MetaAlarmRuleID)
 		}
 
+		entity := types.Entity{}
 		err = p.entityCollection.FindOne(ctx, bson.M{"_id": event.Entity.ID}).Decode(&entity)
 		if err != nil {
 			return err
@@ -161,9 +161,9 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 				return err
 			}
 
-			if metaAlarmState.MetaAlarmName != entity.Name {
+			if metaAlarmState.GetEntityID() != entity.ID {
 				// try to get archived state
-				metaAlarmState, err = p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID+"-"+entity.Name)
+				metaAlarmState, err = p.metaAlarmStatesService.GetMetaAlarmState(ctx, stateID+"-"+entity.ID)
 				if err != nil {
 					return err
 				}
@@ -183,18 +183,14 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		worstState := types.CpsNumber(types.AlarmStateMinor)
 		eventsCount := types.CpsNumber(0)
 		var writeModels []mongodriver.WriteModel
-
+		var childAlarms []types.AlarmWithEntity
 		if len(childEntityIDs) > 0 {
-			childAlarms, err := getAlarmsWithEntityByMatch(ctx, p.alarmCollection, bson.M{
+			childAlarms, err = getAlarmsWithEntityByMatch(ctx, p.alarmCollection, bson.M{
 				"d":          bson.M{"$in": childEntityIDs},
 				"v.resolved": nil,
 			})
 			if err != nil {
 				return fmt.Errorf("cannot fetch children alarms: %w", err)
-			}
-
-			if len(childAlarms) > 0 {
-				lastChild = childAlarms[len(childAlarms)-1]
 			}
 
 			writeModels = make([]mongodriver.WriteModel, 0, len(childAlarms))
@@ -239,6 +235,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 
 					updatedChildrenAlarms = append(updatedChildrenAlarms, childAlarm.Alarm)
 					eventsCount += childAlarm.Alarm.Value.EventsCount
+					lastChild = childAlarm
 					if metaAlarm.Value.LastEventDate.Before(childAlarm.Alarm.Value.LastEventDate) {
 						metaAlarm.Value.LastEventDate = childAlarm.Alarm.Value.LastEventDate
 					}
@@ -247,16 +244,55 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		}
 
 		output := ""
+		entityUpdate := bson.M{}
+		var ruleInfos []types.CorrelationRuleInfo
 		if rule.IsManual() {
 			output = event.Parameters.Output
+			ruleInfos = event.Parameters.MetaAlarmInfos
+			if event.Parameters.MetaAlarmTags != nil {
+				metaAlarm.CopyTagsFromChildren = event.Parameters.MetaAlarmTags.CopyFromChildren
+				metaAlarm.FilterChildrenTagsByLabel = event.Parameters.MetaAlarmTags.FilterByLabel
+			}
 		} else {
 			output, err = executeMetaAlarmOutputTpl(p.templateExecutor, correlation.EventExtraInfosMeta{
-				Rule:     rule,
-				Count:    int64(len(updatedChildrenAlarms)),
-				Children: lastChild,
+				Rule:      rule,
+				Count:     int64(len(updatedChildrenAlarms)),
+				LastChild: lastChild,
+				Children:  lastChild,
 			})
 			if err != nil {
 				return err
+			}
+
+			ruleInfos = rule.Infos
+			metaAlarm.CopyTagsFromChildren = rule.Tags.CopyFromChildren
+			metaAlarm.FilterChildrenTagsByLabel = rule.Tags.FilterByLabel
+		}
+
+		if metaAlarm.CopyTagsFromChildren {
+			metaAlarm.ExternalTags = getMetaAlarmExternalTags(metaAlarm.FilterChildrenTagsByLabel, childAlarms, nil)
+			metaAlarm.Tags = metaAlarm.ExternalTags
+		}
+
+		copyInfoNames := make([]string, 0)
+		for _, info := range ruleInfos {
+			if info.CopyFromChildren {
+				copyInfoNames = append(copyInfoNames, info.Name)
+				continue
+			}
+
+			entityUpdate["infos."+info.Name] = types.Info{
+				Name:        info.Name,
+				Description: info.Description,
+				Value:       info.Value,
+			}
+		}
+
+		if len(copyInfoNames) > 0 {
+			metaAlarm.EntityInfosFromChildren = copyInfoNames
+			copiedEntityInfos := getMetaAlarmEntityInfos(copyInfoNames, childAlarms, nil)
+			for k, v := range copiedEntityInfos {
+				entityUpdate["infos."+k] = v
 			}
 		}
 
@@ -294,21 +330,20 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			}
 
 			alarmChange.Type = types.AlarmChangeTypeCreateAndPbhEnter
+			entityUpdate["pbehavior_info"] = metaAlarm.Value.PbehaviorInfo
+			entityUpdate["last_pbehavior_date"] = metaAlarm.Value.PbehaviorInfo.Timestamp
+		}
 
-			updateRes, err := p.entityCollection.UpdateOne(ctx, bson.M{"_id": metaAlarm.EntityID},
-				bson.M{"$set": bson.M{
-					"pbehavior_info":      metaAlarm.Value.PbehaviorInfo,
-					"last_pbehavior_date": metaAlarm.Value.PbehaviorInfo.Timestamp,
-				}},
-			)
+		if len(entityUpdate) > 0 {
+			entity = types.Entity{}
+			err := p.entityCollection.FindOneAndUpdate(ctx, bson.M{"_id": metaAlarm.EntityID},
+				bson.M{"$set": entityUpdate}, options.FindOneAndUpdate().SetReturnDocument(options.After)).
+				Decode(&entity)
 			if err != nil {
 				return fmt.Errorf("cannot update meta alarm entity: %w", err)
 			}
 
-			if updateRes.ModifiedCount > 0 {
-				entity.PbehaviorInfo = metaAlarm.Value.PbehaviorInfo
-				result.Entity = entity
-			}
+			result.Entity = entity
 		}
 
 		result.IsInstructionMatched, err = p.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: metaAlarm, Entity: entity})
@@ -324,7 +359,6 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			Alarm:  metaAlarm,
 			Entity: entity,
 		}))
-
 		_, err = p.alarmCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
 			return err
@@ -367,24 +401,25 @@ func (p *metaAlarmProcessor) newMetaAlarm(
 		ID:       utils.NewID(),
 		Time:     now,
 		Value: types.AlarmValue{
-			Connector:         canopsis.DefaultSystemAlarmConnector,
-			ConnectorName:     canopsis.DefaultSystemAlarmConnector,
-			Component:         entity.Component,
-			Resource:          entity.Name,
-			CreationDate:      now,
-			DisplayName:       types.GenDisplayName(alarmConfig.DisplayNameScheme),
-			InitialOutput:     params.Output,
-			Output:            params.Output,
-			InitialLongOutput: params.LongOutput,
-			LongOutput:        params.LongOutput,
-			LongOutputHistory: []string{params.LongOutput},
-			LastUpdateDate:    params.Timestamp,
-			LastEventDate:     now,
-			Parents:           []string{},
-			Children:          []string{},
-			UnlinkedParents:   []string{},
-			Infos:             map[string]map[string]interface{}{},
-			RuleVersion:       map[string]string{},
+			Connector:                   canopsis.DefaultSystemAlarmConnector,
+			ConnectorName:               canopsis.DefaultSystemAlarmConnector,
+			Component:                   entity.Component,
+			Resource:                    entity.Name,
+			CreationDate:                now,
+			DisplayName:                 types.GenDisplayName(alarmConfig.DisplayNameScheme),
+			InitialOutput:               params.Output,
+			Output:                      params.Output,
+			InitialLongOutput:           params.LongOutput,
+			LongOutput:                  params.LongOutput,
+			LongOutputHistory:           []string{params.LongOutput},
+			LastUpdateDate:              params.Timestamp,
+			LastStateOrStatusUpdateDate: params.Timestamp,
+			LastEventDate:               now,
+			Parents:                     []string{},
+			Children:                    []string{},
+			UnlinkedParents:             []string{},
+			Infos:                       map[string]map[string]interface{}{},
+			RuleVersion:                 map[string]string{},
 		},
 	}
 
@@ -399,7 +434,7 @@ func (p *metaAlarmProcessor) sendToFifo(ctx context.Context, event types.Event) 
 
 	err = p.amqpPublisher.PublishWithContext(
 		ctx,
-		canopsis.FIFOExchangeName,
+		canopsis.DefaultExchangeName,
 		canopsis.FIFOQueueName,
 		false,
 		false,

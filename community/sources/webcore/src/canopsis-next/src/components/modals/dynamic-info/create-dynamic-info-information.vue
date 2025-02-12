@@ -11,7 +11,8 @@
             v-validate="nameRules"
             :label="$t('common.name')"
             :error-messages="errors.collect('name')"
-            name
+            name="name"
+            autofocus
           />
           <c-mixed-field
             v-model="form.value"
