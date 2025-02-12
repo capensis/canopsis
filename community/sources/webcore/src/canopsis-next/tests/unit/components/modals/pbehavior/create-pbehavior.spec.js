@@ -44,6 +44,7 @@ describe('create-pbehavior', () => {
     rrule: null,
     tstart: null,
     tstop: null,
+    timezone: 'Europe/Paris',
   };
 
   const factory = generateShallowRenderer(CreatePbehavior, {
@@ -225,6 +226,7 @@ describe('create-pbehavior', () => {
       color: Faker.internet.color(),
       entity_pattern: [],
       rrule: null,
+      timezone: 'Europe/Paris',
     };
 
     selectPbehaviorForm(wrapper).triggerCustomEvent('input', newForm);

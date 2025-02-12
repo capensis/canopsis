@@ -88,6 +88,11 @@ func (v *roleProvider) GetValidRoleIDs(ctx context.Context, potentialRoles []str
 		}
 	}
 
+	err = cursor.Err()
+	if err != nil {
+		return nil, fmt.Errorf("failed to process mognodb cursor correctly: %w", err)
+	}
+
 	if len(res.FoundRoles) == 0 {
 		return v.getDefaultRole(ctx, defaultRole)
 	}

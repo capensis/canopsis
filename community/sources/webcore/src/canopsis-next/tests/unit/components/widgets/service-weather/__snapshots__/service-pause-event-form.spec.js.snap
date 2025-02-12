@@ -3,6 +3,7 @@
 exports[`service-pause-event-form Renders \`service-pause-event-form\` with custom props 1`] = `
 <div>
   <c-description-field-stub
+    autofocus=""
     label="Comment"
     name="comment"
     required=""
@@ -19,6 +20,7 @@ exports[`service-pause-event-form Renders \`service-pause-event-form\` with cust
 exports[`service-pause-event-form Renders \`service-pause-event-form\` with default props 1`] = `
 <div>
   <c-description-field-stub
+    autofocus=""
     label="Comment"
     name="comment"
     required=""

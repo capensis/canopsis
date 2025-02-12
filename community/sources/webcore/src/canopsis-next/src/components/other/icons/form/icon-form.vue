@@ -16,6 +16,7 @@
         :label="$t('common.title')"
         :error-messages="titleErrorMessages"
         name="title"
+        autofocus
       />
     </v-layout>
     <icon-file-selector

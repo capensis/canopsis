@@ -597,7 +597,7 @@ describe('alarms-list-table', () => {
         hideActions: true,
         parentAlarm: fakeAlarm(),
         refreshAlarmsList: jest.fn(),
-        selectedTag: 'tag',
+        selectedTags: ['tag'],
       },
     });
 

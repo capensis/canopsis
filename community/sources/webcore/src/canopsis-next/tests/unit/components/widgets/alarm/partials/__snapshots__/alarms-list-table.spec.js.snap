@@ -54,7 +54,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           refreshalarmslist="[Function]"
           search=""
           selectable="true"
-          selectedtag="tag"
+          selectedtags="tag"
           widget="[object Object]"
         />
         <transition-group-stub
@@ -73,7 +73,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           refreshalarmslist="[Function]"
           search=""
           selectable="true"
-          selectedtag="tag"
+          selectedtags="tag"
           widget="[object Object]"
         />
         <transition-group-stub
@@ -92,7 +92,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           refreshalarmslist="[Function]"
           search=""
           selectable="true"
-          selectedtag="tag"
+          selectedtags="tag"
           widget="[object Object]"
         />
         <transition-group-stub
@@ -111,7 +111,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           refreshalarmslist="[Function]"
           search=""
           selectable="true"
-          selectedtag="tag"
+          selectedtags="tag"
           widget="[object Object]"
         />
         <transition-group-stub
@@ -130,7 +130,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
           refreshalarmslist="[Function]"
           search=""
           selectable="true"
-          selectedtag="tag"
+          selectedtags="tag"
           widget="[object Object]"
         />
         <transition-group-stub
@@ -191,7 +191,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag="tag"
                   />
                   <!---->
                   <!---->
@@ -329,7 +328,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   <alarm-header-cell-stub
                     ellipsisheaders="true"
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -355,7 +353,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                   <alarm-header-cell-stub
                     ellipsisheaders="true"
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -424,7 +421,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -449,7 +445,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -518,7 +513,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -543,7 +537,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -613,7 +606,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -638,7 +630,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -733,7 +724,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -758,7 +748,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -854,7 +843,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -879,7 +867,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -944,7 +931,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           headers="[object Object],[object Object],[object Object]"
           refreshalarmslist="[Function]"
           search=""
-          selectedtag=""
+          selectedtags=""
           widget="[object Object]"
         />
         <transition-group-stub
@@ -960,7 +947,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           headers="[object Object],[object Object],[object Object]"
           refreshalarmslist="[Function]"
           search=""
-          selectedtag=""
+          selectedtags=""
           widget="[object Object]"
         />
         <transition-group-stub
@@ -976,7 +963,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           headers="[object Object],[object Object],[object Object]"
           refreshalarmslist="[Function]"
           search=""
-          selectedtag=""
+          selectedtags=""
           widget="[object Object]"
         />
         <transition-group-stub
@@ -992,7 +979,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           headers="[object Object],[object Object],[object Object]"
           refreshalarmslist="[Function]"
           search=""
-          selectedtag=""
+          selectedtags=""
           widget="[object Object]"
         />
         <transition-group-stub
@@ -1008,7 +995,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
           headers="[object Object],[object Object],[object Object]"
           refreshalarmslist="[Function]"
           search=""
-          selectedtag=""
+          selectedtags=""
           widget="[object Object]"
         />
         <transition-group-stub
@@ -1044,7 +1031,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -1063,7 +1049,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->
@@ -1088,7 +1073,6 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 >
                   <alarm-header-cell-stub
                     header="[object Object]"
-                    selectedtag=""
                   />
                   <!---->
                   <!---->

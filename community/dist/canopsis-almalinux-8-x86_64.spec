@@ -59,8 +59,7 @@ fi
 /opt/canopsis/share/database/migrations/*.js
 /opt/canopsis/share/database/postgres_migrations/*.sql
 /opt/canopsis/share/database/tech_postgres_migrations/*.sql
-/opt/canopsis/var/lib/icons
-/opt/canopsis/var/lib/upload-files
+/opt/canopsis/var/lib
 %defattr(0644, root, root, 0755)
 /usr/lib/systemd/system/canopsis-*
 /usr/lib/systemd/system/canopsis.service
@@ -94,12 +93,19 @@ fi
 %package webui
 Summary: Canopsis WebUI
 
-Requires: nginx >= 1:1.20, nginx < 1:1.24
+Requires: nginx >= 1:1.20
 
 %description webui
 Canopsis WebUI RPM Package
 
 %pre webui
+echo "Disabling default.conf if existing"
+if [ -f "/etc/nginx/conf.d/default.conf" ]; then
+if rpm -qf /etc/nginx/conf.d/default.conf  | grep -q canopsis-webui;then 
+  echo "Disabling default.conf from previous existing Canopsis WebUI installation"
+  mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.bak
+fi
+fi
 
 %preun webui
 
@@ -109,7 +115,7 @@ Canopsis WebUI RPM Package
 
 %files webui
 /opt/canopsis/srv
-%config(noreplace) /etc/nginx/conf.d/default.conf
+%config(noreplace) /etc/nginx/conf.d/canopsis.conf
 %config(noreplace) /etc/nginx/cors.inc
 %config(noreplace) /etc/nginx/https.inc
 %config(noreplace) /etc/nginx/rundeck.inc

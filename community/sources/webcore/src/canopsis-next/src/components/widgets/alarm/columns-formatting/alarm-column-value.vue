@@ -17,10 +17,10 @@
       :widget="widget"
       :column="column"
       :small="small"
-      :selected-tag="selectedTag"
+      :selected-tags="selectedTags"
       @activate="$emit('activate', $event)"
       @select:tag="$emit('select:tag', $event)"
-      @clear:tag="$emit('clear:tag')"
+      @remove:tag="$emit('remove:tag', $event)"
       @click:state="$emit('click:state', $event)"
     />
   </color-indicator-wrapper>
@@ -30,10 +30,10 @@
     :widget="widget"
     :column="column"
     :small="small"
-    :selected-tag="selectedTag"
+    :selected-tags="selectedTags"
     @activate="$emit('activate', $event)"
     @select:tag="$emit('select:tag', $event)"
-    @clear:tag="$emit('clear:tag')"
+    @remove:tag="$emit('remove:tag', $event)"
     @click:state="$emit('click:state', $event)"
   />
 </template>
@@ -41,7 +41,7 @@
 <script>
 import { get } from 'lodash';
 
-import { getAlarmWidgetColumnTemplateId } from '@/helpers/entities/alarm/list';
+import { getAlarmWidgetColumnTemplateId, getAlarmWidgetGroupColumnTemplateId } from '@/helpers/entities/alarm/list';
 
 import ColorIndicatorWrapper from '@/components/common/table/color-indicator-wrapper.vue';
 
@@ -65,9 +65,13 @@ export default {
       type: Object,
       required: true,
     },
-    selectedTag: {
-      type: String,
-      default: '',
+    selectedTags: {
+      type: Array,
+      default: () => [],
+    },
+    parentAlarm: {
+      type: Object,
+      default: null,
     },
     small: {
       type: Boolean,
@@ -76,7 +80,9 @@ export default {
   },
   computed: {
     templateId() {
-      return getAlarmWidgetColumnTemplateId(this.widget._id, this.column.value);
+      return this.parentAlarm
+        ? getAlarmWidgetGroupColumnTemplateId(this.widget._id, this.column.value)
+        : getAlarmWidgetColumnTemplateId(this.widget._id, this.column.value);
     },
 
     templateContext() {

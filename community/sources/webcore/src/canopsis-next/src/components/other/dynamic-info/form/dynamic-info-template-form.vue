@@ -6,6 +6,7 @@
       :error-messages="errors.collect('title')"
       :label="$t('common.title')"
       name="title"
+      autofocus
     />
     <h3>{{ $t('modals.createDynamicInfoTemplate.fields.names') }}</h3>
     <dynamic-info-template-names-field v-field="template.names">

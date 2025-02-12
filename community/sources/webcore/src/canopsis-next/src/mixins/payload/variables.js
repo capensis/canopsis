@@ -120,7 +120,10 @@ export const payloadVariablesMixin = {
       return this.alarmPayloadSubVariables.map(
         variable => ({
           ...variable,
-          value: variable.value === ALARM_PAYLOADS_VARIABLES.entityInfosValue
+          value: [
+            ALARM_PAYLOADS_VARIABLES.entityInfosValue,
+            ALARM_PAYLOADS_VARIABLES.entityName,
+          ].includes(variable.value)
             ? variable.value
             : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
         }),

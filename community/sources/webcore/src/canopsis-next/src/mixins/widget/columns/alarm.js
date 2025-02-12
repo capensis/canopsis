@@ -1,4 +1,4 @@
-import { COLOR_INDICATOR_TYPES } from '@/constants';
+import { ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS, COLOR_INDICATOR_TYPES } from '@/constants';
 
 import {
   getAlarmsListWidgetColumnValueFilter,
@@ -33,6 +33,11 @@ export const widgetColumnsAlarmMixin = {
     },
 
     preparedColumns() {
+      const {
+        showRootCauseByStateClick = true,
+        columns: columnsSettings = {},
+      } = this.widget.parameters ?? {};
+
       return (this.columns ?? []).map(column => ({
         ...column,
 
@@ -40,7 +45,11 @@ export const widgetColumnsAlarmMixin = {
         filter: this.$i18n.locale && this.getColumnFilter(column.value),
         getComponent: getAlarmsListWidgetColumnComponentGetter(
           column,
-          { showRootCauseByStateClick: this.widget.parameters?.showRootCauseByStateClick ?? true },
+          {
+            showRootCauseByStateClick,
+            isCellContentTruncated:
+              columnsSettings.cells_content_behavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
+          },
         ),
         colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),
       }));

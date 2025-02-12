@@ -12,9 +12,10 @@ import {
   convertDateToMomentByTimezone,
   convertDateToStartOfDayMoment,
   convertDateToStartOfUnitMoment,
+  convertDateToEndOfUnitMoment,
   convertDateToStartOfUnitString,
   convertDateToTimestampByTimezone,
-  getLocaleTimezone,
+  getLocalTimezone,
   getNowTimestamp,
   subtractUnitFromDate,
 } from './date';
@@ -49,9 +50,13 @@ export const convertStringToDateInterval = (string, type) => {
 
     const isToday = initial === 'today';
     const isStart = type === DATETIME_INTERVAL_TYPES.start;
-    const result = isToday
-      ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
-      : moment();
+    let result = moment();
+
+    if (isToday) {
+      result = isStart || deltaValue
+        ? convertDateToStartOfUnitMoment(getNowTimestamp(), TIME_UNITS.day)
+        : convertDateToEndOfUnitMoment(getNowTimestamp(), TIME_UNITS.day);
+    }
 
     if (preparedRoundUnit) {
       if (isStart) {
@@ -113,7 +118,7 @@ export const convertDateIntervalToMoment = (
  * @param {string} type
  * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @param {string} [unit = SAMPLINGS.hour]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {number | moment.Moment}
  */
 export const convertDateIntervalToMomentByTimezone = (
@@ -121,11 +126,11 @@ export const convertDateIntervalToMomentByTimezone = (
   type,
   format = DATETIME_FORMATS.datePicker,
   unit = SAMPLINGS.hour,
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 ) => (
   convertDateToMomentByTimezone(
     convertDateIntervalToMoment(date, type, format, unit),
-    getLocaleTimezone(),
+    getLocalTimezone(),
     timezone,
   )
 );
@@ -150,10 +155,10 @@ export const convertDateIntervalToTimestamp = (date, type, format, unit) => (
  * @param {string} type
  * @param {string} format
  * @param {string} unit
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {number}
  */
-export const convertDateIntervalToTimestampByTimezone = (date, type, format, unit, timezone = getLocaleTimezone()) => (
+export const convertDateIntervalToTimestampByTimezone = (date, type, format, unit, timezone = getLocalTimezone()) => (
   convertDateIntervalToMomentByTimezone(date, type, format, unit, timezone).unix()
 );
 
@@ -201,14 +206,14 @@ export const convertStartDateIntervalToMoment = (
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @param {string} [unit = SAMPLINGS.day]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {number}
  */
 export const convertStartDateIntervalToTimestampByTimezone = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit = SAMPLINGS.day,
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 ) => convertDateIntervalToTimestampByTimezone(
   date,
   DATETIME_INTERVAL_TYPES.start,
@@ -261,14 +266,14 @@ export const convertStopDateIntervalToMoment = (
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.datePicker]
  * @param {string} [unit = SAMPLINGS.day]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {number}
  */
 export const convertStopDateIntervalToTimestampByTimezone = (
   date,
   format = DATETIME_FORMATS.datePicker,
   unit = SAMPLINGS.day,
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 ) => convertDateIntervalToTimestampByTimezone(
   date,
   DATETIME_INTERVAL_TYPES.stop,
@@ -392,13 +397,13 @@ export const findQuickRangeByInterval = (
  *
  * @param {IntervalForm} [interval = {}]
  * @param {string} [format = DATETIME_FORMATS.datePicker]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {Interval}
  */
 export const convertMetricIntervalToTimestamp = ({
   interval = {},
   format = DATETIME_FORMATS.datePicker,
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 }) => {
   const fromMoment = convertStartDateIntervalToMoment(interval.from, format, TIME_UNITS.day);
   const toMoment = convertStopDateIntervalToMoment(interval.to, format, TIME_UNITS.day);
@@ -416,13 +421,13 @@ export const convertMetricIntervalToTimestamp = ({
  *
  * @param {IntervalForm} [interval = {}]
  * @param {string} [format = DATETIME_FORMATS.datePicker]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {Interval}
  */
 export const convertQueryIntervalToTimestamp = ({
   interval = {},
   format = DATETIME_FORMATS.datePicker,
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 }) => {
   const from = convertStartDateIntervalToTimestamp(interval.from, format, TIME_UNITS.hour);
   const to = convertStopDateIntervalToTimestamp(interval.to, format, TIME_UNITS.hour);

@@ -43,7 +43,11 @@ type EditRequest struct {
 }
 
 type PatchRequest struct {
-	ID                     string   `json:"-"`
+	ID string `json:"-"`
+	PatchEditRequest
+}
+
+type PatchEditRequest struct {
 	Password               *string  `json:"password"`
 	Name                   *string  `json:"name" binding:"omitempty,max=255"`
 	Firstname              *string  `json:"firstname" binding:"omitempty,max=255"`
@@ -118,7 +122,7 @@ func (r EditRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 	return bsonModel, nil
 }
 
-func (r PatchRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
+func (r PatchEditRequest) getBson(passwordEncoder password.Encoder) (bson.M, error) {
 	bsonModel := bson.M{
 		"author":  r.Author,
 		"updated": datetime.NewCpsTime(),
@@ -199,6 +203,11 @@ type User struct {
 	ActiveConnects *int64 `bson:"-" json:"active_connects,omitempty"`
 
 	Deletable *bool `bson:"-" json:"deletable,omitempty"`
+
+	// IdPRoles field shows roles defined in IdP, which shouldn't be modified for a user.
+	IdPRoles []string `bson:"idp_roles,omitempty" json:"idp_roles,omitempty"`
+	// IdPFields field shows immutable user fields, because they are defined by IdP.
+	IdPFields []string `bson:"-" json:"idp_fields,omitempty"`
 }
 
 type Role struct {
@@ -215,6 +224,11 @@ type View struct {
 type BulkUpdateRequestItem struct {
 	ID string `json:"_id" binding:"required"`
 	EditRequest
+}
+
+type BulkPatchRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+	PatchEditRequest
 }
 
 type BulkDeleteRequestItem struct {
