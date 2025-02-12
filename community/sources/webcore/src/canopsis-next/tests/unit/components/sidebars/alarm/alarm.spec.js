@@ -1468,6 +1468,21 @@ describe('alarm', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `alarm` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    wrapper.find('field-title-stub').triggerCustomEvent('input', 'New title');
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `alarm` widget settings with all rights', async () => {
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([

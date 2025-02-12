@@ -23,3 +23,16 @@ exports[`pie-chart Renders \`pie-chart\` widget settings with default props 1`] 
   />
 </widget-settings-stub>
 `;
+
+exports[`pie-chart Renders \`pie-chart\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+  divider="true"
+>
+  <pie-chart-widget-form-stub
+    form="[object Object]"
+    withperiodicrefresh="true"
+    withpreset="true"
+  />
+</widget-settings-stub>
+`;

@@ -1890,3 +1890,629 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
   />
 </widget-settings-stub>
 `;
+
+exports[`alarm Renders \`alarm\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+  divider="true"
+>
+  <field-title-stub
+    name="title"
+    value="New title"
+  />
+  <field-periodic-refresh-stub
+    form="[object Object]"
+    withlivewatching="true"
+  />
+  <widget-settings-group-stub
+    title="Live reporting"
+  >
+    <field-live-reporting-stub
+      value="[object Object]"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Columns"
+  >
+    <field-default-sort-column-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      columnslabel="Column name"
+      value="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for meta alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names for alarm track source"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-resize-column-behavior-stub
+      value="[object Object]"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-info-popup-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      popups=""
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Filter"
+  >
+    <!---->
+    <field-opened-resolved-filter-stub
+      value="true"
+    />
+    <!---->
+    <field-switcher-stub
+      title="Correlation"
+    />
+    <field-switcher-stub
+      title="Clear of selected filter allowed"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="View"
+  >
+    <field-default-elements-per-page-stub
+      value="10"
+    />
+    <field-density-stub
+      name="dense"
+      value="0"
+    />
+    <widget-settings-group-stub
+      title="Kiosk mode"
+    >
+      <field-switcher-stub
+        title="Hide actions"
+      />
+      <field-switcher-stub
+        title="Hide mass selection"
+      />
+      <field-switcher-stub
+        title="Hide toolbar"
+      />
+    </widget-settings-group-stub>
+    <field-switcher-stub
+      title="Sticky header"
+    />
+    <field-switcher-stub
+      title="Sticky horizontal scroll"
+    />
+    <field-switcher-stub
+      title="Render elements on scroll"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Actions"
+  >
+    <widget-settings-group-stub
+      title="Ack"
+    >
+      <field-switcher-stub
+        title="Ack - note field required"
+      />
+      <field-switcher-stub
+        title="Multiple ack"
+      />
+      <field-fast-action-output-stub
+        label="Fast-ack output"
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Cancel"
+    >
+      <field-fast-action-output-stub
+        label="Fast-cancel output"
+        value="[object Object]"
+      />
+      <field-switcher-stub
+        title="Uncancel - comment field required"
+        value="true"
+      />
+    </widget-settings-group-stub>
+    <fast-pbehavior-form-stub
+      form="[object Object]"
+    />
+    <field-switcher-stub
+      title="Snooze - note field required"
+    />
+    <field-switcher-stub
+      title="Remove alarms from manual meta alarm - comment field required"
+      value="true"
+    />
+    <field-switcher-stub
+      title="Multiple declare ticket"
+    />
+    <field-switcher-stub
+      title="Actions allowed when state OK"
+    />
+    <field-text-editor-with-template-stub
+      addable="true"
+      defaultvalue="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
+  <div style=\\"font-size: 18px; color: rgb(255, 255, 255); background-color: rgb(47, 171, 99); border: 2px solid rgb(255, 255, 255);\\">
+    <p style=\\"padding: 10px 12px; margin: 0;\\"><strong>Alarm&nbsp;&nbsp;display</strong></p>
+  </div>
+  <table
+    style=\\"width: 100%; color: rgb(67, 67, 67); border-collapse: collapse; table-layout: fixed;\\">
+    <tbody>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Current&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ current_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Display&nbsp;&nbsp;name</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.display_name }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">State</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.state }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Status</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.status }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Connector</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.connector }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Connector&nbsp;&nbsp;name</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.connector_name }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Component</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.component }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Resource</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.resource }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Creation&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.creation_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Activated&nbsp;&nbsp;at</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.activation_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Resolved&nbsp;&nbsp;at</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.resolved }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Duration</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.duration }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Infos</p></td>
+      <td
+        style=\\"padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.v.infos }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">PBehavior&nbsp;&nbsp;info</p></td>
+      <td
+        style=\\"padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.v.pbehavior_info }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Initial&nbsp;&nbsp;output</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.initial_output }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Output</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.output }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Last&nbsp;&nbsp;event&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.last_event_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Last&nbsp;&nbsp;update&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.last_event_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Acked&nbsp;&nbsp;at</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.acknowledge_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Events&nbsp;&nbsp;count</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.events_count }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Ticket</p></td>
+      <td
+        style=\\"padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.v.ticket }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Comments</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.comments }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Tags</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.tags }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Links</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);\\">
+        {{ alarm.links }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+"
+      dialogprops="[object Object]"
+      removable="true"
+      template="Symbol(custom)"
+      templates=""
+      title="Export PDF template"
+      value="<div style=\\"width: 1000px; font-family: Roboto, sans-serif; font-size: 15px; line-height: 1.2; overflow-wrap: break-word;\\">
+  <div style=\\"font-size: 18px; color: rgb(255, 255, 255); background-color: rgb(47, 171, 99); border: 2px solid rgb(255, 255, 255);\\">
+    <p style=\\"padding: 10px 12px; margin: 0;\\"><strong>Alarm&nbsp;&nbsp;display</strong></p>
+  </div>
+  <table
+    style=\\"width: 100%; color: rgb(67, 67, 67); border-collapse: collapse; table-layout: fixed;\\">
+    <tbody>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Current&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ current_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Display&nbsp;&nbsp;name</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.display_name }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">State</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.state }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Status</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.status }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Connector</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.connector }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Connector&nbsp;&nbsp;name</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.connector_name }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Component</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.component }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Resource</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.resource }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Creation&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.creation_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Activated&nbsp;&nbsp;at</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.activation_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Resolved&nbsp;&nbsp;at</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.resolved }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Duration</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.duration }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Infos</p></td>
+      <td
+        style=\\"padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.v.infos }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">PBehavior&nbsp;&nbsp;info</p></td>
+      <td
+        style=\\"padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.v.pbehavior_info }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Initial&nbsp;&nbsp;output</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.initial_output }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Output</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.output }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Last&nbsp;&nbsp;event&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.last_event_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Last&nbsp;&nbsp;update&nbsp;&nbsp;date</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.last_event_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Acked&nbsp;&nbsp;at</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.acknowledge_date }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Events&nbsp;&nbsp;count</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">{{ alarm.v.events_count }}</p></td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Ticket</p></td>
+      <td
+        style=\\"padding: 0 2px 0 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.v.ticket }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Comments</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.comments }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Tags</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245); width: 70%;\\">
+        {{ alarm.tags }}</td>
+    </tr>
+    <tr>
+      <td
+        style=\\"font-weight: 700; border-top: none; border-right: 2px solid rgb(255, 255, 255); border-bottom: 2px solid rgb(255, 255, 255); border-left: 2px solid rgb(255, 255, 255); border-image: initial; background-color: rgb(245, 245, 245); color: rgb(102, 102, 102); width: 30%;\\">
+        <p style=\\"padding: 12px; margin: 0;\\">Links</p></td>
+      <td
+        style=\\"padding: 0; background-color: rgb(255, 255, 255); border-bottom: 2px solid rgb(245, 245, 245); border-right: 2px solid rgb(245, 245, 245);\\">
+        {{ alarm.links }}</td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Expand panel"
+  >
+    <widget-settings-group-stub
+      title="More infos"
+    >
+      <field-text-editor-with-template-stub
+        addable="true"
+        defaultvalue=""
+        removable="true"
+        template="Symbol(custom)"
+        templates=""
+        title="Infos"
+        value=""
+        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      />
+      <field-grid-range-size-stub
+        inline="true"
+        max="12"
+        min="0"
+        step="1"
+        title="Width"
+        value="0,12"
+      />
+    </widget-settings-group-stub>
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
+    />
+    <field-switcher-stub
+      title="HTML enabled on timeline"
+      value="true"
+    />
+  </widget-settings-group-stub>
+  <export-csv-form-stub
+    datetimeformat="true"
+    form="[object Object]"
+    optionalinfosattributes="true"
+    templates=""
+    type="alarm"
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    withinstructions="true"
+    withsimpletemplate="true"
+  />
+  <charts-form-stub
+    charts=""
+  />
+</widget-settings-stub>
+`;

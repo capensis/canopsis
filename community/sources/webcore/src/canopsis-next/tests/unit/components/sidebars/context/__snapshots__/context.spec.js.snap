@@ -245,3 +245,83 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
   />
 </widget-settings-stub>
 `;
+
+exports[`context Renders \`context\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+  divider="true"
+>
+  <field-title-stub
+    name="title"
+    value="New title"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-default-sort-column-stub
+      columns="[object Object],[object Object]"
+      columnslabel="Column name"
+      value="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names for tree of dependencies"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-tree-of-dependencies-settings-stub
+      value="2"
+    />
+    <field-availability-graph-settings-stub
+      form="[object Object]"
+      name="availability"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object]"
+      label="Column names for active alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object]"
+      label="Column names for resolved alarms"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+    />
+    <!---->
+    <field-context-entities-types-filter-stub
+      value=""
+    />
+    <field-grid-range-size-stub
+      max="12"
+      min="0"
+      step="1"
+      title="Expand card (more infos) width"
+      value="0,12"
+    />
+    <export-csv-form-stub
+      form="[object Object]"
+      templates=""
+      type="entity"
+      withoutinfosattributes="true"
+    />
+  </widget-settings-group-stub>
+  <charts-form-stub
+    charts=""
+  />
+</widget-settings-stub>
+`;
