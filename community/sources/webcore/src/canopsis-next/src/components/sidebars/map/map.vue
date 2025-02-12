@@ -1,6 +1,8 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
+    divider
     @submit="submit"
   >
     <field-title v-model="form.title" />
