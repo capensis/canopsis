@@ -364,6 +364,21 @@ describe('availability-settings', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `availability-settings` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    selectWidgetForm(wrapper).triggerCustomEvent('input', widget);
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `availability-settings` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USERS_PERMISSIONS.business.availability.actions.listFilters]: { actions: [] },
