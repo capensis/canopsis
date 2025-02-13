@@ -139,12 +139,9 @@ moteurs Canopsis doivent être redémarrés.
 
 | Attribut       | Exemple de valeur                        | Description                          |
 | :------------- | :--------------------------------------- | :----------------------------------- |
-| Upload         | "/opt/canopsis/var/lib/upload-files"     | Emplacement des fichiers uploadés. Utilisé pour le module de [remédiation](../../guide-utilisation/remediation/index.md) et des paramètres de l'interface graphique  |
+| Dir            | "/opt/canopsis/var/lib"                  | Emplacement des fichiers uploadés. Utilisé pour le module de [remédiation](../../guide-utilisation/remediation/index.md), des icônes, des exports csv, et dans le cadre de la multi-instanciation du service `api` |
 | UploadMaxSize  | 314572800 # 300Mb                        | Taille maximale d'un fichier à uploader (en octet) |
-| Junit          | "/opt/canopsis/var/lib/junit-files"      | Emplacement des fichiers traités par le module Junit |
-| JunitApi       | "/tmp/canopsis/junit"                    | Emplacement des fichiers temporaires uploadés par le module Junit (via API) |
 | SnmpMib        | ["/usr/share/snmp/mibs"]                 | Emplacement des fichiers MIB qui seront utilisés par le module SNMP |
-| Icon           | "/opt/canopsis/var/lib/icons"            | Emplacement des fichiers d'icônes |
 | IconMaxSize    | 10240 # 10Kb                             | Taille max des fichiers d'icônes |
 
 
