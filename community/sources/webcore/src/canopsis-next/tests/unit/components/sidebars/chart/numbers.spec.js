@@ -240,6 +240,21 @@ describe('numbers', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `numbers` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    selectWidgetForm(wrapper).triggerCustomEvent('input', widget);
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `numbers` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USERS_PERMISSIONS.business.numbers.actions.listFilters]: { actions: [] },
