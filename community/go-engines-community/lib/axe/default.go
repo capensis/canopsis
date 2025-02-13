@@ -44,18 +44,19 @@ import (
 )
 
 type Options struct {
-	Version                  bool
-	FeaturePrintEventOnError bool
-	ModeDebug                bool
-	FifoAckExchange          string
-	PeriodicalWaitTime       time.Duration
-	TagsPeriodicalWaitTime   time.Duration
-	SliPeriodicalWaitTime    time.Duration
-	ExternalWorkers          int
-	SystemWorkers            int
-	UserWorkers              int
-	RpcWorkers               int
-	RecomputeAllOnInit       bool
+	Version                          bool
+	FeaturePrintEventOnError         bool
+	ModeDebug                        bool
+	FifoAckExchange                  string
+	PeriodicalWaitTime               time.Duration
+	TagsPeriodicalWaitTime           time.Duration
+	SliPeriodicalWaitTime            time.Duration
+	SoftDeleteCorrPeriodicalWaitTime time.Duration
+	ExternalWorkers                  int
+	SystemWorkers                    int
+	UserWorkers                      int
+	RpcWorkers                       int
+	RecomputeAllOnInit               bool
 }
 
 func ParseOptions() (Options, []string) {
@@ -67,6 +68,7 @@ func ParseOptions() (Options, []string) {
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.DefaultExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
 	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
+	flag.DurationVar(&opts.SoftDeleteCorrPeriodicalWaitTime, "softDeleteCorrPeriodicalWaitTime", time.Minute, "Duration to wait between two run of periodical process to delete meta alarm rules and corresponding meta alarms")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.ExternalWorkers, "externalWorkers", canopsis.DefaultExternalEventWorkers, "Amount of workers to process external event flow.")
