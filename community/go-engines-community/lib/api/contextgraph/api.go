@@ -17,7 +17,8 @@ import (
 )
 
 const (
-	filePerm    = 0o644
+	dirPerm     = 0o770
+	filePerm    = 0o640
 	filePattern = "import_%s.json"
 )
 
@@ -110,7 +111,7 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 		return "", err
 	}
 
-	err = os.MkdirAll(a.dir, os.ModeDir|filePerm)
+	err = os.MkdirAll(a.dir, os.ModeDir|dirPerm)
 	if err != nil {
 		return "", err
 	}
