@@ -3,13 +3,19 @@ import { ref, computed, unref, onMounted } from 'vue';
 import {
   ALARM_ADVANCED_SEARCH_GROUPS,
   ALARM_EVENT_INITIATORS,
-  ALARM_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS,
-  ALARM_STATES, ALARM_STATUSES,
-  BASIC_ENTITY_TYPES, ENTITY_TYPES, MAX_LIMIT,
-  PATTERN_DURATION_OPERATORS, PATTERN_EXISTS_OPERATORS, PATTERN_NUMBER_OPERATORS,
+  ALARM_FIELDS,
+  ALARM_FIELDS_TO_LABELS_KEYS,
+  ALARM_STATES,
+  ALARM_STATUSES,
+  BASIC_ENTITY_TYPES,
+  ENTITY_TYPES,
+  MAX_LIMIT,
+  PATTERN_DURATION_OPERATORS,
+  PATTERN_EXISTS_OPERATORS,
+  PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
-  PATTERN_QUICK_RANGES,
-  PATTERN_STRING_OPERATORS, PBEHAVIOR_TYPE_TYPES,
+  PATTERN_STRING_OPERATORS,
+  PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
@@ -403,18 +409,22 @@ export const useAdvancedSearchPbehaviorAttributes = () => {
   const attributesMap = computed(() => ({
     [ALARM_FIELDS.pbehaviorInfoName]: {
       ...BASE_OPTIONS,
+      text: t('pbehavior.pbehaviorName'),
       fetchValues: fetchPbehaviorsListWithoutStore,
     },
     [ALARM_FIELDS.pbehaviorInfoReason]: {
       ...BASE_OPTIONS,
+      text: t('pbehavior.pbehaviorReason'),
       fetchValues: fetchPbehaviorReasonsListWithoutStore,
     },
     [ALARM_FIELDS.pbehaviorInfoType]: {
       ...BASE_OPTIONS,
+      text: t('pbehavior.pbehaviorType'),
       fetchValues: fetchPbehaviorTypesListWithoutStore,
     },
     [ALARM_FIELDS.pbehaviorInfoCanonicalType]: {
       operators: BASE_OPERATORS,
+      text: t('pbehavior.pbehaviorCanonicalType'),
       values: Object.values(PBEHAVIOR_TYPE_TYPES).map(type => ({
         value: type,
         text: t(`pbehavior.types.types.${type}`),
@@ -446,12 +456,16 @@ export const useAdvancedSearchAttributes = ({
     ...pbehaviorAttributesMap.value,
   }));
 
-  const prepareItem = (field, allow) => ({
-    ...attributesMap.value[field],
-    value: field,
-    text: tc(ALARM_FIELDS_TO_LABELS_KEYS[field], 2),
-    disabled: !allow,
-  });
+  const prepareItem = (field, allow) => {
+    const attributes = attributesMap.value[field];
+
+    return {
+      ...attributesMap.value[field],
+      value: field,
+      text: attributes.text ?? tc(ALARM_FIELDS_TO_LABELS_KEYS[field], 2),
+      disabled: !allow,
+    };
+  };
 
   const attributes = computed(() => {
     const unwrappedAllowAlarmFields = unref(allowAlarmFields);
