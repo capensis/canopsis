@@ -113,3 +113,62 @@ exports[`map Renders \`map\` widget settings with default props 1`] = `
   </widget-settings-group-stub>
 </widget-settings-stub>
 `;
+
+exports[`map Renders \`map\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+  divider="true"
+>
+  <field-title-stub
+    name="title"
+    value="New title"
+  />
+  <field-periodic-refresh-stub
+    form="[object Object]"
+  />
+  <field-map-stub
+    value=""
+  />
+  <widget-settings-group-stub
+    title="Entity display settings"
+  >
+    <field-color-indicator-stub
+      value="state"
+    />
+    <field-switcher-stub
+      title="Entities under PBh type inactive, Pause, Maintenance display"
+      value="true"
+    />
+  </widget-settings-group-stub>
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <!---->
+    <field-text-editor-stub
+      defaultvalue=""
+      title="Entity info popup"
+      value="<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      label="Alarm list columns"
+      template="Symbol(custom)"
+      templates=""
+      type="alarm"
+      withhtml="true"
+      withtemplate="true"
+    />
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Context explorer columns"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;

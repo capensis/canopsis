@@ -224,6 +224,7 @@ export default {
       + '</dl>',
   },
   stickyHeader: 'Sticky header',
+  stickyHorizontalScroll: 'Sticky horizontal scroll',
   reportFileRegexp: {
     title: 'Report file mask',
     helpText: '<dl>'
