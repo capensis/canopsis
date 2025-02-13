@@ -101,7 +101,8 @@ func main() {
 		logger.Fatal().Err(err).Msg("failed to generate serial name")
 	}
 
-	err = externaldata.SyncMongoCollections(ctx, client, conf.Canopsis.ExternalData.Collections, logger)
+	err = externaldata.SyncMongoCollections(ctx, client, conf.Canopsis.ExternalData.Collections,
+		[]string{mongo.EventFilterRuleCollection, mongo.LinkRuleMongoCollection}, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to sync external data collections")
 	}

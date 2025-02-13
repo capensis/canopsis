@@ -1,4 +1,4 @@
-package externaldata
+package externaldatatable
 
 import (
 	"bytes"
@@ -153,7 +153,7 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("table"), c.MustGet(auth.UserKey).(string))
 	if err != nil {
-		if errors.Is(err, ErrConfigNotDeletable) {
+		if errors.Is(err, ErrConfigNotDeletable) || errors.Is(err, ErrLinkedNotDeletable) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 
 			return

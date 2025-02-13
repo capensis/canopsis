@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -15,7 +15,7 @@ type ParsedRule struct {
 	ID           string
 	Type         string
 	Config       ParsedRuleConfig
-	ExternalData map[string]ParsedExternalDataParameters
+	ExternalData []externaldata.ParsedRefParameters
 	Created      *datetime.CpsTime
 	Updated      *datetime.CpsTime
 
@@ -49,19 +49,6 @@ type ParsedAction struct {
 	ParsedValue libtemplate.ParsedTemplate
 }
 
-type ParsedExternalDataParameters struct {
-	Type string
-
-	Collection string
-	Select     map[string]libtemplate.ParsedTemplate
-	Regexp     map[string]libtemplate.ParsedTemplate
-	SortBy     string
-	Sort       string
-	Optional   bool
-
-	RequestParameters *request.ParsedParameters
-}
-
 func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 	parsedActions := make([]ParsedAction, len(rule.Config.Actions))
 	for i, action := range rule.Config.Actions {
@@ -83,44 +70,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 		}
 	}
 
-	parsedExternalData := make(map[string]ParsedExternalDataParameters, len(rule.ExternalData))
-	for name, params := range rule.ExternalData {
-		parsedSelect := make(map[string]libtemplate.ParsedTemplate, len(params.Select))
-		for k, v := range params.Select {
-			parsedSelect[k] = tplExecutor.Parse(v)
-		}
-
-		parsedRegexp := make(map[string]libtemplate.ParsedTemplate, len(params.Regexp))
-		for k, v := range params.Regexp {
-			parsedRegexp[k] = tplExecutor.Parse(v)
-		}
-
-		var parsedRequestParameters *request.ParsedParameters
-		if params.RequestParameters != nil {
-			parsedRequestParameters = &request.ParsedParameters{
-				URL:        tplExecutor.Parse(params.RequestParameters.URL),
-				Method:     params.RequestParameters.Method,
-				Auth:       params.RequestParameters.Auth,
-				Headers:    params.RequestParameters.Headers,
-				Payload:    tplExecutor.Parse(params.RequestParameters.Payload),
-				SkipVerify: params.RequestParameters.SkipVerify,
-				Timeout:    params.RequestParameters.Timeout,
-				RetryCount: params.RequestParameters.RetryCount,
-				RetryDelay: params.RequestParameters.RetryDelay,
-			}
-		}
-
-		parsedExternalData[name] = ParsedExternalDataParameters{
-			Type:              params.Type,
-			Collection:        params.Collection,
-			Select:            parsedSelect,
-			Regexp:            parsedRegexp,
-			SortBy:            params.SortBy,
-			Sort:              params.Sort,
-			Optional:          params.Optional,
-			RequestParameters: parsedRequestParameters,
-		}
-	}
+	parsedExternalData := externaldata.ParseRefParameters(rule.ExternalData, tplExecutor)
 
 	return ParsedRule{
 		ID:   rule.ID,

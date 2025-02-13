@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
@@ -58,7 +59,7 @@ func Default(
 	options Options,
 	mongoClient mongo.DbClient,
 	cfg config.CanopsisConf,
-	externalDataContainer *eventfilter.ExternalDataContainer,
+	externalDataContainer *externaldata.GetterContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	templateConfigProvider *config.BaseTemplateConfigProvider,
 	metricsConfigProvider *config.BaseMetricsSettingsConfigProvider,

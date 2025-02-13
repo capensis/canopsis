@@ -1,4 +1,4 @@
-package externaldata
+package externaldatatable
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -95,6 +96,11 @@ func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune,
 			return job, common.NewValidationError("_id", "ID doesn't exist.")
 		}
 
+		return job, err
+	}
+
+	err = w.validateColumns(ctx, externalDataTable, f, delimiter)
+	if err != nil {
 		return job, err
 	}
 
@@ -370,13 +376,20 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 
 	switch table.Type {
 	case externaldata.TypeMongoDB:
-		err = w.dbClient.RunAdminCommand(ctx, bson.D{
-			{Key: "renameCollection", Value: w.dbClient.Name() + "." + job.getDBTableName()},
-			{Key: "to", Value: w.dbClient.Name() + "." + externaldata.GetMongoCollectionName(table.Name, table.FromConfig)},
-			{Key: "dropTarget", Value: true},
-		}).Err()
+		cursor, err := w.dbClient.Collection(job.getDBTableName()).Aggregate(ctx, []bson.M{
+			{"$out": table.GetDBName()},
+		})
 		if err != nil {
-			return false, fmt.Errorf("failed to rename mongo collection: %w", err)
+			return false, fmt.Errorf("failed to copy to mongo collection: %w", err)
+		}
+
+		if err = cursor.Err(); err != nil {
+			return false, fmt.Errorf("failed to copy to mongo collection, cursor err: %w", err)
+		}
+
+		err = cursor.Close(ctx)
+		if err != nil {
+			return false, fmt.Errorf("failed to copy to mongo collection, cursor close: %w", err)
 		}
 	case externaldata.TypePostgreSQL:
 		pgPool, err := w.pgPoolProvider.Get(ctx)
@@ -384,17 +397,59 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes m
 			return false, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, "DROP TABLE IF EXISTS "+externaldata.GetPostgresTableName(table.Name))
+		_, err = pgPool.Exec(ctx, "TRUNCATE "+table.GetDBName())
 		if err != nil {
-			return false, fmt.Errorf("failed to drop postgres table: %w", err)
+			return false, fmt.Errorf("failed to truncate postgres table: %w", err)
 		}
 
-		_, err = pgPool.Exec(ctx, "ALTER TABLE "+job.getDBTableName()+" RENAME TO "+pgx.Identifier{table.Name}.Sanitize())
+		columns := make([]string, len(job.ColumnLengths)+1)
+		i := 0
+		columns[i] = externaldata.IDColumnName
+		i++
+		for c, newL := range job.ColumnLengths {
+			columns[i] = pgx.Identifier{c}.Sanitize()
+			i++
+
+			sql := ""
+			if l, ok := table.ColumnLengths[c]; !ok {
+				sql = "ALTER TABLE " + table.GetDBName() +
+					" ADD COLUMN " + pgx.Identifier{c}.Sanitize() + " VARCHAR(" + strconv.Itoa(newL) + ")"
+			} else if l != newL {
+				sql = "ALTER TABLE " + table.GetDBName() +
+					" ALTER COLUMN " + pgx.Identifier{c}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(newL) + ")"
+			}
+
+			if sql != "" {
+				_, err = pgPool.Exec(ctx, sql)
+				if err != nil {
+					return false, fmt.Errorf("failed to alter postgres table: %w", err)
+				}
+			}
+		}
+
+		for c := range table.ColumnLengths {
+			if _, ok := job.ColumnLengths[c]; !ok {
+				sql := "ALTER TABLE " + table.GetDBName() +
+					" DROP COLUMN " + pgx.Identifier{c}.Sanitize()
+				_, err = pgPool.Exec(ctx, sql)
+				if err != nil {
+					return false, fmt.Errorf("failed to alter postgres table: %w", err)
+				}
+			}
+		}
+
+		_, err = pgPool.Exec(ctx, "INSERT INTO "+table.GetDBName()+"("+strings.Join(columns, ",")+
+			") SELECT "+strings.Join(columns, ",")+" FROM "+job.getDBTableName())
 		if err != nil {
-			return false, fmt.Errorf("failed to rename postgres table: %w", err)
+			return false, fmt.Errorf("failed to copy to postgres table: %w", err)
 		}
 	default:
 		return false, fmt.Errorf("invalid table type: %q", table.Type)
+	}
+
+	err = w.deleteTable(ctx, job)
+	if err != nil {
+		return false, err
 	}
 
 	_, err = w.dbImportCollection.DeleteOne(ctx, bson.M{"_id": job.ID})
@@ -556,11 +611,6 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 		if len(columns) == 0 {
 			columns = make([]string, len(record))
 			copy(columns, record)
-			err = w.validateColumns(columns)
-			if err != nil {
-				return nil, err.Error(), nil
-			}
-
 			err = w.createTable(ctx, job, columns, nil)
 			if err != nil {
 				return nil, "", err
@@ -636,11 +686,6 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 			columnsWithID[0] = externaldata.IDColumnName
 			copy(columnsWithID[1:], record)
 			columns = columnsWithID[1:]
-			err = w.validateColumns(columns)
-			if err != nil {
-				return nil, err.Error(), nil
-			}
-
 			columnLengths = make(map[string]int, len(columns))
 			for _, c := range columns {
 				columnLengths[c] = externaldata.PostgresDefaultColumnLen
@@ -691,11 +736,64 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 	return columnLengths, "", nil
 }
 
-func (w *importWorker) validateColumns(columns []string) error {
-	for _, c := range columns {
-		if !common.IsTableName(c) || c == externaldata.IDColumnName {
-			return fmt.Errorf("invalid field name: %q", c)
+func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f multipart.File, delimiter rune) error {
+	ruleExists := false
+	if len(t.ColumnTypes) > 0 {
+		for _, c := range linkedCollections {
+			err := w.dbClient.Collection(c).
+				FindOne(ctx, bson.M{"external_data.table": t.ID}, options.FindOne().SetProjection(bson.M{"_id": 1})).
+				Err()
+			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+				return fmt.Errorf("cannot find linked rules: %w", err)
+			}
+
+			if err == nil {
+				ruleExists = true
+				break
+			}
 		}
+	}
+
+	r := csv.NewReader(f)
+	r.Comma = delimiter
+	columns, err := r.Read()
+	if err != nil {
+		if errors.Is(err, io.EOF) {
+			return common.NewValidationError("file", "File is empty.")
+		}
+
+		return common.NewValidationError("file", "File is invalid.")
+	}
+
+	invalidCols := make([]string, 0)
+	existColumns := make(map[string]bool, len(columns))
+	for _, c := range columns {
+		existColumns[c] = true
+		if !common.IsTableName(c) || c == externaldata.IDColumnName {
+			invalidCols = append(invalidCols, strconv.Quote(c))
+		}
+	}
+
+	if len(invalidCols) > 0 {
+		return common.NewValidationError("file", "Fields ["+strings.Join(invalidCols, ",")+"] in file are invalid.")
+	}
+
+	missingCols := make([]string, 0)
+	if ruleExists {
+		for c := range t.ColumnTypes {
+			if !existColumns[c] {
+				missingCols = append(missingCols, strconv.Quote(c))
+			}
+		}
+	}
+
+	if len(missingCols) > 0 {
+		return common.NewValidationError("file", "Fields ["+strings.Join(missingCols, ",")+"] in file are missing.")
+	}
+
+	_, err = f.Seek(0, io.SeekStart)
+	if err != nil {
+		return fmt.Errorf("failed to seek file to start: %w", err)
 	}
 
 	return nil

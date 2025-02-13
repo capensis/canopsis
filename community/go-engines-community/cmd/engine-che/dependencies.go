@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -27,7 +28,7 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
 	e := che.NewEngine(ctx, opts, dbClient, cfg, metricsSender, metrics.NewNullMetaUpdater(),
-		eventfilter.NewExternalDataGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
+		externaldata.NewGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
 		config.NewTemplateConfigProvider(cfg, logger), eventFilterEventCounter, eventFilterFailureService, logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := dbClient.Disconnect(ctx)

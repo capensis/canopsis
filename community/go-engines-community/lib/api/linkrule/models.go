@@ -3,8 +3,10 @@ package linkrule
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 )
@@ -23,7 +25,7 @@ type EditRequest struct {
 	SourceCode string            `json:"source_code"`
 	Author     string            `json:"author" swaggerignore:"true"`
 
-	ExternalData map[string]link.ExternalDataParameters `bson:"external_data" json:"external_data" binding:"dive"`
+	ExternalData []externaldata.RefParameters `bson:"external_data" json:"external_data" binding:"dive"`
 
 	common.AlarmPatternFieldsRequest
 	common.EntityPatternFieldsRequest
@@ -44,7 +46,7 @@ type Response struct {
 	Created    datetime.CpsTime  `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated    datetime.CpsTime  `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
-	ExternalData map[string]link.ExternalDataParameters `bson:"external_data" json:"external_data"`
+	ExternalData []externaldatatable.RefResponse `bson:"external_data" json:"external_data"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

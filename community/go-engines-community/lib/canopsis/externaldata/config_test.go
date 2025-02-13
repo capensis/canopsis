@@ -12,10 +12,12 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func TestSyncMongoCollections(t *testing.T) {
+func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ctrl := gomock.NewController(t)
@@ -49,11 +51,12 @@ func TestSyncMongoCollections(t *testing.T) {
 	mockClient := mock_mongo.NewMockDbClient(ctrl)
 	mockExdataTableCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockClient.EXPECT().Collection(gomock.Eq(mongo.ExternalDataTableCollection)).Return(mockExdataTableCollection)
-	mockExdataTableCollection.EXPECT().DeleteMany(gomock.Any(), gomock.Any()).Return(int64(0), nil)
+	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, nil), nil)
+	mockExdataTableCollection.EXPECT().UpdateMany(gomock.Any(), gomock.Any(), gomock.Any()).Return(&mongodriver.UpdateResult{}, nil)
 	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, collNamesToIgnore), nil)
 	mockExdataTableCollection.EXPECT().InsertMany(gomock.Any(), gomock.Any()).Return(nil, nil).Do(checkInsertedTables(t, tablesToCreate))
 	newMockCollections(ctrl, mockClient, tablesToCreate, "test")
-	err := externaldata.SyncMongoCollections(ctx, mockClient, collNames, zerolog.Nop())
+	err := externaldata.SyncMongoCollections(ctx, mockClient, collNames, nil, zerolog.Nop())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -86,10 +89,61 @@ func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *tes
 	mockClient := mock_mongo.NewMockDbClient(ctrl)
 	mockExdataTableCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockClient.EXPECT().Collection(gomock.Eq(mongo.ExternalDataTableCollection)).Return(mockExdataTableCollection)
-	mockExdataTableCollection.EXPECT().DeleteMany(gomock.Any(), gomock.Any()).Return(int64(0), nil)
+	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, nil), nil)
+	mockExdataTableCollection.EXPECT().UpdateMany(gomock.Any(), gomock.Any(), gomock.Any()).Return(&mongodriver.UpdateResult{}, nil)
 	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, nil), nil)
 	newMockCollections(ctrl, mockClient, tablesToIgnore, 1)
-	err := externaldata.SyncMongoCollections(ctx, mockClient, collNames, zerolog.Nop())
+	err := externaldata.SyncMongoCollections(ctx, mockClient, collNames, nil, zerolog.Nop())
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestSyncMongoCollections_GivenMissingCollections_ShouldDeleteUnlinked(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	collNames := []string{
+		"test_coll_1",
+	}
+	collNamesToIgnore := []string{
+		"test_coll_1",
+	}
+	collNamesToDelete := []string{
+		"test_coll_2",
+		"test_coll_3",
+	}
+	collNamesToBlockDelete := []string{
+		"test_coll_4",
+		"test_coll_5",
+	}
+	missingCollNames := []string{
+		"test_coll_2",
+		"test_coll_3",
+		"test_coll_4",
+		"test_coll_5",
+	}
+	refCollNames := []string{
+		"test_ref_coll_1",
+		"test_ref_coll_2",
+	}
+	mockClient := mock_mongo.NewMockDbClient(ctrl)
+	mockRefCollection1 := mock_mongo.NewMockDbCollection(ctrl)
+	mockRefCollection1.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(newMockCursorRef(ctrl, collNamesToBlockDelete[:1]), nil)
+	mockRefCollection2 := mock_mongo.NewMockDbCollection(ctrl)
+	mockRefCollection2.EXPECT().Aggregate(gomock.Any(), gomock.Any()).Return(newMockCursorRef(ctrl, collNamesToBlockDelete[1:]), nil)
+	mockClient.EXPECT().Collection(gomock.Eq(refCollNames[0])).Return(mockRefCollection1)
+	mockClient.EXPECT().Collection(gomock.Eq(refCollNames[1])).Return(mockRefCollection2)
+	mockExdataTableCollection := mock_mongo.NewMockDbCollection(ctrl)
+	mockClient.EXPECT().Collection(gomock.Eq(mongo.ExternalDataTableCollection)).Return(mockExdataTableCollection)
+	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, missingCollNames), nil)
+	mockExdataTableCollection.EXPECT().DeleteMany(gomock.Any(), gomock.Eq(bson.M{"_id": bson.M{"$in": collNamesToDelete}}))
+	mockExdataTableCollection.EXPECT().UpdateMany(gomock.Any(), gomock.Eq(bson.M{"_id": bson.M{"$in": collNamesToBlockDelete}}), gomock.Any()).Return(&mongodriver.UpdateResult{}, nil)
+	mockExdataTableCollection.EXPECT().UpdateMany(gomock.Any(), gomock.Any(), gomock.Any()).Return(&mongodriver.UpdateResult{}, nil)
+	mockExdataTableCollection.EXPECT().Find(gomock.Any(), gomock.Any()).Return(newMockCursorTables(ctrl, collNamesToIgnore), nil)
+	err := externaldata.SyncMongoCollections(ctx, mockClient, collNames, refCollNames, zerolog.Nop())
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -97,10 +151,11 @@ func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *tes
 
 func newMockCursorTables(ctrl *gomock.Controller, collNames []string) mongo.Cursor {
 	mockTableCursor := mock_mongo.NewMockCursor(ctrl)
+	mockTableCursor.EXPECT().Next(gomock.Any()).Return(true).Times(len(collNames))
 	for i := range collNames {
 		name := collNames[i]
-		mockTableCursor.EXPECT().Next(gomock.Any()).Return(true)
 		mockTableCursor.EXPECT().Decode(gomock.Any()).DoAndReturn(func(v *externaldata.Table) error {
+			v.ID = name
 			v.Name = name
 
 			return nil
@@ -165,4 +220,25 @@ func checkInsertedTables(t *testing.T, expected []externaldata.Table) func(conte
 			t.Fatal("unexpected result: " + diff)
 		}
 	}
+}
+
+func newMockCursorRef(ctrl *gomock.Controller, collIDs []string) mongo.Cursor {
+	mockCursor := mock_mongo.NewMockCursor(ctrl)
+	mockCursor.EXPECT().Next(gomock.Any()).Return(true).Times(len(collIDs))
+	for i := range collIDs {
+		id := collIDs[i]
+		mockCursor.EXPECT().Decode(gomock.Any()).DoAndReturn(func(v *struct {
+			ID string `bson:"_id"`
+		}) error {
+			v.ID = id
+
+			return nil
+		})
+	}
+
+	mockCursor.EXPECT().Next(gomock.Any()).Return(false)
+	mockCursor.EXPECT().Err().Return(nil)
+	mockCursor.EXPECT().Close(gomock.Any()).Return(nil)
+
+	return mockCursor
 }
