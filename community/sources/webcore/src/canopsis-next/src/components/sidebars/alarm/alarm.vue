@@ -1,6 +1,7 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
     divider
     @submit="submit"
   >
@@ -62,22 +63,22 @@
 
     <widget-settings-group :title="$tc('common.filter', 2)">
       <field-filters
-        v-if="hasAccessToListFilters"
+        v-if="hasAccessToFilter"
         v-model="form.parameters.mainFilter"
         :filters.sync="form.filters"
         :widget-id="widget._id"
-        :addable="hasAccessToAddFilter"
-        :editable="hasAccessToEditFilter"
+        addable
+        editable
         with-alarm
         with-entity
         with-pbehavior
       />
       <field-opened-resolved-filter v-model="form.parameters.opened" />
       <field-remediation-instructions-filters
-        v-if="hasAccessToListRemediationInstructionsFilters"
+        v-if="hasAccessToRemediationInstructionsFilter"
         v-model="form.parameters.remediationInstructionsFilters"
-        :addable="hasAccessToAddRemediationInstructionsFilter"
-        :editable="hasAccessToEditRemediationInstructionsFilter"
+        addable
+        editable
       />
       <field-switcher
         v-model="form.parameters.isCorrelationEnabled"
@@ -109,6 +110,10 @@
       <field-switcher
         v-model="form.parameters.sticky_header"
         :title="$t('settings.stickyHeader')"
+      />
+      <field-switcher
+        v-model="form.parameters.sticky_horizontal_scroll"
+        :title="$t('settings.stickyHorizontalScroll')"
       />
       <field-switcher
         v-model="form.parameters.isVirtualScrollEnabled"

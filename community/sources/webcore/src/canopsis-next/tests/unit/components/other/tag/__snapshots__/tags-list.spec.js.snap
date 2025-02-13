@@ -18,14 +18,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        >
-          <c-action-btn-stub
-            type="delete"
-          />
-        </div>
+        <!---->
       </transition-stub>
     </div>
   </div>
@@ -1256,15 +1249,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
       <transition-stub
         name="expand-transition"
       >
-        <div
-          class="layout px-2 mt-1"
-          style="display: none;"
-        >
-          <c-action-btn-stub
-            style="display: none;"
-            type="delete"
-          />
-        </div>
+        <!---->
       </transition-stub>
     </div>
   </div>

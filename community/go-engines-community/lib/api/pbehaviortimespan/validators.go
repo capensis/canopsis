@@ -1,6 +1,8 @@
 package pbehaviortimespan
 
 import (
+	"time"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
 )
@@ -20,6 +22,13 @@ func ValidateTimespansRequest(sl validator.StructLevel) {
 		_, err := rrule.StrToROption(r.RRule)
 		if err != nil {
 			sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
+		}
+	}
+
+	if r.Timezone != "" {
+		_, err := time.LoadLocation(r.Timezone)
+		if err != nil {
+			sl.ReportError(r.Timezone, "Timezone", "Timezone", "timezone", "")
 		}
 	}
 }

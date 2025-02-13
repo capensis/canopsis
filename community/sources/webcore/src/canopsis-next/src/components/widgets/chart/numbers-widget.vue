@@ -14,9 +14,6 @@
       :show-filter="hasAccessToUserFilter"
       :show-interval="hasAccessToInterval"
       :show-sampling="hasAccessToSampling"
-      :filter-disabled="!hasAccessToListFilters"
-      :filter-addable="hasAccessToAddFilter"
-      :filter-editable="hasAccessToEditFilter"
       class="mx-3"
       @update:filters="updateSelectedFilter"
       @update:sampling="updateSampling"
@@ -37,6 +34,7 @@
         :show-trend="widget.parameters.show_trend"
         :font-size="valueFontSize"
         :downloading="downloading"
+        :hide-actions="hideActions"
         @export:csv="exportMetricsAsCsv"
       />
     </v-layout>
@@ -106,6 +104,10 @@ export default {
     tabId: {
       type: String,
       default: '',
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {

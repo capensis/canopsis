@@ -22,7 +22,7 @@ func (f *Flags) ParseArgs() error {
 	flagVersion := flag.Bool("version", false, "Show the version information")
 	flagFile := flag.String("file", "event.json", "send event from json file (-amqp|http) or directory (-http)")
 	flagMode := flag.String("mode", "feeder", "mode: file (-amqp or -http) or feeder")
-	flagExchange := flag.String("exchange", cps.CheExchangeName, "exchange name to publish events to")
+	flagExchange := flag.String("exchange", cps.DefaultExchangeName, "exchange name to publish events to")
 	flagLoop := flag.Bool("loop", false, "constantly send events")
 
 	flagHTTP := flag.Bool("http", false, "publish events overt http if -file is used")

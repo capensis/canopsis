@@ -17,5 +17,9 @@ export default createCRUDModule({
     fetchTemplatesListWithoutStore(context, { params }) {
       return request.get(API_ROUTES.roles.templates, { params });
     },
+
+    bulkUpdatePermissions(context, { data }) {
+      return request.put(API_ROUTES.roles.bulkPermissions, data);
+    },
   },
 });

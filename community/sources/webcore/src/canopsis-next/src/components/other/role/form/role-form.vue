@@ -10,6 +10,7 @@
       required
       autofocus
     />
+    <role-type-field v-field="form.type" />
     <v-text-field
       v-field="form.description"
       :label="$t('common.description')"
@@ -51,10 +52,11 @@
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
 import RoleTemplateField from './fields/role-template-field.vue';
+import RoleTypeField from './fields/role-type-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ViewSelector, RoleTemplateField },
+  components: { ViewSelector, RoleTemplateField, RoleTypeField },
   model: {
     prop: 'form',
     event: 'input',

@@ -6,6 +6,8 @@ import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 import request from '@/services/request';
 import localStorageService from '@/services/local-storage';
 
+import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
+
 const types = {
   LOGIN: 'LOGIN',
   LOGIN_COMPLETED: 'LOGIN_COMPLETED',
@@ -28,6 +30,7 @@ export default {
     isLoggedIn: state => state.isLoggedIn,
     currentUser: state => state.currentUser,
     currentUserPermissionsById: state => keyBy(state.currentUser.permissions, '_id'),
+    currentUserViewPermissionsByViewId: state => viewPermissionsGroupedPermissions(state.currentUser.permissions),
     pending: state => state.pending,
   },
   mutations: {

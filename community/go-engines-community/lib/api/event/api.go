@@ -278,7 +278,7 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 
 	err = api.publisher.PublishWithContext(
 		c,
-		canopsis.CanopsisEventsExchange,
+		canopsis.EventsExchangeName,
 		"",
 		false,
 		false,
