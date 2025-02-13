@@ -108,7 +108,7 @@ func (a *api) createImportJob(ctx context.Context, job contextgraph.ImportJob, r
 		return "", err
 	}
 
-	err = os.MkdirAll(a.dir, os.ModeDir|contextgraph.FilePerm)
+	err = os.MkdirAll(a.dir, os.ModeDir|contextgraph.DirPerm)
 	if err != nil {
 		return "", err
 	}

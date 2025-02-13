@@ -16,7 +16,8 @@ import (
 )
 
 const (
-	FilePerm    = 0o644
+	DirPerm     = 0o770
+	FilePerm    = 0o640
 	FilePattern = "import_%s.json"
 )
 
