@@ -15,15 +15,23 @@ type RefParameters struct {
 	Type      string `bson:"type" json:"type" binding:"required"`
 
 	// are used in db external data
-	Table        string            `bson:"table,omitempty" json:"table,omitempty"`
-	TableName    string            `bson:"table_name,omitempty" json:"-"`
-	TableType    *int              `bson:"table_type,omitempty" json:"-"`
-	TableColumns []string          `bson:"table_columns,omitempty" json:"-"`
-	Select       map[string]string `bson:"select,omitempty" json:"select,omitempty"`
-	Regexp       map[string]string `bson:"regexp,omitempty" json:"regexp,omitempty"`
-	SortBy       string            `bson:"sort_by,omitempty" json:"sort_by,omitempty"`
-	Sort         string            `bson:"sort,omitempty" json:"sort,omitempty" binding:"oneoforempty=asc desc"`
-	Optional     bool              `bson:"optional,omitempty" json:"optional,omitempty"`
+	// Table contains id of external table
+	Table string `bson:"table,omitempty" json:"table,omitempty"`
+	// TableName, TableType, TableColumns contains data of external table to avoid lookup.
+	TableName    string   `bson:"table_name,omitempty" json:"-"`
+	TableType    *int     `bson:"table_type,omitempty" json:"-"`
+	TableColumns []string `bson:"table_columns,omitempty" json:"-"`
+	// Select defines equal match conditions.
+	// Key contains field name of table, value contains template.
+	Select map[string]string `bson:"select,omitempty" json:"select,omitempty"`
+	// Regexp defines regexp match conditions.
+	// Key contains field name of table with regexp, value contains template.
+	Regexp map[string]string `bson:"regexp,omitempty" json:"regexp,omitempty"`
+	// SortBy and Sort define priority of found rows. It's id by default.
+	SortBy string `bson:"sort_by,omitempty" json:"sort_by,omitempty"`
+	Sort   string `bson:"sort,omitempty" json:"sort,omitempty" binding:"oneoforempty=asc desc"`
+	// Optional defines will it cause error or not if external data isn't found.
+	Optional bool `bson:"optional,omitempty" json:"optional,omitempty"`
 
 	// are used in api external data
 	Request *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
