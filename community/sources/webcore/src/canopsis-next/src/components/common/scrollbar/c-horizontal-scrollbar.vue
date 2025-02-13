@@ -11,6 +11,8 @@ export default {
   },
   methods: {
     connect(el) {
+      this.disconnect();
+
       this.$connectedEl = el;
       this.$connectedEl?.addEventListener('scroll', this.onConnectedElScroll);
 
@@ -18,12 +20,14 @@ export default {
     },
 
     disconnect() {
-      this.$connectedEl.removeEventListener('scroll', this.onConnectedElScroll);
+      this.$connectedEl?.removeEventListener('scroll', this.onConnectedElScroll);
       delete this.$connectedEl;
     },
 
     setContentWidth(width) {
-      this.$refs.content.style.width = `${width}px`;
+      if (this.$refs.content) {
+        this.$refs.content.style.width = `${width}px`;
+      }
     },
 
     setOpacity(opacity) {
@@ -35,7 +39,9 @@ export default {
     },
 
     onScroll() {
-      this.$connectedEl.scrollLeft = this.$el.scrollLeft;
+      if (this.$connectedEl) {
+        this.$connectedEl.scrollLeft = this.$el.scrollLeft;
+      }
     },
 
     onConnectedElScroll() {
