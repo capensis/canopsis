@@ -495,6 +495,21 @@ describe('map', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `map` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    wrapper.find('field-title-stub').triggerCustomEvent('input', 'New title');
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `map` widget settings with custom props', async () => {
     const wrapper = snapshotFactory({
       store,
