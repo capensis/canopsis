@@ -14,30 +14,11 @@
           />
         </div>
         <div class="v-input__append-inner">
-          <v-menu bottom>
-            <template #activator="{ on }">
-              <c-action-btn
-                :tooltip="$t('common.search')"
-                icon="history"
-                v-on="on"
-              />
-            </template>
-            <v-list>
-              <v-list-item
-                v-for="search in preparedSearches"
-                :key="search.key"
-                @click="select(search)"
-              >
-                <v-list-item-content>
-                  <advanced-search-rules
-                    :rules="search.rules"
-                    :attributes="attributes"
-                    disabled
-                  />
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-menu>
+          <advanced-search-history-btn
+            :searches="searches"
+            :attributes="attributes"
+            @select="select"
+          />
         </div>
       </div>
     </div>
@@ -63,7 +44,6 @@ import Themeable from 'vuetify/lib/mixins/themeable';
 import { ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
 
 import {
-  advancedSearchToForm,
   advancedSearchRuleItemToFormItem,
   formToAdvancedSearch,
   isAlarmPatternField,
@@ -75,12 +55,13 @@ import { useComponentInstance } from '@/hooks/vue';
 
 import { useAdvancedSearchAttributes } from './hooks/new-advanced-search';
 import AdvancedSearchRules from './partials/new/advanced-search-rules.vue';
+import AdvancedSearchHistoryBtn from './partials/new/advanced-search-history-btn.vue';
 
 export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AdvancedSearchRules },
+  components: { AdvancedSearchHistoryBtn, AdvancedSearchRules },
   mixins: [Themeable],
   props: {
     /* searches: {
@@ -90,10 +71,7 @@ export default {
   },
   setup(props, { emit }) {
     const searches = JSON.parse('[{"_id":"asd","positions":["alarm_pattern","alarm_pattern","pbehavior_pattern","pbehavior_pattern"],"alarm_pattern":[[{"field":"v.ack.a","cond":{"value":"c78b6ba1-39c5-44a0-86df-50b0dab36845","type":"eq"}},{"field":"v.display_name","cond":{"value":"выфвфывфы","type":"eq"}}]],"entity_pattern":[],"pbehavior_pattern":[[{"field":"v.pbehavior_info.type","cond":{"value":"c6520636-8489-4f21-91ca-2a55317931ba","type":"eq"}},{"field":"v.pbehavior_info.name","cond":{"value":"0618be38-d661-4e30-a31b-cd195af03f6f","type":"eq"}}]]}]');
-    const preparedSearches = searches.map(search => ({
-      _id: search._id,
-      rules: advancedSearchToForm(search),
-    }));
+
     const instance = useComponentInstance();
     const rules = ref([advancedSearchRuleItemToFormItem()]);
 
@@ -164,7 +142,7 @@ export default {
       attributes,
       allowOr,
 
-      preparedSearches,
+      searches,
 
       select,
       clear,
