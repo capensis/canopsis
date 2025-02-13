@@ -23,15 +23,13 @@
               :label="$t('settings.selectAFilter')"
               :filters="userPreference.filters"
               :locked-filters="widget.filters"
-              :disabled="!hasAccessToListFilters"
               @input="updateSelectedFilter"
             />
             <filters-list-btn
-              v-if="hasAccessToAddFilter || hasAccessToEditFilter"
               :widget-id="widget._id"
-              :addable="hasAccessToAddFilter"
-              :editable="hasAccessToEditFilter"
               :entity-types="[$constants.ENTITY_TYPES.service]"
+              addable
+              editable
               with-entity
               with-service-weather
               private
@@ -106,8 +104,8 @@
             :action-required-icon="actionRequiredSettings.icon_name"
             :no-action-required-color="noActionRequiredSettings.color"
             :no-action-required-icon="noActionRequiredSettings.icon_name"
-            :show-alarms-button="isBothModalType && hasAlarmsListAccess"
-            :show-variables-help-button="hasVariablesHelpAccess"
+            :show-alarms-button="!hideActions && isBothModalType && hasAlarmsListAccess"
+            :show-variables-help-button="!hideActions && hasVariablesHelpAccess"
             :template="widget.parameters.blockTemplate"
             :height-factor="widget.parameters.heightFactor"
             :color-indicator="widget.parameters.colorIndicator"
@@ -127,7 +125,7 @@
 </template>
 
 <script>
-import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USERS_PERMISSIONS } from '@/constants';
+import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { getEntityColor } from '@/helpers/entities/entity/color';
@@ -167,6 +165,10 @@ export default {
       type: Object,
       required: true,
     },
+    hideActions: {
+      type: Boolean,
+      required: false,
+    },
   },
   computed: {
     flexSize() {
@@ -185,15 +187,15 @@ export default {
     },
 
     hasMoreInfosAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.moreInfos);
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.moreInfos);
     },
 
     hasAlarmsListAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.alarmsList);
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.alarmsList);
     },
 
     hasVariablesHelpAccess() {
-      return this.checkAccess(USERS_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
+      return this.checkAccess(USER_PERMISSIONS.business.serviceWeather.actions.variablesHelp);
     },
 
     actionRequiredSettings() {
@@ -222,6 +224,10 @@ export default {
   },
   methods: {
     showAdditionalInfoModal(service) {
+      if (this.hideActions) {
+        return;
+      }
+
       if (this.isAlarmListModalType && this.hasAlarmsListAccess) {
         this.showAlarmListModal(service);
       } else if (!this.isAlarmListModalType && this.hasMoreInfosAccess) {

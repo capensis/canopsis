@@ -43,8 +43,8 @@
         v-field="form.parameters.mainFilter"
         :filters="form.filters"
         :widget-id="widgetId"
-        :addable="filterAddable"
-        :editable="filterEditable"
+        addable
+        editable
         with-entity
         @update:filters="updateField('filters', $event)"
       />
@@ -127,14 +127,6 @@ export default {
       default: false,
     },
     showFilter: {
-      type: Boolean,
-      default: false,
-    },
-    filterAddable: {
-      type: Boolean,
-      default: false,
-    },
-    filterEditable: {
       type: Boolean,
       default: false,
     },

@@ -47,16 +47,14 @@
             :label="$t('settings.selectAFilter')"
             :filters="userPreference.filters"
             :locked-filters="widget.filters"
-            :disabled="!hasAccessToListFilters"
             :clearable="!widget.parameters.clearFilterDisabled"
             hide-details
             @input="updateSelectedFilter"
           />
           <filters-list-btn
-            v-if="hasAccessToAddFilter || hasAccessToEditFilter"
             :widget-id="widget._id"
-            :addable="hasAccessToAddFilter"
-            :editable="hasAccessToEditFilter"
+            addable
+            editable
             private
             with-alarm
             with-entity
@@ -83,13 +81,12 @@
           @input="updateTags"
         />
       </v-flex>
-      <v-flex>
+      <v-flex v-if="hasAccessToUserRemediationInstructionsFilter">
         <alarms-list-remediation-instructions-filters
           :filters.sync="remediationInstructionsFilters"
           :locked-filters.sync="widgetRemediationInstructionsFilters"
-          :editable="hasAccessToEditRemediationInstructionsFilter"
-          :addable="hasAccessToUserRemediationInstructionsFilter"
-          :has-access-to-list-filters="hasAccessToListRemediationInstructionsFilters"
+          editable
+          addable
         />
       </v-flex>
       <v-flex>
@@ -156,7 +153,7 @@
 <script>
 import { omit, pick, isObject, isEqual } from 'lodash';
 
-import { LIVE_REPORTING_QUICK_RANGES, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
@@ -277,7 +274,7 @@ export default {
     },
 
     hasAccessToExportAsCsv() {
-      return this.checkAccess(USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv);
     },
 
     dense() {

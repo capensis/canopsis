@@ -604,7 +604,7 @@ func (p *metaAlarmPostProcessor) sendToFifo(ctx context.Context, event types.Eve
 
 	err = p.amqpPublisher.PublishWithContext(
 		ctx,
-		canopsis.FIFOExchangeName,
+		canopsis.DefaultExchangeName,
 		canopsis.FIFOQueueName,
 		false,
 		false,

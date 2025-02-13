@@ -15,7 +15,7 @@ import {
   EXPORT_CSV_SEPARATORS,
   QUICK_RANGES,
   SIDE_BARS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 
@@ -366,8 +366,8 @@ describe('availability-settings', () => {
 
   test('Renders `availability-settings` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.availability.actions.listFilters]: { actions: [] },
-      [USERS_PERMISSIONS.business.availability.actions.exportAsCsv]: { actions: [] },
+      [USER_PERMISSIONS.business.availability.actions.filter]: { actions: [] },
+      [USER_PERMISSIONS.business.availability.actions.exportAsCsv]: { actions: [] },
     });
 
     const wrapper = snapshotFactory({

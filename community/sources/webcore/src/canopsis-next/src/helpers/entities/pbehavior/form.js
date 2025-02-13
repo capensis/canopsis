@@ -1,4 +1,10 @@
-import { cloneDeep, isObject, omit } from 'lodash';
+import {
+  cloneDeep,
+  isObject,
+  map,
+  omit,
+  uniq,
+} from 'lodash';
 
 import { COLORS } from '@/config';
 import {
@@ -14,10 +20,11 @@ import i18n from '@/i18n';
 
 import { uid } from '@/helpers/uid';
 import {
+  convertDateToMoment,
   convertDateToDateObjectByTimezone,
   convertDateToTimestampByTimezone,
   convertDateToTimezoneDateString,
-  getLocaleTimezone,
+  getLocalTimezone,
   getNowTimestamp,
   isEndOfDay,
   isStartOfDay,
@@ -81,6 +88,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * @property {number} tstart
  * @property {number} tstop
  * @property {string} color
+ * @property {string} timezone
  * @property {PbehaviorType} type
  * @property {PbehaviorReason} reason
  * @property {PbehaviorComment[]} comments
@@ -154,10 +162,10 @@ export const exdatesToRequest = (exdates = []) => exdates.map(({ type, begin, en
  * Convert exdate to form
  *
  * @param {PbehaviorExdate} exdate
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorExdateForm}
  */
-export const exdateToForm = (exdate, timezone = getLocaleTimezone()) => ({
+export const exdateToForm = (exdate, timezone = getLocalTimezone()) => ({
   ...exdate,
   key: uid(),
   begin: convertDateToDateObjectByTimezone(exdate.begin, timezone),
@@ -179,10 +187,10 @@ export const exdatesToForm = (exdates, timezone) => (
  * Convert exdate form to exdate
  *
  * @param {PbehaviorExdateForm} formExdate
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorExdate}
  */
-export const formToExdate = (formExdate, timezone = getLocaleTimezone()) => ({
+export const formToExdate = (formExdate, timezone = getLocalTimezone()) => ({
   type: formExdate.type,
   begin: convertDateToTimestampByTimezone(formExdate.begin, timezone),
   end: convertDateToTimestampByTimezone(formExdate.end, timezone),
@@ -209,13 +217,13 @@ export const exceptionsToForm = (exceptions = []) => addKeyInEntities(cloneDeep(
  *
  * @param {Pbehavior} [pbehavior = {}]
  * @param {string|Object} [entityPattern]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorForm}
  */
 export const pbehaviorToForm = (
   pbehavior = {},
   entityPattern,
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 ) => {
   let rrule = pbehavior.rrule ?? null;
 
@@ -230,6 +238,8 @@ export const pbehaviorToForm = (
     [PATTERNS_FIELDS.entity],
   );
 
+  const pbehaviorTimezone = pbehavior.timezone || timezone;
+
   return {
     rrule,
     patterns,
@@ -239,9 +249,10 @@ export const pbehaviorToForm = (
     name: pbehavior.name ?? '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
-    tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, timezone) : null,
-    tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, timezone) : null,
+    tstart: pbehavior.tstart ? convertDateToDateObjectByTimezone(pbehavior.tstart, pbehaviorTimezone) : null,
+    tstop: pbehavior.tstop ? convertDateToDateObjectByTimezone(pbehavior.tstop, pbehaviorTimezone) : null,
     comments: pbehavior.comments ? addKeyInEntities(cloneDeep(pbehavior.comments)) : [],
+    timezone: pbehaviorTimezone,
     exceptions: exceptionsToForm(pbehavior.exceptions),
     exdates: exdatesToForm(pbehavior.exdates, timezone),
   };
@@ -279,20 +290,19 @@ export const formExdatesToExdates = (exdates = [], timezone) => exdates.map(
  * Convert form to pbehavior entity.
  *
  * @param {PbehaviorForm} form
- * @param {string} timezone
  * @return {Pbehavior}
  */
-export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
+export const formToPbehavior = form => ({
   ...omit(form, ['patterns']),
 
   enabled: form.enabled ?? true,
   reason: form.reason,
   type: form.type,
   comments: removeKeyFromEntities(form.comments),
-  exdates: formExdatesToExdates(form.exdates, timezone),
+  exdates: formExdatesToExdates(form.exdates, form.timezone),
   exceptions: formExceptionsToExceptions(form.exceptions),
-  tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, timezone) : null,
-  tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, timezone) : null,
+  tstart: form.tstart ? convertDateToTimestampByTimezone(form.tstart, form.timezone) : null,
+  tstop: form.tstop ? convertDateToTimestampByTimezone(form.tstop, form.timezone) : null,
   ...formFilterToPatterns(form.patterns),
 });
 
@@ -302,14 +312,14 @@ export const formToPbehavior = (form, timezone = getLocaleTimezone()) => ({
  * @param {Object} event
  * @param {Array} entityPattern
  * @param {string} [defaultName = '']
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   event,
   entityPattern,
   defaultName = '',
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 ) => {
   const {
     start,
@@ -328,18 +338,31 @@ export const calendarEventToPbehaviorForm = (
     ...cachedForm,
   };
 
-  form.tstart = start;
+  if (!form.timezone) {
+    form.timezone = timezone;
+  }
+  const localTimezone = getLocalTimezone();
 
-  if (!pbehavior || pbehavior.tstop) {
-    if (event.durationUnit === 'days') {
-      if (end.date.diff(start.date, 'hours') <= 24) {
-        form.tstop = start.date.clone().endOf('day').toDate();
-      } else {
-        form.tstop = end.date.clone().subtract(1, 'millisecond').toDate();
-      }
-    } else {
-      form.tstop = end;
-    }
+  /**
+   * @description The following code converts start and stop date objects to new date objects with timezone shifting.
+   *  1. Convert timezone WITHOUT time shifting
+   *  2. Convert timezone to pbehavior's timezone WITH time shifting
+   *  3. Convert timezone to local timezone WITHOUT time shifting
+   *
+   *  We need it to avoiding problem with different timezones on client computer/calendar/pbehavior's form
+   */
+  form.tstart = convertDateToMoment(start)
+    .tz(timezone, true)
+    .tz(pbehaviorForm.timezone)
+    .tz(localTimezone, true)
+    .toDate();
+
+  if (!pbehavior || pbehaviorForm?.tstop) {
+    form.tstop = convertDateToMoment(end)
+      .tz(timezone, true)
+      .tz(pbehaviorForm.timezone)
+      .tz(localTimezone, true)
+      .toDate();
   }
 
   return form;
@@ -363,10 +386,10 @@ export const isFullDayEvent = (start, stop) => {
  *
  * @param {PbehaviorForm} form
  * @param {Object} event
- * @param {string} timezone
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {Object}
  */
-export const formToCalendarEvent = (form, event, timezone) => {
+export const formToCalendarEvent = (form, event) => {
   const timed = !isFullDayEvent(form.tstart, form.tstop);
 
   return {
@@ -374,7 +397,7 @@ export const formToCalendarEvent = (form, event, timezone) => {
     timed,
     color: form.color,
 
-    pbehavior: formToPbehavior(form, timezone),
+    pbehavior: formToPbehavior(form),
   };
 };
 
@@ -446,10 +469,10 @@ export const getPbehaviorColor = (pbehavior = {}) => pbehavior.color || pbehavio
  * For multiple entities, a generic name generated.
  *
  * @param {Array<Object>} [entities=[]] - The list of entities to generate the name from.
- * @param {string} [timezone=getLocaleTimezone()] - The timezone to use for formatting the current date and time.
+ * @param {string} [timezone=getLocalTimezone()] - The timezone to use for formatting the current date and time.
  * @returns {string} The generated name for the pbehavior.
  */
-export const getPbehaviorNameByEntities = (entities = [], timezone = getLocaleTimezone()) => {
+export const getPbehaviorNameByEntities = (entities = [], timezone = getLocalTimezone()) => {
   if (!entities.length) {
     return '';
   }
@@ -474,4 +497,22 @@ export const getPbehaviorNameByEntities = (entities = [], timezone = getLocaleTi
   }
 
   return i18n.t('pbehavior.defaultNameForMultipleEntities', { datetime: now });
+};
+
+/**
+ * Determines the initial timezone for a list of `pbehaviors`.
+ *
+ * This function extracts unique timezones from the provided `pbehaviors` array.
+ * If there is exactly one unique timezone and it is not falsy, it returns that timezone.
+ * Otherwise, it defaults to the local timezone.
+ *
+ * @param {Array<Object>} [pbehaviors=[]] - An array of `pbehavior` objects, each potentially containing a
+ * `timezone` property.
+ * @returns {string} - The determined initial timezone, either a unique timezone from the `pbehaviors` or the
+ * local timezone.
+ */
+export const getPbehaviorsInitialTimezone = (pbehaviors = []) => {
+  const timezones = uniq(map(pbehaviors, 'timezone'));
+
+  return timezones.length === 1 && timezones[0] ? timezones[0] : getLocalTimezone();
 };

@@ -4,7 +4,7 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import { CRUD_ACTIONS, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { CRUD_ACTIONS, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import PbehaviorsListActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-action-btn.vue';
 
@@ -33,7 +33,7 @@ describe('pbehaviors-list-action-btn', () => {
 
   test('Pbehavior planning modal opened after trigger button', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [CRUD_ACTIONS.read] },
+      [USER_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [CRUD_ACTIONS.read] },
     });
     const entity = { _id: Faker.datatype.string() };
 
@@ -70,7 +70,7 @@ describe('pbehaviors-list-action-btn', () => {
 
   test('Renders `pbehaviors-list-action-btn` with access', () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [CRUD_ACTIONS.read] },
+      [USER_PERMISSIONS.technical.exploitation.pbehavior]: { actions: [CRUD_ACTIONS.read] },
     });
 
     const wrapper = snapshotFactory({

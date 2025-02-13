@@ -3,6 +3,7 @@ package pbehavior
 import (
 	"context"
 	"errors"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
@@ -101,6 +102,12 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 
 	if r.Stop == nil && foundType != nil && foundType.Type != pbehavior.TypePause {
 		sl.ReportError(r.Stop, "Stop", "Stop", "required", "")
+	}
+
+	if r.Timezone != "" {
+		if _, err := time.LoadLocation(r.Timezone); err != nil {
+			sl.ReportError(r.Timezone, "Timezone", "Timezone", "timezone", "")
+		}
 	}
 }
 
@@ -236,6 +243,12 @@ func (v *Validator) ValidatePatchRequest(ctx context.Context, sl validator.Struc
 		}
 	} else if foundType != nil && foundType.Type != pbehavior.TypePause && pbh.Stop == nil {
 		sl.ReportError(r.Stop, "Stop", "Stop", "required", "")
+	}
+
+	if r.Timezone != nil && *r.Timezone != "" {
+		if _, err := time.LoadLocation(*r.Timezone); err != nil {
+			sl.ReportError(r.Timezone, "Timezone", "Timezone", "timezone", "")
+		}
 	}
 }
 

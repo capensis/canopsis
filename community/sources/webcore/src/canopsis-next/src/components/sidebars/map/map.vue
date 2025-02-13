@@ -1,43 +1,36 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    divider
     @submit="submit"
   >
     <field-title v-model="form.title" />
-    <v-divider />
     <field-periodic-refresh v-model="form.parameters" />
-    <v-divider />
     <field-map v-model="form.parameters.map" />
-    <v-divider />
     <widget-settings-group :title="$t('settings.entityDisplaySettings')">
       <field-color-indicator v-model="form.parameters.color_indicator" />
-      <v-divider />
       <field-switcher
         v-model="form.parameters.entities_under_pbehavior_enabled"
         :title="$t('settings.entitiesUnderPbehaviorEnabled')"
       />
     </widget-settings-group>
-    <v-divider />
     <widget-settings-group :title="$t('settings.advancedSettings')">
-      <template v-if="hasAccessToListFilters">
-        <field-filters
-          v-model="form.parameters.mainFilter"
-          :filters.sync="form.filters"
-          :widget-id="widget._id"
-          :addable="hasAccessToAddFilter"
-          :editable="hasAccessToEditFilter"
-          with-alarm
-          with-entity
-          with-pbehavior
-        />
-        <v-divider />
-      </template>
+      <field-filters
+        v-if="hasAccessToFilter"
+        v-model="form.parameters.mainFilter"
+        :filters.sync="form.filters"
+        :widget-id="widget._id"
+        addable
+        editable
+        with-alarm
+        with-entity
+        with-pbehavior
+      />
       <field-text-editor
         v-model="form.parameters.entity_info_template"
         :title="$t('settings.entityInfoPopup')"
         :variables="entityInfoTemplateVariables"
       />
-      <v-divider />
       <field-columns
         v-model="form.parameters.alarmsColumns"
         :template="form.parameters.alarmsColumnsTemplate"
@@ -49,7 +42,6 @@
         with-html
         @update:template="updateAlarmsColumnsTemplate"
       />
-      <v-divider />
       <field-columns
         v-model="form.parameters.entitiesColumns"
         :template="form.parameters.entitiesColumnsTemplate"
@@ -61,7 +53,6 @@
         @update:template="updateEntitiesColumnsTemplate"
       />
     </widget-settings-group>
-    <v-divider />
   </widget-settings>
 </template>
 

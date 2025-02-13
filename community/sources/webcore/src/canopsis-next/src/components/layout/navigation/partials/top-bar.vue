@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
@@ -87,7 +87,7 @@ export default {
   ],
   computed: {
     hasAccessToHealthcheckStatus() {
-      return this.checkAccess(USERS_PERMISSIONS.technical.healthcheckStatus);
+      return this.checkAccess(USER_PERMISSIONS.technical.healthcheckStatus);
     },
   },
 };

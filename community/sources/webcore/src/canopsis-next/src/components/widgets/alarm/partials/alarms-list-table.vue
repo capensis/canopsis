@@ -149,7 +149,6 @@
             :actions-ignore-media-query="resizableColumn"
             :virtual-scroll="widget.parameters.isVirtualScrollEnabled"
             :booted="bootedRows[item._id]"
-            :visible="visibleRows[item._id]"
             :eager="eager"
             v-on="rowListeners"
             @start:resize="startColumnResize"
@@ -207,6 +206,7 @@ import {
 
 import featuresService from '@/services/features';
 import { AsyncBooting } from '@/services/async-booting';
+import { TableIntersectionObserver } from '@/services/table-intersection-observer';
 
 import { mapIds } from '@/helpers/array';
 import {
@@ -350,7 +350,6 @@ export default {
   data() {
     return {
       bootedRows: {},
-      visibleRows: {},
     };
   },
   computed: {
@@ -570,24 +569,12 @@ export default {
     'widget.parameters.isVirtualScrollEnabled': {
       handler(isVirtualScrollEnabled) {
         if (isVirtualScrollEnabled) {
-          this.$intersectionObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-              const { id } = entry.target.dataset;
-
-              if (this.visibleRows[id] !== entry.isIntersecting) {
-                this.$set(this.visibleRows, id, entry.isIntersecting);
-              }
-            });
-          }, {
-            root: null,
-            rootMargin: '400px 0px',
-            threshold: 0,
-          });
+          this.$intersectionObserver.connect();
 
           return;
         }
 
-        this.$intersectionObserver?.disconnect();
+        this.$intersectionObserver.disconnect();
       },
       immediate: true,
     },
@@ -601,6 +588,7 @@ export default {
 
   beforeCreate() {
     this.$asyncBootingActionsPanel = new AsyncBooting();
+    this.$intersectionObserver = new TableIntersectionObserver();
   },
 
   mounted() {
@@ -608,8 +596,8 @@ export default {
   },
 
   beforeDestroy() {
-    this.$intersectionObserver?.disconnect();
     this.$asyncBootingActionsPanel.clear();
+    this.$intersectionObserver.destroy();
   },
 
   methods: {
@@ -640,8 +628,6 @@ export default {
 
         return acc;
       }, {});
-
-      this.visibleRows = { ...this.bootedRows };
 
       const chunks = splitIdsToChunk(farthest, itemsPerRender);
 

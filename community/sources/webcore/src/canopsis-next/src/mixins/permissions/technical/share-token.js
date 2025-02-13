@@ -1,4 +1,4 @@
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -6,19 +6,19 @@ export const permissionsTechnicalShareTokenMixin = {
   mixins: [authMixin],
   computed: {
     hasCreateAnyShareTokenAccess() {
-      return this.checkCreateAccess(USERS_PERMISSIONS.technical.shareToken);
+      return this.checkCreateAccess(USER_PERMISSIONS.technical.shareToken);
     },
 
     hasReadAnyShareTokenAccess() {
-      return this.checkReadAccess(USERS_PERMISSIONS.technical.shareToken);
+      return this.checkReadAccess(USER_PERMISSIONS.technical.shareToken);
     },
 
     hasUpdateAnyShareTokenAccess() {
-      return this.checkUpdateAccess(USERS_PERMISSIONS.technical.shareToken);
+      return this.checkUpdateAccess(USER_PERMISSIONS.technical.shareToken);
     },
 
     hasDeleteAnyShareTokenAccess() {
-      return this.checkDeleteAccess(USERS_PERMISSIONS.technical.shareToken);
+      return this.checkDeleteAccess(USER_PERMISSIONS.technical.shareToken);
     },
   },
 };

@@ -17,6 +17,14 @@ describe('numbers-metrics', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `numbers-metrics` with hide actions', async () => {
+    const wrapper = snapshotFactory({
+      propsData: { hideActions: true },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `numbers-metrics` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {

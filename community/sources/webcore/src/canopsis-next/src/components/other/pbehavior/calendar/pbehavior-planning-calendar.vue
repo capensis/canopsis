@@ -4,7 +4,10 @@
       ref="calendar"
       :events="events"
       :loading="pending"
+      :timezone="timezone"
+      :no-timezone="!shownUserTimezone"
       color="primary"
+      @update:timezone="handleUpdateTimezone"
       @change:event="handleUpdateEvent"
       @move:event="handleUpdateEvent"
       @resize:event="handleUpdateEvent"
@@ -15,6 +18,8 @@
           :event="event"
           :entity-pattern="entityPattern"
           :default-name="defaultName"
+          :timezone="timezone"
+          :no-timezone="!shownUserTimezone"
           @close="close"
           @submit="addEventWithClose($event, close)"
           @remove="removePbehavior"
@@ -43,31 +48,26 @@ import {
   convertDateToDateObjectByTimezone,
   convertDateToDateObject,
   getDiffBetweenDates,
+  getLocalTimezone,
 } from '@/helpers/date/date';
 import { isFullDayEvent } from '@/helpers/entities/pbehavior/form';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesPbehaviorTimespansMixin } from '@/mixins/entities/pbehavior/timespans';
 
 import PbehaviorCreateEvent from './partials/pbehavior-create-event.vue';
 import PbehaviorPlanningCalendarLegend from './partials/pbehavior-planning-calendar-legend.vue';
 
+const { mapGetters: infoMapGetters } = createNamespacedHelpers('info');
 const { mapActions: pbehaviorTypesMapActions } = createNamespacedHelpers('pbehaviorTypes');
 
 export default {
-  inject: ['$system'],
   components: {
     PbehaviorCreateEvent,
     PbehaviorPlanningCalendarLegend,
   },
   mixins: [
-    entitiesInfoMixin,
     entitiesPbehaviorTimespansMixin,
   ],
-  model: {
-    prop: 'pbehaviors',
-    event: 'input',
-  },
   props: {
     pbehaviorsById: {
       type: Object,
@@ -97,6 +97,10 @@ export default {
       type: String,
       default: '',
     },
+    timezone: {
+      type: String,
+      default: getLocalTimezone(),
+    },
   },
   data() {
     return {
@@ -107,6 +111,8 @@ export default {
     };
   },
   computed: {
+    ...infoMapGetters(['shownUserTimezone']),
+
     allPbehaviorsById() {
       return {
         ...this.pbehaviorsById,
@@ -127,6 +133,7 @@ export default {
         this.$nextTick(this.setCalendarView);
       },
     },
+    timezone: 'fetchEvents',
   },
   created() {
     this.debouncedFetchEvents = debounce(this.fetchEvents, 300);
@@ -181,8 +188,8 @@ export default {
     fetchTimespansForPbehavior(pbehavior) {
       const { start, end } = this.$refs.calendar.filled;
 
-      const from = convertDateToTimestampByTimezone(start, this.$system.timezone);
-      const to = convertDateToTimestampByTimezone(end, this.$system.timezone);
+      const from = convertDateToTimestampByTimezone(start, this.timezone, true);
+      const to = convertDateToTimestampByTimezone(end, this.timezone, true);
 
       const timespan = pbehaviorToTimespanRequest({
         pbehavior,
@@ -205,8 +212,8 @@ export default {
       timespans,
     }) {
       const isTimed = !isFullDayEvent(
-        convertDateToDateObjectByTimezone(pbehavior.tstart, this.$system.timezone),
-        pbehavior.tstop && convertDateToDateObjectByTimezone(pbehavior.tstop, this.$system.timezone),
+        convertDateToDateObjectByTimezone(pbehavior.tstart, this.timezone),
+        pbehavior.tstop && convertDateToDateObjectByTimezone(pbehavior.tstop, this.timezone),
       );
 
       return timespans.map((timespan, index) => {
@@ -218,8 +225,8 @@ export default {
         const color = pbehavior.color || type.color || pbehavior.type?.color || CSS_COLORS_VARS.secondary;
         const iconColor = getMostReadableTextColor(color, { level: 'AA', size: 'large' });
 
-        const start = convertDateToDateObjectByTimezone(timespan.from, this.$system.timezone);
-        const end = convertDateToDateObjectByTimezone(timespan.to, this.$system.timezone);
+        const start = convertDateToDateObjectByTimezone(timespan.from, this.timezone);
+        const end = convertDateToDateObjectByTimezone(timespan.to, this.timezone);
 
         return {
           id: `${pbehavior._id}-${index}`,
@@ -310,13 +317,13 @@ export default {
       const { pbehavior } = data;
 
       const originalPbehavior = this.allPbehaviorsById[pbehavior._id];
-
-      const tstart = convertDateToTimestampByTimezone(start, this.$system.timezone);
-      const tstop = convertDateToTimestampByTimezone(end, this.$system.timezone);
+      const timezone = pbehavior.timezone || this.timezone;
+      const tstart = convertDateToTimestampByTimezone(start, timezone);
+      const tstop = convertDateToTimestampByTimezone(end, this.timezone);
 
       const exdate = {
-        begin: convertDateToTimestampByTimezone(oldStart, this.$system.timezone),
-        end: convertDateToTimestampByTimezone(oldEnd, this.$system.timezone),
+        begin: convertDateToTimestampByTimezone(oldStart, timezone),
+        end: convertDateToTimestampByTimezone(oldEnd, timezone),
         type: this.getOppositePbehaviorType(pbehavior.type),
       };
 
@@ -414,9 +421,9 @@ export default {
       const { pbehavior } = event.data;
 
       if (!pbehavior.rrule) {
-        const tstart = convertDateToTimestampByTimezone(event.start, this.$system.timezone);
+        const tstart = convertDateToTimestampByTimezone(event.start, this.timezone);
         const tstop = pbehavior.tstop
-          ? convertDateToTimestampByTimezone(event.end, this.$system.timezone)
+          ? convertDateToTimestampByTimezone(event.end, this.timezone)
           : null;
 
         await this.updatePbehavior({
@@ -489,6 +496,10 @@ export default {
       const targetType = TYPES_MAP[pbehaviorType.type];
 
       return this.defaultTypes.find(defaultType => defaultType.type === targetType);
+    },
+
+    handleUpdateTimezone(newTimezone) {
+      this.$emit('update:timezone', newTimezone);
     },
   },
 };
