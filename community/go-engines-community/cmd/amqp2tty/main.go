@@ -21,7 +21,7 @@ const (
 func main() {
 	var version bool
 	var exchange string
-	flag.StringVar(&exchange, "exchange", canopsis.CanopsisEventsExchange, "exchange name to read events from")
+	flag.StringVar(&exchange, "exchange", canopsis.EventsExchangeName, "exchange name to read events from")
 	flag.BoolVar(&version, "version", false, "Show the version information")
 	flag.Parse()
 

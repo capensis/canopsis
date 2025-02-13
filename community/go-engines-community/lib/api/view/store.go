@@ -11,7 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
+	libview "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -21,8 +21,10 @@ import (
 )
 
 const (
-	permissionPrefix = "Rights on view :"
-	defaultTabTitle  = "Default"
+	defaultTabTitle = "Default"
+
+	permNameGeneral = "view_general"
+	permNameActions = "view_actions"
 )
 
 type Store interface {
@@ -135,7 +137,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 
 		now := datetime.NewCpsTime()
 		id := utils.NewID()
-		_, err = s.collection.InsertOne(ctx, view.View{
+		_, err = s.collection.InsertOne(ctx, libview.View{
 			ID:              id,
 			Enabled:         *r.Enabled,
 			Title:           r.Title,
@@ -154,7 +156,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 		}
 
 		if withDefaultTab {
-			_, err := s.tabCollection.InsertOne(ctx, view.Tab{
+			_, err := s.tabCollection.InsertOne(ctx, libview.Tab{
 				ID:        utils.NewID(),
 				Title:     defaultTabTitle,
 				View:      id,
@@ -175,7 +177,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 		}
 
 		if !group.IsPrivate {
-			err = s.createPermissions(ctx, r.Author, map[string]string{response.ID: response.Title})
+			err = s.createPermissions(ctx, r.Author, map[string]string{response.ID: response.Title}, map[string]string{response.ID: response.Group.ID})
 		}
 
 		return err
@@ -189,7 +191,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		oldView := view.View{}
+		oldView := libview.View{}
 		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&oldView)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -241,7 +243,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		if !oldView.IsPrivate {
-			err = s.updatePermissions(ctx, *response)
+			err = s.updatePermissions(ctx, response.ID, response.Group.ID, response.Title)
 		}
 
 		return err
@@ -315,6 +317,7 @@ func (s *store) UpdatePositions(ctx context.Context, r EditPositionRequest) (boo
 		res = false
 		var err error
 		res, err = s.updatePositions(ctx, r)
+
 		return err
 	})
 
@@ -336,6 +339,13 @@ func (s *store) updatePositions(ctx context.Context, r EditPositionRequest) (boo
 	err = s.writePositions(ctx, newGroupPositions, newViewPositions, changedViewGroup)
 	if err != nil {
 		return false, err
+	}
+
+	for id, groupID := range changedViewGroup {
+		err = s.updatePermissions(ctx, id, groupID, "")
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return true, nil
@@ -636,21 +646,22 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 		newWidgets := make([]interface{}, 0, len(r.Items))
 		newWidgetFilters := make([]interface{}, 0, len(r.Items))
 		newViewTitles := make(map[string]string, len(r.Items))
+		newViewGroups := make(map[string]string, len(r.Items))
 		positionItems := make([]EditPositionItemRequest, 0, len(r.Items))
 		now := datetime.NewCpsTime()
 		for gi, g := range r.Items {
-			groupId := g.ID
+			groupID := g.ID
 
 			if g.ID == "" || !existedGroupIds[g.ID] {
-				groupId = utils.NewID()
+				groupID = utils.NewID()
 				if g.Title == "" {
 					return ValidationError{
 						field: fmt.Sprintf("%d.title", gi),
 						error: ErrValueIsMissing,
 					}
 				}
-				newGroups = append(newGroups, view.Group{
-					ID:       groupId,
+				newGroups = append(newGroups, libview.Group{
+					ID:       groupID,
 					Title:    g.Title,
 					Position: maxGroupPosition,
 					Author:   userID,
@@ -676,15 +687,15 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 						}
 					}
 
-					viewId := utils.NewID()
-					groupViewIds = append(groupViewIds, viewId)
-					newViews = append(newViews, view.View{
-						ID:              viewId,
+					viewID := utils.NewID()
+					groupViewIds = append(groupViewIds, viewID)
+					newViews = append(newViews, libview.View{
+						ID:              viewID,
 						Enabled:         v.Enabled,
 						Title:           v.Title,
 						Description:     v.Description,
 						Position:        maxViewPosition,
-						Group:           groupId,
+						Group:           groupID,
 						Tags:            v.Tags,
 						PeriodicRefresh: v.PeriodicRefresh,
 						Author:          userID,
@@ -692,7 +703,8 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 						Updated:         now,
 					})
 					maxViewPosition++
-					newViewTitles[viewId] = v.Title
+					newViewTitles[viewID] = v.Title
+					newViewGroups[viewID] = groupID
 
 					if v.Tabs != nil {
 						for ti, tab := range *v.Tabs {
@@ -704,10 +716,10 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 							}
 
 							tabId := utils.NewID()
-							newTabs = append(newTabs, view.Tab{
+							newTabs = append(newTabs, libview.Tab{
 								ID:       tabId,
 								Title:    tab.Title,
-								View:     viewId,
+								View:     viewID,
 								Author:   userID,
 								Position: int64(ti),
 								Created:  now,
@@ -741,7 +753,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 										}
 
 										filterId := utils.NewID()
-										newWidgetFilters = append(newWidgetFilters, view.WidgetFilter{
+										newWidgetFilters = append(newWidgetFilters, libview.WidgetFilter{
 											ID:               filterId,
 											Title:            filter.Title,
 											Widget:           widgetId,
@@ -767,7 +779,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 									}
 
 									widget.Parameters.MainFilter = mainFilterId
-									newWidgets = append(newWidgets, view.Widget{
+									newWidgets = append(newWidgets, libview.Widget{
 										ID:             widgetId,
 										Tab:            tabId,
 										Title:          widget.Title,
@@ -786,7 +798,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 			}
 
 			positionItems = append(positionItems, EditPositionItemRequest{
-				ID:    groupId,
+				ID:    groupID,
 				Views: groupViewIds,
 			})
 		}
@@ -821,7 +833,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 			}
 		}
 
-		err = s.createPermissions(ctx, userID, newViewTitles)
+		err = s.createPermissions(ctx, userID, newViewTitles, newViewGroups)
 		if err != nil {
 			return err
 		}
@@ -833,26 +845,48 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 	return err
 }
 
-func (s *store) createPermissions(ctx context.Context, userID string, views map[string]string) error {
+func (s *store) createPermissions(ctx context.Context, userID string, views map[string]string, viewGroups map[string]string) error {
 	if len(views) == 0 {
 		return nil
 	}
 
 	newPermissions := make([]interface{}, 0, len(views))
 	setRole := bson.M{}
-	for viewId, viewTitle := range views {
-		newPermissions = append(newPermissions, bson.M{
-			"_id":         viewId,
-			"name":        viewId,
-			"description": fmt.Sprintf("%s %s", permissionPrefix, viewTitle),
-			"type":        securitymodel.ObjectTypeRW,
-		})
-		setRole["permissions."+viewId] = securitymodel.PermissionBitmaskRead |
+	for viewID, viewTitle := range views {
+		newPermActionsID := utils.NewID()
+		newPermissions = append(newPermissions,
+			bson.M{
+				"_id":         viewID,
+				"name":        permNameGeneral,
+				"view":        viewID,
+				"description": viewTitle,
+				"type":        securitymodel.ObjectTypeRW,
+				"groups": []string{
+					libview.PermissionGroupCommonViews,
+					viewGroups[viewID],
+					viewID,
+				},
+			},
+			bson.M{
+				"_id":         newPermActionsID,
+				"name":        permNameActions,
+				"view":        viewID,
+				"description": viewTitle,
+				"groups": []string{
+					libview.PermissionGroupCommonViews,
+					viewGroups[viewID],
+					viewID,
+				},
+			},
+		)
+		setRole["permissions."+viewID] = securitymodel.PermissionBitmaskRead |
 			securitymodel.PermissionBitmaskUpdate |
 			securitymodel.PermissionBitmaskDelete
+		setRole["permissions."+newPermActionsID] = securitymodel.PermissionBitmaskCan
 		setRole["author"] = userID
 		setRole["updated"] = datetime.NewCpsTime()
 	}
+
 	_, err := s.permissionCollection.InsertMany(ctx, newPermissions)
 	if err != nil {
 		return err
@@ -885,12 +919,21 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	return err
 }
 
-func (s *store) updatePermissions(ctx context.Context, view Response) error {
-	_, err := s.permissionCollection.UpdateOne(ctx,
-		bson.M{"_id": view.ID},
-		bson.M{"$set": bson.M{
-			"description": fmt.Sprintf("%s %s", permissionPrefix, view.Title),
-		}},
+func (s *store) updatePermissions(ctx context.Context, viewID, viewGroupID, viewTitle string) error {
+	set := bson.M{
+		"groups": []string{
+			libview.PermissionGroupCommonViews,
+			viewGroupID,
+			viewID,
+		},
+	}
+	if viewTitle != "" {
+		set["description"] = viewTitle
+	}
+
+	_, err := s.permissionCollection.UpdateMany(ctx,
+		bson.M{"view": viewID},
+		bson.M{"$set": set},
 	)
 
 	return err
@@ -930,7 +973,7 @@ func (s *store) normalizePositionsOnViewMove(ctx context.Context, viewID, groupI
 	viewPositionsByGroup[groupID] = append(viewPositionsByGroup[groupID], viewID)
 
 	viewPositions := make([]string, 0)
-	for id := range viewPositionsByGroup {
+	for _, id := range groupPositions {
 		viewPositions = append(viewPositions, viewPositionsByGroup[id]...)
 	}
 
@@ -1029,7 +1072,7 @@ func (s *store) deleteTabs(ctx context.Context, id, userID string) error {
 	if err != nil {
 		return err
 	}
-	tabs := make([]view.Tab, 0)
+	tabs := make([]libview.Tab, 0)
 	err = tabCursor.All(ctx, &tabs)
 	if err != nil || len(tabs) == 0 {
 		return err
@@ -1055,7 +1098,7 @@ func (s *store) deleteTabs(ctx context.Context, id, userID string) error {
 	if err != nil {
 		return err
 	}
-	widgets := make([]view.Widget, 0)
+	widgets := make([]libview.Widget, 0)
 	err = widgetCursor.All(ctx, &widgets)
 	if err != nil || len(widgets) == 0 {
 		return err

@@ -54,7 +54,7 @@
 </template>
 
 <script>
-import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USERS_PERMISSIONS } from '@/constants';
+import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import RemediationInstructionApprovalTypeField from './fields/remediation-instruction-approval-type-field.vue';
 
@@ -90,7 +90,7 @@ export default {
   },
   computed: {
     approvePermission() {
-      return USERS_PERMISSIONS.api.remediation.instructionApprove;
+      return USER_PERMISSIONS.api.remediation.instructionApprove;
     },
 
     isRoleType() {

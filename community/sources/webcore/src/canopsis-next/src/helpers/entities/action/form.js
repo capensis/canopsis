@@ -4,7 +4,7 @@ import { ALARM_STATES, ACTION_TYPES, PATTERNS_FIELDS } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { durationToForm } from '@/helpers/date/duration';
-import { getLocaleTimezone } from '@/helpers/date/date';
+import { getLocalTimezone } from '@/helpers/date/date';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from '../pbehavior/form';
@@ -236,10 +236,10 @@ const assocTicketActionParametersToForm = (parameters = {}) => ({
  * Convert action pbehavior parameters to form
  *
  * @param {Pbehavior} [parameters = {}]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {PbehaviorForm}
  */
-const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocaleTimezone()) => {
+const pbehaviorActionParametersToForm = (parameters = {}, timezone = getLocalTimezone()) => {
   const pbehaviorForm = {
     ...defaultActionForwardAuthorToForm(parameters),
     ...pbehaviorToForm(parameters, null, timezone),
@@ -304,10 +304,10 @@ export const actionParametersToForm = (action, timezone) => {
  * Convert action to form
  *
  * @param {Action} [action = {}]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {ActionForm}
  */
-export const actionToForm = (action = {}, timezone = getLocaleTimezone()) => ({
+export const actionToForm = (action = {}, timezone = getLocalTimezone()) => ({
   type: action.type ?? ACTION_TYPES.snooze,
   key: uid(),
   parameters: actionParametersToForm(action, timezone),
@@ -336,10 +336,10 @@ export const formToWebhookActionParameters = (parameters = {}) => ({
  * Convert pbehavior parameters to action
  *
  * @param {PbehaviorForm | {}} [parameters = {}]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorRequest}
  */
-export const formToPbehaviorActionParameters = (parameters = {}, timezone = getLocaleTimezone()) => {
+export const formToPbehaviorActionParameters = (parameters = {}, timezone = getLocalTimezone()) => {
   const pbehavior = formToPbehavior(omit(parameters, ['start_on_trigger', 'duration']), timezone);
 
   if (parameters.start_on_trigger) {

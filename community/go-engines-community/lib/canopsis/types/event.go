@@ -13,6 +13,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
+const (
+	InitiatorJSONTag = "initiator"
+)
+
 // event initiators
 const (
 	InitiatorUser     = "user"
@@ -587,6 +591,17 @@ func isValidEventType(t string) bool {
 		EventTypeAutoInstructionActivate,
 		EventTypeMetaAlarmChildActivate,
 		EventTypeMetaAlarmChildDeactivate:
+		return true
+	}
+
+	return false
+}
+
+func IsValidInitiator(i string) bool {
+	switch i {
+	case InitiatorExternal,
+		InitiatorSystem,
+		InitiatorUser:
 		return true
 	}
 

@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { ROUTES_NAMES, USERS_PERMISSIONS } from '@/constants';
+import { ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
 import TopBarMenu from './top-bar-menu.vue';
 
@@ -18,7 +18,7 @@ export default {
         {
           route: { name: ROUTES_NAMES.notificationInstructionStats },
           icon: 'star_half',
-          permission: USERS_PERMISSIONS.technical.notification.instructionStats,
+          permission: USER_PERMISSIONS.technical.notification.instructionStats,
         },
       ];
     },

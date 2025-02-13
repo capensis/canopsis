@@ -1,6 +1,7 @@
 <template>
   <c-action-btn
     :tooltip="$t('filter.selector.buttons.list')"
+    :disabled="disabled"
     icon="filter_list"
     @click="showFiltersListModal"
   />
@@ -48,6 +49,10 @@ export default {
       required: false,
     },
     entityCountersType: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

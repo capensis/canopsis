@@ -3,6 +3,9 @@
 exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] = `
 <div
   class="layout kpi-widget-filters wrap"
+  filteraddable="true"
+  filterdisabled="true"
+  filtereditable="true"
   lockedfilter="locked-filter-id"
 >
   <c-quick-date-interval-field-stub
@@ -22,7 +25,6 @@ exports[`kpi-widget-filters Renders 'kpi-widget-filters' with custom props 1`] =
     <filter-selector-stub
       class="kpi-widget-filters__filter-selector mr-4"
       clearable="true"
-      disabled="true"
       filters="[object Object],[object Object],[object Object]"
       hidedetails="true"
       itemtext="title"

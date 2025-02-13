@@ -103,13 +103,7 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
 exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but without access 1`] = `
 <div
   class="shared-actions-panel"
->
-  <button
-    class="action-exportPdf"
-  >
-    Export alarm to PDF file|assignment_returned|exportPdf
-  </button>
-</div>
+/>
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
