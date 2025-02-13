@@ -25,7 +25,6 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         class="layout align-end"
       >
         <filter-selector-stub
-          disabled="true"
           filters=""
           hidedetails="true"
           itemtext="title"
@@ -33,7 +32,15 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
           label="Select a filter"
           lockedfilters=""
         />
-        <!---->
+        <filters-list-btn-stub
+          addable="true"
+          editable="true"
+          private="true"
+          widgetid="880c5d0c-3f31-477c-8365-2f90389326cc"
+          withalarm="true"
+          withentity="true"
+          withpbehavior="true"
+        />
       </div>
     </div>
     <!---->
@@ -46,14 +53,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         show-count="2"
       />
     </div>
-    <div
-      class="flex"
-    >
-      <alarms-list-remediation-instructions-filters-stub
-        filters=""
-        lockedfilters=""
-      />
-    </div>
+    <!---->
     <div
       class="flex"
     >
@@ -139,14 +139,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
         show-count="2"
       />
     </div>
-    <div
-      class="flex"
-    >
-      <alarms-list-remediation-instructions-filters-stub
-        filters=""
-        lockedfilters=""
-      />
-    </div>
+    <!---->
     <div
       class="flex"
     >
@@ -199,7 +192,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
 </div>
 `;
 
-exports[`alarms-list Renders \`alarms-list\` with default props and user filter permission and correlation and bookmark 1`] = `
+exports[`alarms-list Renders \`alarms-list\` with default props and user filter permissions and correlation and bookmark 1`] = `
 <div
   class="alarms-list"
 >
@@ -242,7 +235,6 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
       >
         <filter-selector-stub
           clearable="true"
-          disabled="true"
           filters=""
           hidedetails="true"
           itemtext="title"
@@ -250,7 +242,15 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
           label="Select a filter"
           lockedfilters=""
         />
-        <!---->
+        <filters-list-btn-stub
+          addable="true"
+          editable="true"
+          private="true"
+          widgetid="880c5d0c-3f31-477c-8365-2f90389326cc"
+          withalarm="true"
+          withentity="true"
+          withpbehavior="true"
+        />
       </div>
     </div>
     <div
@@ -284,6 +284,8 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
       class="flex"
     >
       <alarms-list-remediation-instructions-filters-stub
+        addable="true"
+        editable="true"
         filters=""
         lockedfilters=""
       />

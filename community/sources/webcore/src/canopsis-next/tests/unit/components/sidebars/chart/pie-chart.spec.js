@@ -14,7 +14,7 @@ import {
   QUICK_RANGES,
   SAMPLINGS,
   SIDE_BARS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 
@@ -242,9 +242,24 @@ describe('pie-chart', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `pie-chart` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    selectWidgetForm(wrapper).triggerCustomEvent('input', widget);
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `pie-chart` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.pieChart.actions.listFilters]: { actions: [] },
+      [USER_PERMISSIONS.business.pieChart.actions.filter]: { actions: [] },
     });
 
     const wrapper = snapshotFactory({

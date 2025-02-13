@@ -158,12 +158,16 @@ export default {
       return sanitizeHtml(this.value, this.sanitizeOptions);
     },
 
+    hasTemplateVars() {
+      return !isEmpty(this.templateVars);
+    },
+
     hasError() {
       return this.errorMessages.length;
     },
 
     defaultVariables() {
-      if (!this.withDefaultVariables) {
+      if (!this.withDefaultVariables || !this.hasTemplateVars) {
         return [];
       }
 
@@ -179,7 +183,7 @@ export default {
     },
 
     hasVariables() {
-      return this.variables || (this.withDefaultVariables && !isEmpty(this.templateVars));
+      return this.variables || (this.withDefaultVariables && this.hasTemplateVars);
     },
 
     variablesButton() {

@@ -20,6 +20,7 @@
       />
     </v-layout>
     <v-layout
+      v-if="!hideActions"
       class="kpi-widget__actions mt-4"
       justify-end
     >
@@ -66,6 +67,10 @@ export default {
     fontSize: {
       type: Number,
       required: false,
+    },
+    hideActions: {
+      type: Boolean,
+      default: false,
     },
   },
 };

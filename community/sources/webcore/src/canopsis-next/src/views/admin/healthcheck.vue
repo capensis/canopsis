@@ -67,7 +67,7 @@ import { isEqual } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
-import { USERS_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
 import { authMixin } from '@/mixins/auth';
 
@@ -105,7 +105,7 @@ export default {
     },
 
     hasAccessToTechMetrics() {
-      return this.checkAccess(USERS_PERMISSIONS.technical.techmetrics);
+      return this.checkAccess(USER_PERMISSIONS.technical.techmetrics);
     },
   },
   mounted() {

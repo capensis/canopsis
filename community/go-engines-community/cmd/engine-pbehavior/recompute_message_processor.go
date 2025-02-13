@@ -9,6 +9,7 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -36,6 +37,7 @@ type recomputeMessageProcessor struct {
 	Decoder                  encoding.Decoder
 	Publisher                libamqp.Publisher
 	Exchange, Queue          string
+	TimezoneConfigProvider   config.TimezoneConfigProvider
 	Logger                   zerolog.Logger
 }
 
@@ -67,9 +69,9 @@ func (p *recomputeMessageProcessor) computePbehaviors(ctx context.Context, event
 	var resolver libpbehavior.ComputedEntityTypeResolver
 	var err error
 	if len(ids) == 0 {
-		resolver, err = p.PbhService.Recompute(ctx)
+		resolver, err = p.PbhService.Recompute(ctx, p.TimezoneConfigProvider.Get().Location)
 	} else {
-		resolver, err = p.PbhService.RecomputeByIds(ctx, ids)
+		resolver, err = p.PbhService.RecomputeByIds(ctx, ids, p.TimezoneConfigProvider.Get().Location)
 	}
 	if err != nil {
 		return err

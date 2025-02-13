@@ -1,13 +1,6 @@
-import { get, isUndefined } from 'lodash';
-import flatten from 'flat';
+import { difference } from 'lodash';
 
-import {
-  NOT_COMPLETED_USER_PERMISSIONS,
-  USERS_PERMISSIONS,
-  PERMISSIONS_TYPES_TO_ACTIONS,
-  USER_PERMISSIONS_PREFIXES,
-  CRUD_ACTIONS,
-} from '@/constants';
+import { PERMISSIONS_TYPES_TO_ACTIONS, CRUD_ACTIONS, USER_PERMISSIONS_GROUPS } from '@/constants';
 
 /**
  * Check user access for a permission
@@ -17,16 +10,28 @@ import {
  * @returns {boolean}
  */
 export const checkUserAccess = (permission, action) => {
-  if (permission && permission.actions) {
-    const { actions } = permission;
-
-    return action === CRUD_ACTIONS.can
-      ? actions.length >= 0
-      : actions.includes(action);
+  if (!permission?.actions) {
+    return false;
   }
 
-  return false;
+  const { actions } = permission;
+
+  return action === CRUD_ACTIONS.can
+    ? actions.length >= 0
+    : actions.includes(action);
 };
+
+/**
+ * Check user access for a permission
+ *
+ * @param {Object} currentUserPermissionsById
+ * @param {Object} permissions
+ * @param {string} action
+ * @returns {boolean}
+ */
+export const checkUserAnyAccess = (permissions, action) => (
+  Object.values(permissions).some(permission => checkUserAccess(permission, action))
+);
 
 /**
  * Get actions for permission by type
@@ -39,112 +44,95 @@ export const getPermissionActions = permission => (PERMISSIONS_TYPES_TO_ACTIONS[
   : [CRUD_ACTIONS.can]);
 
 /**
- * Get right checkbox value for the form
+ * Converts a flat permissions array into a hierarchical tree structure
  *
- * @param {string} permissionId
- * @param {PermissionForm} permissions
- * @param {PermissionForm} changedPermissions
- * @param {string} [action=CRUD_ACTIONS.can]
- * @returns {boolean}
+ * @param {Array} [permissions=[]] - Array of permission objects containing groups and actions
+ * @returns {Object} Tree structure where:
+ *   - Each node contains group/permission data
+ *   - Groups have `children`, `allChildren`, and `actions` properties
+ *   - Leaf nodes (permissions) contain the permission data and `actions`
+ *   - Group nodes use group._id as keys
+ *   - Permission nodes use permission._id as keys
+ *
+ * @example
+ * const permissions = [{
+ *   _id: 'perm1',
+ *   groups: [{ _id: 'group1', name: 'Group 1' }],
+ *   type: 'crud'
+ * }];
+ * const tree = permissionsToTreeview(permissions);
+ * // Returns:
+ * // {
+ * //   group1: {
+ * //     _id: 'group1',
+ * //     name: 'Group 1',
+ * //     children: {
+ * //       perm1: { _id: 'perm1', actions: ['create', 'read', 'update', 'delete'] }
+ * //     },
+ * //     allChildren: [{ _id: 'perm1', actions: ['create', 'read', 'update', 'delete'] }],
+ * //     actions: ['can']
+ * //   }
+ * // }
  */
-export const getCheckboxValue = (
-  permissionId,
-  permissions,
-  changedPermissions,
-  action = CRUD_ACTIONS.can,
-) => {
-  const actions = permissions[permissionId] || [];
+export const permissionsToTreeview = (permissions = []) => permissions.reduce((acc, permission) => {
+  let activeGroup = acc;
 
-  const changedActions = get(changedPermissions, [permissionId]);
-  const currentActions = isUndefined(changedActions) ? actions : changedActions;
+  permission.groups.forEach((group) => {
+    if (!activeGroup[group._id]) {
+      activeGroup[group._id] = {
+        ...group,
 
-  return currentActions.includes(action);
+        children: {},
+        allChildren: [],
+        actions: [CRUD_ACTIONS.can],
+      };
+    }
+    activeGroup[group._id].allChildren.push({ _id: permission._id, actions: getPermissionActions(permission) });
+    activeGroup = activeGroup[group._id].children;
+  });
+
+  activeGroup[permission._id] = {
+    ...permission,
+
+    actions: getPermissionActions(permission),
+  };
+
+  return acc;
+}, {});
+
+/**
+ * Get properties for a permission checkbox based on role and permission details.
+ *
+ * @param {Object} role - The role object containing permissions.
+ * @param {Object} permission - The permission object which may contain child permissions.
+ * @param {string} action - The specific action to check within the permission.
+ * @returns {Object} An object containing properties for the checkbox:
+ * - `inputValue`: {boolean} Indicates if the checkbox should be checked.
+ * - `indeterminate`: {boolean} Indicates if the checkbox should be in an indeterminate state
+ * (only present if `permission.allChildren` exists).
+ */
+export const getPermissionCheckboxProps = (role, permission, action) => {
+  if (permission.allChildren) {
+    const childrenPermissionsDiffs = permission.allChildren
+      .map(({ _id: id, actions }) => difference(actions ?? [], role.permissions[id] ?? []).length);
+    const inputValue = childrenPermissionsDiffs.every(v => !v);
+    const hasCheckedChildren = permission.allChildren.some(({ _id: id }) => !!role.permissions[id]?.length);
+
+    return {
+      inputValue,
+      indeterminate: !inputValue && hasCheckedChildren,
+    };
+  }
+
+  return {
+    inputValue: role.permissions[permission._id]?.includes(action) ?? false,
+  };
 };
 
 /**
- * Get prepared grouped permissions for the permissions page
+ * Checks if a permission ID belongs to the API permission group
  *
- * @param {Array<Object>} permissions
- * @returns {*}
+ * @param {string} [permissionId=''] - The permission ID to check
+ * @returns {boolean} True if the permission belongs to API group, false otherwise
  */
-export const getGroupedPermissions = (permissions) => {
-  const allBusinessPermissionsIds = Object.values(flatten(USERS_PERMISSIONS.business));
-  const generalApiPermissions = Object.values(USERS_PERMISSIONS.api.general);
-  const rulesApiPermissions = Object.values(USERS_PERMISSIONS.api.rules);
-  const remediationApiPermissions = Object.values(USERS_PERMISSIONS.api.remediation);
-  const pbehaviorApiPermissions = Object.values(USERS_PERMISSIONS.api.pbehavior);
-  const eventsRecordApiPermissions = Object.values(USERS_PERMISSIONS.api.eventsRecord);
-
-  const {
-    exploitation: exploitationTechnicalPermissions,
-    notification: notificationTechnicalPermissions,
-    profile: profileTechnicalPermissions,
-    ...adminTechnicalPermissions
-  } = USERS_PERMISSIONS.technical;
-  const adminTechnicalPermissionsValues = Object.values(adminTechnicalPermissions);
-  const exploitationTechnicalPermissionsValues = Object.values(exploitationTechnicalPermissions);
-  const notificationTechnicalPermissionsValues = Object.values(notificationTechnicalPermissions);
-  const profileTechnicalPermissionsValues = Object.values(profileTechnicalPermissions);
-
-  return permissions.reduce((acc, permission) => {
-    const permissionId = String(permission._id);
-
-    if (permission.view && permission.view_group) {
-      acc.view.push(permission);
-    } else if (permission.playlist) {
-      acc.playlist.push(permission);
-    } else if (adminTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.admin.push(permission);
-    } else if (exploitationTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.exploitation.push(permission);
-    } else if (notificationTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.notification.push(permission);
-    } else if (profileTechnicalPermissionsValues.includes(permissionId)) {
-      acc.technical.profile.push(permission);
-    } else if (
-      allBusinessPermissionsIds.includes(permissionId)
-      || NOT_COMPLETED_USER_PERMISSIONS.some(id => permissionId.startsWith(id))
-    ) {
-      const [parentKey] = permission._id.split('_');
-
-      if (acc.business[parentKey]) {
-        acc.business[parentKey].push(permission);
-      }
-    } else if (generalApiPermissions.includes(permissionId)) {
-      acc.api.general.push(permission);
-    } else if (rulesApiPermissions.includes(permissionId)) {
-      acc.api.rules.push(permission);
-    } else if (remediationApiPermissions.includes(permissionId)) {
-      acc.api.remediation.push(permission);
-    } else if (pbehaviorApiPermissions.includes(permissionId)) {
-      acc.api.pbehavior.push(permission);
-    } else if (eventsRecordApiPermissions.includes(permissionId)) {
-      acc.api.eventsRecord.push(permission);
-    }
-
-    return acc;
-  }, {
-    business: {
-      ...Object.values(USER_PERMISSIONS_PREFIXES.business).reduce((acc, key) => {
-        acc[key] = [];
-
-        return acc;
-      }, {}),
-    },
-    view: [],
-    playlist: [],
-    technical: {
-      admin: [],
-      exploitation: [],
-      notification: [],
-      profile: [],
-    },
-    api: {
-      general: [],
-      rules: [],
-      remediation: [],
-      pbehavior: [],
-      eventsRecord: [],
-    },
-  });
-};
+export const isApiPermission = (permissionId = '') => permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);

@@ -1,21 +1,29 @@
 <template>
   <v-layout column>
-    <v-layout class="gap-2" justify-end>
-      <c-action-fab-btn
-        v-if="addable"
-        :tooltip="$t('modals.createPbehavior.create.title')"
-        icon="add"
-        color="primary"
-        left
-        @click="showCreatePbehaviorModal"
-      />
-      <c-action-fab-btn
-        :tooltip="$t('modals.pbehaviorsCalendar.title')"
-        icon="calendar_today"
-        color="secondary"
-        left
-        @click="showPbehaviorsCalendarModal"
-      />
+    <v-layout justify-space-between align-center>
+      <v-flex v-if="shownUserTimezone" xs5>
+        <c-timezone-field
+          v-model="timezone"
+          server
+        />
+      </v-flex>
+      <v-layout class="gap-2" justify-end>
+        <c-action-fab-btn
+          v-if="addable"
+          :tooltip="$t('modals.createPbehavior.create.title')"
+          icon="add"
+          color="primary"
+          left
+          @click="showCreatePbehaviorModal"
+        />
+        <c-action-fab-btn
+          :tooltip="$t('modals.pbehaviorsCalendar.title')"
+          icon="calendar_today"
+          color="secondary"
+          left
+          @click="showPbehaviorsCalendarModal"
+        />
+      </v-layout>
     </v-layout>
     <c-advanced-data-table
       :items="pbehaviors"
@@ -61,7 +69,13 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import {
+  computed,
+  ref,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -69,23 +83,17 @@ import Observer from '@/services/observer';
 
 import { createEntityIdPatternByValue } from '@/helpers/entities/pattern/form';
 
-import { pbehaviorsDateFormatMixin } from '@/mixins/pbehavior/pbehavior-date-format';
+import { useModals } from '@/hooks/modals';
+import { useI18n } from '@/hooks/i18n';
+import { usePbehavior } from '@/hooks/store/modules/pbehavior';
+import { usePendingWithLocalQuery } from '@/hooks/query/shared';
+
+import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
 
 import PbehaviorActions from './partials/pbehavior-actions.vue';
 
-const { mapActions } = createNamespacedHelpers('pbehavior');
-
 export default {
-  inject: {
-    $system: {},
-    $periodicRefresh: {
-      default() {
-        return new Observer();
-      },
-    },
-  },
   components: { PbehaviorActions },
-  mixins: [pbehaviorsDateFormatMixin],
   props: {
     entity: {
       type: Object,
@@ -112,88 +120,111 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      pending: false,
-      pbehaviors: [],
-    };
-  },
-  computed: {
-    headers() {
-      const headers = [
-        { text: this.$t('common.name'), value: 'name' },
-        { text: this.$t('common.author'), value: 'author.display_name' },
-        { text: this.$t('pbehavior.isEnabled'), value: 'enabled' },
-        { text: this.$t('pbehavior.begins'), value: 'tstart' },
-        { text: this.$t('pbehavior.ends'), value: 'tstop' },
-        { text: this.$t('pbehavior.rruleEnd'), value: 'rrule_end' },
-        { text: this.$t('common.recurrence'), value: 'rrule' },
-        { text: this.$t('common.type'), value: 'type.name' },
-        { text: this.$t('common.reason'), value: 'reason.name' },
-        { text: this.$tc('common.icon', 1), value: 'icon' },
+  setup(props) {
+    const modals = useModals();
+    const { t, tc } = useI18n();
+    const { fetchPbehaviorsByEntityIdWithoutStore } = usePbehavior();
+    const {
+      timezone,
+      shownUserTimezone,
+      formatIntervalDate,
+      formatRruleEndDate,
+    } = usePbehaviorDateFormat();
+
+    inject('$system');
+
+    const periodicRefresh = inject('$periodicRefresh', new Observer());
+
+    const pbehaviors = ref([]);
+
+    const headers = computed(() => {
+      const result = [
+        { text: t('common.name'), value: 'name' },
+        { text: t('common.author'), value: 'author.display_name' },
+        { text: t('pbehavior.isEnabled'), value: 'enabled' },
+        { text: t('pbehavior.begins'), value: 'tstart' },
+        { text: t('pbehavior.ends'), value: 'tstop' },
+        { text: t('pbehavior.rruleEnd'), value: 'rrule_end' },
+        { text: t('common.recurrence'), value: 'rrule' },
+        { text: t('common.type'), value: 'type.name' },
+        { text: t('common.reason'), value: 'reason.name' },
+        { text: tc('common.icon', 1), value: 'icon' },
       ];
 
-      if (this.withActiveStatus) {
-        headers.push({ text: this.$t('common.status'), value: 'status', sortable: false });
+      if (props.withActiveStatus) {
+        result.push({ text: t('common.status'), value: 'status', sortable: false });
       }
 
-      if (this.updatable || this.removable) {
-        headers.push({ text: this.$t('common.actionsLabel'), value: 'actions', sortable: false });
+      if (props.updatable || props.removable) {
+        result.push({ text: t('common.actionsLabel'), value: 'actions', sortable: false });
       }
 
-      return headers;
-    },
-  },
-  mounted() {
-    this.fetchList();
+      return result;
+    });
 
-    this.$periodicRefresh.register(this.fetchList);
-  },
-  beforeDestroy() {
-    this.$periodicRefresh.unregister(this.fetchList);
-  },
-  methods: {
-    ...mapActions({
-      fetchPbehaviorsByEntityIdWithoutStore: 'fetchListByEntityIdWithoutStore',
-    }),
+    const {
+      pending,
+      fetchHandlerWithQuery: fetchList,
+    } = usePendingWithLocalQuery({
+      fetchHandler: async () => {
+        try {
+          pbehaviors.value = await fetchPbehaviorsByEntityIdWithoutStore({
+            id: props.entity._id,
+            params: {
+              with_flags: true,
+            },
+          });
+        } catch (err) {
+          console.warn(err);
+        }
+      },
+    });
 
-    showPbehaviorsCalendarModal() {
-      this.$modals.show({
-        name: MODALS.pbehaviorsCalendar,
-        config: {
-          title: this.$t('modals.pbehaviorsCalendar.entity.title', { name: this.entity.name }),
-          entityId: this.entity._id,
-        },
-      });
-    },
+    /**
+     * Opens the pbehaviors calendar modal for a specific entity.
+     */
+    const showPbehaviorsCalendarModal = () => modals.show({
+      name: MODALS.pbehaviorsCalendar,
+      config: {
+        title: t('modals.pbehaviorsCalendar.entity.title', { name: props.entity.name }),
+        entityId: props.entity._id,
+      },
+    });
 
-    showCreatePbehaviorModal() {
-      this.$modals.show({
-        name: MODALS.pbehaviorPlanning,
-        config: {
-          entityPattern: createEntityIdPatternByValue(this.entity._id),
-          entities: [this.entity],
-          afterSubmit: this.fetchList,
-        },
-      });
-    },
+    /**
+     * Opens the creation pbehavior modal with pre-configured entity settings.
+     * Automatically refreshes the pbehavior list after successful submission.
+     */
+    const showCreatePbehaviorModal = () => modals.show({
+      name: MODALS.pbehaviorPlanning,
+      config: {
+        entityPattern: createEntityIdPatternByValue(props.entity._id),
+        entities: [props.entity],
+        afterSubmit: fetchList,
+      },
+    });
 
-    async fetchList() {
-      try {
-        this.pending = true;
+    onMounted(() => {
+      fetchList();
 
-        this.pbehaviors = await this.fetchPbehaviorsByEntityIdWithoutStore({
-          id: this.entity._id,
-          params: {
-            with_flags: true,
-          },
-        });
-      } catch (err) {
-        console.warn(err);
-      } finally {
-        this.pending = false;
-      }
-    },
+      periodicRefresh.register(fetchList);
+    });
+
+    onBeforeUnmount(() => periodicRefresh.unregister(fetchList));
+
+    return {
+      timezone,
+      shownUserTimezone,
+      pending,
+      pbehaviors,
+      headers,
+
+      formatIntervalDate,
+      formatRruleEndDate,
+      fetchList,
+      showPbehaviorsCalendarModal,
+      showCreatePbehaviorModal,
+    };
   },
 };
 </script>
