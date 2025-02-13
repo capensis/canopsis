@@ -6,6 +6,7 @@ import (
 
 	apicommon "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
@@ -72,31 +73,43 @@ func insertNewTables(
 			return 0, 0, fmt.Errorf("failed to read collection %q: %w", collName, err)
 		}
 
-		columnTypes := make(map[string]int)
+		var columns []string
+		var columnTypes []int
+		var hasCol map[string]bool
 		invalidFields := make([]string, 0)
 		nonStrFields := make([]string, 0)
 		for cursor.Next(ctx) {
-			var collDoc map[string]any
+			var collDoc bson.D
 			if err := cursor.Decode(&collDoc); err != nil {
 				return 0, 0, fmt.Errorf("failed to decode doc: %w", err)
 			}
 
-			for f, v := range collDoc {
-				if f == IDColumnName {
+			if columns == nil {
+				columns = make([]string, 0, len(collDoc)-1)
+				columnTypes = make([]int, 0, len(collDoc)-1)
+				hasCol = make(map[string]bool, len(collDoc)-1)
+			}
+
+			for _, f := range collDoc {
+				if f.Key == IDColumnName {
 					continue
 				}
 
-				if !apicommon.IsTableName(f) {
-					invalidFields = append(invalidFields, f)
+				if !hasCol[f.Key] && !apicommon.IsTableName(f.Key) {
+					invalidFields = append(invalidFields, f.Key)
 					continue
 				}
 
-				if _, ok := v.(string); !ok {
-					nonStrFields = append(nonStrFields, f)
+				if _, ok := f.Value.(string); !ok {
+					nonStrFields = append(nonStrFields, f.Key)
 					continue
 				}
 
-				columnTypes[f] = ColumnTypeNoType
+				if !hasCol[f.Key] {
+					hasCol[f.Key] = true
+					columns = append(columns, f.Key)
+					columnTypes = append(columnTypes, ColumnTypeNoType)
+				}
 			}
 		}
 
@@ -130,6 +143,7 @@ func insertNewTables(
 			ID:          utils.NewID(),
 			Type:        TypeMongoDB,
 			Name:        collName,
+			Columns:     columns,
 			ColumnTypes: columnTypes,
 			FromConfig:  true,
 			Created:     now,
@@ -226,45 +240,23 @@ func deleteMissingTables(
 		return 0, 0, nil
 	}
 
-	ruleExists := make(map[string]bool, len(ids))
+	linked := make(map[string]bool, len(ids))
+	linked, err = findWidgetLinkedTables(ctx, client.Collection(mongo.WidgetMongoCollection), ids, linked)
+	if err != nil {
+		return 0, 0, err
+	}
+
 	for _, c := range refCollectionNames {
-		ruleCursor, err := client.Collection(c).Aggregate(ctx, []bson.M{
-			{"$match": bson.M{"external_data.table": bson.M{"$in": ids}}},
-			{"$unwind": "$external_data"},
-			{"$match": bson.M{"external_data.table": bson.M{"$in": ids}}},
-			{"$group": bson.M{
-				"_id": "$external_data.table",
-			}},
-		})
+		linked, err = findRuleLinkedTables(ctx, client.Collection(c), ids, linked)
 		if err != nil {
-			return 0, 0, fmt.Errorf("failed to find linked rules: %w", err)
-		}
-
-		for ruleCursor.Next(ctx) {
-			r := struct {
-				ID string `bson:"_id"`
-			}{}
-			err := ruleCursor.Decode(&r)
-			if err != nil {
-				return 0, 0, fmt.Errorf("failed to decode linked rule: %w", err)
-			}
-
-			ruleExists[r.ID] = true
-		}
-
-		if err = ruleCursor.Err(); err != nil {
-			return 0, 0, fmt.Errorf("failed to fetch linked rules: %w", err)
-		}
-
-		if err = ruleCursor.Close(ctx); err != nil {
-			return 0, 0, fmt.Errorf("failed to close rule cursor: %w", err)
+			return 0, 0, err
 		}
 	}
 
 	i := 0
 	blockedIDs := make([]string, 0)
 	for _, id := range ids {
-		if ruleExists[id] {
+		if linked[id] {
 			logger.Error().Str("collection_name", names[id]).Msg("MongoDB collection cannot be removed from external data list because it's used in rules")
 			blockedIDs = append(blockedIDs, id)
 			continue
@@ -298,4 +290,88 @@ func deleteMissingTables(
 	}
 
 	return count, errCount, nil
+}
+
+func findWidgetLinkedTables(ctx context.Context, dbWidgetCollection mongo.DbCollection, ids []string, linked map[string]bool) (map[string]bool, error) {
+	cursor, err := dbWidgetCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"type":             view.WidgetTypeExternalData,
+			"parameters.table": bson.M{"$in": ids},
+		}},
+		{"$group": bson.M{
+			"_id": "$parameters.table",
+		}},
+	})
+	if err != nil {
+		return linked, fmt.Errorf("failed to find linked rules: %w", err)
+	}
+
+	for cursor.Next(ctx) {
+		r := struct {
+			ID string `bson:"_id"`
+		}{}
+		err := cursor.Decode(&r)
+		if err != nil {
+			return linked, fmt.Errorf("failed to decode linked rule: %w", err)
+		}
+
+		linked[r.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return linked, fmt.Errorf("failed to fetch linked rules: %w", err)
+	}
+
+	if err = cursor.Close(ctx); err != nil {
+		return linked, fmt.Errorf("failed to close rule cursor: %w", err)
+	}
+
+	return linked, nil
+}
+
+func findRuleLinkedTables(ctx context.Context, dbRuleCollection mongo.DbCollection, ids []string, linked map[string]bool) (map[string]bool, error) {
+	unlinkedIDs := make([]string, 0, len(ids))
+	for _, id := range ids {
+		if !linked[id] {
+			unlinkedIDs = append(unlinkedIDs, id)
+		}
+	}
+
+	if len(unlinkedIDs) == 0 {
+		return linked, nil
+	}
+
+	cursor, err := dbRuleCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"external_data.table": bson.M{"$in": unlinkedIDs}}},
+		{"$unwind": "$external_data"},
+		{"$match": bson.M{"external_data.table": bson.M{"$in": unlinkedIDs}}},
+		{"$group": bson.M{
+			"_id": "$external_data.table",
+		}},
+	})
+	if err != nil {
+		return linked, fmt.Errorf("failed to find linked rules: %w", err)
+	}
+
+	for cursor.Next(ctx) {
+		r := struct {
+			ID string `bson:"_id"`
+		}{}
+		err := cursor.Decode(&r)
+		if err != nil {
+			return linked, fmt.Errorf("failed to decode linked rule: %w", err)
+		}
+
+		linked[r.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return linked, fmt.Errorf("failed to fetch linked rules: %w", err)
+	}
+
+	if err = cursor.Close(ctx); err != nil {
+		return linked, fmt.Errorf("failed to close rule cursor: %w", err)
+	}
+
+	return linked, nil
 }
