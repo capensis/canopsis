@@ -19,37 +19,35 @@ export const widgetStickyAlarmMixin = {
     },
 
     tableWrapper() {
-      return this.$el.querySelector('.alarms-list-table .v-data-table__wrapper');
+      return this.$el?.querySelector('.alarms-list-table .v-data-table__wrapper');
     },
 
     tableHeader() {
-      return this.$el.querySelector('.alarms-list-table .v-data-table-header');
+      return this.$el?.querySelector('.alarms-list-table .v-data-table-header');
     },
 
     tableBody() {
-      return this.$el.querySelector('.alarms-list-table table  tbody');
+      return this.$el?.querySelector('.alarms-list-table table  tbody');
+    },
+
+    stickyFlagsArray() {
+      return [this.stickyHeader, this.stickyHorizontalScroll];
     },
 
     someSticky() {
-      return this.stickyHeader || this.stickyHorizontalScroll;
+      return this.stickyFlagsArray.some(Boolean);
     },
   },
 
   watch: {
-    someSticky(someSticky) {
-      if (someSticky) {
+    stickyFlagsArray() {
+      if (this.someSticky) {
         this.calculateStickyPositions();
         this.setHeaderPosition();
         this.setHorizontalScrollPosition();
-
-        if (this.stickyHorizontalScroll) {
-          this.connectHorizontalScroll();
-        }
-
-        window.addEventListener('scroll', this.stickyScrollHandler);
+        this.registerScrollHandler();
       } else {
-        window.removeEventListener('scroll', this.stickyScrollHandler);
-
+        this.unregisterScrollHandler();
         this.resetHeaderPosition();
       }
     },
@@ -64,21 +62,38 @@ export const widgetStickyAlarmMixin = {
 
   async mounted() {
     if (this.someSticky) {
-      window.addEventListener('scroll', this.stickyScrollHandler);
-
-      if (this.stickyHorizontalScroll) {
-        this.connectHorizontalScroll();
-      }
+      this.registerScrollHandler();
     }
   },
 
   beforeDestroy() {
-    window.removeEventListener('scroll', this.stickyScrollHandler);
+    this.unregisterScrollHandler();
   },
 
   methods: {
+    registerScrollHandler() {
+      if (this.stickyHorizontalScroll) {
+        this.connectHorizontalScroll();
+      }
+
+      if (this.registeredScrollHandler) {
+        return;
+      }
+
+      window.addEventListener('scroll', this.stickyScrollHandler);
+      this.registeredScrollHandler = true;
+    },
+
+    unregisterScrollHandler() {
+      window.removeEventListener('scroll', this.stickyScrollHandler);
+      this.registeredScrollHandler = false;
+    },
+
     connectHorizontalScroll() {
-      this.$refs.horizontalScrollbar?.connect(this.tableWrapper);
+      /**
+       * We need to use nextTick here to wait component creation
+       */
+      this.$nextTick(() => this.$refs.horizontalScrollbar?.connect(this.tableWrapper));
     },
 
     startScrollingForHeader() {
