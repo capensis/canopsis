@@ -24,7 +24,7 @@ const (
 	SortDesc    = "desc"
 	MaxIDLength = 255
 
-	tableNameRegexString = "^[a-z][a-z0-9_]+$"
+	tableNameRegexString = `^[a-zA-Z_]\w+$`
 	tableNameMaxLen      = 63
 )
 

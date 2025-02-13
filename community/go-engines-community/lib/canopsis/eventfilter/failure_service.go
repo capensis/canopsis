@@ -19,8 +19,8 @@ import (
 const (
 	FailureTypeInvalidPattern = iota
 	FailureTypeInvalidTemplate
-	FailureTypeExternalDataMongo
-	FailureTypeExternalDataApi
+	FailureTypeExternalDataTable
+	FailureTypeExternalDataAPI
 	FailureTypeOther
 )
 

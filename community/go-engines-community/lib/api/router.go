@@ -30,7 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
@@ -135,7 +135,7 @@ func RegisterRoutes(
 	enableSameServiceNames bool,
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
-	exdataImportWorker externaldata.ImportWorker,
+	exdataImportWorker externaldatatable.ImportWorker,
 	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
@@ -1805,7 +1805,7 @@ func RegisterRoutes(
 			)
 		}
 
-		externalDataTableAPI := externaldata.NewAPI(externaldata.NewStore(dbClient, pgPoolProvider), exdataImportWorker,
+		externalDataTableAPI := externaldatatable.NewAPI(externaldatatable.NewStore(dbClient, pgPoolProvider), exdataImportWorker,
 			conf.File.ImportMaxSize, logger)
 		externalDataTableRouter := protected.Group("/external-data-tables")
 		{

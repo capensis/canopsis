@@ -1,9 +1,10 @@
-package externaldata
+package externaldatatable
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -25,7 +26,7 @@ type EditRequest struct {
 	ID          string `json:"-"`
 	Type        *int   `json:"type" binding:"required,oneof=0 1"`
 	Name        string `json:"name" binding:"required,table_name"`
-	Description string `json:"description" binding:"max=255"`
+	Description string `json:"description" binding:"max=500"`
 	Author      string `json:"author" swaggerignore:"true"`
 }
 
@@ -43,15 +44,21 @@ type BulkDeleteRequestItem struct {
 }
 
 type Response struct {
-	ID            string           `bson:"_id" json:"_id"`
-	Type          int              `bson:"type" json:"type"`
-	Name          string           `bson:"name" json:"name"`
-	Description   string           `bson:"description" json:"description"`
-	ColumnTypes   map[string]int   `bson:"column_types" json:"column_types"`
-	ColumnLengths map[string]int   `bson:"column_lengths" json:"-"`
-	FromConfig    bool             `bson:"from_config" json:"from_config"`
-	Created       datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated       datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+	ID                string           `bson:"_id" json:"_id"`
+	Type              int              `bson:"type" json:"type"`
+	Name              string           `bson:"name" json:"name"`
+	Description       string           `bson:"description" json:"description"`
+	ColumnTypes       map[string]int   `bson:"column_types" json:"column_types"`
+	ColumnLengths     map[string]int   `bson:"column_lengths" json:"-"`
+	FromConfig        bool             `bson:"from_config" json:"from_config"`
+	RemovedFromConfig bool             `bson:"removed_from_config" json:"removed_from_config"`
+	Created           datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
+	Updated           datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+
+	LinkedRules map[string][]struct {
+		ID   string `bson:"_id" json:"_id"`
+		Name string `bson:"name" json:"name"`
+	} `bson:"linked_rules,omitempty" json:"linked_rules,omitempty"`
 }
 
 func (r *Response) getDBTableName() string {
@@ -116,4 +123,20 @@ func (j *ImportJob) getDBTableName() string {
 	}
 
 	return externaldata.GetPostgresTableName(j.Table)
+}
+
+type RefResponse struct {
+	Reference string `bson:"reference" json:"reference"`
+	Type      string `json:"type" bson:"type"`
+
+	// are used in db external data
+	Table    Response          `json:"table,omitempty" bson:"table,omitempty"`
+	Select   map[string]string `json:"select,omitempty" bson:"select,omitempty"`
+	Regexp   map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
+	SortBy   string            `json:"sort_by,omitempty" bson:"sort_by,omitempty"`
+	Sort     string            `json:"sort,omitempty" bson:"sort,omitempty" binding:"oneoforempty=asc desc"`
+	Optional bool              `json:"optional,omitempty" bson:"optional,omitempty"`
+
+	// are used in api external data
+	Request *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
 }

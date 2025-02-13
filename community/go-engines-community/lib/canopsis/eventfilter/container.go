@@ -29,31 +29,3 @@ func NewRuleApplicatorContainer() *Container {
 		applicators: make(map[string]RuleApplicator),
 	}
 }
-
-type ExternalDataContainer struct {
-	applicators map[string]ExternalDataGetter
-}
-
-func (c *ExternalDataContainer) Get(dataType string) (ExternalDataGetter, bool) {
-	return c.applicators[dataType], c.Has(dataType)
-}
-
-func (c *ExternalDataContainer) Set(dataType string, service ExternalDataGetter) {
-	if c.Has(dataType) {
-		panic(fmt.Errorf("data getter %q already exists", dataType))
-	}
-
-	c.applicators[dataType] = service
-}
-
-func (c *ExternalDataContainer) Has(dataType string) bool {
-	_, ok := c.applicators[dataType]
-
-	return ok
-}
-
-func NewExternalDataGetterContainer() *ExternalDataContainer {
-	return &ExternalDataContainer{
-		applicators: make(map[string]ExternalDataGetter),
-	}
-}

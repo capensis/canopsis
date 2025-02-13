@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fifo"
@@ -29,7 +30,7 @@ func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger)
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
-	engine := fifo.Default(ctx, options, dbClient, cfg, eventfilter.NewExternalDataGetterContainer(),
+	engine := fifo.Default(ctx, options, dbClient, cfg, externaldata.NewGetterContainer(),
 		config.NewTimezoneConfigProvider(cfg, logger), config.NewTemplateConfigProvider(cfg, logger), metricsConfigProvider,
 		eventFilterEventCounter, eventFilterFailureService, metricsSender, logger)
 	engine.AddDeferFunc(func(ctx context.Context) {

@@ -2,19 +2,26 @@ package eventfilter
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+var failureTypeMapping = map[string]int64{
+	externaldata.RefTypeAPI:   FailureTypeExternalDataAPI,
+	externaldata.RefTypeTable: FailureTypeExternalDataTable,
+}
+
 type enrichmentApplicator struct {
-	externalDataContainer *ExternalDataContainer
+	externalDataContainer *externaldata.GetterContainer
 	actionProcessor       ActionProcessor
 	failureService        FailureService
 }
 
 func NewEnrichmentApplicator(
-	externalDataContainer *ExternalDataContainer,
+	externalDataContainer *externaldata.GetterContainer,
 	processor ActionProcessor,
 	failureService FailureService,
 ) RuleApplicator {
@@ -54,30 +61,57 @@ func getExternalData(
 	rule ParsedRule,
 	event *types.Event,
 	regexMatch RegexMatch,
-	externalDataContainer *ExternalDataContainer,
+	externalDataContainer *externaldata.GetterContainer,
 	failureService FailureService,
 ) (map[string]any, map[string]int64, error) {
 	externalData := make(map[string]any)
 	externalRequestCount := make(map[string]int64)
 
-	for name, parameters := range rule.ExternalData {
+	for _, parameters := range rule.ExternalData {
 		getter, ok := externalDataContainer.Get(parameters.Type)
 		if !ok {
-			failReason := fmt.Sprintf("external data %q has invalid type %q", name, parameters.Type)
+			failReason := fmt.Sprintf("external data %q has invalid type %q", parameters.Reference, parameters.Type)
 			failureService.Add(rule.ID, FailureTypeOther, failReason, nil)
 
 			return nil, nil, fmt.Errorf("no such data source: %s", parameters.Type)
 		}
 
-		data, err := getter.Get(ctx, rule.ID, name, event, parameters, Template{
+		data, err := getter.Get(ctx, parameters, Template{
 			Event:      event,
 			RegexMatch: regexMatch,
 		})
 		if err != nil {
+			getterTplErr := &externaldata.GetterTplError{}
+			getterErr := &externaldata.GetterError{}
+			var failureType int64
+			failReason := ""
+			isParamsInvalid := false
+			if errors.As(err, &getterTplErr) {
+				failureType = FailureTypeInvalidTemplate
+				failReason = getterTplErr.FailReason()
+				isParamsInvalid = getterTplErr.IsParamsInvalid()
+			} else if errors.As(err, &getterErr) {
+				failureType, ok = failureTypeMapping[parameters.Type]
+				if !ok {
+					failureType = FailureTypeOther
+				}
+
+				failReason = getterErr.FailReason()
+				isParamsInvalid = getterErr.IsParamsInvalid()
+			}
+
+			if failReason != "" {
+				if isParamsInvalid {
+					failureService.Add(rule.ID, failureType, failReason, nil)
+				} else {
+					failureService.Add(rule.ID, failureType, failReason, event)
+				}
+			}
+
 			return nil, nil, err
 		}
 
-		externalData[name] = data
+		externalData[parameters.Reference] = data
 		externalRequestCount[parameters.Type]++
 	}
 
