@@ -34,7 +34,7 @@ func NewRunner(
 	return &Runner{
 		amqpConsumer:  amqpConsumer,
 		amqpPublisher: amqpPublisher,
-		exchange:      canopsis.ApiWorkersExchangeName,
+		exchange:      canopsis.DefaultExchangeName,
 		queue:         canopsis.ApiWorkersQueueName,
 		encoder:       json.NewEncoder(),
 		decoder:       json.NewDecoder(),
