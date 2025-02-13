@@ -1805,8 +1805,9 @@ func RegisterRoutes(
 			)
 		}
 
-		externalDataTableAPI := externaldatatable.NewAPI(externaldatatable.NewStore(dbClient, pgPoolProvider), exdataImportWorker,
-			conf.File.ImportMaxSize, logger)
+		externalDataStore := externaldatatable.NewStore(dbClient, pgPoolProvider, dbExportClient, json.NewDecoder())
+		externalDataTableAPI := externaldatatable.NewAPI(externalDataStore, exdataImportWorker,
+			conf.File.ImportMaxSize, exportTaskExecutor, json.NewEncoder(), logger)
 		externalDataTableRouter := protected.Group("/external-data-tables")
 		{
 			externalDataTableRouter.POST(
@@ -1872,24 +1873,45 @@ func RegisterRoutes(
 		externalDataImportRouter := protected.Group("/external-data-import")
 		{
 			externalDataImportRouter.POST(
-				"/:id",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				externalDataTableAPI.Import,
 			)
 			externalDataImportRouter.GET(
 				"/:id/status",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				externalDataTableAPI.ImportStatus,
 			)
 			externalDataImportRouter.GET(
 				"/:id/data",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				externalDataTableAPI.ImportData,
 			)
 			externalDataImportRouter.PUT(
 				"/:id/complete",
-				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				externalDataTableAPI.ImportComplete,
+			)
+		}
+
+		exportTaskExecutor.RegisterType("externaldata", externalDataStore.Export)
+		externalDataExportRouter := protected.Group("/external-data-export")
+		{
+			externalDataExportRouter.POST(
+				":table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.Export,
+			)
+			externalDataExportRouter.GET(
+				"/:id/download",
+				security.GetFileAuthMiddleware(),
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ExportDownload,
+			)
+			externalDataExportRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ExportStatus,
 			)
 		}
 

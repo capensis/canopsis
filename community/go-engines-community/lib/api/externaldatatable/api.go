@@ -6,45 +6,68 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"sort"
+	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
 
 type API interface {
 	common.CrudAPI
+	BulkDeleteData(c *gin.Context)
+	GetSchema(c *gin.Context)
+
 	Import(*gin.Context)
 	ImportStatus(*gin.Context)
 	ImportData(*gin.Context)
 	ImportComplete(*gin.Context)
+
+	Export(c *gin.Context)
+	ExportStatus(c *gin.Context)
+	ExportDownload(c *gin.Context)
+
 	ListData(c *gin.Context)
 	GetData(c *gin.Context)
 	CreateData(c *gin.Context)
 	UpdateData(c *gin.Context)
 	DeleteData(c *gin.Context)
-	BulkDeleteData(c *gin.Context)
-	GetSchema(c *gin.Context)
 }
 
-func NewAPI(store Store, importWorker ImportWorker, maxFileSize uint64, logger zerolog.Logger) API {
+func NewAPI(
+	store Store,
+	importWorker ImportWorker,
+	maxFileSize uint64,
+	exportTaskCreator export.TaskCreator,
+	exportParamsEncoder encoding.Encoder,
+	logger zerolog.Logger,
+) API {
 	return &api{
-		store:        store,
-		importWorker: importWorker,
-		maxFileSize:  maxFileSize,
-		logger:       logger,
+		store:               store,
+		importWorker:        importWorker,
+		maxFileSize:         maxFileSize,
+		exportTaskCreator:   exportTaskCreator,
+		exportParamsEncoder: exportParamsEncoder,
+		logger:              logger,
+		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
+			"tab": '	', "space": ' '},
 	}
 }
 
 type api struct {
-	store        Store
-	importWorker ImportWorker
-	maxFileSize  uint64
-	logger       zerolog.Logger
+	store               Store
+	importWorker        ImportWorker
+	maxFileSize         uint64
+	exportTaskCreator   export.TaskCreator
+	exportParamsEncoder encoding.Encoder
+	logger              zerolog.Logger
+	exportSeparators    map[string]rune
 }
 
 // Create
@@ -117,10 +140,10 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // Update
-// @Param body body EditRequest true "body"
+// @Param body body UpdateRequest true "body"
 // @Success 200 {array} Response
 func (a *api) Update(c *gin.Context) {
-	r := EditRequest{
+	r := UpdateRequest{
 		ID: c.Param("table"),
 	}
 	if err := c.ShouldBind(&r); err != nil {
@@ -174,7 +197,7 @@ func (a *api) Delete(c *gin.Context) {
 // Import
 // @Success 200 {array} ImportJob
 func (a *api) Import(c *gin.Context) {
-	id := c.Param("id")
+	id := c.Param("table")
 	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
@@ -260,15 +283,7 @@ func (a *api) ImportData(c *gin.Context) {
 		return
 	}
 
-	columns := make([]string, len(job.ColumnLengths))
-	i := 0
-	for col := range job.ColumnLengths {
-		columns[i] = col
-		i++
-	}
-
-	sort.Strings(columns)
-	aggregationResult, err := a.store.FindData(c, job.getDBTableName(), job.Type, columns, r)
+	aggregationResult, err := a.store.FindData(c, job.getDBTableName(), job.Type, job.Columns, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -321,6 +336,130 @@ func (a *api) ImportComplete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
+// Export
+// @Param request body ExportRequest true "request"
+// @Success 200 {object} ExportResponse
+func (a *api) Export(c *gin.Context) {
+	var r ExportRequest
+	r.ID = c.Param("table")
+	if err := c.ShouldBind(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	t, err := a.store.FindOne(c, r.ID)
+	if err != nil {
+		panic(err)
+	}
+
+	if t.ID == "" {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	if len(r.SearchBy) > 0 || len(r.Fields) > 0 {
+		hasCol := make(map[string]bool, len(t.Columns))
+		for _, v := range t.Columns {
+			hasCol[v] = true
+		}
+
+		valErrMsgs := make(map[string]string)
+		for i, v := range r.SearchBy {
+			if !hasCol[v] {
+				valErrMsgs["search_by."+strconv.Itoa(i)] = "SearchBy"
+			}
+		}
+
+		for i, f := range r.Fields {
+			if !hasCol[f.Name] {
+				valErrMsgs["fields."+strconv.Itoa(i)+".name"] = "Name"
+			}
+		}
+
+		if len(valErrMsgs) > 0 {
+			errMsg := " must be one of [" + strings.Join(t.Columns, " ") + "]."
+			for k := range valErrMsgs {
+				valErrMsgs[k] += errMsg
+			}
+
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrors(valErrMsgs).ValidationErrorResponse())
+
+			return
+		}
+	}
+
+	fields := r.Fields
+	if len(fields) == 0 {
+		fields = make(export.Fields, len(t.Columns))
+		for i, v := range t.Columns {
+			fields[i] = export.Field{Name: v}
+		}
+	}
+
+	separator := a.exportSeparators[r.Separator]
+	params, err := a.exportParamsEncoder.Encode(r.ExportFetchParameters)
+	if err != nil {
+		panic(err)
+	}
+
+	task, err := a.exportTaskCreator.Create(c, export.TaskParameters{
+		Type:           "externaldata",
+		Parameters:     string(params),
+		Fields:         fields,
+		Separator:      separator,
+		FilenamePrefix: "externaldata",
+		UserID:         c.MustGet(auth.UserKey).(string),
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, ExportResponse{
+		ID:     task.ID,
+		Status: task.Status,
+	})
+}
+
+// ExportStatus
+// @Success 200 {object} ExportResponse
+func (a *api) ExportStatus(c *gin.Context) {
+	id := c.Param("id")
+	t, err := a.exportTaskCreator.Get(c, id)
+	if err != nil {
+		panic(err)
+	}
+
+	if t == nil {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, ExportResponse{
+		ID:     id,
+		Status: t.Status,
+	})
+}
+
+func (a *api) ExportDownload(c *gin.Context) {
+	id := c.Param("id")
+	t, err := a.exportTaskCreator.Get(c, id)
+	if err != nil {
+		panic(err)
+	}
+
+	if t == nil || t.Status != export.TaskStatusSucceeded {
+		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.Status(http.StatusOK)
+	c.Header("Content-Type", "text/csv")
+	c.FileAttachment(t.File, t.Filename)
+}
+
 func (a *api) CreateData(c *gin.Context) {
 	r := make(map[string]string)
 	if err := c.ShouldBind(&r); err != nil {
@@ -370,15 +509,7 @@ func (a *api) ListData(c *gin.Context) {
 		return
 	}
 
-	columns := make([]string, len(table.ColumnTypes))
-	i := 0
-	for col := range table.ColumnTypes {
-		columns[i] = col
-		i++
-	}
-
-	sort.Strings(columns)
-	aggregationResult, err := a.store.FindData(c, table.getDBTableName(), table.Type, columns, r)
+	aggregationResult, err := a.store.FindData(c, table.getDBTableName(), table.Type, table.Columns, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -506,19 +637,9 @@ func (a *api) GetSchema(c *gin.Context) {
 		return
 	}
 
-	fields := make([]string, len(t.ColumnTypes))
-	i, n := 0, len(t.ColumnTypes)
-	for f := range t.ColumnTypes {
-		fields[i] = f
-		i++
-		n += len(f)
-	}
-
-	sort.Strings(fields)
 	b := &bytes.Buffer{}
-	b.Grow(n)
 	w := csv.NewWriter(b)
-	err = w.Write(fields)
+	err = w.Write(t.Columns)
 	if err != nil {
 		panic(err)
 	}

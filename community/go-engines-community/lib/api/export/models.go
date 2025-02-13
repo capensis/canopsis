@@ -55,7 +55,11 @@ func (f *Fields) Fields() []string {
 func (f *Fields) Labels() []string {
 	labels := make([]string, len(*f))
 	for i, field := range *f {
-		labels[i] = field.Label
+		if field.Label != "" {
+			labels[i] = field.Label
+		} else {
+			labels[i] = field.Name
+		}
 	}
 
 	return labels
