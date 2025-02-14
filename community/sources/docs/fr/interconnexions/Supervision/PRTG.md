@@ -60,28 +60,26 @@ Maintenant que PRTG envoie ses alertes vers Canopsis il faut les enrichir afin q
 
 Il faut pour cela créer une première règle d'enrichissment qui permet de sauvegarder un attribut spécifique à PRTG dans l'entitié Canopsis visée par l'alarme. 
 
-Pour cela rendez-vous sur 'Exploitation' -> 'Filtres d'événements' -> 'Créer une règle' ( en lui attribuant une priorité, `10` par exemple, ainsi qu'un filtre )
+Pour cela il faut se rendre sur le menu 'Exploitation' -> 'Filtres d'événements' -> 'Créer une règle' ( en lui attribuant une priorité : `10` par exemple )
 
-![Options pour la règle d'enrichissement de l'entitié](img/PRTG_enrichissement.png)
+Cette règle va contenir un pattern/filtre d'évènement permettant de détecter les alertes envoyées par PRTG de type `Unknown`.
 
-Il faudra ensuite ajouter une action afin de copier et sauvegarder dans l'entité visée par l'évènement la valeur de la criticité au sens PRTG ( elle est contenue dans une variable particulière de l'évènement : `{{ .Event.ExtraInfos.prtg_state }}` )
+![Options pour l'enrichissement de l'évènement](img/PRTG-regle-unknown-1.png)
 
-![Actions pour la copie de l'attribut dans l'entité](img/PRTG_enrichissement-action.png)
+Dans notre exemple, le statut `Unknown` de PRTG doit devenir une criticité `3/Critical` dans Canopsis. 
 
-Une fois cette règle créée, il reste à créer une règle par statut et par langue de PRTG. 
+![Action pour l'enrichissement de l'évènement](img/PRTG-regle-unknown-2.png)
 
-Exemple ici avec le statut `Unknown` de PRTG qui doit devenir une criticité `3/Critical` dans Canopsis. 
+Une fois ce type de règle créée, nous validons que les évènements `Unknown` de PRTG deviennent bien des alarmes `3/Critical` dans Canopsis
 
-Chaque règle doit avoir une priorité supérieure à la règle précédente ( ici nous utiliserons la priorité `11`)
+![Action pour l'enrichissement de l'évènement](img/PRTG-critical-alarm.png)
 
-![Options pour l'enrichissement de l'evènement](img/PRTG-regle-unknown-1.png)
+Il faut ensuite définir l'ensemble des règles réalisant les transformations des états PRTG vers les états connus par Canopsis.
 
-![Action pour l'enrichissement de l'alarme](img/PRTG-regle-unknown-2.png)
+Pour cela, il est possible de dupliquer les règles pour gagner du temps lors de l'élaboration de celles-ci :
 
-Ou avec cette autre règle de priorité `12` qui va faire correspondre le statut `Down` de PRTG en une criticité `2/Major` dans Canopsis
+Chaque règle doit avoir une priorité supérieure à la règle précédente ( ici nous utiliserons la priorité `11`) pour faire correspondre le statut `Down` de PRTG en une criticité `2/Major` dans Canopsis
 
 ![Options pour l'enrichissement de l'evènement](img/PRTG-regle-down-1.png)
 
 ![Action pour l'enrichissement de l'alarme](img/PRTG-regle-down-2.png)
-
-NB: Il est possible de dupliquer les règles pour gagner du temps lors de l'élaboration de celles-ci.
