@@ -221,6 +221,7 @@ export default {
     &__links {
       overflow: auto;
       padding-bottom: 100px;
+      height: 100%;
     }
 
     &--editing {
