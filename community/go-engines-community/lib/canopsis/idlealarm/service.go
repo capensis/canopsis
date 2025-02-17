@@ -3,7 +3,7 @@ Package idlealarm implements alarm modification on idle alarm.
 */
 package idlealarm
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/idlealarm/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm Service
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/idlealarm/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm Service
 
 import (
 	"context"

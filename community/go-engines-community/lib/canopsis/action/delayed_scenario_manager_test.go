@@ -13,8 +13,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestDelayedScenarioManager_AddDelayedScenario_GivenNotDelayedScenario_ShouldReturnError(t *testing.T) {
@@ -29,7 +29,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenNotDelayedScenario_Shoul
 	alarm := types.Alarm{}
 	scenario := action.Scenario{}
 
-	err := manager.AddDelayedScenario(context.Background(), alarm, scenario, action.AdditionalData{})
+	err := manager.AddDelayedScenario(t.Context(), alarm, scenario, action.AdditionalData{})
 	if err == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -75,7 +75,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenMatchedDelayedScenario_S
 		}
 	}).Return("test-id", nil)
 
-	err := manager.AddDelayedScenario(context.Background(), alarm, scenario, action.AdditionalData{})
+	err := manager.AddDelayedScenario(t.Context(), alarm, scenario, action.AdditionalData{})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -117,7 +117,7 @@ func TestDelayedScenarioManager_PauseDelayedScenarios_GivenNotPausedScenario_Sho
 		}
 	})
 
-	err := manager.PauseDelayedScenarios(context.Background(), alarm)
+	err := manager.PauseDelayedScenarios(t.Context(), alarm)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -144,7 +144,7 @@ func TestDelayedScenarioManager_PauseDelayedScenarios_GivenPausedScenario_Should
 	}, nil)
 	mockStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Times(0)
 
-	err := manager.PauseDelayedScenarios(context.Background(), alarm)
+	err := manager.PauseDelayedScenarios(t.Context(), alarm)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -191,7 +191,7 @@ func TestDelayedScenarioManager_ResumeDelayedScenarios_GivenPausedScenario_Shoul
 		}
 	})
 
-	err := manager.ResumeDelayedScenarios(context.Background(), alarm)
+	err := manager.ResumeDelayedScenarios(t.Context(), alarm)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -218,7 +218,7 @@ func TestDelayedScenarioManager_ResumeDelayedScenarios_GivenNotPausedScenario_Sh
 	}, nil)
 	mockStorage.EXPECT().Update(gomock.Any(), gomock.Any()).Times(0)
 
-	err := manager.ResumeDelayedScenarios(context.Background(), alarm)
+	err := manager.ResumeDelayedScenarios(t.Context(), alarm)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -261,9 +261,7 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByTick(t 
 			*alarms = []types.AlarmWithEntity{{Alarm: expectedAlarm}}
 		}).Return(nil)
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	ch, err := manager.Run(ctx)
+	ch, err := manager.Run(t.Context())
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
@@ -320,9 +318,7 @@ func TestDelayedScenarioManager_Run_GivenExpiredScenario_ShouldReturnItByWaiting
 		*alarms = []types.AlarmWithEntity{{Alarm: expectedAlarm}}
 	}).Return(nil)
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	ch, err := manager.Run(ctx)
+	ch, err := manager.Run(t.Context())
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}

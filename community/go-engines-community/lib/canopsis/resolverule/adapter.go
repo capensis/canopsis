@@ -1,6 +1,6 @@
 package resolverule
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/resolverule/rule.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule Adapter
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/resolverule/rule.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule Adapter
 
 import (
 	"context"

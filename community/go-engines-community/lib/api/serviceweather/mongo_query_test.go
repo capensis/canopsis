@@ -1,7 +1,6 @@
 package serviceweather
 
 import (
-	"context"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -15,17 +14,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.uber.org/mock/gomock"
 )
 
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_ShouldBuildQueryWithLookupsAfterLimit(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
@@ -65,7 +62,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	}
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
+	result, err := b.CreateListAggregationPipeline(t.Context(), request)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -77,8 +74,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetFilterWithEntityPattern_ShouldBuildQueryWithLookupsAfterLimit(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
@@ -131,7 +126,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
+	result, err := b.CreateListAggregationPipeline(t.Context(), request)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -143,8 +138,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetFilterWithWeatherServicePatternWithStateCond_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
@@ -199,7 +192,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
+	result, err := b.CreateListAggregationPipeline(t.Context(), request)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -211,8 +204,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetFilterWithWeatherServicePatternWithIconCond_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	filter := view.WidgetFilter{
 		ID: "test-filter",
@@ -267,7 +258,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
+	result, err := b.CreateListAggregationPipeline(t.Context(), request)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -279,8 +270,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByState_ShouldBuildQueryWithLookupsBeforeLimit(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
@@ -320,7 +309,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
+	result, err := b.CreateListAggregationPipeline(t.Context(), request)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -332,8 +321,6 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSortByS
 func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipleWidgetFilters_ShouldBuildQueryAllMatches(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	filter1 := view.WidgetFilter{
 		ID: "test-filter-1",
@@ -417,7 +404,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	}...)
 
 	b := NewMongoQueryBuilder(mockDbClient, authorProvider)
-	result, err := b.CreateListAggregationPipeline(ctx, request)
+	result, err := b.CreateListAggregationPipeline(t.Context(), request)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

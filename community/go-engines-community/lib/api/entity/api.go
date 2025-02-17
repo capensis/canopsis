@@ -127,13 +127,15 @@ func (a *api) StartExport(c *gin.Context) {
 		panic(err)
 	}
 
+	userID := c.MustGet(auth.UserKey).(string)
+
 	task, err := a.exportExecutor.StartExecute(c, export.TaskParameters{
 		Type:           "entity",
 		Parameters:     string(params),
 		Fields:         r.Fields,
 		Separator:      separator,
 		FilenamePrefix: "entities",
-		UserID:         c.MustGet(auth.UserKey).(string),
+		UserID:         userID,
 	})
 
 	if err != nil {

@@ -1,7 +1,7 @@
 package postgres
 
-//go:generate mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool
-//go:generate mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v5 Rows,Tx,BatchResults
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/postgres/postgres.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres BasePool,Pool
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/github.com/jackc/pgx/pgx.go github.com/jackc/pgx/v5 Rows,Tx,BatchResults
 
 import (
 	"context"
