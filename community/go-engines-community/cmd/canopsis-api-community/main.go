@@ -22,6 +22,10 @@ import (
 // @description This doc contains auto generated Open API v2 schemas of requests and responses to use in Open Api v3 doc.
 // @version 4.0.0
 func main() {
+	// Graceful shutdown.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	var flags api.Flags
 	flags.ParseArgs()
 
@@ -30,16 +34,13 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(flags.Debug)
-	// Graceful shutdown.
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
-
 	if flags.Debug {
 		gin.SetMode(gin.DebugMode)
 	} else {
 		gin.SetMode(gin.ReleaseMode)
 	}
+
+	logger := log.NewLogger(ctx, flags.Debug)
 
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)

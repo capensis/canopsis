@@ -1,7 +1,6 @@
 package engine_test
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -9,15 +8,13 @@ import (
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
 	"github.com/bsm/redislock"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestLockedPeriodicalWorker_Work_GivenObtainedLock_ShouldRunWorker(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	interval := time.Minute
 	lockKey := "test-lock"
@@ -30,14 +27,12 @@ func TestLockedPeriodicalWorker_Work_GivenObtainedLock_ShouldRunWorker(t *testin
 	mockWorker.EXPECT().Work(gomock.Any())
 
 	worker := engine.NewLockedPeriodicalWorker(mockLockClient, lockKey, mockWorker, zerolog.Nop())
-	worker.Work(ctx)
+	worker.Work(t.Context())
 }
 
 func TestLockedPeriodicalWorker_Work_GivenNotObtainedLock_ShouldNotRunWorker(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	interval := time.Minute
 	lockKey := "test-lock"
@@ -49,5 +44,5 @@ func TestLockedPeriodicalWorker_Work_GivenNotObtainedLock_ShouldNotRunWorker(t *
 	mockWorker.EXPECT().Work(gomock.Any()).Times(0)
 
 	worker := engine.NewLockedPeriodicalWorker(mockLockClient, lockKey, mockWorker, zerolog.Nop())
-	worker.Work(ctx)
+	worker.Work(t.Context())
 }

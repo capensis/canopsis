@@ -1,7 +1,6 @@
 package eventfilter_test
 
 import (
-	"context"
 	"reflect"
 	"testing"
 
@@ -12,8 +11,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestChangeEntityApply(t *testing.T) {
@@ -318,7 +317,7 @@ func TestChangeEntityApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			outcome, _, _, err := applicator.Apply(context.Background(), dataSet.rule, &dataSet.event, dataSet.regexMatches)
+			outcome, _, _, err := applicator.Apply(t.Context(), dataSet.rule, &dataSet.event, dataSet.regexMatches)
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
 			}
@@ -370,7 +369,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 	}
 
 	outcome, _, _, err := applicator.Apply(
-		context.Background(),
+		t.Context(),
 		eventfilter.ParsedRule{
 			ExternalData: externalData,
 			Config: eventfilter.ParsedRuleConfig{

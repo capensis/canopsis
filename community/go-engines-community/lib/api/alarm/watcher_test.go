@@ -12,13 +12,13 @@ import (
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/alarm"
 	mock_websocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/websocket"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOneChangeStream(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -97,8 +97,8 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithTheSameRequest_ShouldCreateOne
 }
 
 func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultipleChangeStreams(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -206,8 +206,8 @@ func TestWatcher_StartWatch_GivenMultipleConnsWithDiffRequest_ShouldCreateMultip
 }
 
 func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCreateOneChangeStream(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -289,8 +289,8 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithTheSameRequest_ShouldCr
 }
 
 func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreateMultipleChangeStreams(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
+
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -402,8 +402,6 @@ func TestWatcher_StartWatchDetails_GivenMultipleConnsWithDiffRequest_ShouldCreat
 }
 
 func TestWatcher_StopWatch_GivenStartWatch_ShouldCloseChangeStream(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -435,7 +433,7 @@ func TestWatcher_StopWatch_GivenStartWatch_ShouldCloseChangeStream(t *testing.T)
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
 	data := []string{alarmId}
-	err := w.StartWatch(ctx, connId, userID, roomId, data)
+	err := w.StartWatch(t.Context(), connId, userID, roomId, data)
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}
@@ -453,8 +451,6 @@ func TestWatcher_StopWatch_GivenStartWatch_ShouldCloseChangeStream(t *testing.T)
 }
 
 func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -485,7 +481,7 @@ func TestWatcher_StopWatch_GivenStartWatchDetails_ShouldCloseChangeStream(t *tes
 	mockHub := mock_websocket.NewMockHub(ctrl)
 
 	w := alarm.NewWatcher(mockDbClient, mockHub, mockStore, json.NewEncoder(), json.NewDecoder(), zerolog.Nop())
-	err := w.StartWatchDetails(ctx, connId, userID, roomId, []alarm.DetailsRequest{{ID: alarmId}})
+	err := w.StartWatchDetails(t.Context(), connId, userID, roomId, []alarm.DetailsRequest{{ID: alarmId}})
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}

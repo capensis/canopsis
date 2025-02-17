@@ -1,7 +1,6 @@
 package types_test
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -123,8 +122,7 @@ func TestAlarmSteps_Crop_GivenGreaterThenLimitSteps_ShouldCropSteps(t *testing.T
 }
 
 func TestAlarmSteps_Crop_GivenCounterStep_ShouldSaveInDB(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {

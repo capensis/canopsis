@@ -11,7 +11,7 @@ import (
 )
 
 // AuthorizeByID determines if current subject has been authorized to take
-// an action on a object by id.
+// an action on an object by id.
 func AuthorizeByID(
 	act string,
 	enforcer security.Enforcer,
@@ -22,15 +22,18 @@ func AuthorizeByID(
 			panic(errors.New("missing id parameter"))
 		}
 
-		subj, ok := c.Get(auth.UserKey)
-
+		rawSubj, ok := c.Get(auth.UserKey)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
 		}
 
-		ok, err := enforcer.Enforce(subj.(string), obj, act)
+		subj, ok := rawSubj.(string)
+		if !ok {
+			panic(errors.New("user key is not a string"))
+		}
 
+		ok, err := enforcer.Enforce(subj, obj, act)
 		if err != nil {
 			panic(err)
 		}

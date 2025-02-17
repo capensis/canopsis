@@ -1,6 +1,6 @@
 package metrics
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/metrics/metrics.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics MetaUpdater
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/metrics/metrics.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics MetaUpdater
 
 import "context"
 
