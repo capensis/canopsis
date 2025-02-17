@@ -77,6 +77,7 @@ type SectionDataStorage struct {
 	TimeToExecute      string `toml:"TimeToExecute"`
 	MaxUpdates         int    `toml:"MaxUpdates"`
 	MongoClientTimeout string `toml:"MongoClientTimeout"`
+	Timeout            string `toml:"Timeout"`
 }
 
 type SectionApi struct {

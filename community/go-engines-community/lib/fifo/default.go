@@ -5,7 +5,9 @@ import (
 	"flag"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -14,11 +16,14 @@ import (
 	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
@@ -32,6 +37,17 @@ type Options struct {
 	PeriodicalWaitTime     time.Duration
 	ExternalDataApiTimeout time.Duration
 	Workers                int
+}
+
+type Services struct {
+	DbClient                    mongo.DbClient
+	PgPoolProvider              postgres.PoolProvider
+	Cfg                         config.CanopsisConf
+	ExternalDataContainer       *eventfilter.ExternalDataContainer
+	TimezoneConfigProvider      config.TimezoneConfigProvider
+	TemplateConfigProvider      config.TemplateConfigProvider
+	EventFilterFailureService   eventfilter.FailureService
+	DataStoragePeriodicalWorker datastorage.PeriodicalWorker
 }
 
 func ParseOptions() (Options, []string) {
@@ -57,30 +73,37 @@ func ParseOptions() (Options, []string) {
 func Default(
 	ctx context.Context,
 	options Options,
-	mongoClient mongo.DbClient,
-	cfg config.CanopsisConf,
-	externalDataContainer *eventfilter.ExternalDataContainer,
-	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
-	templateConfigProvider *config.BaseTemplateConfigProvider,
-	metricsConfigProvider *config.BaseMetricsSettingsConfigProvider,
-	eventFilterEventCounter eventfilter.EventCounter,
-	eventFilterFailureService eventfilter.FailureService,
-	metricsSender metrics.Sender,
 	logger zerolog.Logger,
-) libengine.Engine {
+) (libengine.Engine, Services) {
 	var m depmake.DependencyMaker
+	s := Services{}
 
-	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
-	amqpConnection := m.DepAmqpConnection(logger, cfg)
+	s.DbClient = m.DepMongoClient(ctx, logger)
+	s.Cfg = m.DepConfig(ctx, s.DbClient)
+	config.SetDbClientRetry(s.DbClient, s.Cfg)
+	eventFilterEventCounter := eventfilter.NewEventCounter(s.DbClient,
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
+	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient,
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
+	s.PgPoolProvider = postgres.NewPoolProvider(s.Cfg.Global.ReconnectRetries, s.Cfg.Global.GetReconnectTimeout())
+	metricsConfigProvider := config.NewMetricsConfigProvider(s.Cfg, logger)
+	metricsSender := metrics.NewTimescaleDBSender(s.PgPoolProvider, metricsConfigProvider, logger)
+	s.ExternalDataContainer = eventfilter.NewExternalDataGetterContainer()
+	timezoneConfigProvider := config.NewTimezoneConfigProvider(s.Cfg, logger)
+	s.TimezoneConfigProvider = timezoneConfigProvider
+	templateConfigProvider := config.NewTemplateConfigProvider(s.Cfg, logger)
+	s.TemplateConfigProvider = templateConfigProvider
+	dataStorageConfigProvider := config.NewDataStorageConfigProvider(s.Cfg, logger)
+	amqpConnection := m.DepAmqpConnection(logger, s.Cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
-	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, cfg)
-	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
-	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, cfg)
-	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, cfg)
+	lockRedisClient := m.DepRedisSession(ctx, redis.LockStorage, logger, s.Cfg)
+	engineLockRedisClient := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, s.Cfg)
+	queueRedisClient := m.DepRedisSession(ctx, redis.QueueStorage, logger, s.Cfg)
+	runInfoRedisClient := m.DepRedisSession(ctx, redis.EngineRunInfo, logger, s.Cfg)
 	scheduler := libscheduler.NewSchedulerService(
 		lockRedisClient,
 		queueRedisClient,
-		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, cfg)),
+		m.DepAMQPChannelPub(m.DepAmqpConnection(logger, s.Cfg)),
 		canopsis.CheQueuePrefix,
 		logger,
 		options.LockTtl,
@@ -88,13 +111,13 @@ func Default(
 		json.NewEncoder(),
 	)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
-	ruleAdapter := eventfilter.NewRuleAdapter(mongoClient)
+	ruleAdapter := eventfilter.NewRuleAdapter(s.DbClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externalDataContainer, eventFilterFailureService, templateExecutor))
-	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter, eventFilterFailureService, templateExecutor, logger)
-	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(s.ExternalDataContainer, s.EventFilterFailureService, templateExecutor))
+	eventfilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter, s.EventFilterFailureService, templateExecutor, logger)
+	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(s.Cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.FIFOEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
-		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
+		s.Cfg.Global.ReconnectRetries, s.Cfg.Global.GetReconnectTimeout(), logger)
 	runInfoPeriodicalWorker := libengine.NewRunInfoMetricsPeriodicalWorker(
 		canopsis.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
@@ -110,7 +133,7 @@ func Default(
 			runInfoPeriodicalWorker.Work(ctx)
 			scheduler.Start(ctx)
 
-			if !mongoClient.IsDistributed() {
+			if !s.DbClient.IsDistributed() {
 				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
 				if err != nil {
 					return err
@@ -121,7 +144,7 @@ func Default(
 		},
 		func(ctx context.Context) {
 			scheduler.Stop(ctx)
-			err := mongoClient.Disconnect(ctx)
+			err := s.DbClient.Disconnect(ctx)
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
@@ -145,6 +168,8 @@ func Default(
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
+
+			s.PgPoolProvider.Close()
 		},
 		logger,
 	)
@@ -168,8 +193,8 @@ func Default(
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOConsumerName,
 		canopsis.FIFOQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
+		s.Cfg.Global.PrefetchCount,
+		s.Cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -184,8 +209,8 @@ func Default(
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOAckConsumerName,
 		canopsis.FIFOAckQueueName,
-		cfg.Global.PrefetchCount,
-		cfg.Global.PrefetchSize,
+		s.Cfg.Global.PrefetchCount,
+		s.Cfg.Global.PrefetchSize,
 		false,
 		"",
 		"",
@@ -205,21 +230,29 @@ func Default(
 		logger,
 	))
 	engine.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
-	engine.AddPeriodicalWorker("outdated_rates", libengine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(engineLockRedisClient),
-		redis.FifoDeleteOutdatedRatesLockKey,
-		&deleteOutdatedRatesWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
-			Logger:                    logger,
+	s.DataStoragePeriodicalWorker = datastorage.NewPeriodicalWorker(
+		func(ctx context.Context, clientTimeout time.Duration) (mongo.DbClient, error) {
+			return mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
+				clientTimeout, logger)
 		},
+		time.Hour,
+		timezoneConfigProvider,
+		dataStorageConfigProvider,
+		logger,
+	)
+	s.DataStoragePeriodicalWorker.AddCleaner("alarm", alarm.NewCleaner(logger))
+	s.DataStoragePeriodicalWorker.AddCleaner("alarm_external_tag", axe.NewExternalTagCleaner(logger))
+	s.DataStoragePeriodicalWorker.AddCleaner("pbehavior", pbehavior.NewCleaner(logger))
+	s.DataStoragePeriodicalWorker.AddCleaner("event_filter_failure", che.NewEventFailureCleaner(logger))
+	engine.AddPeriodicalWorker("datastorage", libengine.NewLockedPeriodicalWorker(
+		redis.NewLockClient(engineLockRedisClient),
+		redis.FifoDataStorageLockKey,
+		s.DataStoragePeriodicalWorker,
 		logger,
 	))
 	engine.AddPeriodicalWorker("config", libengine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
-		config.NewAdapter(mongoClient),
+		config.NewAdapter(s.DbClient),
 		logger,
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
@@ -227,9 +260,9 @@ func Default(
 		templateConfigProvider,
 		metricsConfigProvider,
 	))
-	if mongoClient.IsDistributed() {
+	if s.DbClient.IsDistributed() {
 		engine.AddRoutine(func(ctx context.Context) error {
-			w := eventfilter.NewRulesChangesWatcher(mongoClient, eventfilterService)
+			w := eventfilter.NewRulesChangesWatcher(s.DbClient, eventfilterService)
 
 			logger.Debug().Msg("Loading event filter rules")
 
@@ -254,10 +287,17 @@ func Default(
 	}
 	engine.AddRoutine(func(ctx context.Context) error {
 		eventFilterEventCounter.Run(ctx)
+
 		return nil
 	})
 	engine.AddRoutine(func(ctx context.Context) error {
-		eventFilterFailureService.Run(ctx)
+		s.EventFilterFailureService.Run(ctx)
+
+		return nil
+	})
+	engine.AddRoutine(func(ctx context.Context) error {
+		metricsSender.Run(ctx)
+
 		return nil
 	})
 
@@ -269,5 +309,5 @@ func Default(
 		false,
 	), logger)
 
-	return engine
+	return engine, s
 }

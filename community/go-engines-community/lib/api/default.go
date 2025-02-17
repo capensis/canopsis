@@ -230,7 +230,7 @@ func Default(
 		authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
-	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(dbClient, pgPoolProvider),
+	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
 		json.NewEncoder(), json.NewDecoder(), flags.IntegrationPeriodicalWaitTime, logger)
 
 	err = registerWebsocketGroups(websocketHub, alarmWatcher, messageRateWatcher)

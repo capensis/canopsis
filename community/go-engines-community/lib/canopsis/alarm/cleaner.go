@@ -2,44 +2,82 @@ package alarm
 
 import (
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type Cleaner interface {
-	// ArchiveResolvedAlarms archives alarm to archived alarm collection.
-	ArchiveResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error)
-
-	// DeleteArchivedResolvedAlarms deletes resolved alarms from archived collection after some time.
-	DeleteArchivedResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error)
-}
-
-func NewCleaner(dbClient mongo.DbClient, bulkSize int) Cleaner {
+func NewCleaner(logger zerolog.Logger) datastorage.Cleaner {
 	return &cleaner{
-		resolvedDbCollection: dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
-		archivedDbCollection: dbClient.Collection(mongo.ArchivedAlarmMongoCollection),
-		bulkSize:             bulkSize,
+		logger:   logger,
+		bulkSize: datastorage.BulkSize,
 	}
 }
 
 type cleaner struct {
-	resolvedDbCollection mongo.DbCollection
-	archivedDbCollection mongo.DbCollection
-	bulkSize             int
+	bulkSize int
+	logger   zerolog.Logger
 }
 
-func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error) {
+func (c *cleaner) IsEnabled(conf datastorage.Config) bool {
+	return datetime.IsDurationEnabledAndValid(conf.Alarm.ArchiveAfter) ||
+		datetime.IsDurationEnabledAndValid(conf.Alarm.DeleteAfter)
+}
+
+func (c *cleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datastorage.Config, t datetime.CpsTime, limit int) (datastorage.CleanResult, error) {
+	res := datastorage.CleanResult{}
+	if !c.IsEnabled(conf) {
+		return res, nil
+	}
+
+	defer func() {
+		if res.Archived > 0 {
+			c.logger.Info().Int64("alarm_number", res.Archived).Msg("resolved alarm archiving")
+		}
+
+		if res.Deleted > 0 {
+			c.logger.Info().Int64("alarm_number", res.Deleted).Msg("resolved alarm removing")
+		}
+	}()
+
+	resolvedDbCollection := dbClient.Collection(mongo.ResolvedAlarmMongoCollection)
+	archivedDbCollection := dbClient.Collection(mongo.ArchivedAlarmMongoCollection)
+	var err error
+	archiveAfter := conf.Alarm.ArchiveAfter
+	if datetime.IsDurationEnabledAndValid(archiveAfter) {
+		res.Archived, err = c.archiveResolvedAlarms(ctx, resolvedDbCollection, archivedDbCollection, archiveAfter.SubFrom(t), limit)
+		if err != nil {
+			return res, fmt.Errorf("cannot archive resolved alarms: %w", err)
+		}
+	}
+
+	deleteAfter := conf.Alarm.DeleteAfter
+	if datetime.IsDurationEnabledAndValid(deleteAfter) {
+		res.Deleted, err = c.deleteArchivedResolvedAlarms(ctx, archivedDbCollection, deleteAfter.SubFrom(t), limit)
+		if err != nil {
+			return res, fmt.Errorf("cannot delete resolved alarms: %w", err)
+		}
+	}
+
+	return res, nil
+}
+
+// archiveResolvedAlarms archives alarm to archived alarm collection.
+func (c *cleaner) archiveResolvedAlarms(ctx context.Context, resolvedDbCollection, archivedDbCollection mongo.DbCollection, before datetime.CpsTime, limit int) (int64, error) {
 	opts := options.Find()
 	if limit > 0 {
-		opts.SetLimit(limit)
+		opts.SetLimit(int64(limit))
 	}
-	cursor, err := c.resolvedDbCollection.Find(ctx, bson.M{
+
+	cursor, err := resolvedDbCollection.Find(ctx, bson.M{
 		"v.resolved": bson.M{"$lte": before},
 	}, opts)
 	if err != nil {
@@ -57,7 +95,7 @@ func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before datetime.Cps
 		var alarm types.Alarm
 		err := cursor.Decode(&alarm)
 		if err != nil {
-			return 0, err
+			return archived, err
 		}
 
 		writeModel := mongodriver.NewUpdateOneModel().
@@ -66,20 +104,19 @@ func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before datetime.Cps
 			SetUpsert(true)
 		b, err := bson.Marshal(writeModel)
 		if err != nil {
-			return 0, err
+			return archived, err
 		}
 		newModelLen := len(b)
 		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
-			res, err := c.archivedDbCollection.BulkWrite(ctx, writeModels)
+			res, err := archivedDbCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				return 0, err
+				return archived, err
 			}
 
 			archived += res.UpsertedCount
-
-			_, err = c.resolvedDbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": archivedIds}})
+			_, err = resolvedDbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": archivedIds}})
 			if err != nil {
-				return 0, err
+				return archived, err
 			}
 
 			bulkBytesSize = 0
@@ -92,16 +129,15 @@ func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before datetime.Cps
 		archivedIds = append(archivedIds, alarm.ID)
 
 		if len(writeModels) >= c.bulkSize {
-			res, err := c.archivedDbCollection.BulkWrite(ctx, writeModels)
+			res, err := archivedDbCollection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				return 0, err
+				return archived, err
 			}
 
 			archived += res.UpsertedCount
-
-			_, err = c.resolvedDbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": archivedIds}})
+			_, err = resolvedDbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": archivedIds}})
 			if err != nil {
-				return 0, err
+				return archived, err
 			}
 
 			bulkBytesSize = 0
@@ -111,28 +147,30 @@ func (c *cleaner) ArchiveResolvedAlarms(ctx context.Context, before datetime.Cps
 	}
 
 	if len(writeModels) > 0 {
-		res, err := c.archivedDbCollection.BulkWrite(ctx, writeModels)
+		res, err := archivedDbCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
-			return 0, err
+			return archived, err
 		}
 
 		archived += res.UpsertedCount
 
-		_, err = c.resolvedDbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": archivedIds}})
+		_, err = resolvedDbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": archivedIds}})
 		if err != nil {
-			return 0, err
+			return archived, err
 		}
 	}
 
 	return archived, nil
 }
 
-func (c *cleaner) DeleteArchivedResolvedAlarms(ctx context.Context, before datetime.CpsTime, limit int64) (int64, error) {
+// deleteArchivedResolvedAlarms deletes resolved alarms from archived collection after some time.
+func (c *cleaner) deleteArchivedResolvedAlarms(ctx context.Context, archivedDbCollection mongo.DbCollection, before datetime.CpsTime, limit int) (int64, error) {
 	opts := options.Find().SetProjection(bson.M{"_id": 1})
 	if limit > 0 {
-		opts.SetLimit(limit)
+		opts.SetLimit(int64(limit))
 	}
-	cursor, err := c.archivedDbCollection.Find(ctx, bson.M{
+
+	cursor, err := archivedDbCollection.Find(ctx, bson.M{
 		"v.resolved": bson.M{"$lte": before},
 	}, opts)
 	if err != nil {
@@ -148,18 +186,18 @@ func (c *cleaner) DeleteArchivedResolvedAlarms(ctx context.Context, before datet
 		var alarm types.Alarm
 		err := cursor.Decode(&alarm)
 		if err != nil {
-			return 0, err
+			return deleted, err
 		}
 
 		ids = append(ids, alarm.ID)
 
 		if len(ids) >= c.bulkSize {
-			res, err := c.archivedDbCollection.DeleteMany(
+			res, err := archivedDbCollection.DeleteMany(
 				ctx,
 				bson.M{"_id": bson.M{"$in": ids}},
 			)
 			if err != nil {
-				return 0, err
+				return deleted, err
 			}
 
 			deleted += res
@@ -168,12 +206,12 @@ func (c *cleaner) DeleteArchivedResolvedAlarms(ctx context.Context, before datet
 	}
 
 	if len(ids) > 0 {
-		res, err := c.archivedDbCollection.DeleteMany(
+		res, err := archivedDbCollection.DeleteMany(
 			ctx,
 			bson.M{"_id": bson.M{"$in": ids}},
 		)
 		if err != nil {
-			return 0, err
+			return deleted, err
 		}
 
 		deleted += res

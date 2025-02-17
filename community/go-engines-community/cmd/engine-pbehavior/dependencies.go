@@ -8,7 +8,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -45,7 +44,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -200,24 +198,11 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("cleaner", engine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisSession),
-		redis.PbehaviorCleanPeriodicalLockKey,
-		&cleanPeriodicalWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			Logger:                    logger,
-		},
-		logger,
-	))
 	enginePbehavior.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		logger,
 		timezoneConfigProvider,
-		dataStorageConfigProvider,
 		techMetricsConfigProvider,
 	))
 	enginePbehavior.AddPeriodicalWorker("rrule_cstart", computeRruleStartWorker)
