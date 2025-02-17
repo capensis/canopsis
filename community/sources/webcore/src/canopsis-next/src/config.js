@@ -215,6 +215,7 @@ export const API_ROUTES = {
   roles: {
     list: '/api/v4/roles',
     templates: '/api/v4/role-templates',
+    bulkPermissions: '/api/v4/bulk/role-permissions',
   },
   eventFilter: {
     list: '/api/v4/eventfilter',

@@ -103,7 +103,7 @@ export const getWeekdayNumber = date => convertDateToMoment(date).isoWeekday();
  *
  * @return {string}
  */
-export const getLocaleTimezone = () => moment.tz.guess();
+export const getLocalTimezone = () => moment.tz.guess();
 
 /**
  * Subtract value from date by unit
@@ -141,19 +141,21 @@ export const addUnitToDate = (date, value = 0, unit = TIME_UNITS.second) => conv
 export const convertDateToDateObject = (date, format) => convertDateToMoment(date, format).toDate();
 
 /**
- * Convert date from source timezone to local timezone with time keeping
+ * Convert date from source timezone to local timezone with time keeping flag
  *
  * @param {LocalDate} timestamp
- * @param {string} sourceTimezone
- * @param {string} [targetTimezone = getLocaleTimezone()]
+ * @param {string} [sourceTimezone = getLocalTimezone()]
+ * @param {string} [targetTimezone = getLocalTimezone()]
  * @param {string} [defaultValue]
+ * @param {boolean} [keepTime]
  * @returns {Object}
  */
 export const convertDateToMomentByTimezone = (
   timestamp,
-  sourceTimezone = getLocaleTimezone(),
-  targetTimezone = getLocaleTimezone(),
+  sourceTimezone = getLocalTimezone(),
+  targetTimezone = getLocalTimezone(),
   defaultValue,
+  keepTime = true,
 ) => {
   if (!timestamp) {
     return defaultValue;
@@ -165,33 +167,42 @@ export const convertDateToMomentByTimezone = (
     return dateObject;
   }
 
-  return dateObject.tz(sourceTimezone).tz(targetTimezone, true);
+  const localTimezone = getLocalTimezone();
+
+  return dateObject.tz(sourceTimezone || localTimezone).tz(targetTimezone || localTimezone, keepTime);
 };
 
 /**
- * Convert date from source timezone to local timezone date object
+ * Convert date from source timezone to local timezone date object with time keeping flag
  *
  * @param {LocalDate} timestamp
  * @param {string} sourceTimezone
  * @param {string} [targetTimezone]
+ * @param {string} [defaultValue]
+ * @param {boolean} [keepTime = true]
  * @return {Date}
  */
 export const convertDateToDateObjectByTimezone = (
   timestamp,
   sourceTimezone,
   targetTimezone,
-) => convertDateToMomentByTimezone(timestamp, sourceTimezone, targetTimezone).toDate();
+  defaultValue,
+  keepTime = true,
+) => convertDateToMomentByTimezone(timestamp, sourceTimezone, targetTimezone, defaultValue, keepTime).toDate();
 
 /**
  * Convert date to timestamp with keep time
  *
  * @param {Date|number|moment.Moment} date
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
+ * @param {boolean} [keepTime = true]
  * @returns {number}
  */
-export const convertDateToTimestampByTimezone = (date, timezone = getLocaleTimezone()) => convertDateToMoment(date)
-  .tz(timezone, true)
-  .unix();
+export const convertDateToTimestampByTimezone = (date, timezone = getLocalTimezone(), keepTime = true) => (
+  convertDateToMoment(date)
+    .tz(timezone, keepTime)
+    .unix()
+);
 
 /**
  * Check if date is start of day
@@ -371,11 +382,11 @@ export const convertDateToStartOfDayTimestamp = date => convertDateToStartOfDayM
  * Convert date to start of day as timestamp
  *
  * @param {LocalDate} date
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @return {number}
  */
-export const convertDateToStartOfDayTimestampByTimezone = (date, timezone = getLocaleTimezone()) => (
-  convertDateToMomentByTimezone(convertDateToStartOfDayMoment(date), timezone, getLocaleTimezone()).unix()
+export const convertDateToStartOfDayTimestampByTimezone = (date, timezone = getLocalTimezone()) => (
+  convertDateToMomentByTimezone(convertDateToStartOfDayMoment(date), timezone, getLocalTimezone()).unix()
 );
 
 /**
@@ -421,13 +432,13 @@ export const convertDateToEndOfDayDateObject = date => convertDateToEndOfDayMome
  *
  * @param {LocalDate} date
  * @param {string} [format = DATETIME_FORMATS.long]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {string}
  */
 export const convertDateToStringWithNewTimezone = (
   date,
   format = DATETIME_FORMATS.long,
-  timezone = getLocaleTimezone(),
+  timezone = getLocalTimezone(),
 ) => (
   date
     ? convertDateToMoment(date).tz(timezone).format(format)

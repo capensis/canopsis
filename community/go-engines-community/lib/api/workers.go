@@ -175,7 +175,7 @@ func sendPbhRecomputeEvents(
 				}
 				err = publisher.PublishWithContext(
 					ctx,
-					"",
+					canopsis.DefaultExchangeName,
 					canopsis.PBehaviorQueueRecomputeName,
 					false,
 					false,

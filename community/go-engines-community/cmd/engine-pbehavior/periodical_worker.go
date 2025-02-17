@@ -52,10 +52,9 @@ func (w *periodicalWorker) Work(ctx context.Context) {
 		w.TechMetricsSender.SendPBehaviorPeriodical(metric)
 	}()
 
-	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
+	now := time.Now()
 	newSpan := timespan.New(now, now.Add(w.FrameDuration))
-
-	resolver, recomputedCount, err := w.PbhService.Compute(ctx, newSpan)
+	resolver, recomputedCount, err := w.PbhService.Compute(ctx, newSpan, w.TimezoneConfigProvider.Get().Location)
 	if err != nil {
 		w.Logger.Err(err).Msg("compute pbehavior's frames failed")
 		return

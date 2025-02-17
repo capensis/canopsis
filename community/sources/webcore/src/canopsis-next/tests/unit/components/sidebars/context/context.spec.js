@@ -17,7 +17,7 @@ import {
   EXPORT_CSV_DATETIME_FORMATS,
   EXPORT_CSV_SEPARATORS,
   SORT_ORDERS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   SIDE_BARS,
   COLOR_INDICATOR_TYPES,
   WIDGET_TYPES,
@@ -491,7 +491,7 @@ describe('context', () => {
 
   test('Filters changed after trigger update:filters on filters field', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.context.actions.listFilters]: {
+      [USER_PERMISSIONS.business.context.actions.filter]: {
         actions: [],
       },
     });
@@ -530,7 +530,7 @@ describe('context', () => {
 
   test('Filter changed after trigger input on filters field', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.context.actions.listFilters]: {
+      [USER_PERMISSIONS.business.context.actions.filter]: {
         actions: [],
       },
     });
@@ -569,7 +569,7 @@ describe('context', () => {
 
   test('Root cause settings changed after trigger root cause settings field', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.context.actions.listFilters]: {
+      [USER_PERMISSIONS.business.context.actions.filter]: {
         actions: [],
       },
     });
@@ -745,12 +745,25 @@ describe('context', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `context` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    wrapper.find('field-title-stub').triggerCustomEvent('input', 'New title');
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `context` widget settings with all rights', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.context.actions.listFilters]: { actions: [] },
-      [USERS_PERMISSIONS.business.context.actions.editFilter]: { actions: [] },
-      [USERS_PERMISSIONS.business.context.actions.addFilter]: { actions: [] },
-      [USERS_PERMISSIONS.business.context.actions.userFilter]: { actions: [] },
+      [USER_PERMISSIONS.business.context.actions.filter]: { actions: [] },
+      [USER_PERMISSIONS.business.context.actions.userFilter]: { actions: [] },
     });
     const wrapper = snapshotFactory({
       store: createMockedStoreModules([

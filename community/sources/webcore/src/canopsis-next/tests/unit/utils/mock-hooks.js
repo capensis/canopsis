@@ -96,10 +96,12 @@ export const mockPopups = () => {
 export const mockRouter = () => {
   const router = {
     push: jest.fn(),
+    afterEach: jest.fn(),
   };
 
   afterEach(() => {
     router.push.mockReset();
+    router.afterEach.mockReset();
   });
 
   return router;

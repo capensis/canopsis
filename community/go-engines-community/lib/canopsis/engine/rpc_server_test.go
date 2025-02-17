@@ -24,6 +24,7 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 	consumer := engine.NewRPCServer(
 		name, queue,
 		1, 1,
+		10,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -68,6 +69,7 @@ func TestRpcServer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToBac
 	consumer := engine.NewRPCServer(
 		name, queue,
 		1, 1,
+		10,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -119,6 +121,7 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	consumer := engine.NewRPCServer(
 		name, queue,
 		1, 1,
+		10,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},
@@ -158,6 +161,7 @@ func TestRpcServer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
 	consumer := engine.NewRPCServer(
 		name, queue,
 		1, 1,
+		10,
 		mockConnection,
 		mockMessageProcessor,
 		zerolog.Logger{},

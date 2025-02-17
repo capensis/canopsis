@@ -256,7 +256,7 @@ func (l *listener) publishEvent(ctx context.Context, entID, entType string) erro
 
 	return l.amqpPublisher.PublishWithContext(
 		ctx,
-		"",
+		canopsis.DefaultExchangeName,
 		canopsis.FIFOQueueName,
 		false,
 		false,

@@ -56,6 +56,7 @@ type PBehavior struct {
 	LastAlarmDate *datetime.CpsTime `bson:"last_alarm_date,omitempty"`
 	AlarmCount    int64             `bson:"alarm_count,omitempty"`
 
+	Timezone string            `bson:"timezone"`
 	Start    *datetime.CpsTime `bson:"tstart"`
 	Stop     *datetime.CpsTime `bson:"tstop,omitempty"`
 	RRule    string            `bson:"rrule"`

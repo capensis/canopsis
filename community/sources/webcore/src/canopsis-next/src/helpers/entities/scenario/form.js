@@ -4,7 +4,7 @@ import { DEPRECATED_TRIGGERS } from '@/constants';
 
 import { durationToForm } from '@/helpers/date/duration';
 import { formToAction, actionToForm } from '@/helpers/entities/action';
-import { getLocaleTimezone } from '@/helpers/date/date';
+import { getLocalTimezone } from '@/helpers/date/date';
 import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
@@ -41,10 +41,10 @@ export const isDeprecatedTrigger = type => DEPRECATED_TRIGGERS.includes(type);
  * Convert scenario to form
  *
  * @param {Scenario} [scenario = {}]
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {ScenarioForm}
  */
-export const scenarioToForm = (scenario = {}, timezone = getLocaleTimezone()) => ({
+export const scenarioToForm = (scenario = {}, timezone = getLocalTimezone()) => ({
   name: scenario.name || '',
   priority: scenario.priority,
   enabled: scenario.enabled ?? true,
@@ -62,10 +62,10 @@ export const scenarioToForm = (scenario = {}, timezone = getLocaleTimezone()) =>
  * Convert form to scenario
  *
  * @param {ScenarioForm} form
- * @param {string} [timezone = getLocaleTimezone()]
+ * @param {string} [timezone = getLocalTimezone()]
  * @returns {Scenario}
  */
-export const formToScenario = (form, timezone = getLocaleTimezone()) => ({
+export const formToScenario = (form, timezone = getLocalTimezone()) => ({
   ...omit(form, ['delay', 'actions']),
   delay: isNumber(form.delay?.value)
     ? form.delay
