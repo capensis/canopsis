@@ -2,10 +2,9 @@ package axe
 
 import (
 	"context"
-	"time"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -14,90 +13,54 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-type cleanExternalTagPeriodicalWorker struct {
-	PeriodicalInterval        time.Duration
-	TimezoneConfigProvider    config.TimezoneConfigProvider
-	DataStorageConfigProvider config.DataStorageConfigProvider
-	LimitConfigAdapter        datastorage.Adapter
-	Logger                    zerolog.Logger
+func NewExternalTagCleaner(logger zerolog.Logger) datastorage.Cleaner {
+	return &externalTagCleaner{
+		logger: logger,
+	}
 }
 
-func (w *cleanExternalTagPeriodicalWorker) GetInterval() time.Duration {
-	return w.PeriodicalInterval
+type externalTagCleaner struct {
+	logger zerolog.Logger
 }
 
-func (w *cleanExternalTagPeriodicalWorker) Work(ctx context.Context) {
-	conf, err := w.LimitConfigAdapter.Get(ctx)
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot retrieve data storage config")
+func (c *externalTagCleaner) IsEnabled(conf datastorage.Config) bool {
+	return datetime.IsDurationEnabledAndValid(conf.AlarmExternalTag.DeleteAfter)
+}
 
-		return
+func (c *externalTagCleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datastorage.Config, t datetime.CpsTime, limit int) (datastorage.CleanResult, error) {
+	res := datastorage.CleanResult{}
+	if !c.IsEnabled(conf) {
+		return res, nil
 	}
 
-	var lastExecuted datetime.CpsTime
-	if conf.History.AlarmExternalTag != nil {
-		lastExecuted = conf.History.AlarmExternalTag.Time
-	}
-
-	dataStorageConf := w.DataStorageConfigProvider.Get()
-	if !datastorage.CanRun(lastExecuted, dataStorageConf.TimeToExecute, w.TimezoneConfigProvider.Get().Location) {
-		return
-	}
-
-	mongoClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout, dataStorageConf.MongoClientTimeout, w.Logger)
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot connect to mongo")
-
-		return
-	}
-
+	var deletedColors int64
 	defer func() {
-		err = mongoClient.Disconnect(ctx)
-		if err != nil {
-			w.Logger.Err(err).Msg("cannot disconnect from mongo")
+		if res.Deleted > 0 {
+			c.logger.Info().Int64("count", res.Deleted).Msg("alarm external tags are deleted")
+		}
+
+		if deletedColors > 0 {
+			c.logger.Info().Int64("count", deletedColors).Msg("alarm tag colors are deleted")
 		}
 	}()
 
-	deleteAfter := conf.Config.AlarmExternalTag.DeleteAfter
-	if !datetime.IsDurationEnabledAndValid(deleteAfter) {
-		return
-	}
-
-	now := datetime.NewCpsTime()
-	dbCollection := mongoClient.Collection(mongo.AlarmTagCollection)
-	colorDbCollection := mongoClient.Collection(mongo.AlarmTagColorCollection)
-	deleted, err := w.delete(ctx, deleteAfter.SubFrom(now), dataStorageConf.MaxUpdates, datastorage.BulkSize, dbCollection)
+	dbCollection := dbClient.Collection(mongo.AlarmTagCollection)
+	colorDbCollection := dbClient.Collection(mongo.AlarmTagColorCollection)
+	var err error
+	res.Deleted, err = c.delete(ctx, conf.AlarmExternalTag.DeleteAfter.SubFrom(t), limit, datastorage.BulkSize, dbCollection)
 	if err != nil {
-		w.Logger.Err(err).Msg("cannot delete alarm tags")
-
-		return
+		return res, fmt.Errorf("cannot delete tags: %w", err)
 	}
 
-	if deleted > 0 {
-		w.Logger.Info().Int64("count", deleted).Msg("alarm external tags are deleted")
-	}
-
-	deletedColors, err := w.deleteColors(ctx, dataStorageConf.MaxUpdates, datastorage.BulkSize, colorDbCollection)
+	deletedColors, err = c.deleteColors(ctx, limit, datastorage.BulkSize, colorDbCollection)
 	if err != nil {
-		w.Logger.Err(err).Msg("cannot delete alarm tag colors")
-
-		return
+		return res, fmt.Errorf("cannot delete colors: %w", err)
 	}
 
-	if deletedColors > 0 {
-		w.Logger.Info().Int64("count", deletedColors).Msg("alarm tag colors are deleted")
-	}
-
-	err = w.LimitConfigAdapter.UpdateHistoryAlarmExternalTag(ctx, datastorage.HistoryWithCount{
-		Time:    now,
-		Deleted: deleted,
-	})
-	if err != nil {
-		w.Logger.Err(err).Msg("cannot update config history")
-	}
+	return res, nil
 }
 
-func (w *cleanExternalTagPeriodicalWorker) delete(
+func (c *externalTagCleaner) delete(
 	ctx context.Context,
 	before datetime.CpsTime,
 	limit int,
@@ -124,7 +87,7 @@ func (w *cleanExternalTagPeriodicalWorker) delete(
 		var tag alarmtag.AlarmTag
 		err := cursor.Decode(&tag)
 		if err != nil {
-			return 0, err
+			return deleted, err
 		}
 
 		ids = append(ids, tag.ID)
@@ -134,7 +97,7 @@ func (w *cleanExternalTagPeriodicalWorker) delete(
 				bson.M{"_id": bson.M{"$in": ids}},
 			)
 			if err != nil {
-				return 0, err
+				return deleted, err
 			}
 
 			deleted += res
@@ -148,7 +111,7 @@ func (w *cleanExternalTagPeriodicalWorker) delete(
 			bson.M{"_id": bson.M{"$in": ids}},
 		)
 		if err != nil {
-			return 0, err
+			return deleted, err
 		}
 
 		deleted += res
@@ -156,7 +119,7 @@ func (w *cleanExternalTagPeriodicalWorker) delete(
 
 	return deleted, nil
 }
-func (w *cleanExternalTagPeriodicalWorker) deleteColors(
+func (c *externalTagCleaner) deleteColors(
 	ctx context.Context,
 	limit int,
 	bulkSize int,
@@ -203,7 +166,7 @@ func (w *cleanExternalTagPeriodicalWorker) deleteColors(
 		}
 		err := cursor.Decode(&color)
 		if err != nil {
-			return 0, err
+			return deleted, err
 		}
 
 		ids = append(ids, color.ID)
@@ -213,7 +176,7 @@ func (w *cleanExternalTagPeriodicalWorker) deleteColors(
 				bson.M{"_id": bson.M{"$in": ids}},
 			)
 			if err != nil {
-				return 0, err
+				return deleted, err
 			}
 
 			deleted += res
@@ -227,7 +190,7 @@ func (w *cleanExternalTagPeriodicalWorker) deleteColors(
 			bson.M{"_id": bson.M{"$in": ids}},
 		)
 		if err != nil {
-			return 0, err
+			return deleted, err
 		}
 
 		deleted += res

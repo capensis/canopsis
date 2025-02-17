@@ -8,12 +8,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"github.com/jackc/pgx/v5"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Store interface {
@@ -23,14 +19,12 @@ type Store interface {
 }
 
 type store struct {
-	db             mongo.DbClient
 	pgPoolProvider postgres.PoolProvider
 }
 
 // NewStore creates new store.
-func NewStore(db mongo.DbClient, pgPoolProvider postgres.PoolProvider) Store {
+func NewStore(pgPoolProvider postgres.PoolProvider) Store {
 	return &store{
-		db:             db,
 		pgPoolProvider: pgPoolProvider,
 	}
 }
@@ -92,7 +86,6 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 	}
 
 	search, args := s.getSearchQuery(r)
-
 	rows, err := pgPool.Query(ctx, "SELECT time_bucket_gapfill('1 hour', time), sum(count) FROM "+metrics.MessageRateHourly+
 		search+" GROUP BY time_bucket_gapfill('1 hour', time)", args)
 	if err != nil {
@@ -120,48 +113,10 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 		})
 	}
 
-	collection := s.db.Collection(mongo.MessageRateStatsHourCollectionName)
-	cursor, err := collection.Find(ctx, bson.M{"_id": bson.M{"$gte": r.From, "$lte": r.To}},
-		options.Find().SetSort(bson.M{"_id": 1}))
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-	from := r.From.Unix()
-	interval := int64(time.Hour.Seconds())
-	for cursor.Next(ctx) {
-		var rate StatsResponse
-		err = cursor.Decode(&rate)
-		if err != nil {
-			return nil, err
-		}
-
-		i := int((rate.ID - from) / interval)
-		if i < 0 || i >= len(rates) {
-			return nil, errors.New("invalid postgres query, rates must contain gaps")
-		}
-
-		rates[i].Rate += rate.Rate
-	}
-
 	return rates, nil
 }
 
 func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime, error) {
-	res := struct {
-		Time datetime.CpsTime `bson:"_id"`
-	}{}
-	collection := s.db.Collection(mongo.MessageRateStatsHourCollectionName)
-	err := collection.FindOne(ctx, bson.M{}, options.FindOne().SetSort(bson.M{"_id": 1})).Decode(&res)
-	if err == nil {
-		return &res.Time, nil
-	}
-
-	if !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return nil, err
-	}
-
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return nil, err
@@ -170,6 +125,10 @@ func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime
 	var t time.Time
 	err = pgPool.QueryRow(ctx, "SELECT min(time) FROM "+metrics.MessageRateHourly).Scan(&t)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+
 		return nil, err
 	}
 
