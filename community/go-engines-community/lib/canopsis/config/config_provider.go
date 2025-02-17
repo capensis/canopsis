@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog"
 )
@@ -151,7 +152,7 @@ type TechMetricsConfig struct {
 }
 
 type DataStorageConfig struct {
-	TimeToExecute      *ScheduledTime
+	TimeToExecute      ScheduledTimes
 	MaxUpdates         int
 	MongoClientTimeout time.Duration
 }
@@ -171,8 +172,32 @@ type ScheduledTime struct {
 	Hour    int
 }
 
-func (t ScheduledTime) String() string {
-	return fmt.Sprintf("%v,%v", t.Weekday, t.Hour)
+type ScheduledTimes []ScheduledTime
+
+func (t ScheduledTimes) IsScheduledTime(now datetime.CpsTime) bool {
+	for _, v := range t {
+		if now.Weekday() == v.Weekday && now.Hour() == v.Hour {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (t ScheduledTimes) String() string {
+	const l = len("Wednesday,10;")
+	var b strings.Builder
+	b.Grow(len(t) * l)
+	for i, v := range t {
+		b.WriteString(v.Weekday.String())
+		b.WriteRune(',')
+		b.WriteString(strconv.Itoa(v.Hour))
+		if i < len(t)-1 {
+			b.WriteRune(';')
+		}
+	}
+
+	return b.String()
 }
 
 type BaseTechMetricsConfigProvider struct {
@@ -831,7 +856,7 @@ func parseScheduledTime(
 	name, sectionName string,
 	logger zerolog.Logger,
 	msg string,
-) *ScheduledTime {
+) ScheduledTimes {
 	if v == "" {
 		logger.Info().
 			Msgf("missing %s of %s config section, %s", name, sectionName, msg)
@@ -850,22 +875,24 @@ func parseScheduledTime(
 		Str("value", t.String()).
 		Msgf("%s of %s config section is used", name, sectionName)
 
-	return &t
+	return t
 }
 
 func parseUpdatedScheduledTime(
 	v string,
-	oldVal *ScheduledTime,
+	oldVal ScheduledTimes,
 	name, sectionName string,
 	logger zerolog.Logger,
-) (*ScheduledTime, bool) {
+) (ScheduledTimes, bool) {
 	if v == "" {
 		if oldVal != nil {
 			logger.Warn().
 				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		}
+
 		return nil, false
 	}
+
 	t, ok := stringToScheduledTime(v)
 	if !ok {
 		if oldVal != nil {
@@ -885,24 +912,36 @@ func parseUpdatedScheduledTime(
 
 	logInfoNewValue(logger, name, sectionName, oldValStr, t.String())
 
-	return &t, true
+	return t, true
 }
 
-func stringToScheduledTime(v string) (ScheduledTime, bool) {
-	split := strings.Split(v, ",")
-	t := ScheduledTime{}
-	if len(split) == 2 {
-		if d, ok := weekdays[split[0]]; ok {
-			h, err := strconv.Atoi(split[1])
-			if err == nil && h >= 0 && h <= 24 {
-				t.Weekday = d
-				t.Hour = h
-				return t, true
-			}
-		}
+func stringToScheduledTime(v string) (ScheduledTimes, bool) {
+	if v == "" {
+		return nil, false
 	}
 
-	return t, false
+	split := strings.Split(v, ";")
+	res := make(ScheduledTimes, 0, len(split))
+	for _, s := range split {
+		if s == "" {
+			continue
+		}
+
+		splitT := strings.Split(s, ",")
+		if len(splitT) == 2 {
+			if d, ok := weekdays[splitT[0]]; ok {
+				h, err := strconv.Atoi(splitT[1])
+				if err == nil && h >= 0 && h < 24 {
+					res = append(res, ScheduledTime{Weekday: d, Hour: h})
+					continue
+				}
+			}
+		}
+
+		return nil, false
+	}
+
+	return res, true
 }
 
 func parseTimeDurationByStr(
