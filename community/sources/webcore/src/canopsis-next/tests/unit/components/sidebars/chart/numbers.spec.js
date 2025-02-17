@@ -12,7 +12,7 @@ import {
   QUICK_RANGES,
   SAMPLINGS,
   SIDE_BARS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 
@@ -240,9 +240,24 @@ describe('numbers', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `numbers` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    selectWidgetForm(wrapper).triggerCustomEvent('input', widget);
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `numbers` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.numbers.actions.listFilters]: { actions: [] },
+      [USER_PERMISSIONS.business.numbers.actions.filter]: { actions: [] },
     });
 
     const wrapper = snapshotFactory({

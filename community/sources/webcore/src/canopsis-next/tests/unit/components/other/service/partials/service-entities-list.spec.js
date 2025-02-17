@@ -17,7 +17,7 @@ import {
   MODALS,
   PBEHAVIOR_ORIGINS,
   PBEHAVIOR_TYPE_TYPES,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WEATHER_ACK_EVENT_OUTPUT,
   WEATHER_ACTIONS_TYPES,
   WEATHER_ENTITY_PBEHAVIOR_DEFAULT_TITLE,
@@ -261,7 +261,7 @@ describe('service-entities-list', () => {
 
   test('Validate action applied after trigger mass validate action', async () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.entityValidate]: {
+      [USER_PERMISSIONS.business.serviceWeather.actions.entityValidate]: {
         actions: [],
       },
     }));
@@ -309,7 +309,7 @@ describe('service-entities-list', () => {
 
   test('Invalidate action applied after trigger mass invalidate action', async () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]: {
+      [USER_PERMISSIONS.business.serviceWeather.actions.entityInvalidate]: {
         actions: [],
       },
     }));

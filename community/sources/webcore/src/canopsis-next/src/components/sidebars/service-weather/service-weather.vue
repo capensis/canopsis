@@ -1,24 +1,24 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
     divider
     @submit="submit"
   >
     <field-title v-model="form.title" />
     <field-periodic-refresh v-model="form.parameters" />
-    <template v-if="hasAccessToListFilters">
-      <field-filters
-        v-model="form.parameters.mainFilter"
-        :filters.sync="form.filters"
-        :widget-id="widget._id"
-        :addable="hasAccessToAddFilter"
-        :editable="hasAccessToEditFilter"
-        :entity-types="[$constants.ENTITY_TYPES.service]"
-        with-entity
-        with-service-weather
-        entity-counters-type
-      />
-    </template>
+    <field-filters
+      v-if="hasAccessToFilter"
+      v-model="form.parameters.mainFilter"
+      :filters.sync="form.filters"
+      :widget-id="widget._id"
+      :entity-types="[$constants.ENTITY_TYPES.service]"
+      addable
+      editable
+      with-entity
+      with-service-weather
+      entity-counters-type
+    />
     <alarms-list-modal-form
       v-model="form.parameters.alarmsList"
       :templates="preparedWidgetTemplates"

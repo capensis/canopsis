@@ -36,6 +36,8 @@ const selectAvailabilityValueFilterField = wrapper => wrapper.find('availability
 describe('availability-widget-filters', () => {
   jest.useFakeTimers({ now: 1386435500000 });
 
+  const widgetId = 'widget-id';
+
   const factory = generateShallowRenderer(AvailabilityWidgetFilters, {
     stubs,
   });
@@ -46,6 +48,7 @@ describe('availability-widget-filters', () => {
   test('Interval changed after trigger quick date interval field', async () => {
     const wrapper = factory({
       propsData: {
+        widgetId,
         interval: {
           from: QUICK_RANGES.today.start,
           to: QUICK_RANGES.today.stop,
@@ -67,6 +70,7 @@ describe('availability-widget-filters', () => {
   test('Search changed after trigger search field', async () => {
     const wrapper = factory({
       propsData: {
+        widgetId,
         search: '',
         showInterval: true,
       },
@@ -82,6 +86,7 @@ describe('availability-widget-filters', () => {
   test('Filters changed after trigger filters field', async () => {
     const wrapper = factory({
       propsData: {
+        widgetId,
         showFilter: true,
       },
     });
@@ -96,6 +101,7 @@ describe('availability-widget-filters', () => {
   test('Filters changed after trigger filters field', async () => {
     const wrapper = factory({
       propsData: {
+        widgetId,
         showFilter: true,
       },
     });
@@ -108,7 +114,9 @@ describe('availability-widget-filters', () => {
   });
 
   test('Display parameter changed after trigger availability display parameter field', async () => {
-    const wrapper = factory();
+    const wrapper = factory({
+      propsData: { widgetId },
+    });
 
     const newDisplayParameter = randomArrayItem(Object.values(AVAILABILITY_DISPLAY_PARAMETERS));
 
@@ -118,7 +126,9 @@ describe('availability-widget-filters', () => {
   });
 
   test('Show type changed after trigger availability show type field', async () => {
-    const wrapper = factory();
+    const wrapper = factory({
+      propsData: { widgetId },
+    });
 
     const newShowType = randomArrayItem(Object.values(AVAILABILITY_SHOW_TYPE));
 
@@ -128,7 +138,9 @@ describe('availability-widget-filters', () => {
   });
 
   test('Trend changed after trigger enabled field', async () => {
-    const wrapper = factory();
+    const wrapper = factory({
+      propsData: { widgetId },
+    });
 
     const newTrend = Faker.datatype.boolean();
 
@@ -138,7 +150,9 @@ describe('availability-widget-filters', () => {
   });
 
   test('Value filter changed after trigger value filter field', async () => {
-    const wrapper = factory();
+    const wrapper = factory({
+      propsData: { widgetId },
+    });
 
     const newValueFilter = {
       method: randomArrayItem(Object.values(AVAILABILITY_VALUE_FILTER_METHODS)),
@@ -162,6 +176,7 @@ describe('availability-widget-filters', () => {
 
     const wrapper = factory({
       propsData: {
+        widgetId,
         valueFilter,
       },
     });
@@ -183,6 +198,7 @@ describe('availability-widget-filters', () => {
   test('Export emitted after click on button', async () => {
     const wrapper = factory({
       propsData: {
+        widgetId,
         showExport: true,
       },
     });
@@ -193,7 +209,11 @@ describe('availability-widget-filters', () => {
   });
 
   test('Renders `availability-widget-filters` with default props', async () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        widgetId,
+      },
+    });
 
     await flushPromises();
 
@@ -203,7 +223,7 @@ describe('availability-widget-filters', () => {
   test('Renders `availability-widget-filters` with custom props', async () => {
     const wrapper = snapshotFactory({
       propsData: {
-        widgetId: 'widget-id',
+        widgetId,
         search: 'Custom search',
         interval: {
           from: QUICK_RANGES.yesterday.start,

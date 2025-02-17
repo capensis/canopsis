@@ -59,7 +59,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisSession),
-		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", []string{canopsis.PBehaviorRPCQueueServerName}),
+		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", nil, []string{canopsis.PBehaviorRPCQueueServerName}),
 		amqpChannel,
 		logger,
 	)
@@ -80,10 +80,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			runInfoPeriodicalWorker.Work(ctx)
 			pbhService := pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
-			now := time.Now().In(timezoneConfigProvider.Get().Location)
+			now := time.Now()
 			newSpan := timespan.New(now, now.Add(frameDuration))
-
-			_, count, err := pbhService.Compute(ctx, newSpan)
+			_, count, err := pbhService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -148,6 +147,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		canopsis.PBehaviorRPCQueueServerName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
+		options.Workers,
 		amqpConnection,
 		rpcMessageProcessor,
 		logger,
@@ -163,6 +163,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		"",
 		"",
 		options.Workers,
+		false,
 		amqpConnection,
 		&recomputeMessageProcessor{
 			FeaturePrintEventOnError: options.FeaturePrintEventOnError,
@@ -173,8 +174,9 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Publisher:                amqpChannel,
-			Exchange:                 canopsis.FIFOExchangeName,
+			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
+			TimezoneConfigProvider:   timezoneConfigProvider,
 			Logger:                   logger,
 		},
 		logger,

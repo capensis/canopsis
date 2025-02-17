@@ -6,23 +6,41 @@
           {{ version }}
         </div>
       </template>
-      <div>
-        <div>{{ $t('common.stack') }}:<strong> {{ stack }}</strong></div>
-        <div>{{ $t('common.edition') }}:<strong> {{ edition }}</strong></div>
-        <div>{{ $t('common.serialName') }}:<strong> {{ serialName }}</strong></div>
-      </div>
+      <c-compiled-template :template="template" :context="context" />
     </v-tooltip>
   </div>
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed } from 'vue';
 
-const { mapGetters } = createNamespacedHelpers('info');
+import { useInfo } from '@/hooks/store/modules/info';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
-  computed: {
-    ...mapGetters(['version', 'stack', 'edition', 'serialName']),
+  setup() {
+    const { t } = useI18n();
+    const {
+      version,
+      edition,
+      serialName,
+      versionUpdated,
+      versionDescription,
+    } = useInfo();
+
+    const template = computed(() => (versionDescription.value || t('userInterface.defaultVersionDescription')));
+    const context = computed(() => ({
+      version: version.value,
+      edition: edition.value,
+      serialName: serialName.value,
+      versionUpdated: versionUpdated.value,
+    }));
+
+    return {
+      version,
+      template,
+      context,
+    };
   },
 };
 </script>

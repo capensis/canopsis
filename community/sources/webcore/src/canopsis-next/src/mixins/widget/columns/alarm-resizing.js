@@ -112,6 +112,9 @@ export const widgetColumnResizingAlarmMixin = {
       this.aggregatedMovementDiff += event.movementX;
 
       this.throttledResizeColumnByDiff(this.resizingColumnIndex);
+
+      this.setHorizontalScrollbarWidth();
+      this.setHorizontalScrollPosition();
     },
 
     startColumnResize(columnName) {

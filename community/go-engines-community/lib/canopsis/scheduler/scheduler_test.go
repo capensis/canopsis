@@ -142,7 +142,7 @@ func TestScheduler_AckEvent_GivenEventAndNextEvent_ShouldPublishNextEvent(t *tes
 		Resource:      "test-resource",
 	}
 	lockID := "test-resource/test-component"
-	body := []byte("test-body")
+	body := []byte(`{"initiator": "test-initiator"}`)
 
 	mockRedisLockStorage := mock_redis.NewMockUniversalClient(ctrl)
 	mockRedisLockStorage.EXPECT().Expire(gomock.Any(), gomock.Eq(lockID), gomock.Any()).

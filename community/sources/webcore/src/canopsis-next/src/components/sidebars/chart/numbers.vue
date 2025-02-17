@@ -1,12 +1,13 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
     divider
     @submit="submit"
   >
     <numbers-widget-form
       v-model="form"
-      :with-filters="hasAccessToListFilters"
+      :with-filters="hasAccessToFilter"
       with-periodic-refresh
       with-preset
     />

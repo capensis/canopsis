@@ -282,3 +282,148 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
   </widget-settings-group-stub>
 </widget-settings-stub>
 `;
+
+exports[`service-weather Renders \`service-weather\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+  divider="true"
+>
+  <field-title-stub
+    name="title"
+    value="New title"
+  />
+  <field-periodic-refresh-stub
+    form="[object Object]"
+  />
+  <!---->
+  <alarms-list-modal-form-stub
+    form="[object Object]"
+    templates=""
+  />
+  <field-number-stub
+    title="Limit"
+    value="120"
+  />
+  <field-color-indicator-stub
+    value="state"
+  />
+  <field-columns-stub
+    columns="[object Object],[object Object]"
+    label="Column names for tree of dependencies"
+    template="Symbol(custom)"
+    templates=""
+    type="entity"
+    withcolorindicator="true"
+  />
+  <field-tree-of-dependencies-settings-stub
+    value="2"
+  />
+  <widget-settings-group-stub
+    title="Advanced settings"
+  >
+    <field-sort-column-stub
+      columns="[object Object],[object Object]"
+      value="[object Object]"
+    />
+    <field-default-elements-per-page-stub
+      subtitle="(Modal)"
+      value="10"
+    />
+    <field-root-cause-settings-stub
+      parameters="[object Object]"
+    />
+    <field-text-editor-with-template-stub
+      defaultvalue=""
+      template="Symbol(custom)"
+      templates=""
+      title="Template - Weather item"
+      value="<p><strong><span style=\\"font-size: 18px;\\">{{entity.name}}</span></strong></p>
+<hr id=\\"null\\">
+<p>{{ entity.output }}</p>
+<p> Dernière mise à jour : {{ timestamp entity.last_update_date }}</p>"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    />
+    <field-text-editor-with-template-stub
+      defaultvalue=""
+      template="Symbol(custom)"
+      templates=""
+      title="Template - Modal"
+      value="{{ entities name=\\"entity._id\\" }}"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    />
+    <field-text-editor-with-template-stub
+      defaultvalue=""
+      template="Symbol(custom)"
+      templates=""
+      title="Template - Entities"
+      value="<ul>
+    <li><strong>Libellé</strong> : {{entity.name}}</li>
+</ul>"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    />
+    <field-grid-size-stub
+      mobile="true"
+      title="Columns - Mobile"
+      value="2"
+    />
+    <field-grid-size-stub
+      tablet="true"
+      title="Columns - Tablet"
+      value="3"
+    />
+    <field-grid-size-stub
+      title="Columns - Desktop"
+      value="4"
+    />
+    <margins-form-stub
+      form="[object Object]"
+      max="5"
+      min="0"
+    />
+    <field-slider-stub
+      max="20"
+      min="1"
+      title="Height"
+      value="6"
+    />
+    <field-counters-selector-stub
+      title="Counters"
+      value="[object Object]"
+    />
+    <field-switcher-stub
+      title="Show priority"
+      value="true"
+    />
+    <field-switcher-stub
+      title="Show hide gray"
+      value="true"
+    />
+    <field-switcher-stub
+      title="Show secondary icon"
+      value="true"
+    />
+    <field-modal-type-stub
+      name="modalType"
+      value="both"
+    />
+    <widget-settings-group-stub
+      title="State settings"
+    >
+      <field-action-required-settings-stub
+        value="[object Object]"
+      />
+      <field-no-action-required-settings-stub
+        value="[object Object]"
+      />
+    </widget-settings-group-stub>
+    <hr
+      aria-orientation="horizontal"
+      class="v-divider theme--light"
+      role="separator"
+    />
+    <field-switcher-stub
+      title="Stack entities actions and apply simultaneously"
+    />
+  </widget-settings-group-stub>
+</widget-settings-stub>
+`;
