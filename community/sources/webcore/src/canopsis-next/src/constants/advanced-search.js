@@ -58,4 +58,7 @@ export const ADVANCED_SEARCH_CHIP_TYPES = {
   range: 'range',
   rangeValue: 'rangeValue',
   union: 'union',
+  text: 'text',
 };
+
+export const ADVANCED_SEARCH_VALIDATION_RULE_NAME = 'advancedSearchRule';

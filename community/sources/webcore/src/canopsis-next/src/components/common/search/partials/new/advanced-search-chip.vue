@@ -120,7 +120,7 @@ export default {
   },
   props: {
     value: {
-      type: [String, Number, Array],
+      type: [String, Number, Array, Boolean],
       default: '',
     },
     items: {
@@ -200,11 +200,15 @@ export default {
 
     const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
 
-    const noDataText = computed(() => t(
-      props.allowText
-        ? 'common.pressEnterToApply'
-        : 'common.noData',
-    ));
+    const noDataText = computed(() => {
+      let messageKey = 'common.noData';
+
+      if (props.allowText) {
+        messageKey = props.first ? 'advancedSearch.searchForThisText' : 'common.pressEnterToApply';
+      }
+
+      return t(messageKey);
+    });
 
     /**
      * Fetches and filters items based on search parameters, returning the filtered data along with metadata about the

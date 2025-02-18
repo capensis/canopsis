@@ -1,6 +1,13 @@
-import { ref, computed, unref, onMounted } from 'vue';
+import {
+  ref,
+  computed,
+  unref,
+  onBeforeMount,
+  onMounted,
+} from 'vue';
 
 import {
+  ADVANCED_SEARCH_VALIDATION_RULE_NAME,
   ALARM_ADVANCED_SEARCH_GROUPS,
   ALARM_EVENT_INITIATORS,
   ALARM_FIELDS,
@@ -29,6 +36,7 @@ import { useEntityCategory } from '@/hooks/store/modules/entity-category';
 import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
+import { useComponentInstance } from '@/hooks/vue';
 
 export const ENTITY_OPERATORS = [
   ...PATTERN_STRING_OPERATORS,
@@ -500,5 +508,46 @@ export const useAdvancedSearchAttributes = ({
   return {
     pending: infosPending,
     attributes,
+  };
+};
+
+export const useAdvancedSearchValidator = ({ rules }) => {
+  const instance = useComponentInstance();
+
+  /**
+   * Extends the validator with a custom rule named ADVANCED_SEARCH_VALIDATION_RULE_NAME.
+   * This rule is used to validate advanced search criteria based on specific conditions.
+   *
+   * @description
+   * The ADVANCED_SEARCH_VALIDATION_RULE_NAME checks the following conditions:
+   * - If the rule has an attribute and is not finished, it returns false.
+   * - If the rule does not have an attribute but has a union, it checks the last two rules:
+   * - If the last rule does not have an attribute and the second-to-last rule has the same key as the current rule,
+   *   it returns false.
+   * - Otherwise, it returns true.
+   */
+  const extendValidatorRule = () => (
+    instance.$validator.extend(ADVANCED_SEARCH_VALIDATION_RULE_NAME, ({ rule, finished }) => {
+      const unwrappedRules = unref(rules);
+
+      if (rule.attribute && !finished) {
+        return false;
+      }
+
+      if (!rule.attribute && rule.union) {
+        const lastRule = unwrappedRules.at(-1);
+        const preLastRule = unwrappedRules.at(-2);
+
+        return !(!lastRule?.attribute && preLastRule?.key === rule?.key);
+      }
+
+      return true;
+    })
+  );
+
+  onBeforeMount(extendValidatorRule);
+
+  return {
+    extendValidatorRule,
   };
 };

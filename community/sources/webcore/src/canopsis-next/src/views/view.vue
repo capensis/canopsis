@@ -1,6 +1,5 @@
 <template>
   <div class="view-wrapper">
-    <c-new-advanced-search-field class="mb-2" />
     <v-fade-transition>
       <view-tabs-wrapper
         v-if="isViewTabsReady"

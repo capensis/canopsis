@@ -24,33 +24,12 @@
         </v-list-item-title>
       </v-list-item-content>
       <v-list-item-action>
-        <v-layout>
-          <v-btn
-            small
-            icon
-            @click.stop="removeItem(item.search)"
-          >
-            <v-icon
-              color="grey"
-              small
-            >
-              delete
-            </v-icon>
-          </v-btn>
-          <v-btn
-            :class="{ 'c-search-field__item__pinned': item.pinned }"
-            small
-            icon
-            @click.stop="togglePinItem(item.search)"
-          >
-            <v-icon
-              :color="item.pinned ? 'inherit' : 'grey'"
-              small
-            >
-              $vuetify.icons.push_pin
-            </v-icon>
-          </v-btn>
-        </v-layout>
+        <advanced-search-history-item-btns
+          :id="item.search"
+          :pinned="item.pinned"
+          @remove="removeItem"
+          @toggle-pin="togglePinItem"
+        />
       </v-list-item-action>
     </template>
   </v-combobox>
@@ -70,8 +49,10 @@ import { computed, ref } from 'vue';
 import { useModelField } from '@/hooks/form/model-field';
 
 import { useSearchSavedItems } from './hooks/search';
+import AdvancedSearchHistoryItemBtns from './partials/advanced-search-history-item-btns.vue';
 
 export default {
+  components: { AdvancedSearchHistoryItemBtns },
   props: {
     value: {
       type: String,
@@ -134,14 +115,6 @@ export default {
 
       .v-list-item {
         height: 32px;
-
-        .v-btn:not(.c-search-field__item__pinned) {
-          opacity: 0;
-        }
-
-        &:hover .v-btn {
-          opacity: 1;
-        }
       }
     }
   }

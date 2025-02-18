@@ -11,6 +11,7 @@
             v-model="rules"
             :attributes="attributes"
             :allow-or="allowOr"
+            @input="resetActiveSearch"
           />
         </div>
         <div class="v-input__append-inner">
@@ -18,6 +19,8 @@
             :searches="searches"
             :attributes="attributes"
             @select="select"
+            @remove="removeSearch"
+            @toggle-pin="togglePinForSearch"
           />
         </div>
       </div>
@@ -26,7 +29,7 @@
       <c-action-btn
         :tooltip="$t('common.search')"
         icon="search"
-        @click="submit"
+        @click="submit()"
       />
       <c-action-btn
         :tooltip="$t('common.clearSearch')"
@@ -38,11 +41,12 @@
 </template>
 
 <script>
-import { computed, ref, onBeforeMount } from 'vue';
+import { computed, ref } from 'vue';
 import Themeable from 'vuetify/lib/mixins/themeable';
 
 import { ADVANCED_SEARCH_UNION_CONDITIONS } from '@/constants';
 
+import { uuid } from '@/helpers/uuid';
 import {
   advancedSearchRuleItemToFormItem,
   formToAdvancedSearch,
@@ -53,7 +57,7 @@ import {
 
 import { useComponentInstance } from '@/hooks/vue';
 
-import { useAdvancedSearchAttributes } from './hooks/new-advanced-search';
+import { useAdvancedSearchAttributes, useAdvancedSearchValidator } from './hooks/new-advanced-search';
 import AdvancedSearchRules from './partials/new/advanced-search-rules.vue';
 import AdvancedSearchHistoryBtn from './partials/new/advanced-search-history-btn.vue';
 
@@ -64,16 +68,16 @@ export default {
   components: { AdvancedSearchHistoryBtn, AdvancedSearchRules },
   mixins: [Themeable],
   props: {
-    /* searches: {
+    searches: {
       type: Array,
       default: () => [],
-    }, */
+    },
   },
   setup(props, { emit }) {
-    const searches = JSON.parse('[{"_id":"asd","positions":["alarm_pattern","alarm_pattern","pbehavior_pattern","pbehavior_pattern"],"alarm_pattern":[[{"field":"v.ack.a","cond":{"value":"c78b6ba1-39c5-44a0-86df-50b0dab36845","type":"eq"}},{"field":"v.display_name","cond":{"value":"выфвфывфы","type":"eq"}}]],"entity_pattern":[],"pbehavior_pattern":[[{"field":"v.pbehavior_info.type","cond":{"value":"c6520636-8489-4f21-91ca-2a55317931ba","type":"eq"}},{"field":"v.pbehavior_info.name","cond":{"value":"0618be38-d661-4e30-a31b-cd195af03f6f","type":"eq"}}]]}]');
-
     const instance = useComponentInstance();
     const rules = ref([advancedSearchRuleItemToFormItem()]);
+
+    let activeSearch = null;
 
     const hasOr = computed(() => rules.value.some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
     const hasAlarmField = computed(() => rules.value.some(({ attribute }) => isAlarmPatternField(attribute)));
@@ -104,49 +108,45 @@ export default {
       rules.value = [advancedSearchRuleItemToFormItem()];
     };
 
-    const select = (search) => {
-      rules.value = [...search.rules, advancedSearchRuleItemToFormItem()];
-    };
-
-    /**
-     * Validates the form and emits a 'submit' event with the advanced search criteria if valid.
-     */
     const submit = async () => {
       const isValid = await instance.$validator.validateAll();
 
       if (isValid) {
-        // console.log(JSON.stringify(formToAdvancedSearch(rules.value)));
-        emit('submit', formToAdvancedSearch(rules.value));
+        const newSearch = formToAdvancedSearch(rules.value);
+
+        newSearch._id = activeSearch?._id ?? uuid();
+        newSearch.pinned = activeSearch?.pinned ?? false;
+
+        emit('submit', newSearch);
       }
     };
 
-    const extendValidatorRule = () => instance.$validator.extend('advancedSearchRule', ({ rule, finished }) => {
-      if (rule.attribute && !finished) {
-        return false;
-      }
+    const select = (search) => {
+      activeSearch = search;
+      rules.value = [...search.rules, advancedSearchRuleItemToFormItem()];
 
-      if (!rule.attribute && rule.union) {
-        const lastRule = rules.value.at(-1);
-        const preLastRule = rules.value.at(-2);
+      submit();
+    };
 
-        return !(!lastRule?.attribute && preLastRule?.key === rule?.key);
-      }
+    const removeSearch = id => emit('remove:search', id);
 
-      return true;
-    });
+    const togglePinForSearch = id => emit('toggle-pin:search', id);
 
-    onBeforeMount(extendValidatorRule);
+    const resetActiveSearch = () => activeSearch = null;
+
+    useAdvancedSearchValidator({ rules });
 
     return {
       rules,
       attributes,
       allowOr,
 
-      searches,
-
       select,
       clear,
       submit,
+      removeSearch,
+      togglePinForSearch,
+      resetActiveSearch,
     };
   },
 };

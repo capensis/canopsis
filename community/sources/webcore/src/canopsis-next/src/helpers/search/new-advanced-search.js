@@ -84,6 +84,10 @@ export const getNextForFormItemType = ({ attribute, fieldType, range, operator }
     return null;
   }
 
+  if (type === ADVANCED_SEARCH_CHIP_TYPES.text) {
+    return null;
+  }
+
   if (!attribute || !type) {
     return ADVANCED_SEARCH_CHIP_TYPES.attribute;
   }
@@ -180,6 +184,7 @@ export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) =>
   };
   formItem.range = formItem.range.type;
   formItem.union = null;
+  formItem.text = '';
 
   return formItem;
 };
