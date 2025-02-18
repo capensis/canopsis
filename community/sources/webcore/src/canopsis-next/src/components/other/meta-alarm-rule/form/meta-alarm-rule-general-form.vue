@@ -13,6 +13,7 @@
       v-field="form.output_template"
       :label="$t('metaAlarmRule.outputTemplate')"
       :help-text="$t('metaAlarmRule.outputTemplateHelp')"
+      required
     />
     <c-enabled-field
       v-field="form.auto_resolve"
