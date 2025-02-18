@@ -14,6 +14,7 @@
           :read-only="readOnly"
           :entity-pattern="entityPattern"
           :default-name="defaultName"
+          :timezone.sync="calendarTimezone"
         />
       </template>
       <template #actions="">
@@ -46,6 +47,7 @@ import {
   getPbehaviorNameByEntities,
   pbehaviorToDuplicateForm,
   pbehaviorToRequest,
+  getPbehaviorsInitialTimezone,
 } from '@/helpers/entities/pbehavior/form';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
@@ -60,7 +62,6 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.pbehaviorPlanning,
-  inject: ['$system'],
   components: { PbehaviorPlanningCalendar, ModalWrapper },
   mixins: [
     modalInnerMixin,
@@ -73,6 +74,7 @@ export default {
     const { pbehaviors = [], pbehaviorsToAdd = [] } = this.modal.config;
 
     return {
+      calendarTimezone: getPbehaviorsInitialTimezone(pbehaviors),
       form: {
         pbehaviorsById: keyBy(pbehaviors, '_id'),
         addedPbehaviorsById: keyBy(pbehaviorsToAdd.map(pbehaviorToDuplicateForm), '_id'),
@@ -84,7 +86,7 @@ export default {
   computed: {
     defaultName() {
       return this.autoSuggestPbehaviorName
-        ? getPbehaviorNameByEntities(this.config.entities, this.$system.timezone)
+        ? getPbehaviorNameByEntities(this.config.entities, this.calendarTimezone)
         : '';
     },
 

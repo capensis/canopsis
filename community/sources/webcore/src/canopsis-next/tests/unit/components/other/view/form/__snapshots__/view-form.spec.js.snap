@@ -6,6 +6,7 @@ exports[`view-form Renders \`view-form\` with custom props 1`] = `
 >
   <!---->
   <c-name-field-stub
+    autofocus=""
     label="Title"
     name="title"
     required=""
@@ -74,6 +75,7 @@ exports[`view-form Renders \`view-form\` with default props 1`] = `
 >
   <!---->
   <c-name-field-stub
+    autofocus=""
     label="Title"
     name="title"
     required=""

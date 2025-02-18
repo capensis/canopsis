@@ -90,7 +90,11 @@ func NewEngine(
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisSession),
-		libengine.NewInstanceRunInfo(canopsis.CheEngineName, options.ConsumeFromQueue, options.PublishToQueue),
+		libengine.NewInstanceRunInfo(canopsis.CheEngineName, canopsis.CheQueuePrefix, canopsis.AxeQueuePrefix, []string{
+			canopsis.CheExternalQueueName,
+			canopsis.CheSystemQueueName,
+			canopsis.CheUserQueueName,
+		}),
 		amqpChannel,
 		logger,
 	)
@@ -185,11 +189,10 @@ func NewEngine(
 	})
 
 	eventProcessor := event.NewProcessorContainer()
-	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(mongoClient, contextGraphManager, eventFilterService))
-	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(mongoClient, contextGraphManager, eventFilterService))
+	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(mongoClient, contextGraphManager, eventFilterService, logger))
+	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(mongoClient, contextGraphManager, eventFilterService, logger))
 	eventProcessor.Set(types.SourceTypeConnector, event.NewConnectorProcessor(mongoClient, contextGraphManager, eventFilterService))
 	eventProcessor.Set(types.SourceTypeService, event.NewServiceProcessor(mongoClient, contextGraphManager, eventFilterService))
-	eventProcessor.Set(types.SourceTypeMetaAlarm, event.NewMetaAlarmProcessor())
 
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,
@@ -206,16 +209,49 @@ func NewEngine(
 		Logger:                   logger,
 	}
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
-		canopsis.CheConsumerName,
-		options.ConsumeFromQueue,
+		canopsis.CheExternalConsumerName,
+		canopsis.CheExternalQueueName,
 		cfg.Global.PrefetchCount,
 		cfg.Global.PrefetchSize,
 		options.Purge,
-		"",
-		options.PublishToQueue,
+		canopsis.EngineExchangeName,
+		canopsis.AxeExternalQueueName,
 		options.FifoAckExchange,
 		canopsis.FIFOAckQueueName,
-		options.Workers,
+		options.ExternalWorkers,
+		false,
+		amqpConnection,
+		mainMessageProcessor,
+		logger,
+	))
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
+		canopsis.CheSystemConsumerName,
+		canopsis.CheSystemQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		options.Purge,
+		canopsis.EngineExchangeName,
+		canopsis.AxeSystemQueueName,
+		options.FifoAckExchange,
+		canopsis.FIFOAckQueueName,
+		options.SystemWorkers,
+		false,
+		amqpConnection,
+		mainMessageProcessor,
+		logger,
+	))
+	engine.AddConsumer(libengine.NewConcurrentConsumer(
+		canopsis.CheUserConsumerName,
+		canopsis.CheUserQueueName,
+		cfg.Global.PrefetchCount,
+		cfg.Global.PrefetchSize,
+		options.Purge,
+		canopsis.EngineExchangeName,
+		canopsis.AxeUserQueueName,
+		options.FifoAckExchange,
+		canopsis.FIFOAckQueueName,
+		options.UserWorkers,
+		false,
 		amqpConnection,
 		mainMessageProcessor,
 		logger,
@@ -233,7 +269,7 @@ func NewEngine(
 			entityCollection:          mongoClient.Collection(mongo.EntityMongoCollection),
 			serviceCountersCollection: mongoClient.Collection(mongo.EntityCountersCollection),
 			periodicalInterval:        options.PeriodicalWaitTime,
-			eventPublisher:            communityimport.NewEventPublisher(canopsis.FIFOExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			eventPublisher:            communityimport.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			softDeleteWaitTime:        options.SoftDeleteWaitTime,
 			logger:                    logger,
 		},

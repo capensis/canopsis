@@ -12,6 +12,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with custom p
         class="layout column"
       >
         <date-time-picker-text-field-stub
+          autofocus="true"
           dateobjectpreparer="[Function]"
           label="Start date"
           name="tstart"
@@ -144,6 +145,7 @@ exports[`date-interval-selector Renders \`date-interval-selector\` with default 
         class="layout column"
       >
         <date-time-picker-text-field-stub
+          autofocus="true"
           dateobjectpreparer="[Function]"
           label="Start date"
           name="tstart"

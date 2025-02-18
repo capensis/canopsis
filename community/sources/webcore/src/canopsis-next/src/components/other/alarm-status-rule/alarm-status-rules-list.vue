@@ -11,12 +11,13 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #mass-actions="{ selected }">
+    <template #mass-actions="{ selected, selectedKeys }">
       <c-action-btn
         v-if="removable"
         type="delete"
         @click="$emit('remove-selected', selected)"
       />
+      <c-db-export-btn :ids="selectedKeys" flapping-rule />
     </template>
     <template #duration="{ item }">
       <span>{{ item.duration | duration }}</span>
@@ -41,6 +42,7 @@
           type="delete"
           @click="$emit('remove', item._id)"
         />
+        <c-db-export-btn :id="item._id" flapping-rule />
       </v-layout>
     </template>
     <template #expand="{ item }">

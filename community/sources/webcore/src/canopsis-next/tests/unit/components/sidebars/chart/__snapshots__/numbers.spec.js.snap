@@ -23,3 +23,16 @@ exports[`numbers Renders \`numbers\` widget settings with default props 1`] = `
   />
 </widget-settings-stub>
 `;
+
+exports[`numbers Renders \`numbers\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+  divider="true"
+>
+  <numbers-widget-form-stub
+    form="[object Object]"
+    withperiodicrefresh="true"
+    withpreset="true"
+  />
+</widget-settings-stub>
+`;

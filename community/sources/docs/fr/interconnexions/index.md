@@ -34,6 +34,8 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 
 ### Supervision
 
+**⚠️ Note : Seul SNMP V2 est supporté.**
+
 | **Nom** | **Source** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:--------:|:---------:|:----------:|:-----------:|
 | [SNMP trap](Supervision/SNMPtrap.md) | Tout trap SNMP respectant la [RFC1157](https://www.rfc-editor.org/rfc/pdfrfc/rfc1157.txt.pdf) ou nécéssitant un traitement spécifique | Pro | Oui | Toutes versions |

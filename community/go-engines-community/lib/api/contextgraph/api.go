@@ -6,18 +6,24 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"path/filepath"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
 
-const filePerm = 0o644
+const (
+	filePerm    = 0o644
+	filePattern = "import_%s.json"
+)
 
 type api struct {
 	reporter    StatusReporter
+	dir         string
 	filePattern string
 	logger      zerolog.Logger
 }
@@ -28,7 +34,8 @@ func NewApi(
 	logger zerolog.Logger,
 ) API {
 	a := &api{
-		filePattern: conf.ImportCtx.FilePattern,
+		dir:         filepath.Join(conf.File.Dir, canopsis.SubDirImport),
+		filePattern: filePattern,
 		reporter:    reporter,
 		logger:      logger,
 	}
@@ -103,7 +110,12 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 		return "", err
 	}
 
-	err = os.WriteFile(fmt.Sprintf(a.filePattern, job.ID), raw, filePerm)
+	err = os.MkdirAll(a.dir, os.ModeDir|filePerm)
+	if err != nil {
+		return "", err
+	}
+
+	err = os.WriteFile(filepath.Join(a.dir, fmt.Sprintf(a.filePattern, job.ID)), raw, filePerm)
 	if err != nil {
 		return "", err
 	}

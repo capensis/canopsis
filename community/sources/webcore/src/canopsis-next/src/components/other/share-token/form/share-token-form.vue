@@ -2,6 +2,7 @@
   <v-layout column>
     <c-name-field
       v-field="form.description"
+      autofocus
       required
     />
     <c-information-block :title="$t('shareToken.tokenExpiration')">

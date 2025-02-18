@@ -12,7 +12,7 @@ func (f *Flags) ParseArgs() {
 	flagDumpFile := flag.String("dumpfile", "", "file with dump")
 	flagFeederTime := flag.Int("time", int(60), "feeder duration")
 	flagAlarms := flag.Int("alarms", 20, "percent of alarms")
-	flagExchange := flag.String("exchange", cps.CheExchangeName, "exchange name to publish events to")
+	flagExchange := flag.String("exchange", cps.DefaultExchangeName, "exchange name to publish events to")
 	version := flag.Bool("version", false, "Show the version information")
 
 	flag.Parse()

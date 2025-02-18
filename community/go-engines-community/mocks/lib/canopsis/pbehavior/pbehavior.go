@@ -40,9 +40,9 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // Compute mocks base method.
-func (m *MockService) Compute(arg0 context.Context, arg1 timespan.Span) (pbehavior.ComputedEntityTypeResolver, int, error) {
+func (m *MockService) Compute(arg0 context.Context, arg1 timespan.Span, arg2 *time.Location) (pbehavior.ComputedEntityTypeResolver, int, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Compute", arg0, arg1)
+	ret := m.ctrl.Call(m, "Compute", arg0, arg1, arg2)
 	ret0, _ := ret[0].(pbehavior.ComputedEntityTypeResolver)
 	ret1, _ := ret[1].(int)
 	ret2, _ := ret[2].(error)
@@ -50,39 +50,39 @@ func (m *MockService) Compute(arg0 context.Context, arg1 timespan.Span) (pbehavi
 }
 
 // Compute indicates an expected call of Compute.
-func (mr *MockServiceMockRecorder) Compute(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) Compute(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Compute", reflect.TypeOf((*MockService)(nil).Compute), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Compute", reflect.TypeOf((*MockService)(nil).Compute), arg0, arg1, arg2)
 }
 
 // Recompute mocks base method.
-func (m *MockService) Recompute(arg0 context.Context) (pbehavior.ComputedEntityTypeResolver, error) {
+func (m *MockService) Recompute(arg0 context.Context, arg1 *time.Location) (pbehavior.ComputedEntityTypeResolver, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Recompute", arg0)
+	ret := m.ctrl.Call(m, "Recompute", arg0, arg1)
 	ret0, _ := ret[0].(pbehavior.ComputedEntityTypeResolver)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Recompute indicates an expected call of Recompute.
-func (mr *MockServiceMockRecorder) Recompute(arg0 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) Recompute(arg0, arg1 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recompute", reflect.TypeOf((*MockService)(nil).Recompute), arg0)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Recompute", reflect.TypeOf((*MockService)(nil).Recompute), arg0, arg1)
 }
 
 // RecomputeByIds mocks base method.
-func (m *MockService) RecomputeByIds(arg0 context.Context, arg1 []string) (pbehavior.ComputedEntityTypeResolver, error) {
+func (m *MockService) RecomputeByIds(arg0 context.Context, arg1 []string, arg2 *time.Location) (pbehavior.ComputedEntityTypeResolver, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "RecomputeByIds", arg0, arg1)
+	ret := m.ctrl.Call(m, "RecomputeByIds", arg0, arg1, arg2)
 	ret0, _ := ret[0].(pbehavior.ComputedEntityTypeResolver)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // RecomputeByIds indicates an expected call of RecomputeByIds.
-func (mr *MockServiceMockRecorder) RecomputeByIds(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockServiceMockRecorder) RecomputeByIds(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecomputeByIds", reflect.TypeOf((*MockService)(nil).RecomputeByIds), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "RecomputeByIds", reflect.TypeOf((*MockService)(nil).RecomputeByIds), arg0, arg1, arg2)
 }
 
 // MockModelProvider is a mock of ModelProvider interface.
@@ -490,31 +490,31 @@ func (m *MockTypeComputer) EXPECT() *MockTypeComputerMockRecorder {
 }
 
 // Compute mocks base method.
-func (m *MockTypeComputer) Compute(arg0 context.Context, arg1 timespan.Span) (pbehavior.ComputeResult, error) {
+func (m *MockTypeComputer) Compute(arg0 context.Context, arg1 timespan.Span, arg2 *time.Location) (pbehavior.ComputeResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Compute", arg0, arg1)
+	ret := m.ctrl.Call(m, "Compute", arg0, arg1, arg2)
 	ret0, _ := ret[0].(pbehavior.ComputeResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Compute indicates an expected call of Compute.
-func (mr *MockTypeComputerMockRecorder) Compute(arg0, arg1 interface{}) *gomock.Call {
+func (mr *MockTypeComputerMockRecorder) Compute(arg0, arg1, arg2 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Compute", reflect.TypeOf((*MockTypeComputer)(nil).Compute), arg0, arg1)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Compute", reflect.TypeOf((*MockTypeComputer)(nil).Compute), arg0, arg1, arg2)
 }
 
 // ComputeByIds mocks base method.
-func (m *MockTypeComputer) ComputeByIds(arg0 context.Context, arg1 timespan.Span, arg2 []string) (pbehavior.ComputeResult, error) {
+func (m *MockTypeComputer) ComputeByIds(arg0 context.Context, arg1 timespan.Span, arg2 []string, arg3 *time.Location) (pbehavior.ComputeResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ComputeByIds", arg0, arg1, arg2)
+	ret := m.ctrl.Call(m, "ComputeByIds", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(pbehavior.ComputeResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ComputeByIds indicates an expected call of ComputeByIds.
-func (mr *MockTypeComputerMockRecorder) ComputeByIds(arg0, arg1, arg2 interface{}) *gomock.Call {
+func (mr *MockTypeComputerMockRecorder) ComputeByIds(arg0, arg1, arg2, arg3 interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComputeByIds", reflect.TypeOf((*MockTypeComputer)(nil).ComputeByIds), arg0, arg1, arg2)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ComputeByIds", reflect.TypeOf((*MockTypeComputer)(nil).ComputeByIds), arg0, arg1, arg2, arg3)
 }

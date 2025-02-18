@@ -4,6 +4,7 @@
     v-field="form"
     :no-enabled="noEnabled"
     :no-comments="noComments"
+    :no-timezone="noTimezone"
     :with-start-on-trigger="withStartOnTrigger"
     :with-inherited="withInherited"
     :name-label="nameLabel"
@@ -28,6 +29,7 @@
         ref="general"
         :no-enabled="noEnabled"
         :no-comments="noComments"
+        :no-timezone="noTimezone"
         :with-start-on-trigger="withStartOnTrigger"
         :with-inherited="withInherited"
         :name-label="nameLabel"
@@ -71,6 +73,10 @@ export default {
       default: false,
     },
     noComments: {
+      type: Boolean,
+      default: false,
+    },
+    noTimezone: {
       type: Boolean,
       default: false,
     },

@@ -15,7 +15,7 @@ import {
   LIVE_REPORTING_QUICK_RANGES,
   REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
 } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
@@ -33,6 +33,7 @@ const stubs = {
   'c-pagination': true,
   'c-density-btn-toggle': true,
   'c-table-pagination': true,
+  'c-alarm-tag-field': true,
   'mass-actions-panel': true,
   'alarms-list-table': {
     template: `
@@ -55,12 +56,14 @@ const snapshotStubs = {
   'alarms-list-table': true,
   'c-table-pagination': true,
   'c-density-btn-toggle': true,
+  'c-alarm-tag-field': true,
   'mass-actions-panel': true,
 };
 
 const selectVSwitch = wrapper => wrapper.find('v-switch-stub');
 const selectFilterSelectorField = wrapper => wrapper.find('filter-selector-stub');
 const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stub');
+const selectAlarmTagField = wrapper => wrapper.find('c-alarm-tag-field-stub');
 const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
 const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
@@ -378,7 +381,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
             },
           },
         },
@@ -439,7 +442,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
             },
           },
         },
@@ -484,6 +487,51 @@ describe('alarms-list', () => {
     );
   });
 
+  it('Tags updated after trigger alarm tag field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    const newTags = [Faker.datatype.string(), Faker.datatype.string()];
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const tagField = selectAlarmTagField(wrapper);
+
+    tagField.triggerCustomEvent('input', newTags);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            tags: newTags,
+          },
+        },
+      },
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+
+          page: 1,
+          tags: newTags,
+        },
+      },
+    );
+  });
+
   it('Filter updated after trigger filter field', async () => {
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -500,7 +548,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
             },
           },
         },
@@ -552,7 +600,25 @@ describe('alarms-list', () => {
 
   it('Instruction filters updated after trigger filter field', async () => {
     const wrapper = factory({
-      store,
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        serviceModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
       propsData: {
         widget,
       },
@@ -653,7 +719,25 @@ describe('alarms-list', () => {
 
   it('Locked instruction filters updated after trigger filter field', async () => {
     const wrapper = factory({
-      store,
+      store: createMockedStoreModules([
+        alarmModule,
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        userPreferenceModule,
+        alarmTagModule,
+        serviceModule,
+        {
+          ...authModule,
+          getters: {
+            currentUser: {},
+            currentUserPermissionsById: {
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: { actions: [] },
+            },
+          },
+        },
+      ]),
       propsData: {
         widget,
       },
@@ -822,7 +906,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.category]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.category]: { actions: [] },
             },
           },
         },
@@ -961,7 +1045,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1045,7 +1129,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1112,7 +1196,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1195,7 +1279,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1269,7 +1353,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1317,7 +1401,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1369,7 +1453,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.exportAsCsv]: { actions: [] },
             },
           },
         },
@@ -1683,7 +1767,7 @@ describe('alarms-list', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list` with default props and user filter permission and correlation and bookmark', async () => {
+  it('Renders `alarms-list` with default props and user filter permissions and correlation and bookmark', async () => {
     const wrapper = snapshotFactory({
       propsData: {
         widget,
@@ -1702,9 +1786,10 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
-              [USERS_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.correlation]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.filterByBookmark]: { actions: [] },
             },
           },
         },
@@ -1742,7 +1827,7 @@ describe('alarms-list', () => {
           getters: {
             currentUser: {},
             currentUserPermissionsById: {
-              [USERS_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
+              [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
             },
           },
         },

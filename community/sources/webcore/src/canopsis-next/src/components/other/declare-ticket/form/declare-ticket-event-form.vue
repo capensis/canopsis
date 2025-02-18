@@ -16,6 +16,7 @@
     <c-description-field
       v-field="form.comment"
       :label="$tc('common.comment')"
+      :autofocus="autofocus"
       class="mt-3"
       name="comment"
     />
@@ -53,6 +54,10 @@ export default {
       default: false,
     },
     hideTicketResource: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
       type: Boolean,
       default: false,
     },

@@ -33,8 +33,7 @@ func (w *computeRruleStartPeriodicalWorker) Work(ctx context.Context) {
 }
 
 func (w *computeRruleStartPeriodicalWorker) updatePbehaviorComputedStarts(ctx context.Context) error {
-	loc := w.TimezoneConfigProvider.Get().Location
-	now := time.Now().In(loc)
+	now := time.Now().In(w.TimezoneConfigProvider.Get().Location)
 	currMonth := time.Date(now.Year(), now.Month(), 1, 0, 0, 0, 0, now.Location())
 	// Find computed start between the first day of the previous month and the last week of the previous month.
 	// Extra week interval is required for Calendar view in case if the first day of the current month is not Monday.
@@ -59,6 +58,7 @@ func (w *computeRruleStartPeriodicalWorker) updatePbehaviorComputedStarts(ctx co
 
 	defer cursor.Close(ctx)
 	writeModels := make([]mongo.WriteModel, 0)
+	locs := make(map[string]*time.Location)
 	for cursor.Next(ctx) {
 		pbh := pbehavior.PBehavior{}
 		err := cursor.Decode(&pbh)
@@ -72,10 +72,24 @@ func (w *computeRruleStartPeriodicalWorker) updatePbehaviorComputedStarts(ctx co
 			continue
 		}
 
+		location := w.TimezoneConfigProvider.Get().Location
+		if pbh.Timezone != "" {
+			var ok bool
+			if location, ok = locs[pbh.Timezone]; !ok {
+				location, err = time.LoadLocation(pbh.Timezone)
+				if err != nil {
+					w.Logger.Err(err).Str("pbehavior", pbh.ID).Str("timezone", pbh.Timezone).Msgf("invalid timezone")
+					continue
+				}
+
+				locs[pbh.Timezone] = location
+			}
+		}
+
 		if pbh.RRuleComputedStart != nil {
-			rOption.Dtstart = pbh.RRuleComputedStart.Time.In(loc)
+			rOption.Dtstart = pbh.RRuleComputedStart.Time.In(location)
 		} else {
-			rOption.Dtstart = pbh.Start.Time.In(loc)
+			rOption.Dtstart = pbh.Start.Time.In(location)
 		}
 
 		r, err := librrule.NewRRule(*rOption)
