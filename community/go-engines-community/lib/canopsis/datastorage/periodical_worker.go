@@ -77,11 +77,11 @@ func (w *worker) Work(ctx context.Context) {
 	}
 
 	now := datetime.NewCpsTime().In(w.timezoneConfigProvider.Get().Location)
-	if !w.isScheduledTime(now) {
+	schConf := w.scheduleConfigProvider.Get()
+	if !schConf.TimeToExecute.IsScheduledTime(now) {
 		return
 	}
 
-	schConf := w.scheduleConfigProvider.Get()
 	limit := schConf.MaxUpdates
 	dbClient, err := w.newDbClient(ctx, schConf.MongoClientTimeout)
 	if err != nil {
@@ -107,7 +107,8 @@ func (w *worker) Work(ctx context.Context) {
 	}
 
 	cleanCtx := ctx
-	if schConf.Timeout > 0 {
+	deadline, ok := ctx.Deadline()
+	if schConf.Timeout > 0 && (!ok || schConf.Timeout < time.Until(deadline)) {
 		var cancel context.CancelFunc
 		cleanCtx, cancel = context.WithTimeout(ctx, schConf.Timeout)
 		defer cancel()
@@ -131,7 +132,7 @@ func (w *worker) Work(ctx context.Context) {
 			if err != nil {
 				if schConf.Timeout > 0 && errors.Is(err, context.DeadlineExceeded) &&
 					ctx.Err() == nil && cleanCtx.Err() != nil {
-					w.logger.Warn().Msg("cannot finish cleaning " + c.Key + " for " + schConf.Timeout.String())
+					w.logger.Warn().Msg("cannot finish data cleaning for " + schConf.Timeout.String())
 					_, err = confCollection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{"$set": bson.M{
 						"history." + c.Key: h,
 					}}, options.Update().SetUpsert(true))
@@ -162,17 +163,6 @@ func (w *worker) Work(ctx context.Context) {
 			break
 		}
 	}
-}
-
-func (w *worker) isScheduledTime(now datetime.CpsTime) bool {
-	scheduledTimes := w.scheduleConfigProvider.Get().TimeToExecute
-	for _, t := range scheduledTimes {
-		if now.Weekday() == t.Weekday && now.Hour() == t.Hour {
-			return true
-		}
-	}
-
-	return false
 }
 
 func (w *worker) isAlreadyExecuted(t datetime.CpsTime, history map[string]HistoryWithCount, key string) bool {

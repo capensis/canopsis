@@ -24,7 +24,7 @@ db.configuration.find({_id: "data_storage"}).forEach(function (doc) {
         }
     };
     if (Object.keys(set).length > 0) {
-        update["$set"] = update;
+        update["$set"] = set;
     }
 
     db.configuration.updateOne({_id: "data_storage"}, update);

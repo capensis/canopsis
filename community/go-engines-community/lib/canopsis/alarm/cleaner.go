@@ -146,6 +146,10 @@ func (c *cleaner) archiveResolvedAlarms(ctx context.Context, resolvedDbCollectio
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return archived, err
+	}
+
 	if len(writeModels) > 0 {
 		res, err := archivedDbCollection.BulkWrite(ctx, writeModels)
 		if err != nil {
@@ -203,6 +207,10 @@ func (c *cleaner) deleteArchivedResolvedAlarms(ctx context.Context, archivedDbCo
 			deleted += res
 			ids = ids[:0]
 		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return deleted, err
 	}
 
 	if len(ids) > 0 {

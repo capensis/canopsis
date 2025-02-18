@@ -101,6 +101,10 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return res, err
+	}
+
 	if len(ids) > 0 {
 		for ruleID, dec := range countsByRule {
 			ruleWriteModels = append(ruleWriteModels, c.getRuleUpdateModel(ruleID, dec, unreadCountsByRule[ruleID]))
