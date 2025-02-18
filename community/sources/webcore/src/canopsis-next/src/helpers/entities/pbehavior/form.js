@@ -313,14 +313,14 @@ export const formToPbehavior = form => ({
  *
  * @param {Object} event
  * @param {Array} entityPattern
- * @param {string} [defaultName = '']
+ * @param {Object} [defaultFields]
  * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   event,
   entityPattern,
-  defaultName = '',
+  defaultFields,
   timezone = getLocalTimezone(),
 ) => {
   const {
@@ -329,11 +329,10 @@ export const calendarEventToPbehaviorForm = (
     data: { cachedForm = {}, pbehavior },
   } = event;
 
-  const pbehaviorForm = pbehaviorToForm(pbehavior, entityPattern, timezone);
-
-  if (defaultName) {
-    pbehaviorForm.name = defaultName;
-  }
+  const pbehaviorForm = {
+    ...pbehaviorToForm(pbehavior, entityPattern, timezone),
+    ...defaultFields,
+  };
 
   const form = {
     ...pbehaviorForm,
