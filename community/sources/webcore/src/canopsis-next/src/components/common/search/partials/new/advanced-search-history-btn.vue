@@ -1,8 +1,14 @@
 <template>
-  <v-menu bottom>
+  <v-menu
+    :nudge-bottom="1"
+    :transition="false"
+    bottom
+    offset-y
+  >
     <template #activator="{ on }">
       <c-action-btn
         :tooltip="$t('common.search')"
+        :disabled="!searches.length"
         icon="history"
         v-on="on"
       />
@@ -11,6 +17,7 @@
       <v-list-item
         v-for="search in preparedSearches"
         :key="search._id"
+        class="c-new-advanced-search__history__item"
         @click="select(search)"
       >
         <v-list-item-content>
@@ -20,6 +27,14 @@
             disabled
           />
         </v-list-item-content>
+        <v-list-item-action>
+          <advanced-search-history-item-btns
+            :id="search._id"
+            :pinned="search.pinned"
+            @remove="remove"
+            @toggle-pin="togglePin"
+          />
+        </v-list-item-action>
       </v-list-item>
     </v-list>
   </v-menu>
@@ -29,10 +44,12 @@ import { computed, ref } from 'vue';
 
 import { advancedSearchToForm } from '@/helpers/search/new-advanced-search';
 
+import AdvancedSearchHistoryItemBtns from '../advanced-search-history-item-btns.vue';
+
 import AdvancedSearchRules from './advanced-search-rules.vue';
 
 export default {
-  components: { AdvancedSearchRules },
+  components: { AdvancedSearchHistoryItemBtns, AdvancedSearchRules },
   props: {
     searches: {
       type: Array,
@@ -52,12 +69,18 @@ export default {
 
     const select = search => emit('select', search);
 
+    const remove = id => emit('remove', id);
+
+    const togglePin = id => emit('toggle-pin', id);
+
     return {
       listElement,
 
       preparedSearches,
 
       select,
+      remove,
+      togglePin,
     };
   },
 };

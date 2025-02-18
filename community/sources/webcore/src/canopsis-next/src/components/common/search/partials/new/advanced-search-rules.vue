@@ -19,7 +19,7 @@
       @input="update($event, index)"
       @make:active="makeActive"
       @reset:active="resetActive"
-      @next="next"
+      @next="next($event, index)"
       @remove="remove(index)"
     />
   </v-layout>
@@ -120,12 +120,11 @@ export default {
      */
     const remove = index => removeItemFromArray(index);
 
-    /**
-     * Adds a new item and optionally focuses on the last input.
-     *
-     * @param {boolean} withoutActive - If true, does not focus on the last input.
-     */
-    const next = (withoutActive) => {
+    const next = (withoutActive, index) => {
+      if (index !== props.rules.length - 1) {
+        return;
+      }
+
       add();
 
       if (!withoutActive) {

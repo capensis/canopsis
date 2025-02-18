@@ -18,5 +18,6 @@ export default {
     [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Pbehavior',
   },
 
+  searchForThisText: 'Press <kbd>enter</kbd> to search for this text',
   listDisabledMessage: 'Not possible to combine patterns\n(alarm, entity and pbehavior) with OR (only AND)',
 };

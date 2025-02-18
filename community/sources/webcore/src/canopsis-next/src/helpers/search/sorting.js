@@ -11,11 +11,12 @@ import { uniq } from 'lodash';
  *
  * @param {Search[]} searches
  * @param {string} activeSearch
+ * @param {string} [key = 'search']
  * @returns {Search[]}
  */
-export const sortPinnedSearches = (searches, activeSearch) => uniq(searches).sort((a, b) => {
-  const aFactor = Number(a.search === activeSearch) + Number(a.pinned);
-  const bFactor = Number(b.search === activeSearch) + Number(b.pinned);
+export const sortPinnedSearches = (searches, activeSearch, key = 'search') => uniq(searches).sort((a, b) => {
+  const aFactor = Number(a[key] === activeSearch) + Number(a.pinned);
+  const bFactor = Number(b[key] === activeSearch) + Number(b.pinned);
 
   return bFactor - aFactor;
 });

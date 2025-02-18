@@ -8,6 +8,10 @@
       align-end
     >
       <v-flex>
+        <c-new-advanced-search-field
+          :searches="newSearches"
+          @submit="updateNewSearch"
+        />
         <c-advanced-search
           :fields="advancedSearchFields"
           :saved-items="searches"
