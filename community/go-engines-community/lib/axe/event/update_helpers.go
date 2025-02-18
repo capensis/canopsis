@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -312,7 +313,7 @@ func sendTriggerEvent(
 
 	err = amqpPublisher.PublishWithContext(
 		ctx,
-		"",
+		canopsis.DefaultExchangeName,
 		canopsis.FIFOQueueName,
 		false,
 		false,
@@ -780,6 +781,7 @@ func updateMetaAlarmState(
 
 		alarm.Value.TotalStateChanges++
 		alarm.Value.LastUpdateDate = timestamp
+		alarm.Value.LastStateOrStatusUpdateDate = timestamp
 	}
 
 	newStatus, statusRuleName := service.ComputeStatus(*alarm, entity)
@@ -796,6 +798,7 @@ func updateMetaAlarmState(
 				"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
 				"v.total_state_changes":               alarm.Value.TotalStateChanges,
 				"v.last_update_date":                  alarm.Value.LastUpdateDate,
+				"v.last_st_upd_dt":                    alarm.Value.LastStateOrStatusUpdateDate,
 			},
 			bson.M{"v.steps": alarm.Value.State},
 			nil
@@ -818,11 +821,13 @@ func updateMetaAlarmState(
 
 	alarm.Value.StateChangesSinceStatusUpdate = 0
 	alarm.Value.LastUpdateDate = timestamp
+	alarm.Value.LastStateOrStatusUpdateDate = timestamp
 
 	set := bson.M{
 		"v.status":                            alarm.Value.Status,
 		"v.state_changes_since_status_update": alarm.Value.StateChangesSinceStatusUpdate,
 		"v.last_update_date":                  alarm.Value.LastUpdateDate,
+		"v.last_st_upd_dt":                    alarm.Value.LastStateOrStatusUpdateDate,
 	}
 	newSteps := bson.A{}
 	if state != currentState {
@@ -911,4 +916,74 @@ func executeMetaAlarmOutputTpl(templateExecutor template.Executor, data correlat
 	}
 
 	return res, nil
+}
+
+func getMetaAlarmExternalTags(
+	filterByLabel []string,
+	children []types.AlarmWithEntity,
+	existedTags []string,
+) []string {
+	tagsMap := make(map[string]struct{})
+	existedTagsMap := make(map[string]bool)
+	for _, tag := range existedTags {
+		existedTagsMap[tag] = true
+	}
+
+	for _, child := range children {
+		for _, tag := range child.Alarm.ExternalTags {
+			if existedTagsMap[tag] {
+				continue
+			}
+
+			toCopy := len(filterByLabel) == 0
+			for _, label := range filterByLabel {
+				if tag == label || strings.HasPrefix(tag, label+":") {
+					toCopy = true
+					break
+				}
+			}
+
+			if toCopy {
+				tagsMap[tag] = struct{}{}
+			}
+		}
+	}
+
+	tags := make([]string, 0, len(tagsMap))
+	for tag := range tagsMap {
+		tags = append(tags, tag)
+	}
+
+	return tags
+}
+
+func getMetaAlarmEntityInfos(
+	infoNames []string,
+	children []types.AlarmWithEntity,
+	existedInfos map[string]types.Info,
+) map[string]types.Info {
+	if len(infoNames) == 0 {
+		return nil
+	}
+
+	infos := make(map[string]types.Info)
+	for _, child := range children {
+		for _, infoName := range infoNames {
+			if info, ok := child.Entity.Infos[infoName]; ok {
+				if existedInfo, ok := existedInfos[infoName]; ok {
+					if reflect.DeepEqual(existedInfo.Value, info.Value) {
+						continue
+					}
+				}
+
+				infos[infoName] = types.Info{
+					Name:        infoName,
+					Value:       info.Value,
+					Description: info.Description,
+				}
+			}
+		}
+	}
+
+	return infos
 }

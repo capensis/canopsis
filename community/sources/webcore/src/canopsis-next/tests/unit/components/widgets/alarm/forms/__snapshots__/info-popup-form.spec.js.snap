@@ -31,6 +31,7 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
             <input
               aria-readonly="false"
               autocomplete="off"
+              autofocus="autofocus"
               readonly="readonly"
               type="text"
             />
@@ -119,6 +120,7 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
             <input
               aria-readonly="false"
               autocomplete="off"
+              autofocus="autofocus"
               readonly="readonly"
               type="text"
             />

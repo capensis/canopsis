@@ -63,6 +63,10 @@ function requestHandler(config) {
  * @returns {Object}
  */
 function successResponseHandler(response) {
+  if (response.data instanceof Blob) {
+    return response;
+  }
+
   if (get(response, 'data.errors', []).length) {
     return Promise.reject(response.data.errors);
   }

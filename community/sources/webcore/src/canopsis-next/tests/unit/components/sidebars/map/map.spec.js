@@ -12,7 +12,7 @@ import {
   submitWithExpects,
 } from '@unit/utils/settings';
 
-import { COLOR_INDICATOR_TYPES, SIDE_BARS, USERS_PERMISSIONS, WIDGET_TYPES } from '@/constants';
+import { COLOR_INDICATOR_TYPES, SIDE_BARS, USER_PERMISSIONS, WIDGET_TYPES } from '@/constants';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -344,7 +344,7 @@ describe('map', () => {
 
   test('Filters changed after trigger field filters', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
-      [USERS_PERMISSIONS.business.map.actions.listFilters]: { actions: [] },
+      [USER_PERMISSIONS.business.map.actions.filter]: { actions: [] },
     });
     const wrapper = factory({
       store: createMockedStoreModules([
@@ -489,6 +489,21 @@ describe('map', () => {
         $sidebar,
       },
     });
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `map` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    wrapper.find('field-title-stub').triggerCustomEvent('input', 'New title');
 
     await flushPromises();
 

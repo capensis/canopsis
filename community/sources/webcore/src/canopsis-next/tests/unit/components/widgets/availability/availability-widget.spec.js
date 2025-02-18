@@ -20,7 +20,7 @@ import {
   AVAILABILITY_VALUE_FILTER_METHODS,
   QUICK_RANGES,
   SORT_ORDERS,
-  USERS_PERMISSIONS,
+  USER_PERMISSIONS,
   WIDGET_TYPES,
 } from '@/constants';
 
@@ -70,7 +70,7 @@ describe('availability-widget', () => {
   const { availabilityModule, fetchAvailabilityList } = createAvailabilityModule();
 
   currentUserPermissionsById.mockReturnValue({
-    [USERS_PERMISSIONS.business.availability.actions.userFilter]: { actions: [] },
+    [USER_PERMISSIONS.business.availability.actions.userFilter]: { actions: [] },
   });
 
   const createStore = () => createMockedStoreModules([

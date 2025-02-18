@@ -6,9 +6,7 @@ import (
 )
 
 type VersionConf struct {
-	Edition string `json:"edition" bson:"edition"`
-	Stack   string `json:"stack" bson:"stack"`
-
+	Edition        string            `json:"edition" bson:"edition"`
 	Version        string            `json:"version" bson:"version"`
 	VersionUpdated *datetime.CpsTime `json:"version_updated" bson:"version_updated" swaggertype:"integer"`
 }
@@ -32,11 +30,14 @@ type UserInterfaceConf struct {
 	RequiredInstructionApprove bool          `json:"required_instruction_approve" bson:"required_instruction_approve"`
 	DisabledTransitions        bool          `json:"disabled_transitions" bson:"disabled_transitions"`
 	AutoSuggestPbehaviorName   bool          `json:"auto_suggest_pbehavior_name" bson:"auto_suggest_pbehavior_name"`
+	DefaultColorTheme          string        `json:"default_color_theme" bson:"default_color_theme"`
+	VersionDescription         string        `json:"version_description" bson:"version_description" binding:"max=500"`
 }
 
 type GlobalConf struct {
-	Timezone          string `json:"timezone,omitempty"`
-	FileUploadMaxSize int64  `json:"file_upload_max_size"`
+	Timezone          string   `json:"timezone,omitempty"`
+	UserTimezones     []string `json:"user_timezones,omitempty"`
+	FileUploadMaxSize int64    `json:"file_upload_max_size"`
 
 	EventsCountTriggerDefaultThreshold int `json:"events_count_trigger_default_threshold"`
 }

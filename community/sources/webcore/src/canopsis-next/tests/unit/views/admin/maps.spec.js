@@ -5,7 +5,7 @@ import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/
 import { createMockedStoreModules } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import { CRUD_ACTIONS, MAP_TYPES, MODALS, USERS_PERMISSIONS } from '@/constants';
+import { CRUD_ACTIONS, MAP_TYPES, MODALS, USER_PERMISSIONS } from '@/constants';
 
 import Maps from '@/views/admin/maps.vue';
 
@@ -392,7 +392,7 @@ describe('maps', () => {
 
   test('Renders `maps` with permissions', () => {
     currentUserPermissionsById.mockReturnValueOnce(({
-      [USERS_PERMISSIONS.technical.map]: {
+      [USER_PERMISSIONS.technical.map]: {
         actions: [
           CRUD_ACTIONS.create,
           CRUD_ACTIONS.update,

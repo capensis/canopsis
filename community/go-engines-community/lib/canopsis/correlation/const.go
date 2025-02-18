@@ -8,6 +8,8 @@ const (
 	DefaultMetaAlarmConnector     = canopsis.CorrelationConnector
 	DefaultMetaAlarmConnectorName = canopsis.CorrelationConnector
 
+	// InfosKeyMetaAlarmMeta
+	// todo remove : it was required for event filter rules to set entity infos for entity of meta alarm but now it can be done by rule params
 	InfosKeyMetaAlarmMeta = "Meta"
 
 	DefaultConfigTimeInterval = 86400

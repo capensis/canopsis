@@ -189,13 +189,17 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		if err != nil {
 			s.logger.Err(err).Msg("invalid additional data for delayed scenario")
 		}
-		s.scenarioInputChannel <- ExecuteScenariosTask{
+
+		select {
+		case <-ctx.Done():
+		case s.scenarioInputChannel <- ExecuteScenariosTask{
 			Alarm:             alarm,
 			Entity:            entity,
 			Start:             start,
 			DelayedScenarioID: event.DelayedScenarioID,
 			AdditionalData:    additionalData,
 			FifoAckEvent:      fifoAckEvent,
+		}:
 		}
 
 		return nil
@@ -224,7 +228,9 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		return nil
 	}
 
-	s.scenarioInputChannel <- ExecuteScenariosTask{
+	select {
+	case <-ctx.Done():
+	case s.scenarioInputChannel <- ExecuteScenariosTask{
 		Triggers: triggers,
 		Alarm:    alarm,
 		Entity:   entity,
@@ -239,6 +245,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		IsMetaAlarmUpdated:   event.IsMetaAlarmUpdated,
 		IsInstructionMatched: event.IsInstructionMatched,
 		FifoAckEvent:         fifoAckEvent,
+	}:
 	}
 
 	return nil

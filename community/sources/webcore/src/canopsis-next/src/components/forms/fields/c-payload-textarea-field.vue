@@ -12,6 +12,7 @@
     :row-height="lineHeight"
     :style="textareaStyle"
     :error="!!linesErrors.length"
+    :autofocus="autofocus"
     class="c-payload-textarea-field"
     auto-grow
     @blur="handleBlur"
@@ -116,6 +117,10 @@ export default {
       default: 18,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    autofocus: {
       type: Boolean,
       default: false,
     },

@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
@@ -197,12 +198,14 @@ func RegisterValidators(client mongo.DbClient) {
 
 	roleValidator := role.NewValidator(client)
 	v.RegisterStructValidationCtx(roleValidator.ValidateEditRequest, role.EditRequest{})
+	v.RegisterStructValidationCtx(roleValidator.ValidateBulkUpdatePermissionsRequestItem, role.BulkUpdatePermissionsRequestItem{})
 
 	userValidator := user.NewValidator(client)
 	v.RegisterStructValidationCtx(userValidator.ValidateUpdateRequest, user.UpdateRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidateCreateRequest, user.CreateRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidatePatchRequest, user.PatchRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidateBulkUpdateRequestItem, user.BulkUpdateRequestItem{})
+	v.RegisterStructValidationCtx(userValidator.ValidateBulkPatchRequestItem, user.BulkPatchRequestItem{})
 
 	accountValidator := account.NewValidator(client)
 	v.RegisterStructValidationCtx(accountValidator.ValidateEditRequest, account.EditRequest{})
@@ -308,4 +311,7 @@ func RegisterValidators(client mongo.DbClient) {
 
 	v.RegisterStructValidation(healthcheck.ValidateEngineParameters, config.EngineParameters{})
 	v.RegisterStructValidation(healthcheck.ValidateLimitParameters, config.LimitParameters{})
+
+	appInfoValidator := appinfo.NewValidator(client)
+	v.RegisterStructValidationCtx(appInfoValidator.ValidateRequest, appinfo.UserInterfaceConf{})
 }
