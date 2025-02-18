@@ -145,10 +145,6 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 		metaAlarm.Value.MetaValuePath = event.Parameters.MetaAlarmValuePath
 		metaAlarm.Value.LastEventDate = datetime.CpsTime{} // should be empty
 
-		if event.Parameters.DisplayName != "" {
-			metaAlarm.Value.DisplayName = event.Parameters.DisplayName
-		}
-
 		stateID := rule.GetStateID(event.Parameters.MetaAlarmValuePath)
 		var childEntityIDs []string
 		var archived bool
@@ -260,7 +256,7 @@ func (p *metaAlarmProcessor) createMetaAlarm(ctx context.Context, event rpc.AxeE
 			}
 		}
 
-		metaAlarm.Value.Output = output
+		metaAlarm.Value.Output, metaAlarm.Value.InitialOutput = output, output
 		_, _, err = updateMetaAlarmState(&metaAlarm, entity, event.Parameters.Timestamp, worstState,
 			output, p.alarmStatusService)
 		if err != nil {
@@ -372,7 +368,7 @@ func (p *metaAlarmProcessor) newMetaAlarm(
 			Component:                   entity.Component,
 			Resource:                    entity.Name,
 			CreationDate:                now,
-			DisplayName:                 types.GenDisplayName(alarmConfig.DisplayNameScheme),
+			DisplayName:                 params.DisplayName,
 			InitialOutput:               params.Output,
 			Output:                      params.Output,
 			InitialLongOutput:           params.LongOutput,
@@ -387,6 +383,9 @@ func (p *metaAlarmProcessor) newMetaAlarm(
 			Infos:                       map[string]map[string]interface{}{},
 			RuleVersion:                 map[string]string{},
 		},
+	}
+	if params.DisplayName == "" {
+		alarm.Value.DisplayName = types.GenDisplayName(alarmConfig.DisplayNameScheme)
 	}
 
 	return alarm
