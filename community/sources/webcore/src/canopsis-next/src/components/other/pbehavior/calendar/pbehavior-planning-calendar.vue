@@ -17,7 +17,7 @@
         <pbehavior-create-event
           :event="event"
           :entity-pattern="entityPattern"
-          :default-name="defaultName"
+          :default-fields="defaultFields"
           :with-inherited="withInherited"
           :timezone="timezone"
           :no-timezone="!shownUserTimezone"
@@ -94,9 +94,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    defaultName: {
-      type: String,
-      default: '',
+    defaultFields: {
+      type: Object,
+      required: false,
     },
     withInherited: {
       type: Boolean,

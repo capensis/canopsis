@@ -124,6 +124,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    defaultInherited: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const modals = useModals();
@@ -193,6 +197,7 @@ export default {
       config: {
         title: t('modals.pbehaviorsCalendar.entity.title', { name: props.entity.name }),
         entityId: props.entity._id,
+        defaultInherited: props.defaultInherited,
         withInherited: props.withInherited,
       },
     });
@@ -206,6 +211,7 @@ export default {
       config: {
         entityPattern: createEntityIdPatternByValue(props.entity._id),
         entities: [props.entity],
+        defaultInherited: props.defaultInherited,
         withInherited: props.withInherited,
         afterSubmit: fetchList,
       },

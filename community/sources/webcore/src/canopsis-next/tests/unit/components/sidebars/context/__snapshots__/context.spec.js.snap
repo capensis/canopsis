@@ -75,6 +75,9 @@ exports[`context Renders \`context\` widget settings with all rights 1`] = `
       title="Expand card (more infos) width"
       value="0,12"
     />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
+    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
@@ -153,6 +156,9 @@ exports[`context Renders \`context\` widget settings with custom props 1`] = `
       step="1"
       title="Expand card (more infos) width"
       value="0,12"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
     <export-csv-form-stub
       form="[object Object]"
@@ -233,6 +239,9 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
       title="Expand card (more infos) width"
       value="0,12"
     />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
+    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
@@ -312,6 +321,9 @@ exports[`context Renders \`context\` widget settings with default props with cha
       step="1"
       title="Expand card (more infos) width"
       value="0,12"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
     <export-csv-form-stub
       form="[object Object]"
