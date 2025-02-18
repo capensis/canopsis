@@ -76,6 +76,10 @@ func (s *store) findMinuteStats(ctx context.Context, r ListRequest) ([]StatsResp
 		})
 	}
 
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return rates, nil
 }
 
@@ -111,6 +115,10 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 			ID:   t.Unix(),
 			Rate: rate,
 		})
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return rates, nil

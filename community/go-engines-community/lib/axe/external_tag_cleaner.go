@@ -105,6 +105,10 @@ func (c *externalTagCleaner) delete(
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return deleted, err
+	}
+
 	if len(ids) > 0 {
 		res, err := dbCollection.DeleteMany(
 			ctx,
@@ -182,6 +186,10 @@ func (c *externalTagCleaner) deleteColors(
 			deleted += res
 			ids = ids[:0]
 		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return deleted, err
 	}
 
 	if len(ids) > 0 {

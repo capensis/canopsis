@@ -91,6 +91,10 @@ func (c *cleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datas
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return res, err
+	}
+
 	if len(ids) > 0 {
 		d, err := collection.DeleteMany(
 			ctx,

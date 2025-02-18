@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog"
 )
@@ -175,22 +176,32 @@ type ScheduledTime struct {
 	Hour    int
 }
 
-func (t ScheduledTime) String() string {
-	return fmt.Sprintf("%v,%v", t.Weekday, t.Hour)
-}
-
 type ScheduledTimes []ScheduledTime
 
-func (t ScheduledTimes) String() string {
-	str := ""
-	for i, v := range t {
-		str += v.String()
-		if i < len(t)-1 {
-			str += ";"
+func (t ScheduledTimes) IsScheduledTime(now datetime.CpsTime) bool {
+	for _, v := range t {
+		if now.Weekday() == v.Weekday && now.Hour() == v.Hour {
+			return true
 		}
 	}
 
-	return str
+	return false
+}
+
+func (t ScheduledTimes) String() string {
+	const l = len("Wednesday,10;")
+	var b strings.Builder
+	b.Grow(len(t) * l)
+	for i, v := range t {
+		b.WriteString(v.Weekday.String())
+		b.WriteRune(',')
+		b.WriteString(strconv.Itoa(v.Hour))
+		if i < len(t)-1 {
+			b.WriteRune(';')
+		}
+	}
+
+	return b.String()
 }
 
 type BaseTechMetricsConfigProvider struct {
@@ -936,13 +947,17 @@ func stringToScheduledTime(v string) (ScheduledTimes, bool) {
 	}
 
 	split := strings.Split(v, ";")
-	res := make(ScheduledTimes, len(split))
+	res := make(ScheduledTimes, 0, len(split))
 	for _, s := range split {
+		if s == "" {
+			continue
+		}
+
 		splitT := strings.Split(s, ",")
 		if len(splitT) == 2 {
 			if d, ok := weekdays[splitT[0]]; ok {
 				h, err := strconv.Atoi(splitT[1])
-				if err == nil && h >= 0 && h <= 24 {
+				if err == nil && h >= 0 && h < 24 {
 					res = append(res, ScheduledTime{Weekday: d, Hour: h})
 					continue
 				}
