@@ -16,6 +16,7 @@
       :label="$t('metaAlarmRule.outputTemplate')"
       :help-text="$t('metaAlarmRule.outputTemplateHelp')"
       :variables="variables"
+      required
     />
     <meta-alarm-rule-tags-form
       v-field="form.tags"
