@@ -143,8 +143,8 @@ func Default(
 			return nil
 		},
 		func(ctx context.Context) {
-			scheduler.Stop(ctx)
-			err := s.DbClient.Disconnect(ctx)
+			scheduler.Stop(context.WithoutCancel(ctx))
+			err := s.DbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

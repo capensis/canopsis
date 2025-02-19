@@ -2,6 +2,7 @@ package che
 
 import (
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -54,7 +55,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		"t": bson.M{"$lte": conf.EventFilterFailure.DeleteAfter.SubFrom(t)},
 	}, opts)
 	if err != nil {
-		return res, err
+		return res, fmt.Errorf("failed to find failures: %w", err)
 	}
 
 	defer cursor.Close(ctx)
@@ -66,7 +67,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		var item eventfilter.Failure
 		err := cursor.Decode(&item)
 		if err != nil {
-			return res, err
+			return res, fmt.Errorf("failed to decode failure: %w", err)
 		}
 
 		ids = append(ids, item.ID)
@@ -82,7 +83,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 
 			_, err = dbRuleCollection.BulkWrite(ctx, ruleWriteModels)
 			if err != nil {
-				return res, err
+				return res, fmt.Errorf("failed to update event filter rules: %w", err)
 			}
 
 			d, err := dbCollection.DeleteMany(
@@ -90,7 +91,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 				bson.M{"_id": bson.M{"$in": ids}},
 			)
 			if err != nil {
-				return res, err
+				return res, fmt.Errorf("failed to delete failures: %w", err)
 			}
 
 			res.Deleted += d
@@ -102,7 +103,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 	}
 
 	if err = cursor.Err(); err != nil {
-		return res, err
+		return res, fmt.Errorf("failed to fetch failures: %w", err)
 	}
 
 	if len(ids) > 0 {
@@ -112,7 +113,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 
 		_, err = dbRuleCollection.BulkWrite(ctx, ruleWriteModels)
 		if err != nil {
-			return res, err
+			return res, fmt.Errorf("failed to update event filter rules: %w", err)
 		}
 
 		d, err := dbCollection.DeleteMany(
@@ -120,7 +121,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 			bson.M{"_id": bson.M{"$in": ids}},
 		)
 		if err != nil {
-			return res, err
+			return res, fmt.Errorf("failed to delete failures: %w", err)
 		}
 
 		res.Deleted += d

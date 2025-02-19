@@ -91,7 +91,7 @@ func (w *worker) Work(ctx context.Context) {
 	}
 
 	defer func() {
-		err = dbClient.Disconnect(ctx)
+		err = dbClient.Disconnect(context.WithoutCancel(ctx))
 		if err != nil {
 			w.logger.Err(err).Msg("cannot disconnect from mongo")
 		}
@@ -114,6 +114,7 @@ func (w *worker) Work(ctx context.Context) {
 		defer cancel()
 	}
 
+	// start from the oldest executed worker to avoid timeout run out on the same workers
 	startIdx := w.getStartIdx(conf)
 	if startIdx < 0 {
 		return
@@ -159,6 +160,7 @@ func (w *worker) Work(ctx context.Context) {
 			i = 0
 		}
 
+		// stop after loops reaches the starting worker
 		if i == startIdx {
 			break
 		}
