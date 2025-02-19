@@ -270,11 +270,11 @@ func Default(
 			close(entityCleanerTaskChan)
 			close(broadcastMessageChan)
 
-			err := dbClient.Disconnect(ctx)
+			err := dbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
-			err = dbExportClient.Disconnect(ctx)
+			err = dbExportClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

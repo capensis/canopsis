@@ -98,7 +98,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			return nil
 		},
 		func(ctx context.Context) {
-			err := dbClient.Disconnect(ctx)
+			err := dbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}

@@ -43,7 +43,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) ([]StatsResponse, error
 func (s *store) findMinuteStats(ctx context.Context, r ListRequest) ([]StatsResponse, error) {
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to postgres: %w", err)
 	}
 
 	search, args := s.getSearchQuery(r)
@@ -51,7 +51,7 @@ func (s *store) findMinuteStats(ctx context.Context, r ListRequest) ([]StatsResp
 	rows, err := pgPool.Query(ctx, "SELECT time_bucket_gapfill('1 minute', time), count(*) FROM "+metrics.MessageRate+
 		search+" GROUP BY time_bucket_gapfill('1 minute', time)", args)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to find minute stats: %w", err)
 	}
 
 	defer rows.Close()
@@ -62,7 +62,7 @@ func (s *store) findMinuteStats(ctx context.Context, r ListRequest) ([]StatsResp
 		var rateColumn *int64
 		err := rows.Scan(&t, &rateColumn)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan minute stats: %w", err)
 		}
 
 		var rate int64
@@ -77,7 +77,7 @@ func (s *store) findMinuteStats(ctx context.Context, r ListRequest) ([]StatsResp
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch minute stats: %w", err)
 	}
 
 	return rates, nil
@@ -86,14 +86,14 @@ func (s *store) findMinuteStats(ctx context.Context, r ListRequest) ([]StatsResp
 func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsResponse, error) {
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to postgres: %w", err)
 	}
 
 	search, args := s.getSearchQuery(r)
 	rows, err := pgPool.Query(ctx, "SELECT time_bucket_gapfill('1 hour', time), sum(count) FROM "+metrics.MessageRateHourly+
 		search+" GROUP BY time_bucket_gapfill('1 hour', time)", args)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to find hour stats: %w", err)
 	}
 
 	defer rows.Close()
@@ -103,7 +103,7 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 		var rateColumn *int64
 		err := rows.Scan(&t, &rateColumn)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("failed to scan hour stats: %w", err)
 		}
 
 		var rate int64
@@ -118,7 +118,7 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 	}
 
 	if err = rows.Err(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch hour stats: %w", err)
 	}
 
 	return rates, nil
@@ -127,7 +127,7 @@ func (s *store) findHourStats(ctx context.Context, r ListRequest) ([]StatsRespon
 func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime, error) {
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to connect to postgres: %w", err)
 	}
 
 	var t time.Time
@@ -137,7 +137,7 @@ func (s *store) GetDeletedBeforeForHours(ctx context.Context) (*datetime.CpsTime
 			return nil, nil
 		}
 
-		return nil, err
+		return nil, fmt.Errorf("failed to find min stats date: %w", err)
 	}
 
 	return &datetime.CpsTime{Time: t}, nil

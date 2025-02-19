@@ -2,6 +2,7 @@ package pbehavior
 
 import (
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -63,7 +64,7 @@ func (c *cleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datas
 		},
 	}}, opts)
 	if err != nil {
-		return res, err
+		return res, fmt.Errorf("failed to find pbehaviors: %w", err)
 	}
 
 	defer cursor.Close(ctx)
@@ -72,7 +73,7 @@ func (c *cleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datas
 		var pbh PBehavior
 		err := cursor.Decode(&pbh)
 		if err != nil {
-			return res, err
+			return res, fmt.Errorf("failed to decode pbehavior: %w", err)
 		}
 
 		ids = append(ids, pbh.ID)
@@ -83,7 +84,7 @@ func (c *cleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datas
 				bson.M{"_id": bson.M{"$in": ids}},
 			)
 			if err != nil {
-				return res, err
+				return res, fmt.Errorf("failed to delete pbehaviors: %w", err)
 			}
 
 			res.Deleted += d
@@ -92,7 +93,7 @@ func (c *cleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datas
 	}
 
 	if err = cursor.Err(); err != nil {
-		return res, err
+		return res, fmt.Errorf("failed to fetch pbehaviors: %w", err)
 	}
 
 	if len(ids) > 0 {
@@ -101,7 +102,7 @@ func (c *cleaner) Clean(ctx context.Context, dbClient mongo.DbClient, conf datas
 			bson.M{"_id": bson.M{"$in": ids}},
 		)
 		if err != nil {
-			return res, err
+			return res, fmt.Errorf("failed to delete pbehaviors: %w", err)
 		}
 
 		res.Deleted += d
