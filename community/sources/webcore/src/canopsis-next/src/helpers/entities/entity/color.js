@@ -1,7 +1,7 @@
 import { isNumber } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { COLOR_INDICATOR_TYPES, EVENT_ENTITY_COLORS_BY_TYPE } from '@/constants';
+import { COLOR_INDICATOR_TYPES, EVENT_ENTITY_COLORS_BY_TYPE, PBEHAVIOR_CANONICAL_TYPES } from '@/constants';
 
 import { getAlarmImpactStateColor, getAlarmStateColor } from '../alarm/color';
 
@@ -13,7 +13,7 @@ import { getAlarmImpactStateColor, getAlarmStateColor } from '../alarm/color';
  * @returns {string|*}
  */
 export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYPES.state) => {
-  if (entity.is_grey) {
+  if (entity.is_grey || entity.pbehavior_info?.canonical_type === PBEHAVIOR_CANONICAL_TYPES.pause) {
     return CSS_COLORS_VARS.state.pause;
   }
 
