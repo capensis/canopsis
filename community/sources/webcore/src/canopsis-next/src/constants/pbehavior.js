@@ -51,3 +51,7 @@ export const PBEHAVIOR_ORIGINS = {
   alarmList: 'AlarmList',
   serviceWeather: 'ServiceWeather',
 };
+
+export const PBEHAVIOR_CANONICAL_TYPES = {
+  pause: 'pause',
+};
