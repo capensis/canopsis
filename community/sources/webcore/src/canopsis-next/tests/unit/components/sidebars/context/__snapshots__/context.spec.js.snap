@@ -75,14 +75,14 @@ exports[`context Renders \`context\` widget settings with all rights 1`] = `
       title="Expand card (more infos) width"
       value="0,12"
     />
-    <field-switcher-stub
-      title="Apply pbehavior on dependencies too"
-    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
       type="entity"
       withoutinfosattributes="true"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
   </widget-settings-group-stub>
   <charts-form-stub
@@ -157,14 +157,14 @@ exports[`context Renders \`context\` widget settings with custom props 1`] = `
       title="Expand card (more infos) width"
       value="0,12"
     />
-    <field-switcher-stub
-      title="Apply pbehavior on dependencies too"
-    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
       type="entity"
       withoutinfosattributes="true"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
   </widget-settings-group-stub>
   <charts-form-stub
@@ -239,14 +239,14 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
       title="Expand card (more infos) width"
       value="0,12"
     />
-    <field-switcher-stub
-      title="Apply pbehavior on dependencies too"
-    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
       type="entity"
       withoutinfosattributes="true"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
   </widget-settings-group-stub>
   <charts-form-stub
@@ -322,14 +322,14 @@ exports[`context Renders \`context\` widget settings with default props with cha
       title="Expand card (more infos) width"
       value="0,12"
     />
-    <field-switcher-stub
-      title="Apply pbehavior on dependencies too"
-    />
     <export-csv-form-stub
       form="[object Object]"
       templates=""
       type="entity"
       withoutinfosattributes="true"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
   </widget-settings-group-stub>
   <charts-form-stub
