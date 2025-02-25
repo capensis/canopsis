@@ -69,16 +69,16 @@
         v-model="form.parameters.expandGridRangeSize"
         :title="$t('settings.expandGridRangeSize')"
       />
-      <field-switcher
-        v-model="form.parameters.defaultInheritedPbehavior"
-        :title="$t('settings.defaultInheritedPbehavior')"
-      />
       <export-csv-form
         v-model="form.parameters"
         :type="$constants.ENTITIES_TYPES.entity"
         :templates="entityColumnsWidgetTemplates"
         :templates-pending="widgetTemplatesPending"
         without-infos-attributes
+      />
+      <field-switcher
+        v-model="form.parameters.defaultInheritedPbehavior"
+        :title="$t('settings.defaultInheritedPbehavior')"
       />
     </widget-settings-group>
     <charts-form v-model="form.parameters.charts" />
