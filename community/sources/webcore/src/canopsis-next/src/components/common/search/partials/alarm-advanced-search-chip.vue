@@ -10,7 +10,7 @@
         <v-chip
           :close="closable && !disabled"
           :color="color"
-          class="c-new-advanced-search__array-chip"
+          class="c-alarm-advanced-search__array-chip"
           v-on="multipleChipListeners"
         >
           <v-chip
@@ -27,8 +27,8 @@
               type="text"
               class="ml-1"
               autocomplete="off"
-              @keydown="keydown"
-              @focus="focus"
+              @keydown="keydownInput"
+              @focus="focusInput"
               @input="updateInputValue"
             >
           </span>
@@ -39,12 +39,13 @@
           v-show="active || alwaysActive"
           ref="inputElement"
           :value="inputValue"
+          :placeholder="inputPlaceholder"
           type="text"
           class="ml-1"
           autocomplete="off"
           v-on="on"
-          @keydown="keydown"
-          @focus="focus"
+          @keydown="keydownInput"
+          @focus="focusInput"
           @input="updateInputValue"
         >
         <v-chip
@@ -64,14 +65,15 @@
         </v-chip>
       </span>
     </template>
-    <advanced-search-lazy-list
+    <variables-list
       :value="selectedItems"
       :items="lazyItems"
       :search="inputValue"
       :pending="fetchItems && pending"
       :item-text="itemText"
       :item-value="itemValue"
-      @input="select"
+      return-object
+      @input="selectItem"
       @fetch:more="showMore"
     >
       <template v-if="hasAnyDisabledItem" #prepend="">
@@ -89,7 +91,7 @@
           </v-list-item-content>
         </v-list-item>
       </template>
-    </advanced-search-lazy-list>
+    </variables-list>
   </v-menu>
 </template>
 
@@ -110,10 +112,10 @@ import { filterAdvancedSearchItems } from '@/helpers/search/advanced-search';
 import { useI18n } from '@/hooks/i18n';
 import { useLazySearch } from '@/hooks/form/lazy-search';
 
-import AdvancedSearchLazyList from '@/components/common/search/partials/new/advanced-search-lazy-list.vue';
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 export default {
-  components: { AdvancedSearchLazyList },
+  components: { VariablesList },
   model: {
     prop: 'value',
     event: 'input',
@@ -185,31 +187,6 @@ export default {
     const inputValue = ref('');
     const opened = ref(false);
 
-    const menuProps = computed(() => ({
-      openOnClick: false,
-      disableKeys: true,
-      closeOnContentClick: false,
-      ignoreClickOutsideOnActivator: true,
-      maxHeight: 304,
-      nudgeBottom: 1,
-      bottom: true,
-      offsetY: true,
-      transition: false,
-      disabled: props.disabled,
-    }));
-
-    const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
-
-    const noDataText = computed(() => {
-      let messageKey = 'common.noData';
-
-      if (props.allowText) {
-        messageKey = props.first ? 'advancedSearch.searchForThisText' : 'common.pressEnterToApply';
-      }
-
-      return t(messageKey);
-    });
-
     /**
      * Fetches and filters items based on search parameters, returning the filtered data along with metadata about the
      * total count and page count.
@@ -254,20 +231,62 @@ export default {
       multiple: props.multiple,
     }, emit);
 
-    const showMenu = () => opened.value = true;
-    const focus = () => {
-      showMenu();
-      emit('focus');
-    };
+    const menuProps = computed(() => ({
+      openOnClick: false,
+      disableKeys: true,
+      closeOnContentClick: false,
+      ignoreClickOutsideOnActivator: true,
+      maxHeight: 304,
+      nudgeBottom: 1,
+      bottom: true,
+      offsetY: true,
+      transition: false,
+      disabled: props.disabled,
+    }));
 
+    const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
+
+    const inputPlaceholder = computed(() => (props.first ? t('advancedSearch.inputPlaceholder') : ''));
+
+    const noDataText = computed(() => {
+      let messageKey = 'common.noData';
+
+      if (props.allowText) {
+        messageKey = props.first ? 'advancedSearch.searchForThisText' : 'common.pressEnterToApply';
+      }
+
+      return t(messageKey);
+    });
+
+    const chipText = computed(() => selectedItems.value
+      .map(item => item[props.itemText] ?? item[props.itemValue])
+      .join(','));
+
+    /**
+     * Updates the input value and triggers a search update with the new value.
+     *
+     * @param {string} newInputValue - The new value to be set for the input.
+     */
     const setInputValue = (newInputValue) => {
       inputValue.value = newInputValue;
 
       updateSearch(newInputValue);
     };
 
+    /**
+     * Event handler that updates the input value based on the user's input event.
+     * It extracts the value from the event's target and sets it as the new input value.
+     *
+     * @param {Event} event - The input event triggered by the user.
+     */
     const updateInputValue = event => setInputValue(event.target.value);
 
+    /**
+     * Updates the state of the menu's open status and handles related actions.
+     * If the menu is being closed, it emits a 'focusout' event and resets the input value.
+     *
+     * @param {boolean} value - The new open status of the menu. `true` to open, `false` to close.
+     */
     const updateMenuOpened = (value) => {
       if (!value) {
         emit('focusout');
@@ -277,13 +296,34 @@ export default {
       opened.value = value;
     };
 
+    /**
+     * Sets the `opened` state to true, indicating that the menu should be displayed.
+     */
+    const showMenu = () => updateMenuOpened(true);
+
+    /**
+     * Focuses on the input element, bringing it into view for user interaction.
+     */
+    const focusInput = () => {
+      showMenu();
+      emit('focus');
+    };
+
+    /**
+     * Emits a 'click' event if the chip is not disabled.
+     * This function checks the `disabled` prop before emitting the event.
+     */
     const clickChip = () => !props.disabled && emit('click');
+
+    /**
+     * Emits a 'close' event to signal that the chip should be closed.
+     * This function does not perform any checks before emitting the event.
+     */
     const closeChip = () => emit('close');
 
-    const chipText = computed(() => selectedItems.value
-      .map(item => item[props.itemText] ?? item[props.itemValue])
-      .join(','));
-
+    /**
+     * LISTENERS FOR SINGLE CHIP
+     */
     const chipListeners = computed(() => {
       const listeners = {};
 
@@ -295,6 +335,9 @@ export default {
       return listeners;
     });
 
+    /**
+     * LISTENERS FOR MULTIPLE CHIPS
+     */
     const multipleChipListeners = computed(() => {
       const listeners = {};
 
@@ -306,7 +349,14 @@ export default {
       return listeners;
     });
 
-    const select = (value) => {
+    /**
+     * Selects an item and updates the selected items list based on the `multiple` prop.
+     * Closes the menu and emits a 'next' event if `multiple` is false.
+     * If `multiple` is true, it reopens the menu for additional selections.
+     *
+     * @param {*} value - The value of the item to be selected. It can be of any type depending on the context.
+     */
+    const selectItem = (value) => {
       opened.value = false;
 
       changeSelectedItems(props.multiple ? [...(props.value || []), value] : value);
@@ -319,13 +369,19 @@ export default {
       }
 
       updateMenuOpened(false);
-      showMenu(); // TODO: think about it
     };
 
-    const keydown = (event) => {
+    /**
+     * Handles the keydown event for the input element, specifically responding to the Enter key.
+     * If the Enter key is pressed, it either selects the current input value as an item or finds
+     * and selects an item from the list that matches the input value.
+     *
+     * @param {KeyboardEvent} event - The keydown event triggered by the user.
+     */
+    const keydownInput = (event) => {
       if (event.keyCode === KEY_CODES.enter) {
         if (props.allowText) {
-          select(inputValue.value ?? '');
+          selectItem(inputValue.value ?? '');
 
           return;
         }
@@ -334,18 +390,30 @@ export default {
         const selectedItem = props.items.find(item => item[props.itemText]?.toLowerCase().startsWith(lowerInputValue));
 
         if (selectedItem) {
-          select(selectedItem);
+          selectItem(selectedItem);
         }
       }
     };
 
+    /**
+     * Checks if there are more items to fetch and triggers the fetch operation.
+     * This function is used to load additional items when the user requests more data.
+     * It relies on the `hasMoreItems` reactive property to determine if more items are available.
+     */
     const showMore = () => {
       if (hasMoreItems.value) {
         fetchMoreItems();
       }
     };
 
-    const focusInput = () => setTimeout(() => inputElement.value?.focus(), 100); // TODO: check it
+    /**
+     * Delays focusing on the input element by 100 milliseconds.
+     * This function uses `setTimeout` to ensure the input element is focused after any pending operations.
+     * It checks if the `inputElement` is available before attempting to focus.
+     *
+     * @todo Analise the solution with setTimeout in the future
+     */
+    const callFocus = () => setTimeout(() => inputElement.value?.focus(), 100);
 
     watch(() => props.active, (active, prevActive) => {
       if (active && prevActive !== active) {
@@ -354,31 +422,18 @@ export default {
       }
     });
 
-    /* watch(() => [props.active, selectedItems.value], ([active, newSelectedItems], [prevActive] = []) => {
-      if (!active) {
-        setInputValue('');
-
-        return;
-      }
-
-      if (prevActive !== active) {
-        nextTick(() => inputElement.value?.focus());
-      }
-
-      setInputValue(newSelectedItems[0]?.[props.itemText] ?? newSelectedItems[0]?.[props.itemValue] ?? '');
-    }, { immediate: true }); */
-
     watch(() => props.items, fetchItems);
 
     onMounted(() => {
       if (!props.first) {
-        setTimeout(() => inputElement.value?.focus(), 100);
+        callFocus();
       }
 
       registerLastInputFocus(focusInput);
     });
 
     return {
+      inputPlaceholder,
       noDataText,
       hasAnyDisabledItem,
       selectedItems,
@@ -393,9 +448,10 @@ export default {
       chipListeners,
       multipleChipListeners,
 
-      select,
-      keydown,
-      focus,
+      selectItem,
+      keydownInput,
+      focusInput,
+      callFocus,
       updateMenuOpened,
       updateInputValue,
       showMore,

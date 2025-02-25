@@ -57,9 +57,9 @@ import {
 
 import { useComponentInstance } from '@/hooks/vue';
 
-import { useAdvancedSearchAttributes, useAdvancedSearchValidator } from './hooks/new-advanced-search';
-import AdvancedSearchRules from './partials/new/advanced-search-rules.vue';
-import AdvancedSearchHistoryBtn from './partials/new/advanced-search-history-btn.vue';
+import { useAdvancedSearchAttributes, useAdvancedSearchValidator } from './hooks/alarm-advanced-search';
+import AdvancedSearchRules from './partials/alarm-advanced-search-rules.vue';
+import AdvancedSearchHistoryBtn from './partials/alarm-advanced-search-history-btn.vue';
 
 export default {
   $_veeValidate: {
@@ -79,11 +79,17 @@ export default {
 
     let activeSearch = null;
 
+    /**
+     * HAS FLAGS
+     */
     const hasOr = computed(() => rules.value.some(({ union }) => union === ADVANCED_SEARCH_UNION_CONDITIONS.or));
     const hasAlarmField = computed(() => rules.value.some(({ attribute }) => isAlarmPatternField(attribute)));
     const hasEntityField = computed(() => rules.value.some(({ attribute }) => isEntityPatternField(attribute)));
     const hasPbehaviorField = computed(() => rules.value.some(({ attribute }) => isPbehaviorPatternField(attribute)));
 
+    /**
+     * ALLOW FLAGS
+     */
     const allowOr = computed(() => [
       hasEntityField.value,
       hasPbehaviorField.value,
@@ -108,6 +114,11 @@ export default {
       rules.value = [advancedSearchRuleItemToFormItem()];
     };
 
+    /**
+     * Submits the current advanced search configuration.
+     *
+     * @returns {Promise<void>} A promise that resolves when the submission process is complete.
+     */
     const submit = async () => {
       const isValid = await instance.$validator.validateAll();
 
@@ -121,6 +132,12 @@ export default {
       }
     };
 
+    /**
+     * Selects a search configuration and updates the active search variable.
+     *
+     * @param {Object} search - The search configuration object to be selected.
+     * @param {Array} search.rules - An array of rules associated with the search configuration.
+     */
     const select = (search) => {
       activeSearch = search;
       rules.value = [...search.rules, advancedSearchRuleItemToFormItem()];
@@ -128,10 +145,23 @@ export default {
       submit();
     };
 
+    /**
+     * Emits an event to remove a search configuration by its identifier.
+     *
+     * @param {string} id - The unique identifier of the search configuration to be removed.
+     */
     const removeSearch = id => emit('remove:search', id);
 
+    /**
+     * Emits an event to toggle the pinned status of a search configuration.
+     *
+     * @param {string} id - The unique identifier of the search configuration to toggle the pin status.
+     */
     const togglePinForSearch = id => emit('toggle-pin:search', id);
 
+    /**
+     * Resets the active search configuration to null.
+     */
     const resetActiveSearch = () => activeSearch = null;
 
     useAdvancedSearchValidator({ rules });

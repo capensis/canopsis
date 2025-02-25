@@ -10,11 +10,10 @@
       v-if="isItemTypeField"
       :value="activeValue"
       :items="items"
-      children-key="items"
       return-object
       @input="selectItem"
     >
-      <template #append>
+      <template #prepend>
         <v-switch
           key="not"
           :input-value="notSwitcherValue"

@@ -1,5 +1,8 @@
 <template>
-  <v-list class="pa-0 advanced-search-lazy-list">
+  <v-list
+    :dense="dense"
+    class="pa-0 advanced-search-lazy-list"
+  >
     <v-fade-transition>
       <v-progress-linear
         v-if="pending"
@@ -73,6 +76,9 @@
 import { uniqBy } from 'lodash';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
+/**
+ * @todo We can use it like variables help with fetching
+ */
 export default {
   name: 'advanced-search-lazy-list', // We need it for recursive use
   model: {
@@ -124,12 +130,24 @@ export default {
       type: Number,
       required: false,
     },
+    returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    dense: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const appendElement = ref(null);
     const subItemsShown = ref(false);
     const parentItem = ref(undefined);
     const subItemsPosition = ref({ x: 0, y: 0 });
+
+    const prepareItem = item => (props.returnObject ? item : item?.[props.itemValue]);
+
+    const getValue = value => (props.returnObject ? value?.[props.itemValue] : value);
 
     /**
      * Determines if a given item is active based on the current selection.
@@ -138,8 +156,8 @@ export default {
      * @returns {boolean} - Returns `true` if the item is active, otherwise `false`.
      */
     const isActiveItem = (item = {}) => props.value.find((selectedItem) => {
-      const selectedValue = String(selectedItem[props.itemValue] ?? '');
-      const value = String(item[[props.itemValue]] ?? '');
+      const selectedValue = String(getValue(selectedItem) ?? '');
+      const value = String(getValue(item) ?? '');
 
       if (selectedValue.length > value.length) {
         return selectedValue.startsWith(`${value}.`);
@@ -154,10 +172,14 @@ export default {
      * @param {Object} item - The item to be selected and emitted. This object should contain properties
      *                        that can be identified by the `props.itemValue`.
      */
-    const selectVariable = item => emit(
-      'input',
-      props.multiple ? uniqBy([...props.value, item], props.itemValue) : item,
-    );
+    const selectVariable = (item) => {
+      const preparedItem = prepareItem(item);
+
+      emit(
+        'input',
+        props.multiple ? uniqBy([...props.value, preparedItem], props.itemValue) : preparedItem,
+      );
+    };
 
     /**
      * Selects a sub-variable by modifying its value to include the parent item's value

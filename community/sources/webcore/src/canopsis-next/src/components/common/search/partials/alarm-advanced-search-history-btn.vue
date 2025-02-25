@@ -17,11 +17,10 @@
       <v-list-item
         v-for="search in preparedSearches"
         :key="search._id"
-        class="c-new-advanced-search__history__item"
         @click="select(search)"
       >
         <v-list-item-content>
-          <advanced-search-rules
+          <alarm-advanced-search-rules
             :rules="search.rules"
             :attributes="attributes"
             disabled
@@ -44,12 +43,11 @@ import { computed, ref } from 'vue';
 
 import { advancedSearchToForm } from '@/helpers/search/new-advanced-search';
 
-import AdvancedSearchHistoryItemBtns from '../advanced-search-history-item-btns.vue';
-
-import AdvancedSearchRules from './advanced-search-rules.vue';
+import AdvancedSearchHistoryItemBtns from './advanced-search-history-item-btns.vue';
+import AlarmAdvancedSearchRules from './alarm-advanced-search-rules.vue';
 
 export default {
-  components: { AdvancedSearchHistoryItemBtns, AdvancedSearchRules },
+  components: { AdvancedSearchHistoryItemBtns, AlarmAdvancedSearchRules },
   props: {
     searches: {
       type: Array,
@@ -67,10 +65,25 @@ export default {
       rules: advancedSearchToForm(search),
     })));
 
+    /**
+     * Emits a 'select' event with the specified search configuration.
+     *
+     * @param {Object} search - The search configuration object to be selected.
+     */
     const select = search => emit('select', search);
 
+    /**
+     * Emits a 'remove' event with the specified identifier.
+     *
+     * @param {string} id - The unique identifier of the item to be removed.
+     */
     const remove = id => emit('remove', id);
 
+    /**
+     * Emits a 'toggle-pin' event with the specified identifier.
+     *
+     * @param {string} id - The unique identifier of the item whose pin status is to be toggled.
+     */
     const togglePin = id => emit('toggle-pin', id);
 
     return {

@@ -7,6 +7,7 @@ export default {
   switchAdvancedSearchActiveToTrue: 'Switch to the advanced search',
   switchAdvancedSearchActiveToFalse: 'Switch to the simple search',
   noDataList: 'There aren\'t any items for input',
+  inputPlaceholder: 'Search or filter results...',
 
   groups: {
     [ALARM_ADVANCED_SEARCH_GROUPS.basic]: 'Basic',
