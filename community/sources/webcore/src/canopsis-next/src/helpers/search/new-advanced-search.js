@@ -1,7 +1,7 @@
 import { cloneDeep } from 'lodash';
 
 import {
-  ADVANCED_SEARCH_CHIP_TYPES,
+  ALARM_ADVANCED_SEARCH_CHIP_TYPES,
   ADVANCED_SEARCH_PATTERNS_PREFIXES,
   ADVANCED_SEARCH_UNION_CONDITIONS,
   ALARM_PATTERN_FIELDS,
@@ -60,6 +60,7 @@ import {
  * @typedef {PatternRuleForm} AdvancedSearchFormItem
  * @property {AdvancedSearchUnion} union
  * @property {string} range
+ * @property {string} text
  * @property {{ from: number, to: number }} rangeValue
  * @property {AdvancedSearchChipType[]} filled
  */
@@ -67,6 +68,21 @@ import {
 /**
  * @typedef {AdvancedSearchFormItem[]} AdvancedSearchForm
  */
+
+/**
+ * Determines the initial form item type based on the provided item and union flag.
+ *
+ * @param {AdvancedSearchFormItem} item - The item object to evaluate.
+ * @param {boolean} [union = false] - A flag indicating whether the union type should be returned.
+ * @returns {string | null}
+ */
+export const getInitialFormItemType = (item, union = false) => {
+  if (item?.attribute || item?.union || item?.text) {
+    return null;
+  }
+
+  return union ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute;
+};
 
 /**
  * Determines the next chip type for an advanced search form item based on the current type and attributes.
@@ -80,58 +96,58 @@ import {
  * @returns {AdvancedSearchChipType | null} - The next chip type, or null if there is no next type.
  */
 export const getNextForFormItemType = ({ attribute, fieldType, range, operator } = {}, type = null) => {
-  if (type === ADVANCED_SEARCH_CHIP_TYPES.union) {
+  if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.union) {
     return null;
   }
 
-  if (type === ADVANCED_SEARCH_CHIP_TYPES.text) {
+  if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.text) {
     return null;
   }
 
   if (!attribute || !type) {
-    return ADVANCED_SEARCH_CHIP_TYPES.attribute;
+    return ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute;
   }
 
   switch (type) {
-    case ADVANCED_SEARCH_CHIP_TYPES.attribute:
+    case ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute:
       if (isDatePatternRuleField(attribute)) {
-        return ADVANCED_SEARCH_CHIP_TYPES.range;
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.range;
       }
 
       if (isValueInfosPatternRuleField(attribute)) {
-        return ADVANCED_SEARCH_CHIP_TYPES.fieldType;
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType;
       }
 
       if (attribute === ALARM_PATTERN_FIELDS.ticketData) {
-        return ADVANCED_SEARCH_CHIP_TYPES.dictionary;
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.dictionary;
       }
 
-      return ADVANCED_SEARCH_CHIP_TYPES.operator;
+      return ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator;
 
-    case ADVANCED_SEARCH_CHIP_TYPES.fieldType:
+    case ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType:
       if (fieldType === PATTERN_FIELD_TYPES.boolean) {
-        return ADVANCED_SEARCH_CHIP_TYPES.value;
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.value;
       }
 
-      return ADVANCED_SEARCH_CHIP_TYPES.operator;
+      return ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator;
 
-    case ADVANCED_SEARCH_CHIP_TYPES.dictionary:
-      return ADVANCED_SEARCH_CHIP_TYPES.operator;
+    case ALARM_ADVANCED_SEARCH_CHIP_TYPES.dictionary:
+      return ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator;
 
-    case ADVANCED_SEARCH_CHIP_TYPES.operator:
+    case ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator:
       if (isDurationPatternRuleField(attribute)) {
-        return ADVANCED_SEARCH_CHIP_TYPES.duration;
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration;
       }
 
       if ([PATTERN_OPERATORS.isEmpty, PATTERN_OPERATORS.isNotEmpty].includes(operator)) {
         return null;
       }
 
-      return ADVANCED_SEARCH_CHIP_TYPES.value;
+      return ALARM_ADVANCED_SEARCH_CHIP_TYPES.value;
 
-    case ADVANCED_SEARCH_CHIP_TYPES.range:
+    case ALARM_ADVANCED_SEARCH_CHIP_TYPES.range:
       if (range === QUICK_RANGES.custom.value) {
-        return ADVANCED_SEARCH_CHIP_TYPES.rangeValue;
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue;
       }
 
       return null;
@@ -200,7 +216,7 @@ export const getAdvancedSearchUnionItem = (union = ADVANCED_SEARCH_UNION_CONDITI
   ...advancedSearchRuleItemToFormItem(),
   union,
 
-  filled: [ADVANCED_SEARCH_CHIP_TYPES.union],
+  filled: [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union],
 });
 
 /**

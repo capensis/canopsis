@@ -6,7 +6,7 @@
     wrap
     @click="clickLayout"
   >
-    <advanced-search-rule
+    <alarm-advanced-search-rule
       v-for="(rule, index) in rules"
       v-field="rules[index]"
       :key="rule.key"
@@ -32,10 +32,10 @@ import { advancedSearchRuleItemToFormItem } from '@/helpers/search/new-advanced-
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
-import AdvancedSearchRule from './advanced-search-rule.vue';
+import AlarmAdvancedSearchRule from './alarm-advanced-search-rule.vue';
 
 export default {
-  components: { AdvancedSearchRule },
+  components: { AlarmAdvancedSearchRule },
   model: {
     prop: 'rules',
     event: 'input',
@@ -114,12 +114,28 @@ export default {
     const update = (value, index) => updateItemInArray(index, value);
 
     /**
-     * Removes an item from the array at the specified index.
+     * Removes a rule from the rules array at the specified index.
+     * If there is only one rule in the array, it replaces by new rule.
      *
-     * @param {number} index - The index of the item to remove.
+     * @param {number} index - The index of the rule to be removed or updated.
      */
-    const remove = index => removeItemFromArray(index);
+    const remove = (index) => {
+      if (props.rules.length === 1) {
+        updateItemInArray(index, advancedSearchRuleItemToFormItem());
 
+        return;
+      }
+
+      removeItemFromArray(index);
+    };
+
+    /**
+     * Advances to the next rule in the rules array. If the current index is the last one,
+     * it adds a new rule. Optionally focuses on the last input if `withoutActive` is false.
+     *
+     * @param {boolean} withoutActive - Determines whether to focus on the last input after adding a new rule.
+     * @param {number} index - The current index in the rules array.
+     */
     const next = (withoutActive, index) => {
       if (index !== props.rules.length - 1) {
         return;

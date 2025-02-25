@@ -1,14 +1,25 @@
+import { keyBy } from 'lodash';
 import {
   ref,
   computed,
+  inject,
   unref,
+  watch,
   onBeforeMount,
   onMounted,
+  onBeforeUnmount,
 } from 'vue';
+import { Validator } from 'vee-validate';
 
 import {
-  ADVANCED_SEARCH_VALIDATION_RULE_NAME,
+  ADVANCED_SEARCH_UNION_CONDITIONS,
+  ALARM_ADVANCED_SEARCH_CHIP_TYPES,
+  ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
   ALARM_ADVANCED_SEARCH_GROUPS,
+  ALARM_ADVANCED_SEARCH_ENTITY_OPERATORS,
+  ALARM_ADVANCED_SEARCH_GROUPS_GROUPED,
+  ALARM_ADVANCED_SEARCH_ALARM_ENTITY_FIELDS,
+  ALARM_ADVANCED_SEARCH_ALARM_PBEHAVIOR_INFO_FIELDS,
   ALARM_EVENT_INITIATORS,
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
@@ -17,8 +28,10 @@ import {
   BASIC_ENTITY_TYPES,
   ENTITY_TYPES,
   MAX_LIMIT,
+  PATTERN_ARRAY_OPERATORS,
   PATTERN_DURATION_OPERATORS,
   PATTERN_EXISTS_OPERATORS,
+  PATTERN_FIELD_TYPES,
   PATTERN_NUMBER_OPERATORS,
   PATTERN_OPERATORS,
   PATTERN_STRING_OPERATORS,
@@ -38,82 +51,13 @@ import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { useComponentInstance } from '@/hooks/vue';
 
-export const ENTITY_OPERATORS = [
-  ...PATTERN_STRING_OPERATORS,
-
-  PATTERN_OPERATORS.isOneOf,
-  PATTERN_OPERATORS.isNotOneOf,
-];
-
-export const ADVANCED_SEARCH_GROUPED_ALARM_FIELDS = {
-  [ALARM_ADVANCED_SEARCH_GROUPS.basic]: [ // TODO: rename to ADVANCED_SEARCH_ALARM_GROUPS
-    ALARM_FIELDS.displayName,
-    ALARM_FIELDS.connector,
-    ALARM_FIELDS.connectorName,
-    ALARM_FIELDS.component,
-    ALARM_FIELDS.resource,
-    ALARM_FIELDS.state,
-    ALARM_FIELDS.status,
-    ALARM_FIELDS.tags,
-    ALARM_FIELDS.infos,
-    ALARM_FIELDS.meta,
-    ALARM_FIELDS.changeState,
-    ALARM_FIELDS.totalStateChanges,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.messages]: [
-    ALARM_FIELDS.output,
-    ALARM_FIELDS.longOutput,
-    ALARM_FIELDS.initialOutput,
-    ALARM_FIELDS.initialLongOutput,
-    ALARM_FIELDS.lastComment,
-    ALARM_FIELDS.lastCommentInitiator,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: [
-    ALARM_FIELDS.ticketMessage,
-    ALARM_FIELDS.ticketInitiator,
-    ALARM_FIELDS.ticketValue,
-    ALARM_FIELDS.ticket,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.dates]: [
-    ALARM_FIELDS.creationDate,
-    ALARM_FIELDS.lastUpdateDate,
-    ALARM_FIELDS.lastEventDate,
-    ALARM_FIELDS.ackAt,
-    ALARM_FIELDS.resolved,
-    ALARM_FIELDS.activationDate,
-    ALARM_FIELDS.duration,
-  ],
-  [ALARM_ADVANCED_SEARCH_GROUPS.actions]: [
-    ALARM_FIELDS.ack,
-    ALARM_FIELDS.ackBy,
-    ALARM_FIELDS.ackMessage,
-    ALARM_FIELDS.ackInitiator,
-    ALARM_FIELDS.canceled,
-    ALARM_FIELDS.canceledInitiator,
-    ALARM_FIELDS.activated,
-    ALARM_FIELDS.snooze,
-  ],
-};
-
-export const ADVANCED_SEARCH_ALARM_ENTITY_FIELDS = [
-  ALARM_FIELDS.entityId,
-  ALARM_FIELDS.entityName,
-  ALARM_FIELDS.entityCategoryName,
-  ALARM_FIELDS.entityType,
-  ALARM_FIELDS.entityComponent,
-  ALARM_FIELDS.entityConnector,
-  ALARM_FIELDS.entityImpactLevel,
-  ALARM_FIELDS.entityInfos,
-  ALARM_FIELDS.entityComponentInfos,
-];
-
-export const ADVANCED_SEARCH_ALARM_PBEHAVIOR_INFO_FIELDS = [
-  ALARM_FIELDS.pbehaviorInfoName,
-  ALARM_FIELDS.pbehaviorInfoReason,
-  ALARM_FIELDS.pbehaviorInfoType,
-  ALARM_FIELDS.pbehaviorInfoCanonicalType,
-];
-
+/**
+ * Hook to manage fetching and processing entity information keys for advanced search.
+ *
+ * @returns {Object} An object containing:
+ * @property {boolean} pending - A reactive boolean indicating the fetch operation's pending state.
+ * @property {Array} items - A computed array of entity information keys formatted for search configurations.
+ */
 export const useEntityInfosKeys = () => {
   const { t } = useI18n();
   const { fetchEntityInfosKeysWithoutStore } = useService();
@@ -152,11 +96,21 @@ export const useEntityInfosKeys = () => {
   };
 };
 
+/**
+ * Hook to retrieve entity options for advanced search configurations.
+ *
+ * @returns {Object} An object containing the `getEntityOptions` function.
+ * @property {Function} getEntityOptions - Function to get entity options.
+ * @property {Array} getEntityOptions.operators - Array of operators applicable to the entity.
+ * @property {Function} getEntityOptions.fetchValues - Function to fetch entity values with parameters.
+ * @property {string} getEntityOptions.itemText - The key used to identify the display text in fetched data.
+ * @property {string} getEntityOptions.itemValue - The key used to identify the value in fetched data.
+ */
 export const useGetEntityOptions = () => {
   const { fetchContextEntitiesListWithoutStore } = useEntity();
 
   const getEntityOptions = (type = Object.values(BASIC_ENTITY_TYPES)) => ({
-    operators: ENTITY_OPERATORS,
+    operators: ALARM_ADVANCED_SEARCH_ENTITY_OPERATORS,
     fetchValues: ({ params }) => fetchContextEntitiesListWithoutStore({
       params: { ...params, type },
     }),
@@ -169,6 +123,19 @@ export const useGetEntityOptions = () => {
   };
 };
 
+/**
+ * Hook to manage advanced search attributes for alarms.
+ *
+ * @param {Object} options - Options for configuring the advanced search attributes.
+ * @param {Array} options.infosItems - An array of information items used in the search.
+ * @returns {Object} An object containing the computed `attributesMap`.
+ * @property {Object} attributesMap - A map of attribute configurations for alarms.
+ * @property {Function} attributesMap[].fetchValues - Function to fetch values for the attribute.
+ * @property {Array} attributesMap[].operators - Array of operators applicable to the attribute.
+ * @property {string} attributesMap[].itemValue - The key used to identify the value in fetched data.
+ * @property {string} attributesMap[].itemText - The key used to identify the display text in fetched data.
+ * @property {Array} [attributesMap[].values] - Predefined values for the attribute, if applicable.
+ */
 export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
   const { t } = useI18n();
   const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
@@ -355,6 +322,19 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
   };
 };
 
+/**
+ * Hook to manage advanced search attributes for entities.
+ *
+ * @param {Object} options - Options for configuring the advanced search attributes.
+ * @param {Array} options.infosItems - An array of information items used in the search.
+ * @returns {Object} An object containing the computed `attributesMap`.
+ * @property {Object} attributesMap - A map of attribute configurations for entities.
+ * @property {Function} attributesMap[].fetchValues - Function to fetch values for the attribute.
+ * @property {Array} attributesMap[].operators - Array of operators applicable to the attribute.
+ * @property {string} attributesMap[].itemValue - The key used to identify the value in fetched data.
+ * @property {string} attributesMap[].itemText - The key used to identify the display text in fetched data.
+ * @property {Array} [attributesMap[].values] - Predefined values for the attribute, if applicable.
+ */
 export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
   const { t } = useI18n();
   const { fetchCategoriesListWithoutStore } = useEntityCategory();
@@ -363,7 +343,7 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
   const attributesMap = computed(() => ({
     [ALARM_FIELDS.entityId]: getEntityOptions(),
     [ALARM_FIELDS.entityName]: {
-      operators: ENTITY_OPERATORS,
+      operators: ALARM_ADVANCED_SEARCH_ENTITY_OPERATORS,
     },
     [ALARM_FIELDS.entityCategoryName]: {
       operators: [
@@ -401,6 +381,16 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
   };
 };
 
+/**
+ * Hook to manage advanced search attributes for pbehaviors.
+ *
+ * @returns {Object} An object containing the computed `attributesMap`.
+ * @property {Object} attributesMap - A map of attribute configurations for pbehaviors.
+ * @property {Function} attributesMap[].fetchValues - Function to fetch values for the attribute.
+ * @property {Array} attributesMap[].operators - Array of operators applicable to the attribute.
+ * @property {string} attributesMap[].text - Display text for the attribute.
+ * @property {Array} [attributesMap[].values] - Predefined values for the attribute, if applicable.
+ */
 export const useAdvancedSearchPbehaviorAttributes = () => {
   const { t } = useI18n();
   const { fetchPbehaviorsListWithoutStore } = usePbehavior();
@@ -445,6 +435,15 @@ export const useAdvancedSearchPbehaviorAttributes = () => {
   };
 };
 
+/**
+ * Hook to manage advanced search attributes for alarms, entities, and pbehaviors.
+ *
+ * @param {Object} options - Options for configuring the advanced search attributes.
+ * @param {boolean} options.allowAlarmFields - Flag to allow alarm fields in the search.
+ * @param {boolean} options.allowEntityFields - Flag to allow entity fields in the search.
+ * @param {boolean} options.allowPbehaviorFields - Flag to allow pbehavior fields in the search.
+ * @returns {Object} An object containing the pending state and the computed attributes.
+ */
 export const useAdvancedSearchAttributes = ({
   allowAlarmFields,
   allowEntityFields,
@@ -480,7 +479,7 @@ export const useAdvancedSearchAttributes = ({
     const unwrappedAllowEntityFields = unref(allowEntityFields);
     const unwrappedAllowPbehaviorFields = unref(allowPbehaviorFields);
 
-    const result = Object.entries(ADVANCED_SEARCH_GROUPED_ALARM_FIELDS).reduce((acc, [group, items]) => {
+    const result = Object.entries(ALARM_ADVANCED_SEARCH_GROUPS_GROUPED).reduce((acc, [group, items]) => {
       const header = t(`advancedSearch.groups.${group}`);
 
       acc.push(
@@ -496,10 +495,14 @@ export const useAdvancedSearchAttributes = ({
 
     result.push(
       { header: entityHeader, value: entityHeader },
-      ...ADVANCED_SEARCH_ALARM_ENTITY_FIELDS.map(field => prepareItem(field, unwrappedAllowEntityFields)),
+      ...ALARM_ADVANCED_SEARCH_ALARM_ENTITY_FIELDS.map(field => (
+        prepareItem(field, unwrappedAllowEntityFields)
+      )),
 
       { header: pbehaviorHeader, value: pbehaviorHeader },
-      ...ADVANCED_SEARCH_ALARM_PBEHAVIOR_INFO_FIELDS.map(field => prepareItem(field, unwrappedAllowPbehaviorFields)),
+      ...ALARM_ADVANCED_SEARCH_ALARM_PBEHAVIOR_INFO_FIELDS.map(field => (
+        prepareItem(field, unwrappedAllowPbehaviorFields)
+      )),
     );
 
     return result;
@@ -511,15 +514,22 @@ export const useAdvancedSearchAttributes = ({
   };
 };
 
+/**
+ * Hook to extend the validator with a custom rule for advanced search validation.
+ *
+ * @param {Object} options - Options for the validator.
+ * @param {Array} options.rules - The array of rules to be validated.
+ * @returns {Object} An object containing the `extendValidatorRule` function.
+ */
 export const useAdvancedSearchValidator = ({ rules }) => {
   const instance = useComponentInstance();
 
   /**
-   * Extends the validator with a custom rule named ADVANCED_SEARCH_VALIDATION_RULE_NAME.
+   * Extends the validator with a custom rule named ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME.
    * This rule is used to validate advanced search criteria based on specific conditions.
    *
    * @description
-   * The ADVANCED_SEARCH_VALIDATION_RULE_NAME checks the following conditions:
+   * The ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME checks the following conditions:
    * - If the rule has an attribute and is not finished, it returns false.
    * - If the rule does not have an attribute but has a union, it checks the last two rules:
    * - If the last rule does not have an attribute and the second-to-last rule has the same key as the current rule,
@@ -527,7 +537,7 @@ export const useAdvancedSearchValidator = ({ rules }) => {
    * - Otherwise, it returns true.
    */
   const extendValidatorRule = () => (
-    instance.$validator.extend(ADVANCED_SEARCH_VALIDATION_RULE_NAME, ({ rule, finished }) => {
+    instance.$validator.extend(ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME, ({ rule, finished }) => {
       const unwrappedRules = unref(rules);
 
       if (rule.attribute && !finished) {
@@ -549,5 +559,169 @@ export const useAdvancedSearchValidator = ({ rules }) => {
 
   return {
     extendValidatorRule,
+  };
+};
+
+/**
+ * A Vue composition function that manages active items for an advanced search rule.
+ * It computes various properties based on the rule's field type, operators, interval ranges,
+ * input types, and union conditions.
+ *
+ * @param {Object} options - Options for configuring the active items.
+ * @param {Object} [options.rule = {}] - The rule object to evaluate.
+ * @param {Array} [options.attributes = []] - List of available attributes for the rule.
+ * @param {Array} [options.intervalRanges = []] - List of interval ranges for range-based rules.
+ * @param {Array} [options.inputTypes = []] - List of input types for the rule.
+ * @param {boolean} [options.allowOr = false] - Determines if the 'OR' union condition is allowed.
+ * @returns {Object} - An object containing the current attribute and items by type.
+ */
+export const useAdvancedSearchRuleActiveItems = ({
+  rule = {},
+  attributes = [],
+  intervalRanges = [],
+  inputTypes = [],
+  allowOr = false,
+} = {}) => {
+  const { t } = useI18n();
+
+  const attributesMap = computed(() => keyBy(unref(attributes), 'value'));
+  const currentAttribute = computed(() => attributesMap.value[unref(rule).attribute]);
+
+  /**
+   * FIELD TYPES BOOLEANS
+   */
+  const isStringFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.string);
+  const isNumberFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.number);
+  const isBooleanFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.boolean);
+  const isArrayFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.stringArray);
+
+  /**
+   * OPERATORS ITEMS
+   */
+  const operators = computed(() => ({
+    [isStringFieldType.value]: [
+      ...PATTERN_STRING_OPERATORS,
+
+      PATTERN_OPERATORS.isOneOf,
+      PATTERN_OPERATORS.isNotOneOf,
+    ],
+    [isNumberFieldType.value]: PATTERN_NUMBER_OPERATORS,
+    [isArrayFieldType.value]: PATTERN_ARRAY_OPERATORS,
+  }.true ?? []));
+
+  const preparedOperators = computed(() => (
+    (currentAttribute.value?.operators ?? operators.value ?? []).map(operator => ({
+      text: t(`common.operators.${operator}`),
+      value: operator,
+    }))
+  ));
+
+  /**
+   * INTERVAL ITEMS
+   */
+  const preparedIntervalRanges = computed(() => (
+    unref(intervalRanges).map(range => ({
+      ...range,
+      text: t(`quickRanges.types.${range.value}`),
+    }))
+  ));
+
+  /**
+   * INPUT TYPES ITEMS
+   */
+  const preparedInputTypes = computed(() => (
+    unref(inputTypes).map(type => ({
+      ...type,
+      text: t(`common.mixedField.types.${type.value}`),
+    }))
+  ));
+
+  /**
+   * UNION ITEMS
+   */
+  const preparedUnionItems = computed(() => (
+    Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).map(value => ({
+      value,
+      text: value,
+      disabled: value === ADVANCED_SEARCH_UNION_CONDITIONS.or && !unref(allowOr),
+    }))
+  ));
+
+  /**
+   * BOOLEAN ITEMS
+   */
+  const preparedBooleanItems = computed(() => [
+    { text: t('common.true'), value: true }, { text: t('common.false'), value: false },
+  ]);
+
+  /**
+   * VALUE ITEMS
+   */
+  const preparedValueItems = computed(() => ({
+    [isBooleanFieldType.value]: preparedBooleanItems.value,
+  }).true ?? []);
+
+  /**
+   * ITEMS BY TYPE
+   */
+  const itemsByType = computed(() => ({
+    [ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute]: unref(attributes),
+    [ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator]: preparedOperators.value,
+    [ALARM_ADVANCED_SEARCH_CHIP_TYPES.range]: preparedIntervalRanges.value,
+    [ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType]: preparedInputTypes.value,
+    [ALARM_ADVANCED_SEARCH_CHIP_TYPES.value]: preparedValueItems.value,
+    [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union]: preparedUnionItems.value,
+  }));
+
+  return {
+    currentAttribute,
+    itemsByType,
+  };
+};
+
+/**
+ * A Vue composition function that manages the attachment and detachment of validation rules
+ * for an advanced search rule. It uses the injected `$validator` from `vee-validate` to
+ * dynamically attach or detach validation rules based on the `disabled` state.
+ *
+ * @param {Object} options - Options for configuring the validator attachment.
+ * @param {Object} [options.rule = {}] - The rule object to be validated.
+ * @param {boolean} [options.disabled = false] - Determines if the validation should be disabled.
+ * @param {boolean} [options.isFinishedRule = false] - Indicates if the rule is finished, affecting validation logic.
+ * @returns {Object} - An object containing the `validator` instance.
+ */
+export const useAttachAdvancedSearchRuleValidator = ({
+  rule = {},
+  disabled = false,
+  isFinishedRule = false,
+} = {}) => {
+  const validator = inject('$validator', new Validator());
+
+  const attachValidationRule = () => {
+    const unwrapperRule = unref(rule);
+
+    validator.attach({
+      name: unwrapperRule.key,
+      rules: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
+      getter: () => ({ rule: unwrapperRule, finished: isFinishedRule.value }),
+    });
+  };
+
+  const detachValidationRule = () => validator.detach(unref(rule).key);
+
+  watch(() => unref(disabled), (newDisabled) => {
+    if (newDisabled) {
+      detachValidationRule();
+
+      return;
+    }
+
+    attachValidationRule();
+  }, { immediate: true });
+
+  onBeforeUnmount(detachValidationRule);
+
+  return {
+    validator,
   };
 };

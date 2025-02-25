@@ -2,7 +2,7 @@
   <v-chip
     :close="closable"
     :color="color"
-    class="c-new-advanced-search__array-chip"
+    class="c-alarm-advanced-search__array-chip"
     @click.prevent=""
     @click:close="close"
   >

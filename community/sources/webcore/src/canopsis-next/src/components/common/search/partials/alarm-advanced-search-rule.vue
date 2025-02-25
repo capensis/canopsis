@@ -1,7 +1,7 @@
 <template>
   <v-layout
-    :class="{ 'c-new-advanced-search__rule--union': union }"
-    class="c-new-advanced-search__rule"
+    :class="{ 'c-alarm-advanced-search__rule--union': union }"
+    class="c-alarm-advanced-search__rule"
   >
     <component
       v-for="chip in chips"
@@ -14,50 +14,33 @@
 </template>
 
 <script>
-import { keyBy, uniq, pick } from 'lodash';
+import { uniq, pick } from 'lodash';
 import {
   computed,
   ref,
   watch,
   nextTick,
-  inject,
-  onBeforeUnmount,
+  toRef,
 } from 'vue';
-import { Validator } from 'vee-validate';
 
-import {
-  ADVANCED_SEARCH_UNION_CONDITIONS,
-  ADVANCED_SEARCH_CHIP_TYPES,
-  PATTERN_ARRAY_OPERATORS,
-  PATTERN_FIELD_TYPES,
-  PATTERN_NUMBER_OPERATORS,
-  PATTERN_OPERATORS,
-  PATTERN_QUICK_RANGES,
-  PATTERN_STRING_OPERATORS,
-  QUICK_RANGES,
-  ADVANCED_SEARCH_VALIDATION_RULE_NAME,
-} from '@/constants';
+import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES, QUICK_RANGES } from '@/constants';
 
 import { isArrayCondition } from '@/helpers/entities/pattern/form';
-import { advancedSearchRuleItemToFormItem, getNextForFormItemType } from '@/helpers/search/new-advanced-search';
+import {
+  advancedSearchRuleItemToFormItem,
+  getInitialFormItemType,
+  getNextForFormItemType,
+} from '@/helpers/search/new-advanced-search';
 
 import { useModelField } from '@/hooks/form/model-field';
-import { useI18n } from '@/hooks/i18n';
 
-import AdvancedSearchChip from './advanced-search-chip.vue';
-import AdvancedSearchRangeChip from './advanced-search-range-chip.vue';
+import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/alarm-advanced-search';
 
-// TODO: move to helpers
-const getInitialInputTypeForRule = (rule = {}, union = false) => {
-  if (rule.attribute || rule.union) {
-    return null;
-  }
-
-  return union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute;
-};
+import AlarmAdvancedSearchChip from './alarm-advanced-search-chip.vue';
+import AlarmAdvancedSearchRangeChip from './alarm-advanced-search-range-chip.vue';
 
 export default {
-  components: { AdvancedSearchChip, AdvancedSearchRangeChip },
+  components: { AlarmAdvancedSearchChip, AlarmAdvancedSearchRangeChip },
   model: {
     prop: 'rule',
     event: 'input',
@@ -106,79 +89,26 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const validator = inject('$validator', new Validator());
-
-    const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const inputType = ref(getInitialInputTypeForRule(props.rule, props.union));
+    const inputType = ref(getInitialFormItemType(props.rule, props.union));
     const activeType = ref(null);
 
-    const attributesMap = computed(() => keyBy(props.attributes, 'value'));
-    const currentAttribute = computed(() => attributesMap.value[props.rule.attribute]);
     const isFinishedRule = computed(() => !inputType.value);
 
-    const isStringFieldType = computed(() => props.rule.fieldType === PATTERN_FIELD_TYPES.string);
-    const isNumberFieldType = computed(() => props.rule.fieldType === PATTERN_FIELD_TYPES.number);
-    const isBooleanFieldType = computed(() => props.rule.fieldType === PATTERN_FIELD_TYPES.boolean);
-    const isArrayFieldType = computed(() => props.rule.fieldType === PATTERN_FIELD_TYPES.stringArray);
+    const { currentAttribute, itemsByType } = useAdvancedSearchRuleActiveItems({
+      rule: toRef(props, 'rule'),
+      attributes: toRef(props, 'attributes'),
+      intervalRanges: toRef(props, 'intervalRanges'),
+      inputTypes: toRef(props, 'inputTypes'),
+      allowOr: toRef(props, 'allowOr'),
+    });
 
-    const operators = computed(() => ({
-      [isStringFieldType.value]: [
-        ...PATTERN_STRING_OPERATORS,
-
-        PATTERN_OPERATORS.isOneOf,
-        PATTERN_OPERATORS.isNotOneOf,
-      ],
-      [isNumberFieldType.value]: PATTERN_NUMBER_OPERATORS,
-      [isArrayFieldType.value]: PATTERN_ARRAY_OPERATORS,
-    }.true ?? []));
-
-    const preparedOperators = computed(() => (
-      (currentAttribute.value?.operators ?? operators.value ?? []).map(operator => ({
-        text: t(`common.operators.${operator}`),
-        value: operator,
-      }))
-    ));
-
-    const preparedIntervalRanges = computed(() => (
-      props.intervalRanges.map(range => ({
-        ...range,
-        text: t(`quickRanges.types.${range.value}`),
-      }))
-    ));
-
-    const preparedInputTypes = computed(() => (
-      props.inputTypes.map(type => ({
-        ...type,
-        text: t(`common.mixedField.types.${type.value}`),
-      }))
-    ));
-
-    const preparedUnionItems = computed(() => (
-      Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).map(value => ({
-        value,
-        text: value,
-        disabled: value === ADVANCED_SEARCH_UNION_CONDITIONS.or && !props.allowOr,
-      }))
-    ));
-
-    const preparedBooleanItems = computed(() => [
-      { text: t('common.true'), value: true }, { text: t('common.false'), value: false },
-    ]);
-
-    const preparedValueItems = computed(() => ({
-      [isBooleanFieldType.value]: preparedBooleanItems.value,
-    }).true ?? []);
-
-    const itemsByType = computed(() => ({
-      [ADVANCED_SEARCH_CHIP_TYPES.attribute]: props.attributes,
-      [ADVANCED_SEARCH_CHIP_TYPES.operator]: preparedOperators.value,
-      [ADVANCED_SEARCH_CHIP_TYPES.range]: preparedIntervalRanges.value,
-      [ADVANCED_SEARCH_CHIP_TYPES.fieldType]: preparedInputTypes.value,
-      [ADVANCED_SEARCH_CHIP_TYPES.value]: preparedValueItems.value,
-      [ADVANCED_SEARCH_CHIP_TYPES.union]: preparedUnionItems.value,
-    }));
+    const { validator } = useAttachAdvancedSearchRuleValidator({
+      isFinishedRule,
+      rule: toRef(props, 'rule'),
+      disabled: toRef(props, 'disabled'),
+    });
 
     /**
      * Navigates to the next form item type, optionally skipping the current type.
@@ -211,7 +141,7 @@ export default {
      *
      * @param {*} value - The value to set for the specified type. This can vary depending on the type.
      * @param {string} type - The type of the chip item being updated. It should be one of the predefined
-     *                        types in `ADVANCED_SEARCH_CHIP_TYPES`.
+     *                        types in `ALARM_ADVANCED_SEARCH_CHIP_TYPES`.
      */
     const updateChipItem = (value, type) => {
       const oldFilled = props.rule.filled ?? [];
@@ -219,12 +149,12 @@ export default {
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
       const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
 
-      if (type === ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
-        filled.push(ADVANCED_SEARCH_CHIP_TYPES.value);
+      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
+        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
       }
 
-      if (type === ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
-        filled.push(ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
+        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
       }
 
       updateModel({
@@ -234,7 +164,7 @@ export default {
         filled: uniq(filled),
       });
 
-      if ([ADVANCED_SEARCH_CHIP_TYPES.rangeValue, ADVANCED_SEARCH_CHIP_TYPES.value].includes(type)) {
+      if ([ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue, ALARM_ADVANCED_SEARCH_CHIP_TYPES.value].includes(type)) {
         return;
       }
 
@@ -255,14 +185,14 @@ export default {
       const preparedRule = { ...props.rule };
       let skipType = false;
 
-      if (inputType.value === ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
-        filled.push(ADVANCED_SEARCH_CHIP_TYPES.value);
-        preparedRule[ADVANCED_SEARCH_CHIP_TYPES.value] = [];
+      if (inputType.value === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
+        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
+        preparedRule[ALARM_ADVANCED_SEARCH_CHIP_TYPES.value] = [];
         skipType = true;
       }
 
-      if (inputType.value === ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
-        filled.push(ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+      if (inputType.value === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
+        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
         skipType = true;
       }
 
@@ -315,6 +245,17 @@ export default {
      */
     const isActiveType = type => props.active && activeType.value === type;
 
+    /**
+     * Generates the attributes and event handlers for a chip component based on the provided parameters.
+     *
+     * @param {Object} options - The options for configuring the chip attributes.
+     * @param {boolean} options.input - Determines if the chip should always be active.
+     * @param {boolean} options.first - Indicates if this is the first chip, affecting text allowance.
+     * @param {boolean} options.closable - Specifies if the chip can be closed.
+     * @param {string} [options.type = inputType.value] - The type of the chip, defaulting to the current input type.
+     * @returns {Object} - An object containing the key, component type, binding attributes,
+     *                     and event handlers for the chip.
+     */
     const getChipAttributes = ({
       input,
       first,
@@ -327,7 +268,7 @@ export default {
       let itemValue;
       let fetchItems;
 
-      if (type === ADVANCED_SEARCH_CHIP_TYPES.value) {
+      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.value) {
         multiple = isArrayCondition(props.rule.operator);
         itemText = currentAttribute.value?.itemText;
         itemValue = currentAttribute.value?.itemValue;
@@ -365,9 +306,9 @@ export default {
 
       return {
         key,
-        component: type === ADVANCED_SEARCH_CHIP_TYPES.rangeValue
-          ? 'advanced-search-range-chip'
-          : 'advanced-search-chip',
+        component: type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue
+          ? 'alarm-advanced-search-range-chip'
+          : 'alarm-advanced-search-chip',
         bind,
         on,
       };
@@ -387,29 +328,9 @@ export default {
       return result;
     });
 
-    const attachValidationRule = () => validator.attach({
-      name: props.rule.key,
-      rules: ADVANCED_SEARCH_VALIDATION_RULE_NAME,
-      getter: () => ({ rule: props.rule, finished: isFinishedRule.value }),
-    });
-
-    const detachValidationRule = () => validator.detach(props.rule.key);
-
     watch(() => props.union, union => (
-      inputType.value = union ? ADVANCED_SEARCH_CHIP_TYPES.union : ADVANCED_SEARCH_CHIP_TYPES.attribute
+      inputType.value = union ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.union : ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute
     ));
-
-    watch(() => props.disabled, (disabled) => {
-      if (disabled) {
-        detachValidationRule();
-
-        return;
-      }
-
-      attachValidationRule();
-    }, { immediate: true });
-
-    onBeforeUnmount(detachValidationRule);
 
     return {
       chips,
@@ -421,7 +342,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-new-advanced-search__rule {
+.c-alarm-advanced-search__rule {
   &:hover ::v-deep {
     .theme--light.v-chip:before {
       opacity: 0.04;

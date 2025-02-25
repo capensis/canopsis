@@ -8,7 +8,7 @@
       align-end
     >
       <v-flex>
-        <c-new-advanced-search-field
+        <c-alarm-advanced-search-field
           :searches="newSearches"
           @submit="updateNewSearch"
         />
