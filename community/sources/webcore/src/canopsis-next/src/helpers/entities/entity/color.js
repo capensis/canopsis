@@ -13,7 +13,7 @@ import { getAlarmImpactStateColor, getAlarmStateColor } from '../alarm/color';
  * @returns {string|*}
  */
 export const getEntityColor = (entity = {}, colorIndicator = COLOR_INDICATOR_TYPES.state) => {
-  if (entity.is_grey || entity.pbehavior_info?.canonical_type === PBEHAVIOR_CANONICAL_TYPES.pause) {
+  if (entity.is_grey || entity.pbehavior_info?.canonical_type !== PBEHAVIOR_CANONICAL_TYPES.active) {
     return CSS_COLORS_VARS.state.pause;
   }
 
