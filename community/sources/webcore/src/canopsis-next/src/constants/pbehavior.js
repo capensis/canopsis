@@ -54,4 +54,5 @@ export const PBEHAVIOR_ORIGINS = {
 
 export const PBEHAVIOR_CANONICAL_TYPES = {
   pause: 'pause',
+  active: 'active',
 };
