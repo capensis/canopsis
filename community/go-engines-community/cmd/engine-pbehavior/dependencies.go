@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -53,7 +54,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
 	pbhStore := pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder())
+	authorProvider := author.NewProvider(config.NewApiConfigProvider(cfg, logger))
+	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
