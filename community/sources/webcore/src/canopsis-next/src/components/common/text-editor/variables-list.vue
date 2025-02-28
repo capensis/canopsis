@@ -67,6 +67,7 @@
         :z-index="zIndex + 1"
         :show-value="showValue"
         :children-key="childrenKey"
+        :return-object="returnObject"
         @input="selectSubVariable"
       />
     </v-menu>
@@ -84,7 +85,7 @@ export default {
   },
   props: {
     value: {
-      type: Array,
+      type: [Array, String, Number],
       default: () => [],
     },
     search: {
@@ -142,6 +143,14 @@ export default {
     const parentItem = ref(undefined);
     const subItemsPosition = ref({ x: 0, y: 0 });
 
+    /**
+     * Prepares an item for use based on the component's configuration.
+     *
+     * @param {Object|string} item - The item to process, which can be an object or a string.
+     * @returns {Object|string} The processed item. If `props.returnObject` is true, it returns the item itself;
+     *                          otherwise, it returns the property specified by `props.itemValue` from the object,
+     *                          or the item itself if it's not an object.
+     */
     const prepareItem = (item) => {
       if (props.returnObject) {
         return item;
@@ -150,6 +159,13 @@ export default {
       return isObject(item) ? item?.[props.itemValue] : item;
     };
 
+    /**
+     * Retrieves the value based on the component's configuration.
+     *
+     * @param {Object|string} value - The value to process, which can be an object or a string.
+     * @returns {Object|string} The processed value. If `props.returnObject` is true, it returns the property
+     *                          specified by `props.itemValue` from the object; otherwise, it returns the value itself.
+     */
     const getValue = value => (props.returnObject ? value?.[props.itemValue] : value);
 
     /**
@@ -158,7 +174,7 @@ export default {
      * @param {Object} [item={}] - The item to check for activity status. Defaults to an empty object.
      * @returns {boolean} - Returns `true` if the item is active, otherwise `false`.
      */
-    const isActiveItem = (item = {}) => props.value.find((selectedItem) => {
+    const isActiveItem = (item = {}) => props.value === item[props.itemValue] || props.value.find?.((selectedItem) => {
       const selectedValue = String(getValue(selectedItem) ?? '');
       const value = String(getValue(item) ?? '');
 
@@ -197,13 +213,19 @@ export default {
      *                        properties that can be identified by the `props.itemValue`.
      */
     const selectSubVariable = (item) => {
+      const parentValue = parentItem.value[props.itemValue];
+      const value = getValue(item);
+      const newValue = String(value).startsWith(parentValue)
+        ? value
+        : `${parentValue}.${value}`;
+
       if (props.returnObject) {
         selectVariable({
           ...item,
-          [props.itemValue]: `${parentItem.value[props.itemValue]}.${item[props.itemValue]}`,
+          [props.itemValue]: newValue,
         });
       } else {
-        selectVariable(`${parentItem.value[props.itemValue]}.${item}`);
+        selectVariable(newValue);
       }
 
       subItemsShown.value = false;

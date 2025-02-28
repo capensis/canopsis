@@ -1,4 +1,3 @@
-import { keyBy } from 'lodash';
 import {
   ref,
   computed,
@@ -38,6 +37,8 @@ import {
   PBEHAVIOR_TYPE_TYPES,
 } from '@/constants';
 
+import { deepKeyBy } from '@/helpers/array';
+
 import { useI18n } from '@/hooks/i18n';
 import { useEntity } from '@/hooks/store/modules/entity';
 import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
@@ -72,27 +73,57 @@ export const useEntityInfosKeys = () => {
     entityInfosKeys.value = infos;
   });
 
-  const getDefaultItemChildren = () => [
-    {
-      value: 'name',
-      text: t('common.name'),
-    }, {
-      value: 'value',
-      text: t('common.value'),
-    },
-  ];
+  /**
+   * Generates default child items for a given chip text prefix.
+   *
+   * @param {string} chipTextPrefix - The prefix to be used for chip text.
+   * @returns {Array<Object>} An array of objects, each containing:
+   *   - {string} value: The value of the item.
+   *   - {string} text: The translated text for the item.
+   *   - {string} chipText: The complete chip text including the prefix.
+   */
+  const getDefaultItemChildren = (chipTextPrefix = '') => ['name', 'value'].map((value) => {
+    const text = t(`common.${value}`);
+    const result = { value, text };
 
-  const items = computed(() => entityInfosKeys.value.map(({ value }) => ({
-    value,
-    text: value,
-    items: getDefaultItemChildren(),
-  })));
+    if (chipTextPrefix) {
+      result.chipText = `${chipTextPrefix}.${text}`;
+    }
+
+    return result;
+  });
+
+  /**
+   * Retrieves items formatted for search configurations, with optional chip text prefix.
+   *
+   * @param {string} chipTextPrefix - The prefix to be used for chip text.
+   * @returns {Array<Object>} An array of objects, each containing:
+   *   - {string} value: The value of the item.
+   *   - {string} chipText: The complete chip text including the prefix.
+   *   - {string} text: The text for the item.
+   *   - {Array<Object>} items: The default child items for the chip text.
+   */
+  const getItems = chipTextPrefix => entityInfosKeys.value.map(({ value }) => {
+    const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
+
+    return {
+      value,
+      chipText,
+      text: value,
+      items: getDefaultItemChildren(chipText),
+    };
+  });
+
+  const alarmItems = computed(() => getItems(t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.infos])));
+  const entityItems = computed(() => getItems(t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.entityInfos])));
 
   onMounted(handler);
 
   return {
     pending,
-    items,
+    alarmItems,
+    entityItems,
+    getItems,
   };
 };
 
@@ -451,10 +482,14 @@ export const useAdvancedSearchAttributes = ({
 }) => {
   const { t, tc } = useI18n();
 
-  const { pending: infosPending, items: infosItems } = useEntityInfosKeys();
+  const {
+    pending: infosPending,
+    alarmItems: alarmInfosItems,
+    entityItems: entityInfosItems,
+  } = useEntityInfosKeys();
 
-  const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({ infosItems });
-  const { attributesMap: entityAttributesMap } = useAdvancedSearchEntityAttributes({ infosItems });
+  const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({ infosItems: alarmInfosItems });
+  const { attributesMap: entityAttributesMap } = useAdvancedSearchEntityAttributes({ infosItems: entityInfosItems });
   const { attributesMap: pbehaviorAttributesMap } = useAdvancedSearchPbehaviorAttributes();
 
   const attributesMap = computed(() => ({
@@ -584,7 +619,7 @@ export const useAdvancedSearchRuleActiveItems = ({
 } = {}) => {
   const { t } = useI18n();
 
-  const attributesMap = computed(() => keyBy(unref(attributes), 'value'));
+  const attributesMap = computed(() => deepKeyBy(unref(attributes), 'value'));
   const currentAttribute = computed(() => attributesMap.value[unref(rule).attribute]);
 
   /**
@@ -674,6 +709,7 @@ export const useAdvancedSearchRuleActiveItems = ({
   }));
 
   return {
+    attributesMap,
     currentAttribute,
     itemsByType,
   };

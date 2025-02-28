@@ -1,7 +1,8 @@
 <template>
   <v-layout
     ref="layoutElement"
-    class="c-advanced-search__groups-wrapper gap-1"
+    :class="{ 'c-alarm-advanced-search__groups-wrapper--disabled': disabled }"
+    class="c-alarm-advanced-search__groups-wrapper gap-1"
     align-center
     wrap
     @click="clickLayout"
@@ -28,7 +29,7 @@
 <script>
 import { ref, provide, nextTick } from 'vue';
 
-import { advancedSearchRuleItemToFormItem } from '@/helpers/search/new-advanced-search';
+import { advancedSearchRuleItemToFormItem } from '@/helpers/search/alarm-advanced-search';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
@@ -172,7 +173,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.c-advanced-search__groups-wrapper > * {
-  flex: 0 1 auto;
+.c-alarm-advanced-search__groups-wrapper {
+  > * {
+    flex: 0 1 auto;
+  }
+
+  &--disabled::v-deep .v-chip {
+    cursor: pointer !important;
+  }
 }
 </style>

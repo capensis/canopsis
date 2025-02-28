@@ -10,7 +10,7 @@
         <v-chip
           :close="closable && !disabled"
           :color="color"
-          class="c-alarm-advanced-search__array-chip"
+          class="c-alarm-advanced-search__chip c-alarm-advanced-search__array-chip"
           v-on="multipleChipListeners"
         >
           <v-chip
@@ -20,7 +20,7 @@
           >
             {{ item[itemText] ?? item[itemValue] }}
           </v-chip>
-          <span>
+          <span v-if="!disabled">
             <input
               v-model="inputValue"
               ref="inputElement"
@@ -52,6 +52,7 @@
           v-if="!active && !alwaysActive"
           :color="color"
           :close="closable && !disabled"
+          class="c-alarm-advanced-search__chip"
           v-on="chipListeners"
         >
           <v-progress-circular
@@ -61,7 +62,10 @@
             width="2"
             indeterminate
           />
-          <span v-else>{{ chipText }}</span>
+          <span v-else>
+            <v-icon v-if="first && hasNoDataFlagInSelectedItems" class="mr-2" small>text_fields</v-icon>
+            {{ chipText }}
+          </span>
         </v-chip>
       </span>
     </template>
@@ -214,14 +218,14 @@ export default {
 
     const {
       selectedItems,
-      items: lazyItems,
-      changeSelectedItems,
       updateSearch,
       valuesPending,
-      wholePending: pending,
       hasMoreItems,
+      items: lazyItems,
+      wholePending: pending,
       fetchItems,
       fetchMoreItems,
+      changeSelectedItems,
     } = useLazySearch({
       value: toRef(props, 'value'),
       addable: props.allowText,
@@ -259,8 +263,10 @@ export default {
     });
 
     const chipText = computed(() => selectedItems.value
-      .map(item => item[props.itemText] ?? item[props.itemValue])
+      .map(item => item.chipText ?? item[props.itemText] ?? item[props.itemValue])
       .join(','));
+
+    const hasNoDataFlagInSelectedItems = computed(() => selectedItems.value.some(({ noData }) => noData));
 
     /**
      * Updates the input value and triggers a search update with the new value.
@@ -379,7 +385,7 @@ export default {
      * @param {KeyboardEvent} event - The keydown event triggered by the user.
      */
     const keydownInput = (event) => {
-      if (event.keyCode === KEY_CODES.enter) {
+      if (event.keyCode === KEY_CODES.enter) { // TODO: change keyCode in whole application
         if (props.allowText) {
           selectItem(inputValue.value ?? '');
 
@@ -413,7 +419,9 @@ export default {
      *
      * @todo Analise the solution with setTimeout in the future
      */
-    const callFocus = () => setTimeout(() => inputElement.value?.focus(), 100);
+    const callFocus = () => setTimeout(() => (
+      (props.active || props.alwaysActive) && inputElement.value?.focus()
+    ), 100);
 
     watch(() => props.active, (active, prevActive) => {
       if (active && prevActive !== active) {
@@ -429,7 +437,7 @@ export default {
         callFocus();
       }
 
-      registerLastInputFocus(focusInput);
+      registerLastInputFocus(callFocus);
     });
 
     return {
@@ -447,6 +455,7 @@ export default {
       pending,
       chipListeners,
       multipleChipListeners,
+      hasNoDataFlagInSelectedItems,
 
       selectItem,
       keydownInput,

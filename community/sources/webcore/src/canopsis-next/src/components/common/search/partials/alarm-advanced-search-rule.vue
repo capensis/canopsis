@@ -30,7 +30,7 @@ import {
   advancedSearchRuleItemToFormItem,
   getInitialFormItemType,
   getNextForFormItemType,
-} from '@/helpers/search/new-advanced-search';
+} from '@/helpers/search/alarm-advanced-search';
 
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -96,7 +96,7 @@ export default {
 
     const isFinishedRule = computed(() => !inputType.value);
 
-    const { currentAttribute, itemsByType } = useAdvancedSearchRuleActiveItems({
+    const { attributesMap, currentAttribute, itemsByType } = useAdvancedSearchRuleActiveItems({
       rule: toRef(props, 'rule'),
       attributes: toRef(props, 'attributes'),
       intervalRanges: toRef(props, 'intervalRanges'),
@@ -124,7 +124,7 @@ export default {
         return;
       }
 
-      if (isFinishedRule.value) {
+      if (isFinishedRule.value && !props.rule.text) {
         emit('next', isArrayCondition(props.rule.operator));
       }
     };
@@ -135,6 +135,14 @@ export default {
      * @param {string} type - The type of input to be set (e.g., 'attribute', 'operator').
      */
     const setInputType = type => inputType.value = type;
+
+    /**
+     * Determines if the given value is considered text based on the current attribute and attributes map.
+     *
+     * @param {string} value - The value to be checked.
+     * @returns {boolean} - Returns true if the value is considered text, false otherwise.
+     */
+    const isText = value => !props.union && !currentAttribute.value && !attributesMap.value[value];
 
     /**
      * Updates the search rule's chip item based on the provided value and type.
@@ -181,6 +189,10 @@ export default {
      * @param {*} value - The value to set for the current active type. This can vary depending on the type.
      */
     const updateItem = (value) => {
+      if (isText(value)) {
+        setInputType(ALARM_ADVANCED_SEARCH_CHIP_TYPES.text);
+      }
+
       const filled = [...(props.rule.filled ?? []), inputType.value];
       const preparedRule = { ...props.rule };
       let skipType = false;
@@ -202,9 +214,7 @@ export default {
         [inputType.value]: value,
       });
 
-      if (!isFinishedRule.value) {
-        nextTick(() => goToNextType(skipType));
-      }
+      nextTick(() => goToNextType(skipType));
     };
 
     /**
@@ -297,7 +307,7 @@ export default {
         bind.color = validator.errors.has(props.rule.key) ? 'error' : undefined;
 
         on = {
-          input: value => updateChipItem(value, type),
+          input: value => updateChipItem(value, isText(value) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
           click: () => clickChip(type),
           focusout: () => focusOutChip(type),
           close: remove,

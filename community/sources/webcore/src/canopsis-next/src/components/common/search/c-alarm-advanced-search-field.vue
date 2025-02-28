@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[themeClasses]"
-    class="c-advanced-search v-input v-input--hide-details theme--light
+    class="c-alarm-advanced-search v-input v-input--hide-details theme--light
     v-text-field v-text-field--single-line v-text-field--is-booted v-select v-autocomplete primary--text"
   >
     <div class="v-input__control">
@@ -29,12 +29,12 @@
       <c-action-btn
         :tooltip="$t('common.search')"
         icon="search"
-        @click="submit()"
+        @click="submit"
       />
       <c-action-btn
         :tooltip="$t('common.clearSearch')"
         icon="clear"
-        @click="clear"
+        @click="reset"
       />
     </v-layout>
   </div>
@@ -53,7 +53,7 @@ import {
   isAlarmPatternField,
   isEntityPatternField,
   isPbehaviorPatternField,
-} from '@/helpers/search/new-advanced-search';
+} from '@/helpers/search/alarm-advanced-search';
 
 import { useComponentInstance } from '@/hooks/vue';
 
@@ -107,11 +107,20 @@ export default {
     });
 
     /**
-     * Clears the current search field errors and resets the rules to their initial state.
+     * Resets the active search configuration to null.
      */
-    const clear = () => {
+    const resetActiveSearch = () => activeSearch = null;
+
+    /**
+     * Reset the current search field errors and resets the rules to their initial state.
+     */
+    const reset = () => {
       instance.errors.clear();
       rules.value = [advancedSearchRuleItemToFormItem()];
+
+      resetActiveSearch();
+
+      emit('reset');
     };
 
     /**
@@ -159,11 +168,6 @@ export default {
      */
     const togglePinForSearch = id => emit('toggle-pin:search', id);
 
-    /**
-     * Resets the active search configuration to null.
-     */
-    const resetActiveSearch = () => activeSearch = null;
-
     useAdvancedSearchValidator({ rules });
 
     return {
@@ -172,7 +176,7 @@ export default {
       allowOr,
 
       select,
-      clear,
+      reset,
       submit,
       removeSearch,
       togglePinForSearch,
@@ -182,54 +186,65 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-.c-advanced-search { // TODO: remove new
-  --v-chip-gap: 4px;
+<style lang="scss">
+:root {
+  --alarm-advanced-search-chip-gap: 4px;
+}
+
+.c-alarm-advanced-search {
   --input-min-inline-size: 20ch;
 
-  &::v-deep {
-    input {
-      flex: 0 1 auto;
-      field-sizing: content;
-      min-inline-size: var(--input-min-inline-size);
+  align-items: center;
+
+  input {
+    flex: 0 1 auto;
+    field-sizing: content;
+    min-inline-size: var(--input-min-inline-size);
+  }
+
+  &__groups-wrapper {
+    &, .layout {
+      padding: var(--alarm-advanced-search-chip-gap) 0;
+      gap: var(--alarm-advanced-search-chip-gap);
+    }
+  }
+
+  .v-input__append-inner {
+    margin: 0;
+    align-self: center;
+  }
+
+  button {
+    margin-left: 4px !important;
+  }
+
+  &__chip.v-chip {
+    padding: 0 8px;
+    margin: 0;
+
+    .v-chip__content {
+      gap: var(--alarm-advanced-search-chip-gap);
     }
 
-    .layout {
-      padding: var(--v-chip-gap) 0;
-      gap: var(--v-chip-gap);
+    &:has(> .v-chip__content > .v-chip) {
+      padding: 0 6px !important;
+
+      button {
+        margin: 0 -2px 0 0 !important;
+      }
     }
 
     .v-chip {
-      padding: 0 8px;
+      height: 24px;
       margin: 0;
 
-      &:has(> .v-chip__content > .v-chip) {
-        padding: 0 6px !important;
-
-        button {
-          margin: 0 -2px 0 0 !important;
-        }
+      &.theme--light {
+        background: var(--v-application-background-base, #FFFFFF);
       }
 
-      &__content {
-        gap: var(--v-chip-gap);
+      &.theme--dark {
+        background: var(--v-application-background-base, #121212);
       }
-
-      .v-chip {
-        height: 24px;
-
-        &.theme--light {
-          background: var(--v-application-background-base, #FFFFFF);
-        }
-
-        &.theme--dark {
-          background: var(--v-application-background-base, #121212);
-        }
-      }
-    }
-
-    button {
-      margin-left: 4px !important;
     }
   }
 }
