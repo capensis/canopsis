@@ -9,17 +9,11 @@
     >
       <v-flex>
         <c-alarm-advanced-search-field
-          :searches="newSearches"
-          @submit="updateNewSearch"
-        />
-        <c-advanced-search
-          :fields="advancedSearchFields"
-          :saved-items="searches"
-          combobox
-          @submit="updateSearchInQuery"
-          @add:item="addSearchIntoUserPreferences"
-          @toggle-pin:item="togglePinSearchInUserPreferences"
-          @remove:item="removeSearchFromUserPreferences"
+          :searches="searches"
+          @submit="updateSearch"
+          @reset="resetSearch"
+          @toggle-pin:search="togglePinSearch"
+          @remove:search="removeSearch"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
@@ -167,10 +161,7 @@ import { setSeveralFields } from '@/helpers/immutable';
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
-import {
-  widgetAdvancedSearchSavedItemsMixin,
-  widgetAdvancedSearchAlarmFieldsMixin,
-} from '@/mixins/widget/advanced-search';
+import { widgetAlarmAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/alarm-saved-items';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
@@ -215,8 +206,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetAdvancedSearchSavedItemsMixin,
-    widgetAdvancedSearchAlarmFieldsMixin,
+    widgetAlarmAdvancedSearchSavedItemsMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,

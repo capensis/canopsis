@@ -15,7 +15,7 @@ import {
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { mapIds } from '@/helpers/array';
+import { deepKeyBy, mapIds } from '@/helpers/array';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
@@ -30,6 +30,7 @@ import { useModelField } from '@/hooks/form';
  * @param {Object} options - Configuration options for the hook.
  * @param {Ref|Array} options.value - The current value or list of values to be managed.
  * @param {string} options.isKey - The key used to identify each item uniquely.
+ * @param {string} options.childrenKey - The key used for children checking.
  * @param {string} options.idParamsKey - The key used for query parameters when fetching selected items.
  * @param {number} [options.limit = PAGINATION_LIMIT] - The limit for pagination, determining how many items to
  * fetch per page.
@@ -52,6 +53,7 @@ export const useLazySearch = ({
   value,
   idKey,
   idParamsKey,
+  childrenKey = 'items',
   limit = PAGINATION_LIMIT,
   fetchHandler,
   addable,
@@ -113,12 +115,13 @@ export const useLazySearch = ({
         [unref(idParamsKey)]: arrayValue.value,
       },
     });
-
     const unwrappedIdKey = unref(idKey);
-    const dataById = keyBy(data, unwrappedIdKey);
+    const unwrappedChildrenKey = unref(childrenKey);
+
+    const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
 
     selectedItems.value = arrayValue.value.map(item => (
-      dataById[item[unwrappedIdKey] || item] ?? ({ [unwrappedIdKey]: item })
+      dataById[item[unwrappedIdKey] || item] ?? ({ [unwrappedIdKey]: item, noData: true })
     ));
   }, true);
 

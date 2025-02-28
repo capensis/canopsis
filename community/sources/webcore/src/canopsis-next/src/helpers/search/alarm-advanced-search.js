@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty, pick } from 'lodash';
 
 import {
   ALARM_ADVANCED_SEARCH_CHIP_TYPES,
@@ -49,6 +49,7 @@ import {
  * | 'rangeValue'
  * | 'value'
  * | 'duration'
+ * | 'text'
  * } AdvancedSearchChipType
  */
 
@@ -92,15 +93,12 @@ export const getInitialFormItemType = (item, union = false) => {
  * @param {string} [params.fieldType] - The field type of the rule item.
  * @param {string} [params.range] - The range of the rule item.
  * @param {string} [params.operator] - The operator of the rule item.
+ * @param {string} [params.text] - The text of the rule item.
  * @param {AdvancedSearchChipType | null} [type = null] - The current chip type.
  * @returns {AdvancedSearchChipType | null} - The next chip type, or null if there is no next type.
  */
-export const getNextForFormItemType = ({ attribute, fieldType, range, operator } = {}, type = null) => {
-  if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.union) {
-    return null;
-  }
-
-  if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.text) {
+export const getNextForFormItemType = ({ attribute, fieldType, range, operator, text } = {}, type = null) => {
+  if (text || [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union, ALARM_ADVANCED_SEARCH_CHIP_TYPES.text].includes(type)) {
     return null;
   }
 
@@ -223,12 +221,22 @@ export const getAdvancedSearchUnionItem = (union = ADVANCED_SEARCH_UNION_CONDITI
  * Converts advanced search into a form structure.
  *
  * @param {AdvancedSearch} params - The parameters for the conversion.
+ * @param {string} params.text - The text search.
  * @param {AdvancedSearchPositions} params.positions - The positions of the patterns.
  * @param {AdvancedSearchPatterns} params.patterns - The advanced search patterns.
  * @returns {AdvancedSearchForm} - The form structure representing the advanced search rules.
  */
-export const advancedSearchToForm = ({ positions = [], ...patterns } = {}) => {
+export const advancedSearchToForm = ({ text = '', positions = [], ...patterns } = {}) => {
   const clonedPatterns = cloneDeep(patterns);
+
+  if (text) {
+    const item = advancedSearchRuleItemToFormItem();
+
+    item.text = text;
+    item.filled = [ALARM_ADVANCED_SEARCH_CHIP_TYPES.text];
+
+    return [item];
+  }
 
   return positions.reduce((acc, key, index) => {
     if (!clonedPatterns[key][0]?.length) {
@@ -279,7 +287,13 @@ export const isAlarmPatternField = (field = '') => !isEntityPatternField(field) 
 export const formToAdvancedSearch = (form = []) => {
   let firstPatternKey = null;
 
-  return form.reduce((acc, { union, rangeValue, range, filled, ...item }) => {
+  return form.reduce((acc, { union, rangeValue, range, filled, text, ...item }) => {
+    if (text) {
+      acc.text = text;
+
+      return acc;
+    }
+
     if (union === ADVANCED_SEARCH_UNION_CONDITIONS.and || (!union && !item.attribute)) {
       return acc;
     }
@@ -323,9 +337,16 @@ export const formToAdvancedSearch = (form = []) => {
 
     return acc;
   }, {
+    text: '',
     positions: [],
     alarm_pattern: [],
     entity_pattern: [],
     pbehavior_pattern: [],
   });
 };
+
+export const isEmptyAlarmSearch = (search = {}) => (
+  Object.values(pick(search, ['text', 'alarm_pattern', 'entity_pattern', 'pbehavior_pattern']))
+    .map(isEmpty)
+    .every(Boolean)
+);

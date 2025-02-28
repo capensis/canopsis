@@ -19,7 +19,7 @@
         :key="search._id"
         @click="select(search)"
       >
-        <v-list-item-content>
+        <v-list-item-content class="pa-0">
           <alarm-advanced-search-rules
             :rules="search.rules"
             :attributes="attributes"
@@ -41,7 +41,7 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { advancedSearchToForm } from '@/helpers/search/new-advanced-search';
+import { advancedSearchToForm } from '@/helpers/search/alarm-advanced-search';
 
 import AdvancedSearchHistoryItemBtns from './advanced-search-history-item-btns.vue';
 import AlarmAdvancedSearchRules from './alarm-advanced-search-rules.vue';
@@ -62,6 +62,7 @@ export default {
     const listElement = ref(null);
     const preparedSearches = computed(() => props.searches.map(search => ({
       _id: search._id,
+      pinned: search.pinned,
       rules: advancedSearchToForm(search),
     })));
 
