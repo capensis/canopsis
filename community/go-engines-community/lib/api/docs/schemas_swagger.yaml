@@ -286,10 +286,6 @@ definitions:
           additionalProperties: true
           type: object
         type: object
-      infos_rule_version:
-        additionalProperties:
-          type: string
-        type: object
       initial_long_output:
         type: string
       initial_output:

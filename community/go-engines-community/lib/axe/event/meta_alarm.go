@@ -415,7 +415,6 @@ func (p *metaAlarmProcessor) newMetaAlarm(
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
 			Infos:                       map[string]map[string]interface{}{},
-			RuleVersion:                 map[string]string{},
 		},
 	}
 	if params.DisplayName == "" {
