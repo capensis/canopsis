@@ -3,10 +3,13 @@ package user
 import (
 	"context"
 	"errors"
+	"slices"
 	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
@@ -25,14 +28,41 @@ type baseValidator struct {
 	dbRoleCollection       mongo.DbCollection
 	dbViewCollection       mongo.DbCollection
 	dbColorThemeCollection mongo.DbCollection
+
+	availableAuthSources      map[string]bool
+	availableAuthSourcesNames []string
 }
 
-func NewValidator(dbClient mongo.DbClient) Validator {
+func NewValidator(dbClient mongo.DbClient, secConfig security.Config) Validator {
+	availableAuthSources := make(map[string]bool)
+	availableAuthSourcesNames := make([]string, 0, len(secConfig.Security.AuthProviders))
+
+	for _, source := range secConfig.Security.AuthProviders {
+		switch source {
+		case security.SourceSaml, security.SourceLdap, security.SourceCas, security.SourceOauth2:
+			if source == security.SourceOauth2 {
+				for oauth2source := range secConfig.Security.OAuth2.Providers {
+					availableAuthSources[oauth2source] = true
+					availableAuthSourcesNames = append(availableAuthSourcesNames, oauth2source)
+				}
+			} else {
+				availableAuthSources[source] = true
+				availableAuthSourcesNames = append(availableAuthSourcesNames, source)
+			}
+
+		}
+	}
+
+	// necessary for tests to check error.
+	slices.Sort(availableAuthSourcesNames)
+
 	return &baseValidator{
-		dbCollection:           dbClient.Collection(mongo.UserCollection),
-		dbRoleCollection:       dbClient.Collection(mongo.RoleCollection),
-		dbViewCollection:       dbClient.Collection(mongo.ViewMongoCollection),
-		dbColorThemeCollection: dbClient.Collection(mongo.ColorThemeCollection),
+		dbCollection:              dbClient.Collection(mongo.UserCollection),
+		dbRoleCollection:          dbClient.Collection(mongo.RoleCollection),
+		dbViewCollection:          dbClient.Collection(mongo.ViewMongoCollection),
+		dbColorThemeCollection:    dbClient.Collection(mongo.ColorThemeCollection),
+		availableAuthSources:      availableAuthSources,
+		availableAuthSourcesNames: availableAuthSourcesNames,
 	}
 }
 
@@ -67,6 +97,10 @@ func (v *baseValidator) ValidateCreateRequest(ctx context.Context, sl validator.
 	if r.Source != "" {
 		if r.Password != "" {
 			sl.ReportError(r.Source, "Source", "Source", "required_not_both", "Password")
+		}
+
+		if !v.availableAuthSources[r.Source] {
+			sl.ReportError(r.Source, "Source", "Source", "oneoforempty", strings.Join(v.availableAuthSourcesNames, ", "))
 		}
 	} else {
 		v.validatePassword(sl, r.EditRequest, "")
