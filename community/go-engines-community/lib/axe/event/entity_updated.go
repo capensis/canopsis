@@ -49,12 +49,13 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	var componentStateChanged bool
 	var newComponentState int
+	var alarm types.Alarm
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedServiceStates = nil
 		result = Result{}
+		alarm = types.Alarm{}
 
-		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
@@ -102,6 +103,11 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return result, fmt.Errorf("failed to update component state: %w", err)
 		}
 	}
+
+	// to dynamic-infos
+	result.Forward = true
+	result.Alarm = alarm
+	result.AlarmChange = types.NewAlarmChange()
 
 	return result, nil
 }
