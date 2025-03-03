@@ -31,7 +31,7 @@ func AuthorizeOwnership(strategy security.OwnershipStrategy) gin.HandlerFunc {
 
 		subj, ok := rawSubj.(string)
 		if !ok {
-			panic(errors.New("user key is not a string"))
+			panic("user key is not a string")
 		}
 
 		ownership, err := strategy.IsOwner(c, obj, subj)

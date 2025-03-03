@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -30,7 +29,7 @@ func ProvideAuthorizedIds(
 
 		subj, ok := rawSubj.(string)
 		if !ok {
-			panic(errors.New("user key is not a string"))
+			panic("user key is not a string")
 		}
 
 		roles, err := enforcer.GetRolesForUser(subj)
