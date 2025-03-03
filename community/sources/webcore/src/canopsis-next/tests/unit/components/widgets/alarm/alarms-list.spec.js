@@ -19,11 +19,12 @@ import {
 } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
+import { formToAdvancedSearch } from '@/helpers/search/alarm-advanced-search';
 
 import AlarmsList from '@/components/widgets/alarm/alarms-list.vue';
 
 const stubs = {
-  'c-advanced-search': true,
+  'c-alarm-advanced-search-field': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
@@ -45,7 +46,7 @@ const stubs = {
 };
 
 const snapshotStubs = {
-  'c-advanced-search': true,
+  'c-alarm-advanced-search-field': true,
   'c-entity-category-field': true,
   'v-switch': true,
   'filter-selector': true,
@@ -68,6 +69,7 @@ const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1)
 const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
 const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
+const selectAlarmAdvancedSearchField = wrapper => wrapper.find('c-alarm-advanced-search-field-stub');
 const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
 
 describe('alarms-list', () => {
@@ -1752,6 +1754,265 @@ describe('alarms-list', () => {
     wrapper.destroy();
 
     expect(clearInterval).toHaveBeenCalledTimes(1);
+  });
+
+  it('Search updated after alarm-advanced-search-field submit trigger', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const alarmAdvancedSearchField = selectAlarmAdvancedSearchField(wrapper);
+
+    const advancedSearchValue = formToAdvancedSearch();
+
+    advancedSearchValue._id = Faker.datatype.string();
+    advancedSearchValue.search = Faker.datatype.string();
+    advancedSearchValue.pinned = false;
+
+    alarmAdvancedSearchField.triggerCustomEvent('submit', advancedSearchValue);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            searches: [advancedSearchValue],
+          },
+        },
+      },
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+
+          page: 1,
+          search: advancedSearchValue.search,
+          alarm_pattern: JSON.stringify(advancedSearchValue.alarm_pattern),
+          entity_pattern: JSON.stringify(advancedSearchValue.entity_pattern),
+          pbehavior_pattern: JSON.stringify(advancedSearchValue.pbehavior_pattern),
+        },
+      },
+    );
+  });
+
+  it('Patterns updated after alarm-advanced-search-field submit trigger', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const alarmAdvancedSearchField = selectAlarmAdvancedSearchField(wrapper);
+
+    const advancedSearchValue = formToAdvancedSearch();
+
+    advancedSearchValue._id = Faker.datatype.string();
+    advancedSearchValue.pinned = false;
+    advancedSearchValue.alarm_pattern = [[{ field: 'connector', cond: 'eq', value: 'test' }]];
+    advancedSearchValue.entity_pattern = [[{ field: 'connector', cond: 'eq', value: 'test1' }]];
+    advancedSearchValue.pbehavior_pattern = [[{ field: 'connector', cond: 'eq', value: 'test2' }]];
+
+    alarmAdvancedSearchField.triggerCustomEvent('submit', advancedSearchValue);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            searches: [advancedSearchValue],
+          },
+        },
+      },
+    );
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: {
+          ...defaultQuery,
+
+          page: 1,
+          search: '',
+          alarm_pattern: JSON.stringify(advancedSearchValue.alarm_pattern),
+          entity_pattern: JSON.stringify(advancedSearchValue.entity_pattern),
+          pbehavior_pattern: JSON.stringify(advancedSearchValue.pbehavior_pattern),
+        },
+      },
+    );
+  });
+
+  it('Search field cleared after alarm-advanced-search-field reset trigger', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const alarmAdvancedSearchField = selectAlarmAdvancedSearchField(wrapper);
+
+    alarmAdvancedSearchField.triggerCustomEvent('reset');
+
+    await flushPromises();
+
+    expect(updateQuery).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        id: widget._id,
+        query: omit(defaultQuery, ['search']),
+      },
+    );
+  });
+
+  it('Search pinned after alarm-advanced-search-field toggle-pin:search trigger', async () => {
+    const firstSearch = formToAdvancedSearch();
+    const secondSearch = formToAdvancedSearch();
+
+    firstSearch._id = Faker.datatype.string();
+    firstSearch.search = Faker.datatype.string();
+    firstSearch.pinned = true;
+
+    secondSearch._id = Faker.datatype.string();
+    secondSearch.search = Faker.datatype.string();
+    secondSearch.pinned = false;
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        alarmTagModule,
+        serviceModule,
+        alarmModule,
+        authModule,
+        {
+          ...userPreferenceModule,
+          getters: {
+            getItemByWidgetId: () => () => ({
+              ...userPreferences,
+              content: {
+                ...userPreferences.content,
+                searches: [firstSearch, secondSearch],
+              },
+            }),
+          },
+        },
+      ]),
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const alarmAdvancedSearchField = selectAlarmAdvancedSearchField(wrapper);
+
+    alarmAdvancedSearchField.triggerCustomEvent('toggle-pin:search', secondSearch._id);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            searches: [{ ...secondSearch, pinned: true }, firstSearch],
+          },
+        },
+      },
+    );
+  });
+
+  it('Search removed after alarm-advanced-search-field remove:search trigger', async () => {
+    const firstSearch = formToAdvancedSearch();
+    const secondSearch = formToAdvancedSearch();
+
+    firstSearch._id = Faker.datatype.string();
+    firstSearch.search = Faker.datatype.string();
+    firstSearch.pinned = true;
+
+    secondSearch._id = Faker.datatype.string();
+    secondSearch.search = Faker.datatype.string();
+    secondSearch.pinned = false;
+
+    const wrapper = factory({
+      store: createMockedStoreModules([
+        sideBarModule,
+        infoModule,
+        queryModule,
+        viewModule,
+        alarmTagModule,
+        serviceModule,
+        alarmModule,
+        authModule,
+        {
+          ...userPreferenceModule,
+          getters: {
+            getItemByWidgetId: () => () => ({
+              ...userPreferences,
+              content: {
+                ...userPreferences.content,
+                searches: [firstSearch, secondSearch],
+              },
+            }),
+          },
+        },
+      ]),
+      propsData: {
+        widget,
+      },
+    });
+
+    await flushPromises();
+
+    updateQuery.mockClear();
+
+    const alarmAdvancedSearchField = selectAlarmAdvancedSearchField(wrapper);
+
+    alarmAdvancedSearchField.triggerCustomEvent('remove:search', firstSearch._id);
+
+    await flushPromises();
+
+    expect(updateUserPreference).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: {
+          content: {
+            ...userPreferences.content,
+            searches: [secondSearch],
+          },
+        },
+      },
+    );
   });
 
   it('Renders `alarms-list` with default props', async () => {

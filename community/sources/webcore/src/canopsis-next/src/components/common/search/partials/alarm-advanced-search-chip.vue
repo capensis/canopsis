@@ -45,7 +45,7 @@
           autocomplete="off"
           v-on="on"
           @keydown="keydownInput"
-          @focus="focusInput"
+          @mouseup="focusInput"
           @input="updateInputValue"
         >
         <v-chip
@@ -311,6 +311,7 @@ export default {
      * Focuses on the input element, bringing it into view for user interaction.
      */
     const focusInput = () => {
+      inputElement.value?.focus();
       showMenu();
       emit('focus');
     };
@@ -420,7 +421,7 @@ export default {
      * @todo Analise the solution with setTimeout in the future
      */
     const callFocus = () => setTimeout(() => (
-      (props.active || props.alwaysActive) && inputElement.value?.focus()
+      (props.active || props.alwaysActive) && focusInput()
     ), 100);
 
     watch(() => props.active, (active, prevActive) => {

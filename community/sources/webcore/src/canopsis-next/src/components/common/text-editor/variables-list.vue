@@ -1,12 +1,12 @@
 <template>
   <v-list
     :dense="dense"
-    class="pa-0 advanced-search-lazy-list"
+    class="pa-0 variables-list"
   >
     <v-fade-transition>
       <v-progress-linear
         v-if="pending"
-        class="advanced-search-lazy-list__progress"
+        class="variables-list__progress"
         color="primary"
         indeterminate
       />
@@ -47,7 +47,7 @@
     </template>
     <div
       ref="appendElement"
-      class="advanced-search-lazy-list__append-item"
+      class="variables-list__append-item"
     />
     <slot v-if="!items.length" name="no-data" />
     <v-menu
@@ -297,7 +297,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.advanced-search-lazy-list {
+.variables-list {
   position: relative;
 
   .v-subheader {

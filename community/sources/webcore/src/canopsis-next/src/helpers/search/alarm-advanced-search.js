@@ -36,6 +36,7 @@ import {
 
 /**
  * @typedef {AdvancedSearchPatterns & AdvancedSearchPositions} AdvancedSearch
+ * @property {string} search
  */
 
 /**
@@ -221,18 +222,18 @@ export const getAdvancedSearchUnionItem = (union = ADVANCED_SEARCH_UNION_CONDITI
  * Converts advanced search into a form structure.
  *
  * @param {AdvancedSearch} params - The parameters for the conversion.
- * @param {string} params.text - The text search.
+ * @param {string} params.search - The text search.
  * @param {AdvancedSearchPositions} params.positions - The positions of the patterns.
  * @param {AdvancedSearchPatterns} params.patterns - The advanced search patterns.
  * @returns {AdvancedSearchForm} - The form structure representing the advanced search rules.
  */
-export const advancedSearchToForm = ({ text = '', positions = [], ...patterns } = {}) => {
+export const advancedSearchToForm = ({ search = '', positions = [], ...patterns } = {}) => {
   const clonedPatterns = cloneDeep(patterns);
 
-  if (text) {
+  if (search) {
     const item = advancedSearchRuleItemToFormItem();
 
-    item.text = text;
+    item.text = search;
     item.filled = [ALARM_ADVANCED_SEARCH_CHIP_TYPES.text];
 
     return [item];
@@ -289,7 +290,7 @@ export const formToAdvancedSearch = (form = []) => {
 
   return form.reduce((acc, { union, rangeValue, range, filled, text, ...item }) => {
     if (text) {
-      acc.text = text;
+      acc.search = text;
 
       return acc;
     }
@@ -337,7 +338,7 @@ export const formToAdvancedSearch = (form = []) => {
 
     return acc;
   }, {
-    text: '',
+    search: '',
     positions: [],
     alarm_pattern: [],
     entity_pattern: [],
@@ -346,7 +347,7 @@ export const formToAdvancedSearch = (form = []) => {
 };
 
 export const isEmptyAlarmSearch = (search = {}) => (
-  Object.values(pick(search, ['text', 'alarm_pattern', 'entity_pattern', 'pbehavior_pattern']))
+  Object.values(pick(search, ['search', 'alarm_pattern', 'entity_pattern', 'pbehavior_pattern']))
     .map(isEmpty)
     .every(Boolean)
 );

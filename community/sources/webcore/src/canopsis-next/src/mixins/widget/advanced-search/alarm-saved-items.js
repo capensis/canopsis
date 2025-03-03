@@ -28,7 +28,7 @@ export const widgetAlarmAdvancedSearchSavedItemsMixin = {
         ...this.query,
 
         page: 1,
-        search: search.text,
+        search: search.search,
         alarm_pattern: JSON.stringify(search.alarm_pattern),
         entity_pattern: JSON.stringify(search.entity_pattern),
         pbehavior_pattern: JSON.stringify(search.pbehavior_pattern),
