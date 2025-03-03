@@ -5,7 +5,7 @@
     class="c-alarm-advanced-search__groups-wrapper gap-1"
     align-center
     wrap
-    @click="clickLayout"
+    @mouseup="mouseupLayout"
   >
     <alarm-advanced-search-rule
       v-for="(rule, index) in rules"
@@ -150,11 +150,11 @@ export default {
     };
 
     /**
-     * Handles click events on the layout element and focuses on the last input if the target is the layout element.
+     * Handles mouseup events on the layout element and focuses on the last input if the target is the layout element.
      *
-     * @param {Event} event - The click event.
+     * @param {Event} event - The mouseup event.
      */
-    const clickLayout = event => event.target === layoutElement.value && lastInputFocus();
+    const mouseupLayout = event => event.target === layoutElement.value && lastInputFocus();
 
     return {
       layoutElement,
@@ -166,7 +166,7 @@ export default {
       add,
       update,
       remove,
-      clickLayout,
+      mouseupLayout,
     };
   },
 };

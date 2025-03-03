@@ -1,31 +1,31 @@
 <template>
-  <div
-    :class="[themeClasses]"
-    class="c-alarm-advanced-search v-input v-input--hide-details theme--light
+  <v-layout class="c-alarm-advanced-search__wrapper" align-end>
+    <div
+      :class="[themeClasses]"
+      class="c-alarm-advanced-search v-input v-input--hide-details theme--light
     v-text-field v-text-field--single-line v-text-field--is-booted v-select v-autocomplete primary--text"
-  >
-    <div class="v-input__control">
-      <div class="v-input__slot">
-        <div class="v-text-field__slot">
-          <advanced-search-rules
-            v-model="rules"
-            :attributes="attributes"
-            :allow-or="allowOr"
-            @input="resetActiveSearch"
-          />
-        </div>
-        <div class="v-input__append-inner">
-          <advanced-search-history-btn
-            :searches="searches"
-            :attributes="attributes"
-            @select="select"
-            @remove="removeSearch"
-            @toggle-pin="togglePinForSearch"
-          />
+    >
+      <div class="v-input__control">
+        <div class="v-input__slot">
+          <div class="v-text-field__slot">
+            <advanced-search-rules
+              v-model="rules"
+              :attributes="attributes"
+              :allow-or="allowOr"
+              @input="resetActiveSearch"
+            />
+          </div>
         </div>
       </div>
     </div>
     <v-layout>
+      <advanced-search-history-btn
+        :searches="searches"
+        :attributes="attributes"
+        @select="select"
+        @remove="removeSearch"
+        @toggle-pin="togglePinForSearch"
+      />
       <c-action-btn
         :tooltip="$t('common.search')"
         icon="search"
@@ -37,7 +37,7 @@
         @click="reset"
       />
     </v-layout>
-  </div>
+  </v-layout>
 </template>
 
 <script>
@@ -194,17 +194,18 @@ export default {
 .c-alarm-advanced-search {
   --input-min-inline-size: 20ch;
 
-  align-items: center;
+  padding-bottom: 2px;
 
-  input {
-    flex: 0 1 auto;
-    field-sizing: content;
-    min-inline-size: var(--input-min-inline-size);
+  & &__rule {
+    input {
+      flex: 0 1 auto;
+      field-sizing: content;
+      min-inline-size: var(--input-min-inline-size);
+    }
   }
 
   &__groups-wrapper {
     &, .layout {
-      padding: var(--alarm-advanced-search-chip-gap) 0;
       gap: var(--alarm-advanced-search-chip-gap);
     }
   }
