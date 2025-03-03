@@ -1,7 +1,6 @@
 package event
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -15,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/ajg/form"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -52,25 +50,32 @@ func (api *api) Send(c *gin.Context) {
 	var raw []byte
 	var values []*fastjson.Value
 
-	raw, err = c.GetRawData()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
 	if mediatype, _, err := mime.ParseMediaType(c.GetHeader("content-type")); err == nil && mediatype == binding.MIMEPOSTForm {
-		var u map[string]interface{}
-		d := form.NewDecoder(bytes.NewBuffer(raw))
-		if err := d.Decode(&u); err != nil {
-			panic(err)
-		}
-
-		raw, err = json.Marshal(u)
-		if err != nil {
+		if err = c.Request.ParseForm(); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
+		formData := make(map[string]any)
+		for k, v := range c.Request.Form {
+			if len(v) == 1 {
+				formData[k] = v[0]
+			} else {
+				formData[k] = v
+			}
+		}
+
+		raw, err = json.Marshal(formData)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+	} else {
+		raw, err = c.GetRawData()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
 	}
 
 	jsonValue, err := fastjson.ParseBytes(raw)

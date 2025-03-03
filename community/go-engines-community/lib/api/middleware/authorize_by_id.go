@@ -30,7 +30,7 @@ func AuthorizeByID(
 
 		subj, ok := rawSubj.(string)
 		if !ok {
-			panic(errors.New("user key is not a string"))
+			panic("user key is not a string")
 		}
 
 		ok, err := enforcer.Enforce(subj, obj, act)

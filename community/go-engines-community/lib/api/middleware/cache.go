@@ -5,7 +5,6 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"errors"
 	"io"
 	"net/url"
 	"sort"
@@ -17,7 +16,6 @@ import (
 	cache "github.com/chenyahui/gin-cache"
 	"github.com/chenyahui/gin-cache/persist"
 	"github.com/gin-gonic/gin"
-	"github.com/jellydator/ttlcache/v2"
 )
 
 func NewCacheMiddlewareGetter(defaultExpire time.Duration, getExpire func() time.Duration) *CacheMiddlewareGetter {
@@ -83,14 +81,7 @@ func (g *CacheMiddlewareGetter) ClearCache(path string) gin.HandlerFunc {
 				continue
 			}
 
-			err := g.memoryStore.Delete(key)
-			if err != nil {
-				if errors.Is(err, ttlcache.ErrNotFound) {
-					continue
-				}
-
-				panic(err)
-			}
+			_ = g.memoryStore.Delete(key)
 		}
 	}
 }
