@@ -733,16 +733,21 @@ export const useAttachAdvancedSearchRuleValidator = ({
 } = {}) => {
   const validator = inject('$validator', new Validator());
 
-  const attachValidationRule = () => {
-    const unwrapperRule = unref(rule);
+  /**
+   * Attaches a validation rule to the validator instance.
+   * The rule is identified by its key and uses a predefined validation rule name.
+   * The getter function provides the rule and its finished state for validation.
+   */
+  const attachValidationRule = () => validator.attach({
+    name: unref(rule).key,
+    rules: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
+    getter: () => ({ rule: unref(rule), finished: isFinishedRule.value }),
+  });
 
-    validator.attach({
-      name: unwrapperRule.key,
-      rules: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
-      getter: () => ({ rule: unwrapperRule, finished: isFinishedRule.value }),
-    });
-  };
-
+  /**
+   * Detaches a validation rule from the validator instance.
+   * The rule is identified by its key, ensuring it is no longer validated.
+   */
   const detachValidationRule = () => validator.detach(unref(rule).key);
 
   watch(() => unref(disabled), (newDisabled) => {
