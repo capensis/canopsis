@@ -6,7 +6,7 @@
     v-text-field v-text-field--single-line v-text-field--is-booted v-select v-autocomplete primary--text"
     >
       <div class="v-input__control">
-        <div class="v-input__slot">
+        <div class="v-input__slot pb-1">
           <div class="v-text-field__slot">
             <advanced-search-rules
               v-model="rules"
