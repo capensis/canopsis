@@ -57,7 +57,7 @@ export const useLazySearch = ({
   limit = PAGINATION_LIMIT,
   fetchHandler,
   addable,
-  multiple, // TODO: add true for all places
+  multiple,
   delay = 100,
 }, emit) => {
   const pageCount = ref(1);
