@@ -14,6 +14,7 @@ import (
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type internalTagPeriodicalWorker struct {
@@ -21,6 +22,7 @@ type internalTagPeriodicalWorker struct {
 	Logger             zerolog.Logger
 	TagCollection      mongo.DbCollection
 	AlarmCollection    mongo.DbCollection
+	EntityCollection   mongo.DbCollection
 }
 
 func (w *internalTagPeriodicalWorker) GetInterval() time.Duration {
@@ -110,6 +112,45 @@ func (w *internalTagPeriodicalWorker) addTag(
 		bson.M{"$unwind": "$entity"},
 	)
 	if len(tag.EntityPattern) > 0 {
+		if len(tag.AlarmPattern) == 0 {
+			q, err := db.EntityPatternToMongoQuery(tag.EntityPattern, "")
+			if err != nil {
+				return err
+			}
+
+			cursor, err := w.EntityCollection.Aggregate(ctx, []bson.M{
+				{"$match": q},
+				{"$replaceRoot": bson.M{"newRoot": bson.M{"entity": "$$ROOT"}}},
+				{"$lookup": bson.M{
+					"from":         mongo.AlarmMongoCollection,
+					"localField":   "entity._id",
+					"foreignField": "d",
+					"as":           "alarm",
+					"pipeline": []bson.M{
+						{"$match": bson.M{"v.resolved": nil}},
+						{"$limit": 1},
+					},
+				}},
+				{"$match": bson.M{
+					"alarm.t": bson.M{"$lt": secNow},
+					"$or": []bson.M{
+						{"alarm.itags_upd": bson.M{"$lt": microNow}},
+						{"alarm.itags_upd": nil},
+					},
+					"alarm.itags": bson.M{"$nin": bson.A{tag.Value}},
+				}},
+				{"$unwind": "$alarm"},
+				{"$project": bson.M{
+					"alarm.v.steps": 0,
+				}},
+			}, options.Aggregate().SetComment("add tag"))
+			if err != nil {
+				return err
+			}
+
+			return w.updateByCursor(ctx, cursor, tags, microNow)
+		}
+
 		q, err := db.EntityPatternToMongoQuery(tag.EntityPattern, "entity")
 		if err != nil {
 			return err
@@ -120,7 +161,7 @@ func (w *internalTagPeriodicalWorker) addTag(
 		"alarm.v.steps": 0,
 	}})
 
-	cursor, err := w.AlarmCollection.Aggregate(ctx, pipeline)
+	cursor, err := w.AlarmCollection.Aggregate(ctx, pipeline, options.Aggregate().SetComment("addTag"))
 	if err != nil {
 		return err
 	}
@@ -183,7 +224,7 @@ func (w *internalTagPeriodicalWorker) removeTag(
 		"alarm.v.steps": 0,
 	}})
 
-	cursor, err := w.AlarmCollection.Aggregate(ctx, pipeline)
+	cursor, err := w.AlarmCollection.Aggregate(ctx, pipeline, options.Aggregate().SetComment("removeTag"))
 	if err != nil {
 		return err
 	}
@@ -217,7 +258,7 @@ func (w *internalTagPeriodicalWorker) removeTags(
 		{"$project": bson.M{
 			"alarm.v.steps": 0,
 		}},
-	})
+	}, options.Aggregate().SetComment("removeTags"))
 	if err != nil {
 		return err
 	}
