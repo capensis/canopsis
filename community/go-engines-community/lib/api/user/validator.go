@@ -39,17 +39,14 @@ func NewValidator(dbClient mongo.DbClient, secConfig security.Config) Validator 
 
 	for _, source := range secConfig.Security.AuthProviders {
 		switch source {
-		case security.SourceSaml, security.SourceLdap, security.SourceCas, security.SourceOauth2:
-			if source == security.SourceOauth2 {
-				for oauth2source := range secConfig.Security.OAuth2.Providers {
-					availableAuthSources[oauth2source] = true
-					availableAuthSourcesNames = append(availableAuthSourcesNames, oauth2source)
-				}
-			} else {
-				availableAuthSources[source] = true
-				availableAuthSourcesNames = append(availableAuthSourcesNames, source)
+		case security.SourceOauth2:
+			for oauth2source := range secConfig.Security.OAuth2.Providers {
+				availableAuthSources[oauth2source] = true
+				availableAuthSourcesNames = append(availableAuthSourcesNames, oauth2source)
 			}
-
+		case security.SourceSaml, security.SourceLdap, security.SourceCas:
+			availableAuthSources[source] = true
+			availableAuthSourcesNames = append(availableAuthSourcesNames, source)
 		}
 	}
 
