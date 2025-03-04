@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`storage-settings-junit-form Renders \`storage-settings-events-records-form\` with custom form and history 1`] = `
+exports[`storage-settings-events-records-form Renders \`storage-settings-events-records-form\` with custom form and history 1`] = `
 <div
   class="layout c-information-block column"
 >
@@ -31,15 +31,15 @@ exports[`storage-settings-junit-form Renders \`storage-settings-events-records-f
       />
     </span>
   </div>
-  <storage-settings-duration-field-stub
-    duration="[object Object]"
+  <c-enabled-duration-field-stub
     label="Delete events recordings after"
     name="eventsRecords.delete_after"
+    value="[object Object]"
   />
 </div>
 `;
 
-exports[`storage-settings-junit-form Renders \`storage-settings-events-records-form\` with default form 1`] = `
+exports[`storage-settings-events-records-form Renders \`storage-settings-events-records-form\` with default form 1`] = `
 <div
   class="layout c-information-block column"
 >
@@ -60,10 +60,10 @@ exports[`storage-settings-junit-form Renders \`storage-settings-events-records-f
     />
   </div>
   <!---->
-  <storage-settings-duration-field-stub
-    duration="[object Object]"
+  <c-enabled-duration-field-stub
     label="Delete events recordings after"
     name="eventsRecords.delete_after"
+    value="[object Object]"
   />
 </div>
 `;
