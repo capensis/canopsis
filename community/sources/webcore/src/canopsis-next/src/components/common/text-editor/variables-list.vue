@@ -213,7 +213,12 @@ export default {
      *                        properties that can be identified by the `props.itemValue`.
      */
     const selectSubVariable = (item) => {
-      const parentValue = parentItem.value[props.itemValue];
+      /**
+       * We are replacing /\s*}}/ for correct parent prefix checking for payloads
+       * @example detect {{ .LastChild.Alarm.Value }} in {{ .LastChild.Alarm.Value.Infos.something.Value }}
+       */
+      const parentValue = String(parentItem.value[props.itemValue]).replace(/\s*}}$/, '');
+
       const value = getValue(item);
       const newValue = String(value).startsWith(parentValue)
         ? value
