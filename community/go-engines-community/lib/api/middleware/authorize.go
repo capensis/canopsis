@@ -21,7 +21,16 @@ func Authorize(
 	enforcer security.Enforcer,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		subj := c.MustGet(auth.UserKey).(string)
+		rawSubj, ok := c.Get(auth.UserKey)
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			return
+		}
+
+		subj, ok := rawSubj.(string)
+		if !ok {
+			panic("user key is not a string")
+		}
 
 		ok, err := enforcer.Enforce(subj, obj, act)
 		if err != nil {
@@ -43,7 +52,16 @@ func AuthorizeAtLeastOnePerm(
 	enforcer security.Enforcer,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		subj := c.MustGet(auth.UserKey).(string)
+		rawSubj, ok := c.Get(auth.UserKey)
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			return
+		}
+
+		subj, ok := rawSubj.(string)
+		if !ok {
+			panic("user key is not a string")
+		}
 
 		for _, permCheck := range permChecks {
 			ok, err := enforcer.Enforce(subj, permCheck.Obj, permCheck.Act)
