@@ -563,6 +563,8 @@ type AlarmValue struct {
 	SnoozeDuration int64 `bson:"snooze_duration" json:"snooze_duration"`
 	// PbehaviorInactiveDuration represents a duration when an alarm was in maintenance, pause, inactive pbehavior interval.
 	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
+	// CancelDelayValue represents a cancel delay timeout, used only in the API response.
+	CancelDelayValue int64 `bson:"cancel_delay_value,omitempty" json:"cancel_delay_value,omitempty"`
 }
 
 func (v *AlarmValue) Transform() {

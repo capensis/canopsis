@@ -3215,6 +3215,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.SnoozeDuration = int64(in.Int64())
 		case "pbh_inactive_duration":
 			out.PbehaviorInactiveDuration = int64(in.Int64())
+		case "cancel_delay_value":
+			out.CancelDelayValue = int64(in.Int64())
 		default:
 			in.SkipRecursive()
 		}
@@ -3640,6 +3642,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"pbh_inactive_duration\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.PbehaviorInactiveDuration))
+	}
+	if in.CancelDelayValue != 0 {
+		const prefix string = ",\"cancel_delay_value\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.CancelDelayValue))
 	}
 	out.RawByte('}')
 }

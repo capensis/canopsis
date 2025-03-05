@@ -66,6 +66,9 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 			"v.last_update_date":                  event.Parameters.Timestamp,
 			"v.last_st_upd_dt":                    event.Parameters.Timestamp,
 		}},
+		{"$unset": bson.A{
+			"v.cancel_delay_value",
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
