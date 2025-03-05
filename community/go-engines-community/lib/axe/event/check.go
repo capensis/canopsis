@@ -282,6 +282,25 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		alarm.InactiveAutoInstructionInProgress = result.IsInstructionMatched
 	}
 
+	if event.Parameters.CancelDelay != nil && *event.Parameters.CancelDelay > 0 {
+		alarm.Value.CancelDelayValue = *event.Parameters.CancelDelay
+
+		_, err = p.cancelDelayJobCollection.UpdateOne(ctx, bson.M{
+			"_id": alarm.ID,
+		}, bson.M{
+			"$set": canceldelay.Job{
+				Name:      entity.Name,
+				Component: entity.Component,
+				Type:      entity.Type,
+				Delay:     *event.Parameters.CancelDelay,
+				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CancelDelay,
+			},
+		}, options.Update().SetUpsert(true))
+		if err != nil {
+			return result, fmt.Errorf("cannot upsert cancel delay job on alarm create: %w", err)
+		}
+	}
+
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
 	alarm.InternalTagsUpdated = datetime.NewMicroTime()
 	alarm.Tags = append(alarm.Tags, alarm.InternalTags...)
@@ -308,23 +327,6 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		if updateRes.ModifiedCount > 0 {
 			entity.PbehaviorInfo = alarm.Value.PbehaviorInfo
 			result.Entity = entity
-		}
-	}
-
-	if event.Parameters.CancelDelay != nil && *event.Parameters.CancelDelay > 0 {
-		_, err = p.cancelDelayJobCollection.UpdateOne(ctx, bson.M{
-			"_id": alarm.ID,
-		}, bson.M{
-			"$set": canceldelay.Job{
-				Name:      entity.Name,
-				Component: entity.Component,
-				Type:      entity.Type,
-				Delay:     *event.Parameters.CancelDelay,
-				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CancelDelay,
-			},
-		}, options.Update().SetUpsert(true))
-		if err != nil {
-			return result, fmt.Errorf("cannot upsert cancel delay job on alarm create: %w", err)
 		}
 	}
 
@@ -409,6 +411,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		}
 
 		if params.CancelDelay != nil && *params.CancelDelay > 0 {
+			set["v.cancel_delay_value"] = params.CancelDelay
+
 			_, err = p.cancelDelayJobCollection.UpdateOne(ctx, bson.M{
 				"_id": alarm.ID,
 			}, bson.M{
@@ -427,6 +431,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	if params.CancelDelay != nil && *params.CancelDelay == 0 {
+		unset["v.cancel_delay_value"] = ""
+
 		_, err := p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
 		if err != nil {
 			return result, fmt.Errorf("cannot delete cancel delay job on alarm update: %w", err)

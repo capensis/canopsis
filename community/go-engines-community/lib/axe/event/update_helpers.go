@@ -668,6 +668,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 			"not_acked_metric_type",
 			"not_acked_metric_send_time",
 			"not_acked_since",
+			"v.cancel_delay_value",
 		}},
 	}
 }
