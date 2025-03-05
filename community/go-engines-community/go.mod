@@ -4,7 +4,7 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 // The .env:GOLANG_VERSION be greater than or equal to the version below.
 go 1.24
 
-toolchain go1.24.0
+toolchain go1.24.1
 
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
@@ -44,19 +44,19 @@ require (
 	github.com/pelletier/go-toml/v2 v2.2.3
 	github.com/prometheus/procfs v0.15.1
 	github.com/rabbitmq/amqp091-go v1.10.0
-	github.com/redis/go-redis/v9 v9.7.0
+	github.com/redis/go-redis/v9 v9.7.1
 	github.com/rs/zerolog v1.33.0
 	github.com/russellhaering/gosaml2 v0.9.1
 	github.com/russellhaering/goxmldsig v1.4.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.4
-	go.mongodb.org/mongo-driver v1.17.2
+	go.mongodb.org/mongo-driver v1.17.3
 	go.uber.org/mock v0.5.0
-	golang.org/x/crypto v0.35.0
-	golang.org/x/oauth2 v0.27.0
-	golang.org/x/sync v0.11.0
-	golang.org/x/text v0.22.0
+	golang.org/x/crypto v0.36.0
+	golang.org/x/oauth2 v0.28.0
+	golang.org/x/sync v0.12.0
+	golang.org/x/text v0.23.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -127,7 +127,7 @@ require (
 	golang.org/x/arch v0.8.0 // indirect
 	golang.org/x/mod v0.22.0 // indirect
 	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/sys v0.31.0 // indirect
 	golang.org/x/tools v0.29.0 // indirect
 	google.golang.org/protobuf v1.36.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
