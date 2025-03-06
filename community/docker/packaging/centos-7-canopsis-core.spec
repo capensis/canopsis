@@ -64,7 +64,6 @@ fi
 
 %defattr(0755, canopsis, canopsis, 0755)
 /opt/canopsis/bin/
-/opt/canopsis/opt/mongodb/filldb.py
 
 %attr(755, canopsis, canopsis) /opt/canopsis/deploy-ansible/install-self.sh
 %attr(755, canopsis, canopsis) /opt/canopsis/.bashrc
@@ -74,7 +73,6 @@ fi
 %dir %attr(0755, canopsis, canopsis) /opt/canopsis/var/log
 %dir %attr(0755, canopsis, canopsis) /opt/canopsis/var/log/engines
 
-%config(noreplace) /opt/canopsis/opt/mongodb/load.d
 %config(noreplace) /opt/canopsis/etc
 
 %defattr(0644, root, root, 0755)

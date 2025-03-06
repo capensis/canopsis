@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -26,20 +25,17 @@ type API interface {
 }
 
 type api struct {
-	publisher       libamqp.Publisher
-	alarmCollection mongo.DbCollection
-	logger          zerolog.Logger
+	publisher libamqp.Publisher
+	logger    zerolog.Logger
 }
 
 func NewApi(
 	publisher libamqp.Publisher,
-	client mongo.DbClient,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		publisher:       publisher,
-		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
-		logger:          logger,
+		publisher: publisher,
+		logger:    logger,
 	}
 }
 
@@ -182,9 +178,6 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msgf("Long output field is not a string : %s. Replacing it by \"\"", longOutputValue.Type())
 	}
 
-	contextAuthor := c.MustGet(auth.Username).(string)
-	contextUser := c.MustGet(auth.UserKey).(string)
-
 	author, err := getStringField(value, "author")
 	if err != nil && !errors.Is(err, ErrFieldNotExists) {
 		a.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
@@ -192,6 +185,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if author == "" {
+		contextAuthor := c.MustGet(auth.Username).(string)
 		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", contextAuthor)))
 	}
 
@@ -202,6 +196,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if user == "" {
+		contextUser := c.MustGet(auth.UserKey).(string)
 		value.Set("user_id", fastjson.MustParse(fmt.Sprintf("%q", contextUser)))
 	}
 
@@ -211,6 +206,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		a.logger.Warn().Err(err).Str("key", "connector").Msg("")
 		return false
 	}
+
 	connectorName, err := getStringField(value, "connector_name")
 	if err != nil || connectorName == "" {
 		a.logger.Warn().Err(err).Str("key", "connector_name").Msg("")
@@ -233,12 +229,10 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		if resource != "" {
 			a.logger.Warn().Str("key", "component").Msg("resource is defined but component is empty")
 		}
+	} else if resource == "" {
+		sourceType = types.SourceTypeComponent
 	} else {
-		if resource == "" {
-			sourceType = types.SourceTypeComponent
-		} else {
-			sourceType = types.SourceTypeResource
-		}
+		sourceType = types.SourceTypeResource
 	}
 
 	if sourceType == types.SourceTypeConnector && eventType == types.EventTypeCheck {
