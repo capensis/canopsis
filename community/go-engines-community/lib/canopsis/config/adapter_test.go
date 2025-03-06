@@ -1,7 +1,6 @@
 package config_test
 
 import (
-	"context"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -13,8 +12,7 @@ import (
 
 func TestConfWriteAndRead(t *testing.T) {
 	Convey("Given a session, config DB adapter and a config", t, func() {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+		ctx := t.Context()
 
 		dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 		if err != nil {
@@ -40,8 +38,7 @@ func TestConfWriteAndRead(t *testing.T) {
 
 func TestConfSave(t *testing.T) {
 	Convey("Given a session, config DB adapter and a config", t, func() {
-		ctx, cancel := context.WithCancel(context.Background())
-		defer cancel()
+		ctx := t.Context()
 
 		dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 		if err != nil {

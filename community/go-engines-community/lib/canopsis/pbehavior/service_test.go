@@ -1,7 +1,6 @@
 package pbehavior_test
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -16,15 +15,15 @@ import (
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/redis"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
+	ctx := t.Context()
 
 	defaultActiveType := pbehavior.Type{
 		ID:       "type1",

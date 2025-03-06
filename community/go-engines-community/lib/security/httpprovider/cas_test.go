@@ -12,7 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_http "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/http"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 const validRole = "valid"

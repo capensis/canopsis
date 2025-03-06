@@ -9,15 +9,16 @@ import (
 
 	mock_pgx "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/jackc/pgx"
 	mock_postgres "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/postgres"
-	"github.com/golang/mock/gomock"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+	"go.uber.org/mock/gomock"
 )
 
 func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
+
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
 	sql := "test sql"
@@ -59,8 +60,6 @@ func TestPool_Exec_GivenContextDone_ShouldAbortRetries(t *testing.T) {
 func TestPool_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -77,7 +76,7 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	commandTag, err := pool.Exec(ctx, sql)
+	commandTag, err := pool.Exec(t.Context(), sql)
 	if err == nil {
 		t.Errorf("expected error but got nothing")
 	}
@@ -90,8 +89,6 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryMaxTries(t *testing.T) {
 func TestPool_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -115,7 +112,7 @@ func TestPool_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	commandTag, err := pool.Exec(ctx, sql)
+	commandTag, err := pool.Exec(t.Context(), sql)
 	if err == nil {
 		t.Errorf("expected error but got nothing")
 	}
@@ -128,8 +125,6 @@ func TestPool_Exec_GivenNotConnectionError_ShouldReturnError(t *testing.T) {
 func TestPool_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -157,7 +152,7 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	commandTag, err := pool.Exec(ctx, sql)
+	commandTag, err := pool.Exec(t.Context(), sql)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -170,8 +165,6 @@ func TestPool_Exec_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 func TestPool_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -188,7 +181,7 @@ func TestPool_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	rows, err := pool.Query(ctx, sql)
+	rows, err := pool.Query(t.Context(), sql)
 	if err == nil {
 		t.Errorf("expected error but got nothing")
 	}
@@ -201,8 +194,6 @@ func TestPool_Query_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 func TestPool_Query_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -226,7 +217,7 @@ func TestPool_Query_GivenConnectionError_ShouldReturnError(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	rows, err := pool.Query(ctx, sql)
+	rows, err := pool.Query(t.Context(), sql)
 	if err == nil {
 		t.Errorf("expected error but got nothing")
 	}
@@ -239,8 +230,6 @@ func TestPool_Query_GivenConnectionError_ShouldReturnError(t *testing.T) {
 func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -268,7 +257,7 @@ func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	rows, err := pool.Query(ctx, sql)
+	rows, err := pool.Query(t.Context(), sql)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -281,8 +270,6 @@ func TestPool_Query_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 func TestPool_QueryRow_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -299,7 +286,7 @@ func TestPool_QueryRow_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T)
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	row := pool.QueryRow(ctx, sql)
+	row := pool.QueryRow(t.Context(), sql)
 	err := row.Scan()
 	if err == nil {
 		t.Errorf("expected error but got nothing")
@@ -309,8 +296,6 @@ func TestPool_QueryRow_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T)
 func TestPool_QueryRow_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -334,7 +319,7 @@ func TestPool_QueryRow_GivenConnectionError_ShouldReturnError(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	row := pool.QueryRow(ctx, sql)
+	row := pool.QueryRow(t.Context(), sql)
 	err := row.Scan()
 	if err == nil {
 		t.Errorf("expected error but got nothing")
@@ -344,8 +329,6 @@ func TestPool_QueryRow_GivenConnectionError_ShouldReturnError(t *testing.T) {
 func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	sql := "test sql"
 	retryCount := 3
@@ -378,7 +361,7 @@ func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	row := pool.QueryRow(ctx, sql)
+	row := pool.QueryRow(t.Context(), sql)
 	err := row.Scan()
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
@@ -388,8 +371,6 @@ func TestPool_QueryRow_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T
 func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	b := &pgx.Batch{}
 	b.Queue("test")
@@ -423,7 +404,7 @@ func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	err := pool.SendBatch(ctx, b)
+	err := pool.SendBatch(t.Context(), b)
 	if err == nil {
 		t.Errorf("expected error but got nothing")
 	}
@@ -432,8 +413,6 @@ func TestPool_SendBatch_GivenNotConnectionError_ShouldRetryMaxTries(t *testing.T
 func TestPool_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	b := &pgx.Batch{}
 	b.Queue("test")
@@ -460,7 +439,7 @@ func TestPool_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	err := pool.SendBatch(ctx, b)
+	err := pool.SendBatch(t.Context(), b)
 	if err == nil {
 		t.Errorf("expected error but got nothing")
 	}
@@ -469,8 +448,6 @@ func TestPool_SendBatch_GivenConnectionError_ShouldReturnError(t *testing.T) {
 func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	b := &pgx.Batch{}
 	b.Queue("test")
@@ -511,7 +488,7 @@ func TestPool_SendBatch_GivenConnectionError_ShouldRetryUntilSuccess(t *testing.
 		minRetryTimeout: minRetryTimeout,
 	}
 
-	err := pool.SendBatch(ctx, b)
+	err := pool.SendBatch(t.Context(), b)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

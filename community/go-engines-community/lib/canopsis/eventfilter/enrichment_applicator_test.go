@@ -13,8 +13,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	mock_externaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/externaldata"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestEnrichmentApplyOnSuccess(t *testing.T) {
@@ -49,7 +49,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 
 	event := types.Event{}
 	resOutcome, _, _, resError := applicator.Apply(
-		context.Background(),
+		t.Context(),
 		eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnSuccess: expectedOutcome}},
 		&event,
 		eventfilter.RegexMatch{})
@@ -95,7 +95,7 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 
 	event := types.Event{}
 	applicator := eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), mockActionProcessor, mockFailureService)
-	resOutcome, _, _, resError := applicator.Apply(context.Background(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, eventfilter.RegexMatch{})
+	resOutcome, _, _, resError := applicator.Apply(t.Context(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, eventfilter.RegexMatch{})
 	if resError == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -146,7 +146,7 @@ func TestApplyWithExternalData(t *testing.T) {
 	}
 
 	outcome, _, _, err := applicator.Apply(
-		context.Background(),
+		t.Context(),
 		eventfilter.ParsedRule{
 			ExternalData: externalData,
 			Config: eventfilter.ParsedRuleConfig{

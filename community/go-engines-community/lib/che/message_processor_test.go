@@ -202,19 +202,20 @@ func benchmarkMessageProcessorWithConfig(
 	cfg config.CanopsisConf,
 	genEvent func(i int) types.Event,
 ) {
+	ctx := b.Context()
+
 	defer func() {
 		if r := recover(); r != nil {
 			b.Fatal("benchmark failed due to panic:", r)
 		}
 	}()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := dbClient.Disconnect(context.Background())
+		err := dbClient.Disconnect(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
@@ -237,7 +238,7 @@ func benchmarkMessageProcessorWithConfig(
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := loader.Clean(context.Background())
+		err := loader.Clean(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}

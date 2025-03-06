@@ -1,7 +1,6 @@
 package alarm
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -11,15 +10,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
-	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
+	"go.uber.org/mock/gomock"
 )
 
 func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	service := NewActivationService(
@@ -50,7 +48,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 		).
 		Times(1)
 
-	_, err := service.Process(ctx, alarm, types.Event{})
+	_, err := service.Process(t.Context(), alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -59,8 +57,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishEvent(t *test
 func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	service := NewActivationService(
@@ -115,7 +112,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 			gomock.Any(),
 		)
 
-	_, err := service.Process(ctx, alarm, event)
+	_, err := service.Process(t.Context(), alarm, event)
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -124,8 +121,7 @@ func TestActivationService_Process_GivenInactiveAlarm_ShouldPublishActiveEvent(t
 func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	service := NewActivationService(
@@ -156,7 +152,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, types.Event{})
+	_, err := service.Process(t.Context(), alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -165,8 +161,7 @@ func TestActivationService_Process_GivenInactiveAndSnoozedAlarm_ShouldNotPublish
 func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldNotPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	service := NewActivationService(
@@ -196,7 +191,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, types.Event{})
+	_, err := service.Process(t.Context(), alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}
@@ -205,8 +200,7 @@ func TestActivationService_Process_GivenInactiveAlarmWithActivePBehavior_ShouldN
 func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	encoderMock := mock_encoding.NewMockEncoder(ctrl)
 	publisherMock := mock_amqp.NewMockPublisher(ctrl)
 	service := NewActivationService(
@@ -237,7 +231,7 @@ func TestActivationService_Process_GivenActiveAlarm_ShouldNotPublishEvent(t *tes
 		).
 		Times(0)
 
-	_, err := service.Process(ctx, alarm, types.Event{})
+	_, err := service.Process(t.Context(), alarm, types.Event{})
 	if err != nil {
 		t.Errorf("exepected not error but got %v", err)
 	}

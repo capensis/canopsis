@@ -12,12 +12,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestProcessEventSuccess(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -93,7 +93,7 @@ func TestProcessEventSuccess(t *testing.T) {
 }
 
 func TestProcessEventBreakOutcome(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -168,7 +168,7 @@ func TestProcessEventBreakOutcome(t *testing.T) {
 }
 
 func TestProcessEventDropOutcome(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

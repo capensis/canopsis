@@ -1,6 +1,6 @@
 package eventfilter
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter RuleApplicator,RuleAdapter,RuleApplicatorContainer,Service,ActionProcessor,FailureService,EventCounter
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter RuleApplicator,RuleAdapter,RuleApplicatorContainer,Service,ActionProcessor,FailureService,EventCounter
 
 import (
 	"context"

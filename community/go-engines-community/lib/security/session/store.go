@@ -1,7 +1,7 @@
 // Package session contains implementation of http session.
 package session
 
-//go:generate mockgen -destination=../../../mocks/github.com/gorilla/sessions/store.go github.com/gorilla/sessions Store
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/github.com/gorilla/sessions/store.go github.com/gorilla/sessions Store
 
 import (
 	"context"

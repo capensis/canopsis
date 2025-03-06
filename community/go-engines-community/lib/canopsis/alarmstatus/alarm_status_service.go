@@ -1,6 +1,6 @@
 package alarmstatus
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarmstatus/alarmstatus.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus Service
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/alarmstatus/alarmstatus.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus Service
 
 import (
 	"context"
