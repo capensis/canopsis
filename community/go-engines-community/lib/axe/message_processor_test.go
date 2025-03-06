@@ -7,6 +7,7 @@ import (
 	"time"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -242,14 +243,14 @@ func benchmarkMessageProcessor(
 	genEvent func(i int) types.Event,
 	adjustFixtures ...func(ctx context.Context, dbClient mongo.DbClient) error,
 ) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := b.Context()
+
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := dbClient.Disconnect(context.Background())
+		err := dbClient.Disconnect(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
@@ -272,7 +273,7 @@ func benchmarkMessageProcessor(
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := loader.Clean(context.Background())
+		err := loader.Clean(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
@@ -314,7 +315,8 @@ func benchmarkMessageProcessor(
 	}
 	pbhLockClient := redis.NewLockClient(pbhRedisSession)
 	pbhStore := pbehavior.NewStore(redisClient, json.NewEncoder(), json.NewDecoder())
-	_, _, err = pbehavior.NewService(dbClient, pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder()), pbhStore, pbhLockClient, logger).
+	autorProvider := author.NewProvider(config.NewApiConfigProvider(cfg, logger))
+	_, _, err = pbehavior.NewService(dbClient, pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, autorProvider), json.NewDecoder()), pbhStore, pbhLockClient, logger).
 		Compute(ctx, timespan.New(time.Now(), time.Now().Add(time.Hour)), time.UTC)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)

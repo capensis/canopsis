@@ -1,7 +1,6 @@
 package eventfilter_test
 
 import (
-	"context"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -14,10 +13,10 @@ import (
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
-	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.uber.org/mock/gomock"
 )
 
 func TestActionProcessor(t *testing.T) {
@@ -1862,7 +1861,7 @@ func TestActionProcessor(t *testing.T) {
 	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEntityUpdated, resultErr := processor.Process(context.Background(), "test", dataset.action, &dataset.event,
+			resultEntityUpdated, resultErr := processor.Process(t.Context(), "test", dataset.action, &dataset.event,
 				dataset.regexMatches, dataset.externalData)
 			if diff := pretty.Compare(dataset.expectedEvent, dataset.event); diff != "" {
 				t.Errorf("unexpected event: %s", diff)

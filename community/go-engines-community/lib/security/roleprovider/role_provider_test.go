@@ -8,17 +8,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/mock/gomock"
 )
 
 func TestRoleProvider_GetValidRoles(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-
-	ctx := context.Background()
 
 	validRoleNameIDMap := map[string]string{
 		"default-role": "default-role-id",
@@ -167,7 +165,7 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			roles, err := p.GetValidRoleIDs(ctx, dataset.potentialRoles, dataset.defaultRole)
+			roles, err := p.GetValidRoleIDs(t.Context(), dataset.potentialRoles, dataset.defaultRole)
 			if !slices.Equal(roles, dataset.expectedRoles) {
 				t.Errorf("expected roles %v, got %v", dataset.expectedRoles, roles)
 			}

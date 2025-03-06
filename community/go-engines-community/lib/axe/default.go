@@ -403,6 +403,7 @@ func NewEngine(
 			Logger:             logger,
 			TagCollection:      dbClient.Collection(mongo.AlarmTagCollection),
 			AlarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+			EntityCollection:   dbClient.Collection(mongo.EntityMongoCollection),
 		},
 		logger,
 	))

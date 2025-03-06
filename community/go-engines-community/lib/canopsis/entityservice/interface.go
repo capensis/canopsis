@@ -1,6 +1,6 @@
 package entityservice
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/entityservice/entityservice.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice Adapter
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/entityservice/entityservice.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice Adapter
 
 import (
 	"context"
