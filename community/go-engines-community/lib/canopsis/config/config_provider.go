@@ -1,6 +1,6 @@
 package config
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/config/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
 
 import (
 	"fmt"
@@ -469,7 +469,7 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 		p.logger.Error().
 			Strs("invalid", cfg.API.AuthorScheme).
 			Msgf("bad value AuthorScheme of %s config section, previous value is used", sectionName)
-	} else if !reflect.DeepEqual(cfg.API.AuthorScheme, p.conf.AuthorScheme) {
+	} else if !slices.Equal(cfg.API.AuthorScheme, p.conf.AuthorScheme) {
 		p.logger.Info().
 			Strs("previous", p.conf.AuthorScheme).
 			Strs("new", cfg.API.AuthorScheme).

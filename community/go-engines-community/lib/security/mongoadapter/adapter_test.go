@@ -10,7 +10,7 @@ import (
 	libmodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	casbinmodel "github.com/casbin/casbin/v2/model"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 func TestAdapter_LoadPolicy_GivenRole_ShouldAddCRUDPermissionsToRole(t *testing.T) {
@@ -251,7 +251,7 @@ func createMockCursor[T any](ctrl *gomock.Controller, models []T) mongo.Cursor {
 	mockCursor := mock_mongo.NewMockCursor(ctrl)
 	if len(models) > 0 {
 		mockCursor.EXPECT().Next(gomock.Any()).Return(true).Times(len(models))
-		calls := make([]*gomock.Call, len(models))
+		calls := make([]any, len(models))
 		for i := range models {
 			model := models[i]
 			calls[i] = mockCursor.EXPECT().Decode(gomock.Any()).Do(func(m *T) {

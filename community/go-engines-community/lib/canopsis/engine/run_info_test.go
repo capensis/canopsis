@@ -1,7 +1,6 @@
 package engine_test
 
 import (
-	"context"
 	"reflect"
 	"testing"
 	"time"
@@ -13,8 +12,7 @@ import (
 )
 
 func TestNewRunInfoManager(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
 	client, err := redis.NewSession(ctx, redis.EngineRunInfo, zerolog.Nop(), 0, 0)
 	if err != nil {

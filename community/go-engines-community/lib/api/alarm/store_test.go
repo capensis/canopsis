@@ -88,14 +88,14 @@ func BenchmarkStore_Find_GivenRequestWithExcludeInstructionsFilter(b *testing.B)
 }
 
 func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListRequestWithPagination, userID string) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := b.Context()
+
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := dbClient.Disconnect(context.Background())
+		err := dbClient.Disconnect(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
@@ -108,7 +108,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := loader.Clean(context.Background())
+		err := loader.Clean(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}

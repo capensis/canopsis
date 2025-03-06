@@ -12,6 +12,10 @@ import (
 )
 
 func main() {
+	// Graceful shutdown.
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	opts := Options{}
 
 	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
@@ -29,12 +33,9 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(opts.ModeDebug)
+	logger := log.NewLogger(ctx, opts.ModeDebug)
 	trace := debug.Start(logger)
 
-	// Graceful shutdown.
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
 	var err error
 	if opts.ComputeRruleEnd {
 		err = computeRruleEnd(ctx, logger)
