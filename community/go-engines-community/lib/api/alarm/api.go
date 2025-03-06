@@ -355,13 +355,14 @@ func (a *api) StartExport(c *gin.Context) {
 		panic(err)
 	}
 
+	userID := c.MustGet(auth.UserKey).(string)
 	task, err := a.taskCreator.Create(c, export.TaskParameters{
 		Type:           "alarm",
 		Parameters:     string(params),
 		Fields:         r.Fields,
 		Separator:      separator,
 		FilenamePrefix: "alarms",
-		UserID:         c.MustGet(auth.UserKey).(string),
+		UserID:         userID,
 	})
 	if err != nil {
 		panic(err)

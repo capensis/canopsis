@@ -1,6 +1,6 @@
 package techmetrics
 
-//go:generate mockgen -destination=../../../mocks/lib/techmetrics/sender.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics Sender
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/techmetrics/sender.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics Sender
 
 import (
 	"context"

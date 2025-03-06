@@ -2,19 +2,17 @@ package scheduler_test
 
 import (
 	"bytes"
-	"context"
 	"testing"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/redis/go-redis/v9"
-	"github.com/golang/mock/gomock"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -36,8 +34,7 @@ func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing.T) {
 		Times(1).
 		Return(redis.NewBoolResult(true, nil))
 
-	locked, err := queueLock.LockOrPush(ctx, lockID, item)
-
+	locked, err := queueLock.LockOrPush(t.Context(), lockID, item)
 	if !locked {
 		t.Error("expected returns true")
 	}
@@ -48,7 +45,6 @@ func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldSetLock(t *testing.T) {
 }
 
 func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldNotAddItemToQueue(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -73,11 +69,10 @@ func TestQueueLock_LockOrPush_GivenLockIsNotSet_ShouldNotAddItemToQueue(t *testi
 		RPush(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	_, _ = queueLock.LockOrPush(ctx, lockID, item)
+	_, _ = queueLock.LockOrPush(t.Context(), lockID, item)
 }
 
 func TestQueueLock_LockOrPush_GivenLockIsSet_ShouldAddItemToQueue(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -103,7 +98,7 @@ func TestQueueLock_LockOrPush_GivenLockIsSet_ShouldAddItemToQueue(t *testing.T) 
 		Times(1).
 		Return(redis.NewIntResult(1, nil))
 
-	locked, err := queueLock.LockOrPush(ctx, lockID, item)
+	locked, err := queueLock.LockOrPush(t.Context(), lockID, item)
 
 	if locked {
 		t.Error("expected returns false")
@@ -115,7 +110,6 @@ func TestQueueLock_LockOrPush_GivenLockIsSet_ShouldAddItemToQueue(t *testing.T) 
 }
 
 func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsNotEmpty_ShouldReturnNextItem(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -143,7 +137,7 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsNotEmpty_ShouldReturnNext
 		Times(1).
 		Return(redis.NewStringResult(string(expectedItem), nil))
 
-	item, err := queueLock.PopOrUnlock(ctx, lockID, false)
+	item, err := queueLock.PopOrUnlock(t.Context(), lockID, false)
 
 	if !bytes.Equal(item, expectedItem) {
 		t.Errorf("expected item: %v but got %v", expectedItem, item)
@@ -155,7 +149,6 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsNotEmpty_ShouldReturnNext
 }
 
 func TestQueueLock_PopOrUnlock_GivenLockIsNotSet_ShouldNotReturnNextItem(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -184,7 +177,7 @@ func TestQueueLock_PopOrUnlock_GivenLockIsNotSet_ShouldNotReturnNextItem(t *test
 		LPop(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	item, err := queueLock.PopOrUnlock(ctx, lockID, false)
+	item, err := queueLock.PopOrUnlock(t.Context(), lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -196,7 +189,6 @@ func TestQueueLock_PopOrUnlock_GivenLockIsNotSet_ShouldNotReturnNextItem(t *test
 }
 
 func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldNotReturnNextItem(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -226,7 +218,7 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldNotReturnNext
 		Times(1).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	item, err := queueLock.PopOrUnlock(ctx, lockID, false)
+	item, err := queueLock.PopOrUnlock(t.Context(), lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -238,7 +230,6 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldNotReturnNext
 }
 
 func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldDeleteLock(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -268,11 +259,10 @@ func TestQueueLock_PopOrUnlock_GivenLockIsSetAndQueueIsEmpty_ShouldDeleteLock(t 
 		LPop(gomock.Any(), gomock.Any()).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	_, _ = queueLock.PopOrUnlock(ctx, lockID, false)
+	_, _ = queueLock.PopOrUnlock(t.Context(), lockID, false)
 }
 
 func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNextItem(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -300,7 +290,7 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNe
 		Times(1).
 		Return(redis.NewStringResult(string(expectedItem), nil))
 
-	item, err := queueLock.LockAndPop(ctx, lockID, false)
+	item, err := queueLock.LockAndPop(t.Context(), lockID, false)
 
 	if !bytes.Equal(item, expectedItem) {
 		t.Errorf("expected item: %v but got %v", expectedItem, item)
@@ -312,7 +302,6 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsNotEmpty_ShouldReturnNe
 }
 
 func TestQueueLock_LockAndPop_GivenLockIsSet_ShouldNotReturnNextItem(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -336,7 +325,7 @@ func TestQueueLock_LockAndPop_GivenLockIsSet_ShouldNotReturnNextItem(t *testing.
 		LPop(gomock.Any(), gomock.Any()).
 		Times(0)
 
-	item, err := queueLock.LockAndPop(ctx, lockID, false)
+	item, err := queueLock.LockAndPop(t.Context(), lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -348,7 +337,6 @@ func TestQueueLock_LockAndPop_GivenLockIsSet_ShouldNotReturnNextItem(t *testing.
 }
 
 func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldNotReturnNextItem(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -378,7 +366,7 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldNotReturnNe
 		Times(1).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	item, err := queueLock.LockAndPop(ctx, lockID, false)
+	item, err := queueLock.LockAndPop(t.Context(), lockID, false)
 
 	if item != nil {
 		t.Errorf("expected item: nil but got %v", item)
@@ -390,7 +378,6 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldNotReturnNe
 }
 
 func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldDeleteLock(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	lockClient := mock_redis.NewMockCmdable(ctrl)
@@ -420,5 +407,5 @@ func TestQueueLock_LockAndPop_GivenLockIsNotSetAndQueueIsEmpty_ShouldDeleteLock(
 		LPop(gomock.Any(), gomock.Any()).
 		Return(redis.NewStringResult("", redis.Nil))
 
-	_, _ = queueLock.LockAndPop(ctx, lockID, false)
+	_, _ = queueLock.LockAndPop(t.Context(), lockID, false)
 }

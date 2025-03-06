@@ -43,7 +43,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(f.modeDebug)
+	logger := log.NewLogger(ctx, f.modeDebug)
 	conf, err := parseConfig(f, logger)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to parse config")

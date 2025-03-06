@@ -356,7 +356,7 @@ func BenchmarkKeyMutex_LockMultiple_UnlockMultiple(b *testing.B) {
 }
 
 func waitDone(t *testing.T, done <-chan bool) {
-	ctx, cancel := context.WithTimeout(context.Background(), waitTimeout)
+	ctx, cancel := context.WithTimeout(t.Context(), waitTimeout)
 	defer cancel()
 
 	select {

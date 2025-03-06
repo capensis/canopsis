@@ -1,7 +1,7 @@
 package redis
 
-//go:generate mockgen -destination=../../mocks/lib/redis/redislock.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis LockClient,Lock
-//go:generate mockgen -destination=../../mocks/github.com/redis/go-redis/v9/cmdable.go github.com/redis/go-redis/v9 Cmdable,UniversalClient
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/redis/redislock.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis LockClient,Lock
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/github.com/redis/go-redis/v9/cmdable.go github.com/redis/go-redis/v9 Cmdable,UniversalClient
 
 import (
 	"context"
