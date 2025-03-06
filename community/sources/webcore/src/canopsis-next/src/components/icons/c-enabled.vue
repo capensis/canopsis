@@ -2,15 +2,15 @@
   <span>
     <v-icon
       v-if="value"
-      color="primary"
+      color="success"
     >
-      check_circle
+      {{ iconSuccess }}
     </v-icon>
     <v-icon
       v-else
       color="error"
     >
-      cancel
+      {{ iconFailed }}
     </v-icon>
   </span>
 </template>
@@ -21,6 +21,14 @@ export default {
     value: {
       type: Boolean,
       default: false,
+    },
+    iconSuccess: {
+      type: String,
+      default: 'check_circle',
+    },
+    iconFailed: {
+      type: String,
+      default: 'cancel',
     },
   },
 };
