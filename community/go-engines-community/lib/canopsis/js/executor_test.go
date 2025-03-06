@@ -1,7 +1,6 @@
 package js_test
 
 import (
-	"context"
 	"errors"
 	"testing"
 
@@ -11,8 +10,6 @@ import (
 )
 
 func TestCompile_GivenFunc_ShouldCallIt(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	code := `
         function test(a, b) {
           return a + b;
@@ -23,7 +20,7 @@ func TestCompile_GivenFunc_ShouldCallIt(t *testing.T) {
 		t.Fatalf("unexpected error %v", err)
 	}
 
-	res, err := e.ExecuteFunc(ctx, "test", 1, 2)
+	res, err := e.ExecuteFunc(t.Context(), "test", 1, 2)
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -48,8 +45,6 @@ func TestCompile_GivenInvalidJs_ShouldReturnError(t *testing.T) {
 }
 
 func TestCompile_GivenInvalidFuncArgs_ShouldReturnError(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	code := `
         function test(a, b) {
           return a.indexOf(b);
@@ -60,7 +55,7 @@ func TestCompile_GivenInvalidFuncArgs_ShouldReturnError(t *testing.T) {
 		t.Fatalf("unexpected error %v", err)
 	}
 
-	_, err = e.ExecuteFunc(ctx, "test")
+	_, err = e.ExecuteFunc(t.Context(), "test")
 	exception := &goja.Exception{}
 	if err == nil || !errors.As(err, &exception) {
 		t.Fatalf("unexpected error %v", err)

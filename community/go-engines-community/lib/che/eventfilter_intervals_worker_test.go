@@ -46,15 +46,14 @@ func BenchmarkEventfilterIntervalsWorker_Work_Given100Exdates_100ExceptionsWith_
 }
 
 func benchmarkRulesChangesWatcher(b *testing.B, fixturesPath string) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := b.Context()
 
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := dbClient.Disconnect(context.Background())
+		err := dbClient.Disconnect(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
@@ -67,7 +66,7 @@ func benchmarkRulesChangesWatcher(b *testing.B, fixturesPath string) {
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := loader.Clean(context.Background())
+		err := loader.Clean(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}

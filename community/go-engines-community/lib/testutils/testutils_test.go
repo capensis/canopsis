@@ -12,8 +12,8 @@ func TestEnvBackup(t *testing.T) {
 	Convey("Given a manually set env var", t, func() {
 		envname := "CPS_TEST_TESTUTILS"
 		envval := "CoolWorld"
-		err := os.Setenv(envname, envval)
-		So(err, ShouldBeNil)
+
+		t.Setenv(envname, envval)
 
 		Convey("I can create an EnvBackup, save and restore en env var", func() {
 			e, err := testutils.NewEnvBackup(envname, "MadWorld")
