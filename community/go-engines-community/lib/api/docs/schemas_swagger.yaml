@@ -3027,6 +3027,8 @@ definitions:
         type: string
       created:
         type: integer
+      fill_border:
+        type: boolean
       title:
         type: string
       updated:
