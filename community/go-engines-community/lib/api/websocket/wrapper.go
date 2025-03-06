@@ -1,6 +1,6 @@
 package websocket
 
-//go:generate mockgen -destination=../../../mocks/lib/api/websocket/websocket.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket Upgrader,Connection,Authorizer,Hub
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/websocket/websocket.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket Upgrader,Connection,Authorizer,Hub
 
 import (
 	"net"

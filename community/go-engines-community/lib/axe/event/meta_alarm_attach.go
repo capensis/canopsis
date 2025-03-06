@@ -293,6 +293,9 @@ func (p *metaAlarmAttachProcessor) attachChildrenToMetaAlarm(ctx context.Context
 			metaAlarm.Value.LastEventDate = lastEventDate
 			setUpdate["v.last_event_date"] = lastEventDate
 		}
+		if metaAlarm.Value.InitialOutput == "" {
+			metaAlarm.Value.InitialOutput, setUpdate["v.initial_output"] = event.Parameters.Output, event.Parameters.Output
+		}
 
 		addToSet := bson.M{"v.children": bson.M{"$each": childrenIds}}
 		if !rule.IsManual() {

@@ -12,9 +12,9 @@ import (
 	mock_sessions "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/gorilla/sessions"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
 	"github.com/gorilla/sessions"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t *testing.T) {

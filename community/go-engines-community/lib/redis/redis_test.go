@@ -1,20 +1,19 @@
 package redis_test
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"strconv"
 	"testing"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/rs/zerolog"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestNewRedisOptions(t *testing.T) {
-	redisOptions, err := redis.NewOptions("redis://user:password@host:7777", 0, log.NewTestLogger(), 0, 0)
+	redisOptions, err := redis.NewOptions("redis://user:password@host:7777", 0, zerolog.Nop(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
 	}
@@ -33,72 +32,71 @@ func TestNewRedisOptions(t *testing.T) {
 }
 
 func TestBadRedisOptions(t *testing.T) {
-	ctx := context.Background()
-
 	Convey("Testing bad redis urls", t, func() {
+		ctx := t.Context()
+
 		Convey("Bad url", func() {
-			_, err := redis.NewOptions("bla://nrausitenrste,anursiet", -1, log.NewTestLogger(), 0, 0)
+			_, err := redis.NewOptions("bla://nrausitenrste,anursiet", -1, zerolog.Nop(), 0, 0)
 			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Bad url - judgement day", func() {
-			_, err := redis.NewOptions("", -1, log.NewTestLogger(), 0, 0)
+			_, err := redis.NewOptions("", -1, zerolog.Nop(), 0, 0)
 			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Bad url - access denied", func() {
-			_, err := redis.NewOptions("redis://user@localhost/0", -1, log.NewTestLogger(), 0, 0)
+			_, err := redis.NewOptions("redis://user@localhost/0", -1, zerolog.Nop(), 0, 0)
 			So(err, ShouldBeNil)
 		})
 
 		Convey("Bad db", func() {
-			_, err := redis.NewOptions("redis://localhost/bleurk", -1, log.NewTestLogger(), 0, 0)
+			_, err := redis.NewOptions("redis://localhost/bleurk", -1, zerolog.Nop(), 0, 0)
 			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Bad url - i'm calling you", func() {
 			oldredisurl := os.Getenv(redis.EnvURL)
-			os.Setenv(redis.EnvURL, "redis://anrsuitenrstau,nrasutie;;;;...")
-			_, err := redis.NewSession(ctx, -1, log.NewTestLogger(), 0, 0)
-			os.Setenv(redis.EnvURL, oldredisurl)
+			t.Setenv(redis.EnvURL, "redis://anrsuitenrstau,nrasutie;;;;...")
+			_, err := redis.NewSession(ctx, -1, zerolog.Nop(), 0, 0)
+			t.Setenv(redis.EnvURL, oldredisurl)
 			So(err, ShouldNotBeNil)
 		})
 
 		Convey("Good url, wrong database - Bagdad cafe", func() {
 			oldredisurl := os.Getenv(redis.EnvURL)
-			os.Setenv(redis.EnvURL, "redis://Canyouexplainwhatyouwannado/0")
-			_, err := redis.NewSession(ctx, -1, log.NewTestLogger(), 0, 0)
-			os.Setenv(redis.EnvURL, oldredisurl)
+			t.Setenv(redis.EnvURL, "redis://Canyouexplainwhatyouwannado/0")
+			_, err := redis.NewSession(ctx, -1, zerolog.Nop(), 0, 0)
+			t.Setenv(redis.EnvURL, oldredisurl)
 			So(err, ShouldNotBeNil)
 		})
 	})
 }
 
 func TestNewRedisSession(t *testing.T) {
-	_, err := redis.NewSession(context.Background(), redis.CacheAlarm, log.NewTestLogger(), 0, 0)
+	_, err := redis.NewSession(t.Context(), redis.CacheAlarm, zerolog.Nop(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis client error: %v", err)
 	}
 }
 
 func BenchmarkRedisSpeed(b *testing.B) {
-	ctx := context.Background()
-	client, _ := redis.NewSession(ctx, redis.CacheAlarm, log.NewTestLogger(), 0, 0)
+	client, _ := redis.NewSession(b.Context(), redis.CacheAlarm, zerolog.Nop(), 0, 0)
 
 	for i := 1; i < b.N; i++ {
 		rid := "titi_" + strconv.Itoa(i)
 		if i%4 == 0 {
-			err := client.Set(ctx, rid, "toto", time.Hour*4)
+			err := client.Set(b.Context(), rid, "toto", time.Hour*4)
 			if err.Err() != nil {
 				fmt.Printf("error setting key %s: %v", rid, err)
 			}
 		}
-		_ = client.Exists(ctx, rid)
+		_ = client.Exists(b.Context(), rid)
 	}
 }
 
 func TestNewFailoverOptions(t *testing.T) {
-	redisOptions, err := redis.NewFailoverOptions("redis-sentinel://user:password@host:7777?sentinelMasterId=prime", 0, log.NewTestLogger(), 0, 0)
+	redisOptions, err := redis.NewFailoverOptions("redis-sentinel://user:password@host:7777?sentinelMasterId=prime", 0, zerolog.Nop(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
 	}
@@ -127,7 +125,7 @@ func TestNewFailoverOptions(t *testing.T) {
 		t.Fatalf("redis bad database: %d", redisOptions.DB)
 	}
 
-	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/3?timeout=1s&sentinelMasterId=prime", -1, log.NewTestLogger(), 0, 0)
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/3?timeout=1s&sentinelMasterId=prime", -1, zerolog.Nop(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
 	}
@@ -152,7 +150,7 @@ func TestNewFailoverOptions(t *testing.T) {
 		t.Fatalf("redis bad master: %s", redisOptions.MasterName)
 	}
 
-	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/6?timeout=1s&sentinelMasterId=prime", 3, log.NewTestLogger(), 0, 0)
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://password@host1:7777,host2:7778/6?timeout=1s&sentinelMasterId=prime", 3, zerolog.Nop(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
 	}
@@ -162,7 +160,7 @@ func TestNewFailoverOptions(t *testing.T) {
 	if redisOptions.DB != 3 {
 		t.Fatalf("redis bad database: %d", redisOptions.DB)
 	}
-	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://:password@host1:7777,host2:7778/?timeout=1s&sentinelMasterId=prime", 3, log.NewTestLogger(), 0, 0)
+	redisOptions, err = redis.NewFailoverOptions("redis-sentinel://:password@host1:7777,host2:7778/?timeout=1s&sentinelMasterId=prime", 3, zerolog.Nop(), 0, 0)
 	if err != nil {
 		t.Fatalf("redis options error: %v", err)
 	}
