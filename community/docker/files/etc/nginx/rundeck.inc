@@ -1,1 +1,0 @@
-../../../../deploy-ansible/playbook/roles/canopsis/templates/nginx/rundeck.j2
