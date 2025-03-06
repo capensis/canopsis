@@ -83,7 +83,7 @@
 <script>
 import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES } from '@/constants';
 
-import { isInstructionAuto, isInstructionSimpleManual } from '@/helpers/entities/remediation/instruction/form';
+import { isInstructionTypeAuto, isInstructionTypeSimpleManual } from '@/helpers/entities/remediation/instruction/form';
 
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
@@ -124,11 +124,11 @@ export default {
   },
   computed: {
     isAutoType() {
-      return isInstructionAuto(this.form);
+      return isInstructionTypeAuto(this.form?.type);
     },
 
     isManualSimplified() {
-      return isInstructionSimpleManual(this.form);
+      return isInstructionTypeSimpleManual(this.form?.type);
     },
 
     availableTriggers() {

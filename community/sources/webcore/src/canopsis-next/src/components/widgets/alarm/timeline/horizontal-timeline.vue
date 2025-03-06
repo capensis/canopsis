@@ -38,14 +38,14 @@ import HorizontalTimelineCard from './horizontal-timeline-card.vue';
 export default {
   components: { HorizontalTimelineCard },
   props: {
-    alarm: {
-      type: Object,
-      required: true,
+    steps: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {
     groupedSteps() {
-      return Object.entries(groupAlarmSteps(this.alarm.v.steps)).map(([day, steps]) => ({
+      return Object.entries(groupAlarmSteps(this.steps)).map(([day, steps]) => ({
         day,
         steps,
       }));

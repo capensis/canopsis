@@ -84,7 +84,7 @@ import { isNull } from 'lodash';
 import { ENTITY_TYPES, MODALS, TREE_OF_DEPENDENCIES_SHOW_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
-import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
+import { isInstructionTypeManual } from '@/helpers/entities/remediation/instruction/form';
 import {
   getAvailableActionsByEntity,
   isDisabledActionForEntityByActionsRequests,
@@ -205,7 +205,7 @@ export default {
       const refreshEntities = () => this.$emit('refresh', true);
 
       this.$modals.show({
-        name: isInstructionManual(assignedInstruction)
+        name: isInstructionTypeManual(assignedInstruction?.type)
           ? MODALS.executeRemediationInstruction
           : MODALS.executeRemediationSimpleInstruction,
         config: {
