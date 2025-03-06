@@ -1,6 +1,6 @@
 package canceldelay
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/canceldelay/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/canceldelay Service
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/canceldelay/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/canceldelay Service
 
 import (
 	"context"

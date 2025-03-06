@@ -108,7 +108,7 @@ func (p *ackRemoveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 		return result, err
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates)
 
 	return result, nil
 }

@@ -110,7 +110,7 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 		return result, err
 	}
 
-	go p.postProcess(context.Background(), event, result)
+	go p.postProcess(context.WithoutCancel(ctx), event, result)
 
 	return result, nil
 }

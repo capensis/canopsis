@@ -72,7 +72,7 @@ func (p *activateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	result.Alarm = alarm
 	result.AlarmChange = alarmChange
 	result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
-	go p.postProcess(context.Background(), event, result)
+	go p.postProcess(context.WithoutCancel(ctx), event, result)
 
 	return result, nil
 }
