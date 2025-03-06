@@ -2,7 +2,6 @@ package idlealarm
 
 import (
 	"bytes"
-	"context"
 	"reflect"
 	"testing"
 	"time"
@@ -20,16 +19,15 @@ import (
 	mock_entity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entity"
 	mock_idlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlerule"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
@@ -96,7 +94,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
-	events, err := service.Process(ctx)
+	events, err := service.Process(t.Context())
 
 	if err != nil {
 		t.Errorf("exepected no error but got %v", err)
@@ -131,8 +129,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
@@ -198,7 +195,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
-	events, err := service.Process(ctx)
+	events, err := service.Process(t.Context())
 
 	if err != nil {
 		t.Errorf("exepected no error but got %v", err)
@@ -233,8 +230,7 @@ func TestService_Process_GivenAlarmRuleByLastUpdateDate_ShouldReturnEvent(t *tes
 func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
@@ -302,7 +298,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return(nil, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
-	events, err := service.Process(ctx)
+	events, err := service.Process(t.Context())
 
 	if err != nil {
 		t.Errorf("exepected no error but got %v", err)
@@ -338,8 +334,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	mockRuleAdapter := mock_idlerule.NewMockRuleAdapter(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 	mockEntityAdapter := mock_entity.NewMockAdapter(ctrl)
@@ -365,7 +360,7 @@ func TestService_Process_GivenAlarmForConnectorEntity_ShouldReturnEvent(t *testi
 	mockAlarmAdapter.EXPECT().GetOpenedAlarmsByConnectorIdleRules(gomock.Any()).Return([]types.Alarm{alarm}, nil)
 
 	service := NewService(mockRuleAdapter, mockAlarmAdapter, mockEntityAdapter, mockRPCClient, libevent.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector), mockEncoder, logger)
-	events, err := service.Process(ctx)
+	events, err := service.Process(t.Context())
 
 	if err != nil {
 		t.Errorf("exepected no error but got %v", err)

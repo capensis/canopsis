@@ -68,13 +68,13 @@ install: $(CURRENT_BUILD_OUTPUT_DIR)/www
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/cors.inc" "$(DESTDIR)/etc/nginx/cors.inc"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/https.inc" "$(DESTDIR)/etc/nginx/https.inc"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/rundeck.inc" "$(DESTDIR)/etc/nginx/rundeck.inc"
-	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/default.conf"
+	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/canopsis.conf" "$(DESTDIR)/etc/nginx/conf.d/canopsis.conf"
 	cp -pR -- "$(CURRENT_BUILD_OUTPUT_DIR)/www" "$(DESTDIR)/opt/canopsis/srv/"
 
 nginx_config:
 	@echo "==> installing Nginx default config"
 	install -d -m 755 -- "$(DESTDIR)/etc/nginx/conf.d"
-	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/default.conf" "$(DESTDIR)/etc/nginx/conf.d/"
+	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/canopsis.conf" "$(DESTDIR)/etc/nginx/conf.d/"
 	install -c -m 644 -p -- "$(MONOREPO_ROOT)/community/sources/webcore/src/canopsis-next/config/nginx/resolvers.inc" "$(DESTDIR)/etc/nginx/"
 
 #

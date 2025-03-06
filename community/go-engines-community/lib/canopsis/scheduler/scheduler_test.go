@@ -1,7 +1,6 @@
 package scheduler_test
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -10,16 +9,14 @@ import (
 	mock_redis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/redis/go-redis/v9"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
-	"github.com/golang/mock/gomock"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestScheduler_ProcessEvent_GivenEventAndNoLock_ShouldPublishEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	event := types.Event{
 		Connector:     "test-connector",
@@ -46,7 +43,7 @@ func TestScheduler_ProcessEvent_GivenEventAndNoLock_ShouldPublishEvent(t *testin
 	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
 		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder)
 
-	err := service.ProcessEvent(ctx, event)
+	err := service.ProcessEvent(t.Context(), event)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -55,8 +52,6 @@ func TestScheduler_ProcessEvent_GivenEventAndNoLock_ShouldPublishEvent(t *testin
 func TestScheduler_ProcessEvent_GivenEventAndLock_ShouldAddEventToQueue(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	event := types.Event{
 		Connector:     "test-connector",
@@ -83,7 +78,7 @@ func TestScheduler_ProcessEvent_GivenEventAndLock_ShouldAddEventToQueue(t *testi
 	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
 		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder)
 
-	err := service.ProcessEvent(ctx, event)
+	err := service.ProcessEvent(t.Context(), event)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -92,8 +87,6 @@ func TestScheduler_ProcessEvent_GivenEventAndLock_ShouldAddEventToQueue(t *testi
 func TestScheduler_AckEvent_GivenEventAndNoNextEventInQueue_ShouldUnlock(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	event := types.Event{
 		Connector:     "test-connector",
@@ -120,7 +113,7 @@ func TestScheduler_AckEvent_GivenEventAndNoNextEventInQueue_ShouldUnlock(t *test
 	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
 		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder)
 
-	err := service.AckEvent(ctx, event)
+	err := service.AckEvent(t.Context(), event)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -132,8 +125,6 @@ func TestScheduler_AckEvent_GivenEventAndNoNextEventInQueue_ShouldUnlock(t *test
 func TestScheduler_AckEvent_GivenEventAndNextEvent_ShouldPublishNextEvent(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	event := types.Event{
 		Connector:     "test-connector",
@@ -161,7 +152,7 @@ func TestScheduler_AckEvent_GivenEventAndNextEvent_ShouldPublishNextEvent(t *tes
 	service := scheduler.NewSchedulerService(mockRedisLockStorage, mockRedisQueueStorage,
 		mockChannel, publishToQueue, zerolog.Nop(), lockTtl, mockDecoder, mockEncoder)
 
-	err := service.AckEvent(ctx, event)
+	err := service.AckEvent(t.Context(), event)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

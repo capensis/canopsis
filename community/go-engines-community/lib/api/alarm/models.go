@@ -1,6 +1,6 @@
 package alarm
 
-//go:generate easyjson -no_std_marshalers
+//go:generate go tool github.com/mailru/easyjson/easyjson -no_std_marshalers
 
 import (
 	"fmt"

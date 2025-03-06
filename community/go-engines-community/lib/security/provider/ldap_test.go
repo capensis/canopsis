@@ -10,7 +10,7 @@ import (
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	mock_provider "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security/provider"
 	"github.com/go-ldap/ldap/v3"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 const validRole = "valid"
@@ -18,8 +18,7 @@ const validRole = "valid"
 func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	username := "testname"
 	password := "testpass"
 	expectedUser := &security.User{
@@ -68,8 +67,8 @@ func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
 	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
-	user, err := p.Auth(ctx, username, password)
 
+	user, err := p.Auth(t.Context(), username, password)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -82,8 +81,7 @@ func TestLdapProvider_Auth_GivenUsernameAndPassword_ShouldReturnUser(t *testing.
 func TestLdapProvider_Auth_GivenInvalidAdminCredentials_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	username := "testname"
 	password := "testpass"
 	config := security.LdapConfig{
@@ -115,8 +113,8 @@ func TestLdapProvider_Auth_GivenInvalidAdminCredentials_ShouldReturnError(t *tes
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
 	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
-	user, err := p.Auth(ctx, username, password)
 
+	user, err := p.Auth(t.Context(), username, password)
 	if err == nil {
 		t.Error("expected error but got nil")
 	}
@@ -129,8 +127,7 @@ func TestLdapProvider_Auth_GivenInvalidAdminCredentials_ShouldReturnError(t *tes
 func TestLdapProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	username := "testname"
 	password := "testpass"
 	config := security.LdapConfig{
@@ -162,8 +159,8 @@ func TestLdapProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
 	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
-	user, err := p.Auth(ctx, username, password)
 
+	user, err := p.Auth(t.Context(), username, password)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -176,8 +173,7 @@ func TestLdapProvider_Auth_GivenInvalidUsername_ShouldReturnNil(t *testing.T) {
 func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	username := "testname"
 	password := "testpass"
 	config := security.LdapConfig{
@@ -216,8 +212,8 @@ func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 	mockEnforcer := mock_security.NewMockEnforcer(ctrl)
 
 	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
-	user, err := p.Auth(ctx, username, password)
 
+	user, err := p.Auth(t.Context(), username, password)
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
@@ -230,8 +226,7 @@ func TestLdapProvider_Auth_GivenInvalidPassword_ShouldReturnNil(t *testing.T) {
 func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreateNewUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	username := "testname"
 	password := "testpass"
 	config := security.LdapConfig{
@@ -295,14 +290,13 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNoUserInStore_ShouldCreate
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
 	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
-	_, _ = p.Auth(ctx, username, password)
+	_, _ = p.Auth(t.Context(), username, password)
 }
 
 func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUser(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	username := "testname"
 	password := "testpass"
 	config := security.LdapConfig{
@@ -375,14 +369,13 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndUserInStore_ShouldUpdateUs
 	mockEnforcer.EXPECT().LoadPolicy().Return(nil)
 
 	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mockEnforcer)
-	_, _ = p.Auth(ctx, username, password)
+	_, _ = p.Auth(t.Context(), username, password)
 }
 
 func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNotFoundRole_ShouldReturnError(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	username := "testname"
 	password := "testpass"
 	config := security.LdapConfig{
@@ -429,8 +422,8 @@ func TestLdapProvider_Auth_GivenUsernameAndPasswordAndNotFoundRole_ShouldReturnE
 		Return(nil, nil)
 
 	p := NewLdapProvider(config, mockUserProvider, getRoleProviderMock(ctrl), mockLdapDialer, mock_security.NewMockEnforcer(ctrl))
-	user, err := p.Auth(ctx, username, password)
 
+	user, err := p.Auth(t.Context(), username, password)
 	if err == nil {
 		t.Error("expected error but got none")
 	}

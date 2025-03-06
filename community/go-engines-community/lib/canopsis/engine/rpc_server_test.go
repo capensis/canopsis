@@ -8,9 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
-	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
@@ -50,7 +50,7 @@ func TestRpcServer_Consume_GivenMessage_ShouldProcessIt(t *testing.T) {
 
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Eq(d)).Return(body, nil)
 
-	err := consumer.Consume(context.Background())
+	err := consumer.Consume(t.Context())
 	if err == nil {
 		t.Error("expected error but got nil")
 	}
@@ -104,7 +104,7 @@ func TestRpcServer_Consume_GivenProcessedMessage_ShouldPublishResultMessageToBac
 		}),
 	)
 
-	err := consumer.Consume(context.Background())
+	err := consumer.Consume(t.Context())
 	if err == nil {
 		t.Error("expected error but got nil")
 	}
@@ -143,7 +143,7 @@ func TestRpcServer_Consume_GivenErrorOnMessage_ShouldStopConsumer(t *testing.T) 
 	expectedErr := &testError{msg: "test error"}
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Return(nil, expectedErr)
 
-	err := consumer.Consume(context.Background())
+	err := consumer.Consume(t.Context())
 	testErr := &testError{}
 	if !errors.As(err, &testErr) || testErr.Error() != expectedErr.Error() {
 		t.Errorf("expected error %v but got %v", expectedErr, err)
@@ -177,7 +177,7 @@ func TestRpcServer_Consume_GivenContextDone_ShouldStopConsumer(t *testing.T) {
 		gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).Return(msgs, nil)
 	mockMessageProcessor.EXPECT().Process(gomock.Any(), gomock.Any()).Times(0)
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	cancel()
 
 	err := consumer.Consume(ctx)
