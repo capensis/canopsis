@@ -66,6 +66,7 @@ func (r *Runner) Run(ctx context.Context) error {
 	g, ctx := errgroup.WithContext(ctx)
 	for i := 0; i < r.workers; i++ {
 		g.Go(func() error {
+			var err error
 			for {
 				select {
 				case <-ctx.Done():
