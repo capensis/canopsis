@@ -2781,12 +2781,17 @@ definitions:
   externaldata.RefParameters:
     properties:
       optional:
+        description: Optional defines will it cause error or not if external data
+          isn't found.
         type: boolean
       reference:
         type: string
       regexp:
         additionalProperties:
           type: string
+        description: |-
+          Regexp defines regexp match conditions.
+          Key contains field name of table with regexp, value contains template.
         type: object
       request:
         $ref: '#/definitions/request.Parameters'
@@ -2794,13 +2799,19 @@ definitions:
       select:
         additionalProperties:
           type: string
+        description: |-
+          Select defines equal match conditions.
+          Key contains field name of table, value contains template.
         type: object
       sort:
         type: string
       sort_by:
+        description: SortBy and Sort define priority of found rows. It's id by default.
         type: string
       table:
-        description: are used in db external data
+        description: |-
+          are used in db external data
+          Table contains id of external table
         type: string
       type:
         type: string
