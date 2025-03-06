@@ -129,7 +129,7 @@ func (w *worker) ProcessFirstJob(ctx context.Context) error {
 	done := make(chan struct{})
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
-		err = w.processJob(ctx, job)
+		err := w.processJob(ctx, job)
 		close(done)
 
 		return err
@@ -143,7 +143,7 @@ func (w *worker) ProcessFirstJob(ctx context.Context) error {
 			case <-done:
 				return nil
 			case <-ticket.C:
-				err = w.reporter.ReportOngoing(ctx, job)
+				err := w.reporter.ReportOngoing(ctx, job)
 				if err != nil {
 					return err
 				}
