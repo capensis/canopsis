@@ -357,7 +357,7 @@ dnf module disable nginx php
 === "RHEL 8"
 
     ```sh
-    dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.14.2 timescaledb-2-loader-postgresql-13-2.14.2
+    dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1 
     dnf install erlang rabbitmq-server
     ```
 
@@ -366,7 +366,7 @@ dnf module disable nginx php
 
     ```sh
     dnf install 'dnf-command(versionlock)'
-    dnf versionlock add timescaledb-2-loader-postgresql-13 timescaledb-2-postgresql-13
+    dnf versionlock add timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
     dnf versionlock add --raw 'rabbitmq-server-3.*'
     ```
 
@@ -508,15 +508,15 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
 
 === "RHEL 8"
     ```sh
-    postgresql-13-setup initdb
-    timescaledb-tune -yes --pg-config=/usr/pgsql-13/bin/pg_config
-    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/13/data/postgresql.conf
+    postgresql-15-setup initdb
+    timescaledb-tune -yes --pg-config=/usr/pgsql-15/bin/pg_config
+    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/15/data/postgresql.conf
     ```
 
     Activer et démarrer le service :
 
     ```sh
-    systemctl enable --now postgresql-13.service
+    systemctl enable --now postgresql-15.service
     ```
 
     Se connecter à l'instance PostgreSQL avec l'identité du superuser `postgres` :
