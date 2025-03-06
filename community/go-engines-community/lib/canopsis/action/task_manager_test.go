@@ -8,21 +8,17 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_action "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/action"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
@@ -31,7 +27,8 @@ func TestTaskManager_Run_GiveTask_ShouldSendResult(t *testing.T) {
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
+
 	task := action.ExecuteScenariosTask{
 		Triggers: []string{"create"},
 		Entity:   types.Entity{ID: "test-entity"},
@@ -129,13 +126,9 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
@@ -144,7 +137,8 @@ func TestTaskManager_Run_GiveTaskWithEmitTrigger_ShouldSendResult(t *testing.T) 
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
+
 	task := action.ExecuteScenariosTask{
 		Triggers: []string{"create"},
 		Entity:   types.Entity{ID: "test-entity"},
@@ -289,13 +283,9 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
@@ -304,7 +294,8 @@ func TestTaskManager_Run_GiveDelayedTask_ShouldSendResult(t *testing.T) {
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
+
 	scenario := action.Scenario{
 		ID:   "test-scenario",
 		Name: "test-scenario-name",
@@ -397,13 +388,9 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
@@ -412,7 +399,8 @@ func TestTaskManager_Run_GiveAbandonedTask_ShouldSendResult(t *testing.T) {
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
+
 	executionCacheKey := "test-alarm$$test-scenario"
 	task := action.ExecuteScenariosTask{
 		AbandonedExecutionCacheKey: executionCacheKey,

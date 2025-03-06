@@ -1,6 +1,6 @@
 package http
 
-//go:generate mockgen -destination=../../mocks/lib/http/doer.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http Doer
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/http/doer.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http Doer
 
 import "net/http"
 
