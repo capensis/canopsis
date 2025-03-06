@@ -3,6 +3,7 @@ package pbehavior
 import (
 	"context"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"go.mongodb.org/mongo-driver/bson"
@@ -24,12 +25,16 @@ type ModelProvider interface {
 
 // modelProvider implements fetching models from mongo db.
 type modelProvider struct {
-	dbClient mongo.DbClient
+	dbClient       mongo.DbClient
+	authorProvider author.Provider
 }
 
 // NewModelProvider creates new model provider.
-func NewModelProvider(dbClient mongo.DbClient) ModelProvider {
-	return &modelProvider{dbClient: dbClient}
+func NewModelProvider(dbClient mongo.DbClient, ap author.Provider) ModelProvider {
+	return &modelProvider{
+		dbClient:       dbClient,
+		authorProvider: ap,
+	}
 }
 
 func (p *modelProvider) GetTypes(ctx context.Context) (map[string]Type, error) {
@@ -51,12 +56,16 @@ func (p *modelProvider) GetTypes(ctx context.Context) (map[string]Type, error) {
 		typesByID[pbehaviorType.ID] = pbehaviorType
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return typesByID, nil
 }
 
 func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.Span) (map[string]PBehavior, error) {
 	coll := p.dbClient.Collection(mongo.PbehaviorMongoCollection)
-	cursor, err := coll.Aggregate(ctx, []bson.M{
+	pipeline := append([]bson.M{
 		{"$match": bson.M{
 			"enabled": true,
 			"$or": []bson.M{
@@ -79,7 +88,10 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 		{"$project": bson.M{
 			"comments": 0,
 		}},
-	})
+	}, p.authorProvider.Pipeline()...)
+	pipeline = append(pipeline, p.authorProvider.AddAuthorStr("author"))
+
+	cursor, err := coll.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -96,6 +108,10 @@ func (p *modelProvider) GetEnabledPbehaviors(ctx context.Context, span timespan.
 		pbehaviorsByID[pbehavior.ID] = pbehavior
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return pbehaviorsByID, nil
 }
 
@@ -104,7 +120,7 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 		return nil, nil
 	}
 	coll := p.dbClient.Collection(mongo.PbehaviorMongoCollection)
-	cursor, err := coll.Aggregate(ctx, []bson.M{
+	pipeline := append([]bson.M{
 		{"$match": bson.M{
 			"_id":     bson.M{"$in": ids},
 			"enabled": true,
@@ -122,7 +138,9 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 		{"$project": bson.M{
 			"comments": 0,
 		}},
-	})
+	}, p.authorProvider.Pipeline()...)
+	pipeline = append(pipeline, p.authorProvider.AddAuthorStr("author"))
+	cursor, err := coll.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
 	}
@@ -137,6 +155,10 @@ func (p *modelProvider) GetEnabledPbehaviorsByIds(ctx context.Context, ids []str
 		}
 
 		pbehaviorsByID[pbehavior.ID] = pbehavior
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return pbehaviorsByID, nil
@@ -179,6 +201,10 @@ func (p *modelProvider) GetReasons(ctx context.Context) (map[string]Reason, erro
 		}
 
 		reasonsByID[reason.ID] = reason
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return reasonsByID, nil

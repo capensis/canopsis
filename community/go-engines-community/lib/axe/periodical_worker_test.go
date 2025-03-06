@@ -1,7 +1,6 @@
 package axe
 
 import (
-	"context"
 	"testing"
 	"time"
 
@@ -11,14 +10,12 @@ import (
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_idlealarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlealarm"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 func TestPeriodicalWorker_Work(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	mockAlarmService := mock_alarm.NewMockService(ctrl)
 	mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
@@ -54,5 +51,5 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockIdleAlarmService.EXPECT().Process(gomock.Any())
 	mockCancelDelayJobService.EXPECT().Process(gomock.Any())
 
-	worker.Work(ctx)
+	worker.Work(t.Context())
 }

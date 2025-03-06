@@ -130,6 +130,7 @@ const selectFieldRemoveAlarmsFromMetaAlarmCommentRequired = wrapper => selectSwi
 );
 const selectFieldExportCsvForm = wrapper => wrapper.find('input.export-csv-form');
 const selectFieldStickyHeader = wrapper => selectSwitcherFieldByTitle(wrapper, 'Sticky header');
+const selectFieldStickyHorizontalScroll = wrapper => selectSwitcherFieldByTitle(wrapper, 'Sticky horizontal scroll');
 const selectFieldKioskHideActions = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide actions');
 const selectFieldKioskHideMassSelection = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide mass selection');
 const selectFieldKioskHideToolbar = wrapper => selectSwitcherFieldByTitle(wrapper, 'Hide toolbar');
@@ -1264,6 +1265,34 @@ describe('alarm', () => {
     });
   });
 
+  test('Sticky horizontal scroll changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldStickyHeader = selectFieldStickyHorizontalScroll(wrapper);
+
+    const stickyHorizontalScroll = Faker.datatype.boolean();
+
+    fieldStickyHeader.triggerCustomEvent('input', stickyHorizontalScroll);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'sticky_horizontal_scroll', stickyHorizontalScroll),
+      },
+    });
+  });
+
   /**
    * @link https://git.canopsis.net/canopsis/canopsis-pro/-/issues/4390
    */
@@ -1433,6 +1462,21 @@ describe('alarm', () => {
         sidebar,
       },
     });
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `alarm` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    wrapper.find('field-title-stub').triggerCustomEvent('input', 'New title');
 
     await flushPromises();
 

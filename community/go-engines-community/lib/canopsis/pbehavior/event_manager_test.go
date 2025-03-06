@@ -8,7 +8,7 @@ import (
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 func TestGetEvent(t *testing.T) {
@@ -32,7 +32,7 @@ func TestGetEvent(t *testing.T) {
 
 		event.PbehaviorInfo.Timestamp = nil
 		if event.PbehaviorInfo != expectedAlarmPbhInfo {
-			t.Errorf("expected events's pbehavior info = %v, got %v", expectedAlarmPbhInfo, event.PbehaviorInfo)
+			t.Errorf("expected events's pbehavior info = %+v, got %+v", expectedAlarmPbhInfo, event.PbehaviorInfo)
 		}
 	}
 
@@ -89,6 +89,7 @@ func TestGetEvent(t *testing.T) {
 		Name:       "Pbh active",
 		ReasonID:   "Reason active",
 		ReasonName: "Reason active name",
+		Author:     canopsis.DefaultEventAuthor,
 	}
 	resolvedAnotherActive := pbehavior.ResolveResult{
 		Type: pbehavior.Type{
@@ -100,6 +101,7 @@ func TestGetEvent(t *testing.T) {
 		Name:       "Another pbh active",
 		ReasonID:   "Another reason active",
 		ReasonName: "Another reason active name",
+		Author:     canopsis.DefaultEventAuthor,
 	}
 	resolvedMaintenance := pbehavior.ResolveResult{
 		Type: pbehavior.Type{
@@ -111,6 +113,7 @@ func TestGetEvent(t *testing.T) {
 		Name:       "Pbh maintenance",
 		ReasonID:   "Reason maintenance",
 		ReasonName: "Reason maintenance name",
+		Author:     canopsis.DefaultEventAuthor,
 	}
 	resolvedAnotherMaintenance := pbehavior.ResolveResult{
 		Type: pbehavior.Type{
@@ -122,6 +125,7 @@ func TestGetEvent(t *testing.T) {
 		Name:       "Another pbh maintenance",
 		ReasonID:   "Another reason maintenance",
 		ReasonName: "Another reason maintenance name",
+		Author:     canopsis.DefaultEventAuthor,
 	}
 
 	f(
