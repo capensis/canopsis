@@ -114,7 +114,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return result, err
 		}
 
-		go p.postProcess(context.Background(), &event, updatedServiceStates, componentStateChanged, newComponentState)
+		go p.postProcess(context.WithoutCancel(ctx), &event, updatedServiceStates, componentStateChanged, newComponentState)
 
 		return result, nil
 	}

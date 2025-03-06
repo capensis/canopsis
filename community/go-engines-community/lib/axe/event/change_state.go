@@ -196,7 +196,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 
 	result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
-	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
 
 	return result, nil
 }

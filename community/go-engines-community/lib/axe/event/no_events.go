@@ -148,7 +148,7 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		return result, err
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
 
 	return result, nil
 }
