@@ -13,13 +13,12 @@ import (
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_datastorage "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/datastorage"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestPeriodicalWorker_Work_GivenScheduledTimeOnToday_ShouldExecCleaner(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
@@ -71,8 +70,7 @@ func TestPeriodicalWorker_Work_GivenScheduledTimeOnToday_ShouldExecCleaner(t *te
 }
 
 func TestPeriodicalWorker_Work_GivenScheduledTimeOnTodayAndLastExecuteTimeOnToday_ShouldNotExecCleaner(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
@@ -116,8 +114,7 @@ func TestPeriodicalWorker_Work_GivenScheduledTimeOnTodayAndLastExecuteTimeOnToda
 }
 
 func TestPeriodicalWorker_Work_GivenScheduledTimeOnTodayAndDisabledCleaner_ShouldNotExecCleaner(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
@@ -157,8 +154,7 @@ func TestPeriodicalWorker_Work_GivenScheduledTimeOnTodayAndDisabledCleaner_Shoul
 }
 
 func TestPeriodicalWorker_Work_GivenNoScheduledTime_ShouldNotExecCleaner(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
@@ -180,8 +176,7 @@ func TestPeriodicalWorker_Work_GivenNoScheduledTime_ShouldNotExecCleaner(t *test
 }
 
 func TestPeriodicalWorker_Work_GivenScheduledTimeOnAnotherDay_ShouldNotExecCleaner(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
@@ -213,8 +208,7 @@ func TestPeriodicalWorker_Work_GivenScheduledTimeOnAnotherDay_ShouldNotExecClean
 }
 
 func TestPeriodicalWorker_Work_GivenInterruptedWorker_ShouldContinueFromTheOldestExecutedCleaner(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
@@ -293,8 +287,7 @@ func TestPeriodicalWorker_Work_GivenInterruptedWorker_ShouldContinueFromTheOldes
 }
 
 func TestPeriodicalWorker_Work_GivenInterruptedWorker_ShouldContinueFromNeverExecutedCleaner(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
@@ -431,7 +424,7 @@ func TestPeriodicalWorker_Work_GivenCleanerErr_ShouldStopExec(t *testing.T) {
 	mockCleaner2.EXPECT().IsEnabled(gomock.Any()).
 		Return(true).
 		AnyTimes()
-	ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond)
+	ctx, cancel := context.WithTimeout(t.Context(), time.Millisecond)
 	defer cancel()
 	mockCleaner2.EXPECT().Clean(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(_ context.Context, _ mongo.DbClient, _ datastorage.Config, _ datetime.CpsTime, _ int) (datastorage.CleanResult, error) {
@@ -454,8 +447,7 @@ func TestPeriodicalWorker_Work_GivenCleanerErr_ShouldStopExec(t *testing.T) {
 }
 
 func TestPeriodicalWorker_Work_GivenCleanerDeadlineErr_ShouldStopExecAndUpdateHistory(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	now := time.Now()
