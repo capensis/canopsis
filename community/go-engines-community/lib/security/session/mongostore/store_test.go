@@ -9,11 +9,11 @@ import (
 
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/mock/gomock"
 )
 
 func TestMongoStore_New_GivenNoCookie_ShouldReturnNewSession(t *testing.T) {

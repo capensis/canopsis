@@ -13,10 +13,10 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_entitycounters "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entitycounters"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/mock/gomock"
 )
 
 type componentDataset struct {
@@ -33,8 +33,6 @@ type componentDataset struct {
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangeNone(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -597,14 +595,12 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeNone(t *testing.T) {
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangeState(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -1189,14 +1185,12 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeState(t *testing.T) {
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangeCreate(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -1540,14 +1534,12 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeCreate(t *testing.T) {
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -2155,14 +2147,12 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeCreateAndPbhEnter(t *t
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangePbhEnter(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -2691,14 +2681,12 @@ func TestComponentService_ProcessCounters_GivenAlarmChangePbhEnter(t *testing.T)
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangePbhLeave(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -3190,14 +3178,12 @@ func TestComponentService_ProcessCounters_GivenAlarmChangePbhLeave(t *testing.T)
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -4266,14 +4252,12 @@ func TestComponentService_ProcessCounters_GivenAlarmChangePbhLeaveAndEnter(t *te
 
 	for _, dSet := range dataSets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }
 
 func TestComponentService_ProcessCounters_GivenAlarmChangeResolve(t *testing.T) {
-	ctx := context.Background()
-
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -4684,7 +4668,7 @@ func TestComponentService_ProcessCounters_GivenAlarmChangeResolve(t *testing.T) 
 
 	for _, dSet := range datasets {
 		t.Run(dSet.name, func(t *testing.T) {
-			runComponentsDataset(ctx, t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
+			runComponentsDataset(t.Context(), t, entityHelper, countersHelper, entityCollection, countersCollection, componentService, dSet)
 		})
 	}
 }

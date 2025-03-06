@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -13,16 +12,15 @@ import (
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldRecomputePbehavior(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockEventManager := mock_pbehavior.NewMockEventManager(ctrl)
 	mockDecoder := mock_encoding.NewMockDecoder(ctrl)
@@ -68,17 +66,16 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldRecomputePbeha
 		Logger:                 zerolog.Nop(),
 	}
 
-	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
+	_, err := p.Process(t.Context(), amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
 }
 
 func TestRecomputeMessageProcessor_Process_GivenEmptyPbehaviorID_ShouldRecomputeAllPbehaviors(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -105,17 +102,16 @@ func TestRecomputeMessageProcessor_Process_GivenEmptyPbehaviorID_ShouldRecompute
 		Logger:                 zerolog.Nop(),
 	}
 
-	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"\"}")})
+	_, err := p.Process(t.Context(), amqp.Delivery{Body: []byte("{\"_id\":\"\"}")})
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}
 }
 
 func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorEvent(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
+
 	mockService := mock_pbehavior.NewMockService(ctrl)
 	mockPbhDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockEntityDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -198,7 +194,7 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorE
 		Logger:                 zerolog.Nop(),
 	}
 
-	_, err := p.Process(ctx, amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
+	_, err := p.Process(t.Context(), amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
 	if err != nil {
 		t.Errorf("expected no error but got %v", err)
 	}

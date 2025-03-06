@@ -518,7 +518,7 @@ func RegisterRoutes(
 			pbehavior.NewStore(
 				dbClient,
 				pbhEntityTypeResolver,
-				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient), json.NewDecoder()),
+				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder()),
 				timezoneConfigProvider,
 				authorProvider,
 			),

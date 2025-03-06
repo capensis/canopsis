@@ -1,7 +1,6 @@
 package alarm_test
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"testing"
@@ -18,7 +17,7 @@ import (
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_alarmstatus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarmstatus"
 	mock_resolverule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/resolverule"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService_ResolveCancels(t *testing.T) {
@@ -105,6 +104,8 @@ func TestService_ResolveCancels(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
+			ctx := t.Context()
+
 			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
 			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
@@ -118,10 +119,10 @@ func TestService_ResolveCancels(t *testing.T) {
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
 				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
-				log.NewLogger(true),
+				log.NewLogger(ctx, true),
 			)
 
-			events, err := service.ResolveCancels(context.Background(), config.AlarmConfig{
+			events, err := service.ResolveCancels(ctx, config.AlarmConfig{
 				CancelAutosolveDelay: time.Minute * 60,
 			})
 			if err != nil {
@@ -220,6 +221,8 @@ func TestService_ResolveSnoozes(t *testing.T) {
 
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
+			ctx := t.Context()
+
 			mockAlarmAdapter := mock_alarm.NewMockAdapter(ctrl)
 			mockResolveRuleAdapter := mock_resolverule.NewMockAdapter(ctrl)
 			mockAlarmStatusService := mock_alarmstatus.NewMockService(ctrl)
@@ -233,10 +236,10 @@ func TestService_ResolveSnoozes(t *testing.T) {
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
 				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
-				log.NewLogger(true),
+				log.NewLogger(ctx, true),
 			)
 
-			events, err := service.ResolveSnoozes(context.Background(), config.AlarmConfig{})
+			events, err := service.ResolveSnoozes(ctx, config.AlarmConfig{})
 			if err != nil {
 				expectedErr := fmt.Sprintf("snooze alarms error: %v", dataset.findError.Error())
 				if errors.Is(err, errors.New(expectedErr)) {

@@ -9,8 +9,8 @@ import (
 
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 const waitTimeout = time.Second
@@ -21,7 +21,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 	const timesToRun = 2
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	done := make(chan bool)
 	defer close(done)
@@ -76,7 +76,7 @@ func TestEngine_Run_GivenPeriodicalProcess_ShouldRunIt(t *testing.T) {
 func TestEngine_Run_GivenConsumer_ShouldRunIt(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 	done := make(chan bool)
 	defer close(done)
@@ -105,8 +105,7 @@ func TestEngine_Run_GivenConsumer_ShouldRunIt(t *testing.T) {
 func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
 	done := make(chan bool)
 	defer close(done)
 
@@ -119,7 +118,7 @@ func TestEngine_Run_GivenErrorOnConsumer_ShouldStopEngine(t *testing.T) {
 
 	var err error
 	go func() {
-		err = engine.Run(ctx)
+		err = engine.Run(t.Context())
 		done <- true
 	}()
 
@@ -135,7 +134,7 @@ func TestEngine_Run_GivenRoutine_ShouldRunIt(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	expectedDuration := 100 * time.Millisecond
-	ctx, cancel := context.WithTimeout(context.Background(), expectedDuration)
+	ctx, cancel := context.WithTimeout(t.Context(), expectedDuration)
 	defer cancel()
 	done := make(chan bool)
 	defer close(done)
