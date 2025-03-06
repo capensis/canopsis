@@ -9,17 +9,16 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.uber.org/mock/gomock"
 )
 
 func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -72,8 +71,7 @@ func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
 }
 
 func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -115,8 +113,7 @@ func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *tes
 }
 
 func TestSyncMongoCollections_GivenMissingCollections_ShouldDeleteUnlinked(t *testing.T) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 

@@ -404,13 +404,14 @@ func (a *api) Export(c *gin.Context) {
 		panic(err)
 	}
 
+	userID := c.MustGet(auth.UserKey).(string)
 	task, err := a.exportTaskCreator.Create(c, export.TaskParameters{
 		Type:           "externaldata",
 		Parameters:     string(params),
 		Fields:         fields,
 		Separator:      separator,
 		FilenamePrefix: "externaldata",
-		UserID:         c.MustGet(auth.UserKey).(string),
+		UserID:         userID,
 	})
 	if err != nil {
 		panic(err)

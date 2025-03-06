@@ -1,6 +1,6 @@
 package externaldata
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/externaldata/externaldata.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata Getter
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/externaldata/externaldata.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata Getter
 
 import (
 	"context"
