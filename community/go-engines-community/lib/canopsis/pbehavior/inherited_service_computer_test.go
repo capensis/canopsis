@@ -7,7 +7,9 @@ import (
 	"testing"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -18,12 +20,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	mock_pbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/pbehavior"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestServiceComputerAndResolver(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
@@ -337,8 +339,7 @@ func BenchmarkInheritedServicesPbhResolve1Parent100000Children(b *testing.B) {
 }
 
 func benchmarkInheritedRecompute(b *testing.B, fixturesPath string) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := b.Context()
 
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
@@ -351,14 +352,14 @@ func benchmarkInheritedRecompute(b *testing.B, fixturesPath string) {
 	}
 
 	b.Cleanup(func() {
-		err = pbhRedisSession.FlushDB(context.Background()).Err()
+		err = pbhRedisSession.FlushDB(context.WithoutCancel(ctx)).Err()
 		if err != nil {
 			b.Fatalf("unexpected error %v", err)
 		}
 	})
 
 	b.Cleanup(func() {
-		err := dbClient.Disconnect(context.Background())
+		err := dbClient.Disconnect(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
@@ -371,7 +372,7 @@ func benchmarkInheritedRecompute(b *testing.B, fixturesPath string) {
 		b.Fatalf("unexpected error %v", err)
 	}
 	b.Cleanup(func() {
-		err := loader.Clean(context.Background())
+		err := loader.Clean(context.WithoutCancel(ctx))
 		if err != nil {
 			b.Errorf("unexpected error %v", err)
 		}
@@ -382,9 +383,10 @@ func benchmarkInheritedRecompute(b *testing.B, fixturesPath string) {
 
 	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
 
+	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	pbhService := pbehavior.NewService(
 		dbClient,
-		pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder()),
+		pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder()),
 		pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder()),
 		pbhLockerClient,
 		zerolog.Nop(),
