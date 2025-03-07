@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -45,7 +45,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -53,7 +52,8 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	lockRedisSession := m.DepRedisSession(ctx, redis.EngineLockStorage, logger, cfg)
 	pbhLockerClient := redis.NewLockClient(pbhRedisSession)
 	pbhStore := pbehavior.NewStore(pbhRedisSession, json.NewEncoder(), json.NewDecoder())
-	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient), json.NewDecoder())
+	authorProvider := author.NewProvider(config.NewApiConfigProvider(cfg, logger))
+	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
@@ -100,7 +100,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			return nil
 		},
 		func(ctx context.Context) {
-			err := dbClient.Disconnect(ctx)
+			err := dbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
@@ -202,24 +202,11 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		},
 		logger,
 	))
-	enginePbehavior.AddPeriodicalWorker("cleaner", engine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisSession),
-		redis.PbehaviorCleanPeriodicalLockKey,
-		&cleanPeriodicalWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			Logger:                    logger,
-		},
-		logger,
-	))
 	enginePbehavior.AddPeriodicalWorker("config", engine.NewLoadConfigPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		config.NewAdapter(dbClient),
 		logger,
 		timezoneConfigProvider,
-		dataStorageConfigProvider,
 		techMetricsConfigProvider,
 	))
 	enginePbehavior.AddPeriodicalWorker("rrule_cstart", computeRruleStartWorker)

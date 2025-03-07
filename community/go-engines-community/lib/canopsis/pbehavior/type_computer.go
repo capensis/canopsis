@@ -1,6 +1,6 @@
 package pbehavior
 
-//go:generate easyjson -no_std_marshalers
+//go:generate go tool github.com/mailru/easyjson/easyjson -no_std_marshalers
 
 import (
 	"context"
@@ -47,6 +47,7 @@ type ComputedPbehavior struct {
 	Types      []ComputedType `json:"t"`
 	Created    int64          `json:"c"`
 	Color      string         `json:"clr"`
+	Author     string         `json:"a"`
 
 	EntityPattern pattern.Entity `json:"p,omitempty"`
 	Inherited     bool           `json:"i,omitempty"`
@@ -343,6 +344,7 @@ func (c *typeComputer) computePbehavior(
 			Types:         computedTypes,
 			Created:       pbehavior.Created.Unix(),
 			Color:         pbehavior.Color,
+			Author:        pbehavior.Author,
 			EntityPattern: pbehavior.EntityPattern,
 			Inherited:     pbehavior.Inherited,
 		}, nil

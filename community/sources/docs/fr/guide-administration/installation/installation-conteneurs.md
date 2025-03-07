@@ -37,20 +37,20 @@ Cette procédure décrit l'installation de Canopsis avec Docker Compose.
 
 ### Prérequis de version du noyau Linux
 
-Lors de l'utilisation de Docker, Canopsis nécessite **un noyau Linux 4.4 minimum sur votre système hôte**.
+Lors de l'utilisation de Docker, Canopsis nécessite **un noyau Linux 4.4 minimum sur votre système hôte**.
 
-De nos jours, ce point est acquis à partir du moment où vous utilisez une version supportée d'une de ces distributions majeures orientées « serveur » : EL, Debian, Ubuntu LTS, SLES, OpenSUSE Leap.
+De nos jours, ce point est acquis à partir du moment où vous utilisez une version supportée d'une de ces distributions majeures orientées « serveur » : EL, Debian, Ubuntu LTS, SLES, OpenSUSE Leap.
 
-En cas de doute, vérifiez votre version du noyau à l'aide de la commande suivante :
+En cas de doute, vérifiez votre version du noyau à l'aide de la commande suivante :
 
 ```sh
 uname -r
 ```
 
-Si la version affichée est inférieure à 4.4, vous devez soit utiliser une distribution GNU/Linux plus à jour, ou bien installer un noyau plus récent via des dépôts spécifiques, lorsque c'est possible.
+Si la version affichée est inférieure à 4.4, vous devez soit utiliser une distribution GNU/Linux plus à jour, ou bien installer un noyau plus récent via des dépôts spécifiques, lorsque c'est possible.
 
 !!! important
-    L'utilisation de Docker Compose avec un noyau inférieur à 4.4 n'est pas prise en charge.
+    L'utilisation de Docker Compose avec un noyau inférieur à 4.4 n'est pas prise en charge.
 
 ## Installation de Docker et Docker Compose
 
@@ -75,7 +75,7 @@ Les images Docker officielles de Canopsis sont hébergées sur leur propre regis
 ### Récupération de l'environnement Docker Compose
 
 Les environnements Docker Compose de référence pour Canopsis sont disponibles via
-git :
+git :
 
 === "Canopsis Pro"
 
@@ -113,14 +113,14 @@ git :
 
 ### Lancement de l'environnement
 
-Récupérez les dernières images disponibles :
+Récupérez les dernières images disponibles :
 
 ```sh
 docker compose pull
 ```
 
 Lancez ensuite la commande suivante, afin de démarrer un environnement Canopsis
-complet :
+complet :
 
 ```sh
 docker compose up -d
@@ -147,7 +147,7 @@ docker compose down
 
 La mise en place d'une politique de rétention des logs nécessite la présence du logiciel `logrotate`.
 
-Une fois que `logrotate` est installé sur votre machine, créer le fichier `/etc/logrotate.d/docker-container` suivant :
+Une fois que `logrotate` est installé sur votre machine, créer le fichier `/etc/logrotate.d/docker-container` suivant :
 
 ```
 /var/lib/docker/containers/*/*.log {
@@ -162,19 +162,19 @@ Une fois que `logrotate` est installé sur votre machine, créer le fichier `/et
 }
 ```
 
-Pour vérifier la validité de la configuration logrotate ajoutée, lancez la commande :
+Pour vérifier la validité de la configuration logrotate ajoutée, lancez la commande :
 
 ```sh
 logrotate -dv /etc/logrotate.d/docker-container
 ```
 
-Si vous souhaitez forcer une exécution manuelle de cette rotation sur-le-champ, vous pouvez éventuellement lancer la commande :
+Si vous souhaitez forcer une exécution manuelle de cette rotation sur-le-champ, vous pouvez éventuellement lancer la commande :
 
 ```sh
 logrotate -fv /etc/logrotate.d/docker-container
 ```
 
-[prereq-versions]: https://doc.canopsis.net/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
+[prereq-versions]: https://doc.canopsis.net/latest/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
 [compose-spec]: https://docs.docker.com/compose/compose-file/
 [docker-compose]: https://docs.docker.com/compose/install/#install-compose
 [canopsis-pro]: https://git.canopsis.net/canopsis/canopsis-pro/-/releases

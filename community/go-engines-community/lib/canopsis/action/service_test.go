@@ -17,22 +17,19 @@ import (
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
-	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/mock/gomock"
 )
 
 func TestService_Process(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx := context.Background()
+	ctx := t.Context()
 
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
@@ -41,7 +38,7 @@ func TestService_Process(t *testing.T) {
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
 
 	logger := zerolog.Nop()
 	scenarioExecChan := make(chan action.ExecuteScenariosTask)
@@ -97,7 +94,7 @@ func TestService_Process(t *testing.T) {
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
 			go func() {
-				err := actionService.Process(ctx, dataset.event)
+				err := actionService.Process(t.Context(), dataset.event)
 				if err != nil {
 					t.Errorf("expected not error but got %v", err)
 				}
@@ -124,19 +121,16 @@ func TestService_Process(t *testing.T) {
 }
 
 func TestService_ListenScenarioFinish(t *testing.T) {
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
-		case <-ctx.Done():
+		case <-t.Context().Done():
 			return
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
 
 	alarm1 := types.Alarm{
 		ID: "alarm-1",
@@ -194,8 +188,7 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
 
-			ctx, cancel := context.WithCancel(timerCtx)
-			defer cancel()
+			ctx := t.Context()
 
 			scenarioExecChan := make(chan action.ExecuteScenariosTask)
 			defer close(scenarioExecChan)
@@ -214,10 +207,10 @@ func TestService_ListenScenarioFinish(t *testing.T) {
 
 			actionService.ListenScenarioFinish(ctx, scenarioInfoChannel)
 
-			getInOrder := make([]*gomock.Call, 0)
-			processInOrder := make([]*gomock.Call, 0)
-			encodeInOrder := make([]*gomock.Call, 0)
-			publishInOrder := make([]*gomock.Call, 0)
+			getInOrder := make([]any, 0)
+			processInOrder := make([]any, 0)
+			encodeInOrder := make([]any, 0)
+			publishInOrder := make([]any, 0)
 
 			for _, v := range dataset.scenarioInfos {
 				info := v
@@ -282,21 +275,16 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx := context.Background()
-
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5000 * time.Second)
 
 		select {
-		case <-ctx.Done():
+		case <-t.Context().Done():
 			return
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
 
 	logger := zerolog.Nop()
 	amqpChannelMock := mock_amqp.NewMockChannel(ctrl)
@@ -500,7 +488,7 @@ func TestService_ProcessAbandonedExecutions(t *testing.T) {
 				}()
 			}
 
-			err := actionService.ProcessAbandonedExecutions(ctx)
+			err := actionService.ProcessAbandonedExecutions(t.Context())
 			if err != nil {
 				t.Errorf("error %s is not expected.", err.Error())
 			}

@@ -242,6 +242,21 @@ describe('pie-chart', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `pie-chart` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    selectWidgetForm(wrapper).triggerCustomEvent('input', widget);
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `pie-chart` widget settings with custom props and permissions', async () => {
     currentUserPermissionsById.mockReturnValueOnce({
       [USER_PERMISSIONS.business.pieChart.actions.filter]: { actions: [] },
