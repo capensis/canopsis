@@ -1,6 +1,6 @@
 package amqp
 
-//go:generate mockgen -destination=../../mocks/lib/amqp/amqp.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp Connection,Channel,Publisher
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/amqp/amqp.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp Connection,Channel,Publisher
 
 import (
 	"context"

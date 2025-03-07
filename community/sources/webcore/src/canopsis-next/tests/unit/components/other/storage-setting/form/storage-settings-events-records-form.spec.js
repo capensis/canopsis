@@ -1,5 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { randomDurationValue } from '@unit/utils/duration';
+import { randomDurationEnabledValue } from '@unit/utils/duration';
 
 import { TIME_UNITS } from '@/constants';
 
@@ -11,13 +11,13 @@ import StorageSettingsEventsRecordsForm from '@/components/other/storage-setting
 const stubs = {
   'c-information-block': CInformationBlock,
   'c-help-icon': true,
-  'storage-settings-duration-field': true,
+  'c-enabled-duration-field': true,
   'storage-settings-history-message': true,
 };
 
-const selectDeleteAfterField = wrapper => wrapper.find('storage-settings-duration-field-stub');
+const selectDeleteAfterField = wrapper => wrapper.find('c-enabled-duration-field-stub');
 
-describe('storage-settings-junit-form', () => {
+describe('storage-settings-events-records-form', () => {
   const form = {
     delete_after: {
       value: 2,
@@ -28,14 +28,14 @@ describe('storage-settings-junit-form', () => {
   const factory = generateRenderer(StorageSettingsEventsRecordsForm, { stubs });
   const snapshotFactory = generateRenderer(StorageSettingsEventsRecordsForm, { stubs });
 
-  test('Junit delete after changed after trigger enabled duration field', () => {
+  test('Events record delete after changed after trigger enabled duration field', () => {
     const wrapper = factory({
       propsData: {
         form,
       },
     });
 
-    const newValue = randomDurationValue();
+    const newValue = randomDurationEnabledValue();
 
     selectDeleteAfterField(wrapper).triggerCustomEvent('input', newValue);
 

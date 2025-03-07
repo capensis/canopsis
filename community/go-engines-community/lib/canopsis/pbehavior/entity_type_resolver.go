@@ -10,11 +10,7 @@ import (
 )
 
 type EntityTypeResolver interface {
-	Resolve(
-		ctx context.Context,
-		entity types.Entity,
-		t time.Time,
-	) (ResolveResult, error)
+	Resolve(ctx context.Context, entity types.Entity, t time.Time) (ResolveResult, error)
 	GetPbehaviors(ctx context.Context, pbhIDs []string, t time.Time) (map[string]ResolveResult, error)
 }
 

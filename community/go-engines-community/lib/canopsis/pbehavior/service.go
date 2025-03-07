@@ -1,6 +1,6 @@
 package pbehavior
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,ModelProvider,EventManager,Store,EntityTypeResolver,ComputedEntityTypeResolver,TypeComputer,InheritedServicePbhResolver
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,ModelProvider,EventManager,Store,EntityTypeResolver,ComputedEntityTypeResolver,TypeComputer,InheritedServicePbhResolver
 
 import (
 	"context"

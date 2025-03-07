@@ -15,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -44,18 +43,19 @@ import (
 )
 
 type Options struct {
-	Version                  bool
-	FeaturePrintEventOnError bool
-	ModeDebug                bool
-	FifoAckExchange          string
-	PeriodicalWaitTime       time.Duration
-	TagsPeriodicalWaitTime   time.Duration
-	SliPeriodicalWaitTime    time.Duration
-	ExternalWorkers          int
-	SystemWorkers            int
-	UserWorkers              int
-	RpcWorkers               int
-	RecomputeAllOnInit       bool
+	Version                          bool
+	FeaturePrintEventOnError         bool
+	ModeDebug                        bool
+	FifoAckExchange                  string
+	PeriodicalWaitTime               time.Duration
+	TagsPeriodicalWaitTime           time.Duration
+	SliPeriodicalWaitTime            time.Duration
+	SoftDeleteCorrPeriodicalWaitTime time.Duration
+	ExternalWorkers                  int
+	SystemWorkers                    int
+	UserWorkers                      int
+	RpcWorkers                       int
+	RecomputeAllOnInit               bool
 }
 
 func ParseOptions() (Options, []string) {
@@ -67,6 +67,7 @@ func ParseOptions() (Options, []string) {
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.DefaultExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.DurationVar(&opts.TagsPeriodicalWaitTime, "tagsPeriodicalWaitTime", 5*time.Second, "Duration to wait between two run of periodical process to update alarm tags")
 	flag.DurationVar(&opts.SliPeriodicalWaitTime, "sliPeriodicalWaitTime", 5*time.Minute, "Duration to wait between two run of periodical process to update SLI metrics")
+	flag.DurationVar(&opts.SoftDeleteCorrPeriodicalWaitTime, "softDeleteCorrPeriodicalWaitTime", time.Minute, "Duration to wait between two run of periodical process to delete meta alarm rules and corresponding meta alarms")
 	flag.BoolVar(&opts.RecomputeAllOnInit, "recomputeAllOnInit", false, "Recompute entity services on init.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.ExternalWorkers, "externalWorkers", canopsis.DefaultExternalEventWorkers, "Amount of workers to process external event flow.")
@@ -102,7 +103,6 @@ func NewEngine(
 	m := DependencyMaker{}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
@@ -403,6 +403,7 @@ func NewEngine(
 			Logger:             logger,
 			TagCollection:      dbClient.Collection(mongo.AlarmTagCollection),
 			AlarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+			EntityCollection:   dbClient.Collection(mongo.EntityMongoCollection),
 		},
 		logger,
 	))
@@ -430,30 +431,6 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("resolve_archiver", libengine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisClient),
-		redis.AxeResolvedArchiverPeriodicalLockKey,
-		&resolvedArchiverWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			Logger:                    logger,
-		},
-		logger,
-	))
-	engineAxe.AddPeriodicalWorker("clean_tags", libengine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisClient),
-		redis.AxeCleanExternalTagsPeriodicalLockKey,
-		&cleanExternalTagPeriodicalWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			Logger:                    logger,
-		},
-		logger,
-	))
 	engineAxe.AddPeriodicalWorker("idle_since", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeIdleSincePeriodicalLockKey,
@@ -471,7 +448,6 @@ func NewEngine(
 		alarmConfigProvider,
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
-		dataStorageConfigProvider,
 	))
 
 	engineAxe.AddPeriodicalWorker("user_interface_config", libengine.NewLoadUserInterfaceConfigPeriodicalWorker(

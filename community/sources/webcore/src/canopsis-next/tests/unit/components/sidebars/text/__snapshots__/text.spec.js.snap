@@ -49,3 +49,30 @@ exports[`text Renders \`text\` widget settings with default props 1`] = `
   />
 </widget-settings-stub>
 `;
+
+exports[`text Renders \`text\` widget settings with default props with changed title 1`] = `
+<widget-settings-stub
+  dirty="true"
+>
+  <field-title-stub
+    name="title"
+    value="New title"
+  />
+  <hr
+    aria-orientation="horizontal"
+    class="v-divider theme--light"
+    role="separator"
+  />
+  <field-text-editor-stub
+    defaultvalue=""
+    sanitizeoptions="[object Object]"
+    title="Template"
+    value=""
+  />
+  <hr
+    aria-orientation="horizontal"
+    class="v-divider theme--light"
+    role="separator"
+  />
+</widget-settings-stub>
+`;

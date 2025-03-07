@@ -1,6 +1,7 @@
 <template>
   <widget-settings
     :submitting="submitting"
+    :dirty="hasChanges"
     divider
     @submit="submit"
   >
@@ -109,6 +110,10 @@
       <field-switcher
         v-model="form.parameters.sticky_header"
         :title="$t('settings.stickyHeader')"
+      />
+      <field-switcher
+        v-model="form.parameters.sticky_horizontal_scroll"
+        :title="$t('settings.stickyHorizontalScroll')"
       />
       <field-switcher
         v-model="form.parameters.isVirtualScrollEnabled"

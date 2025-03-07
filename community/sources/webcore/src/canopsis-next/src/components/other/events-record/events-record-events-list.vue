@@ -62,13 +62,7 @@
       />
     </template>
     <template #expand="{ item }">
-      <div class="secondary pa-3">
-        <v-card>
-          <v-card-text>
-            <c-json-treeview :json="item | json" />
-          </v-card-text>
-        </v-card>
-      </div>
+      <events-record-events-list-expand-panel :event="item" />
     </template>
   </c-advanced-data-table>
 </template>
@@ -78,10 +72,14 @@ import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
-import EventsRecordDownloadBtn from '@/components/other/events-record/partials/events-record-download-btn.vue';
+import EventsRecordEventsListExpandPanel from './partials/events-record-events-list-expand-panel.vue';
+import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
 
 export default {
-  components: { EventsRecordDownloadBtn },
+  components: {
+    EventsRecordEventsListExpandPanel,
+    EventsRecordDownloadBtn,
+  },
   props: {
     eventsRecordId: {
       type: String,
