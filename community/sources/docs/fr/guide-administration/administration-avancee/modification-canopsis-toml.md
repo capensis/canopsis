@@ -174,9 +174,9 @@ moteurs Canopsis doivent être redémarrés.
 
 ### Section [Canopsis.data_storage]
 
-| Attribut      | Exemple de valeur | Description                           |
-| :------------ | :-----------------| :------------------------------------ |
-| TimeToExecute | "Sunday,23"       | Jour et heure d'exécution de la politique de rotation des données définie dans le module `Data Storage` | 
+| Attribut      | Exemple de valeur                  | Description                           |
+| :------------ | :----------------------------------| :------------------------------------ |
+| TimeToExecute | "Friday,23;Saturday,10;Sunday,10;" | Jours et heures d'exécution de la politique de rotation des données définie dans le module `Data Storage` | 
 
 
 ### Section [Canopsis.import_ctx]
