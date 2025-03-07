@@ -39,7 +39,10 @@
     />
     <storage-settings-metrics-form v-field="form.metrics" />
     <storage-settings-perf-data-metrics-form v-field="form.perf_data_metrics" />
-    <storage-settings-event-filter-failure-form v-field="form.event_filter_failure" />
+    <storage-settings-event-filter-failure-form
+      v-field="form.event_filter_failure"
+      :history="history.event_filter_failure"
+    />
     <storage-settings-alarm-external-tag-form
       v-field="form.alarm_external_tag"
       :history="history.alarm_external_tag"
