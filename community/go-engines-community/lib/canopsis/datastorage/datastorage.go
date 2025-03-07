@@ -9,23 +9,21 @@ import (
 
 func CanRun(
 	lastExecuted datetime.CpsTime,
-	scheduledTime *config.ScheduledTime,
+	scheduledTimes config.ScheduledTimes,
 	location *time.Location,
 ) bool {
-	// Skip if schedule is not defined.
-	if scheduledTime == nil {
+	if len(scheduledTimes) == 0 {
 		return false
 	}
-	// Check now = schedule.
+
 	now := datetime.NewCpsTime().In(location)
-	if now.Weekday() != scheduledTime.Weekday || now.Hour() != scheduledTime.Hour {
+	if !scheduledTimes.IsScheduledTime(now) {
 		return false
 	}
 
-	//Skip if already executed today.
-	if lastExecuted.Unix() > 0 && lastExecuted.EqualDay(now) {
-		return false
-	}
+	return !isAlreadyExecuted(now, lastExecuted.In(location))
+}
 
-	return true
+func isAlreadyExecuted(now, lastExecuted datetime.CpsTime) bool {
+	return now.EqualDay(lastExecuted) && now.Hour() == lastExecuted.Hour()
 }

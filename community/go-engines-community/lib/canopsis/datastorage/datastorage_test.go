@@ -14,12 +14,14 @@ func TestCanRun_GivenScheduledTimeOnToday_ShouldReturnTrue(t *testing.T) {
 	location := now.Location()
 	weekday := now.Weekday()
 	hour := now.Hour()
-	scheduledTime := &libconfig.ScheduledTime{
-		Weekday: weekday,
-		Hour:    hour,
+	scheduledTimes := libconfig.ScheduledTimes{
+		{
+			Weekday: weekday,
+			Hour:    hour,
+		},
 	}
 
-	if !datastorage.CanRun(datetime.CpsTime{}, scheduledTime, location) {
+	if !datastorage.CanRun(datetime.CpsTime{}, scheduledTimes, location) {
 		t.Errorf("exepcted true but got false")
 	}
 }
@@ -42,12 +44,14 @@ func TestCanRun_GivenScheduledTimeOnAnotherDay_ShouldReturnFalse(t *testing.T) {
 	} else {
 		weekday = time.Monday
 	}
-	scheduledTime := &libconfig.ScheduledTime{
-		Weekday: weekday,
-		Hour:    10,
+	scheduledTimes := libconfig.ScheduledTimes{
+		{
+			Weekday: weekday,
+			Hour:    10,
+		},
 	}
 
-	if datastorage.CanRun(datetime.CpsTime{}, scheduledTime, location) {
+	if datastorage.CanRun(datetime.CpsTime{}, scheduledTimes, location) {
 		t.Errorf("exepcted false but got true")
 	}
 }
@@ -57,12 +61,14 @@ func TestCanRun_GivenScheduledTimeOnTodayAndLastExecutedToday_ShouldReturnFalse(
 	location := now.Location()
 	weekday := now.Weekday()
 	hour := now.Hour()
-	scheduledTime := &libconfig.ScheduledTime{
-		Weekday: weekday,
-		Hour:    hour,
+	scheduledTimes := libconfig.ScheduledTimes{
+		{
+			Weekday: weekday,
+			Hour:    hour,
+		},
 	}
 
-	if datastorage.CanRun(datetime.CpsTime{Time: now}, scheduledTime, location) {
+	if datastorage.CanRun(datetime.CpsTime{Time: now}, scheduledTimes, location) {
 		t.Errorf("exepcted false but got true")
 	}
 }
