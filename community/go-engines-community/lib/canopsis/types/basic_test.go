@@ -242,7 +242,7 @@ func TestBinaryCpsTime(t *testing.T) {
 		t := datetime.NewCpsTime()
 		out := datetime.CpsTime{Time: time.Time{}}
 
-		So(out.Equal(t.Time), ShouldBeFalse)
+		So(out.Equal(t), ShouldBeFalse)
 
 		Convey("I can encode", func() {
 			b, err := t.MarshalBinary()
@@ -251,7 +251,7 @@ func TestBinaryCpsTime(t *testing.T) {
 			Convey("I can decode", func() {
 				err := out.UnmarshalBinary(b)
 				So(err, ShouldBeNil)
-				So(out.Equal(t.Time), ShouldBeTrue)
+				So(out.Equal(t), ShouldBeTrue)
 			})
 		})
 	})
