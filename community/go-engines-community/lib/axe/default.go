@@ -15,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -104,7 +103,6 @@ func NewEngine(
 	m := DependencyMaker{}
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, logger)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	templateConfigProvider := config.NewTemplateConfigProvider(cfg, logger)
 	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
@@ -433,30 +431,6 @@ func NewEngine(
 		},
 		logger,
 	))
-	engineAxe.AddPeriodicalWorker("resolve_archiver", libengine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisClient),
-		redis.AxeResolvedArchiverPeriodicalLockKey,
-		&resolvedArchiverWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			Logger:                    logger,
-		},
-		logger,
-	))
-	engineAxe.AddPeriodicalWorker("clean_tags", libengine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisClient),
-		redis.AxeCleanExternalTagsPeriodicalLockKey,
-		&cleanExternalTagPeriodicalWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			Logger:                    logger,
-		},
-		logger,
-	))
 	engineAxe.AddPeriodicalWorker("idle_since", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(lockRedisClient),
 		redis.AxeIdleSincePeriodicalLockKey,
@@ -474,7 +448,6 @@ func NewEngine(
 		alarmConfigProvider,
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
-		dataStorageConfigProvider,
 	))
 
 	engineAxe.AddPeriodicalWorker("user_interface_config", libengine.NewLoadUserInterfaceConfigPeriodicalWorker(
