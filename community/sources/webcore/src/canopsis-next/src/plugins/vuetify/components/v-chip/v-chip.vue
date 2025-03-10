@@ -11,11 +11,6 @@ const isEmptyText = (nodes = []) => nodes.every(node => !node?.text && isEmptyTe
 
 export default {
   extends: VChip,
-  computed: {
-    hasFillBorderIcon() {
-      return !!this.$el?.querySelector?.('.v-icon--fill-border');
-    },
-  },
   render(h) {
     const children = [this.genContent()];
     const routeLink = this.generateRouteLink();
@@ -23,8 +18,8 @@ export default {
 
     data.class = {
       ...data.class,
+
       'v-chip--without-text': isEmptyText(this.$slots.default),
-      'v-chip--with-fill-border-icon': this.hasFillBorderIcon,
     };
 
     data.directives.push({
@@ -34,6 +29,7 @@ export default {
 
     data = this.setBackgroundColor(this.color, data);
     const color = this.textColor || (this.outlined && this.color);
+
     return h(routeLink.tag, this.setTextColor(color, data), children);
   },
 };
