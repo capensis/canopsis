@@ -12,7 +12,6 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     timezone="Europe/Paris"
   >
     <pbehavior-create-event-stub
-      defaultname=""
       event="[object Object]"
       notimezone="true"
       timezone="Europe/Paris"
@@ -24,7 +23,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
 </div>
 `;
 
-exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` with required props and with shownUserTimezone 1`] = `
+exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` with required props and with shownUserTimezone and defaultFields 1`] = `
 <div
   class="fill-height"
 >
@@ -35,7 +34,7 @@ exports[`pbehavior-planning-calendar Renders \`pbehavior-planning-calendar\` wit
     timezone="Europe/Paris"
   >
     <pbehavior-create-event-stub
-      defaultname=""
+      defaultfields="[object Object]"
       event="[object Object]"
       timezone="Europe/Paris"
     />
