@@ -47,7 +47,10 @@
         />
       </template>
       <template #actions="{ item }">
-        <actions-panel :item="item" />
+        <actions-panel
+          :item="item"
+          :default-inherited-pbehavior="widget.parameters.defaultInheritedPbehavior"
+        />
       </template>
       <template #expand="{ item }">
         <entities-list-expand-panel
@@ -65,6 +68,7 @@
       <template #mass-actions="{ selected, clearSelected }">
         <mass-actions-panel
           :items="selected"
+          :default-inherited-pbehavior="widget.parameters.defaultInheritedPbehavior"
           class="ml-3"
           @clear:items="clearSelected"
         />

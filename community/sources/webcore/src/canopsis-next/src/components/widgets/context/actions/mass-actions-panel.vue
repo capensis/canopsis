@@ -30,6 +30,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    defaultInheritedPbehavior: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
@@ -151,6 +155,8 @@ export default {
         config: {
           entityPattern: createEntityIdPatternByValue(this.items.map(({ _id: id }) => id)),
           entities: this.items,
+          defaultInherited: this.defaultInheritedPbehavior,
+          withInherited: true,
           afterSubmit: this.afterSubmit,
         },
       });
