@@ -117,6 +117,10 @@ func (t CpsTime) After(u CpsTime) bool {
 	return t.Time.After(u.Time)
 }
 
+func (t CpsTime) Equal(u CpsTime) bool {
+	return t.Time.Equal(u.Time)
+}
+
 func (t CpsTime) In(loc *time.Location) CpsTime {
 	return CpsTime{Time: t.Time.In(loc)}
 }

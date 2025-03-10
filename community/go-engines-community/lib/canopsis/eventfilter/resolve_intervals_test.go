@@ -284,11 +284,11 @@ func TestUpdateIntervals(t *testing.T) {
 
 			ResolveIntervals(&dataSet.ef, r, dataSet.now, time.UTC)
 
-			if !dataSet.expectedResolvedStart.Equal(dataSet.ef.ResolvedStart.Time) {
+			if !dataSet.expectedResolvedStart.Equal(*dataSet.ef.ResolvedStart) {
 				t.Errorf("expected start = %v, got = %v", dataSet.expectedResolvedStart, dataSet.ef.ResolvedStart)
 			}
 
-			if !dataSet.expectedResolvedStop.Equal(dataSet.ef.ResolvedStop.Time) {
+			if !dataSet.expectedResolvedStop.Equal(*dataSet.ef.ResolvedStop) {
 				t.Errorf("expected stop = %v, got = %v", dataSet.expectedResolvedStop, dataSet.ef.ResolvedStop)
 			}
 
@@ -308,11 +308,11 @@ func TestUpdateIntervals(t *testing.T) {
 				t.Fatalf("expected next stop = %v, but got nil", dataSet.expectedNextResolvedStop)
 			}
 
-			if dataSet.expectedNextResolvedStart != nil && !dataSet.expectedNextResolvedStart.Equal(dataSet.ef.NextResolvedStart.Time) {
+			if dataSet.expectedNextResolvedStart != nil && !dataSet.expectedNextResolvedStart.Equal(*dataSet.ef.NextResolvedStart) {
 				t.Errorf("expected next start = %v, got = %v", dataSet.expectedNextResolvedStart, dataSet.ef.NextResolvedStart)
 			}
 
-			if dataSet.expectedNextResolvedStop != nil && !dataSet.expectedNextResolvedStop.Equal(dataSet.ef.NextResolvedStop.Time) {
+			if dataSet.expectedNextResolvedStop != nil && !dataSet.expectedNextResolvedStop.Equal(*dataSet.ef.NextResolvedStop) {
 				t.Errorf("expected next stop = %v, got = %v", dataSet.expectedNextResolvedStop, dataSet.ef.NextResolvedStop)
 			}
 		})

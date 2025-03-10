@@ -3,6 +3,7 @@ package engine
 import (
 	"context"
 	"errors"
+	"sync"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
@@ -37,23 +38,81 @@ func (w *lockedPeriodicalWorker) GetInterval() time.Duration {
 	return w.worker.GetInterval()
 }
 
-func (w *lockedPeriodicalWorker) Work(ctx context.Context) {
+func (w *lockedPeriodicalWorker) Work(parentCtx context.Context) {
+	ctx, cancel := context.WithCancel(parentCtx)
+	defer cancel()
 	ttl := w.GetInterval()
 	if ttl > ttlDiff {
 		ttl -= ttlDiff
 	}
 
+	lockEnd := time.Now().Add(ttl)
+	lockOpts := &redislock.Options{}
 	// Lock periodical, do not release lock to not allow another instance start periodical.
-	_, err := w.lockClient.Obtain(ctx, w.lockKey, ttl, &redislock.Options{})
+	l, err := w.lockClient.Obtain(ctx, w.lockKey, ttl, lockOpts)
 	if err != nil {
 		if errors.Is(err, redislock.ErrNotObtained) {
-			w.logger.Debug().Msg("lock already obtained")
+			w.logger.Debug().Str("key", w.lockKey).Msg("lock already obtained")
+
 			return
 		}
 
-		w.logger.Err(err).Msg("cannot obtain lock")
+		w.logger.Err(err).Str("key", w.lockKey).Msg("cannot obtain lock")
+
 		return
 	}
 
-	w.worker.Work(ctx)
+	lockRefreshed := false
+	defer func() {
+		if !lockRefreshed {
+			return
+		}
+
+		d := time.Until(lockEnd)
+		if d > 0 {
+			err = l.Refresh(context.WithoutCancel(parentCtx), d, lockOpts)
+			if err != nil {
+				w.logger.Err(err).Str("key", w.lockKey).Msg("cannot refresh lock")
+			}
+		} else {
+			err = l.Release(context.WithoutCancel(parentCtx))
+			if err != nil {
+				w.logger.Err(err).Str("key", w.lockKey).Msg("cannot release lock")
+			}
+		}
+	}()
+
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	done := make(chan struct{})
+	go func() {
+		defer wg.Done()
+		defer close(done)
+		w.worker.Work(ctx)
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer wg.Done()
+		ticker := time.NewTicker(ttl / 2)
+		defer ticker.Stop()
+		for {
+			select {
+			case <-done:
+				return
+			case <-ticker.C:
+				err = l.Refresh(ctx, ttl, lockOpts)
+				if err != nil {
+					w.logger.Err(err).Str("key", w.lockKey).Msg("cannot refresh lock, stop periodical worker")
+					cancel()
+
+					return
+				}
+
+				lockRefreshed = true
+			}
+		}
+	}()
+
+	wg.Wait()
 }

@@ -2222,7 +2222,7 @@ func RegisterRoutes(
 
 		messageRateStatsRouter := protected.Group("/message-rate-stats")
 		{
-			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(dbClient, pgPoolProvider))
+			messageRateStatsAPI := messageratestats.NewApi(messageratestats.NewStore(pgPoolProvider))
 			messageRateStatsRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.PermMessageRateStatsRead, model.PermissionCan, enforcer),

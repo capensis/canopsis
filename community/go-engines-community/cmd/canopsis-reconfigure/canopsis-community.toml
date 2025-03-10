@@ -277,6 +277,8 @@ TimeToExecute = "Sunday,23"
 MaxUpdates = 100000
 # MongoClientTimeout specifies the amount of time that a single operation run on Mongo Client can execute before returning an error.
 MongoClientTimeout = "1m"
+# Timeout specifies the amount of time that a whole cleaning process can execute before returning an error.
+Timeout = "1h"
 
 # It's required to restart api and engines after canopsis-reconfigure updates mongodb
 # to catch up following parameters.

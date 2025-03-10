@@ -32,10 +32,6 @@ const (
 	WidgetTemplateMongoCollection = "widget_templates"
 	ViewGroupMongoCollection      = "viewgroups"
 
-	// MessageRateStatsHourCollectionName contains old stats
-	// deprecated
-	MessageRateStatsHourCollectionName = "message_rate_statistic_hour"
-
 	// Collection for ok/ko event statistics
 	EventStatistics = "event_statistics"
 
