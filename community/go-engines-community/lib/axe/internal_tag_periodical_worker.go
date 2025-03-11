@@ -301,6 +301,11 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 							"then": "$etags",
 							"else": bson.A{},
 						}},
+						bson.M{"$cond": bson.M{
+							"if":   "$imtags",
+							"then": "$imtags",
+							"else": bson.A{},
+						}},
 						matchedTags,
 					}},
 				}},
