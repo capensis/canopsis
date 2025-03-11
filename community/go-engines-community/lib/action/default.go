@@ -127,7 +127,7 @@ func NewEngineAction(
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
 		options.PeriodicalWaitTime,
 		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueuePrefix, "", nil, rpcPublishQueues),
+		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueuePrefix, "", nil, nil, rpcPublishQueues),
 		amqpChannel,
 		logger,
 	)
