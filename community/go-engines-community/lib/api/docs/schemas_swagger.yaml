@@ -3305,6 +3305,10 @@ definitions:
         type: string
       output_template:
         type: string
+      tags:
+        additionalProperties:
+          type: string
+        type: object
       type:
         type: string
     required:
