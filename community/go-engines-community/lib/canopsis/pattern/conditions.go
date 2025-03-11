@@ -41,6 +41,8 @@ const (
 	ConditionTimeAbsolute = "absolute_time"
 	ConditionIsOneOf      = "is_one_of"
 	ConditionIsNotOneOf   = "is_not_one_of"
+	ConditionHasLabels    = "has_labels"
+	ConditionHasNotLabels = "has_not_labels"
 )
 
 const (
@@ -49,6 +51,8 @@ const (
 	FieldTypeBool        = "bool"
 	FieldTypeStringArray = "string_array"
 )
+
+const tagLabelSeparator = ":"
 
 // FieldCondition represents a condition for a specific field.
 type FieldCondition struct {
@@ -382,6 +386,36 @@ func (c *Condition) MatchStringArray(value []string) (bool, error) {
 	return false, ErrUnsupportedConditionType
 }
 
+func (c *Condition) MatchTags(tags []string) (bool, error) {
+	switch c.Type {
+	case ConditionIsEmpty, ConditionHasEvery, ConditionHasOneOf, ConditionHasNot:
+		return c.MatchStringArray(tags)
+	case ConditionHasLabels, ConditionHasNotLabels:
+		hasLabels := c.Type == ConditionHasLabels
+
+		if len(c.valueStrArray) == 0 {
+			return false, ErrWrongConditionValue
+		}
+
+		labelsMap := make(map[string]bool)
+		for _, v := range tags {
+			label, _, _ := strings.Cut(v, tagLabelSeparator)
+
+			labelsMap[label] = true
+		}
+
+		for _, v := range c.valueStrArray {
+			if labelsMap[v] {
+				return hasLabels, nil
+			}
+		}
+
+		return !hasLabels, nil
+	default:
+		return false, ErrUnsupportedConditionType
+	}
+}
+
 func (c *Condition) MatchTime(value time.Time) (bool, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
@@ -673,6 +707,28 @@ func (c *Condition) StringArrayToMongoQuery(f string, checkExists bool) (bson.M,
 		}
 
 		return bson.M{f: bson.M{"$nin": c.valueStrArray}}, nil
+	default:
+		return nil, ErrUnsupportedConditionType
+	}
+}
+
+func (c *Condition) TagsToMongoQuery(f string) (bson.M, error) {
+	switch c.Type {
+	case ConditionIsEmpty, ConditionHasEvery, ConditionHasOneOf, ConditionHasNot:
+		return c.StringArrayToMongoQuery(f, false)
+	case ConditionHasLabels, ConditionHasNotLabels:
+		expr := "^(" + strings.Join(c.valueStrArray, "|") + ")(?:\\:|$)"
+
+		r, err := utils.NewRegexExpression(expr)
+		if err != nil {
+			return nil, fmt.Errorf("invalid regexp expression - %q in tags alarm pattern: %w", expr, err)
+		}
+
+		if c.Type == ConditionHasLabels {
+			return bson.M{f: bson.M{"$regex": r.String()}}, nil
+		} else {
+			return bson.M{f: bson.M{"$not": bson.M{"$regex": r.String()}}}, nil
+		}
 	default:
 		return nil, ErrUnsupportedConditionType
 	}
