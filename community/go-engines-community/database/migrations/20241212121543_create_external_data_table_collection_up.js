@@ -2,6 +2,7 @@ if (!db.permission.findOne({_id: "api_external_data_table"})) {
     db.permission.insertOne({
         _id: "api_external_data_table",
         name: "api_external_data_table",
+        type: "CRUD",
         description: "External data",
         groups: ["api", "api_rules"]
     });
@@ -16,6 +17,7 @@ if (!db.permission.findOne({_id: "models_exploitation_externalData"})) {
     db.permission.insertOne({
         _id: "models_exploitation_externalData",
         name: "models_exploitation_externalData",
+        type: "CRUD",
         description: "External data",
         groups: ["technical", "technical_exploitation"],
         api_permissions: {
