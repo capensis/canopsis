@@ -225,6 +225,7 @@ func NewEngine(
 				canopsis.AxeSystemQueueName,
 				canopsis.AxeUserQueueName,
 			},
+			nil,
 			append([]string{canopsis.PBehaviorRPCQueueServerName}, rpcPublishQueues...),
 		),
 		amqpChannel,

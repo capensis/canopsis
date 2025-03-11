@@ -119,7 +119,7 @@ func Default(
 	techMetricsSender := techmetrics.NewSender(canopsis.FIFOEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		s.Cfg.Global.ReconnectRetries, s.Cfg.Global.GetReconnectTimeout(), logger)
 	runInfoPeriodicalWorker := libengine.NewRunInfoMetricsPeriodicalWorker(
-		canopsis.PeriodicalWaitTime,
+		options.PeriodicalWaitTime,
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, canopsis.FIFOQueueName, canopsis.CheQueuePrefix, []string{canopsis.FIFOQueueName}),
 		amqpChannel,
