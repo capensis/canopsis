@@ -293,6 +293,7 @@ export const API_ROUTES = {
   bulkLinkRule: '/api/v4/bulk/link-rules',
   linkCategories: '/api/v4/link-categories',
   icons: '/api/v4/icons',
+  externalDataTables: '/api/v4/external-data-tables',
   themes: {
     list: '/api/v4/color-themes',
     bulkList: '/api/v4/bulk/color-themes',

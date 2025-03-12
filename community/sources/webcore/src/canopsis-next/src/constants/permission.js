@@ -222,6 +222,7 @@ export const USER_PERMISSIONS = {
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
+      externalData: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`, // TODO: change to _externalData
     },
     notification: {
       common: USER_PERMISSIONS_PREFIXES.technical.notification,
@@ -475,6 +476,7 @@ export const USER_PERMISSIONS = {
       playlist: `${USER_PERMISSIONS_PREFIXES.api}_playlist`,
       launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
       resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
+      externalDataTable: `${USER_PERMISSIONS_PREFIXES.api}_external_data_table`,
 
       ...featuresService.get('constants.USER_PERMISSIONS.api.general'),
     },
