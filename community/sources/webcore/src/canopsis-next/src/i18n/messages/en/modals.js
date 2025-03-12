@@ -784,6 +784,12 @@ export default {
       phraseText: 'Please, type the following to confirm:',
       phrase: 'archive or delete',
     },
+    deleteExternalDataTable: {
+      title: 'Delete Reference table / collection',
+      text: 'You are about to delete data.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type table / collection name to confirm:',
+    },
   },
   pbehaviorsCalendar: {
     title: 'Periodic behaviors',
@@ -1045,5 +1051,24 @@ export default {
     title: 'Events recording {date}',
     subtitle: '{count} events from RabbitMQ received',
     buttonTooltip: 'Delete received events',
+  },
+  createExternalDataTable: {
+    create: {
+      title: 'Add external data (table / collection)',
+    },
+    edit: {
+      title: 'Edit external data (table / collection)',
+    },
+  },
+  createExternalDataTableRecord: {
+    create: {
+      title: 'Add record',
+    },
+    edit: {
+      title: 'Edit record',
+    },
+    duplicate: {
+      title: 'Duplicate record',
+    },
   },
 };

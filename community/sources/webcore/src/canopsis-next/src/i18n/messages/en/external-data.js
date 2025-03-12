@@ -2,6 +2,7 @@ import {
   EXTERNAL_DATA_TYPES,
   EXTERNAL_DATA_CONDITION_TYPES,
   EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS,
+  EXTERNAL_DATA_TABLES_TYPES,
 } from '@/constants';
 
 export default {
@@ -33,4 +34,11 @@ export default {
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.output]: 'Output',
     [EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.extraInfos]: 'Extra infos',
   },
+
+  tableTypes: {
+    [EXTERNAL_DATA_TABLES_TYPES.mongo]: 'MongoDB',
+    [EXTERNAL_DATA_TABLES_TYPES.postgres]: 'PostgreSQL',
+  },
+
+  tableNameTooltip: 'Supported symbols: latin letters, “_”, numbers (not at the beginning)',
 };

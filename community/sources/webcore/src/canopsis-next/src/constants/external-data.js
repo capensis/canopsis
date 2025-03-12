@@ -65,3 +65,8 @@ export const EXTERNAL_DATA_DEFAULT_CONDITION_VALUES = [
     value: EXTERNAL_DATA_PAYLOADS_VARIABLES.extraInfos,
   },
 ];
+
+export const EXTERNAL_DATA_TABLES_TYPES = {
+  mongo: 0,
+  postgres: 1,
+};
