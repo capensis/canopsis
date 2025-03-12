@@ -49,7 +49,7 @@ export const vuetifyCustomIconsRegisterMixin = {
 
       const icon = await this.fetchIconWithoutStore({ id });
 
-      this.registerIconInVuetify(icon.title, icon.content);
+      this.registerIconInVuetify(icon.title, icon.content, { fillBorder: icon.fill_border });
       this.addRegisteredIcon({ id, icon });
     },
 
@@ -57,7 +57,9 @@ export const vuetifyCustomIconsRegisterMixin = {
       try {
         const { data: icons } = await this.fetchIconsListWithoutStore({ params: { limit: MAX_LIMIT } });
 
-        icons.map(({ title, content }) => this.registerIconInVuetify(title, content));
+        icons.forEach(({ title, content, fill_border: fillBorder }) => (
+          this.registerIconInVuetify(title, content, { fillBorder })
+        ));
 
         this.setRegisteredIcons({ icons });
       } catch (err) {
