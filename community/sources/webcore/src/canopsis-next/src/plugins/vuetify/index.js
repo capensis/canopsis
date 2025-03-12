@@ -5,6 +5,8 @@ import * as VuetifyDirectives from 'vuetify/lib/directives';
 import icons from './components/icons';
 import ClickOutside from './directives/click-outside';
 import VCombobox from './components/v-combobox/v-combobox.vue';
+import VChip from './components/v-chip/v-chip.vue';
+import VIcon from './components/v-icon/v-icon.vue';
 import VMenu from './components/v-menu/v-menu.vue';
 import VDialog from './components/v-dialog/v-dialog.vue';
 import VNavigationDrawer from './components/v-navigation-drawer/v-navigation-drawer.vue';
@@ -26,6 +28,8 @@ export const createVuetify = (Vue, options) => {
   Vue.use(Vuetify, {
     components: {
       ...VuetifyComponents,
+      VChip,
+      VIcon,
       VMenu,
       VNavigationDrawer,
       VDialog,

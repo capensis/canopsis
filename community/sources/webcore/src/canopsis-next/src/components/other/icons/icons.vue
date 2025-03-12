@@ -35,8 +35,8 @@ export default {
      * We need to use this watcher (even if we have sockets) to displaying icons in table without blink
      */
     icons(icons) {
-      icons.forEach(({ title, content }) => (
-        !this.hasIconInVuetify(title) && this.registerIconInVuetify(title, content)
+      icons.forEach(({ title, content, fill_border: fillBorder }) => (
+        !this.hasIconInVuetify(title) && this.registerIconInVuetify(title, content, { fillBorder })
       ));
     },
   },
