@@ -541,7 +541,7 @@ type AlarmValue struct {
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
 	Infos           map[string]map[string]interface{} `bson:"infos" json:"infos"`
-	LastInfosUpdate datetime.CpsTime                  `bson:"last_infos_update,omitempty" json:"last_infos_update,omitempty"`
+	LastInfosUpdate datetime.MicroTime                `bson:"last_infos_update,omitempty" json:"last_infos_update,omitempty"`
 
 	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
 	// It's used only to compute InactiveDuration.
