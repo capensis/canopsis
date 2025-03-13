@@ -12,7 +12,7 @@
               v-model="rules"
               :attributes="attributes"
               :allow-or="allowOr"
-              @input="resetActiveSearch"
+              @input="inputSearch"
             />
           </div>
         </div>
@@ -107,23 +107,6 @@ export default {
     });
 
     /**
-     * Resets the active search configuration to null.
-     */
-    const resetActiveSearch = () => activeSearch = null;
-
-    /**
-     * Reset the current search field errors and resets the rules to their initial state.
-     */
-    const reset = () => {
-      instance.errors.clear();
-      rules.value = [advancedSearchRuleItemToFormItem()];
-
-      resetActiveSearch();
-
-      emit('reset');
-    };
-
-    /**
      * Submits the current advanced search configuration.
      *
      * @returns {Promise<void>} A promise that resolves when the submission process is complete.
@@ -139,6 +122,34 @@ export default {
 
         emit('submit', newSearch);
       }
+    };
+
+    /**
+     * Resets the active search configuration to null.
+     */
+    const resetActiveSearch = () => activeSearch = null;
+
+    /**
+     * Input search handler
+     */
+    const inputSearch = (newRules) => {
+      resetActiveSearch();
+
+      if (newRules.length === 1 && newRules[0].text) {
+        submit();
+      }
+    };
+
+    /**
+     * Reset the current search field errors and resets the rules to their initial state.
+     */
+    const reset = () => {
+      instance.errors.clear();
+      rules.value = [advancedSearchRuleItemToFormItem()];
+
+      resetActiveSearch();
+
+      emit('reset');
     };
 
     /**
@@ -180,7 +191,7 @@ export default {
       submit,
       removeSearch,
       togglePinForSearch,
-      resetActiveSearch,
+      inputSearch,
     };
   },
 };

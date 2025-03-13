@@ -24,7 +24,7 @@
             <input
               v-model="inputValue"
               ref="inputElement"
-              type="text"
+              :type="inputType"
               class="ml-1"
               autocomplete="off"
               @keydown="keydownInput"
@@ -40,7 +40,7 @@
           ref="inputElement"
           :value="inputValue"
           :placeholder="inputPlaceholder"
-          type="text"
+          :type="inputType"
           class="ml-1"
           autocomplete="off"
           v-on="on"
@@ -181,6 +181,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    number: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const registerLastInputFocus = inject('$registerLastInputFocus', () => {});
@@ -247,6 +251,8 @@ export default {
       transition: false,
       disabled: props.disabled,
     }));
+
+    const inputType = computed(() => (props.number ? 'number' : 'text'));
 
     const hasAnyDisabledItem = computed(() => props.items.some(({ disabled }) => disabled));
 
@@ -366,6 +372,10 @@ export default {
     const selectItem = (value) => {
       opened.value = false;
 
+      if (props.number && !value) {
+        return;
+      }
+
       changeSelectedItems(props.multiple ? [...(props.value || []), value] : value);
 
       if (!props.multiple) {
@@ -450,6 +460,7 @@ export default {
       inputElement,
       inputValue,
       menuProps,
+      inputType,
       chipText,
       lazyItems,
       valuesPending,
