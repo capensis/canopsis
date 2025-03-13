@@ -1,20 +1,22 @@
 <template>
   <v-chip
-    :close="closable"
+    :close="closable && !disabled"
     :color="color"
     class="c-alarm-advanced-search__chip c-alarm-advanced-search__array-chip"
     @click.prevent=""
     @click:close="close"
   >
     <v-chip>
+      <span v-if="disabled">{{ value.value }}</span>
       <input
+        v-else
         :value="value.value"
         :placeholder="$t('common.duration')"
         type="number"
         @input="updateValue"
       >
     </v-chip>
-    <v-menu bottom>
+    <v-menu :disabled="disabled" bottom>
       <template #activator="{ on }">
         <v-chip v-on="on">
           <span>{{ unitText }}</span>
@@ -57,6 +59,10 @@ export default {
     },
     color: {
       type: String,
+      required: false,
+    },
+    disabled: {
+      type: Boolean,
       required: false,
     },
     long: {
