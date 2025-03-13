@@ -741,7 +741,7 @@ export const useAttachAdvancedSearchRuleValidator = ({
   const attachValidationRule = () => validator.attach({
     name: unref(rule).key,
     rules: ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME,
-    getter: () => ({ rule: unref(rule), finished: isFinishedRule.value }),
+    getter: () => ({ rule: unref(rule), finished: unref(isFinishedRule) }),
   });
 
   /**

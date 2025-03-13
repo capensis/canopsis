@@ -23,13 +23,16 @@ import {
   toRef,
 } from 'vue';
 
-import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES, QUICK_RANGES } from '@/constants';
+import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES } from '@/constants';
 
 import { isArrayCondition } from '@/helpers/entities/pattern/form';
 import {
   advancedSearchRuleItemToFormItem,
   getInitialFormItemType,
   getNextForFormItemType,
+  isArrayItem,
+  isCustomRangeItem,
+  isDurationItem,
   isNumberValueType,
 } from '@/helpers/search/alarm-advanced-search';
 
@@ -39,9 +42,14 @@ import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator 
 
 import AlarmAdvancedSearchChip from './alarm-advanced-search-chip.vue';
 import AlarmAdvancedSearchRangeChip from './alarm-advanced-search-range-chip.vue';
+import AlarmAdvancedSearchDurationChip from './alarm-advanced-search-duration-chip.vue';
 
 export default {
-  components: { AlarmAdvancedSearchChip, AlarmAdvancedSearchRangeChip },
+  components: {
+    AlarmAdvancedSearchChip,
+    AlarmAdvancedSearchRangeChip,
+    AlarmAdvancedSearchDurationChip,
+  },
   model: {
     prop: 'rule',
     event: 'input',
@@ -157,13 +165,21 @@ export default {
       const typeIndex = oldFilled.indexOf(type);
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
       const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
+      let skipType = false;
 
-      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
+      if (isArrayItem(type, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
+        skipType = true;
       }
 
-      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
+      if (isCustomRangeItem(type, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+        skipType = true;
+      }
+
+      if (isDurationItem(type, value)) {
+        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration);
+        skipType = true;
       }
 
       updateModel({
@@ -173,14 +189,20 @@ export default {
         filled: uniq(filled),
       });
 
-      if ([ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue, ALARM_ADVANCED_SEARCH_CHIP_TYPES.value].includes(type)) {
+      if (
+        [
+          ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue,
+          ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration,
+          ALARM_ADVANCED_SEARCH_CHIP_TYPES.value,
+        ].includes(type)
+      ) {
         return;
       }
 
       setInputType(type);
 
       if (!isFinishedRule.value) {
-        nextTick(() => goToNextType());
+        nextTick(() => goToNextType(skipType));
       }
     };
 
@@ -198,14 +220,19 @@ export default {
       const preparedRule = { ...props.rule };
       let skipType = false;
 
-      if (inputType.value === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)) {
+      if (isArrayItem(inputType.value, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
         preparedRule[ALARM_ADVANCED_SEARCH_CHIP_TYPES.value] = [];
         skipType = true;
       }
 
-      if (inputType.value === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value) {
+      if (isCustomRangeItem(inputType.value, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue);
+        skipType = true;
+      }
+
+      if (isDurationItem(inputType.value, value)) {
+        filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration);
         skipType = true;
       }
 
@@ -316,11 +343,17 @@ export default {
         };
       }
 
+      let component = 'alarm-advanced-search-chip';
+
+      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue) {
+        component = 'alarm-advanced-search-range-chip';
+      } else if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration) {
+        component = 'alarm-advanced-search-duration-chip';
+      }
+
       return {
         key,
-        component: type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.rangeValue
-          ? 'alarm-advanced-search-range-chip'
-          : 'alarm-advanced-search-chip',
+        component,
         bind,
         on,
       };
