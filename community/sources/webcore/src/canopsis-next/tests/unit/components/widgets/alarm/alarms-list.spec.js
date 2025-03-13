@@ -1894,11 +1894,11 @@ describe('alarms-list', () => {
     const secondSearch = formToAdvancedSearch();
 
     firstSearch._id = Faker.datatype.string();
-    firstSearch.search = Faker.datatype.string();
+    firstSearch.search = 'first';
     firstSearch.pinned = true;
 
     secondSearch._id = Faker.datatype.string();
-    secondSearch.search = Faker.datatype.string();
+    secondSearch.search = 'second';
     secondSearch.pinned = false;
 
     const wrapper = factory({

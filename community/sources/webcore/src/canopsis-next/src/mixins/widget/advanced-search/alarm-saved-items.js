@@ -1,7 +1,7 @@
 import { omit, keyBy } from 'lodash';
 
 import { sortPinnedSearches } from '@/helpers/search/sorting';
-import { isEmptyAlarmSearch } from '@/helpers/search/alarm-advanced-search';
+import { isEmptyAlarmSearch, isEqualAlarmSearches } from '@/helpers/search/alarm-advanced-search';
 
 import { entitiesUserPreferenceMixin } from '@/mixins/entities/user-preference';
 
@@ -35,11 +35,24 @@ export const widgetAlarmAdvancedSearchSavedItemsMixin = {
       };
 
       let searches;
+      let found = false;
 
-      if (this.searchesById[search._id]) {
-        searches = this.searches.map(value => (value._id === search._id ? search : value));
-      } else {
-        searches = [...this.searches, search];
+      searches = this.searches.map((value) => {
+        if (isEqualAlarmSearches(value, search)) {
+          found = true;
+
+          return {
+            ...search,
+
+            pinned: value.pinned || search.pinned,
+          };
+        }
+
+        return value;
+      });
+
+      if (!found) {
+        searches = [search, ...this.searches];
       }
 
       this.updateContentInUserPreference({

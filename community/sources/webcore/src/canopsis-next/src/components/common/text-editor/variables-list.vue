@@ -56,6 +56,7 @@
       :position-x="subItemsPosition.x"
       :position-y="subItemsPosition.y"
       :z-index="zIndex"
+      :close-on-content-click="clickableParent"
       offset-x
       right
     >
@@ -68,6 +69,7 @@
         :show-value="showValue"
         :children-key="childrenKey"
         :return-object="returnObject"
+        :clickable-parent="clickableParent"
         @input="selectSubVariable"
       />
     </v-menu>
@@ -136,6 +138,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    clickableParent: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const appendElement = ref(null);
@@ -192,6 +198,11 @@ export default {
      *                        that can be identified by the `props.itemValue`.
      */
     const selectVariable = (item) => {
+      if (item?.[props.childrenKey]?.length) {
+        subItemsShown.value = true;
+        return;
+      }
+
       let newValue = prepareItem(item);
 
       if (props.multiple) {

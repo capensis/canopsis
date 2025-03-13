@@ -36,6 +36,7 @@
         :items="availableVariables"
         children-key="variables"
         show-value
+        clickable-parent
         @input="pasteVariable"
       />
     </template>

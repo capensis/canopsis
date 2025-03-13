@@ -141,3 +141,15 @@ export const ALARM_ADVANCED_SEARCH_ALARM_PBEHAVIOR_INFO_FIELDS = [
 ];
 
 export const ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME = 'advancedSearchRule';
+
+export const ALARM_SEARCH_FIELDS_TO_COMPARISON = [
+  'search',
+  'alarm_pattern',
+  'entity_pattern',
+  'pbehavior_pattern',
+  'positions',
+];
+
+export const ALARM_SEARCH_NUMBER_ATTRIBUTES = [
+  ALARM_FIELDS.totalStateChanges,
+];

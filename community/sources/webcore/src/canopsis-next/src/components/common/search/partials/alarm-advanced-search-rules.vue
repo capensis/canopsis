@@ -9,8 +9,8 @@
   >
     <alarm-advanced-search-rule
       v-for="(rule, index) in rules"
-      v-field="rules[index]"
       :key="rule.key"
+      :rule="rule"
       :attributes="attributes"
       :active="rule.key === activeKey"
       :union="index % 2 === 1"

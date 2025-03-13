@@ -30,6 +30,7 @@ import {
   advancedSearchRuleItemToFormItem,
   getInitialFormItemType,
   getNextForFormItemType,
+  isNumberValueType,
 } from '@/helpers/search/alarm-advanced-search';
 
 import { useModelField } from '@/hooks/form/model-field';
@@ -291,6 +292,7 @@ export default {
         itemText: itemText ?? 'text',
         itemValue: itemValue ?? 'value',
         allowText: first || !itemsByType.value[type]?.length,
+        number: isNumberValueType(props.rule, type),
         fetchItems,
         first,
       };

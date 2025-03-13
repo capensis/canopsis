@@ -11,6 +11,7 @@
       :value="activeValue"
       :items="items"
       return-object
+      clickable-parent
       @input="selectItem"
     >
       <template #prepend>

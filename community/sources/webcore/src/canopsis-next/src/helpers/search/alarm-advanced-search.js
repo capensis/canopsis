@@ -6,9 +6,12 @@ import {
   ADVANCED_SEARCH_UNION_CONDITIONS,
   ALARM_PATTERN_FIELDS,
   PATTERN_FIELD_TYPES,
-  PATTERN_OPERATORS,
   PATTERNS_FIELDS,
   QUICK_RANGES,
+  PATTERN_OPERATORS_WITHOUT_VALUE,
+  ALARM_SEARCH_FIELDS_TO_COMPARISON,
+  ALARM_SEARCH_NUMBER_ATTRIBUTES,
+  PATTERN_NUMBER_OPERATORS,
 } from '@/constants';
 
 import {
@@ -18,6 +21,7 @@ import {
   isValueInfosPatternRuleField,
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
+import { isPickEqual } from '@/helpers/collection';
 
 /**
  * @typedef {'alarm_pattern' | 'entity_pattern' | 'pbehavior_pattern'} AdvancedSearchRuleItemPosition
@@ -138,7 +142,7 @@ export const getNextForFormItemType = ({ attribute, fieldType, range, operator, 
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration;
       }
 
-      if ([PATTERN_OPERATORS.isEmpty, PATTERN_OPERATORS.isNotEmpty].includes(operator)) {
+      if (PATTERN_OPERATORS_WITHOUT_VALUE.includes(operator)) {
         return null;
       }
 
@@ -346,8 +350,42 @@ export const formToAdvancedSearch = (form = []) => {
   });
 };
 
+/**
+ * Checks if an alarm search object is empty by evaluating specific fields.
+ *
+ * @param {AdvancedSearch} [search = {}] - The alarm search object to evaluate.
+ * @returns {boolean} - Returns true if all specified fields in the search object are empty, otherwise false.
+ */
 export const isEmptyAlarmSearch = (search = {}) => (
-  Object.values(pick(search, ['search', 'alarm_pattern', 'entity_pattern', 'pbehavior_pattern']))
+  Object.values(pick(search, ALARM_SEARCH_FIELDS_TO_COMPARISON))
     .map(isEmpty)
     .every(Boolean)
+);
+
+/**
+ * Compares two alarm search objects for equality based on specific fields or their unique identifiers.
+ *
+ * @param {AdvancedSearch & { _id: string }} firstSearch - The first alarm search object to compare.
+ * @param {AdvancedSearch & { _id: string }} secondSearch - The second alarm search object to compare.
+ * @returns {boolean} - Returns true if the searches are equal based on their IDs or specified fields, otherwise false.
+ */
+export const isEqualAlarmSearches = (firstSearch, secondSearch) => (
+  firstSearch?._id === secondSearch?._id
+  || isPickEqual(firstSearch, secondSearch, ALARM_SEARCH_FIELDS_TO_COMPARISON)
+);
+
+/**
+ * Determines if a rule is of a number value type based on its type and operator.
+ *
+ * @param {AdvancedSearchFormItem} rule - The rule object to evaluate.
+ * @param {AdvancedSearchChipType} type - The type of the rule to check against.
+ * @returns {boolean} - Returns true if the rule is of a number value type, otherwise false.
+ */
+export const isNumberValueType = (rule, type) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.value
+  && PATTERN_NUMBER_OPERATORS.includes(rule.operator)
+  && (
+    rule.fieldType === PATTERN_FIELD_TYPES.number
+    || ALARM_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
+  )
 );
