@@ -23,7 +23,7 @@
         v-else
         :key="item.value"
         :input-value="isActiveItem(item)"
-        :disabled="item.disabled"
+        :disabled="item.disabled || item[childrenKey]?.length === 0"
         @click="selectVariable(item)"
         @mouseenter="handleMouseEnter(item, $event)"
       >

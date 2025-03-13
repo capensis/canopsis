@@ -68,7 +68,7 @@ export const useEntityInfosKeys = () => {
     pending,
     handler,
   } = usePendingHandler(async () => {
-    const { data: infos } = await fetchEntityInfosKeysWithoutStore({ params: MAX_LIMIT });
+    const { data: infos } = await fetchEntityInfosKeysWithoutStore({ params: { limit: MAX_LIMIT } });
 
     entityInfosKeys.value = infos;
   });
