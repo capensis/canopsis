@@ -12,10 +12,12 @@ import {
   ALARM_SEARCH_FIELDS_TO_COMPARISON,
   ALARM_SEARCH_NUMBER_ATTRIBUTES,
   PATTERN_NUMBER_OPERATORS,
+  PATTERN_DURATION_OPERATORS,
 } from '@/constants';
 
 import {
   formRuleToPatternRule,
+  isArrayCondition,
   isDatePatternRuleField,
   isDurationPatternRuleField,
   isValueInfosPatternRuleField,
@@ -388,4 +390,37 @@ export const isNumberValueType = (rule, type) => (
     rule.fieldType === PATTERN_FIELD_TYPES.number
     || ALARM_SEARCH_NUMBER_ATTRIBUTES.includes(rule.attribute)
   )
+);
+
+/**
+ * Checks if the given type and value represent an array item.
+ *
+ * @param {AdvancedSearchChipType} type - The type of the item.
+ * @param {string} value - The value of the item.
+ * @returns {boolean} True if the type is 'operator' and the value is an array condition, otherwise false.
+ */
+export const isArrayItem = (type, value) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)
+);
+
+/**
+ * Checks if the given type and value represent a custom range item.
+ *
+ * @param {AdvancedSearchChipType} type - The type of the item.
+ * @param {string} value - The value of the item.
+ * @returns {boolean} True if the type is 'range' and the value is 'custom', otherwise false.
+ */
+export const isCustomRangeItem = (type, value) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.range && value === QUICK_RANGES.custom.value
+);
+
+/**
+ * Checks if the given type and value represent a duration item.
+ *
+ * @param {AdvancedSearchChipType} type - The type of the item.
+ * @param {string} value - The value of the item.
+ * @returns {boolean} True if the type is 'operator' and the value is a duration operator, otherwise false.
+ */
+export const isDurationItem = (type, value) => (
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && PATTERN_DURATION_OPERATORS.includes(value)
 );
