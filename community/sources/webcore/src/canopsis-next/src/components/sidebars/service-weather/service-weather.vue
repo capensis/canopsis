@@ -111,6 +111,10 @@
         v-model="form.parameters.isSecondaryIconEnabled"
         :title="$t('settings.isSecondaryIconEnabled')"
       />
+      <field-switcher
+        v-model="form.parameters.defaultInheritedPbehavior"
+        :title="$t('settings.defaultInheritedPbehavior')"
+      />
       <field-modal-type v-model="form.parameters.modalType" />
       <widget-settings-group :title="$t('settings.stateSettings')">
         <field-action-required-settings v-model="form.parameters.actionRequiredSettings" />
