@@ -1,0 +1,183 @@
+# some explanations regarding terms like parent, midchild and child in context of those fixture files
+# in a context graph relation like A -> B, A is parent(has B as dependent entity) and B is child(has A in services array)
+# in a context graph relation like A -> B -> C, A is parent, B is midchild, C is child.
+
+template:
+  - &type_inactive {
+    _id: <UUID()>,
+    priority: <Index()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
+    icon_name: brightness_3,
+    color: "#979797",
+    type: inactive,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
+  }
+  - &type_active {
+    _id: <UUID()>,
+    priority: <Index()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
+    icon_name: brightness_3,
+    color: "#2FAB63",
+    type: active,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
+  }
+  - &type_maintenance {
+    _id: <UUID()>,
+    priority: <Index()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
+    icon_name: build,
+    color: "#BF360C",
+    type: maintenance,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
+  }
+  - &type_pause {
+    _id: <UUID()>,
+    priority: <Index()>,
+    name: <UniqueName()>,
+    description: <LoremIpsumSentence(3)>,
+    icon_name: pause,
+    color: "#5A6D80",
+    type: pause,
+    author: root,
+    created: <NowUnix()>,
+    updated: <Current().created>
+  }
+
+default_entities:
+  resource_{1..20000}:
+    _id: <{test-resource-<RangeIndex()>/test-component}>
+    name: <{test-resource-<RangeIndex()>}>
+    type: resource
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+    component: test-component
+
+  service_parent_{1..10}:
+    _id: <{test-service-parent-<RangeIndex()>}>
+    name: <Current()._id>
+    type: service
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <{test-service-child-<RangeIndex()>}>
+
+  service_child_{1..10}:
+    _id: <{test-service-child-<RangeIndex()>}>
+    name: <Current()._id>
+    type: service
+    enabled: true
+    impact_level: 1
+    infos: { }
+    services:
+      - <{test-service-parent-<RangeIndex()>}>
+    created: <NowUnix()>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <{test-resource-<RangeIndex()>}>
+
+  connector:
+    _id: test-connector/test-connector-name
+    name: test-connector-name
+    type: connector
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+
+  component:
+    _id: test-component
+    name: <Current()._id>
+    component: <Current()._id>
+    type: component
+    enabled: true
+    impact_level: 1
+    infos: { }
+    created: <NowUnix()>
+    connector: test-connector/test-connector-name
+
+pbehavior_type:
+  pbehavior_type_{1..10}:
+    _id: <{test-type-<RangeIndex()>}>
+    priority: <Index()>
+    name: <Current()._id>
+    description: <Current()._id>
+    type: maintenance
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+  type_default_inactive_type:
+    <<: *type_inactive
+    _id: test-default-inactive-type
+    description: Default Type Inactive
+    icon_name: test-inactive-icon
+    name: Default Type Inactive
+
+  type_default_active_type:
+    <<: *type_active
+    _id: test-default-active-type
+    description: Default Type Active
+    icon_name:
+    name: Default Type Active
+
+  type_default_pause_type:
+    <<: *type_pause
+    _id: test-default-pause-type
+    description: Default Type Pause
+    icon_name: test-pause-icon
+    name: Default Type Pause
+
+  type_default_maintenance_type:
+    <<: *type_maintenance
+    _id: test-default-maintenance-type
+    description: Default Type Maintenance
+    icon_name: test-maintenance-icon
+    name: Default Type Maintenance
+
+pbehavior_reason:
+  pbehavior-reason-1:
+    _id: test-reason-1
+    name: <Current()._id>
+    description: <Current()._id>
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+pbehavior:
+  pbehavior_{1..10}:
+    _id: <{test-pbehavior-<RangeIndex()>}>
+    author: root
+    enabled: true
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <{test-service-parent-<RangeIndex()>}>
+    name: <Current()._id>
+    reason: test-reason-1
+    tstart: <NowUnix()>
+    tstop: <NowUnixAdd(1h)>
+    color: "#FFFFFF"
+    type_: <{test-type-<RangeIndex()>}>
+    created: <NowUnix()>
+    updated: <Current().created>
+    inherited: true

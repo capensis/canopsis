@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -46,7 +45,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	cfg := m.DepConfig(ctx, dbClient)
 	config.SetDbClientRetry(dbClient, cfg)
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(cfg, logger)
-	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)
 	amqpChannel := m.DepAMQPChannelPub(amqpConnection)
 	pbhRedisSession := m.DepRedisSession(ctx, redis.PBehaviorLockStorage, logger, cfg)
@@ -102,7 +100,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			return nil
 		},
 		func(ctx context.Context) {
-			err := dbClient.Disconnect(ctx)
+			err := dbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
@@ -176,6 +174,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Publisher:                amqpChannel,
+			InheritedServiceResolver: pbehavior.NewInheritedServicePbhResolver(dbClient, eventManager, pbhStore, pbhLockerClient),
 			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
 			TimezoneConfigProvider:   timezoneConfigProvider,
@@ -188,29 +187,18 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
-			TechMetricsSender:      techMetricsSender,
-			ChannelPub:             amqpChannel,
-			PeriodicalInterval:     options.PeriodicalWaitTime,
-			PbhService:             pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
-			AlarmAdapter:           alarm.NewAdapter(dbClient),
-			EntityAdapter:          entity.NewAdapter(dbClient),
-			EventManager:           eventManager,
-			FrameDuration:          frameDuration,
-			TimezoneConfigProvider: timezoneConfigProvider,
-			Encoder:                json.NewEncoder(),
-			Logger:                 logger,
-		},
-		logger,
-	))
-	enginePbehavior.AddPeriodicalWorker("cleaner", engine.NewLockedPeriodicalWorker(
-		redis.NewLockClient(lockRedisSession),
-		redis.PbehaviorCleanPeriodicalLockKey,
-		&cleanPeriodicalWorker{
-			PeriodicalInterval:        time.Hour,
-			TimezoneConfigProvider:    timezoneConfigProvider,
-			DataStorageConfigProvider: dataStorageConfigProvider,
-			LimitConfigAdapter:        datastorage.NewAdapter(dbClient),
-			Logger:                    logger,
+			TechMetricsSender:        techMetricsSender,
+			ChannelPub:               amqpChannel,
+			PeriodicalInterval:       options.PeriodicalWaitTime,
+			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			AlarmAdapter:             alarm.NewAdapter(dbClient),
+			EntityAdapter:            entity.NewAdapter(dbClient),
+			EventManager:             eventManager,
+			InheritedServiceResolver: pbehavior.NewInheritedServicePbhResolver(dbClient, eventManager, pbhStore, pbhLockerClient),
+			FrameDuration:            frameDuration,
+			TimezoneConfigProvider:   timezoneConfigProvider,
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
 		},
 		logger,
 	))
@@ -219,7 +207,6 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		config.NewAdapter(dbClient),
 		logger,
 		timezoneConfigProvider,
-		dataStorageConfigProvider,
 		techMetricsConfigProvider,
 	))
 	enginePbehavior.AddPeriodicalWorker("rrule_cstart", computeRruleStartWorker)

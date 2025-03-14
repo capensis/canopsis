@@ -1,6 +1,6 @@
 import { find } from 'lodash';
 
-import { mapIds } from '@/helpers/array';
+import { pickIds } from '@/helpers/array';
 
 import { useStoreModuleHooks } from '@/hooks/store';
 import { usePbehaviorComment } from '@/hooks/store/modules/pbehavior-comment';
@@ -145,7 +145,7 @@ export const usePbehavior = () => {
    * @param {string} pbehaviors[]._id - ID of pbehavior to remove
    * @returns {Promise<void>}
    */
-  const removePbehaviors = (pbehaviors = []) => actions.bulkRemovePbehaviors({ data: mapIds(pbehaviors) });
+  const removePbehaviors = (pbehaviors = []) => actions.bulkRemovePbehaviors({ data: pickIds(pbehaviors) });
 
   return {
     ...getters,

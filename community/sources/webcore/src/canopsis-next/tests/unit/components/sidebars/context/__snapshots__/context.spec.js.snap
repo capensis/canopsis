@@ -81,6 +81,9 @@ exports[`context Renders \`context\` widget settings with all rights 1`] = `
       type="entity"
       withoutinfosattributes="true"
     />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
+    />
   </widget-settings-group-stub>
   <charts-form-stub
     charts=""
@@ -159,6 +162,9 @@ exports[`context Renders \`context\` widget settings with custom props 1`] = `
       templates=""
       type="entity"
       withoutinfosattributes="true"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
   </widget-settings-group-stub>
   <charts-form-stub
@@ -239,6 +245,9 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
       type="entity"
       withoutinfosattributes="true"
     />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
+    />
   </widget-settings-group-stub>
   <charts-form-stub
     charts=""
@@ -318,6 +327,9 @@ exports[`context Renders \`context\` widget settings with default props with cha
       templates=""
       type="entity"
       withoutinfosattributes="true"
+    />
+    <field-switcher-stub
+      title="Apply pbehavior on dependencies too"
     />
   </widget-settings-group-stub>
   <charts-form-stub
