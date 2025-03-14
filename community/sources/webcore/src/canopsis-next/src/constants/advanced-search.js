@@ -1,4 +1,4 @@
-import { PATTERN_OPERATORS, PATTERN_STRING_OPERATORS } from '@/constants/pattern';
+import { PATTERN_OPERATORS, PATTERN_STRING_OPERATORS, PATTERNS_FIELDS } from '@/constants/pattern';
 import { ALARM_ADVANCED_SEARCH_GROUPS, ALARM_FIELDS } from '@/constants/alarm';
 
 export const ADVANCED_SEARCH_ITEM_TYPES = {
@@ -134,7 +134,7 @@ export const ALARM_ADVANCED_SEARCH_ALARM_ENTITY_FIELDS = [
 ];
 
 export const ALARM_ADVANCED_SEARCH_ALARM_PBEHAVIOR_INFO_FIELDS = [
-  ALARM_FIELDS.pbehaviorInfoName,
+  ALARM_FIELDS.pbehaviorInfoId,
   ALARM_FIELDS.pbehaviorInfoReason,
   ALARM_FIELDS.pbehaviorInfoType,
   ALARM_FIELDS.pbehaviorInfoCanonicalType,
@@ -144,10 +144,11 @@ export const ALARM_ADVANCED_SEARCH_VALIDATION_RULE_NAME = 'advancedSearchRule';
 
 export const ALARM_SEARCH_FIELDS_TO_COMPARISON = [
   'search',
-  'alarm_pattern',
-  'entity_pattern',
-  'pbehavior_pattern',
   'positions',
+
+  PATTERNS_FIELDS.alarm,
+  PATTERNS_FIELDS.entity,
+  PATTERNS_FIELDS.pbehavior,
 ];
 
 export const ALARM_SEARCH_NUMBER_ATTRIBUTES = [
