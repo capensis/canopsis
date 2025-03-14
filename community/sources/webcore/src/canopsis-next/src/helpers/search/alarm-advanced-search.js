@@ -20,6 +20,7 @@ import {
   isArrayCondition,
   isDatePatternRuleField,
   isDurationPatternRuleField,
+  isInfosPatternRuleField,
   isValueInfosPatternRuleField,
   patternRuleToForm,
 } from '@/helpers/entities/pattern/form';
@@ -212,6 +213,11 @@ export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) =>
     formItem.dictionary = '';
   }
 
+  if (formItem.field) {
+    formItem.attribute = [formItem.attribute, formItem.field].join('.');
+    formItem.field = '';
+  }
+
   return formItem;
 };
 
@@ -259,7 +265,15 @@ export const advancedSearchToForm = ({ search = '', positions = [], ...patterns 
       acc.push(getAdvancedSearchUnionItem(ADVANCED_SEARCH_UNION_CONDITIONS.and));
     }
 
-    acc.push(advancedSearchRuleItemToFormItem(clonedPatterns[key][0]?.pop?.()));
+    const formItem = advancedSearchRuleItemToFormItem(clonedPatterns[key][0]?.pop?.());
+
+    if (key === PATTERNS_FIELDS.entity) {
+      formItem.attribute = ['entity', formItem.attribute].join('.');
+    } else if (key === PATTERNS_FIELDS.pbehavior) {
+      formItem.attribute = ['v', formItem.attribute].join('.');
+    }
+
+    acc.push(formItem);
 
     return acc;
   }, []);
@@ -326,15 +340,25 @@ export const formToAdvancedSearch = (form = []) => {
       };
     }
 
-    preparedItem = formRuleToPatternRule(preparedItem);
-
     let key = PATTERNS_FIELDS.alarm;
 
-    if (isEntityPatternField(preparedItem.field)) {
+    if (isEntityPatternField(preparedItem.attribute)) {
       key = PATTERNS_FIELDS.entity;
-    } else if (isPbehaviorPatternField(preparedItem.field)) {
+      preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
+    } else if (isPbehaviorPatternField(preparedItem.attribute)) {
       key = PATTERNS_FIELDS.pbehavior;
+      preparedItem.attribute = preparedItem.attribute.replace(/^v\./, '');
     }
+
+    if (isInfosPatternRuleField(preparedItem.attribute)) {
+      const splittedAttribute = preparedItem.attribute.split('.');
+      const field = splittedAttribute.pop();
+
+      preparedItem.attribute = splittedAttribute.join('.');
+      preparedItem.field = field;
+    }
+
+    preparedItem = formRuleToPatternRule(preparedItem);
 
     if (!firstPatternKey) {
       firstPatternKey = key;
@@ -351,9 +375,9 @@ export const formToAdvancedSearch = (form = []) => {
   }, {
     search: '',
     positions: [],
-    alarm_pattern: [],
-    entity_pattern: [],
-    pbehavior_pattern: [],
+    [PATTERNS_FIELDS.alarm]: [],
+    [PATTERNS_FIELDS.entity]: [],
+    [PATTERNS_FIELDS.pbehavior]: [],
   });
 };
 

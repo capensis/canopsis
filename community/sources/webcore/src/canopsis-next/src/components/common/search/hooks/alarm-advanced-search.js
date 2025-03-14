@@ -436,7 +436,7 @@ export const useAdvancedSearchPbehaviorAttributes = () => {
   };
 
   const attributesMap = computed(() => ({
-    [ALARM_FIELDS.pbehaviorInfoName]: {
+    [ALARM_FIELDS.pbehaviorInfoId]: {
       ...BASE_OPTIONS,
       text: t('pbehavior.pbehaviorName'),
       fetchValues: fetchPbehaviorsListWithoutStore,
