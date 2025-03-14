@@ -129,7 +129,7 @@ type ImportJob struct {
 	Type              int               `bson:"type" json:"-"`
 	Table             string            `bson:"table" json:"-"`
 	ExternalDataTable string            `bson:"exdt" json:"-"`
-	Delimiter         rune              `bson:"delimiter" json:"-"`
+	Separator         rune              `bson:"separator" json:"-"`
 	Filepath          string            `bson:"filepath" json:"-"`
 	Columns           []string          `bson:"columns" json:"-"`
 	ColumnLengths     []int             `bson:"column_lengths" json:"-"`
