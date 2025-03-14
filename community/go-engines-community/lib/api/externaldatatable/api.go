@@ -217,11 +217,11 @@ func (a *api) Import(c *gin.Context) {
 		valErrors["file"] = fmt.Sprintf("File size %d exceeds limit %d", fh.Size, a.maxFileSize)
 	}
 
-	delimiterStr := c.Request.FormValue("delimiter")
-	if delimiterStr == "" {
-		valErrors["delimiter"] = "Delimiter is missing."
-	} else if len(delimiterStr) > 1 {
-		valErrors["delimiter"] = "Delimiter is too long."
+	separatorStr := c.Request.FormValue("separator")
+	if separatorStr == "" {
+		valErrors["separator"] = "Separator is missing."
+	} else if len(separatorStr) > 1 {
+		valErrors["separator"] = "Separator is too long."
 	}
 
 	if len(valErrors) > 0 {
@@ -230,8 +230,8 @@ func (a *api) Import(c *gin.Context) {
 		return
 	}
 
-	delimiter := rune(delimiterStr[0])
-	job, err := a.importWorker.CreateJob(c, id, delimiter, f)
+	separator := rune(separatorStr[0])
+	job, err := a.importWorker.CreateJob(c, id, separator, f)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {

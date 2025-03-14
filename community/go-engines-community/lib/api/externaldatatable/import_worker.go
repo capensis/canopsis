@@ -36,7 +36,7 @@ const (
 )
 
 type ImportWorker interface {
-	CreateJob(ctx context.Context, id string, delimiter rune, f multipart.File) (_ ImportJob, resErr error)
+	CreateJob(ctx context.Context, id string, separator rune, f multipart.File) (_ ImportJob, resErr error)
 	ProcessJob(ctx context.Context, id string) error
 	GetJob(ctx context.Context, id string) (ImportJob, error)
 	CompleteJob(ctx context.Context, id string, columnTypes []int) (bool, error)
@@ -89,7 +89,7 @@ type importWorker struct {
 	logger                  zerolog.Logger
 }
 
-func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune, f multipart.File) (_ ImportJob, resErr error) {
+func (w *importWorker) CreateJob(ctx context.Context, id string, separator rune, f multipart.File) (_ ImportJob, resErr error) {
 	defer func() {
 		err := f.Close()
 		if err != nil && resErr == nil {
@@ -108,7 +108,7 @@ func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune,
 		return job, err
 	}
 
-	err = w.validateColumns(ctx, externalDataTable, f, delimiter)
+	err = w.validateColumns(ctx, externalDataTable, f, separator)
 	if err != nil {
 		return job, err
 	}
@@ -121,7 +121,7 @@ func (w *importWorker) CreateJob(ctx context.Context, id string, delimiter rune,
 		Table:             tmpTablePrefix + jobID,
 		ExternalDataTable: id,
 		Status:            ImportStatusCreated,
-		Delimiter:         delimiter,
+		Separator:         separator,
 		Filepath:          filepath.Join(w.tmpImportDir, jobID),
 		Created:           now,
 	}
@@ -216,7 +216,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 			}
 		}()
 		r := csv.NewReader(f)
-		r.Comma = job.Delimiter
+		r.Comma = job.Separator
 		r.ReuseRecord = true
 		var columns []string
 		var columnLengths []int
@@ -725,7 +725,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 	return columns, columnLengths, "", nil
 }
 
-func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f multipart.File, delimiter rune) error {
+func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f multipart.File, separator rune) error {
 	isLinked := false
 	var err error
 	if len(t.Columns) > 0 {
@@ -736,7 +736,7 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	r := csv.NewReader(f)
-	r.Comma = delimiter
+	r.Comma = separator
 	columns, err := r.Read()
 	if err != nil {
 		if errors.Is(err, io.EOF) {

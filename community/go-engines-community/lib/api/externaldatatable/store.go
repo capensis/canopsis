@@ -136,7 +136,11 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 					"pipeline": []bson.M{
 						{"$limit": limitLinkedRules},
 						{"$project": bson.M{
-							"name": 1,
+							"name": bson.M{"$cond": bson.M{
+								"if":   "$name",
+								"then": "$name",
+								"else": "$description",
+							}},
 						}},
 					},
 				}},
