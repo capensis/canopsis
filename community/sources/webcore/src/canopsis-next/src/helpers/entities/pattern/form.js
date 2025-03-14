@@ -1003,7 +1003,7 @@ export const formRuleToPatternRule = (rule) => {
   const isObject = isObjectPatternRuleField(rule.attribute);
 
   if (isInfos || isExtraInfos || isObject) {
-    pattern.field = [rule.attribute, rule.dictionary].join('.');
+    pattern.field = rule.dictionary ? [rule.attribute, rule.dictionary].join('.') : rule.attribute;
   }
 
   if (isDate) {
@@ -1073,10 +1073,12 @@ export const formRuleToPatternRule = (rule) => {
 
     case PATTERN_OPERATORS.higher:
       pattern.cond.type = PATTERN_CONDITIONS.greater;
+      pattern.cond.value = Number(pattern.cond.value);
       break;
 
     case PATTERN_OPERATORS.lower:
       pattern.cond.type = PATTERN_CONDITIONS.less;
+      pattern.cond.value = Number(pattern.cond.value);
       break;
 
     case PATTERN_OPERATORS.longer:

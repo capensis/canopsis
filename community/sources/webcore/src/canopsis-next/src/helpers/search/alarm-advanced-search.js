@@ -207,6 +207,11 @@ export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) =>
   formItem.union = null;
   formItem.text = '';
 
+  if (formItem.dictionary) {
+    formItem.attribute = [formItem.attribute, formItem.dictionary].join('.');
+    formItem.dictionary = '';
+  }
+
   return formItem;
 };
 

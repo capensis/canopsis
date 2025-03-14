@@ -2,6 +2,7 @@
   <v-menu
     :nudge-bottom="1"
     :transition="false"
+    content-class="c-alarm-advanced-search__history-menu"
     bottom
     offset-y
   >
@@ -99,3 +100,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-alarm-advanced-search__history-menu {
+  max-height: 95vh;
+}
+</style>
