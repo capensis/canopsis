@@ -398,7 +398,9 @@ export default {
     const keydownInput = (event) => {
       if (event.keyCode === KEY_CODES.enter) { // TODO: change keyCode in whole application
         if (props.allowText) {
-          selectItem(inputValue.value ?? '');
+          const preparedValue = inputValue.value ?? '';
+
+          selectItem(props.number ? Number(preparedValue) : preparedValue);
 
           return;
         }

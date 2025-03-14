@@ -15,8 +15,8 @@ import { uniq } from 'lodash';
  * @returns {Search[]}
  */
 export const sortPinnedSearches = (searches, activeSearch, key = 'search') => uniq(searches).sort((a, b) => {
-  const aFactor = Number(a[key] === activeSearch) + Number(a.pinned);
-  const bFactor = Number(b[key] === activeSearch) + Number(b.pinned);
+  const aFactor = Number(a[key] === activeSearch) + (a.pinned ? 2 : 0);
+  const bFactor = Number(b[key] === activeSearch) + (b.pinned ? 2 : 0);
 
   return bFactor - aFactor;
 });
