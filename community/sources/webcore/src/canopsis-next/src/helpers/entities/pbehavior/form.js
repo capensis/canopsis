@@ -94,6 +94,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/f
  * @property {PbehaviorComment[]} comments
  * @property {PbehaviorException[]} exceptions
  * @property {PbehaviorExdate[]} exdates
+ * @property {boolean} [inherited]
  */
 
 /**
@@ -246,6 +247,7 @@ export const pbehaviorToForm = (
     _id: pbehavior._id ?? uid('pbehavior'),
     color: pbehavior.color ?? '',
     enabled: pbehavior.enabled ?? true,
+    inherited: pbehavior.inherited ?? false,
     name: pbehavior.name ?? '',
     type: cloneDeep(pbehavior.type),
     reason: cloneDeep(pbehavior.reason),
@@ -311,14 +313,14 @@ export const formToPbehavior = form => ({
  *
  * @param {Object} event
  * @param {Array} entityPattern
- * @param {string} [defaultName = '']
+ * @param {Object} [defaultFields]
  * @param {string} [timezone = getLocalTimezone()]
  * @return {PbehaviorForm}
  */
 export const calendarEventToPbehaviorForm = (
   event,
   entityPattern,
-  defaultName = '',
+  defaultFields,
   timezone = getLocalTimezone(),
 ) => {
   const {
@@ -327,11 +329,10 @@ export const calendarEventToPbehaviorForm = (
     data: { cachedForm = {}, pbehavior },
   } = event;
 
-  const pbehaviorForm = pbehaviorToForm(pbehavior, entityPattern, timezone);
-
-  if (defaultName) {
-    pbehaviorForm.name = defaultName;
-  }
+  const pbehaviorForm = {
+    ...pbehaviorToForm(pbehavior, entityPattern, timezone),
+    ...defaultFields,
+  };
 
   const form = {
     ...pbehaviorForm,
