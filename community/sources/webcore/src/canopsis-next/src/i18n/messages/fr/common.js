@@ -455,8 +455,8 @@ export default {
     [PATTERN_OPERATORS.with]: 'Avec',
     [PATTERN_OPERATORS.without]: 'Sans',
 
-    [PATTERN_OPERATORS.withLabel]: 'Avec étiquette',
-    [PATTERN_OPERATORS.withoutLabel]: 'Sans étiquette',
+    [PATTERN_OPERATORS.withLabel]: 'Avec le label',
+    [PATTERN_OPERATORS.withoutLabel]: 'Sans le label',
 
     [PATTERN_OPERATORS.activated]: 'Activé',
     [PATTERN_OPERATORS.inactive]: 'Inactif',
