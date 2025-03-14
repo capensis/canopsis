@@ -97,7 +97,7 @@ const BaseUrl = "/api/v4"
 
 const mimeTypeSvg = "image/svg+xml"
 
-const cacheExpiration = time.Hour
+const cacheExpiration = time.Second
 
 // RegisterRoutes
 // nolint: contextcheck

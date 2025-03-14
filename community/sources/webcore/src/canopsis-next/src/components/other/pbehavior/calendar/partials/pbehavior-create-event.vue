@@ -7,6 +7,7 @@
     <pbehavior-form
       v-model="form"
       :no-pattern="!!entityPattern"
+      :with-inherited="withInherited"
       :no-timezone="noTimezone"
       class="py-3"
     />
@@ -70,9 +71,13 @@ export default {
       type: Array,
       required: false,
     },
-    defaultName: {
-      type: String,
+    defaultFields: {
+      type: Object,
       required: false,
+    },
+    withInherited: {
+      type: Boolean,
+      default: false,
     },
     timezone: {
       type: String,
@@ -86,7 +91,7 @@ export default {
   data() {
     return {
       manualClose: false,
-      form: calendarEventToPbehaviorForm(this.event, this.entityPattern, this.defaultName, this.timezone),
+      form: calendarEventToPbehaviorForm(this.event, this.entityPattern, this.defaultFields, this.timezone),
     };
   },
   computed: {

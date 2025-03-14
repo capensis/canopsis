@@ -70,6 +70,7 @@ func (s *store) Create(ctx context.Context, r EditRequest) (*Response, error) {
 	res.Title = r.Title
 	res.MimeType = r.MimeType
 	res.Author = r.Author
+	res.FillBorder = r.FillBorder
 	res.Created = now
 	res.Updated = now
 
@@ -107,6 +108,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	res.ID = id
 	res.Title = r.Title
 	res.MimeType = r.MimeType
+	res.FillBorder = r.FillBorder
 	res.Author = r.Author
 	res.Created = old.Created
 	res.Updated = now
@@ -153,6 +155,12 @@ func (s *store) Patch(ctx context.Context, r PatchRequest) (*Response, error) {
 		res.Title = old.Title
 	} else {
 		res.Title = r.Title
+	}
+
+	if r.FillBorder == nil {
+		res.FillBorder = old.FillBorder
+	} else {
+		res.FillBorder = *r.FillBorder
 	}
 
 	now := datetime.NewCpsTime()

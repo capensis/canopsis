@@ -6,6 +6,7 @@
     :no-comments="noComments"
     :no-timezone="noTimezone"
     :with-start-on-trigger="withStartOnTrigger"
+    :with-inherited="withInherited"
     :name-label="nameLabel"
     :name-tooltip="nameTooltip"
   />
@@ -30,6 +31,7 @@
         :no-comments="noComments"
         :no-timezone="noTimezone"
         :with-start-on-trigger="withStartOnTrigger"
+        :with-inherited="withInherited"
         :name-label="nameLabel"
         :name-tooltip="nameTooltip"
       />
@@ -79,6 +81,10 @@ export default {
       default: false,
     },
     withStartOnTrigger: {
+      type: Boolean,
+      default: false,
+    },
+    withInherited: {
       type: Boolean,
       default: false,
     },

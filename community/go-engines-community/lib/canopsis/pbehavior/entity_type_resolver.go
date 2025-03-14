@@ -2,6 +2,7 @@ package pbehavior
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -35,7 +36,7 @@ func (r *entityTypeResolver) Resolve(
 ) (ResolveResult, error) {
 	span, err := r.store.GetSpan(ctx)
 	if err != nil {
-		return ResolveResult{}, err
+		return ResolveResult{}, fmt.Errorf("failed to get span: %w", err)
 	}
 
 	if !span.In(t) {
@@ -44,7 +45,12 @@ func (r *entityTypeResolver) Resolve(
 
 	computed, err := r.store.GetComputed(ctx)
 	if err != nil {
-		return ResolveResult{}, err
+		return ResolveResult{}, fmt.Errorf("failed to get computed pbh result: %w", err)
+	}
+
+	inheritedServicesPbhResolveResult, err := r.store.GetInheritedServicesPbhResolveResult(ctx)
+	if err != nil {
+		return ResolveResult{}, fmt.Errorf("failed to get inherited services pbh resolve result: %w", err)
 	}
 
 	resolver := NewTypeResolver(
@@ -55,7 +61,12 @@ func (r *entityTypeResolver) Resolve(
 		r.logger,
 	)
 
-	return resolver.Resolve(ctx, t, entity)
+	resolvedResult, err := resolver.Resolve(ctx, t, entity)
+	if err != nil {
+		return ResolveResult{}, fmt.Errorf("failed to resolve pbh for entity %q: %w", entity.ID, err)
+	}
+
+	return inheritedServicesPbhResolveResult.ResolveForEntity(resolvedResult, entity.Services), nil
 }
 
 func (r *entityTypeResolver) GetPbehaviors(ctx context.Context, pbhIDs []string, t time.Time) (map[string]ResolveResult, error) {

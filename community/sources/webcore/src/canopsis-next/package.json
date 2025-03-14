@@ -23,6 +23,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "chartjs-plugin-zoom": "^1.1.1",
     "core-js": "^3.32.2",
+    "css-has-pseudo": "^7.0.2",
     "cytoscape": "^3.19.0",
     "cytoscape-cise": "^1.0.0",
     "cytoscape-dagre": "^2.3.2",
