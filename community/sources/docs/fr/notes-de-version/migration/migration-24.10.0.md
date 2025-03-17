@@ -375,64 +375,63 @@ Deux étapes sont à suivre :
 
     ```sh
     kubectl apply -f - <<EOF
-    ---
     apiVersion: apps/v1
     kind: StatefulSet
     metadata:
-    name: canopsis-timescaledb
+      name: canopsis-timescaledb
     spec:
-    selector:
+      selector:
         matchLabels: 
-        app.kubernetes.io/name: canopsis-pro
-    serviceName: canopsis-timescaledb-headless
-    updateStrategy:
+          app.kubernetes.io/name: canopsis-pro
+      serviceName: canopsis-timescaledb-headless
+      updateStrategy:
         type: RollingUpdate
-    template:
+      template:
         metadata:
-        labels:
+          labels:
             app.kubernetes.io/name: canopsis-pro
         spec:
-        containers:
+          containers:
             - name: timescaledb
-            image: docker.io/timescale/timescaledb:2.14.2-pg15
-            ports:
+              image: docker.io/timescale/timescaledb:2.14.2-pg15
+              ports:
                 - containerPort: 5432
-            env:
+              env:
                 - name: TIMESCALEDB_TELEMETRY
-                value: "off"
+                  value: "off"
                 - name: POSTGRES_DB
-                value: "canopsis"
+                  value: "canopsis"
                 - name: POSTGRES_USER
-                value: "cpspostgres"
+                  value: "cpspostgres"
                 - name: POSTGRES_PASSWORD
-                valueFrom:
+                  valueFrom:
                     secretKeyRef:
-                    name: canopsis-timescaledb
-                    key: timescaledb-password
-            readinessProbe:
+                      name: canopsis-timescaledb
+                      key: timescaledb-password
+              readinessProbe:
                 exec:
-                command:
+                  command:
                     - /bin/bash
                     - -c
                     - pg_isready -d $POSTGRES_DB -U $POSTGRES_USER
                 initialDelaySeconds: 5
                 periodSeconds: 10
                 timeoutSeconds: 5
-            volumeMounts:
+              volumeMounts:
                 - name: datadir
-                mountPath: /var/lib/postgresql/data
-        imagePullSecrets:
+                  mountPath: /var/lib/postgresql/data
+          imagePullSecrets:
             - name: canopsisregistry
-    volumeClaimTemplates:
+      volumeClaimTemplates:
         - metadata:
             name: datadir
             annotations:
-            helm.sh/resource-policy: "keep"
-        spec:
+              helm.sh/resource-policy: "keep"
+          spec:
             accessModes:
-            - ReadWriteOnce
+              - ReadWriteOnce
             resources:
-            requests:
+              requests:
                 storage: 8Gi
     EOF
     ```
