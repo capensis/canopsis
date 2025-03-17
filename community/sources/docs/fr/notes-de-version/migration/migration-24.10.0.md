@@ -607,7 +607,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Mise à jour de Canopsis :
 
     ```sh
-    helm upgrade --install ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
+    helm upgrade ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
     ```
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
