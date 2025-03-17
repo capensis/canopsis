@@ -216,7 +216,10 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 			}
 		}()
 		r := csv.NewReader(f)
-		r.Comma = job.Separator
+		if job.Separator != 0 {
+			r.Comma = job.Separator
+		}
+
 		r.ReuseRecord = true
 		var columns []string
 		var columnLengths []int
@@ -736,7 +739,10 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	r := csv.NewReader(f)
-	r.Comma = separator
+	if separator != 0 {
+		r.Comma = separator
+	}
+
 	columns, err := r.Read()
 	if err != nil {
 		if errors.Is(err, io.EOF) {
