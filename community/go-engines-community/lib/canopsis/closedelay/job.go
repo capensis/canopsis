@@ -1,4 +1,4 @@
-package canceldelay
+package closedelay
 
 type Job struct {
 	ID        string `bson:"_id,omitempty" json:"_id,omitempty"`

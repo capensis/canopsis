@@ -362,7 +362,7 @@ type AlarmValue struct {
 	RuleVersion map[string]string                 `bson:"infos_rule_version" json:"infos_rule_version"`
 	Infos       map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
-	CancelDelayValue int64 `bson:"cancel_delay_value,omitempty" json:"cancel_delay_value,omitempty"`
+	CloseDelayValue int64 `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
 }
 
 type Pbehavior struct {

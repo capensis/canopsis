@@ -34,7 +34,7 @@ func NewResolveCancelProcessor(
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
 		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
-		cancelDelayJobCollection:        dbClient.Collection(mongo.CancelDelayJobCollection),
+		closeDelayJobCollection:         dbClient.Collection(mongo.CloseDelayJobCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -54,7 +54,7 @@ type resolveCancelProcessor struct {
 	resolvedAlarmCollection         mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
 	metaAlarmRuleCollection         mongo.DbCollection
-	cancelDelayJobCollection        mongo.DbCollection
+	closeDelayJobCollection         mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
@@ -86,7 +86,7 @@ func (p *resolveCancelProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		p.entityCollection,
 		p.resolvedAlarmCollection,
 		p.metaAlarmRuleCollection,
-		p.cancelDelayJobCollection,
+		p.closeDelayJobCollection,
 	)
 	if err != nil || result.Alarm.ID == "" {
 		return result, err

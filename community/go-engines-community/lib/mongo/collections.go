@@ -105,5 +105,5 @@ const (
 
 	IconCollection = "icon"
 
-	CancelDelayJobCollection = "cancel_delay_job"
+	CloseDelayJobCollection = "close_delay_job"
 )

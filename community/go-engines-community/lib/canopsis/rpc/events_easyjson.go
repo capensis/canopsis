@@ -2480,8 +2480,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.SnoozeDuration = int64(in.Int64())
 		case "pbh_inactive_duration":
 			out.PbehaviorInactiveDuration = int64(in.Int64())
-		case "cancel_delay_value":
-			out.CancelDelayValue = int64(in.Int64())
+		case "close_delay_value":
+			out.CloseDelayValue = int64(in.Int64())
 		default:
 			in.SkipRecursive()
 		}
@@ -2908,10 +2908,10 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Int64(int64(in.PbehaviorInactiveDuration))
 	}
-	if in.CancelDelayValue != 0 {
-		const prefix string = ",\"cancel_delay_value\":"
+	if in.CloseDelayValue != 0 {
+		const prefix string = ",\"close_delay_value\":"
 		out.RawString(prefix)
-		out.Int64(int64(in.CancelDelayValue))
+		out.Int64(int64(in.CloseDelayValue))
 	}
 	out.RawByte('}')
 }
@@ -4424,15 +4424,15 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 		case "state_setting_updated":
 			out.StateSettingUpdated = bool(in.Bool())
-		case "cancel_delay":
+		case "close_delay":
 			if in.IsNull() {
 				in.Skip()
-				out.CancelDelay = nil
+				out.CloseDelay = nil
 			} else {
-				if out.CancelDelay == nil {
-					out.CancelDelay = new(int64)
+				if out.CloseDelay == nil {
+					out.CloseDelay = new(int64)
 				}
-				*out.CancelDelay = int64(in.Int64())
+				*out.CloseDelay = int64(in.Int64())
 			}
 		case "ticket":
 			out.Ticket = string(in.String())
@@ -4787,10 +4787,10 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Bool(bool(in.StateSettingUpdated))
 	}
-	if in.CancelDelay != nil {
-		const prefix string = ",\"cancel_delay\":"
+	if in.CloseDelay != nil {
+		const prefix string = ",\"close_delay\":"
 		out.RawString(prefix)
-		out.Int64(int64(*in.CancelDelay))
+		out.Int64(int64(*in.CloseDelay))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"

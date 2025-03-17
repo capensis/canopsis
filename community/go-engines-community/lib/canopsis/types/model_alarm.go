@@ -33,7 +33,6 @@ const (
 	AlarmStatusFlapping
 	AlarmStatusCancelled
 	AlarmStatusNoEvents
-	AlarmStatusCancelledWithDelay
 )
 
 const (

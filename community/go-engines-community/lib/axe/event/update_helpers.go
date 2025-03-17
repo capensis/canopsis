@@ -378,7 +378,7 @@ func processResolve(
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	dbClient mongo.DbClient,
-	alarmCollection, entityCollection, resolvedCollection, metaAlarmRuleCollection, cancelDelayJobCollection mongo.DbCollection,
+	alarmCollection, entityCollection, resolvedCollection, metaAlarmRuleCollection, closeDelayJobCollection mongo.DbCollection,
 ) (Result, map[string]entitycounters.UpdatedServicesInfo, string, bool, int, error) {
 	result := Result{}
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
@@ -431,9 +431,9 @@ func processResolve(
 			return err
 		}
 
-		_, err = cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
+		_, err = closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
 		if err != nil {
-			return fmt.Errorf("failed to delete cancel_delay job on resolve: %w", err)
+			return fmt.Errorf("failed to delete close_delay job on resolve: %w", err)
 		}
 
 		return removeMetaAlarmStateOnResolve(ctx, metaAlarmRuleCollection, metaAlarmStatesService, result.Alarm)
@@ -668,7 +668,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 			"not_acked_metric_type",
 			"not_acked_metric_send_time",
 			"not_acked_since",
-			"v.cancel_delay_value",
+			"v.close_delay_value",
 		}},
 	}
 }
