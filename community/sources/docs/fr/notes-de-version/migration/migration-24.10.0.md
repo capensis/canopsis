@@ -464,6 +464,8 @@ Deux étapes sont à suivre :
     kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis_tech_metrics --no-owner -Ft -v /tmp/postgres_canopsis_techmetrics_dump.tar
     ```
 
+    Une erreur du type `pg_restore: error: could not execute query: ERROR: role "monitoring" does not exist` peut être visible. Cela est dû au fait que le rôle "monitoring" n'existe pas. Il sera recréé lors de l'exécution de l'update.
+
     Suppression du statefulset PostgreSQL : 
 
     ```sh
