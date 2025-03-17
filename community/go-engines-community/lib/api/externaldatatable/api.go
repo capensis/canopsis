@@ -218,10 +218,9 @@ func (a *api) Import(c *gin.Context) {
 	}
 
 	separatorStr := c.Request.FormValue("separator")
-	if separatorStr == "" {
-		valErrors["separator"] = "Separator is missing."
-	} else if len(separatorStr) > 1 {
-		valErrors["separator"] = "Separator is too long."
+	separator, ok := a.exportSeparators[separatorStr]
+	if separatorStr != "" && !ok {
+		valErrors["separator"] = "Separator must be one of [comma semicolon tab space] or empty."
 	}
 
 	if len(valErrors) > 0 {
@@ -230,7 +229,6 @@ func (a *api) Import(c *gin.Context) {
 		return
 	}
 
-	separator := rune(separatorStr[0])
 	job, err := a.importWorker.CreateJob(c, id, separator, f)
 	if err != nil {
 		valErr := common.ValidationError{}

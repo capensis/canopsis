@@ -6561,12 +6561,10 @@ paths:
             schema:
               type: object
               required:
-                - separator
                 - file
               properties:
                 separator:
                   type: string
-                  maxLength: 1
                 file:
                   type: string
                   format: binary
