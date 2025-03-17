@@ -38,7 +38,7 @@ func NewEntityToggledProcessor(
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
 		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
-		cancelDelayJobCollection:        dbClient.Collection(mongo.CancelDelayJobCollection),
+		closeDelayJobCollection:         dbClient.Collection(mongo.CloseDelayJobCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -58,7 +58,7 @@ type entityToggledProcessor struct {
 	resolvedAlarmCollection         mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
 	metaAlarmRuleCollection         mongo.DbCollection
-	cancelDelayJobCollection        mongo.DbCollection
+	closeDelayJobCollection         mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
@@ -137,9 +137,9 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 		entity := *event.Entity
 		if beforeAlarm.ID != "" {
-			_, err = p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": beforeAlarm.ID})
+			_, err = p.closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": beforeAlarm.ID})
 			if err != nil {
-				return fmt.Errorf("failed to delete cancel_delay job on entitytoggled event: %w", err)
+				return fmt.Errorf("failed to delete close_delay job on entitytoggled event: %w", err)
 			}
 
 			if beforeAlarm.NotAckedMetricSendTime != nil {

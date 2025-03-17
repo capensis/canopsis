@@ -20,22 +20,22 @@ func NewCancelProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &cancelProcessor{
-		client:                   client,
-		alarmCollection:          client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:         client.Collection(mongo.EntityMongoCollection),
-		cancelDelayJobCollection: client.Collection(mongo.CancelDelayJobCollection),
-		metaAlarmPostProcessor:   metaAlarmPostProcessor,
-		logger:                   logger,
+		client:                  client,
+		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:        client.Collection(mongo.EntityMongoCollection),
+		closeDelayJobCollection: client.Collection(mongo.CloseDelayJobCollection),
+		metaAlarmPostProcessor:  metaAlarmPostProcessor,
+		logger:                  logger,
 	}
 }
 
 type cancelProcessor struct {
-	client                   mongo.DbClient
-	alarmCollection          mongo.DbCollection
-	entityCollection         mongo.DbCollection
-	cancelDelayJobCollection mongo.DbCollection
-	metaAlarmPostProcessor   MetaAlarmPostProcessor
-	logger                   zerolog.Logger
+	client                  mongo.DbClient
+	alarmCollection         mongo.DbCollection
+	entityCollection        mongo.DbCollection
+	closeDelayJobCollection mongo.DbCollection
+	metaAlarmPostProcessor  MetaAlarmPostProcessor
+	logger                  zerolog.Logger
 }
 
 func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -67,7 +67,7 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 			"v.last_st_upd_dt":                    event.Parameters.Timestamp,
 		}},
 		{"$unset": bson.A{
-			"v.cancel_delay_value",
+			"v.close_delay_value",
 		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
@@ -98,9 +98,9 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 			}
 		}
 
-		_, err = p.cancelDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
+		_, err = p.closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
 		if err != nil {
-			return fmt.Errorf("failed to delete cancel_delay job on cancel event: %w", err)
+			return fmt.Errorf("failed to delete close_delay job on cancel event: %w", err)
 		}
 
 		return nil

@@ -1,6 +1,6 @@
-package canceldelay
+package closedelay
 
-//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/canceldelay/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/canceldelay Service
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/closedelay/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/closedelay Service
 
 import (
 	"context"
@@ -32,7 +32,7 @@ type service struct {
 
 func NewService(client mongo.DbClient, generator libevent.Generator, periodicalInterval time.Duration) Service {
 	return &service{
-		collection:     client.Collection(mongo.CancelDelayJobCollection),
+		collection:     client.Collection(mongo.CloseDelayJobCollection),
 		eventGenerator: generator,
 		resendDelay:    PeriodsUntilResend * periodicalInterval,
 	}
@@ -53,7 +53,7 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 		},
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to find cancel delay jobs: %w", err)
+		return nil, fmt.Errorf("failed to find close delay jobs: %w", err)
 	}
 
 	defer cursor.Close(ctx)
@@ -66,7 +66,7 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 
 		err := cursor.Decode(&job)
 		if err != nil {
-			return nil, fmt.Errorf("failed to decode cancel delay job: %w", err)
+			return nil, fmt.Errorf("failed to decode close delay job: %w", err)
 		}
 
 		event, err := s.eventGenerator.Generate(types.Entity{
@@ -75,13 +75,14 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 			Component: job.Component,
 		})
 		if err != nil {
-			return nil, fmt.Errorf("failed to generate cancel delay event: %w", err)
+			return nil, fmt.Errorf("failed to generate close delay event: %w", err)
 		}
 
 		event.AlarmID = job.ID
-		event.EventType = types.EventTypeCancelDelay
+		event.EventType = types.EventTypeCheck
 		event.Timestamp = now
-		event.Output = fmt.Sprintf("canceled after %d seconds delay", job.Delay)
+		event.State = types.AlarmStateOK
+		event.Output = fmt.Sprintf("closed after %d seconds delay", job.Delay)
 
 		events = append(events, event)
 
@@ -95,7 +96,7 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 		if len(writeModels) == canopsis.DefaultBulkSize {
 			_, err := s.collection.BulkWrite(ctx, writeModels)
 			if err != nil {
-				return nil, fmt.Errorf("failed to bulk update cancel delay jobs: %w", err)
+				return nil, fmt.Errorf("failed to bulk update close delay jobs: %w", err)
 			}
 
 			writeModels = writeModels[:0]
@@ -105,13 +106,13 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 	if len(writeModels) > 0 {
 		_, err := s.collection.BulkWrite(ctx, writeModels)
 		if err != nil {
-			return nil, fmt.Errorf("failed to bulk update cancel delay jobs: %w", err)
+			return nil, fmt.Errorf("failed to bulk update close delay jobs: %w", err)
 		}
 	}
 
 	err = cursor.Err()
 	if err != nil {
-		return nil, fmt.Errorf("failed to process cancel delay jobs cursor: %w", err)
+		return nil, fmt.Errorf("failed to process close delay jobs cursor: %w", err)
 	}
 
 	return events, nil

@@ -9,7 +9,7 @@ import (
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/canceldelay"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/closedelay"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -27,7 +27,7 @@ type periodicalWorker struct {
 	AlarmAdapter        libalarm.Adapter
 	Encoder             encoding.Encoder
 	IdleAlarmService    idlealarm.Service
-	CancelDelayService  canceldelay.Service
+	CloseDelayService   closedelay.Service
 	AlarmConfigProvider config.AlarmConfigProvider
 	Logger              zerolog.Logger
 }
@@ -108,13 +108,13 @@ func (w *periodicalWorker) Work(parentCtx context.Context) {
 	eventCount += idleEventCount
 	w.publishEvents(ctx, idleEvents)
 
-	cancelDelayEvents, err := w.CancelDelayService.Process(ctx)
+	closeDelayEvents, err := w.CloseDelayService.Process(ctx)
 	if err != nil {
-		w.Logger.Err(err).Msg("cannot process cancel delay jobs")
+		w.Logger.Err(err).Msg("cannot process close delay jobs")
 	}
 
-	eventCount += len(cancelDelayEvents)
-	w.publishEvents(ctx, cancelDelayEvents)
+	eventCount += len(closeDelayEvents)
+	w.publishEvents(ctx, closeDelayEvents)
 }
 
 func (w *periodicalWorker) publishEvents(ctx context.Context, events []types.Event) {

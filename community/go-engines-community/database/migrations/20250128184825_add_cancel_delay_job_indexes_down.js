@@ -1,1 +1,1 @@
-db.cancel_delay_job.drop()
+db.close_delay_job.drop()

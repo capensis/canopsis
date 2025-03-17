@@ -6,7 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	mock_alarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/alarm"
-	mock_canceldelay "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/canceldelay"
+	mock_closedelay "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/closedelay"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_idlealarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/idlealarm"
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
@@ -23,7 +23,7 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockAlarmConfigProvider := mock_config.NewMockAlarmConfigProvider(ctrl)
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	mockTechMetricsSender.EXPECT().SendAxePeriodical(gomock.Any())
-	mockCancelDelayJobService := mock_canceldelay.NewMockService(ctrl)
+	mockCloseDelayJobService := mock_closedelay.NewMockService(ctrl)
 
 	interval := time.Minute
 	worker := periodicalWorker{
@@ -33,7 +33,7 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 		AlarmAdapter:        mockAlarmAdapter,
 		IdleAlarmService:    mockIdleAlarmService,
 		AlarmConfigProvider: mockAlarmConfigProvider,
-		CancelDelayService:  mockCancelDelayJobService,
+		CloseDelayService:   mockCloseDelayJobService,
 	}
 
 	alarmConfig := config.AlarmConfig{
@@ -49,7 +49,7 @@ func TestPeriodicalWorker_Work(t *testing.T) {
 	mockAlarmService.EXPECT().ResolveCancels(gomock.Any(), gomock.Eq(alarmConfig))
 	mockAlarmService.EXPECT().UpdateFlappingAlarms(gomock.Any())
 	mockIdleAlarmService.EXPECT().Process(gomock.Any())
-	mockCancelDelayJobService.EXPECT().Process(gomock.Any())
+	mockCloseDelayJobService.EXPECT().Process(gomock.Any())
 
 	worker.Work(t.Context())
 }

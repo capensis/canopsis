@@ -253,8 +253,6 @@ definitions:
         type: integer
       active_duration:
         type: integer
-      cancel_delay_value:
-        type: integer
       canceled:
         $ref: '#/definitions/common.AlarmStep'
       change_state:
@@ -263,6 +261,8 @@ definitions:
         items:
           type: string
         type: array
+      close_delay_value:
+        type: integer
       comments:
         items:
           $ref: '#/definitions/common.AlarmStep'
