@@ -375,64 +375,63 @@ Deux étapes sont à suivre :
 
     ```sh
     kubectl apply -f - <<EOF
-    ---
     apiVersion: apps/v1
     kind: StatefulSet
     metadata:
-    name: canopsis-timescaledb
+      name: canopsis-timescaledb
     spec:
-    selector:
+      selector:
         matchLabels: 
-        app.kubernetes.io/name: canopsis-pro
-    serviceName: canopsis-timescaledb-headless
-    updateStrategy:
+          app.kubernetes.io/name: canopsis-pro
+      serviceName: canopsis-timescaledb-headless
+      updateStrategy:
         type: RollingUpdate
-    template:
+      template:
         metadata:
-        labels:
+          labels:
             app.kubernetes.io/name: canopsis-pro
         spec:
-        containers:
+          containers:
             - name: timescaledb
-            image: docker.io/timescale/timescaledb:2.14.2-pg15
-            ports:
+              image: docker.io/timescale/timescaledb:2.14.2-pg15
+              ports:
                 - containerPort: 5432
-            env:
+              env:
                 - name: TIMESCALEDB_TELEMETRY
-                value: "off"
+                  value: "off"
                 - name: POSTGRES_DB
-                value: "canopsis"
+                  value: "canopsis"
                 - name: POSTGRES_USER
-                value: "cpspostgres"
+                  value: "cpspostgres"
                 - name: POSTGRES_PASSWORD
-                valueFrom:
+                  valueFrom:
                     secretKeyRef:
-                    name: canopsis-timescaledb
-                    key: timescaledb-password
-            readinessProbe:
+                      name: canopsis-timescaledb
+                      key: timescaledb-password
+              readinessProbe:
                 exec:
-                command:
+                  command:
                     - /bin/bash
                     - -c
                     - pg_isready -d $POSTGRES_DB -U $POSTGRES_USER
                 initialDelaySeconds: 5
                 periodSeconds: 10
                 timeoutSeconds: 5
-            volumeMounts:
+              volumeMounts:
                 - name: datadir
-                mountPath: /var/lib/postgresql/data
-        imagePullSecrets:
+                  mountPath: /var/lib/postgresql/data
+          imagePullSecrets:
             - name: canopsisregistry
-    volumeClaimTemplates:
+      volumeClaimTemplates:
         - metadata:
             name: datadir
             annotations:
-            helm.sh/resource-policy: "keep"
-        spec:
+              helm.sh/resource-policy: "keep"
+          spec:
             accessModes:
-            - ReadWriteOnce
+              - ReadWriteOnce
             resources:
-            requests:
+              requests:
                 storage: 8Gi
     EOF
     ```
@@ -463,6 +462,8 @@ Deux étapes sont à suivre :
 
     kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis_tech_metrics --no-owner -Ft -v /tmp/postgres_canopsis_techmetrics_dump.tar
     ```
+
+    Une erreur du type `pg_restore: error: could not execute query: ERROR: role "monitoring" does not exist` peut être visible. Cela est dû au fait que le rôle "monitoring" n'existe pas. Il sera recréé lors de l'exécution de l'update.
 
     Suppression du statefulset PostgreSQL : 
 
@@ -607,7 +608,7 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Mise à jour de Canopsis :
 
     ```sh
-    helm upgrade --install ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
+    helm upgrade ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
     ```
 
 Par ailleurs, le mécanisme de bilan de santé intégré à Canopsis ne doit pas présenter d'erreur.  
