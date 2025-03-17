@@ -517,7 +517,7 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
 === "Helm"
 
-   Non concerné, `canopsis-reconfigure` est lancé automatiquement lors de l'upgrade
+   Non concerné, `canopsis-reconfigure` est lancé automatiquement lors de l'upgrade.
 
 ### Mise à jour et démarrage final de Canopsis
 
@@ -602,8 +602,10 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     
     ```sh
     export RELEASE_NAME="canopsis-prod"
+    ```
 
-    Mise à jour de Canopsis
+    Mise à jour de Canopsis :
+
     ```sh
     helm upgrade --install ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
     ```
