@@ -26,37 +26,26 @@ Les données collectées sont stockées dans une base TimescaleDB (donc PostgreS
 
     Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
 
+!!! Information
+   
+      La mise en place de la base de données pour une installation de type `RPM` se trouve désormais dans le [guide d'installation](https://doc.canopsis.net/24.10/guide-administration/installation/installation-paquets/).
+
 === "Docker Compose"
 
-    ```sh
-    CPS_EDITION=pro docker compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/postgres
-    postgres=# CREATE database canopsis_tech_metrics;
-    postgres=# \c canopsis_tech_metrics
-    canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
-    canopsis_tech_metrics=# SET password_encryption = 'scram-sha-256';
-    canopsis_tech_metrics=# CREATE USER cpspostgres_tech_metrics WITH PASSWORD 'canopsis';
-    canopsis_tech_metrics=# exit
-    ```
+    La base de données est généré au moment de l'initialisation de la stack `docker-compose`.
+    Le mot de passe par défaut est `canopsis`.
 
-    Définir la chaine de connexion à cette base de données dans le fichier `compose.env`
+    Pour changer le mot de passe avant l'initilisation, il faut le modifier dans le fichier `timescaledb.env`
+
+    Vérifier la chaine de connexion à cette base de données dans le fichier `compose.env`
 
     ```
     CPS_POSTGRES_TECH_URL=postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics
     ```
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
 
-    ```sh
-    sudo -u postgres psql
-    postgres=# CREATE database canopsis_tech_metrics;
-    postgres=# \c canopsis_tech_metrics
-    canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
-    canopsis_tech_metrics=# SET password_encryption = 'scram-sha-256';
-    canopsis_tech_metrics=# CREATE USER cpspostgres_tech_metrics WITH PASSWORD 'canopsis';
-    canopsis_tech_metrics=# exit
-    ```
-
-    Définir la chaine de connexion à cette base de données dans le fichier `/opt/canopsis/etc/go-engines-vars.conf`
+    Vérifier la chaine de connexion à cette base de données dans le fichier `/opt/canopsis/etc/go-engines-vars.conf`
 
     ```
     CPS_POSTGRES_TECH_URL=postgresql://cpspostgres_tech_metrics:canopsis@timescaledb:5432/canopsis_tech_metrics
@@ -91,7 +80,7 @@ L'option `DumpKeepInterval` définit le délai au dela duquel un dump demandé d
     CPS_EDITION=pro docker compose up -d
     ```
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
 
     Ajouter le bloc de configuration dans votre fichier d'override `canopsis.override.yml` puis exécutez `canopsis-reconfigure`
 
