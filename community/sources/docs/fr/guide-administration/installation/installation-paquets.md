@@ -542,7 +542,7 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
     !!! Warning
         Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
 
-    Créer la base de données `canopsis_tech_metrics` et l'utilisateur associé dans l'instance PostgreSQL :
+    Créer la base de données `canopsis_tech_metrics` et l'utilisateur associé dans l'instance PostgreSQL ( en adaptant le mot de passe de l'utilisateur qui est ici `canopsis` dans l'exemple ci-dessous ) :
 
     ```sql
     postgres=# CREATE database canopsis_tech_metrics;
@@ -592,7 +592,7 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
     !!! Warning
         Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
 
-    Créer la base de données `canopsis_tech_metrics` et l'utilisateur associé dans l'instance PostgreSQL :
+    Créer la base de données `canopsis_tech_metrics` et l'utilisateur associé dans l'instance PostgreSQL ( en adaptant le mot de passe de l'utilisateur qui est ici `canopsis` dans l'exemple ci-dessous ) :
 
     ```sql
     postgres=# CREATE database canopsis_tech_metrics;
