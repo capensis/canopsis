@@ -62,10 +62,6 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		var update []bson.M
 		if event.Parameters.ImportSource != "" {
 			importTags := types.TransformEventTags(event.Parameters.ImportTags)
-			if importTags == nil {
-				importTags = make([]string, 0)
-			}
-
 			var setTags bson.M
 			if len(importTags) > 0 {
 				setTags = bson.M{"$concatArrays": bson.A{
