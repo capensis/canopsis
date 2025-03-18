@@ -36,6 +36,7 @@ describe('create-pbehavior', () => {
     color: '',
     comments: [],
     enabled: true,
+    inherited: false,
     entity_pattern: [],
     exceptions: [],
     exdates: [],
@@ -229,7 +230,7 @@ describe('create-pbehavior', () => {
       timezone: 'Europe/Paris',
     };
 
-    selectPbehaviorForm(wrapper).triggerCustomEvent('input', newForm);
+    selectPbehaviorForm(wrapper).triggerCustomEvent('input', { ...defaultPbehavior, ...newForm });
     selectSubmitButton(wrapper).trigger('click');
 
     await flushPromises();

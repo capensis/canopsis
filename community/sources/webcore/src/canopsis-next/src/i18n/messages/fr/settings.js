@@ -91,6 +91,7 @@ export default {
   defaultTimeRange: 'Plage horaire par défaut',
   liveWatching: 'Mises à jour en direct',
   liveWatchingTooltip: 'Si activé, les alarmes sont mises à jour en direct à l\'aide de websockets',
+  defaultInheritedPbehavior: 'Appliquer pbehavior également aux dépendances',
   expandPanel: {
     title: 'Agrandir le panneau',
   },
@@ -224,6 +225,7 @@ export default {
       + '</dl>',
   },
   stickyHeader: 'En-tête collant',
+  stickyHorizontalScroll: 'Défilement horizontal fixe',
   reportFileRegexp: {
     title: 'Masque de fichier de rapport',
     helpText: '<dl>'

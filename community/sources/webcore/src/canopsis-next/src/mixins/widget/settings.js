@@ -25,12 +25,13 @@ export const widgetSettingsMixin = {
     activeViewMixin,
     entitiesWidgetMixin,
     entitiesUserPreferenceMixin,
-    confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide' }),
+    confirmableModalMixinCreator({ field: 'form', closeMethod: '$sidebar.hide', originalField: 'originalForm' }),
     submittableMixinCreator(),
   ],
   data() {
     return {
       form: widgetToForm(this.sidebar.config?.widget),
+      hasChanges: false,
     };
   },
   computed: {
@@ -46,7 +47,18 @@ export const widgetSettingsMixin = {
       return this.config.duplicate;
     },
   },
+  created() {
+    this.registerWatchOnceForForm();
+  },
   methods: {
+    registerWatchOnceForForm() {
+      const unwatch = this.$watch(() => this.form, () => {
+        this.hasChanges = true;
+
+        this.$nextTick(() => unwatch());
+      }, { deep: true });
+    },
+
     scrollToFirstError() {
       let el = this.$el.querySelector('.v-messages.error--text:first-of-type');
 

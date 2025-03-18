@@ -1,6 +1,6 @@
 package encoding
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/encoding/encoding.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding Encoder,Decoder
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/encoding/encoding.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding Encoder,Decoder
 
 // Encoder interface ease the use of encoders like encoding/gob...
 type Encoder interface {

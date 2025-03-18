@@ -58,7 +58,7 @@ import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/durati
 
 /**
  * @typedef {Object} DataStorageEventsRecordsConfig
- * @property {Duration} delete_after
+ * @property {DurationWithEnabled} delete_after
  */
 
 /**
@@ -254,7 +254,9 @@ export const dataStorageAlarmExternalTagToForm = (alarmExternalTag = {}) => ({
  * @return {DataStorageEventsRecordsConfig}
  */
 export const dataStorageEventsRecordsToForm = (eventsRecords = {}) => ({
-  delete_after: durationToForm(eventsRecords.delete_after ?? { value: 2, unit: TIME_UNITS.day }),
+  delete_after: eventsRecords.delete_after
+    ? durationWithEnabledToForm(eventsRecords.delete_after)
+    : { value: 180, unit: TIME_UNITS.day, enabled: false },
 });
 
 /**

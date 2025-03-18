@@ -32,7 +32,9 @@
         <v-tab-item>
           <pbehaviors-simple-list
             :entity="service"
+            :default-inherited="widgetParameters.defaultInheritedPbehavior"
             with-active-status
+            with-inherited
             addable
             updatable
             removable

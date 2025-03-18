@@ -291,6 +291,8 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Created = int64(in.Int64())
 		case "clr":
 			out.Color = string(in.String())
+		case "a":
+			out.Author = string(in.String())
 		case "p":
 			if in.IsNull() {
 				in.Skip()
@@ -335,6 +337,8 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
+		case "i":
+			out.Inherited = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -390,6 +394,11 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.String(string(in.Color))
 	}
+	{
+		const prefix string = ",\"a\":"
+		out.RawString(prefix)
+		out.String(string(in.Author))
+	}
 	if len(in.EntityPattern) != 0 {
 		const prefix string = ",\"p\":"
 		out.RawString(prefix)
@@ -414,6 +423,11 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.Inherited {
+		const prefix string = ",\"i\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Inherited))
 	}
 	out.RawByte('}')
 }
@@ -596,4 +610,130 @@ func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.Raw((in.Span).MarshalJSON())
 	}
 	out.RawByte('}')
+}
+func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior4(in *jlexer.Lexer, out *ComputeResult) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "ComputedPbehaviors":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				out.ComputedPbehaviors = make(map[string]ComputedPbehavior)
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v12 ComputedPbehavior
+					(v12).UnmarshalEasyJSON(in)
+					(out.ComputedPbehaviors)[key] = v12
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
+		case "TypesByID":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				in.Delim('{')
+				out.TypesByID = make(map[string]Type)
+				for !in.IsDelim('}') {
+					key := string(in.String())
+					in.WantColon()
+					var v13 Type
+					easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior1(in, &v13)
+					(out.TypesByID)[key] = v13
+					in.WantComma()
+				}
+				in.Delim('}')
+			}
+		case "DefaultActiveType":
+			out.DefaultActiveType = string(in.String())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior4(out *jwriter.Writer, in ComputeResult) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"ComputedPbehaviors\":"
+		out.RawString(prefix[1:])
+		if in.ComputedPbehaviors == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+			out.RawString(`null`)
+		} else {
+			out.RawByte('{')
+			v14First := true
+			for v14Name, v14Value := range in.ComputedPbehaviors {
+				if v14First {
+					v14First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v14Name))
+				out.RawByte(':')
+				(v14Value).MarshalEasyJSON(out)
+			}
+			out.RawByte('}')
+		}
+	}
+	{
+		const prefix string = ",\"TypesByID\":"
+		out.RawString(prefix)
+		if in.TypesByID == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+			out.RawString(`null`)
+		} else {
+			out.RawByte('{')
+			v15First := true
+			for v15Name, v15Value := range in.TypesByID {
+				if v15First {
+					v15First = false
+				} else {
+					out.RawByte(',')
+				}
+				out.String(string(v15Name))
+				out.RawByte(':')
+				easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior1(out, v15Value)
+			}
+			out.RawByte('}')
+		}
+	}
+	{
+		const prefix string = ",\"DefaultActiveType\":"
+		out.RawString(prefix)
+		out.String(string(in.DefaultActiveType))
+	}
+	out.RawByte('}')
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v ComputeResult) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson950e241aEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior4(w, v)
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *ComputeResult) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPbehavior4(l, v)
 }

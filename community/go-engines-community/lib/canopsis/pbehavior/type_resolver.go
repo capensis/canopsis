@@ -60,13 +60,15 @@ func NewTypeResolver(
 
 // ResolveResult represents current state of entity.
 type ResolveResult struct {
+	Created    int64
 	Type       Type
 	ID         string
 	Name       string
 	ReasonID   string
 	ReasonName string
 	Color      string
-	Created    int64
+	Author     string
+	Inherited  bool
 }
 
 // Resolve checks entity for each pbehavior concurrently. It uses "workerPoolSize" goroutines.
@@ -238,6 +240,8 @@ func (r *typeResolver) getPbehaviorIntervals(
 						ReasonName: d.computed.ReasonName,
 						Color:      d.computed.Color,
 						Created:    d.computed.Created,
+						Author:     d.computed.Author,
+						Inherited:  d.computed.Inherited,
 					}
 					break
 				}

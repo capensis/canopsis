@@ -1,6 +1,6 @@
 package entity
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/entity/adapter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity Adapter
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/entity/adapter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity Adapter
 
 import (
 	"context"
@@ -42,7 +42,7 @@ type Adapter interface {
 
 	Bulk(ctx context.Context, models []mongodriver.WriteModel) error
 
-	FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds []string) (mongo.Cursor, error)
+	FindToCheckPbehaviorInfo(ctx context.Context, idsWithPbehaviors []string, exceptIds, serviceIDs []string) (mongo.Cursor, error)
 
 	UpdatePbehaviorInfo(ctx context.Context, id string, info types.PbehaviorInfo) error
 

@@ -3,13 +3,14 @@ Package idlealarm implements alarm modification on idle alarm.
 */
 package idlealarm
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/idlealarm/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm Service
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/idlealarm/service.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm Service
 
 import (
 	"context"
 	"fmt"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -268,6 +269,7 @@ func (s *baseService) applyAlarmRule(
 			Entity: &entity,
 			Type:   rpc.PbehaviorEventTypeCreate,
 			Params: rpc.PbehaviorParameters{
+				Author:         canopsis.DefaultEventAuthor,
 				Name:           rule.Operation.Parameters.Name,
 				Reason:         rule.Operation.Parameters.Reason,
 				Type:           rule.Operation.Parameters.Type,

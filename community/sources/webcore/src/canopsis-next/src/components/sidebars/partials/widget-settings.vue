@@ -31,6 +31,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    dirty: {
+      type: Boolean,
+      default: false,
+    },
     divider: {
       type: Boolean,
       default: false,
@@ -38,7 +42,7 @@ export default {
   },
   computed: {
     validatorDirty() {
-      return !this.$sidebar?.config?.widget?._id || Object.values(this.fields).some(field => field.dirty);
+      return !this.$sidebar?.config?.widget?._id || this.dirty;
     },
   },
 };
