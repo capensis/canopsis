@@ -536,6 +536,24 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
     canopsis=# exit
     ```
 
+    !!! Information
+        Depuis la version 24.10 de Canopsis, les métriques techniques sont activables directement depuis la WebUI. Il est donc nécessaire de mettre en place la base avant le premier lancement.
+
+    !!! Warning
+        Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
+
+    Créer la base de données `canopsis_tech_metrics` et l'utilisateur associé dans l'instance PostgreSQL :
+
+    ```sql
+    postgres=# CREATE database canopsis_tech_metrics;
+    postgres=# \c canopsis_tech_metrics
+    canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+    canopsis_tech_metrics=# SET password_encryption = 'scram-sha-256';
+    canopsis_tech_metrics=# CREATE USER cpspostgres_tech_metrics WITH PASSWORD 'canopsis';
+    canopsis_tech_metrics=# exit
+    ```
+    
+
 === "RHEL 9"
     ```sh
     postgresql-15-setup initdb
@@ -566,6 +584,25 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
     canopsis=# GRANT ALL ON DATABASE canopsis TO cpspostgres;
     canopsis=# ALTER DATABASE canopsis OWNER TO cpspostgres;
     canopsis=# exit
+    ```
+
+    !!! Information
+        Depuis la version 24.10 de Canopsis, les métriques techniques sont activables directement depuis la WebUI. Il est donc nécessaire de mettre en place la base avant le premier lancement.
+
+    !!! Warning
+        Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
+
+    Créer la base de données `canopsis_tech_metrics` et l'utilisateur associé dans l'instance PostgreSQL :
+
+    ```sql
+    postgres=# CREATE database canopsis_tech_metrics;
+    postgres=# \c canopsis_tech_metrics
+    canopsis_tech_metrics=# CREATE EXTENSION IF NOT EXISTS timescaledb;
+    canopsis_tech_metrics=# SET password_encryption = 'scram-sha-256';
+    canopsis_tech_metrics=# CREATE USER cpspostgres_tech_metrics WITH PASSWORD 'canopsis';
+    canopsis_tech_metrics=# GRANT ALL ON DATABASE canopsis_tech_metrics TO cpspostgres_tech_metrics;
+    canopsis_tech_metrics=# ALTER DATABASE canopsis_tech_metrics OWNER TO cpspostgres_tech_metrics;
+    canopsis_tech_metrics=# exit
     ```
 
 ### Configuration de RabbitMQ
