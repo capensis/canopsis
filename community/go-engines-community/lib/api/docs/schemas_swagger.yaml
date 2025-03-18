@@ -1490,7 +1490,7 @@ definitions:
       event_records:
         properties:
           delete_after:
-            $ref: '#/definitions/datetime.DurationWithUnit'
+            $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       health_check:
         properties:
@@ -1539,34 +1539,9 @@ definitions:
       config:
         $ref: '#/definitions/datastorage.Config'
       history:
-        $ref: '#/definitions/datastorage.History'
-    type: object
-  datastorage.History:
-    properties:
-      alarm:
-        $ref: '#/definitions/datastorage.HistoryWithCount'
-      alarm_external_tag:
-        $ref: '#/definitions/datastorage.HistoryWithCount'
-      entity_cleaned:
-        $ref: '#/definitions/datastorage.HistoryWithCount'
-      entity_disabled:
-        $ref: '#/definitions/datastorage.HistoryWithCount'
-      entity_unlinked:
-        $ref: '#/definitions/datastorage.HistoryWithCount'
-      event_filter_failure:
-        type: integer
-      event_records:
-        type: integer
-      health_check:
-        type: integer
-      junit:
-        type: integer
-      pbehavior:
-        type: integer
-      remediation:
-        type: integer
-      webhook:
-        type: integer
+        additionalProperties:
+          $ref: '#/definitions/datastorage.HistoryWithCount'
+        type: object
     type: object
   datastorage.HistoryWithCount:
     properties:
@@ -3027,6 +3002,8 @@ definitions:
         type: string
       created:
         type: integer
+      fill_border:
+        type: boolean
       title:
         type: string
       updated:
@@ -3854,6 +3831,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3916,6 +3895,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3960,6 +3941,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         type: string
       reason:
@@ -4034,6 +4017,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.Exdate'
         type: array
+      inherited:
+        type: boolean
       is_active_status:
         description: IsActiveStatus represents if pbehavior is in action for current
           time.
@@ -4109,6 +4094,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string

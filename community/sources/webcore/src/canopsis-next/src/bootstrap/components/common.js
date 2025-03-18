@@ -28,3 +28,4 @@ export { default as CAdvancedSearchField } from '@/components/common/search/c-ad
 export { default as CSimpleTooltip } from '@/components/common/tooltip/c-simple-tooltip.vue';
 export { default as CPlaceholderLoader } from '@/components/common/placeholder/c-placeholder-loader.vue';
 export { default as CBootedPlaceholderLoader } from '@/components/common/placeholder/c-booted-placeholder-loader.vue';
+export { default as CHorizontalScrollbar } from '@/components/common/scrollbar/c-horizontal-scrollbar.vue';

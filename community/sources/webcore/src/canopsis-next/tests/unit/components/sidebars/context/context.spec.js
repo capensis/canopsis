@@ -56,6 +56,7 @@ const stubs = {
   'field-filters': createInputStub('field-filters'),
   'field-context-entities-types-filter': createInputStub('field-context-entities-types-filter'),
   'field-grid-range-size': createInputStub('field-grid-range-size'),
+  'field-switcher': createInputStub('field-switcher'),
   'export-csv-form': createInputStub('export-csv-form'),
   'charts-form': createInputStub('charts-form'),
   'v-btn': createButtonStub('v-btn'),
@@ -74,6 +75,7 @@ const snapshotStubs = {
   'field-filters': true,
   'field-context-entities-types-filter': true,
   'field-grid-range-size': true,
+  'field-switcher': true,
   'export-csv-form': true,
   'charts-form': true,
 };
@@ -92,6 +94,7 @@ const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldGridRangeSize = wrapper => wrapper.find('input.field-grid-range-size');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
+const selectDefaultInheritedPbehaviorField = wrapper => wrapper.find('.field-switcher');
 
 describe('context', () => {
   const $sidebar = mockSidebar();
@@ -732,6 +735,34 @@ describe('context', () => {
     });
   });
 
+  test('Default inherited pbehavior changed after trigger default inherited pbehavior switcher', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldDefaultInheritedPbehavior = selectDefaultInheritedPbehaviorField(wrapper);
+
+    const defaultInheritedPbehavior = true;
+
+    fieldDefaultInheritedPbehavior.triggerCustomEvent('input', defaultInheritedPbehavior);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'defaultInheritedPbehavior', defaultInheritedPbehavior),
+      },
+    });
+  });
+
   test('Renders `context` widget settings with default props', async () => {
     const wrapper = snapshotFactory({
       store,
@@ -739,6 +770,21 @@ describe('context', () => {
         sidebar,
       },
     });
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `context` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    wrapper.find('field-title-stub').triggerCustomEvent('input', 'New title');
 
     await flushPromises();
 

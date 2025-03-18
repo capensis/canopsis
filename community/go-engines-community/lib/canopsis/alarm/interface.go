@@ -1,6 +1,6 @@
 package alarm
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor,ActivationService
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/alarm/alarm.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm Adapter,Service,EventProcessor,ActivationService
 
 import (
 	"context"
@@ -53,7 +53,7 @@ type Adapter interface {
 	// CopyAlarmToResolvedCollection copies alarm to resolved alarm collection
 	CopyAlarmToResolvedCollection(ctx context.Context, alarm types.Alarm) error
 
-	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error)
+	FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors, serviceIDs []string) (mongo.Cursor, error)
 
 	GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error)
 

@@ -86,7 +86,8 @@ const selectFieldSwitcherByIndex = (wrapper, index) => wrapper.findAll('field-sw
 const selectIsPriorityField = wrapper => selectFieldSwitcherByIndex(wrapper, 0);
 const selectIsHideGrayField = wrapper => selectFieldSwitcherByIndex(wrapper, 1);
 const selectIsSecondaryEnabledField = wrapper => selectFieldSwitcherByIndex(wrapper, 2);
-const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 3);
+const selectDefaultInheritedPbehaviorField = wrapper => selectFieldSwitcherByIndex(wrapper, 3);
+const selectEntitiesActionsInQueueField = wrapper => selectFieldSwitcherByIndex(wrapper, 4);
 const selectFieldModalType = wrapper => wrapper.find('field-modal-type-stub');
 const selectFieldActionRequiredSettingsType = wrapper => wrapper.find('field-action-required-settings-stub');
 const selectFieldRootCauseSettings = wrapper => wrapper.find('field-root-cause-settings-stub');
@@ -762,8 +763,41 @@ describe('service-weather', () => {
     });
   });
 
+  test('Default inherited pbehavior changed after trigger default inherited pbehavior switcher', async () => {
+    const wrapper = factory();
+
+    const defaultInheritedPbehavior = true;
+
+    selectDefaultInheritedPbehaviorField(wrapper).triggerCustomEvent('input', defaultInheritedPbehavior);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'defaultInheritedPbehavior', defaultInheritedPbehavior),
+      },
+    });
+  });
+
   test('Renders `service-weather` widget settings with default props', async () => {
     const wrapper = snapshotFactory();
+
+    await flushPromises();
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `service-weather` widget settings with default props with changed title', async () => {
+    const wrapper = snapshotFactory({
+      store,
+      propsData: {
+        sidebar,
+      },
+    });
+
+    wrapper.find('field-title-stub').triggerCustomEvent('input', 'New title');
 
     await flushPromises();
 

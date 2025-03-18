@@ -16,10 +16,10 @@ import (
 )
 
 func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecutions_ShouldReturnThem(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	timestamp := time.Now().Unix()
-	storage := createTestStorage()
+	storage := createTestStorage(ctx)
 	_, err := storage.Create(ctx, action.ScenarioExecution{
 		AlarmID:    "1",
 		ScenarioID: "1",
@@ -94,10 +94,10 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenTooLongNotUpdatedExecut
 }
 
 func TestRedisScenarioExecutionStorage_GetAbandoned_GivenExecutionWithMaxRetries_ShouldDeleteIt(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	timestamp := time.Now().Unix()
-	storage := createTestStorage()
+	storage := createTestStorage(ctx)
 	execution := action.ScenarioExecution{
 		AlarmID:    "6",
 		ScenarioID: "6",
@@ -121,10 +121,8 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenExecutionWithMaxRetries
 	}
 }
 
-func createTestStorage() action.ScenarioExecutionStorage {
-	ctx := context.Background()
-
-	session, err := redislib.NewSession(ctx, redislib.ActionScenarioStorage, log.NewLogger(true), 0, 0)
+func createTestStorage(ctx context.Context) action.ScenarioExecutionStorage {
+	session, err := redislib.NewSession(ctx, redislib.ActionScenarioStorage, log.NewLogger(ctx, true), 0, 0)
 	if err != nil {
 		panic(err)
 	}

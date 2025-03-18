@@ -1,6 +1,6 @@
 package rpc
 
-//go:generate easyjson -no_std_marshalers
+//go:generate go tool github.com/mailru/easyjson/easyjson -no_std_marshalers
 
 import (
 	"encoding/json"
@@ -112,10 +112,11 @@ type WebhookEvent struct {
 //
 //easyjson:json
 type PbehaviorRecomputeEvent struct {
-	Ids       []string `json:"ids"`
-	Author    string   `json:"author"`
-	UserID    string   `json:"user_id"`
-	Initiator string   `json:"initiator"`
+	Ids                []string `json:"ids"`
+	Author             string   `json:"author"`
+	UserID             string   `json:"user_id"`
+	Initiator          string   `json:"initiator"`
+	RecomputeInherited bool     `json:"inherited"`
 }
 
 // PbehaviorEvent

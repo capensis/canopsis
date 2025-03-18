@@ -1,6 +1,6 @@
 package mongo
 
-//go:generate mockgen -destination=../../mocks/lib/mongo/mongo.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo DbCollection,DbClient,SingleResultHelper,Cursor,ChangeStream
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../mocks/lib/mongo/mongo.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo DbCollection,DbClient,SingleResultHelper,Cursor,ChangeStream
 
 import (
 	"context"
@@ -30,6 +30,8 @@ const (
 	ChangeStreamTypeInsert = "insert"
 	ChangeStreamTypeUpdate = "update"
 	ChangeStreamTypeDelete = "delete"
+
+	DefaultGraphLookupMaxDepth = 100
 )
 
 type contextKey string

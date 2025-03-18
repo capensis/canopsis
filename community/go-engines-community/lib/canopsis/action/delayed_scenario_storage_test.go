@@ -1,7 +1,6 @@
 package action_test
 
 import (
-	"context"
 	"reflect"
 	"testing"
 
@@ -13,7 +12,7 @@ import (
 )
 
 func TestRedisDelayedScenarioStorage_Add(t *testing.T) {
-	session, err := redis.NewSession(context.Background(), redis.ActionScenarioStorage, zerolog.Logger{}, 0, 0)
+	session, err := redis.NewSession(t.Context(), redis.ActionScenarioStorage, zerolog.Logger{}, 0, 0)
 	if err != nil {
 		panic(err)
 	}
@@ -27,14 +26,16 @@ func TestRedisDelayedScenarioStorage_Add(t *testing.T) {
 		TimeLeft:      0,
 	}
 
-	_, err = storage.Add(context.Background(), scenario)
+	_, err = storage.Add(t.Context(), scenario)
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}
 }
 
 func TestRedisDelayedScenarioStorage_Get(t *testing.T) {
-	session, err := redis.NewSession(context.Background(), redis.ActionScenarioStorage, zerolog.Logger{}, 0, 0)
+	ctx := t.Context()
+
+	session, err := redis.NewSession(ctx, redis.ActionScenarioStorage, zerolog.Logger{}, 0, 0)
 	if err != nil {
 		panic(err)
 	}
@@ -47,8 +48,6 @@ func TestRedisDelayedScenarioStorage_Get(t *testing.T) {
 		Paused:        false,
 		TimeLeft:      0,
 	}
-
-	ctx := context.Background()
 
 	id, _ := storage.Add(ctx, expectedScenario)
 	scenario, err := storage.Get(ctx, id)
@@ -63,7 +62,7 @@ func TestRedisDelayedScenarioStorage_Get(t *testing.T) {
 }
 
 func TestRedisDelayedScenarioStorage_GetAll(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	session, err := redis.NewSession(ctx, redis.ActionScenarioStorage, zerolog.Logger{}, 0, 0)
 	if err != nil {
@@ -112,7 +111,7 @@ func TestRedisDelayedScenarioStorage_GetAll(t *testing.T) {
 }
 
 func TestRedisDelayedScenarioStorage_Delete(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	session, err := redis.NewSession(ctx, redis.ActionScenarioStorage, zerolog.Logger{}, 0, 0)
 	if err != nil {
@@ -149,7 +148,7 @@ func TestRedisDelayedScenarioStorage_Delete(t *testing.T) {
 }
 
 func TestRedisDelayedScenarioStorage_Update(t *testing.T) {
-	ctx := context.Background()
+	ctx := t.Context()
 
 	session, err := redis.NewSession(ctx, redis.ActionScenarioStorage, zerolog.Logger{}, 0, 0)
 	if err != nil {

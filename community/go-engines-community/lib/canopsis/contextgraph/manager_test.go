@@ -18,11 +18,10 @@ import (
 	mock_contextgraph "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/contextgraph"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	mock_statesetting "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/statesetting"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 func TestCheckServices(t *testing.T) {
-	ctx := context.Background()
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
@@ -417,7 +416,7 @@ func TestCheckServices(t *testing.T) {
 		},
 	}
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(t.Context(), true))
 
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
@@ -428,7 +427,7 @@ func TestCheckServices(t *testing.T) {
 			commRegister.Clear()
 			storage.EXPECT().GetAll(gomock.Any()).Return(dataset.services, nil)
 
-			err := manager.LoadServices(ctx)
+			err := manager.LoadServices(t.Context())
 			if err != nil {
 				t.Error(err)
 			}
@@ -475,7 +474,7 @@ func TestCheckServices(t *testing.T) {
 }
 
 func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
-	ctx := context.Background()
+	ctx := b.Context()
 	ctrl := gomock.NewController(b)
 	defer ctrl.Finish()
 
@@ -528,14 +527,14 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, true))
 	for i := 0; i < b.N; i++ {
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
 }
 
 func BenchmarkRecomputeServicesAddAll(b *testing.B) {
-	ctx := context.Background()
+	ctx := b.Context()
 	ctrl := gomock.NewController(b)
 	defer ctrl.Finish()
 
@@ -592,7 +591,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, true))
 	for i := 0; i < b.N; i++ {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
@@ -600,7 +599,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 }
 
 func BenchmarkRecomputeServicesMixed(b *testing.B) {
-	ctx := context.Background()
+	ctx := b.Context()
 	ctrl := gomock.NewController(b)
 	defer ctrl.Finish()
 
@@ -673,7 +672,7 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, true))
 	for i := 0; i < b.N; i++ {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)

@@ -19,21 +19,17 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_engine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/engine"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"github.com/golang/mock/gomock"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
@@ -42,7 +38,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
 
 	cond, err := pattern.NewRegexpCondition("regexp", "abc-.*-def")
 	if err != nil {
@@ -270,13 +266,10 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(t.Context())
 	defer cancel()
 
-	timerCtx, timerCancel := context.WithCancel(context.Background())
-	defer timerCancel()
-
-	go func(ctx context.Context) {
+	go func() {
 		deadlockTimer := time.NewTimer(5 * time.Second)
 
 		select {
@@ -285,7 +278,7 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 		case <-deadlockTimer.C:
 			panic("workers or test are deadlocked")
 		}
-	}(timerCtx)
+	}()
 
 	axeRpcMock := mock_engine.NewMockRPCClient(ctrl)
 	webhookRpcMock := mock_engine.NewMockRPCClient(ctrl)
