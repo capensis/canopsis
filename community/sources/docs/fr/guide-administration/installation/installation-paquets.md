@@ -537,7 +537,7 @@ Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentati
     ```
 
     !!! Information
-        Depuis la version 24.10 de Canopsis, les métriques techniques sont activables directement depuis la WebUI. Il est donc nécessaire de mettre en place la base avant le premier lancement.
+        Depuis la version 24.10 de Canopsis, les métriques techniques sont activables directement depuis la WebUI. Il est donc nécessaire de créer la base de données associée à cette fonctionnalité avant la première utilisation.
 
     !!! Warning
         Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
