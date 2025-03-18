@@ -26,6 +26,10 @@ Les données collectées sont stockées dans une base TimescaleDB (donc PostgreS
 
     Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
 
+!!! Information
+   
+      La mise en place de la base de données pour une installation de type `RPM` se trouve désormais dans le [guide d'installation](https://doc.canopsis.net/24.10/guide-administration/installation/installation-paquets/).
+
 === "Docker Compose"
 
     La base de données est généré au moment de l'initialisation de la stack `docker-compose`.
@@ -40,9 +44,6 @@ Les données collectées sont stockées dans une base TimescaleDB (donc PostgreS
     ```
 
 === "Paquets RHEL"
-
-   !!! Information
-      La mise en place de la base de données pour une installation de type `RPM` se trouve désormais dans le [guide d'installation](https://doc.canopsis.net/24.10/guide-administration/installation/installation-paquets/).
 
     Vérifier la chaine de connexion à cette base de données dans le fichier `/opt/canopsis/etc/go-engines-vars.conf`
 
