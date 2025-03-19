@@ -1764,6 +1764,10 @@ definitions:
         items:
           type: string
         type: array
+      ids:
+        items:
+          type: string
+        type: array
       no_events:
         type: boolean
       search:

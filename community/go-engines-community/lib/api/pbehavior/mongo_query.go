@@ -99,12 +99,24 @@ func (q *MongoQuery) CreateAggregationPipeline(ctx context.Context, r ListReques
 }
 
 func (q *MongoQuery) handleFilter(ctx context.Context, r ListRequest) error {
+	andCond := make([]bson.M, 0)
 	filter, err := q.getSearchFilter(ctx, r.Search)
 	if err != nil {
 		return err
 	}
 
-	q.match = filter
+	if len(filter) > 0 {
+		andCond = append(andCond, filter)
+	}
+
+	if len(r.IDs) > 0 {
+		andCond = append(andCond, bson.M{"_id": bson.M{"$in": r.IDs}})
+	}
+
+	if len(andCond) > 0 {
+		q.match = bson.M{"$and": andCond}
+	}
+
 	return nil
 }
 
