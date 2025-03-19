@@ -23,14 +23,17 @@
         </template>
       </c-enabled-field>
       <v-fade-transition>
-        <c-alarm-tag-label-field
+        <c-alarm-tag-field
           v-if="filterByLabelEnabled"
           v-field="form.filter_by_label"
           :label="$t('common.label')"
           name="filter_by_label"
+          multiple
+          addable
           combobox
           required
           hide-selected
+          only-labels
         >
           <template #no-data="">
             <v-list-item>
@@ -39,7 +42,7 @@
               </v-list-item-content>
             </v-list-item>
           </template>
-        </c-alarm-tag-label-field>
+        </c-alarm-tag-field>
       </v-fade-transition>
     </v-layout>
   </v-layout>
