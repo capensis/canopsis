@@ -533,7 +533,7 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 	logger.Info().
 		Msgf("%+v is loaded %s of %s config section", apiKeys, "external_api", sectionName)
 
-	return &BaseRemediationConfigProvider{
+	p := &BaseRemediationConfigProvider{
 		conf: RemediationConfig{
 			HttpTimeout:                    parseTimeDurationByStr(cfg.HttpTimeout, RemediationHttpTimeout, "http_timeout", sectionName, logger),
 			PauseManualInstructionInterval: parseTimeDurationByStr(cfg.PauseManualInstructionInterval, RemediationPauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, logger),
@@ -543,6 +543,21 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 		},
 		logger: logger,
 	}
+
+	if p.conf.HttpTimeout >= p.conf.JobRetryInterval {
+		p.conf.HttpTimeout = RemediationHttpTimeout
+		logger.Error().
+			Str("default", RemediationHttpTimeout.String()).
+			Msgf("value http_timeout of %[1]s config section cannot be greater then value job_retry_interval of %[1]s config, default value is used instead", sectionName)
+		if RemediationHttpTimeout >= p.conf.JobRetryInterval {
+			p.conf.JobRetryInterval = RemediationJobRetryInterval
+			logger.Error().
+				Str("default", RemediationJobRetryInterval.String()).
+				Msgf("value job_retry_interval of %[1]s config section cannot be greater then default value http_timeout of %[1]s config, default value is used instead", sectionName)
+		}
+	}
+
+	return p
 }
 
 type BaseRemediationConfigProvider struct {
