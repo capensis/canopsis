@@ -43,20 +43,34 @@ describe('c-alarm-tag-field', () => {
       page_count: items.length,
     },
   });
+  const fetchAlarmTagsLabels = jest.fn().mockReturnValue({
+    data: items,
+    meta: {
+      page_count: items.length,
+    },
+  });
 
   const alarmTagsGetter = jest.fn().mockReturnValue(items);
   const pendingGetter = jest.fn().mockReturnValue(false);
-  const store = createMockedStoreModules([
-    {
-      name: 'alarmTag',
-      getters: {
-        items: alarmTagsGetter,
-        pending: pendingGetter,
-      },
-      actions: {
-        fetchListWithoutStore: fetchAlarmTags,
-      },
+  const alarmTagModule = {
+    name: 'alarmTag',
+    getters: {
+      items: alarmTagsGetter,
+      pending: pendingGetter,
     },
+    actions: {
+      fetchListWithoutStore: fetchAlarmTags,
+    },
+  };
+  const alarmTagLabelModule = {
+    name: 'alarmTag/label',
+    actions: {
+      fetchListWithoutStore: fetchAlarmTagsLabels,
+    },
+  };
+  const store = createMockedStoreModules([
+    alarmTagModule,
+    alarmTagLabelModule,
   ]);
 
   const factory = generateShallowRenderer(CAlarmTag, { stubs });
@@ -66,7 +80,31 @@ describe('c-alarm-tag-field', () => {
     fetchAlarmTags.mockClear();
   });
 
-  test('Value changed after trigger the input', async () => {
+  test('fetchAlarmTags was called', async () => {
+    factory({
+      store,
+    });
+
+    await flushPromises();
+
+    expect(fetchAlarmTags).toHaveBeenCalledTimes(1);
+  });
+
+  test('fetchAlarmTagsLabels was called', async () => {
+    factory({
+      store,
+
+      propsData: {
+        onlyLabels: true,
+      },
+    });
+
+    await flushPromises();
+
+    expect(fetchAlarmTagsLabels).toHaveBeenCalledTimes(1);
+  });
+
+  test('Value changed after trigger the input', () => {
     const wrapper = factory({
       store,
     });
@@ -94,6 +132,7 @@ describe('c-alarm-tag-field', () => {
         label: 'Custom label',
         name: 'customName',
         disabled: true,
+        multiple: true,
       },
     });
 
