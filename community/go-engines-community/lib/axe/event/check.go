@@ -511,7 +511,6 @@ func (p *checkProcessor) newAlarm(
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
 			Infos:                       map[string]map[string]interface{}{},
-			RuleVersion:                 map[string]string{},
 		},
 	}
 
