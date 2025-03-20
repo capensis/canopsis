@@ -222,7 +222,7 @@ export const USER_PERMISSIONS = {
       resolveRules: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_resolveRules`,
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
-      externalData: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`, // TODO: change to _externalData
+      externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`, // TODO: change to _externalDataTables
     },
     notification: {
       common: USER_PERMISSIONS_PREFIXES.technical.notification,

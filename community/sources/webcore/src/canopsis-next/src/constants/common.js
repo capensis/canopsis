@@ -32,7 +32,7 @@ export const ROUTES_NAMES = {
   exploitationResolveRules: 'exploitation-resolve-rules',
   exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
   exploitationLinkRules: 'exploitation-link-rules',
-  exploitationExternalData: 'exploitation-external-data',
+  exploitationExternalDataTables: 'exploitation-external-data-tables',
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
@@ -72,7 +72,7 @@ export const ROUTES = {
   exploitationResolveRules: '/exploitation/resolve-rules',
   exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
   exploitationLinkRules: '/exploitation/link-rules',
-  exploitationExternalData: '/exploitation/external-data',
+  exploitationExternalDataTables: '/exploitation/external-data-tables',
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
   profileThemes: '/themes',
@@ -470,4 +470,11 @@ export const WIDGET_COLUMNS_GROUPS = {
 
   entityParameters: 'entityParameters',
   ticketParameters: 'ticketParameters',
+};
+
+export const CSV_SEPARATORS = {
+  comma: 'comma',
+  semicolon: 'semicolon',
+  tab: 'tab',
+  space: 'space',
 };

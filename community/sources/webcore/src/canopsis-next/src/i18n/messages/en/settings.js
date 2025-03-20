@@ -97,7 +97,6 @@ export default {
   exportCsv: {
     title: 'Export CSV',
     fields: {
-      separator: 'Separator',
       datetimeFormat: 'Datetime format',
     },
   },

@@ -309,6 +309,8 @@ export default {
   width: 'Width',
   versionUpdated: 'Version updated',
   database: 'Database',
+  importData: 'Import data',
+  separator: 'Separator',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -577,6 +579,8 @@ export default {
     },
     fileTypes: {
       svg: 'SVG file',
+      csv: 'CSV file',
     },
+    fileSizeMb: 'maximum {size} MB',
   },
 };

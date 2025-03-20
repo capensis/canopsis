@@ -41,4 +41,8 @@ export default {
   },
 
   tableNameTooltip: 'Supported symbols: latin letters, “_”, numbers (not at the beginning)',
+
+  importFileDescription: 'First row has to contain column names',
+
+  tableField: 'Collection / table',
 };

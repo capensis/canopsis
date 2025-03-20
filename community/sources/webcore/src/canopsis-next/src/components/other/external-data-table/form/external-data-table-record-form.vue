@@ -1,26 +1,12 @@
 <template>
   <v-layout column>
-    <v-layout v-if="!form._id">
-      <v-flex xs6>
-        <external-data-table-database-field
-          :value="externalDataTable.database"
-          disabled
-        />
-      </v-flex>
-      <v-flex xs6>
-        <c-select-field
-          :value="externalDataTable.name"
-          :items="names"
-          :label="$t('common.name')"
-          disabled
-        />
-      </v-flex>
-    </v-layout>
+    <external-data-table-general-info-form v-if="!form._id" :form="externalDataTable" />
     <c-id-field
       v-else
       :value="form._id"
       disabled
     />
+
     <v-text-field
       v-for="rule in externalDataTable.linked_rules"
       v-validate="'required'"
@@ -34,10 +20,12 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import ExternalDataTableGeneralInfoForm
+  from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
 
 export default {
   inject: ['$validator'],
+  components: { ExternalDataTableGeneralInfoForm },
   model: {
     prop: 'form',
     event: 'input',
@@ -51,13 +39,6 @@ export default {
       type: Object,
       default: () => ({}),
     },
-  },
-  setup(props) {
-    const names = computed(() => [props.externalDataTable.name]);
-
-    return {
-      names,
-    };
   },
 };
 </script>
