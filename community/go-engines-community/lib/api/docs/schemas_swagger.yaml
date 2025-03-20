@@ -197,7 +197,8 @@ definitions:
         type: integer
       infos:
         additionalProperties:
-          additionalProperties: true
+          additionalProperties:
+            type: any
           type: object
         type: object
       instruction_execution_icon:
@@ -283,7 +284,8 @@ definitions:
         type: integer
       infos:
         additionalProperties:
-          additionalProperties: true
+          additionalProperties:
+            type: any
           type: object
         type: object
       initial_long_output:
