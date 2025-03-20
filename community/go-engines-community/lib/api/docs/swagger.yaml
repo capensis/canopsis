@@ -6725,6 +6725,7 @@ paths:
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/ids'
       responses:
         200:
           description: OK
