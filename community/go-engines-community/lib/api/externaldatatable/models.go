@@ -20,7 +20,8 @@ const tmpTablePrefix = "tmp_"
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id name description type"`
+	SortBy string   `form:"sort_by" binding:"oneoforempty=_id name description type"`
+	IDs    []string `form:"ids[]"`
 }
 
 type EditRequest struct {
