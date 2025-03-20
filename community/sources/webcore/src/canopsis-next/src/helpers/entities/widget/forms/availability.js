@@ -10,7 +10,7 @@ import {
   ALARM_UNSORTABLE_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   DEFAULT_CONTEXT_WIDGET_RESOLVED_ALARMS_COLUMNS,
-  EXPORT_CSV_SEPARATORS,
+  CSV_SEPARATORS,
   ENTITY_FIELDS,
 } from '@/constants';
 
@@ -90,7 +90,7 @@ export const availabilityWidgetParametersExportSettingsToForm = (exportSettings 
   widgetExportColumns:
     widgetColumnsToForm(exportSettings.widget_export_columns ?? DEFAULT_CONTEXT_WIDGET_COLUMNS),
   widgetExportColumnsTemplate: formToWidgetTemplateValue(exportSettings.widget_export_columns_template),
-  exportCsvSeparator: exportSettings.export_csv_separator ?? EXPORT_CSV_SEPARATORS.comma,
+  exportCsvSeparator: exportSettings.export_csv_separator ?? CSV_SEPARATORS.comma,
 });
 
 /**

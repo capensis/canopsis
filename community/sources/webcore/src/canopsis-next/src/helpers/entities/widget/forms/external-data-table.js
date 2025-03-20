@@ -1,0 +1,60 @@
+import { PAGINATION_LIMIT } from '@/config';
+import { ALARM_DENSE_TYPES, CSV_SEPARATORS, DEFAULT_PERIODIC_REFRESH, EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
+
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
+import { columnsParametersToForm, widgetSortToForm } from '@/helpers/entities/widget/forms/alarm';
+import { formToWidgetColumns, widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+
+/**
+ * @typedef {Object} ExternalDataTableWidgetParameters
+ * @property {DurationWithEnabled} periodic_refresh
+ * @property {number} itemsPerPage
+ * @property {string} table
+ * @property {WidgetSort} sort
+ * @property {WidgetColumn[]} widgetColumns
+ * @property {WidgetColumn[]} widgetExportColumns
+ * @property {WidgetColumnsParameters} [columns]
+ * @property {WidgetDenseParameters} dense
+ * @property {WidgetCsvSeparator} exportCsvSeparator
+ * @property {string} exportCsvDatetimeFormat
+ */
+
+/**
+ * @typedef {ExternalDataTableWidgetParameters} ExternalDataTableWidgetParametersForm
+ * @property {WidgetColumnForm[]} widgetColumns
+ * @property {WidgetColumnForm[]} widgetExportColumns
+ */
+
+/**
+ * Convert external data table widget parameters to form
+ *
+ * @param {ExternalDataTableWidgetParameters} parameters
+ * @returns {ExternalDataTableWidgetParametersForm}
+ */
+export const externalDataTableWidgetParametersToForm = parameters => ({
+  itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
+  periodic_refresh: durationWithEnabledToForm(parameters.periodic_refresh ?? DEFAULT_PERIODIC_REFRESH),
+  table: parameters.table || '',
+  sort: widgetSortToForm(parameters.sort),
+  widgetColumns:
+    widgetColumnsToForm(parameters.widgetColumns ?? []),
+  widgetExportColumns:
+    widgetColumnsToForm(parameters.widgetExportColumns ?? []),
+  columns: columnsParametersToForm(parameters.columns),
+  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
+  exportCsvSeparator: parameters.exportCsvSeparator ?? CSV_SEPARATORS.comma,
+  exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
+});
+
+/**
+ * Convert form to external data table widget parameters
+ *
+ * @param {ExternalDataTableWidgetParametersForm} form
+ * @returns {ExternalDataTableWidgetParameters}
+ */
+export const formToExternalDataTableWidgetParameters = form => ({
+  ...form,
+
+  widgetColumns: formToWidgetColumns(form.widgetColumns),
+  widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
+});

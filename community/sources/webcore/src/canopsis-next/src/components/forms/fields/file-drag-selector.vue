@@ -26,13 +26,15 @@
         >
           upload_file
         </v-icon>
-        <span class="text-subtitle-2">
-          {{ $t('common.fileSelector.dragAndDrop.label') }}
-          <a v-on="on">
-            {{ $t('common.fileSelector.dragAndDrop.labelAction') }}
-          </a>
-          {{ fileTypeLabel ? ` ${fileTypeLabel}` : '' }}
-        </span>
+        <slot :on="on" name="label">
+          <span class="text-subtitle-2">
+            {{ $t('common.fileSelector.dragAndDrop.label') }}
+            <a v-on="on">
+              {{ $t('common.fileSelector.dragAndDrop.labelAction') }}
+            </a>
+            {{ fileTypeLabel ? ` ${fileTypeLabel}` : '' }}
+          </span>
+        </slot>
       </v-layout>
     </template>
   </file-selector>

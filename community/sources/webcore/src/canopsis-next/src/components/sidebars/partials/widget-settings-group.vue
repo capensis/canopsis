@@ -1,5 +1,6 @@
 <template>
   <v-list-group
+    :disabled="disabled"
     class="widget-settings-group"
     color=""
     eager
@@ -30,6 +31,10 @@ export default {
     title: {
       type: String,
       required: true,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
 };

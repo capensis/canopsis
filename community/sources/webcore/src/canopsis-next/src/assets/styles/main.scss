@@ -29,21 +29,28 @@ html {
   z-index: 9;
 }
 
-.v-list .v-list-item {
-  > *:not(.v-list-item__action) {
-    .v-input {
-      &, &__slot {
-        margin-top: 4px;
-      }
+.v-list {
+  .v-list-item {
+    > *:not(.v-list-item__action) {
+      .v-input {
+        &, &__slot {
+          margin-top: 4px;
+        }
 
-      &__slot {
-        margin-bottom: 8px;
-      }
+        &__slot {
+          margin-bottom: 8px;
+        }
 
-      .v-messages {
-        display: block;
+        .v-messages {
+          display: block;
+        }
       }
     }
+  }
+
+  &-group--disabled .v-list-group__header.v-list-item:not(.v-list-item--disabled) {
+    color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
+    pointer-events: none;
   }
 }
 

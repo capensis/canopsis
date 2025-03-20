@@ -7,11 +7,10 @@
     :options="options"
     expand
     advanced-pagination
-    select-all
     @update:options="updateOptions"
   >
-    <template #timestamp="{ item }">
-      {{ item.timestamp | date }}
+    <template #type="{ item }">
+      {{ $t(`externalData.tableTypes.${item.type}`) }}
     </template>
     <template #actions="{ item }">
       <c-action-btn
@@ -83,7 +82,7 @@ export default {
       },
       {
         text: t('common.database'),
-        value: 'database',
+        value: 'type',
       },
       {
         text: t('common.actionsLabel'),

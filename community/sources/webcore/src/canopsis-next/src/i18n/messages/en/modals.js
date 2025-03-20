@@ -271,6 +271,9 @@ export default {
       [WIDGET_TYPES.availability]: {
         title: 'Availability',
       },
+      [WIDGET_TYPES.externalDataTable]: {
+        title: 'External data',
+      },
       chart: {
         title: 'Chart',
       },

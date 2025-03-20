@@ -9,6 +9,7 @@
       :with-template="withTemplate"
       :with-html="withHtml"
       :with-color-indicator="withColorIndicator"
+      :items="items"
       :excluded-columns="excludedColumns"
       @update:template="updateTemplate"
     />
@@ -31,7 +32,7 @@ export default {
     },
     type: {
       type: String,
-      required: true,
+      required: false,
     },
     columns: {
       type: Array,
@@ -60,6 +61,10 @@ export default {
     withColorIndicator: {
       type: Boolean,
       default: false,
+    },
+    items: {
+      type: Array,
+      required: false,
     },
     excludedColumns: {
       type: Array,

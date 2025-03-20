@@ -24,6 +24,7 @@ export const WIDGET_TYPES = {
   userStatistics: 'UserStatistics',
   alarmStatistics: 'AlarmStatistics',
   availability: 'Availability',
+  externalDataTable: 'ExternalDataTable',
 
   ...featuresService.get('constants.WIDGET_TYPES'),
 };
@@ -38,6 +39,7 @@ export const TOP_LEVEL_WIDGET_TYPES = [
   WIDGET_TYPES.testingWeather,
   WIDGET_TYPES.map,
   WIDGET_TYPES.availability,
+  WIDGET_TYPES.externalDataTable,
 ];
 
 export const COMPONENTS_BY_WIDGET_TYPES = {
@@ -56,6 +58,7 @@ export const COMPONENTS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.userStatistics]: 'user-statistics-widget',
   [WIDGET_TYPES.alarmStatistics]: 'alarm-statistics-widget',
   [WIDGET_TYPES.availability]: 'availability-widget',
+  [WIDGET_TYPES.externalDataTable]: 'external-data-table-widget',
 
   ...featuresService.get('constants.COMPONENTS_BY_WIDGET_TYPES'),
 };
@@ -77,6 +80,7 @@ export const WIDGET_ICONS = {
   [WIDGET_TYPES.userStatistics]: 'perm_identity',
   [WIDGET_TYPES.alarmStatistics]: 'notification_important',
   [WIDGET_TYPES.availability]: '$vuetify.icons.published_with_changes',
+  [WIDGET_TYPES.externalDataTable]: '$vuetify.icons.database_outlined',
 
   ...featuresService.get('constants.WIDGET_ICONS'),
 };
@@ -97,6 +101,7 @@ export const SIDE_BARS = {
   userStatisticsSettings: 'user-statistics-settings',
   alarmStatisticsSettings: 'alarm-statistics-settings',
   availabilitySettings: 'availability-settings',
+  externalDataTableSettings: 'external-data-table-settings',
 
   ...featuresService.get('constants.SIDE_BARS'),
 };
@@ -117,6 +122,7 @@ export const SIDE_BARS_BY_WIDGET_TYPES = {
   [WIDGET_TYPES.userStatistics]: SIDE_BARS.userStatisticsSettings,
   [WIDGET_TYPES.alarmStatistics]: SIDE_BARS.alarmStatisticsSettings,
   [WIDGET_TYPES.availability]: SIDE_BARS.availabilitySettings,
+  [WIDGET_TYPES.externalDataTable]: SIDE_BARS.externalDataTableSettings,
 
   ...featuresService.get('constants.SIDE_BARS_BY_WIDGET_TYPES'),
 };
@@ -176,13 +182,6 @@ export const DEFAULT_WIDGET_GRID_PARAMETERS = {
   h: 1,
   w: WIDGET_GRID_COLUMNS_COUNT,
   autoHeight: true,
-};
-
-export const EXPORT_CSV_SEPARATORS = {
-  comma: 'comma',
-  semicolon: 'semicolon',
-  tab: 'tab',
-  space: 'space',
 };
 
 export const EXPORT_CSV_DATETIME_FORMATS = {

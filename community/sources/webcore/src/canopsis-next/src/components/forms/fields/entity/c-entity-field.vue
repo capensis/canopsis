@@ -15,6 +15,7 @@
     :clearable="clearable"
     :autocomplete="autocomplete"
     :return-object="returnObject"
+    with-type
     @fetch="fetchEntities"
     @fetch:more="fetchMoreEntities"
     @update:search="updateSearch"

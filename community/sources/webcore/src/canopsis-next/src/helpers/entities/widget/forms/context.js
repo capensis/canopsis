@@ -7,7 +7,7 @@ import {
   DEFAULT_CONTEXT_WIDGET_ACTIVE_ALARM_COLUMNS,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   EXPORT_CSV_DATETIME_FORMATS,
-  EXPORT_CSV_SEPARATORS,
+  CSV_SEPARATORS,
   SORT_ORDERS,
   ENTITY_UNSORTABLE_FIELDS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
@@ -99,7 +99,7 @@ export const contextWidgetParametersToForm = (parameters = {}) => ({
     ? [...parameters.expandGridRangeSize]
     : [GRID_SIZES.min, GRID_SIZES.max],
   sort: parameters.sort ? { ...parameters.sort } : { order: SORT_ORDERS.asc },
-  exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
+  exportCsvSeparator: parameters.exportCsvSeparator ?? CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   charts: addKeyInEntities(parameters.charts),
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,

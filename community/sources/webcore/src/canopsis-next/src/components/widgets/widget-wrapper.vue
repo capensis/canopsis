@@ -59,6 +59,7 @@ import NumbersWidget from './chart/numbers-widget.vue';
 import UserStatisticsWidget from './statistics/user-statistics-widget.vue';
 import AlarmStatisticsWidget from './statistics/alarm-statistics-widget.vue';
 import AvailabilityWidget from './availability/availability-widget.vue';
+import ExternalDataTableWidget from './external-data-table/external-data-table-widget.vue';
 
 const { mapGetters } = createNamespacedHelpers('info');
 
@@ -79,6 +80,7 @@ export default {
     UserStatisticsWidget,
     AlarmStatisticsWidget,
     AvailabilityWidget,
+    ExternalDataTableWidget,
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },

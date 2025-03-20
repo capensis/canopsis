@@ -62,7 +62,7 @@ export default {
     message: 'Allows you to define the rules for associating links with alarms',
   },
 
-  [USER_PERMISSIONS.technical.exploitation.externalData]: {
+  [USER_PERMISSIONS.technical.exploitation.externalDataTable]: {
     title: 'External data',
   },
 

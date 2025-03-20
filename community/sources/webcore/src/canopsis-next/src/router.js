@@ -47,7 +47,7 @@ const ExploitationFlappingRules = () => import(/* webpackChunkName: "AlarmStatus
 const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/resolve-rules.vue');
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
-const ExploitationExternalData = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/external-data.vue');
+const ExploitationExternalDataTables = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/external-data-tables.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
@@ -410,13 +410,13 @@ const routes = [
     },
   },
   {
-    path: ROUTES.exploitationExternalData,
-    name: ROUTES_NAMES.exploitationExternalData,
-    component: ExploitationExternalData,
+    path: ROUTES.exploitationExternalDataTables,
+    name: ROUTES_NAMES.exploitationExternalDataTables,
+    component: ExploitationExternalDataTables,
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USER_PERMISSIONS.technical.exploitation.externalData,
+        id: USER_PERMISSIONS.technical.exploitation.externalDataTable,
       },
     },
   },
