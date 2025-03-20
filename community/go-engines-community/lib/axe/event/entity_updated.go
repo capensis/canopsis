@@ -54,10 +54,12 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	var componentStateChanged bool
 	var newComponentState int
+	var alarm types.Alarm
 
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedServiceStates = nil
 		result = Result{}
+		alarm = types.Alarm{}
 
 		var update []bson.M
 		if event.Parameters.ImportSource != "" {
@@ -90,7 +92,6 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		alarm := types.Alarm{}
 		var err error
 		if len(update) > 0 {
 			err = p.alarmCollection.FindOneAndUpdate(ctx, getOpenAlarmMatch(event), update).Decode(&alarm)
@@ -148,6 +149,11 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	if event.Parameters.ImportSource != "" {
 		p.externalTagUpdater.Add(event.Parameters.ImportTags)
 	}
+
+	// to dynamic-infos
+	result.Forward = true
+	result.Alarm = alarm
+	result.AlarmChange = types.NewAlarmChange()
 
 	return result, nil
 }

@@ -622,8 +622,8 @@ func (a *Alarm) GetDurationField(f string) (int64, bool) {
 	}
 }
 
-// GetStringArrayField is a magic getter for string array fields for easier field retrieving when matching alarm pattern
-func (a *Alarm) GetStringArrayField(f string) ([]string, bool) {
+// GetTagsField is a magic getter for string array fields for easier field retrieving when matching alarm pattern
+func (a *Alarm) GetTagsField(f string) ([]string, bool) {
 	switch f {
 	case "tags":
 		return a.Tags, true

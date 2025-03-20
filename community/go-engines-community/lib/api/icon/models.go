@@ -7,19 +7,21 @@ import (
 )
 
 type EditRequest struct {
-	ID       string                `form:"-"`
-	Title    string                `form:"title" binding:"required,max=255"`
-	File     *multipart.FileHeader `form:"file" binding:"required"`
-	MimeType string                `form:"-"`
-	Author   string                `form:"-" swaggerignore:"true"`
+	ID         string                `form:"-"`
+	Title      string                `form:"title" binding:"required,max=255"`
+	File       *multipart.FileHeader `form:"file" binding:"required"`
+	MimeType   string                `form:"-"`
+	Author     string                `form:"-" swaggerignore:"true"`
+	FillBorder bool                  `form:"fill_border"`
 }
 
 type PatchRequest struct {
-	ID       string                `form:"-"`
-	Title    string                `form:"title" binding:"max=255"`
-	File     *multipart.FileHeader `form:"file"`
-	MimeType string                `form:"-"`
-	Author   string                `form:"-" swaggerignore:"true"`
+	ID         string                `form:"-"`
+	Title      string                `form:"title" binding:"max=255"`
+	File       *multipart.FileHeader `form:"file"`
+	MimeType   string                `form:"-"`
+	Author     string                `form:"-" swaggerignore:"true"`
+	FillBorder *bool                 `form:"fill_border"`
 }
 
 type Response struct {
@@ -35,6 +37,8 @@ type Response struct {
 	MimeType string `bson:"mime_type" json:"-"`
 
 	Content string `bson:"-" json:"content,omitempty"`
+
+	FillBorder bool `bson:"fill_border"  json:"fill_border"`
 }
 
 type AggregationResult struct {
