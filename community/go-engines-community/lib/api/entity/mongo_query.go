@@ -279,6 +279,7 @@ func (q *MongoQueryBuilder) handleFilter(r ListRequest) {
 	q.addSearchFilter(r, &entityMatch)
 	q.addCategoryFilter(r, &entityMatch)
 	q.addTypeFilter(r, &entityMatch)
+	q.addIDFilter(r, &entityMatch)
 	q.addNoEventsFilter(r, &entityMatch)
 
 	if len(entityMatch) > 0 {
@@ -395,6 +396,14 @@ func (q *MongoQueryBuilder) addTypeFilter(r ListRequest, match *[]bson.M) {
 	}
 
 	*match = append(*match, bson.M{"type": bson.M{"$in": r.Type}})
+}
+
+func (q *MongoQueryBuilder) addIDFilter(r ListRequest, match *[]bson.M) {
+	if len(r.IDs) == 0 {
+		return
+	}
+
+	*match = append(*match, bson.M{"_id": bson.M{"$in": r.IDs}})
 }
 
 func (q *MongoQueryBuilder) addNoEventsFilter(r ListRequest, match *[]bson.M) {

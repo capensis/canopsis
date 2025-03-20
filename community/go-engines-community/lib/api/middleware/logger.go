@@ -49,6 +49,7 @@ func Logger(logger zerolog.Logger, logBody bool, logBodyOnError bool) gin.Handle
 			}
 
 			defer bufPool.Put(buf)
+			buf.Reset()
 			responseWriter = &responseBodyLogWriter{
 				body:           buf,
 				ResponseWriter: c.Writer,
