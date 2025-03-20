@@ -101,6 +101,10 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 		project = append(project, getRolePipeline()...)
 	}
 
+	if len(r.IDs) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.IDs}}})
+	}
+
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}

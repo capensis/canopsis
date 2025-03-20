@@ -53,6 +53,9 @@ export const PATTERN_OPERATORS = {
   with: 'with',
   without: 'without',
 
+  withLabel: 'with_label',
+  withoutLabel: 'without_label',
+
   activated: 'activated',
   inactive: 'inactive',
 
@@ -84,6 +87,8 @@ export const PATTERN_CONDITIONS = {
   notBeginWith: 'not_begin_with',
   endsWith: 'end_with',
   notEndWith: 'not_end_with',
+  hasLabels: 'has_labels',
+  hasNotLabels: 'has_not_labels',
 };
 
 export const PATTERN_FIELD_TYPES = {
@@ -138,6 +143,8 @@ export const PATTERN_ARRAY_OPERATORS = [
   PATTERN_OPERATORS.isNotOneOf,
   PATTERN_OPERATORS.isEmpty,
   PATTERN_OPERATORS.isNotEmpty,
+  PATTERN_OPERATORS.withLabel,
+  PATTERN_OPERATORS.withoutLabel,
 ];
 
 export const PATTERN_DURATION_OPERATORS = [
@@ -177,6 +184,11 @@ export const PATTERN_NULL_OPERATORS = [
 export const PATTERN_EXISTS_OPERATORS = [
   PATTERN_OPERATORS.exist,
   PATTERN_OPERATORS.notExist,
+];
+
+export const PATTERN_ALARM_TAG_LABEL_OPERATORS = [
+  PATTERN_OPERATORS.withLabel,
+  PATTERN_OPERATORS.withoutLabel,
 ];
 
 export const PATTERN_QUICK_RANGES = [

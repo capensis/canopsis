@@ -4305,6 +4305,7 @@ paths:
             type: array
             items:
               type: string
+        - $ref: '#/components/parameters/ids'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - name: paginate
@@ -4313,14 +4314,8 @@ paths:
             type: boolean
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
-        - name: sort_by
-          in: query
-          schema:
-            type: string
-        - name: with_flags
-          in: query
-          schema:
-            type: boolean
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/withFlags'
         - name: perf_data[]
           in: query
           style: form
@@ -4610,15 +4605,12 @@ paths:
         -  PERMISSIONS: `api_entitycategory:read`
       operationId: entity-categories-find-all
       parameters:
+        - $ref: '#/components/parameters/ids'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
-        - name: sort_by
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/sort_by'
       responses:
         200:
           description: OK
@@ -9335,20 +9327,13 @@ paths:
         -  PERMISSIONS: `api_pbehaviorreason:read`
       operationId: pbehavior-reasons-find-all
       parameters:
+        - $ref: '#/components/parameters/ids'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
-        - name: sort_by
-          in: query
-          description: sort query
-          schema:
-            type: string
-        - name: with_flags
-          in: query
-          description: with flags
-          schema:
-            type: boolean
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/withFlags'
       responses:
         200:
           description: OK
@@ -9555,20 +9540,13 @@ paths:
             type: array
             items:
               type: string
+        - $ref: '#/components/parameters/ids'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
-        - name: sort_by
-          in: query
-          description: sort query
-          schema:
-            type: string
-        - name: with_flags
-          in: query
-          description: with flags
-          schema:
-            type: boolean
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/withFlags'
       responses:
         200:
           description: OK
@@ -9787,15 +9765,12 @@ paths:
         -  PERMISSIONS: `api_pbehavior:read`
       operationId: pbehaviors-find-all
       parameters:
+        - $ref: '#/components/parameters/ids'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
-        - name: sort_by
-          in: query
-          description: sort query
-          schema:
-            type: string
+        - $ref: '#/components/parameters/sort_by'
       responses:
         200:
           description: OK
@@ -13206,15 +13181,12 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
         - $ref: '#/components/parameters/withFlags'
+        - $ref: '#/components/parameters/ids'
         - name: permission
           in: query
           description: role permission
-          schema:
-            type: string
-        - name: sort_by
-          in: query
-          description: sort query
           schema:
             type: string
       responses:
@@ -15437,6 +15409,15 @@ components:
       required: false
       schema:
         type: boolean
+    ids:
+      name: ids[]
+      in: query
+      style: form
+      explode: true
+      schema:
+        type: array
+        items:
+          type: string
 
   schemas:
     event.Event:
