@@ -268,12 +268,12 @@ type ExportResponse struct {
 }
 
 type Alarm struct {
-	ID     string                            `bson:"_id" json:"_id"`
-	Time   datetime.CpsTime                  `bson:"t" json:"t" swaggertype:"integer"`
-	Entity entity.Entity                     `bson:"entity" json:"entity"`
-	Value  AlarmValue                        `bson:"v" json:"v"`
-	Tags   []string                          `bson:"tags" json:"tags"`
-	Infos  map[string]map[string]interface{} `bson:"infos" json:"infos"`
+	ID     string                    `bson:"_id" json:"_id"`
+	Time   datetime.CpsTime          `bson:"t" json:"t" swaggertype:"integer"`
+	Entity entity.Entity             `bson:"entity" json:"entity"`
+	Value  AlarmValue                `bson:"v" json:"v"`
+	Tags   []string                  `bson:"tags" json:"tags"`
+	Infos  map[string]map[string]any `bson:"infos" json:"infos"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
 
@@ -359,8 +359,7 @@ type AlarmValue struct {
 
 	EventsCount types.CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	RuleVersion map[string]string                 `bson:"infos_rule_version" json:"infos_rule_version"`
-	Infos       map[string]map[string]interface{} `bson:"infos" json:"infos"`
+	Infos map[string]map[string]any `bson:"infos" json:"infos"`
 
 	CloseDelayValue int64 `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
 }
@@ -438,7 +437,7 @@ type AggregationResult struct {
 	TotalCount int64   `bson:"total_count" json:"total_count"`
 }
 
-func (r *AggregationResult) GetData() interface{} {
+func (r *AggregationResult) GetData() any {
 	return r.Data
 }
 
@@ -535,7 +534,7 @@ type GetDisplayNamesResponse struct {
 	TotalCount int64             `bson:"total_count" json:"total_count"`
 }
 
-func (r *GetDisplayNamesResponse) GetData() interface{} {
+func (r *GetDisplayNamesResponse) GetData() any {
 	return r.Data
 }
 

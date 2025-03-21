@@ -9,44 +9,50 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func NewRunInfoMetricsPeriodicalWorker(
+func NewQueueMetricsPeriodicalWorker(
 	periodicalInterval time.Duration,
-	manager RunInfoManager,
-	info InstanceRunInfo,
 	channel amqp.Channel,
 	techMetricsSender techmetrics.Sender,
+	consumeQueues []string,
 	techMetric string,
 	logger zerolog.Logger,
 ) PeriodicalWorker {
-	return &runInfoMetricsPeriodicalWorker{
+	return &queueMetricsPeriodicalWorker{
 		periodicalInterval: periodicalInterval,
-		manager:            manager,
-		info:               info,
 		channel:            channel,
 		techMetricsSender:  techMetricsSender,
+		consumeQueues:      consumeQueues,
 		techMetric:         techMetric,
 		logger:             logger,
 	}
 }
 
-type runInfoMetricsPeriodicalWorker struct {
+type queueMetricsPeriodicalWorker struct {
 	periodicalInterval time.Duration
-	manager            RunInfoManager
-	info               InstanceRunInfo
 	channel            amqp.Channel
 	techMetricsSender  techmetrics.Sender
+	consumeQueues      []string
 	techMetric         string
 	logger             zerolog.Logger
 }
 
-func (w *runInfoMetricsPeriodicalWorker) GetInterval() time.Duration {
+func (w *queueMetricsPeriodicalWorker) GetInterval() time.Duration {
 	return w.periodicalInterval
 }
 
-func (w *runInfoMetricsPeriodicalWorker) Work(ctx context.Context) {
-	info := updateInstanceRunInfo(ctx, w.GetInterval(), w.manager, w.info, w.channel, w.logger)
+func (w *queueMetricsPeriodicalWorker) Work(ctx context.Context) {
+	queueLength := 0
 
-	if info.QueueLength > 0 {
-		w.techMetricsSender.SendQueue(w.techMetric, time.Now(), int64(info.QueueLength))
+	for i := range w.consumeQueues {
+		queue, err := w.channel.QueueInspect(w.consumeQueues[i])
+		if err != nil {
+			w.logger.Err(err).Msg("cannot get consume queue length")
+		}
+
+		queueLength += queue.Messages
+	}
+
+	if queueLength > 0 {
+		w.techMetricsSender.SendQueue(w.techMetric, time.Now(), int64(queueLength))
 	}
 }

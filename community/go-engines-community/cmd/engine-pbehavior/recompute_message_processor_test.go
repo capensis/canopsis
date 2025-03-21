@@ -52,18 +52,25 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldRecomputePbeha
 	mockCursor.EXPECT().Next(gomock.Any()).Return(false).Times(2)
 	mockCursor.EXPECT().Close(gomock.Any()).Times(2)
 
+	inhResolver := mock_pbehavior.NewMockInheritedServicePbhResolver(ctrl)
+	inhResolver.EXPECT().GetResolvedInheritedServicePbh(gomock.Any()).Return(pbehavior.InheritedServicesPbhResolveResult{
+		IDs:          make([]string, 0),
+		PersonalPbh:  make(map[string]pbehavior.ResolveResult),
+		InheritedPbh: make(map[string]pbehavior.ResolveResult),
+	}, nil).AnyTimes()
+
 	p := recomputeMessageProcessor{
-		PbhService:             mockService,
-		PbehaviorCollection:    mockPbhDbCollection,
-		EntityCollection:       mockEntityDbCollection,
-		EventManager:           mockEventManager,
-		Encoder:                mockEncoder,
-		Decoder:                mockDecoder,
-		Publisher:              mockPublisher,
-		Exchange:               "",
-		Queue:                  "test-queue",
-		TimezoneConfigProvider: config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
-		Logger:                 zerolog.Nop(),
+		PbhService:               mockService,
+		PbehaviorCollection:      mockPbhDbCollection,
+		EntityCollection:         mockEntityDbCollection,
+		EventManager:             mockEventManager,
+		Encoder:                  mockEncoder,
+		Decoder:                  mockDecoder,
+		Publisher:                mockPublisher,
+		InheritedServiceResolver: inhResolver,
+		Exchange:                 "",
+		Queue:                    "test-queue",
+		TimezoneConfigProvider:   config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()), Logger: zerolog.Nop(),
 	}
 
 	_, err := p.Process(t.Context(), amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})
@@ -88,18 +95,25 @@ func TestRecomputeMessageProcessor_Process_GivenEmptyPbehaviorID_ShouldRecompute
 
 	mockService.EXPECT().Recompute(gomock.Any(), gomock.Any())
 
+	inhResolver := mock_pbehavior.NewMockInheritedServicePbhResolver(ctrl)
+	inhResolver.EXPECT().GetResolvedInheritedServicePbh(gomock.Any()).Return(pbehavior.InheritedServicesPbhResolveResult{
+		IDs:          make([]string, 0),
+		PersonalPbh:  make(map[string]pbehavior.ResolveResult),
+		InheritedPbh: make(map[string]pbehavior.ResolveResult),
+	}, nil).AnyTimes()
+
 	p := recomputeMessageProcessor{
-		PbhService:             mockService,
-		PbehaviorCollection:    mockPbhDbCollection,
-		EntityCollection:       mockEntityDbCollection,
-		EventManager:           mockEventManager,
-		Encoder:                mockEncoder,
-		Decoder:                mockDecoder,
-		Publisher:              mockPublisher,
-		Exchange:               "",
-		Queue:                  "test-queue",
-		TimezoneConfigProvider: config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
-		Logger:                 zerolog.Nop(),
+		PbhService:               mockService,
+		PbehaviorCollection:      mockPbhDbCollection,
+		EntityCollection:         mockEntityDbCollection,
+		EventManager:             mockEventManager,
+		Encoder:                  mockEncoder,
+		Decoder:                  mockDecoder,
+		Publisher:                mockPublisher,
+		InheritedServiceResolver: inhResolver,
+		Exchange:                 "",
+		Queue:                    "test-queue",
+		TimezoneConfigProvider:   config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()), Logger: zerolog.Nop(),
 	}
 
 	_, err := p.Process(t.Context(), amqp.Delivery{Body: []byte("{\"_id\":\"\"}")})
@@ -180,18 +194,25 @@ func TestRecomputeMessageProcessor_Process_GivenPbehaviorID_ShouldSendPbehaviorE
 			DeliveryMode: amqp.Persistent,
 		}))
 
+	inhResolver := mock_pbehavior.NewMockInheritedServicePbhResolver(ctrl)
+	inhResolver.EXPECT().GetResolvedInheritedServicePbh(gomock.Any()).Return(pbehavior.InheritedServicesPbhResolveResult{
+		IDs:          make([]string, 0),
+		PersonalPbh:  make(map[string]pbehavior.ResolveResult),
+		InheritedPbh: make(map[string]pbehavior.ResolveResult),
+	}, nil).AnyTimes()
+
 	p := recomputeMessageProcessor{
-		PbhService:             mockService,
-		PbehaviorCollection:    mockPbhDbCollection,
-		EntityCollection:       mockEntityDbCollection,
-		EventManager:           mockEventManager,
-		Encoder:                mockEncoder,
-		Decoder:                mockDecoder,
-		Publisher:              mockPublisher,
-		Exchange:               "",
-		Queue:                  "test-queue",
-		TimezoneConfigProvider: config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
-		Logger:                 zerolog.Nop(),
+		PbhService:               mockService,
+		PbehaviorCollection:      mockPbhDbCollection,
+		EntityCollection:         mockEntityDbCollection,
+		EventManager:             mockEventManager,
+		Encoder:                  mockEncoder,
+		Decoder:                  mockDecoder,
+		Publisher:                mockPublisher,
+		InheritedServiceResolver: inhResolver,
+		Exchange:                 "",
+		Queue:                    "test-queue",
+		TimezoneConfigProvider:   config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()), Logger: zerolog.Nop(),
 	}
 
 	_, err := p.Process(t.Context(), amqp.Delivery{Body: []byte("{\"_id\":\"" + pbehaviorID + "\"}")})

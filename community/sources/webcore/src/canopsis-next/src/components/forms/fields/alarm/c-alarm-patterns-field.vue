@@ -46,6 +46,7 @@ import {
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
   PATTERN_EXISTS_OPERATORS,
+  PATTERN_ALARM_TAG_LABEL_OPERATORS,
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
@@ -286,9 +287,15 @@ export default {
         operators: [
           PATTERN_OPERATORS.with,
           PATTERN_OPERATORS.without,
+          PATTERN_OPERATORS.withLabel,
+          PATTERN_OPERATORS.withoutLabel,
         ],
         valueField: {
           is: 'c-alarm-tag-field',
+          props: rule => ({
+            onlyLabels: PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(rule.operator),
+            multiple: true,
+          }),
         },
       };
     },
