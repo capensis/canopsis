@@ -53,7 +53,7 @@ En premier lieu, rapprochez-vous de votre autorité de certification afin de con
 
 Vous devez ensuite placer ces fichiers au bon endroit sur votre serveur Canopsis, en fonction de la [méthode d'installation](../../installation/index.md#methodes-dinstallation-de-canopsis) que vous avez choisie.
 
-=== "Paquets CentOS 7"
+=== "Paquets RHEL"
 
     Assurez-vous tout d'abord de la bonne restriction des accès à `/etc/nginx/ssl` avec la commande suivante :
 
@@ -96,7 +96,7 @@ Notez au préalable que :
 * L'utilisation de certificats autosignés provoquera l'affichage d'un message dans votre navigateur lors de la connexion à Canopsis. Vous devrez ajouter une exception sur chaque navigateur devant accéder à Canopsis.
 * De façon générale, les certificats autosignés n'assurent pas un niveau de sécurité suffisant dans un SI, et ne sont donc **pas recommandés**.
 
-=== "Paquets CentOS 7"
+=== "Paquets RHEL"
 
     Sur l'environnement cible, exécutez les commandes suivantes en remplaçant `canopsis.mon-si.fr` par le vrai FQDN de votre service Canopsis :
 
@@ -152,7 +152,7 @@ Si vous pouvez garantir que la totalité de vos clients utilisera uniquement une
 
 Pour cela, le moteur `canopsis-api` doit être lancé avec l'option `-secure`.
 
-=== "Paquets CentOS 7"
+=== "Paquets RHEL"
 
     Exécutez les commandes suivantes pour forcer le moteur `canopsis-api` à être lancé avec l'option `-secure` :
 
