@@ -3,6 +3,7 @@ package fifo
 import (
 	"context"
 	"flag"
+	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe"
@@ -118,12 +119,25 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(s.Cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.FIFOEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		s.Cfg.Global.ReconnectRetries, s.Cfg.Global.GetReconnectTimeout(), logger)
-	runInfoPeriodicalWorker := libengine.NewRunInfoMetricsPeriodicalWorker(
-		canopsis.PeriodicalWaitTime,
+
+	healthCheckCfg, err := config.NewHealthCheckAdapter(s.DbClient).GetConfig(ctx)
+	if err != nil {
+		panic(fmt.Errorf("cannot load healthcheck config: %w", err))
+	}
+
+	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
+		healthCheckCfg.ParseUpdateInterval(logger),
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(canopsis.FIFOEngineName, canopsis.FIFOQueueName, canopsis.CheQueuePrefix, []string{canopsis.FIFOQueueName}),
 		amqpChannel,
+		logger,
+	)
+
+	queueMetricsPeriodicalWorker := libengine.NewQueueMetricsPeriodicalWorker(
+		options.PeriodicalWaitTime,
+		amqpChannel,
 		techMetricsSender,
+		[]string{canopsis.FIFOQueueName},
 		techmetrics.FIFOQueue,
 		logger,
 	)
@@ -131,6 +145,8 @@ func Default(
 	engine := libengine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
+			queueMetricsPeriodicalWorker.Work(ctx)
+
 			scheduler.Start(ctx)
 
 			if !s.DbClient.IsDistributed() {
@@ -229,7 +245,10 @@ func Default(
 		},
 		logger,
 	))
+
 	engine.AddPeriodicalWorker("run_info", runInfoPeriodicalWorker)
+	engine.AddPeriodicalWorker("queue_metrics", queueMetricsPeriodicalWorker)
+
 	s.DataStoragePeriodicalWorker = datastorage.NewPeriodicalWorker(
 		func(ctx context.Context, clientTimeout time.Duration) (mongo.DbClient, error) {
 			return mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
