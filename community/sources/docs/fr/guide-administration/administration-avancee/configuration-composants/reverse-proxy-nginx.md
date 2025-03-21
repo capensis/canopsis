@@ -18,7 +18,7 @@ Actuellement, cette configuration apporte :
 * une prise en charge optionnelle d'HTTPS, HTTP/2 et des Websockets (voir ci-dessous).
 
 !!! information
-        La configuration Nginx par défaut déployée avec Canopsis est consultable sur le [dépôt Gitlab](https://git.canopsis.net/canopsis/canopsis-community/-/blob/develop/community/sources/webcore/src/canopsis-next/config/nginx/canopsis.conf).
+     La configuration Nginx par défaut déployée avec Canopsis est consultable sur le [dépôt Gitlab](https://git.canopsis.net/canopsis/canopsis-community/-/blob/develop/community/sources/webcore/src/canopsis-next/config/nginx/canopsis.conf).
 
 ## Configuration additionnelle
 
