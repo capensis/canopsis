@@ -234,5 +234,5 @@ traitement grâce à des MIB ;
 possédez pas les MIB peuvent être traités avec du code personnalisé.
 
 Se référer à la documentation sur les
-[règles SNMP](../../guide-utilisation/menu-exploitation/regles-snmp.md
+[règles SNMP](../../guide-utilisation/menu-exploitation/regles-snmp.md)
 qui détaille ces parties de la mise en œuvre.
