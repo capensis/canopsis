@@ -213,8 +213,13 @@ func NewEngine(
 		logger,
 	)
 
+	healthCheckCfg, err := config.NewHealthCheckAdapter(dbClient).GetConfig(ctx)
+	if err != nil {
+		panic(fmt.Errorf("cannot load healthcheck config: %w", err))
+	}
+
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
+		healthCheckCfg.ParseUpdateInterval(logger),
 		libengine.NewRunInfoManager(runInfoRedisClient),
 		libengine.NewInstanceRunInfo(
 			canopsis.AxeEngineName,
@@ -225,6 +230,7 @@ func NewEngine(
 				canopsis.AxeSystemQueueName,
 				canopsis.AxeUserQueueName,
 			},
+			nil,
 			append([]string{canopsis.PBehaviorRPCQueueServerName}, rpcPublishQueues...),
 		),
 		amqpChannel,

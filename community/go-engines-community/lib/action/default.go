@@ -3,6 +3,7 @@ package action
 import (
 	"context"
 	"flag"
+	"fmt"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -124,10 +125,16 @@ func NewEngineAction(
 		},
 		logger,
 	)
+
+	healthCheckCfg, err := config.NewHealthCheckAdapter(mongoClient).GetConfig(ctx)
+	if err != nil {
+		panic(fmt.Errorf("cannot load healthcheck config: %w", err))
+	}
+
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
+		healthCheckCfg.ParseUpdateInterval(logger),
 		engine.NewRunInfoManager(runInfoRedisClient),
-		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueuePrefix, "", nil, rpcPublishQueues),
+		engine.NewInstanceRunInfo(canopsis.ActionEngineName, canopsis.ActionQueuePrefix, "", nil, nil, rpcPublishQueues),
 		amqpChannel,
 		logger,
 	)

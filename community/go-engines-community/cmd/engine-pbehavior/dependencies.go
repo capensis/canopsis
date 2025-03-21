@@ -56,8 +56,14 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
+
+	healthCheckCfg, err := config.NewHealthCheckAdapter(dbClient).GetConfig(ctx)
+	if err != nil {
+		panic(fmt.Errorf("cannot load healthcheck config: %w", err))
+	}
+
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
+		healthCheckCfg.ParseUpdateInterval(logger),
 		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", nil, []string{canopsis.PBehaviorRPCQueueServerName}),
 		amqpChannel,
