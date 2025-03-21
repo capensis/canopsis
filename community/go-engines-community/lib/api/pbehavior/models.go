@@ -19,7 +19,8 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
+	SortBy string   `form:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
+	IDs    []string `form:"ids[]"`
 }
 
 type EntitiesListRequest struct {
@@ -40,6 +41,7 @@ type EditRequest struct {
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
 	Color      string                             `json:"color" binding:"iscolororempty"`
+	Inherited  bool                               `json:"inherited"`
 
 	common.EntityPatternFieldsRequest
 }
@@ -77,6 +79,7 @@ type PatchRequest struct {
 	Exdates    []pbehaviorexception.ExdateRequest `json:"exdates" binding:"dive"`
 	Exceptions []string                           `json:"exceptions"`
 	Color      *string                            `json:"color"`
+	Inherited  *bool                              `json:"inherited"`
 
 	EntityPattern          pattern.Entity             `json:"entity_pattern"`
 	CorporateEntityPattern *string                    `json:"corporate_entity_pattern"`
@@ -117,6 +120,8 @@ type Response struct {
 	savedpattern.EntityPatternFields `bson:",inline"`
 
 	RRuleComputedStart *datetime.CpsTime `bson:"rrule_cstart" json:"-"`
+
+	Inherited bool `bson:"inherited" json:"inherited"`
 }
 
 type NullableTime struct {

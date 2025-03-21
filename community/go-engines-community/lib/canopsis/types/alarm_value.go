@@ -540,10 +540,8 @@ type AlarmValue struct {
 	// EventsCount accumulates count of check events.
 	EventsCount CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos map[string]map[string]interface{} `bson:"infos" json:"infos"`
-
-	// store version of dynamic-infos rule
-	RuleVersion map[string]string `bson:"infos_rule_version" json:"infos_rule_version"`
+	Infos           map[string]map[string]interface{} `bson:"infos" json:"infos"`
+	LastInfosUpdate datetime.MicroTime                `bson:"last_infos_update,omitempty" json:"last_infos_update,omitempty"`
 
 	// InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
 	// It's used only to compute InactiveDuration.

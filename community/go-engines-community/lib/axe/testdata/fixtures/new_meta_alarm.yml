@@ -22,7 +22,6 @@ periodical_alarm:
       output: <LoremIpsumSentence(3)>
       initial_output: <LoremIpsumSentence(3)>
       infos: { }
-      infos_rule_version: { }
       long_output: ""
       initial_long_output: ""
       long_output_history: [ "" ]

@@ -23,5 +23,7 @@ func FindDeprecatedFlags(flags ...string) []string {
 }
 
 func LogDeprecatedFlags(logger zerolog.Logger, deprecatedFlags []string) {
-	logger.Warn().Strs("flags", deprecatedFlags).Msg("Deprecated flags will be removed in a future versions.")
+	if len(deprecatedFlags) != 0 {
+		logger.Warn().Strs("flags", deprecatedFlags).Msg("Deprecated flags will be removed in a future versions.")
+	}
 }

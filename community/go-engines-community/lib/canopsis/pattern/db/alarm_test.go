@@ -651,4 +651,46 @@ func TestAlarmPatternToMongoQuery(t *testing.T) {
 		nil,
 		nil,
 	)
+	f(
+		pattern.Alarm{
+			{
+				{
+					Field:     "tags",
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-1", "label-2"}),
+				},
+				{
+					Field:     "tags",
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-3"}),
+				},
+			},
+			{
+				{
+					Field:     "tags",
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionHasNotLabels, []string{"label-4", "label-5"}),
+				},
+				{
+					Field:     "tags",
+					Condition: pattern.NewStringArrayCondition(pattern.ConditionHasNotLabels, []string{"label-6"}),
+				},
+			},
+		},
+		bson.M{
+			"$or": []bson.M{
+				{
+					"$and": []bson.M{
+						{"alarm.tags": bson.M{"$regex": "^(label-1|label-2)(?:\\:|$)"}},
+						{"alarm.tags": bson.M{"$regex": "^(label-3)(?:\\:|$)"}},
+					},
+				},
+				{
+					"$and": []bson.M{
+						{"alarm.tags": bson.M{"$not": bson.M{"$regex": "^(label-4|label-5)(?:\\:|$)"}}},
+						{"alarm.tags": bson.M{"$not": bson.M{"$regex": "^(label-6)(?:\\:|$)"}}},
+					},
+				},
+			},
+		},
+		nil,
+		nil,
+	)
 }

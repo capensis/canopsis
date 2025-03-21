@@ -30,6 +30,8 @@ const (
 	ChangeStreamTypeInsert = "insert"
 	ChangeStreamTypeUpdate = "update"
 	ChangeStreamTypeDelete = "delete"
+
+	DefaultGraphLookupMaxDepth = 100
 )
 
 type contextKey string
