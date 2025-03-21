@@ -114,9 +114,9 @@ Notez au préalable que :
 
 ## Activation de la configuration HTTPS
 
-=== "Paquets CentOS 7"
+=== "Paquets RHEL"
 
-    Éditez le fichier `/etc/nginx/conf.d/default.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
+    Éditez le fichier `/etc/nginx/conf.d/canopsis.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
 
     ```nginx hl_lines="1 5"
     set $canopsis_server_name "canopsis.mon-si.fr";
