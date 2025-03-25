@@ -73,6 +73,8 @@ type AxeParameters struct {
 	// Check
 	LongOutput    string            `json:"long_output,omitempty"`
 	Tags          map[string]string `json:"tags,omitempty"`
+	ImportTags    map[string]string `json:"imtags,omitempty"`
+	ImportSource  string            `json:"impsrc,omitempty"`
 	Connector     string            `json:"connector,omitempty"`
 	ConnectorName string            `json:"connector_name,omitempty"`
 	// Idle events
