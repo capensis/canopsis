@@ -132,7 +132,7 @@ type ImportJob struct {
 	ExternalDataTable string            `bson:"exdt" json:"-"`
 	Separator         rune              `bson:"separator" json:"-"`
 	Filepath          string            `bson:"filepath" json:"-"`
-	Columns           []string          `bson:"columns" json:"-"`
+	Columns           []string          `bson:"columns" json:"columns"`
 	ColumnLengths     []int             `bson:"column_lengths" json:"-"`
 	Created           datetime.CpsTime  `bson:"created" json:"-"`
 	LastPing          *datetime.CpsTime `bson:"last_ping" json:"-"`

@@ -2856,6 +2856,10 @@ definitions:
     properties:
       _id:
         type: string
+      columns:
+        items:
+          type: string
+        type: array
       status:
         type: integer
     type: object
