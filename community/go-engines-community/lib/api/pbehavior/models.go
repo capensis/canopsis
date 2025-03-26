@@ -17,6 +17,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 )
 
+const (
+	BulkConnectorActionCreate = "create"
+	BulkConnectorActionDelete = "delete"
+)
+
 type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
@@ -217,4 +222,18 @@ type BulkConnectorDeleteRequestItem struct {
 	Start    *datetime.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
 	Stop     *datetime.CpsTime `json:"tstop" binding:"required" swaggertype:"integer"`
 	Comment  string            `json:"comment" binding:"required"`
+}
+
+type BulkConnectorEditRequestItem struct {
+	Action   string            `json:"action" binding:"oneof=create delete"`
+	Author   string            `json:"author" swaggerignore:"true"`
+	Entities []string          `json:"entities" binding:"required,notblank"`
+	Origin   string            `json:"origin" binding:"required,max=255"`
+	Start    *datetime.CpsTime `json:"tstart" binding:"required" swaggertype:"integer"`
+	Stop     *datetime.CpsTime `json:"tstop" binding:"required" swaggertype:"integer"`
+	Comment  string            `json:"comment" binding:"required"`
+	Name     string            `json:"name" binding:"max=255"`
+	Reason   string            `json:"reason"`
+	Type     string            `json:"type"`
+	Color    string            `json:"color" binding:"iscolororempty"`
 }
