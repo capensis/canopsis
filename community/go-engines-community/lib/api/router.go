@@ -1980,6 +1980,13 @@ func RegisterRoutes(
 					middleware.PreProcessBulk(apiConfigProvider, true),
 					pbehaviorApi.BulkConnectorDelete,
 				)
+				connectorPbehaviorRouter.PUT(
+					"",
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionCreate, enforcer),
+					middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, true),
+					pbehaviorApi.BulkConnectorEdit,
+				)
 			}
 
 			entityRouter := bulkRouter.Group("/entities")
