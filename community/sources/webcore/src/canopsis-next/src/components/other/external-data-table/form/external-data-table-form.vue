@@ -20,8 +20,6 @@
 </template>
 
 <script>
-import { onMounted, onBeforeUnmount } from 'vue';
-
 import ExternalDataTableDatabaseField from './fields/exterrnal-data-table-database-field.vue';
 
 export default {
@@ -46,12 +44,6 @@ export default {
   },
   setup() {
     const nameRegex = /^[a-z_][\w_]*$/i;
-
-    const attachRegexRule = () => {};
-    const detachRegexRule = () => {};
-
-    onMounted(attachRegexRule);
-    onBeforeUnmount(detachRegexRule);
 
     return {
       nameRegex,
