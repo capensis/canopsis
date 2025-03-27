@@ -28,7 +28,15 @@
 </template>
 <script>
 import { pick } from 'lodash';
-import { ref, toRef } from 'vue';
+import {
+  ref,
+  toRef,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
+
+import Observer from '@/services/observer';
 
 import { externalDataTableColumnsToForm } from '@/helpers/entities/external-data-table/form';
 
@@ -57,6 +65,8 @@ export default {
       options,
       updateOptions,
 
+      fetchList,
+
       showImportExternalDataTablesModal,
       showCreateExternalDataTableRecordModal,
       showEditExternalDataTableRecordModal,
@@ -78,6 +88,11 @@ export default {
         column_types: Object.values(newColumns),
       },
     });
+
+    const observer = inject('$refresh', new Observer());
+
+    onMounted(() => observer.registerChild(fetchList));
+    onBeforeUnmount(() => observer.unregisterChild(fetchList));
 
     return {
       records,

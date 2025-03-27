@@ -39,8 +39,11 @@
 import { map } from 'lodash';
 import { toRef, onMounted } from 'vue';
 
+import { PAGINATION_LIMIT } from '@/config';
+
 import { openUrlInNewTab } from '@/helpers/url';
 import { getExternalDataTableRecordsFileUrl } from '@/helpers/entities/external-data-table/url';
+import { convertSortToQuery } from '@/helpers/entities/shared/query';
 
 import { useFilePollingWithPending } from '@/hooks/polling';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
@@ -107,7 +110,15 @@ export default {
       showDuplicateExternalDataTableRecordModal,
       showRemoveExternalDataTableRecordModal,
       showRemoveSelectedExternalDataTableRecordsModal,
-    } = useExternalDataTableRecordsList({ externalDataTable });
+    } = useExternalDataTableRecordsList({
+      externalDataTable,
+      initialQuery: {
+        page: 1,
+        limit: PAGINATION_LIMIT,
+
+        ...convertSortToQuery(props.widget),
+      },
+    });
 
     /**
      * Fetches the widget item data and then loads the associated records list
