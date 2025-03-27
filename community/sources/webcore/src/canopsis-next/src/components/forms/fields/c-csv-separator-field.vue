@@ -3,6 +3,7 @@
     v-field="value"
     :label="$t('common.separator')"
     :items="separators"
+    :disabled="disabled"
   />
 </template>
 
@@ -16,6 +17,10 @@ export default {
     value: {
       type: String,
       default: CSV_SEPARATORS.comma,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {

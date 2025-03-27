@@ -4,26 +4,20 @@ import request from '@/services/request';
 
 import { createCRUDModule } from '@/store/plugins/entities';
 
-import { convertObjectToFormData } from '@/helpers/request';
+import recordModule from './record';
+import importModule from './import';
 
 export default createCRUDModule({
   route: API_ROUTES.externalDataTables,
   withWithoutStore: true,
 }, {
+  modules: {
+    record: recordModule,
+    import: importModule,
+  },
   actions: {
     fetchItemWithoutStore(context, { id }) {
       return request.get(`${API_ROUTES.externalDataTables}/${id}`);
-    },
-
-    /**
-     * DATA
-     */
-    fetchData(context, { id } = {}) {
-      return request.get(`${API_ROUTES.externalDataTables}/${id}/data`);
-    },
-
-    createData(context, { id, data } = {}) {
-      return request.post(`${API_ROUTES.externalDataTables}/${id}/data`, data);
     },
 
     /**
@@ -34,24 +28,14 @@ export default createCRUDModule({
     },
 
     /**
-     * IMPORTS
+     * EXPORT
      */
-    createImport(context, { id, data } = {}) {
-      return request.post(`${API_ROUTES.externalDataImport}/${id}`, convertObjectToFormData(data), {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+    createExport(context, { id, data } = {}) {
+      return request.post(`${API_ROUTES.externalDataExport}/${id}`, data);
     },
 
-    completeImport(context, { id, data } = {}) {
-      return request.put(`${API_ROUTES.externalDataImport}/${id}/complete`, data);
-    },
-
-    fetchImportData(context, { id } = {}) {
-      return request.get(`${API_ROUTES.externalDataImport}/${id}/data`);
-    },
-
-    fetchImportStatus(context, { id } = {}) {
-      return request.get(`${API_ROUTES.externalDataImport}/${id}/status`);
+    fetchExportStatus(context, { id } = {}) {
+      return request.get(`${API_ROUTES.externalDataExport}/${id}`);
     },
   },
 });

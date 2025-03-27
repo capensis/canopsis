@@ -63,6 +63,8 @@ export const useLocalQuery = ({
     }
   };
 
+  const resetQuery = () => query.value = { ...initialQuery };
+
   const handler = (handlerQuery = query.value) => onUpdate(handlerQuery);
 
   const updateQueryFieldsMethods = Object.keys(initialQuery).reduce((acc, field) => {
@@ -77,6 +79,7 @@ export const useLocalQuery = ({
     query,
     updateQuery,
     updateQueryField,
+    resetQuery,
     handler,
   };
 };

@@ -8,13 +8,13 @@
     />
 
     <v-text-field
-      v-for="rule in externalDataTable.linked_rules"
+      v-for="column in externalDataTable.columns"
       v-validate="'required'"
-      v-field="form[rule._id]"
-      :key="rule._id"
-      :label="rule.name"
-      :name="rule._id"
-      :error-messages="errors.collect(rule._id)"
+      v-field="form[column]"
+      :key="column"
+      :label="column"
+      :name="column"
+      :error-messages="errors.collect(column)"
     />
   </v-layout>
 </template>

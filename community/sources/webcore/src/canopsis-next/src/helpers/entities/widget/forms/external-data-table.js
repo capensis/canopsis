@@ -1,5 +1,5 @@
 import { PAGINATION_LIMIT } from '@/config';
-import { ALARM_DENSE_TYPES, CSV_SEPARATORS, DEFAULT_PERIODIC_REFRESH, EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
+import { DENSE_TYPES, CSV_SEPARATORS, DEFAULT_PERIODIC_REFRESH, EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
 
 import { durationWithEnabledToForm } from '@/helpers/date/duration';
 import { columnsParametersToForm, widgetSortToForm } from '@/helpers/entities/widget/forms/alarm';
@@ -41,7 +41,7 @@ export const externalDataTableWidgetParametersToForm = parameters => ({
   widgetExportColumns:
     widgetColumnsToForm(parameters.widgetExportColumns ?? []),
   columns: columnsParametersToForm(parameters.columns),
-  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
+  dense: parameters.dense ?? DENSE_TYPES.large,
   exportCsvSeparator: parameters.exportCsvSeparator ?? CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
 });

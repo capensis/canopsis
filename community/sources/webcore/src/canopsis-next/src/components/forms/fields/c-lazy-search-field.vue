@@ -126,7 +126,7 @@ export default {
       default: '_id',
     },
     itemValue: {
-      type: String,
+      type: [String, Function],
       default: '_id',
     },
     noDataText: {

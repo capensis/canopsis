@@ -79,9 +79,9 @@ import { getTechMetricsDownloadFileUrl } from '@/helpers/entities/metric/url';
 import { openUrlInNewTab } from '@/helpers/url';
 
 import { useI18n } from '@/hooks/i18n';
-import { useExportFile } from '@/hooks/export-file';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useTechMetrics } from '@/hooks/store/modules/tech-metrics';
+import { useFilePolling } from '@/hooks/polling';
 
 export default {
   setup() {
@@ -137,7 +137,7 @@ export default {
     /**
      * Handles file generation and download for technical metrics export.
      */
-    const { generateFile } = useExportFile({
+    const { poll: generateFile } = useFilePolling({
       createHandler: createTechMetricsExport,
       fetchHandler: fetchTechMetrics,
       completedStatus: TECH_METRICS_EXPORT_STATUSES.success,

@@ -11,10 +11,11 @@ export const useExternalDataTable = () => {
     removeExternalDataTable: 'remove',
     fetchExternalDataTablesListWithoutStore: 'fetchListWithoutStore',
     fetchExternalDataTableWithoutStore: 'fetchItemWithoutStore',
+    fetchExternalDataTableDataWithoutStore: 'fetchDataWithoutStore',
     fetchExternalDataTableSchema: 'fetchSchema',
 
-    createExternalDataTableImport: 'createImport',
-    fetchExternalDataTableImportData: 'fetchImportData',
+    createExternalDataTableExport: 'createExport',
+    fetchExternalDataTableExportStatus: 'fetchExportStatus',
   });
 
   return {

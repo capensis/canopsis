@@ -271,6 +271,9 @@ export default {
       [WIDGET_TYPES.availability]: {
         title: 'Disponibilité',
       },
+      [WIDGET_TYPES.externalDataTable]: {
+        title: 'External data',
+      },
       chart: {
         title: 'Graphique',
       },
@@ -784,6 +787,12 @@ export default {
       phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
       phrase: 'archiver ou supprimer',
     },
+    deleteExternalDataTable: {
+      title: 'Delete Reference table / collection',
+      text: 'You are about to delete data.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type table / collection name to confirm:',
+    },
   },
   pbehaviorsCalendar: {
     title: 'Comportements périodiques',
@@ -1045,5 +1054,24 @@ export default {
     title: 'Enregistrement des événements {date}',
     subtitle: '{count} événements reçus',
     buttonTooltip: 'Supprimer les événements reçus',
+  },
+  createExternalDataTable: {
+    create: {
+      title: 'Ajouter des données externes (table / collection)',
+    },
+    edit: {
+      title: 'Modifier les données externes (table / collection)',
+    },
+  },
+  createExternalDataTableRecord: {
+    create: {
+      title: 'Ajouter un enregistrement',
+    },
+    edit: {
+      title: 'Modifier l\'enregistrement',
+    },
+    duplicate: {
+      title: 'Enregistrement en double',
+    },
   },
 };

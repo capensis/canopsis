@@ -14,6 +14,8 @@ exports[`context Renders \`context\` widget settings with all rights 1`] = `
     <field-default-sort-column-stub
       columns="[object Object],[object Object]"
       columnslabel="Column name"
+      itemtext="text"
+      itemvalue="value"
       value="[object Object]"
     />
     <field-columns-stub
@@ -102,6 +104,8 @@ exports[`context Renders \`context\` widget settings with custom props 1`] = `
     <field-default-sort-column-stub
       columns=""
       columnslabel="Column name"
+      itemtext="text"
+      itemvalue="value"
       value="[object Object]"
     />
     <field-columns-stub
@@ -181,6 +185,8 @@ exports[`context Renders \`context\` widget settings with default props 1`] = `
     <field-default-sort-column-stub
       columns="[object Object],[object Object]"
       columnslabel="Column name"
+      itemtext="text"
+      itemvalue="value"
       value="[object Object]"
     />
     <field-columns-stub
@@ -261,6 +267,8 @@ exports[`context Renders \`context\` widget settings with default props with cha
     <field-default-sort-column-stub
       columns="[object Object],[object Object]"
       columnslabel="Column name"
+      itemtext="text"
+      itemvalue="value"
       value="[object Object]"
     />
     <field-columns-stub

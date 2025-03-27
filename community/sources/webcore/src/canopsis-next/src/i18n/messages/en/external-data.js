@@ -3,6 +3,7 @@ import {
   EXTERNAL_DATA_CONDITION_TYPES,
   EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS,
   EXTERNAL_DATA_TABLES_TYPES,
+  EXTERNAL_DATA_TABLE_COLUMN_TYPES,
 } from '@/constants';
 
 export default {
@@ -19,8 +20,8 @@ export default {
     reference: 'Will be used in actions as <strong>.ExternalData.&lt;Reference&gt;</strong>',
   },
   types: {
-    [EXTERNAL_DATA_TYPES.mongo]: 'MongoDB collection',
     [EXTERNAL_DATA_TYPES.api]: 'API',
+    [EXTERNAL_DATA_TYPES.table]: 'Table',
   },
   conditionTypes: {
     [EXTERNAL_DATA_CONDITION_TYPES.select]: 'Select',
@@ -43,6 +44,23 @@ export default {
   tableNameTooltip: 'Supported symbols: latin letters, “_”, numbers (not at the beginning)',
 
   importFileDescription: 'First row has to contain column names',
+  exportTableStructure: 'Export table structure',
 
   tableField: 'Collection / table',
+
+  andMore: 'and more...',
+  linkedRules: {
+    widgets: '<strong>Widgets</strong> that uses this table<br><ul>{rules}</ul>',
+    eventFilters: '<strong>Event filters</strong>\n<ul>{rules}</ul>',
+    links: '<strong>Links</strong>\n<ul>{rules}</ul>',
+  },
+  tableCanBeDeletedInConfig: 'Table can be deleted only in configuration file',
+  tableCanBeDeletedAfter: 'Table can be deleted after deletion of \n{rules}',
+  tableRemovedFromConfig: 'Table is removed from configuration file, but still used in the following items.\n<strong>Move table back to configuration file or delete all items that use it</strong>\n{rules}',
+
+  tableColumnTypes: {
+    [EXTERNAL_DATA_TABLE_COLUMN_TYPES.noType]: 'No type',
+    [EXTERNAL_DATA_TABLE_COLUMN_TYPES.filter]: 'Filter',
+    [EXTERNAL_DATA_TABLE_COLUMN_TYPES.context]: 'Context',
+  },
 };
