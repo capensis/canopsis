@@ -33,7 +33,6 @@ type parseResult struct {
 	serviceEvents          []types.Event
 	resourceEvents         []types.Event
 	updatedComponentEvents []types.Event
-	existedComponentEvents []types.Event
 }
 
 type parseEntityResult struct {
@@ -45,7 +44,6 @@ type parseEntityResult struct {
 	serviceEvents          []types.Event
 	resourceEvents         []types.Event
 	updatedComponentEvents []types.Event
-	existedComponentEvents []types.Event
 }
 
 type worker struct {
@@ -149,64 +147,24 @@ func (w *worker) WorkPartial(ctx context.Context, filename, source string) (stat
 		w.metricMetaUpdater.DeleteById(ctx, res.removedIds...)
 	}
 
-	serviceCount, err := w.entityCollection.CountDocuments(ctx, bson.M{"type": types.EntityTypeService})
-	if err != nil {
-		return stats, err
-	}
-
-	if serviceCount == 0 {
-		for _, event := range res.updatedComponentEvents {
-			err = w.publisher.SendEvent(ctx, event)
-			if err != nil {
-				return stats, err
-			}
-		}
-
-		for _, event := range res.existedComponentEvents {
-			err = w.publisher.SendEvent(ctx, event)
-			if err != nil {
-				return stats, err
-			}
-		}
-	} else if len(res.serviceEvents)+len(res.resourceEvents) <= int(serviceCount) {
-		for _, event := range res.serviceEvents {
-			err = w.publisher.SendEvent(ctx, event)
-			if err != nil {
-				return stats, err
-			}
-		}
-
-		for _, event := range res.resourceEvents {
-			err = w.publisher.SendEvent(ctx, event)
-			if err != nil {
-				return stats, err
-			}
-		}
-
-		for _, event := range res.updatedComponentEvents {
-			err = w.publisher.SendEvent(ctx, event)
-			if err != nil {
-				return stats, err
-			}
-		}
-	} else {
-		err = w.sendUpdateServiceEvents(ctx)
+	for _, event := range res.serviceEvents {
+		err = w.publisher.SendEvent(ctx, event)
 		if err != nil {
 			return stats, err
 		}
+	}
 
-		for _, event := range res.updatedComponentEvents {
-			err = w.publisher.SendEvent(ctx, event)
-			if err != nil {
-				return stats, err
-			}
+	for _, event := range res.resourceEvents {
+		err = w.publisher.SendEvent(ctx, event)
+		if err != nil {
+			return stats, err
 		}
+	}
 
-		for _, event := range res.existedComponentEvents {
-			err = w.publisher.SendEvent(ctx, event)
-			if err != nil {
-				return stats, err
-			}
+	for _, event := range res.updatedComponentEvents {
+		err = w.publisher.SendEvent(ctx, event)
+		if err != nil {
+			return stats, err
 		}
 	}
 
@@ -264,7 +222,6 @@ func (w *worker) parseFile(ctx context.Context, filename, source string, withEve
 	res.serviceEvents = entityParseRes.serviceEvents
 	res.resourceEvents = entityParseRes.resourceEvents
 	res.updatedComponentEvents = entityParseRes.updatedComponentEvents
-	res.existedComponentEvents = entityParseRes.existedComponentEvents
 
 	return res, nil
 }
@@ -293,7 +250,6 @@ func (w *worker) parseEntities(
 
 	serviceEvents := make([]types.Event, 0)
 	resourceEvents := make([]types.Event, 0)
-	existedComponentEvents := make([]types.Event, 0)
 	updatedComponentEvents := make([]types.Event, 0)
 
 	for decoder.More() {
@@ -303,9 +259,23 @@ func (w *worker) parseEntities(
 			return res, fmt.Errorf("failed to decode cis item: %w", err)
 		}
 
+		id := ""
+		switch ci.Type {
+		case types.EntityTypeService:
+			id = ci.Name
+		case types.EntityTypeResource:
+			id = ci.Name + "/" + ci.Component
+		case types.EntityTypeComponent:
+			id = ci.Name
+		}
+
 		err = w.validate(ci)
 		if err != nil {
-			return res, fmt.Errorf("ci = %s, validation error: %s", ci.ID, err.Error())
+			if ci.Type == types.EntityTypeService {
+				return res, fmt.Errorf("ci = %s, validation error: %s", ci.Name, err.Error())
+			}
+
+			return res, fmt.Errorf("ci = %s, validation error: %s", id, err.Error())
 		}
 
 		if ci.Type == types.EntityTypeService && !match.ValidateEntityPattern(ci.EntityPattern, common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
@@ -313,6 +283,7 @@ func (w *worker) parseEntities(
 			continue
 		}
 
+		categoryID := ""
 		if ci.CategoryName != "" {
 			var category entitycategory.Category
 
@@ -335,22 +306,20 @@ func (w *worker) parseEntities(
 				}
 			}
 
-			ci.CategoryID = category.ID
+			categoryID = category.ID
 		}
-
-		w.fillDefaultFields(&ci, source, now)
 
 		eventType := ""
 		var oldEntity struct {
-			EntityConfiguration `bson:",inline"`
-			Resources           []string `bson:"resources"`
+			Entity    `bson:",inline"`
+			Resources []string `bson:"resources"`
 		}
 
 		findCriteria := bson.M{"soft_deleted": bson.M{"$exists": false}}
 		if ci.Type == types.EntityTypeService {
 			findCriteria["name"] = ci.Name
 		} else {
-			findCriteria["_id"] = ci.ID
+			findCriteria["_id"] = id
 		}
 
 		cursor, err := w.entityCollection.Aggregate(ctx, []bson.M{
@@ -383,24 +352,28 @@ func (w *worker) parseEntities(
 			return res, err
 		}
 
+		if oldEntity.ID != "" {
+			id = oldEntity.ID
+		}
+
 		switch ci.Action {
 		case ActionSet:
 			if ci.Type == types.EntityTypeComponent {
-				componentInfos[ci.ID] = ci.Infos
-				componentsExist[ci.ID] = true
+				componentInfos[id] = ci.Infos
+				componentsExist[id] = true
 			}
 
 			if oldEntity.ID == "" {
-				writeModels = append(writeModels, w.createEntity(ci))
+				writeModels = append(writeModels, w.updateEntity(ci, Entity{}, id, categoryID, source, now))
 				if ci.Type == types.EntityTypeResource {
 					if _, ok := componentsExist[ci.Component]; !ok {
 						componentsExist[ci.Component] = false
 					}
 				}
 
-				updatedIds = append(updatedIds, ci.ID)
+				updatedIds = append(updatedIds, id)
 			} else {
-				writeModels = append(writeModels, w.updateEntity(&ci, oldEntity.EntityConfiguration, true))
+				writeModels = append(writeModels, w.updateEntity(ci, oldEntity.Entity, oldEntity.ID, categoryID, source, now))
 				if ci.Type == types.EntityTypeResource {
 					componentsExist[ci.Component] = true
 				}
@@ -413,7 +386,7 @@ func (w *worker) parseEntities(
 				case types.EntityTypeService:
 					eventType = types.EventTypeRecomputeEntityService
 				default:
-					if oldEntity.Enabled && ci.Enabled {
+					if oldEntity.ID == "" || oldEntity.Enabled && ci.Enabled {
 						eventType = types.EventTypeEntityUpdated
 					} else {
 						eventType = types.EventTypeEntityToggled
@@ -425,16 +398,16 @@ func (w *worker) parseEntities(
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to delete an entity service with name = %s", ci.Name)
 				} else {
-					err = fmt.Errorf("failed to delete an entity with _id = %s", ci.ID)
+					err = fmt.Errorf("failed to delete an entity with _id = %s", id)
 				}
 
 				return res, err
 			}
 
-			if ci.Type == types.EntityTypeResource && !deletedResources[ci.ID] {
-				deletedResources[ci.ID] = true
+			if ci.Type == types.EntityTypeResource && !deletedResources[id] {
+				deletedResources[id] = true
 			} else if ci.Type == types.EntityTypeComponent {
-				componentsToDelete[ci.ID] = true
+				componentsToDelete[id] = true
 
 				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
@@ -454,7 +427,7 @@ func (w *worker) parseEntities(
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to enable an entity service with name = %s", ci.Name)
 				} else {
-					err = fmt.Errorf("failed to enable an entity with _id = %s", ci.ID)
+					err = fmt.Errorf("failed to enable an entity with _id = %s", id)
 				}
 
 				return res, err
@@ -465,7 +438,7 @@ func (w *worker) parseEntities(
 				eventType = types.EventTypeRecomputeEntityService
 			default:
 				if ci.Type == types.EntityTypeComponent {
-					componentInfos[ci.ID] = ci.Infos
+					componentInfos[id] = ci.Infos
 				}
 
 				eventType = types.EventTypeEntityToggled
@@ -478,17 +451,17 @@ func (w *worker) parseEntities(
 				if ci.Type == types.EntityTypeService {
 					err = fmt.Errorf("failed to disable an entity service with name = %s", ci.Name)
 				} else {
-					err = fmt.Errorf("failed to disable an entity with _id = %s", ci.ID)
+					err = fmt.Errorf("failed to disable an entity with _id = %s", id)
 				}
 
 				return res, err
 			}
 
-			if ci.Type == types.EntityTypeResource && !deletedResources[ci.ID] {
-				disabledResources[ci.ID] = true
+			if ci.Type == types.EntityTypeResource && !deletedResources[id] {
+				disabledResources[id] = true
 			} else if ci.Type == types.EntityTypeComponent {
-				componentsToDisable[ci.ID] = true
-				componentInfos[ci.ID] = ci.Infos
+				componentsToDisable[id] = true
+				componentInfos[id] = ci.Infos
 
 				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
@@ -515,11 +488,11 @@ func (w *worker) parseEntities(
 		if withEvents && eventType != "" {
 			switch ci.Type {
 			case types.EntityTypeService:
-				serviceEvents = append(serviceEvents, w.createServiceEvent(cmp.Or(oldEntity.EntityConfiguration.ID, ci.ID), eventType, now))
+				serviceEvents = append(serviceEvents, w.createServiceEvent(cmp.Or(oldEntity.ID, id), eventType, now))
 			case types.EntityTypeResource:
-				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.Name, ci.Component, now))
+				resourceEvents = append(resourceEvents, w.createResourceEvent(eventType, ci.Name, ci.Component, now, source, ci.Tags))
 			case types.EntityTypeComponent:
-				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(eventType, ci.ID, now))
+				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(eventType, id, now, source, ci.Tags))
 			}
 		}
 	}
@@ -543,28 +516,21 @@ func (w *worker) parseEntities(
 
 			if errors.Is(err, mongo.ErrNoDocuments) {
 				ci := EntityConfiguration{
-					ID:           componentName,
-					Name:         componentName,
-					Component:    componentName,
-					ImpactLevel:  1,
-					ImportSource: source,
-					Imported:     now,
-					Type:         types.EntityTypeComponent,
-					Enabled:      true,
+					Name:      componentName,
+					Component: componentName,
+					Type:      types.EntityTypeComponent,
+					Enabled:   true,
 				}
 
-				writeModels = append(writeModels, w.createEntity(ci))
-				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now))
+				writeModels = append(writeModels, w.updateEntity(ci, Entity{}, componentName, "", source, now))
+				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now, source, nil))
 			} else {
 				if !oldEntity.Enabled {
 					return res, errors.New("can't create resource for disabled component")
 				}
 
 				componentInfos[componentName] = oldEntity.Infos
-				existedComponentEvents = append(existedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now))
 			}
-		} else {
-			existedComponentEvents = append(existedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now))
 		}
 
 		if len(componentInfos[componentName]) > 0 {
@@ -578,7 +544,6 @@ func (w *worker) parseEntities(
 	res.serviceEvents = serviceEvents
 	res.resourceEvents = resourceEvents
 	res.updatedComponentEvents = updatedComponentEvents
-	res.existedComponentEvents = existedComponentEvents
 
 	return res, nil
 }
@@ -692,78 +657,52 @@ func (w *worker) validate(ci EntityConfiguration) error {
 	return nil
 }
 
-func (w *worker) fillDefaultFields(ci *EntityConfiguration, source string, now datetime.CpsTime) {
-	switch ci.Type {
-	case types.EntityTypeService:
-		ci.ID = ci.Name
-	case types.EntityTypeResource:
-		ci.ID = ci.Name + "/" + ci.Component
-	case types.EntityTypeComponent:
-		ci.ID = ci.Name
+func (w *worker) updateEntity(c EntityConfiguration, oldEntity Entity, id, categoryID, source string, now datetime.CpsTime) mongo.WriteModel {
+	e := Entity{
+		ID:             id,
+		Name:           c.Name,
+		Component:      c.Component,
+		CategoryID:     categoryID,
+		Services:       []string{},
+		EnableHistory:  []int64{},
+		EntityPattern:  c.EntityPattern,
+		OutputTemplate: c.OutputTemplate,
+		Infos:          c.Infos,
+		Type:           c.Type,
+		ImpactLevel:    c.ImpactLevel,
+		Enabled:        c.Enabled,
+		ImportSource:   source,
+		Imported:       now,
+		ImportTags:     types.TransformEventTags(c.Tags),
 	}
 
-	if ci.ImpactLevel == 0 {
-		ci.ImpactLevel = 1
+	if e.ImpactLevel == 0 {
+		e.ImpactLevel = 1
 	}
 
-	ci.ImportSource = source
-	ci.Imported = now
-}
-
-func (w *worker) createEntity(ci EntityConfiguration) mongo.WriteModel {
-	ci.Services = []string{}
-	ci.EnableHistory = make([]int64, 0)
-
-	if ci.Type == types.EntityTypeComponent {
-		ci.Component = ci.ID
+	if e.Type == types.EntityTypeComponent {
+		e.Component = e.ID
 	}
 
-	if ci.Infos == nil {
-		ci.Infos = make(map[string]types.Info)
+	if oldEntity.EnableHistory != nil {
+		e.EnableHistory = oldEntity.EnableHistory
 	}
 
-	return mongo.NewUpdateOneModel().
-		SetFilter(bson.M{"_id": ci.ID}).
-		SetUpdate(bson.M{
-			"$set":         ci,
-			"$setOnInsert": bson.M{"created": datetime.NewCpsTime()},
-			"$unset": bson.M{
-				"soft_deleted":                    "",
-				"resolve_deleted_event_sent":      "",
-				"resolve_deleted_event_processed": "",
-			},
-		}).
-		SetUpsert(true)
-}
-
-func (w *worker) updateEntity(ci *EntityConfiguration, oldEntity EntityConfiguration, mergeInfos bool) mongo.WriteModel {
-	ci.EnableHistory = oldEntity.EnableHistory
-
-	if ci.Type == types.EntityTypeComponent {
-		ci.Component = ci.ID
+	if e.Infos == nil {
+		e.Infos = make(map[string]types.Info)
 	}
 
-	if ci.Infos == nil {
-		ci.Infos = make(map[string]types.Info)
-	}
-
-	if oldEntity.Infos == nil {
-		oldEntity.Infos = make(map[string]types.Info)
-	}
-
-	if mergeInfos {
-		for k, v := range ci.Infos {
-			oldEntity.Infos[k] = v
+	for k, v := range oldEntity.Infos {
+		if _, ok := e.Infos[k]; !ok {
+			e.Infos[k] = v
 		}
-
-		ci.Infos = oldEntity.Infos
 	}
 
 	return mongo.NewUpdateOneModel().
-		SetFilter(bson.M{"_id": oldEntity.ID}).
+		SetFilter(bson.M{"_id": e.ID}).
 		SetUpdate(bson.M{
-			"$set":         ci,
-			"$setOnInsert": bson.M{"created": datetime.NewCpsTime()},
+			"$set":         e,
+			"$setOnInsert": bson.M{"created": now},
 			"$unset": bson.M{
 				"soft_deleted":                    "",
 				"resolve_deleted_event_sent":      "",
@@ -787,7 +726,10 @@ func (w *worker) deleteEntity(id string, now datetime.CpsTime) []mongo.WriteMode
 	return []mongo.WriteModel{
 		mongo.NewUpdateOneModel().
 			SetFilter(bson.M{"_id": id}).
-			SetUpdate(bson.M{"$set": bson.M{"enabled": false, "soft_deleted": now}}),
+			SetUpdate(bson.M{"$set": bson.M{
+				"enabled":      false,
+				"soft_deleted": now,
+			}}),
 	}
 }
 
@@ -810,7 +752,7 @@ func (w *worker) createServiceEvent(id, eventType string, now datetime.CpsTime) 
 	}
 }
 
-func (w *worker) createResourceEvent(eventType, name, component string, now datetime.CpsTime) types.Event {
+func (w *worker) createResourceEvent(eventType, name, component string, now datetime.CpsTime, source string, tags map[string]string) types.Event {
 	return types.Event{
 		Connector:     w.connector,
 		ConnectorName: w.connector,
@@ -821,10 +763,12 @@ func (w *worker) createResourceEvent(eventType, name, component string, now date
 		Resource:      name,
 		Component:     component,
 		SourceType:    types.SourceTypeResource,
+		ImportSource:  source,
+		ImportTags:    tags,
 	}
 }
 
-func (w *worker) createComponentEvent(eventType, name string, now datetime.CpsTime) types.Event {
+func (w *worker) createComponentEvent(eventType, name string, now datetime.CpsTime, source string, tags map[string]string) types.Event {
 	return types.Event{
 		Connector:     w.connector,
 		ConnectorName: w.connector,
@@ -834,5 +778,7 @@ func (w *worker) createComponentEvent(eventType, name string, now datetime.CpsTi
 		Initiator:     types.InitiatorSystem,
 		Component:     name,
 		SourceType:    types.SourceTypeComponent,
+		ImportSource:  source,
+		ImportTags:    tags,
 	}
 }

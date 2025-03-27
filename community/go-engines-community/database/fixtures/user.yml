@@ -3380,7 +3380,10 @@ role:
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
       "@permission_models_stateSetting": 15
+      "@permission_models_storageSettings": 15
       "@permission_models_icon": 15
+      "@permission_models_view_import_export": 1
+      "@permission_models_notification": 1
       "@permission_models_eventsRecord": 1
       "@permission_models_privateView": 1
       "@permission_availability_interval": 1
@@ -3410,6 +3413,7 @@ role:
       "@permission_listalarm_links": 1
       "@permission_listalarm_correlation": 1
       "@permission_listalarm_executeInstruction": 1
+      "@permission_listalarm_exportPdf": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
       "@permission_listalarm_bookmark": 1
@@ -3581,6 +3585,7 @@ role_template:
       "@permission_listalarm_links": 1
       "@permission_listalarm_correlation": 1
       "@permission_listalarm_executeInstruction": 1
+      "@permission_listalarm_exportPdf": 1
       "@permission_listalarm_category": 1
       "@permission_listalarm_exportAsCsv": 1
       "@permission_serviceweather_entityAck": 1

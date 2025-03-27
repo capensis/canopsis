@@ -44,13 +44,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libidlerule "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators(client mongo.DbClient) {
+func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
 		return
@@ -204,7 +205,7 @@ func RegisterValidators(client mongo.DbClient) {
 	v.RegisterStructValidationCtx(roleValidator.ValidateEditRequest, role.EditRequest{})
 	v.RegisterStructValidationCtx(roleValidator.ValidateBulkUpdatePermissionsRequestItem, role.BulkUpdatePermissionsRequestItem{})
 
-	userValidator := user.NewValidator(client)
+	userValidator := user.NewValidator(client, secConfig)
 	v.RegisterStructValidationCtx(userValidator.ValidateUpdateRequest, user.UpdateRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidateCreateRequest, user.CreateRequest{})
 	v.RegisterStructValidationCtx(userValidator.ValidatePatchRequest, user.PatchRequest{})

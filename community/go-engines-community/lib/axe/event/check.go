@@ -489,13 +489,31 @@ func (p *checkProcessor) newAlarm(
 	timestamp datetime.CpsTime,
 	alarmConfig config.AlarmConfig,
 ) (types.Alarm, error) {
-	tags := types.TransformEventTags(params.Tags)
+	tags := make([]string, len(entity.ImportTags))
+	copy(tags, entity.ImportTags)
+	has := make(map[string]bool, len(tags))
+	for _, t := range tags {
+		has[t] = true
+	}
+
+	extTags := make([]string, 0, len(params.Tags))
+	for k, v := range params.Tags {
+		t := types.TransformEventTag(k, v)
+		if t != "" {
+			extTags = append(extTags, t)
+			if !has[t] {
+				tags = append(tags, t)
+			}
+		}
+	}
+
 	alarm := types.Alarm{
 		EntityID:     entity.ID,
 		ID:           utils.NewID(),
 		Time:         timestamp,
 		Tags:         tags,
-		ExternalTags: tags,
+		ExternalTags: extTags,
+		ImportTags:   entity.ImportTags,
 		Value: types.AlarmValue{
 			CreationDate:                timestamp,
 			DisplayName:                 types.GenDisplayName(alarmConfig.DisplayNameScheme),
@@ -511,7 +529,6 @@ func (p *checkProcessor) newAlarm(
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
 			Infos:                       map[string]map[string]interface{}{},
-			RuleVersion:                 map[string]string{},
 		},
 	}
 
