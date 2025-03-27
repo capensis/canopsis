@@ -232,6 +232,7 @@ func validateOAuth2Config(config OAuth2ProviderConfig) error {
 func validateConfig(config Config) error {
 	for _, name := range config.Security.AuthProviders {
 		switch name {
+		case AuthMethodApiKey:
 		case AuthMethodBasic:
 			if config.Security.Basic.ExpirationInterval != "" {
 				_, err := datetime.ParseDurationWithUnit(config.Security.Basic.ExpirationInterval)
@@ -302,6 +303,8 @@ func validateConfig(config Config) error {
 					return fmt.Errorf("invalid %s provider config: %w", provider, err)
 				}
 			}
+		default:
+			panic("unknown auth provider: " + name)
 		}
 	}
 

@@ -345,7 +345,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(dbClient)
+		RegisterValidators(dbClient, security.GetConfig())
 		RegisterRoutes(
 			ctx,
 			cfg,

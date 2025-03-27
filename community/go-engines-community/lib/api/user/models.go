@@ -19,7 +19,7 @@ type ListRequest struct {
 
 type CreateRequest struct {
 	EditRequest
-	Source     string `json:"source" binding:"oneoforempty=ldap cas saml"`
+	Source     string `json:"source"`
 	ExternalID string `json:"external_id"`
 }
 
