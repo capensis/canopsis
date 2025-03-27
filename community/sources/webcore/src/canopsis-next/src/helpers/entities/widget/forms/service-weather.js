@@ -75,6 +75,7 @@ import { alarmListBaseParametersToForm, formToAlarmListBaseParameters } from './
  * @property {boolean} entitiesActionsInQueue
  * @property {number} treeOfDependenciesShowType
  * @property {boolean} showRootCauseByStateClick
+ * @property {boolean} defaultInheritedPbehavior
  * @property {ColorIndicator} rootCauseColorIndicator
  */
 
@@ -154,6 +155,7 @@ export const serviceWeatherWidgetParametersToForm = (parameters = {}) => ({
   entitiesActionsInQueue: parameters.entitiesActionsInQueue ?? false,
   treeOfDependenciesShowType: parameters.treeOfDependenciesShowType ?? TREE_OF_DEPENDENCIES_SHOW_TYPES.custom,
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
+  defaultInheritedPbehavior: parameters.defaultInheritedPbehavior ?? false,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
 });
 

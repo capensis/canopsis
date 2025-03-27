@@ -12,6 +12,7 @@ type ListRequest struct {
 	WithHidden  bool     `form:"with_hidden"`
 	SortBy      string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name priority"`
 	Types       []string `form:"types[]" json:"types"`
+	IDs         []string `form:"ids[]" json:"ids"`
 }
 
 type EditRequest struct {

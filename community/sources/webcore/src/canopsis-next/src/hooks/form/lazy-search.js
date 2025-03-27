@@ -109,7 +109,7 @@ export const useLazySearch = ({
       return;
     }
 
-    const { data } = await fetchHandler({
+    const { data } = await unref(fetchHandler)({
       params: {
         limit: arrayValue.value.length,
         [unref(idParamsKey)]: arrayValue.value,
@@ -141,7 +141,7 @@ export const useLazySearch = ({
       search: '',
     },
     fetchHandler: async (params) => {
-      const { data, meta } = await fetchHandler({
+      const { data, meta } = await unref(fetchHandler)({
         params,
       });
 
@@ -246,7 +246,7 @@ export const useLazySearch = ({
   watch(selectedItems, newSelectedItems => emit('update:selected-items', newSelectedItems));
 
   onMounted(() => {
-    if (idParamsKey) {
+    if (unref(idParamsKey)) {
       initializeSelectedItems();
     }
 

@@ -97,9 +97,9 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 				}
 			}
 			if !foundField || err != nil {
-				if _, ok := emptyAlarm.GetStringArrayField(cond.Field); ok {
+				if _, ok := emptyAlarm.GetTagsField(cond.Field); ok {
 					foundField = true
-					condQueries[j], err = cond.Condition.StringArrayToMongoQuery(mongoField, false)
+					condQueries[j], err = cond.Condition.TagsToMongoQuery(mongoField)
 				}
 			}
 

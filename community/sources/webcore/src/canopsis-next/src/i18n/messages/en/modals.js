@@ -130,6 +130,7 @@ export default {
           fullDay: 'Whole day',
           noEnding: 'No ending',
           startOnTrigger: 'Start on trigger',
+          inherited: 'Apply for all dependant entities',
         },
       },
       filter: {

@@ -91,6 +91,7 @@ export default {
   defaultTimeRange: 'Default time range',
   liveWatching: 'Live watching',
   liveWatchingTooltip: 'If enabled, the information about changes in alarms are retrieved using websockets',
+  defaultInheritedPbehavior: 'Apply pbehavior on dependencies too',
   expandPanel: {
     title: 'Expand panel',
   },

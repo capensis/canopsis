@@ -31,6 +31,10 @@ export default {
       type: Object,
       required: true,
     },
+    defaultInheritedPbehavior: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     actionsMap() {
@@ -176,6 +180,8 @@ export default {
         config: {
           entityPattern: createEntityIdPatternByValue(this.item._id),
           entities: [this.item],
+          defaultInherited: this.defaultInheritedPbehavior,
+          withInherited: true,
         },
       });
     },

@@ -131,6 +131,8 @@ describe('pbehaviors-simple-list', () => {
         config: {
           entityPattern: createEntityIdPatternByValue(entity._id),
           entities: [entity],
+          withInherited: false,
+          defaultInherited: false,
           afterSubmit: expect.any(Function),
         },
       },
@@ -155,6 +157,8 @@ describe('pbehaviors-simple-list', () => {
           _id: entityId,
           name: entityName,
         },
+        defaultInherited: true,
+        withInherited: true,
         addable: true,
       },
     });
@@ -167,6 +171,8 @@ describe('pbehaviors-simple-list', () => {
         config: {
           title: `Periodic behaviors - ${entityName}`,
           entityId,
+          withInherited: true,
+          defaultInherited: true,
         },
       },
     );

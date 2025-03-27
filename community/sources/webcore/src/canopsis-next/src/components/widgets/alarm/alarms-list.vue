@@ -77,6 +77,7 @@
           :value="query.tags"
           :label="$tc('common.tag', 2)"
           :show-count="2"
+          multiple
           combobox
           @input="updateTags"
         />

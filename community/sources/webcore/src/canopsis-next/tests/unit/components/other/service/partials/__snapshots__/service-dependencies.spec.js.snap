@@ -54,7 +54,7 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                       arrow_right_alt
                     </i>
                     <span
-                      class="ma-0 v-chip v-chip--no-color theme--light v-size--default white--text"
+                      class="ma-0 v-chip v-chip--no-color theme--light v-size--default v-chip--without-text white--text"
                     >
                       <span
                         class="v-chip__content"

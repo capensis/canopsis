@@ -15,6 +15,7 @@ type ComputedEntityTypeResolver interface {
 		t time.Time,
 	) (ResolveResult, error)
 	GetComputedEntityIDs() ([]string, error)
+	GetComputedServicesWithInheritedPbhIDs() ([]string, error)
 	GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error)
 }
 
@@ -43,6 +44,10 @@ func (r *computedEntityTypeResolver) Resolve(
 
 func (r *computedEntityTypeResolver) GetComputedEntityIDs() ([]string, error) {
 	return r.getter.GetComputedEntityIDs()
+}
+
+func (r *computedEntityTypeResolver) GetComputedServicesWithInheritedPbhIDs() ([]string, error) {
+	return r.getter.GetComputedServiceIDs()
 }
 
 func (r *computedEntityTypeResolver) GetPbehaviorsCount(ctx context.Context, t time.Time) (int, error) {

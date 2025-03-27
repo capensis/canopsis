@@ -54,6 +54,7 @@ type Entity struct {
 
 	ImportSource string            `bson:"import_source,omitempty" json:"import_source"`
 	Imported     *datetime.CpsTime `bson:"imported,omitempty" json:"imported"`
+	ImportTags   []string          `bson:"imtags,omitempty" json:"imtags,omitempty"`
 
 	PbehaviorInfo     PbehaviorInfo     `bson:"pbehavior_info,omitempty" json:"pbehavior_info,omitempty"`
 	LastPbehaviorDate *datetime.CpsTime `bson:"last_pbehavior_date,omitempty" json:"last_pbehavior_date,omitempty"`
