@@ -1,12 +1,12 @@
 import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
 
 import {
-  ALARM_DENSE_TYPES,
+  DENSE_TYPES,
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
   ALARMS_OPENED_VALUES,
-  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  RESIZING_CELLS_CONTENTS_BEHAVIORS,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -262,7 +262,7 @@ export const openedToForm = (opened) => {
 export const columnsParametersToForm = (columns = {}) => ({
   draggable: columns.draggable ?? false,
   resizable: columns.resizable ?? false,
-  cells_content_behavior: columns.cells_content_behavior ?? ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
+  cells_content_behavior: columns.cells_content_behavior ?? RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
 });
 
 /**
@@ -370,7 +370,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   fastPbehaviorReason: parameters.fastPbehaviorReason,
   sticky_header: !!parameters.sticky_header,
   sticky_horizontal_scroll: !!parameters.sticky_horizontal_scroll,
-  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
+  dense: parameters.dense ?? DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {

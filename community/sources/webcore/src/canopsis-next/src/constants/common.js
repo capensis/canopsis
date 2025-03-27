@@ -478,3 +478,17 @@ export const CSV_SEPARATORS = {
   tab: 'tab',
   space: 'space',
 };
+
+export const VIEW_PERIODIC_REFRESH_KEY = '$periodicRefresh';
+export const WIDGET_PERIODIC_REFRESH_KEY = '$periodicRefresh';
+
+export const RESIZING_CELLS_CONTENTS_BEHAVIORS = {
+  wrap: 'wrap',
+  truncate: 'truncate',
+};
+
+export const DENSE_TYPES = {
+  large: 0,
+  medium: 1,
+  small: 2,
+};

@@ -30,7 +30,7 @@
 </template>
 
 <script>
-import { ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import { RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
@@ -44,7 +44,7 @@ export default {
   },
   computed: {
     types() {
-      return Object.values(ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS).map(value => ({
+      return Object.values(RESIZING_CELLS_CONTENTS_BEHAVIORS).map(value => ({
         value,
         label: this.$t(`settings.columnsSettings.cellsContentBehaviors.${value}`),
       }));

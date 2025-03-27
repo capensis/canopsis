@@ -287,6 +287,87 @@ html {
   overflow: visible !important;
 }
 
+.table {
+  &__grid  > .v-data-table__wrapper > table {
+    & > tbody > tr > td,
+    & > thead > tr > th {
+      position: relative;
+
+      &:after {
+        content: ' ';
+        background: rgba(0, 0, 0, 0.12);
+        position: absolute;
+        right: -1px;
+        top: 0;
+        width: 1px;
+        height: 100%;
+      }
+    }
+  }
+
+  &__resize-handler {
+    cursor: col-resize;
+
+    display: flex;
+    justify-content: center;
+
+    width: 15px;
+
+    position: absolute;
+    right: -7px;
+    top: 0;
+
+    height: 100%;
+
+    z-index: 2;
+  }
+
+  &__dragging-handler {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    z-index: 1;
+
+    &:after {
+      content: ' ';
+      position: absolute;
+      transition: .3s cubic-bezier(.25, .8, .5, 1);
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      background: var(--v-secondary-base);
+      opacity: 0.0;
+    }
+
+    &:hover:after {
+      opacity: 0.1;
+    }
+  }
+
+  &--wrapped {
+    & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
+      word-break: break-all;
+      word-wrap: break-word;
+    }
+  }
+
+  &--truncated {
+    td .table-cell__content {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: block;
+    }
+  }
+}
+
 *[aria-required="true"] label:before {
   content: '*';
   padding-right: 4px;

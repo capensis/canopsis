@@ -53,22 +53,13 @@
             @input="updatePage"
           />
         </v-flex>
-        <v-flex
+        <c-grid-btns
           v-if="resizableColumn || draggableColumn"
+          :editing="isColumnsChanging"
           class="alarms-list-table__top-pagination--right-absolute"
-        >
-          <c-action-btn
-            v-if="isColumnsChanging"
-            :tooltip="$t('alarm.tooltips.resetChangeColumns')"
-            icon="$vuetify.icons.restart_alt"
-            @click="resetColumnsSettings"
-          />
-          <c-action-btn
-            :icon="isColumnsChanging ? 'lock_open' : 'lock_outline'"
-            :tooltip="$t(`alarm.tooltips.${isColumnsChanging ? 'finishChangeColumns' : 'startChangeColumns'}`)"
-            @click="toggleColumnEditingMode"
-          />
-        </v-flex>
+          @toggle="toggleColumnEditingMode"
+          @reset="resetColumnsSettings"
+        />
       </v-layout>
       <v-data-table
         v-model="selected"
@@ -113,13 +104,13 @@
             <span
               v-if="draggingMode"
               :key="`header.${item.value}.drag`"
-              class="alarms-list-table__dragging-handler"
+              class="table__dragging-handler"
               @click.stop=""
             />
             <span
               v-if="resizingMode"
               :key="`header.cell.${item.value}.resize`"
-              class="alarms-list-table__resize-handler"
+              class="table__resize-handler"
               @mousedown.stop.prevent="startColumnResize(header.value)"
               @click.stop=""
             />
@@ -199,8 +190,8 @@ import {
   ALARM_ACTION_BUTTON_MARGINS,
   ALARM_ACTION_BUTTON_WIDTHS,
   ALARM_ACTIONS_PADDINGS,
-  ALARM_DENSE_TYPES,
-  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  DENSE_TYPES,
+  RESIZING_CELLS_CONTENTS_BEHAVIORS,
   DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
   MODALS,
 } from '@/constants';
@@ -293,7 +284,7 @@ export default {
     },
     dense: {
       type: Number,
-      default: ALARM_DENSE_TYPES.large,
+      default: DENSE_TYPES.large,
     },
     parentAlarm: {
       type: Object,
@@ -385,11 +376,11 @@ export default {
     },
 
     isCellContentWrapped() {
-      return this.cellsContentBehavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap;
+      return this.cellsContentBehavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap;
     },
 
     isCellContentTruncated() {
-      return this.cellsContentBehavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate;
+      return this.cellsContentBehavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate;
     },
 
     needToAddLeftActionsCell() {
@@ -463,9 +454,9 @@ export default {
       }
 
       const denseType = {
-        [this.isSmallDense]: ALARM_DENSE_TYPES.small,
-        [this.isMediumDense]: ALARM_DENSE_TYPES.medium,
-      }.true ?? ALARM_DENSE_TYPES.large;
+        [this.isSmallDense]: DENSE_TYPES.small,
+        [this.isMediumDense]: DENSE_TYPES.medium,
+      }.true ?? DENSE_TYPES.large;
       const width = this.getColumnWidthByField('actions') ?? 0;
       const widthWithoutPaddings = width - (ALARM_ACTIONS_PADDINGS[denseType] * 2);
       const actionWidth = ALARM_ACTION_BUTTON_WIDTHS[denseType] + ALARM_ACTION_BUTTON_MARGINS[denseType];
@@ -524,11 +515,11 @@ export default {
     },
 
     isMediumDense() {
-      return this.dense === ALARM_DENSE_TYPES.medium;
+      return this.dense === DENSE_TYPES.medium;
     },
 
     isSmallDense() {
-      return this.dense === ALARM_DENSE_TYPES.small;
+      return this.dense === DENSE_TYPES.small;
     },
 
     parentAlarmId() {
@@ -800,52 +791,6 @@ export default {
     &--right-absolute {
       position: absolute;
       right: 0;
-    }
-  }
-
-  &__resize-handler {
-    cursor: col-resize;
-
-    display: flex;
-    justify-content: center;
-
-    width: 15px;
-
-    position: absolute;
-    right: -7px;
-    top: 0;
-
-    height: 100%;
-
-    z-index: 2;
-  }
-
-  &__dragging-handler {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: grab;
-    z-index: 1;
-
-    &:after {
-      content: ' ';
-      position: absolute;
-      transition: .3s cubic-bezier(.25, .8, .5, 1);
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: 0;
-      background: var(--v-secondary-base);
-      opacity: 0.0;
-    }
-
-    &:hover:after {
-      opacity: 0.1;
     }
   }
 

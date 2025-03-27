@@ -7,7 +7,7 @@
       <template #text="">
         <external-data-table-record-form
           v-model="form"
-          :external-data-table="config.value.externalDataTable"
+          :external-data-table="config.externalDataTable"
         />
       </template>
       <template #actions="">
@@ -47,7 +47,7 @@ import ExternalDataTableRecordForm from '@/components/other/external-data-table/
 import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
-  name: MODALS.createExternalDataTable,
+  name: MODALS.createExternalDataTableRecord,
   $_veeValidate: {
     validator: 'new',
     delay: VALIDATION_DELAY,

@@ -213,6 +213,13 @@ export const EXPORT_STATUSES = {
   failed: 2,
 };
 
+export const IMPORT_STATUSES = {
+  created: 0,
+  running: 1,
+  completed: 2,
+  failed: 3,
+};
+
 export const WIDGET_TEMPLATES_TYPES = {
   alarmColumns: 'alarm_columns',
   entityColumns: 'entity_columns',

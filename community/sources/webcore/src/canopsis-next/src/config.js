@@ -294,7 +294,9 @@ export const API_ROUTES = {
   linkCategories: '/api/v4/link-categories',
   icons: '/api/v4/icons',
   externalDataTables: '/api/v4/external-data-tables',
+  bulkExternalDataTables: '/api/v4/bulk/external-data-tables',
   externalDataImport: '/api/v4/external-data-import',
+  externalDataExport: '/api/v4/external-data-export',
   themes: {
     list: '/api/v4/color-themes',
     bulkList: '/api/v4/bulk/color-themes',
@@ -697,6 +699,8 @@ export const FILE_BASE_URL = `${API_HOST}${API_ROUTES.file}`;
 export const DOCUMENTATION_BASE_URL = 'https://doc.canopsis.net/';
 
 export const EXPORT_FETCHING_INTERVAL = 2000;
+
+export const IMPORT_FETCHING_INTERVAL = 500;
 
 export const MAX_PBEHAVIOR_DATES_DIFF_YEARS = 5;
 

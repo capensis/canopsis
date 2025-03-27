@@ -243,6 +243,7 @@ export const useLazySearch = ({
   );
 
   watch(value, () => initializeSelectedItems());
+  watch(selectedItems, newSelectedItems => emit('update:selected-items', newSelectedItems));
 
   onMounted(() => {
     if (idParamsKey) {

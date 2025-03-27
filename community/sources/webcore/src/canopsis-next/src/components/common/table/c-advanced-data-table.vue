@@ -54,6 +54,7 @@
       :hide-default-footer="hideActions || advancedPagination || noPagination"
       :class="tableClass"
       :dense="dense"
+      :ultra-dense="ultraDense"
       :loader-height="loaderHeight"
       :ellipsis-headers="ellipsisHeaders"
       checkbox-color="primary"
@@ -110,6 +111,13 @@
       <template #progress="props">
         <slot
           name="progress"
+          v-bind="props"
+        />
+      </template>
+
+      <template #body.prepend="props">
+        <slot
+          name="body.prepend"
           v-bind="props"
         />
       </template>
@@ -214,10 +222,14 @@ export default {
       required: false,
     },
     tableClass: {
-      type: String,
+      type: [String, Object],
       required: false,
     },
     dense: {
+      type: Boolean,
+      default: false,
+    },
+    ultraDense: {
       type: Boolean,
       default: false,
     },

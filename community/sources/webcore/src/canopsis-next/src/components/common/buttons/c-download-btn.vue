@@ -4,6 +4,7 @@
     :color="color"
     :tooltip="tooltip"
     :disabled="disabled || downloading"
+    :loading="downloading"
     @click="downloadContent"
   />
 </template>
@@ -40,6 +41,10 @@ export default {
     color: {
       type: String,
       default: '',
+    },
+    outlined: {
+      type: Boolean,
+      default: false,
     },
     tooltip: {
       type: String,

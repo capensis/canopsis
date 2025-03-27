@@ -1,4 +1,4 @@
-import { pick } from 'lodash';
+import { omit } from 'lodash';
 
 import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants';
 
@@ -22,15 +22,16 @@ import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } fr
 /**
  * @typedef {ExternalDataCondition} ExternalDataItem
  * @property {ExternalDataType} type
+ * @property {string} reference
+ * @property {string} [table]
  * @property {string} [sort_by]
  * @property {string} [sort]
- * @property {string} [collection]
  * @property {boolean} [optional]
  * @property {Request} [request]
  */
 
 /**
- * @typedef {Object<string, ExternalDataItem>} ExternalData
+ * @typedef {ExternalDataItem[]} ExternalData
  */
 
 /**
@@ -45,7 +46,7 @@ import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } fr
  * @property {RequestForm} request
  * @property {string} reference
  * @property {ExternalDataType} type
- * @property {string} collection
+ * @property {string} table
  * @property {string} sort_by
  * @property {string} sort
  * @property {boolean} optional
@@ -107,19 +108,18 @@ export const externalDataItemConditionsToForm = (item = {}) => {
 /**
  * Convert external data item to form
  *
- * @param {string} reference
  * @param {ExternalDataItem} item
  * @returns {ExternalDataItemForm}
  */
-export const externalDataItemToForm = (reference = '', item = { type: EXTERNAL_DATA_TYPES.mongo }) => ({
+export const externalDataItemToForm = (item = { type: EXTERNAL_DATA_TYPES.table }) => ({
   key: uid(),
-  reference,
+  reference: item.reference,
   type: item.type,
   request: requestToForm(item.request),
   sort_by: item.sort_by,
   sort: item.sort,
   optional: item.optional ?? false,
-  collection: item.collection ?? '',
+  table: item.table?._id ?? '',
   conditions: externalDataItemConditionsToForm(item),
 });
 
@@ -131,7 +131,7 @@ export const externalDataItemToForm = (reference = '', item = { type: EXTERNAL_D
  */
 export const externalDataToForm = externalData => (
   externalData
-    ? Object.entries(externalData).map(([reference, item]) => externalDataItemToForm(reference, item))
+    ? externalData.map(externalDataItemToForm)
     : []
 );
 
@@ -159,26 +159,16 @@ export const formToExternalDataConditions = (form = []) => (
  * @param {ExternalDataForm} form
  * @returns {ExternalData}
  */
-export const formToExternalData = (form = []) => (
-  form.reduce((acc, externalData) => {
-    const { type, reference } = externalData;
+export const formToExternalData = (form = []) => form.map((externalData) => {
+  const { type, reference } = externalData;
 
-    const additionalFields = isApiExternalDataType(type)
-      ? { request: formToRequest(externalData.request) }
-      : {
-        ...pick(externalData, ['sort', 'sort_by', 'collection', 'optional']),
-        ...formToExternalDataConditions(externalData.conditions),
-      };
-
-    acc[reference] = {
-      type,
-
-      ...additionalFields,
+  return isApiExternalDataType(type)
+    ? { reference, request: formToRequest(externalData.request) }
+    : {
+      ...omit(externalData, ['request']),
+      ...formToExternalDataConditions(externalData.conditions),
     };
-
-    return acc;
-  }, {})
-);
+});
 
 /**
  * Convert template variables errors structure to form structure
