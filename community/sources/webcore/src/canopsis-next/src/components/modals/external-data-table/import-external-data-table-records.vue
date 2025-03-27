@@ -201,10 +201,12 @@ export default {
       options,
       updateOptions,
       fetchList,
-    } = useFetchListWithoutStoreWithOptions(rest => fetchExternalDataTableImportData({
-      ...rest,
-      id: activeImportFileId.value,
-    }));
+    } = useFetchListWithoutStoreWithOptions({
+      fetchListHandler: rest => fetchExternalDataTableImportData({
+        ...rest,
+        id: activeImportFileId.value,
+      }),
+    });
 
     /**
      * Handles file generation and download for technical metrics export.

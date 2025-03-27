@@ -50,21 +50,18 @@ export const usePendingWithLocalQuery = ({
 };
 
 /**
- * Custom hook to fetch a list of data without using a store, with options for query management.
+ * Custom hook to fetch a list of data with query options management
  *
- * @param {Function} fetchListHandler - The asynchronous function responsible for fetching the list data.
- * @returns {Object} An object containing:
- *   - `data` {Ref<Array>} - Reactive reference to the fetched data array.
- *   - `meta` {Ref<Object>} - Reactive reference to metadata associated with the fetched data.
- *   - `pending` {Ref<boolean>} - Reactive reference indicating the pending state of the fetch operation.
- *   - `fetchData` {Function} - Function to trigger the data fetch operation with the current query.
- *   - `query` {Ref<Object>} - Reactive reference to the current query state.
- *   - `updateQuery` {Function} - Function to update the query state.
- *   - `resetQuery` {Function} - Function to reset the query to its initial state.
- *   - `options` {ComputedRef<Object>} - Computed reference to the current pagination and sorting options.
- *   - `updateOptions` {Function} - Function to update the pagination and sorting options.
+ * This hook combines data fetching with query state management and options handling.
+ * It provides reactive references for the fetched data, metadata, and loading state,
+ * along with functions to manage the query and pagination/sorting options.
+ *
+ * @param {Object} options - Configuration options for the hook
+ * @param {Function} options.fetchListHandler - Async function that fetches data based on provided parameters
+ * @param {Object} [options.initialQuery] - Initial query state
+ * @returns {Object}
  */
-export const useFetchListWithoutStoreWithOptions = (fetchListHandler) => {
+export const useFetchListWithoutStoreWithOptions = ({ fetchListHandler, initialQuery }) => {
   const data = ref([]);
   const meta = ref({});
 
@@ -75,6 +72,7 @@ export const useFetchListWithoutStoreWithOptions = (fetchListHandler) => {
     resetQuery,
     fetchHandlerWithQuery: fetchList,
   } = usePendingWithLocalQuery({
+    initialQuery,
     fetchHandler: async (fetchQuery) => {
       const response = await fetchListHandler({ params: convertQueryToRequest(fetchQuery) });
 
