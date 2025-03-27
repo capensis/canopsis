@@ -8,6 +8,7 @@
         <pbehavior-form
           v-model="form"
           :no-pattern="noPattern"
+          :with-inherited="withInherited"
         />
       </template>
       <template #actions="">
@@ -72,6 +73,10 @@ export default {
 
     noPattern() {
       return !!this.config.noPattern;
+    },
+
+    withInherited() {
+      return !!this.config.withInherited;
     },
   },
   methods: {

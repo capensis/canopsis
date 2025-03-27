@@ -56,8 +56,14 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
 	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
+
+	healthCheckCfg, err := config.NewHealthCheckAdapter(dbClient).GetConfig(ctx)
+	if err != nil {
+		panic(fmt.Errorf("cannot load healthcheck config: %w", err))
+	}
+
 	runInfoPeriodicalWorker := engine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
+		healthCheckCfg.ParseUpdateInterval(logger),
 		engine.NewRunInfoManager(runInfoRedisSession),
 		engine.NewInstanceRunInfo(canopsis.PBehaviorEngineName, "", "", nil, []string{canopsis.PBehaviorRPCQueueServerName}),
 		amqpChannel,
@@ -174,6 +180,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			Encoder:                  json.NewEncoder(),
 			Decoder:                  json.NewDecoder(),
 			Publisher:                amqpChannel,
+			InheritedServiceResolver: pbehavior.NewInheritedServicePbhResolver(dbClient, eventManager, pbhStore, pbhLockerClient),
 			Exchange:                 canopsis.DefaultExchangeName,
 			Queue:                    canopsis.FIFOQueueName,
 			TimezoneConfigProvider:   timezoneConfigProvider,
@@ -186,17 +193,18 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		redis.NewLockClient(lockRedisSession),
 		redis.PbehaviorPeriodicalLockKey,
 		&periodicalWorker{
-			TechMetricsSender:      techMetricsSender,
-			ChannelPub:             amqpChannel,
-			PeriodicalInterval:     options.PeriodicalWaitTime,
-			PbhService:             pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
-			AlarmAdapter:           alarm.NewAdapter(dbClient),
-			EntityAdapter:          entity.NewAdapter(dbClient),
-			EventManager:           eventManager,
-			FrameDuration:          frameDuration,
-			TimezoneConfigProvider: timezoneConfigProvider,
-			Encoder:                json.NewEncoder(),
-			Logger:                 logger,
+			TechMetricsSender:        techMetricsSender,
+			ChannelPub:               amqpChannel,
+			PeriodicalInterval:       options.PeriodicalWaitTime,
+			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			AlarmAdapter:             alarm.NewAdapter(dbClient),
+			EntityAdapter:            entity.NewAdapter(dbClient),
+			EventManager:             eventManager,
+			InheritedServiceResolver: pbehavior.NewInheritedServicePbhResolver(dbClient, eventManager, pbhStore, pbhLockerClient),
+			FrameDuration:            frameDuration,
+			TimezoneConfigProvider:   timezoneConfigProvider,
+			Encoder:                  json.NewEncoder(),
+			Logger:                   logger,
 		},
 		logger,
 	))

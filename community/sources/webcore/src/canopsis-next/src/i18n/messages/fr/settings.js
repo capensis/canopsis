@@ -91,6 +91,7 @@ export default {
   defaultTimeRange: 'Plage horaire par défaut',
   liveWatching: 'Mises à jour en direct',
   liveWatchingTooltip: 'Si activé, les alarmes sont mises à jour en direct à l\'aide de websockets',
+  defaultInheritedPbehavior: 'Appliquer pbehavior également aux dépendances',
   expandPanel: {
     title: 'Agrandir le panneau',
   },

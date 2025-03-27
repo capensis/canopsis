@@ -89,18 +89,18 @@ func (mr *MockAdapterMockRecorder) DeleteResolvedAlarms(ctx, duration any) *gomo
 }
 
 // FindToCheckPbehaviorInfo mocks base method.
-func (m *MockAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors []string) (mongo.Cursor, error) {
+func (m *MockAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefore datetime.CpsTime, idsWithPbehaviors, serviceIDs []string) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindToCheckPbehaviorInfo", ctx, createdBefore, idsWithPbehaviors)
+	ret := m.ctrl.Call(m, "FindToCheckPbehaviorInfo", ctx, createdBefore, idsWithPbehaviors, serviceIDs)
 	ret0, _ := ret[0].(mongo.Cursor)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // FindToCheckPbehaviorInfo indicates an expected call of FindToCheckPbehaviorInfo.
-func (mr *MockAdapterMockRecorder) FindToCheckPbehaviorInfo(ctx, createdBefore, idsWithPbehaviors any) *gomock.Call {
+func (mr *MockAdapterMockRecorder) FindToCheckPbehaviorInfo(ctx, createdBefore, idsWithPbehaviors, serviceIDs any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindToCheckPbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).FindToCheckPbehaviorInfo), ctx, createdBefore, idsWithPbehaviors)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindToCheckPbehaviorInfo", reflect.TypeOf((*MockAdapter)(nil).FindToCheckPbehaviorInfo), ctx, createdBefore, idsWithPbehaviors, serviceIDs)
 }
 
 // GetAlarmByAlarmId mocks base method.

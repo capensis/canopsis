@@ -10,9 +10,10 @@
           :added-pbehaviors-by-id.sync="form.addedPbehaviorsById"
           :changed-pbehaviors-by-id.sync="form.changedPbehaviorsById"
           :removed-pbehaviors-by-id.sync="form.removedPbehaviorsById"
+          :with-inherited="config.withInherited"
           :read-only="readOnly"
           :entity-pattern="entityPattern"
-          :default-name="defaultName"
+          :default-fields="defaultFields"
           :timezone.sync="calendarTimezone"
         />
       </template>
@@ -87,6 +88,20 @@ export default {
       return this.autoSuggestPbehaviorName
         ? getPbehaviorNameByEntities(this.config.entities, this.calendarTimezone)
         : '';
+    },
+
+    defaultFields() {
+      const fields = {};
+
+      if (this.defaultName) {
+        fields.name = this.defaultName;
+      }
+
+      if (this.config.defaultInherited) {
+        fields.inherited = this.config.defaultInherited;
+      }
+
+      return fields;
     },
 
     readOnly() {

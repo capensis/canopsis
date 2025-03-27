@@ -197,7 +197,8 @@ definitions:
         type: integer
       infos:
         additionalProperties:
-          additionalProperties: true
+          additionalProperties:
+            type: any
           type: object
         type: object
       instruction_execution_icon:
@@ -283,12 +284,9 @@ definitions:
         type: integer
       infos:
         additionalProperties:
-          additionalProperties: true
+          additionalProperties:
+            type: any
           type: object
-        type: object
-      infos_rule_version:
-        additionalProperties:
-          type: string
         type: object
       initial_long_output:
         type: string
@@ -1764,6 +1762,10 @@ definitions:
         items:
           type: string
         type: array
+      ids:
+        items:
+          type: string
+        type: array
       no_events:
         type: boolean
       search:
@@ -3002,6 +3004,8 @@ definitions:
         type: string
       created:
         type: integer
+      fill_border:
+        type: boolean
       title:
         type: string
       updated:
@@ -3305,6 +3309,10 @@ definitions:
         type: string
       output_template:
         type: string
+      tags:
+        additionalProperties:
+          type: string
+        type: object
       type:
         type: string
     required:
@@ -3829,6 +3837,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3891,6 +3901,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string
@@ -3935,6 +3947,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         type: string
       reason:
@@ -4009,6 +4023,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.Exdate'
         type: array
+      inherited:
+        type: boolean
       is_active_status:
         description: IsActiveStatus represents if pbehavior is in action for current
           time.
@@ -4084,6 +4100,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      inherited:
+        type: boolean
       name:
         maxLength: 255
         type: string

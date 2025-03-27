@@ -19,6 +19,10 @@
         autofocus
       />
     </v-layout>
+    <c-enabled-field
+      v-field="form.fill_border"
+      :label="$t('icon.fillBorder')"
+    />
     <icon-file-selector
       v-if="!iconOriginalTitle"
       v-field="form.file"

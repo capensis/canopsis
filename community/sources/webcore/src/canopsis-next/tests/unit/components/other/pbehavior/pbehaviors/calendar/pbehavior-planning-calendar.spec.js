@@ -67,7 +67,7 @@ describe('pbehavior-planning-calendar', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  test('Renders `pbehavior-planning-calendar` with required props and with shownUserTimezone', async () => {
+  test('Renders `pbehavior-planning-calendar` with required props and with shownUserTimezone and defaultFields', async () => {
     shownUserTimezone.mockReturnValueOnce(true);
 
     const wrapper = snapshotFactory({
@@ -77,6 +77,7 @@ describe('pbehavior-planning-calendar', () => {
         addedPbehaviorsById: {},
         removedPbehaviorsById: {},
         changedPbehaviorsById: {},
+        defaultFields: { name: 'name', inherited: true },
       },
     });
 
