@@ -14,9 +14,10 @@
           v-on="multipleChipListeners"
         >
           <v-chip
-            v-for="item in selectedItems"
+            v-for="(item, index) in selectedItems"
             :key="item[itemValue]"
             :close="!disabled"
+            @click:close="closeChildChip(index)"
           >
             {{ item[itemText] ?? item[itemValue] }}
           </v-chip>
@@ -329,6 +330,15 @@ export default {
     const clickChip = () => !props.disabled && emit('click');
 
     /**
+     * Removes a child chip from the selected items list based on its index.
+     *
+     * @param {number} index - The index of the chip to be removed from the selected items.
+     */
+    const closeChildChip = index => changeSelectedItems(
+      selectedItems.value.filter((_, itemIndex) => itemIndex !== index),
+    );
+
+    /**
      * Emits a 'close' event to signal that the chip should be closed.
      * This function does not perform any checks before emitting the event.
      */
@@ -478,6 +488,7 @@ export default {
       updateMenuOpened,
       updateInputValue,
       showMore,
+      closeChildChip,
     };
   },
 };
