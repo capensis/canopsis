@@ -32,6 +32,7 @@ import {
   ref,
   toRef,
   inject,
+  watch,
   onMounted,
   onBeforeUnmount,
 } from 'vue';
@@ -75,10 +76,7 @@ export default {
       showRemoveSelectedExternalDataTableRecordsModal,
     } = useExternalDataTableRecordsList({ externalDataTable: toRef(props, 'externalDataTable') });
 
-    const columns = ref(externalDataTableColumnsToForm(
-      props.externalDataTable.columns,
-      props.externalDataTable.column_types,
-    ));
+    const columns = ref({});
 
     const updateColumns = newColumns => updateExternalDataTable({
       id: props.externalDataTable._id,
@@ -90,6 +88,13 @@ export default {
     });
 
     const observer = inject('$refresh', new Observer());
+
+    watch(() => props.externalDataTable, (newExternalDataTable) => {
+      columns.value = externalDataTableColumnsToForm(
+        newExternalDataTable.columns,
+        newExternalDataTable.column_types,
+      );
+    }, { deep: true, immediate: true });
 
     onMounted(() => observer.registerChild(fetchList));
     onBeforeUnmount(() => observer.unregisterChild(fetchList));

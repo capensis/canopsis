@@ -1,5 +1,5 @@
 import { omit } from 'lodash';
-import { computed, unref, onMounted } from 'vue';
+import { computed, unref, inject, onMounted } from 'vue';
 
 import { MODALS } from '@/constants';
 
@@ -32,12 +32,15 @@ export const useExternalDataTableRecordsModals = ({
   const { t } = useI18n();
   const modals = useModals();
 
+  const refreshObserver = inject('$refresh', null);
+
   const {
     createExternalDataTableRecord,
     updateExternalDataTableRecord,
     removeExternalDataTableRecord,
     bulkRemoveExternalDataTableRecord,
   } = useExternalDataTableRecord();
+
   const { callActionWithPopup } = useCallActionWithPopup();
 
   /**
@@ -47,7 +50,7 @@ export const useExternalDataTableRecordsModals = ({
     name: MODALS.importExternalDataTableRecords,
     config: {
       externalDataTable: unref(externalDataTable),
-      afterSubmit: () => callActionWithPopup(fetchList),
+      afterSubmit: () => callActionWithPopup(() => (refreshObserver?.notify ? refreshObserver.notify() : fetchList())),
     },
   });
 
