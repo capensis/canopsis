@@ -27,7 +27,6 @@ import {
   BASIC_ENTITY_TYPES,
   ENTITY_TYPES,
   MAX_LIMIT,
-  PATTERN_ARRAY_OPERATORS,
   PATTERN_DURATION_OPERATORS,
   PATTERN_EXISTS_OPERATORS,
   PATTERN_FIELD_TYPES,
@@ -35,9 +34,11 @@ import {
   PATTERN_OPERATORS,
   PATTERN_STRING_OPERATORS,
   PBEHAVIOR_TYPE_TYPES,
+  PATTERN_RULE_INFOS_FIELDS,
 } from '@/constants';
 
 import { deepKeyBy } from '@/helpers/array';
+import { getOperatorsByFieldType } from '@/helpers/entities/pattern/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useEntity } from '@/hooks/store/modules/entity';
@@ -82,12 +83,23 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The translated text for the item.
    *   - {string} chipText: The complete chip text including the prefix.
    */
-  const getDefaultItemChildren = (chipTextPrefix = '') => ['name', 'value'].map((value) => {
+  const getDefaultItemChildren = (chipTextPrefix = '') => [
+    PATTERN_RULE_INFOS_FIELDS.name,
+    PATTERN_RULE_INFOS_FIELDS.value,
+  ].map((value) => {
     const text = t(`common.${value}`);
     const result = { value, text };
 
     if (chipTextPrefix) {
       result.chipText = `${chipTextPrefix}.${text}`;
+    }
+
+    if (value === PATTERN_RULE_INFOS_FIELDS.name) {
+      result.operators = PATTERN_EXISTS_OPERATORS;
+    }
+
+    if (value === PATTERN_RULE_INFOS_FIELDS.name) {
+      result.operators = PATTERN_EXISTS_OPERATORS;
     }
 
     return result;
@@ -623,26 +635,28 @@ export const useAdvancedSearchRuleActiveItems = ({
   const currentAttribute = computed(() => attributesMap.value[unref(rule).attribute]);
 
   /**
-   * FIELD TYPES BOOLEANS
+   * FIELD TYPE
    */
-  const isStringFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.string);
-  const isNumberFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.number);
   const isBooleanFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.boolean);
-  const isArrayFieldType = computed(() => unref(rule).fieldType === PATTERN_FIELD_TYPES.stringArray);
 
   /**
    * OPERATORS ITEMS
    */
-  const operators = computed(() => ({
-    [isStringFieldType.value]: [
-      ...PATTERN_STRING_OPERATORS,
+  const operators = computed(() => {
+    const unwrappedRule = unref(rule);
 
-      PATTERN_OPERATORS.isOneOf,
-      PATTERN_OPERATORS.isNotOneOf,
-    ],
-    [isNumberFieldType.value]: PATTERN_NUMBER_OPERATORS,
-    [isArrayFieldType.value]: PATTERN_ARRAY_OPERATORS,
-  }.true ?? []));
+    let result = getOperatorsByFieldType(unwrappedRule.fieldType);
+
+    if (unwrappedRule.fieldType === PATTERN_FIELD_TYPES.string) {
+      result = [
+        ...operators,
+        PATTERN_OPERATORS.isOneOf,
+        PATTERN_OPERATORS.isNotOneOf,
+      ];
+    }
+
+    return result;
+  });
 
   const preparedOperators = computed(() => (
     (currentAttribute.value?.operators ?? operators.value ?? []).map(operator => ({
