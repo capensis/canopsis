@@ -13,18 +13,18 @@ import (
 )
 
 func main() {
-	opts, deprecatedFlags := action.ParseOptions()
-	if opts.Version {
-		canopsis.PrintVersionInfo()
-
-		return
-	}
-
-	logger := log.NewLogger(opts.ModeDebug)
-	trace := debug.Start(logger)
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
+
+	opts, deprecatedFlags := action.ParseOptions()
+	if opts.Version {
+		canopsis.PrintVersionInfo()
+		return
+	}
+
+	logger := log.NewLogger(ctx, opts.ModeDebug)
+	trace := debug.Start(logger)
 
 	libflag.LogDeprecatedFlags(logger, deprecatedFlags)
 

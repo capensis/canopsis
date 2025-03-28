@@ -19,6 +19,9 @@ import (
 const helpFlag = "-h"
 
 func main() {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	var version bool
 	flag.BoolVar(&version, "version", false, "Show the version information")
 	flag.Parse()
@@ -28,9 +31,7 @@ func main() {
 		return
 	}
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-	logger := log.NewLogger(false)
+	logger := log.NewLogger(ctx, false)
 
 	err := execCmd(ctx, logger)
 	if err != nil {

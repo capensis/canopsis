@@ -66,9 +66,9 @@ func MatchAlarmPattern(p pattern.Alarm, alarm *types.Alarm) (bool, error) {
 				}
 			}
 			if !foundField || err != nil {
-				if a, ok := alarm.GetStringArrayField(f); ok {
+				if a, ok := alarm.GetTagsField(f); ok {
 					foundField = true
-					matched, err = v.Condition.MatchStringArray(a)
+					matched, err = v.Condition.MatchTags(a)
 				}
 			}
 
@@ -155,9 +155,9 @@ func ValidateAlarmPattern(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFiel
 				}
 			}
 			if !foundField || err != nil {
-				if a, ok := emptyAlarm.GetStringArrayField(f); ok {
+				if a, ok := emptyAlarm.GetTagsField(f); ok {
 					foundField = true
-					_, err = v.Condition.MatchStringArray(a)
+					_, err = v.Condition.MatchTags(a)
 				}
 			}
 

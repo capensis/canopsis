@@ -144,6 +144,8 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		Connector:           event.Connector,
 		ConnectorName:       event.ConnectorName,
 		Tags:                event.Tags,
+		ImportTags:          event.ImportTags,
+		ImportSource:        event.ImportSource,
 		IdleRuleApply:       event.IdleRuleApply,
 		MetaAlarmRuleID:     event.MetaAlarmRuleID,
 		MetaAlarmValuePath:  event.MetaAlarmValuePath,

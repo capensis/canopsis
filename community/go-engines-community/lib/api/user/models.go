@@ -12,13 +12,14 @@ import (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy     string `form:"sort_by" binding:"oneoforempty=_id name display_name enable source"`
-	Permission string `form:"permission"`
+	SortBy     string   `form:"sort_by" binding:"oneoforempty=_id name display_name enable source"`
+	Permission string   `form:"permission"`
+	IDs        []string `form:"ids[]"`
 }
 
 type CreateRequest struct {
 	EditRequest
-	Source     string `json:"source" binding:"oneoforempty=ldap cas saml"`
+	Source     string `json:"source"`
 	ExternalID string `json:"external_id"`
 }
 

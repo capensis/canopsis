@@ -19,6 +19,9 @@ const (
 )
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	var version bool
 	var exchange string
 	flag.StringVar(&exchange, "exchange", canopsis.EventsExchangeName, "exchange name to read events from")
@@ -30,10 +33,7 @@ func main() {
 		return
 	}
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
-
-	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(true), 0, 0)
+	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(ctx, true), 0, 0)
 	if err != nil {
 		log.Fatal(err)
 	}

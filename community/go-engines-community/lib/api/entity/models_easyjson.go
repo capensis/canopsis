@@ -90,6 +90,29 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.NoEvents = bool(in.Bool())
 		case "entity_pattern":
 			out.EntityPattern = string(in.String())
+		case "ids":
+			if in.IsNull() {
+				in.Skip()
+				out.IDs = nil
+			} else {
+				in.Delim('[')
+				if out.IDs == nil {
+					if !in.IsDelim(']') {
+						out.IDs = make([]string, 0, 4)
+					} else {
+						out.IDs = []string{}
+					}
+				} else {
+					out.IDs = (out.IDs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v3 string
+					v3 = string(in.String())
+					out.IDs = append(out.IDs, v3)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -116,11 +139,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v3, v4 := range in.Filters {
-				if v3 > 0 {
+			for v4, v5 := range in.Filters {
+				if v4 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v4))
+				out.String(string(v5))
 			}
 			out.RawByte(']')
 		}
@@ -137,11 +160,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v5, v6 := range in.Type {
-				if v5 > 0 {
+			for v6, v7 := range in.Type {
+				if v6 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v6))
+				out.String(string(v7))
 			}
 			out.RawByte(']')
 		}
@@ -155,6 +178,22 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"entity_pattern\":"
 		out.RawString(prefix)
 		out.String(string(in.EntityPattern))
+	}
+	{
+		const prefix string = ",\"ids\":"
+		out.RawString(prefix)
+		if in.IDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v8, v9 := range in.IDs {
+				if v8 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v9))
+			}
+			out.RawByte(']')
+		}
 	}
 	out.RawByte('}')
 }

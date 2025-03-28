@@ -23,6 +23,7 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "chartjs-plugin-zoom": "^1.1.1",
     "core-js": "^3.32.2",
+    "css-has-pseudo": "^7.0.2",
     "cytoscape": "^3.19.0",
     "cytoscape-cise": "^1.0.0",
     "cytoscape-dagre": "^2.3.2",
@@ -161,6 +162,7 @@
   "resolutions": {
     "moment-timezone/moment": "^2.22.2",
     "@vue/cli-plugin-unit-jest/jest": "29.7.0",
-    "@vue/cli-plugin-unit-jest/babel-jest": "29.7.0"
+    "@vue/cli-plugin-unit-jest/babel-jest": "29.7.0",
+    "postcss": "^8.2.15"
   }
 }

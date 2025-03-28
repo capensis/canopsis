@@ -45,10 +45,14 @@ type store struct {
 	defaultSortBy         string
 }
 
-func (s *store) Find(ctx context.Context, query ListRequest) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
 	match := bson.M{}
-	if !query.WithHidden {
+	if !r.WithHidden {
 		match["hidden"] = bson.M{"$in": bson.A{false, nil}}
+	}
+
+	if len(r.IDs) > 0 {
+		match["_id"] = bson.M{"$in": r.IDs}
 	}
 
 	pipeline := make([]bson.M, 0)
@@ -56,7 +60,7 @@ func (s *store) Find(ctx context.Context, query ListRequest) (*AggregationResult
 		pipeline = append(pipeline, bson.M{"$match": match})
 	}
 
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -64,16 +68,16 @@ func (s *store) Find(ctx context.Context, query ListRequest) (*AggregationResult
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
 
 	var project []bson.M
-	if query.WithFlags {
+	if r.WithFlags {
 		project = getDeletablePipeline()
 	}
 
 	cursor, err := s.dbCollection.Aggregate(
 		ctx,
 		pagination.CreateAggregationPipeline(
-			query.Query,
+			r.Query,
 			pipeline,
-			common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort),
+			common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 			project,
 		),
 		options.Aggregate().SetCollation(&options.Collation{Locale: "en"}),

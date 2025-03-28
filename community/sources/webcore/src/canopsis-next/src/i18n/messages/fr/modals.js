@@ -130,6 +130,7 @@ export default {
           fullDay: 'Toute la journée',
           noEnding: 'Sans fin',
           startOnTrigger: 'Démarrer sur déclencheur',
+          inherited: 'S\'applique à toutes les entités dépendantes',
         },
       },
       filter: {

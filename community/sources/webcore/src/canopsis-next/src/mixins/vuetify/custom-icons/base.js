@@ -8,11 +8,12 @@ export const vuetifyCustomIconsBaseMixin = {
       return !!this.$vuetify.icons.values[name];
     },
 
-    registerIconInVuetify(name, template) {
+    registerIconInVuetify(name, template, meta = {}) {
       this.$vuetify.icons.values = {
         ...this.$vuetify.icons.values,
 
         [name]: {
+          meta,
           component: {
             template: normalizeHtml(template),
           },

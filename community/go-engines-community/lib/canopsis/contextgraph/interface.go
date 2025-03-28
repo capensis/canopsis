@@ -1,7 +1,7 @@
 // Package contextgraph contains a service, which is responsible for building canopsis context graph.
 package contextgraph
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/contextgraph/contextgraph.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph Manager,EntityServiceStorage
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/contextgraph/contextgraph.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph Manager,EntityServiceStorage
 
 import (
 	"context"

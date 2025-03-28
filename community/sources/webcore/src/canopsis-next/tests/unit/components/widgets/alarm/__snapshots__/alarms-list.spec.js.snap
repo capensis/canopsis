@@ -48,6 +48,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
       <c-alarm-tag-field-stub
         combobox=""
         label="Tags"
+        multiple=""
         show-count="2"
       />
     </div>
@@ -132,6 +133,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props 1`] = `
       <c-alarm-tag-field-stub
         combobox=""
         label="Tags"
+        multiple=""
         show-count="2"
       />
     </div>
@@ -271,6 +273,7 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
       <c-alarm-tag-field-stub
         combobox=""
         label="Tags"
+        multiple=""
         show-count="2"
       />
     </div>

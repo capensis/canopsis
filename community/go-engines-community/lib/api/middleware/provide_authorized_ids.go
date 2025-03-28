@@ -21,14 +21,18 @@ func ProvideAuthorizedIds(
 	provider apisecurity.OwnedObjectsProvider,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		subj, ok := c.Get(auth.UserKey)
-
+		rawSubj, ok := c.Get(auth.UserKey)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
 		}
 
-		roles, err := enforcer.GetRolesForUser(subj.(string))
+		subj, ok := rawSubj.(string)
+		if !ok {
+			panic("user key is not a string")
+		}
+
+		roles, err := enforcer.GetRolesForUser(subj)
 		if err != nil {
 			panic(err)
 		}
@@ -51,7 +55,7 @@ func ProvideAuthorizedIds(
 		}
 
 		if provider != nil {
-			ownedIds, err := provider.GetOwnedIDs(c, subj.(string))
+			ownedIds, err := provider.GetOwnedIDs(c, subj)
 			if err != nil {
 				panic(err)
 			}

@@ -64,6 +64,10 @@ func (s *store) Find(ctx context.Context, r ListRequest) (pbhResult *Aggregation
 		match["priority"] = bson.M{"$in": prioritiesOfDefaultTypes}
 	}
 
+	if len(r.IDs) > 0 {
+		match["_id"] = bson.M{"$in": r.IDs}
+	}
+
 	if len(r.Types) > 0 {
 		match["type"] = bson.M{"$in": r.Types}
 	}

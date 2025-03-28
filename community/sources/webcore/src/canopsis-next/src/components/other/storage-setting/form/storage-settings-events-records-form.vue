@@ -10,9 +10,9 @@
     >
       <storage-settings-history-message :history="history" />
     </template>
-    <storage-settings-duration-field
+    <c-enabled-duration-field
       v-field="form.delete_after"
-      :label="$t('storageSetting.eventsRecords.deleteAfter') "
+      :label="$t('storageSetting.eventsRecords.deleteAfter')"
       :name="errorsDeleteAfterFieldName"
     />
   </c-information-block>
@@ -21,11 +21,9 @@
 <script>
 import StorageSettingsHistoryMessage from '../partials/storage-settings-history-message.vue';
 
-import StorageSettingsDurationField from './partials/storage-settings-duration-field.vue';
-
 export default {
   inject: ['$validator'],
-  components: { StorageSettingsHistoryMessage, StorageSettingsDurationField },
+  components: { StorageSettingsHistoryMessage },
   model: {
     prop: 'form',
     event: 'input',
