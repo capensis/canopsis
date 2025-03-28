@@ -144,9 +144,9 @@ export default {
   },
 
   instructionStat: {
-    instructionResult: 'Résultat de l\'instruction',
-    alarmStateAfterTimeout: 'État de l\'alarme après expiration',
-    afterRemediationEnd: 'Après la fin de la remédiation, avant l\'état ok',
+    instructionResult: 'Résultat de la consigne',
+    alarmStateAfterTimeout: 'Sévérité de l\'alarme après timeout',
+    afterRemediationEnd: 'Délai entre la fin de la remédiation et la sévérité ok',
     solveBeforeRemediationEnd: 'Résolu avant la fin de la remédiation',
     remediationStart: 'Début de la remédiation',
     remediationEnd: 'Fin de la remédiation',
