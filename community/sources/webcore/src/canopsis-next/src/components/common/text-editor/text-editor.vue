@@ -17,6 +17,7 @@
         :position-x="variablesMenuPosition.x"
         :position-y="variablesMenuPosition.y"
         dense
+        clickable-parent
         @input="pasteVariable"
         @close="closeVariablesMenu"
       />

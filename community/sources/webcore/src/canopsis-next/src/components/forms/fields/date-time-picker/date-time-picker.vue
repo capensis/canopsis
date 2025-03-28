@@ -134,6 +134,10 @@ export default {
     },
 
     allowedTime(time) {
+      if (!this.allowedDates) {
+        return true;
+      }
+
       const [hours, minutes] = time.split(':');
       const currentDate = convertDateToDateObject(this.value);
 

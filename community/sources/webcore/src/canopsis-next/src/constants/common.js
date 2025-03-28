@@ -438,6 +438,9 @@ export const WEBHOOK_EXECUTION_STATUSES = {
   failed: 3,
 };
 
+/**
+ * @todo change event.keyCode to event.key
+ */
 export const KEY_CODES = {
   backspace: 8,
   enter: 13,

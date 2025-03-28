@@ -1,3 +1,5 @@
+import { ALARM_ADVANCED_SEARCH_GROUPS } from '@/constants';
+
 export default {
   title: 'Recherche Avancée',
   not: 'NOT',
@@ -5,4 +7,18 @@ export default {
   switchAdvancedSearchActiveToTrue: 'Passer à la recherche avancée',
   switchAdvancedSearchActiveToFalse: 'Passer à la recherche simple',
   noDataList: 'Il n\'y a aucun élément à saisir',
+  inputPlaceholder: 'Rechercher ou filtrer les résultats...',
+
+  groups: {
+    [ALARM_ADVANCED_SEARCH_GROUPS.basic]: 'Basique',
+    [ALARM_ADVANCED_SEARCH_GROUPS.messages]: 'Messages',
+    [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: 'Billet',
+    [ALARM_ADVANCED_SEARCH_GROUPS.dates]: 'Dates',
+    [ALARM_ADVANCED_SEARCH_GROUPS.actions]: 'Actes',
+    [ALARM_ADVANCED_SEARCH_GROUPS.entity]: 'Entité',
+    [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportement',
+  },
+
+  searchForThisText: 'Appuyez sur <kbd>Entrée</kbd> pour rechercher ce texte',
+  listDisabledMessage: 'Il n\'est pas possible de combiner des modèles\n(alarme, entité et comportement) avec OU (uniquement ET)',
 };
