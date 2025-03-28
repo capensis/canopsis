@@ -18,6 +18,9 @@ import (
 )
 
 func main() {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	var retries int
 	var flagTimeout time.Duration
 	var withPostgres, withTechPostgres bool
@@ -27,15 +30,13 @@ func main() {
 	flag.BoolVar(&withTechPostgres, "withTechPostgres", false, "check tech postgres")
 	flag.Parse()
 
-	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
-	defer stop()
-	var logger = log.NewLogger(false)
-
 	if flagTimeout > 0 {
 		var cancel context.CancelFunc
 		ctx, cancel = context.WithTimeout(ctx, flagTimeout)
 		defer cancel()
 	}
+
+	logger := log.NewLogger(ctx, false)
 
 	retryDelay := time.Second
 	err := ready.CheckAll(ctx, retryDelay, retries, withPostgres, withTechPostgres, logger)

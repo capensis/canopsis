@@ -7,7 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/gin-gonic/gin"
-	"github.com/golang/mock/gomock"
+	"go.uber.org/mock/gomock"
 )
 
 func TestAuthorizeByID_GivenAuthorizedUser_ShouldReturnResponse(t *testing.T) {

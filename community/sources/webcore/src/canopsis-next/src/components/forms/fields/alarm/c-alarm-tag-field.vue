@@ -12,10 +12,10 @@
     :autocomplete="!combobox"
     :hide-details="!required"
     :hide-selected="hideSelected"
+    :item-text="itemText"
+    :item-value="itemValue"
+    :multiple="multiple"
     class="c-alarm-tag-field"
-    item-text="value"
-    item-value="value"
-    multiple
     chips
     dense
     clearable
@@ -29,13 +29,13 @@
       <c-alarm-action-chip
         v-if="!showCount || index < showCount"
         :color="item.color"
-        :title="item.value"
+        :title="item[itemText]"
         class="c-alarm-tag-field__tag px-2"
         closable
         ellipsis
         @close="removeItemFromSelectedItemsByIndex(index)"
       >
-        {{ item.value }}
+        {{ item[itemText] }}
       </c-alarm-action-chip>
       <span v-else-if="index === showCount">+{{ selectedItems.length - showCount }} {{ $t('common.more') }}</span>
       <span v-else />
@@ -46,27 +46,31 @@
         v-bind="attrs"
         v-on="on"
       >
-        <v-list-item-action>
+        <v-list-item-action v-if="multiple">
           <v-checkbox
             :input-value="attrs.inputValue"
             :color="parent.color"
           />
         </v-list-item-action>
         <v-list-item-content class="c-word-break-all">
-          {{ item.value }}
+          {{ item[itemText] }}
         </v-list-item-content>
       </v-list-item>
+    </template>
+    <template v-if="$slots['no-data']" #no-data="">
+      <slot name="no-data" />
     </template>
   </c-lazy-search-field>
 </template>
 
 <script>
-import { toRef } from 'vue';
+import { computed, toRef, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
 import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
 import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
 
 export default {
   props: {
@@ -110,9 +114,25 @@ export default {
       type: Number,
       required: false,
     },
+    multiple: {
+      type: Boolean,
+      required: false,
+    },
+    onlyLabels: {
+      type: Boolean,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
+    const { fetchAlarmTagsLabelsListWithoutStore } = useAlarmTagLabel();
+
+    const itemText = computed(() => (props.onlyLabels ? '_id' : 'value'));
+    const itemValue = computed(() => (props.onlyLabels ? '_id' : 'value'));
+    const idParamsKey = computed(() => (props.onlyLabels ? 'ids' : 'values'));
+    const fetchHandler = computed(() => (
+      props.onlyLabels ? fetchAlarmTagsLabelsListWithoutStore : fetchAlarmTagsListWithoutStore
+    ));
 
     const {
       selectedItems,
@@ -125,19 +145,23 @@ export default {
       removeItemFromSelectedItemsByIndex,
       updateSearch,
     } = useLazySearch({
+      idParamsKey,
+      fetchHandler,
+      idKey: itemValue,
       value: toRef(props, 'value'),
       addable: toRef(props, 'addable'),
-      idKey: 'value',
-      idParamsKey: 'values',
-      fetchHandler: fetchAlarmTagsListWithoutStore,
       multiple: true,
     }, emit);
+
+    watch(() => props.onlyLabels, fetchItems);
 
     return {
       selectedItems,
       items,
       wholePending,
       hasMoreItems,
+      itemText,
+      itemValue,
       fetchItems,
       fetchMoreItems,
       changeSelectedItems,

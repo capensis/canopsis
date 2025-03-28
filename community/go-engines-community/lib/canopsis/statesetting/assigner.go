@@ -1,6 +1,6 @@
 package statesetting
 
-//go:generate mockgen -destination=../../../mocks/lib/statesetting/assigner.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting Assigner
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/statesetting/assigner.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting Assigner
 
 import (
 	"context"

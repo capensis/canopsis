@@ -259,6 +259,8 @@ export const isArrayCondition = condition => [
   PATTERN_CONDITIONS.isOneOf,
   PATTERN_CONDITIONS.isNotOneOf,
   PATTERN_CONDITIONS.hasEvery,
+  PATTERN_CONDITIONS.hasLabels,
+  PATTERN_CONDITIONS.hasNotLabels,
 ].includes(condition);
 
 /**
@@ -875,6 +877,16 @@ export const patternRuleToForm = (rule = {}) => {
         ...rule.cond.value,
       };
       break;
+
+    case PATTERN_CONDITIONS.hasLabels:
+      form.operator = PATTERN_OPERATORS.withLabel;
+      form.value = rule.cond.value;
+      break;
+
+    case PATTERN_CONDITIONS.hasNotLabels:
+      form.operator = PATTERN_OPERATORS.withoutLabel;
+      form.value = rule.cond.value;
+      break;
   }
 
   if (isDuration) {
@@ -1125,6 +1137,12 @@ export const formRuleToPatternRule = (rule) => {
       break;
     case PATTERN_OPERATORS.without:
       pattern.cond.type = PATTERN_CONDITIONS.hasNot;
+      break;
+    case PATTERN_OPERATORS.withLabel:
+      pattern.cond.type = PATTERN_CONDITIONS.hasLabels;
+      break;
+    case PATTERN_OPERATORS.withoutLabel:
+      pattern.cond.type = PATTERN_CONDITIONS.hasNotLabels;
       break;
   }
 

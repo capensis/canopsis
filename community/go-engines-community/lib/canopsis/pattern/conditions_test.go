@@ -764,7 +764,7 @@ func TestCondition_UnmarshalAndMatchStringArray(t *testing.T) {
 		},
 		{
 			Type:  pattern.ConditionHasOneOf,
-			Value: []interface{}{"val1", "val2"},
+			Value: []any{"val1", "val2"},
 		},
 		{
 			Type:  pattern.ConditionHasNot,
@@ -811,7 +811,7 @@ func TestCondition_MatchRef(t *testing.T) {
 	dataSet := []struct {
 		testName       string
 		cond           pattern.Condition
-		value          interface{}
+		value          any
 		expectedErr    error
 		expectedResult bool
 	}{
@@ -1158,14 +1158,14 @@ func TestCondition_UnmarshalAndMatchDuration(t *testing.T) {
 	dataSet := []pattern.Condition{
 		{
 			Type: pattern.ConditionGT,
-			Value: map[string]interface{}{
+			Value: map[string]any{
 				"value": 5,
 				"unit":  "m",
 			},
 		},
 		{
 			Type: pattern.ConditionLT,
-			Value: map[string]interface{}{
+			Value: map[string]any{
 				"value": 5,
 				"unit":  "m",
 			},
@@ -1201,6 +1201,240 @@ func TestCondition_UnmarshalAndMatchDuration(t *testing.T) {
 		}
 
 		_, err = w.Cond.MatchDuration(10)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+	}
+}
+
+func TestCondition_MatchTags(t *testing.T) {
+	dataSet := []struct {
+		testName       string
+		cond           pattern.Condition
+		value          []string
+		expectedErr    error
+		expectedResult bool
+	}{
+		{
+			testName:       "test is empty is matched",
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+			value:          []string{},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test is empty is not matched",
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+			value:          []string{"label-1: test-1"},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test is not empty is matched",
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
+			value:          []string{"label-1: test-1"},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test is not empty is not matched",
+			cond:           pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
+			value:          []string{},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test has_not is matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"}),
+			value:          []string{"label-4: value-4"},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test has_not is not matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"}),
+			value:          []string{"label-3: value-3", "label-4: value-4"},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test has_one_of is matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"}),
+			value:          []string{"label-3: value-3", "label-4: value-4"},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test has_one_of is not matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"}),
+			value:          []string{"label-4: value-4"},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test has_every is matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"}),
+			value:          []string{"label-1: value-1", "label-2: value-2", "label-3: value-3", "label-4: value-4"},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test has_every is not matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"}),
+			value:          []string{"label-1: value-1", "label-2: value-2"},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test has_labels is matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-1", "label-4"}),
+			value:          []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test has_labels is not matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-4"}),
+			value:          []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test tag without value has_labels is matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-2"}),
+			value:          []string{"label-1: value-1", "label-2", "label-3: value-3"},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test has_not_labels is matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasNotLabels, []string{"label-4"}),
+			value:          []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"},
+			expectedErr:    nil,
+			expectedResult: true,
+		},
+		{
+			testName:       "test has_not_labels is not matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasNotLabels, []string{"label-1", "label-4"}),
+			value:          []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test tag without value has_not_labels is not matched",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasNotLabels, []string{"label-2"}),
+			value:          []string{"label-1: value-1", "label-2", "label-3: value-3"},
+			expectedErr:    nil,
+			expectedResult: false,
+		},
+		{
+			testName:       "test cond value is not a bool",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionIsEmpty, []string{"test"}),
+			value:          []string{"test"},
+			expectedErr:    pattern.ErrWrongConditionValue,
+			expectedResult: false,
+		},
+		{
+			testName:       "test cond value is not a slice of strings",
+			cond:           pattern.NewBoolCondition(pattern.ConditionHasEvery, true),
+			value:          []string{"test"},
+			expectedErr:    pattern.ErrWrongConditionValue,
+			expectedResult: false,
+		},
+		{
+			testName:       "test cond value is empty slice of strings",
+			cond:           pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{}),
+			value:          []string{"test"},
+			expectedErr:    pattern.ErrWrongConditionValue,
+			expectedResult: false,
+		},
+		{
+			testName:       "test cond type is not supported",
+			cond:           pattern.NewStringArrayCondition("some", []string{"test"}),
+			value:          []string{"test"},
+			expectedErr:    pattern.ErrUnsupportedConditionType,
+			expectedResult: false,
+		},
+	}
+
+	var result bool
+	var err error
+
+	for _, data := range dataSet {
+		t.Run(data.testName, func(t *testing.T) {
+			result, err = data.cond.MatchTags(data.value)
+			if result != data.expectedResult {
+				t.Errorf("expected %t but got %t", data.expectedResult, result)
+			}
+
+			if !errors.Is(err, data.expectedErr) {
+				t.Errorf("expected error %v but got %v", data.expectedErr, err)
+			}
+		})
+	}
+}
+
+func TestCondition_UnmarshalAndMatchTags(t *testing.T) {
+	dataSet := []pattern.Condition{
+		{
+			Type:  pattern.ConditionIsEmpty,
+			Value: false,
+		},
+		{
+			Type:  pattern.ConditionIsEmpty,
+			Value: true,
+		},
+		{
+			Type:  pattern.ConditionHasEvery,
+			Value: []string{"val1", "val2"},
+		},
+		{
+			Type:  pattern.ConditionHasOneOf,
+			Value: []any{"val1", "val2"},
+		},
+		{
+			Type:  pattern.ConditionHasNot,
+			Value: bson.A{"val1", "val2"},
+		},
+		{
+			Type:  pattern.ConditionHasLabels,
+			Value: []string{"val1", "val2"},
+		},
+		{
+			Type:  pattern.ConditionHasNotLabels,
+			Value: []any{"val1", "val2"},
+		},
+	}
+
+	for _, data := range dataSet {
+		b, err := json.Marshal(condWrapper{Cond: data})
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+
+		w := condWrapper{}
+		err = json.Unmarshal(b, &w)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+
+		_, err = w.Cond.MatchTags([]string{"test"})
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+
+		b, err = bson.Marshal(condWrapper{Cond: data})
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+
+		w = condWrapper{}
+		err = bson.Unmarshal(b, &w)
+		if err != nil {
+			t.Errorf("expected no error but got %v", err)
+		}
+
+		_, err = w.Cond.MatchTags([]string{"test"})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}

@@ -10,9 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	mock_encoding "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/encoding"
-	"github.com/golang/mock/gomock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
+	"go.uber.org/mock/gomock"
 )
 
 func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T) {
@@ -118,7 +118,7 @@ func TestEventPublisher_Publish_GivenChangedEntity_ShouldSendEvent(t *testing.T)
 
 			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, "", logger)
 
-			ctx, cancel := context.WithCancel(context.Background())
+			ctx, cancel := context.WithCancel(t.Context())
 			defer cancel()
 			ch := make(chan entityservice.ChangeEntityMessage, 1)
 			ch <- data.Message
@@ -217,7 +217,7 @@ func TestEventPublisher_Publish_GivenChangedService_ShouldSendEvent(t *testing.T
 
 			eventPublisher := entityservice.NewEventPublisher(mockPublisher, mockEncoder, contentType, exchange, routingKey, "", logger)
 
-			ctx, cancel := context.WithCancel(context.Background())
+			ctx, cancel := context.WithCancel(t.Context())
 			defer cancel()
 			ch := make(chan entityservice.ChangeEntityMessage, 1)
 			ch <- data.Message

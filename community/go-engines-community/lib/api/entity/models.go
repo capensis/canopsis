@@ -1,6 +1,6 @@
 package entity
 
-//go:generate easyjson -no_std_marshalers
+//go:generate go tool github.com/mailru/easyjson/easyjson -no_std_marshalers
 
 import (
 	"encoding/json"
@@ -53,6 +53,7 @@ type BaseFilterRequest struct {
 	Type          []string `form:"type[]" json:"type"`
 	NoEvents      bool     `form:"no_events" json:"no_events"`
 	EntityPattern string   `form:"entity_pattern" json:"entity_pattern"`
+	IDs           []string `form:"ids[]" json:"ids"`
 }
 
 type ExportRequest struct {

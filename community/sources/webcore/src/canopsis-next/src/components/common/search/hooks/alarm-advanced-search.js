@@ -649,7 +649,7 @@ export const useAdvancedSearchRuleActiveItems = ({
 
     if (unwrappedRule.fieldType === PATTERN_FIELD_TYPES.string) {
       result = [
-        ...operators,
+        ...result,
         PATTERN_OPERATORS.isOneOf,
         PATTERN_OPERATORS.isNotOneOf,
       ];

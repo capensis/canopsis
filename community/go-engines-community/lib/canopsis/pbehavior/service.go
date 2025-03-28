@@ -1,6 +1,6 @@
 package pbehavior
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,ModelProvider,EventManager,Store,EntityTypeResolver,ComputedEntityTypeResolver,TypeComputer
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/pbehavior/pbehavior.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior Service,ModelProvider,EventManager,Store,EntityTypeResolver,ComputedEntityTypeResolver,TypeComputer,InheritedServicePbhResolver
 
 import (
 	"context"
@@ -176,8 +176,10 @@ func (s *service) compute(ctx context.Context, span *timespan.Span, location *ti
 		s.logger,
 	)
 	getter := NewComputedEntityGetter(s.dbClient)
-	queries := s.getQueries(res.ComputedPbehaviors)
-	err = getter.Compute(ctx, queries)
+
+	notInheritedQueries, inheritedQueries := s.getQueries(res.ComputedPbehaviors)
+
+	err = getter.Compute(ctx, notInheritedQueries, inheritedQueries)
 	if err != nil {
 		return nil, 0, fmt.Errorf("cannot compute entity getter: %w", err)
 	}
@@ -199,8 +201,10 @@ func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityT
 		s.logger,
 	)
 	getter := NewComputedEntityGetter(s.dbClient)
-	queries := s.getQueries(data.ComputedPbehaviors)
-	err = getter.Compute(ctx, queries)
+
+	notInheritedQueries, inheritedQueries := s.getQueries(data.ComputedPbehaviors)
+
+	err = getter.Compute(ctx, notInheritedQueries, inheritedQueries)
 	if err != nil {
 		return nil, err
 	}
@@ -208,8 +212,10 @@ func (s *service) load(ctx context.Context, span timespan.Span) (ComputedEntityT
 	return NewComputedEntityTypeResolver(getter, resolver), nil
 }
 
-func (s *service) getQueries(computed map[string]ComputedPbehavior) []bson.M {
-	queries := make([]bson.M, 0, len(computed))
+func (s *service) getQueries(computed map[string]ComputedPbehavior) ([]bson.M, []bson.M) {
+	notInheritedQueries := make([]bson.M, 0, len(computed))
+	inheritedQueries := make([]bson.M, 0, len(computed))
+
 	for id, pbehavior := range computed {
 		if len(pbehavior.EntityPattern) == 0 {
 			continue
@@ -221,8 +227,12 @@ func (s *service) getQueries(computed map[string]ComputedPbehavior) []bson.M {
 			continue
 		}
 
-		queries = append(queries, query)
+		if pbehavior.Inherited {
+			inheritedQueries = append(inheritedQueries, query)
+		} else {
+			notInheritedQueries = append(notInheritedQueries, query)
+		}
 	}
 
-	return queries
+	return notInheritedQueries, inheritedQueries
 }

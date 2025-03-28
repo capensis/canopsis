@@ -1,6 +1,6 @@
 package types
 
-//go:generate easyjson -no_std_marshalers
+//go:generate go tool github.com/mailru/easyjson/easyjson -no_std_marshalers
 
 import (
 	"encoding/json"
@@ -152,7 +152,9 @@ type Event struct {
 	TicketInfo `bson:",inline"`
 
 	// Tags contains external tags for alarm.
-	Tags map[string]string `bson:"tags" json:"tags"`
+	Tags         map[string]string `bson:"tags,omitempty" json:"tags,omitempty"`
+	ImportTags   map[string]string `bson:"imtags,omitempty" json:"imtags,omitempty"`
+	ImportSource string            `bson:"impsrc,omitempty" json:"impsrc,omitempty"`
 
 	MetaAlarmRuleID    string `bson:"metaalarm_rule_id,omitempty" json:"metaalarm_rule_id,omitempty"`
 	MetaAlarmValuePath string `bson:"metaalarm_value_path,omitempty" json:"metaalarm_value_path,omitempty"`

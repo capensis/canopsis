@@ -16,7 +16,7 @@ import (
 // NewLogger returns the default logger, that should be used by all the
 // engines.
 // The returned logger is thread-safe, and may be used in multiple goroutines.
-func NewLogger(debug bool) zerolog.Logger {
+func NewLogger(ctx context.Context, debug bool) zerolog.Logger {
 	var (
 		logger               zerolog.Logger
 		loggerWriter, writer io.Writer
@@ -35,7 +35,7 @@ func NewLogger(debug bool) zerolog.Logger {
 	}
 	loggerWriter = consoleWriter
 
-	cfg, err := loadLoggerConfig()
+	cfg, err := loadLoggerConfig(ctx)
 	if err != nil {
 		logger = zerolog.New(loggerWriter).Level(logLevel).With().Timestamp().Caller().Logger()
 		return logger
@@ -73,28 +73,20 @@ func NewLogger(debug bool) zerolog.Logger {
 	return logger
 }
 
-// NewTestLogger returns the default test logger, that should be used by all
-// the engines.
-func NewTestLogger() zerolog.Logger {
-	return NewLogger(false)
-}
-
-func loadLoggerConfig() (*config.SectionLogger, error) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func loadLoggerConfig(ctx context.Context) (*config.SectionLogger, error) {
 	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
 	if err != nil {
 		return nil, err
 	}
 
 	cfg, err := config.NewAdapter(dbClient).GetConfig(ctx)
-	dbErr := dbClient.Disconnect(ctx)
 	if err != nil {
 		return nil, err
 	}
-	if dbErr != nil {
-		return nil, dbErr
+
+	err = dbClient.Disconnect(ctx)
+	if err != nil {
+		return nil, err
 	}
 
 	return &cfg.Logger, nil

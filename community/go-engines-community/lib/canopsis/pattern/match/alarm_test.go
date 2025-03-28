@@ -612,6 +612,198 @@ func getMatchAlarmPatternDataSets() map[string]alarmDataSet {
 			},
 			matchResult: false,
 		},
+		"given match tags is_empty true condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+					},
+				},
+			},
+			alarm:       types.Alarm{},
+			matchResult: true,
+		},
+		"given match tags is_empty true condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, true),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-1"},
+			},
+			matchResult: false,
+		},
+		"given match tags is_empty false condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-1"},
+			},
+			matchResult: true,
+		},
+		"given match tags is_empty false condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewBoolCondition(pattern.ConditionIsEmpty, false),
+					},
+				},
+			},
+			alarm:       types.Alarm{},
+			matchResult: false,
+		},
+		"given match tags has_every condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-1: value-1", "label-2: value-2"},
+			},
+			matchResult: true,
+		},
+		"given match tags has_every condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasEvery, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-1: value-1"},
+			},
+			matchResult: false,
+		},
+		"given match tags has_one_of condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-1: value-1", "label-2: value-2", "label-3: value-3"},
+			},
+			matchResult: true,
+		},
+		"given match tags has_one_of condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasOneOf, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-3: value-3"},
+			},
+			matchResult: false,
+		},
+		"given match tags has_not condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-3: value-3"},
+			},
+			matchResult: true,
+		},
+		"given match tags has_not condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasNot, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-2: value-2", "label-3: value-3"},
+			},
+			matchResult: false,
+		},
+		"given match tags has_labels condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-1", "label-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-2", "label-3: value-3"},
+			},
+			matchResult: true,
+		},
+		"given match tags has_labels condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-3: value-3"},
+			},
+			matchResult: false,
+		},
+		"given match tags has_not_labels condition should match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-1", "label-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-2", "label-3: value-3"},
+			},
+			matchResult: true,
+		},
+		"given match tags has_not_labels condition should not match": {
+			pattern: pattern.Alarm{
+				{
+					{
+						Field:     "tags",
+						Condition: pattern.NewStringArrayCondition(pattern.ConditionHasLabels, []string{"label-1: value-1", "label-2: value-2"}),
+					},
+				},
+			},
+			alarm: types.Alarm{
+				Tags: []string{"label-3: value-3"},
+			},
+			matchResult: false,
+		},
 	}
 }
 

@@ -230,7 +230,7 @@ func Default(
 		authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
-	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(dbClient, pgPoolProvider),
+	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
 		json.NewEncoder(), json.NewDecoder(), flags.IntegrationPeriodicalWaitTime, logger)
 
 	err = registerWebsocketGroups(websocketHub, alarmWatcher, messageRateWatcher)
@@ -270,11 +270,11 @@ func Default(
 			close(entityCleanerTaskChan)
 			close(broadcastMessageChan)
 
-			err := dbClient.Disconnect(ctx)
+			err := dbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
-			err = dbExportClient.Disconnect(ctx)
+			err = dbExportClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
@@ -328,7 +328,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(dbClient)
+		RegisterValidators(dbClient, security.GetConfig())
 		RegisterRoutes(
 			ctx,
 			cfg,

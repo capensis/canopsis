@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -61,7 +60,6 @@ func NewEngine(
 	serviceRedisSession := m.DepRedisSession(ctx, redis.EntityServiceStorage, logger, cfg)
 	periodicalLockClient := redis.NewLockClient(redisSession)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
-	dataStorageConfigProvider := config.NewDataStorageConfigProvider(cfg, logger)
 	stateSettingsService := statesetting.NewService(mongoClient, logger)
 	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), stateSettingsService, logger)
 
@@ -87,8 +85,13 @@ func NewEngine(
 	eventFilterService := eventfilter.NewRuleService(ruleAdapter, ruleApplicatorContainer, eventFilterEventCounter,
 		eventFilterFailureService, templateExecutor, logger)
 
+	healthCheckCfg, err := config.NewHealthCheckAdapter(mongoClient).GetConfig(ctx)
+	if err != nil {
+		panic(fmt.Errorf("cannot load healthcheck config: %w", err))
+	}
+
 	runInfoPeriodicalWorker := libengine.NewRunInfoPeriodicalWorker(
-		options.PeriodicalWaitTime,
+		healthCheckCfg.ParseUpdateInterval(logger),
 		libengine.NewRunInfoManager(runInfoRedisSession),
 		libengine.NewInstanceRunInfo(canopsis.CheEngineName, canopsis.CheQueuePrefix, canopsis.AxeQueuePrefix, []string{
 			canopsis.CheExternalQueueName,
@@ -286,7 +289,6 @@ func NewEngine(
 		timezoneConfigProvider,
 		techMetricsConfigProvider,
 		templateConfigProvider,
-		dataStorageConfigProvider,
 	))
 	engine.AddPeriodicalWorker("impacted_services", libengine.NewLockedPeriodicalWorker(
 		periodicalLockClient,
@@ -331,14 +333,6 @@ func NewEngine(
 			return nil
 		})
 	}
-
-	engine.AddPeriodicalWorker("clean", &cleanPeriodicalWorker{
-		PeriodicalInterval:        time.Hour,
-		TimezoneConfigProvider:    timezoneConfigProvider,
-		DataStorageConfigProvider: dataStorageConfigProvider,
-		LimitConfigAdapter:        datastorage.NewAdapter(mongoClient),
-		Logger:                    logger,
-	})
 
 	healthcheck.Start(ctx, healthcheck.NewChecker(
 		"che",

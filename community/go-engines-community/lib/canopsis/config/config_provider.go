@@ -1,6 +1,6 @@
 package config
 
-//go:generate mockgen -destination=../../../mocks/lib/canopsis/config/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/config/provider.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config AlarmConfigProvider,TimezoneConfigProvider,RemediationConfigProvider,UserInterfaceConfigProvider,DataStorageConfigProvider,TechMetricsConfigProvider,TemplateConfigProvider
 
 import (
 	"fmt"
@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/rs/zerolog"
 )
@@ -153,9 +154,10 @@ type TechMetricsConfig struct {
 }
 
 type DataStorageConfig struct {
-	TimeToExecute      *ScheduledTime
+	TimeToExecute      ScheduledTimes
 	MaxUpdates         int
 	MongoClientTimeout time.Duration
+	Timeout            time.Duration
 }
 
 type MetricsConfig struct {
@@ -174,8 +176,32 @@ type ScheduledTime struct {
 	Hour    int
 }
 
-func (t ScheduledTime) String() string {
-	return fmt.Sprintf("%v,%v", t.Weekday, t.Hour)
+type ScheduledTimes []ScheduledTime
+
+func (t ScheduledTimes) IsScheduledTime(now datetime.CpsTime) bool {
+	for _, v := range t {
+		if now.Weekday() == v.Weekday && now.Hour() == v.Hour {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (t ScheduledTimes) String() string {
+	const l = len("Wednesday,10;")
+	var b strings.Builder
+	b.Grow(len(t) * l)
+	for i, v := range t {
+		b.WriteString(v.Weekday.String())
+		b.WriteRune(',')
+		b.WriteString(strconv.Itoa(v.Hour))
+		if i < len(t)-1 {
+			b.WriteRune(';')
+		}
+	}
+
+	return b.String()
 }
 
 type BaseTechMetricsConfigProvider struct {
@@ -507,7 +533,7 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 	logger.Info().
 		Msgf("%+v is loaded %s of %s config section", apiKeys, "external_api", sectionName)
 
-	return &BaseRemediationConfigProvider{
+	p := &BaseRemediationConfigProvider{
 		conf: RemediationConfig{
 			HttpTimeout:                    parseTimeDurationByStr(cfg.HttpTimeout, RemediationHttpTimeout, "http_timeout", sectionName, logger),
 			PauseManualInstructionInterval: parseTimeDurationByStr(cfg.PauseManualInstructionInterval, RemediationPauseManualInstructionInterval, "pause_manual_instruction_interval", sectionName, logger),
@@ -517,6 +543,21 @@ func NewRemediationConfigProvider(cfg RemediationConf, logger zerolog.Logger) *B
 		},
 		logger: logger,
 	}
+
+	if p.conf.HttpTimeout >= p.conf.JobRetryInterval {
+		p.conf.HttpTimeout = RemediationHttpTimeout
+		logger.Error().
+			Str("default", RemediationHttpTimeout.String()).
+			Msgf("value http_timeout of %[1]s config section cannot be greater then value job_retry_interval of %[1]s config, default value is used instead", sectionName)
+		if RemediationHttpTimeout >= p.conf.JobRetryInterval {
+			p.conf.JobRetryInterval = RemediationJobRetryInterval
+			logger.Error().
+				Str("default", RemediationJobRetryInterval.String()).
+				Msgf("value job_retry_interval of %[1]s config section cannot be greater then default value http_timeout of %[1]s config, default value is used instead", sectionName)
+		}
+	}
+
+	return p
 }
 
 type BaseRemediationConfigProvider struct {
@@ -692,6 +733,8 @@ func NewDataStorageConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *Base
 				logger),
 			MongoClientTimeout: parseTimeDurationByStr(cfg.DataStorage.MongoClientTimeout, 0,
 				"MongoClientTimeout", sectionName, logger),
+			Timeout: parseTimeDurationByStr(cfg.DataStorage.Timeout, 0,
+				"Timeout", sectionName, logger),
 		},
 		logger: logger,
 	}
@@ -723,6 +766,12 @@ func (p *BaseDataStorageConfigProvider) Update(cfg CanopsisConf) {
 		"MongoClientTimeout", sectionName, p.logger)
 	if ok {
 		p.conf.MongoClientTimeout = d
+	}
+
+	d, ok = parseUpdatedTimeDurationByStr(cfg.DataStorage.Timeout, p.conf.Timeout,
+		"Timeout", sectionName, p.logger)
+	if ok {
+		p.conf.Timeout = d
 	}
 }
 
@@ -848,7 +897,7 @@ func parseScheduledTime(
 	name, sectionName string,
 	logger zerolog.Logger,
 	msg string,
-) *ScheduledTime {
+) ScheduledTimes {
 	if v == "" {
 		logger.Info().
 			Msgf("missing %s of %s config section, %s", name, sectionName, msg)
@@ -867,22 +916,24 @@ func parseScheduledTime(
 		Str("value", t.String()).
 		Msgf("%s of %s config section is used", name, sectionName)
 
-	return &t
+	return t
 }
 
 func parseUpdatedScheduledTime(
 	v string,
-	oldVal *ScheduledTime,
+	oldVal ScheduledTimes,
 	name, sectionName string,
 	logger zerolog.Logger,
-) (*ScheduledTime, bool) {
+) (ScheduledTimes, bool) {
 	if v == "" {
 		if oldVal != nil {
 			logger.Warn().
 				Msgf("%s of %s config section is not defined, previous value is used", name, sectionName)
 		}
+
 		return nil, false
 	}
+
 	t, ok := stringToScheduledTime(v)
 	if !ok {
 		if oldVal != nil {
@@ -902,24 +953,36 @@ func parseUpdatedScheduledTime(
 
 	logInfoNewValue(logger, name, sectionName, oldValStr, t.String())
 
-	return &t, true
+	return t, true
 }
 
-func stringToScheduledTime(v string) (ScheduledTime, bool) {
-	split := strings.Split(v, ",")
-	t := ScheduledTime{}
-	if len(split) == 2 {
-		if d, ok := weekdays[split[0]]; ok {
-			h, err := strconv.Atoi(split[1])
-			if err == nil && h >= 0 && h <= 24 {
-				t.Weekday = d
-				t.Hour = h
-				return t, true
-			}
-		}
+func stringToScheduledTime(v string) (ScheduledTimes, bool) {
+	if v == "" {
+		return nil, false
 	}
 
-	return t, false
+	split := strings.Split(v, ";")
+	res := make(ScheduledTimes, 0, len(split))
+	for _, s := range split {
+		if s == "" {
+			continue
+		}
+
+		splitT := strings.Split(s, ",")
+		if len(splitT) == 2 {
+			if d, ok := weekdays[splitT[0]]; ok {
+				h, err := strconv.Atoi(splitT[1])
+				if err == nil && h >= 0 && h < 24 {
+					res = append(res, ScheduledTime{Weekday: d, Hour: h})
+					continue
+				}
+			}
+		}
+
+		return nil, false
+	}
+
+	return res, true
 }
 
 func parseTimeDurationByStr(
