@@ -311,6 +311,8 @@ export default {
   database: 'Database',
   importData: 'Import data',
   separator: 'Separator',
+  true: 'True',
+  false: 'False',
   variableTypes: {
     string: 'String',
     number: 'Number',
