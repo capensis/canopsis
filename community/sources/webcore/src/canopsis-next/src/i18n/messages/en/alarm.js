@@ -223,5 +223,6 @@ export default {
     closedChildren: 'Closed consequences',
     canceledInitiator: 'Canceled initiator',
     changeState: 'Change state',
+    closeDelay: 'Close delay',
   },
 };
