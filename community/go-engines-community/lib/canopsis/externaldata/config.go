@@ -29,14 +29,15 @@ func SyncMongoCollections(
 		return err
 	}
 
-	_, err = collection.UpdateMany(ctx, bson.M{"name": bson.M{"$in": collectionNames}, "from_config": true}, bson.M{"$unset": bson.M{
-		"removed_from_config": "",
-	}})
-	if err != nil {
-		return fmt.Errorf("failed to update external data tables: %w", err)
+	if len(collectionNames) > 0 {
+		_, err = collection.UpdateMany(ctx, bson.M{"name": bson.M{"$in": collectionNames}, "from_config": true},
+			bson.M{"$unset": bson.M{"removed_from_config": ""}})
+		if err != nil {
+			return fmt.Errorf("failed to update external data tables: %w", err)
+		}
 	}
 
-	unprocessedCollNames, err := findUnprocessedTables(ctx, collection, collectionNames)
+	unprocessedCollNames, nonConfErrCount, err := findUnprocessedTables(ctx, collection, collectionNames, logger)
 	if err != nil {
 		return err
 	}
@@ -50,8 +51,8 @@ func SyncMongoCollections(
 		Int("deleted", delCount).
 		Int("deleted_errors", delErrCount).
 		Int("created", newCount).
-		Int("created_errors", newErrCount).
-		Int("unmodified", len(collectionNames)-len(unprocessedCollNames)).
+		Int("created_errors", newErrCount+nonConfErrCount).
+		Int("unmodified", len(collectionNames)-len(unprocessedCollNames)-nonConfErrCount).
 		Msg("external data tables successfully updated")
 
 	return nil
@@ -164,32 +165,40 @@ func insertNewTables(
 	return count, errCount, nil
 }
 
-func findUnprocessedTables(ctx context.Context, dbCollection mongo.DbCollection, names []string) ([]string, error) {
+func findUnprocessedTables(ctx context.Context, collection mongo.DbCollection, names []string, logger zerolog.Logger) ([]string, int, error) {
+	if len(names) == 0 {
+		return nil, 0, nil
+	}
+
 	namesMap := make(map[string]struct{}, len(names))
 	for _, name := range names {
 		namesMap[name] = struct{}{}
 	}
 
-	cursor, err := dbCollection.Find(ctx, bson.M{
-		"name":        bson.M{"$in": names},
-		"from_config": true,
+	cursor, err := collection.Find(ctx, bson.M{
+		"name": bson.M{"$in": names},
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to find external data tables: %w", err)
+		return nil, 0, fmt.Errorf("failed to find external data tables: %w", err)
 	}
 
+	nonConfCount := 0
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
 		v := Table{}
 		if err = cursor.Decode(&v); err != nil {
-			return nil, fmt.Errorf("failed to decode external data table: %w", err)
+			return nil, 0, fmt.Errorf("failed to decode external data table: %w", err)
 		}
 
 		delete(namesMap, v.Name)
+		if !v.FromConfig {
+			nonConfCount++
+			logger.Error().Str("collection_name", v.Name).Msg("MongoDB collection cannot be added to external data list because it's already created by API")
+		}
 	}
 
 	if err = cursor.Err(); err != nil {
-		return nil, fmt.Errorf("failed to fetch external data tables: %w", err)
+		return nil, 0, fmt.Errorf("failed to fetch external data tables: %w", err)
 	}
 
 	res := make([]string, len(namesMap))
@@ -199,7 +208,7 @@ func findUnprocessedTables(ctx context.Context, dbCollection mongo.DbCollection,
 		i++
 	}
 
-	return res, nil
+	return res, nonConfCount, nil
 }
 
 func deleteMissingTables(
@@ -210,10 +219,14 @@ func deleteMissingTables(
 	refCollectionNames []string,
 	logger zerolog.Logger,
 ) (int, int, error) {
-	cursor, err := collection.Find(ctx, bson.M{
-		"name":        bson.M{"$nin": collectionNames},
+	match := bson.M{
 		"from_config": true,
-	}, options.Find().SetProjection(bson.M{"_id": 1, "name": 1}))
+	}
+	if len(collectionNames) > 0 {
+		match["name"] = bson.M{"$nin": collectionNames}
+	}
+
+	cursor, err := collection.Find(ctx, match, options.Find().SetProjection(bson.M{"_id": 1, "name": 1}))
 	if err != nil {
 		return 0, 0, fmt.Errorf("failed to find external data tables to removed: %w", err)
 	}
@@ -293,6 +306,10 @@ func deleteMissingTables(
 }
 
 func findWidgetLinkedTables(ctx context.Context, dbWidgetCollection mongo.DbCollection, ids []string, linked map[string]bool) (map[string]bool, error) {
+	if len(ids) == 0 {
+		return linked, nil
+	}
+
 	cursor, err := dbWidgetCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"type":             view.WidgetTypeExternalData,
