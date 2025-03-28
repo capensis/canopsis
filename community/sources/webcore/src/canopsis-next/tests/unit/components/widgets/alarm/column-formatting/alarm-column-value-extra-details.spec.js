@@ -11,6 +11,7 @@ const stubs = {
   'extra-details-pbehavior': true,
   'extra-details-parents': true,
   'extra-details-children': true,
+  'extra-details-close-delay': true,
 };
 
 describe('alarm-column-value-extra-details', () => {
@@ -28,6 +29,7 @@ describe('alarm-column-value-extra-details', () => {
         icon_name: 'icon',
         type_name: 'type',
       },
+      close_delay_value: 6,
     },
   };
 

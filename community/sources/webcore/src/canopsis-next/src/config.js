@@ -453,6 +453,7 @@ export const COLORS = {
     comment: '#ba68c8',
     snooze: '#e91e63',
     ticket: '#2196F3',
+    closeDelay: '#808080',
   },
   entitiesEvents: {
     ack: '#9c27b0',

@@ -2,6 +2,7 @@ import { escape } from 'lodash';
 import { computed } from 'vue';
 
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 import { linkifyHtml, sanitizeHtml } from '@/helpers/html';
 import { isSuccessTicketDeclaration } from '@/helpers/entities/declare-ticket/event/entity';
 
@@ -249,6 +250,24 @@ export const useExtraDetailsTicketTooltip = (props) => {
 
     return `<div class="layout extra-details-ticket__list column">${content}</div>
               <div class="mt-2">${otherTickets}</div>`;
+  });
+
+  return { tooltipContent };
+};
+
+/**
+ * Function to provide tooltip content for close delay in extra details.
+ *
+ * @param {Object} props - The props object containing ticket information.
+ * @returns {Object} - The tooltip content for Ticket action.
+ */
+export const useExtraDetailsCloseDelayTooltip = (props) => {
+  const { t } = useI18n();
+
+  const tooltipContent = computed(() => {
+    const content = `${t('alarm.fields.closeDelay')}: ${convertDurationToString(props.closeDelay)}`;
+
+    return `<div class="text-md-center">${content}</div>`;
   });
 
   return { tooltipContent };
