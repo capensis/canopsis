@@ -30,7 +30,7 @@ export const externalDataTableToForm = (externalDataTable = {}) => ({
 });
 
 export const externalDataTableColumnsToForm = (columns = [], columnTypes = []) => (
-  columns.reduce((acc, column, index) => {
+  (columns ?? []).reduce((acc, column, index) => {
     acc[column] = columnTypes[index] ?? EXTERNAL_DATA_TABLE_COLUMN_TYPES.noType;
 
     return acc;
