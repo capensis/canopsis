@@ -48,11 +48,13 @@ export const useQueryOptions = (query, updateQuery) => {
       return;
     }
 
+    const oldItemsPerPage = unwrappedQuery.itemsPerPage ?? PAGINATION_LIMIT;
+
     updateQuery({
       ...unwrappedQuery,
 
       search: value.search || '',
-      page: value.itemsPerPage <= unwrappedQuery.itemsPerPage ? value.page : 1,
+      page: value.itemsPerPage <= oldItemsPerPage ? value.page : 1,
       itemsPerPage: value.itemsPerPage || PAGINATION_LIMIT,
       sortBy: value.sortBy || [],
       sortDesc: value.sortDesc || [],
