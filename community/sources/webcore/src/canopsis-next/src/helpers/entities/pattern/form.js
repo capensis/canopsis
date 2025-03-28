@@ -362,6 +362,7 @@ export const isArrayPatternRuleField = value => [
  */
 export const isInfosPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.infos,
+  ALARM_PATTERN_FIELDS.entityInfos,
   ENTITY_PATTERN_FIELDS.componentInfos,
   ENTITY_PATTERN_FIELDS.infos,
 ].some((field) => {
@@ -370,8 +371,16 @@ export const isInfosPatternRuleField = value => [
    */
   const start = `${field}.`;
 
-  return value === field || value?.startsWith(start);
+  return value === field || value?.startsWith?.(start);
 });
+
+/**
+ * Check pattern field is infos value
+ *
+ * @param {string} [value = '']
+ * @return {boolean}
+ */
+export const isValueInfosPatternRuleField = value => isInfosPatternRuleField(value) && value?.endsWith?.('.value');
 
 /**
  * Check pattern field is duration
@@ -1006,7 +1015,7 @@ export const formRuleToPatternRule = (rule) => {
   const isObject = isObjectPatternRuleField(rule.attribute);
 
   if (isInfos || isExtraInfos || isObject) {
-    pattern.field = [rule.attribute, rule.dictionary].join('.');
+    pattern.field = rule.dictionary ? [rule.attribute, rule.dictionary].join('.') : rule.attribute;
   }
 
   if (isDate) {
@@ -1076,10 +1085,12 @@ export const formRuleToPatternRule = (rule) => {
 
     case PATTERN_OPERATORS.higher:
       pattern.cond.type = PATTERN_CONDITIONS.greater;
+      pattern.cond.value = Number(pattern.cond.value);
       break;
 
     case PATTERN_OPERATORS.lower:
       pattern.cond.type = PATTERN_CONDITIONS.less;
+      pattern.cond.value = Number(pattern.cond.value);
       break;
 
     case PATTERN_OPERATORS.longer:

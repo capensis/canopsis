@@ -307,6 +307,8 @@ export default {
   pressEnterToApply: 'Press <kbd>enter</kbd> to apply',
   width: 'Width',
   versionUpdated: 'Version updated',
+  true: 'True',
+  false: 'False',
   variableTypes: {
     string: 'String',
     number: 'Number',
