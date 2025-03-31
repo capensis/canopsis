@@ -6,7 +6,7 @@
     :outlined="outlined"
     class="c-alarm-action-chip"
     small
-    @click="$emit('click')"
+    @click="$emit('click', $event)"
   >
     <span class="c-alarm-action-chip__text">
       <slot />
@@ -15,7 +15,7 @@
       v-if="closable"
       class="cursor-pointer ml-2"
       small
-      @click.stop="$emit('close')"
+      @click.stop="$emit('close', $event)"
     >
       cancel
     </v-icon>
