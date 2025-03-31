@@ -34,7 +34,7 @@
       <field-default-elements-per-page v-field="form.parameters.itemsPerPage" />
       <field-density v-field="form.parameters.dense" />
       <export-csv-form
-        v-field="form.parameters.export_settings"
+        v-field="form.parameters"
         :items="preparedColumns"
         without-template
         without-infos-attributes

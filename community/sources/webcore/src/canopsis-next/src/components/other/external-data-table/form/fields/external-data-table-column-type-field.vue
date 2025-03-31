@@ -1,13 +1,14 @@
 <template>
   <v-menu :disabled="disabled" bottom nudge-bottom>
     <template #activator="{ on }">
-      <v-chip
+      <c-alarm-action-chip
         :color="activeChip?.color"
+        class="px-2"
         text-color="white"
         v-on="on"
       >
         {{ activeChip?.text }}
-      </v-chip>
+      </c-alarm-action-chip>
     </template>
     <v-list>
       <v-list-item
