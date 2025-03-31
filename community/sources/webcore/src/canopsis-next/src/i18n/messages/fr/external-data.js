@@ -46,7 +46,7 @@ export default {
   importFileDescription: 'La première ligne doit contenir les noms de colonnes',
   exportTableStructure: 'Exporter la structure de la table',
 
-  tableField: 'Collection / tableau',
+  tableField: 'Collection / Table',
 
   andMore: 'et plus...',
   linkedRules: {
@@ -55,7 +55,7 @@ export default {
     links: '<strong>Links</strong>\n<ul>{rules}</ul>',
   },
   tableCanBeDeletedInConfig: 'La table ne peut être supprimée que dans le fichier de configuration',
-  tableCanBeDeletedAfter: 'Le tableau peut être supprimé après la suppression de\n{rules}',
+  tableCanBeDeletedAfter: 'La table pourra être supprimée après la suppression de\n{rules}',
   tableRemovedFromConfig: 'La table est supprimée du fichier de configuration, mais elle reste utilisée dans les éléments suivants.\n<strong>Replacer la table dans le fichier de configuration ou supprimer tous les éléments qui l\'utilisent</strong>\n{rules}',
 
   tableColumnTypes: {

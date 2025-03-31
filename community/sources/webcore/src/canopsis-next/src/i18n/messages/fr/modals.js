@@ -273,7 +273,7 @@ export default {
         title: 'Disponibilité',
       },
       [WIDGET_TYPES.externalDataTable]: {
-        title: 'External data',
+        title: 'Données externes',
       },
       chart: {
         title: 'Graphique',
@@ -789,10 +789,10 @@ export default {
       phrase: 'archiver ou supprimer',
     },
     deleteExternalDataTable: {
-      title: 'Delete Reference table / collection',
-      text: 'You are about to delete data.\n'
-        + '<strong>Deletion operation won\'t be cancellable.</strong>',
-      phraseText: 'Please type table / collection name to confirm:',
+      title: 'Supprimer la Collection / Table',
+      text: 'vous êtes sur le point de supprimer des données.\n'
+        + '<strong>Cette opération est irreversible.</strong>',
+      phraseText: 'Veuillez saisir le nom de la Collection / Table pour confirmer:',
     },
   },
   pbehaviorsCalendar: {
@@ -1072,7 +1072,7 @@ export default {
       title: 'Modifier l\'enregistrement',
     },
     duplicate: {
-      title: 'Enregistrement en double',
+      title: 'Dupliquer',
     },
   },
 };
