@@ -13,10 +13,8 @@ import { isPickEqual } from '@/helpers/collection';
  * @returns {Object} - Object containing computed options for pagination and sorting.
  */
 export const useQueryOptions = (query, updateQuery) => {
-  const unwrappedQuery = unref(query);
-
   const options = computed(() => {
-    const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = query.value;
+    const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [], ...restQuery } = unref(query);
 
     return { page, itemsPerPage, sortBy, sortDesc, ...restQuery };
   });
@@ -27,6 +25,7 @@ export const useQueryOptions = (query, updateQuery) => {
    * @param {Object} value - The new options values to update.
    */
   const updateOptions = (value) => {
+    const unwrappedQuery = unref(query);
     const otherValues = omit(value, [
       'search',
       'page',
