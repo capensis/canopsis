@@ -54,8 +54,8 @@ export const useExternalDataTableWidgetTable = ({
       }, map(unref(widget).parameters.widgetColumns, 'value'));
     },
 
-    set: (newColumns) => {
-      externalDataTable.value = updateExternalDataTable({
+    set: async (newColumns) => {
+      externalDataTable.value = await updateExternalDataTable({
         id: externalDataTable.value._id,
         data: {
           ...pick(externalDataTable.value, ['type', 'name', 'description']),
