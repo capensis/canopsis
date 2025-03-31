@@ -31,7 +31,7 @@
       advanced-pagination
       @update:options="$emit('update:options', $event)"
     >
-      <template v-if="withToolbar" #toolbar="">
+      <template v-if="withToolbar" #toolbar="{ selected }">
         <v-flex>
           <v-layout class="gap-1" justify-end>
             <v-btn
@@ -87,7 +87,7 @@
                   :loading="downloading"
                   :tooltip="$t('settings.exportAsCsv')"
                   icon="cloud_download"
-                  @click="$emit('export')"
+                  @click="$emit('export', selected)"
                 />
               </v-layout>
             </v-flex>
@@ -105,11 +105,13 @@
           <td v-if="selectable" />
           <td v-if="expandable" />
           <td v-for="header in sortedHeaders" :key="header.value">
-            <external-data-table-column-type-field
-              v-if="header.value !== '_id' && header.value !== 'actions'"
-              v-field="columns[header.value]"
-              :disabled="disabled"
-            />
+            <div class="py-1">
+              <external-data-table-column-type-field
+                v-if="header.value !== '_id' && header.value !== 'actions'"
+                v-field="columns[header.value]"
+                :disabled="disabled"
+              />
+            </div>
             <span
               v-if="resizingMode"
               :key="`${header.value}.resize`"

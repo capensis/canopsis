@@ -21,7 +21,7 @@
       selectable
       exportable
       expandable
-      @download="exportRecords"
+      @export="exportRecords"
       @import="showImportExternalDataTablesModal"
       @add="showCreateExternalDataTableRecordModal"
       @edit="showEditExternalDataTableRecordModal"
@@ -44,6 +44,7 @@ import { PAGINATION_LIMIT } from '@/config';
 import { openUrlInNewTab } from '@/helpers/url';
 import { getExternalDataTableRecordsFileUrl } from '@/helpers/entities/external-data-table/url';
 import { convertSortToQuery } from '@/helpers/entities/shared/query';
+import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
 import { useFilePollingWithPending } from '@/hooks/polling';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
@@ -149,12 +150,12 @@ export default {
       pending: downloading,
       poll: exportRecords,
     } = useFilePollingWithPending({
-      createHandler: () => createExternalDataTableExport({
+      createHandler: selected => createExternalDataTableExport({
         id: externalDataTable.value._id,
         data: {
-          search: query.value.search ?? '',
-          fields: props.widget.parameters.export_settings.widgetExportColumns,
-          separator: props.widget.parameters.export_settings.exportCsvSeparator,
+          search: selectedToQuery(selected, query.search),
+          fields: widgetToExportQueryColumns(props.widget),
+          separator: props.widget.parameters.exportCsvSeparator,
           search_by: map(props.widget.parameters.widgetColumns, 'value'),
         },
       }),

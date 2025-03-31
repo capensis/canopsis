@@ -131,3 +131,40 @@ export function prepareWidgetQuery(widget, userPreference) {
 
   return query;
 }
+
+/**
+ * Transforms widget parameters into a format suitable for export query columns.
+ *
+ * @param {Object} [parameters={}] - The parameters object containing widget column information.
+ * @param {WidgetColumn[]} [parameters.widgetExportColumns] - An array of export column objects, each containing
+ *                                                            `value`, `text`, and `template`.
+ * @param {WidgetColumn[]} [parameters.widgetColumns] - An array of widget column objects, each containing `value`,
+ *                                                      `text`, and `template`.
+ * @returns {Object[]} An array of objects, each representing a column with `name`, `label`, and optionally `template`.
+ */
+export const widgetToExportQueryColumns = ({ parameters } = {}) => {
+  const {
+    widgetExportColumns,
+    widgetColumns,
+  } = parameters;
+
+  const hasExportColumns = !!widgetExportColumns?.length;
+  const columns = hasExportColumns ? widgetExportColumns : widgetColumns;
+
+  return columns.map(({ value, text, template }) => ({
+    name: value,
+    label: text,
+    template: hasExportColumns ? template : undefined,
+  }));
+};
+
+/**
+ * Converts a list of selected items into a query string or returns a search string if no items are selected.
+ *
+ * @param {Array} [selected=[]] - An array of selected items, each containing an `_id` property.
+ * @param {string} [search=''] - A search string to return if no items are selected.
+ * @returns {string} A query string constructed from selected items or the provided search string.
+ */
+export const selectedToQuery = (selected = [], search = '') => (
+  selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : search
+);
