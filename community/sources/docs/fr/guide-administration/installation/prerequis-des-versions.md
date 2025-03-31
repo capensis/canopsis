@@ -25,7 +25,7 @@ Nginx       | 1.20 (uniquement pour l'installation via paquets RPM) |
 PostgreSQL  | >= 13               |
 TimescaleDB | 2.14.2           |
 RabbitMQ    | >= 3.12             |
-Redis       | ≥ 5.0, < 7.0     |
+Valkey       | 8.0   |
 
 ## Prérequis composants externes
 
