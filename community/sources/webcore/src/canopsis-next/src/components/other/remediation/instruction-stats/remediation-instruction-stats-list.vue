@@ -36,6 +36,12 @@
       <template #avg_complete_time="{ item }">
         {{ item.avg_complete_time | duration }}
       </template>
+      <template #avg_alarm_ok_timeout="{ item }">
+        {{ item.avg_alarm_ok_timeout | duration }}
+      </template>
+      <template #avg_successful="{ item }">
+        {{ item.avg_successful }}% / {{ item.avg_successful_state_ok }}%
+      </template>
       <template #alarm_states="{ item }">
         <affect-alarm-states :alarm-states="item.alarm_states" />
       </template>
@@ -136,24 +142,36 @@ export default {
         {
           text: this.$t('remediation.instructionStat.lastExecutedOn'),
           value: 'last_executed_on',
-          width: 180,
+          width: 160,
         },
         {
           text: this.$t('common.lastModifiedOn'),
           value: 'last_modified',
-          width: 180,
+          width: 160,
         },
         {
           text: this.$t('remediation.instructionStat.averageCompletionTime'),
           value: 'avg_complete_time',
           sortable: false,
-          width: 150,
+          width: 140,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageAlarmOkTimeout'),
+          value: 'avg_alarm_ok_timeout',
+          sortable: false,
+          width: 100,
         },
         {
           text: this.$t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
           sortable: false,
-          width: 120,
+          width: 100,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageSuccessfulAllOk'),
+          value: 'avg_successful',
+          sortable: false,
+          width: 100,
         },
         {
           text: this.$t('remediation.instructionStat.alarmStates'),
@@ -165,19 +183,19 @@ export default {
           text: this.$t('remediation.instructionStat.okAlarmStates'),
           value: 'ok_alarm_states',
           sortable: false,
-          width: 150,
+          width: 90,
         },
         {
           text: this.$tc('common.rating'),
           value: 'rating',
           sortable: false,
-          width: 240,
+          width: 230,
         },
         {
           text: this.$t('common.actionsLabel'),
           value: 'actions',
           sortable: false,
-          width: 100,
+          width: 80,
         },
       ].filter(Boolean);
     },
