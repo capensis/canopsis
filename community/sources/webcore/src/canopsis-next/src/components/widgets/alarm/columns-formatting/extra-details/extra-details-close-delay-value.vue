@@ -14,19 +14,19 @@
 <script>
 import { COLORS } from '@/config';
 
-import { useExtraDetailsCloseDelayTooltip } from '../../hooks/extra-details-tooltips';
+import { useExtraDetailsCloseDelayValueTooltip } from '../../hooks/extra-details-tooltips';
 
 export default {
   props: {
-    closeDelay: {
-      type: Object,
+    closeDelayValue: {
+      type: Number,
       required: true,
     },
   },
   setup(props) {
-    const { tooltipContent } = useExtraDetailsCloseDelayTooltip(props);
+    const { tooltipContent } = useExtraDetailsCloseDelayValueTooltip(props);
 
-    const icon = '$vuetify.icons.close_with_delay';
+    const icon = '$vuetify.icons.remove_clock';
     const color = COLORS.alarmExtraDetails.closeDelay;
 
     return {

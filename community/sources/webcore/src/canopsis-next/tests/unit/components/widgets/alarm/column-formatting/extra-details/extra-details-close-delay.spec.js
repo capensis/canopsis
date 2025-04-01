@@ -9,8 +9,15 @@ const stubs = {
 };
 
 describe('extra-details-close-delay', () => {
-  const closeDelay = 6;
-
+  const closeDelay = {
+    _t: 'statedec',
+    t: 1743511657,
+    a: 'system',
+    user_id: '',
+    m: 'closed after 20 seconds delay',
+    val: 0,
+    initiator: 'system',
+  };
   const snapshotFactory = generateRenderer(ExtraDetailsCloseDelay, {
     stubs,
     attachTo: document.body,

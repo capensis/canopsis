@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`extra-details-close-delay-value Renders \`extra-details-close-delay-value\` with full children and rule 1`] = `
+<div>
+  <c-simple-tooltip-stub
+    content="<div class=\\"text-md-center\\">Close delay: 6 secs</div>"
+    top=""
+  >
+    <c-alarm-extra-details-chip-stub
+      color="#808080"
+      icon="$vuetify.icons.remove_clock"
+    />
+  </c-simple-tooltip-stub>
+</div>
+`;
