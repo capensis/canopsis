@@ -563,6 +563,8 @@ type AlarmValue struct {
 	PbehaviorInactiveDuration int64 `bson:"pbh_inactive_duration" json:"pbh_inactive_duration"`
 	// CloseDelayValue represents a close delay timeout, used only in the API response.
 	CloseDelayValue int64 `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
+	// CloseDelay should have a state step copy when alarm is closed by a close delay job.
+	CloseDelay *AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 }
 
 func (v *AlarmValue) Transform() {
