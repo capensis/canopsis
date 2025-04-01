@@ -338,7 +338,7 @@ func (s *service) sendCpsEventMetric(event types.Event) {
 			},
 		}
 
-		if event.EventType == types.EventTypeCheck {
+		if event.EventType == types.EventTypeCheck || event.EventType == types.EventTypeContextUpdate {
 			isOkState := event.State == types.AlarmStateOK
 			eventMetric.IsOkState = &isOkState
 		}
