@@ -40,8 +40,12 @@
       :rule="alarm.meta_alarm_rule"
     />
     <extra-details-close-delay
+      v-if="alarm.v.close_delay"
+      :close-delay="alarm.v.close_delay"
+    />
+    <extra-details-close-delay-value
       v-if="alarm.v.close_delay_value"
-      :close-delay="alarm.v.close_delay_value"
+      :close-delay-value="alarm.v.close_delay_value"
     />
   </v-layout>
 </template>
@@ -56,6 +60,7 @@ import ExtraDetailsPbehavior from './extra-details/extra-details-pbehavior.vue';
 import ExtraDetailsParents from './extra-details/extra-details-parents.vue';
 import ExtraDetailsChildren from './extra-details/extra-details-children.vue';
 import ExtraDetailsCloseDelay from './extra-details/extra-details-close-delay.vue';
+import ExtraDetailsCloseDelayValue from './extra-details/extra-details-close-delay-value.vue';
 
 /**
  * Component for the 'extra-details' column of the alarms list
@@ -75,6 +80,7 @@ export default {
     ExtraDetailsParents,
     ExtraDetailsChildren,
     ExtraDetailsCloseDelay,
+    ExtraDetailsCloseDelayValue,
   },
   props: {
     alarm: {

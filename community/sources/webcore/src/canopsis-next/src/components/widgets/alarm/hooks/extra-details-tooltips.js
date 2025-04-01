@@ -262,10 +262,40 @@ export const useExtraDetailsTicketTooltip = (props) => {
  * @returns {Object} - The tooltip content for Ticket action.
  */
 export const useExtraDetailsCloseDelayTooltip = (props) => {
+  const { t, tc } = useI18n();
+
+  const date = computed(() => convertDateToStringWithFormatForToday(props.closeDelay.t));
+
+  const tooltipContent = computed(() => {
+    let content = `<strong>${t(`common.statusTypes.${props.closeDelay.val}`)}</strong>
+        <div>${t('common.by')} : ${escape(props.closeDelay.a)}</div>
+        <div>${t('common.date')} : ${date.value}</div>`;
+
+    if (props.closeDelay.initiator) {
+      content += `<div>${t('common.initiator')} : ${escape(props.closeDelay.initiator)}</div>`;
+    }
+
+    if (props.closeDelay.m) {
+      content += `<div class="c-extra-details__message">${tc('common.comment')} : ${escape(props.closeDelay.m)}</div>`;
+    }
+
+    return `<div class="text-md-center">${content}</div>`;
+  });
+
+  return { tooltipContent };
+};
+
+/**
+ * Function to provide tooltip content for close delay value in extra details.
+ *
+ * @param {Object} props - The props object containing ticket information.
+ * @returns {Object} - The tooltip content for Ticket action.
+ */
+export const useExtraDetailsCloseDelayValueTooltip = (props) => {
   const { t } = useI18n();
 
   const tooltipContent = computed(() => {
-    const content = `${t('alarm.fields.closeDelay')}: ${convertDurationToString(props.closeDelay)}`;
+    const content = `${t('alarm.fields.closeDelay')}: ${convertDurationToString(props.closeDelayValue)}`;
 
     return `<div class="text-md-center">${content}</div>`;
   });
