@@ -152,7 +152,8 @@ func (p *MessageProcessor) transformEvent(event types.Event) rpc.AxeEvent {
 		DisplayName:         event.DisplayName,
 		MetaAlarmChildren:   event.MetaAlarmChildren,
 		StateSettingUpdated: event.StateSettingUpdated,
-		CloseDelay:          event.CloseDelay,
+		CloseDelayValue:     event.CloseDelayValue,
+		IsCloseDelayJob:     event.IsCloseDelayJob,
 	}
 
 	if event.Duration > 0 {

@@ -199,8 +199,10 @@ type Event struct {
 	Healthcheck bool `bson:"healthcheck,omitempty" json:"healthcheck,omitempty"`
 
 	StateSettingUpdated bool `bson:"state_setting_updated,omitempty" json:"state_setting_updated,omitempty"`
-
-	CloseDelay *int64 `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
+	// CloseDelayValue shows a close delay timeout in seconds.
+	CloseDelayValue *int64 `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
+	// IsCloseDelayJob shows if an event is triggered by a close delay job.
+	IsCloseDelayJob bool `bson:"is_close_delay,omitempty" json:"is_close_delay,omitempty"`
 }
 
 // Format an event

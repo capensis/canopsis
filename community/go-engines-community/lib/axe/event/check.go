@@ -282,8 +282,8 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		alarm.InactiveAutoInstructionInProgress = result.IsInstructionMatched
 	}
 
-	if event.Parameters.CloseDelay != nil && *event.Parameters.CloseDelay > 0 {
-		alarm.Value.CloseDelayValue = *event.Parameters.CloseDelay
+	if event.Parameters.CloseDelayValue != nil && *event.Parameters.CloseDelayValue > 0 {
+		alarm.Value.CloseDelayValue = *event.Parameters.CloseDelayValue
 
 		_, err = p.closeDelayJobCollection.UpdateOne(ctx, bson.M{
 			"_id": alarm.ID,
@@ -292,8 +292,8 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 				Name:      entity.Name,
 				Component: entity.Component,
 				Type:      entity.Type,
-				Delay:     *event.Parameters.CloseDelay,
-				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CloseDelay,
+				Delay:     *event.Parameters.CloseDelayValue,
+				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CloseDelayValue,
 			},
 		}, options.Update().SetUpsert(true))
 		if err != nil {
@@ -412,8 +412,13 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 	}
 
 	if params.State != nil {
-		if params.CloseDelay != nil && *params.CloseDelay > 0 && *params.State != types.AlarmStateOK {
-			set["v.close_delay_value"] = params.CloseDelay
+		if params.CloseDelayValue != nil && *params.CloseDelayValue > 0 && *params.State != types.AlarmStateOK {
+			set["v.close_delay_value"] = params.CloseDelayValue
+
+			// must do unset, because an alarm may be already closed by previous close delay.
+			if alarm.Value.CloseDelay != nil {
+				unset["v.close_delay"] = ""
+			}
 
 			_, err := p.closeDelayJobCollection.UpdateOne(ctx, bson.M{
 				"_id": alarm.ID,
@@ -422,8 +427,8 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 					Name:      entity.Name,
 					Component: entity.Component,
 					Type:      entity.Type,
-					Delay:     *params.CloseDelay,
-					ExecTime:  params.Timestamp.Unix() + *params.CloseDelay,
+					Delay:     *params.CloseDelayValue,
+					ExecTime:  params.Timestamp.Unix() + *params.CloseDelayValue,
 				},
 			}, options.Update().SetUpsert(true))
 			if err != nil {
@@ -431,7 +436,11 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 			}
 		}
 
-		if params.CloseDelay != nil && *params.CloseDelay == 0 || *params.State == types.AlarmStateOK {
+		if params.CloseDelayValue != nil && *params.CloseDelayValue == 0 || *params.State == types.AlarmStateOK {
+			if params.IsCloseDelayJob {
+				set["v.close_delay"] = alarm.Value.State
+			}
+
 			unset["v.close_delay_value"] = ""
 
 			_, err := p.closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})

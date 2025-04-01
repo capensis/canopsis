@@ -83,6 +83,7 @@ func (s *service) Process(ctx context.Context) ([]types.Event, error) {
 		event.Timestamp = now
 		event.State = types.AlarmStateOK
 		event.Output = fmt.Sprintf("closed after %d seconds delay", job.Delay)
+		event.IsCloseDelayJob = true
 
 		events = append(events, event)
 

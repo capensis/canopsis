@@ -332,13 +332,15 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		case "close_delay":
 			if in.IsNull() {
 				in.Skip()
-				out.CloseDelay = nil
+				out.CloseDelayValue = nil
 			} else {
-				if out.CloseDelay == nil {
-					out.CloseDelay = new(int64)
+				if out.CloseDelayValue == nil {
+					out.CloseDelayValue = new(int64)
 				}
-				*out.CloseDelay = int64(in.Int64())
+				*out.CloseDelayValue = int64(in.Int64())
 			}
+		case "is_close_delay":
+			out.IsCloseDelayJob = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -727,10 +729,15 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Bool(bool(in.StateSettingUpdated))
 	}
-	if in.CloseDelay != nil {
+	if in.CloseDelayValue != nil {
 		const prefix string = ",\"close_delay\":"
 		out.RawString(prefix)
-		out.Int64(int64(*in.CloseDelay))
+		out.Int64(int64(*in.CloseDelayValue))
+	}
+	if in.IsCloseDelayJob {
+		const prefix string = ",\"is_close_delay\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsCloseDelayJob))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"
@@ -3205,6 +3212,16 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.PbehaviorInactiveDuration = int64(in.Int64())
 		case "close_delay_value":
 			out.CloseDelayValue = int64(in.Int64())
+		case "close_delay":
+			if in.IsNull() {
+				in.Skip()
+				out.CloseDelay = nil
+			} else {
+				if out.CloseDelay == nil {
+					out.CloseDelay = new(AlarmStep)
+				}
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes13(in, out.CloseDelay)
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -3619,6 +3636,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"close_delay_value\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.CloseDelayValue))
+	}
+	if in.CloseDelay != nil {
+		const prefix string = ",\"close_delay\":"
+		out.RawString(prefix)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes13(out, *in.CloseDelay)
 	}
 	out.RawByte('}')
 }
