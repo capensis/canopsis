@@ -193,6 +193,7 @@ export const useExternalDataTableRecordsList = ({ externalDataTable, fetchExtern
     query,
     options,
     updateOptions,
+    resetQuery,
     fetchList,
   } = useFetchListWithoutStoreWithOptions({
     initialQuery,
@@ -233,6 +234,7 @@ export const useExternalDataTableRecordsList = ({ externalDataTable, fetchExtern
     query,
     options,
     updateOptions,
+    resetQuery,
 
     hasStructure,
 

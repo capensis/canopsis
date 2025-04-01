@@ -13,6 +13,11 @@
         </v-btn>
       </v-flex>
     </v-layout>
+    <v-layout v-else-if="isEmptyColumns" column>
+      <v-flex align-self-center>
+        <v-subheader>{{ $t('externalData.tableEmptyColumns') }}</v-subheader>
+      </v-flex>
+    </v-layout>
     <c-advanced-data-table
       v-else
       ref="tableElement"
@@ -190,6 +195,7 @@
 </template>
 
 <script>
+import { isEmpty } from 'lodash';
 import { computed, ref, toRef } from 'vue';
 
 import { DENSE_TYPES } from '@/constants';
@@ -308,6 +314,8 @@ export default {
     /**
      * COMPUTED
      */
+    const isEmptyColumns = computed(() => isEmpty(props.columns));
+
     const headers = computed(() => {
       const result = Object.keys(props.columns).map(column => ({
         value: column,
@@ -358,6 +366,7 @@ export default {
     return {
       tableElement,
 
+      isEmptyColumns,
       headers,
       isSmallDense,
       isMediumDense,

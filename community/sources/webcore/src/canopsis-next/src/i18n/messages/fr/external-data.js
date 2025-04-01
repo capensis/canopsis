@@ -57,7 +57,7 @@ export default {
   tableCanBeDeletedInConfig: 'La table ne peut être supprimée que dans le fichier de configuration',
   tableCanBeDeletedAfter: 'La table pourra être supprimée après la suppression de\n{rules}',
   tableRemovedFromConfig: 'La table est supprimée du fichier de configuration, mais elle reste utilisée dans les éléments suivants.\n<strong>Replacer la table dans le fichier de configuration ou supprimer tous les éléments qui l\'utilisent</strong>\n{rules}',
-
+  tableEmptyColumns: 'Veuillez choisir au moins 1 colonne dans les paramètres',
   tableColumnTypes: {
     [EXTERNAL_DATA_TABLE_COLUMN_TYPES.noType]: 'Aucun type',
     [EXTERNAL_DATA_TABLE_COLUMN_TYPES.filter]: 'Filtre',

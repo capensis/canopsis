@@ -37,14 +37,11 @@
 
 <script>
 import { map } from 'lodash';
-import { toRef, onMounted } from 'vue';
-
-import { PAGINATION_LIMIT } from '@/config';
+import { computed, toRef, onMounted } from 'vue';
 
 import { openUrlInNewTab } from '@/helpers/url';
 import { getExternalDataTableRecordsFileUrl } from '@/helpers/entities/external-data-table/url';
-import { convertSortToQuery } from '@/helpers/entities/shared/query';
-import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
+import { prepareWidgetQuery, selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
 import { useFilePollingWithPending } from '@/hooks/polling';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
@@ -92,6 +89,8 @@ export default {
       fetchItem,
     } = useExternalDataTableWidgetTable({ widget: toRef(props, 'widget') });
 
+    const initialQuery = computed(() => prepareWidgetQuery(props.widget, userPreference.value));
+
     /**
      * RECORDS LIST METHODS
      */
@@ -101,8 +100,9 @@ export default {
       meta,
       query,
       options,
-      updateOptions,
 
+      updateOptions: updateOptionsHook,
+      resetQuery,
       fetchList: fetchRecordsList,
 
       showImportExternalDataTablesModal,
@@ -114,20 +114,32 @@ export default {
     } = useExternalDataTableRecordsList({
       externalDataTable,
       fetchExternalDataTable: fetchItem,
-      initialQuery: {
-        page: 1,
-        limit: PAGINATION_LIMIT,
-
-        ...convertSortToQuery(props.widget),
-      },
+      initialQuery,
     });
+
+    const updateOptions = (newOptions) => {
+      if (newOptions.itemsPerPage !== options.value.itemsPerPage) {
+        updateContentInUserPreference({ itemsPerPage: newOptions.itemsPerPage });
+      }
+
+      return updateOptionsHook(newOptions);
+    };
 
     /**
      * Fetches the widget item data and then loads the associated records list
      *
      * @returns {Promise} A promise that resolves when both the widget item and its records are fetched
      */
-    const fetchItemWithRecords = () => fetchItem(fetchRecordsList);
+    const fetchItemWithRecords = async () => {
+      await fetchItem();
+
+      /**
+       * We need to reset query to use updated initialQuery with userPreference content
+       */
+      resetQuery();
+
+      return fetchRecordsList();
+    };
 
     /**
      * COLUMNS SETTINGS
@@ -156,8 +168,8 @@ export default {
         data: {
           search: selectedToQuery(selected, query.search),
           separator: props.widget.parameters.exportCsvSeparator,
-          fields: widgetToExportQueryColumns(props.widget).filter(({ name }) => name !== '_id'),
-          search_by: map(props.widget.parameters.widgetColumns, 'value').filter(value => value !== '_id'),
+          fields: widgetToExportQueryColumns(props.widget),
+          search_by: map(props.widget.parameters.widgetColumns, 'value'),
         },
       }),
       fetchHandler: fetchExternalDataTableExportStatus,
@@ -181,7 +193,9 @@ export default {
       handler: fetchItemWithRecords,
     });
 
-    onMounted(fetchItemWithRecords);
+    onMounted(() => {
+      fetchItemWithRecords();
+    });
 
     return {
       externalDataTable,
