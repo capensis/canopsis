@@ -395,7 +395,7 @@ exports[`sidebar-wrapper Renders \`sidebar-wrapper\` with type: external-data-ta
           <div
             class="v-list-item__title white--text text-subtitle-1"
           >
-          settings.titles.external-data-table-settings
+          External data settings
           </div>
           <button
             class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
