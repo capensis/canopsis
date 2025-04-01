@@ -25,6 +25,7 @@ export default {
     [SIDE_BARS.userStatisticsSettings]: 'User statistics settings',
     [SIDE_BARS.alarmStatisticsSettings]: 'Alarm statistics settings',
     [SIDE_BARS.availabilitySettings]: 'Availability settings',
+    [SIDE_BARS.externalDataTableSettings]: 'External data settings',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Opened alarms',

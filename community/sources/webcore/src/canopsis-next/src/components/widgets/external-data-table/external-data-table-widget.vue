@@ -113,6 +113,7 @@ export default {
       showRemoveSelectedExternalDataTableRecordsModal,
     } = useExternalDataTableRecordsList({
       externalDataTable,
+      fetchExternalDataTable: fetchItem,
       initialQuery: {
         page: 1,
         limit: PAGINATION_LIMIT,
@@ -154,9 +155,9 @@ export default {
         id: externalDataTable.value._id,
         data: {
           search: selectedToQuery(selected, query.search),
-          fields: widgetToExportQueryColumns(props.widget),
           separator: props.widget.parameters.exportCsvSeparator,
-          search_by: map(props.widget.parameters.widgetColumns, 'value'),
+          fields: widgetToExportQueryColumns(props.widget).filter(({ name }) => name !== '_id'),
+          search_by: map(props.widget.parameters.widgetColumns, 'value').filter(value => value !== '_id'),
         },
       }),
       fetchHandler: fetchExternalDataTableExportStatus,
