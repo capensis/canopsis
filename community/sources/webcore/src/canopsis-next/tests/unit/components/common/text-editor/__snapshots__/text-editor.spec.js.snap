@@ -273,6 +273,7 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
     </div>
     <variables-menu-stub
       childrenkey="variables"
+      clickableparent="true"
       dense="true"
       items="[object Object]"
       positionx="0"
@@ -1953,6 +1954,7 @@ exports[`text-editor Renders \`text-editor\` with variables 1`] = `
     </div>
     <variables-menu-stub
       childrenkey="variables"
+      clickableparent="true"
       dense="true"
       items="[object Object]"
       positionx="112"

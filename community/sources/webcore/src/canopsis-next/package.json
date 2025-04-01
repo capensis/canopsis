@@ -162,6 +162,7 @@
   "resolutions": {
     "moment-timezone/moment": "^2.22.2",
     "@vue/cli-plugin-unit-jest/jest": "29.7.0",
-    "@vue/cli-plugin-unit-jest/babel-jest": "29.7.0"
+    "@vue/cli-plugin-unit-jest/babel-jest": "29.7.0",
+    "postcss": "^8.2.15"
   }
 }
