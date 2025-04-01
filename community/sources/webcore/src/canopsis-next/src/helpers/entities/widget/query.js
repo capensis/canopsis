@@ -28,6 +28,10 @@ import {
   convertAvailabilityUserPreferenceToQuery,
   convertAvailabilityWidgetParametersToQuery,
 } from '../availability/query';
+import {
+  convertExternalDataTableUserPreferenceToQuery,
+  convertExternalDataTableWidgetToQuery,
+} from '../external-data-table/query';
 
 /**
  * This function converts userPreference to query Object
@@ -49,6 +53,7 @@ export function convertUserPreferenceToQuery(userPreference, widgetType) {
     [WIDGET_TYPES.userStatistics]: convertStatisticsUserPreferenceToQuery,
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsUserPreferenceToQuery,
     [WIDGET_TYPES.availability]: convertAvailabilityUserPreferenceToQuery,
+    [WIDGET_TYPES.externalDataTable]: convertExternalDataTableUserPreferenceToQuery,
 
     ...featuresService.get('helpers.query.convertUserPreferenceToQuery.convertersMap'),
   };
@@ -79,6 +84,7 @@ export function convertWidgetToQuery(widget) {
     [WIDGET_TYPES.userStatistics]: convertStatisticsWidgetParametersToQuery,
     [WIDGET_TYPES.alarmStatistics]: convertStatisticsWidgetParametersToQuery,
     [WIDGET_TYPES.availability]: convertAvailabilityWidgetParametersToQuery,
+    [WIDGET_TYPES.externalDataTable]: convertExternalDataTableWidgetToQuery,
 
     ...featuresService.get('helpers.query.convertWidgetToQuery.convertersMap'),
   };

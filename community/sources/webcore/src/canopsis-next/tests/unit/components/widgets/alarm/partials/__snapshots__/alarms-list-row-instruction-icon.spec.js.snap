@@ -7,7 +7,7 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon material-icons theme--light 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26"
+    class="v-icon notranslate instruction-icon material-icons theme--light instruction-icon--completed"
     style="font-size: 22px;"
   >
     assignment
@@ -22,7 +22,7 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon material-icons theme--light 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23"
+    class="v-icon notranslate instruction-icon material-icons theme--light instruction-icon--failed"
     style="font-size: 22px;"
   >
     assignment
@@ -37,7 +37,7 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon material-icons theme--light 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23"
+    class="v-icon notranslate instruction-icon material-icons theme--light instruction-icon--failed"
     style="font-size: 22px;"
   >
     assignment
@@ -52,7 +52,7 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 >
   <span
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon theme--light 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23"
+    class="v-icon notranslate instruction-icon theme--light instruction-icon--failed"
     style="font-size: 22px; height: 22px; width: 22px;"
   >
     <svg
@@ -96,7 +96,7 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 >
   <span
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon theme--light 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32"
+    class="v-icon notranslate instruction-icon theme--light blinking instruction-icon--dotted"
     style="font-size: 22px; height: 22px; width: 22px;"
   >
     <svg

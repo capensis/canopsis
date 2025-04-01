@@ -1,5 +1,5 @@
 import { isEqual, upperFirst, camelCase } from 'lodash';
-import { ref, set } from 'vue';
+import { ref, unref, set } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -41,7 +41,7 @@ export const useLocalQuery = ({
   onUpdate,
   comparator = isEqual,
 } = {}) => {
-  const query = ref({ ...initialQuery });
+  const query = ref({ ...unref(initialQuery) });
 
   const updateQuery = (newQuery) => {
     const oldQuery = query.value;
@@ -63,11 +63,11 @@ export const useLocalQuery = ({
     }
   };
 
-  const resetQuery = () => query.value = { ...initialQuery };
+  const resetQuery = () => query.value = { ...unref(initialQuery) };
 
   const handler = (handlerQuery = query.value) => onUpdate(handlerQuery);
 
-  const updateQueryFieldsMethods = Object.keys(initialQuery).reduce((acc, field) => {
+  const updateQueryFieldsMethods = Object.keys(unref(initialQuery)).reduce((acc, field) => {
     acc[`updateQuery${upperFirst(camelCase(field))}`] = value => updateQueryField(field, value);
 
     return acc;

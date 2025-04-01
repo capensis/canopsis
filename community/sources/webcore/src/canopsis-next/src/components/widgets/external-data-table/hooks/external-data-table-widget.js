@@ -68,11 +68,13 @@ export const useExternalDataTableWidgetTable = ({
     },
   });
 
-  const { pending, handler: fetchItem } = usePendingHandler(async (afterFetch) => {
-    externalDataTable.value = await fetchExternalDataTableWithoutStore({ id: unref(widget).parameters.table });
+  const { pending, handler: fetchItem } = usePendingHandler(async () => {
+    const [response] = await Promise.all([
+      fetchExternalDataTableWithoutStore({ id: unref(widget).parameters.table }),
+      fetchUserPreference(),
+    ]);
 
-    fetchUserPreference();
-    afterFetch?.();
+    externalDataTable.value = response;
   }, true);
 
   return {
