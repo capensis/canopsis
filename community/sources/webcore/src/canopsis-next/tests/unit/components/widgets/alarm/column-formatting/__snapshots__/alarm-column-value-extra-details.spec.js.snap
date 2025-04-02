@@ -12,6 +12,8 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
   <!---->
   <!---->
   <!---->
+  <!---->
+  <!---->
 </div>
 `;
 
@@ -45,6 +47,12 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
     rule="[object Object]"
     total="3"
   />
+  <extra-details-close-delay-stub
+    closedelay="[object Object]"
+  />
+  <extra-details-close-delay-value-stub
+    closedelayvalue="6"
+  />
 </div>
 `;
 
@@ -73,5 +81,11 @@ exports[`alarm-column-value-extra-details Renders \`alarm-column-value-extra-det
   />
   <!---->
   <!---->
+  <extra-details-close-delay-stub
+    closedelay="[object Object]"
+  />
+  <extra-details-close-delay-value-stub
+    closedelayvalue="6"
+  />
 </div>
 `;
