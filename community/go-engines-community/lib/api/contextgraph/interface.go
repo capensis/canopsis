@@ -23,6 +23,7 @@ type EventPublisher interface {
 type StatusReporter interface {
 	GetStatus(ctx context.Context, id string) (ImportJob, error)
 	GetFirst(ctx context.Context, abandonedInterval time.Duration) (ImportJob, error)
+	HasAbandoned(ctx context.Context, abandonedInterval time.Duration) (bool, error)
 	ReportCreate(ctx context.Context, job *ImportJob) error
 	ReportOngoing(ctx context.Context, job ImportJob) error
 	ReportDone(ctx context.Context, job ImportJob, stats importcontextgraph.Stats) (bool, error)
@@ -31,5 +32,7 @@ type StatusReporter interface {
 }
 
 type ImportWorker interface {
-	Run(ctx context.Context)
+	ProcessAbandonedJob(ctx context.Context)
+	DeleteOldJobs(ctx context.Context)
+	ProcessFirstJob(ctx context.Context) error
 }

@@ -359,6 +359,12 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("not_api_perm", fe.StructField(), fe.Param())
 		return t
 	})
+	_ = v.RegisterTranslation("table_name", trans, func(ut ut.Translator) error {
+		return ut.Add("table_name", "{0} is invalid table name.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("table_name", fe.StructField(), fe.Param())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.

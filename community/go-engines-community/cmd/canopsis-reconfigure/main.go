@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/migration/cli"
@@ -98,6 +99,12 @@ func main() {
 	err = generateSerialName(ctx, logger, f.forceGenerateSerialName)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to generate serial name")
+	}
+
+	err = externaldata.SyncMongoCollections(ctx, client, conf.Canopsis.ExternalData.Collections,
+		[]string{mongo.EventFilterRuleCollection, mongo.LinkRuleMongoCollection}, logger)
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to sync external data collections")
 	}
 
 	// keep it in the end for cmd/ready

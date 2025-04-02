@@ -4,7 +4,9 @@ import (
 	"context"
 	"strings"
 
+	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
@@ -107,6 +109,8 @@ func (v *Validator) validateEventFilter(ctx context.Context, sl validator.Struct
 	if !ok {
 		sl.ReportError(r.Exceptions, "Exceptions", "Exceptions", "not_exist", "")
 	}
+
+	apiexternaldata.ValidateRefParameters(sl, r.ExternalData, []string{externaldata.RefTypeAPI, externaldata.RefTypeTable})
 }
 
 func (v *Validator) checkRrule(r string) bool {

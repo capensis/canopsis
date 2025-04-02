@@ -2,6 +2,8 @@ package linkrule
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -45,10 +47,5 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		sl.ReportError(r.SourceCode, "SourceCode", "SourceCode", "required_or", "Links")
 	}
 
-	for ref, params := range r.ExternalData {
-		if len(params.Select) == 0 && len(params.Regexp) == 0 {
-			sl.ReportError(params.Select, "ExternalData."+ref+".Select", "Select", "required_or", "Regexp")
-			sl.ReportError(params.Regexp, "ExternalData."+ref+".Regexp", "Regexp", "required_or", "Select")
-		}
-	}
+	apiexternaldata.ValidateRefParameters(sl, r.ExternalData, []string{externaldata.RefTypeTable})
 }

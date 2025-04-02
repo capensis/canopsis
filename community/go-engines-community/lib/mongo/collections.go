@@ -14,7 +14,6 @@ const (
 	MetaAlarmRulesMongoCollection     = "meta_alarm_rules"
 	IdleRuleMongoCollection           = "idle_rule"
 	ExportTaskMongoCollection         = "export_task"
-	ActionLogMongoCollection          = "action_log"
 	DynamicInfosRulesMongoCollection  = "dynamic_infos"
 	EntityCategoryMongoCollection     = "entity_category"
 	ImportJobMongoCollection          = "default_importgraph"
@@ -100,4 +99,7 @@ const (
 	EngineNotificationCollection = "engine_notification"
 
 	IconCollection = "icon"
+
+	ExternalDataTableCollection        = "external_data_table"
+	ExternalDataImportWorkerCollection = "external_data_import_worker"
 )
