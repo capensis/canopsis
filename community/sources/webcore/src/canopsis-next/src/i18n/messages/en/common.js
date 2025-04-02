@@ -270,6 +270,7 @@ export default {
   frequencyLimit: 'Frequency limit',
   clearSearch: 'Clear search input',
   noData: 'No data',
+  noDataAvailable: 'No data available',
   noColumns: 'You have to select at least 1 column',
   theme: 'Theme | Themes',
   systemName: 'System name',
@@ -307,6 +308,11 @@ export default {
   pressEnterToApply: 'Press <kbd>enter</kbd> to apply',
   width: 'Width',
   versionUpdated: 'Version updated',
+  database: 'Database',
+  importData: 'Import data',
+  separator: 'Separator',
+  true: 'True',
+  false: 'False',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -578,6 +584,8 @@ export default {
     },
     fileTypes: {
       svg: 'SVG file',
+      csv: 'CSV file',
     },
+    fileSizeMb: 'maximum {size} MB',
   },
 };

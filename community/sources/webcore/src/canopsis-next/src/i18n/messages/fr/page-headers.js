@@ -63,6 +63,10 @@ export default {
     message: 'Permet de définir les règles d\'association de liens aux alarmes',
   },
 
+  [USER_PERMISSIONS.technical.exploitation.externalDataTable]: {
+    title: 'Données externes',
+  },
+
   /**
    * Admin access
    */

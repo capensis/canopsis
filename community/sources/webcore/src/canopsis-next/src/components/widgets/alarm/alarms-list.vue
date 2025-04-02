@@ -8,14 +8,12 @@
       align-end
     >
       <v-flex>
-        <c-advanced-search
-          :fields="advancedSearchFields"
-          :saved-items="searches"
-          combobox
-          @submit="updateSearchInQuery"
-          @add:item="addSearchIntoUserPreferences"
-          @toggle-pin:item="togglePinSearchInUserPreferences"
-          @remove:item="removeSearchFromUserPreferences"
+        <c-alarm-advanced-search-field
+          :searches="searches"
+          @submit="updateSearch"
+          @reset="resetSearch"
+          @toggle-pin:search="togglePinSearch"
+          @remove:search="removeSearch"
         />
       </v-flex>
       <v-flex v-if="hasAccessToCategory">
@@ -160,14 +158,12 @@ import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constan
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
+import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { exportMixinCreator } from '@/mixins/widget/export';
-import {
-  widgetAdvancedSearchSavedItemsMixin,
-  widgetAdvancedSearchAlarmFieldsMixin,
-} from '@/mixins/widget/advanced-search';
+import { widgetAlarmAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanced-search/alarm-saved-items';
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
@@ -212,8 +208,7 @@ export default {
   mixins: [
     authMixin,
     widgetFetchQueryMixin,
-    widgetAdvancedSearchSavedItemsMixin,
-    widgetAdvancedSearchAlarmFieldsMixin,
+    widgetAlarmAdvancedSearchSavedItemsMixin,
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
@@ -440,22 +435,6 @@ export default {
       }
     },
 
-    getExportQueryColumns() {
-      const {
-        widgetExportColumns,
-        widgetColumns,
-      } = this.widget.parameters;
-
-      const hasExportColumns = !!widgetExportColumns?.length;
-      const columns = hasExportColumns ? widgetExportColumns : widgetColumns;
-
-      return columns.map(({ value, text, template }) => ({
-        name: value,
-        label: text,
-        template: hasExportColumns ? template : undefined,
-      }));
-    },
-
     getExportQuery() {
       const query = this.getQuery();
       const {
@@ -475,7 +454,7 @@ export default {
           'instructions',
         ]),
 
-        fields: this.getExportQueryColumns(),
+        fields: widgetToExportQueryColumns(this.widget),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**
@@ -484,7 +463,7 @@ export default {
         time_format: isObject(exportCsvDatetimeFormat)
           ? exportCsvDatetimeFormat.value
           : exportCsvDatetimeFormat,
-        search: selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : query.search,
+        search: selectedToQuery(selected, query.search),
       };
     },
 

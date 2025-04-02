@@ -13,6 +13,7 @@
     :no-data-text="$t('alarm.noAlarmFound')"
     clearable
     autocomplete
+    with-type
     @fetch="fetchAlarms"
     @fetch:more="fetchMoreAlarms"
     @update:search="updateSearch"

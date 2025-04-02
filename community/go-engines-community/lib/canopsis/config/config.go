@@ -68,8 +68,9 @@ type SectionImportCtx struct {
 
 type SectionFile struct {
 	Dir           string   `toml:"Dir"`
-	UploadMaxSize int64    `toml:"UploadMaxSize"`
-	IconMaxSize   int64    `toml:"IconMaxSize"`
+	UploadMaxSize uint64   `toml:"UploadMaxSize"`
+	IconMaxSize   uint64   `toml:"IconMaxSize"`
+	ImportMaxSize uint64   `toml:"ImportMaxSize"`
 	SnmpMib       []string `toml:"SnmpMib"`
 }
 
@@ -125,20 +126,25 @@ type SectionTemplate struct {
 	Vars                 map[string]any `bson:"vars" toml:"vars"`
 }
 
+type SectionExternalData struct {
+	Collections []string `bson:"collections" toml:"Collections"`
+}
+
 // CanopsisConf represents a generic configuration object.
 type CanopsisConf struct {
-	ID          string             `bson:"_id,omitempty" toml:"omitempty"`
-	Global      SectionGlobal      `bson:"global" toml:"global"`
-	Alarm       SectionAlarm       `bson:"alarm" toml:"alarm"`
-	Timezone    SectionTimezone    `bson:"timezone" toml:"timezone"`
-	ImportCtx   SectionImportCtx   `bson:"import_ctx" toml:"import_ctx"`
-	File        SectionFile        `bson:"file" toml:"file"`
-	DataStorage SectionDataStorage `bson:"data_storage" toml:"data_storage"`
-	Logger      SectionLogger      `bson:"logger" toml:"logger"`
-	API         SectionApi         `bson:"api" toml:"api"`
-	Metrics     SectionMetrics     `bson:"metrics" toml:"metrics"`
-	TechMetrics SectionTechMetrics `bson:"tech_metrics" toml:"tech_metrics"`
-	Template    SectionTemplate    `bson:"template" toml:"template"`
+	ID           string              `bson:"_id,omitempty" toml:"omitempty"`
+	Global       SectionGlobal       `bson:"global" toml:"global"`
+	Alarm        SectionAlarm        `bson:"alarm" toml:"alarm"`
+	Timezone     SectionTimezone     `bson:"timezone" toml:"timezone"`
+	ImportCtx    SectionImportCtx    `bson:"import_ctx" toml:"import_ctx"`
+	File         SectionFile         `bson:"file" toml:"file"`
+	DataStorage  SectionDataStorage  `bson:"data_storage" toml:"data_storage"`
+	Logger       SectionLogger       `bson:"logger" toml:"logger"`
+	API          SectionApi          `bson:"api" toml:"api"`
+	Metrics      SectionMetrics      `bson:"metrics" toml:"metrics"`
+	TechMetrics  SectionTechMetrics  `bson:"tech_metrics" toml:"tech_metrics"`
+	Template     SectionTemplate     `bson:"template" toml:"template"`
+	ExternalData SectionExternalData `bson:"external_data" toml:"external_data"`
 }
 
 // UserInterfaceConf represents a user interface configuration object.

@@ -98,8 +98,8 @@ export default {
 
     externalDataTypes() {
       return [{
-        text: this.$t(`externalData.types.${EXTERNAL_DATA_TYPES.mongo}`),
-        value: EXTERNAL_DATA_TYPES.mongo,
+        text: this.$t(`externalData.types.${EXTERNAL_DATA_TYPES.table}`),
+        value: EXTERNAL_DATA_TYPES.table,
       }];
     },
 

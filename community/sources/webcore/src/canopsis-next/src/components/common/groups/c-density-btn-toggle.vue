@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { ALARM_DENSE_TYPES } from '@/constants';
+import { DENSE_TYPES } from '@/constants';
 
 export default {
   model: {
@@ -67,7 +67,7 @@ export default {
   props: {
     value: {
       type: Number,
-      default: ALARM_DENSE_TYPES.large,
+      default: DENSE_TYPES.large,
     },
     name: {
       type: String,
@@ -81,15 +81,15 @@ export default {
   computed: {
     types() {
       return [{
-        value: ALARM_DENSE_TYPES.large,
+        value: DENSE_TYPES.large,
         icon: '$vuetify.icons.density_large',
         text: this.$t('settings.density.comfort'),
       }, {
-        value: ALARM_DENSE_TYPES.medium,
+        value: DENSE_TYPES.medium,
         icon: '$vuetify.icons.density_medium',
         text: this.$t('settings.density.compact'),
       }, {
-        value: ALARM_DENSE_TYPES.small,
+        value: DENSE_TYPES.small,
         icon: '$vuetify.icons.density_small',
         text: this.$t('settings.density.ultraCompact'),
       }];

@@ -16,7 +16,7 @@ import {
 import {
   ALARMS_OPENED_VALUES,
   EXPORT_CSV_DATETIME_FORMATS,
-  EXPORT_CSV_SEPARATORS,
+  CSV_SEPARATORS,
   SORT_ORDERS,
   TIME_UNITS,
   USER_PERMISSIONS,
@@ -1211,7 +1211,7 @@ describe('alarm', () => {
 
     const exportProperties = {
       ...widgetParametersToForm(widget),
-      exportCsvSeparator: EXPORT_CSV_SEPARATORS.semicolon,
+      exportCsvSeparator: CSV_SEPARATORS.semicolon,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: [],
     };

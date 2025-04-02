@@ -15,9 +15,10 @@
       class="px-2"
       xs4
     >
-      <v-text-field
+      <v-select
         v-field="condition.attribute"
         v-validate="'required'"
+        :items="columns"
         :label="$t('common.attribute')"
         :name="conditionFieldName"
         :error-messages="errors.collect(conditionFieldName)"
@@ -87,7 +88,11 @@ export default {
     },
     variables: {
       type: Array,
-      default: () => ([]),
+      default: () => [],
+    },
+    columns: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {

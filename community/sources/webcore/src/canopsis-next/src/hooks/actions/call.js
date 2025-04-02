@@ -18,7 +18,7 @@ export const useCallActionWithPopup = () => {
 
       popups.success({ text: t('success.default') });
 
-      return afterAction();
+      return afterAction?.();
     } catch (err) {
       console.error(err);
 

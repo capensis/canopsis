@@ -1,10 +1,6 @@
 <template>
   <widget-settings-item :title="$t('settings.exportCsv.title')">
-    <v-select
-      v-field="form.exportCsvSeparator"
-      :items="separators"
-      :label="$t('settings.exportCsv.fields.separator')"
-    />
+    <c-csv-separator-field v-field="form.exportCsvSeparator" />
     <v-select
       v-if="datetimeFormat"
       v-field="form.exportCsvDatetimeFormat"
@@ -15,8 +11,23 @@
       <h4 class="text-subtitle-1 my-4">
         {{ $t('settings.exportColumnNames') }}
       </h4>
-      <c-columns-with-template-field
+      <c-columns-field
+        v-if="withoutTemplate"
         v-field="form.widgetExportColumns"
+        :items="items"
+        :label="$t('settings.exportColumnNames')"
+        :type="type"
+        :with-instructions="withInstructions"
+        :variables="variables"
+        :optional-infos-attributes="optionalInfosAttributes"
+        :without-infos-attributes="withoutInfosAttributes"
+        :excluded-columns="excludedColumns"
+        :without-custom-label="withoutCustomLabel"
+      />
+      <c-columns-with-template-field
+        v-else
+        v-field="form.widgetExportColumns"
+        :items="items"
         :template="form.widgetExportColumnsTemplate"
         :templates="templates"
         :templates-pending="templatesPending"
@@ -35,7 +46,7 @@
 </template>
 
 <script>
-import { EXPORT_CSV_SEPARATORS, EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
+import { EXPORT_CSV_DATETIME_FORMATS } from '@/constants';
 
 import { formBaseMixin } from '@/mixins/form';
 
@@ -55,7 +66,7 @@ export default {
     },
     type: {
       type: String,
-      required: true,
+      required: false,
     },
     templates: {
       type: Array,
@@ -89,16 +100,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    withoutTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    withoutCustomLabel: {
+      type: Boolean,
+      default: false,
+    },
+    items: {
+      type: Array,
+      required: false,
+    },
     excludedColumns: {
       type: Array,
       required: false,
     },
   },
   computed: {
-    separators() {
-      return Object.values(EXPORT_CSV_SEPARATORS);
-    },
-
     formats() {
       return Object.values(EXPORT_CSV_DATETIME_FORMATS);
     },

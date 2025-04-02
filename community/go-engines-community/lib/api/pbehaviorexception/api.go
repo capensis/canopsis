@@ -2,6 +2,7 @@ package pbehaviorexception
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -20,11 +21,13 @@ type API interface {
 func NewApi(
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
+	maxFileSize uint64,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:       store,
 		computeChan: computeChan,
+		maxFileSize: maxFileSize,
 		logger:      logger,
 	}
 }
@@ -32,6 +35,7 @@ func NewApi(
 type api struct {
 	store       Store
 	computeChan chan<- rpc.PbehaviorRecomputeEvent
+	maxFileSize uint64
 	logger      zerolog.Logger
 }
 
@@ -170,9 +174,7 @@ func (a *api) Import(c *gin.Context) {
 	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{
-				"file": "File is missing.",
-			}})
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationError("file", "File is missing.").ValidationErrorResponse())
 			return
 		}
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "request has invalid structure"})
@@ -183,6 +185,10 @@ func (a *api) Import(c *gin.Context) {
 	name := c.Request.FormValue("name")
 	pbhType := c.Request.FormValue("type")
 	valErrors := make(map[string]string)
+	if a.maxFileSize > 0 && uint64(fh.Size) > a.maxFileSize {
+		valErrors["file"] = fmt.Sprintf("File size %d exceeds limit %d", fh.Size, a.maxFileSize)
+	}
+
 	if name == "" {
 		valErrors["name"] = "Name is missing."
 	}
@@ -191,7 +197,8 @@ func (a *api) Import(c *gin.Context) {
 	}
 
 	if len(valErrors) > 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: valErrors})
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrors(valErrors).ValidationErrorResponse())
+
 		return
 	}
 
