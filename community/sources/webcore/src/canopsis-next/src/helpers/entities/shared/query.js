@@ -160,3 +160,35 @@ export const convertWidgetQueryToRequest = (query) => {
 
   return result;
 };
+
+/**
+ * Constructs a query object for list data retrieval.
+ *
+ * @param {Object} [options = {}] - The options for constructing the query.
+ * @param {number} [options.page = 1] - The current page number.
+ * @param {string} [options.search] - The search term to filter results.
+ * @param {number} options.itemsPerPage - The number of items per page.
+ * @param {string[]} [options.sortBy = []] - The fields to sort by.
+ * @param {string[]} [options.sortDesc = []] - The sort order for each field in `sortBy`.
+ * @returns {Object} The constructed query object.
+ */
+export const getQueryForList = ({
+  page = 1,
+  search,
+  itemsPerPage,
+  sortBy = [],
+  sortDesc = [],
+} = {}) => {
+  const query = {
+    page,
+    limit: itemsPerPage,
+
+    ...convertSortToRequest(sortBy, sortDesc),
+  };
+
+  if (search) {
+    query.search = search;
+  }
+
+  return query;
+};
