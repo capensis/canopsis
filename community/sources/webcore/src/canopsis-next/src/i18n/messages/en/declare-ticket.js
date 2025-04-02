@@ -10,7 +10,6 @@ export default {
   allowTicketURLTemplate: 'Allow variables in the URL',
   allowTicketIdTemplate: 'Allow variables in the ID',
   alarmFieldName: 'Alarm field name',
-  customFields: 'Custom fields',
   responseField: 'Response field',
   responseFieldHelpText: 'API Response field in JSON format where the "{field}" is taken from',
   emptyResponse: 'Empty response',
