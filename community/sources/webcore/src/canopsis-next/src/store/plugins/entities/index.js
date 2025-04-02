@@ -444,7 +444,7 @@ export const types = {
 
 export { default as createEntityModule } from './create-entity-module';
 export { createWidgetModule } from './create-widget-module';
-export { createCRUDModule } from './create-crud-module';
+export { createCRUDModule, createBasicCRUDModule } from './create-crud-module';
 
 export default (store) => {
   store.registerModule(entitiesModuleName, entitiesModule);

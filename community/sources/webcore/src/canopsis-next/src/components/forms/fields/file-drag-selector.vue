@@ -9,11 +9,12 @@
       <slot
         v-if="$scopedSlots.selected && files.length"
         :clear="clear"
+        :files="files"
         name="selected"
       />
       <v-layout
         v-else
-        :class="{ 'drag-zone--dropping': dropping }"
+        :class="{ 'drag-zone--dropping': dropping, 'drag-zone--has-errors': errors.has(name) }"
         class="pa-3 drag-zone"
         align-center
         @drop.prevent="drop"
@@ -26,13 +27,15 @@
         >
           upload_file
         </v-icon>
-        <span class="text-subtitle-2">
-          {{ $t('common.fileSelector.dragAndDrop.label') }}
-          <a v-on="on">
-            {{ $t('common.fileSelector.dragAndDrop.labelAction') }}
-          </a>
-          {{ fileTypeLabel ? ` ${fileTypeLabel}` : '' }}
-        </span>
+        <slot :on="on" name="label">
+          <span class="text-subtitle-2">
+            {{ $t('common.fileSelector.dragAndDrop.label') }}
+            <a v-on="on">
+              {{ $t('common.fileSelector.dragAndDrop.labelAction') }}
+            </a>
+            {{ fileTypeLabel ? ` ${fileTypeLabel}` : '' }}
+          </span>
+        </slot>
       </v-layout>
     </template>
   </file-selector>
@@ -42,6 +45,7 @@
 import FileSelector from './file-selector.vue';
 
 export default {
+  inject: ['$validator'],
   components: { FileSelector },
   inheritAttrs: false,
   props: {
@@ -115,6 +119,14 @@ export default {
 
     &, & ::v-deep .v-icon {
       color: var(--v-application-background-lighten4);
+    }
+  }
+
+  &--has-errors {
+    border-color: var(--v-error-base) !important;
+
+    & ::v-deep .v-icon {
+      color: var(--v-error-base) !important;
     }
   }
 }

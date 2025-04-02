@@ -13,6 +13,7 @@
     :no-data-text="$t('metaAlarmRule.field.noData')"
     clearable
     autocomplete
+    with-type
     @input="clearQuerySearch"
     @fetch="fetchRules"
     @fetch:more="fetchMoreRules"

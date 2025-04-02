@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
@@ -23,22 +24,28 @@ const (
 )
 
 type api struct {
-	reporter    StatusReporter
-	dir         string
-	filePattern string
-	logger      zerolog.Logger
+	reporter      StatusReporter
+	jobPublisher  workers.JobPublisher
+	dir           string
+	filePattern   string
+	maxImportSize uint64
+	logger        zerolog.Logger
 }
 
 func NewApi(
 	conf config.CanopsisConf,
 	reporter StatusReporter,
+	jobPublisher workers.JobPublisher,
+	maxImportSize uint64,
 	logger zerolog.Logger,
 ) API {
 	a := &api{
-		dir:         filepath.Join(conf.File.Dir, canopsis.SubDirImport),
-		filePattern: filePattern,
-		reporter:    reporter,
-		logger:      logger,
+		dir:           filepath.Join(conf.File.Dir, canopsis.SubDirImport),
+		filePattern:   filePattern,
+		reporter:      reporter,
+		jobPublisher:  jobPublisher,
+		maxImportSize: maxImportSize,
+		logger:        logger,
 	}
 
 	return a
@@ -50,7 +57,7 @@ func NewApi(
 func (a *api) ImportAll(c *gin.Context) {
 	query := ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
@@ -62,7 +69,12 @@ func (a *api) ImportAll(c *gin.Context) {
 
 	raw, err := c.GetRawData()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
 		return
 	}
 
@@ -80,7 +92,7 @@ func (a *api) ImportAll(c *gin.Context) {
 func (a *api) ImportPartial(c *gin.Context) {
 	query := ImportQuery{}
 	if err := c.BindQuery(&query); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
@@ -93,7 +105,12 @@ func (a *api) ImportPartial(c *gin.Context) {
 
 	raw, err := c.GetRawData()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		return
+	}
+
+	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
 		return
 	}
 
@@ -117,6 +134,11 @@ func (a *api) createImportJob(ctx context.Context, job ImportJob, raw []byte) (s
 	}
 
 	err = os.WriteFile(filepath.Join(a.dir, fmt.Sprintf(a.filePattern, job.ID)), raw, filePerm)
+	if err != nil {
+		return "", err
+	}
+
+	err = a.jobPublisher.Publish(ctx, "")
 	if err != nil {
 		return "", err
 	}

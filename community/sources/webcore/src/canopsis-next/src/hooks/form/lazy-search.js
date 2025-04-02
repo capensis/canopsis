@@ -1,15 +1,21 @@
 import {
+  keyBy,
+  pick,
+  isArray,
+  isString,
+  debounce,
+} from 'lodash';
+import {
   computed,
   ref,
   unref,
   watch,
   onMounted,
 } from 'vue';
-import { keyBy, pick, isArray, isString } from 'lodash';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { mapIds } from '@/helpers/array';
+import { deepKeyBy, mapIds } from '@/helpers/array';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
@@ -24,11 +30,14 @@ import { useModelField } from '@/hooks/form';
  * @param {Object} options - Configuration options for the hook.
  * @param {Ref|Array} options.value - The current value or list of values to be managed.
  * @param {string} options.isKey - The key used to identify each item uniquely.
+ * @param {string} options.childrenKey - The key used for children checking.
  * @param {string} options.idParamsKey - The key used for query parameters when fetching selected items.
  * @param {number} [options.limit = PAGINATION_LIMIT] - The limit for pagination, determining how many items to
  * fetch per page.
  * @param {Function} options.fetchHandler - The asynchronous function used to fetch data from the server.
  * @param {boolean} options.addable - The flag for indicating possibility to add new item.
+ * @param {boolean} options.multiple - The flag for indicating possibility to choose more than one item.
+ * @param {number} options.delay - The delay number value for debouncing.
  * @param {Function} emit - The emit function for Vue events, used to update the model.
  * @returns {Object} An object containing methods and properties for managing search and selection:
  * - `selectedItems`: {Ref<Array>} A reactive reference to the currently selected items.
@@ -40,7 +49,17 @@ import { useModelField } from '@/hooks/form';
  * - `changeSelectedItems`: {Function} A function to update the selected items and emit changes.
  * - `updateSearch`: {Function} A function to update the search query and trigger a fetch.
  */
-export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LIMIT, fetchHandler, addable }, emit) => {
+export const useLazySearch = ({
+  value,
+  idKey,
+  idParamsKey,
+  childrenKey = 'items',
+  limit = PAGINATION_LIMIT,
+  fetchHandler,
+  addable,
+  multiple,
+  delay = 100,
+}, emit) => {
   const pageCount = ref(1);
   const itemsByValue = ref({});
   const selectedItems = ref([]);
@@ -59,6 +78,10 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
    */
   const arrayValue = computed(() => {
     const unwrappedValue = unref(value);
+
+    if (!unwrappedValue) {
+      return [];
+    }
 
     if (isArray(unwrappedValue)) {
       return unwrappedValue;
@@ -92,12 +115,13 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
         [unref(idParamsKey)]: arrayValue.value,
       },
     });
-
     const unwrappedIdKey = unref(idKey);
-    const dataById = keyBy(data, unwrappedIdKey);
+    const unwrappedChildrenKey = unref(childrenKey);
+
+    const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
 
     selectedItems.value = arrayValue.value.map(item => (
-      dataById[item[unwrappedIdKey] || item] ?? ({ [unwrappedIdKey]: item })
+      dataById[item[unwrappedIdKey] || item] ?? ({ [unwrappedIdKey]: item, noData: true })
     ));
   }, true);
 
@@ -108,8 +132,8 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
     pending,
     query,
     fetchHandlerWithQuery: fetchItems,
+    updateQuery,
     updateQueryPage,
-    updateQuerySearch,
   } = usePendingWithLocalQuery({
     initialQuery: {
       page: 1,
@@ -132,6 +156,20 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   });
 
   /**
+   * Update search field in query with page updating
+   *
+   * @param {string} [newSearch = '']
+   */
+  const updateSearch = debounce((newSearch = '') => {
+    if (query.value.search !== newSearch) {
+      updateQuery({
+        search: newSearch,
+        page: 1,
+      });
+    }
+  }, unref(delay));
+
+  /**
    * Computed property to determine if there are more items to fetch.
    * @type {ComputedRef<boolean>}
    */
@@ -144,25 +182,51 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   const wholePending = computed(() => pending.value || valuesPending.value);
 
   /**
+   * Computed property for first selected item.
+   * @type {ComputedRef<Object | undefined>}
+   */
+  const selectedItem = computed(() => selectedItems.value?.[0]);
+
+  /**
    * Function to fetch the next page of items.
    */
   const fetchMoreItems = () => updateQueryPage(query.value.page + 1);
 
   /**
    * Function to update the selected items and emit changes.
-   * @param {Array} newSelectedTags - The new list of selected tags.
+   * @param {Array} newSelectedItems - The new list of selected items.
    */
-  const changeSelectedItems = (newSelectedTags) => {
+  const changeSelectedItems = (newSelectedItems) => {
+    if (!newSelectedItems) {
+      selectedItems.value = [];
+      updateModel('');
+
+      return;
+    }
+
     const unwrappedIdKey = unref(idKey);
     const unwrappedAddable = unref(addable);
+    const unwrappedMultiple = unref(multiple);
+
+    let preparedNewSelectedItems;
+
+    if (!isArray(newSelectedItems)) {
+      preparedNewSelectedItems = [newSelectedItems];
+    } else {
+      preparedNewSelectedItems = unwrappedMultiple ? newSelectedItems : newSelectedItems.slice(1);
+    }
 
     selectedItems.value = (
       unwrappedAddable
-        ? newSelectedTags
-        : newSelectedTags.filter(tag => !isString(tag))
-    ).map(tag => (tag[unwrappedIdKey] ? tag : { [unwrappedIdKey]: tag }));
+        ? preparedNewSelectedItems
+        : preparedNewSelectedItems.filter(item => !isString(item))
+    ).map(item => (item[unwrappedIdKey] ? item : { [unwrappedIdKey]: item }));
 
-    updateModel(mapIds(selectedItems.value, unwrappedIdKey));
+    updateModel(
+      unwrappedMultiple
+        ? mapIds(selectedItems.value, unwrappedIdKey)
+        : selectedItems.value[0]?.[unwrappedIdKey],
+    );
   };
 
   /**
@@ -179,6 +243,7 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   );
 
   watch(value, () => initializeSelectedItems());
+  watch(selectedItems, newSelectedItems => emit('update:selected-items', newSelectedItems));
 
   onMounted(() => {
     if (unref(idParamsKey)) {
@@ -189,14 +254,17 @@ export const useLazySearch = ({ value, idKey, idParamsKey, limit = PAGINATION_LI
   });
 
   return {
+    query,
+    selectedItem,
     selectedItems,
     items,
+    valuesPending,
     wholePending,
     hasMoreItems,
     fetchItems,
     fetchMoreItems,
     changeSelectedItems,
     removeItemFromSelectedItemsByIndex,
-    updateSearch: updateQuerySearch,
+    updateSearch,
   };
 };

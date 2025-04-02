@@ -437,3 +437,18 @@ export const ApplyEventFilter = () => ({
   component: import(/* webpackChunkName: "EventsRecord" */ './events-record/apply-event-filter.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateExternalDataTable = () => ({
+  component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/create-external-data-table.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateExternalDataTableRecord = () => ({
+  component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/create-external-data-table-record.vue'),
+  loading: LoaderOverlay,
+});
+
+export const ImportExternalDataTableRecords = () => ({
+  component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/import-external-data-table-records.vue'),
+  loading: LoaderOverlay,
+});

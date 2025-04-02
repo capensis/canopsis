@@ -2,17 +2,13 @@ package link
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 )
 
 const (
 	TypeAlarm  = "alarm"
 	TypeEntity = "entity"
-)
-
-const (
-	ActionOpen = "open"
-	ActionCopy = "copy"
 )
 
 type Rule struct {
@@ -26,7 +22,7 @@ type Rule struct {
 	Created    datetime.CpsTime `bson:"created,omitempty"`
 	Updated    datetime.CpsTime `bson:"updated,omitempty"`
 
-	ExternalData map[string]ExternalDataParameters `bson:"external_data"`
+	ExternalData []externaldata.RefParameters `bson:"external_data"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
@@ -41,16 +37,6 @@ type Parameters struct {
 	// Single to mark links unavailable to multiple selected alarms
 	Single     bool `bson:"single,omitempty" json:"single,omitempty"`
 	HideInMenu bool `bson:"hide_in_menu,omitempty" json:"hide_in_menu,omitempty"`
-}
-
-type ExternalDataParameters struct {
-	Type string `bson:"type" json:"type" binding:"required,oneof=mongo"`
-
-	Collection string            `bson:"collection" json:"collection" binding:"required"`
-	Select     map[string]string `bson:"select" json:"select"`
-	Regexp     map[string]string `bson:"regexp" json:"regexp"`
-	SortBy     string            `bson:"sort_by" json:"sort_by"`
-	Sort       string            `bson:"sort" json:"sort" binding:"oneoforempty=asc desc"`
 }
 
 type Link struct {

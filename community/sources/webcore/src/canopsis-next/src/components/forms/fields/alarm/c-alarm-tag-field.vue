@@ -147,9 +147,10 @@ export default {
     } = useLazySearch({
       idParamsKey,
       fetchHandler,
+      idKey: itemValue,
       value: toRef(props, 'value'),
       addable: toRef(props, 'addable'),
-      idKey: itemValue,
+      multiple: true,
     }, emit);
 
     watch(() => props.onlyLabels, fetchItems);

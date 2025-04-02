@@ -37,7 +37,7 @@ sestatus
 L'installation nécessite l'ajout de dépôts RPM tiers, ainsi qu'un accès HTTP et HTTPS pour le téléchargement de diverses dépendances. Plus de détails dans la [matrice des flux réseau](../matrice-des-flux-reseau/index.md).
 
 !!! Information
-    Notez que les versions de MongoDB, RabbitMQ, Redis et TimescaleDB dont l'installation est décrite ici sont les seules validées pour fonctionner avec Canopsis.
+    Notez que les versions de MongoDB, RabbitMQ, Valkey et TimescaleDB dont l'installation est décrite ici sont les seules validées pour fonctionner avec Canopsis.
 
     Plus de détails sur les [prérequis des versions](prerequis-des-versions.md).
 
@@ -206,6 +206,12 @@ systemctl enable --now disable-transparent-huge-pages
     EOF
     ```
 
+    Ajout des dépôts pour Valkey:
+
+    ```sh
+    dnf install epel-release
+    ```
+
 === "RHEL 9"
 
     Ajout du dépôt pour PostgreSQL :
@@ -315,6 +321,12 @@ systemctl enable --now disable-transparent-huge-pages
     EOF
     ```
 
+    Ajout des dépôts pour Valkey:
+
+    ```sh
+    dnf install epel-release
+    ```
+
 ### Configuration des dépôts
 
 Exécuter la commande suivante et vérifier dans la sortie que les dépôts ajoutés
@@ -336,28 +348,12 @@ Désactiver le module nginx:
 dnf module disable nginx php
 ```
 
-=== "RHEL 8"
-
-    Activer le module Redis 6.0.* :
-
-    ```sh
-    dnf module enable redis:6
-    ```
-
-=== "RHEL 9"
-
-    Activer le module Redis 7.0.* :
-
-    ```sh
-    dnf module enable redis:7
-    ```
-
 ### Installation
 
 === "RHEL 8"
 
     ```sh
-    dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1 
+    dnf install logrotate socat mongodb-org nginx valkey timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1 
     dnf install erlang rabbitmq-server
     ```
 
@@ -371,14 +367,14 @@ dnf module disable nginx php
     ```
 
     Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
-    maintien dans la branche majeure souhaitée (exemples : MongoDB 7.0, Redis 6).
+    maintien dans la branche majeure souhaitée (exemple : MongoDB 7.0).
 
     [dnf-versionlock]: https://dnf-plugins-core.readthedocs.io/en/latest/versionlock.html
 
 === "RHEL 9"
 
     ```sh
-    dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1
+    dnf install logrotate socat mongodb-org nginx valkey timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1
     dnf install erlang-26.2.5.6 rabbitmq-server-3.12.13
     ```
 
@@ -393,7 +389,7 @@ dnf module disable nginx php
     ```
 
     Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
-    maintien dans la branche majeure souhaitée (exemples : MongoDB 7.0, Redis 6).
+    maintien dans la branche majeure souhaitée (exemple : MongoDB 7.0,).
 
     [dnf-versionlock]: https://dnf-plugins-core.readthedocs.io/en/latest/versionlock.html
 
@@ -592,26 +588,18 @@ rabbitmqctl set_user_tags cpsrabbit administrator
 rabbitmqctl set_permissions --vhost canopsis cpsrabbit '.*' '.*' '.*'
 ```
 
-### Démarrage de Redis
+### Démarrage de Valkey
 
 Ajouter un mot de passe ( ici `canopsis`)
 
-=== "RHEL 8"
-
-    ```sh
-    sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/redis.conf
-    ```
-
-=== "RHEL 9"
-
-    ```sh
-    sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/redis/redis.conf
-    ```
+```sh
+sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/valkey/valkey.conf
+```
 
 Activer et démarrer le service :
 
 ```sh
-systemctl enable --now redis
+systemctl enable --now valkey
 ```
 
 ## Installation de Canopsis Community ou Pro

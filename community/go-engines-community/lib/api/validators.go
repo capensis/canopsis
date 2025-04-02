@@ -105,6 +105,10 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 	if err != nil {
 		panic(err)
 	}
+	err = v.RegisterValidation("table_name", common.ValidateTableName)
+	if err != nil {
+		panic(err)
+	}
 	v.RegisterCustomTypeFunc(common.ValidateCpsTimeType, datetime.CpsTime{})
 
 	// Request validators

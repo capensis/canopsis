@@ -136,6 +136,7 @@ func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 		Timezone:                           conf.Timezone.Timezone,
 		UserTimezones:                      conf.Timezone.UserTimezones,
 		FileUploadMaxSize:                  conf.File.UploadMaxSize,
+		FileImportMaxSize:                  conf.File.ImportMaxSize,
 		EventsCountTriggerDefaultThreshold: conf.Global.EventsCountTriggerDefaultThreshold,
 	}, nil
 }

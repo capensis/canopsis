@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"regexp"
 	"sort"
 	"sync"
 	"text/template"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/js"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
@@ -17,8 +17,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -35,26 +33,27 @@ var (
 func NewGenerator(
 	client mongo.DbClient,
 	tplExecutor libtemplate.Executor,
+	externalDataContainer *externaldata.GetterContainer,
 	logger zerolog.Logger,
 ) Generator {
 	return &generator{
-		dbClient:                client,
 		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
 		resolvedAlarmCollection: client.Collection(mongo.ResolvedAlarmMongoCollection),
 		entityCollection:        client.Collection(mongo.EntityMongoCollection),
 		linkCollection:          client.Collection(mongo.LinkRuleMongoCollection),
 		tplExecutor:             tplExecutor,
+		externalDataContainer:   externalDataContainer,
 		logger:                  logger,
 	}
 }
 
 type generator struct {
-	dbClient                mongo.DbClient
 	alarmCollection         mongo.DbCollection
 	resolvedAlarmCollection mongo.DbCollection
 	entityCollection        mongo.DbCollection
 	linkCollection          mongo.DbCollection
 	tplExecutor             libtemplate.Executor
+	externalDataContainer   *externaldata.GetterContainer
 	logger                  zerolog.Logger
 
 	rulesMx sync.RWMutex
@@ -78,15 +77,14 @@ type entityWithAlarm struct {
 }
 
 type parsedRule struct {
-	ID              string
-	Type            string
-	AlarmPattern    pattern.Alarm
-	EntityPattern   pattern.Entity
-	ExternalData    map[string]ExternalDataParameters
-	ExternalDataTpl map[string]map[string]map[string]*template.Template
-	Links           []Parameters
-	LinkTpls        []*template.Template
-	CodeExecutor    js.Executor
+	ID            string
+	Type          string
+	AlarmPattern  pattern.Alarm
+	EntityPattern pattern.Entity
+	ExternalData  []externaldata.ParsedRefParameters
+	Links         []Parameters
+	LinkTpls      []*template.Template
+	CodeExecutor  js.Executor
 }
 
 type linkWithCategory struct {
@@ -274,58 +272,13 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 			return nil, err
 		}
 
-		externalDataTpl := make(map[string]map[string]map[string]*template.Template)
-		for ref, params := range rule.ExternalData {
-			externalDataTpl[ref] = map[string]map[string]*template.Template{
-				"select": make(map[string]*template.Template, len(params.Select)),
-				"regexp": make(map[string]*template.Template, len(params.Regexp)),
-			}
-			for k, v := range params.Select {
-				if v == "" {
-					continue
-				}
-
-				parsed := g.tplExecutor.Parse(v)
-				err = parsed.Err
-				if err != nil {
-					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
-					break
-				}
-
-				externalDataTpl[ref]["select"][k] = parsed.Tpl
-			}
-			if err != nil {
-				break
-			}
-			for k, v := range params.Regexp {
-				if v == "" {
-					continue
-				}
-
-				parsed := g.tplExecutor.Parse(v)
-				err = parsed.Err
-				if err != nil {
-					g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
-					break
-				}
-
-				externalDataTpl[ref]["regexp"][k] = parsed.Tpl
-			}
-			if err != nil {
-				break
-			}
-		}
-		if err != nil {
-			continue
-		}
-
+		parsedExternalData := externaldata.ParseRefParameters(rule.ExternalData, g.tplExecutor)
 		pr := parsedRule{
-			ID:              rule.ID,
-			Type:            rule.Type,
-			AlarmPattern:    rule.AlarmPattern,
-			EntityPattern:   rule.EntityPattern,
-			ExternalData:    rule.ExternalData,
-			ExternalDataTpl: externalDataTpl,
+			ID:            rule.ID,
+			Type:          rule.Type,
+			AlarmPattern:  rule.AlarmPattern,
+			EntityPattern: rule.EntityPattern,
+			ExternalData:  parsedExternalData,
 		}
 
 		if rule.SourceCode != "" {
@@ -361,6 +314,10 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		}
 
 		parsedRules = append(parsedRules, pr)
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return parsedRules, nil
@@ -577,9 +534,9 @@ func (g *generator) addExternalData(
 ) error {
 	switch rule.Type {
 	case TypeAlarm:
-		return g.addExternalDataToAlarms(ctx, rule.ExternalData, rule.ExternalDataTpl, alarms)
+		return g.addExternalDataToAlarms(ctx, rule.ExternalData, alarms)
 	case TypeEntity:
-		return g.addExternalDataToEntities(ctx, rule.ExternalData, rule.ExternalDataTpl, entities)
+		return g.addExternalDataToEntities(ctx, rule.ExternalData, entities)
 	}
 
 	return nil
@@ -587,8 +544,7 @@ func (g *generator) addExternalData(
 
 func (g *generator) addExternalDataToAlarms(
 	ctx context.Context,
-	externalData map[string]ExternalDataParameters,
-	externalDataTpl map[string]map[string]map[string]*template.Template,
+	externalData []externaldata.ParsedRefParameters,
 	data []alarmWithData,
 ) error {
 	if len(externalData) == 0 {
@@ -598,8 +554,8 @@ func (g *generator) addExternalDataToAlarms(
 	var err error
 	for i, item := range data {
 		data[i].ExternalData = make(map[string]map[string]any, len(externalData))
-		for ref, params := range externalData {
-			data[i].ExternalData[ref], err = g.processExternalData(ctx, params, externalDataTpl[ref], item)
+		for _, params := range externalData {
+			data[i].ExternalData[params.Reference], err = g.processExternalData(ctx, params, item)
 			if err != nil {
 				return err
 			}
@@ -611,8 +567,7 @@ func (g *generator) addExternalDataToAlarms(
 
 func (g *generator) addExternalDataToEntities(
 	ctx context.Context,
-	externalData map[string]ExternalDataParameters,
-	externalDataTpl map[string]map[string]map[string]*template.Template,
+	externalData []externaldata.ParsedRefParameters,
 	data []entityWithData,
 ) error {
 	if len(externalData) == 0 {
@@ -622,8 +577,8 @@ func (g *generator) addExternalDataToEntities(
 	var err error
 	for i, item := range data {
 		data[i].ExternalData = make(map[string]map[string]any, len(externalData))
-		for ref, params := range externalData {
-			data[i].ExternalData[ref], err = g.processExternalData(ctx, params, externalDataTpl[ref], item)
+		for _, params := range externalData {
+			data[i].ExternalData[params.Reference], err = g.processExternalData(ctx, params, item)
 			if err != nil {
 				return err
 			}
@@ -635,86 +590,15 @@ func (g *generator) addExternalDataToEntities(
 
 func (g *generator) processExternalData(
 	ctx context.Context,
-	params ExternalDataParameters,
-	tpls map[string]map[string]*template.Template,
+	params externaldata.ParsedRefParameters,
 	data any,
 ) (map[string]any, error) {
-	collection := g.dbClient.Collection(params.Collection)
-	sort := mongo.GetSort(params.SortBy, params.Sort)
-	query := bson.M{}
-	var err error
-	for k := range params.Select {
-		tpl := tpls["select"][k]
-		query[k], err = g.tplExecutor.ExecuteByTpl(tpl, data)
-		if err != nil {
-			return nil, fmt.Errorf("cannot execute select template %q: %w", k, err)
-		}
+	getter, ok := g.externalDataContainer.Get(params.Type)
+	if !ok {
+		return nil, fmt.Errorf("cannot find external data getter by type %q", params.Type)
 	}
 
-	if len(params.Regexp) == 0 {
-		res := make(map[string]any)
-		err = collection.
-			FindOne(ctx, query, options.FindOne().SetSort(sort)).
-			Decode(&res)
-		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil
-			}
-
-			return nil, err
-		}
-
-		return res, nil
-	}
-
-	regexpMap := make(map[string]string, len(params.Regexp))
-	for k := range params.Regexp {
-		tpl := tpls["regexp"][k]
-		regexpMap[k], err = g.tplExecutor.ExecuteByTpl(tpl, data)
-		if err != nil {
-			return nil, fmt.Errorf("cannot execute regexp template %q: %w", k, err)
-		}
-	}
-
-	cursor, err := collection.Find(ctx, query, options.Find().SetSort(sort))
-	if err != nil {
-		return nil, err
-	}
-
-	defer cursor.Close(ctx)
-
-	for cursor.Next(ctx) {
-		var row map[string]any
-		err := cursor.Decode(&row)
-		if err != nil {
-			return nil, fmt.Errorf("cannot decode data: %w", err)
-		}
-
-		matched := false
-		for field, v := range regexpMap {
-			regexpStr, ok := row[field].(string)
-			if !ok {
-				matched = false
-				break
-			}
-
-			re, err := regexp.Compile(regexpStr)
-			if err != nil {
-				return nil, fmt.Errorf("cannot compile %q regexp %q: %w", field, regexpStr, err)
-			}
-
-			matched = re.MatchString(v)
-			if !matched {
-				break
-			}
-		}
-
-		if matched {
-			return row, nil
-		}
-	}
-
-	return nil, nil
+	return getter.Get(ctx, params, data)
 }
 
 func (g *generator) getLinksWithCategoryByTpl(

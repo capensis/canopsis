@@ -55,6 +55,13 @@ export default {
       paramNames: ['preparer'],
     });
 
+    Validator.extend('picker_format', {
+      getMessage: () => i18n.t('errors.endDateLessOrEqualStartDate'),
+      validate: isValidPicker,
+    }, {
+      paramNames: ['preparer'],
+    });
+
     Validator.extend('url', { validate: isValidUrl });
 
     const sourceDirective = Vue.directive('validate');

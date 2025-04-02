@@ -224,21 +224,46 @@ loop:
 }
 
 type ValidationError struct {
-	field  string
-	errMsg string
+	errMsgs map[string]string
 }
 
 func NewValidationError(field, errMsg string) ValidationError {
-	return ValidationError{field: field, errMsg: errMsg}
+	return ValidationError{errMsgs: map[string]string{field: errMsg}}
+}
+
+func NewValidationErrors(errMsgs map[string]string) ValidationError {
+	return ValidationError{errMsgs: errMsgs}
 }
 
 func (v ValidationError) Error() string {
-	return v.errMsg
+	b := strings.Builder{}
+	i := 0
+	for field, errMsg := range v.errMsgs {
+		b.WriteString(field)
+		b.WriteString(": ")
+		b.WriteString(errMsg)
+		if i < len(v.errMsgs)-1 {
+			b.WriteString("; ")
+		}
+
+		i++
+	}
+
+	return b.String()
+}
+
+func (v ValidationError) AddFieldPrefix(p string) ValidationError {
+	errMsgs := make(map[string]string, len(v.errMsgs))
+	for f, m := range v.errMsgs {
+		errMsgs[p+"."+f] = m
+	}
+
+	return ValidationError{errMsgs: errMsgs}
 }
 
 func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
 	return ValidationErrorResponse{
-		Errors: map[string]string{v.field: v.Error()},
+		Errors: v.errMsgs,
 	}
 }
 

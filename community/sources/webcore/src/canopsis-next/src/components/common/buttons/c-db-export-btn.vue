@@ -74,6 +74,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    externalDataTable: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
     const {

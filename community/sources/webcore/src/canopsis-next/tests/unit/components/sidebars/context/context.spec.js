@@ -15,7 +15,7 @@ import {
 
 import {
   EXPORT_CSV_DATETIME_FORMATS,
-  EXPORT_CSV_SEPARATORS,
+  CSV_SEPARATORS,
   SORT_ORDERS,
   USER_PERMISSIONS,
   SIDE_BARS,
@@ -655,7 +655,7 @@ describe('context', () => {
 
     const exportProperties = {
       ...widgetParametersToForm(widget),
-      exportCsvSeparator: EXPORT_CSV_SEPARATORS.semicolon,
+      exportCsvSeparator: CSV_SEPARATORS.semicolon,
       exportCsvDatetimeFormat: EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
       widgetExportColumns: [],
     };

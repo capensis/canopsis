@@ -3,7 +3,7 @@ package widget
 import (
 	"context"
 	"errors"
-	"fmt"
+	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -39,26 +39,32 @@ func (t *RequestTransformer) Transform(ctx context.Context, r *EditRequest) erro
 
 func (t *RequestTransformer) transformPatternFields(ctx context.Context, r *EditRequest) error {
 	var err error
+	var valErr common.ValidationError
 	for i := range r.Filters {
 		r.Filters[i].AlarmPatternFieldsRequest, err = t.patternFieldsTransformer.TransformAlarmPatternFieldsRequest(ctx, r.Filters[i].AlarmPatternFieldsRequest)
 		if err != nil {
-			if errors.Is(err, common.ErrNotExistCorporateAlarmPattern) {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_alarm_pattern", i), err.Error())
+			if errors.As(err, &valErr) {
+				return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
 			}
+
 			return err
 		}
+
 		r.Filters[i].EntityPatternFieldsRequest, err = t.patternFieldsTransformer.TransformEntityPatternFieldsRequest(ctx, r.Filters[i].EntityPatternFieldsRequest)
 		if err != nil {
-			if errors.Is(err, common.ErrNotExistCorporateEntityPattern) {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_entity_pattern", i), err.Error())
+			if errors.As(err, &valErr) {
+				return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
 			}
+
 			return err
 		}
+
 		r.Filters[i].PbehaviorPatternFieldsRequest, err = t.patternFieldsTransformer.TransformPbehaviorPatternFieldsRequest(ctx, r.Filters[i].PbehaviorPatternFieldsRequest)
 		if err != nil {
-			if errors.Is(err, common.ErrNotExistCorporatePbehaviorPattern) {
-				return common.NewValidationError(fmt.Sprintf("filters.%d.corporate_pbehavior_pattern", i), err.Error())
+			if errors.As(err, &valErr) {
+				return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
 			}
+
 			return err
 		}
 	}

@@ -5,6 +5,8 @@
         v-field="value.column"
         :items="columns"
         :label="columnsLabel"
+        :item-text="itemText"
+        :item-value="itemValue"
       />
     </v-layout>
     <v-layout>
@@ -45,6 +47,14 @@ export default {
     columnsLabel: {
       type: String,
       default: null,
+    },
+    itemText: {
+      type: String,
+      default: 'text',
+    },
+    itemValue: {
+      type: String,
+      default: 'value',
     },
   },
   computed: {
