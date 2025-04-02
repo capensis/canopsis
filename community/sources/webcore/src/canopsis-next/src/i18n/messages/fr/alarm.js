@@ -223,5 +223,6 @@ export default {
     closedChildren: 'Conséquences fermées',
     canceledInitiator: 'Initiateur annulé',
     changeState: 'Changer d\'état',
+    closeDelay: 'Délai de fermeture',
   },
 };
