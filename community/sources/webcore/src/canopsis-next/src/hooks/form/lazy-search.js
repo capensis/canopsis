@@ -182,6 +182,12 @@ export const useLazySearch = ({
   const wholePending = computed(() => pending.value || valuesPending.value);
 
   /**
+   * Computed property for first selected item.
+   * @type {ComputedRef<Object | undefined>}
+   */
+  const selectedItem = computed(() => selectedItems.value?.[0]);
+
+  /**
    * Function to fetch the next page of items.
    */
   const fetchMoreItems = () => updateQueryPage(query.value.page + 1);
@@ -191,6 +197,13 @@ export const useLazySearch = ({
    * @param {Array} newSelectedItems - The new list of selected items.
    */
   const changeSelectedItems = (newSelectedItems) => {
+    if (!newSelectedItems) {
+      selectedItems.value = [];
+      updateModel('');
+
+      return;
+    }
+
     const unwrappedIdKey = unref(idKey);
     const unwrappedAddable = unref(addable);
     const unwrappedMultiple = unref(multiple);
@@ -230,6 +243,7 @@ export const useLazySearch = ({
   );
 
   watch(value, () => initializeSelectedItems());
+  watch(selectedItems, newSelectedItems => emit('update:selected-items', newSelectedItems));
 
   onMounted(() => {
     if (unref(idParamsKey)) {
@@ -241,6 +255,7 @@ export const useLazySearch = ({
 
   return {
     query,
+    selectedItem,
     selectedItems,
     items,
     valuesPending,

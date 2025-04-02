@@ -158,6 +158,7 @@ import { LIVE_REPORTING_QUICK_RANGES, MODALS, USER_PERMISSIONS } from '@/constan
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 import { getAlarmListExportDownloadFileUrl } from '@/helpers/entities/alarm/url';
 import { setSeveralFields } from '@/helpers/immutable';
+import { selectedToQuery, widgetToExportQueryColumns } from '@/helpers/entities/widget/query';
 
 import { authMixin } from '@/mixins/auth';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
@@ -434,22 +435,6 @@ export default {
       }
     },
 
-    getExportQueryColumns() {
-      const {
-        widgetExportColumns,
-        widgetColumns,
-      } = this.widget.parameters;
-
-      const hasExportColumns = !!widgetExportColumns?.length;
-      const columns = hasExportColumns ? widgetExportColumns : widgetColumns;
-
-      return columns.map(({ value, text, template }) => ({
-        name: value,
-        label: text,
-        template: hasExportColumns ? template : undefined,
-      }));
-    },
-
     getExportQuery() {
       const query = this.getQuery();
       const {
@@ -469,7 +454,7 @@ export default {
           'instructions',
         ]),
 
-        fields: this.getExportQueryColumns(),
+        fields: widgetToExportQueryColumns(this.widget),
         filters: query.filters,
         separator: exportCsvSeparator,
         /**
@@ -478,7 +463,7 @@ export default {
         time_format: isObject(exportCsvDatetimeFormat)
           ? exportCsvDatetimeFormat.value
           : exportCsvDatetimeFormat,
-        search: selected?.length ? selected.map(alarm => `_id="${alarm._id}"`).join(' OR ') : query.search,
+        search: selectedToQuery(selected, query.search),
       };
     },
 

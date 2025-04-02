@@ -271,6 +271,7 @@ export default {
   clearSearch: 'Ne plus appliquer cette recherche',
   noData: 'Aucune donnée',
   noColumns: 'Veuillez sélectionner au moins une colonne',
+  noDataAvailable: 'Aucune donnée disponible',
   theme: 'Thème | Thèmes',
   systemName: 'Nom du système',
   emitTrigger: 'Émettre un déclencheur',
@@ -307,6 +308,9 @@ export default {
   pressEnterToApply: 'Appuyez sur <kbd>Entrée</kbd> pour appliquer',
   width: 'Largeur',
   versionUpdated: 'Version mise à jour',
+  database: 'Base de données',
+  importData: 'Importer des données',
+  separator: 'Séparateur',
   true: 'Vrai',
   false: 'Faux',
   variableTypes: {
@@ -580,6 +584,8 @@ export default {
     },
     fileTypes: {
       svg: 'fichier SVG',
+      csv: 'fichier CSV',
     },
+    fileSizeMb: 'Taille du fichier (MB)',
   },
 };

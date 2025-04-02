@@ -7,7 +7,7 @@ import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
 import { mockModals } from '@unit/utils/mock-hooks';
 
-import { ALARM_DENSE_TYPES, ALARM_FIELDS, ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
+import { DENSE_TYPES, ALARM_FIELDS, RESIZING_CELLS_CONTENTS_BEHAVIORS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
@@ -589,7 +589,7 @@ describe('alarms-list-table', () => {
         loading: true,
         selectable: true,
         hideChildren: true,
-        dense: ALARM_DENSE_TYPES.medium,
+        dense: DENSE_TYPES.medium,
         expandable: true,
         stickyHeader: true,
         densable: true,
@@ -635,7 +635,7 @@ describe('alarms-list-table', () => {
           parameters: {
             ...defaultWidget.parameters,
 
-            dense: ALARM_DENSE_TYPES.medium,
+            dense: DENSE_TYPES.medium,
           },
         },
         alarms: [],
@@ -656,7 +656,7 @@ describe('alarms-list-table', () => {
           parameters: {
             ...defaultWidget.parameters,
 
-            dense: ALARM_DENSE_TYPES.medium,
+            dense: DENSE_TYPES.medium,
           },
         },
         alarms: [],
@@ -724,7 +724,7 @@ describe('alarms-list-table', () => {
         },
         alarms: [],
         columns,
-        cellsContentBehavior: ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
+        cellsContentBehavior: RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
       },
     });
 
@@ -744,7 +744,7 @@ describe('alarms-list-table', () => {
         },
         alarms: [],
         columns,
-        cellsContentBehavior: ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
+        cellsContentBehavior: RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
       },
     });
 

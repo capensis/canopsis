@@ -1,12 +1,12 @@
 import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
 
 import {
-  ALARM_DENSE_TYPES,
+  DENSE_TYPES,
   ALARM_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
   ALARM_UNSORTABLE_FIELDS,
   ALARMS_OPENED_VALUES,
-  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  RESIZING_CELLS_CONTENTS_BEHAVIORS,
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
@@ -15,7 +15,7 @@ import {
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
   ENTITY_FIELDS_TO_LABELS_KEYS,
   EXPORT_CSV_DATETIME_FORMATS,
-  EXPORT_CSV_SEPARATORS,
+  CSV_SEPARATORS,
   GRID_SIZES,
   SORT_ORDERS,
   TIME_UNITS,
@@ -81,6 +81,10 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} draggable
  * @property {boolean} resizable
  * @property {AlarmsResizingBehaviors} cells_content_behavior
+ */
+
+/**
+ * @typedef {0 | 1 | 2} WidgetDenseParameters
  */
 
 /**
@@ -179,7 +183,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} fastPbehaviorReason
  * @property {boolean} sticky_header
  * @property {boolean} sticky_horizontal_scroll
- * @property {boolean} dense
+ * @property {WidgetDenseParameters} dense
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
  * @property {AvailabilityField} availability
@@ -258,7 +262,7 @@ export const openedToForm = (opened) => {
 export const columnsParametersToForm = (columns = {}) => ({
   draggable: columns.draggable ?? false,
   resizable: columns.resizable ?? false,
-  cells_content_behavior: columns.cells_content_behavior ?? ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
+  cells_content_behavior: columns.cells_content_behavior ?? RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap,
 });
 
 /**
@@ -366,7 +370,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   fastPbehaviorReason: parameters.fastPbehaviorReason,
   sticky_header: !!parameters.sticky_header,
   sticky_horizontal_scroll: !!parameters.sticky_horizontal_scroll,
-  dense: parameters.dense ?? ALARM_DENSE_TYPES.large,
+  dense: parameters.dense ?? DENSE_TYPES.large,
   fastAckOutput: parameters.fastAckOutput
     ? { ...parameters.fastAckOutput }
     : {
@@ -421,7 +425,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   expandGridRangeSize: parameters.expandGridRangeSize
     ? [...parameters.expandGridRangeSize]
     : [GRID_SIZES.min, GRID_SIZES.max],
-  exportCsvSeparator: parameters.exportCsvSeparator ?? EXPORT_CSV_SEPARATORS.comma,
+  exportCsvSeparator: parameters.exportCsvSeparator ?? CSV_SEPARATORS.comma,
   exportCsvDatetimeFormat: parameters.exportCsvDatetimeFormat ?? EXPORT_CSV_DATETIME_FORMATS.datetimeSeconds.value,
   kiosk: kioskParametersToForm(parameters.kiosk),
   columns: columnsParametersToForm(parameters.columns),

@@ -545,6 +545,78 @@ exports[`widget-wrapper Renders \`widget-wrapper\` with type Counter and core ed
 </div>
 `;
 
+exports[`widget-wrapper Renders \`widget-wrapper\` with type ExternalDataTable and cat edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <external-data-table-widget-stub
+      tab-id="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type ExternalDataTable and cat edition without actions access 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <external-data-table-widget-stub
+      hideactions="true"
+      hidemassselection="true"
+      tab-id="tab-id"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type ExternalDataTable and core edition 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <external-data-table-widget-stub
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
+exports[`widget-wrapper Renders \`widget-wrapper\` with type ExternalDataTable and core edition without actions access 1`] = `
+<div
+  style="min-height: 40px;"
+>
+  <!---->
+  <div
+    class="v-card__text pa-0 position-relative"
+  >
+    <external-data-table-widget-stub
+      hideactions="true"
+      hidemassselection="true"
+      message="Stats widgets are not available with 'community' edition"
+      tab-id="tab-id"
+      value="true"
+      widget="[object Object]"
+    />
+  </div>
+</div>
+`;
+
 exports[`widget-wrapper Renders \`widget-wrapper\` with type Junit and cat edition 1`] = `
 <div
   style="min-height: 40px;"

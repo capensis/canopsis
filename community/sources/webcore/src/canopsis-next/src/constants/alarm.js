@@ -1,6 +1,6 @@
 import { COLORS } from '@/config';
 
-import { WIDGET_COLUMNS_GROUPS } from './common';
+import { DENSE_TYPES, WIDGET_COLUMNS_GROUPS } from './common';
 
 export const ALARM_FIELDS = {
   id: '_id',
@@ -602,11 +602,6 @@ export const ALARMS_OPENED_VALUES = {
   resolved: false,
 };
 
-export const ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS = {
-  wrap: 'wrap',
-  truncate: 'truncate',
-};
-
 export const ALARM_BASIC_METRIC_PARAMETERS = {
   activeAlarms: 'active_alarms',
   createdAlarms: 'created_alarms',
@@ -966,12 +961,6 @@ export const ALARM_UNSORTABLE_FIELDS = [
   ALARM_FIELDS.tags,
 ];
 
-export const ALARM_DENSE_TYPES = {
-  large: 0,
-  medium: 1,
-  small: 2,
-};
-
 export const ALARM_PAYLOADS_VARIABLES = {
   alarm: '.Alarm',
   alarms: '.Alarms',
@@ -1024,35 +1013,35 @@ export const ALARMS_EXPAND_PANEL_TABS = {
 export const ALARM_LINK_ICON_CHIP_WIDTH = 26;
 
 export const ALARM_LINK_ICON_CHIP_COLUMN_GAP = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 8,
-  [ALARM_DENSE_TYPES.small]: 4,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 8,
+  [DENSE_TYPES.small]: 4,
 };
 
 export const ALARM_LINK_TD_PADDINGS = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 6,
-  [ALARM_DENSE_TYPES.small]: 6,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 6,
+  [DENSE_TYPES.small]: 6,
 };
 
 export const ALARM_EXPORT_FILE_NAME_PREFIX = 'alarm';
 
 export const ALARM_ACTION_BUTTON_WIDTHS = {
-  [ALARM_DENSE_TYPES.large]: 36,
-  [ALARM_DENSE_TYPES.medium]: 36,
-  [ALARM_DENSE_TYPES.small]: 24,
+  [DENSE_TYPES.large]: 36,
+  [DENSE_TYPES.medium]: 36,
+  [DENSE_TYPES.small]: 24,
 };
 
 export const ALARM_ACTION_BUTTON_MARGINS = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 0,
-  [ALARM_DENSE_TYPES.small]: 0,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 0,
+  [DENSE_TYPES.small]: 0,
 };
 
 export const ALARM_ACTIONS_PADDINGS = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 6,
-  [ALARM_DENSE_TYPES.small]: 6,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 6,
+  [DENSE_TYPES.small]: 6,
 };
 
 export const DEFAULT_ALARM_ACTIONS_INLINE_COUNT = 4;

@@ -10,3 +10,4 @@ export { default as CSpeedDial } from '@/components/common/buttons/c-speed-dial.
 export { default as CDensityBtnToggle } from '@/components/common/groups/c-density-btn-toggle.vue';
 export { default as CBtnWithError } from '@/components/common/buttons/c-btn-with-error.vue';
 export { default as CDbExportBtn } from '@/components/common/buttons/c-db-export-btn.vue';
+export { default as CGridBtns } from '@/components/common/buttons/c-grid-btns.vue';

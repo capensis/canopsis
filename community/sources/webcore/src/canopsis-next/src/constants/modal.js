@@ -124,4 +124,8 @@ export const MODALS = {
   applyEventFilter: 'apply-event-filter',
 
   duration: 'duration',
+
+  createExternalDataTable: 'create-external-data-table',
+  createExternalDataTableRecord: 'create-external-data-table-record',
+  importExternalDataTableRecords: 'import-external-data-table-records',
 };

@@ -8,6 +8,71 @@ export const DEFAULT_ENTITY_MODULE_TYPES = {
   FETCH_LIST_FAILED: 'FETCH_LIST_FAILED',
 };
 
+/**
+ * Creates a basic CRUD module with create, update, and remove actions.
+ *
+ * @param {Object} options - Configuration options for the CRUD module.
+ * @param {string} options.route - The base API route for the entity.
+ * @param {boolean} [options.namespaced = true] - Namespaced flag.
+ * @param {Object} [module = {}] - Additional module configuration.
+ * @returns {Object} An object containing CRUD actions.
+ * @property {Function} create - Action to create an entity.
+ * @property {Function} update - Action to update an entity by ID.
+ * @property {Function} remove - Action to remove an entity by ID.
+ */
+export const createBasicCRUDModule = ({ route, namespaced = true } = {}, module = {}) => merge({
+  namespaced,
+
+  actions: {
+    /**
+     * Create entity by data
+     *
+     * @param {ActionContext} context
+     * @param {Object} data - Entity data
+     * @returns {Promise<AxiosPromise>}
+     */
+    create(context, { data }) {
+      return request.post(route, data);
+    },
+
+    /**
+     * Update entity by id and data
+     *
+     * @param {ActionContext} context
+     * @param {string} id - Id of entity
+     * @param {Object} data - Entity data
+     * @returns {Promise<AxiosPromise>}
+     */
+    update(context, { id, data }) {
+      return request.put(`${route}/${encodeURIComponent(id)}`, data);
+    },
+
+    /**
+     * Remove entity by id
+     *
+     * @param {ActionContext} context
+     * @param {string} id - Id of entity
+     * @returns {Promise<AxiosPromise>}
+     */
+    remove(context, { id } = {}) {
+      return request.delete(`${route}/${encodeURIComponent(id)}`);
+    },
+  },
+}, module);
+
+/**
+ * Creates a Vuex module for CRUD operations with additional features.
+ *
+ * @param {Object} options - Configuration options for the CRUD module.
+ * @param {Object} [options.types = DEFAULT_ENTITY_MODULE_TYPES] - Custom types for mutations.
+ * @param {string} options.route - The base API route for the entity.
+ * @param {Function} [options.dataPreparer = d => d?.data] - Function to prepare data from the response.
+ * @param {Function} [options.metaPreparer = d => d?.meta] - Function to prepare meta information from the response.
+ * @param {boolean} [options.withFetchingParams] - Flag to enable fetching with parameters.
+ * @param {boolean} [options.withWithoutStore] - Flag to enable fetching without storing data.
+ * @param {Object} [module = {}] - Additional module configuration.
+ * @returns {Object} A Vuex module with state, getters, mutations, and actions for CRUD operations.
+ */
 export const createCRUDModule = ({
   types = DEFAULT_ENTITY_MODULE_TYPES,
   route,
@@ -44,10 +109,11 @@ export const createCRUDModule = ({
 
   const moduleActions = {
     /**
+     * Fetches a list of entities from the API.
      *
-     * @param {ActionContext} context
-     * @param {Object} [params] - Query params of request
-     * @returns {Promise.<void>}
+     * @param {ActionContext} context - The Vuex action context.
+     * @param {Object} [params] - Query parameters for the request.
+     * @returns {Promise<void>} A promise that resolves when the fetch is complete.
      */
     async fetchList({ commit }, { params } = {}) {
       try {
@@ -65,40 +131,6 @@ export const createCRUDModule = ({
 
         throw err;
       }
-    },
-
-    /**
-     * Create entity by data
-     *
-     * @param {ActionContext} context
-     * @param {Object} data - Entity data
-     * @returns {Promise<AxiosPromise>}
-     */
-    create(context, { data }) {
-      return request.post(route, data);
-    },
-
-    /**
-     * Update entity by id and data
-     *
-     * @param {ActionContext} context
-     * @param {string} id - Id of entity
-     * @param {Object} data - Entity data
-     * @returns {Promise<AxiosPromise>}
-     */
-    update(context, { id, data }) {
-      return request.put(`${route}/${encodeURIComponent(id)}`, data);
-    },
-
-    /**
-     * Remove entity by id
-     *
-     * @param {ActionContext} context
-     * @param {string} id - Id of entity
-     * @returns {Promise<AxiosPromise>}
-     */
-    remove(context, { id } = {}) {
-      return request.delete(`${route}/${encodeURIComponent(id)}`);
     },
   };
 
@@ -123,5 +155,5 @@ export const createCRUDModule = ({
     getters: moduleGetters,
     mutations: moduleMutations,
     actions: moduleActions,
-  }, module);
+  }, createBasicCRUDModule({ route }), module);
 };

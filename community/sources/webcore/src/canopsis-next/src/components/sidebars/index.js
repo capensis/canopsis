@@ -13,3 +13,4 @@ export { default as NumbersSettings } from './chart/numbers.vue';
 export { default as UserStatisticsSettings } from './statistics/user-statistics.vue';
 export { default as AlarmStatisticsSettings } from './statistics/alarm-statistics.vue';
 export { default as AvailabilitySettings } from './availability/availability.vue';
+export { default as ExternalDataTableSettings } from './external-data-table/external-data-table.vue';
