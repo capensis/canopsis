@@ -1033,6 +1033,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_rules"
+  permission_api_external_data_table:
+    <<: *permission_crud
+    _id: api_external_data_table
+    name: <Current()._id>
+    description: External data
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
 
   # api -> remediation
   permission_api_job_config:
@@ -1273,6 +1281,14 @@ permission:
 
   .api_permissions_widget_Availability_read: &api_permissions_widget_Availability_read {
     "@permission_api_metrics": 1
+  }
+
+  .api_permissions_widget_ExternalData_read: &api_permissions_widget_ExternalData_read {
+    "@permission_api_external_data_table": 6
+  }
+
+  .api_permissions_widget_ExternalData_update: &api_permissions_widget_ExternalData_update {
+    "@permission_api_external_data_table": 6
   }
 
   # technical -> admin -> access
@@ -1673,7 +1689,9 @@ permission:
         *api_permissions_widget_Numbers_read,
         *api_permissions_widget_UserStatistics_read,
         *api_permissions_widget_AlarmStatistics_read,
-        *api_permissions_widget_Availability_read
+        *api_permissions_widget_Availability_read,
+        *api_permissions_widget_ExternalData_read,
+        *api_permissions_widget_ExternalData_update,
       ]
   permission_models_userview:
     <<: *permission_crud
@@ -1849,6 +1867,16 @@ permission:
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
       ]
+  permission_models_exploitation_externalData:
+    <<: *permission_crud
+    _id: models_exploitation_externalData
+    name: <Current()._id>
+    description: External data
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_external_data_table": 0
 
   # technical -> notification
   permission_models_notification_instructionStats:
@@ -3283,6 +3311,26 @@ permission:
       1:
         <<: *api_permissions_view_delete
 
+  permission_widget_ExternalData:
+    <<: *permission
+    _id: ExternalData
+    name: <Current()._id>
+    description: API permissions for ExternalData widget
+    hidden: true
+    api_permissions_bitmask:
+      4:
+        <<: [
+          *api_permissions_view_read,
+          *api_permissions_widget_ExternalData_read
+        ]
+      2:
+        <<: [
+          *api_permissions_view_update,
+          *api_permissions_widget_ExternalData_update
+        ]
+      1:
+        <<: *api_permissions_view_delete
+
 role:
   role_admin:
     <<: *role
@@ -3316,6 +3364,7 @@ role:
       "@permission_models_exploitation_resolveRules": 15
       "@permission_models_exploitation_declareTicketRule": 15
       "@permission_models_exploitation_linkRule": 15
+      "@permission_models_exploitation_externalData": 15
       "@permission_models_healthcheck": 1
       "@permission_models_healthcheckStatus": 1
       "@permission_models_kpi": 1
@@ -3478,6 +3527,7 @@ role:
       "@permission_api_kpi_filter": 15
       "@permission_api_snmprule": 15
       "@permission_api_snmpmib": 15
+      "@permission_api_external_data_table": 15
       "@permission_api_corporate_pattern": 1
       "@permission_api_map": 15
       "@permission_api_share_token": 15

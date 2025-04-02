@@ -2,7 +2,6 @@ package importcontextgraph
 
 import (
 	"context"
-	"errors"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -16,8 +15,6 @@ const (
 	ActionDisable = "disable"
 	ActionEnable  = "enable"
 )
-
-var ErrNotImplemented = errors.New("import action not implemented")
 
 type Worker interface {
 	Work(ctx context.Context, filename, source string) (Stats, error)

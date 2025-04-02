@@ -571,6 +571,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 
 	if len(alarmPatternQuery) > 0 {
 		g.Go(func() error {
+			var err error
 			alarmPatternPipeline := make([]bson.M, 0)
 			if len(alarmPatternAddFields) > 0 {
 				alarmPatternPipeline = append(alarmPatternPipeline, bson.M{"$addFields": alarmPatternAddFields})
@@ -747,6 +748,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	}
 	if len(alarmPatternQuery) > 0 {
 		g.Go(func() error {
+			var err error
 			alarmPatternPipeline := make([]bson.M, 0)
 			if len(alarmPatternAddFields) > 0 {
 				alarmPatternPipeline = append(alarmPatternPipeline, bson.M{"$addFields": alarmPatternAddFields})
