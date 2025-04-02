@@ -144,8 +144,14 @@ export default {
   },
 
   instructionStat: {
+    instructionResult: 'Instruction result',
+    alarmStateAfterTimeout: 'Alarm state after timeout',
+    afterRemediationEnd: 'After remediation end, before ok state',
+    solveBeforeRemediationEnd: 'Solved before remediation end',
+    remediationStart: 'Remediation start',
+    remediationEnd: 'Remediation end',
+    okStateDate: 'Ok state date',
     alarmsTimeline: 'Alarms timeline',
-    executedAt: 'End of execution at',
     lastExecutedOn: 'Last executed on',
     modifiedOn: 'Modified on',
     averageCompletionTime: 'Average time\nof completion',
@@ -155,7 +161,6 @@ export default {
     alarmStates: 'Alarms affected by state',
     okAlarmStates: 'Number of resulting\nOK states',
     instructionChanged: 'The instruction has been changed',
-    alarmResolvedDate: 'Alarm resolved date',
     showFailedExecutions: 'Show failed instruction executions',
     remediationDuration: 'Remediation duration',
     timeoutAfterExecution: 'Timeout after execution',
