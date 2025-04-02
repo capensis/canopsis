@@ -59,7 +59,7 @@
     }
 
     & > tbody, thead {
-      & > tr:not(.v-data-table__progress, .v-data-table__expanded) {
+      & > tr:not(.v-data-table__progress, .v-data-table__expanded__content) {
         & > td, & > th {
           padding: 0 $ultra-dense-padding !important;
         }
@@ -74,7 +74,7 @@
   &--dense, &--ultra-dense {
     & > .v-data-table__wrapper > table {
       tbody, thead {
-        tr:not(.v-data-table__expanded) {
+        tr:not(.v-data-table__expanded__content) {
           td, th {
             padding: 0 $dense-padding !important;
           }

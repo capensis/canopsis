@@ -1,5 +1,10 @@
+import { ref } from 'vue';
+
+import { convertQueryToRequest } from '@/helpers/query';
+
 import { usePendingHandler } from './pending';
 import { useLocalQuery } from './local-query';
+import { useQueryOptions } from './options';
 
 /**
  * Custom hook that combines the functionalities of tracking pending state of an asynchronous operation and managing a
@@ -41,5 +46,54 @@ export const usePendingWithLocalQuery = ({
     pending,
 
     fetchHandlerWithQuery,
+  };
+};
+
+/**
+ * Custom hook to fetch a list of data with query options management
+ *
+ * This hook combines data fetching with query state management and options handling.
+ * It provides reactive references for the fetched data, metadata, and loading state,
+ * along with functions to manage the query and pagination/sorting options.
+ *
+ * @param {Object} options - Configuration options for the hook
+ * @param {Function} options.fetchListHandler - Async function that fetches data based on provided parameters
+ * @param {Object} [options.initialQuery] - Initial query state
+ * @returns {Object}
+ */
+export const useFetchListWithoutStoreWithOptions = ({ fetchListHandler, initialQuery }) => {
+  const data = ref([]);
+  const meta = ref({});
+
+  const {
+    pending,
+    query,
+    updateQuery,
+    resetQuery,
+    fetchHandlerWithQuery: fetchList,
+  } = usePendingWithLocalQuery({
+    initialQuery,
+    fetchHandler: async (fetchQuery) => {
+      const response = await fetchListHandler({ params: convertQueryToRequest(fetchQuery) });
+
+      data.value = response.data;
+      meta.value = response.meta;
+    },
+  });
+
+  const { options, updateOptions } = useQueryOptions(query, updateQuery);
+
+  return {
+    data,
+    meta,
+    pending,
+    fetchList,
+
+    query,
+    updateQuery,
+    resetQuery,
+
+    options,
+    updateOptions,
   };
 };

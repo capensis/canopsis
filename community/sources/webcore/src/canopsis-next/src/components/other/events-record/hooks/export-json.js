@@ -4,7 +4,7 @@ import { openUrlInNewTab } from '@/helpers/url';
 import { getEventsRecordFileUrl } from '@/helpers/entities/events-record/url';
 
 import { useEventsRecord } from '@/hooks/store/modules/events-record';
-import { useExportFile } from '@/hooks/export-file';
+import { useFilePolling } from '@/hooks/polling';
 
 /**
  * Function to use events record export JSON
@@ -22,7 +22,7 @@ export const useEventsRecordExportJson = ({ eventsRecordId, eventIds = [] }) => 
     fetchEventsRecordExport,
   } = useEventsRecord();
 
-  const { generateFile } = useExportFile({
+  const { poll: generateFile } = useFilePolling({
     createHandler: createEventsRecordExport,
     fetchHandler: fetchEventsRecordExport,
     endHandler: fileData => openUrlInNewTab(getEventsRecordFileUrl(fileData?._id)),

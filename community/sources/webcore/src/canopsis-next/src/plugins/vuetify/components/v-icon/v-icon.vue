@@ -1,4 +1,5 @@
 <script>
+import { isString } from 'lodash';
 import { remapInternalIcon } from 'vuetify/lib/util/helpers';
 import VIcon from 'vuetify/lib/components/VIcon/VIcon';
 
@@ -15,6 +16,12 @@ export default {
       || '';
 
     const icon = remapInternalIcon(config.parent, iconName);
+
+    if (isString(config.data.class)) {
+      config.data.class = {
+        [config.data.class]: true,
+      };
+    }
 
     config.data.class = {
       ...config.data.class,

@@ -38,6 +38,7 @@ export default {
     language: state => state.appInfo.language,
     timezone: state => state.appInfo.timezone,
     fileUploadMaxSize: state => state.appInfo.file_upload_max_size ?? 0,
+    fileImportMaxSize: state => state.appInfo.file_import_max_size ?? 0,
     remediationJobConfigTypes: state => state.appInfo.remediation?.job_config_types ?? [],
     casConfig: state => state.appInfo?.login?.casconfig,
     samlConfig: state => state.appInfo?.login?.saml2config,

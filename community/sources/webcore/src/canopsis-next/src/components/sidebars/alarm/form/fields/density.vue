@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import { ALARM_DENSE_TYPES } from '@/constants';
+import { DENSE_TYPES } from '@/constants';
 
 import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 
@@ -18,7 +18,7 @@ export default {
   props: {
     value: {
       type: Number,
-      default: ALARM_DENSE_TYPES.large,
+      default: DENSE_TYPES.large,
     },
     name: {
       type: String,

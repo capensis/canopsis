@@ -1,12 +1,12 @@
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
 /**
- * Check external data type is mongo
+ * Check external data type is table
  *
  * @param {string} type
  * @returns {boolean}
  */
-export const isMongoExternalDataType = type => type === EXTERNAL_DATA_TYPES.mongo;
+export const isTableExternalDataType = type => type === EXTERNAL_DATA_TYPES.table;
 
 /**
  * Check external data type is api

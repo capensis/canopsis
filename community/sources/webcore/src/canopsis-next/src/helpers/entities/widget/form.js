@@ -24,6 +24,10 @@ import { contextWidgetParametersToForm, formToContextWidgetParameters, prepareCo
 import { textWidgetParametersToForm } from './forms/text';
 import { statisticsWidgetParametersToForm, formToStatisticsWidgetParameters } from './forms/statistics';
 import { availabilityWidgetParametersToForm, formToAvailabilityWidgetParameters } from './forms/availability';
+import {
+  externalDataTableWidgetParametersToForm,
+  formToExternalDataTableWidgetParameters,
+} from './forms/external-data-table';
 
 /**
  * @typedef {
@@ -41,7 +45,8 @@ import { availabilityWidgetParametersToForm, formToAvailabilityWidgetParameters 
  *   'Numbers' |
  *   'UserStatistics' |
  *   'AlarmStatistics' |
- *   'Availability'
+ *   'Availability' |
+ *   'ExternalDataTable'
  * } WidgetType
  */
 
@@ -132,7 +137,9 @@ import { availabilityWidgetParametersToForm, formToAvailabilityWidgetParameters 
  *   LineChartWidgetParameters |
  *   PieChartWidgetParameters |
  *   NumbersWidgetParameters |
- *   StatisticsWidgetParameters
+ *   StatisticsWidgetParameters |
+ *   AvailabilityWidgetParameters |
+ *   ExternalDataTableWidgetParameters
  * } WidgetParameters
  */
 
@@ -150,7 +157,9 @@ import { availabilityWidgetParametersToForm, formToAvailabilityWidgetParameters 
  *   LineChartWidgetParametersForm |
  *   PieChartWidgetParametersForm |
  *   NumbersWidgetParametersForm |
- *   StatisticsWidgetParametersForm
+ *   StatisticsWidgetParametersForm |
+ *   AvailabilityWidgetParametersForm |
+ *   ExternalDataTableWidgetParametersForm
  * } WidgetParametersForm
  */
 
@@ -198,6 +207,7 @@ export const widgetParametersToForm = ({ type, parameters = {} } = {}) => {
     [WIDGET_TYPES.userStatistics]: statisticsWidgetParametersToForm,
     [WIDGET_TYPES.alarmStatistics]: statisticsWidgetParametersToForm,
     [WIDGET_TYPES.availability]: availabilityWidgetParametersToForm,
+    [WIDGET_TYPES.externalDataTable]: externalDataTableWidgetParametersToForm,
 
     ...featuresService.get('helpers.forms.widgets.widgetParametersToForm.widgetsMap'),
   };
@@ -270,6 +280,7 @@ export const formToWidgetParameters = ({ type, parameters }) => {
     [WIDGET_TYPES.userStatistics]: formToStatisticsWidgetParameters,
     [WIDGET_TYPES.alarmStatistics]: formToStatisticsWidgetParameters,
     [WIDGET_TYPES.availability]: formToAvailabilityWidgetParameters,
+    [WIDGET_TYPES.externalDataTable]: formToExternalDataTableWidgetParameters,
 
     ...featuresService.get('helpers.forms.widgets.formToWidgetParameters.widgetsMap'),
   };

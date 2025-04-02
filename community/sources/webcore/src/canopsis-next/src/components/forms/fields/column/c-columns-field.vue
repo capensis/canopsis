@@ -19,6 +19,8 @@
         :optional-infos-attributes="optionalInfosAttributes"
         :with-simple-template="withSimpleTemplate"
         :without-infos-attributes="withoutInfosAttributes"
+        :without-custom-label="withoutCustomLabel"
+        :items="items"
         :variables="variables"
         :excluded-columns="excludedColumns"
         class="mb-3"
@@ -89,6 +91,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withoutCustomLabel: {
+      type: Boolean,
+      default: false,
+    },
     optionalInfosAttributes: {
       type: Boolean,
       default: false,
@@ -104,6 +110,10 @@ export default {
     withoutInfosAttributes: {
       type: Boolean,
       default: false,
+    },
+    items: {
+      type: Array,
+      required: false,
     },
     excludedColumns: {
       type: Array,

@@ -5,20 +5,21 @@
         v-if="optionally"
         v-field="form.optional"
         :label="$t('common.optional')"
-      />
-      <v-text-field
-        v-field="form.collection"
-        v-validate="'required'"
-        :label="$t('externalData.fields.collection')"
-        :name="collectionFieldName"
-        :error-messages="errors.collect(collectionFieldName)"
         :disabled="disabled"
+      />
+      <external-data-table-table-field
+        v-field="form.table"
+        :label="$t('externalData.fields.collection')"
+        :disabled="disabled"
+        required
+        @update:selected-items="updateSelectedItems"
       />
     </v-layout>
     <v-layout>
       <v-flex xs6>
-        <v-text-field
+        <v-select
           v-field="form.sort_by"
+          :items="columns"
           :label="$t('externalData.fields.sortBy')"
           :name="sortByFieldName"
           :error-messages="errors.collect(sortByFieldName)"
@@ -40,7 +41,7 @@
         />
       </v-flex>
     </v-layout>
-    <external-data-mongo-condition-form
+    <external-data-table-condition-form
       v-for="(condition, index) in form.conditions"
       v-field="form.conditions[index]"
       :key="condition.key"
@@ -48,6 +49,7 @@
       :disabled-remove="hasOnlyOneCondition"
       :disabled="disabled"
       :variables="variables"
+      :columns="columns"
       @remove="removeCondition(index)"
     />
     <v-flex v-if="!disabled">
@@ -64,18 +66,22 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { SORT_ORDERS } from '@/constants';
 
 import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
 
-import { formMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
 
-import ExternalDataMongoConditionForm from './external-data-mongo-condition-form.vue';
+import ExternalDataTableTableField
+  from '@/components/other/external-data-table/form/fields/external-data-table-table-field.vue';
+
+import ExternalDataTableConditionForm from './external-data-table-condition-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ExternalDataMongoConditionForm },
-  mixins: [formMixin],
+  components: { ExternalDataTableTableField, ExternalDataTableConditionForm },
   model: {
     prop: 'form',
     event: 'input',
@@ -102,42 +108,43 @@ export default {
       default: false,
     },
   },
-  computed: {
-    sortOrders() {
-      return Object.values(SORT_ORDERS).map(order => order.toLowerCase());
-    },
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
 
-    hasOnlyOneCondition() {
-      return this.form.conditions.length === 1;
-    },
+    const sortOrders = Object.values(SORT_ORDERS).map(order => order.toLowerCase());
+    const columns = ref([]);
 
-    collectionFieldName() {
-      return `${this.name}.collection`;
-    },
+    const hasOnlyOneCondition = computed(() => props.form.conditions.length === 1);
+    const collectionFieldName = computed(() => `${props.name}.collection`);
+    const sortFieldName = computed(() => `${props.name}.sort`);
+    const sortByFieldName = computed(() => `${props.name}.sort_by`);
 
-    sortFieldName() {
-      return `${this.name}.sort`;
-    },
+    const addCondition = () => updateField('conditions', [
+      ...props.form.conditions,
 
-    sortByFieldName() {
-      return `${this.name}.sort_by`;
-    },
-  },
-  methods: {
-    addCondition() {
-      this.updateField('conditions', [
-        ...this.form.conditions,
+      externalDataItemConditionAttributeToForm(),
+    ]);
 
-        externalDataItemConditionAttributeToForm(),
-      ]);
-    },
+    const removeCondition = index => updateField(
+      'conditions',
+      props.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),
+    );
 
-    removeCondition(index) {
-      this.updateField(
-        'conditions',
-        this.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),
-      );
-    },
+    const updateSelectedItems = ([table = {}] = []) => columns.value = table?.columns ?? [];
+
+    return {
+      columns,
+
+      sortOrders,
+      hasOnlyOneCondition,
+      collectionFieldName,
+      sortFieldName,
+      sortByFieldName,
+
+      addCondition,
+      removeCondition,
+      updateSelectedItems,
+    };
   },
 };
 </script>

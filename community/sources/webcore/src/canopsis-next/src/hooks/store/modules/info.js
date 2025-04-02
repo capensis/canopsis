@@ -69,6 +69,7 @@ export const useShownHeader = () => {
  * @property {Ref<Object>} oauthConfig - OAuth configuration
  * @property {Ref<string>} timezone - Application timezone
  * @property {Ref<number>} fileUploadMaxSize - Maximum file upload size
+ * @property {Ref<number>} fileImportMaxSize - Maximum file import size
  * @property {Ref<Array>} remediationJobConfigTypes - Remediation job types
  * @property {Ref<Object>} maintenance - Maintenance settings
  * @property {Ref<string>} defaultColorTheme - Default UI theme
@@ -119,6 +120,7 @@ export const useInfo = () => {
     oauthConfig: 'oauthConfig',
     timezone: 'timezone',
     fileUploadMaxSize: 'fileUploadMaxSize',
+    fileImportMaxSize: 'fileImportMaxSize',
     remediationJobConfigTypes: 'remediationJobConfigTypes',
     maintenance: 'maintenance',
     defaultColorTheme: 'defaultColorTheme',

@@ -38,8 +38,8 @@
             </v-icon>
           </v-btn>
         </v-layout>
-        <external-data-mongo-form
-          v-if="isMongoType"
+        <external-data-table-form
+          v-if="isTableType"
           v-field="form"
           :name="name"
           :disabled="disabled"
@@ -62,17 +62,17 @@
 <script>
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
-import { isMongoExternalDataType } from '@/helpers/entities/shared/external-data/entity';
+import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
 import { formMixin } from '@/mixins/form';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
 
-import ExternalDataMongoForm from './external-data-mongo-form.vue';
+import ExternalDataTableForm from './external-data-table-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { RequestForm, ExternalDataMongoForm },
+  components: { RequestForm, ExternalDataTableForm },
   mixins: [formMixin],
   model: {
     prop: 'form',
@@ -112,8 +112,8 @@ export default {
           .map(type => ({ text: this.$t(`externalData.types.${type}`), value: type }));
     },
 
-    isMongoType() {
-      return isMongoExternalDataType(this.form.type);
+    isTableType() {
+      return isTableExternalDataType(this.form.type);
     },
 
     referenceFieldName() {
