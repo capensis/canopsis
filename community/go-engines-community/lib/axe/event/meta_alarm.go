@@ -104,7 +104,7 @@ func (p *metaAlarmProcessor) Process(ctx context.Context, event rpc.AxeEvent) (R
 		p.metricsSender.SendCorrelation(event.Parameters.Timestamp.Time, child)
 	}
 
-	go p.postProcess(context.Background(), event, result)
+	go p.postProcess(context.WithoutCancel(ctx), event, result)
 
 	return result, nil
 }

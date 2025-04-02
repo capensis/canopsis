@@ -13,6 +13,7 @@ import (
 	libalarm "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/closedelay"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -431,6 +432,11 @@ func NewEngine(
 				eventGenerator,
 				json.NewEncoder(),
 				logger,
+			),
+			CloseDelayService: closedelay.NewService(
+				dbClient,
+				eventGenerator,
+				options.PeriodicalWaitTime,
 			),
 			AlarmConfigProvider: alarmConfigProvider,
 			Logger:              logger,

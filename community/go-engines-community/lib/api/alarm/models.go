@@ -360,6 +360,9 @@ type AlarmValue struct {
 	EventsCount types.CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
 	Infos map[string]map[string]any `bson:"infos" json:"infos"`
+
+	CloseDelayValue int64             `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
+	CloseDelay      *common.AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 }
 
 type Pbehavior struct {

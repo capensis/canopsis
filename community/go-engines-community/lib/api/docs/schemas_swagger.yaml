@@ -262,6 +262,10 @@ definitions:
         items:
           type: string
         type: array
+      close_delay:
+        $ref: '#/definitions/common.AlarmStep'
+      close_delay_value:
+        type: integer
       comments:
         items:
           $ref: '#/definitions/common.AlarmStep'
