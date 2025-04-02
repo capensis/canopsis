@@ -355,6 +355,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.Healthcheck = bool(in.Bool())
 		case "state_setting_updated":
 			out.StateSettingUpdated = bool(in.Bool())
+		case "close_delay":
+			if in.IsNull() {
+				in.Skip()
+				out.CloseDelayValue = nil
+			} else {
+				if out.CloseDelayValue == nil {
+					out.CloseDelayValue = new(int64)
+				}
+				*out.CloseDelayValue = int64(in.Int64())
+			}
+		case "is_close_delay":
+			out.IsCloseDelayJob = bool(in.Bool())
 		case "ticket":
 			out.Ticket = string(in.String())
 		case "ticket_url":
@@ -764,6 +776,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"state_setting_updated\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.StateSettingUpdated))
+	}
+	if in.CloseDelayValue != nil {
+		const prefix string = ",\"close_delay\":"
+		out.RawString(prefix)
+		out.Int64(int64(*in.CloseDelayValue))
+	}
+	if in.IsCloseDelayJob {
+		const prefix string = ",\"is_close_delay\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsCloseDelayJob))
 	}
 	if in.Ticket != "" {
 		const prefix string = ",\"ticket\":"
@@ -3310,6 +3332,18 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.SnoozeDuration = int64(in.Int64())
 		case "pbh_inactive_duration":
 			out.PbehaviorInactiveDuration = int64(in.Int64())
+		case "close_delay_value":
+			out.CloseDelayValue = int64(in.Int64())
+		case "close_delay":
+			if in.IsNull() {
+				in.Skip()
+				out.CloseDelay = nil
+			} else {
+				if out.CloseDelay == nil {
+					out.CloseDelay = new(AlarmStep)
+				}
+				easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes13(in, out.CloseDelay)
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -3719,6 +3753,16 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"pbh_inactive_duration\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.PbehaviorInactiveDuration))
+	}
+	if in.CloseDelayValue != 0 {
+		const prefix string = ",\"close_delay_value\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.CloseDelayValue))
+	}
+	if in.CloseDelay != nil {
+		const prefix string = ",\"close_delay\":"
+		out.RawString(prefix)
+		easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes13(out, *in.CloseDelay)
 	}
 	out.RawByte('}')
 }

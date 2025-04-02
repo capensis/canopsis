@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -19,20 +20,22 @@ func NewCancelProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &cancelProcessor{
-		client:                 client,
-		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:       client.Collection(mongo.EntityMongoCollection),
-		metaAlarmPostProcessor: metaAlarmPostProcessor,
-		logger:                 logger,
+		client:                  client,
+		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:        client.Collection(mongo.EntityMongoCollection),
+		closeDelayJobCollection: client.Collection(mongo.CloseDelayJobCollection),
+		metaAlarmPostProcessor:  metaAlarmPostProcessor,
+		logger:                  logger,
 	}
 }
 
 type cancelProcessor struct {
-	client                 mongo.DbClient
-	alarmCollection        mongo.DbCollection
-	entityCollection       mongo.DbCollection
-	metaAlarmPostProcessor MetaAlarmPostProcessor
-	logger                 zerolog.Logger
+	client                  mongo.DbClient
+	alarmCollection         mongo.DbCollection
+	entityCollection        mongo.DbCollection
+	closeDelayJobCollection mongo.DbCollection
+	metaAlarmPostProcessor  MetaAlarmPostProcessor
+	logger                  zerolog.Logger
 }
 
 func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -63,6 +66,9 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 			"v.last_update_date":                  event.Parameters.Timestamp,
 			"v.last_st_upd_dt":                    event.Parameters.Timestamp,
 		}},
+		{"$unset": bson.A{
+			"v.close_delay_value",
+		}},
 	}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
@@ -92,14 +98,19 @@ func (p *cancelProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resu
 			}
 		}
 
-		return err
+		_, err = p.closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
+		if err != nil {
+			return fmt.Errorf("failed to delete close_delay job on cancel event: %w", err)
+		}
+
+		return nil
 	})
 
 	if err != nil || result.Alarm.ID == "" {
 		return result, err
 	}
 
-	go p.postProcess(context.Background(), event, result)
+	go p.postProcess(context.WithoutCancel(ctx), event, result)
 
 	return result, nil
 }
