@@ -67,11 +67,13 @@ export default {
   },
   methods: {
     async submit() {
-      if (this.config.action) {
-        await this.config.action(formToSnmpRule(this.form));
-      }
+      const isValid = await this.$validator.validateAll();
 
-      this.$modals.hide();
+      if (isValid) {
+        await this.config.action?.(formToSnmpRule(this.form));
+
+        this.$modals.hide();
+      }
     },
   },
 };
