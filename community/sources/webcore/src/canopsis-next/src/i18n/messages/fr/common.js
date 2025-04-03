@@ -313,6 +313,7 @@ export default {
   separator: 'Séparateur',
   true: 'Vrai',
   false: 'Faux',
+  customField: 'Champ personnalisé|Champs personnalisés',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

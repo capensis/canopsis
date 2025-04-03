@@ -1,10 +1,19 @@
 import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
 
+import { uid } from '@/helpers/uid';
+import { removeKeyFromEntities } from '@/helpers/array';
+
 /**
  * @typedef {Object} SnmpRuleModuleMib
  * @property {string} formatter
  * @property {string} regex
  * @property {string} value
+ */
+
+/**
+ * @typedef {Object} SnmpRuleModuleExtra
+ * @property {string} name
+ * @property {SnmpRuleModuleMib} value
  */
 
 /**
@@ -31,6 +40,8 @@ import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
  * @property {SnmpRuleModuleMib} connector_name
  * @property {SnmpRuleModuleMib} output
  * @property {SnmpRuleModuleMib} resource
+ * @property {SnmpRuleModuleMib[]} tags
+ * @property {SnmpRuleModuleExtra[]} extra
  * @property {SnmpRuleOid} oid
  * @property {SnmpRuleState} state
  */
@@ -48,11 +59,23 @@ import { SNMP_STATE_TYPES, SNMP_TEMPLATE_STATE_STATES } from '@/constants';
  */
 
 /**
+ * @typedef {SnmpRuleModuleExtra} SnmpRuleModuleExtraForm
+ * @property {string} key
+ */
+
+/**
+ * @typedef {SnmpRuleModuleMib} SnmpRuleModuleTagForm
+ * @property {string} key
+ */
+
+/**
  * @typedef {Object} SnmpRuleForm
  * @property {SnmpRuleModuleMib} component
  * @property {SnmpRuleModuleMib} connector_name
  * @property {SnmpRuleModuleMib} output
  * @property {SnmpRuleModuleMib} resource
+ * @property {SnmpRuleModuleTagForm[]} tags
+ * @property {SnmpRuleModuleExtraForm[]} extra
  * @property {SnmpRuleOidForm} oid
  * @property {SnmpRuleState} state
  */
@@ -115,6 +138,46 @@ export const snmpRuleStateToForm = (state = {}) => {
 };
 
 /**
+ * Convert snmp rule tag item to form format
+ *
+ * @param {SnmpRuleModuleMib} [tag={}] - The list of SNMP rule tags.
+ * @returns {SnmpRuleModuleTagForm}
+ */
+export const snmpRuleTagToForm = (tag = {}) => ({
+  ...snmpRuleModuleMibToForm(tag),
+
+  key: uid(),
+});
+
+/**
+ * Convert snmp rule tags to form format
+ *
+ * @param {SnmpRuleModuleMib[]} [tags=[]] - The list of SNMP rule tags.
+ * @returns {SnmpRuleModuleTagForm[]}
+ */
+export const snmpRuleTagsToForm = (tags = []) => (tags ?? []).map(snmpRuleTagToForm);
+
+/**
+ * Convert snmp rule extra data item to form format
+ *
+ * @param {SnmpRuleModuleExtra} [extraItem={}] - The list of SNMP rule extra data.
+ * @returns {SnmpRuleModuleExtraForm}
+ */
+export const snmpRuleExtraItemToForm = (extraItem = {}) => ({
+  key: uid(),
+  name: extraItem.name ?? '',
+  value: snmpRuleModuleMibToForm(extraItem.value),
+});
+
+/**
+ * Convert snmp rule extra data to form format
+ *
+ * @param {SnmpRuleModuleExtra[]} [extra=[]] - The list of SNMP rule extra data.
+ * @returns {SnmpRuleModuleExtraForm[]}
+ */
+export const snmpRuleExtraToForm = (extra = []) => (extra ?? []).map(snmpRuleExtraItemToForm);
+
+/**
  * Convert snmp rule to form
  *
  * @param {SnmpRule} snmpRule
@@ -127,6 +190,8 @@ export const snmpRuleToForm = (snmpRule = {}) => ({
   output: snmpRuleModuleMibToForm(snmpRule.output),
   resource: snmpRuleModuleMibToForm(snmpRule.resource),
   state: snmpRuleStateToForm(snmpRule.state),
+  tags: snmpRuleTagsToForm(snmpRule.tags),
+  extra: snmpRuleExtraToForm(snmpRule.extra),
 });
 
 /**
@@ -151,4 +216,6 @@ export const formToSnmpRule = form => ({
   ...form,
 
   oid: snmpRuleFormToOid(form.oid),
+  tags: removeKeyFromEntities(form.tags),
+  extra: removeKeyFromEntities(form.extra),
 });
