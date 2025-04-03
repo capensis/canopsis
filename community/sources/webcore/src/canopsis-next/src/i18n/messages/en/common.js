@@ -313,6 +313,7 @@ export default {
   separator: 'Separator',
   true: 'True',
   false: 'False',
+  customField: 'Custom field|Custom fields',
   variableTypes: {
     string: 'String',
     number: 'Number',
