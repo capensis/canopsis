@@ -304,6 +304,7 @@ export default {
   lastComment: 'Dernier commentaire',
   serialName: 'Nom de série',
   width: 'Largeur',
+  customField: 'Champ personnalisé|Champs personnalisés',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
