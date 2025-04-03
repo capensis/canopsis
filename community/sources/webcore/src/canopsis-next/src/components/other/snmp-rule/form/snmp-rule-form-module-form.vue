@@ -18,7 +18,6 @@
           item-text="moduleName"
           item-value="_id"
           name="moduleName"
-          autofocus
           hide-no-data
           hide-details
           @change="selectModule"
