@@ -1,7 +1,6 @@
 package event
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -14,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"github.com/ajg/form"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	amqp "github.com/rabbitmq/amqp091-go"
@@ -46,25 +44,32 @@ func (api *api) Send(c *gin.Context) {
 	var raw []byte
 	var values []*fastjson.Value
 
-	raw, err = c.GetRawData()
-	if err != nil {
-		c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
 	if mediatype, _, err := mime.ParseMediaType(c.GetHeader("content-type")); err == nil && mediatype == binding.MIMEPOSTForm {
-		var u map[string]interface{}
-		d := form.NewDecoder(bytes.NewBuffer(raw))
-		if err := d.Decode(&u); err != nil {
-			panic(err)
-		}
-
-		raw, err = json.Marshal(u)
-		if err != nil {
+		if err = c.Request.ParseForm(); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
+		formData := make(map[string]any)
+		for k, v := range c.Request.Form {
+			if len(v) == 1 {
+				formData[k] = v[0]
+			} else {
+				formData[k] = v
+			}
+		}
+
+		raw, err = json.Marshal(formData)
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+	} else {
+		raw, err = c.GetRawData()
+		if err != nil {
+			c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
 	}
 
 	jsonValue, err := fastjson.ParseBytes(raw)
@@ -85,10 +90,10 @@ func (api *api) Send(c *gin.Context) {
 	case fastjson.TypeObject:
 		if !api.processValue(c, jsonValue) {
 			failedEvents.SetArrayItem(0, jsonValue)
-			break
+		} else {
+			sendEvents.SetArrayItem(0, jsonValue)
 		}
 
-		sendEvents.SetArrayItem(0, jsonValue)
 	case fastjson.TypeArray:
 		values, err = jsonValue.Array()
 		if err != nil {
@@ -101,12 +106,10 @@ func (api *api) Send(c *gin.Context) {
 			if !api.processValue(c, value) {
 				failedEvents.SetArrayItem(failedIdx, value)
 				failedIdx++
-
-				continue
+			} else {
+				sendEvents.SetArrayItem(sentIdx, value)
+				sentIdx++
 			}
-
-			sendEvents.SetArrayItem(sentIdx, value)
-			sentIdx++
 		}
 	default:
 		err = errors.New("the body should be an object or an array")
@@ -123,7 +126,11 @@ func (api *api) Send(c *gin.Context) {
 func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	eventType, err := getStringField(value, "event_type")
 	if err != nil {
-		api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg(err.Error())
+		if errors.Is(err, ErrFieldNotExists) {
+			api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg("Missing required field: event_type")
+		} else {
+			api.logger.Warn().Err(err).Str("event", string(value.MarshalTo(nil))).Send()
+		}
 		return false
 	}
 
@@ -159,7 +166,8 @@ func (api *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 			if s, ok := roles.([]string); ok && len(s) > 0 {
 				role = s[0]
 			}
-		} else {
+		}
+		if role == "" {
 			api.logger.Warn().Str("event", string(value.MarshalTo(nil))).Msg("Cannot retrieve role from user")
 		}
 
