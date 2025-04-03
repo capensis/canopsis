@@ -55,6 +55,7 @@ export const ADMIN_PAGES_RULES = {
   kpi: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   tag: { stack: CANOPSIS_STACK.go, edition: CANOPSIS_EDITION.pro },
   map: { edition: CANOPSIS_EDITION.pro },
+  eventsRecord: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
@@ -553,6 +554,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USERS_PERMISSIONS.technical.kpi]: ADMIN_PAGES_RULES.kpi,
   [USERS_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
   [USERS_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
+  [USERS_PERMISSIONS.technical.eventsRecord]: ADMIN_PAGES_RULES.eventsRecord,
 
   /**
    * Exploitation pages
