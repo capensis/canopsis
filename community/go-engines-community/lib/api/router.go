@@ -869,7 +869,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(publisher, dbClient, logger)
+		eventApi := event.NewApi(publisher, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(

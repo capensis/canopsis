@@ -1,8 +1,0 @@
-{
-    "_id": "datacleaner",
-    "loader_id": "datacleaner",
-    "crecord_type": "datacleaner",
-    "retention_duration" : 31536000,
-    "use_secure_delay" : true,
-    "loader_no_update": true
-}

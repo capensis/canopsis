@@ -11,7 +11,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -29,13 +29,16 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { snmpRuleToForm, formToSnmpRule } from '@/helpers/entities/snmp-rule/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import SnmpRuleForm from '@/components/other/snmp-rule/form/snmp-rule-form.vue';
 
@@ -47,32 +50,57 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { SnmpRuleForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { snmpRule } = this.modal.config;
+  components: {
+    SnmpRuleForm,
+    ModalWrapper,
+  },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { t } = useI18n();
+    const {
+      config,
+      close,
+    } = useInnerModal(props);
+
+    const form = ref(snmpRuleToForm(config.value.snmpRule));
+
+    const {
+      submit,
+      isDisabled,
+      submitting,
+    } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(formToSnmpRule(form.value));
+
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({
+      form,
+      submit,
+      close,
+    });
+
+    const title = computed(() => config.value.title || t('modals.createSnmpRule.create.title'));
 
     return {
-      form: snmpRuleToForm(snmpRule),
-    };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.createSnmpRule.create.title');
-    },
-  },
-  methods: {
-    async submit() {
-      if (this.config.action) {
-        await this.config.action(formToSnmpRule(this.form));
-      }
+      form,
 
-      this.$modals.hide();
-    },
+      isDisabled,
+      submitting,
+
+      title,
+
+      submit,
+      close,
+    };
   },
 };
 </script>
