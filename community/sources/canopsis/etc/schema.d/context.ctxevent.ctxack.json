@@ -1,9 +1,0 @@
-{
-    "type": "object",
-    "properties": {
-        "type": {"enum": ["ack"], "required": true},
-        "author": {"type": "string", "required": true},
-        "comment": {"type": "string", "required": true},
-        "timestamp": {"type": "integer", "required": true}
-    }
-}

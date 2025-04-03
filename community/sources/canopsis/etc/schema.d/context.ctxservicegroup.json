@@ -1,6 +1,0 @@
-{
-    "type": "object",
-    "properties": {
-        "type": {"enum": ["servicegroup"], "required": true}
-    }
-}
