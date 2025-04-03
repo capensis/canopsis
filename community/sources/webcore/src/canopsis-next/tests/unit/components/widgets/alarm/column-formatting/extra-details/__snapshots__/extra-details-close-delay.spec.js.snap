@@ -5,7 +5,7 @@ exports[`extra-details-close-delay Renders \`extra-details-close-delay\` with fu
   <c-simple-tooltip-stub
     content="<div class=\\"text-md-center\\"><strong>Closed</strong>
         <div>By : system</div>
-        <div>Date : 14:47:37</div><div>Initiator : system</div><div class=\\"c-extra-details__message\\">Comment : closed after 20 seconds delay</div></div>"
+        <div>Date : 01/04/2025 14:47:37</div><div>Initiator : system</div><div class=\\"c-extra-details__message\\">Comment : closed after 20 seconds delay</div></div>"
     top=""
   >
     <c-alarm-extra-details-chip-stub
