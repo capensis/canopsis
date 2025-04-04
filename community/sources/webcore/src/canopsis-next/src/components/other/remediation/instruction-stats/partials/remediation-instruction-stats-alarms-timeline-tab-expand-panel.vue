@@ -115,7 +115,6 @@ export default {
     width: 100%;
 
     * {
-      white-space: wrap;
       word-break: break-all;
       word-wrap: break-word;
     }

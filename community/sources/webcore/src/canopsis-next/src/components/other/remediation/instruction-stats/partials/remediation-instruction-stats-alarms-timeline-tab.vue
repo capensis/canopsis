@@ -5,8 +5,7 @@
     :loading="pending"
     :options="options"
     :total-items="totalItems"
-    :is-expandable-item="isExpandedItem"
-    class="instruction-alarms-timeline-table"
+    :is-expandable-item="isExpandableItem"
     search
     expand
     advanced-pagination
@@ -22,7 +21,7 @@
       </v-layout>
     </template>
     <template #alarm_display_name="{ item }">
-      {{ item.alarm_display_name }}
+      <span class="c-nowrap">{{ item.alarm_display_name }}</span>
     </template>
     <template #result="{ item }">
       <c-enabled
@@ -36,22 +35,22 @@
       <c-alarm-state-chip v-if="item.alarm_id" :value="item.result_alarm_state" />
     </template>
     <template #started_at="{ item }">
-      {{ item.started_at }}
+      <span class="c-nowrap">{{ item.started_at }}</span>
     </template>
     <template #completed_at="{ item }">
-      {{ item.completed_at }}
+      <span class="c-nowrap">{{ item.completed_at }}</span>
     </template>
     <template #duration="{ item }">
-      {{ item.duration }}
+      <span class="c-nowrap">{{ item.duration }}</span>
     </template>
     <template #alarm_ok_at="{ item }">
-      {{ item.alarm_ok_at }}
+      <span class="c-nowrap">{{ item.alarm_ok_at }}</span>
     </template>
     <template #timeout_after_execution="{ item }">
-      {{ item.timeout_after_execution }}
+      <span class="c-nowrap">{{ item.timeout_after_execution }}</span>
     </template>
     <template #alarm_ok_before_completed="{ item }">
-      {{ item.alarm_ok_before_completed }}
+      <span class="c-nowrap">{{ item.alarm_ok_before_completed }}</span>
     </template>
     <template #timeline="{ item }">
       <span
@@ -219,7 +218,7 @@ export default {
 
     const { options, updateOptions } = useQueryOptions(query, updateQuery);
 
-    const isExpandedItem = item => !!item.alarm_id;
+    const isExpandableItem = item => !!item.alarm_id;
 
     watch(() => props.interval, fetchList);
     watch(showFailed, fetchList);
@@ -234,16 +233,8 @@ export default {
       pending,
       options,
       updateOptions,
-      isExpandedItem,
+      isExpandableItem,
     };
   },
 };
 </script>
-
-<style lang="scss">
-.instruction-alarms-timeline-table td {
-  &, & > * {
-    white-space: nowrap;
-  }
-}
-</style>
