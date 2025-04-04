@@ -5,7 +5,10 @@
     :loading="pending"
     :options="options"
     :total-items="totalItems"
+    :is-expandable-item="isExpandedItem"
+    class="instruction-alarms-timeline-table"
     search
+    expand
     advanced-pagination
     @update:options="updateOptions"
   >
@@ -19,7 +22,7 @@
       </v-layout>
     </template>
     <template #alarm_display_name="{ item }">
-      <span class="c-nowrap">{{ item.alarm_display_name }}</span>
+      {{ item.alarm_display_name }}
     </template>
     <template #result="{ item }">
       <c-enabled
@@ -33,22 +36,22 @@
       <c-alarm-state-chip v-if="item.alarm_id" :value="item.result_alarm_state" />
     </template>
     <template #started_at="{ item }">
-      <span class="c-nowrap">{{ item.started_at }}</span>
+      {{ item.started_at }}
     </template>
     <template #completed_at="{ item }">
-      <span class="c-nowrap">{{ item.completed_at }}</span>
+      {{ item.completed_at }}
     </template>
     <template #duration="{ item }">
-      <span class="c-nowrap">{{ item.duration }}</span>
+      {{ item.duration }}
     </template>
     <template #alarm_ok_at="{ item }">
-      <span class="c-nowrap">{{ item.alarm_ok_at }}</span>
+      {{ item.alarm_ok_at }}
     </template>
     <template #timeout_after_execution="{ item }">
-      <span class="c-nowrap">{{ item.timeout_after_execution }}</span>
+      {{ item.timeout_after_execution }}
     </template>
     <template #alarm_ok_before_completed="{ item }">
-      <span class="c-nowrap">{{ item.alarm_ok_before_completed }}</span>
+      {{ item.alarm_ok_before_completed }}
     </template>
     <template #timeline="{ item }">
       <span
@@ -59,6 +62,13 @@
         v-else
         :steps="item.alarm_steps"
         class="my-2"
+      />
+    </template>
+    <template #expand="{ item }">
+      <remediation-instruction-stats-alarms-timeline-tab-expand-panel
+        v-if="item.alarm_id"
+        :alarm-id="item.alarm_id"
+        :execution-id="item._id"
       />
     </template>
   </c-advanced-data-table>
@@ -84,9 +94,11 @@ import { useQueryOptions } from '@/hooks/query/options';
 import { useRemdeitionInstructionStatsStore } from '@/hooks/store/modules/remediation-instruction-stats';
 
 import AlarmHorizontalTimeline from '@/components/widgets/alarm/timeline/horizontal-timeline.vue';
+import RemediationInstructionStatsAlarmsTimelineTabExpandPanel
+  from '@/components/other/remediation/instruction-stats/partials/remediation-instruction-stats-alarms-timeline-tab-expand-panel.vue';
 
 export default {
-  components: { AlarmHorizontalTimeline },
+  components: { RemediationInstructionStatsAlarmsTimelineTabExpandPanel, AlarmHorizontalTimeline },
   props: {
     remediationInstruction: {
       type: Object,
@@ -207,6 +219,8 @@ export default {
 
     const { options, updateOptions } = useQueryOptions(query, updateQuery);
 
+    const isExpandedItem = item => !!item.alarm_id;
+
     watch(() => props.interval, fetchList);
     watch(showFailed, fetchList);
 
@@ -220,7 +234,16 @@ export default {
       pending,
       options,
       updateOptions,
+      isExpandedItem,
     };
   },
 };
 </script>
+
+<style lang="scss">
+.instruction-alarms-timeline-table td {
+  &, & > * {
+    white-space: nowrap;
+  }
+}
+</style>
