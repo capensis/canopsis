@@ -10,7 +10,7 @@ build_oci:
     - make -C ${OCI_PATH_2} docker-images VERSION=$CI_COMMIT_TAG
     - docker images --format="{{.Repository}}:{{.Tag}}" | grep docker.canopsis.net/docker/community | grep $CI_COMMIT_TAG | xargs -I {} docker push {}
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?$/' && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?|beta([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
 
 build_oci_dev:
   extends: .common
@@ -32,7 +32,7 @@ build_oci_dev:
       grep $CI_COMMIT_TAG |
       xargs -I {} docker push {}
   rules:
-    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
+    - if: $CI_COMMIT_TAG =~ '/^[0-9]+\.[0-9]+(\.[0-9]+)?(-)?(rc([0-9])?|preview([0-9])?|beta([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
 
 source_rpm:
   extends: .common
@@ -87,9 +87,9 @@ release-rpm:
     - publish-rpm -p el8/${CANOPSIS_EDITION} dist/build/almalinux-8-x86_64/output
     - publish-rpm -p el9/${CANOPSIS_EDITION} dist/build/almalinux-9-x86_64/output
   rules:
-    - if: $CI_COMMIT_TAG =~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
+    - if: $CI_COMMIT_TAG =~ '/(rc([0-9])?|preview([0-9])?|beta([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
       variables:
         RPM_REPO: ${RPM_REPO_DEVELOP}
-    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_TAG !~ '/(rc([0-9])?|preview([0-9])?|beta([0-9])?)/' && $CI_PROJECT_NAME == "canopsis-pro"
       variables:
         RPM_REPO: ${RPM_REPO_RELEASE}
