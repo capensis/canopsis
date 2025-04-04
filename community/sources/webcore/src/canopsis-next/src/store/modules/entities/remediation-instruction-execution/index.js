@@ -44,5 +44,9 @@ export default {
     resume({ dispatch }, { id }) {
       return dispatch('update', { path: 'resume', id });
     },
+
+    fetchAlarmExecutionsWithoutStore(context, { alarmId, params }) {
+      return request.get(`${API_ROUTES.remediation.alarmExecutions}/${alarmId}`, { params });
+    },
   },
 };

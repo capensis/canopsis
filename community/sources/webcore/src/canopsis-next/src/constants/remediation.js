@@ -107,8 +107,10 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES = {
 };
 
 export const REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES = {
+  running: 0,
   completed: 1,
   failed: 2,
   aborted: 3,
   skipped: 5,
+  waiting: 6,
 };

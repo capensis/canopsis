@@ -463,12 +463,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -637,12 +632,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -811,12 +801,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -985,12 +970,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -1159,12 +1139,7 @@ exports[`tags-list Renders \`tags-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -1564,12 +1539,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -1682,12 +1652,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -1800,12 +1765,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -1918,12 +1878,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
@@ -2036,12 +1991,7 @@ exports[`tags-list Renders \`tags-list\` with default props 1`] = `
             <td
               class="text-start"
             >
-              <button
-                class="v-icon notranslate v-data-table__expand-icon v-icon--link material-icons theme--light"
-                type="button"
-              >
-                keyboard_arrow_down
-              </button>
+              <span />
             </td>
             <td
               class="text-start"
