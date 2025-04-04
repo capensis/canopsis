@@ -22,7 +22,7 @@ import featuresService from '@/services/features';
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
 import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
-import { isInstructionManual } from '@/helpers/entities/remediation/instruction/form';
+import { isInstructionTypeManual } from '@/helpers/entities/remediation/instruction/form';
 import { harmonizeLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
 import {
   isCancelledAlarmStatus,
@@ -518,7 +518,7 @@ export default {
 
       this.$modals.show({
         id: `${this.item._id}${assignedInstruction._id}`,
-        name: isInstructionManual(assignedInstruction)
+        name: isInstructionTypeManual(assignedInstruction?.type)
           ? MODALS.executeRemediationInstruction
           : MODALS.executeRemediationSimpleInstruction,
         config: {

@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -44,7 +45,7 @@ type Services struct {
 	DbClient                    mongo.DbClient
 	PgPoolProvider              postgres.PoolProvider
 	Cfg                         config.CanopsisConf
-	ExternalDataContainer       *eventfilter.ExternalDataContainer
+	ExternalDataContainer       *externaldata.GetterContainer
 	TimezoneConfigProvider      config.TimezoneConfigProvider
 	TemplateConfigProvider      config.TemplateConfigProvider
 	EventFilterFailureService   eventfilter.FailureService
@@ -89,7 +90,7 @@ func Default(
 	s.PgPoolProvider = postgres.NewPoolProvider(s.Cfg.Global.ReconnectRetries, s.Cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(s.Cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(s.PgPoolProvider, metricsConfigProvider, logger)
-	s.ExternalDataContainer = eventfilter.NewExternalDataGetterContainer()
+	s.ExternalDataContainer = externaldata.NewGetterContainer()
 	timezoneConfigProvider := config.NewTimezoneConfigProvider(s.Cfg, logger)
 	s.TimezoneConfigProvider = timezoneConfigProvider
 	templateConfigProvider := config.NewTemplateConfigProvider(s.Cfg, logger)

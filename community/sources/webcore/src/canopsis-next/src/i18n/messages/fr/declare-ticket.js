@@ -10,7 +10,6 @@ export default {
   allowTicketURLTemplate: 'Autoriser les variables dans l\'URL',
   allowTicketIdTemplate: 'Autoriser les variables dans l\'ID',
   alarmFieldName: 'Nom du champ d\'alarme',
-  customFields: 'Champs personnalisés',
   responseField: 'Champ de réponse',
   responseFieldHelpText: 'Champ de réponse API au format JSON d\'où provient le "{field}"',
   emptyResponse: 'Réponse vide',

@@ -4,7 +4,7 @@ import {
   SIDE_BARS,
   ALARMS_OPENED_VALUES,
   CHART_WIDGET_PRESET_TYPES,
-  ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS,
+  RESIZING_CELLS_CONTENTS_BEHAVIORS,
   WIDGET_COLUMNS_GROUPS,
 } from '@/constants';
 
@@ -25,6 +25,7 @@ export default {
     [SIDE_BARS.userStatisticsSettings]: 'Paramètres des statistiques utilisateur',
     [SIDE_BARS.alarmStatisticsSettings]: 'Paramètres des statistiques d\'alarme',
     [SIDE_BARS.availabilitySettings]: 'Paramètres de disponibilité',
+    [SIDE_BARS.externalDataTableSettings]: 'Paramètres des données externes',
   },
   openedTypes: {
     [ALARMS_OPENED_VALUES.opened]: 'Alarmes ouvertes',
@@ -98,7 +99,6 @@ export default {
   exportCsv: {
     title: 'Exporter CSV',
     fields: {
-      separator: 'Séparateur',
       datetimeFormat: 'Format date/heure',
     },
   },
@@ -311,8 +311,8 @@ export default {
     resizing: 'Redimensionner les colonnes',
     cellsContentBehavior: 'Contenu des cellules',
     cellsContentBehaviors: {
-      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Enveloppé',
-      [ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Tronquée',
+      [RESIZING_CELLS_CONTENTS_BEHAVIORS.wrap]: 'Enveloppé',
+      [RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate]: 'Tronquée',
     },
   },
   mainParameter: {

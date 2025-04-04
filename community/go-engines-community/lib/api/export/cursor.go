@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/jackc/pgx/v5"
 )
 
 func NewMongoCursor(
@@ -13,6 +14,18 @@ func NewMongoCursor(
 	transform func(k string, v any) any,
 ) DataCursor {
 	return &mongoCursor{
+		cursor:    cursor,
+		fields:    fields,
+		transform: transform,
+	}
+}
+
+func NewPostgresCursor(
+	cursor pgx.Rows,
+	fields []string,
+	transform func(k string, v any) any,
+) DataCursor {
+	return &postgresCursor{
 		cursor:    cursor,
 		fields:    fields,
 		transform: transform,
@@ -41,6 +54,40 @@ func (c *mongoCursor) Scan(m *map[string]any) error {
 
 func (c *mongoCursor) Close(ctx context.Context) error {
 	return c.cursor.Close(ctx)
+}
+
+type postgresCursor struct {
+	cursor    pgx.Rows
+	fields    []string
+	transform func(k string, v any) any
+}
+
+func (c *postgresCursor) Next(_ context.Context) bool {
+	return c.cursor.Next()
+}
+
+func (c *postgresCursor) Scan(m *map[string]any) error {
+	*m = make(map[string]any, len(c.fields))
+	v, err := c.cursor.Values()
+	if err != nil {
+		return err
+	}
+
+	for i, f := range c.fields {
+		if c.transform == nil {
+			(*m)[f] = v[i]
+		} else {
+			(*m)[f] = c.transform(f, v[i])
+		}
+	}
+
+	return nil
+}
+
+func (c *postgresCursor) Close(_ context.Context) error {
+	c.cursor.Close()
+
+	return nil
 }
 
 func filterFields(

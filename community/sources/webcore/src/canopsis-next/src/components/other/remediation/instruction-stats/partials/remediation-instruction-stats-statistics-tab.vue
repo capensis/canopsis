@@ -13,12 +13,19 @@
     <template #modified_on="{ item }">
       <span>{{ item.modified_on | date }}</span>
     </template>
-    <template #execution_count="{ item }">
-      <span>{{ item.execution_count }}</span>
-    </template>
     <template #avg_complete_time="{ item }">
       <span v-if="item.execution_count">{{ item.avg_complete_time | duration }}</span>
       <span v-else>{{ $t('common.notAvailable') }}</span>
+    </template>
+    <template #avg_alarm_ok_timeout="{ item }">
+      <span v-if="item.avg_alarm_ok_timeout">{{ item.avg_alarm_ok_timeout | duration }}</span>
+      <span v-else>{{ $t('common.notAvailable') }}</span>
+    </template>
+    <template #avg_successful="{ item }">
+      <span>{{ item.avg_successful }}%</span>
+    </template>
+    <template #avg_successful_state_ok="{ item }">
+      <span>{{ item.avg_successful_state_ok }}%</span>
     </template>
     <template #alarm_states="{ item }">
       <affect-alarm-states
@@ -76,8 +83,23 @@ export default {
           sortable: false,
         },
         {
+          text: this.$t('remediation.instructionStat.averageAlarmOkTimeout'),
+          value: 'avg_alarm_ok_timeout',
+          sortable: false,
+        },
+        {
           text: this.$t('remediation.instructionStat.executionCount'),
           value: 'execution_count',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageSuccessfulAll'),
+          value: 'avg_successful',
+          sortable: false,
+        },
+        {
+          text: this.$t('remediation.instructionStat.averageSuccessfulOk'),
+          value: 'avg_successful_state_ok',
           sortable: false,
         },
         {

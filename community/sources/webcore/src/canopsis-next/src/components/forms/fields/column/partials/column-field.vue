@@ -31,6 +31,7 @@
           </v-icon>
         </span>
         <c-expand-btn
+          v-if="!withoutCustomLabel"
           v-model="expanded"
           :color="hasChildrenError ? 'error' : ''"
           class="mr-1"
@@ -54,7 +55,7 @@
           :menu-props="selectMenuProps"
           @change="changeColumn"
         />
-        <v-tooltip left>
+        <v-tooltip v-if="!withoutCustomLabel" left>
           <template #activator="{ on }">
             <v-btn
               :class="`mr-0 ${isCustom ? 'text--primary' : 'text--disabled'}`"
@@ -72,7 +73,7 @@
           <span>{{ $t('common.convertToCustomColumn') }}</span>
         </v-tooltip>
       </v-layout>
-      <v-expand-transition mode="out-in">
+      <v-expand-transition v-if="!withoutCustomLabel" mode="out-in">
         <column-field-expand-panel
           v-if="bootedExpandPanel"
           v-show="expanded"
@@ -134,6 +135,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    items: {
+      type: Array,
+      required: false,
+    },
     name: {
       type: String,
       default: '',
@@ -159,6 +164,10 @@ export default {
       default: false,
     },
     withoutInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withoutCustomLabel: {
       type: Boolean,
       default: false,
     },
@@ -231,6 +240,10 @@ export default {
     ));
 
     const availableColumns = computed(() => {
+      if (props.items) {
+        return props.items;
+      }
+
       const columns = isAlarmType.value
         ? alarmListAvailableColumns.value
         : contextAvailableColumns.value;

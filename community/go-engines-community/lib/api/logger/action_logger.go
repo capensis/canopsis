@@ -104,6 +104,7 @@ func NewActionLogger(
 		mongo.SnmpRulesCollection:               ValueTypeSnmpRule,
 		mongo.InstructionMongoCollection:        ValueTypeInstruction,
 		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
+		mongo.ExternalDataTableCollection:       ValueTypeExternalData,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))
@@ -377,7 +378,7 @@ func (l *logger) runWatcher(ctx context.Context, g *errgroup.Group) (<-chan Acti
 		for stream.Next(ctx) {
 			var event ActionLogEvent
 
-			err = stream.Decode(&event)
+			err := stream.Decode(&event)
 			if err != nil {
 				l.zLog.Err(err).Msg("failed to decode change stream event")
 				continue

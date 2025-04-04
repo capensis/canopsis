@@ -18,7 +18,6 @@
           item-text="moduleName"
           item-value="_id"
           name="moduleName"
-          autofocus
           hide-no-data
           hide-details
           @change="selectModule"
@@ -29,16 +28,15 @@
         xs6
       >
         <v-autocomplete
-          v-validate="'required'"
           :value="form.mib"
           :items="moduleMibs"
           :loading="moduleMibsPending"
           :menu-props="{ offsetY: true }"
-          :error-messages="errors.collect('mib')"
+          :error-messages="errors.collect(mibName)"
+          :name="mibName"
           class="pt-0"
           item-text="name"
           item-value="_id"
-          name="mib"
           hide-no-data
           hide-details
           return-object
@@ -50,21 +48,27 @@
 </template>
 
 <script>
-import { find, sortBy } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
+import { find, sortBy, throttle } from 'lodash';
+import {
+  ref,
+  watch,
+  nextTick,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
 import { MAX_LIMIT } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useSnmpMib } from '@/hooks/store/modules/snmp-mib';
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
 import SnmpRuleFormFieldTitle from './snmp-rule-form-field-title.vue';
-
-const { mapActions } = createNamespacedHelpers('snmpMib');
 
 export default {
   inject: ['$validator'],
   components: { SnmpRuleFormFieldTitle },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -75,53 +79,49 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-      modules: [],
-      searchInput: '',
-      modulesPending: false,
-      moduleMibs: [],
-      moduleMibsPending: false,
-    };
-  },
-  watch: {
-    searchInput(value) {
-      this.fetchModulesList(value);
-    },
-  },
-  async mounted() {
-    if (this.form.moduleName) {
-      await this.selectModule(this.form.moduleName);
-    }
-  },
-  methods: {
-    ...mapActions({
-      fetchSnmpMibList: 'fetchList',
-    }),
+  setup(props, { emit }) {
+    const mibName = 'oid.mibName';
 
-    async fetchModulesList(searchInput) {
-      this.modulesPending = true;
+    const modules = ref([]);
+    const moduleMibs = ref([]);
+    const searchInput = ref('');
 
-      const { data } = await this.fetchSnmpMibList({
+    const { updateField } = useModelField(props, emit);
+    const { fetchSnmpMibList } = useSnmpMib();
+
+    const {
+      attachRequiredRule,
+      detachRequiredRule,
+      validateRequiredRule,
+    } = useValidationAttachRequired(mibName);
+
+    const {
+      pending: modulesPending,
+      handler: fetchModulesList,
+    } = usePendingHandler(async () => {
+      const { data } = await fetchSnmpMibList({
         params: {
+          search: searchInput.value,
+
           limit: MAX_LIMIT,
           nodetype: 'notification',
-          search: searchInput,
           projection: 'moduleName',
           distinct: true,
         },
       });
 
-      this.modules = sortBy(data, 'moduleName');
-      this.modulesPending = false;
-    },
+      modules.value = sortBy(data, 'moduleName');
+    });
 
-    async selectModule(module) {
-      this.moduleMibsPending = true;
+    const throttledFetchModulesList = throttle(fetchModulesList, 500);
 
-      this.updateField('moduleName', module);
+    const {
+      pending: moduleMibsPending,
+      handler: selectModule,
+    } = usePendingHandler(async (module) => {
+      updateField('moduleName', module);
 
-      const { data } = await this.fetchSnmpMibList({
+      const { data } = await fetchSnmpMibList({
         params: {
           limit: MAX_LIMIT,
           nodetype: 'notification',
@@ -129,17 +129,56 @@ export default {
         },
       });
 
-      this.moduleMibs = sortBy(data, 'name');
-      this.moduleMibsPending = false;
+      moduleMibs.value = sortBy(data, 'name');
 
-      if (this.form.mib?.name) {
-        this.updateField('mib', find(data, { name: this.form.mib.name }));
+      if (props.form.mib?.name) {
+        updateField('mib', find(data, { name: props.form.mib.name }));
       }
-    },
+    });
 
-    selectMib(mib) {
-      this.updateField('mib', mib);
-    },
+    /**
+     * Select a MIB and update the form field.
+     *
+     * @param {Object} mib - The MIB object to be selected.
+     * @returns {void}
+     */
+    const selectMib = (mib) => {
+      updateField('mib', mib);
+
+      nextTick(validateRequiredRule);
+    };
+
+    /**
+     * Check if a MIB name exists.
+     *
+     * @returns {boolean} Returns true if the MIB name exists, otherwise false.
+     */
+    const isMibNameExists = () => !!props.form.mib?.name;
+
+    watch(searchInput, throttledFetchModulesList);
+
+    onMounted(() => {
+      if (props.form.moduleName) {
+        selectModule(props.form.moduleName);
+      }
+
+      attachRequiredRule(isMibNameExists);
+    });
+
+    onBeforeUnmount(detachRequiredRule);
+
+    return {
+      mibName,
+
+      modules,
+      modulesPending,
+      moduleMibs,
+      moduleMibsPending,
+      searchInput,
+
+      selectModule,
+      selectMib,
+    };
   },
 };
 </script>

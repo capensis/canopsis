@@ -30,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exportconfiguration"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
@@ -69,6 +70,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgettemplate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -117,7 +119,7 @@ func RegisterRoutes(
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
 	entityCleanerTaskChan chan<- entity.CleanTask,
-	exportExecutor export.TaskExecutor,
+	exportTaskExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
@@ -133,6 +135,8 @@ func RegisterRoutes(
 	enableSameServiceNames bool,
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
+	exdataImportWorker externaldatatable.ImportWorker,
+	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -292,7 +296,7 @@ func RegisterRoutes(
 
 		alarmStore := alarm.NewStore(dbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider,
 			tplExecutor, json.NewDecoder(), logger)
-		alarmAPI := alarm.NewApi(alarmStore, exportExecutor, json.NewEncoder(), logger)
+		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(dbClient, amqpChannel, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger), logger)
 		alarmRouter := protected.Group("/alarms")
@@ -398,7 +402,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermAlarmRead, model.PermissionCan, enforcer),
 			alarmAPI.GetDisplayNames,
 		)
-		exportExecutor.RegisterType("alarm", alarmStore.Export)
+		exportTaskExecutor.RegisterType("alarm", alarmStore.Export)
 		alarmExportRouter := protected.Group("/alarm-export")
 		{
 			alarmExportRouter.POST(
@@ -429,7 +433,7 @@ func RegisterRoutes(
 		entityStore := entity.NewStore(dbClient, dbExportClient, timezoneConfigProvider, authorProvider, json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
-			exportExecutor,
+			exportTaskExecutor,
 			entityCleanerTaskChan,
 			entityPublChan,
 			metricsEntityMetaUpdater,
@@ -437,7 +441,7 @@ func RegisterRoutes(
 			logger,
 		)
 
-		exportExecutor.RegisterType("entity", entityStore.Export)
+		exportTaskExecutor.RegisterType("entity", entityStore.Export)
 		entityExportRouter := protected.Group("/entity-export")
 		{
 			entityExportRouter.POST(
@@ -776,6 +780,7 @@ func RegisterRoutes(
 		exceptionAPI := pbehaviorexception.NewApi(
 			pbehaviorexception.NewStore(dbClient, timezoneConfigProvider, authorProvider),
 			pbhComputeChan,
+			conf.File.ImportMaxSize,
 			logger,
 		)
 		exceptionRouter := protected.Group("/pbehavior-exceptions")
@@ -864,7 +869,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(publisher, dbClient, logger)
+		eventApi := event.NewApi(publisher, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
@@ -1466,7 +1471,8 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
 			scenarioAPI.DBExport)
 
-		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient), logger)
+		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(dbClient),
+			workers.NewJobPublisher(jobKeyImport, workersRunner), conf.File.ImportMaxSize, logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
@@ -1799,6 +1805,116 @@ func RegisterRoutes(
 			)
 		}
 
+		externalDataStore := externaldatatable.NewStore(dbClient, pgPoolProvider, dbExportClient, json.NewDecoder())
+		externalDataTableAPI := externaldatatable.NewAPI(externalDataStore, exdataImportWorker,
+			conf.File.ImportMaxSize, exportTaskExecutor, json.NewEncoder(), logger)
+		externalDataTableRouter := protected.Group("/external-data-tables")
+		{
+			externalDataTableRouter.POST(
+				"/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.CreateData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ListData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.GetData,
+			)
+			externalDataTableRouter.PUT(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.UpdateData,
+			)
+			externalDataTableRouter.DELETE(
+				"/:table/data/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.DeleteData,
+			)
+			externalDataTableRouter.GET(
+				"/:table/schema",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.GetSchema,
+			)
+			externalDataTableRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.Create,
+			)
+			externalDataTableRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.List,
+			)
+			externalDataTableRouter.GET(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.Get,
+			)
+			externalDataTableRouter.PUT(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				externalDataTableAPI.Update,
+			)
+			externalDataTableRouter.DELETE(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionDelete, enforcer),
+				externalDataTableAPI.Delete,
+			)
+		}
+
+		externalDataImportRouter := protected.Group("/external-data-import")
+		{
+			externalDataImportRouter.POST(
+				"/:table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.Import,
+			)
+			externalDataImportRouter.GET(
+				"/:id/status",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.ImportStatus,
+			)
+			externalDataImportRouter.GET(
+				"/:id/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.ImportData,
+			)
+			externalDataImportRouter.PUT(
+				"/:id/complete",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.ImportComplete,
+			)
+		}
+
+		exportTaskExecutor.RegisterType("externaldata", externalDataStore.Export)
+		externalDataExportRouter := protected.Group("/external-data-export")
+		{
+			externalDataExportRouter.POST(
+				":table",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.Export,
+			)
+			externalDataExportRouter.GET(
+				"/:id/download",
+				security.GetFileAuthMiddleware(),
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ExportDownload,
+			)
+			externalDataExportRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionRead, enforcer),
+				externalDataTableAPI.ExportStatus,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -2080,6 +2196,13 @@ func RegisterRoutes(
 					colorThemeApi.BulkDelete,
 				)
 			}
+
+			bulkRouter.DELETE(
+				"/external-data-tables/:table/data",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				middleware.PreProcessBulk(apiConfigProvider, false),
+				externalDataTableAPI.BulkDeleteData,
+			)
 		}
 
 		dateStorageRouter := protected.Group("data-storage")

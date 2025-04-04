@@ -2,9 +2,9 @@ package eventfilter
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -51,32 +51,17 @@ const (
 	ActionSetTagsFromTemplate = "set_tags_from_template"
 )
 
-type ExternalDataParameters struct {
-	Type string `json:"type" bson:"type"`
-
-	// are used in mongo external data
-	Collection string            `json:"collection,omitempty" bson:"collection,omitempty"`
-	Select     map[string]string `json:"select,omitempty" bson:"select,omitempty"`
-	Regexp     map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
-	SortBy     string            `json:"sort_by,omitempty" bson:"sort_by,omitempty"`
-	Sort       string            `json:"sort,omitempty" bson:"sort,omitempty" binding:"oneoforempty=asc desc"`
-	Optional   bool              `json:"optional,omitempty" bson:"optional,omitempty"`
-
-	// are used in api external data
-	RequestParameters *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
-}
-
 type Rule struct {
-	ID           string                            `bson:"_id" json:"_id" binding:"id"`
-	Author       string                            `bson:"author" json:"author" swaggerignore:"true"`
-	Description  string                            `bson:"description" json:"description" binding:"required,max=255"`
-	Type         string                            `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int64                             `bson:"priority" json:"priority"`
-	Enabled      bool                              `bson:"enabled" json:"enabled"`
-	Config       RuleConfig                        `bson:"config" json:"config"`
-	ExternalData map[string]ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
-	Created      *datetime.CpsTime                 `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated      *datetime.CpsTime                 `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	ID           string                       `bson:"_id" json:"_id" binding:"id"`
+	Author       string                       `bson:"author" json:"author" swaggerignore:"true"`
+	Description  string                       `bson:"description" json:"description" binding:"required,max=255"`
+	Type         string                       `bson:"type" json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Priority     int64                        `bson:"priority" json:"priority"`
+	Enabled      bool                         `bson:"enabled" json:"enabled"`
+	Config       RuleConfig                   `bson:"config" json:"config"`
+	ExternalData []externaldata.RefParameters `bson:"external_data" json:"external_data,omitempty"`
+	Created      *datetime.CpsTime            `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *datetime.CpsTime            `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	EventsCount         int64 `bson:"events_count,omitempty" json:"events_count,omitempty"`
 	FailuresCount       int64 `bson:"failures_count,omitempty" json:"failures_count,omitempty"`

@@ -8,6 +8,8 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   <field-default-sort-column-stub
     columns=""
     columnslabel="Column name"
+    itemtext="text"
+    itemvalue="value"
     value="[object Object]"
   />
   <field-columns-stub
@@ -258,6 +260,8 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
   <field-default-sort-column-stub
     columns=""
     columnslabel="Column name"
+    itemtext="text"
+    itemvalue="value"
     value="[object Object]"
   />
   <field-columns-stub

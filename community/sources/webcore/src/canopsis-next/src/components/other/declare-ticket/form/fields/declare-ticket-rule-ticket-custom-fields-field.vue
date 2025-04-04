@@ -1,5 +1,5 @@
 <template>
-  <c-information-block :title="$t('declareTicket.customFields')">
+  <c-information-block :title="$tc('common.customField', 2)">
     <c-alert
       v-if="!value.length"
       type="info"

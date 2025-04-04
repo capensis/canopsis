@@ -101,12 +101,10 @@ export default {
       {
         text: t('user.firstName'),
         value: 'firstname',
-        sortable: false,
       },
       {
         text: t('user.lastName'),
         value: 'lastname',
-        sortable: false,
       },
       {
         text: tc('common.role', 2),

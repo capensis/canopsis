@@ -65,6 +65,7 @@ import iconModule from './icon';
 import availabilityModule from './availability';
 import eventsRecordModule from './events-record';
 import dbExportModule from './db-export';
+import externalDataTableModule from './external-data-table';
 
 export default {
   alarm: alarmModule,
@@ -134,4 +135,5 @@ export default {
   availability: availabilityModule,
   eventsRecord: eventsRecordModule,
   dbExport: dbExportModule,
+  externalDataTable: externalDataTableModule,
 };

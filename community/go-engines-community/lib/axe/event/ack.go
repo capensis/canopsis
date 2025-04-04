@@ -154,7 +154,7 @@ func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result,
 		return result, err
 	}
 
-	go p.postProcess(context.Background(), event, result, updatedServiceStates, notAckedMetricType)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, notAckedMetricType)
 
 	return result, nil
 }

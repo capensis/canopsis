@@ -18,7 +18,7 @@ import { usePopups } from './popups';
  * @param {Object} options - Configuration options for the submittable form.
  * @param {Object} options.form - The form data object that will be validated.
  * @param {Function} options.method - The submission method to be called if the form is valid.
- * @param {boolean} options.withTimeout - The property for timeout enabling.
+ * @param {boolean} [options.withTimeout = false] - The property for timeout enabling.
  * @returns {Object} An object containing methods and properties to manage the form submission.
  * @example
  * const form = reactive({ username: '', password: '' });

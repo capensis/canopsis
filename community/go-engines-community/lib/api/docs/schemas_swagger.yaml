@@ -262,6 +262,10 @@ definitions:
         items:
           type: string
         type: array
+      close_delay:
+        $ref: '#/definitions/common.AlarmStep'
+      close_delay_value:
+        type: integer
       comments:
         items:
           $ref: '#/definitions/common.AlarmStep'
@@ -991,6 +995,8 @@ definitions:
       edition:
         type: string
       events_count_trigger_default_threshold:
+        type: integer
+      file_import_max_size:
         type: integer
       file_upload_max_size:
         type: integer
@@ -2445,9 +2451,9 @@ definitions:
           $ref: '#/definitions/exdate.Request'
         type: array
       external_data:
-        additionalProperties:
-          $ref: '#/definitions/eventfilter.ExternalDataParameters'
-        type: object
+        items:
+          $ref: '#/definitions/externaldata.RefParameters'
+        type: array
       priority:
         minimum: 0
         type: integer
@@ -2503,9 +2509,9 @@ definitions:
           $ref: '#/definitions/exdate.Request'
         type: array
       external_data:
-        additionalProperties:
-          $ref: '#/definitions/eventfilter.ExternalDataParameters'
-        type: object
+        items:
+          $ref: '#/definitions/externaldata.RefParameters'
+        type: array
       priority:
         minimum: 0
         type: integer
@@ -2539,31 +2545,6 @@ definitions:
           $ref: '#/definitions/types.Exdate'
         type: array
       name:
-        type: string
-    type: object
-  eventfilter.ExternalDataParameters:
-    properties:
-      collection:
-        description: are used in mongo external data
-        type: string
-      optional:
-        type: boolean
-      regexp:
-        additionalProperties:
-          type: string
-        type: object
-      request:
-        $ref: '#/definitions/request.Parameters'
-        description: are used in api external data
-      select:
-        additionalProperties:
-          type: string
-        type: object
-      sort:
-        type: string
-      sort_by:
-        type: string
-      type:
         type: string
     type: object
   eventfilter.FailureResponse:
@@ -2620,9 +2601,9 @@ definitions:
           $ref: '#/definitions/types.Exdate'
         type: array
       external_data:
-        additionalProperties:
-          $ref: '#/definitions/eventfilter.ExternalDataParameters'
-        type: object
+        items:
+          $ref: '#/definitions/externaldatatable.RefResponse'
+        type: array
       failures_count:
         type: integer
       priority:
@@ -2692,9 +2673,9 @@ definitions:
           $ref: '#/definitions/exdate.Request'
         type: array
       external_data:
-        additionalProperties:
-          $ref: '#/definitions/eventfilter.ExternalDataParameters'
-        type: object
+        items:
+          $ref: '#/definitions/externaldata.RefParameters'
+        type: array
       priority:
         minimum: 0
         type: integer
@@ -2777,6 +2758,198 @@ definitions:
         items:
           type: string
         type: array
+    type: object
+  externaldata.RefParameters:
+    properties:
+      optional:
+        description: Optional defines will it cause error or not if external data
+          isn't found.
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        description: |-
+          Regexp defines regexp match conditions.
+          Key contains field name of table with regexp, value contains template.
+        type: object
+      request:
+        $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        description: |-
+          Select defines equal match conditions.
+          Key contains field name of table, value contains template.
+        type: object
+      sort:
+        type: string
+      sort_by:
+        description: SortBy and Sort define priority of found rows. It's id by default.
+        type: string
+      table:
+        description: |-
+          are used in db external data
+          Table contains id of external table
+        type: string
+      type:
+        type: string
+    required:
+    - reference
+    - type
+    type: object
+  externaldatatable.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
+  externaldatatable.EditRequest:
+    properties:
+      description:
+        maxLength: 500
+        type: string
+      name:
+        type: string
+      type:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - name
+    - type
+    type: object
+  externaldatatable.ExportRequest:
+    properties:
+      fields:
+        items:
+          $ref: '#/definitions/export.Field'
+        type: array
+      search:
+        type: string
+      search_by:
+        items:
+          type: string
+        type: array
+      separator:
+        type: string
+    type: object
+  externaldatatable.ExportResponse:
+    properties:
+      _id:
+        type: string
+      status:
+        type: integer
+    type: object
+  externaldatatable.ImportCompleteRequest:
+    properties:
+      column_types:
+        items:
+          type: integer
+        type: array
+    required:
+    - column_types
+    type: object
+  externaldatatable.ImportJob:
+    properties:
+      _id:
+        type: string
+      columns:
+        items:
+          type: string
+        type: array
+      status:
+        type: integer
+    type: object
+  externaldatatable.RefResponse:
+    properties:
+      optional:
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      request:
+        $ref: '#/definitions/request.Parameters'
+        description: are used in api external data
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      table:
+        $ref: '#/definitions/externaldatatable.Response'
+        description: are used in db external data
+      type:
+        type: string
+    type: object
+  externaldatatable.Response:
+    properties:
+      _id:
+        type: string
+      column_types:
+        items:
+          type: integer
+        type: array
+      columns:
+        items:
+          type: string
+        type: array
+      created:
+        type: integer
+      description:
+        type: string
+      from_config:
+        type: boolean
+      linked_rules:
+        additionalProperties:
+          items:
+            properties:
+              _id:
+                type: string
+              name:
+                type: string
+            type: object
+          type: array
+        type: object
+      name:
+        type: string
+      removed_from_config:
+        type: boolean
+      type:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  externaldatatable.UpdateRequest:
+    properties:
+      column_types:
+        items:
+          type: integer
+        type: array
+      description:
+        maxLength: 500
+        type: string
+      name:
+        type: string
+      type:
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - column_types
+    - name
+    - type
     type: object
   file.File:
     properties:
@@ -3326,30 +3499,6 @@ definitions:
       updated:
         type: integer
     type: object
-  link.ExternalDataParameters:
-    properties:
-      collection:
-        type: string
-      regexp:
-        additionalProperties:
-          type: string
-        type: object
-      select:
-        additionalProperties:
-          type: string
-        type: object
-      sort:
-        type: string
-      sort_by:
-        type: string
-      type:
-        enum:
-        - mongo
-        type: string
-    required:
-    - collection
-    - type
-    type: object
   link.Link:
     properties:
       action:
@@ -3438,9 +3587,9 @@ definitions:
           type: array
         type: array
       external_data:
-        additionalProperties:
-          $ref: '#/definitions/link.ExternalDataParameters'
-        type: object
+        items:
+          $ref: '#/definitions/externaldata.RefParameters'
+        type: array
       links:
         items:
           $ref: '#/definitions/link.Parameters'
@@ -3491,9 +3640,9 @@ definitions:
           type: array
         type: array
       external_data:
-        additionalProperties:
-          $ref: '#/definitions/link.ExternalDataParameters'
-        type: object
+        items:
+          $ref: '#/definitions/externaldatatable.RefResponse'
+        type: array
       links:
         items:
           $ref: '#/definitions/link.Parameters'
@@ -6068,6 +6217,9 @@ definitions:
           type: string
         type: array
       screenshot_filemask:
+        type: string
+      table:
+        description: ExternalData
         type: string
       video_directories:
         items:
