@@ -87,6 +87,10 @@ type AxeParameters struct {
 	DisplayName         string                      `json:"display_name,omitempty"`
 	MetaAlarmChildren   []string                    `json:"meta_alarm_children,omitempty"`
 	StateSettingUpdated bool                        `json:"state_setting_updated,omitempty"`
+	// CloseDelayValue shows a close delay timeout in seconds.
+	CloseDelayValue *int64 `json:"close_delay,omitempty"`
+	// IsCloseDelayJob shows if an event is triggered by a close delay job.
+	IsCloseDelayJob bool `json:"is_close_delay,omitempty"`
 }
 
 // AxeResultEvent

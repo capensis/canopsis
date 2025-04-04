@@ -161,26 +161,26 @@ export const isInstructionDismissed = instruction => [
 /**
  * Check instruction type is auto
  *
- * @param {RemediationInstruction} instruction
+ * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionAuto = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.auto;
+export const isInstructionTypeAuto = type => type === REMEDIATION_INSTRUCTION_TYPES.auto;
 
 /**
  * Check instruction type is manual
  *
- * @param {RemediationInstruction} instruction
+ * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionManual = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.manual;
+export const isInstructionTypeManual = type => type === REMEDIATION_INSTRUCTION_TYPES.manual;
 
 /**
  * Check instruction type is simple manual
  *
- * @param {RemediationInstruction} instruction
+ * @param {number} type
  * @returns {boolean}
  */
-export const isInstructionSimpleManual = instruction => instruction.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
+export const isInstructionTypeSimpleManual = type => type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
 
 /**
  * Convert a remediation instruction step operation to form
@@ -367,12 +367,12 @@ export const formToRemediationInstruction = (form) => {
     steps, jobs, priority, triggers, ...instruction
   } = form;
 
-  if (isInstructionManual(form)) {
+  if (isInstructionTypeManual(form?.type)) {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
 
-    if (isInstructionAuto(form)) {
+    if (isInstructionTypeAuto(form?.type)) {
       instruction.priority = priority;
       instruction.triggers = triggers;
     }

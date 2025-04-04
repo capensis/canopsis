@@ -4,22 +4,24 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
 type EditRequest struct {
-	Author       string                                        `json:"author" swaggerignore:"true"`
-	Description  string                                        `json:"description" binding:"required,max=255"`
-	Type         string                                        `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Priority     int64                                         `json:"priority" binding:"min=0"`
-	Enabled      bool                                          `json:"enabled"`
-	Config       eventfilter.RuleConfig                        `json:"config"`
-	ExternalData map[string]eventfilter.ExternalDataParameters `json:"external_data,omitempty" binding:"dive"`
+	Author       string                       `json:"author" swaggerignore:"true"`
+	Description  string                       `json:"description" binding:"required,max=255"`
+	Type         string                       `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Priority     int64                        `json:"priority" binding:"min=0"`
+	Enabled      bool                         `json:"enabled"`
+	Config       eventfilter.RuleConfig       `json:"config"`
+	ExternalData []externaldata.RefParameters `json:"external_data,omitempty" binding:"dive"`
 
 	common.EntityPatternFieldsRequest
 	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
@@ -32,21 +34,21 @@ type EditRequest struct {
 }
 
 type Response struct {
-	ID           string                                        `bson:"_id" json:"_id"`
-	Author       *author.Author                                `bson:"author" json:"author" swaggerignore:"true"`
-	Description  string                                        `bson:"description" json:"description"`
-	Type         string                                        `bson:"type" json:"type"`
-	Priority     int64                                         `bson:"priority" json:"priority"`
-	Enabled      bool                                          `bson:"enabled" json:"enabled"`
-	Config       eventfilter.RuleConfig                        `bson:"config" json:"config"`
-	ExternalData map[string]eventfilter.ExternalDataParameters `bson:"external_data" json:"external_data,omitempty"`
-	Created      *datetime.CpsTime                             `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated      *datetime.CpsTime                             `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
-	RRule        string                                        `bson:"rrule" json:"rrule"`
-	Start        *datetime.CpsTime                             `bson:"start,omitempty" json:"start,omitempty" swaggertype:"integer"`
-	Stop         *datetime.CpsTime                             `bson:"stop,omitempty" json:"stop,omitempty" swaggertype:"integer"`
-	Exdates      []types.Exdate                                `bson:"exdates" json:"exdates"`
-	Exceptions   []Exception                                   `bson:"exceptions" json:"exceptions"`
+	ID           string                          `bson:"_id" json:"_id"`
+	Author       *author.Author                  `bson:"author" json:"author" swaggerignore:"true"`
+	Description  string                          `bson:"description" json:"description"`
+	Type         string                          `bson:"type" json:"type"`
+	Priority     int64                           `bson:"priority" json:"priority"`
+	Enabled      bool                            `bson:"enabled" json:"enabled"`
+	Config       eventfilter.RuleConfig          `bson:"config" json:"config"`
+	ExternalData []externaldatatable.RefResponse `bson:"external_data" json:"external_data,omitempty"`
+	Created      *datetime.CpsTime               `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
+	Updated      *datetime.CpsTime               `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	RRule        string                          `bson:"rrule" json:"rrule"`
+	Start        *datetime.CpsTime               `bson:"start,omitempty" json:"start,omitempty" swaggertype:"integer"`
+	Stop         *datetime.CpsTime               `bson:"stop,omitempty" json:"stop,omitempty" swaggertype:"integer"`
+	Exdates      []types.Exdate                  `bson:"exdates" json:"exdates"`
+	Exceptions   []Exception                     `bson:"exceptions" json:"exceptions"`
 
 	EventsCount         int64 `bson:"events_count" json:"events_count"`
 	FailuresCount       int64 `bson:"failures_count" json:"failures_count"`

@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
@@ -28,9 +29,10 @@ type Store interface {
 }
 
 type store struct {
-	client         mongo.DbClient
-	collection     mongo.DbCollection
-	authorProvider author.Provider
+	client                mongo.DbClient
+	collection            mongo.DbCollection
+	exdataTableCollection mongo.DbCollection
+	authorProvider        author.Provider
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -38,9 +40,10 @@ type store struct {
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		client:         dbClient,
-		collection:     dbClient.Collection(mongo.LinkRuleMongoCollection),
-		authorProvider: authorProvider,
+		client:                dbClient,
+		collection:            dbClient.Collection(mongo.LinkRuleMongoCollection),
+		exdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
+		authorProvider:        authorProvider,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name"},
 		defaultSortBy:         "created",
@@ -49,20 +52,25 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 
 func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-	model := transformRequestToModel(request)
+	model, err := s.transformRequestToModel(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
 	model.ID = utils.NewID()
 	model.Created = now
 	model.Updated = now
 
 	var response *Response
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.collection.InsertOne(ctx, model)
+		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
 			return err
 		}
 
 		response, err = s.GetByID(ctx, model.ID)
+
 		return err
 	})
 
@@ -72,6 +80,7 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	pipeline := []bson.M{{"$match": bson.M{"_id": id}}}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	pipeline = append(pipeline, apiexternaldata.GetRefParametersLookups()...)
 	cursor, err := s.collection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -80,12 +89,16 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
 		response := Response{}
-		err := cursor.Decode(&response)
+		err = cursor.Decode(&response)
 		if err != nil {
 			return nil, err
 		}
 
 		return &response, nil
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return nil, nil
@@ -98,10 +111,14 @@ func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
+	sort := common.GetSortQuery(cmp.Or(request.SortBy, s.defaultSortBy), request.Sort)
+	project := apiexternaldata.GetRefParametersLookups()
+	project = append(project, sort)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(request.SortBy, s.defaultSortBy), request.Sort),
+		sort,
+		project,
 	))
 
 	if err != nil {
@@ -117,16 +134,24 @@ func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResu
 		}
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return &result, nil
 }
 
 func (s *store) Update(ctx context.Context, request EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-	model := transformRequestToModel(request)
+	model, err := s.transformRequestToModel(ctx, request)
+	if err != nil {
+		return nil, err
+	}
+
 	model.ID = request.ID
 	model.Updated = now
 	var response *Response
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		res, err := s.collection.UpdateOne(
 			ctx,
@@ -138,6 +163,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		}
 
 		response, err = s.GetByID(ctx, model.ID)
+
 		return err
 	})
 
@@ -202,26 +228,37 @@ func (s *store) GetCategories(ctx context.Context, r CategoriesRequest) (*Catego
 	if err != nil {
 		return nil, err
 	}
-	defer cursor.Close(ctx)
 
+	defer cursor.Close(ctx)
 	resp := CategoryResponse{}
 	if !cursor.Next(ctx) {
 		return &resp, nil
 	}
-	if err := cursor.Decode(&resp); err != nil {
+
+	if err = cursor.Decode(&resp); err != nil {
 		return nil, err
 	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
 	return &resp, nil
 }
 
-func transformRequestToModel(r EditRequest) link.Rule {
+func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (link.Rule, error) {
+	externalData, err := apiexternaldata.TransformRefParameters(ctx, r.ExternalData, s.exdataTableCollection)
+	if err != nil {
+		return link.Rule{}, err
+	}
+
 	rule := link.Rule{
 		Name:         r.Name,
 		Type:         r.Type,
 		Enabled:      *r.Enabled,
 		Links:        r.Links,
 		SourceCode:   r.SourceCode,
-		ExternalData: r.ExternalData,
+		ExternalData: externalData,
 		Author:       r.Author,
 		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
 			common.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
@@ -234,5 +271,5 @@ func transformRequestToModel(r EditRequest) link.Rule {
 		)
 	}
 
-	return rule
+	return rule, nil
 }

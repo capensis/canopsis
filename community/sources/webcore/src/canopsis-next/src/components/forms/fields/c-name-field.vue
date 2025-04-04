@@ -49,6 +49,10 @@ export default {
       type: Number,
       required: false,
     },
+    regex: {
+      type: RegExp,
+      required: false,
+    },
     tooltip: {
       type: String,
       required: false,
@@ -62,6 +66,10 @@ export default {
 
       if (this.maxLength) {
         rules.max = this.maxLength;
+      }
+
+      if (this.regex) {
+        rules.regex = this.regex;
       }
 
       return rules;

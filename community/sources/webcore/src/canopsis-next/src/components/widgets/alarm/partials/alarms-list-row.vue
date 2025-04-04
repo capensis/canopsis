@@ -92,7 +92,7 @@
         />
         <span
           v-if="resizing"
-          class="alarms-list-table__resize-handler"
+          class="table__resize-handler"
           @mousedown.prevent="$emit('start:resize', header.value)"
           @click.stop=""
         />

@@ -34,6 +34,7 @@ func NewResolveCloseProcessor(
 		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
 		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
 		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
+		closeDelayJobCollection:         dbClient.Collection(mongo.CloseDelayJobCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		metaAlarmPostProcessor:          metaAlarmPostProcessor,
@@ -53,6 +54,7 @@ type resolveCloseProcessor struct {
 	resolvedAlarmCollection         mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
 	metaAlarmRuleCollection         mongo.DbCollection
+	closeDelayJobCollection         mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	metaAlarmPostProcessor          MetaAlarmPostProcessor
@@ -84,6 +86,7 @@ func (p *resolveCloseProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 		p.entityCollection,
 		p.resolvedAlarmCollection,
 		p.metaAlarmRuleCollection,
+		p.closeDelayJobCollection,
 	)
 	if err != nil || result.Alarm.ID == "" {
 		return result, err

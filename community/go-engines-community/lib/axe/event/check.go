@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/closedelay"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -52,6 +53,7 @@ func NewCheckProcessor(
 		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
 		entityCollection:                client.Collection(mongo.EntityMongoCollection),
 		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
+		closeDelayJobCollection:         client.Collection(mongo.CloseDelayJobCollection),
 		alarmConfigProvider:             alarmConfigProvider,
 		alarmStatusService:              alarmStatusService,
 		pbhTypeResolver:                 pbhTypeResolver,
@@ -75,6 +77,7 @@ type checkProcessor struct {
 	alarmCollection                 mongo.DbCollection
 	entityCollection                mongo.DbCollection
 	pbehaviorCollection             mongo.DbCollection
+	closeDelayJobCollection         mongo.DbCollection
 	alarmConfigProvider             config.AlarmConfigProvider
 	alarmStatusService              alarmstatus.Service
 	pbhTypeResolver                 pbehavior.EntityTypeResolver
@@ -170,7 +173,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	if !event.Healthcheck {
-		go p.postProcess(context.Background(), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+		go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
 	}
 
 	return result, nil
@@ -277,6 +280,25 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 
 	if alarmConfig.ActivateAlarmAfterAutoRemediation {
 		alarm.InactiveAutoInstructionInProgress = result.IsInstructionMatched
+	}
+
+	if event.Parameters.CloseDelayValue != nil && *event.Parameters.CloseDelayValue > 0 {
+		alarm.Value.CloseDelayValue = *event.Parameters.CloseDelayValue
+
+		_, err = p.closeDelayJobCollection.UpdateOne(ctx, bson.M{
+			"_id": alarm.ID,
+		}, bson.M{
+			"$set": closedelay.Job{
+				Name:      entity.Name,
+				Component: entity.Component,
+				Type:      entity.Type,
+				Delay:     *event.Parameters.CloseDelayValue,
+				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CloseDelayValue,
+			},
+		}, options.Update().SetUpsert(true))
+		if err != nil {
+			return result, fmt.Errorf("cannot upsert close delay job on alarm create: %w", err)
+		}
 	}
 
 	alarm.InternalTags = p.internalTagAlarmMatcher.Match(entity, alarm)
@@ -386,6 +408,45 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		if alarm.IsStateLocked() {
 			alarm.Value.ChangeState = nil
 			unset["v.change_state"] = ""
+		}
+	}
+
+	if params.State != nil {
+		if params.CloseDelayValue != nil && *params.CloseDelayValue > 0 && *params.State != types.AlarmStateOK {
+			set["v.close_delay_value"] = params.CloseDelayValue
+
+			// must do unset, because an alarm may be already closed by previous close delay.
+			if alarm.Value.CloseDelay != nil {
+				unset["v.close_delay"] = ""
+			}
+
+			_, err := p.closeDelayJobCollection.UpdateOne(ctx, bson.M{
+				"_id": alarm.ID,
+			}, bson.M{
+				"$set": closedelay.Job{
+					Name:      entity.Name,
+					Component: entity.Component,
+					Type:      entity.Type,
+					Delay:     *params.CloseDelayValue,
+					ExecTime:  params.Timestamp.Unix() + *params.CloseDelayValue,
+				},
+			}, options.Update().SetUpsert(true))
+			if err != nil {
+				return result, fmt.Errorf("cannot upsert close delay job on alarm update: %w", err)
+			}
+		}
+
+		if params.CloseDelayValue != nil && *params.CloseDelayValue == 0 || *params.State == types.AlarmStateOK {
+			if params.IsCloseDelayJob {
+				set["v.close_delay"] = alarm.Value.State
+			}
+
+			unset["v.close_delay_value"] = ""
+
+			_, err := p.closeDelayJobCollection.DeleteOne(ctx, bson.M{"_id": alarm.ID})
+			if err != nil {
+				return result, fmt.Errorf("cannot delete close delay job on alarm update: %w", err)
+			}
 		}
 	}
 

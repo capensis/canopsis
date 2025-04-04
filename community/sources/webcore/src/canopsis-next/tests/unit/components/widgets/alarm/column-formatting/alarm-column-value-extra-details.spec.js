@@ -11,6 +11,8 @@ const stubs = {
   'extra-details-pbehavior': true,
   'extra-details-parents': true,
   'extra-details-children': true,
+  'extra-details-close-delay': true,
+  'extra-details-close-delay-value': true,
 };
 
 describe('alarm-column-value-extra-details', () => {
@@ -27,6 +29,16 @@ describe('alarm-column-value-extra-details', () => {
       pbehavior_info: {
         icon_name: 'icon',
         type_name: 'type',
+      },
+      close_delay_value: 6,
+      close_delay: {
+        _t: 'statedec',
+        t: 1743511657,
+        a: 'system',
+        user_id: '',
+        m: 'closed after 20 seconds delay',
+        val: 0,
+        initiator: 'system',
       },
     },
   };

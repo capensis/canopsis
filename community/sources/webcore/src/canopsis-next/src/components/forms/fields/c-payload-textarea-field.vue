@@ -32,6 +32,7 @@
           :position-y="variablesMenuPosition.y"
           ignore-click-outside
           show-value
+          clickable-parent
           @input="pasteVariable"
         />
         <span

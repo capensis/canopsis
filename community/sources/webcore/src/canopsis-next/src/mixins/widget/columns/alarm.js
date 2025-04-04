@@ -1,4 +1,4 @@
-import { ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS, COLOR_INDICATOR_TYPES } from '@/constants';
+import { RESIZING_CELLS_CONTENTS_BEHAVIORS, COLOR_INDICATOR_TYPES } from '@/constants';
 
 import {
   getAlarmsListWidgetColumnValueFilter,
@@ -48,7 +48,7 @@ export const widgetColumnsAlarmMixin = {
           {
             showRootCauseByStateClick,
             isCellContentTruncated:
-              columnsSettings.cells_content_behavior === ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
+              columnsSettings.cells_content_behavior === RESIZING_CELLS_CONTENTS_BEHAVIORS.truncate,
           },
         ),
         colorIndicatorEnabled: Object.values(COLOR_INDICATOR_TYPES).includes(column.colorIndicator),

@@ -47,12 +47,12 @@ func BindFilteredQuery(c *gin.Context, query *FilteredQuery) error {
 
 func CreateAggregationPipeline(
 	query Query,
-	filter []bson.M,
+	beforeLimit []bson.M,
 	sort bson.M,
-	project ...[]bson.M,
+	afterLimit ...[]bson.M,
 ) []bson.M {
-	result := make([]bson.M, len(filter))
-	copy(result, filter)
+	result := make([]bson.M, len(beforeLimit))
+	copy(result, beforeLimit)
 
 	pipeline := make([]bson.M, 0, 4)
 	if len(sort) == 1 {
@@ -66,9 +66,9 @@ func CreateAggregationPipeline(
 		)
 	}
 
-	if len(project) == 1 {
-		pipeline = append(pipeline, project[0]...)
-	} else if len(project) > 1 {
+	if len(afterLimit) == 1 {
+		pipeline = append(pipeline, afterLimit[0]...)
+	} else if len(afterLimit) > 1 {
 		panic("too much arguments")
 	}
 

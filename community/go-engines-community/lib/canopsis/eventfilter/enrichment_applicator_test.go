@@ -8,9 +8,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
+	mock_externaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/externaldata"
 	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
 )
@@ -43,7 +45,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		return false, nil
 	})
 
-	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
+	applicator := eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), mockActionProcessor, mockFailureService)
 
 	event := types.Event{}
 	resOutcome, _, _, resError := applicator.Apply(
@@ -92,7 +94,7 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 	})
 
 	event := types.Event{}
-	applicator := eventfilter.NewEnrichmentApplicator(eventfilter.NewExternalDataGetterContainer(), mockActionProcessor, mockFailureService)
+	applicator := eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), mockActionProcessor, mockFailureService)
 	resOutcome, _, _, resError := applicator.Apply(t.Context(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, eventfilter.RegexMatch{})
 	if resError == nil {
 		t.Errorf("expected error but nothing")
@@ -111,20 +113,22 @@ func TestApplyWithExternalData(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockGetter := mock_eventfilter.NewMockExternalDataGetter(ctrl)
-	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).
-		Return(types.Entity{ID: "test_value"}, nil)
+	mockGetter := mock_externaldata.NewMockGetter(ctrl)
+	mockGetter.EXPECT().Get(gomock.Any(), gomock.Any(), gomock.Any()).
+		Return(map[string]any{"ID": "test_value"}, nil)
 
-	externalDataContainer := eventfilter.NewExternalDataGetterContainer()
+	externalDataContainer := externaldata.NewGetterContainer()
 	externalDataContainer.Set("test", mockGetter)
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
 	applicator := eventfilter.NewChangeEntityApplicator(externalDataContainer, mockFailureService, tplExecutor)
 
-	externalData := make(map[string]eventfilter.ParsedExternalDataParameters)
-	externalData["test"] = eventfilter.ParsedExternalDataParameters{
-		Type: "test",
+	externalData := []externaldata.ParsedRefParameters{
+		{
+			Reference: "test",
+			Type:      "test",
+		},
 	}
 
 	event := types.Event{

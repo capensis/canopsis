@@ -1,6 +1,6 @@
 package eventfilter
 
-//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter RuleApplicator,RuleAdapter,RuleApplicatorContainer,ExternalDataGetter,Service,ActionProcessor,FailureService,EventCounter
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/canopsis/eventfilter/eventfilter.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter RuleApplicator,RuleAdapter,RuleApplicatorContainer,Service,ActionProcessor,FailureService,EventCounter
 
 import (
 	"context"
@@ -37,8 +37,4 @@ type Service interface {
 type RuleApplicatorContainer interface {
 	Get(string) (RuleApplicator, bool)
 	Set(string, RuleApplicator)
-}
-
-type ExternalDataGetter interface {
-	Get(ctx context.Context, ruleID, name string, event *types.Event, parameters ParsedExternalDataParameters, templateParameters Template) (interface{}, error)
 }

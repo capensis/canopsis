@@ -48,6 +48,7 @@ const (
 	ValueTypeColorTheme         = "colortheme"
 	ValueTypeIcon               = "icon"
 	ValueTypeEventRecord        = "eventrecord"
+	ValueTypeExternalData       = "externaldata"
 )
 
 type ActionLogEvent struct {

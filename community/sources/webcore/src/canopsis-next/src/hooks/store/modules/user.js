@@ -50,6 +50,7 @@ export const useUser = () => {
   const actions = useActions({
     fetchUsersList: 'fetchList',
     fetchUsersListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchUsersListWithoutStore: 'fetchListWithoutStore',
     createUser: 'create',
     updateUser: 'update',
     updateCurrentUser: 'updateCurrentUser',

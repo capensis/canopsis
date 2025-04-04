@@ -1,6 +1,6 @@
 import { COLORS } from '@/config';
 
-import { WIDGET_COLUMNS_GROUPS } from './common';
+import { DENSE_TYPES, WIDGET_COLUMNS_GROUPS } from './common';
 
 export const ALARM_FIELDS = {
   id: '_id',
@@ -67,6 +67,10 @@ export const ALARM_FIELDS = {
   entityInfos: 'entity.infos',
   entityComponentInfos: 'entity.component_infos',
   entityLastPbehaviorDate: 'entity.last_pbehavior_date',
+  pbehaviorInfoId: 'v.pbehavior_info.id',
+  pbehaviorInfoReason: 'v.pbehavior_info.reason',
+  pbehaviorInfoType: 'v.pbehavior_info.type',
+  pbehaviorInfoCanonicalType: 'v.pbehavior_info.canonical_type',
 
   /**
    * OBJECTS
@@ -97,6 +101,83 @@ export const ALARM_OUTPUT_FIELDS = [
   ALARM_FIELDS.initialOutput,
   ALARM_FIELDS.initialLongOutput,
 ];
+
+export const ALARM_ADVANCED_SEARCH_GROUPS = {
+  basic: 'basic',
+  messages: 'messages',
+  ticket: 'ticket',
+  dates: 'dates',
+  actions: 'actions',
+  entity: 'entity',
+  pbehavior: 'pbehavior',
+};
+
+export const ALARM_GROUPED_ADVANCED_SEARCH_FIELDS = {
+  [ALARM_ADVANCED_SEARCH_GROUPS.basic]: [
+    ALARM_FIELDS.displayName,
+    ALARM_FIELDS.connector,
+    ALARM_FIELDS.connectorName,
+    ALARM_FIELDS.component,
+    ALARM_FIELDS.resource,
+    ALARM_FIELDS.state,
+    ALARM_FIELDS.status,
+    ALARM_FIELDS.tags,
+    ALARM_FIELDS.infos,
+    ALARM_FIELDS.meta,
+    ALARM_FIELDS.changeState,
+    ALARM_FIELDS.totalStateChanges,
+  ],
+  [ALARM_ADVANCED_SEARCH_GROUPS.messages]: [
+    ALARM_FIELDS.output,
+    ALARM_FIELDS.longOutput,
+    ALARM_FIELDS.initialOutput,
+    ALARM_FIELDS.initialLongOutput,
+    ALARM_FIELDS.lastComment,
+    ALARM_FIELDS.lastCommentInitiator,
+  ],
+  [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: [
+    ALARM_FIELDS.ticketMessage,
+    ALARM_FIELDS.ticketInitiator,
+    ALARM_FIELDS.ticketValue,
+    ALARM_FIELDS.ticket,
+  ],
+  [ALARM_ADVANCED_SEARCH_GROUPS.dates]: [
+    ALARM_FIELDS.creationDate,
+    ALARM_FIELDS.lastUpdateDate,
+    ALARM_FIELDS.lastEventDate,
+    ALARM_FIELDS.ackAt,
+    ALARM_FIELDS.resolved,
+    ALARM_FIELDS.activationDate,
+    ALARM_FIELDS.duration,
+  ],
+  [ALARM_ADVANCED_SEARCH_GROUPS.actions]: [
+    ALARM_FIELDS.ack,
+    ALARM_FIELDS.ackBy,
+    ALARM_FIELDS.ackMessage,
+    ALARM_FIELDS.ackInitiator,
+    ALARM_FIELDS.canceled,
+    ALARM_FIELDS.canceledInitiator,
+    ALARM_FIELDS.activated,
+    ALARM_FIELDS.snooze,
+  ],
+  [ALARM_ADVANCED_SEARCH_GROUPS.entity]: [
+    ALARM_FIELDS.entityId,
+    ALARM_FIELDS.entityName,
+    ALARM_FIELDS.entityCategoryName,
+    ALARM_FIELDS.entityType,
+    ALARM_FIELDS.entityComponent,
+    ALARM_FIELDS.entityConnector,
+    ALARM_FIELDS.entityImpactLevel,
+    ALARM_FIELDS.entityInfos,
+    ALARM_FIELDS.entityComponentInfos,
+  ],
+  [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: [
+    ALARM_FIELDS.pbehaviorInfoName,
+    ALARM_FIELDS.pbehaviorInfoReason,
+    ALARM_FIELDS.pbehaviorInfoType,
+    ALARM_FIELDS.pbehaviorInfoCanonicalType,
+  ],
+};
 
 export const ALARM_ADVANCED_SEARCH_FIELDS = [
   ALARM_FIELDS.id,
@@ -521,11 +602,6 @@ export const ALARMS_OPENED_VALUES = {
   resolved: false,
 };
 
-export const ALARMS_RESIZING_CELLS_CONTENTS_BEHAVIORS = {
-  wrap: 'wrap',
-  truncate: 'truncate',
-};
-
 export const ALARM_BASIC_METRIC_PARAMETERS = {
   activeAlarms: 'active_alarms',
   createdAlarms: 'created_alarms',
@@ -709,6 +785,7 @@ export const ALARM_PATTERN_FIELDS = {
   ticketData: ALARM_FIELDS.ticketData,
   changeState: ALARM_FIELDS.changeState,
   meta: ALARM_FIELDS.meta,
+  entityInfos: ALARM_FIELDS.entityInfos,
 };
 
 export const ALARM_EVENT_INITIATORS = {
@@ -856,6 +933,10 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.entityLastPbehaviorDate]: 'alarm.fields.entityLastPbehaviorDate',
   [ALARM_FIELDS.changeState]: 'alarm.fields.changeState',
   [ALARM_FIELDS.meta]: 'alarm.metaAlarm',
+  [ALARM_FIELDS.pbehaviorInfoId]: 'common.id',
+  [ALARM_FIELDS.pbehaviorInfoReason]: 'common.reason',
+  [ALARM_FIELDS.pbehaviorInfoType]: 'common.type',
+  [ALARM_FIELDS.pbehaviorInfoCanonicalType]: 'common.canonicalType',
 
   /**
    * OBJECTS
@@ -879,12 +960,6 @@ export const ALARM_UNSORTABLE_FIELDS = [
   ALARM_FIELDS.links,
   ALARM_FIELDS.tags,
 ];
-
-export const ALARM_DENSE_TYPES = {
-  large: 0,
-  medium: 1,
-  small: 2,
-};
 
 export const ALARM_PAYLOADS_VARIABLES = {
   alarm: '.Alarm',
@@ -938,35 +1013,35 @@ export const ALARMS_EXPAND_PANEL_TABS = {
 export const ALARM_LINK_ICON_CHIP_WIDTH = 26;
 
 export const ALARM_LINK_ICON_CHIP_COLUMN_GAP = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 8,
-  [ALARM_DENSE_TYPES.small]: 4,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 8,
+  [DENSE_TYPES.small]: 4,
 };
 
 export const ALARM_LINK_TD_PADDINGS = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 6,
-  [ALARM_DENSE_TYPES.small]: 6,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 6,
+  [DENSE_TYPES.small]: 6,
 };
 
 export const ALARM_EXPORT_FILE_NAME_PREFIX = 'alarm';
 
 export const ALARM_ACTION_BUTTON_WIDTHS = {
-  [ALARM_DENSE_TYPES.large]: 36,
-  [ALARM_DENSE_TYPES.medium]: 36,
-  [ALARM_DENSE_TYPES.small]: 24,
+  [DENSE_TYPES.large]: 36,
+  [DENSE_TYPES.medium]: 36,
+  [DENSE_TYPES.small]: 24,
 };
 
 export const ALARM_ACTION_BUTTON_MARGINS = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 0,
-  [ALARM_DENSE_TYPES.small]: 0,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 0,
+  [DENSE_TYPES.small]: 0,
 };
 
 export const ALARM_ACTIONS_PADDINGS = {
-  [ALARM_DENSE_TYPES.large]: 8,
-  [ALARM_DENSE_TYPES.medium]: 6,
-  [ALARM_DENSE_TYPES.small]: 6,
+  [DENSE_TYPES.large]: 8,
+  [DENSE_TYPES.medium]: 6,
+  [DENSE_TYPES.small]: 6,
 };
 
 export const DEFAULT_ALARM_ACTIONS_INLINE_COUNT = 4;

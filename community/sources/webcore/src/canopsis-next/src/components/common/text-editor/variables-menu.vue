@@ -17,6 +17,7 @@
       :dense="dense"
       :z-index="submenuZIndex"
       :show-value="showValue"
+      :clickable-parent="clickableParent"
       @input="$emit('input', $event)"
     />
   </v-menu>
@@ -61,6 +62,10 @@ export default {
       default: false,
     },
     returnObject: {
+      type: Boolean,
+      default: false,
+    },
+    clickableParent: {
       type: Boolean,
       default: false,
     },

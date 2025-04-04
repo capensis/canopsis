@@ -10,6 +10,7 @@
     :hide-no-data="addable"
     item-text="text"
     item-value="value"
+    with-type
     @fetch="fetchListExternalMetrics"
     @fetch:more="fetchMoreExternalMetrics"
     @update:search="updateSearch"

@@ -553,7 +553,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /alarm-tags/{id}:
     get:
       tags:
@@ -882,7 +882,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -923,7 +923,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -985,7 +985,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1067,7 +1067,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1109,7 +1109,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1150,7 +1150,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1195,7 +1195,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1236,7 +1236,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -1317,7 +1317,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
     delete:
       tags:
         - associativetables
@@ -1405,7 +1405,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /broadcast-message/{id}:
     get:
       tags:
@@ -2568,6 +2568,63 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/external-data-tables/{table}/data:
+    delete:
+      tags:
+        - externaldata
+      summary: Bulk delete rows from external data table
+      description: |
+        Bulk delete rows from external data table.
+
+        -  PERMISSIONS: `api_external_data_table:update`
+      operationId: externaldatarows-bulk-delete
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete rows
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/idle-rules:
     put:
       tags:
@@ -3659,7 +3716,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /color-themes/{id}:
     get:
       tags:
@@ -4780,7 +4837,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -4826,7 +4883,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
         404:
           description: Not Found
           content:
@@ -5700,7 +5757,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /eventfilter/rules:
     get:
       tags:
@@ -5864,20 +5921,21 @@ paths:
                     "on_failure": "pass"
                   }
                 }
-              CreateEnrichmentRuleWithExternalMongoData:
-                summary: Create an enrichment rule with external mongo data
-                description: Create an enrichment rule with external mongo data.
+              CreateEnrichmentRuleWithExternalTableData:
+                summary: Create an enrichment rule with external table data
+                description: Create an enrichment rule with external table data.
                 value: {
                   "type": "enrichment",
-                  "external_data": {
-                    "component": {
-                      "type": "mongo",
+                  "external_data": [
+                    {
+                      "reference": "component",
+                      "type": "table",
+                      "table": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101",
                       "select": {
                         "component_customer": "{{ .Event.Component }}"
-                      },
-                      "collection": "assets"
+                      }
                     }
-                  },
+                  ],
                   "event_pattern": [
                     [
                       {
@@ -5889,7 +5947,7 @@ paths:
                       }
                     ]
                   ],
-                  "description": "enruchment rule with external mongo data",
+                  "description": "enruchment rule with external table data",
                   "priority": 1,
                   "enabled": true,
                   "config": {
@@ -5910,15 +5968,16 @@ paths:
                 description: Create an enrichment rule with external api data.
                 value: {
                   "type": "enrichment",
-                  "external_data": {
-                    "title": {
+                  "external_data": [
+                    {
+                      "reference": "title",
                       "type": "api",
                       "request": {
                         "url": "http://localhost:3000/api/external_data",
                         "method": "GET"
                       }
                     }
-                  },
+                  ],
                   "event_pattern": [
                     [
                       {
@@ -6109,7 +6168,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /eventfilter/rules/{id}:
     get:
       tags:
@@ -6367,6 +6426,715 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-export/{id}:
+    post:
+      tags:
+        - externaldata
+      summary: Create external data export job
+      description: |
+        Create external data export job.
+
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldataexport-create
+      parameters:
+        - name: id
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    get:
+      tags:
+        - externaldata
+      summary: Get status of external data export job
+      description: |
+        Get status of external data export job.
+
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldataexport-status
+      parameters:
+        - name: id
+          in: path
+          description: external data export job id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ExportResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-export/{id}/download:
+    get:
+      tags:
+        - externaldata
+      summary: Get result of external data export job
+      description: |
+        Get result of external data export job.
+
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldataexport-download
+      parameters:
+        - name: id
+          in: path
+          description: external data export job id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}:
+    post:
+      tags:
+        - externaldata
+      summary: Create external data import job
+      description: |
+        Create external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externaldataimport-create
+      parameters:
+        - name: id
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                separator:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/complete:
+    put:
+      tags:
+        - externaldata
+      summary: Complete external data import job
+      description: |
+        Complete external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externaldataimport-complete
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportCompleteRequest'
+            examples:
+              complete:
+                summary: Complete import job
+                description: Complete import job
+                value: {
+                  "column_types": [
+                    0,
+                    1,
+                    1,
+                    2
+                  ]
+                }
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/data:
+    get:
+      tags:
+        - externaldata
+      summary: Get data of external data import job
+      description: |
+        Get data of external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externaldataimport-data
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties:
+                            type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-import/{id}/status:
+    get:
+      tags:
+        - externaldata
+      summary: Get status of external data import job
+      description: |
+        Get status of external data import job.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externaldataimport-status
+      parameters:
+        - name: id
+          in: path
+          description: external data import job id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.ImportJob'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-tables:
+    get:
+      tags:
+        - externaldata
+      summary: Find all external data tables
+      description: |
+        Find all external data tables.
+        
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldatatables-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/ids'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+    post:
+      tags:
+        - externaldata
+      summary: Create external data table
+      description: |
+        Create external data table.
+        
+        -  PERMISSIONS: `api_external_data_table:create`
+      operationId: externaldatatables-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.EditRequest'
+            examples:
+              create:
+                summary: Create external data table
+                description: Create external data table
+                value: {
+                  "type": 0,
+                  "name": "some_data",
+                  "description": "Data for enrichment"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /external-data-tables/{id}:
+    get:
+      tags:
+        - externaldata
+      summary: Get external data table by id
+      description: |
+        Get external data table by id.
+        
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldatatables-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - externaldata
+      summary: Update external data table by id
+      description: |
+        Update external data table by id.
+        
+        -  PERMISSIONS: `api_external_data_table:update`
+      operationId: externaldatatables-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.UpdateRequest'
+            examples:
+              update:
+                summary: Update external data table
+                description: Update external data table
+                value: {
+                  "type": 0,
+                  "name": "some_data",
+                  "description": "Data for enrichment",
+                  "column_types": [0, 1, 1, 2]
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - externaldata
+      summary: Delete external data table by id
+      description: |
+        Delete external data table by id.
+        
+        -  PERMISSIONS: `api_external_data_table:delete`
+      operationId: externaldatatables-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-tables/{table}/data:
+    get:
+      tags:
+        - externaldata
+      summary: Find all external data rows in table
+      description: |
+        Find all external data rows in table.
+        
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldatarows-find-all
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/search_by'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - $ref: '#/components/parameters/withFlags'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          type: object
+                          additionalProperties:
+                            type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - externaldata
+      summary: Create row in external data table
+      description: |
+        Create row in external data table.
+        
+        -  PERMISSIONS: `api_external_data_table:update`
+      operationId: externaldatarows-create
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+            examples:
+              create:
+                summary: Create row
+                description: Create row
+                value: {
+                  "field1": "string value 1",
+                  "field2": "string value 2",
+                  "field3": "string valee 3"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-tables/{table}/schema:
+    get:
+      tags:
+        - externaldata
+      summary: Get schema of external data table
+      description: |
+        Get schema of external data table.
+        
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldatatable-schema
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /external-data-tables/{table}/data/{id}:
+    get:
+      tags:
+        - externaldata
+      summary: Get row from external data table by id
+      description: |
+        Get row from external data table by id.
+        
+        -  PERMISSIONS: `api_external_data_table:read`
+      operationId: externaldatarows-get-by-id
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - externaldata
+      summary: Update row in external data table by id
+      description: |
+        Update row in external data table by id.
+        
+        -  PERMISSIONS: `api_external_data_table:update`
+      operationId: externaldatarows-update-by-id
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties:
+                type: string
+            examples:
+              update:
+                summary: Update row
+                description: Update row
+                value: {
+                  "field1": "string value 1",
+                  "field2": "string value 2",
+                  "field3": "string value 3"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - externaldata
+      summary: Delete row from external data table by id
+      description: |
+        Delete row from external data table by id.
+        
+        -  PERMISSIONS: `api_external_data_table:update`
+      operationId: externaldatarows-delete-by-id
+      parameters:
+        - name: table
+          in: path
+          description: external data table id
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /file:
     get:
       tags:
@@ -6614,7 +7382,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /flapping-rules/{id}:
     get:
       tags:
@@ -9707,7 +10475,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /resolve-rules/{id}:
     get:
       tags:
@@ -11560,7 +12328,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /state-settings/{id}:
     get:
       tags:
@@ -12040,7 +12808,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /link-rules/{id}:
     get:
       tags:
@@ -12239,7 +13007,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /template-validator/event-filter-rules:
     post:
       tags:
@@ -12279,7 +13047,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /template-validator/scenarios:
     post:
       tags:
@@ -12319,7 +13087,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /template-vars:
     get:
       tags:
@@ -14610,6 +15378,16 @@ components:
       description: search query
       schema:
         type: string
+    search_by:
+      name: search_by[]
+      in: query
+      style: form
+      explode: true
+      description: search by fields
+      schema:
+        type: array
+        items:
+          type: string
     sort:
       name: sort
       in: query

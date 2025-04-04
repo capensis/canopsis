@@ -56,8 +56,8 @@ describe('variables-list', () => {
   });
 
   test.each([
-    [undefined, 'variables'],
-    ['items', 'items'],
+    [undefined, 'items'],
+    ['variables', 'variables'],
   ])('Submenu opened when mouseover tile (childrenKey: %s)', async (childrenKey, internalKey) => {
     const zIndex = Faker.datatype.number();
     const subItems = [
@@ -106,7 +106,7 @@ describe('variables-list', () => {
         items: [
           {
             value: 'first',
-            variables: [],
+            items: [],
           },
           {
             value: 'second',
@@ -136,7 +136,7 @@ describe('variables-list', () => {
         items: [
           {
             value: parentValue,
-            variables: [],
+            items: [],
           },
         ],
       },
@@ -154,7 +154,7 @@ describe('variables-list', () => {
 
     variablesList.triggerCustomEvent('input', value);
 
-    expect(wrapper).toEmitInput(value);
+    expect(wrapper).toEmitInput(`${parentValue}.${value}`);
   });
 
   test('Renders `variables-list` with default props', () => {

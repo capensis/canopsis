@@ -106,7 +106,7 @@ export default {
   },
 
   beforeDestroy() {
-    this.$periodicRefresh.unregister(this.refreshView);
+    this.$periodicRefresh.unregisterAll();
   },
 
   methods: {

@@ -93,6 +93,8 @@ const (
 	RemediationRPCQueueServerJobName = "Engine_remediation_rpc_server_job"
 
 	WebhookRPCQueueServerName = "Engine_webhook_rpc_server"
+
+	ApiWorkersQueueName = "api_workers"
 )
 
 // Consumers
@@ -150,10 +152,11 @@ const (
 
 	FacetLimit = 1000
 
-	SubDirUpload   = "upload-files"
-	SubDirIcons    = "icons"
-	SubDirExport   = "export-files"
-	SubDirImport   = "import-files"
-	SubDirJunit    = "junit-files"
-	SubDirJunitAPI = "junit-api-files"
+	SubDirUpload       = "upload-files"
+	SubDirIcons        = "icons"
+	SubDirExport       = "export-files"
+	SubDirImport       = "import-files"
+	SubDirJunit        = "junit-files"
+	SubDirJunitAPI     = "junit-api-files"
+	SubDirExDataImport = "exdataimport"
 )

@@ -274,6 +274,7 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.resolveRules]: 'Resolve rules',
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
+    [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'External data',
 
     /**
      * Technical Admin Notification

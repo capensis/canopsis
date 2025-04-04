@@ -3,7 +3,6 @@ package alarm
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -36,7 +35,7 @@ type API interface {
 
 type api struct {
 	store               Store
-	exportExecutor      export.TaskExecutor
+	taskCreator         export.TaskCreator
 	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
 	encoder             encoding.Encoder
@@ -46,7 +45,7 @@ type api struct {
 
 func NewApi(
 	store Store,
-	executor export.TaskExecutor,
+	taskCreator export.TaskCreator,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) API {
@@ -62,7 +61,7 @@ func NewApi(
 
 	return &api{
 		store:               store,
-		exportExecutor:      executor,
+		taskCreator:         taskCreator,
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
@@ -357,8 +356,7 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	userID := c.MustGet(auth.UserKey).(string)
-
-	task, err := a.exportExecutor.StartExecute(c, export.TaskParameters{
+	task, err := a.taskCreator.Create(c, export.TaskParameters{
 		Type:           "alarm",
 		Parameters:     string(params),
 		Fields:         r.Fields,
@@ -380,7 +378,7 @@ func (a *api) StartExport(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.Get(c, id)
+	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -398,7 +396,7 @@ func (a *api) GetExport(c *gin.Context) {
 
 func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
-	t, err := a.exportExecutor.Get(c, id)
+	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
 		panic(err)
 	}
@@ -409,10 +407,8 @@ func (a *api) DownloadExport(c *gin.Context) {
 	}
 
 	c.Status(http.StatusOK)
-	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, t.Filename))
 	c.Header("Content-Type", "text/csv")
-	c.ContentType()
-	c.File(t.File)
+	c.FileAttachment(t.File, t.Filename)
 }
 
 // GetLinks

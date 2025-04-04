@@ -12,22 +12,23 @@
         :on="tooltipOn"
         name="button"
       >
-        <v-btn
-          :disabled="disabled"
-          :loading="loading"
-          :small="small"
-          :color="btnColor"
-          :dark="dark"
-          :input-value="inputValue"
-          class="mx-1 my-0 c-action-btn__button"
-          icon
-          v-on="tooltipOn"
-          @click.stop.prevent="$listeners.click"
-        >
-          <v-icon :color="preparedProps.color">
-            {{ preparedProps.icon }}
-          </v-icon>
-        </v-btn>
+        <div class="c-action-btn__button-wrapper" v-on="tooltipOn">
+          <v-btn
+            :disabled="disabled || disabledButton"
+            :loading="loading"
+            :small="small"
+            :color="btnColor"
+            :dark="dark"
+            :input-value="inputValue"
+            :icon="!!preparedProps.icon"
+            class="mx-1 my-0 c-action-btn__button"
+            @click.stop.prevent="$listeners.click"
+          >
+            <v-icon :color="preparedProps.color">
+              {{ preparedProps.icon }}
+            </v-icon>
+          </v-btn>
+        </div>
       </slot>
     </template>
   </c-simple-tooltip>
@@ -54,6 +55,10 @@ export default {
       default: '',
     },
     disabled: {
+      type: Boolean,
+      default: false,
+    },
+    disabledButton: {
       type: Boolean,
       default: false,
     },
@@ -126,3 +131,9 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.c-action-btn__button-wrapper {
+  display: inline-flex;
+}
+</style>

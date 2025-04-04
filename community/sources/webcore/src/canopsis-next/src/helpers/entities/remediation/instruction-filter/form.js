@@ -1,4 +1,4 @@
-import { isInstructionAuto } from '../instruction/form';
+import { isInstructionTypeAuto } from '../instruction/form';
 
 /**
  * @typedef {Object} RemediationInstructionFilterInstruction
@@ -47,7 +47,7 @@ export const remediationInstructionFilterToForm = (filter = {}) => ({
  * @returns {boolean}
  */
 export const isRemediationInstructionIntersectsWithFilterByType = (filter = {}, instruction = {}) => {
-  const isAuto = isInstructionAuto(instruction);
+  const isAuto = isInstructionTypeAuto(instruction?.type);
 
   return (filter.auto && isAuto) || (filter.manual && !isAuto);
 };
