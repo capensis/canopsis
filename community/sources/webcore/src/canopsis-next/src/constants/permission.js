@@ -49,6 +49,7 @@ export const ADMIN_PAGES_RULES = {
   kpi: { edition: CANOPSIS_EDITION.pro },
   tag: { edition: CANOPSIS_EDITION.pro },
   map: { edition: CANOPSIS_EDITION.pro },
+  eventsRecord: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const NOTIFICATIONS_PAGES_RULES = {
@@ -607,10 +608,10 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   /**
    * Admin pages
    */
-  [USER_PERMISSIONS.technical.healthcheck]: ADMIN_PAGES_RULES.healthcheck,
   [USER_PERMISSIONS.technical.kpi]: ADMIN_PAGES_RULES.kpi,
   [USER_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
   [USER_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
+  [USER_PERMISSIONS.technical.eventsRecord]: ADMIN_PAGES_RULES.eventsRecord,
 
   /**
    * Grouped
@@ -620,11 +621,9 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   /**
    * Exploitation pages
    */
-  [USER_PERMISSIONS.technical.exploitation.eventFilter]: EXPLOITATION_PAGES_RULES.eventFilter,
   [USER_PERMISSIONS.technical.exploitation.snmpRule]: EXPLOITATION_PAGES_RULES.snmpRule,
   [USER_PERMISSIONS.technical.exploitation.dynamicInfo]: EXPLOITATION_PAGES_RULES.dynamicInfo,
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
-  [USER_PERMISSIONS.technical.exploitation.scenario]: EXPLOITATION_PAGES_RULES.scenario,
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
   /**
