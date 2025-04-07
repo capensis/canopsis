@@ -1242,13 +1242,15 @@ definitions:
         properties:
           accent:
             type: string
-          active_color:
-            type: string
           background:
             type: string
           error:
             type: string
+          error_icons:
+            type: string
           info:
+            type: string
+          info_icons:
             type: string
           primary:
             type: string
@@ -1256,18 +1258,25 @@ definitions:
             type: string
           success:
             type: string
+          success_icons:
+            type: string
           warning:
+            type: string
+          warning_icons:
             type: string
         required:
         - accent
-        - active_color
         - background
         - error
+        - error_icons
         - info
+        - info_icons
         - primary
         - secondary
         - success
+        - success_icons
         - warning
+        - warning_icons
         type: object
       state:
         properties:

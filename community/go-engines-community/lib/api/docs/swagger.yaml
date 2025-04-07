@@ -3751,11 +3751,14 @@ paths:
                       "info": "#AAAAAA",
                       "success": "#AAAAAA",
                       "warning": "#AAAAAA",
-                      "background": "#AAAAAA"
+                      "background": "#AAAAAA",
+                      "error_icons": "#AAAAAA",
+                      "warning_icons": "#AAAAAA",
+                      "info_icons": "#AAAAAA",
+                      "success_icons": "#AAAAAA"
                     },
                     "table": {
                       "background": "#AAAAAA",
-                      "active_color": "#AAAAAA",
                       "row_color": "#AAAAAA",
                       "shift_row_color": "#AAAAAA",
                       "hover_row_color": "#AAAAAA"
@@ -3840,11 +3843,14 @@ paths:
                       "info": "#FFFFFF",
                       "success": "#FFFFFF",
                       "warning": "#FFFFFF",
-                      "background": "#FFFFFF"
+                      "background": "#FFFFFF",
+                      "error_icons": "#AAAAAA",
+                      "warning_icons": "#AAAAAA",
+                      "info_icons": "#AAAAAA",
+                      "success_icons": "#AAAAAA"
                     },
                     "table": {
                       "background": "#FFFFFF",
-                      "active_color": "#FFFFFF",
                       "row_color": "#FFFFFF",
                       "shift_row_color": "#FFFFFF",
                       "hover_row_color": "#FFFFFF"
