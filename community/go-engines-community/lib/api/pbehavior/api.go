@@ -28,6 +28,7 @@ type API interface {
 	BulkEntityDelete(c *gin.Context)
 	BulkConnectorCreate(c *gin.Context)
 	BulkConnectorDelete(c *gin.Context)
+	BulkConnectorEdit(c *gin.Context)
 	DBExport(c *gin.Context)
 }
 
@@ -516,6 +517,66 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 	exists := make(map[string]struct{})
 	bulk.Handler(c, func(request BulkConnectorDeleteRequestItem) (string, error) {
 		id, err := a.store.ConnectorDelete(c, request)
+		if err != nil || id == "" {
+			return "", err
+		}
+
+		if _, ok := exists[id]; !ok {
+			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
+			exists[id] = struct{}{}
+		}
+
+		return id, nil
+	}, a.logger)
+
+	for origin, ids := range idsByOrigin {
+		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
+			Ids:       ids,
+			Author:    origin,
+			Initiator: types.InitiatorExternal,
+		})
+	}
+}
+
+// BulkConnectorEdit
+// @Param body body []BulkConnectorEditRequestItem true "body"
+func (a *api) BulkConnectorEdit(c *gin.Context) {
+	idsByOrigin := make(map[string][]string)
+	exists := make(map[string]struct{})
+	bulk.Handler(c, func(request BulkConnectorEditRequestItem) (string, error) {
+		var id string
+		var err error
+		switch request.Action {
+		case BulkConnectorActionCreate:
+			var pbh *Response
+			pbh, err = a.store.ConnectorCreate(c, BulkConnectorCreateRequestItem{
+				Author:   request.Author,
+				Entities: request.Entities,
+				Origin:   request.Origin,
+				Start:    request.Start,
+				Stop:     request.Stop,
+				Comment:  request.Comment,
+				Name:     request.Name,
+				Reason:   request.Reason,
+				Type:     request.Type,
+				Color:    request.Color,
+			})
+			if pbh != nil {
+				id = pbh.ID
+			}
+		case BulkConnectorActionDelete:
+			id, err = a.store.ConnectorDelete(c, BulkConnectorDeleteRequestItem{
+				Author:   request.Author,
+				Entities: request.Entities,
+				Origin:   request.Origin,
+				Start:    request.Start,
+				Stop:     request.Stop,
+				Comment:  request.Comment,
+			})
+		default:
+			return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
+		}
+
 		if err != nil || id == "" {
 			return "", err
 		}
