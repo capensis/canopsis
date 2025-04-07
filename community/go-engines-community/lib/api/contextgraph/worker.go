@@ -151,7 +151,18 @@ func (w *worker) ProcessFirstJob(ctx context.Context) error {
 		}
 	})
 
-	return g.Wait()
+	err = g.Wait()
+	if err != nil {
+		return err
+	}
+
+	// to start next job
+	err = w.jobPublisher.Publish(ctx, "")
+	if err != nil {
+		return fmt.Errorf("failed to publish import job: %w", err)
+	}
+
+	return nil
 }
 
 func (w *worker) processJob(ctx context.Context, job ImportJob) error {
