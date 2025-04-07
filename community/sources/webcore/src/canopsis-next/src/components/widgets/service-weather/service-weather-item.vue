@@ -88,7 +88,7 @@
 </template>
 
 <script>
-import { MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
+import { ALARM_STATES, MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
@@ -194,6 +194,10 @@ export default {
       return this.service.is_action_required;
     },
 
+    isNoActionRequired() {
+      return !this.isActionRequired && this.service?.state?.val > ALARM_STATES.ok;
+    },
+
     isBlinking() {
       return this.isActionRequired && this.actionRequiredBlinking;
     },
@@ -201,19 +205,22 @@ export default {
     backgroundIcon() {
       return {
         [this.isActionRequired]: this.actionRequiredIcon,
-        [!this.isActionRequired]: this.noActionRequiredIcon,
+        [this.isNoActionRequired]: this.noActionRequiredIcon,
       }.true || this.service.icon;
     },
 
     backgroundColor() {
       return {
         [this.isActionRequired]: this.actionRequiredColor,
-        [!this.isActionRequired]: this.noActionRequiredColor,
+        [this.isNoActionRequired]: this.noActionRequiredColor,
       }.true || getEntityColor(this.service, this.colorIndicator);
     },
 
     color() {
-      if (this.isActionRequired && this.actionRequiredColor) {
+      if (
+        (this.isActionRequired && this.actionRequiredColor)
+        || (this.isNoActionRequired && this.noActionRequiredColor)
+      ) {
         return getMostReadableTextColor(this.backgroundColor, { level: 'AA', size: 'large' });
       }
 
