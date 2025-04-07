@@ -195,7 +195,7 @@ export default {
     },
 
     isNoActionRequired() {
-      return !this.isActionRequired && this.service?.state?.val === ALARM_STATES.ok;
+      return !this.isActionRequired && this.service?.state?.val > ALARM_STATES.ok;
     },
 
     isBlinking() {
