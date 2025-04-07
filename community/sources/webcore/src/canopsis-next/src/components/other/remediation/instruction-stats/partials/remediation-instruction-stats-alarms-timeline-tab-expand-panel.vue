@@ -81,7 +81,7 @@ export default {
       },
       {
         text: t('common.output'),
-        value: 'output',
+        value: 'fail_reason',
         sortable: false,
       },
       {
