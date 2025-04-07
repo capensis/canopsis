@@ -12,7 +12,6 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#ffffff'
-        active_color: '#000'
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -40,7 +39,6 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#424242'
-        active_color: '#fff'
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -68,7 +66,6 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#ffffff'
-        active_color: '#000'
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
@@ -96,7 +93,6 @@ color_theme:
         success: '#4caf50'
         warning: '#fb8c00'
         background: '#424242'
-        active_color: '#fff'
       state:
         ok: '#00a65a'
         minor: '#fcdc00'
