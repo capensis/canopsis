@@ -5,7 +5,9 @@
     :loading="pending"
     :options="options"
     :total-items="totalItems"
+    :is-expandable-item="isExpandableItem"
     search
+    expand
     advanced-pagination
     @update:options="updateOptions"
   >
@@ -61,6 +63,13 @@
         class="my-2"
       />
     </template>
+    <template #expand="{ item }">
+      <remediation-instruction-stats-alarms-timeline-tab-expand-panel
+        v-if="item.alarm_id"
+        :alarm-id="item.alarm_id"
+        :execution-id="item._id"
+      />
+    </template>
   </c-advanced-data-table>
 </template>
 
@@ -84,9 +93,11 @@ import { useQueryOptions } from '@/hooks/query/options';
 import { useRemdeitionInstructionStatsStore } from '@/hooks/store/modules/remediation-instruction-stats';
 
 import AlarmHorizontalTimeline from '@/components/widgets/alarm/timeline/horizontal-timeline.vue';
+import RemediationInstructionStatsAlarmsTimelineTabExpandPanel
+  from '@/components/other/remediation/instruction-stats/partials/remediation-instruction-stats-alarms-timeline-tab-expand-panel.vue';
 
 export default {
-  components: { AlarmHorizontalTimeline },
+  components: { RemediationInstructionStatsAlarmsTimelineTabExpandPanel, AlarmHorizontalTimeline },
   props: {
     remediationInstruction: {
       type: Object,
@@ -207,6 +218,8 @@ export default {
 
     const { options, updateOptions } = useQueryOptions(query, updateQuery);
 
+    const isExpandableItem = item => !!item.alarm_id;
+
     watch(() => props.interval, fetchList);
     watch(showFailed, fetchList);
 
@@ -220,6 +233,7 @@ export default {
       pending,
       options,
       updateOptions,
+      isExpandableItem,
     };
   },
 };

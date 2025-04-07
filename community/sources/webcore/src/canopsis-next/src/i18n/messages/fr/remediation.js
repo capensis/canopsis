@@ -107,10 +107,12 @@ export default {
     },
     stepsTitles: {
       [REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.manual]: {
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]: 'L\'étape {name} est en cours d\'exécution',
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: 'L\'étape {name} est terminée',
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: 'L\'étape {name} a échoué',
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: 'L\'étape {name} est abandonnée',
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.skipped]: 'L\'étape {name} est ignorée',
+        [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.waiting]: 'L\'étape {name} est en attente',
       },
       [REMEDIATION_INSTRUCTION_EXECUTION_STEP_TYPES.job]: {
         [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: '{name} est terminée',

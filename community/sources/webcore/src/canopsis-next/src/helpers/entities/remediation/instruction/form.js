@@ -183,6 +183,16 @@ export const isInstructionTypeManual = type => type === REMEDIATION_INSTRUCTION_
 export const isInstructionTypeSimpleManual = type => type === REMEDIATION_INSTRUCTION_TYPES.simpleManual;
 
 /**
+ * Check instruction type is any manual
+ *
+ * @param {number} type
+ * @returns {boolean}
+ */
+export const isInstructionTypeAnySimpleManual = type => (
+  isInstructionTypeManual(type) || isInstructionTypeSimpleManual(type)
+);
+
+/**
  * Convert a remediation instruction step operation to form
  *
  * @param {RemediationInstructionStepOperation} [operation]
