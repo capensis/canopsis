@@ -41,7 +41,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`autoinstructioncomplete\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="#6A6A6A"
+    color="#2FAB63"
   >
     assignment
   </v-icon-stub>
@@ -51,7 +51,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`autoinstructionfail\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="#6A6A6A"
+    color="#FF5252"
   >
     assignment
   </v-icon-stub>
@@ -140,7 +140,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructionabort\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="#6A6A6A"
+    color="#979797"
   >
     $vuetify.icons.manual_instruction
   </v-icon-stub>
@@ -150,7 +150,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructioncomplete\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="#6A6A6A"
+    color="#2FAB63"
   >
     $vuetify.icons.manual_instruction
   </v-icon-stub>
@@ -160,7 +160,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`instructionfail\` correctly 1`] = `
 <div>
   <v-icon-stub
-    color="#6A6A6A"
+    color="#FF5252"
   >
     $vuetify.icons.manual_instruction
   </v-icon-stub>

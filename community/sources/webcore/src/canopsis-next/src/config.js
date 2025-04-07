@@ -342,6 +342,7 @@ export const API_ROUTES = {
     configurations: '/api/v4/cat/job-configs',
     executions: '/api/v4/cat/executions',
     jobExecutions: '/api/v4/cat/job-executions',
+    alarmExecutions: '/api/v4/cat/alarm-executions',
     pausedExecutions: '/api/v4/cat/account/paused-executions',
     instructionComments: '/api/v4/cat/instruction-comments',
   },
@@ -564,6 +565,7 @@ export const COLORS = {
       completed: '#2FAB63',
       aborted: '#979797',
       failed: '#FF5252',
+      skipped: '#BDBDBD',
     },
   },
   flowchart: {
