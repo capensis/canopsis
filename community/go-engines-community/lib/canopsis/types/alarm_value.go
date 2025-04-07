@@ -22,9 +22,12 @@ const (
 	RuleNameDeclareTicketRulePrefix = "Ticket declaration rule: "
 	RuleNameRulePrefix              = "Rule: "
 
-	OutputCommentPrefix   = "Comment: "
-	OutputTitlePrefix     = "Title: "
-	OutputComponentPrefix = "Component: "
+	OutputCommentPrefix    = "Comment: "
+	OutputTitlePrefix      = "Title: "
+	OutputComponentPrefix  = "Component: "
+	OutputStepPrefix       = "Step: "
+	OutputJobPrefix        = "Job: "
+	OutputFailReasonPrefix = "Fail reason: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.

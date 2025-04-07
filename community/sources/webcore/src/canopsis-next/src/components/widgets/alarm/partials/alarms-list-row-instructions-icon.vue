@@ -14,6 +14,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { INSTRUCTION_EXECUTION_ICONS } from '@/constants';
 
 import {
@@ -23,6 +25,8 @@ import {
   isInstructionExecutionManual,
 } from '@/helpers/entities/remediation/instruction-execution/form';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     alarm: {
@@ -30,54 +34,52 @@ export default {
       required: true,
     },
   },
-  computed: {
-    alarmInstructionExecutionIcon() {
-      return this.alarm.instruction_execution_icon ?? INSTRUCTION_EXECUTION_ICONS.manualAvailable;
-    },
+  setup(props) {
+    const { tc } = useI18n();
 
-    hasRunningInstruction() {
-      return isInstructionExecutionIconInProgress(this.alarmInstructionExecutionIcon);
-    },
+    const alarmInstructionExecutionIcon = computed(() => (
+      props.alarm.instruction_execution_icon ?? INSTRUCTION_EXECUTION_ICONS.manualAvailable
+    ));
 
-    someOneInstructionIsFailed() {
-      return isInstructionExecutionIconFailed(this.alarmInstructionExecutionIcon);
-    },
+    const hasRunningInstruction = computed(() => (
+      isInstructionExecutionIconInProgress(alarmInstructionExecutionIcon.value)
+    ));
 
-    someOneInstructionIsSuccessful() {
-      return isInstructionExecutionIconSuccess(this.alarmInstructionExecutionIcon);
-    },
+    const someOneInstructionIsFailed = computed(() => (
+      isInstructionExecutionIconFailed(alarmInstructionExecutionIcon.value)
+    ));
 
-    isManualInstructionIcon() {
-      return isInstructionExecutionManual(this.alarmInstructionExecutionIcon);
-    },
+    const someOneInstructionIsSuccessful = computed(() => (
+      isInstructionExecutionIconSuccess(alarmInstructionExecutionIcon.value)
+    ));
 
-    iconName() {
-      if (this.isManualInstructionIcon) {
-        return '$vuetify.icons.manual_instruction';
-      }
+    const isManualInstructionIcon = computed(() => (
+      isInstructionExecutionManual(alarmInstructionExecutionIcon.value)
+    ));
 
-      return 'assignment';
-    },
+    const iconName = computed(() => (
+      isManualInstructionIcon.value ? '$vuetify.icons.manual_instruction' : 'assignment'
+    ));
 
-    iconClass() {
+    const iconClass = computed(() => {
       const classNames = [];
 
-      if (this.hasRunningInstruction) {
+      if (hasRunningInstruction.value) {
         classNames.push('blinking', 'instruction-icon--dotted');
       }
 
-      if (this.someOneInstructionIsFailed) {
+      if (someOneInstructionIsFailed.value) {
         classNames.push('instruction-icon--failed');
       }
 
-      if (this.someOneInstructionIsSuccessful) {
+      if (someOneInstructionIsSuccessful.value) {
         classNames.push('instruction-icon--completed');
       }
 
       return classNames.join(' ');
-    },
+    });
 
-    iconTooltip() {
+    const iconTooltip = computed(() => {
       const {
         running_manual_instructions: runningManualInstructions,
         running_auto_instructions: runningAutoInstructions,
@@ -86,7 +88,7 @@ export default {
         successful_manual_instructions: successfulManualInstructions,
         successful_auto_instructions: successfulAutoInstructions,
         assigned_instructions: assignedInstructions,
-      } = this.alarm;
+      } = props.alarm;
 
       const tooltips = Object.entries({
         runningManualInstructions,
@@ -97,7 +99,7 @@ export default {
         successfulAutoInstructions,
       }).reduce((acc, [key, instructions]) => {
         if (instructions?.length) {
-          acc.push(this.$tc(
+          acc.push(tc(
             `alarm.tooltips.${key}`,
             instructions.length,
             { title: instructions.join(', ') },
@@ -108,11 +110,17 @@ export default {
       }, []);
 
       if (assignedInstructions?.length) {
-        tooltips.push(this.$tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
+        tooltips.push(tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
       }
 
       return `<span class="pre-wrap">${tooltips.join('\n')}</span>`;
-    },
+    });
+
+    return {
+      iconName,
+      iconClass,
+      iconTooltip,
+    };
   },
 };
 </script>

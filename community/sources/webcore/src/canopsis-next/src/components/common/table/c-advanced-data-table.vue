@@ -57,6 +57,7 @@
       :ultra-dense="ultraDense"
       :loader-height="loaderHeight"
       :ellipsis-headers="ellipsisHeaders"
+      :expand-icon="expandIcon"
       checkbox-color="primary"
       @update:options="updateOptions"
     >
@@ -76,12 +77,24 @@
         </slot>
       </template>
 
+      <template v-if="isExpandableItem" #item.data-table-expand="props">
+        <v-icon
+          v-if="checkIsExpandableItem(props.item)"
+          :class="{ 'v-data-table__expand-icon--active': props.isExpanded }"
+          class="v-data-table__expand-icon"
+          @click.stop="props.expand(!props.isExpanded)"
+        >
+          {{ expandIcon }}
+        </v-icon>
+        <span v-else />
+      </template>
+
       <template
         v-if="hasExpandSlot"
         #expanded-item="props"
       >
         <div
-          v-if="isExpandableItem(props.item)"
+          v-if="checkIsExpandableItem(props.item)"
           class="secondary lighten-2"
         >
           <slot
@@ -215,7 +228,7 @@ export default {
     },
     isExpandableItem: {
       type: Function,
-      default: () => true,
+      required: false,
     },
     toolbarProps: {
       type: Object,
@@ -240,6 +253,10 @@ export default {
     loaderHeight: {
       type: [String, Number],
       default: 2,
+    },
+    expandIcon: {
+      type: String,
+      default: '$expand',
     },
   },
   data() {
@@ -322,6 +339,10 @@ export default {
     },
   },
   methods: {
+    checkIsExpandableItem(item) {
+      return this.isExpandableItem ? this.isExpandableItem(item) : true;
+    },
+
     updateOptions(options) {
       this.selected = [];
 
