@@ -41,7 +41,8 @@ func (p *autoWebhookFailProcessor) Process(ctx context.Context, event rpc.AxeEve
 	outputBuilder := strings.Builder{}
 	outputBuilder.WriteString(event.Parameters.Output)
 	if event.Parameters.WebhookFailReason != "" {
-		outputBuilder.WriteString(". Fail reason: ")
+		outputBuilder.WriteString(". ")
+		outputBuilder.WriteString(types.OutputFailReasonPrefix)
 		outputBuilder.WriteString(event.Parameters.WebhookFailReason)
 		outputBuilder.WriteRune('.')
 	}
