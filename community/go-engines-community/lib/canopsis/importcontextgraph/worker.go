@@ -244,6 +244,7 @@ func (w *worker) parseEntities(
 	componentsExist := make(map[string]bool)
 	componentsToDelete := make(map[string]bool)
 	componentsToDisable := make(map[string]bool)
+	componentsToEnable := make(map[string]bool)
 
 	deletedResources := make(map[string]bool)
 	disabledResources := make(map[string]bool)
@@ -358,13 +359,10 @@ func (w *worker) parseEntities(
 
 		switch ci.Action {
 		case ActionSet:
-			if ci.Type == types.EntityTypeComponent {
-				componentInfos[id] = ci.Infos
-				componentsExist[id] = true
-			}
-
+			var mergedEntity Entity
 			if oldEntity.ID == "" {
-				writeModels = append(writeModels, w.updateEntity(ci, Entity{}, id, categoryID, source, now))
+				mergedEntity = w.mergeEntity(ci, Entity{}, id, categoryID, source, now)
+				writeModels = append(writeModels, w.updateEntity(mergedEntity))
 				if ci.Type == types.EntityTypeResource {
 					if _, ok := componentsExist[ci.Component]; !ok {
 						componentsExist[ci.Component] = false
@@ -373,12 +371,18 @@ func (w *worker) parseEntities(
 
 				updatedIds = append(updatedIds, id)
 			} else {
-				writeModels = append(writeModels, w.updateEntity(ci, oldEntity.Entity, oldEntity.ID, categoryID, source, now))
+				mergedEntity = w.mergeEntity(ci, oldEntity.Entity, oldEntity.ID, categoryID, source, now)
+				writeModels = append(writeModels, w.updateEntity(mergedEntity))
 				if ci.Type == types.EntityTypeResource {
 					componentsExist[ci.Component] = true
 				}
 
 				updatedIds = append(updatedIds, oldEntity.ID)
+			}
+
+			if ci.Type == types.EntityTypeComponent {
+				componentInfos[id] = mergedEntity.Infos
+				componentsExist[id] = true
 			}
 
 			if oldEntity.Enabled || ci.Enabled {
@@ -438,7 +442,7 @@ func (w *worker) parseEntities(
 				eventType = types.EventTypeRecomputeEntityService
 			default:
 				if ci.Type == types.EntityTypeComponent {
-					componentInfos[id] = ci.Infos
+					componentsToEnable[id] = true
 				}
 
 				eventType = types.EventTypeEntityToggled
@@ -461,7 +465,6 @@ func (w *worker) parseEntities(
 				disabledResources[id] = true
 			} else if ci.Type == types.EntityTypeComponent {
 				componentsToDisable[id] = true
-				componentInfos[id] = ci.Infos
 
 				for _, resourceID := range oldEntity.Resources {
 					if !deletedResources[resourceID] {
@@ -522,10 +525,10 @@ func (w *worker) parseEntities(
 					Enabled:   true,
 				}
 
-				writeModels = append(writeModels, w.updateEntity(ci, Entity{}, componentName, "", source, now))
+				writeModels = append(writeModels, w.updateEntity(w.mergeEntity(ci, Entity{}, componentName, "", source, now)))
 				updatedComponentEvents = append(updatedComponentEvents, w.createComponentEvent(types.EventTypeEntityUpdated, componentName, now, source, nil))
 			} else {
-				if !oldEntity.Enabled {
+				if !oldEntity.Enabled && !componentsToEnable[oldEntity.ID] {
 					return res, errors.New("can't create resource for disabled component")
 				}
 
@@ -657,7 +660,7 @@ func (w *worker) validate(ci EntityConfiguration) error {
 	return nil
 }
 
-func (w *worker) updateEntity(c EntityConfiguration, oldEntity Entity, id, categoryID, source string, now datetime.CpsTime) mongo.WriteModel {
+func (w *worker) mergeEntity(c EntityConfiguration, oldEntity Entity, id, categoryID, source string, now datetime.CpsTime) Entity {
 	e := Entity{
 		ID:             id,
 		Name:           c.Name,
@@ -698,11 +701,15 @@ func (w *worker) updateEntity(c EntityConfiguration, oldEntity Entity, id, categ
 		}
 	}
 
+	return e
+}
+
+func (w *worker) updateEntity(e Entity) mongo.WriteModel {
 	return mongo.NewUpdateOneModel().
 		SetFilter(bson.M{"_id": e.ID}).
 		SetUpdate(bson.M{
 			"$set":         e,
-			"$setOnInsert": bson.M{"created": now},
+			"$setOnInsert": bson.M{"created": e.Imported},
 			"$unset": bson.M{
 				"soft_deleted":                    "",
 				"resolve_deleted_event_sent":      "",
