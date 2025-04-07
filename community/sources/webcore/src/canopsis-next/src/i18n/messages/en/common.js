@@ -304,6 +304,7 @@ export default {
   loadingItems: 'Loading items...',
   lastComment: 'Last comment',
   serialName: 'Serial name',
+  customField: 'Custom field|Custom fields',
   variableTypes: {
     string: 'String',
     number: 'Number',
