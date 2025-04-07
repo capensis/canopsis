@@ -72,7 +72,7 @@ export default {
     const dataStorageSettings = await this.fetchDataStorageSettingsWithoutStore();
 
     this.form = dataStorageSettingsToForm(dataStorageSettings.config);
-    this.history = dataStorageSettings.history;
+    this.history = dataStorageSettings.history ?? {};
   },
   methods: {
     showConfirmationPhraseModal({ action, ...config }) {
