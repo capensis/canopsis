@@ -6,7 +6,11 @@
       :width="labelWidth"
     ) {{ $t(`eventFilter.types.${eventFilter.type}`) }}
     c-information-block-row(:label="$t('common.priority')", :width="labelWidth") {{ eventFilter.priority || '-' }}
-    c-information-block-row(:label="$t('common.author')", :width="labelWidth") {{ eventFilter.author.display_name }}
+    c-information-block-row(
+      v-if="eventFilter.author",
+      :label="$t('common.author')",
+      :width="labelWidth"
+    ) {{ eventFilter.author.display_name }}
     c-information-block-row(:label="$t('common.created')", :width="labelWidth") {{ eventFilter.created | date }}
     c-information-block-row(:label="$t('common.updated')", :width="labelWidth") {{ eventFilter.updated | date }}
     c-information-block-row(
