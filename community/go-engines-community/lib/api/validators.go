@@ -127,6 +127,7 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 	v.RegisterStructValidation(pbhValidator.ValidateCalendarRequest, pbehavior.CalendarByEntityIDRequest{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidateEntityCreateRequest, pbehavior.BulkEntityCreateRequestItem{})
 	v.RegisterStructValidationCtx(pbhValidator.ValidateConnectorCreateRequest, pbehavior.BulkConnectorCreateRequestItem{})
+	v.RegisterStructValidationCtx(pbhValidator.ValidateConnectorEditRequest, pbehavior.BulkConnectorEditRequestItem{})
 
 	pbhReasonUniqueIDValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "ID")
 	pbhReasonUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Name")
