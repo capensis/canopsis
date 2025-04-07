@@ -35,3 +35,9 @@ Identifiants par défaut : `cpsmongo` / `canopsis`.
 La base de données PostgreSQL est accessible avec la commande `psql -U cpspostgres -W -d canopsis -h localhost`.
 
 Identifiants par défaut : `cpspostgres` / `canopsis`.
+
+### PostgreSQL Tech_metrics
+
+La base de données PostgreSQL est accessible avec la commande `psql -U cpspostgres_tech_metrics -W -d canopsis_tech_metrics -h localhost`.
+
+Identifiants par défaut : `cpspostgres_tech_metrics` / `canopsis`.
