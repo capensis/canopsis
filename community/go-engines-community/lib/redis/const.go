@@ -40,9 +40,7 @@ const (
 	PbehaviorTypesKey             = "pbehavior-types"
 	PbehaviorDefaultActiveTypeKey = "pbehavior-default-active-type"
 	PbehaviorComputedKey          = "pbehavior-computed-"
-
-	//todo: we should rename this key and do not use "pbehavior-computed-" prefix since it's not a computed pbehavior.
-	PbehaviorComputedInheritedServices = "pbehavior-computed-inherited-services"
+	PbehaviorInheritedServices    = "pbehavior-inherited-services"
 
 	DynamicInfosDictionaryPeriodicalLockKey = "dynamic-infos-dictionary-periodical-lock-key"
 
