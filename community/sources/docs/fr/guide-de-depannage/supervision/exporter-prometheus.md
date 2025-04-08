@@ -39,6 +39,31 @@ L’exporter peut être lancé avec les options suivantes :
 | `-d`                      | `false`           | Active les logs de debug |
 | `-updateMetricsInterval`  | `10s`             | Fréquence de mise à jour des métriques |
 
+=== "Paquets RPM"
+
+    A venir
+
+=== "Docker"
+
+    Un service spécifique est distribué dans l'environnement de référence. Il est attaché au profil "prometheus".  
+    Pour démarrer l'exporter, veuillez exécuter la commande suivante :  
+
+    ```sh
+    CPS_EDITION=pro docker compose --profile=prometheus up -d prometheus-exporter
+    ```
+
+    Les logs associés sont alors :
+
+    ```sh
+    CPS_EDITION=pro docker compose --profile=prometheus logs  prometheus-exporter
+    prometheus-exporter-1  | 2025-04-08T14:10:00Z INF git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo/mongo.go:532 > replica set is detected, transactions are enabled
+    prometheus-exporter-1  | 2025-04-08T14:10:00Z INF git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/cmd/prometheus-exporter/main.go:140 > prometheus exporter started
+    ```
+
+=== "Helm"
+
+    A venir
+
 ## Configuration de Prometheus
 
 Pour intégrer cet exporter à Prometheus, ajoutez la configuration suivante dans votre fichier `prometheus.yml` :
@@ -53,3 +78,8 @@ scrape_configs:
 
 !!! tip "Conseil"
     Veillez à ce que la valeur de scrape_interval dans Prometheus soit supérieure ou égale à -updateMetricsInterval côté exporter. Sinon, Prometheus risque de collecter des valeurs identiques ou obsolètes.
+
+
+
+
+
