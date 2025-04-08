@@ -292,8 +292,7 @@ func (u *updater) Update(ctx context.Context, m *Metrics) {
 			}
 		}
 
-		//todo: must do -1, because of "pbehavior-computed-inherited-services" key, which is always in redis, but not an active pbehavior.
-		metricsValues.SetGauge(ActivePBehaviorsGauge, float64(activePbh-1))
+		metricsValues.SetGauge(ActivePBehaviorsGauge, float64(activePbh))
 	}()
 
 	opts := options.FindOne().SetSort(bson.M{"updated": -1}).SetProjection(bson.M{"updated": 1})
