@@ -39,6 +39,24 @@ L’exporter peut être lancé avec les options suivantes :
 | `-d`                      | `false`           | Active les logs de debug |
 | `-updateMetricsInterval`  | `10s`             | Fréquence de mise à jour des métriques |
 
+
+## Variables d’environnement
+
+L’exporter nécessite que les variables d’environnement suivantes soient définies à l’exécution :
+
+- `CPS_REDIS_URL` : URI de connexion à Redis.
+- `CPS_MONGO_URL` : URI de connexion à MongoDB.
+
+### Préférence de lecture MongoDB
+
+Afin de réduire la charge sur le **noeud primaire MongoDB**, il est recommandé d’utiliser l’option `readPreference=secondary` dans l’URI de connexion. Cela permet à l’exporter de lire les données à partir des **noeuds secondaires** du replica set, sans impacter les opérations d’écriture sur le primaire.
+
+**Exemple d’URI :**
+
+```
+mongodb://cpsmongo:canopsis@localhost:27017,localhost:27018,localhost:27019/canopsis?replicaSet=cps&readPreference=secondary
+```
+
 === "Paquets RPM"
 
     A venir
