@@ -138,7 +138,7 @@ func (u *updater) Update(ctx context.Context, m *Metrics) {
 			u.logger.Error().Err(err).Msg("failed to count number of active users from db")
 		}
 
-		metricsValues.SetGauge(ActiveUsersGauge, float64(count))
+		metricsValues.SetGauge(EnabledUsersGauge, float64(count))
 	}()
 
 	wg.Add(1)
@@ -186,7 +186,7 @@ func (u *updater) Update(ctx context.Context, m *Metrics) {
 			u.logger.Error().Err(err).Msg("failed to count number of active alarms from db")
 		}
 
-		metricsValues.SetGauge(ActiveAlarmsGauge, float64(count))
+		metricsValues.SetGauge(OpenedAlarmsGauge, float64(count))
 	}()
 
 	wg.Add(1)
@@ -198,7 +198,7 @@ func (u *updater) Update(ctx context.Context, m *Metrics) {
 			u.logger.Error().Err(err).Msg("failed to count number of closed alarms from db")
 		}
 
-		metricsValues.SetGauge(ClosedAlarmsGauge, float64(count))
+		metricsValues.SetGauge(ResolvedAlarmsGauge, float64(count))
 	}()
 
 	wg.Add(1)
@@ -210,7 +210,7 @@ func (u *updater) Update(ctx context.Context, m *Metrics) {
 			u.logger.Error().Err(err).Msg("failed to get event filter failures from db")
 		}
 
-		metricsValues.SetGauge(EnrichmentErrorsGauge, float64(count))
+		metricsValues.SetGauge(EventfilterErrorsGauge, float64(count))
 	}()
 
 	wg.Add(1)
@@ -222,7 +222,7 @@ func (u *updater) Update(ctx context.Context, m *Metrics) {
 			u.logger.Error().Err(err).Msg("failed to get active connections")
 		}
 
-		metricsValues.SetGauge(ConnectedUsersGauge, float64(count))
+		metricsValues.SetGauge(UserConnectionsGauge, float64(count))
 	}()
 
 	wg.Add(1)
