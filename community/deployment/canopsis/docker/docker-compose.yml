@@ -205,3 +205,10 @@ services:
       timeout: 30s
       retries: 3
       start_period: 3m
+
+  prometheus-exporter:
+    <<: *initial_config_base
+    profiles:
+      - prometheus
+    image: ${DOCKER_REPOSITORY}community/prometheus-exporter:${CANOPSIS_IMAGE_TAG}
+
