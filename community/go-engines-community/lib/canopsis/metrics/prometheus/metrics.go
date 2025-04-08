@@ -9,13 +9,13 @@ import (
 const canopsisMetricsNamespace = "canopsis"
 
 const (
-	EnrichmentErrorsGauge = iota
-	ActiveAlarmsGauge
-	ClosedAlarmsGauge
+	EventfilterErrorsGauge = iota
+	OpenedAlarmsGauge
+	ResolvedAlarmsGauge
 	ActiveEntitiesGauge
 	DisabledEntitiesGauge
-	ConnectedUsersGauge
-	ActiveUsersGauge
+	UserConnectionsGauge
+	EnabledUsersGauge
 	EventFiltersGauge
 	ActivePBehaviorsGauge
 	MetaAlarmsRulesGauge
@@ -43,14 +43,15 @@ type MetricsValue struct {
 func NewMetricsValues() *MetricsValue {
 	return &MetricsValue{
 		gauges: map[int]float64{
-			EnrichmentErrorsGauge:  0,
-			ActiveAlarmsGauge:      0,
-			ClosedAlarmsGauge:      0,
+			EventfilterErrorsGauge: 0,
+			OpenedAlarmsGauge:      0,
+			ResolvedAlarmsGauge:    0,
 			ActiveEntitiesGauge:    0,
 			DisabledEntitiesGauge:  0,
-			ConnectedUsersGauge:    0,
-			ActiveUsersGauge:       0,
+			UserConnectionsGauge:   0,
+			EnabledUsersGauge:      0,
 			EventFiltersGauge:      0,
+			ActivePBehaviorsGauge:  0,
 			MetaAlarmsRulesGauge:   0,
 			DynamicInfosRulesGauge: 0,
 		},
@@ -94,20 +95,20 @@ type Metrics struct {
 func NewMetrics() *Metrics {
 	return &Metrics{
 		gauges: map[int]prometheus.Gauge{
-			EnrichmentErrorsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+			EventfilterErrorsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: canopsisMetricsNamespace,
-				Name:      "enrichment_errors",
-				Help:      "Number of enrichment errors",
+				Name:      "eventfilter_errors",
+				Help:      "Number of event filter errors",
 			}),
-			ActiveAlarmsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+			OpenedAlarmsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: canopsisMetricsNamespace,
-				Name:      "active_alarms",
-				Help:      "Number of active alarms",
+				Name:      "opened_alarms",
+				Help:      "Number of opened alarms",
 			}),
-			ClosedAlarmsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+			ResolvedAlarmsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: canopsisMetricsNamespace,
-				Name:      "closed_alarms",
-				Help:      "Number of closed alarms",
+				Name:      "resolved_alarms",
+				Help:      "Number of resolved alarms",
 			}),
 			ActiveEntitiesGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: canopsisMetricsNamespace,
@@ -119,15 +120,15 @@ func NewMetrics() *Metrics {
 				Name:      "disabled_entities",
 				Help:      "Number of disabled entities",
 			}),
-			ConnectedUsersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+			UserConnectionsGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: canopsisMetricsNamespace,
-				Name:      "connected_users",
-				Help:      "Number of connected users",
+				Name:      "user_connections",
+				Help:      "Number of user connections",
 			}),
-			ActiveUsersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
+			EnabledUsersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: canopsisMetricsNamespace,
-				Name:      "active_users",
-				Help:      "Number of active users",
+				Name:      "enabled_users",
+				Help:      "Number of enabled users",
 			}),
 			EventFiltersGauge: prometheus.NewGauge(prometheus.GaugeOpts{
 				Namespace: canopsisMetricsNamespace,

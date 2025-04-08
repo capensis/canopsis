@@ -7,13 +7,13 @@ This exporter exposes internal metrics from Canopsis in prometheus-compatible fo
 - **Exporter Path**: `/metrics`
 - **Port**: `9180` by default. You can change it using the `-port` flag.
 - **Custom Metrics**:
-  - `canopsis_enrichment_errors`: Number of enrichment errors
-  - `canopsis_active_alarms`: Number of active alarms
-  - `canopsis_closed_alarms`: Number of closed alarms
+  - `canopsis_eventfilter_errors`: Number of event filter errors
+  - `canopsis_opened_alarms`: Number of opened alarms
+  - `canopsis_resolved_alarms`: Number of resolved alarms
   - `canopsis_active_entities`: Number of active entities
   - `canopsis_disabled_entities`: Number of disabled entities
-  - `canopsis_connected_users`: Number of connected users
-  - `canopsis_active_users`: Number of active users
+  - `canopsis_user_connections`: Number of user connections
+  - `canopsis_enabled_users`: Number of enabled users
   - `canopsis_event_filters`: Number of event filters
   - `canopsis_active_pbehavior`: Number of active pbehaviors
   - `canopsis_meta_alarms_rules`: Number of meta alarm rules
