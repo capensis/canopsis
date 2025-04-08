@@ -97,19 +97,11 @@ systemctl enable --now disable-transparent-huge-pages
 
 ### Ajout des dépôts tiers
 
-=== "RHEL 8"
-    Ajout du dépôt pour PostgreSQL :
+Ajout du dépôt pour PostgreSQL :
 
-    ```sh
-    dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-    ```
-
-=== "RHEL 9"
-    Ajout du dépôt pour PostgreSQL :
-
-    ```sh
-    dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-    ```
+```sh
+dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(cat /etc/redhat-release | cut -d'.' -f1 | awk '{print $NF}')-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+```
 
 Ajout du dépôt pour MongoDB :
 
@@ -675,13 +667,13 @@ d'une mise à jour de routine de l'ensemble des paquets système.
 === "Canopsis Community (édition open-source)"
 
     ```sh
-    dnf versionlock add --raw 'canopsis-24.10.*'
-    dnf versionlock add --raw 'canopsis-webui-24.10.*'
+    dnf versionlock add --raw 'canopsis-25.04.*'
+    dnf versionlock add --raw 'canopsis-webui-25.04.*'
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
-    dnf versionlock add --raw 'canopsis-pro-24.10.*'
-    dnf versionlock add --raw 'canopsis-webui-24.10.*'
+    dnf versionlock add --raw 'canopsis-pro-25.04.*'
+    dnf versionlock add --raw 'canopsis-webui-25.04.*'
     ```
