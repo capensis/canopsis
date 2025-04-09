@@ -43,8 +43,9 @@ type Colors struct {
 		Success      string `bson:"success" json:"success" binding:"required,iscolor"`
 		Warning      string `bson:"warning" json:"warning" binding:"required,iscolor"`
 		Background   string `bson:"background" json:"background" binding:"required,iscolor"`
+		ActiveColor  string `bson:"active_color" json:"active_color" binding:"required,iscolor"`
 		ErrorIcons   string `bson:"error_icons" json:"error_icons" binding:"required,iscolor"`
-		WarningIcons string `bson:"warning_icons"json:"warning_icons" binding:"required,iscolor"`
+		WarningIcons string `bson:"warning_icons" json:"warning_icons" binding:"required,iscolor"`
 		InfoIcons    string `bson:"info_icons" json:"info_icons" binding:"required,iscolor"`
 		SuccessIcons string `bson:"success_icons" json:"success_icons" binding:"required,iscolor"`
 	} `bson:"main" json:"main"`

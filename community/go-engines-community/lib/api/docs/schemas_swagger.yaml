@@ -1242,6 +1242,8 @@ definitions:
         properties:
           accent:
             type: string
+          active_color:
+            type: string
           background:
             type: string
           error:
@@ -1266,6 +1268,7 @@ definitions:
             type: string
         required:
         - accent
+        - active_color
         - background
         - error
         - error_icons
