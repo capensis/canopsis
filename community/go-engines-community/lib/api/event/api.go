@@ -134,7 +134,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 
 	switch eventType {
 	case types.EventTypeCheck, types.EventTypeMetaAlarm, types.EventTypeChangestate,
-		types.EventTypeContextUpdate, types.EventTypeJunitTestSuiteUpdated:
+		types.EventTypeJunitTestSuiteUpdated:
 		state, isNotInt, err := getIntField(value, "state")
 
 		if err != nil {
