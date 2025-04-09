@@ -40,7 +40,7 @@ type MetricsValue struct {
 	gaugeVectorsMx sync.Mutex
 }
 
-func NewMetricsValues() *MetricsValue {
+func newMetricsValues() *MetricsValue {
 	return &MetricsValue{
 		gauges: map[int]float64{
 			EventfilterErrorsGauge: 0,
