@@ -101,7 +101,7 @@ func NewUpdater(
 func (u *updater) Update(ctx context.Context, m *Metrics) {
 	u.logger.Debug().Msg("fetching metrics from the db")
 
-	metricsValues := NewMetricsValues()
+	metricsValues := newMetricsValues()
 
 	var wg sync.WaitGroup
 
