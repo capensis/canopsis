@@ -70,7 +70,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                  $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
       security:
         - { }
   /alarm-counters:
@@ -1328,7 +1328,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                          $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         400:
           description: Bad Request
           content:
@@ -1349,7 +1349,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.CreateRequest'
         required: true
       responses:
         201:
@@ -1357,7 +1357,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         400:
           description: Bad Request
           content:
@@ -1382,7 +1382,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         404:
           description: Not Found
           content:
@@ -1405,7 +1405,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Payload'
+              $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.UpdateRequest'
         required: true
       responses:
         200:
@@ -1413,7 +1413,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.BroadcastMessage'
+                $ref: 'schemas_swagger.yaml#/definitions/broadcastmessage.Response'
         400:
           description: Bad Request
           content:
@@ -3513,7 +3513,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                          $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         400:
           description: Bad Request
           content:
@@ -3575,7 +3575,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         400:
           description: Bad Request
           content:
@@ -3600,7 +3600,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         404:
           description: Not Found
           content:
@@ -3664,7 +3664,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Theme'
+                $ref: 'schemas_swagger.yaml#/definitions/colortheme.Response'
         400:
           description: Bad Request
           content:
@@ -8234,7 +8234,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8279,7 +8279,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8300,7 +8300,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -8333,7 +8333,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8358,7 +8358,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         404:
           description: Not Found
           content:
@@ -8381,7 +8381,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -8414,7 +8414,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Exception'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorexception.Response'
         400:
           description: Bad Request
           content:
@@ -8517,7 +8517,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                          $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         400:
           description: Bad Request
           content:
@@ -8538,7 +8538,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.CreateRequest'
             examples:
               create:
                 summary: Create
@@ -8554,7 +8554,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         400:
           description: Bad Request
           content:
@@ -8579,7 +8579,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         404:
           description: Not Found
           content:
@@ -8602,7 +8602,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Request'
+              $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.UpdateRequest'
             examples:
               update:
                 summary: Update
@@ -8618,7 +8618,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Reason'
+                $ref: 'schemas_swagger.yaml#/definitions/pbehaviorreason.Response'
         400:
           description: Bad Request
           content:
