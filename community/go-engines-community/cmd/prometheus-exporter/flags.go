@@ -12,7 +12,7 @@ const (
 
 func (f *Flags) ParseArgs() {
 	flag.BoolVar(&f.Version, "version", false, "Show the version information")
-	flag.Int64Var(&f.Port, "port", defaultPort, "Server port")
+	flag.IntVar(&f.Port, "port", defaultPort, "Server port")
 	flag.BoolVar(&f.Debug, "d", false, "debug")
 	flag.DurationVar(&f.UpdateMetricsInterval, "updateMetricsInterval", defaultInterval, "Duration to wait between two run of update metrics processes")
 	flag.Parse()
@@ -20,7 +20,7 @@ func (f *Flags) ParseArgs() {
 
 type Flags struct {
 	UpdateMetricsInterval time.Duration
-	Port                  int64
+	Port                  int
 	Version               bool
 	Debug                 bool
 }
