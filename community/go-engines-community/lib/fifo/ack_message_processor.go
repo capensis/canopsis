@@ -44,7 +44,7 @@ func (p *ackMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 				},
 			}
 
-			if event.EventType == types.EventTypeCheck || event.EventType == types.EventTypeContextUpdate {
+			if event.EventType == types.EventTypeCheck {
 				isOkState := event.State == types.AlarmStateOK
 				eventMetric.IsOkState = &isOkState
 			}
