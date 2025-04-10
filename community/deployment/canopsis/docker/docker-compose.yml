@@ -140,6 +140,7 @@ services:
       - TIMESCALEDB_TELEMETRY=off
     volumes:
       - timescaledata:/var/lib/postgresql/data
+      - ./files/postgresql/canopsis.sh:/docker-entrypoint-initdb.d/canopsis.sh
       - ./files/postgresql/tech_metrics.sh:/docker-entrypoint-initdb.d/tech_metrics.sh
     shm_size: 1g
     healthcheck:
