@@ -1,11 +1,11 @@
 import { kebabCase, merge, pick } from 'lodash';
 
 import { DEFAULT_THEME_COLORS } from '@/config';
+import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants';
 
 import { colorToRgba, getDarkenColor, isDarkColor } from '@/helpers/color';
-import { convertMainToVuetifyVariables, themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
-
-import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants/theme';
+import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
+import { convertTypeColors } from '@/helpers/entities/theme/form';
 
 export const systemThemeMixin = {
   data() {
@@ -52,6 +52,8 @@ export const systemThemeMixin = {
 
     ejectCSS() {
       document.head.removeChild(this.styleElement);
+
+      delete this.styleElement;
     },
 
     setTheme(theme) {
@@ -63,10 +65,12 @@ export const systemThemeMixin = {
       const isDark = isDarkColor(main.background);
 
       const vuetifyVariables = merge({}, DEFAULT_THEME_COLORS, {
-        ...convertMainToVuetifyVariables(main),
         table,
         state,
         applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
+
+        ...main,
+        ...convertTypeColors(main),
       });
 
       const variables = themePropertiesToCSSVariables(vuetifyVariables);
@@ -75,8 +79,8 @@ export const systemThemeMixin = {
       this.$vuetify.theme.themes.dark = variables;
       this.$vuetify.theme.themes.light = variables;
 
-      const lightBaseColor = black;
-      const darkBaseColor = white;
+      const lightBaseColor = isDark ? black : main.active_color;
+      const darkBaseColor = isDark ? main.active_color : white;
 
       const typeBackgroundColors = pick(vuetifyVariables, [
         'error-background',
