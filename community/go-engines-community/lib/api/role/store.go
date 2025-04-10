@@ -4,11 +4,14 @@ import (
 	"cmp"
 	"context"
 	"errors"
+	"fmt"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -30,7 +33,7 @@ type Store interface {
 	GetTemplates(ctx context.Context) ([]Template, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, userInterfaceAdapter config.UserInterfaceAdapter) Store {
 	return &store{
 		dbClient:               dbClient,
 		dbCollection:           dbClient.Collection(mongo.RoleCollection),
@@ -40,6 +43,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		defaultSearchByFields:  []string{"_id", "name", "description"},
 		defaultSortBy:          "name",
 		authorProvider:         authorProvider,
+		userInterfaceAdapter:   userInterfaceAdapter,
 	}
 }
 
@@ -53,6 +57,8 @@ type store struct {
 	defaultSortBy          string
 
 	authorProvider author.Provider
+
+	userInterfaceAdapter config.UserInterfaceAdapter
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -64,6 +70,14 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+
+	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
+	if err != nil {
+		return nil, err
+	}
+
+	pipeline = append(pipeline, uiThemePipeline...)
+
 	if r.Permission != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
 	}
@@ -106,6 +120,14 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+
+	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
+	if err != nil {
+		return nil, err
+	}
+
+	pipeline = append(pipeline, uiThemePipeline...)
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -150,6 +172,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			"permissions": transformPermissionsToDoc(r.Permissions, perms, widgetPerms),
 			"auth_config": r.AuthConfig,
 			"author":      r.Author,
+			"ui_theme":    r.UITheme,
 			"created":     now,
 			"updated":     now,
 		})
@@ -202,6 +225,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 				"permissions": transformPermissionsToDoc(r.Permissions, perms, widgetPerms),
 				"auth_config": r.AuthConfig,
 				"author":      r.Author,
+				"ui_theme":    r.UITheme,
 				"updated":     now,
 			}},
 		)
@@ -366,6 +390,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"author":      bson.M{"$first": "$author"},
 			"created":     bson.M{"$first": "$created"},
 			"updated":     bson.M{"$first": "$updated"},
+			"ui_theme":    bson.M{"$first": "$ui_theme"},
 			"permissions": bson.M{"$push": bson.M{"$cond": bson.M{
 				"if": "$permissions.model",
 				"then": bson.M{"$mergeObjects": bson.A{
@@ -605,4 +630,43 @@ func getPermissions(ctx context.Context, permissionCollection mongo.DbCollection
 	}
 
 	return permissions, widgetPermissionsByViewID, nil
+}
+
+func (s *store) getUiThemePipeline(ctx context.Context, authorProvider author.Provider) ([]bson.M, error) {
+	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user interface config: %w", err)
+	}
+
+	pipeline := []bson.M{
+		{
+			"$addFields": bson.M{
+				"ui_theme": bson.M{
+					"$cond": bson.M{
+						"if": bson.M{
+							"$or": bson.A{
+								bson.M{"$eq": bson.A{"$ui_theme", ""}},
+								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
+							},
+						},
+						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
+						"else": "$ui_theme",
+					},
+				},
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":         mongo.ColorThemeCollection,
+				"localField":   "ui_theme",
+				"foreignField": "_id",
+				"as":           "ui_theme",
+			},
+		},
+		{
+			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
+		},
+	}
+
+	return append(pipeline, authorProvider.PipelineForField("ui_theme.author")...), nil
 }
