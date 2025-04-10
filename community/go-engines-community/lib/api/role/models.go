@@ -2,6 +2,7 @@ package role
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -29,6 +30,8 @@ type EditRequest struct {
 
 	AuthConfig security.AuthMethodConf `json:"auth_config"`
 	Author     string                  `json:"author" swaggerignore:"true"`
+
+	UITheme string `json:"ui_theme" binding:"max=255"`
 }
 
 type BulkUpdatePermissionsRequestItem struct {
@@ -51,6 +54,8 @@ type Response struct {
 	Author  *author.Author    `bson:"author,omitempty" json:"author,omitempty"`
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
 	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+
+	UITheme colortheme.Response `bson:"ui_theme" json:"ui_theme"`
 }
 
 type Permission struct {
