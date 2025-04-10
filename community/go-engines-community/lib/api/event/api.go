@@ -132,10 +132,9 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		return false
 	}
 
-	if eventType == types.EventTypeCheck ||
-		eventType == types.EventTypeMetaAlarm ||
-		eventType == types.EventTypeChangestate ||
-		eventType == types.EventTypeJunitTestSuiteUpdated {
+	switch eventType {
+	case types.EventTypeCheck, types.EventTypeMetaAlarm, types.EventTypeChangestate,
+		types.EventTypeJunitTestSuiteUpdated:
 		state, isNotInt, err := getIntField(value, "state")
 
 		if err != nil {
@@ -235,7 +234,8 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		sourceType = types.SourceTypeResource
 	}
 
-	if sourceType == types.SourceTypeConnector && eventType == types.EventTypeCheck {
+	if sourceType == types.SourceTypeConnector && (eventType == types.EventTypeCheck ||
+		eventType == types.EventTypeContextUpdate) {
 		a.logger.Warn().Str("key", "source_type").Msg("cannot create check event for connector")
 		return false
 	}
