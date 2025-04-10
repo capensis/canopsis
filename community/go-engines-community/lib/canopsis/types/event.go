@@ -46,6 +46,9 @@ const (
 	EventTypeUnsnooze    = "unsnooze"
 	EventTypeUncancel    = "uncancel"
 
+	// EventTypeContextUpdate is used to send a context graph update event without counting it and updating LastEventDate
+	EventTypeContextUpdate = "contextupdate"
+
 	EventTypeDeclareTicketWebhook = "declareticketwebhook"
 	EventTypeWebhookStarted       = "webhookstarted"
 	EventTypeWebhookCompleted     = "webhookcompleted"
@@ -282,21 +285,19 @@ func (e *Event) InjectExtraInfos(source []byte) error {
 // IsContextable tells you if the given event can lead to context enrichment.
 func (e *Event) IsContextable() bool {
 	switch e.EventType {
-	case EventTypeCheck, EventTypeMetaAlarm,
+	case EventTypeCheck, EventTypeContextUpdate, EventTypeMetaAlarm,
 		EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
-	default:
-		return false
 	}
+	return false
 }
 
 func (e *Event) IsOnlyServiceUpdate() bool {
 	switch e.EventType {
 	case EventTypeEntityToggled, EventTypeEntityUpdated, EventTypeResolveDeleted:
 		return true
-	default:
-		return false
 	}
+	return false
 }
 
 // IsValid checks if an Event is valid for Canopsis processing.
@@ -553,6 +554,7 @@ func setMapStringStringField[T any | string](field reflect.Value, value map[stri
 func isValidEventType(t string) bool {
 	switch t {
 	case EventTypeCheck,
+		EventTypeContextUpdate,
 		EventTypeActivate,
 		EventTypeAck,
 		EventTypeAckremove,
