@@ -35,19 +35,19 @@ type Response struct {
 
 type Colors struct {
 	Main struct {
-		Primary      string `bson:"primary" json:"primary" binding:"required,iscolor"`
-		Secondary    string `bson:"secondary" json:"secondary" binding:"required,iscolor"`
-		Accent       string `bson:"accent" json:"accent" binding:"required,iscolor"`
-		Error        string `bson:"error" json:"error" binding:"required,iscolor"`
-		Info         string `bson:"info" json:"info" binding:"required,iscolor"`
-		Success      string `bson:"success" json:"success" binding:"required,iscolor"`
-		Warning      string `bson:"warning" json:"warning" binding:"required,iscolor"`
-		Background   string `bson:"background" json:"background" binding:"required,iscolor"`
-		ActiveColor  string `bson:"active_color" json:"active_color" binding:"required,iscolor"`
-		ErrorIcons   string `bson:"error_icons" json:"error_icons" binding:"required,iscolor"`
-		WarningIcons string `bson:"warning_icons" json:"warning_icons" binding:"required,iscolor"`
-		InfoIcons    string `bson:"info_icons" json:"info_icons" binding:"required,iscolor"`
-		SuccessIcons string `bson:"success_icons" json:"success_icons" binding:"required,iscolor"`
+		Primary           string `bson:"primary" json:"primary" binding:"required,iscolor"`
+		Secondary         string `bson:"secondary" json:"secondary" binding:"required,iscolor"`
+		Accent            string `bson:"accent" json:"accent" binding:"required,iscolor"`
+		Error             string `bson:"error" json:"error" binding:"required,iscolor"`
+		Info              string `bson:"info" json:"info" binding:"required,iscolor"`
+		Success           string `bson:"success" json:"success" binding:"required,iscolor"`
+		Warning           string `bson:"warning" json:"warning" binding:"required,iscolor"`
+		Background        string `bson:"background" json:"background" binding:"required,iscolor"`
+		ActiveColor       string `bson:"active_color" json:"active_color" binding:"required,iscolor"`
+		ErrorBackground   string `bson:"error_background" json:"error_background" binding:"required,iscolor"`
+		WarningBackground string `bson:"warning_background" json:"warning_background" binding:"required,iscolor"`
+		InfoBackground    string `bson:"info_background" json:"info_background" binding:"required,iscolor"`
+		SuccessBackground string `bson:"success_background" json:"success_background" binding:"required,iscolor"`
 	} `bson:"main" json:"main"`
 	Table struct {
 		Background    string `bson:"background" json:"background" binding:"required,iscolor"`
