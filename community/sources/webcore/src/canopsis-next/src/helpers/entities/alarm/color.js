@@ -7,7 +7,13 @@ import { ALARM_STATES, ALARM_STATUSES } from '@/constants';
  * @param {number} impactState
  * @returns {string}
  */
-export const getAlarmImpactStateColor = impactState => COLORS.impactState[impactState];
+export const getAlarmImpactStateColor = (impactState) => {
+  const divider = Math.floor(COLORS.impactState.length / COLORS.impactStateGrouped.length);
+
+  return COLORS.impactStateGrouped[
+    Math.min(Math.floor(impactState / divider), COLORS.impactStateGrouped.length - 1)
+  ];
+};
 
 /**
  * Get color by entity impact state

@@ -93,6 +93,7 @@ import { MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { convertObjectToTreeview } from '@/helpers/treeview';
+import { getThemeVariableKeyFromCssVariable } from '@/helpers/entities/theme/entity';
 
 import { entityHandlebarsTagsHelper } from '@/mixins/widget/handlebars/entity-tags-helper';
 
@@ -212,12 +213,18 @@ export default {
       }.true || getEntityColor(this.service, this.colorIndicator);
     },
 
-    color() {
-      if (this.isActionRequired && this.actionRequiredColor) {
-        return getMostReadableTextColor(this.backgroundColor, { level: 'AA', size: 'large' });
+    realBackgroundColor() {
+      const colorKey = getThemeVariableKeyFromCssVariable(this.backgroundColor);
+
+      if (colorKey === this.backgroundColor) {
+        return this.backgroundColor;
       }
 
-      return 'white';
+      return this.$vuetify.theme.currentTheme[colorKey];
+    },
+
+    color() {
+      return getMostReadableTextColor(this.realBackgroundColor, { level: 'AA', size: 'large' });
     },
 
     itemClasses() {
@@ -294,6 +301,7 @@ export default {
 <style lang="scss" scoped>
 .service-weather-item {
   overflow: hidden;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
 
   &__content > * {
     margin-right: 2px;

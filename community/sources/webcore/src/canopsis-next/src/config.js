@@ -407,13 +407,17 @@ export const API_ROUTES = {
 };
 
 export const COLORS = {
-  primary: '#2fab63',
-  secondary: '#2b3e4f',
-  accent: '#82b1ff',
-  error: '#ff5252',
-  info: '#2196f3',
-  success: '#4caf50',
-  warning: '#fb8c00',
+  primary: '#2DAC61',
+  secondary: '#2B3E4F',
+  accent: '#678CCA',
+  error: '#FFCABE',
+  errorIcons: '#D22E2E',
+  info: '#A6D9FF',
+  infoIcons: '#0A6EBD',
+  success: '#90DFB1',
+  successIcons: '#22874C',
+  warning: '#FFD27A',
+  warningIcons: '#FB8C00',
   background: '#ffffff',
   activeColor: '#000000',
   table: {
@@ -423,10 +427,10 @@ export const COLORS = {
     hoverRowColor: '#F5F5F5',
   },
   state: {
-    ok: '#00a65a',
-    minor: '#fcdc00',
-    major: '#ff9900',
-    critical: '#f56954',
+    ok: '#24834C',
+    minor: '#FFF176',
+    major: '#FFA800',
+    critical: '#C62828',
     pause: '#808080',
   },
   status: {
@@ -515,6 +519,13 @@ export const COLORS = {
     '#C2185B',
     '#AD1457',
     '#880E4F',
+  ],
+  impactStateGrouped: [
+    '#568822',
+    '#cddc39',
+    '#fff176',
+    '#ffba53',
+    '#c51e07',
   ],
   kpi: {
     downtime: '#c4c4c4',
@@ -658,6 +669,7 @@ export const CSS_COLORS_VARS = {
   primary: 'var(--v-primary-base)',
   secondary: 'var(--v-secondary-base)',
   error: 'var(--v-error-base)',
+  success: 'var(--v-success-base)',
 
   state: {
     ok: 'var(--v-state-ok-base)',
