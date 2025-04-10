@@ -25,9 +25,8 @@ Le cycle de vie des versions Canopsis est détaillé sur le [site commercial de 
 
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
 
-=== "Develop"
+=== "25.04"
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **Develop**  | [:material-file-document:]                               | 30/04/2025 | Cette version comporte un important Guide de migration |
-
+    | **25.04.0**  | [:material-file-document:](notes-de-version/25.04.0.md)  | 30/04/2025 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-25.04.0.md) |
