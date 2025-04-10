@@ -1248,11 +1248,11 @@ definitions:
             type: string
           error:
             type: string
-          error_icons:
+          error_background:
             type: string
           info:
             type: string
-          info_icons:
+          info_background:
             type: string
           primary:
             type: string
@@ -1260,26 +1260,26 @@ definitions:
             type: string
           success:
             type: string
-          success_icons:
+          success_background:
             type: string
           warning:
             type: string
-          warning_icons:
+          warning_background:
             type: string
         required:
         - accent
         - active_color
         - background
         - error
-        - error_icons
+        - error_background
         - info
-        - info_icons
+        - info_background
         - primary
         - secondary
         - success
-        - success_icons
+        - success_background
         - warning
-        - warning_icons
+        - warning_background
         type: object
       state:
         properties:
