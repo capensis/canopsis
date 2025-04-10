@@ -36,11 +36,11 @@ const (
 	RemediationPeriodicalLockKey        = "remediation-periodical-lock-key"
 	RemediationPostponedJobTasksLockKey = "remediation-postponed-job-tasks-lock-key"
 
-	PbehaviorSpanKey                   = "pbehavior-span"
-	PbehaviorTypesKey                  = "pbehavior-types"
-	PbehaviorDefaultActiveTypeKey      = "pbehavior-default-active-type"
-	PbehaviorComputedKey               = "pbehavior-computed-"
-	PbehaviorComputedInheritedServices = "pbehavior-computed-inherited-services"
+	PbehaviorSpanKey              = "pbehavior-span"
+	PbehaviorTypesKey             = "pbehavior-types"
+	PbehaviorDefaultActiveTypeKey = "pbehavior-default-active-type"
+	PbehaviorComputedKey          = "pbehavior-computed-"
+	PbehaviorInheritedServices    = "pbehavior-inherited-services"
 
 	DynamicInfosDictionaryPeriodicalLockKey = "dynamic-infos-dictionary-periodical-lock-key"
 
