@@ -45,9 +45,13 @@ export const themeMainColorsToForm = (main = {}) => ({
   secondary: main.secondary ?? COLORS.secondary,
   accent: main.accent ?? COLORS.accent,
   error: main.error ?? COLORS.error,
+  error_icons: main.error_icons ?? COLORS.errorIcons,
   info: main.info ?? COLORS.info,
+  info_icons: main.info_icons ?? COLORS.infoIcons,
   success: main.success ?? COLORS.success,
+  success_icons: main.success_icons ?? COLORS.successIcons,
   warning: main.warning ?? COLORS.warning,
+  warning_icons: main.warning_icons ?? COLORS.warningIcons,
   background: main.background ?? COLORS.background,
   active_color: main.active_color ?? COLORS.activeColor,
 });
