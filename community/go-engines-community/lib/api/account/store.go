@@ -146,7 +146,31 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
 							},
 						},
-						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
+						"then": bson.M{
+							"$ifNull": bson.A{
+								bson.M{
+									"$first": bson.M{
+										"$map": bson.M{
+											"input": bson.M{
+												"$filter": bson.M{
+													"input": "$roles",
+													"as":    "role",
+													"cond": bson.M{
+														"$and": bson.A{
+															bson.M{"$ne": bson.A{bson.M{"$ifNull": bson.A{"$$role.ui_theme", ""}}, ""}},
+															bson.M{"$ne": bson.A{"$$role.ui_theme", ""}},
+														},
+													},
+												},
+											},
+											"as": "role",
+											"in": "$$role.ui_theme",
+										},
+									},
+								},
+								cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
+							},
+						},
 						"else": "$ui_theme",
 					},
 				},
