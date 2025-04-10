@@ -6,14 +6,15 @@ import { isString, kebabCase } from 'lodash';
  * @property {string} secondary
  * @property {string} accent
  * @property {string} error
- * @property {string} error_icons
+ * @property {string} error_background
  * @property {string} info
- * @property {string} info_icons
+ * @property {string} info_background
  * @property {string} success
- * @property {string} success_icons
+ * @property {string} success_background
  * @property {string} warning
- * @property {string} warning_icons
+ * @property {string} warning_background
  * @property {string} background
+ * @property {string} active_color
  */
 
 /**
@@ -88,32 +89,3 @@ export const themePropertiesToCSSVariables = (colors = {}) => themeObjectColorsT
 export const getThemeVariableKeyFromCssVariable = (cssVariable = '') => (
   cssVariable.replace('var(--v-', '').replace('-base)', '')
 );
-
-/**
- * Converts main theme colors to Vuetify-compatible variables.
- *
- * @param {Object} [main={}] - The main theme colors object.
- * @param {string} [main.error_icons] - The color for error icons.
- * @param {string} [main.error] - The background color for errors.
- * @param {string} [main.warning_icons] - The color for warning icons.
- * @param {string} [main.warning] - The background color for warnings.
- * @param {string} [main.success_icons] - The color for success icons.
- * @param {string} [main.success] - The background color for success.
- * @param {string} [main.info_icons] - The color for info icons.
- * @param {string} [main.info] - The background color for info.
- * @returns {Object} An object with Vuetify-compatible variable names.
- */
-export const convertMainToVuetifyVariables = (main = {}) => ({
-  ...main,
-  error: main.error_icons,
-  error_background: main.error,
-
-  warning: main.warning_icons,
-  warning_background: main.warning,
-
-  success: main.success_icons,
-  success_background: main.success,
-
-  info: main.info_icons,
-  info_background: main.info,
-});

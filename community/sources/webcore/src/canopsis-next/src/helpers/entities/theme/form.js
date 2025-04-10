@@ -1,6 +1,7 @@
 import { COLORS } from '@/config';
+import { THEME_FONT_SIZES } from '@/constants';
 
-import { THEME_FONT_SIZES } from '@/constants/theme';
+import { getLightenOrDarkenColor } from '@/helpers/color';
 
 /**
  * @typedef {Object} ThemeEnabledColor
@@ -35,6 +36,43 @@ import { THEME_FONT_SIZES } from '@/constants/theme';
  */
 
 /**
+ * Convert main type colors to a standardized set of colors with backgrounds.
+ *
+ * @param {Object} main - The main color object containing type colors.
+ * @param {string} [main.error] - The error color.
+ * @param {string} [main.error_background] - The error background color.
+ * @param {string} [main.warning] - The warning color.
+ * @param {string} [main.warning_background] - The warning background color.
+ * @param {string} [main.success] - The success color.
+ * @param {string} [main.success_background] - The success background color.
+ * @param {string} [main.info] - The info color.
+ * @param {string} [main.info_background] - The info background color.
+ * @param {number} [amount] - The amount to adjust the background color if needed.
+ * @returns {Object} - An object containing standardized colors and their backgrounds.
+ */
+export const convertTypeColors = (main, amount) => ({
+  error: main.error || COLORS.error,
+  error_background: !main.error && !main.error_background
+    ? COLORS.errorBackground
+    : main.error_background || getLightenOrDarkenColor(main.error, amount),
+
+  warning: main.warning || COLORS.warning,
+  warning_background: !main.warning && !main.warning_background
+    ? COLORS.warningBackground
+    : main.warning_background || getLightenOrDarkenColor(main.warning, amount),
+
+  success: main.success || COLORS.success,
+  success_background: !main.success && !main.success_background
+    ? COLORS.successBackground
+    : main.success_background || getLightenOrDarkenColor(main.success, amount),
+
+  info: main.info || COLORS.info,
+  info_background: !main.info && !main.info_background
+    ? COLORS.infoBackground
+    : main.info_background || getLightenOrDarkenColor(main.info, amount),
+});
+
+/**
  * Convert theme main colors to form object
  *
  * @param {ThemeMainColors} [main = {}]
@@ -44,16 +82,10 @@ export const themeMainColorsToForm = (main = {}) => ({
   primary: main.primary ?? COLORS.primary,
   secondary: main.secondary ?? COLORS.secondary,
   accent: main.accent ?? COLORS.accent,
-  error: main.error ?? COLORS.error,
-  error_icons: main.error_icons ?? COLORS.errorIcons,
-  info: main.info ?? COLORS.info,
-  info_icons: main.info_icons ?? COLORS.infoIcons,
-  success: main.success ?? COLORS.success,
-  success_icons: main.success_icons ?? COLORS.successIcons,
-  warning: main.warning ?? COLORS.warning,
-  warning_icons: main.warning_icons ?? COLORS.warningIcons,
   background: main.background ?? COLORS.background,
   active_color: main.active_color ?? COLORS.activeColor,
+
+  ...convertTypeColors(main),
 });
 
 /**

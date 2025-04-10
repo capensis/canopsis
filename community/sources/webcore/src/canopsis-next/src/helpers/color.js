@@ -1,5 +1,7 @@
 import tinycolor from 'tinycolor2';
 
+import { BACKGROUND_AND_ICONS_COLORS_DIFF } from '@/constants';
+
 /**
  * @typedef {Object} ReadableColorOptions
  * @property {'AA' | 'AAA'} level
@@ -88,6 +90,27 @@ export const isDarkColor = color => tinycolor(color).isDark();
 export const getDarkenColor = (color, amount) => tinycolor(color)
   .darken(amount)
   .toString();
+
+/**
+ * Get lighten color
+ *
+ * @param {string} color
+ * @param {number} amount
+ */
+export const getLightenColor = (color, amount) => tinycolor(color)
+  .lighten(amount)
+  .toString();
+
+/**
+ * Adjusts the color by either lightening or darkening it based on its current brightness.
+ *
+ * @param {string|Object} color - The color to be adjusted. It can be a string or an object compatible with tinycolor.
+ * @param {number} [amount=BACKGROUND_AND_ICONS_COLORS_DIFF] - The amount by which to lighten or darken the color.
+ * @returns {string} - The adjusted color as a string.
+ */
+export const getLightenOrDarkenColor = (color, amount = BACKGROUND_AND_ICONS_COLORS_DIFF) => (
+  isDarkColor(color) ? getLightenColor(color, amount) : getDarkenColor(color, amount)
+);
 
 /**
  * Check property is css variable

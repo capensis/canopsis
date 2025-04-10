@@ -24,36 +24,41 @@
           :label="$t('theme.main.accent')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.error_icons"
+          v-field="form.colors.main.error"
           :label="$t('theme.main.errorIcons')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.error"
+          v-field="form.colors.main.error_background"
           :label="$t('theme.main.error')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.warning_icons"
+          v-field="form.colors.main.warning"
           :label="$t('theme.main.warningIcons')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.warning"
+          v-field="form.colors.main.warning_background"
           :label="$t('theme.main.warning')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.success_icons"
+          v-field="form.colors.main.success"
           :label="$t('theme.main.successIcons')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.success"
+          v-field="form.colors.main.success_background"
           :label="$t('theme.main.success')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.info_icons"
+          v-field="form.colors.main.info"
           :label="$t('theme.main.infoIcons')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.info"
+          v-field="form.colors.main.info_background"
           :label="$t('theme.main.info')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.active_color"
+          :label="$t('theme.main.activeColor')"
+          :help-text="$t('theme.main.activeColorHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.background"
@@ -161,7 +166,7 @@ export default {
     const fontSize = computed(() => THEME_FONT_PIXEL_SIZES[props.form.font_size]);
 
     const attachFontSizeAndActiveColor = items => (
-      items.map(item => ({ color: '#000', fontSize: fontSize.value, ...item }))
+      items.map(item => ({ color: props.form.colors.main.active_color, fontSize: fontSize.value, ...item }))
     );
 
     const tableColors = computed(() => {
