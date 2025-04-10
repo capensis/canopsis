@@ -237,7 +237,7 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
-		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider), logger)
+		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider, userInterfaceAdapter), logger)
 		roleRouter := protected.Group("/roles")
 		{
 			roleRouter.POST("",
