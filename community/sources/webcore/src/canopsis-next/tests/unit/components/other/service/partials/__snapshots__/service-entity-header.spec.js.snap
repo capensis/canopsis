@@ -116,7 +116,7 @@ exports[`service-entity-header Renders \`service-entity-header\` with custom pro
       />
       <div>
         <div
-          class="v-alert entity-alert ma-0 px-2 py-1 v-sheet theme--light black"
+          class="v-alert entity-alert ma-0 px-2 py-1 v-sheet theme--light v-alert--dark-background black"
           role="alert"
         >
           <div

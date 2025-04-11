@@ -7,7 +7,7 @@ exports[`service-dependencies-expand Renders \`service-dependencies-expand\` wit
   >
     <button
       class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
-      style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+      style="background-color: rgb(86, 136, 34); border-color: #568822;"
       type="button"
     >
       <span
@@ -118,7 +118,7 @@ exports[`service-dependencies-expand Renders \`service-dependencies-expand\` wit
   >
     <button
       class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
-      style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
+      style="background-color: rgb(86, 136, 34); border-color: #568822;"
       type="button"
     >
       <span
