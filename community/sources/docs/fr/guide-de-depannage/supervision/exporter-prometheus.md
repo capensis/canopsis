@@ -12,21 +12,23 @@ Cet exporter expose un ensemble de métriques utiles pour suivre l’état de la
 
 ## Métriques exposées
 
-| Nom de la métrique                           | Description |
-|----------------------------------------------|-------------|
-| `canopsis_enrichment_errors`                 | Nombre d’erreurs d’enrichissement |
-| `canopsis_active_alarms`                     | Nombre d’alarmes actives |
-| `canopsis_closed_alarms`                     | Nombre d’alarmes clôturées |
-| `canopsis_active_entities`                   | Nombre d’entités actives |
-| `canopsis_disabled_entities`                 | Nombre d’entités désactivées |
-| `canopsis_connected_users`                   | Nombre d’utilisateurs connectés |
-| `canopsis_active_users`                      | Nombre d’utilisateurs actifs |
-| `canopsis_event_filters`                     | Nombre de filtres d’événements |
-| `canopsis_active_pbehavior`                  | Nombre de comportements prédictifs actifs |
-| `canopsis_meta_alarms_rules`                 | Nombre de règles de méta-alarmes |
-| `canopsis_dynamic_infos_rules`               | Nombre de règles d’informations dynamiques |
-| `canopsis_engine_status{engine_name=}`       | Statut des moteurs (1 = actif, 0 = inactif) |
-| `canopsis_last_exploitation_mod_time{type=}` | Date de dernière modification des éléments d’exploitation |
+## Métriques exposées
+
+| Nom de la métrique                                  | Description |
+|-----------------------------------------------------|-------------|
+| `canopsis_eventfilter_errors`                       | Nombre d’erreurs dans les filtres d’événements |
+| `canopsis_opened_alarms`                            | Nombre d’alarmes ouvertes |
+| `canopsis_resolved_alarms`                          | Nombre d’alarmes résolues |
+| `canopsis_active_entities`                          | Nombre d’entités actives |
+| `canopsis_disabled_entities`                        | Nombre d’entités désactivées |
+| `canopsis_user_connections`                         | Nombre de connexions utilisateur |
+| `canopsis_enabled_users`                            | Nombre d’utilisateurs activés |
+| `canopsis_event_filters`                            | Nombre total de filtres d’événements |
+| `canopsis_active_pbehavior`                         | Nombre de comportements périodiques actifs |
+| `canopsis_meta_alarms_rules`                        | Nombre de règles de méta-alarmes |
+| `canopsis_dynamic_infos_rules`                      | Nombre de règles d’informations dynamiques |
+| `canopsis_engine_status{engine_name="<nom>"}`       | Statut d’un moteur Canopsis (1 = actif, 0 = inactif) |
+| `canopsis_last_exploitation_mod_time{type="<type>"}`| Horodatage de dernière modification d’un élément d’exploitation |
 
 ## Démarrage de l’exporter
 
