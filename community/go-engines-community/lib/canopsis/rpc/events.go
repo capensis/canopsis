@@ -202,6 +202,13 @@ type RemediationJobEvent struct {
 	Step           int    `json:"step"`
 }
 
+type ApiRemediationResultEvent struct {
+	EventType   string `json:"event_type"`
+	JobExecID   string `json:"job_exec_id"`
+	ExecutionID string `json:"exec_id"`
+	UserID      string `json:"user_id"`
+}
+
 type Error struct {
 	Error error
 }

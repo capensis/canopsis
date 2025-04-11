@@ -110,6 +110,7 @@ func NewEngineAction(
 
 	axeRpcClient := engine.NewRPCClient(
 		canopsis.ActionRPCConsumerName,
+		"",
 		canopsis.AxeRPCQueueServerName,
 		canopsis.ActionAxeRPCClientQueueName,
 		cfg.Global.PrefetchCount,

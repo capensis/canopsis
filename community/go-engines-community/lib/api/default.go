@@ -56,6 +56,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -231,7 +232,7 @@ func Default(
 	})
 
 	websocketAuthorizer := websocket.NewAuthorizer(services.Enforcer, security.GetTokenProviders())
-	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, logger)
+	websocketHub := websocket.NewHub(ctx, websocketUpgrader, websocketAuthorizer, flags.IntegrationPeriodicalWaitTime, services.ApiConfigProvider, logger)
 	err = registerWebsocketRooms(websocketHub)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot register websocket rooms: %w", err)
@@ -425,6 +426,11 @@ func Default(
 	api.AddWorker("amqp_workers", func(ctx context.Context) {
 		err = workersRunner.Run(ctx)
 		if err != nil {
+			var amqpErr *amqp.Error
+			if errors.As(err, &amqpErr) && amqpErr.Code == amqp.NotFound {
+				panic(NewFatalWorkerError(err))
+			}
+
 			panic(err)
 		}
 	})
