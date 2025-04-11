@@ -48,6 +48,8 @@ const (
 	DefaultExchangeName = ""
 	EngineExchangeName  = "canopsis.engine"
 	EventsExchangeName  = "canopsis.events"
+
+	ApiRemediationResultsExchangeName = "canopsis.api_rem_res"
 )
 
 // Queues
