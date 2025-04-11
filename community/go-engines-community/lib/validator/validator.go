@@ -160,7 +160,11 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("url", trans, func(ut ut.Translator) error {
 		return ut.Add("url", "{0} is not an url.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("url", fe.Value().(string))
+		value, ok := fe.Value().(string)
+		if !ok {
+			value = ""
+		}
+		t, _ := ut.T("url", value)
 		return t
 	})
 	_ = v.RegisterTranslation("json", trans, func(ut ut.Translator) error {
@@ -238,7 +242,11 @@ func RegisterTranslations(v *validator.Validate) {
 	_ = v.RegisterTranslation("metaalarm_config_invalid_with_type", trans, func(ut ut.Translator) error {
 		return ut.Add("metaalarm_config_invalid_with_type", "{0} config can not be in type {1}.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("metaalarm_config_invalid_with_type", fe.Value().(string), fe.Param())
+		value, ok := fe.Value().(string)
+		if !ok {
+			value = ""
+		}
+		t, _ := ut.T("metaalarm_config_invalid_with_type", value, fe.Param())
 		return t
 	})
 	_ = v.RegisterTranslation("time_format", trans, func(ut ut.Translator) error {
