@@ -134,6 +134,9 @@ func AsInteger(value interface{}) (int64, bool) {
 	case int64:
 		return typedValue, true
 	case uint:
+		if typedValue > math.MaxInt64 {
+			return 0, false
+		}
 		return int64(typedValue), true
 	case uint8:
 		return int64(typedValue), true
@@ -142,6 +145,9 @@ func AsInteger(value interface{}) (int64, bool) {
 	case uint32:
 		return int64(typedValue), true
 	case uint64:
+		if typedValue > math.MaxInt64 {
+			return 0, false
+		}
 		return int64(typedValue), true
 	case CpsNumber:
 		return int64(typedValue), true

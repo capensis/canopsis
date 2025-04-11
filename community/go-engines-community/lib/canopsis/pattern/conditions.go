@@ -1254,10 +1254,16 @@ func GetIntValue(v interface{}) (int64, error) {
 	case int64:
 		return i, nil
 	case uint:
+		if i > math.MaxInt64 {
+			return 0, ErrWrongConditionValue
+		}
 		return int64(i), nil
 	case uint32:
 		return int64(i), nil
 	case uint64:
+		if i > math.MaxInt64 {
+			return 0, ErrWrongConditionValue
+		}
 		return int64(i), nil
 	case float32:
 		a, b := math.Modf(float64(i))
