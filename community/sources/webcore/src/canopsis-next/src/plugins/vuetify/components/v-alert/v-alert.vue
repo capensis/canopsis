@@ -45,7 +45,7 @@ export default {
      * Instead of condition we are returning css variable.
      */
     iconColor() {
-      return `var(--v-${this.type}-base)`;
+      return this.type ? `var(--v-${this.type}-base)` : undefined;
     },
   },
 };
@@ -62,11 +62,15 @@ export default {
     line-height: 22px;
 
     &--dark-background {
-      color: var(--alert-color-light);
+      &, .v-icon{
+        color: var(--alert-color-light);
+      }
     }
 
     &--light-background {
-      color: var(--alert-color-dark);
+      &, .v-icon{
+        color: var(--alert-color-dark);
+      }
     }
   }
 }

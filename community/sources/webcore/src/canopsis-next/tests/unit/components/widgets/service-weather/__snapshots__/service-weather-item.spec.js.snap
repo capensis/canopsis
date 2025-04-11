@@ -3,7 +3,7 @@
 exports[`service-weather-item Renders \`service-weather-item\` with custom props 1`] = `
 <card-with-see-alarms-btn-stub
   class="cursor-pointer service-weather-item mt-0 mr-0 mb-0 ml-0"
-  style="height: 4em; color: white;"
+  style="height: 4em; color: black;"
 >
   <div
     class="layout fill-height service-weather-item__content justify-space-between"
@@ -22,7 +22,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
-          color="white"
+          color="black"
           top=""
         />
         <impact-state-indicator-stub
@@ -34,7 +34,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
       </div>
       <i
         aria-hidden="true"
-        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light black--text"
         style="font-size: 5em;"
       />
       <!---->
@@ -49,7 +49,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
 <card-with-see-alarms-btn-stub
   class="cursor-pointer service-weather-item mt-1 mr-3 mb-5 ml-7"
   showbutton="true"
-  style="height: 16em; color: white;"
+  style="height: 16em; color: black;"
 >
   <div
     class="layout fill-height service-weather-item__content justify-space-between"
@@ -83,7 +83,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
-          color="white"
+          color="black"
           top=""
         />
         <impact-state-indicator-stub
@@ -136,7 +136,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
       </div>
       <i
         aria-hidden="true"
-        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light black--text"
         style="font-size: 5em;"
       />
       <!---->

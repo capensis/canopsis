@@ -19,21 +19,21 @@ export default {
 
     accent: 'Neutral buttons',
 
-    error: 'Error background',
-    errorIcons: 'Error icons / buttons',
+    error: 'Error icons / buttons',
+    errorBackground: 'Error background',
 
-    warning: 'Warning background',
-    warningIcons: 'Warning icons / buttons',
+    warning: 'Warning icons / buttons',
+    warningBackground: 'Warning background',
 
-    success: 'Success / positive background',
-    successIcons: 'Success / positive icons',
+    success: 'Success / positive icons',
+    successBackground: 'Success / positive background',
 
-    info: 'Info background',
-    infoIcons: 'Info icons / buttons',
+    info: 'Info icons / buttons',
+    infoBackground: 'Info background',
 
     background: 'Main background',
 
-    activeColor: 'Main active color',
+    activeColor: 'Main active',
     activeColorHelpText: 'Main color for texts and icons',
   },
   fontSize: {

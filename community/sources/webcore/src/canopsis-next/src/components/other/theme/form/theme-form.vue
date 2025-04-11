@@ -25,35 +25,35 @@
         />
         <theme-color-picker-field
           v-field="form.colors.main.error"
-          :label="$t('theme.main.errorIcons')"
-        />
-        <theme-color-picker-field
-          v-field="form.colors.main.error_background"
           :label="$t('theme.main.error')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.warning"
-          :label="$t('theme.main.warningIcons')"
+          v-field="form.colors.main.error_background"
+          :label="$t('theme.main.errorBackground')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.warning_background"
+          v-field="form.colors.main.warning"
           :label="$t('theme.main.warning')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.success"
-          :label="$t('theme.main.successIcons')"
+          v-field="form.colors.main.warning_background"
+          :label="$t('theme.main.warningBackground')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.success_background"
+          v-field="form.colors.main.success"
           :label="$t('theme.main.success')"
         />
         <theme-color-picker-field
+          v-field="form.colors.main.success_background"
+          :label="$t('theme.main.successBackground')"
+        />
+        <theme-color-picker-field
           v-field="form.colors.main.info"
-          :label="$t('theme.main.infoIcons')"
+          :label="$t('theme.main.info')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.info_background"
-          :label="$t('theme.main.info')"
+          :label="$t('theme.main.infoBackground')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.active_color"

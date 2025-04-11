@@ -232,7 +232,7 @@ exports[`geomap-editor Renders \`geomap-editor\` with validation errors  1`] = `
       class="geomap geomap-editor__map mb-2"
       min-zoom="2"
       options="[object Object]"
-      style="border-color: #ffcabe;"
+      style="border-color: #d22e2e;"
     >
       <geomap-control-zoom-stub
         disableclickpropagation="true"
