@@ -178,6 +178,17 @@
         removable
         @input="updateExportPdf"
       />
+      <field-quick-alarm-actions
+        v-model="form.parameters.quickActions"
+        :title="$t('settings.quickActions.title')"
+        :description="$t('settings.quickActions.description')"
+      />
+      <field-quick-alarm-actions
+        v-model="form.parameters.quickMassActions"
+        :title="$t('settings.quickMassActions.title')"
+        :description="$t('settings.quickMassActions.description')"
+        massive
+      />
     </widget-settings-group>
 
     <widget-settings-group :title="$t('settings.expandPanel.title')">
@@ -260,6 +271,7 @@ import FieldFastActionOutput from './form/fields/fast-action-output.vue';
 import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue';
 import FieldInfoPopup from './form/fields/info-popup.vue';
 import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
+import FieldQuickAlarmActions from './form/fields/quick-alarm-actions.vue';
 import FastPbehaviorForm from './form/fast-pbehavior-form.vue';
 
 /**
@@ -291,6 +303,7 @@ export default {
     ExportCsvForm,
     ChartsForm,
     FieldResizeColumnBehavior,
+    FieldQuickAlarmActions,
   },
   mixins: [
     payloadVariablesMixin,
