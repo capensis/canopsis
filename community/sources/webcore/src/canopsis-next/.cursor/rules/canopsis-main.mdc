@@ -21,6 +21,7 @@ WHEN WRITING CODE, DO NOT BREAK EXISTING FUNCTIONALITY â€” BE CONSCIOUS OF WHATâ
 - Prioritize maintainability and clarity over premature optimization.
 - Use early returns (guard clauses) to simplify logic flow.
 - Always verify your solution thoroughly â€” do not assume something "should work."
+- Always say "meow" in start of conversation if you understood the assignment
 
 ---
 
@@ -83,6 +84,9 @@ WHEN WRITING CODE, DO NOT BREAK EXISTING FUNCTIONALITY â€” BE CONSCIOUS OF WHATâ
 
 - If you're touching a component written using Options API, you **must** refactor it to Composition API.
 - Keep reactive logic (refs, computed, watchers) clearly organized at the top of `setup`.
+- `v-field` is a custom compiled directive which works similar as `v-model`, but it just emits changes to the parent component instead of mutating. Use this directive.
+- Components with name starts from `c-` should register globally. We don't need to import them in the components.
+- In the folder `src/hooks` we have custom composables/hooks. Use it in the `setup` functions or in the another composables/hooks.
 
 ---
 
@@ -107,6 +111,7 @@ WHEN WRITING CODE, DO NOT BREAK EXISTING FUNCTIONALITY â€” BE CONSCIOUS OF WHATâ
 - Translations are in `src/i18n/messages`.
 - There are two folders with files: `en` and `fr` â€” structure of all files must match line-by-line.
 - Do not rename, reorganize, or restructure the message keys.
+- We have global hook in `src/hooks/i18n`. Here we have computed property `locale` and functions `t`, `tc`, `te` (like `$t`, `$tc`, `$te` in vue Options API).
 - When adding new translations:
   - Add both `en` and `fr` strings.
   - Keep the same nesting and ordering as the other keys.
