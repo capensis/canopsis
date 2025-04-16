@@ -56,3 +56,22 @@ export const PBEHAVIOR_CANONICAL_TYPES = {
   pause: 'pause',
   active: 'active',
 };
+
+export const PBEHAVIOR_LIST_FIELDS = {
+  name: 'name',
+  author: 'author.display_name',
+  enabled: 'enabled',
+  begins: 'tstart',
+  ends: 'tstop',
+  rruleEnd: 'rrule_end',
+  rrule: 'rrule',
+  type: 'type.name',
+  reason: 'reason.name',
+  created: 'created',
+  updated: 'updated',
+  lastAlarmDate: 'last_alarm_date',
+  alarmCount: 'alarm_count',
+  typeIcon: 'type.icon_name',
+  status: 'is_active_status',
+  actions: 'actions',
+};
