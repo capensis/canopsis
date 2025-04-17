@@ -228,13 +228,10 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     },
     [ALARM_FIELDS.resource]: getEntityOptions([BASIC_ENTITY_TYPES.resource]),
     [ALARM_FIELDS.state]: {
-      operators: [
-        PATTERN_OPERATORS.equal,
-        PATTERN_OPERATORS.notEqual,
-        PATTERN_OPERATORS.higher,
-        PATTERN_OPERATORS.lower,
-      ],
+      operators: PATTERN_NUMBER_OPERATORS,
       values: Object.values(ALARM_STATES).map(value => ({ value, text: t(`common.stateTypes.${value}`) })),
+      itemText: 'text',
+      itemValue: 'value',
     },
     [ALARM_FIELDS.status]: {
       operators: [
@@ -242,6 +239,8 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
         PATTERN_OPERATORS.notEqual,
       ],
       values: Object.values(ALARM_STATUSES).map(value => ({ value, text: t(`common.statusTypes.${value}`) })),
+      itemText: 'text',
+      itemValue: 'value',
     },
     [ALARM_FIELDS.tags]: {
       operators: [
@@ -407,10 +406,14 @@ export const useAdvancedSearchEntityAttributes = ({ infosItems }) => {
         PATTERN_OPERATORS.isNotOneOf,
       ],
       values: Object.values(ENTITY_TYPES).map(type => ({ value: type, text: t(`entity.types.${type}`) })),
+      itemText: 'text',
+      itemValue: 'value',
     },
     [ALARM_FIELDS.entityComponent]: getEntityOptions([ENTITY_TYPES.component]),
     [ALARM_FIELDS.entityConnector]: getEntityOptions([ENTITY_TYPES.connector]),
-    [ALARM_FIELDS.entityImpactLevel]: {},
+    [ALARM_FIELDS.entityImpactLevel]: {
+      operators: PATTERN_NUMBER_OPERATORS,
+    },
     [ALARM_FIELDS.entityInfos]: {
       items: unref(infosItems),
     },
@@ -706,9 +709,11 @@ export const useAdvancedSearchRuleActiveItems = ({
   /**
    * VALUE ITEMS
    */
-  const preparedValueItems = computed(() => ({
-    [isBooleanFieldType.value]: preparedBooleanItems.value,
-  }).true ?? []);
+  const preparedValueItems = computed(() => (
+    currentAttribute.value?.values
+      ?? { [isBooleanFieldType.value]: preparedBooleanItems.value }.true
+      ?? []
+  ));
 
   /**
    * ITEMS BY TYPE
