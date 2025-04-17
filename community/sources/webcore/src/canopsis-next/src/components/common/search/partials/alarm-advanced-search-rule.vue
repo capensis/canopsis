@@ -96,6 +96,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    focusOnMount: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { updateModel } = useModelField(props, emit);
@@ -152,6 +156,17 @@ export default {
      * @returns {boolean} - Returns true if the value is considered text, false otherwise.
      */
     const isText = value => !props.union && !currentAttribute.value && !attributesMap.value[value];
+
+    /**
+     * Handles the click event on a chip and sets the active type.
+     *
+     * @param {string} type - The type of chip that was clicked.
+     */
+    const clickChip = (type) => {
+      activeType.value = type;
+
+      emit('make:active', props.rule.key);
+    };
 
     /**
      * Updates the search rule's chip item based on the provided value and type.
@@ -246,17 +261,6 @@ export default {
     };
 
     /**
-     * Handles the click event on a chip and sets the active type.
-     *
-     * @param {string} type - The type of chip that was clicked.
-     */
-    const clickChip = (type) => {
-      activeType.value = type;
-
-      emit('make:active', props.rule.key);
-    };
-
-    /**
      * Handles the focus out event on a chip and resets the active type if necessary.
      *
      * @param {string} type - The type of chip that lost focus.
@@ -322,6 +326,7 @@ export default {
         number: isNumberValueType(props.rule, type),
         fetchItems,
         first,
+        focusOnMount: props.focusOnMount,
       };
 
       let on = { input: updateItem };
@@ -329,6 +334,7 @@ export default {
       if (input) {
         bind.alwaysActive = true;
       } else {
+        bind.alwaysActive = multiple && !props.rule[type]?.length;
         bind.active = isActiveType(type);
         bind.value = props.rule[type];
         bind.closable = closable;

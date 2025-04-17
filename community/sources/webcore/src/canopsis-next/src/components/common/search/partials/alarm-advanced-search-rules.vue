@@ -17,6 +17,7 @@
       :first="index === 0"
       :allow-or="allowOr"
       :disabled="disabled"
+      :focus-on-mount="getFocusOnMount(index)"
       @input="update($event, index)"
       @make:active="makeActive"
       @reset:active="resetActive"
@@ -30,6 +31,7 @@
 import { ref, provide, nextTick } from 'vue';
 
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/alarm-advanced-search';
+import { isArrayCondition } from '@/helpers/entities/pattern/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
@@ -144,9 +146,7 @@ export default {
 
       add();
 
-      if (!withoutActive) {
-        nextTick(() => lastInputFocus());
-      }
+      nextTick(() => lastInputFocus());
     };
 
     /**
@@ -155,6 +155,14 @@ export default {
      * @param {Event} event - The mouseup event.
      */
     const mouseupLayout = event => event.target === layoutElement.value && lastInputFocus();
+
+    const getFocusOnMount = (index) => {
+      if (!index && !props.rules[index]?.attribute) {
+        return false;
+      }
+
+      return !isArrayCondition(props.rules[index - 1]?.operator);
+    };
 
     return {
       layoutElement,
@@ -167,6 +175,7 @@ export default {
       update,
       remove,
       mouseupLayout,
+      getFocusOnMount,
     };
   },
 };
