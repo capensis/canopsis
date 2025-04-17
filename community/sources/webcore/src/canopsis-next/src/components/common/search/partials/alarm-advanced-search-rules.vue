@@ -21,23 +21,26 @@
       @input="update($event, index)"
       @make:active="makeActive"
       @reset:active="resetActive"
-      @next="next($event, index)"
+      @next="next(index)"
       @remove="remove(index)"
     />
   </v-layout>
 </template>
 
 <script>
-import { ref, provide, nextTick } from 'vue';
+import { ref, nextTick } from 'vue';
 
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/alarm-advanced-search';
 import { isArrayCondition } from '@/helpers/entities/pattern/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
+import { useActiveKey } from '@/hooks/active-key';
+import { useLastInputFocus } from '@/hooks/focus';
 
 import AlarmAdvancedSearchRule from './alarm-advanced-search-rule.vue';
 
 export default {
+  name: 'AlarmAdvancedSearchRules',
   components: { AlarmAdvancedSearchRule },
   model: {
     prop: 'rules',
@@ -46,10 +49,12 @@ export default {
   props: {
     rules: {
       type: Array,
+      required: true,
       default: () => [],
     },
     attributes: {
       type: Array,
+      required: true,
       default: () => [],
     },
     allowOr: {
@@ -69,39 +74,8 @@ export default {
     } = useArrayModelField(props, emit);
 
     const layoutElement = ref(null);
-    const activeKey = ref();
-
-    /**
-     * A no-operation function to store the last input focus.
-     *
-     * @type {Function}
-     */
-    let lastInputFocus = () => {};
-
-    /**
-     * Provides a method to register the last input focus function.
-     *
-     * @param {Function} focus - The function to set as the last input focus.
-     */
-    provide('$registerLastInputFocus', focus => lastInputFocus = focus);
-
-    /**
-     * Sets the active key to the specified key.
-     *
-     * @param {string} key - The key to set as active.
-     */
-    const makeActive = key => activeKey.value = key;
-
-    /**
-     * Resets the active key if it matches the specified key.
-     *
-     * @param {string} key - The key to check against the active key.
-     */
-    const resetActive = (key) => {
-      if (key === activeKey.value) {
-        activeKey.value = null;
-      }
-    };
+    const { activeKey, makeActive, resetActive } = useActiveKey();
+    const { lastInputFocus } = useLastInputFocus();
 
     /**
      * Adds a new item into the array using a form item.
@@ -133,20 +107,18 @@ export default {
     };
 
     /**
-     * Advances to the next rule in the rules array. If the current index is the last one,
-     * it adds a new rule. Optionally focuses on the last input if `withoutActive` is false.
+     * Advances to the next rule in the rules array. If the current index is the last one, it adds a new rule.
      *
-     * @param {boolean} withoutActive - Determines whether to focus on the last input after adding a new rule.
      * @param {number} index - The current index in the rules array.
      */
-    const next = (withoutActive, index) => {
+    const next = (index) => {
       if (index !== props.rules.length - 1) {
         return;
       }
 
       add();
 
-      nextTick(() => lastInputFocus());
+      nextTick(() => lastInputFocus.value());
     };
 
     /**
@@ -154,8 +126,15 @@ export default {
      *
      * @param {Event} event - The mouseup event.
      */
-    const mouseupLayout = event => event.target === layoutElement.value && lastInputFocus();
+    const mouseupLayout = event => event.target === layoutElement.value && lastInputFocus.value();
 
+    /**
+     * Determines whether a rule should receive focus when mounted based on its position
+     * and the previous rule's condition.
+     *
+     * @param {number} index - The index of the rule in the rules array
+     * @returns {boolean} - Returns true if the rule should receive focus, false otherwise
+     */
     const getFocusOnMount = (index) => {
       if (!index && !props.rules[index]?.attribute) {
         return false;
