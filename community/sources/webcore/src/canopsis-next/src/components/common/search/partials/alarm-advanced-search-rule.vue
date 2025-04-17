@@ -138,7 +138,7 @@ export default {
       }
 
       if (isFinishedRule.value && !props.rule.text) {
-        emit('next', isArrayCondition(props.rule.operator));
+        emit('next');
       }
     };
 
