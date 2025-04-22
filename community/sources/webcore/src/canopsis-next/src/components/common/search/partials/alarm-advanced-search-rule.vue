@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { uniq, pick } from 'lodash';
+import { uniq, pick, isFunction } from 'lodash';
 import {
   computed,
   ref,
@@ -25,7 +25,7 @@ import {
 
 import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES } from '@/constants';
 
-import { isArrayCondition } from '@/helpers/entities/pattern/form';
+import { isArrayOperator } from '@/helpers/entities/pattern/form';
 import {
   advancedSearchRuleItemToFormItem,
   getInitialFormItemType,
@@ -179,12 +179,17 @@ export default {
       const oldFilled = props.rule.filled ?? [];
       const typeIndex = oldFilled.indexOf(type);
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
+
       const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
       let skipType = false;
 
       if (isArrayItem(type, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
         skipType = true;
+
+        if (typeIndex > 0) {
+          // filledForRemove = oldFilled.slice(typeIndex + 1);
+        }
       }
 
       if (isCustomRangeItem(type, value)) {
@@ -311,10 +316,19 @@ export default {
       let fetchItems;
 
       if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.value) {
-        multiple = isArrayCondition(props.rule.operator);
-        itemText = currentAttribute.value?.itemText;
-        itemValue = currentAttribute.value?.itemValue;
-        fetchItems = currentAttribute.value?.fetchValues;
+        multiple = isArrayOperator(props.rule.operator);
+
+        itemText = isFunction(currentAttribute.value?.itemText)
+          ? currentAttribute.value?.itemText(props.rule)
+          : currentAttribute.value?.itemText;
+
+        itemValue = isFunction(currentAttribute.value?.itemValue)
+          ? currentAttribute.value?.itemValue(props.rule)
+          : currentAttribute.value?.itemValue;
+
+        if (currentAttribute.value?.fetchValues) {
+          fetchItems = (...args) => currentAttribute.value?.fetchValues(...args, props.rule);
+        }
       }
 
       const bind = {
