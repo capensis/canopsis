@@ -7,15 +7,11 @@ import (
 )
 
 type EditRequest struct {
-	ID       string `bson:"_id" json:"-"`
-	Name     string `bson:"name" json:"name" binding:"required"`
-	Colors   Colors `bson:"colors" json:"colors"`
-	FontSize int    `bson:"font_size" json:"font_size" binding:"required,oneof=1 2 3"`
-
-	Author    string           `bson:"author" json:"author" swaggerignore:"true"`
-	Created   datetime.CpsTime `bson:"created,omitempty" json:"-" swaggerignore:"true"`
-	Updated   datetime.CpsTime `bson:"updated,omitempty" json:"-" swaggerignore:"true"`
-	Deletable bool             `bson:"deletable" json:"-" swaggerignore:"true"`
+	ID       string `json:"-"`
+	Name     string `json:"name" binding:"required"`
+	Colors   Colors `json:"colors"`
+	FontSize int    `json:"font_size" binding:"required,oneof=1 2 3"`
+	Author   string `json:"author" swaggerignore:"true"`
 }
 
 type BulkDeleteRequestItem struct {
@@ -52,8 +48,10 @@ type Colors struct {
 	Table struct {
 		Background    string `bson:"background" json:"background" binding:"required,iscolor"`
 		RowColor      string `bson:"row_color" json:"row_color" binding:"required,iscolor"`
-		ShiftRowColor string `bson:"shift_row_color,omitempty" json:"shift_row_color,omitempty" binding:"iscolororempty"`
-		HoverRowColor string `bson:"hover_row_color,omitempty" json:"hover_row_color,omitempty" binding:"iscolororempty"`
+		ShiftRow      *bool  `bson:"shift_row" json:"shift_row" binding:"required"`
+		ShiftRowColor string `bson:"shift_row_color,omitempty" json:"shift_row_color,omitempty" binding:"required_if=ShiftRow true,iscolororempty"`
+		HoverRow      *bool  `bson:"hover_row" json:"hover_row" binding:"required"`
+		HoverRowColor string `bson:"hover_row_color,omitempty" json:"hover_row_color,omitempty" binding:"required_if=HoverRow true,iscolororempty"`
 	} `bson:"table" json:"table"`
 	State struct {
 		OK       string `bson:"ok" json:"ok" binding:"required,iscolor"`
@@ -61,6 +59,17 @@ type Colors struct {
 		Major    string `bson:"major" json:"major" binding:"required,iscolor"`
 		Critical string `bson:"critical" json:"critical" binding:"required,iscolor"`
 	} `bson:"state" json:"state"`
+}
+
+type Document struct {
+	ID        string           `bson:"_id,omitempty"`
+	Name      string           `bson:"name"`
+	Colors    Colors           `bson:"colors"`
+	FontSize  int              `bson:"font_size"`
+	Author    string           `bson:"author"`
+	Created   datetime.CpsTime `bson:"created,omitempty"`
+	Updated   datetime.CpsTime `bson:"updated,omitempty"`
+	Deletable bool             `bson:"deletable"`
 }
 
 type AggregationResult struct {
