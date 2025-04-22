@@ -3,7 +3,6 @@ package event
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
@@ -11,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 )
@@ -21,6 +21,8 @@ func NewEntityUpdatedProcessor(
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
 	externalTagUpdater alarmtag.ExternalUpdater,
+	metaAlarmPostProcessor MetaAlarmPostProcessor,
+	logger zerolog.Logger,
 ) Processor {
 	return &entityUpdatedProcessor{
 		dbClient:                        dbClient,
@@ -30,6 +32,8 @@ func NewEntityUpdatedProcessor(
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
 		externalTagUpdater:              externalTagUpdater,
+		metaAlarmPostProcessor:          metaAlarmPostProcessor,
+		logger:                          logger,
 	}
 }
 
@@ -41,6 +45,8 @@ type entityUpdatedProcessor struct {
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
 	externalTagUpdater              alarmtag.ExternalUpdater
+	metaAlarmPostProcessor          MetaAlarmPostProcessor
+	logger                          zerolog.Logger
 }
 
 func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -60,18 +66,45 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		updatedServiceStates = nil
 		result = Result{}
 		alarm = types.Alarm{}
+		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
 
-		var update []bson.M
-		if event.Parameters.ImportSource != "" {
+		if event.Parameters.ImportSource != "" && (len(event.Parameters.ImportTags) > 0 || len(alarm.ImportTags) > 0) {
 			importTags := types.TransformEventTags(event.Parameters.ImportTags)
 			var setTags bson.M
 			if len(importTags) > 0 {
+				hasTagsInAlarm := make(map[string]bool, len(alarm.ImportTags))
+				for _, tag := range alarm.ImportTags {
+					hasTagsInAlarm[tag] = true
+				}
+
+				addedTags := make([]string, 0)
+				removedTags := make([]string, 0)
+				hasInImportTags := make(map[string]bool, len(importTags))
+				for _, tag := range importTags {
+					hasInImportTags[tag] = true
+					if !hasTagsInAlarm[tag] {
+						addedTags = append(addedTags, tag)
+					}
+				}
+
+				for _, tag := range alarm.ImportTags {
+					if !hasInImportTags[tag] {
+						removedTags = append(removedTags, tag)
+					}
+				}
+
+				result.AddedExternalTags = addedTags
+				result.RemovedExternalTags = removedTags
 				setTags = bson.M{"$concatArrays": bson.A{
 					bson.M{"$cond": bson.M{"if": "$etags", "then": "$etags", "else": bson.A{}}},
 					bson.M{"$cond": bson.M{"if": "$itags", "then": "$itags", "else": bson.A{}}},
 					importTags,
 				}}
 			} else {
+				result.RemovedExternalTags = alarm.ImportTags
 				setTags = bson.M{"$cond": bson.M{
 					"if": bson.M{"$and": bson.A{
 						"$imtags",
@@ -86,21 +119,13 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 				}}
 			}
 
-			update = []bson.M{
+			_, err = p.alarmCollection.UpdateOne(ctx, getOpenAlarmMatch(event), []bson.M{
 				{"$set": bson.M{"tags": setTags}},
 				{"$set": bson.M{"imtags": importTags}},
+			})
+			if err != nil {
+				return err
 			}
-		}
-
-		var err error
-		if len(update) > 0 {
-			err = p.alarmCollection.FindOneAndUpdate(ctx, getOpenAlarmMatch(event), update).Decode(&alarm)
-		} else {
-			err = p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
-		}
-
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
 		}
 
 		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
@@ -132,17 +157,35 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, err
 	}
 
+	// to dynamic-infos
+	result.Forward = true
+	result.Alarm = alarm
+	result.AlarmChange = types.NewAlarmChange()
+
+	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+
+	return result, nil
+}
+
+func (p *entityUpdatedProcessor) postProcess(
+	ctx context.Context,
+	event rpc.AxeEvent,
+	result Result,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
+	componentStateChanged bool,
+	newComponentState int,
+) {
 	for servID, servInfo := range updatedServiceStates {
-		err = p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
+		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
 		if err != nil {
-			return result, fmt.Errorf("failed to update service state: %w", err)
+			p.logger.Err(err).Msg("failed to update service state")
 		}
 	}
 
 	if componentStateChanged {
-		err = p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
+		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
 		if err != nil {
-			return result, fmt.Errorf("failed to update component state: %w", err)
+			p.logger.Err(err).Msg("failed to update component state")
 		}
 	}
 
@@ -150,10 +193,13 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		p.externalTagUpdater.Add(event.Parameters.ImportTags)
 	}
 
-	// to dynamic-infos
-	result.Forward = true
-	result.Alarm = alarm
-	result.AlarmChange = types.NewAlarmChange()
-
-	return result, nil
+	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
+		Alarm:               &result.Alarm,
+		AlarmChangeType:     result.AlarmChange.Type,
+		AddedExternalTags:   result.AddedExternalTags,
+		RemovedExternalTags: result.RemovedExternalTags,
+	})
+	if err != nil {
+		p.logger.Err(err).Msg("cannot process meta alarm")
+	}
 }
