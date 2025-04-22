@@ -26,7 +26,7 @@ import {
   TIME_UNITS,
 } from '@/constants';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { generateDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';

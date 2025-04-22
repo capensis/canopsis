@@ -12,6 +12,8 @@
           :key="action.key"
           :drag-handle-class="dragItemHandleClass"
           :name="action.key"
+          :selected-actions="actions"
+          :massive="massive"
           @remove="remove(index)"
         />
       </template>
@@ -55,6 +57,10 @@ export default {
     actions: {
       type: Array,
       default: () => [],
+    },
+    massive: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {
