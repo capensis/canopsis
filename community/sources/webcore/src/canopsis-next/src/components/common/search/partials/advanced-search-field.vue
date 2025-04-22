@@ -225,6 +225,7 @@ export default {
     };
 
     const { filteredItems } = useAdvancedSearchItems({
+      value: toRef(props, 'value'),
       fields: toRef(props, 'fields'),
       conditions: toRef(props, 'conditions'),
       activeType,
