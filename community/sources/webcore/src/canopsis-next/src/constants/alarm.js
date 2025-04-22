@@ -395,7 +395,7 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 };
 
 export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
-  [ALARM_LIST_ACTIONS_TYPES.addBookmark]: ALARM_LIST_ACTIONS_TYPES.removeBookmark,
+  [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: ALARM_LIST_ACTIONS_TYPES.addBookmark,
 };
 
 export const UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS = {
@@ -435,7 +435,6 @@ export const UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS = {
   // Other actions
   [ALARM_LIST_ACTIONS_TYPES.comment]: 'alarm.actions.titles.comment',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm.actions.titles.snooze',
-  [ALARM_LIST_ACTIONS_TYPES.correlation]: 'alarm.actions.titles.correlation',
   [ALARM_LIST_ACTIONS_TYPES.links]: 'alarm.actions.titles.links',
 };
 

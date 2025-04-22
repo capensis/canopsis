@@ -2,7 +2,7 @@ import { isArray, omit } from 'lodash';
 
 import { WIDGET_TYPES } from '@/constants';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { mapIds } from '@/helpers/array';
 

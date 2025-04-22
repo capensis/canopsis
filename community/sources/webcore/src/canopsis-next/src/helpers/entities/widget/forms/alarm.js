@@ -187,6 +187,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
  * @property {AvailabilityField} availability
+ * @property {string[]} quickActions
+ * @property {string[]} quickMassActions
  */
 
 /**
@@ -401,6 +403,8 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
   availability: availabilityFieldToForm(parameters.availability),
+  quickActions: parameters.quickActions ?? [],
+  quickMassActions: parameters.quickMassActions ?? [],
 });
 
 /**

@@ -1,6 +1,6 @@
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { CANOPSIS_EDITION } from './permission';
 import { ALARM_METRIC_PARAMETERS } from './alarm';

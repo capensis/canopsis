@@ -30,6 +30,7 @@ import { featuresService } from '@/services/features';
 import { useI18n } from '@/hooks/i18n';
 
 export default {
+  name: 'QuickAlarmActionsFormItem',
   props: {
     value: {
       type: String,
@@ -47,22 +48,30 @@ export default {
       type: String,
       default: 'action',
     },
+    selectedActions: {
+      type: Array,
+      default: () => [],
+    },
   },
   setup(props) {
     const { t, tc } = useI18n();
 
     const availableActions = computed(() => {
+      // Determine which set of actions to use based on whether it's a massive action or not
       const { actions, featuresActionsKey } = {
         [props.massive]: {
+          // Use unique alarm list actions for non-massive operations
           actions: UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
           featuresActionsKey: 'components.alarmListActionPanel.computed.actions',
         },
         [!props.massive]: {
+          // Use mass actions for massive operations
           actions: UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
           featuresActionsKey: 'components.alarmListMassActionsPanel.computed.actions',
         },
       }.true;
 
+      // Transform actions into a format suitable for display (value-text pairs)
       const preparedActions = Object.entries(actions).map(([value, textKey]) => ({
         value,
         text: t(textKey),
@@ -71,15 +80,18 @@ export default {
       let featuresActions = [];
 
       try {
+        // Create context for feature switcher with necessary methods
         const contextForFeatureSwitcher = {
           checkAccess: () => true,
           $t: t,
           $tc: tc,
         };
 
+        // Check if feature exists and get its actions
         featuresActions = featuresService.has(featuresActionsKey)
         && featuresService.call(featuresActionsKey, contextForFeatureSwitcher, []);
 
+        // If feature actions exist, add them to the beginning of the actions list
         if (featuresActions?.length) {
           const preparedFeaturesActions = featuresActions.map(({ type, title }) => ({ value: type, text: title }));
 
@@ -89,7 +101,10 @@ export default {
         console.error(err);
       }
 
-      return preparedActions;
+      // Filter out actions that are already selected, except for the current value
+      return preparedActions.filter(preparedAction => (
+        preparedAction.value === props.value || !props.selectedActions.includes(preparedAction.value)
+      ));
     });
 
     return {
