@@ -31,7 +31,7 @@
 import { ref, nextTick } from 'vue';
 
 import { advancedSearchRuleItemToFormItem } from '@/helpers/search/alarm-advanced-search';
-import { isArrayCondition } from '@/helpers/entities/pattern/form';
+import { isArrayOperator } from '@/helpers/entities/pattern/form';
 
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useActiveKey } from '@/hooks/active-key';
@@ -140,7 +140,7 @@ export default {
         return false;
       }
 
-      return !isArrayCondition(props.rules[index - 1]?.operator);
+      return !isArrayOperator(props.rules[index - 1]?.operator);
     };
 
     return {

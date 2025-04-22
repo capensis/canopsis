@@ -34,6 +34,7 @@ import {
   PATTERN_OPERATORS,
   PATTERN_STRING_OPERATORS,
   PBEHAVIOR_TYPE_TYPES,
+  PATTERN_ALARM_TAG_LABEL_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
 } from '@/constants';
 
@@ -52,6 +53,7 @@ import { usePbehavior } from '@/hooks/store/modules/pbehavior';
 import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { useComponentInstance } from '@/hooks/vue';
+import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
 
 /**
  * Hook to manage fetching and processing entity information keys for advanced search.
@@ -182,6 +184,7 @@ export const useGetEntityOptions = () => {
 export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
   const { t } = useI18n();
   const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
+  const { fetchAlarmTagsLabelsListWithoutStore } = useAlarmTagLabel();
   const { fetchMetaAlarmRulesListWithoutStore } = useMetaAlarmRule();
   const { fetchUsersListWithoutStore } = useUser();
   const { getEntityOptions } = useGetEntityOptions();
@@ -219,14 +222,27 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     [ALARM_FIELDS.displayName]: {
       operators: STRING_WITH_ONE_OF_OPERATORS,
     },
-    [ALARM_FIELDS.connector]: getEntityOptions([BASIC_ENTITY_TYPES.connector]),
-    [ALARM_FIELDS.connectorName]: getEntityOptions([BASIC_ENTITY_TYPES.connector]),
+    [ALARM_FIELDS.connector]: {
+      ...getEntityOptions([BASIC_ENTITY_TYPES.connector]),
+
+      itemText: 'connector_type',
+      itemValue: 'connector_type',
+    },
+    [ALARM_FIELDS.connectorName]: {
+      ...getEntityOptions([BASIC_ENTITY_TYPES.connector]),
+
+      itemValue: 'name',
+    },
     [ALARM_FIELDS.component]: {
       ...getEntityOptions([BASIC_ENTITY_TYPES.component]),
 
       itemText: 'component',
     },
-    [ALARM_FIELDS.resource]: getEntityOptions([BASIC_ENTITY_TYPES.resource]),
+    [ALARM_FIELDS.resource]: {
+      ...getEntityOptions([BASIC_ENTITY_TYPES.resource]),
+
+      itemValue: 'name',
+    },
     [ALARM_FIELDS.state]: {
       operators: PATTERN_NUMBER_OPERATORS,
       values: Object.values(ALARM_STATES).map(value => ({ value, text: t(`common.stateTypes.${value}`) })),
@@ -246,10 +262,24 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
       operators: [
         PATTERN_OPERATORS.with,
         PATTERN_OPERATORS.without,
+        PATTERN_OPERATORS.withLabel,
+        PATTERN_OPERATORS.withoutLabel,
       ],
-      fetchValues: fetchAlarmTagsListWithoutStore,
-      itemText: 'value',
-      itemValue: 'value',
+      fetchValues: ({ params }, { operator } = {}) => (
+        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
+          ? fetchAlarmTagsLabelsListWithoutStore({ params })
+          : fetchAlarmTagsListWithoutStore({ params })
+      ),
+      itemText: ({ operator } = {}) => (
+        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
+          ? '_id'
+          : 'value'
+      ),
+      itemValue: ({ operator } = {}) => (
+        PATTERN_ALARM_TAG_LABEL_OPERATORS.includes(operator)
+          ? '_id'
+          : 'value'
+      ),
     },
     [ALARM_FIELDS.infos]: {
       items: unref(infosItems),
@@ -331,8 +361,8 @@ export const useAdvancedSearchAlarmAttributes = ({ infosItems }) => {
     [ALARM_FIELDS.ackBy]: {
       operators: USER_OPERATORS,
       fetchValues: fetchUsersListWithoutStore,
-      itemValue: '_id',
-      itemText: 'name',
+      itemValue: 'display_name',
+      itemText: 'display_name',
     },
     [ALARM_FIELDS.ackMessage]: {
       operators: STRING_WITH_EXIST_AND_ONE_OF_OPERATORS,
