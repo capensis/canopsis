@@ -1301,15 +1301,21 @@ definitions:
         properties:
           background:
             type: string
+          hover_row:
+            type: boolean
           hover_row_color:
             type: string
           row_color:
             type: string
+          shift_row:
+            type: boolean
           shift_row_color:
             type: string
         required:
         - background
+        - hover_row
         - row_color
+        - shift_row
         type: object
     type: object
   colortheme.EditRequest:

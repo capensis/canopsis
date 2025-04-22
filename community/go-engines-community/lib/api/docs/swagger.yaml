@@ -3761,7 +3761,9 @@ paths:
                     "table": {
                       "background": "#AAAAAA",
                       "row_color": "#AAAAAA",
+                      "shift_row": false,
                       "shift_row_color": "#AAAAAA",
+                      "hover_row": true,
                       "hover_row_color": "#AAAAAA"
                     },
                     "state": {
@@ -3854,7 +3856,9 @@ paths:
                     "table": {
                       "background": "#FFFFFF",
                       "row_color": "#FFFFFF",
+                      "shift_row": false,
                       "shift_row_color": "#FFFFFF",
+                      "hover_row": false,
                       "hover_row_color": "#FFFFFF"
                     },
                     "state": {
