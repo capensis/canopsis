@@ -395,7 +395,27 @@ export default {
         return;
       }
 
-      changeSelectedItems(props.multiple ? [...(props.value || []), value] : value);
+      let newValue = value;
+
+      if (props.multiple) {
+        const prevValue = props.value || [];
+        const index = prevValue.findIndex(item => (
+          item?.[props.itemValue] === value?.[props.itemValue]
+          || item?.[props.itemValue] === value
+          || item === value?.[props.itemValue]
+          || item === value
+        ));
+
+        newValue = [...prevValue];
+
+        if (index === -1) {
+          newValue.push(value);
+        } else {
+          newValue.splice(index, 1);
+        }
+      }
+
+      changeSelectedItems(newValue);
 
       if (!props.multiple) {
         updateMenuOpened(false);
