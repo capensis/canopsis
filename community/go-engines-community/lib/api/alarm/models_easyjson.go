@@ -135,25 +135,68 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.EntityPattern = string(in.String())
 		case "pbehavior_pattern":
 			out.PbehaviorPattern = string(in.String())
-		case "instructions":
+		case "instruction_filter_type":
 			if in.IsNull() {
 				in.Skip()
-				out.Instructions = nil
+				out.InstructionFilterType = nil
+			} else {
+				if out.InstructionFilterType == nil {
+					out.InstructionFilterType = new(int)
+				}
+				*out.InstructionFilterType = int(in.Int())
+			}
+		case "instruction_type":
+			if in.IsNull() {
+				in.Skip()
+				out.InstructionType = nil
+			} else {
+				if out.InstructionType == nil {
+					out.InstructionType = new(int)
+				}
+				*out.InstructionType = int(in.Int())
+			}
+		case "instruction_statuses":
+			if in.IsNull() {
+				in.Skip()
+				out.InstructionStatuses = nil
 			} else {
 				in.Delim('[')
-				if out.Instructions == nil {
+				if out.InstructionStatuses == nil {
 					if !in.IsDelim(']') {
-						out.Instructions = make([]InstructionFilterRequest, 0, 0)
+						out.InstructionStatuses = make([]int, 0, 8)
 					} else {
-						out.Instructions = []InstructionFilterRequest{}
+						out.InstructionStatuses = []int{}
 					}
 				} else {
-					out.Instructions = (out.Instructions)[:0]
+					out.InstructionStatuses = (out.InstructionStatuses)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v3 InstructionFilterRequest
-					easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(in, &v3)
-					out.Instructions = append(out.Instructions, v3)
+					var v3 int
+					v3 = int(in.Int())
+					out.InstructionStatuses = append(out.InstructionStatuses, v3)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "instruction_ids":
+			if in.IsNull() {
+				in.Skip()
+				out.InstructionIDs = nil
+			} else {
+				in.Delim('[')
+				if out.InstructionIDs == nil {
+					if !in.IsDelim(']') {
+						out.InstructionIDs = make([]string, 0, 4)
+					} else {
+						out.InstructionIDs = []string{}
+					}
+				} else {
+					out.InstructionIDs = (out.InstructionIDs)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v4 string
+					v4 = string(in.String())
+					out.InstructionIDs = append(out.InstructionIDs, v4)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -186,11 +229,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v4, v5 := range in.Filters {
-				if v4 > 0 {
+			for v5, v6 := range in.Filters {
+				if v5 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v5))
+				out.String(string(v6))
 			}
 			out.RawByte(']')
 		}
@@ -254,11 +297,11 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v6, v7 := range in.Tags {
-				if v6 > 0 {
+			for v7, v8 := range in.Tags {
+				if v7 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v7))
+				out.String(string(v8))
 			}
 			out.RawByte(']')
 		}
@@ -279,17 +322,51 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.String(string(in.PbehaviorPattern))
 	}
 	{
-		const prefix string = ",\"instructions\":"
+		const prefix string = ",\"instruction_filter_type\":"
 		out.RawString(prefix)
-		if in.Instructions == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+		if in.InstructionFilterType == nil {
+			out.RawString("null")
+		} else {
+			out.Int(int(*in.InstructionFilterType))
+		}
+	}
+	{
+		const prefix string = ",\"instruction_type\":"
+		out.RawString(prefix)
+		if in.InstructionType == nil {
+			out.RawString("null")
+		} else {
+			out.Int(int(*in.InstructionType))
+		}
+	}
+	{
+		const prefix string = ",\"instruction_statuses\":"
+		out.RawString(prefix)
+		if in.InstructionStatuses == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v8, v9 := range in.Instructions {
-				if v8 > 0 {
+			for v9, v10 := range in.InstructionStatuses {
+				if v9 > 0 {
 					out.RawByte(',')
 				}
-				easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(out, v9)
+				out.Int(int(v10))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"instruction_ids\":"
+		out.RawString(prefix)
+		if in.InstructionIDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v11, v12 := range in.InstructionIDs {
+				if v11 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v12))
 			}
 			out.RawByte(']')
 		}
@@ -310,214 +387,4 @@ func (v ExportFetchParameters) MarshalEasyJSON(w *jwriter.Writer) {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *ExportFetchParameters) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm(l, v)
-}
-func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(in *jlexer.Lexer, out *InstructionFilterRequest) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "running":
-			if in.IsNull() {
-				in.Skip()
-				out.Running = nil
-			} else {
-				if out.Running == nil {
-					out.Running = new(bool)
-				}
-				*out.Running = bool(in.Bool())
-			}
-		case "include_types":
-			if in.IsNull() {
-				in.Skip()
-				out.IncludeTypes = nil
-			} else {
-				in.Delim('[')
-				if out.IncludeTypes == nil {
-					if !in.IsDelim(']') {
-						out.IncludeTypes = make([]int, 0, 8)
-					} else {
-						out.IncludeTypes = []int{}
-					}
-				} else {
-					out.IncludeTypes = (out.IncludeTypes)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v10 int
-					v10 = int(in.Int())
-					out.IncludeTypes = append(out.IncludeTypes, v10)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "exclude_types":
-			if in.IsNull() {
-				in.Skip()
-				out.ExcludeTypes = nil
-			} else {
-				in.Delim('[')
-				if out.ExcludeTypes == nil {
-					if !in.IsDelim(']') {
-						out.ExcludeTypes = make([]int, 0, 8)
-					} else {
-						out.ExcludeTypes = []int{}
-					}
-				} else {
-					out.ExcludeTypes = (out.ExcludeTypes)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v11 int
-					v11 = int(in.Int())
-					out.ExcludeTypes = append(out.ExcludeTypes, v11)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "include":
-			if in.IsNull() {
-				in.Skip()
-				out.Include = nil
-			} else {
-				in.Delim('[')
-				if out.Include == nil {
-					if !in.IsDelim(']') {
-						out.Include = make([]string, 0, 4)
-					} else {
-						out.Include = []string{}
-					}
-				} else {
-					out.Include = (out.Include)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v12 string
-					v12 = string(in.String())
-					out.Include = append(out.Include, v12)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		case "exclude":
-			if in.IsNull() {
-				in.Skip()
-				out.Exclude = nil
-			} else {
-				in.Delim('[')
-				if out.Exclude == nil {
-					if !in.IsDelim(']') {
-						out.Exclude = make([]string, 0, 4)
-					} else {
-						out.Exclude = []string{}
-					}
-				} else {
-					out.Exclude = (out.Exclude)[:0]
-				}
-				for !in.IsDelim(']') {
-					var v13 string
-					v13 = string(in.String())
-					out.Exclude = append(out.Exclude, v13)
-					in.WantComma()
-				}
-				in.Delim(']')
-			}
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibApiAlarm1(out *jwriter.Writer, in InstructionFilterRequest) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"running\":"
-		out.RawString(prefix[1:])
-		if in.Running == nil {
-			out.RawString("null")
-		} else {
-			out.Bool(bool(*in.Running))
-		}
-	}
-	{
-		const prefix string = ",\"include_types\":"
-		out.RawString(prefix)
-		if in.IncludeTypes == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v14, v15 := range in.IncludeTypes {
-				if v14 > 0 {
-					out.RawByte(',')
-				}
-				out.Int(int(v15))
-			}
-			out.RawByte(']')
-		}
-	}
-	{
-		const prefix string = ",\"exclude_types\":"
-		out.RawString(prefix)
-		if in.ExcludeTypes == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v16, v17 := range in.ExcludeTypes {
-				if v16 > 0 {
-					out.RawByte(',')
-				}
-				out.Int(int(v17))
-			}
-			out.RawByte(']')
-		}
-	}
-	{
-		const prefix string = ",\"include\":"
-		out.RawString(prefix)
-		if in.Include == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v18, v19 := range in.Include {
-				if v18 > 0 {
-					out.RawByte(',')
-				}
-				out.String(string(v19))
-			}
-			out.RawByte(']')
-		}
-	}
-	{
-		const prefix string = ",\"exclude\":"
-		out.RawString(prefix)
-		if in.Exclude == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
-			out.RawByte('[')
-			for v20, v21 := range in.Exclude {
-				if v20 > 0 {
-					out.RawByte(',')
-				}
-				out.String(string(v21))
-			}
-			out.RawByte(']')
-		}
-	}
-	out.RawByte('}')
 }
