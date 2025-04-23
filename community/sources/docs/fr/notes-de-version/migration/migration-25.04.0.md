@@ -1,6 +1,6 @@
 # Guide de migration vers Canopsis 25.04.0
 
-Ce guide donne les instructions vous permettant de mettre à jour Canopsis 24.04 (dernière version disponible) vers [la version 25.04.0](../25.04.0.md).
+Ce guide donne les instructions vous permettant de mettre à jour Canopsis 24.10 (dernière version disponible) vers [la version 25.04.0](../25.04.0.md).
 
 ## Prérequis
 
@@ -100,7 +100,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     Si vous êtes utilisateur de l'édition `community`, voici les étapes à suivre.
 
-    Télécharger le paquet de la version 24.10.0 (canopsis-community-docker-compose-25.04.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases).
+    Télécharger le paquet de la version 25.04.0 (canopsis-community-docker-compose-25.04.0.tar.gz) disponible à cette adresse [https://git.canopsis.net/canopsis/canopsis-community/-/releases](https://git.canopsis.net/canopsis/canopsis-community/-/releases).
 
     ```sh
     export CPS_EDITION=community
@@ -130,9 +130,43 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
 ### Mise à jour de RabbitMQ
 
-Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 3 à 4.
+Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 3 à 4.  
+La complexité de la procédure officielle de migration nous incite à proposer la suppression pure et simple du volume accueillant les données RabbitMQ.  
+Dans Canopsis, RabbitMQ traite toutes les données en mémoire sauf dans certaines situations où les moteurs Canopsis ne sont plus en mesure de traiter les messages. Il n'y a donc pas de craintes de perte de données dans ce processus.
+
+
+!!! warning "Avertissement"
+
+    Si votre installation RabbitMQ est clusterisée, veillez contacter notre service de support.  
+    La notion de "Mirrored Classic Queues" a été remplacée par les "Quorum Queues".  
+    Des opérations spécifiques sont nécessaires.
+    Procédure officielle de migration : [https://www.rabbitmq.com/docs/3.13/migrate-mcq-to-qq](https://www.rabbitmq.com/docs/3.13/migrate-mcq-to-qq)
 
 === "Docker Compose"
+
+    Repérer le volume associé à RabbitMQ : `rabbitmqdata`
+
+    ```sh
+    docker volume ls|grep canopsis-pro_rabbitmqdata
+    ```
+
+    Cette commande devrait vous renvoyer un résultat similaire à 
+
+    ```sh
+    local     canopsis-pro_rabbitmqdata
+    ```
+
+    Suppression du volume
+
+    ```sh
+    docker volume rm canopsis-pro_rabbitmqdata
+    ```
+
+    Démarrage du conteneur
+
+    ```sh
+    CPS_EDITION=pro docker compose up -d rabbitmq
+    ```
 
 === "Paquets RHEL 8"
 
@@ -164,16 +198,15 @@ Si vous avez utilisé un fichier de surcharge, alors vous n'avez rien à faire, 
 
 Chaque moteur dispose désormais de processeurs dédiés à chacun de ces flux, permettant leur exécution en parallèle. De plus, chaque processeur embarque un pool de workers permettant un traitement concurrent efficace.
 
-Objectif : éviter que les événements système ne bloquent les actions utilisateurs ou les événements de connecteurs. Par exemple, même en cas de nombreux pbh_enter, l’interface reste réactive et les nouvelles alarmes peuvent être créées sans latence.
+**Objectif :** éviter que les événements système ne bloquent les actions utilisateurs ou les événements de connecteurs. Par exemple, même en cas de nombreux pbh_enter, l’interface reste réactive et les nouvelles alarmes peuvent être créées sans latence.
 
-Dépréciation de certains flags
 Les flags suivants sont désormais obsolètes :
 
 * -publishQueue
 * -consumeQueue
 * -workers (remplacé par des flags spécifiques à chaque type de flux)
 
-| Moteur               | Flags (nouveaux)   | Valeur par défaut | Flags obsolètes                             |
+| Moteur               | Flags nouveaux     | Valeur par défaut | Flags obsolètes                             |
 |----------------------|--------------------|-------------------|---------------------------------------------|
 | engine-fifo          | -workers           | 10                | -publishQueue, -consumeQueue                |
 | engine-che           | -externalWorkers   | 4                 | -workers, -publishQueue, -consumeQueue      |
