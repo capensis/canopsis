@@ -502,10 +502,42 @@ definitions:
         items:
           type: string
         type: array
-      instructions:
+      instruction_filter_type:
+        description: |-
+          Possible instruction filter type values.
+            * `0` - No instructions.
+            * `1` - No instructions or not in progress.
+            * `2` - Has instructions.
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      instruction_ids:
         items:
-          $ref: '#/definitions/alarm.InstructionFilterRequest'
+          type: string
         type: array
+        uniqueItems: true
+      instruction_statuses:
+        description: |-
+          Possible instruction status values.
+            * `0` - In progress.
+            * `1` - Completed.
+            * `2` - Failed.
+            * `3` - Not in progress and not completed.
+        items:
+          type: integer
+        type: array
+        uniqueItems: true
+      instruction_type:
+        description: |-
+          Possible instruction type values.
+            * `0` - Manual.
+            * `1` - Auto.
+        enum:
+        - 0
+        - 1
+        type: integer
       only_bookmarks:
         type: boolean
       opened:
@@ -543,27 +575,6 @@ definitions:
             * `1` - Succeeded
             * `2` - Failed
         type: integer
-    type: object
-  alarm.InstructionFilterRequest:
-    properties:
-      exclude:
-        items:
-          type: string
-        type: array
-      exclude_types:
-        items:
-          type: integer
-        type: array
-      include:
-        items:
-          type: string
-        type: array
-      include_types:
-        items:
-          type: integer
-        type: array
-      running:
-        type: boolean
     type: object
   alarm.MetaAlarmRule:
     properties:

@@ -36,6 +36,27 @@ const (
 	entityDbPrefix           = "e"
 )
 
+const (
+	instrFilterNoInstructions = iota
+	instrFilterNoInstructionOrNotProgress
+	instrFilterHasInstructions
+)
+
+const (
+	instrFilterExecStatusInProgress = iota
+	instrFilterExecStatusCompleted
+	instrFilterExecStatusFailed
+	instrFilterExecStatusNotInProgressAndNotCompleted
+)
+
+const (
+	instrFilterExecOptNoOpt = iota
+	instrFilterExecOptOnlyEmptyExecs
+	instrFilterExecOptWithEmptyExecs
+)
+
+const maxPossibleUniqueExecutionStatuses = 4
+
 var ErrUnknownQuery = errors.New("unknown query type")
 
 type MongoQueryBuilder struct {
@@ -945,133 +966,86 @@ func (q *MongoQueryBuilder) addOnlyParentsFilter(r FilterRequest, match *[]bson.
 }
 
 func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterRequest, match *[]bson.M) error {
+	if r.InstructionFilterType == nil {
+		return nil
+	}
+
 	withMatch := false
 	withExecution := false
-	withExecutionType := false
 
-	for _, instructionFilter := range r.Instructions {
-		if len(instructionFilter.Exclude) > 0 {
-			if instructionFilter.Running != nil && *instructionFilter.Running {
-				withExecution = true
-				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Exclude}})
-				continue
-			}
+	instructionQuery := bson.M{"enabled": true}
+	instructionExecutionLookupQuery := make(bson.M)
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"_id": bson.M{"$in": instructionFilter.Exclude}},
-			)
-			if err != nil {
-				return err
-			}
-			if len(filters) > 0 {
-				if instructionFilter.Running == nil {
-					withMatch = true
-					*match = append(*match, bson.M{"$nor": filters})
-				} else {
-					withExecution = true
-					withMatch = true
-					*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$or": []bson.M{
-						{"$in": instructionFilter.Exclude},
-						{"$nor": filters},
-					}}})
-				}
-			}
-			continue
+	executionsOptions := instrFilterExecOptNoOpt
+	var instructionExecutionStatuses []int
+
+	switch *r.InstructionFilterType {
+	case instrFilterNoInstructions:
+		withMatch = true
+
+		instructionFilters, err := q.getInstructionsFilters(ctx, instructionQuery)
+		if err != nil {
+			return fmt.Errorf("failed to get instructions filters: %w", err)
 		}
 
-		if len(instructionFilter.ExcludeTypes) > 0 {
-			if instructionFilter.Running != nil && *instructionFilter.Running {
-				withExecutionType = true
-				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$nin": instructionFilter.ExcludeTypes}})
-				continue
-			}
-
-			filters, err := q.getInstructionsFilters(ctx, bson.M{
-				"type":    bson.M{"$in": instructionFilter.ExcludeTypes},
-				"enabled": true,
-			})
-			if err != nil {
-				return err
-			}
-			if len(filters) > 0 {
-				if instructionFilter.Running == nil {
-					withMatch = true
-					*match = append(*match, bson.M{"$nor": filters})
-				} else {
-					withExecutionType = true
-					withMatch = true
-					*match = append(*match, bson.M{"$or": []bson.M{
-						{"instruction_execution.type": bson.M{"$in": instructionFilter.ExcludeTypes}},
-						{"$nor": filters},
-					}})
-				}
-			}
-			continue
+		if len(instructionFilters) > 0 {
+			*match = append(*match, bson.M{"$nor": instructionFilters})
+		} else {
+			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
 		}
+	case instrFilterNoInstructionOrNotProgress:
+		withExecution = true
 
-		if len(instructionFilter.Include) > 0 {
-			if instructionFilter.Running != nil && *instructionFilter.Running {
-				withExecution = true
-				*match = append(*match, bson.M{"instruction_execution.instruction": bson.M{"$in": instructionFilter.Include}})
-				continue
-			}
+		instructionExecutionStatuses = []int{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}
 
-			filters, err := q.getInstructionsFilters(
-				ctx,
-				bson.M{"_id": bson.M{"$in": instructionFilter.Include}},
-			)
-			if err != nil {
-				return err
-			}
-			if len(filters) > 0 {
-				if instructionFilter.Running == nil {
-					withMatch = true
-					*match = append(*match, bson.M{"$or": filters})
-				} else {
-					withMatch = true
-					withExecution = true
-					*match = append(*match, bson.M{"$and": []bson.M{
-						{"instruction_execution.instruction": bson.M{"$nin": instructionFilter.Include}},
-						{"$or": filters},
-					}})
-				}
+		executionsOptions = instrFilterExecOptOnlyEmptyExecs
+	case instrFilterHasInstructions:
+		withMatch = true
+
+		if r.InstructionType != nil {
+			if *r.InstructionType == 0 {
+				instructionQuery["type"] = bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}}
+				instructionExecutionLookupQuery["type"] = bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}}
 			} else {
-				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
+				instructionQuery["type"] = InstructionTypeAuto
+				instructionExecutionLookupQuery["type"] = InstructionTypeAuto
 			}
-			continue
 		}
 
-		if len(instructionFilter.IncludeTypes) > 0 {
-			if instructionFilter.Running != nil && *instructionFilter.Running {
-				withExecutionType = true
-				*match = append(*match, bson.M{"instruction_execution.type": bson.M{"$in": instructionFilter.IncludeTypes}})
-				continue
-			}
+		if len(r.InstructionIDs) > 0 {
+			instructionQuery["_id"] = bson.M{"$in": r.InstructionIDs}
+			instructionExecutionLookupQuery["instruction"] = bson.M{"$in": r.InstructionIDs}
+		}
 
-			filters, err := q.getInstructionsFilters(ctx, bson.M{
-				"type":    bson.M{"$in": instructionFilter.IncludeTypes},
-				"enabled": true,
-			})
-			if err != nil {
-				return err
-			}
-			if len(filters) > 0 {
-				if instructionFilter.Running == nil {
-					withMatch = true
-					*match = append(*match, bson.M{"$or": filters})
-				} else {
-					withMatch = true
-					withExecutionType = true
-					*match = append(*match, bson.M{"$and": []bson.M{
-						{"instruction_execution.type": bson.M{"$nin": instructionFilter.IncludeTypes}},
-						{"$or": filters},
-					}})
+		// all elements are unique thanks to unique validator
+		// if all statuses is set then it's the same as no statuses
+		if len(r.InstructionStatuses) > 0 && len(r.InstructionStatuses) != maxPossibleUniqueExecutionStatuses {
+			withExecution = true
+
+			for _, status := range r.InstructionStatuses {
+				switch status {
+				case instrFilterExecStatusFailed:
+					instructionExecutionStatuses = append(instructionExecutionStatuses, InstructionExecutionStatusFailed)
+				case instrFilterExecStatusCompleted:
+					instructionExecutionStatuses = append(instructionExecutionStatuses, InstructionExecutionStatusCompleted)
+				case instrFilterExecStatusInProgress:
+					instructionExecutionStatuses = append(instructionExecutionStatuses, InstructionExecutionStatusRunning)
+					instructionExecutionStatuses = append(instructionExecutionStatuses, InstructionExecutionStatusWaitResult)
+				case instrFilterExecStatusNotInProgressAndNotCompleted:
+					executionsOptions = instrFilterExecOptWithEmptyExecs
 				}
-			} else {
-				*match = append(*match, bson.M{"$nor": []bson.M{{}}})
 			}
-			continue
+		}
+
+		instructionFilters, err := q.getInstructionsFilters(ctx, instructionQuery)
+		if err != nil {
+			return fmt.Errorf("failed to get instructions filters: %w", err)
+		}
+
+		if len(instructionFilters) > 0 {
+			*match = append(*match, bson.M{"$or": instructionFilters})
+		} else {
+			*match = append(*match, bson.M{"$nor": []bson.M{{}}})
 		}
 	}
 
@@ -1080,9 +1054,13 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 		q.computedFieldsForAlarmMatch["v.infos_array"] = true
 		q.computedFields["v.infos_array"] = bson.M{"$objectToArray": "$v.infos"}
 	}
-	if withExecution || withExecutionType {
+	if withExecution {
 		q.lookupsOnlyForAdditionalMatch["instruction_execution"] = true
-		q.lookups = append(q.lookups, lookupWithKey{key: "instruction_execution", pipeline: getInstructionExecutionLookup(withExecutionType)})
+		q.lookups = append(q.lookups, lookupWithKey{key: "instruction_execution", pipeline: getInstructionExecutionLookup(
+			instructionExecutionLookupQuery,
+			instructionExecutionStatuses,
+			executionsOptions,
+		)})
 	}
 
 	return nil
@@ -1449,36 +1427,66 @@ func getChildrenCountLookup() []bson.M {
 	}
 }
 
-func getInstructionExecutionLookup(withType bool) []bson.M {
+func getInstructionExecutionLookup(pipelineLookupQuery bson.M, executionStatuses []int, executionsOption int) []bson.M {
 	pipeline := []bson.M{
-		{"$lookup": bson.M{
-			"from": mongo.InstructionExecutionMongoCollection,
-			"let":  bson.M{"alarm": "$_id"},
-			"pipeline": []bson.M{
-				{"$match": bson.M{"$and": []bson.M{
-					{"$expr": bson.M{"$eq": bson.A{"$$alarm", "$alarm"}}},
-					{"status": bson.M{"$in": bson.A{InstructionExecutionStatusRunning, InstructionExecutionStatusWaitResult}}},
-				}}},
+		{
+			"$lookup": bson.M{
+				"from": mongo.InstructionExecutionMongoCollection,
+				"let":  bson.M{"alarm": "$_id"},
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{"$and": []bson.M{
+							{
+								"$expr": bson.M{
+									"$eq": bson.A{"$$alarm", "$alarm"},
+								},
+							},
+							pipelineLookupQuery,
+						}},
+					},
+					{
+						"$sort": bson.M{"created_at": -1},
+					},
+					{
+						"$limit": 1,
+					},
+				},
+				"as": "instruction_execution",
 			},
-			"as": "instruction_execution",
-		}},
-		{"$unwind": bson.M{"path": "$instruction_execution", "preserveNullAndEmptyArrays": true}},
+		},
+		{
+			"$unwind": bson.M{
+				"path":                       "$instruction_execution",
+				"preserveNullAndEmptyArrays": true,
+			},
+		},
 	}
-	if withType {
-		pipeline = append(pipeline, []bson.M{
-			{"$lookup": bson.M{
-				"from":         mongo.InstructionMongoCollection,
-				"localField":   "instruction_execution.instruction",
-				"foreignField": "_id",
-				"as":           "instruction_execution.type",
-			}},
-			{"$unwind": bson.M{"path": "$instruction_execution.type", "preserveNullAndEmptyArrays": true}},
-			{"$addFields": bson.M{
-				"instruction_execution.type": "$instruction_execution.type.type",
-			}},
-		}...)
+
+	switch executionsOption {
+	case instrFilterExecOptOnlyEmptyExecs:
+		if len(executionStatuses) > 0 {
+			pipeline = append(pipeline, bson.M{"$match": bson.M{"instruction_execution.status": bson.M{"$nin": executionStatuses}}})
+		} else {
+			pipeline = append(pipeline, bson.M{"$match": bson.M{"instruction_execution": bson.M{"$exists": false}}})
+		}
+	case instrFilterExecOptWithEmptyExecs:
+		or := []bson.M{{"instruction_execution": bson.M{"$exists": false}}}
+		if len(executionStatuses) > 0 {
+			or = append(or, bson.M{"instruction_execution.status": bson.M{"$in": executionStatuses}})
+		}
+
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$or": or}})
+	case instrFilterExecOptNoOpt:
+		if len(executionStatuses) > 0 {
+			pipeline = append(pipeline, bson.M{"$match": bson.M{"instruction_execution.status": bson.M{"$in": executionStatuses}}})
+		}
 	}
-	return pipeline
+
+	return append(pipeline, bson.M{
+		"$project": bson.M{
+			"instruction_execution": 0,
+		},
+	})
 }
 
 func getComputedFields(now datetime.CpsTime, userID string) bson.M {
