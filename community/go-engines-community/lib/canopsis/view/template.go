@@ -134,6 +134,12 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmExportToPDF: {
 				"exportPdfTemplate",
 			},
+			WidgetTemplateTypeAlarmQuickActions: {
+				"quickActions",
+			},
+			WidgetTemplateTypeAlarmMassQuickActions: {
+				"massQuickActions",
+			},
 		},
 		WidgetTypeContextExplorer: {
 			WidgetTemplateTypeAlarmColumns: {

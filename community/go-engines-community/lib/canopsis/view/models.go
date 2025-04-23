@@ -25,13 +25,15 @@ const (
 )
 
 const (
-	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
-	WidgetTemplateTypeEntityColumns        = "entity_columns"
-	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
-	WidgetTemplateTypeAlarmExportToPDF     = "alarm_export_to_pdf"
-	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
-	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
-	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
+	WidgetTemplateTypeAlarmColumns          = "alarm_columns"
+	WidgetTemplateTypeEntityColumns         = "entity_columns"
+	WidgetTemplateTypeAlarmMoreInfos        = "alarm_more_infos"
+	WidgetTemplateTypeAlarmExportToPDF      = "alarm_export_to_pdf"
+	WidgetTemplateTypeAlarmQuickActions     = "alarm_quick_actions"
+	WidgetTemplateTypeAlarmMassQuickActions = "alarm_mass_quick_actions"
+	WidgetTemplateTypeServiceWeatherItem    = "weather_item"
+	WidgetTemplateTypeServiceWeatherModal   = "weather_modal"
+	WidgetTemplateTypeServiceWeatherEntity  = "weather_entity"
 )
 
 const PermissionGroupCommonViews = "commonviews"
@@ -192,6 +194,7 @@ type WidgetTemplate struct {
 	Type    string           `bson:"type"`
 	Columns []WidgetColumn   `bson:"columns,omitempty"`
 	Content string           `bson:"content,omitempty"`
+	Actions []string         `bson:"actions,omitempty"`
 	Author  string           `bson:"author"`
 	Created datetime.CpsTime `bson:"created,omitempty"`
 	Updated datetime.CpsTime `bson:"updated,omitempty"`

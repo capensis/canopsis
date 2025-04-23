@@ -6584,6 +6584,10 @@ definitions:
     type: object
   widgettemplate.EditRequest:
     properties:
+      actions:
+        items:
+          type: string
+        type: array
       columns:
         items:
           $ref: '#/definitions/view.WidgetColumn'
@@ -6599,6 +6603,8 @@ definitions:
         - entity_columns
         - alarm_more_infos
         - alarm_export_to_pdf
+        - alarm_quick_actions
+        - alarm_mass_quick_actions
         - weather_item
         - weather_modal
         - weather_entity
@@ -6611,6 +6617,10 @@ definitions:
     properties:
       _id:
         type: string
+      actions:
+        items:
+          type: string
+        type: array
       author:
         $ref: '#/definitions/author.Author'
       columns:

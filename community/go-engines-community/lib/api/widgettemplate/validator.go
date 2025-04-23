@@ -26,6 +26,10 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		if r.Content != "" {
 			sl.ReportError(r.Content, "Content", "Content", "must_be_empty", "")
 		}
+
+		if len(r.Actions) > 0 {
+			sl.ReportError(r.Columns, "Actions", "Actions", "must_be_empty", "")
+		}
 	case view.WidgetTemplateTypeAlarmMoreInfos,
 		view.WidgetTemplateTypeAlarmExportToPDF,
 		view.WidgetTemplateTypeServiceWeatherItem,
@@ -34,8 +38,28 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		if r.Content == "" {
 			sl.ReportError(r.Content, "Content", "Content", "required", "")
 		}
+
 		if len(r.Columns) > 0 {
 			sl.ReportError(r.Columns, "Columns", "Columns", "must_be_empty", "")
 		}
+
+		if len(r.Actions) > 0 {
+			sl.ReportError(r.Columns, "Actions", "Actions", "must_be_empty", "")
+		}
+	case view.WidgetTemplateTypeAlarmQuickActions,
+		view.WidgetTemplateTypeAlarmMassQuickActions:
+		if len(r.Actions) == 0 {
+			sl.ReportError(r.Actions, "Actions", "Actions", "required", "")
+		}
+
+		if len(r.Columns) > 0 {
+			sl.ReportError(r.Columns, "Columns", "Columns", "must_be_empty", "")
+		}
+
+		if r.Content != "" {
+			sl.ReportError(r.Content, "Content", "Content", "must_be_empty", "")
+		}
+	default:
+		// do nothing
 	}
 }
