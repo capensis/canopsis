@@ -64,7 +64,7 @@ export default {
   fastAckOutput: 'Commentaire d\'acquittement rapide',
   fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie',
-  isCorrelationEnabled: 'Corrélation activée ?',
+  isCorrelationEnabled: 'Corrélation activée ?',
   fastPbehavior: 'Comportement périodique rapide',
   duration: 'Durée',
   tstop: 'Date de fin',
@@ -153,7 +153,7 @@ export default {
     },
   },
   considerPbehaviors: {
-    title: 'Prendre en compte les comportements périodiques ?',
+    title: 'Prendre en compte les comportements périodiques ?',
   },
   serviceWeatherModalTypes: {
     title: 'Type de modale',
@@ -165,9 +165,9 @@ export default {
   },
   columns: {
     customLabel: 'Étiquette personnalisée',
-    isHtml: 'Est-ce du HTML ?',
+    isHtml: 'Est-ce du HTML ?',
     withTemplate: 'Modèle personnalisé',
-    isState: 'Affiché comme une criticité ?',
+    isState: 'Affiché comme une criticité ?',
     onlyIcon: 'Afficher uniquement les icônes de liens',
     inlineLinksCount: 'Nombre de liens en ligne',
     linksInRowCount: 'Nombre de liens dans la ligne',
@@ -198,6 +198,9 @@ export default {
   serverStorage: 'Stockage serveur',
   filenameRecognition: 'Reconnaissance du nom de fichier',
   resultDirectory: 'Stockage des résultats de test',
+  quickMassActions: {
+    description: 'Configuration des actions massives rapides',
+  },
   screenshotDirectories: {
     title: 'Paramètres de stockage des captures d\'écran',
     helpText: 'Définir où les captures d\'écran sont stockées',
