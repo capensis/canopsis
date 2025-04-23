@@ -13,6 +13,13 @@
           class="c-alarm-advanced-search__chip c-alarm-advanced-search__array-chip"
           v-on="multipleChipListeners"
         >
+          <v-progress-circular
+            v-if="valuesPending"
+            color="primary"
+            size="16"
+            width="2"
+            indeterminate
+          />
           <v-chip
             v-for="(item, index) in selectedItems"
             :key="item[itemValue]"
@@ -280,10 +287,12 @@ export default {
      *
      * @param {string} newInputValue - The new value to be set for the input.
      */
-    const setInputValue = (newInputValue) => {
+    const setInputValue = (newInputValue, withSearch = true) => {
       inputValue.value = newInputValue;
 
-      updateSearch(newInputValue);
+      if (withSearch) {
+        updateSearch(newInputValue);
+      }
     };
 
     /**
@@ -386,7 +395,27 @@ export default {
         return;
       }
 
-      changeSelectedItems(props.multiple ? [...(props.value || []), value] : value);
+      let newValue = value;
+
+      if (props.multiple) {
+        const prevValue = props.value || [];
+        const index = prevValue.findIndex(item => (
+          item?.[props.itemValue] === value?.[props.itemValue]
+          || item?.[props.itemValue] === value
+          || item === value?.[props.itemValue]
+          || item === value
+        ));
+
+        newValue = [...prevValue];
+
+        if (index === -1) {
+          newValue.push(value);
+        } else {
+          newValue.splice(index, 1);
+        }
+      }
+
+      changeSelectedItems(newValue);
 
       if (!props.multiple) {
         updateMenuOpened(false);
@@ -448,7 +477,7 @@ export default {
 
     watch(() => props.active, (active, prevActive) => {
       if (active && prevActive !== active) {
-        setInputValue(selectedItems.value[0]?.[props.itemText] ?? selectedItems.value[0]?.[props.itemValue] ?? '');
+        setInputValue(selectedItems.value[0]?.[props.itemText] ?? selectedItems.value[0]?.[props.itemValue] ?? '', false);
         focusInput();
       }
     });
@@ -456,11 +485,10 @@ export default {
     watch(() => props.items, fetchItems);
 
     onMounted(() => {
-      if (!props.first) {
+      if (props.focusOnMount) {
         callFocus();
+        registerLastInputFocus(callFocus);
       }
-
-      registerLastInputFocus(callFocus);
     });
 
     return {
