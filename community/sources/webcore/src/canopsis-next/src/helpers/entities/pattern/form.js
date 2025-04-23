@@ -249,6 +249,8 @@ export const isBooleanCondition = condition => [
 /**
  * Check condition is boolean
  *
+ * @todo: remove this function in the future and use isArrayOperator instead
+ *
  * @param {string} condition
  * @return {boolean}
  */
@@ -262,6 +264,14 @@ export const isArrayCondition = condition => [
   PATTERN_CONDITIONS.hasLabels,
   PATTERN_CONDITIONS.hasNotLabels,
 ].includes(condition);
+
+/**
+ * Check operator is array
+ *
+ * @param {string} operator
+ * @return {boolean}
+ */
+export const isArrayOperator = operator => PATTERN_ARRAY_OPERATORS.includes(operator);
 
 /**
  * Check condition is valid
