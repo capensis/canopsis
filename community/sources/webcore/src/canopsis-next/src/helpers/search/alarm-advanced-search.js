@@ -17,7 +17,7 @@ import {
 
 import {
   formRuleToPatternRule,
-  isArrayCondition,
+  isArrayOperator,
   isDatePatternRuleField,
   isDurationPatternRuleField,
   isInfosPatternRuleField,
@@ -429,7 +429,7 @@ export const isNumberValueType = (rule, type) => (
  * @returns {boolean} True if the type is 'operator' and the value is an array condition, otherwise false.
  */
 export const isArrayItem = (type, value) => (
-  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayCondition(value)
+  type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator && isArrayOperator(value)
 );
 
 /**
