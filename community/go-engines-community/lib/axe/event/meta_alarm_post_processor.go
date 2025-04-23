@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"math"
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -341,7 +340,7 @@ func (p *metaAlarmPostProcessor) removeTagsFromParents(ctx context.Context, pare
 		return nil
 	})
 
-	w := int(math.Min(float64(workers), float64(len(parentIDs))))
+	w := min(workers, len(parentIDs))
 	for i := 0; i < w; i++ {
 		g.Go(func() error {
 			for parentID := range ch {
@@ -491,7 +490,7 @@ func (p *metaAlarmPostProcessor) resolveParents(ctx context.Context, parentIDs [
 		return nil
 	})
 
-	w := int(math.Min(float64(workers), float64(len(parentIDs))))
+	w := min(workers, len(parentIDs))
 	for i := 0; i < w; i++ {
 		g.Go(func() error {
 			for parentId := range ch {
@@ -573,7 +572,7 @@ func (p *metaAlarmPostProcessor) updateParentState(ctx context.Context, childAla
 		return nil
 	})
 
-	w := int(math.Min(float64(workers), float64(len(childAlarm.Value.Parents))))
+	w := min(workers, len(childAlarm.Value.Parents))
 	for i := 0; i < w; i++ {
 		g.Go(func() error {
 			for parentId := range ch {
