@@ -160,4 +160,5 @@ export const ALARM_SEARCH_FIELDS_TO_COMPARISON = [
 
 export const ALARM_SEARCH_NUMBER_ATTRIBUTES = [
   ALARM_FIELDS.totalStateChanges,
+  ALARM_FIELDS.entityImpactLevel,
 ];
