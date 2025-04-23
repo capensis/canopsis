@@ -27,7 +27,6 @@ func NewEntityUpdatedProcessor(
 	return &entityUpdatedProcessor{
 		dbClient:                        dbClient,
 		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -40,7 +39,6 @@ func NewEntityUpdatedProcessor(
 type entityUpdatedProcessor struct {
 	dbClient                        mongo.DbClient
 	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
@@ -56,12 +54,11 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	entity := *event.Entity
+	importTags := types.TransformEventTags(event.Parameters.ImportTags)
 	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
-
 	var componentStateChanged bool
 	var newComponentState int
 	var alarm types.Alarm
-
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedServiceStates = nil
 		result = Result{}
@@ -71,8 +68,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return err
 		}
 
-		if event.Parameters.ImportSource != "" && (len(event.Parameters.ImportTags) > 0 || len(alarm.ImportTags) > 0) {
-			importTags := types.TransformEventTags(event.Parameters.ImportTags)
+		if event.Parameters.ImportSource != "" && (len(importTags) > 0 || len(alarm.ImportTags) > 0) {
 			var setTags bson.M
 			if len(importTags) > 0 {
 				hasTagsInAlarm := make(map[string]bool, len(alarm.ImportTags))
