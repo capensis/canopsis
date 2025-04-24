@@ -138,7 +138,7 @@ Dans Canopsis, RabbitMQ traite toutes les données en mémoire sauf dans certain
 
 !!! warning "Avertissement"
 
-    Si votre installation RabbitMQ est clusterisée, veillez contacter notre service de support.  
+    Si votre installation RabbitMQ est clusterisée, veuillez contacter notre service de support.  
     La notion de "Mirrored Classic Queues" a été remplacée par les "Quorum Queues".  
     Des opérations spécifiques sont nécessaires.
     Procédure officielle de migration : [https://www.rabbitmq.com/docs/3.13/migrate-mcq-to-qq](https://www.rabbitmq.com/docs/3.13/migrate-mcq-to-qq)
@@ -169,7 +169,51 @@ Dans Canopsis, RabbitMQ traite toutes les données en mémoire sauf dans certain
     CPS_EDITION=pro docker compose up -d rabbitmq
     ```
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
+
+    Supprimer rabbitmq-server
+
+    ```sh
+    dnf remove rabbitmq-server erlang
+    rm -rf /var/lib/rabbitmq
+    ```
+
+    Suspendre le versionlock des paquets `rabbitmq-server` et `erlang-26*`
+
+    ```sh
+    dnf versionlock delete 'rabbitmq-server-3.*'
+    dnf versionlock delete 'erlang-26.*'
+    ```
+
+    Installation de rabbitmq-server 4.1.x 
+
+    ```sh
+    dnf install rabbitmq-server-4.1.0
+    ```
+
+    Définir des versionlock pour les paquets `rabbitmq-server-4*` et `erlang-27*`
+
+    ```sh
+    dnf versionlock add --raw 'rabbitmq-server-4.*'
+    dnf versionlock add --raw 'erlang-27.*'
+    ```
+
+    Démarrage du service
+
+    ```sh
+    systemctl enable --now rabbitmq-server.service
+    ```
+
+    Activation de de l'interface de management et création des objets de base
+
+    ```sh
+    rabbitmq-plugins enable rabbitmq_management
+    systemctl restart rabbitmq-server.service
+    rabbitmqctl add_vhost canopsis
+    rabbitmqctl add_user cpsrabbit canopsis
+    rabbitmqctl set_user_tags cpsrabbit administrator
+    rabbitmqctl set_permissions --vhost canopsis cpsrabbit '.*' '.*' '.*'
+    ```
 
 === "Helm"
 
@@ -217,9 +261,47 @@ Vis-à-vis du changement de licence de Redis, Canopsis a décidé de migrer de R
 
     Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
 
+    Supprimer redis
 
+    ```sh
+    dnf remove redis
+    rm -rf /var/lib/redis
+    rm -rf /etc/redis
+    dnf module reset redis
+    dnf module disable redis
+    ```
+
+    Activer les dépôts EPEL qui proposent le paquet Valkey
+
+    ```sh
+    dnf install epel-release
+    ```
+
+    Installation de valkey
+
+    ```sh
+    dnf install valkey-8.0.2
+    ```
+
+    Définir des versionlock pour le paquet `valkey-8.*`
+
+    ```sh
+    dnf versionlock add --raw 'valkey-8.*'
+    ```
+
+    Ajouter un mot de passe Valkey
+
+    ```sh
+    sed -i 's/^# requirepass.*/requirepass canopsis/' /etc/valkey/valkey.conf
+    ```
+
+    Démarrage du service
+
+    ```sh
+    systemctl enable --now valkey.service
+    ```
 
 === "Helm"
 
@@ -236,7 +318,11 @@ Les actions ci-dessous vous permettrons de réaliser les changements de dépôts
 
     Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
+
+    !!! warning "Avertissement"
+
+        Cette procédure ne doit être appliquée que si votre installation utilise les paquets nginx de la distribution RHEL. Si vous utilisez déjà les dépôts éditeurs de nginx, vous n'êtes pas concernés. (Vous pouvez le vérifier par la présence ou non du fichier /etc/yum.repos.d/nginx.repo)
 
     Stopper l'interface graphique
     
@@ -283,12 +369,6 @@ Les actions ci-dessous vous permettrons de réaliser les changements de dépôts
     dnf makecache
     ```
     
-    Ré installation de l'interface graphique de Canopsis (qui installera la dernière version stable de nginx disponible)
-    
-    ```sh
-    dnf -y install canopsis-webui-24.04.*
-    ```
-    
     Une fois que vous aurez réappliqué vos configurations, vous pourrez remettre le service en marche:
     
     ```
@@ -298,7 +378,6 @@ Les actions ci-dessous vous permettrons de réaliser les changements de dépôts
 === "Helm"
 
     Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
-
 
 
 ### Lancement du provisioning `canopsis-reconfigure`
@@ -382,7 +461,7 @@ Les flags suivants sont désormais obsolètes, nous vous invitons à supprimer t
     canopsis-pro-reconfigure-1            "/canopsis-reconfigu…"   reconfigure            exited (0)
     ```
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
 
     La commande `canopsis-reconfigure` doit être exécutée après mise à jour de Canopsis dans le cadre d'installation par paquets RPM.
 
@@ -406,12 +485,26 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     CPS_EDITION=pro docker compose ps
     ```
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
+
+    Suspendre le versionlock des paquets Canopsis
+
+    ```sh
+    dnf versionlock delete 'canopsis-pro-24.10.*'
+    dnf versionlock delete 'canopsis-webui-24.10.*'
+    ```
 
     Mise à jour de Canopsis
 
     ```sh
     dnf install canopsis-pro-25.04.0 canopsis-webui-25.04.0
+    ```
+
+    Réactiver les versionlock des paquets Canopsis
+
+    ```sh
+    dnf versionlock add --raw 'canopsis-pro-25.04.*'
+    dnf versionlock add --raw 'canopsis-webui-25.04.*'
     ```
 
     Reconfiguration de Canopsis
@@ -425,9 +518,9 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
     Si vous utilisez un fichier d'override du canopsis.toml, veuillez ajouter à la ligne de commande suivante l'option `-override` suivie du chemin du fichier en question.
 
     ```sh
-    systemctl start postgresql-15
+    systemctl start postgresql-15 mongod
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -edition pro
+    /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-tech-postgres=true -migrate-mongo=true -edition pro
     ```
 
     !!! information "Information"
