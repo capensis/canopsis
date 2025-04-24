@@ -20,5 +20,6 @@ type Result struct {
 	IsInstructionMatched bool
 	IsCountersUpdated    bool
 
-	NewExternalTags []string
+	AddedExternalTags   []string
+	RemovedExternalTags []string
 }

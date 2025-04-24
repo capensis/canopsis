@@ -4,8 +4,8 @@ package event
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"math"
 	"strings"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -23,6 +23,8 @@ import (
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
+	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -195,7 +197,7 @@ func (p *metaAlarmPostProcessor) processChild(ctx context.Context, event rpc.Axe
 			return fmt.Errorf("cannot update parent alarms: %w", err)
 		}
 
-		err = p.resolveParents(ctx, *eventRes.Alarm, event.Parameters.Timestamp)
+		err = p.resolveParents(ctx, eventRes.Alarm.Value.Parents, event.Parameters.Timestamp)
 		if err != nil {
 			return err
 		}
@@ -214,14 +216,23 @@ func (p *metaAlarmPostProcessor) processChild(ctx context.Context, event rpc.Axe
 			return fmt.Errorf("cannot update parent alarms: %w", err)
 		}
 
-		err = p.updateParentTags(ctx, eventRes.Alarm.Value.Parents, eventRes.NewExternalTags)
-		if err != nil {
-			return fmt.Errorf("cannot update parent alarms: %w", err)
-		}
-
 		err = p.adapter.UpdateLastEventDate(ctx, eventRes.Alarm.Value.Parents, event.Parameters.Timestamp)
 		if err != nil {
 			return fmt.Errorf("cannot update parent alarms: %w", err)
+		}
+	}
+
+	if len(eventRes.AddedExternalTags) > 0 {
+		err := p.addNewTagsToParents(ctx, eventRes.Alarm.Value.Parents, eventRes.AddedExternalTags)
+		if err != nil {
+			return fmt.Errorf("cannot add parent alarm tags: %w", err)
+		}
+	}
+
+	if len(eventRes.RemovedExternalTags) > 0 {
+		err := p.removeTagsFromParents(ctx, eventRes.Alarm.Value.Parents, eventRes.RemovedExternalTags)
+		if err != nil {
+			return fmt.Errorf("cannot remove parent alarm tags: %w", err)
 		}
 	}
 
@@ -245,7 +256,7 @@ func (p *metaAlarmPostProcessor) incrementParentEventsCount(ctx context.Context,
 	return err
 }
 
-func (p *metaAlarmPostProcessor) updateParentTags(ctx context.Context, parentIDs, externalTags []string) error {
+func (p *metaAlarmPostProcessor) addNewTagsToParents(ctx context.Context, parentIDs, externalTags []string) error {
 	if len(externalTags) == 0 || len(parentIDs) == 0 {
 		return nil
 	}
@@ -309,23 +320,177 @@ func (p *metaAlarmPostProcessor) updateParentTags(ctx context.Context, parentIDs
 	return err
 }
 
-func (p *metaAlarmPostProcessor) resolveParents(ctx context.Context, childAlarm types.Alarm, timestamp datetime.CpsTime) error {
+func (p *metaAlarmPostProcessor) removeTagsFromParents(ctx context.Context, parentIDs, removedChildExternalTags []string) error {
+	if len(parentIDs) == 0 || len(removedChildExternalTags) == 0 {
+		return nil
+	}
+
 	ch := make(chan string)
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
 		defer close(ch)
-		for _, p := range childAlarm.Value.Parents {
+		for _, id := range parentIDs {
 			select {
 			case <-ctx.Done():
 				return nil
-			case ch <- p:
+			case ch <- id:
 			}
 		}
 
 		return nil
 	})
 
-	w := int(math.Min(float64(workers), float64(len(childAlarm.Value.Parents))))
+	w := min(workers, len(parentIDs))
+	for i := 0; i < w; i++ {
+		g.Go(func() error {
+			for parentID := range ch {
+				err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+					parentAlarm := types.Alarm{}
+					err := p.alarmCollection.FindOne(ctx, bson.M{
+						"d":          parentID,
+						"v.resolved": nil,
+						"copy_ctags": true,
+					}).Decode(&parentAlarm)
+					if err != nil {
+						if errors.Is(err, mongodriver.ErrNoDocuments) {
+							return nil
+						}
+
+						return err
+					}
+
+					tagsToRemove := make([]string, 0, len(removedChildExternalTags))
+					if len(parentAlarm.FilterChildrenTagsByLabel) == 0 {
+						tagsToRemove = removedChildExternalTags
+					} else {
+						for _, tag := range removedChildExternalTags {
+							for _, label := range parentAlarm.FilterChildrenTagsByLabel {
+								if tag == label || strings.HasPrefix(tag, label+":") {
+									tagsToRemove = append(tagsToRemove, tag)
+									break
+								}
+							}
+						}
+					}
+
+					if len(tagsToRemove) == 0 {
+						return nil
+					}
+
+					cursor, err := p.alarmCollection.Aggregate(ctx, []bson.M{
+						{"$match": bson.M{
+							"v.parents":  parentID,
+							"v.resolved": nil,
+							"$or": []bson.M{
+								{"etags": bson.M{"$elemMatch": bson.M{"$in": tagsToRemove}}},
+								{"imtags": bson.M{"$elemMatch": bson.M{"$in": tagsToRemove}}},
+							},
+						}},
+						{"$project": bson.M{
+							"etags": bson.M{"$setIntersection": bson.A{
+								bson.M{"$ifNull": bson.A{"$etags", bson.A{}}},
+								tagsToRemove,
+							}},
+							"imtags": bson.M{"$setIntersection": bson.A{
+								bson.M{"$ifNull": bson.A{"$imtags", bson.A{}}},
+								tagsToRemove,
+							}},
+						}},
+						{"$project": bson.M{
+							"tags": bson.M{"$setUnion": bson.A{
+								bson.M{"$ifNull": bson.A{"$etags", bson.A{}}},
+								bson.M{"$ifNull": bson.A{"$imtags", bson.A{}}},
+							}},
+						}},
+						{"$unwind": "$tags"},
+						{"$group": bson.M{
+							"_id": "$tags",
+						}},
+					}, options.Aggregate().SetComment("checkTagsExists"))
+					if err != nil {
+						return err
+					}
+
+					tagExistsInAnotherChild := make(map[string]bool, len(tagsToRemove))
+					for cursor.Next(ctx) {
+						t := struct {
+							ID string `bson:"_id"`
+						}{}
+						err := cursor.Decode(&t)
+						if err != nil {
+							return err
+						}
+
+						tagExistsInAnotherChild[t.ID] = true
+					}
+
+					if err = cursor.Err(); err != nil {
+						return err
+					}
+
+					if err = cursor.Close(ctx); err != nil {
+						return err
+					}
+
+					k := 0
+					for j := range tagsToRemove {
+						if !tagExistsInAnotherChild[tagsToRemove[j]] {
+							tagsToRemove[k] = tagsToRemove[j]
+							k++
+						}
+					}
+
+					tagsToRemove = tagsToRemove[:k]
+					if len(tagsToRemove) == 0 {
+						return nil
+					}
+
+					_, err = p.alarmCollection.UpdateOne(
+						ctx,
+						bson.M{
+							"d":          parentID,
+							"v.resolved": nil,
+							"copy_ctags": true,
+						},
+						bson.M{
+							"$pullAll": bson.M{
+								"etags": tagsToRemove,
+								"tags":  tagsToRemove,
+							},
+						},
+					)
+
+					return err
+				})
+				if err != nil {
+					return err
+				}
+			}
+
+			return nil
+		})
+	}
+
+	return g.Wait()
+}
+
+func (p *metaAlarmPostProcessor) resolveParents(ctx context.Context, parentIDs []string, timestamp datetime.CpsTime) error {
+	ch := make(chan string)
+	g, ctx := errgroup.WithContext(ctx)
+	g.Go(func() error {
+		defer close(ch)
+		for _, id := range parentIDs {
+			select {
+			case <-ctx.Done():
+				return nil
+			case ch <- id:
+			}
+		}
+
+		return nil
+	})
+
+	w := min(workers, len(parentIDs))
 	for i := 0; i < w; i++ {
 		g.Go(func() error {
 			for parentId := range ch {
@@ -396,18 +561,18 @@ func (p *metaAlarmPostProcessor) updateParentState(ctx context.Context, childAla
 	g, ctx := errgroup.WithContext(ctx)
 	g.Go(func() error {
 		defer close(ch)
-		for _, p := range childAlarm.Value.Parents {
+		for _, id := range childAlarm.Value.Parents {
 			select {
 			case <-ctx.Done():
 				return nil
-			case ch <- p:
+			case ch <- id:
 			}
 		}
 
 		return nil
 	})
 
-	w := int(math.Min(float64(workers), float64(len(childAlarm.Value.Parents))))
+	w := min(workers, len(childAlarm.Value.Parents))
 	for i := 0; i < w; i++ {
 		g.Go(func() error {
 			for parentId := range ch {
