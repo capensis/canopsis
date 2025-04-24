@@ -172,6 +172,97 @@ Dans Canopsis, RabbitMQ traite toutes les données en mémoire sauf dans certain
 
 === "Helm"
 
+### Passage de Redis à Valkey
+
+Vis-à-vis du changement de licence de Redis, Canopsis a décidé de migrer de Redis à [Valkey](https://valkey.io/).
+
+=== "Docker Compose"
+
+    Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
+
+=== "Paquets RHEL 8"
+
+
+
+=== "Helm"
+
+    Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
+
+
+### Mise à jour de Nginx
+
+Dans les versions précédentes de Canopsis, il était recommandé d'effectuer l'installation de nginx à travers les modules EL. Cependant ceux-ci ne sont pas régulièrement mis à jour et les versions disponibles peuvent être obsolètes et non maintenues par l'éditeur (que ça soit au niveau fonctionnel comme sécurité). Nous avons donc décidé de mettre à jour nos documentations afin d'utiliser le dépôt éditeurs.
+
+Les actions ci-dessous vous permettrons de réaliser les changements de dépôts sans prendre le risque de perdre vos configurations nginx si vous les aviez modifiées.
+
+=== "Docker Compose"
+
+    Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
+
+=== "Paquets RHEL 8"
+
+    Stopper l'interface graphique
+    
+    ```sh
+    systemctl stop nginx
+    systemctl disable nginx
+    ```
+    
+    Sauvegarde de la configuration existante
+    
+    ```sh
+    mkdir /root/backupnginx
+    cp /etc/nginx/conf.d/* /root/backupnginx/
+    ```
+    
+    !!! info "Information"
+        Nous utilisons le dossier `/root/backupnginx` dans notre exemple mais il est possible d'utiliser n'importe quel répertoire dans lequel vous avez les droits.  
+        Il est aussi important de répéter cette commande avec l'ensemble des fichiers que vous auriez pu modifier. Même si ici nous nous concentrons sur le fichier propre au virtualhost de Canopsis.
+    
+    Déinstallation de Nginx (Cette déinstallation entraine la déinstallation de l'interface graphique de Canopsis)
+    
+    ```sh
+    dnf -y remove nginx 
+    dnf -y module disable nginx
+    ```
+    
+    Configuration du dépôt Nginx
+    
+    ```sh
+    cat << EOF > /etc/yum.repos.d/nginx.repo
+    [nginx-stable]
+    name=nginx stable repo
+    baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
+    gpgcheck=1
+    enabled=1
+    gpgkey=https://nginx.org/keys/nginx_signing.key
+    module_hotfixes=true
+    EOF
+    ```
+    
+    Fabrication du cache
+    
+    ```sh
+    dnf makecache
+    ```
+    
+    Ré installation de l'interface graphique de Canopsis (qui installera la dernière version stable de nginx disponible)
+    
+    ```sh
+    dnf -y install canopsis-webui-24.04.*
+    ```
+    
+    Une fois que vous aurez réappliqué vos configurations, vous pourrez remettre le service en marche:
+    
+    ```
+    systemctl enable --now nginx
+    ```
+
+=== "Helm"
+
+    Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
+
+
 
 ### Lancement du provisioning `canopsis-reconfigure`
 
@@ -200,7 +291,7 @@ Chaque moteur dispose désormais de processeurs dédiés à chacun de ces flux, 
 
 **Objectif :** éviter que les événements système ne bloquent les actions utilisateurs ou les événements de connecteurs. Par exemple, même en cas de nombreux pbh_enter, l’interface reste réactive et les nouvelles alarmes peuvent être créées sans latence.
 
-Les flags suivants sont désormais obsolètes :
+Les flags suivants sont désormais obsolètes, nous vous invitons à supprimer toute référence dans vos configurations :
 
 * -publishQueue
 * -consumeQueue
