@@ -149,6 +149,22 @@ widget_templates:
     title: Default columns
     type: alarm_columns
     columns: *widget_alarm_columns
+  tpl_alarm_quick_actions:
+    <<: *widget_tpl
+    title: Default quick actions
+    type: alarm_quick_actions
+    actions:
+      - ack
+      - fastAck
+      - cancel
+  tpl_alarm_mass_quick_actions:
+    <<: *widget_tpl
+    title: Default quick massive actions
+    type: alarm_mass_quick_actions
+    actions:
+      - ack
+      - fastAck
+      - cancel
   tpl_entity_columns:
     <<: *widget_tpl
     title: Default columns
