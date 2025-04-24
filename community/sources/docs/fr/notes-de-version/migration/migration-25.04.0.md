@@ -85,7 +85,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 === "Helm"
 
     ```sh
-    kubectl get deployments | grep -v timescaledb | awk 'NR>1 {print $1}' | xargs kubectl delete deployment
+    kubectl delete deployments --all
     ```
 
 
@@ -171,6 +171,42 @@ Dans Canopsis, RabbitMQ traite toutes les données en mémoire sauf dans certain
 === "Paquets RHEL 8"
 
 === "Helm"
+
+    Répérer le statefulset RabbitMQ
+
+    ```sh
+    kubectl get statefulset | grep rabbitmq
+    ```
+
+    L’exécution de cette commande renverra quelque chose comme
+
+    ```sh
+    canopsis-prod-rabbitmq       1/1     11m
+    ```
+
+    Suppression du statefulset RabbitMQ
+
+    ```sh
+    kubectl delete statefulset canopsis-prod-rabbitmq
+    ```
+
+    Repérer le volume associé à RabbitMQ
+
+    ```sh
+    kubectl get pvc | grep rabbitmq
+    ```
+
+    Cette commande devrait vous renvoyer un résultat similaire à
+
+    ```sh
+    data-canopsis-prod-rabbitmq-0   Bound pvc-ad1f6b85-042d-4019-a406-d2fe09acc60c   8Gi        RWO            standard       <unset>                 40h
+    ```
+
+    Suppression du volume
+
+    ```sh
+    kubectl delete pvc data-canopsis-prod-rabbitmq-0
+    ```
 
 ### Passage de Redis à Valkey
 
@@ -413,13 +449,19 @@ Enfin, il vous reste à mettre à jour et à démarrer tous les composants appli
 
 === "Helm"
 
-    Définir le nom de votre instance :
+    Définir le nom de votre instance
     
     ```sh
     export RELEASE_NAME="canopsis-prod"
     ```
 
-    Mise à jour de Canopsis :
+    Mise à jour des repos helm
+
+    ```sh
+    helm repo update
+    ```
+
+    Mise à jour de Canopsis
 
     ```sh
     helm upgrade ${RELEASE_NAME} canopsis/canopsis-pro -f customer-values.yaml
