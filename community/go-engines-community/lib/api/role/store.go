@@ -62,29 +62,32 @@ type store struct {
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+	beforeLimit := make([]bson.M, 0)
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
+		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
-	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	beforeLimit = append(beforeLimit, getNestedObjectsPipeline()...)
+
+	afterLimit := s.authorProvider.Pipeline()
 
 	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
 	if err != nil {
 		return nil, err
 	}
 
-	pipeline = append(pipeline, uiThemePipeline...)
+	afterLimit = append(afterLimit, uiThemePipeline...)
 
 	if r.Permission != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
+		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
 	}
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
-		pipeline,
+		beforeLimit,
 		common.GetSortQuery(cmp.Or(r.SortBy, "name"), r.Sort),
+		afterLimit,
 	))
 
 	if err != nil {
@@ -644,10 +647,7 @@ func (s *store) getUiThemePipeline(ctx context.Context, authorProvider author.Pr
 				"ui_theme": bson.M{
 					"$cond": bson.M{
 						"if": bson.M{
-							"$or": bson.A{
-								bson.M{"$eq": bson.A{"$ui_theme", ""}},
-								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
-							},
+							"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""},
 						},
 						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
 						"else": "$ui_theme",
