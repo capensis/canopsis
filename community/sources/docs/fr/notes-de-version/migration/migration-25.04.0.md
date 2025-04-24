@@ -39,7 +39,7 @@ La restructuration apportée dans les bases de données pour cette version de Ca
         > exit
         ```
 
-    === "Paquets RHEL 8"
+    === "Paquets RHEL"
 
         ```sh
         mongosh -u root -p root
@@ -72,7 +72,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     CPS_EDITION=pro docker compose down
     ```
 
-=== "Paquets RHEL 8"
+=== "Paquets RHEL"
 
     ```sh
     systemctl stop canopsis
@@ -80,6 +80,7 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     systemctl stop postgresql-15
     systemctl stop rabbitmq-server
     systemctl stop redis
+    systemctl stop nginx
     ```
 
 === "Helm"
