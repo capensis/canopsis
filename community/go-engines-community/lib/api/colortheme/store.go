@@ -1,7 +1,6 @@
 package colortheme
 
 import (
-	"cmp"
 	"context"
 	"fmt"
 
@@ -227,8 +226,6 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 					"author":  userID,
 					"updated": datetime.NewCpsTime(),
 				},
-				// should do $unset for a user ui_theme instead of $set the default one,
-				// because it would mean that user chose the default theme, and the user won't inherit a role's theme if the role has it.
 				"$unset": bson.M{
 					"ui_theme": "",
 				},
@@ -243,9 +240,11 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			bson.M{"ui_theme": id},
 			bson.M{
 				"$set": bson.M{
-					"ui_theme": cmp.Or(cfg.DefaultColorTheme, Canopsis),
-					"author":   userID,
-					"updated":  datetime.NewCpsTime(),
+					"author":  userID,
+					"updated": datetime.NewCpsTime(),
+				},
+				"$unset": bson.M{
+					"ui_theme": "",
 				},
 			},
 		)
