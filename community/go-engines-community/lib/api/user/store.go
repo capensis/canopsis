@@ -646,10 +646,7 @@ func (s *store) getUiThemePipeline(ctx context.Context, authorProvider author.Pr
 				"ui_theme": bson.M{
 					"$cond": bson.M{
 						"if": bson.M{
-							"$or": bson.A{
-								bson.M{"$eq": bson.A{"$ui_theme", ""}},
-								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
-							},
+							"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""},
 						},
 						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
 						"else": "$ui_theme",
