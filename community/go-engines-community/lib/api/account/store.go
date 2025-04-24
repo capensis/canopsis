@@ -141,10 +141,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 				"ui_theme": bson.M{
 					"$cond": bson.M{
 						"if": bson.M{
-							"$or": bson.A{
-								bson.M{"$eq": bson.A{"$ui_theme", ""}},
-								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
-							},
+							"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""},
 						},
 						"then": bson.M{
 							"$ifNull": bson.A{
@@ -156,10 +153,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 													"input": "$roles",
 													"as":    "role",
 													"cond": bson.M{
-														"$and": bson.A{
-															bson.M{"$ne": bson.A{bson.M{"$ifNull": bson.A{"$$role.ui_theme", ""}}, ""}},
-															bson.M{"$ne": bson.A{"$$role.ui_theme", ""}},
-														},
+														"$ne": bson.A{bson.M{"$ifNull": bson.A{"$$role.ui_theme", ""}}, ""},
 													},
 												},
 											},
