@@ -8,6 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"github.com/kylelemons/godebug/pretty"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
@@ -921,128 +922,88 @@ func TestCondition_UnmarshalAndMatchRef(t *testing.T) {
 }
 
 func TestCondition_MatchTime(t *testing.T) {
-	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.DurationWithUnit{
-		Value: 100,
-		Unit:  "s",
-	})
+	f := func(cond pattern.Condition, value time.Time, expectedResult bool, expectedError error) {
+		t.Helper()
+
+		result, err := cond.MatchTime(value)
+		if !errors.Is(err, expectedError) {
+			t.Errorf("expected error %v but got %v", expectedError, err)
+		}
+
+		if result != expectedResult {
+			t.Errorf("expected %t but got %t", expectedResult, result)
+		}
+	}
+
+	testDuration := datetime.NewDurationWithUnit(100, "s")
+	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, testDuration)
 	if err != nil {
-		panic(err)
+		t.Errorf("unexpected error %v", err)
 	}
-	dataSet := []struct {
-		testName       string
-		cond           pattern.Condition
-		value          time.Time
-		expectedErr    error
-		expectedResult bool
-	}{
-		{
-			testName:       "test relative is matched",
-			cond:           timeRelativeCond,
-			value:          time.Now().Add(-50 * time.Second),
-			expectedErr:    nil,
-			expectedResult: true,
-		},
-		{
-			testName:       "test relative is not matched",
-			cond:           timeRelativeCond,
-			value:          time.Now().Add(-150 * time.Second),
-			expectedErr:    nil,
-			expectedResult: false,
-		},
-		{
-			testName: "test absolute is matched",
-			cond: pattern.NewTimeIntervalCondition(
-				pattern.ConditionTimeAbsolute,
-				time.Now().Add(-1000*time.Second).Unix(),
-				time.Now().Add(1000*time.Second).Unix(),
-			),
-			value:          time.Now(),
-			expectedErr:    nil,
-			expectedResult: true,
-		},
-		{
-			testName: "test absolute is not matched left",
-			cond: pattern.NewTimeIntervalCondition(
-				pattern.ConditionTimeAbsolute,
-				time.Now().Add(-1000*time.Second).Unix(),
-				time.Now().Add(1000*time.Second).Unix(),
-			),
-			value:          time.Now().Add(-2000 * time.Second),
-			expectedErr:    nil,
-			expectedResult: false,
-		},
-		{
-			testName: "test absolute is not matched right",
-			cond: pattern.NewTimeIntervalCondition(
-				pattern.ConditionTimeAbsolute,
-				time.Now().Add(-1000*time.Second).Unix(),
-				time.Now().Add(1000*time.Second).Unix(),
-			),
-			value:          time.Now().Add(2000 * time.Second),
-			expectedErr:    nil,
-			expectedResult: false,
-		},
-		{
-			testName:       "test relative wrong condition value type",
-			cond:           pattern.NewStringCondition(pattern.ConditionTimeRelative, "test"),
-			value:          time.Now().Add(-50 * time.Second),
-			expectedErr:    pattern.ErrWrongConditionValue,
-			expectedResult: false,
-		},
-		{
-			testName:       "test absolute condition value is wrong type",
-			cond:           pattern.NewStringCondition(pattern.ConditionTimeAbsolute, "test"),
-			value:          time.Now(),
-			expectedErr:    pattern.ErrWrongConditionValue,
-			expectedResult: false,
-		},
-		{
-			testName: "test unexpected type",
-			cond: pattern.NewTimeIntervalCondition(
-				"some",
-				time.Now().Add(-1000*time.Second).Unix(),
-				time.Now().Add(1000*time.Second).Unix(),
-			),
-			value:          time.Now(),
-			expectedErr:    pattern.ErrUnsupportedConditionType,
-			expectedResult: false,
-		},
+	timeOlderThanCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.DurationWithUnit{}, testDuration)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+	timeBetweenCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(200, "s"), testDuration)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
 	}
 
-	for _, data := range dataSet {
-		t.Run(data.testName, func(t *testing.T) {
-			result, err := data.cond.MatchTime(data.value)
-			if result != data.expectedResult {
-				t.Errorf("expected %t but got %t", data.expectedResult, result)
-			}
-
-			if !errors.Is(err, data.expectedErr) {
-				t.Errorf("expected error %v but got %v", data.expectedErr, err)
-			}
-		})
-	}
+	// test relative is matched
+	f(timeRelativeCond, time.Now().Add(-50*time.Second), true, nil)
+	// test relative is not matched
+	f(timeRelativeCond, time.Now().Add(-150*time.Second), false, nil)
+	// test relative is not matched to edge
+	f(timeRelativeCond, testDuration.SubFrom(datetime.CpsTime{Time: timeRelativeCond.TestTime.Add(0)}).Time, false, nil)
+	// test relative time older than is matched
+	f(timeOlderThanCond, time.Now().Add(-1*time.Hour), true, nil)
+	// test relative time older than is matched to edge
+	f(timeOlderThanCond, testDuration.SubFrom(datetime.CpsTime{Time: timeOlderThanCond.TestTime.Add(-1 * time.Nanosecond)}).Time, true, nil)
+	// test relative time older than is not matched
+	f(timeOlderThanCond, time.Now().Add(-50*time.Second), false, nil)
+	// test relative time between is matched
+	f(timeBetweenCond, time.Now().Add(-150*time.Second), true, nil)
+	// test relative time between is not matched
+	f(timeBetweenCond, time.Now().Add(-50*time.Second), false, nil)
+	// test relative time between is not matched
+	f(timeBetweenCond, time.Now().Add(-250*time.Second), false, nil)
+	// test absolute is matched
+	f(pattern.NewTimeIntervalCondition(
+		pattern.ConditionTimeAbsolute,
+		time.Now().Add(-1000*time.Second).Unix(),
+		time.Now().Add(1000*time.Second).Unix(),
+	), time.Now(), true, nil)
+	// test absolute is not matched left
+	f(pattern.NewTimeIntervalCondition(
+		pattern.ConditionTimeAbsolute,
+		time.Now().Add(-1000*time.Second).Unix(),
+		time.Now().Add(1000*time.Second).Unix(),
+	), time.Now().Add(-2000*time.Second), false, nil)
+	// test absolute is not matched right
+	f(pattern.NewTimeIntervalCondition(
+		pattern.ConditionTimeAbsolute,
+		time.Now().Add(-1000*time.Second).Unix(),
+		time.Now().Add(1000*time.Second).Unix(),
+	), time.Now().Add(2000*time.Second), false, nil)
+	// test relative wrong condition value type
+	f(pattern.NewStringCondition(pattern.ConditionTimeRelative, "test"), time.Now().Add(-50*time.Second), false, pattern.ErrWrongConditionValue)
+	// test absolute condition value is wrong type
+	f(pattern.NewStringCondition(pattern.ConditionTimeAbsolute, "test"), time.Now(), false, pattern.ErrWrongConditionValue)
+	// test unexpected type
+	f(pattern.NewTimeIntervalCondition(
+		"some",
+		time.Now().Add(-1000*time.Second).Unix(),
+		time.Now().Add(1000*time.Second).Unix(),
+	), time.Now(), false, pattern.ErrUnsupportedConditionType)
+	// test relative time older than condition value is wrong type
+	f(pattern.NewStringCondition(pattern.ConditionTimeRelative, "test"), time.Now().Add(50*time.Second), false, pattern.ErrWrongConditionValue)
 }
 
 func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
-	dataSet := []pattern.Condition{
-		{
-			Type: pattern.ConditionTimeRelative,
-			Value: datetime.DurationWithUnit{
-				Value: 100,
-				Unit:  "s",
-			},
-		},
-		{
-			Type: pattern.ConditionTimeAbsolute,
-			Value: map[string]int64{
-				"from": 10,
-				"to":   10,
-			},
-		},
-	}
+	f := func(cond pattern.Condition) {
+		t.Helper()
 
-	for _, data := range dataSet {
-		b, err := json.Marshal(condWrapper{Cond: data})
+		b, err := json.Marshal(condWrapper{Cond: cond})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -1055,10 +1016,10 @@ func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
 
 		_, err = w.Cond.MatchTime(time.Now())
 		if err != nil {
-			t.Errorf("expected no error but got %v", err)
+			t.Errorf("expected no error after JSON unmarshal but got %v", err)
 		}
 
-		b, err = bson.Marshal(condWrapper{Cond: data})
+		b, err = bson.Marshal(condWrapper{Cond: cond})
 		if err != nil {
 			t.Errorf("expected no error but got %v", err)
 		}
@@ -1071,9 +1032,32 @@ func TestCondition_UnmarshalAndMatchTime(t *testing.T) {
 
 		_, err = w.Cond.MatchTime(time.Now())
 		if err != nil {
-			t.Errorf("expected no error but got %v", err)
+			t.Errorf("expected no error after BSON unmarshal but got %v", err)
 		}
 	}
+
+	// test relative wrong condition value type
+	f(pattern.Condition{
+		Type:  pattern.ConditionTimeRelative,
+		Value: datetime.NewDurationWithUnit(100, "s"),
+	})
+	// test relative older than condition value
+	f(pattern.Condition{
+		Type: pattern.ConditionTimeRelative,
+		Value: map[string]*datetime.DurationWithUnit{
+			"to": {Value: 100, Unit: "s"},
+		},
+	})
+	// test relative between durations
+	f(pattern.Condition{
+		Type: pattern.ConditionTimeRelative,
+		Value: map[string]*datetime.DurationWithUnit{
+			"from": {Value: 1, Unit: "h"},
+			"to":   {Value: 100, Unit: "s"},
+		},
+	})
+	// test absolute condition value
+	f(pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 10, 10))
 }
 
 func TestCondition_MatchDuration(t *testing.T) {
@@ -1205,6 +1189,61 @@ func TestCondition_UnmarshalAndMatchDuration(t *testing.T) {
 			t.Errorf("expected no error but got %v", err)
 		}
 	}
+}
+
+func TestCondition_TimeToMongoQuery(t *testing.T) {
+	f := func(cond pattern.Condition, field string, expectedResult bson.M, expectedError error) {
+		t.Helper()
+
+		result, err := cond.TimeToMongoQuery(field)
+		if !errors.Is(err, expectedError) {
+			t.Errorf("expected error %v but got %v", expectedError, err)
+		}
+
+		if diff := pretty.Compare(result, expectedResult); diff != "" {
+			t.Errorf("unexpected result (-got +want): %s", diff)
+		}
+	}
+	testDuration := datetime.DurationWithUnit{
+		Value: 100,
+		Unit:  "s",
+	}
+	timeRelativeCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, testDuration)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+	timeOlderThanCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.DurationWithUnit{}, testDuration)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+	timeBetweenCond, err := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(1, "h"), testDuration)
+	if err != nil {
+		t.Errorf("unexpected error %v", err)
+	}
+	timeBetweenValue, ok := timeBetweenCond.Value.(map[string]*datetime.DurationWithUnit)
+	if !ok {
+		t.Errorf("invalid type for timeBetweenCond.Value")
+	}
+	now := timeBetweenCond.TestTime.Add(0)
+	timeBetweenResult := bson.M{
+		"$gt": timeBetweenValue["from"].SubFrom(datetime.NewCpsTime(now.Unix())),
+		"$lt": timeBetweenValue["to"].SubFrom(datetime.NewCpsTime(now.Unix())),
+	}
+	fromTime, toTime := time.Now().Add(-1000*time.Second).Unix(), time.Now().Add(1000*time.Second).Unix()
+	timeAbsCond := pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, fromTime, toTime)
+	// test time relative
+	f(timeRelativeCond, "test", bson.M{"test": bson.M{"$gt": datetime.NewCpsTime(timeRelativeCond.TestTime.Add(time.Duration(-testDuration.Value) * time.Second).Unix())}}, nil)
+	// test time older than
+	f(timeOlderThanCond, "test", bson.M{"test": bson.M{"$lt": datetime.NewCpsTime(timeRelativeCond.TestTime.Add(time.Duration(-testDuration.Value) * time.Second).Unix())}}, nil)
+	// test time between
+	f(timeBetweenCond, "test", bson.M{"test": timeBetweenResult}, nil)
+	// test time absolute
+	f(timeAbsCond, "test", bson.M{"test": bson.M{"$gt": datetime.NewCpsTime(fromTime), "$lt": datetime.NewCpsTime(toTime)}}, nil)
+	// unsupported condition type error
+	f(pattern.Condition{Type: pattern.ConditionEqual, Value: "test"}, "test", nil, pattern.ErrUnsupportedConditionType)
+	// ErrWrongConditionValue error
+	f(pattern.Condition{Type: pattern.ConditionTimeRelative, Value: 10}, "test", nil, pattern.ErrWrongConditionValue)
+	f(pattern.Condition{Type: pattern.ConditionTimeAbsolute, Value: 10}, "test", nil, pattern.ErrWrongConditionValue)
 }
 
 func TestCondition_MatchTags(t *testing.T) {
