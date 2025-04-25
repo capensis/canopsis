@@ -202,7 +202,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, userInterfaceAdapter, securityConfig),
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, securityConfig),
 			logger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
