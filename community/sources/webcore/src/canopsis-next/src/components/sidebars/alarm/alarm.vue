@@ -29,7 +29,7 @@
         with-template
         with-html
         with-color-indicator
-        @update:template="updateWidgetColumnsTemplate"
+        @update:template="getUpdateTemplateFunction('widgetColumns')"
       />
       <field-columns
         v-model="form.parameters.widgetGroupColumns"
@@ -41,7 +41,7 @@
         with-template
         with-html
         with-color-indicator
-        @update:template="updateWidgetGroupColumnsTemplate"
+        @update:template="getUpdateTemplateFunction('widgetGroupColumns')"
       />
       <field-columns
         v-model="form.parameters.serviceDependenciesColumns"
@@ -51,7 +51,7 @@
         :label="$t('settings.trackColumnNames')"
         :type="$constants.ENTITIES_TYPES.entity"
         with-color-indicator
-        @update:template="updateServiceDependenciesColumnsTemplate"
+        @update:template="getUpdateTemplateFunction('serviceDependenciesColumns')"
       />
       <field-resize-column-behavior v-model="form.parameters.columns" />
       <field-root-cause-settings v-model="form.parameters" />
@@ -176,19 +176,31 @@
         :templates="alarmExportToPdfWidgetTemplates"
         addable
         removable
-        @input="updateExportPdf"
+        @input="getUpdateTemplateFunction('exportPdf')"
       />
-      <field-quick-alarm-actions
-        v-model="form.parameters.quickActions"
-        :title="$t('settings.quickActions.title')"
-        :description="$t('settings.quickActions.description')"
-      />
-      <field-quick-alarm-actions
-        v-model="form.parameters.quickMassActions"
-        :title="$t('settings.quickMassActions.title')"
-        :description="$t('settings.quickMassActions.description')"
-        massive
-      />
+      <widget-settings-group :title="$t('settings.quickActions.title')">
+        <field-quick-alarm-actions
+          v-model="form.parameters.quickActions"
+          :template="form.parameters.quickActionsTemplate"
+          :templates="alarmQuickActionsWidgetTemplates"
+          :templates-pending="widgetTemplatesPending"
+          @update:template="getUpdateTemplateFunction('quickActions')"
+        />
+      </widget-settings-group>
+      <widget-settings-group :title="$t('settings.quickMassActions.title')">
+        <field-switcher
+          v-model="form.parameters.hideMassActions"
+          :title="$t('settings.quickMassActions.hideSwitcher')"
+        />
+        <field-quick-alarm-actions
+          v-model="form.parameters.quickMassActions"
+          :template="form.parameters.quickMassActionsTemplate"
+          :templates="alarmMassQuickActionsWidgetTemplates"
+          :templates-pending="widgetTemplatesPending"
+          massive
+          @update:template="getUpdateTemplateFunction('quickMassActions')"
+        />
+      </widget-settings-group>
     </widget-settings-group>
 
     <widget-settings-group :title="$t('settings.expandPanel.title')">
@@ -201,7 +213,7 @@
           :templates="alarmMoreInfosWidgetTemplates"
           addable
           removable
-          @input="updateMoreInfo"
+          @input="getUpdateTemplateFunction('moreInfo')"
         />
         <field-grid-range-size
           v-model="form.parameters.expandGridRangeSize"
@@ -345,35 +357,14 @@ export default {
     this.fetchInfos();
   },
   methods: {
-    updateWidgetColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
-      this.$set(this.form.parameters, 'widgetColumns', columns);
-    },
+    getUpdateTemplateFunction(templateValueField) {
+      return (template, value) => {
+        this.$set(this.form.parameters, `${templateValueField}Template`, template);
 
-    updateWidgetGroupColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'widgetGroupColumnsTemplate', template);
-      this.$set(this.form.parameters, 'widgetGroupColumns', columns);
-    },
-
-    updateServiceDependenciesColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
-      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
-    },
-
-    updateMoreInfo(content, template) {
-      this.$set(this.form.parameters, 'moreInfoTemplate', content);
-
-      if (template && template !== this.form.parameters.moreInfoTemplateTemplate) {
-        this.$set(this.form.parameters, 'moreInfoTemplateTemplate', template);
-      }
-    },
-
-    updateExportPdf(content, template) {
-      this.$set(this.form.parameters, 'exportPdfTemplate', content);
-
-      if (template && template !== this.form.parameters.exportPdfTemplateTemplate) {
-        this.$set(this.form.parameters, 'exportPdfTemplateTemplate', template);
-      }
+        if (template && template !== this.form.parameters[templateValueField]) {
+          this.$set(this.form.parameters, templateValueField, value);
+        }
+      };
     },
   },
 };

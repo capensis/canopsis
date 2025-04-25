@@ -1,28 +1,31 @@
 <template>
-  <widget-settings-item :title="title">
-    <v-layout column>
-      <span v-if="description">{{ description }}</span>
+  <v-container>
+    <v-layout class="gap-2" column>
+      <span class="text-body-2">{{ $t('settings.quickActions.title') }}</span>
+      <span>{{ $t('settings.quickActions.description') }}</span>
+      <c-widget-template-field
+        :with-template="withTemplate"
+        :value="template"
+        :templates="templates"
+        :pending="templatesPending"
+        @input="updateTemplate"
+      />
       <quick-alarm-actions-form
-        v-field="value"
+        :value="value"
         :massive="massive"
+        @input="updateValue"
       />
     </v-layout>
-  </widget-settings-item>
+  </v-container>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { useWidgetTemplateField } from '@/hooks/widget/widget-template';
 
-import { ALARMS_OPENED_VALUES } from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form/model-field';
-
-import WidgetSettingsItem from '@/components/sidebars/partials/widget-settings-item.vue';
 import QuickAlarmActionsForm from '@/components/common/actions-panel/quick-alarm-actions-form.vue';
 
 export default {
-  components: { WidgetSettingsItem, QuickAlarmActionsForm },
+  components: { QuickAlarmActionsForm },
   props: {
     value: {
       type: Array,
@@ -40,28 +43,25 @@ export default {
       type: String,
       default: '',
     },
+    template: {
+      type: String,
+      default: '',
+    },
+    templates: {
+      type: Array,
+      default: () => [],
+    },
+    templatesPending: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
-    const { t } = useI18n();
-    const { updateModel } = useModelField(props, emit);
-
-    const localValue = computed({
-      get: () => String(props.value),
-      set: newValue => updateModel({
-        true: true,
-        false: false,
-        null: null,
-      }[newValue]),
-    });
-
-    const types = computed(() => Object.values(ALARMS_OPENED_VALUES).map(value => ({
-      value: String(value),
-      label: t(`settings.openedTypes.${value}`),
-    })));
+    const { updateTemplate, updateValue } = useWidgetTemplateField(props, emit);
 
     return {
-      localValue,
-      types,
+      updateTemplate,
+      updateValue,
     };
   },
 };

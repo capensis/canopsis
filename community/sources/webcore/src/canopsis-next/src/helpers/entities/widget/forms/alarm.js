@@ -37,11 +37,11 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html'
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
+import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-action/form';
 
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
-
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
  */
@@ -187,8 +187,11 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
  * @property {AvailabilityField} availability
- * @property {string[]} quickActions
- * @property {string[]} quickMassActions
+ * @property {WidgetQuickAction[]} quickActions
+ * @property {string} quickActionsTemplate
+ * @property {WidgetQuickAction[]} quickMassActions
+ * @property {string} quickMassActionsTemplate
+ * @property {boolean} hideMassActions
  */
 
 /**
@@ -229,6 +232,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumnForm[]} widgetGroupColumns
  * @property {WidgetColumnForm[]} widgetExportColumns
  * @property {WidgetColumnForm[]} serviceDependenciesColumns
+ * @property {WidgetQuickActionForm[]} quickActions
+ * @property {WidgetQuickActionForm[]} quickMassActions
  */
 
 /**
@@ -403,8 +408,11 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
   availability: availabilityFieldToForm(parameters.availability),
-  quickActions: parameters.quickActions ?? [],
-  quickMassActions: parameters.quickMassActions ?? [],
+  quickActionsTemplate: widgetTemplateValueToForm(parameters.quickActionsTemplate),
+  quickMassActionsTemplate: widgetTemplateValueToForm(parameters.quickMassActionsTemplate),
+  quickActions: widgetQuickActionsToForm(parameters.quickActions ?? []),
+  quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? []),
+  hideMassActions: parameters.hideMassActions ?? true,
 });
 
 /**
@@ -495,6 +503,10 @@ export const formToAlarmListWidgetParameters = (form) => {
     widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
     serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
     charts: removeKeyFromEntities(form.charts),
+    quickActionsTemplate: formToWidgetTemplateValue(form.quickActionsTemplate),
+    quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
+    quickActions: formToWidgetQuickActions(form.quickActions),
+    quickMassActions: formToWidgetQuickActions(form.quickMassActions),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);

@@ -338,6 +338,5 @@ export default {
   quickMassActions: {
     title: 'Quick massive actions',
     hideSwitcher: 'Hide massive actions under more button',
-    description: 'Quick mass actions configuration',
   },
 };
