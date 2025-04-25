@@ -15,7 +15,11 @@
       v-field="form.description"
       :label="$t('common.description')"
     />
-    <c-theme-field v-if="isUiType" v-field="form.ui_theme" />
+    <c-theme-field
+      v-if="isUiType"
+      v-field="form.ui_theme"
+      clearable
+    />
     <c-information-block :title="$t('role.expirationSettings')">
       <c-enabled-field
         v-field="form.auth_config.intervals_enabled"
