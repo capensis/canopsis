@@ -202,7 +202,7 @@ func RegisterRoutes(
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
 
-		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, userInterfaceAdapter, securityConfig),
+		userApi := user.NewApi(user.NewStore(dbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, securityConfig),
 			logger, metricsUserMetaUpdater)
 		userRouter := protected.Group("/users")
 		{
@@ -237,7 +237,7 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
-		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider, userInterfaceAdapter), logger)
+		roleApi := role.NewApi(role.NewStore(dbClient, authorProvider), logger)
 		roleRouter := protected.Group("/roles")
 		{
 			roleRouter.POST("",

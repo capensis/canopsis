@@ -4,14 +4,11 @@ import (
 	"cmp"
 	"context"
 	"errors"
-	"fmt"
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -33,7 +30,7 @@ type Store interface {
 	GetTemplates(ctx context.Context) ([]Template, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, userInterfaceAdapter config.UserInterfaceAdapter) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:               dbClient,
 		dbCollection:           dbClient.Collection(mongo.RoleCollection),
@@ -43,7 +40,6 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, userInter
 		defaultSearchByFields:  []string{"_id", "name", "description"},
 		defaultSortBy:          "name",
 		authorProvider:         authorProvider,
-		userInterfaceAdapter:   userInterfaceAdapter,
 	}
 }
 
@@ -57,8 +53,6 @@ type store struct {
 	defaultSortBy          string
 
 	authorProvider author.Provider
-
-	userInterfaceAdapter config.UserInterfaceAdapter
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -71,13 +65,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	beforeLimit = append(beforeLimit, getNestedObjectsPipeline()...)
 
 	afterLimit := s.authorProvider.Pipeline()
-
-	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
-	if err != nil {
-		return nil, err
-	}
-
-	afterLimit = append(afterLimit, uiThemePipeline...)
 
 	if r.Permission != "" {
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
@@ -123,13 +110,6 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
-
-	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
-	if err != nil {
-		return nil, err
-	}
-
-	pipeline = append(pipeline, uiThemePipeline...)
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
@@ -633,40 +613,4 @@ func getPermissions(ctx context.Context, permissionCollection mongo.DbCollection
 	}
 
 	return permissions, widgetPermissionsByViewID, nil
-}
-
-func (s *store) getUiThemePipeline(ctx context.Context, authorProvider author.Provider) ([]bson.M, error) {
-	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get user interface config: %w", err)
-	}
-
-	pipeline := []bson.M{
-		{
-			"$addFields": bson.M{
-				"ui_theme": bson.M{
-					"$cond": bson.M{
-						"if": bson.M{
-							"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""},
-						},
-						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
-						"else": "$ui_theme",
-					},
-				},
-			},
-		},
-		{
-			"$lookup": bson.M{
-				"from":         mongo.ColorThemeCollection,
-				"localField":   "ui_theme",
-				"foreignField": "_id",
-				"as":           "ui_theme",
-			},
-		},
-		{
-			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
-		},
-	}
-
-	return append(pipeline, authorProvider.PipelineForField("ui_theme.author")...), nil
 }

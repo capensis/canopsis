@@ -4,15 +4,12 @@ import (
 	"cmp"
 	"context"
 	"errors"
-	"fmt"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
@@ -34,7 +31,6 @@ func NewStore(
 	passwordEncoder password.Encoder,
 	websocketStore websocket.Store,
 	authorProvider author.Provider,
-	userInterfaceAdapter config.UserInterfaceAdapter,
 	securityConfig security.Config,
 ) Store {
 	return &store{
@@ -49,11 +45,10 @@ func NewStore(
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 
-		passwordEncoder:      passwordEncoder,
-		websocketStore:       websocketStore,
-		authorProvider:       authorProvider,
-		userInterfaceAdapter: userInterfaceAdapter,
-		securityConfig:       securityConfig,
+		passwordEncoder: passwordEncoder,
+		websocketStore:  websocketStore,
+		authorProvider:  authorProvider,
+		securityConfig:  securityConfig,
 
 		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
@@ -72,11 +67,10 @@ type store struct {
 	widgetFilterCollection mongo.DbCollection
 	shareTokenCollection   mongo.DbCollection
 
-	passwordEncoder      password.Encoder
-	websocketStore       websocket.Store
-	authorProvider       author.Provider
-	userInterfaceAdapter config.UserInterfaceAdapter
-	securityConfig       security.Config
+	passwordEncoder password.Encoder
+	websocketStore  websocket.Store
+	authorProvider  author.Provider
+	securityConfig  security.Config
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -115,12 +109,6 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*Agg
 
 	project = append(project, getViewPipeline()...)
 
-	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
-	if err != nil {
-		return nil, err
-	}
-
-	project = append(project, uiThemePipeline...)
 	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	project = append(project, sort)
 	cursor, err := s.userCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -186,12 +174,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		{"$match": bson.M{"_id": id}},
 	}
 
-	nestedObjectsPipeline, err := s.getNestedObjectsPipeline(ctx, s.authorProvider)
-	if err != nil {
-		return nil, err
-	}
-
-	pipeline = append(pipeline, nestedObjectsPipeline...)
+	pipeline = append(pipeline, s.getNestedObjectsPipeline(s.authorProvider)...)
 	cursor, err := s.userCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -563,7 +546,7 @@ func (s *store) checkLastAdmin(ctx context.Context) (bool, string, string, error
 	return res.Count <= 1, res.LastID, res.AdminRoleID, nil
 }
 
-func (s *store) getNestedObjectsPipeline(ctx context.Context, authorProvider author.Provider) ([]bson.M, error) {
+func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
 	pipeline := []bson.M{
 		{"$addFields": bson.M{
 			"username": "$name",
@@ -574,16 +557,9 @@ func (s *store) getNestedObjectsPipeline(ctx context.Context, authorProvider aut
 	}
 	pipeline = append(pipeline, getRolePipeline()...)
 	pipeline = append(pipeline, getViewPipeline()...)
-
-	uiThemePipeline, err := s.getUiThemePipeline(ctx, s.authorProvider)
-	if err != nil {
-		return nil, err
-	}
-
-	pipeline = append(pipeline, uiThemePipeline...)
 	pipeline = append(pipeline, authorProvider.Pipeline()...)
 
-	return pipeline, nil
+	return pipeline
 }
 
 func getRolePipeline() []bson.M {
@@ -632,40 +608,4 @@ func getViewPipeline() []bson.M {
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
 	}
-}
-
-func (s *store) getUiThemePipeline(ctx context.Context, authorProvider author.Provider) ([]bson.M, error) {
-	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to get user interface config: %w", err)
-	}
-
-	pipeline := []bson.M{
-		{
-			"$addFields": bson.M{
-				"ui_theme": bson.M{
-					"$cond": bson.M{
-						"if": bson.M{
-							"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""},
-						},
-						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
-						"else": "$ui_theme",
-					},
-				},
-			},
-		},
-		{
-			"$lookup": bson.M{
-				"from":         mongo.ColorThemeCollection,
-				"localField":   "ui_theme",
-				"foreignField": "_id",
-				"as":           "ui_theme",
-			},
-		},
-		{
-			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
-		},
-	}
-
-	return append(pipeline, authorProvider.PipelineForField("ui_theme.author")...), nil
 }
