@@ -73,6 +73,8 @@ definitions:
       ui_language:
         type: string
       ui_theme:
+        type: string
+      ui_theme_colors:
         $ref: '#/definitions/colortheme.Response'
       ui_tours:
         additionalProperties:
@@ -4933,7 +4935,7 @@ definitions:
       type:
         type: string
       ui_theme:
-        $ref: '#/definitions/colortheme.Response'
+        type: string
       updated:
         type: integer
     type: object
@@ -6074,7 +6076,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        $ref: '#/definitions/colortheme.Response'
+        type: string
       updated:
         type: integer
     type: object
