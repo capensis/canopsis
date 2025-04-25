@@ -92,7 +92,7 @@ export default {
 
             await this.fetchCurrentUser();
 
-            this.$system.setTheme(this.currentUser.ui_theme);
+            this.$system.setTheme(this.currentUser.ui_theme_colors);
           },
         },
       });
