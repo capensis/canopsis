@@ -131,7 +131,7 @@ export default {
         if (!isEmpty(currentUser)) {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
 
-          this.setTheme(currentUser.ui_theme);
+          this.setTheme(currentUser.ui_theme_colors);
 
           await this.filesAccess();
 

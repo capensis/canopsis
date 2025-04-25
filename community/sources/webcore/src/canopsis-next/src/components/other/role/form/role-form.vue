@@ -15,6 +15,11 @@
       v-field="form.description"
       :label="$t('common.description')"
     />
+    <c-theme-field
+      v-if="isUiType"
+      v-field="form.ui_theme"
+      clearable
+    />
     <c-information-block :title="$t('role.expirationSettings')">
       <c-enabled-field
         v-field="form.auth_config.intervals_enabled"
@@ -49,6 +54,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { ROLE_TYPES } from '@/constants';
+
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
 import RoleTemplateField from './fields/role-template-field.vue';
@@ -70,6 +79,13 @@ export default {
       type: Boolean,
       default: false,
     },
+  },
+  setup(props) {
+    const isUiType = computed(() => props.form.type === ROLE_TYPES.ui);
+
+    return {
+      isUiType,
+    };
   },
 };
 </script>
