@@ -23,8 +23,6 @@ Les fichiers de référence qui sont mentionnés dans ce guide sont disponibles 
 
 Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lors de modifications importantes.
 
-La restructuration apportée dans les bases de données pour cette version de Canopsis nous amène à insister d'autant plus sur ce point. Il est donc fortement recommandé de réaliser une **sauvegarde complète** des VM hébergeant vos services Canopsis, avant cette mise à jour.
-
 ### Vérification MongoDB
 
 !!! warning "Vérification"
@@ -204,7 +202,7 @@ Dans Canopsis, RabbitMQ traite toutes les données en mémoire sauf dans certain
     systemctl enable --now rabbitmq-server.service
     ```
 
-    Activation de de l'interface de management et création des objets de base
+    Activation de l'interface de management et création des objets de base
 
     ```sh
     rabbitmq-plugins enable rabbitmq_management
@@ -310,9 +308,9 @@ Vis-à-vis du changement de licence de Redis, Canopsis a décidé de migrer de R
 
 ### Mise à jour de Nginx
 
-Dans les versions précédentes de Canopsis, il était recommandé d'effectuer l'installation de nginx à travers les modules EL. Cependant ceux-ci ne sont pas régulièrement mis à jour et les versions disponibles peuvent être obsolètes et non maintenues par l'éditeur (que ça soit au niveau fonctionnel comme sécurité). Nous avons donc décidé de mettre à jour nos documentations afin d'utiliser le dépôt éditeurs.
+Dans les versions précédentes de Canopsis, il était recommandé d'effectuer l'installation de nginx à travers les modules EL. Cependant ceux-ci ne sont pas régulièrement mis à jour et les versions disponibles peuvent être obsolètes et non maintenues par l'éditeur (que ça soit au niveau fonctionnel comme sécurité). Nous avons donc décidé de mettre à jour nos documentations afin d'utiliser le dépôt éditeur.
 
-Les actions ci-dessous vous permettrons de réaliser les changements de dépôts sans prendre le risque de perdre vos configurations nginx si vous les aviez modifiées.
+Les actions ci-dessous vous permettront de réaliser les changements de dépôts sans prendre le risque de perdre vos configurations nginx si vous les aviez modifiées.
 
 === "Docker Compose"
 
@@ -467,7 +465,7 @@ Les flags suivants sont désormais obsolètes, nous vous invitons à supprimer t
 
 === "Helm"
 
-   Non concerné, `canopsis-reconfigure` est lancé automatiquement lors de l'upgrade.
+    Non concerné, `canopsis-reconfigure` est lancé automatiquement lors de l'upgrade.
 
 ### Mise à jour et démarrage final de Canopsis
 
