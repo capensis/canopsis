@@ -15,6 +15,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 
 
 ### Menu **Exploitation**
+  * [Comportements périodiques](menu-exploitation/comportements-periodiques.md)
   * [Filtres d'événements](menu-exploitation/filtres-evenements.md)
   * [Générateur de liens](menu-exploitation/generateur-liens.md)
   * [Informations dynamiques](menu-exploitation/informations-dynamiques.md)
