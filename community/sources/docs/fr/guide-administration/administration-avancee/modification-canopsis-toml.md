@@ -164,10 +164,10 @@ moteurs Canopsis doivent être redémarrés.
 
 ### Section [Canopsis.timezone]
 
-| Attribut | Exemple de valeur | Description                           |
-| :------- | :-----------------| :------------------------------------ |
-| Timezone | "Europe/Paris"    | Timezone générale du produit Canopsis |
-
+| Attribut      | Exemple de valeur                        | Description                                               |
+| :------------ | :----------------------------------------| :-------------------------------------------------------- |
+| Timezone      | "Europe/Paris"                           | Timezone générale du produit Canopsis                     |
+| UserTimezones | ["Australia/Sydney", "America/New_York"] | Timezones secondaires utilisées dans les vues calendriers |
 
 ### Section [Canopsis.data_storage]
 
