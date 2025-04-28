@@ -222,7 +222,7 @@ export default {
     openedChildren: 'Conséquences ouvertes',
     closedChildren: 'Conséquences fermées',
     canceledInitiator: 'Initiateur annulé',
-    changeState: 'Changer d\'état',
+    changeState: 'Changement et verrouillage de la criticité',
     closeDelay: 'Délai de fermeture',
   },
 };

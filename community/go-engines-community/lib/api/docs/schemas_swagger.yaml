@@ -73,6 +73,8 @@ definitions:
       ui_language:
         type: string
       ui_theme:
+        type: string
+      ui_theme_colors:
         $ref: '#/definitions/colortheme.Response'
       ui_tours:
         additionalProperties:
@@ -4902,6 +4904,9 @@ definitions:
         - ui
         - api
         type: string
+      ui_theme:
+        maxLength: 255
+        type: string
     required:
     - name
     - type
@@ -4946,6 +4951,8 @@ definitions:
           $ref: '#/definitions/role.Permission'
         type: array
       type:
+        type: string
+      ui_theme:
         type: string
       updated:
         type: integer
@@ -6087,7 +6094,7 @@ definitions:
       ui_language:
         type: string
       ui_theme:
-        $ref: '#/definitions/colortheme.Response'
+        type: string
       updated:
         type: integer
     type: object

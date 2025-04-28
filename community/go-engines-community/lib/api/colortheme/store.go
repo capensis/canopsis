@@ -1,7 +1,6 @@
 package colortheme
 
 import (
-	"cmp"
 	"context"
 	"fmt"
 
@@ -35,6 +34,7 @@ type store struct {
 	dbClient             libmongo.DbClient
 	dbColorCollection    libmongo.DbCollection
 	dbUserCollection     libmongo.DbCollection
+	dbRoleCollection     libmongo.DbCollection
 	authorProvider       author.Provider
 	userInterfaceAdapter config.UserInterfaceAdapter
 
@@ -51,6 +51,7 @@ func NewStore(
 		dbClient:              dbClient,
 		dbColorCollection:     dbClient.Collection(libmongo.ColorThemeCollection),
 		dbUserCollection:      dbClient.Collection(libmongo.UserCollection),
+		dbRoleCollection:      dbClient.Collection(libmongo.RoleCollection),
 		authorProvider:        authorProvider,
 		userInterfaceAdapter:  userInterfaceAdapter,
 		defaultSearchByFields: []string{"_id", "name"},
@@ -243,9 +244,28 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			bson.M{"ui_theme": id},
 			bson.M{
 				"$set": bson.M{
-					"ui_theme": cmp.Or(cfg.DefaultColorTheme, Canopsis),
-					"author":   userID,
-					"updated":  datetime.NewCpsTime(),
+					"author":  userID,
+					"updated": datetime.NewCpsTime(),
+				},
+				"$unset": bson.M{
+					"ui_theme": "",
+				},
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbRoleCollection.UpdateMany(
+			ctx,
+			bson.M{"ui_theme": id},
+			bson.M{
+				"$set": bson.M{
+					"author":  userID,
+					"updated": datetime.NewCpsTime(),
+				},
+				"$unset": bson.M{
+					"ui_theme": "",
 				},
 			},
 		)

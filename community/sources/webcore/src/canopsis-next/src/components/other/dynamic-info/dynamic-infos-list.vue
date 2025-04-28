@@ -46,8 +46,6 @@
           type="delete"
           @click="$emit('remove', item._id)"
         />
-        <pbehaviors-create-action-btn :entity="item" />
-        <pbehaviors-list-action-btn :entity="item" />
         <c-db-export-btn :id="item._id" dynamic-info />
       </v-layout>
     </template>
@@ -58,15 +56,10 @@
 </template>
 
 <script>
-import PbehaviorsCreateActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-create-action-btn.vue';
-import PbehaviorsListActionBtn from '@/components/other/pbehavior/pbehaviors/partials/pbehaviors-list-action-btn.vue';
-
 import DynamicInfosListExpandItem from './partials/dynamic-infos-expand-item.vue';
 
 export default {
   components: {
-    PbehaviorsCreateActionBtn,
-    PbehaviorsListActionBtn,
     DynamicInfosListExpandItem,
   },
   props: {

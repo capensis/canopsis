@@ -1,6 +1,7 @@
 package account
 
 import (
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -9,9 +10,10 @@ import (
 )
 
 type User struct {
-	user.User   `bson:",inline"`
-	Permissions []role.Permission `bson:"permissions" json:"permissions"`
-	UITours     map[string]bool   `bson:"ui_tours" json:"ui_tours"`
+	user.User     `bson:",inline"`
+	Permissions   []role.Permission   `bson:"permissions" json:"permissions"`
+	UITours       map[string]bool     `bson:"ui_tours" json:"ui_tours"`
+	UIThemeColors colortheme.Response `bson:"ui_theme_colors" json:"ui_theme_colors"`
 }
 
 type EditRequest struct {
