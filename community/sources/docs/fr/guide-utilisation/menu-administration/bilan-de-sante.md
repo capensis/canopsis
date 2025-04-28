@@ -7,7 +7,7 @@ Le module `Healthcheck` inclus dans Canopsis Edition Pro permet de connaitre l'�
 Les composants éligibles sont : 
 
 * [API Canopsis](#api-canopsis)
-* [Cache Redis](#cache-redis)
+* [Cache Valkey](#cache-valkey)
 * [Base de données MongoDB](#base-de-donnees-mongodb)
 * [Bus RabbitMQ](#bus-rabbitmq)
 * [Moteurs Canopsis](#moteurs-canopsis)
@@ -49,7 +49,7 @@ Il s'agit en réalité de la réponse renvoyée par le reverse proxy `nginx`.
 
 **Remédiation associée**
 
-=== "Paquets CentOS 7"
+=== "Paquets EL"
 
     ```sh
     systemctl restart canopsis-service@canopsis-api.service
@@ -69,31 +69,31 @@ Il s'agit en réalité de la réponse renvoyée par le reverse proxy `nginx`.
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
 
-### Cache Redis
+### Cache Valkey
 
-Lorsque le système de cache `redis` est indisponible, la pastille associée passe au rouge.  
+Lorsque le système de cache `valkey` est indisponible, la pastille associée passe au rouge.  
 Canopsis ne peut alors pas fonctionner correctement.
 
-[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger-community/index.md) sur la route `healthcheck` vous précisera alors le dysfonctionnement de Redis
+[La réponse renvoyée par l'API Canopsis](../../guide-developpement/swagger-community/index.md) sur la route `healthcheck` vous précisera alors le dysfonctionnement de Valkey
 
 **Remédiation associée**
 
-=== "Paquets CentOS 7"
+=== "Paquets EL"
 
     ```sh
-    systemctl restart redis.service
+    systemctl restart valkey.service
     ```
 
 === "Docker Compose Community"
 
     ```sh
-    CPS_EDITION=community docker compose restart redis
+    CPS_EDITION=community docker compose restart valkey
     ```
 
 === "Docker Compose Pro"
 
     ```sh
-    CPS_EDITION=pro docker compose restart redis
+    CPS_EDITION=pro docker compose restart valkey
     ```
 
 Si cela ne permet pas de rétablir le service, une analyse de logs est nécessaire.
@@ -107,7 +107,7 @@ Canopsis ne peut alors pas fonctionner correctement.
 
 **Remédiation associée**
 
-=== "Paquets CentOS 7"
+=== "Paquets EL"
 
     ```sh
     systemctl restart mongod.service
@@ -136,7 +136,7 @@ Canopsis ne peut alors pas fonctionner correctement.
 
 **Remédiation associée**
 
-=== "Paquets CentOS 7"
+=== "Paquets EL"
 
     ```sh
     systemctl restart rabbitmq.service

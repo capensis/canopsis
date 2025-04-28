@@ -21,10 +21,10 @@ Pour rappel, SELinux n'est pas supporté.
 Composant   | Version (Pour Canopsis 24.04)         |
 ------------|------------------|
 MongoDB     | 7.0              |
-Nginx       | 1.20 (uniquement pour l'installation via paquets RPM) |
-PostgreSQL  | >= 13               |
-TimescaleDB | 2.14.2           |
-RabbitMQ    | >= 3.12             |
+Nginx       | >= 1.26 (uniquement pour l'installation via paquets RPM) |
+PostgreSQL  | >= 15               |
+TimescaleDB | 2.15.1           |
+RabbitMQ    | >= 4.0             |
 Valkey       | 8.0   |
 
 ## Prérequis composants externes
