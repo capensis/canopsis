@@ -79,7 +79,7 @@ export default {
             await Promise.all(requests);
 
             if (isCurrentUser) {
-              this.$system.setTheme(this.currentUser.ui_theme);
+              this.$system.setTheme(this.currentUser.ui_theme_colors);
             }
           },
         },

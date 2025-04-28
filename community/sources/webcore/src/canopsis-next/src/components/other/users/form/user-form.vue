@@ -58,7 +58,7 @@
       :items="groupsNavigationItems"
       class="mt-0"
     />
-    <c-theme-field v-field="form.ui_theme" />
+    <c-theme-field v-field="form.ui_theme" clearable />
     <v-layout
       v-if="!isNew"
       align-center
