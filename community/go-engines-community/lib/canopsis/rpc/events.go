@@ -103,7 +103,8 @@ type AxeResultEvent struct {
 
 	Origin *types.Event `json:"origin,omitempty"`
 
-	NewExternalTags []string `json:"-"`
+	AddedExternalTags   []string `json:"-"`
+	RemovedExternalTags []string `json:"-"`
 }
 
 // WebhookEvent

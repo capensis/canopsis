@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { uniq, pick } from 'lodash';
+import { uniq, pick, isFunction } from 'lodash';
 import {
   computed,
   ref,
@@ -25,7 +25,7 @@ import {
 
 import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES } from '@/constants';
 
-import { isArrayCondition } from '@/helpers/entities/pattern/form';
+import { isArrayOperator } from '@/helpers/entities/pattern/form';
 import {
   advancedSearchRuleItemToFormItem,
   getInitialFormItemType,
@@ -96,6 +96,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    focusOnMount: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { updateModel } = useModelField(props, emit);
@@ -134,7 +138,7 @@ export default {
       }
 
       if (isFinishedRule.value && !props.rule.text) {
-        emit('next', isArrayCondition(props.rule.operator));
+        emit('next');
       }
     };
 
@@ -154,6 +158,17 @@ export default {
     const isText = value => !props.union && !currentAttribute.value && !attributesMap.value[value];
 
     /**
+     * Handles the click event on a chip and sets the active type.
+     *
+     * @param {string} type - The type of chip that was clicked.
+     */
+    const clickChip = (type) => {
+      activeType.value = type;
+
+      emit('make:active', props.rule.key);
+    };
+
+    /**
      * Updates the search rule's chip item based on the provided value and type.
      *
      * @param {*} value - The value to set for the specified type. This can vary depending on the type.
@@ -164,12 +179,17 @@ export default {
       const oldFilled = props.rule.filled ?? [];
       const typeIndex = oldFilled.indexOf(type);
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
+
       const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
       let skipType = false;
 
       if (isArrayItem(type, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
         skipType = true;
+
+        if (typeIndex > 0) {
+          // filledForRemove = oldFilled.slice(typeIndex + 1);
+        }
       }
 
       if (isCustomRangeItem(type, value)) {
@@ -246,17 +266,6 @@ export default {
     };
 
     /**
-     * Handles the click event on a chip and sets the active type.
-     *
-     * @param {string} type - The type of chip that was clicked.
-     */
-    const clickChip = (type) => {
-      activeType.value = type;
-
-      emit('make:active', props.rule.key);
-    };
-
-    /**
      * Handles the focus out event on a chip and resets the active type if necessary.
      *
      * @param {string} type - The type of chip that lost focus.
@@ -307,10 +316,19 @@ export default {
       let fetchItems;
 
       if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.value) {
-        multiple = isArrayCondition(props.rule.operator);
-        itemText = currentAttribute.value?.itemText;
-        itemValue = currentAttribute.value?.itemValue;
-        fetchItems = currentAttribute.value?.fetchValues;
+        multiple = isArrayOperator(props.rule.operator);
+
+        itemText = isFunction(currentAttribute.value?.itemText)
+          ? currentAttribute.value?.itemText(props.rule)
+          : currentAttribute.value?.itemText;
+
+        itemValue = isFunction(currentAttribute.value?.itemValue)
+          ? currentAttribute.value?.itemValue(props.rule)
+          : currentAttribute.value?.itemValue;
+
+        if (currentAttribute.value?.fetchValues) {
+          fetchItems = (...args) => currentAttribute.value?.fetchValues(...args, props.rule);
+        }
       }
 
       const bind = {
@@ -322,6 +340,7 @@ export default {
         number: isNumberValueType(props.rule, type),
         fetchItems,
         first,
+        focusOnMount: props.focusOnMount,
       };
 
       let on = { input: updateItem };
@@ -329,6 +348,7 @@ export default {
       if (input) {
         bind.alwaysActive = true;
       } else {
+        bind.alwaysActive = multiple && !props.rule[type]?.length;
         bind.active = isActiveType(type);
         bind.value = props.rule[type];
         bind.closable = closable;
