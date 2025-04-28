@@ -88,7 +88,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 
 			now := time.Now()
 			newSpan := timespan.New(now, now.Add(frameDuration))
-			_, count, err := pbhService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
+			resolver, count, err := pbhService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -99,6 +99,12 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 					Time("interval_to", newSpan.To()).
 					Int("count", count).
 					Msg("pbehaviors are recomputed")
+			}
+
+			inheritedServiceResolver := pbehavior.NewInheritedServicePbhResolver(dbClient, eventManager, pbhStore, pbhLockerClient)
+			_, _, err = inheritedServiceResolver.ComputeAndResolveInheritedServicePbh(ctx, resolver)
+			if err != nil {
+				return fmt.Errorf("failed to resolve inherited pbh: %w", err)
 			}
 
 			computeRruleStartWorker.Work(ctx)
