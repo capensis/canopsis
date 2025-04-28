@@ -48,9 +48,19 @@ func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, 
 			return
 		}
 
+		redirectUrl, err := url.Parse(request.Redirect)
+		if err != nil {
+			panic(fmt.Errorf("parse redirect url error: %w", err))
+		}
+
+		q := redirectUrl.Query()
+
 		user, err, ok := p.Auth(c.Request)
 		if err != nil {
-			panic(err)
+			q.Set("errorMessage", err.Error())
+			redirectUrl.RawQuery = q.Encode()
+
+			c.Redirect(http.StatusPermanentRedirect, redirectUrl.String())
 		}
 
 		if !ok || user == nil {
@@ -85,12 +95,6 @@ func CallbackHandler(p libsecurity.HttpProvider, enforcer libsecurity.Enforcer, 
 			panic(err)
 		}
 
-		redirectUrl, err := url.Parse(request.Redirect)
-		if err != nil {
-			panic(fmt.Errorf("parse redirect url error: %w", err))
-		}
-
-		q := redirectUrl.Query()
 		q.Set("access_token", accessToken)
 		redirectUrl.RawQuery = q.Encode()
 

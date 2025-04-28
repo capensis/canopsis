@@ -412,6 +412,10 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 	}
 
 	now := datetime.NewCpsTime()
+	lastEventDate := &now
+	if event.EventType == types.EventTypeContextUpdate {
+		lastEventDate = nil
+	}
 
 	if resource == nil {
 		if !connectorExist {
@@ -424,13 +428,13 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 				Infos:         map[string]types.Info{},
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				Created:       now,
-				LastEventDate: &now,
+				LastEventDate: lastEventDate,
 				Healthcheck:   event.Healthcheck,
 			})
 
 			report.CheckConnector = true
-		} else {
-			commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		} else if lastEventDate != nil {
+			commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": *lastEventDate})
 		}
 
 		if !componentExist {
@@ -445,7 +449,7 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 				Infos:         map[string]types.Info{},
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				Created:       now,
-				LastEventDate: &now,
+				LastEventDate: lastEventDate,
 				Healthcheck:   event.Healthcheck,
 			})
 
@@ -464,7 +468,7 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 			Infos:          map[string]types.Info{},
 			ImpactLevel:    types.EntityDefaultImpactLevel,
 			Created:        now,
-			LastEventDate:  &now,
+			LastEventDate:  lastEventDate,
 			Healthcheck:    event.Healthcheck,
 		}
 
@@ -480,7 +484,13 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 	if resource.Connector != connectorID && !connectorExist {
 		resource.Connector = connectorID
 
-		commRegister.RegisterUpdate(resourceID, bson.M{"connector": connectorID, "last_event_date": now})
+		upd := bson.M{
+			"connector": connectorID,
+		}
+		if lastEventDate != nil {
+			upd["last_event_date"] = *lastEventDate
+		}
+		commRegister.RegisterUpdate(resourceID, upd)
 		commRegister.RegisterInsert(&types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,
@@ -490,18 +500,18 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 			Infos:         map[string]types.Info{},
 			ImpactLevel:   types.EntityDefaultImpactLevel,
 			Created:       now,
-			LastEventDate: &now,
+			LastEventDate: lastEventDate,
 			Healthcheck:   event.Healthcheck,
 		})
 
 		report.CheckResource = true
 		report.CheckConnector = true
-	} else {
-		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
-		commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": now})
+	} else if lastEventDate != nil {
+		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": *lastEventDate})
+		commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": *lastEventDate})
 	}
 
-	resource.LastEventDate = &now
+	resource.LastEventDate = lastEventDate
 	event.Entity = resource
 
 	return report, nil
@@ -550,6 +560,10 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	}
 
 	now := datetime.NewCpsTime()
+	lastEventDate := &now
+	if event.EventType == types.EventTypeContextUpdate {
+		lastEventDate = nil
+	}
 
 	if component == nil {
 		if !connectorExist {
@@ -562,13 +576,13 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 				Infos:         map[string]types.Info{},
 				ImpactLevel:   types.EntityDefaultImpactLevel,
 				Created:       now,
-				LastEventDate: &now,
+				LastEventDate: lastEventDate,
 				Healthcheck:   event.Healthcheck,
 			})
 
 			report.CheckConnector = true
-		} else {
-			commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
+		} else if lastEventDate != nil {
+			commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": *lastEventDate})
 		}
 
 		component = &types.Entity{
@@ -582,7 +596,7 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 			Infos:         map[string]types.Info{},
 			ImpactLevel:   types.EntityDefaultImpactLevel,
 			Created:       now,
-			LastEventDate: &now,
+			LastEventDate: lastEventDate,
 			Healthcheck:   event.Healthcheck,
 		}
 
@@ -598,7 +612,13 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	if component.Connector != connectorID && !connectorExist {
 		component.Connector = connectorID
 
-		commRegister.RegisterUpdate(componentID, bson.M{"connector": connectorID, "last_event_date": now})
+		upd := bson.M{
+			"connector": connectorID,
+		}
+		if lastEventDate != nil {
+			upd["last_event_date"] = *lastEventDate
+		}
+		commRegister.RegisterUpdate(componentID, upd)
 		commRegister.RegisterInsert(&types.Entity{
 			ID:            connectorID,
 			Name:          connectorName,
@@ -608,18 +628,18 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 			Infos:         map[string]types.Info{},
 			ImpactLevel:   types.EntityDefaultImpactLevel,
 			Created:       now,
-			LastEventDate: &now,
+			LastEventDate: lastEventDate,
 			Healthcheck:   event.Healthcheck,
 		})
 
 		report.CheckComponent = true
 		report.CheckConnector = true
-	} else {
-		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
-		commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": now})
+	} else if lastEventDate != nil {
+		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": *lastEventDate})
+		commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": *lastEventDate})
 	}
 
-	component.LastEventDate = &now
+	component.LastEventDate = lastEventDate
 	event.Entity = component
 
 	return report, nil
@@ -642,7 +662,7 @@ func (m *manager) HandleService(ctx context.Context, event *types.Event, commReg
 		return Report{}, nil
 	}
 
-	if event.IsContextable() && !event.IsOnlyServiceUpdate() {
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType != types.EventTypeContextUpdate {
 		now := datetime.NewCpsTime()
 		commRegister.RegisterUpdate(serviceID, bson.M{"last_event_date": now})
 		service.LastEventDate = &now
@@ -665,7 +685,7 @@ func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commR
 		return Report{}, fmt.Errorf("connector %s doesn't exist", connectorID)
 	}
 
-	if event.IsContextable() && !event.IsOnlyServiceUpdate() {
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType != types.EventTypeContextUpdate {
 		now := datetime.NewCpsTime()
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
 		connector.LastEventDate = &now

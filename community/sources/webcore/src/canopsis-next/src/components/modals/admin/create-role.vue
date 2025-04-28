@@ -17,12 +17,13 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn
           :disabled="isDisabled"
+          :loading="submitting"
           class="primary white--text"
           type="submit"
         >
@@ -34,13 +35,16 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+
 import { MODALS } from '@/constants';
 
 import { roleToForm, formToRole } from '@/helpers/entities/role/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import RoleForm from '@/components/other/role/form/role-form.vue';
 
@@ -48,35 +52,53 @@ import ModalWrapper from '../modal-wrapper.vue';
 
 export default {
   name: MODALS.createRole,
+
   $_veeValidate: {
     validator: 'new',
   },
-  components: { RoleForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+
+  components: {
+    RoleForm,
+    ModalWrapper,
+  },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+
+    const form = ref(roleToForm(config.value.role));
+
+    const title = computed(() => (
+      config.value.title || t('modals.createRole.create.title')
+    ));
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action(formToRole(form.value));
+
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
     return {
-      form: roleToForm(this.modal.config.role),
+      form,
+      title,
+      isDisabled,
+      submitting,
+      submit,
+      close,
+      config,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createRole.create.title');
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config.action(formToRole(this.form));
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

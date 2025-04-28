@@ -31,6 +31,7 @@ import { omit } from 'lodash';
 
 import { MODALS } from '@/constants';
 
+import { authMixin } from '@/mixins/auth';
 import { entitiesRoleMixin } from '@/mixins/entities/role';
 import { permissionsTechnicalRoleMixin } from '@/mixins/permissions/technical/role';
 import { localQueryMixin } from '@/mixins/query/query';
@@ -38,10 +39,12 @@ import { localQueryMixin } from '@/mixins/query/query';
 import RolesList from '@/components/other/role/roles-list.vue';
 
 export default {
+  inject: ['$system'],
   components: {
     RolesList,
   },
   mixins: [
+    authMixin,
     localQueryMixin,
     entitiesRoleMixin,
     permissionsTechnicalRoleMixin,
@@ -100,9 +103,19 @@ export default {
           action: async (data) => {
             await this.updateRole({ data, id: role._id });
 
+            const requests = [this.fetchList()];
+
+            if (this.currentUser.roles.find(currentRole => currentRole._id === role._id)) {
+              requests.push(this.fetchCurrentUser());
+            }
+
             this.$popups.success({ text: this.$t('success.default') });
 
-            await this.fetchList();
+            await Promise.all(requests);
+
+            if (requests.length > 1) {
+              this.$system.setTheme(this.currentUser.ui_theme_colors);
+            }
           },
         },
       });

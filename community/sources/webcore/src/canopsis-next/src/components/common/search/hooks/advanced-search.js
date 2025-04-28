@@ -1,4 +1,4 @@
-import { computed, ref, set } from 'vue';
+import { computed, ref, unref, set } from 'vue';
 
 import { ADVANCED_SEARCH_ITEM_TYPES, ADVANCED_SEARCH_UNION_FIELDS } from '@/constants';
 
@@ -169,9 +169,13 @@ export const useAdvancedSearchMenu = ({ onChange }) => {
  * @returns {Object} An object containing reactive properties for fields items, conditions items, all items based on the
  * active type, and filtered items based on the search query.
  */
-export const useAdvancedSearchItems = ({ fields, conditions, activeType, internalSearch }) => {
+export const useAdvancedSearchItems = ({ value, fields, conditions, activeType, internalSearch }) => {
   const fieldsItems = computed(() => prepareAdvancedSearchFields(fields.value));
-  const conditionsItems = computed(() => prepareAdvancedSearchConditions(conditions.value));
+  const conditionsItems = computed(() => {
+    const lastItem = unref(value).at(-1);
+
+    return prepareAdvancedSearchConditions(lastItem.conditions ? lastItem.conditions : conditions.value);
+  });
 
   const items = computed(() => {
     switch (activeType.value) {

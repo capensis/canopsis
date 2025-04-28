@@ -175,7 +175,9 @@ func (s *inheritedServicePbhResolver) ComputeAndResolveInheritedServicePbh(
 
 	if len(parentServiceIDs) == 0 {
 		_, err = s.store.GetInheritedServicesPbhResolveResult(ctx)
-		if errors.Is(err, ErrNoComputed) {
+		if err != nil && !errors.Is(err, ErrNoComputed) {
+			return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, err
+		} else {
 			err = s.store.SetInheritedServicesPbhResolveResult(ctx, InheritedServicesPbhResolveResult{})
 			if err != nil {
 				return InheritedServicesPbhResolveResult{}, ServiceEventsData{}, fmt.Errorf("failed to save default inherited service pbehavior resolve result: %w", err)

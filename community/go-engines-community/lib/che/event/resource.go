@@ -161,11 +161,12 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 				return err
 			}
 
-			if ent.Type == types.EntityTypeResource {
+			switch ent.Type {
+			case types.EntityTypeResource:
 				resource = ent
-			} else if ent.Type == types.EntityTypeComponent {
+			case types.EntityTypeComponent:
 				component = ent
-			} else {
+			default:
 				connector = ent
 			}
 		}
