@@ -62,10 +62,6 @@ type FieldCondition struct {
 	Condition Condition `json:"cond" bson:"cond"`
 }
 
-type TimeAdder interface {
-	Add(time.Duration) time.Time
-}
-
 // Condition represents an expression to decide if a value fits.
 type Condition struct {
 	Type  string `json:"type" bson:"type"`
@@ -82,8 +78,6 @@ type Condition struct {
 	// valueDurationTo is second duration for "before relative_time" condition
 	valueDuration   *int64
 	valueDurationTo *int64
-	// TestTime is used to test the condition with a specific time
-	TestTime TimeAdder `json:"-" bson:"-"`
 }
 
 // RegexMatches is a type that contains the values of the sub-expressions of a
@@ -161,7 +155,6 @@ func NewDurationCondition(t string, d ...datetime.DurationWithUnit) (Condition, 
 		Type:          t,
 		Value:         d[0],
 		valueDuration: &durationFrom.Value,
-		TestTime:      time.Now(),
 	}
 
 	if len(d) == 1 {
@@ -433,17 +426,13 @@ func (c *Condition) MatchTags(tags []string) (bool, error) {
 	}
 }
 
-func (c *Condition) MatchTime(value time.Time) (bool, error) {
+func (c *Condition) MatchTime(value, now time.Time) (bool, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
 		if c.valueDuration == nil && c.valueDurationTo == nil {
 			return false, ErrWrongConditionValue
 		}
 		var t1, t2 time.Time
-		now := c.TestTime
-		if now == nil {
-			now = time.Now()
-		}
 		if c.valueDurationTo != nil {
 			t2 = now.Add(time.Duration(-*c.valueDurationTo) * time.Second)
 		}
@@ -800,17 +789,13 @@ func (c *Condition) StringArrayInArrayToMongoQuery(arrayField, arrayItemField st
 	return bson.M{arrayField: bson.M{"$elemMatch": cond}}, nil
 }
 
-func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
+func (c *Condition) TimeToMongoQuery(f string, now time.Time) (bson.M, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
 		if c.valueDuration == nil && c.valueDurationTo == nil {
 			return nil, ErrWrongConditionValue
 		}
 		var t1, t2 datetime.CpsTime
-		now := c.TestTime
-		if now == nil {
-			now = time.Now()
-		}
 		if c.valueDurationTo != nil {
 			t2 = datetime.NewCpsTime(now.Add(time.Duration(-*c.valueDurationTo) * time.Second).Unix())
 		}
