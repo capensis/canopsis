@@ -1855,13 +1855,13 @@ func TestActionProcessor(t *testing.T) {
 		EnableArraySortingInEntityInfos: true,
 	}).AnyTimes()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
-	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
 	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
 	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor, mockTechMetricsSender)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEntityUpdated, resultErr := processor.Process(t.Context(), "test", dataset.action, &dataset.event,
+			resultEntityUpdated, resultErr := processor.Process(t.Context(), "test", "", dataset.action, &dataset.event,
 				dataset.regexMatches, dataset.externalData)
 			if diff := pretty.Compare(dataset.expectedEvent, dataset.event); diff != "" {
 				t.Errorf("unexpected event: %s", diff)

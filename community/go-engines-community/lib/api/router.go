@@ -83,6 +83,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -475,7 +476,7 @@ func RegisterRoutes(
 
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
-			eventfilter.NewStore(dbClient, authorProvider),
+			eventfilter.NewStore(dbClient, authorProvider, usernotification.NewStore(dbClient)),
 			dbexport.NewExporter(dbClient),
 			logger,
 			common.NewPatternFieldsTransformer(dbClient),
@@ -1521,18 +1522,19 @@ func RegisterRoutes(
 			)
 		}
 
-		notificationRouter := protected.Group("/notification")
+		notificationAPI := notification.NewApi(notification.NewStore(dbClient, authorProvider))
+		protected.GET("/notifications", notificationAPI.List)
+		notifSettingsRouter := protected.Group("/notification-settings")
 		{
-			notificationApi := notification.NewApi(notification.NewStore(dbClient))
-			notificationRouter.PUT(
+			notifSettingsRouter.PUT(
 				"",
 				middleware.Authorize(apisecurity.PermNotification, model.PermissionCan, enforcer),
-				notificationApi.Update,
+				notificationAPI.UpdateSettings,
 			)
-			notificationRouter.GET(
+			notifSettingsRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.PermNotification, model.PermissionCan, enforcer),
-				notificationApi.Get,
+				notificationAPI.GetSettings,
 			)
 		}
 

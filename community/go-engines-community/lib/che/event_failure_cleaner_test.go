@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/kylelemons/godebug/pretty"
@@ -25,17 +26,19 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 	now := datetime.NewCpsTime()
 	failColl := client.Collection(mongo.EventFilterFailureCollection)
 	ruleColl := client.Collection(mongo.EventFilterRuleCollection)
+	notifColl := client.Collection(mongo.UserNotificationCollection)
 	f := func(
 		conf datastorage.Config,
 		limit int,
-		fails, rules []any,
+		fails, rules, notifs []any,
 		expectedFailIDs []string,
 		expectedRules []eventfilter.Rule,
 		expectedDeleted int64,
+		expectedNotifIDs []string,
 	) {
 		t.Helper()
 
-		err = cleanCollections(ctx, failColl, ruleColl, fails, rules)
+		err = cleanCollections(ctx, failColl, ruleColl, notifColl, fails, rules, notifs)
 		if err != nil {
 			t.Fatalf("cannot clean: %v", err)
 		}
@@ -68,7 +71,16 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 			t.Fatalf("unexpected deleted count, expected %d, got %d", expectedDeleted, res.Deleted)
 		}
 
-		err = cleanCollections(ctx, failColl, ruleColl, nil, nil)
+		notifIDs, err := findIDs(ctx, notifColl)
+		if err != nil {
+			t.Fatalf("cannot find: %v", err)
+		}
+
+		if diff := pretty.Compare(expectedNotifIDs, notifIDs); diff != "" {
+			t.Fatalf("unexpected result in %s: (-want +got):\n%s", notifColl.Name(), diff)
+		}
+
+		err = cleanCollections(ctx, failColl, ruleColl, notifColl, nil, nil, nil)
 		if err != nil {
 			t.Fatalf("cannot clean: %v", err)
 		}
@@ -96,6 +108,11 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 			newTestRule("r3", 1, 1),
 			newTestRule("r4", 0, 0),
 		},
+		[]any{
+			newTestNotif("n1", "r1", weekAgo),
+			newTestNotif("n2", "r2", now),
+			newTestNotif("n3", "r3", weekAgo),
+		},
 		[]string{"f1", "f2", "f3", "f4", "f9"},
 		[]eventfilter.Rule{
 			newTestRule("r1", 4, 2),
@@ -104,6 +121,7 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 			newTestRule("r4", 0, 0),
 		},
 		5,
+		[]string{"n1", "n2"},
 	)
 	f(
 		newDSConfig("7d"),
@@ -117,11 +135,13 @@ func TestEventFailureCleaner_Clean(t *testing.T) {
 		[]any{
 			newTestRule("r1", 4, 0),
 		},
+		[]any{},
 		[]string{"f4"},
 		[]eventfilter.Rule{
 			newTestRule("r1", 1, 0),
 		},
 		3,
+		[]string{},
 	)
 }
 
@@ -158,7 +178,21 @@ func newTestFail(id, r string, t datetime.CpsTime, u bool) eventfilter.Failure {
 	}
 }
 
-func cleanCollections(ctx context.Context, failColl, ruleColl mongo.DbCollection, fails, rules []any) error {
+func newTestNotif(id, r string, t datetime.CpsTime) usernotification.Notification {
+	return usernotification.Notification{
+		ID:      id,
+		Type:    usernotification.TypeEventFilterFailure,
+		Roles:   []string{"test-role"},
+		Time:    t,
+		Comment: "test",
+		Rule: &usernotification.Rule{
+			ID:   r,
+			Name: "test",
+		},
+	}
+}
+
+func cleanCollections(ctx context.Context, failColl, ruleColl, notifColl mongo.DbCollection, fails, rules, notifs []any) error {
 	_, err := failColl.DeleteMany(ctx, bson.M{})
 	if err != nil {
 		return fmt.Errorf("cannot clean %s: %w", failColl.Name(), err)
@@ -167,6 +201,11 @@ func cleanCollections(ctx context.Context, failColl, ruleColl mongo.DbCollection
 	_, err = ruleColl.DeleteMany(ctx, bson.M{})
 	if err != nil {
 		return fmt.Errorf("cannot clean %s: %w", ruleColl.Name(), err)
+	}
+
+	_, err = notifColl.DeleteMany(ctx, bson.M{})
+	if err != nil {
+		return fmt.Errorf("cannot clean %s: %w", notifColl.Name(), err)
 	}
 
 	if len(fails) > 0 {
@@ -180,6 +219,13 @@ func cleanCollections(ctx context.Context, failColl, ruleColl mongo.DbCollection
 		_, err = ruleColl.InsertMany(ctx, rules)
 		if err != nil {
 			return fmt.Errorf("cannot insert into %s: %w", ruleColl.Name(), err)
+		}
+	}
+
+	if len(notifs) > 0 {
+		_, err = notifColl.InsertMany(ctx, notifs)
+		if err != nil {
+			return fmt.Errorf("cannot insert into %s: %w", notifColl.Name(), err)
 		}
 	}
 
