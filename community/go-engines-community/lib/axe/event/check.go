@@ -94,10 +94,28 @@ type checkProcessor struct {
 
 func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil ||
-		!event.Entity.Enabled ||
-		event.Parameters.State == nil ||
+	// rare case: event cannot have empty entity
+	if event.Entity == nil {
+		return result, nil
+	}
+
+	// events can be safely ignored if entity is disabled but add log msg for external events
+	if !event.Entity.Enabled {
+		if event.Parameters.Initiator == types.InitiatorExternal {
+			p.logger.Warn().
+				Str("event_type", event.EventType).
+				Str("connector", event.Parameters.Connector+"/"+event.Parameters.ConnectorName).
+				Str("entity", event.Entity.ID).
+				Msg("entity is disabled, event cannot be processed")
+		}
+
+		return result, nil
+	}
+
+	// invalid event
+	if event.Parameters.State == nil ||
 		event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
+
 		return result, nil
 	}
 
