@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -22,7 +23,7 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 	config.SetDbClientRetry(dbClient, cfg)
 	eventFilterEventCounter := eventfilter.NewEventCounter(dbClient,
 		utils.MinDuration(canopsis.DefaultFlushInterval, opts.PeriodicalWaitTime), logger)
-	eventFilterFailureService := eventfilter.NewFailureService(dbClient,
+	eventFilterFailureService := eventfilter.NewFailureService(dbClient, usernotification.NewStore(dbClient),
 		utils.MinDuration(canopsis.DefaultFlushInterval, opts.PeriodicalWaitTime), logger)
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
