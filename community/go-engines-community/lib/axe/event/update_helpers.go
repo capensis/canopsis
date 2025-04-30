@@ -777,6 +777,8 @@ func updateMetaAlarmState(
 
 		if state < currentState {
 			newStep.Type = types.AlarmStepStateDecrease
+		} else if alarm.Value.MaxState < state {
+			alarm.Value.MaxState = state
 		}
 
 		alarm.Value.State = &newStep
@@ -805,6 +807,7 @@ func updateMetaAlarmState(
 				"v.total_state_changes":               alarm.Value.TotalStateChanges,
 				"v.last_update_date":                  alarm.Value.LastUpdateDate,
 				"v.last_st_upd_dt":                    alarm.Value.LastStateOrStatusUpdateDate,
+				"v.max_state":                         alarm.Value.MaxState,
 			},
 			bson.M{"v.steps": alarm.Value.State},
 			nil
@@ -839,6 +842,7 @@ func updateMetaAlarmState(
 	if state != currentState {
 		set["v.total_state_changes"] = alarm.Value.TotalStateChanges
 		set["v.state"] = alarm.Value.State
+		set["v.max_state"] = alarm.Value.MaxState
 		newSteps = append(newSteps, alarm.Value.State)
 	}
 
