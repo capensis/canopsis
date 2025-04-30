@@ -42,6 +42,7 @@ import { isApiPermission } from '@/helpers/entities/permissions/list';
  * @property {string} name
  * @property {RoleType} type
  * @property {string} description
+ * @property {string} ui_theme
  * @property {boolean} [editable]
  * @property {Permission[]} permissions
  * @property {DefaultView} defaultview
@@ -103,6 +104,7 @@ export const roleToForm = (role = {}) => ({
   defaultview: role.defaultview?._id,
   editable: role.editable ?? true,
   permissions: role.permissions ?? {},
+  ui_theme: role.ui_theme ?? '',
   auth_config: roleAuthConfigToForm(role.auth_config),
 });
 

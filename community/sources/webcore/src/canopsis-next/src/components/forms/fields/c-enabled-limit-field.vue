@@ -23,11 +23,10 @@
     <v-flex xs2>
       <c-number-field
         v-field="value.limit"
+        v-bind="validationRules"
         :label="fieldLabel"
         :name="limitFieldName"
         :disabled="!value.enabled"
-        :required="value.enabled"
-        :min="min"
       />
     </v-flex>
     <v-flex xs9>
@@ -79,6 +78,17 @@ export default {
 
     limitFieldName() {
       return `${this.name}.limit`;
+    },
+
+    validationRules() {
+      const rules = {};
+
+      if (this.value.enabled) {
+        rules.min = this.min;
+        rules.reqired = true;
+      }
+
+      return rules;
     },
   },
 };

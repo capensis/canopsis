@@ -89,6 +89,7 @@ type SectionApi struct {
 	MetricsCacheExpiration   string   `toml:"MetricsCacheExpiration"`
 	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
 	EventsRecorderFetchStatusTimeout string `toml:"EventsRecorderFetchStatusTimeout"`
+	WebsocketPingInterval            string `toml:"WebsocketPingInterval"`
 }
 
 type SectionLogger struct {

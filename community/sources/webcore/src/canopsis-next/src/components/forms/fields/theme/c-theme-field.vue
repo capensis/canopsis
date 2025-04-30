@@ -9,6 +9,7 @@
     :name="name"
     :error-messages="errors.collect(name)"
     :hide-details="hideDetails"
+    :clearable="clearable"
     item-text="name"
     item-value="_id"
   />
@@ -45,6 +46,10 @@ export default {
       default: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
       type: Boolean,
       default: false,
     },
