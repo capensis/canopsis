@@ -363,6 +363,8 @@ type AlarmValue struct {
 
 	CloseDelayValue int64             `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
 	CloseDelay      *common.AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
+
+	MaxState types.CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
 }
 
 type Pbehavior struct {

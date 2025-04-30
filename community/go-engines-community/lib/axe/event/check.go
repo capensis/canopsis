@@ -238,6 +238,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	statusStep.Author = author
 	statusStep.Value = types.AlarmStatusOngoing
 	alarm.Value.State = &stateStep
+	alarm.Value.MaxState = stateStep.Value
 	err = alarm.Value.Steps.Add(stateStep)
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
@@ -393,6 +394,9 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		if newState < previousState {
 			alarmChange.Type = types.AlarmChangeTypeStateDecrease
 			stateStep.Type = types.AlarmStepStateDecrease
+		} else if alarm.Value.MaxState < newState {
+			alarm.Value.MaxState = newState
+			set["v.max_state"] = newState
 		}
 
 		alarm.Value.State = &stateStep
