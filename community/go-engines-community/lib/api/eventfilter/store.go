@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/bson"
@@ -36,6 +37,7 @@ type store struct {
 	dbFailureCollection     mongo.DbCollection
 	dbExdataTableCollection mongo.DbCollection
 	authorProvider          author.Provider
+	notificationStore       usernotification.Store
 	defaultSearchByFields   []string
 	defaultSortBy           string
 }
@@ -43,6 +45,7 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
+	notificationStore usernotification.Store,
 ) Store {
 	return &store{
 		dbClient:                dbClient,
@@ -50,6 +53,7 @@ func NewStore(
 		dbFailureCollection:     dbClient.Collection(mongo.EventFilterFailureCollection),
 		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
 		authorProvider:          authorProvider,
+		notificationStore:       notificationStore,
 		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
 		defaultSortBy:           "created",
 	}
@@ -241,7 +245,11 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-		return err
+		if err != nil {
+			return err
+		}
+
+		return s.notificationStore.RemoveForEventFilterFailure(ctx, id)
 	})
 
 	return deleted > 0, err
@@ -259,6 +267,10 @@ func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (
 	match := bson.M{"rule": id}
 	if r.Type != nil {
 		match["type"] = r.Type
+	}
+
+	if r.OnlyUnreadFailure {
+		match["unread_failures_count"] = bson.M{"$gt": 0}
 	}
 
 	cursor, err := s.dbFailureCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -311,8 +323,11 @@ func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
 		_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": id, "unread": true}, bson.M{"$unset": bson.M{
 			"unread": "",
 		}})
+		if err != nil {
+			return err
+		}
 
-		return err
+		return s.notificationStore.RemoveForEventFilterFailure(ctx, id)
 	})
 
 	return ruleExists, err
