@@ -42,6 +42,15 @@ internal = false
 noWait = false
 # args =
 
+[[RabbitMQ.exchanges]]
+name = "canopsis.api_rem_res"
+kind = "fanout"
+durable = true
+autoDelete = false
+internal = false
+noWait = false
+# args =
+
 [[RabbitMQ.queues]]
 name = "Engine_action_external"
 durable = true
@@ -478,6 +487,7 @@ AuthorScheme = ["$username"]
 #AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
 MetricsCacheExpiration = "24h"
 EventsRecorderFetchStatusTimeout = "3s"
+WebsocketPingInterval = "5s"
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.external_data]

@@ -103,7 +103,8 @@ type AxeResultEvent struct {
 
 	Origin *types.Event `json:"origin,omitempty"`
 
-	NewExternalTags []string `json:"-"`
+	AddedExternalTags   []string `json:"-"`
+	RemovedExternalTags []string `json:"-"`
 }
 
 // WebhookEvent
@@ -200,6 +201,13 @@ type RemediationEvent struct {
 type RemediationJobEvent struct {
 	JobExecutionID string `json:"job_execution_id"`
 	Step           int    `json:"step"`
+}
+
+type ApiRemediationResultEvent struct {
+	EventType   string `json:"event_type"`
+	JobExecID   string `json:"job_exec_id"`
+	ExecutionID string `json:"exec_id"`
+	UserID      string `json:"user_id"`
 }
 
 type Error struct {

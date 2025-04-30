@@ -138,15 +138,33 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		}},
 		{
 			"$addFields": bson.M{
-				"ui_theme": bson.M{
+				"ui_theme_colors": bson.M{
 					"$cond": bson.M{
 						"if": bson.M{
-							"$or": bson.A{
-								bson.M{"$eq": bson.A{"$ui_theme", ""}},
-								bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""}},
+							"$eq": bson.A{bson.M{"$ifNull": bson.A{"$ui_theme", ""}}, ""},
+						},
+						"then": bson.M{
+							"$ifNull": bson.A{
+								bson.M{
+									"$first": bson.M{
+										"$map": bson.M{
+											"input": bson.M{
+												"$filter": bson.M{
+													"input": "$roles",
+													"as":    "role",
+													"cond": bson.M{
+														"$ne": bson.A{bson.M{"$ifNull": bson.A{"$$role.ui_theme", ""}}, ""},
+													},
+												},
+											},
+											"as": "role",
+											"in": "$$role.ui_theme",
+										},
+									},
+								},
+								cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
 							},
 						},
-						"then": cmp.Or(cfg.DefaultColorTheme, colortheme.Canopsis),
 						"else": "$ui_theme",
 					},
 				},
@@ -155,17 +173,17 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 		{
 			"$lookup": bson.M{
 				"from":         mongo.ColorThemeCollection,
-				"localField":   "ui_theme",
+				"localField":   "ui_theme_colors",
 				"foreignField": "_id",
-				"as":           "ui_theme",
+				"as":           "ui_theme_colors",
 			},
 		},
 		{
-			"$unwind": bson.M{"path": "$ui_theme", "preserveNullAndEmptyArrays": true},
+			"$unwind": bson.M{"path": "$ui_theme_colors", "preserveNullAndEmptyArrays": true},
 		},
 	}
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
-	pipeline = append(pipeline, s.authorProvider.PipelineForField("ui_theme.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("ui_theme_colors.author")...)
 
 	cursor, err := s.userCollection.Aggregate(ctx, pipeline)
 	if err != nil {
