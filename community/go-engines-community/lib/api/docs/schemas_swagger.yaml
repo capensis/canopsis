@@ -312,6 +312,8 @@ definitions:
         items:
           type: string
         type: array
+      max_state:
+        type: integer
       meta:
         type: string
       output:
