@@ -120,6 +120,7 @@ func NewEngine(
 	alarmStatusService := alarmstatus.NewService(flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
 	actionRpcClient := libengine.NewRPCClientWithoutReply(
+		"",
 		canopsis.ActionAxeRPCClientQueueName,
 		amqpChannel,
 	)
@@ -168,6 +169,7 @@ func NewEngine(
 
 	pbhRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
+		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		canopsis.AxePbehaviorRPCClientQueueName,
 		cfg.Global.PrefetchCount,
@@ -193,6 +195,7 @@ func NewEngine(
 	)
 	pbhRpcClientForIdleRules := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
+		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		"",
 		cfg.Global.PrefetchCount,
@@ -540,7 +543,7 @@ func (m DependencyMaker) EventProcessor(
 	container.Set(types.EventTypeResolveDeleted, event.NewResolveDeletedProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmPostProcessor, metaAlarmStatesService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeEntityToggled, event.NewEntityToggledProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmPostProcessor, metaAlarmStatesService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
 	container.Set(types.EventTypeRecomputeEntityService, event.NewRecomputeEntityServiceProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, metaAlarmPostProcessor, metaAlarmStatesService, metricsSender, remediationRpcClient, json.NewEncoder(), logger))
-	container.Set(types.EventTypeEntityUpdated, event.NewEntityUpdatedProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, externalTagUpdater))
+	container.Set(types.EventTypeEntityUpdated, event.NewEntityUpdatedProcessor(dbClient, entityServiceCountersCalculator, componentCountersCalculator, eventsSender, externalTagUpdater, metaAlarmPostProcessor, logger))
 	container.Set(types.EventTypeUpdateCounters, event.NewUpdateCountersProcessor(dbClient, entityServiceCountersCalculator, eventsSender))
 	container.Set(types.EventTypeSnooze, event.NewSnoozeProcessor(dbClient, metaAlarmPostProcessor, logger))
 	container.Set(types.EventTypeUncancel, event.NewUncancelProcessor(dbClient, alarmStatusService, metaAlarmPostProcessor, logger))
