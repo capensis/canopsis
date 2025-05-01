@@ -49,26 +49,24 @@ func NewFailureService(
 	logger zerolog.Logger,
 ) FailureService {
 	return &failureService{
-		collection:             client.Collection(mongo.EventFilterFailureCollection),
-		ruleCollection:         client.Collection(mongo.EventFilterRuleCollection),
-		notificationCollection: client.Collection(mongo.UserNotificationCollection),
-		roleCollection:         client.Collection(mongo.RoleCollection),
-		notificationStore:      notificationStore,
-		interval:               interval,
-		logger:                 logger,
-		countsByRule:           make(map[string]int64),
-		failedRules:            make(map[string]failedRule),
+		collection:        client.Collection(mongo.EventFilterFailureCollection),
+		ruleCollection:    client.Collection(mongo.EventFilterRuleCollection),
+		roleCollection:    client.Collection(mongo.RoleCollection),
+		notificationStore: notificationStore,
+		interval:          interval,
+		logger:            logger,
+		countsByRule:      make(map[string]int64),
+		failedRules:       make(map[string]failedRule),
 	}
 }
 
 type failureService struct {
-	collection             mongo.DbCollection
-	ruleCollection         mongo.DbCollection
-	notificationCollection mongo.DbCollection
-	notificationStore      usernotification.Store
-	roleCollection         mongo.DbCollection
-	interval               time.Duration
-	logger                 zerolog.Logger
+	collection        mongo.DbCollection
+	ruleCollection    mongo.DbCollection
+	notificationStore usernotification.Store
+	roleCollection    mongo.DbCollection
+	interval          time.Duration
+	logger            zerolog.Logger
 
 	dataMx       sync.Mutex
 	inserts      []any
@@ -131,7 +129,7 @@ func (s *failureService) flush(ctx context.Context) error {
 		return err
 	}
 
-	err = s.updateRuleNotifications(ctx, failedRules, bulkSize)
+	err = s.updateRuleNotifications(ctx, failedRules)
 	if err != nil {
 		return err
 	}
@@ -187,7 +185,7 @@ func (s *failureService) updateRuleCounts(ctx context.Context, countsByRule map[
 	return nil
 }
 
-func (s *failureService) updateRuleNotifications(ctx context.Context, failedRules map[string]failedRule, bulkSize int) error {
+func (s *failureService) updateRuleNotifications(ctx context.Context, failedRules map[string]failedRule) error {
 	if len(failedRules) == 0 {
 		return nil
 	}
@@ -197,24 +195,13 @@ func (s *failureService) updateRuleNotifications(ctx context.Context, failedRule
 		return err
 	}
 
-	writeModels := make([]mongodriver.WriteModel, 0, bulkSize)
 	for ruleID, r := range failedRules {
-		writeModels = append(writeModels, s.notificationStore.GetWriteModelForEventFilterFailure(r.Timestamp, ruleID, r.Description, roleIDs))
-		if len(writeModels) == bulkSize {
-			_, err = s.notificationCollection.BulkWrite(ctx, writeModels, options.BulkWrite().SetComment("eventFilterNotif"))
-			if err != nil {
-				return err
-			}
-
-			writeModels = writeModels[:0]
-		}
+		s.notificationStore.AddForEventFilterFailure(r.Timestamp, ruleID, r.Description, roleIDs)
 	}
 
-	if len(writeModels) > 0 {
-		_, err = s.notificationCollection.BulkWrite(ctx, writeModels, options.BulkWrite().SetComment("eventFilterNotif"))
-		if err != nil {
-			return err
-		}
+	err = s.notificationStore.Flush(ctx)
+	if err != nil {
+		return err
 	}
 
 	return nil

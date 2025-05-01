@@ -21,6 +21,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -44,8 +45,6 @@ func NewEngine(
 	externalDataContainer *externaldata.GetterContainer,
 	timezoneConfigProvider *config.BaseTimezoneConfigProvider,
 	templateConfigProvider *config.BaseTemplateConfigProvider,
-	eventFilterEventCounter eventfilter.EventCounter,
-	eventFilterFailureService eventfilter.FailureService,
 	logger zerolog.Logger,
 ) libengine.Engine {
 	defer depmake.Catch(logger)
@@ -63,7 +62,12 @@ func NewEngine(
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	stateSettingsService := statesetting.NewService(mongoClient, logger)
 	contextGraphManager := contextgraph.NewManager(entityAdapter, mongoClient, contextgraph.NewEntityServiceStorage(mongoClient), stateSettingsService, logger)
-
+	eventFilterEventCounter := eventfilter.NewEventCounter(mongoClient,
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
+	notifStore := usernotification.NewStore(mongoClient, amqpChannel, json.NewEncoder(),
+		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
+	eventFilterFailureService := eventfilter.NewFailureService(mongoClient, notifStore,
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.CheEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
