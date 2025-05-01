@@ -249,10 +249,18 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			return err
 		}
 
-		return s.notificationStore.RemoveForEventFilterFailure(ctx, id)
+		return nil
 	})
+	if err != nil || deleted == 0 {
+		return false, err
+	}
 
-	return deleted > 0, err
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error) {
@@ -327,10 +335,18 @@ func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
 			return err
 		}
 
-		return s.notificationStore.RemoveForEventFilterFailure(ctx, id)
+		return nil
 	})
+	if err != nil || !ruleExists {
+		return false, err
+	}
 
-	return ruleExists, err
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (eventfilter.Rule, error) {

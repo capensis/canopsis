@@ -137,6 +137,7 @@ type ApiConfig struct {
 	// EventsRecorderFetchStatusTimeout is a timeout for fetching status from events recorder
 	EventsRecorderFetchStatusTimeout time.Duration
 	WebsocketPingInterval            time.Duration
+	NotificationDisplayCount         int
 }
 
 type RemediationConfig struct {
@@ -446,6 +447,7 @@ func NewApiConfigProvider(cfg CanopsisConf, logger zerolog.Logger) *BaseApiConfi
 		MetricsCacheExpiration:           parseTimeDurationByStr(cfg.API.MetricsCacheExpiration, ApiMetricsCacheExpiration, "MetricsCacheExpiration", sectionName, logger),
 		EventsRecorderFetchStatusTimeout: parseTimeDurationByStr(cfg.API.EventsRecorderFetchStatusTimeout, ApiEventsRecorderFetchStatusTimeout, "EventsRecorderFetchStatusTimeout", sectionName, logger),
 		WebsocketPingInterval:            parseTimeDurationByStr(cfg.API.WebsocketPingInterval, ApiWebsocketPingInterval, "WebsocketPingInterval", sectionName, logger),
+		NotificationDisplayCount:         parseInt(cfg.API.NotificationDisplayCount, ApiNotificationDisplayCount, "NotificationDisplayCount", sectionName, logger),
 	}
 
 	if len(cfg.API.AuthorScheme) == 0 {
@@ -518,6 +520,11 @@ func (p *BaseApiConfigProvider) Update(cfg CanopsisConf) {
 	d, ok = parseUpdatedTimeDurationByStr(cfg.API.WebsocketPingInterval, p.conf.WebsocketPingInterval, "WebsocketPingInterval", sectionName, p.logger)
 	if ok {
 		p.conf.WebsocketPingInterval = d
+	}
+
+	i, ok = parseUpdatedInt(cfg.API.NotificationDisplayCount, p.conf.NotificationDisplayCount, "NotificationDisplayCount", sectionName, p.logger)
+	if ok {
+		p.conf.NotificationDisplayCount = i
 	}
 }
 
