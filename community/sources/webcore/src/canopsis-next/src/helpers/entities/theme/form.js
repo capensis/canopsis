@@ -1,7 +1,7 @@
 import { COLORS } from '@/config';
 import { THEME_FONT_SIZES } from '@/constants';
 
-import { getLightenOrDarkenColor } from '@/helpers/color';
+import { isDarkColor, getLightenOrDarkenColor } from '@/helpers/color';
 
 /**
  * @typedef {Object} ThemeEnabledColor
@@ -94,18 +94,28 @@ export const themeMainColorsToForm = (main = {}) => ({
  * @param {ThemeTableColors} [table = {}]
  * @returns {ThemeTableColorsForm}
  */
-export const themeTableColorsToForm = (table = {}) => ({
-  background: table.background ?? COLORS.table.background,
-  row_color: table.row_color ?? COLORS.table.rowColor,
-  shift_row_color: {
-    enabled: !!table.shift_row_color,
-    color: table.shift_row_color ?? COLORS.table.shiftRowColor,
-  },
-  hover_row_color: {
-    enabled: !!table.hover_row_color,
-    color: table.hover_row_color ?? COLORS.table.hoverRowColor,
-  },
-});
+export const themeTableColorsToForm = (table = {}) => {
+  const isDarkRowColor = table.row_color && isDarkColor(table.row_color);
+  const shiftRowColor = table.shift_row_color ?? (
+    isDarkRowColor ? COLORS.table.shiftRowDarkColor : COLORS.table.shiftRowColor
+  );
+  const hoverRowColor = table.hover_row_color ?? (
+    isDarkRowColor ? COLORS.table.hoverRowDarkColor : COLORS.table.hoverRowColor
+  );
+
+  return {
+    background: table.background ?? COLORS.table.background,
+    row_color: table.row_color ?? COLORS.table.rowColor,
+    shift_row_color: {
+      enabled: !!table.shift_row_color,
+      color: shiftRowColor,
+    },
+    hover_row_color: {
+      enabled: !!table.hover_row_color,
+      color: hoverRowColor,
+    },
+  };
+};
 
 /**
  * Convert theme main colors to form object
