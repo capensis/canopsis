@@ -33,6 +33,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
   },
   methods: {
     edit() {
@@ -41,6 +45,7 @@ export default {
         config: {
           infoPopups: this.popups,
           columns: this.columns,
+          variables: this.variables,
           action: popups => this.updateModel(popups),
         },
       });

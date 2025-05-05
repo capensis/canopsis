@@ -58,6 +58,7 @@
       <field-info-popup
         v-model="form.parameters.infoPopups"
         :columns="preparedWidgetColumns"
+        :variables="alarmVariables"
       />
     </widget-settings-group>
 
