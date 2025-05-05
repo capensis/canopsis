@@ -424,7 +424,9 @@ export const COLORS = {
     background: '#FFFFFF',
     rowColor: '#FFFFFF',
     shiftRowColor: '#F5F5F5',
+    shiftRowDarkColor: '#616161',
     hoverRowColor: '#F5F5F5',
+    hoverRowDarkColor: '#616161',
   },
   state: {
     ok: '#24834C',
@@ -522,10 +524,10 @@ export const COLORS = {
   ],
   impactStateGrouped: [
     '#568822',
-    '#cddc39',
+    '#b0e37b',
     '#fff176',
-    '#ffba53',
-    '#c51e07',
+    '#ffb7b8',
+    '#c50711',
   ],
   kpi: {
     downtime: '#c4c4c4',
