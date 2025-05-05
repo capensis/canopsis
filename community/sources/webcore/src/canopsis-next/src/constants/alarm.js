@@ -82,6 +82,8 @@ export const ALARM_FIELDS = {
   canceledInitiator: 'v.canceled.initiator',
   snooze: 'v.snooze',
   pbehaviorInfo: 'v.pbehavior_info',
+  stateObject: 'v.state',
+  statusObject: 'v.status',
 
   /**
    * VIRTUAL
@@ -797,8 +799,8 @@ export const ALARM_EVENT_INITIATORS = {
 export const ALARM_TEMPLATE_FIELDS = {
   id: `alarm.${ALARM_FIELDS.id}`,
   ack: `alarm.${ALARM_FIELDS.ack}`,
-  state: `alarm.${ALARM_FIELDS.state}`,
-  status: `alarm.${ALARM_FIELDS.status}`,
+  state: `alarm.${ALARM_FIELDS.stateObject}`,
+  status: `alarm.${ALARM_FIELDS.statusObject}`,
   ticket: `alarm.${ALARM_FIELDS.ticket}`,
   component: `alarm.${ALARM_FIELDS.component}`,
   connector: `alarm.${ALARM_FIELDS.connector}`,
@@ -948,6 +950,8 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.canceledInitiator]: 'alarm.fields.canceledInitiator',
   [ALARM_FIELDS.snooze]: 'common.snooze',
   [ALARM_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
+  [ALARM_FIELDS.stateObject]: 'common.state',
+  [ALARM_FIELDS.statusObject]: 'common.status',
 
   /**
    * VIRTUAL
