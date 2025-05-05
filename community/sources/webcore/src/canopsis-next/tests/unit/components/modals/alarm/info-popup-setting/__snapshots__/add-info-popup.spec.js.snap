@@ -22,6 +22,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with empty modal 1`] = `
       <info-popup-form-stub
         columns=""
         form="[object Object]"
+        variables=""
       />
     </div>
     <div
@@ -74,6 +75,7 @@ exports[`add-info-popup Renders \`add-info-popup\` with popup 1`] = `
       <info-popup-form-stub
         columns="[object Object]"
         form="[object Object]"
+        variables=""
       />
     </div>
     <div
