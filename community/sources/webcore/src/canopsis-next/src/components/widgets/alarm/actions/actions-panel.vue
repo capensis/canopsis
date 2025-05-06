@@ -32,6 +32,7 @@ import {
   isAlarmStatusClosed,
   isAlarmStatusFlapping,
   isAlarmStatusOngoing,
+  isAlarmStatusNoEvents,
 } from '@/helpers/entities/alarm/form';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
@@ -97,6 +98,10 @@ export default {
 
     isAlarmStatusOngoing() {
       return isAlarmStatusOngoing(this.item);
+    },
+
+    isAlarmStatusNoEvents() {
+      return isAlarmStatusNoEvents(this.item);
     },
 
     isAlarmStatusFlapping() {
@@ -227,7 +232,9 @@ export default {
 
       const isAckAndChangeStateAvailable = (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
         || this.isAlarmStatusOngoing
+        || this.isAlarmStatusNoEvents
         || this.isAlarmStatusFlapping;
+
       const isNotResolvedOpenedAlarm = !this.isResolvedAlarm && this.isOpenedAlarm;
 
       const variablesHelpAction = {
