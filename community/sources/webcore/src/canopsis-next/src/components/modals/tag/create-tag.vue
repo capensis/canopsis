@@ -77,9 +77,8 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        if (config.value.action) {
-          await config.value.action(formToTag(form.value));
-        }
+        await config.value.action?.(formToTag(form.value));
+
         close();
       },
     });
