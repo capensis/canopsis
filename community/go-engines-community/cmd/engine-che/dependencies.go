@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -24,7 +25,7 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 	eventFilterEventCounter := eventfilter.NewEventCounter(dbClient,
 		utils.MinDuration(canopsis.DefaultFlushInterval, opts.PeriodicalWaitTime), logger)
 	eventFilterFailureService := eventfilter.NewFailureService(dbClient, usernotification.NewStore(dbClient),
-		utils.MinDuration(canopsis.DefaultFlushInterval, opts.PeriodicalWaitTime), logger)
+		utils.MinDuration(canopsis.DefaultFlushInterval, opts.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)

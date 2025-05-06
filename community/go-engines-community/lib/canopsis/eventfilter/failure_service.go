@@ -6,7 +6,6 @@ import (
 	"sync"
 	"time"
 
-	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -46,6 +45,7 @@ func NewFailureService(
 	client mongo.DbClient,
 	notificationStore usernotification.Store,
 	interval time.Duration,
+	permToNotify string,
 	logger zerolog.Logger,
 ) FailureService {
 	return &failureService{
@@ -55,6 +55,7 @@ func NewFailureService(
 		roleCollection:         client.Collection(mongo.RoleCollection),
 		notificationStore:      notificationStore,
 		interval:               interval,
+		permToNotify:           permToNotify,
 		logger:                 logger,
 		countsByRule:           make(map[string]int64),
 		failedRules:            make(map[string]failedRule),
@@ -68,6 +69,7 @@ type failureService struct {
 	notificationStore      usernotification.Store
 	roleCollection         mongo.DbCollection
 	interval               time.Duration
+	permToNotify           string
 	logger                 zerolog.Logger
 
 	dataMx       sync.Mutex
@@ -222,7 +224,7 @@ func (s *failureService) updateRuleNotifications(ctx context.Context, failedRule
 
 func (s *failureService) findRoles(ctx context.Context) ([]string, error) {
 	cursor, err := s.roleCollection.Find(ctx, bson.M{
-		"permissions." + apisecurity.ObjEventFilter: bson.M{"$ne": nil},
+		"permissions." + s.permToNotify: bson.M{"$ne": nil},
 	}, options.Find().SetProjection(bson.M{"_id": 1}))
 	if err != nil {
 		return nil, err

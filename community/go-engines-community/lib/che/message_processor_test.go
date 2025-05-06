@@ -246,7 +246,7 @@ func benchmarkMessageProcessorWithConfig(
 	})
 
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, zerolog.Nop())
-	failureService := eventfilter.NewFailureService(dbClient, usernotification.NewStore(dbClient), time.Hour, zerolog.Nop())
+	failureService := eventfilter.NewFailureService(dbClient, usernotification.NewStore(dbClient), time.Hour, "", zerolog.Nop())
 	eventCounter := eventfilter.NewEventCounter(dbClient, time.Hour, zerolog.Nop())
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, zerolog.Nop())
