@@ -16,6 +16,37 @@ import { useStoreModuleHooks } from './store';
 export const useAuthStoreModule = () => useStoreModuleHooks('auth');
 
 /**
+ * Hook for accessing authentication-related functionality.
+ * Provides access to the current user, login/logout methods, and other auth-related features.
+ *
+ * @returns {Object} An object containing auth-related getters and actions
+ */
+export const useAuth = () => {
+  const { useGetters, useActions } = useAuthStoreModule();
+
+  const getters = useGetters({
+    currentUser: 'currentUser',
+    isLoggedIn: 'isLoggedIn',
+    currentUserPermissionsById: 'currentUserPermissionsById',
+    currentUserViewPermissionsByViewId: 'currentUserViewPermissionsByViewId',
+    pending: 'pending',
+  });
+
+  const actions = useActions({
+    login: 'login',
+    applyAccessToken: 'applyAccessToken',
+    logout: 'logout',
+    fetchCurrentUser: 'fetchCurrentUser',
+    filesAccess: 'filesAccess',
+  });
+
+  return {
+    ...getters,
+    ...actions,
+  };
+};
+
+/**
  * Custom hook for accessing and checking the current user's permissions.
  * This hook utilizes the Vuex store module `auth` to retrieve permissions and provides methods to check specific
  * CRUD actions.
