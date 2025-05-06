@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
@@ -63,6 +64,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 	countsByRule := make(map[string]int64, datastorage.BulkSize)
 	unreadCountsByRule := make(map[string]int64, datastorage.BulkSize)
 	ruleWriteModels := make([]mongodriver.WriteModel, 0, datastorage.BulkSize)
+	isUnreadDeleted := false
 	for cursor.Next(ctx) {
 		var item eventfilter.Failure
 		err := cursor.Decode(&item)
@@ -74,6 +76,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		countsByRule[item.Rule]++
 		if item.Unread {
 			unreadCountsByRule[item.Rule]++
+			isUnreadDeleted = true
 		}
 
 		if len(ids) >= datastorage.BulkSize {
@@ -127,7 +130,72 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		res.Deleted += d
 	}
 
+	if isUnreadDeleted {
+		err = c.deleteNotifications(ctx, dbClient)
+		if err != nil {
+			return res, fmt.Errorf("failed to delete notifications: %w", err)
+		}
+	}
+
 	return res, nil
+}
+
+func (c *eventFailureCleaner) deleteNotifications(ctx context.Context, dbClient mongo.DbClient) error {
+	dbCollection := dbClient.Collection(mongo.UserNotificationCollection)
+	cursor, err := dbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"type": usernotification.TypeEventFilterFailure}},
+		{"$lookup": bson.M{
+			"from":         mongo.EventFilterRuleCollection,
+			"localField":   "rule._id",
+			"foreignField": "_id",
+			"as":           "eventfilter",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"unread_failures_count": bson.M{"$in": bson.A{0, nil}}}},
+			},
+		}},
+		{"$unwind": "$eventfilter"},
+		{"$project": bson.M{
+			"_id": 1,
+		}},
+	})
+	if err != nil {
+		return err
+	}
+
+	defer cursor.Close(ctx)
+	ids := make([]string, 0, datastorage.BulkSize)
+	for cursor.Next(ctx) {
+		n := struct {
+			ID string `bson:"_id"`
+		}{}
+		err = cursor.Decode(&n)
+		if err != nil {
+			return err
+		}
+
+		ids = append(ids, n.ID)
+		if len(ids) == datastorage.BulkSize {
+			_, err = dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+			if err != nil {
+				return err
+			}
+
+			ids = ids[:0]
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return err
+	}
+
+	if len(ids) > 0 {
+		_, err = dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (c *eventFailureCleaner) getRuleUpdateModel(ruleID string, dec, unreadDec int64) mongodriver.WriteModel {

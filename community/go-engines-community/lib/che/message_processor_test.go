@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -245,7 +246,7 @@ func benchmarkMessageProcessorWithConfig(
 	})
 
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, zerolog.Nop())
-	failureService := eventfilter.NewFailureService(dbClient, time.Hour, zerolog.Nop())
+	failureService := eventfilter.NewFailureService(dbClient, usernotification.NewStore(dbClient), time.Hour, "", zerolog.Nop())
 	eventCounter := eventfilter.NewEventCounter(dbClient, time.Hour, zerolog.Nop())
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, zerolog.Nop())
