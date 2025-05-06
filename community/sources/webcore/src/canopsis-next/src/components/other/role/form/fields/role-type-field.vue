@@ -1,5 +1,5 @@
 <template>
-  <v-radio-group v-field="value">
+  <v-radio-group v-field="value" :disabled="disabled">
     <template #label="">
       {{ $t('common.type') }}
     </template>
@@ -26,6 +26,10 @@ export default {
     value: {
       type: String,
       default: ROLE_TYPES.ui,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {
