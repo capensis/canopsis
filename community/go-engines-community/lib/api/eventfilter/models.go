@@ -105,7 +105,8 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type FailureRequest struct {
 	pagination.Query
-	Type *int `json:"type" form:"type"`
+	Type              *int `json:"type" form:"type"`
+	OnlyUnreadFailure bool `json:"only_unread_failure" form:"only_unread_failure"`
 }
 
 type FailureResponse struct {
