@@ -266,7 +266,7 @@ func (s *store) SetInheritedServicesPbhResolveResult(ctx context.Context, inheri
 		return fmt.Errorf("cannot encode computed pbehavior: %w", err)
 	}
 
-	err = s.client.Set(ctx, libredis.PbehaviorComputedInheritedServices, b, 0).Err()
+	err = s.client.Set(ctx, libredis.PbehaviorInheritedServices, b, 0).Err()
 	if err != nil {
 		return fmt.Errorf("cannot set computed pbehavior: %w", err)
 	}
@@ -275,7 +275,7 @@ func (s *store) SetInheritedServicesPbhResolveResult(ctx context.Context, inheri
 }
 
 func (s *store) GetInheritedServicesPbhResolveResult(ctx context.Context) (InheritedServicesPbhResolveResult, error) {
-	res := s.client.Get(ctx, libredis.PbehaviorComputedInheritedServices)
+	res := s.client.Get(ctx, libredis.PbehaviorInheritedServices)
 	if err := res.Err(); err != nil {
 		if errors.Is(err, redis.Nil) {
 			return InheritedServicesPbhResolveResult{}, ErrNoComputed

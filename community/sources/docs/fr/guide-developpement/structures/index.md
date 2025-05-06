@@ -1,242 +1,156 @@
-# Structure des évènements
+# Structure des événements
 
 ## Focus AMQP
 
--   Vhost: canopsis
--   Routing key: `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]`
--   Exchange: canopsis.events
--   Exchange Options: type: "topic", durable: true, auto_delete: false
--   Content Type: "application/json"
+* Vhost : `canopsis`
+* Routing key : `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]`
+* Exchange : `canopsis.events`
+* Options de l'Exchange : type : "topic", durable : true, auto_delete : false
+* Content Type : `application/json`
 
-## Structure basique d'un évènement
+## Structure basique d'un événement
 
-Voici la structure de base d'un [évènement](../../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les [types d'évènements](#liste-des-types-devenements).
+Voici la structure de base d'un [événement](../../guide-utilisation/vocabulaire/index.md#evenement), commune à tous les [types d'événements](#liste-des-types-devénements).
 
-```javascript
+```json
 {
-    "event_type":       // Event type (see below) - value field is `string` type
-    "source_type":      // Source of event ("component", or "resource") - value field is `string` type
-    "connector":        // Connector Type (gelf, nagios, snmp, ...) - value field is `string` type
-    "connector_name":   // Connector Identifier (nagios1, nagios2, ...) - value field is `string` type
-    "component":        // Component's name - value field is `string` type
-    "resource":         // Resource's name (only if source_type is "resource") - value field is `string` type
+  "event_type": "",      // Type de l'événement - type `string`
+  "source_type": "",     // Source de l'événement ("component" ou "resource") - type `string`
+  "connector": "",       // Type de connecteur (gelf, nagios, snmp, ...) - type `string`
+  "connector_name": "",  // Identifiant du connecteur - type `string`
+  "component": "",       // Nom du composant - type `string`
+  "resource": "",        // Nom de la ressource (si `source_type` = "resource") - type `string`
 
-    // /!\ The following is optional /!\
-
-    "timestamp":        // UNIX timestamp for when the event  was emitted (optional: set by the server to now) - value field is an integer `number` type. 
-                        // Since 4.5 release, only timestamp  values < 24H are kept and forwarded, values > 24H are dropped by FIFO engine
-                        // Since 4.5 release, `last_update_date` field inside created alarm is initialized from event timestamp field, and `creation_date` is initialized from time.Now()
-    "output":           // Message - value field is `string` type
-    "long_output":      // Description - value field is `string` type
+  // Champs optionnels
+  "timestamp": 0,        // Timestamp UNIX de l'émission de l'événement - type `integer`
+  "output": "",          // Message court - type `string`
+  "long_output": ""      // Message détaillé - type `string`
 }
 ```
 
-## Liste des types d'évènements
+!!! note "Remarques sur le champ `timestamp`"
+    
+    * Champ optionnel mais fortement recommandé.
+    * Si absent, Canopsis prendra l'heure courante.
+    * Depuis la version 4.5, seuls les événements dont le `timestamp` est dans la fenêtre **Now ± 24h** sont conservés.
+    * Dans les alarmes créées :
+      * `creation_date` = maintenant
+      * `last_update_date` = valeur du `timestamp`
 
-Certains de ces événements déclenchent également un [trigger](../../guide-administration/architecture-interne/triggers.md).
 
-Type              | Description                                                                                                                                |
-------------------|--------------------------------------------------------------------------------------------------------------------------------------------|
-ack               | Acquitte une alarme                                                                                                                        |
-ackremove         | Supprimer l'acquittement d'une alarme. (champ ack supprimé)                                                                                |
-assocticket       | Associe un ticket                                                                                                                          |
-declareticket     | Envoie un trigger declareticket                                                                                                            |
-cancel            | Annule un évènement et met son statut dans un état "cancel", supprime également l'acquittement de l'évènement référent, le cas échéant.    |
-changestate       | Change et verrouille la criticité d'une alarme                                                                                             |
-check             | Envoie le résultat d'un check (depuis Nagios, Icinga,...)                                                                                  |
-comment           | Ajoute un commentaire sur une alarme                                                                                                           |
-snmp              | Envoyé par le connecteur [`snmp2canopsis`](../../interconnexions/Supervision/SNMPtrap.md) au moteur [`snmp`](../../guide-utilisation/menu-exploitation/regles-snmp.md) |
-snooze            | Place un Snooze sur une alarme                                                                                                             |
-statcounterinc    | Incrémente un compteur dans l'engine statistics                                                                                            |
-statduration      | Ajoute une durée dans l'engine statistics                                                                                                  |
-statstateinterval | Ajoute un état d'intervalle dans l'engine statistics                                                                                       |
-uncancel          | Annule un évènement sur l'alarme et restaure son statut précédent                                                                          |
-updatewatcher     | Déclenche la mise à jour de l'état d'un watcher (interne)                                                                                  |
+## Liste des types d'événements
 
-## Ajout d'éléments et personnalisation
+| Type d'événement | Fonction | Origine | Interne ? |
+|:---------------------|:---------|:--------|:----------|
+| ack | Acquitte une alarme | UI / Engine-axe | Non |
+| ackremove | Retire un acquittement | UI / Engine-axe | Non |
+| assocticket | Associe un ticket | UI / Engine-axe | Non |
+| cancel | Annule une alarme | UI / Engine-axe | Non |
+| check | Crée ou met à jour une alarme | Connecteurs divers | Non |
+| contextupdate | Met à jour l'entité sans changer la date du dernier événement | Connecteurs divers | Non |
+| comment | Ajoute un commentaire | UI | Non |
+| declareticket | Déclare un ticket sur l'alarme | UI | Non |
+| done | Marque une alarme comme résolue | ??? | Non |
+| changestate | Change et vérrouille la criticité d'une alarme | UI / Engine-axe | Non |
+| snooze | Snooze une alarme (mise en pause) | UI / Engine-axe | Non |
+| unsnooze | Retire le snooze | Engine-axe | Oui |
+| uncancel | Annule une annulation | ??? | Non |
+| metaalarm | Crée une méta-alarme | Engine-correlation | Oui |
+| metaalarmupdated | Met à jour une méta-alarme | Engine-correlation | Oui |
+| pbhenter / pbhleave / pbhleaveandenter | Gestion des comportements périodiques (pbh) | Engine-pbehavior | Oui |
+| pbhcreate | Crée un comportement PBH | Engine-axe | Oui |
+| resolve_done / resolve_cancel / resolve_close / resolve_deleted | Résolution d'alarmes | Moteurs divers | Oui |
+| updatestatus | Mise à jour de statut | Engine-axe | Oui |
+| manual_metaalarm_group / manual_metaalarm_ungroup / manual_metaalarm_update | Gestion manuelle des méta-alarmes | UI | Oui |
+| activate | Activation d'une alarme | Engine-axe | Oui |
+| run_delayed_scenario | Exécution différée d'un scénario | Engine-action | Oui |
+| instructionstarted / instructionpaused / instructionresumed / instructioncompleted / instructionfailed / instructionaborted / autoinstructionstarted / autoinstructioncompleted / autoinstructionfailed / autoinstructionalreadyrunning | Statut d'exécution des remédiations | Engine-remediation / API | Oui |
+| recomputeentityservice | Recalcul du graphe de service | API | Oui |
+| updateentityservice | Mise à jour du cache service | API | Oui |
+| entityupdated | Notification de modification d'entité | Engine-che / API | Oui |
+| entitytoggled | Activation / Désactivation d'une entité | API | Oui |
+| alarmskipped | Alarme ignorée pendant le recompute | Engine-service | Oui |
+| junittestsuiteupdated / junittestcaseupdated | Mise à jour de tests Junit | connector-junit | Oui |
+| noevents | Création d'une alarme par règle idle-rule | Engine-axe | Oui |
 
-Après avoir défini la structure de base de l'[évènement](../../guide-utilisation/vocabulaire/index.md#evenement), choisissez le type d'événement que vous souhaitez envoyer et ajoutez les champs correspondants.
+!!! warning "Attention"
+    Les événements internes doivent être utilisés avec précaution voire non utilisés. Leur usage manuel peut entrainer un dysfonctionnement de Canopsis !
 
-### Event Acknowledgment Structure
 
-```javascript
+## Format public des événements
+
+### Champs obligatoires
+
+Un événement doit être un objet JSON comportant :
+
+* `event_type`     : Type de l'événement (`string`)
+* `source_type`    : Source de l'événement (`string`) * "component" ou "resource"
+* `connector`      : Type de connecteur (`string`)
+* `connector_name` : Nom du connecteur (`string`)
+* `component`      : Composant concerné (`string`)
+* `resource`       : Ressource (obligatoire si `source_type` = "resource") (`string`)
+* `timestamp`      : Timestamp UNIX (`integer`) (optionnel mais recommandé)
+
+
+### Détail par type d'événement
+
+#### Evénement `check`
+
+Champs additionnels :
+
+* `state` : Sévérité/Criticité de l'alarme (0 = INFO, 1 = MINOR, 2 = MAJOR, 3 = CRITICAL) - Obligatoire
+* `output` : Message court - Optionnel
+* `long_output` : Message détaillé - Optionnel
+* `close_delay` : Délai de résolution automatique en secondes - Optionnel 
+
+```json
 {
-    "event_type": "ack",    // mandatory - value field is `string` type
-
-    "author":               // Acknowledgment author, optional - value field is `string` type
-    "output":               // Acknowledgment comment, optional - value field is `string` type
+  "event_type": "check",
+  "state": 2,
+  "output": "CPU usage high",
+  "long_output": "CPU usage over 90% for 5 minutes",
+  "timestamp": 1639403732
 }
 ```
 
-### Event Ackremove Structure
+!!! info "Information"
+    Le champ `close_delay` permet à une alarme d'être cloturée automatiquement après un délai dans le cas où aucune contre alarme ne serait émise vers Canopsis
 
-```javascript
+#### Evénement `contextupdate`
+
+Même structure que `check`, mais sans effet sur l'état de l'alarme.  
+Permet d'enrichir une entité.
+
+```json
 {
-    "event_type": "ackremove",  // mandatory - value field is `string` type
-
-    "author":               // author, optional - value field is `string` type
-    "output":               // comment, optional - value field is `string` type
+  "event_type": "contextupdate",
+  "output": "Update metadata",
+  "timestamp": 1639403732
 }
 ```
 
-### Event Assocticket Structure
 
-```javascript
+#### Evénements `ack`, `ackremove`, `assocticket`, `comment`, `cancel`, `uncancel`, `snooze`, `changestate`
+
+Selon le type :  
+
+* `author` : Auteur de l'action - Optionnel
+* `user_id` : ID utilisateur - Optionnel
+* `output` : Commentaire - Optionnel
+* `ticket` : Numéro de ticket (assocticket uniquement)
+* `state` : Nouvelle criticité forcée (changestate uniquement)
+* `duration` : Durée en secondes (snooze uniquement)
+
+Exemple `ack` :
+```json
 {
-    "event_type": "assocticket",    // mandatory - value field is `string` type
-
-    "author":               // Assocticket author, optional - value field is `string` type
-    "ticket":               // Assocticket number, optional - value field is `string` type
-    "output":               // Assocticket comment, optional - value field is `string` type
+  "event_type": "ack",
+  "author": "admin",
+  "output": "Maintenance planned",
+  "timestamp": 1639403732
 }
 ```
 
-### Event Declareticket Structure
+!!! note "Note"
+    Si `author` ou `user_id` ne sont pas fournis, Canopsis utilise ceux de l'utilisateur authentifié.
 
-```javascript
-{
-    "event_type": "declareticket",    // mandatory - value field is `string` type
-
-    "author":               // Declareticket author, optional - value field is `string` type
-    "output":               // Declareticket comment, optional - value field is `string` type
-}
-```
-
-### Event Cancel Structure
-
-```javascript
-{
-    "event_type": "cancel",     // mandatory - value field is `string` type
-
-    "author":               // author, optional - value field is `string` type
-    "output":               // comment, optional - value field is `string` type
-}
-```
-
-### Event Changestate Structure
-
-```javascript
-{
-  "event_type": "changestate",   // mandatory
-  "state":                       // state that will be locked for the alarm (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0, mandatory - value field is an integer `number` type
-
-  "author":           // changestate author, optional
-  "output":           // changestate comment, optional
-}
-```
-
-### Event Check Structure
-
-```javascript
-{
-    "event_type": "check",  // mandatory - value field is `string` type
-
-    "state":                // Check state (0 - INFO, 1 - MINOR, 2 - MAJOR, 3 - CRITICAL), default is 0 - value field is an integer `number` type
-}
-```
-
-### Event Comment Structure
-
-```javascript
-{
-    "event_type": "comment", // mandatory - value field is `string` type
-
-    "author":                // comment author
-    "output":                // comment content
-}
-```
-
-### Event SNMP Structure
-
-```javascript
-{
-    "event_type": "trap",  // mandatory - value field is `string` type
-
-    "snmp_severity":        // SNMP severity, mandatory - value field is `string` type
-    "snmp_state":           // SNMP state, mandatory - value field is `string` type
-    "snmp_oid":             // SNMP oid, mandatory - value field is `string` type
-}
-```
-
-### Event Snooze Structure
-
-```javascript
-{
-  "event_type": "snooze",   // mandatory - value field is `string` type
-
-  "duration":         // snooze duration, in seconds - value field is an integer `number` type
-  "author":           // snooze author, optional - value field is `string` type
-  "output":           // snooze comment, optional - value field is `string` type
-}
-```
-
-### Event Statistics Counter Increment Structure
-
-```javascript
-{
-    "event_type": "statcounterinc",     // mandatory
-
-    "stat_name":            // The name of the counter to increment, mandatory
-    "alarm":                // The alarm, mandatory
-    "entity":               // The entity which sent the event, mandatory
-}
-```
-Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
-Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
-
-### Event Statistics Duration Structure
-
-```javascript
-{
-    "event_type": "statduration",   // mandatory
-
-    "stat_name":            // The name of the duration, mandatory
-    "duration":             // The value of the duration (in seconds), mandatory
-    "current_alarm":        // The alarm, mandatory
-    "current_entity":       // The entity which sent the event, mandatory
-}
-```
-
-Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
-Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
-
-### Event Statistics State Interval Structure
-
-```javascript
-{
-    "event_type": "statstateinterval",      // mandatory
-
-    "stat_name":            // The name of the state, mandatory
-    "duration":             // The time spent in this state (in seconds), mandatory
-    "state":                // The value of the state, mandatory
-    "alarm":                // The alarm, mandatory
-    "entity":               // The entity which sent the event, mandatory
-}
-```
-
-Le champ `alarm` devrait contenir la valeur de l'alarme sous forme d'objet JSON.
-Le champ `entity` devrait contenir l'entité sous forme d'objet JSON.
-
-### Event Undo Cancel Structure
-
-```javascript
-{
-    "event_type": "uncancel",   // mandatory - value field is `string` type
-
-    "author":               // author, optional - value field is `string` type
-    "output":               // comment, optional - value field is `string` type
-}
-```
-
-### Event Updatewatcher Structure
-
-```javascript
-{
-    "event_type": "updatewatcher",   // mandatory
-
-    "connector": "watcher",          // fixed value
-    "connector_name": "watcher",     // fixed value
-    "source_type": "component",      // fixed value
-    "component"                      // component value is the watcher id, mandatory
-}
-```

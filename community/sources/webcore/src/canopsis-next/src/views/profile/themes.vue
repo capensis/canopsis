@@ -68,7 +68,7 @@ export default {
           action: async (newTheme) => {
             await this.updateTheme({ id: theme._id, data: newTheme });
 
-            if (this.currentUser.ui_theme._id === theme._id) {
+            if (this.currentUser.ui_theme === theme._id) {
               this.$system.setTheme(newTheme);
             }
 

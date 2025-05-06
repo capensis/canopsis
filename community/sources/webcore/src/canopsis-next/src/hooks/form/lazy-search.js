@@ -3,7 +3,10 @@ import {
   pick,
   isArray,
   isString,
+  isNumber,
+  isUndefined,
   debounce,
+  uniqBy,
 } from 'lodash';
 import {
   computed,
@@ -79,7 +82,7 @@ export const useLazySearch = ({
   const arrayValue = computed(() => {
     const unwrappedValue = unref(value);
 
-    if (!unwrappedValue) {
+    if (!unwrappedValue && !isNumber(unwrappedValue)) {
       return [];
     }
 
@@ -87,7 +90,7 @@ export const useLazySearch = ({
       return unwrappedValue;
     }
 
-    return unwrappedValue ? [unwrappedValue] : [];
+    return [unwrappedValue];
   });
 
   /**
@@ -121,7 +124,7 @@ export const useLazySearch = ({
     const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
 
     selectedItems.value = arrayValue.value.map(item => (
-      dataById[item[unwrappedIdKey] || item] ?? ({ [unwrappedIdKey]: item, noData: true })
+      dataById[item[unwrappedIdKey] ?? item] ?? ({ [unwrappedIdKey]: item, noData: true })
     ));
   }, true);
 
@@ -216,11 +219,11 @@ export const useLazySearch = ({
       preparedNewSelectedItems = unwrappedMultiple ? newSelectedItems : newSelectedItems.slice(1);
     }
 
-    selectedItems.value = (
+    selectedItems.value = uniqBy((
       unwrappedAddable
         ? preparedNewSelectedItems
         : preparedNewSelectedItems.filter(item => !isString(item))
-    ).map(item => (item[unwrappedIdKey] ? item : { [unwrappedIdKey]: item }));
+    ).map(item => (isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item } : item)), unwrappedIdKey);
 
     updateModel(
       unwrappedMultiple
