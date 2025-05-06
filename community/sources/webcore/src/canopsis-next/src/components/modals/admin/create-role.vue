@@ -11,6 +11,7 @@
         <role-form
           v-model="form"
           :with-template="config.withTemplate"
+          :is-new="isNew"
         />
       </template>
       <template #actions="">
@@ -75,9 +76,8 @@ export default {
 
     const form = ref(roleToForm(config.value.role));
 
-    const title = computed(() => (
-      config.value.title || t('modals.createRole.create.title')
-    ));
+    const isNew = computed(() => !config.value.role?._id);
+    const title = computed(() => (config.value.title || t('modals.createRole.create.title')));
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
@@ -92,6 +92,7 @@ export default {
 
     return {
       form,
+      isNew,
       title,
       isDisabled,
       submitting,
