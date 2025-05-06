@@ -8,6 +8,7 @@ export const EVENT_TYPES = {
   check: 'check',
   comment: 'comment',
   snooze: 'snooze',
+  contextupdate: 'contextupdate',
 };
 
 export const HEALTHCHECK_EVENT_TYPES = {

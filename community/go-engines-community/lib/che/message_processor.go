@@ -115,6 +115,10 @@ func (p *messageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]byte
 
 	p.handlePerfData(ctx, &event)
 
+	if event.EventType == types.EventTypeContextUpdate {
+		return nil, nil
+	}
+
 	event.Format()
 
 	body, err := p.Encoder.Encode(&event)
@@ -203,7 +207,7 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 }
 
 func (p *messageProcessor) handlePerfData(ctx context.Context, event *types.Event) {
-	if event.EventType != types.EventTypeCheck || event.Entity == nil {
+	if (event.EventType != types.EventTypeCheck && event.EventType != types.EventTypeContextUpdate) || event.Entity == nil {
 		return
 	}
 
