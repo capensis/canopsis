@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/axe"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarm"
@@ -114,7 +115,7 @@ func Default(
 	notifStore := usernotification.NewStore(s.DbClient, amqpChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient, notifStore,
-		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(s.DbClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()

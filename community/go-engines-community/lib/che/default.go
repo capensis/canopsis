@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
@@ -67,7 +68,7 @@ func NewEngine(
 	notifStore := usernotification.NewStore(mongoClient, amqpChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	eventFilterFailureService := eventfilter.NewFailureService(mongoClient, notifStore,
-		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.CheEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
