@@ -4,14 +4,13 @@
       <span class="text-body-2">{{ $t('settings.quickActions.title') }}</span>
       <span>{{ $t('settings.quickActions.description') }}</span>
       <c-widget-template-field
-        :with-template="withTemplate"
         :value="template"
         :templates="templates"
         :pending="templatesPending"
         @input="updateTemplate"
       />
       <quick-alarm-actions-form
-        :value="value"
+        :actions="value"
         :massive="massive"
         @input="updateValue"
       />
@@ -57,7 +56,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { updateTemplate, updateValue } = useWidgetTemplateField(props, emit);
+    const { updateTemplate, updateValue } = useWidgetTemplateField(props, 'actions', emit);
 
     return {
       updateTemplate,

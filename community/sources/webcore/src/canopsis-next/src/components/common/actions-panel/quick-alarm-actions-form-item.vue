@@ -59,12 +59,12 @@ export default {
     const availableActions = computed(() => {
       // Determine which set of actions to use based on whether it's a massive action or not
       const { actions, featuresActionsKey } = {
-        [props.massive]: {
+        [!props.massive]: {
           // Use unique alarm list actions for non-massive operations
           actions: UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS,
           featuresActionsKey: 'components.alarmListActionPanel.computed.actions',
         },
-        [!props.massive]: {
+        [props.massive]: {
           // Use mass actions for massive operations
           actions: UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS,
           featuresActionsKey: 'components.alarmListMassActionsPanel.computed.actions',

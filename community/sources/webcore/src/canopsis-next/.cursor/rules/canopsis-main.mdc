@@ -122,7 +122,17 @@ WHEN WRITING CODE, DO NOT BREAK EXISTING FUNCTIONALITY â€” BE CONSCIOUS OF WHATâ
   - Add both `en` and `fr` strings.
   - Keep the same nesting and ordering as the other keys.
   - Use meaningful, context-aware keys (e.g., `auth.login.error.invalidPassword`).
-
+- If I ask you `Check fr translations` you should:
+  - Run `yarn unit tests/unit/i18n/messages.spec.js`
+  - Check diff of the `EN translation keys DOESN'T exists inside FR` and be sure that this diff tells us which words we have in en i18n files and don't have in fr i18n files. The upper key in diff is filename in i18n folder.
+  - Translate this words to fr and put it on the same lines like in en files
+- If I ask you `Check en translations` you should:
+  - Run `yarn unit tests/unit/i18n/messages.spec.js`
+  - Check diff of the `FR translation keys DOESN'T exists inside EN` and be sure that this diff tells us which words we have in fr i18n files and don't have in en i18n files. The upper key in diff is filename in i18n folder.
+  - Remove this words from fr i18n files
+ - If i ask you `Check translations` you should do the two commands which I described above (You must run `yarn unit` command only once):
+  - `Check fr translations`
+  - `Check en translations`
 ---
 
 ## Bonus Rules
