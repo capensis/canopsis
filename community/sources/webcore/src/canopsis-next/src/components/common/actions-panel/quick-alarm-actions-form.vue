@@ -8,7 +8,7 @@
     >
       <template #item="{ item: action, index }">
         <quick-alarm-actions-form-item
-          v-field="actions[index]"
+          v-field="actions[index].value"
           :key="action.key"
           :drag-handle-class="dragItemHandleClass"
           :name="action.key"
@@ -41,6 +41,8 @@
 <script>
 import { computed } from 'vue';
 
+import { widgetQuickAlarmActionToForm } from '@/helpers/entities/widget/quick-action/form';
+
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useAsyncBootingParent } from '@/hooks/render/async-booting';
 
@@ -72,7 +74,7 @@ export default {
 
     useAsyncBootingParent(2);
 
-    const add = () => addItemIntoArray('');
+    const add = () => addItemIntoArray(widgetQuickAlarmActionToForm());
     const remove = index => removeItemFromArray(index);
 
     return {

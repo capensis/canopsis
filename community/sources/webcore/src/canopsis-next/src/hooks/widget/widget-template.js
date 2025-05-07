@@ -8,7 +8,7 @@ import { useModelField } from '@/hooks/form/model-field';
  * Hook for managing widget template field functionality
  *
  * @param {Object} props - Component props containing template and model data
- * @param {string} props.template - Current template value
+ * @param {string} valueKey - Key to extract value from the template object
  * @param {Function} emit - Vue emit function for model updates
  * @returns {Object} Object containing template update functions
  * @property {Function} updateTemplate - Updates both template and columns
@@ -17,12 +17,14 @@ import { useModelField } from '@/hooks/form/model-field';
 export const useWidgetTemplateField = (props, valueKey, emit) => {
   const { updateModel } = useModelField(props, emit);
 
+  const emitUpdateTemplate = (newTemplate, newValue) => emit('update:template', newTemplate, newValue);
+
   /**
    * Updates both template and columns values
    *
    * @param {WidgetTemplate} newTemplate - New template value to set
    */
-  const updateTemplate = newTemplate => updateModel(newTemplate?.value, newTemplate?.[unref(valueKey)]);
+  const updateTemplate = newTemplate => emitUpdateTemplate(newTemplate?.value, newTemplate?.[unref(valueKey)]);
 
   /**
    * Updates model value based on template type
@@ -33,7 +35,7 @@ export const useWidgetTemplateField = (props, valueKey, emit) => {
    */
   const updateValue = newValue => (props.template === CUSTOM_WIDGET_TEMPLATE
     ? updateModel(newValue)
-    : updateModel(CUSTOM_WIDGET_TEMPLATE, newValue));
+    : emitUpdateTemplate(CUSTOM_WIDGET_TEMPLATE, newValue));
 
   return {
     updateTemplate,

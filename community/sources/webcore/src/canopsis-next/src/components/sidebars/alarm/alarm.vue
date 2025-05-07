@@ -29,7 +29,7 @@
         with-template
         with-html
         with-color-indicator
-        @update:template="getUpdateTemplateFunction('widgetColumns')"
+        @update:template="updateWidgetColumnsTemplate"
       />
       <field-columns
         v-model="form.parameters.widgetGroupColumns"
@@ -41,7 +41,7 @@
         with-template
         with-html
         with-color-indicator
-        @update:template="getUpdateTemplateFunction('widgetGroupColumns')"
+        @update:template="updateWidgetGroupColumnsTemplate"
       />
       <field-columns
         v-model="form.parameters.serviceDependenciesColumns"
@@ -51,7 +51,7 @@
         :label="$t('settings.trackColumnNames')"
         :type="$constants.ENTITIES_TYPES.entity"
         with-color-indicator
-        @update:template="getUpdateTemplateFunction('serviceDependenciesColumns')"
+        @update:template="updateServiceDependenciesColumnsTemplate"
       />
       <field-resize-column-behavior v-model="form.parameters.columns" />
       <field-root-cause-settings v-model="form.parameters" />
@@ -176,7 +176,7 @@
         :templates="alarmExportToPdfWidgetTemplates"
         addable
         removable
-        @input="getUpdateTemplateFunction('exportPdf')"
+        @input="updateExportPdfTemplate"
       />
       <widget-settings-group :title="$t('settings.quickActions.title')">
         <field-quick-alarm-actions
@@ -184,7 +184,7 @@
           :template="form.parameters.quickActionsTemplate"
           :templates="alarmQuickActionsWidgetTemplates"
           :templates-pending="widgetTemplatesPending"
-          @update:template="getUpdateTemplateFunction('quickActions')"
+          @update:template="updateQuickActionsTemplate"
         />
       </widget-settings-group>
       <widget-settings-group :title="$t('settings.quickMassActions.title')">
@@ -198,7 +198,7 @@
           :templates="alarmMassQuickActionsWidgetTemplates"
           :templates-pending="widgetTemplatesPending"
           massive
-          @update:template="getUpdateTemplateFunction('quickMassActions')"
+          @update:template="updateQuickMassActionsTemplate"
         />
       </widget-settings-group>
     </widget-settings-group>
@@ -213,7 +213,7 @@
           :templates="alarmMoreInfosWidgetTemplates"
           addable
           removable
-          @input="getUpdateTemplateFunction('moreInfo')"
+          @input="updateMoreInfoTemplate"
         />
         <field-grid-range-size
           v-model="form.parameters.expandGridRangeSize"
@@ -357,14 +357,40 @@ export default {
     this.fetchInfos();
   },
   methods: {
-    getUpdateTemplateFunction(templateValueField) {
-      return (template, value) => {
-        this.$set(this.form.parameters, `${templateValueField}Template`, template);
+    updateTemplate(field, template, value) {
+      this.$set(this.form.parameters, `${field}Template`, template);
 
-        if (template && template !== this.form.parameters[templateValueField]) {
-          this.$set(this.form.parameters, templateValueField, value);
-        }
-      };
+      if (template && template !== this.form.parameters[field]) {
+        this.$set(this.form.parameters, field, value);
+      }
+    },
+
+    updateMoreInfoTemplate(value, template) {
+      this.updateTemplate('moreInfoTemplate', template, value);
+    },
+
+    updateExportPdfTemplate(value, template) {
+      this.updateTemplate('exportPdf', template, value);
+    },
+
+    updateWidgetColumnsTemplate(template, value) {
+      this.updateTemplate('widgetColumns', template, value);
+    },
+
+    updateWidgetGroupColumnsTemplate(template, value) {
+      this.updateTemplate('widgetGroupColumns', template, value);
+    },
+
+    updateServiceDependenciesColumnsTemplate(template, value) {
+      this.updateTemplate('serviceDependenciesColumns', template, value);
+    },
+
+    updateQuickActionsTemplate(template, value) {
+      this.updateTemplate('quickActions', template, value);
+    },
+
+    updateQuickMassActionsTemplate(template, value) {
+      this.updateTemplate('quickMassActions', template, value);
     },
   },
 };

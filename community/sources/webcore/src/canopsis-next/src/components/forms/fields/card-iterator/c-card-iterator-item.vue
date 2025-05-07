@@ -86,14 +86,15 @@ export default {
 .c-card-iterator-item {
   --actions-max-width: 100px;
   --actions-min-width: 60px;
-  --one-action-min-width: 26px;
+  --one-action-width: 26px;
 
   &__actions {
     max-width: var(--actions-max-width);
     min-width: var(--actions-min-width);
 
     &--draggable-only {
-      min-width: var(--one-action-min-width);
+      min-width: var(--one-action-width);
+      max-width: var(--one-action-width);
     }
   }
 
