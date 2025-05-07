@@ -38,7 +38,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { updateTemplate, updateValue } = useWidgetTemplateField(props, emit);
+    const { updateTemplate, updateValue } = useWidgetTemplateField(props, 'columns', emit);
 
     return {
       updateTemplate,

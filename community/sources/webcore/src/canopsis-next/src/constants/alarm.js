@@ -465,6 +465,7 @@ export const UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS = {
   // Other actions
   [ALARM_LIST_ACTIONS_TYPES.comment]: 'alarm.actions.titles.comment',
   [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm.actions.titles.snooze',
+  [ALARM_LIST_ACTIONS_TYPES.links]: 'alarm.actions.titles.links',
 };
 
 export const ALARM_LIST_STEPS = {

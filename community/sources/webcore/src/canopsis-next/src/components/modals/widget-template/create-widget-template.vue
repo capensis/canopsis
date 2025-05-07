@@ -72,6 +72,8 @@ export default {
       form,
       method: async () => {
         await config.value.action?.(formToWidgetTemplate(form.value));
+
+        close();
       },
     });
 

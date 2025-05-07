@@ -10,7 +10,7 @@
       </v-alert>
     </v-flex>
     <quick-alarm-actions-form
-      v-field="form.quickActions"
+      v-field="form.actions"
       :massive="massive"
       @input="validate"
     />
@@ -46,7 +46,7 @@ export default {
 
     const {
       asyncValidateRequiredRule: validate,
-    } = useValidationAttachRequiredForField(name, () => !!props.form.quickActions?.length);
+    } = useValidationAttachRequiredForField(name, () => !!props.form.actions?.length);
 
     return {
       name,

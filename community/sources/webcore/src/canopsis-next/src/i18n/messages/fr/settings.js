@@ -198,8 +198,13 @@ export default {
   serverStorage: 'Stockage serveur',
   filenameRecognition: 'Reconnaissance du nom de fichier',
   resultDirectory: 'Stockage des résultats de test',
+  quickActions: {
+    title: 'Actions rapides',
+    description: 'Ces actions seront affichées, les autres seront cachées sous le bouton plus',
+  },
   quickMassActions: {
-    description: 'Configuration des actions massives rapides',
+    title: 'Actions massives rapides',
+    hideSwitcher: 'Masquer les actions massives sous le bouton plus',
   },
   screenshotDirectories: {
     title: 'Paramètres de stockage des captures d\'écran',

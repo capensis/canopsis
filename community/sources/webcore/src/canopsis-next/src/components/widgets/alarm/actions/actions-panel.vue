@@ -265,6 +265,11 @@ export default {
         title: this.$t('alarm.actions.titles.ack'),
         method: this.showAckModal,
       };
+      const fastAckAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.fastAck,
+        title: this.$t('alarm.actions.titles.fastAck'),
+        method: this.createFastAckEvent,
+      };
 
       if (!this.isResolvedAlarm && isAckAndChangeStateAvailable) {
         if (this.item.v.ack) {
@@ -282,17 +287,10 @@ export default {
           );
 
           if (this.widget.parameters.isMultiAckEnabled) {
-            actions.push(ackAction);
+            actions.push(ackAction, fastAckAction);
           }
         } else {
-          actions.push(
-            ackAction,
-            {
-              type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-              title: this.$t('alarm.actions.titles.fastAck'),
-              method: this.createFastAckEvent,
-            },
-          );
+          actions.push(ackAction, fastAckAction);
         }
       }
 
@@ -462,7 +460,7 @@ export default {
       }
 
       return {
-        inlineCount: getActionsInlineCount(this.preparedActions, this.quickActions),
+        inlineCount: getActionsInlineCount(this.preparedActions, this.quickActions) || this.inlineCount,
         ignoreMediaQuery: false,
       };
     },
