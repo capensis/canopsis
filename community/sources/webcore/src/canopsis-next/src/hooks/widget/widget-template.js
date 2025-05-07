@@ -17,6 +17,12 @@ import { useModelField } from '@/hooks/form/model-field';
 export const useWidgetTemplateField = (props, valueKey, emit) => {
   const { updateModel } = useModelField(props, emit);
 
+  /**
+   * Emits an 'update:template' event with the new template and value.
+   *
+   * @param {string} newTemplate - The updated template object or value.
+   * @param {any} newValue - The new value associated with the template.
+   */
   const emitUpdateTemplate = (newTemplate, newValue) => emit('update:template', newTemplate, newValue);
 
   /**
