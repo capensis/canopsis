@@ -18,23 +18,6 @@
         {{ item.text }}
       </template>
     </template>
-    <template #item="{ parent, item, attrs, on }">
-      <v-list-item
-        v-bind="attrs"
-        v-on="on"
-      >
-        <v-list-item-action v-if="isMultiple">
-          <v-checkbox
-            :input-value="attrs.value"
-            :color="parent.color"
-            :disabled="attrs.disabled"
-          />
-        </v-list-item-action>
-        <v-list-item-content>
-          <v-list-item-title>{{ item.text }}</v-list-item-title>
-        </v-list-item-content>
-      </v-list-item>
-    </template>
   </v-autocomplete>
 </template>
 
