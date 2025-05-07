@@ -45,6 +45,13 @@ export const sortActionsByQuickActions = (actions = [], quickActions = []) => [.
   return aIndex - bIndex;
 });
 
+/**
+ * Calculates the number of inline actions to display in the actions panel.
+ *
+ * @param {Array<Object>} actions - The list of all possible actions.
+ * @param {Array<string>} quickActions - The list of quick actions to match against.
+ * @returns {number} The number of inline actions to display (including menu button if needed).
+ */
 export const getActionsInlineCount = (actions = [], quickActions = []) => {
   const filteredActions = actions.filter(action => (
     findQuickActionIndex(quickActions, action) !== -1
