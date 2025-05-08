@@ -97,7 +97,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 				setTags = bson.M{"$concatArrays": bson.A{
 					bson.M{"$cond": bson.M{"if": "$etags", "then": "$etags", "else": bson.A{}}},
 					bson.M{"$cond": bson.M{"if": "$itags", "then": "$itags", "else": bson.A{}}},
-					importTags,
+					bson.M{"$literal": importTags},
 				}}
 			} else {
 				result.RemovedExternalTags = alarm.ImportTags
@@ -117,7 +117,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 			_, err = p.alarmCollection.UpdateOne(ctx, getOpenAlarmMatch(event), []bson.M{
 				{"$set": bson.M{"tags": setTags}},
-				{"$set": bson.M{"imtags": importTags}},
+				{"$set": bson.M{"imtags": bson.M{"$literal": importTags}}},
 			})
 			if err != nil {
 				return err

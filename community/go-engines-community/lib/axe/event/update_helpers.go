@@ -626,7 +626,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 		}},
 		{"$set": bson.M{
 			"v.resolved": t,
-			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{bson.M{"$literal": newStep}}}},
 			"v.current_state_duration": bson.M{"$subtract": bson.A{
 				t,
 				"$v.state.t",

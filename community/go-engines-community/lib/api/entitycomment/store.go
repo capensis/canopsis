@@ -82,12 +82,13 @@ func (s *store) Insert(ctx context.Context, r Request, userID, username string) 
 	if entity.Type != types.EntityTypeService && entity.Type != types.EntityTypeResource {
 		return nil, common.NewValidationError("entity", "Invalid entity type.")
 	}
-	doc := types.EntityComment{
+	comm := types.EntityComment{
 		ID:        utils.NewID(),
 		Timestamp: datetime.NewCpsTime(),
 		Author:    &types.Author{ID: userID, DisplayName: username},
 		Message:   r.Message,
 	}
+	doc := bson.M{"$literal": comm}
 	filter := bson.M{"_id": r.Entity}
 	// set update with insert as first item in comments array
 	update := []bson.M{
@@ -95,8 +96,8 @@ func (s *store) Insert(ctx context.Context, r Request, userID, username string) 
 			"last_comment": doc,
 			"comments": bson.M{
 				"$ifNull": []any{
-					bson.M{"$concatArrays": []interface{}{[]types.EntityComment{doc}, "$comments"}},
-					[]types.EntityComment{doc},
+					bson.M{"$concatArrays": bson.A{bson.A{doc}, "$comments"}},
+					bson.A{doc},
 				},
 			},
 		}},
@@ -114,12 +115,12 @@ func (s *store) Insert(ctx context.Context, r Request, userID, username string) 
 		return nil, err
 	}
 	return &Response{
-		ID:     doc.ID,
+		ID:     comm.ID,
 		Entity: r.Entity,
 		Comment: Comment{
-			Timestamp: doc.Timestamp,
-			Author:    doc.Author,
-			Message:   doc.Message,
+			Timestamp: comm.Timestamp,
+			Author:    comm.Author,
+			Message:   comm.Message,
 		},
 	}, nil
 
