@@ -1530,6 +1530,7 @@ func RegisterRoutes(
 			notifSettingsRouter.PUT(
 				"",
 				middleware.Authorize(apisecurity.PermNotification, model.PermissionCan, enforcer),
+				middleware.SetAuthor(),
 				notificationAPI.UpdateSettings,
 			)
 			notifSettingsRouter.GET(

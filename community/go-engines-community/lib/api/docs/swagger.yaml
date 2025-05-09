@@ -8525,7 +8525,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/notification.Settings'
+                $ref: 'schemas_swagger.yaml#/definitions/notification.SettingsResponse'
     put:
       tags:
         - notification
@@ -8540,7 +8540,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/notification.Settings'
+              $ref: 'schemas_swagger.yaml#/definitions/notification.UpdateSettingsRequest'
         required: true
       responses:
         200:
@@ -8548,7 +8548,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/notification.Settings'
+                $ref: 'schemas_swagger.yaml#/definitions/notification.SettingsResponse'
         400:
           description: Bad Request
           content:

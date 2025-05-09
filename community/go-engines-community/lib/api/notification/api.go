@@ -55,7 +55,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 // GetSettings
-// @Success 200 {object} Settings
+// @Success 200 {object} SettingsResponse
 func (a *api) GetSettings(c *gin.Context) {
 	notification, err := a.store.GetSettings(c)
 	if errors.Is(err, mongo.ErrNoDocuments) {
@@ -69,10 +69,10 @@ func (a *api) GetSettings(c *gin.Context) {
 }
 
 // UpdateSettings
-// @Param body body Settings true "body"
-// @Success 200 {object} Settings
+// @Param body body UpdateSettingsRequest true "body"
+// @Success 200 {object} SettingsResponse
 func (a *api) UpdateSettings(c *gin.Context) {
-	request := Settings{}
+	request := UpdateSettingsRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return

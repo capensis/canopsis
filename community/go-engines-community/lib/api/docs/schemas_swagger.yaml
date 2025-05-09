@@ -3715,7 +3715,12 @@ definitions:
       type:
         type: integer
     type: object
-  notification.Settings:
+  notification.SettingsResponse:
+    properties:
+      instruction:
+        $ref: '#/definitions/notification.InstructionNotificationSettings'
+    type: object
+  notification.UpdateSettingsRequest:
     properties:
       instruction:
         $ref: '#/definitions/notification.InstructionNotificationSettings'
