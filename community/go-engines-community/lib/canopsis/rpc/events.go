@@ -210,6 +210,11 @@ type ApiRemediationResultEvent struct {
 	UserID      string `json:"user_id"`
 }
 
+type ApiNotificationEvent struct {
+	Users []string `json:"users,omitempty"`
+	Roles []string `json:"roles,omitempty"`
+}
+
 type Error struct {
 	Error error
 }
