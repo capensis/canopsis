@@ -15,8 +15,20 @@ type Response struct {
 	Rule    *usernotification.Rule `json:"rule" bson:"rule"`
 }
 
-type Settings struct {
+type UpdateSettingsRequest struct {
+	Instruction InstructionNotificationSettings `json:"instruction"`
+	Author      string                          `json:"author" swaggerignore:"true"`
+}
+
+type SettingsResponse struct {
 	Instruction InstructionNotificationSettings `json:"instruction" bson:"instruction"`
+}
+
+type Settings struct {
+	ID          string                          `bson:"_id,omitempty"`
+	Instruction InstructionNotificationSettings `bson:"instruction"`
+	Author      string                          `bson:"author"`
+	Updated     datetime.CpsTime                `bson:"updated"`
 }
 
 type InstructionNotificationSettings struct {
