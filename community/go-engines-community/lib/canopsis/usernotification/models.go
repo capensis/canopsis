@@ -5,9 +5,10 @@ import (
 )
 
 const (
-	TypeInstructionApprove = iota
-	TypeInstructionRate
+	TypeInstructionRate = iota
 	TypeEventFilterFailure
+	TypeInstructionApprove
+	TypeInstructionDismiss
 )
 
 type Notification struct {

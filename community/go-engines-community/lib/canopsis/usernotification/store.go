@@ -21,10 +21,12 @@ import (
 type Store interface {
 	Flush(ctx context.Context) error
 	AddForInstructionApprove(time datetime.CpsTime, id, name, author, comment, userID, roleID string)
+	AddForInstructionDismiss(time datetime.CpsTime, id, name, author, comment, userID string)
 	AddForInstructionRate(time datetime.CpsTime, id, name, userID string)
 	AddForEventFilterFailure(time datetime.CpsTime, id, description string, roleIDs []string)
 
 	DeleteForInstructionApprove(ctx context.Context, id string) error
+	DeleteForInstructionDismiss(ctx context.Context, id string) error
 	DeleteForInstructionRate(ctx context.Context, id, userID string) error
 	DeleteForEventFilterFailure(ctx context.Context, id string) error
 }
@@ -139,6 +141,38 @@ func (s *store) AddForInstructionApprove(time datetime.CpsTime, id, name, author
 	)
 }
 
+func (s *store) AddForInstructionDismiss(time datetime.CpsTime, id, name, author, comment, userID string) {
+	s.dataMX.Lock()
+	defer s.dataMX.Unlock()
+	t := TypeInstructionDismiss
+	s.userIDs[userID] = struct{}{}
+
+	s.writeModels = append(s.writeModels, mongodriver.NewUpdateOneModel().
+		SetFilter(bson.M{
+			"type":     t,
+			"rule._id": id,
+		}).
+		SetUpdate(bson.M{
+			"$set": bson.M{
+				"time":    time,
+				"user":    userID,
+				"roles":   []string{},
+				"comment": comment,
+				"rule": bson.M{
+					"_id":  id,
+					"name": name,
+				},
+				"author": author,
+			},
+			"$setOnInsert": bson.M{
+				"_id":  utils.NewID(),
+				"type": t,
+			},
+		}).
+		SetUpsert(true),
+	)
+}
+
 func (s *store) AddForInstructionRate(time datetime.CpsTime, id, name, userID string) {
 	s.dataMX.Lock()
 	defer s.dataMX.Unlock()
@@ -205,6 +239,10 @@ func (s *store) AddForEventFilterFailure(time datetime.CpsTime, id, description 
 
 func (s *store) DeleteForInstructionApprove(ctx context.Context, id string) error {
 	return s.delete(ctx, bson.M{"type": TypeInstructionApprove, "rule._id": id})
+}
+
+func (s *store) DeleteForInstructionDismiss(ctx context.Context, id string) error {
+	return s.delete(ctx, bson.M{"type": TypeInstructionDismiss, "rule._id": id})
 }
 
 func (s *store) DeleteForInstructionRate(ctx context.Context, id, userID string) error {
