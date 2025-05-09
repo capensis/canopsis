@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,8 +16,8 @@ const SettingsID = "notification"
 
 type Store interface {
 	Find(ctx context.Context, r pagination.Query, userID string, roleIDs []string) (AggregationResult, error)
-	GetSettings(ctx context.Context) (Settings, error)
-	UpdateSettings(ctx context.Context, r Settings) (Settings, error)
+	GetSettings(ctx context.Context) (SettingsResponse, error)
+	UpdateSettings(ctx context.Context, r UpdateSettingsRequest) (SettingsResponse, error)
 }
 
 type store struct {
@@ -72,19 +73,23 @@ func (s *store) Find(ctx context.Context, r pagination.Query, userID string, rol
 	return res, nil
 }
 
-func (s *store) GetSettings(ctx context.Context) (Settings, error) {
-	res := Settings{}
+func (s *store) GetSettings(ctx context.Context) (SettingsResponse, error) {
+	res := SettingsResponse{}
 	err := s.settingsCollection.FindOne(ctx, bson.M{"_id": SettingsID}).Decode(&res)
 
 	return res, err
 }
 
-func (s *store) UpdateSettings(ctx context.Context, request Settings) (Settings, error) {
-	res := Settings{}
+func (s *store) UpdateSettings(ctx context.Context, request UpdateSettingsRequest) (SettingsResponse, error) {
+	res := SettingsResponse{}
 	err := s.settingsCollection.FindOneAndUpdate(
 		ctx,
 		bson.M{"_id": SettingsID},
-		bson.M{"$set": request},
+		bson.M{"$set": Settings{
+			Instruction: request.Instruction,
+			Author:      request.Author,
+			Updated:     datetime.NewCpsTime(),
+		}},
 		options.FindOneAndUpdate().SetReturnDocument(options.After),
 	).Decode(&res)
 
