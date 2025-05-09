@@ -138,6 +138,7 @@ func (s *store) RetrieveGlobalConfig(ctx context.Context) (GlobalConf, error) {
 		FileUploadMaxSize:                  conf.File.UploadMaxSize,
 		FileImportMaxSize:                  conf.File.ImportMaxSize,
 		EventsCountTriggerDefaultThreshold: conf.Global.EventsCountTriggerDefaultThreshold,
+		NotificationDisplayCount:           conf.API.NotificationDisplayCount,
 	}, nil
 }
 

@@ -33,6 +33,15 @@ internal = false
 noWait = false
 # args =
 
+[[RabbitMQ.exchanges]]
+name = "canopsis.api_notification"
+kind = "fanout"
+durable = true
+autoDelete = false
+internal = false
+noWait = false
+# args =
+
 [[RabbitMQ.queues]]
 name = "Engine_action_external"
 durable = true
@@ -293,6 +302,8 @@ BulkMaxSize = 10000
 ExportMongoClientTimeout = "1m"
 AuthorScheme = ["$username"]
 #AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
+WebsocketPingInterval = "5s"
+NotificationDisplayCount = 3
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.external_data]

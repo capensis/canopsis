@@ -85,10 +85,6 @@ func Default(
 	s.DbClient = m.DepMongoClient(ctx, logger)
 	s.Cfg = m.DepConfig(ctx, s.DbClient)
 	config.SetDbClientRetry(s.DbClient, s.Cfg)
-	eventFilterEventCounter := eventfilter.NewEventCounter(s.DbClient,
-		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
-	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient, usernotification.NewStore(s.DbClient),
-		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
 	s.PgPoolProvider = postgres.NewPoolProvider(s.Cfg.Global.ReconnectRetries, s.Cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(s.Cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(s.PgPoolProvider, metricsConfigProvider, logger)
@@ -114,6 +110,12 @@ func Default(
 		json.NewDecoder(),
 		json.NewEncoder(),
 	)
+	eventFilterEventCounter := eventfilter.NewEventCounter(s.DbClient,
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), logger)
+	notifStore := usernotification.NewStore(s.DbClient, amqpChannel, json.NewEncoder(),
+		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
+	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient, notifStore,
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(s.DbClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
@@ -265,7 +267,8 @@ func Default(
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm", alarm.NewCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm_external_tag", axe.NewExternalTagCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("pbehavior", pbehavior.NewCleaner(logger))
-	s.DataStoragePeriodicalWorker.AddCleaner("event_filter_failure", che.NewEventFailureCleaner(logger))
+	s.DataStoragePeriodicalWorker.AddCleaner("event_filter_failure", che.NewEventFailureCleaner(amqpChannel, json.NewEncoder(),
+		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType, logger))
 	engine.AddPeriodicalWorker("datastorage", libengine.NewLockedPeriodicalWorker(
 		redis.NewLockClient(engineLockRedisClient),
 		redis.FifoDataStorageLockKey,

@@ -137,6 +137,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	notifStore usernotification.Store,
 	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
@@ -476,7 +477,7 @@ func RegisterRoutes(
 
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
-			eventfilter.NewStore(dbClient, authorProvider, usernotification.NewStore(dbClient)),
+			eventfilter.NewStore(dbClient, authorProvider, notifStore),
 			dbexport.NewExporter(dbClient),
 			logger,
 			common.NewPatternFieldsTransformer(dbClient),

@@ -4,25 +4,43 @@ import (
 	"context"
 	"fmt"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/bson"
 	mongodriver "go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func NewEventFailureCleaner(logger zerolog.Logger) datastorage.Cleaner {
+func NewEventFailureCleaner(
+	publishCh libamqp.Publisher,
+	encoder encoding.Encoder,
+	exchangeName, routingKey, msgContentType string,
+	logger zerolog.Logger,
+) datastorage.Cleaner {
 	return &eventFailureCleaner{
-		logger: logger,
+		publishCh:      publishCh,
+		exchangeName:   exchangeName,
+		routingKey:     routingKey,
+		msgContentType: msgContentType,
+		encoder:        encoder,
+		logger:         logger,
 	}
 }
 
 type eventFailureCleaner struct {
-	logger zerolog.Logger
+	publishCh                libamqp.Publisher
+	exchangeName, routingKey string
+	msgContentType           string
+	encoder                  encoding.Encoder
+	logger                   zerolog.Logger
 }
 
 func (c *eventFailureCleaner) IsEnabled(conf datastorage.Config) bool {
@@ -155,7 +173,8 @@ func (c *eventFailureCleaner) deleteNotifications(ctx context.Context, dbClient 
 		}},
 		{"$unwind": "$eventfilter"},
 		{"$project": bson.M{
-			"_id": 1,
+			"_id":   1,
+			"roles": 1,
 		}},
 	})
 	if err != nil {
@@ -164,16 +183,19 @@ func (c *eventFailureCleaner) deleteNotifications(ctx context.Context, dbClient 
 
 	defer cursor.Close(ctx)
 	ids := make([]string, 0, datastorage.BulkSize)
+	mapRoleIDs := make(map[string]struct{}, datastorage.BulkSize)
 	for cursor.Next(ctx) {
-		n := struct {
-			ID string `bson:"_id"`
-		}{}
+		n := usernotification.Notification{}
 		err = cursor.Decode(&n)
 		if err != nil {
 			return err
 		}
 
 		ids = append(ids, n.ID)
+		for _, v := range n.Roles {
+			mapRoleIDs[v] = struct{}{}
+		}
+
 		if len(ids) == datastorage.BulkSize {
 			_, err = dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
 			if err != nil {
@@ -195,6 +217,20 @@ func (c *eventFailureCleaner) deleteNotifications(ctx context.Context, dbClient 
 		}
 	}
 
+	if len(mapRoleIDs) > 0 {
+		roleIDs := make([]string, len(mapRoleIDs))
+		i := 0
+		for v := range mapRoleIDs {
+			roleIDs[i] = v
+			i++
+		}
+
+		err = c.sendEvent(ctx, roleIDs)
+		if err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -209,4 +245,30 @@ func (c *eventFailureCleaner) getRuleUpdateModel(ruleID string, dec, unreadDec i
 	return mongodriver.NewUpdateOneModel().
 		SetFilter(bson.M{"_id": ruleID}).
 		SetUpdate(bson.M{"$inc": update})
+}
+
+func (c *eventFailureCleaner) sendEvent(ctx context.Context, roleIDs []string) error {
+	b, err := c.encoder.Encode(rpc.ApiNotificationEvent{
+		Roles: roleIDs,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot encode notification event: %w", err)
+	}
+
+	err = c.publishCh.PublishWithContext(
+		ctx,
+		c.exchangeName,
+		c.routingKey,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: c.msgContentType,
+			Body:        b,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("cannot send notification event: %w", err)
+	}
+
+	return nil
 }
