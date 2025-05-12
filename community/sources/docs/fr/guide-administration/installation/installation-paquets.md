@@ -759,7 +759,7 @@ CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost:5672/canopsis"
 CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"
 CPS_REDIS_URL="redis://localhost:6379/0"
 CPS_API_URL="http://localhost:8082"
-CPS_POSTGRES_TECH_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis_tech_metrics"
+CPS_POSTGRES_TECH_URL="postgresql://cpspostgres_tech_metrics:canopsis@localhost:5432/canopsis_tech_metrics"
 ```
 
 !!! Note
