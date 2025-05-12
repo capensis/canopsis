@@ -2070,7 +2070,7 @@ describe('alarms-list', () => {
           parameters: {
             ...widget.parameters,
 
-            clearFilterDisabled: true,
+            clearFilterEnabled: true,
           },
         },
       },
