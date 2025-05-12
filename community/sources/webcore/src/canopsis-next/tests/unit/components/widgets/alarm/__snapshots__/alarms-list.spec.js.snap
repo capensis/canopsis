@@ -23,6 +23,7 @@ exports[`alarms-list Renders \`alarms-list\` with clear filter disabled props 1`
         class="layout align-end"
       >
         <filter-selector-stub
+          clearable="true"
           filters=""
           hidedetails="true"
           itemtext="title"
