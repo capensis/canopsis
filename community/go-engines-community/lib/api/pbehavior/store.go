@@ -787,7 +787,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 								},
 								"$$ROOT",
 							}},
-							"else": doc,
+							"else": bson.M{"$literal": doc},
 						},
 					}},
 				},

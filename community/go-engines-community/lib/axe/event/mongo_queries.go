@@ -75,10 +75,10 @@ func stepUpdateQueryWithInPbhIntervalByStep(newStep types.AlarmStep) bson.M {
 			{"$ne": bson.A{"$v.pbehavior_info.id", ""}},
 		}},
 		"then": bson.M{"$mergeObjects": bson.A{
-			newStep,
+			bson.M{"$literal": newStep},
 			bson.M{"in_pbh": true},
 		}},
-		"else": newStep,
+		"else": bson.M{"$literal": newStep},
 	}}
 }
 
