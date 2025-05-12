@@ -78,8 +78,8 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	} else {
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.pbehavior_info": event.Parameters.PbehaviorInfo,
-				"v.steps":          bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+				"v.pbehavior_info": bson.M{"$literal": event.Parameters.PbehaviorInfo},
+				"v.steps":          bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{bson.M{"$literal": newStep}}}},
 				"v.inactive_duration": bson.M{"$sum": bson.A{
 					"$v.inactive_duration",
 					bson.M{"$cond": bson.M{
