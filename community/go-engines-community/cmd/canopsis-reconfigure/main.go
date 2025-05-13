@@ -60,7 +60,7 @@ func main() {
 	}
 
 	// remove timeout to not limit long migrations
-	client, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout, 0, logger)
+	client, err := mongo.NewClient(ctx, mongo.ClientOptions{})
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to connect to mongo")
 	}

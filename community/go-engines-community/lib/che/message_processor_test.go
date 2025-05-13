@@ -210,7 +210,7 @@ func benchmarkMessageProcessorWithConfig(
 		}
 	}()
 
-	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
