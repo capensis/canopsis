@@ -41,7 +41,7 @@ func main() {
 
 	logger := log.NewLogger(ctx, flags.Debug)
 
-	mongoClient, err := mongo.NewClient(ctx, 0, 0, logger)
+	mongoClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to create mongo client")
 	}
