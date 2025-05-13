@@ -294,7 +294,7 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 			SetUpdate([]bson.M{
 				{"$set": bson.M{
 					"itags_upd": microNow,
-					"itags":     matchedTags,
+					"itags":     bson.M{"$literal": matchedTags},
 					"tags": bson.M{"$concatArrays": bson.A{
 						bson.M{"$cond": bson.M{
 							"if":   "$etags",
@@ -306,7 +306,7 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 							"then": "$imtags",
 							"else": bson.A{},
 						}},
-						matchedTags,
+						bson.M{"$literal": matchedTags},
 					}},
 				}},
 			}),
