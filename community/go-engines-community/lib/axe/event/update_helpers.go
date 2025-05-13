@@ -626,7 +626,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 		}},
 		{"$set": bson.M{
 			"v.resolved": t,
-			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{bson.M{"$literal": newStep}}}},
 			"v.current_state_duration": bson.M{"$subtract": bson.A{
 				t,
 				"$v.state.t",
@@ -930,28 +930,36 @@ func getMetaAlarmExternalTags(
 	existedTags []string,
 ) []string {
 	tagsMap := make(map[string]struct{})
-	existedTagsMap := make(map[string]bool)
+	existedTagsMap := make(map[string]bool, len(existedTags))
 	for _, tag := range existedTags {
 		existedTagsMap[tag] = true
 	}
 
+	f := func(tag string) {
+		if existedTagsMap[tag] {
+			return
+		}
+
+		toCopy := len(filterByLabel) == 0
+		for _, label := range filterByLabel {
+			if tag == label || strings.HasPrefix(tag, label+":") {
+				toCopy = true
+				break
+			}
+		}
+
+		if toCopy {
+			tagsMap[tag] = struct{}{}
+		}
+	}
+
 	for _, child := range children {
 		for _, tag := range child.Alarm.ExternalTags {
-			if existedTagsMap[tag] {
-				continue
-			}
+			f(tag)
+		}
 
-			toCopy := len(filterByLabel) == 0
-			for _, label := range filterByLabel {
-				if tag == label || strings.HasPrefix(tag, label+":") {
-					toCopy = true
-					break
-				}
-			}
-
-			if toCopy {
-				tagsMap[tag] = struct{}{}
-			}
+		for _, tag := range child.Alarm.ImportTags {
+			f(tag)
 		}
 	}
 
