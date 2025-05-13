@@ -36,6 +36,13 @@ export const ADVANCED_SEARCH_CONDITIONS = {
   contains: 'CONTAINS',
 };
 
+export const ADVANCED_SEARCH_DATE_CONDITIONS = [
+  ADVANCED_SEARCH_CONDITIONS.less,
+  ADVANCED_SEARCH_CONDITIONS.more,
+  ADVANCED_SEARCH_CONDITIONS.equal,
+  ADVANCED_SEARCH_CONDITIONS.notEqual,
+];
+
 export const ADVANCED_SEARCH_UNION_REGEXP_PATTERN = new RegExp(`\\s(${Object.values(ADVANCED_SEARCH_UNION_CONDITIONS).join('|')})(\\s|$)`, 'gi');
 
 export const ADVANCED_SEARCH_UNION_FIELDS = [
@@ -153,4 +160,5 @@ export const ALARM_SEARCH_FIELDS_TO_COMPARISON = [
 
 export const ALARM_SEARCH_NUMBER_ATTRIBUTES = [
   ALARM_FIELDS.totalStateChanges,
+  ALARM_FIELDS.entityImpactLevel,
 ];
