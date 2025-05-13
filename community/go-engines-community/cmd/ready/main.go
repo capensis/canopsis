@@ -52,7 +52,7 @@ func main() {
 
 	buildInfo := canopsis.GetBuildInfo()
 	err = ready.Check(ctx, func(ctx context.Context, logger zerolog.Logger) error {
-		dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
+		dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
 		if err != nil {
 			return err
 		}

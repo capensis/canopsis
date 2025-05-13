@@ -42,7 +42,7 @@ func main() {
 	logger := log.NewLogger(ctx, flags.Debug)
 
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
+	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
 	if err != nil {
 		logger.Fatal().Err(err).Msg("cannot connect to mongodb")
 	}

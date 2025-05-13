@@ -494,20 +494,6 @@ func (mr *MockDbClientMockRecorder) Disconnect(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), ctx)
 }
 
-// IsDistributed mocks base method.
-func (m *MockDbClient) IsDistributed() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsDistributed")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsDistributed indicates an expected call of IsDistributed.
-func (mr *MockDbClientMockRecorder) IsDistributed() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDistributed", reflect.TypeOf((*MockDbClient)(nil).IsDistributed))
-}
-
 // ListCollectionNames mocks base method.
 func (m *MockDbClient) ListCollectionNames(ctx context.Context, filter any, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error) {
 	m.ctrl.T.Helper()
