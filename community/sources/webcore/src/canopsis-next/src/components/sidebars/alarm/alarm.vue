@@ -74,12 +74,6 @@
         with-pbehavior
       />
       <field-opened-resolved-filter v-model="form.parameters.opened" />
-      <field-remediation-instructions-filters
-        v-if="hasAccessToRemediationInstructionsFilter"
-        v-model="form.parameters.remediationInstructionsFilters"
-        addable
-        editable
-      />
       <field-switcher
         v-model="form.parameters.isCorrelationEnabled"
         :title="$t('common.correlation')"
@@ -253,7 +247,6 @@ import ExportCsvForm from '../form/export-csv.vue';
 import ChartsForm from '../chart/form/charts-form.vue';
 import FieldRootCauseSettings from '../form/fields/root-cause-settings.vue';
 
-import FieldRemediationInstructionsFilters from './form/fields/remediation-instructions-filters.vue';
 import FieldDensity from './form/fields/density.vue';
 import FieldLiveReporting from './form/fields/live-reporting.vue';
 import FieldFastActionOutput from './form/fields/fast-action-output.vue';
@@ -284,7 +277,6 @@ export default {
     FieldSwitcher,
     FieldFastActionOutput,
     FieldGridRangeSize,
-    FieldRemediationInstructionsFilters,
     FieldInfoPopup,
     FieldDensity,
     FastPbehaviorForm,

@@ -83,11 +83,6 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <field-remediation-instructions-filters-stub
-      addable="true"
-      editable="true"
-      filters=""
-    />
     <field-switcher-stub
       title="Correlation"
     />
@@ -714,7 +709,6 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <!---->
     <field-switcher-stub
       title="Correlation"
     />
@@ -1345,7 +1339,6 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <!---->
     <field-switcher-stub
       title="Correlation"
     />
@@ -1973,7 +1966,6 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <!---->
     <field-switcher-stub
       title="Correlation"
     />

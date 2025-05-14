@@ -277,16 +277,9 @@ exports[`alarms-list Renders \`alarms-list\` with default props and user filter 
         show-count="2"
       />
     </div>
-    <div
-      class="flex"
-    >
-      <alarms-list-remediation-instructions-filters-stub
-        addable="true"
-        editable="true"
-        filters=""
-        lockedfilters=""
-      />
-    </div>
+    <alarms-list-remediation-instructions-filter-stub
+      filter="[object Object]"
+    />
     <div
       class="flex"
     >
