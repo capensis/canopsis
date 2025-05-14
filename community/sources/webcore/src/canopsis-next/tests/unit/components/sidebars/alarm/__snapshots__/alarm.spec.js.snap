@@ -93,6 +93,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -720,6 +721,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -1351,6 +1353,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -1979,6 +1982,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub

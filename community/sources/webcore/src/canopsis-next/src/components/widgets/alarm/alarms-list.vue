@@ -45,7 +45,7 @@
             :label="$t('settings.selectAFilter')"
             :filters="userPreference.filters"
             :locked-filters="widget.filters"
-            :clearable="!widget.parameters.clearFilterDisabled"
+            :clearable="widget.parameters.clearFilterEnabled"
             hide-details
             @input="updateSelectedFilter"
           />
