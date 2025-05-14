@@ -4,6 +4,44 @@ Canopsis est une solution d’hypervision conçue pour **centraliser, corréler 
 
 > Cette documentation est votre guide pour **découvrir, déployer, configurer et maîtriser Canopsis** dans tous ses usages.
 
+
+<div class="grid cards" markdown>
+
+-   :material-clock-fast:{ .lg .middle } __Installer Canopsis__
+
+    ---
+
+    Découvrez comment installer Canopsis et réaliser les premiers paramétrages système et réseau.
+
+    [:octicons-arrow-right-24: Guide d'installation](guide-administration/installation/index.md)
+
+-   :material-link:{ .lg .middle } __Connecter vos outils__
+
+    ---
+
+    Intégrez vos outils de supervision grâce aux nombreux connecteurs fournis par Canopsis.
+
+    [:octicons-arrow-right-24: Connecteurs](interconnexions/index.md)
+
+-   :material-spellcheck:{ .lg .middle } __Comprendre les concepts clés__
+
+    ---
+
+    Familiarisez-vous avec les notions fondamentales de Canopsis pour bien démarrer.
+
+    [:octicons-arrow-right-24: Glossaire](guide-utilisation/vocabulaire/index.md)
+
+
+-   :material-monitor-dashboard:{ .lg .middle } __Découvrir l’interface__
+
+    ---
+
+    Apprenez à naviguer dans l’interface, utiliser les vues, les widgets et le bac à alarmes.
+
+    [:octicons-arrow-right-24: Interface utilisateur](guide-utilisation/interface)
+
+</div>
+
 ---
 
 ## 👥 À qui s’adresse cette documentation ?
@@ -41,6 +79,8 @@ Le cycle de vie des versions Canopsis est détaillé sur le [site commercial de 
 
 ---
 
+
+
 ## 📝 Notes de version
 
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
@@ -50,4 +90,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
     | Version      | Notes de version                                         | API | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| --- | ---------- | --------- |
     | **25.04.0**  | [📝](notes-de-version/25.04.0.md)  | 🔄 [Changelog](notes-de-version/api/changelog-25.04.0.md)<br>⚠️ [Breaking](notes-de-version/api/breaking-25.04.0.md) | 28/04/2025 | 🧭 [Guide de migration](notes-de-version/migration/migration-25.04.0.md) |
+
+
+
 
