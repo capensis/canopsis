@@ -77,7 +77,7 @@ export default {
   isPriorityEnabled: 'Afficher la priorité',
   isHideGrayEnabled: 'Afficher l\'option Cacher les tuiles grises',
   isSecondaryIconEnabled: 'Afficher l\'icône secondaire',
-  clearFilterDisabled: 'Effacement du filtre sélectionné autorisé',
+  clearFilterEnabled: 'Effacement du filtre sélectionné autorisé',
   showRootCauseByStateClick: 'Afficher le diagramme de cause racine à partir de la colonne Criticité',
   rootCauseSettings: 'Paramètres du diagramme de cause racine',
   entitiesColorIndicator: 'Indicateur de couleur des entités',
