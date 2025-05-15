@@ -12,11 +12,11 @@ export default {
   groups: {
     [ALARM_ADVANCED_SEARCH_GROUPS.basic]: 'Basique',
     [ALARM_ADVANCED_SEARCH_GROUPS.messages]: 'Messages',
-    [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: 'Billet',
+    [ALARM_ADVANCED_SEARCH_GROUPS.ticket]: 'Ticket',
     [ALARM_ADVANCED_SEARCH_GROUPS.dates]: 'Dates',
-    [ALARM_ADVANCED_SEARCH_GROUPS.actions]: 'Actes',
+    [ALARM_ADVANCED_SEARCH_GROUPS.actions]: 'Actions',
     [ALARM_ADVANCED_SEARCH_GROUPS.entity]: 'Entité',
-    [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportement',
+    [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportements périodiques',
   },
 
   searchForThisText: 'Appuyez sur <kbd>Entrée</kbd> pour rechercher ce texte',
