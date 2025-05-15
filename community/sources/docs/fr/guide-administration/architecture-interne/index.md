@@ -15,6 +15,11 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 
 ![img2](img/Cano_macro_resume.png)
 
+## Moteurs et Services Canopsis
+
+* [Fonctionnement des Moteurs et Services](./moteurs/)
+* [Enchainement des moteurs](./moteurs/index.md#enchainement-des-moteurs)
+
 ## Documentation des différentes parties
 
 *  [Documentation interconnexions](../../interconnexions/index.md)
