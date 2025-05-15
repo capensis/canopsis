@@ -137,8 +137,8 @@ func GetWidgetTemplateParameters() map[string]map[string][]string {
 			WidgetTemplateTypeAlarmQuickActions: {
 				"quickActions",
 			},
-			WidgetTemplateTypeAlarmMassQuickActions: {
-				"massQuickActions",
+			WidgetTemplateTypeAlarmQuickMassActions: {
+				"quickMassActions",
 			},
 		},
 		WidgetTypeContextExplorer: {
