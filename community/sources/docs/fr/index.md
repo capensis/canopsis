@@ -1,4 +1,4 @@
-# Bienvenue sur la documentation officielle de **Canopsis** 
+# Documentation officielle de **Canopsis** 
 
 Canopsis est une solution d’hypervision conçue pour **centraliser, corréler et piloter intelligemment** les événements issus de vos outils de supervision, d'observabilité et de monitoring en général.
 
