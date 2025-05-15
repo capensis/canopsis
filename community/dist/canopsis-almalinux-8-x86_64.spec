@@ -76,8 +76,6 @@ make -C community/sources/webcore/src/canopsis-next clean
 %package common
 Summary: Canopsis common files and configurations
 
-Requires: python3.12
-
 %description common
 Canopsis common files and configurations
 
