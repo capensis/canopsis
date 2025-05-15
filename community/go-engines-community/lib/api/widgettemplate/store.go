@@ -215,7 +215,7 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID st
 				view.WidgetTemplateTypeServiceWeatherEntity:
 				val = tpl.Content
 			case view.WidgetTemplateTypeAlarmQuickActions,
-				view.WidgetTemplateTypeAlarmMassQuickActions:
+				view.WidgetTemplateTypeAlarmQuickMassActions:
 				val = tpl.Actions
 			default:
 				return fmt.Errorf("unknown template type: %s", tpl.Type)

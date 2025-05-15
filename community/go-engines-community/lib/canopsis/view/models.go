@@ -30,7 +30,7 @@ const (
 	WidgetTemplateTypeAlarmMoreInfos        = "alarm_more_infos"
 	WidgetTemplateTypeAlarmExportToPDF      = "alarm_export_to_pdf"
 	WidgetTemplateTypeAlarmQuickActions     = "alarm_quick_actions"
-	WidgetTemplateTypeAlarmMassQuickActions = "alarm_mass_quick_actions"
+	WidgetTemplateTypeAlarmQuickMassActions = "alarm_mass_quick_actions"
 	WidgetTemplateTypeServiceWeatherItem    = "weather_item"
 	WidgetTemplateTypeServiceWeatherModal   = "weather_modal"
 	WidgetTemplateTypeServiceWeatherEntity  = "weather_entity"
