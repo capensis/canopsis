@@ -8,6 +8,7 @@
         <info-popup-form
           v-model="form"
           :columns="config.columns"
+          :variables="config.variables"
         />
       </template>
       <template #actions="">
