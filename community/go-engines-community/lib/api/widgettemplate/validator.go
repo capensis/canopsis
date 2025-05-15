@@ -47,7 +47,7 @@ func ValidateEditRequest(sl validator.StructLevel) {
 			sl.ReportError(r.Columns, "Actions", "Actions", "must_be_empty", "")
 		}
 	case view.WidgetTemplateTypeAlarmQuickActions,
-		view.WidgetTemplateTypeAlarmMassQuickActions:
+		view.WidgetTemplateTypeAlarmQuickMassActions:
 		if len(r.Actions) == 0 {
 			sl.ReportError(r.Actions, "Actions", "Actions", "required", "")
 		}
