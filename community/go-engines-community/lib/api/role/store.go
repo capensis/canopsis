@@ -56,21 +56,25 @@ type store struct {
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
-	pipeline := make([]bson.M, 0)
+	beforeLimit := make([]bson.M, 0)
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
+		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
 
-	pipeline = append(pipeline, getNestedObjectsPipeline()...)
-	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+	beforeLimit = append(beforeLimit, getNestedObjectsPipeline()...)
+
+	afterLimit := s.authorProvider.Pipeline()
+
 	if r.Permission != "" {
-		pipeline = append(pipeline, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
+		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
 	}
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
-		pipeline,
+		beforeLimit,
 		common.GetSortQuery(cmp.Or(r.SortBy, "name"), r.Sort),
+		afterLimit,
 	))
 
 	if err != nil {
@@ -106,6 +110,7 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 	}
 	pipeline = append(pipeline, getNestedObjectsPipeline()...)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
+
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return nil, err
@@ -150,6 +155,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			"permissions": transformPermissionsToDoc(r.Permissions, perms, widgetPerms),
 			"auth_config": r.AuthConfig,
 			"author":      r.Author,
+			"ui_theme":    r.UITheme,
 			"created":     now,
 			"updated":     now,
 		})
@@ -202,6 +208,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 				"permissions": transformPermissionsToDoc(r.Permissions, perms, widgetPerms),
 				"auth_config": r.AuthConfig,
 				"author":      r.Author,
+				"ui_theme":    r.UITheme,
 				"updated":     now,
 			}},
 		)
@@ -366,6 +373,7 @@ func getNestedObjectsPipeline() []bson.M {
 			"author":      bson.M{"$first": "$author"},
 			"created":     bson.M{"$first": "$created"},
 			"updated":     bson.M{"$first": "$updated"},
+			"ui_theme":    bson.M{"$first": "$ui_theme"},
 			"permissions": bson.M{"$push": bson.M{"$cond": bson.M{
 				"if": "$permissions.model",
 				"then": bson.M{"$mergeObjects": bson.A{
