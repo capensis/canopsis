@@ -116,6 +116,17 @@ type dbCollection struct {
 	minRetryTimeout time.Duration
 }
 
+type ClientOptions struct {
+	RetryCount             int
+	MinRetryTimeout        time.Duration
+	ServerSelectionTimeout time.Duration
+	ClientTimeout          time.Duration
+	ReadPreference         *readpref.ReadPref
+
+	// if NoClientTimeout set to true, then client timeout set to 0 and ClientTimeout value is ignored
+	NoClientTimeout bool
+}
+
 func (c *dbCollection) Name() string {
 	return c.mongoCollection.Name()
 }
@@ -359,17 +370,6 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	return res, nil
 }
 
-type ClientOptions struct {
-	RetryCount             int
-	MinRetryTimeout        time.Duration
-	ServerSelectionTimeout time.Duration
-	ClientTimeout          time.Duration
-	ReadPreference         *readpref.ReadPref
-
-	// if NoClientTimeout set to true, then client timeout set to 0 and ClientTimeout value is ignored
-	NoClientTimeout bool
-}
-
 func NewClient(ctx context.Context, clientOptions ClientOptions) (DbClient, error) {
 	mongoURL, dbName, err := getURL()
 	if err != nil {
@@ -412,24 +412,7 @@ func NewClient(ctx context.Context, clientOptions ClientOptions) (DbClient, erro
 		mongoClientOptions.SetReadPreference(clientOptions.ReadPreference)
 	}
 
-	mongoClient, err := mongo.Connect(mongoClientOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	err = mongoClient.Ping(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	client := &dbClient{
-		Client:          mongoClient,
-		Database:        mongoClient.Database(dbName),
-		RetryCount:      clientOptions.RetryCount,
-		MinRetryTimeout: clientOptions.MinRetryTimeout,
-	}
-
-	isDistributed, err := isMongoReplicaSetEnabled(ctx)
+	isDistributed, err := isMongoReplicaSetEnabled(ctx, mongoClientOptions)
 	if err != nil {
 		return nil, fmt.Errorf("failed to check if replica set is enabled: %w", err)
 	}
@@ -438,7 +421,23 @@ func NewClient(ctx context.Context, clientOptions ClientOptions) (DbClient, erro
 		return nil, errors.New("replica set is required")
 	}
 
-	return client, nil
+	mongoClient, err := mongo.Connect(mongoClientOptions)
+	if err != nil {
+		return nil, err
+	}
+
+	err = mongoClient.Ping(ctx, nil)
+	if err != nil {
+		_ = mongoClient.Disconnect(ctx)
+		return nil, err
+	}
+
+	return &dbClient{
+		Client:          mongoClient,
+		Database:        mongoClient.Database(dbName),
+		RetryCount:      clientOptions.RetryCount,
+		MinRetryTimeout: clientOptions.MinRetryTimeout,
+	}, nil
 }
 
 func (c *dbClient) Name() string {
@@ -512,13 +511,8 @@ func (c *dbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...
 	return c.Database.Client().Database("admin").RunCommand(ctx, runCommand, opts...)
 }
 
-func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
-	mongoURL, _, err := getURL()
-	if err != nil {
-		return false, fmt.Errorf("could not get mongo url: %w", err)
-	}
-
-	cfg, err := topology.NewConfig(options.Client().ApplyURI(mongoURL), nil)
+func isMongoReplicaSetEnabled(ctx context.Context, clientOptions *options.ClientOptions) (bool, error) {
+	cfg, err := topology.NewConfig(clientOptions, nil)
 	if err != nil {
 		return false, fmt.Errorf("could not create topology config: %w", err)
 	}
@@ -620,6 +614,11 @@ func retry(ctx context.Context, retryCount int, retryTimeout time.Duration, f fu
 }
 
 func IsConnectionError(err error) bool {
-	return mongo.IsNetworkError(err) ||
-		strings.Contains(err.Error(), "server selection error")
+	var sse topology.ServerSelectionError
+
+	return mongo.IsNetworkError(err) || errors.As(err, &sse)
+}
+
+func SecondaryPreferred(opts ...readpref.Option) *readpref.ReadPref {
+	return readpref.SecondaryPreferred(opts...)
 }

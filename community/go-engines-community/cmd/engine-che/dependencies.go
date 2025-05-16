@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
 )
 
 func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) engine.Engine {
@@ -28,7 +27,7 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 	secondaryDbClient := m.DepMongoClient(ctx, mongo.ClientOptions{
 		RetryCount:      cfg.Global.ReconnectRetries,
 		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
-		ReadPreference:  readpref.SecondaryPreferred(),
+		ReadPreference:  mongo.SecondaryPreferred(),
 	})
 
 	// noTimeoutClient should be used by change stream watchers only.
