@@ -300,9 +300,15 @@ export default {
     },
 
     inlineCount() {
-      return this.widget.parameters.hideMassActions
-        ? getActionsInlineCount(this.preparedActions, this.quickMassActions)
-        : this.preparedActions.length;
+      if (!this.widget.parameters.hideMassActions) {
+        return this.preparedActions.length;
+      }
+
+      if (this.preparedActions.length && !this.quickMassActions.length) {
+        return 1;
+      }
+
+      return getActionsInlineCount(this.preparedActions, this.quickMassActions);
     },
   },
   watch: {
