@@ -4,7 +4,7 @@
 
 Le moteur FIFO a pour objectif de garantir la chronologie des événements et d'appliquer les règles de transformations d'entités. Ce moteur est disponible en édition Community.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les filtres d'événements](../../../../guide-utilisation/menu-exploitation/filtres-evenements/).
+Pour plus d'informations sur la fonctionnalité de transformation d'entités, consultez la [documentation sur les filtres d'événements](../../../../guide-utilisation/menu-exploitation/filtres-evenements/#type-change-entity).
 
 ## Options de démarrage
 
