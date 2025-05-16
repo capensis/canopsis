@@ -28,3 +28,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 ```
 
 Cette commande lance le moteur FIFO en mode debug, avec un intervalle de 2 minutes entre les exécutions périodiques et 15 workers pour traiter les événements.
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-fifo/)

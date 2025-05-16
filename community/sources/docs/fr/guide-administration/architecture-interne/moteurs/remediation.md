@@ -25,3 +25,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 ```
 
 Cette commande lance le moteur REMEDIATION en mode debug, avec 15 workers pour traiter les événements et un intervalle de réessai de 2 minutes pour le dernier job d'une instruction de remédiation.
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-remediation/)

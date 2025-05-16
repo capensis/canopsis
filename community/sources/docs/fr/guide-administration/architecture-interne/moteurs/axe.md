@@ -39,3 +39,8 @@ Pour plus d'informations sur les fonctionnalités, consultez :
 ```
 
 Cette commande lance le moteur AXE en mode debug, avec 8 workers pour les événements externes, une mise à jour des métriques SLI toutes les 10 minutes et une mise à jour des tags d'alarmes toutes les 10 secondes.
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-axe/)
