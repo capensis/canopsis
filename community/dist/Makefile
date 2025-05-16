@@ -1,7 +1,7 @@
 VERSION ?= $(shell (git describe --abbrev=4 HEAD 2>/dev/null || echo "HEAD") | sed -e 's/-\([0-9]*\)-g/.\1-g/g')
 VERSION_SAFE ?= $(shell echo "$(VERSION)" | sed -e 's/\(.*\)-\([^g][^-]*\)/\1~\2/g' -e 's/-/_/g')
 CANOPSIS_ENV = $(addprefix ../../, ./community/.env)
-PYTHON_VERSION ?= $(shell grep "^PYTHON_VERSION" "$(CANOPSIS_ENV)" | cut -d = -f2 | sed 's/ //g' | cut -d . -f1,2 )
+VERSION_PYTHON ?= $(shell grep "^PYTHON_VERSION" "$(CANOPSIS_ENV)" | cut -d = -f2 | sed 's/ //g' | cut -d . -f1,2 )
 BUILD_TARGET = almalinux-8-x86_64 \
 	almalinux-9-x86_64
 CANOPSIS_ARCHIVES = $(addsuffix /SOURCES/canopsis$(PACKAGE_PREFIX).tar.gz, $(addprefix build/, $(BUILD_TARGET)))
