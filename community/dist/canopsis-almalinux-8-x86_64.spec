@@ -8,7 +8,7 @@ Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version_upst
 
 BuildRequires: make >= 3.81, gcc, nodejs, yarn, systemd-rpm-macros
 
-Requires: canopsis-common
+Requires: canopsis-common-%{version_safe}
 Conflicts: canopsis-pro
 
 Prefix: /usr
