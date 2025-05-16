@@ -10,6 +10,7 @@ import {
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  DEFAULT_ALARMS_QUICK_ACTIONS,
   DEFAULT_LINKS_INLINE_COUNT,
   DEFAULT_PERIODIC_REFRESH,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
@@ -410,8 +411,8 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   availability: availabilityFieldToForm(parameters.availability),
   quickActionsTemplate: widgetTemplateValueToForm(parameters.quickActionsTemplate),
   quickMassActionsTemplate: widgetTemplateValueToForm(parameters.quickMassActionsTemplate),
-  quickActions: widgetQuickActionsToForm(parameters.quickActions ?? []),
-  quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? []),
+  quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
+  quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? true,
 });
 

@@ -596,7 +596,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
     <widget-settings-group-stub
@@ -612,7 +612,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
   </widget-settings-group-stub>
@@ -1254,7 +1254,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
     <widget-settings-group-stub
@@ -1270,7 +1270,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
   </widget-settings-group-stub>
@@ -1908,7 +1908,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
     <widget-settings-group-stub
@@ -1924,7 +1924,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
   </widget-settings-group-stub>
@@ -2563,7 +2563,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
     <widget-settings-group-stub
@@ -2579,7 +2579,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
         template="Symbol(custom)"
         templates=""
         title=""
-        value=""
+        value="[object Object],[object Object],[object Object]"
       />
     </widget-settings-group-stub>
   </widget-settings-group-stub>
