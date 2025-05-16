@@ -455,7 +455,7 @@ func Default(
 	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	api.AddWorker("action_log", func(ctx context.Context) {
 		err := actionLogger.Watch(ctx)
-		if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
+		if err != nil && !errors.Is(err, context.Canceled) {
 			panic(FatalWorkerError{err: err})
 		}
 	})
