@@ -44,17 +44,17 @@ info --> action["engine-action<br/>→ Scénarios"]
 action --> webhook["engine-webhook<br/>→ Appels externes"]
 
 %% Clicks
-click snmp "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/regles-snmp/"
-click fifo "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/filtres-evenements/"
-click che "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/filtres-evenements/"
-click pbh "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/comportements-periodiques/"
-click axe "https://doc.canopsis.net/latest/guide-utilisation/"
-click correl "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/regles-metaalarme/"
-click info "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/informations-dynamiques/"
-click action "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/scenarios/"
-click webhook "https://doc.canopsis.net/latest/guide-utilisation/menu-exploitation/scenarios/#webhook"
-click remediation "https://doc.canopsis.net/latest/guide-utilisation/remediation/"
-click sup "https://doc.canopsis.net/latest/interconnexions/"
+click snmp "./snmp/"
+click fifo "./fifo/"
+click che "./che/"
+click pbh "./pbehavior/"
+click axe "./axe/"
+click correl "./correlation/"
+click info "./dynamic-infos/"
+click action "./action/"
+click webhook "./webhook/"
+click remediation "./remediation/"
+click sup "../../../../../interconnexions/"
 
 %% Styles
 classDef grey font-weight:normal,font-size:12pt,color:#fff,fill:#878787,stroke:#222,stroke-width:3px;
