@@ -37,3 +37,9 @@ Pour plus d'informations sur les fonctionnalités, consultez :
 ```
 
 Cette commande lance le moteur CHE en mode debug, avec 6 workers pour les événements externes, un délai d'attente de 45 secondes pour les requêtes API et une mise à jour du dictionnaire d'informations toutes les 2 heures.
+
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-che/)
