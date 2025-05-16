@@ -58,7 +58,6 @@ import (
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/readpref"
 )
 
 const (
@@ -124,7 +123,7 @@ func Default(
 	secondaryDbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
 		RetryCount:      cfg.Global.ReconnectRetries,
 		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
-		ReadPreference:  readpref.SecondaryPreferred(),
+		ReadPreference:  mongo.SecondaryPreferred(),
 	})
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot create secondary mongodb client: %w", err)
@@ -134,7 +133,7 @@ func Default(
 	noTimeoutClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
 		RetryCount:      cfg.Global.ReconnectRetries,
 		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
-		ReadPreference:  readpref.SecondaryPreferred(),
+		ReadPreference:  mongo.SecondaryPreferred(),
 		NoClientTimeout: true,
 	})
 	if err != nil {
@@ -190,7 +189,8 @@ func Default(
 	}
 
 	dbExportClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
-		ClientTimeout: services.ApiConfigProvider.Get().ExportMongoClientTimeout,
+		ClientTimeout:  services.ApiConfigProvider.Get().ExportMongoClientTimeout,
+		ReadPreference: mongo.SecondaryPreferred(),
 	})
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to mongodb: %w", err)

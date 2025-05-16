@@ -722,6 +722,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 
 		pipeline = append(pipeline, bson.M{"$project": project})
+		pipeline = append(pipeline, common.GetSortQuery(externaldata.IDColumnName, mongo.SortAsc))
+
 		cursor, err := s.dbExportClient.Collection(table.getDBTableName()).Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 		if err != nil {
 			return nil, err
@@ -754,6 +756,8 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 				}
 			}
 		}
+
+		sql += " ORDER BY " + externaldata.IDColumnName
 
 		rows, err := pgPool.Query(ctx, sql, queryArgs...)
 		if err != nil {
