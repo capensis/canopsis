@@ -31,3 +31,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 ```
 
 Cette commande lance le moteur ACTION en mode debug, avec 15 workers pour l'exécution des scénarios et un intervalle de réessai de 2 minutes pour la dernière étape d'un scénario.
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-action/)

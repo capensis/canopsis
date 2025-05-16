@@ -29,3 +29,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 ```
 
 Cette commande lance le moteur DYNAMIC INFOS en mode debug, avec une mise à jour du dictionnaire d'informations dynamiques toutes les 30 minutes et 4 workers pour traiter les événements utilisateur.
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-dynamic-infos/)

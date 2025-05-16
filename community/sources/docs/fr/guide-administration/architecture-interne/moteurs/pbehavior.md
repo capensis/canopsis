@@ -25,3 +25,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 ```
 
 Cette commande lance le moteur PBEHAVIOR en mode debug, avec un intervalle de calcul de 90 minutes pour les comportements périodiques et une exécution du processus périodique toutes les 2 minutes.
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-pbehavior/)

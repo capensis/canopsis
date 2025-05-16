@@ -29,3 +29,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 ```
 
 Cette commande lance le moteur Corrélation en mode debug, avec 6 workers pour les événements externes et une exécution du processus périodique toutes les 30 secondes.
+
+## Schéma d'interactions
+
+Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
+[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-correlation/)
