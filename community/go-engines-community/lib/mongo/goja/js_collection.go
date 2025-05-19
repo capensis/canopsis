@@ -291,7 +291,7 @@ func (c *jsCollection) FindOne(ctx context.Context, filter, opts goja.Value) (an
 	}
 
 	dbOpts := options.FindOne()
-	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{})
+	err = transformOptions(c.vm, opts, dbOpts)
 	if err != nil {
 		return 0, fmt.Errorf("invalid find one options: %w", err)
 	}
@@ -320,7 +320,7 @@ func (c *jsCollection) FindOneAndDelete(ctx context.Context, filter, opts goja.V
 	}
 
 	dbOpts := options.FindOneAndDelete()
-	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{})
+	err = transformOptions(c.vm, opts, dbOpts)
 	if err != nil {
 		return 0, fmt.Errorf("invalid find one and delete options: %w", err)
 	}
@@ -573,7 +573,7 @@ func (c *jsCollection) CountDocuments(ctx context.Context, filter, opts goja.Val
 	}
 
 	dbOpts := options.Count()
-	err = transformOptions(c.vm, opts, dbOpts, map[string]mappingFunc{})
+	err = transformOptions(c.vm, opts, dbOpts)
 	if err != nil {
 		return 0, fmt.Errorf("invalid count options: %w", err)
 	}
@@ -692,7 +692,7 @@ func (c *jsCollection) BulkWrite(ctx context.Context, operations, opts goja.Valu
 	}, nil
 }
 
-func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter goja.Value) (any, error) {
+func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter goja.Value) ([]any, error) {
 	dbFilter, err := transformValue(c.vm, filter)
 	if err != nil {
 		return nil, fmt.Errorf("invalid filter: %w", err)
@@ -702,9 +702,10 @@ func (c *jsCollection) Distinct(ctx context.Context, fieldName string, filter go
 		dbFilter = bson.M{}
 	}
 
-	res := c.dbCollection.Distinct(ctx, fieldName, dbFilter)
-	if res.Err() != nil {
-		return nil, fmt.Errorf("error distinct: %w", res.Err())
+	var res []any
+	err = c.dbCollection.Distinct(ctx, fieldName, dbFilter).Decode(&res)
+	if err != nil {
+		return nil, fmt.Errorf("error distinct: %w", err)
 	}
 
 	return res, nil
@@ -772,7 +773,7 @@ func (c *jsCollection) getMethods(ctx context.Context) map[string]any {
 		"bulkWrite": func(operations, opts goja.Value) (map[string]any, error) {
 			return c.BulkWrite(ctx, operations, opts)
 		},
-		"distinct": func(fieldName string, filter goja.Value) (any, error) {
+		"distinct": func(fieldName string, filter goja.Value) ([]any, error) {
 			return c.Distinct(ctx, fieldName, filter)
 		},
 	}

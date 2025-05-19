@@ -3,6 +3,7 @@ package goja
 import (
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
 	"strconv"
 	"strings"
@@ -194,6 +195,10 @@ func transformCommitQuorum(v goja.Value) (int32, error) {
 		iVal, err := strconv.Atoi(val)
 		if err != nil {
 			return 0, err
+		}
+
+		if iVal > math.MaxInt32 {
+			return 0, fmt.Errorf("int32 type mismatch for value %d", iVal)
 		}
 
 		return int32(iVal), nil //nolint:gosec
