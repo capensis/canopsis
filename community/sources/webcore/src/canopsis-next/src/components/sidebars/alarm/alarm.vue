@@ -85,8 +85,8 @@
         :title="$t('common.correlation')"
       />
       <field-switcher
-        v-model="form.parameters.clearFilterDisabled"
-        :title="$t('settings.clearFilterDisabled')"
+        v-model="form.parameters.clearFilterEnabled"
+        :title="$t('settings.clearFilterEnabled')"
       />
     </widget-settings-group>
 
