@@ -24,7 +24,7 @@ Actuellement, cette configuration apporte :
 
 ### Changement du nom de serveur hôte HTTP (`server_name`)
 
-À partir de Canopsis 4.4.0, Nginx est configuré pour utiliser le nom de serveur `localhost`, par défaut.
+Nginx est configuré pour utiliser le nom de serveur `localhost`, par défaut.
 
 Suivez la procédure suivante, si le service HTTP doit être accessible avec un autre nom.
 
@@ -52,7 +52,7 @@ Suivez la procédure suivante, si le service HTTP doit être accessible avec un 
 
 ### Activation d'HTTPS, HTTP/2 et les Websockets
 
-À partir de Canopsis 4.4.0, une configuration activant HTTPS, HTTP/2 et les Websockets est disponible, mais n'est pas encore activée par défaut.
+Une configuration activant HTTPS, HTTP/2 et les Websockets est disponible, mais n'est pas encore activée par défaut.
 
 Consultez le [Guide d'activation d'HTTPS](reverse-proxy-nginx-https.md) pour en savoir plus.
 
