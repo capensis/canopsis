@@ -6,11 +6,11 @@
     />
     <c-name-field
       v-field="form.name"
-      :disabled="!!form._id"
+      :disabled="!isNew"
       required
       autofocus
     />
-    <role-type-field v-field="form.type" />
+    <role-type-field v-field="form.type" :disabled="!isNew" />
     <v-text-field
       v-field="form.description"
       :label="$t('common.description')"
@@ -76,6 +76,10 @@ export default {
       default: () => ({}),
     },
     withTemplate: {
+      type: Boolean,
+      default: false,
+    },
+    isNew: {
       type: Boolean,
       default: false,
     },
