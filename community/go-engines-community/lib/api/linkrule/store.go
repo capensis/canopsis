@@ -3,7 +3,7 @@ package linkrule
 import (
 	"cmp"
 	"context"
-	"fmt"
+	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -204,7 +204,7 @@ func (s *store) GetCategories(ctx context.Context, r CategoriesRequest) (*Catego
 	if r.Search != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
 			"links.category": bson.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", r.Search),
+				Pattern: ".*" + regexp.QuoteMeta(r.Search) + ".*",
 				Options: "i",
 			},
 		}})

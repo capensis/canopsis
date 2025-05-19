@@ -38,7 +38,6 @@ func (c Content) MarshalJSON() ([]byte, error) {
 
 // MarshalBSONValue stores value to map because it's impossible to decode struct and array of struct
 // to interface without bson.D and bson.D cannot be encoded to JSON properly.
-// Try to use interface{} in mongo-driver > 1.3.7
 func (c Content) MarshalBSONValue() (byte, []byte, error) {
 	bsonType, bsonBytes, err := bson.MarshalValue(map[string]any{
 		bsonKey: c.value,

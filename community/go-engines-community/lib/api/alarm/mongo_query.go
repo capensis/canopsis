@@ -205,7 +205,7 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesReque
 
 	if r.Search != "" {
 		match["v.display_name"] = bson.Regex{
-			Pattern: fmt.Sprintf(".*%s.*", r.Search),
+			Pattern: ".*" + regexp.QuoteMeta(r.Search) + ".*",
 			Options: "i",
 		}
 	}
@@ -824,7 +824,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r FilterRequest) (bson.M, bool, erro
 	}
 
 	searchRegexp := bson.Regex{
-		Pattern: fmt.Sprintf(".*%s.*", r.Search),
+		Pattern: ".*" + regexp.QuoteMeta(r.Search) + ".*",
 		Options: "i",
 	}
 
