@@ -912,9 +912,9 @@ describe('alarm', () => {
 
     const fieldHtmlEnabledSwitcher = selectFieldClearFilterDisabled(wrapper);
 
-    const clearFilterDisabled = Faker.datatype.boolean();
+    const clearFilterEnabled = Faker.datatype.boolean();
 
-    fieldHtmlEnabledSwitcher.triggerCustomEvent('input', clearFilterDisabled);
+    fieldHtmlEnabledSwitcher.triggerCustomEvent('input', clearFilterEnabled);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -922,7 +922,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterDisabled', clearFilterDisabled),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterEnabled', clearFilterEnabled),
       },
     });
   });
