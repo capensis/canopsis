@@ -2558,6 +2558,10 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.MaxState).UnmarshalJSON(data))
 			}
+		case "initial_state":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.InitialState).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -2982,6 +2986,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"max_state\":"
 		out.RawString(prefix)
 		out.Raw((in.MaxState).MarshalJSON())
+	}
+	if in.InitialState != 0 {
+		const prefix string = ",\"initial_state\":"
+		out.RawString(prefix)
+		out.Raw((in.InitialState).MarshalJSON())
 	}
 	out.RawByte('}')
 }
