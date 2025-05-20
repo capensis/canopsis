@@ -6,6 +6,8 @@ Le service API est le point d'entrée principal pour interagir avec Canopsis. Il
 
 ## Options de démarrage
 
+L'option `-h` permet d'afficher toutes les options disponibles au lancement de l'api.
+
 | Option | Description |
 |--------|------------|
 | `-c string` | Répertoire des fichiers de configuration (défaut : "/opt/canopsis/share/config") |
