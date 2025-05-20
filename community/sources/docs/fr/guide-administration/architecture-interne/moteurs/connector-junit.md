@@ -6,6 +6,8 @@ Le service Connector-JUnit est un connecteur spécialisé qui permet d'intégrer
 
 ## Options de démarrage
 
+L'option `-h` permet d'afficher toutes les options disponibles au lancement du connecteur.
+
 | Option | Description |
 |--------|------------|
 | `-d` | Active le mode debug |

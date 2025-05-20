@@ -8,6 +8,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 
 ## Options de démarrage
 
+L'option `-h` permet d'afficher toutes les options disponibles au lancement du moteur.
+
 Le moteur SNMP est lancé avec la commande `engine-launcher` et les paramètres suivants :
 
 | Option | Description |

@@ -8,6 +8,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 
 ## Options de démarrage
 
+L'option `-h` permet d'afficher toutes les options disponibles au lancement du moteur.
+
 | Option | Description |
 |--------|------------|
 | `-computeRruleEnd` | Calcule la fin des règles récurrentes (rrule) pour les comportements périodiques et quitte |
