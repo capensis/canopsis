@@ -29,7 +29,7 @@
         >
           <c-no-events-icon
             :value="service.idle_since"
-            :color="color"
+            class="color--current-color"
             top
           />
           <impact-state-indicator
@@ -43,7 +43,7 @@
             small
             @click.stop="$emit('show:root-cause')"
           >
-            <v-icon color="white" small>
+            <v-icon small>
               $vuetify.icons.root_cause
             </v-icon>
           </v-btn>
@@ -53,22 +53,20 @@
             small
             @click.stop="showVariablesHelpModal(service)"
           >
-            <v-icon color="white" small>
+            <v-icon small>
               help
             </v-icon>
           </v-btn>
         </v-layout>
         <v-icon
-          :color="color"
-          class="service-weather-item__background"
+          class="service-weather-item__background color--current-color"
           size="5em"
         >
           {{ backgroundIcon }}
         </v-icon>
         <v-icon
           v-if="secondaryIconEnabled && service.secondary_icon"
-          :color="color"
-          class="service-weather-item__secondary-icon mb-1 mr-1"
+          class="service-weather-item__secondary-icon color--current-color mb-1 mr-1"
         >
           {{ service.secondary_icon }}
         </v-icon>
@@ -90,10 +88,9 @@
 <script>
 import { ALARM_STATES, MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 
-import { getEntityColor } from '@/helpers/entities/entity/color';
+import { getEntityColorClass } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { convertObjectToTreeview } from '@/helpers/treeview';
-import { getThemeVariableKeyFromCssVariable } from '@/helpers/entities/theme/entity';
 
 import { entityHandlebarsTagsHelper } from '@/mixins/widget/handlebars/entity-tags-helper';
 
@@ -210,25 +207,19 @@ export default {
       }.true || this.service.icon;
     },
 
-    backgroundColor() {
+    backgroundColorByActionRequired() {
       return {
         [this.isActionRequired]: this.actionRequiredColor,
         [this.isNoActionRequired]: this.noActionRequiredColor,
-      }.true || getEntityColor(this.service, this.colorIndicator);
+      }.true;
     },
 
-    realBackgroundColor() {
-      const colorKey = getThemeVariableKeyFromCssVariable(this.backgroundColor);
-
-      if (colorKey === this.backgroundColor) {
-        return this.backgroundColor;
+    colorByActionRequired() {
+      if (!this.backgroundColorByActionRequired) {
+        return undefined;
       }
 
-      return this.$vuetify.theme.currentTheme[colorKey];
-    },
-
-    color() {
-      return getMostReadableTextColor(this.realBackgroundColor, { level: 'AA', size: 'large' });
+      return getMostReadableTextColor(this.backgroundColorByActionRequired, { level: 'AA', size: 'large' });
     },
 
     itemClasses() {
@@ -237,6 +228,7 @@ export default {
         `mr-${this.margin.right}`,
         `mb-${this.margin.bottom}`,
         `ml-${this.margin.left}`,
+        getEntityColorClass(this.service, this.colorIndicator),
       ];
     },
 
@@ -247,8 +239,8 @@ export default {
     itemStyle() {
       return {
         height: `${this.itemHeight}em`,
-        backgroundColor: this.backgroundColor,
-        color: this.color,
+        backgroundColor: this.backgroundColorByActionRequired,
+        color: this.colorByActionRequired,
       };
     },
 

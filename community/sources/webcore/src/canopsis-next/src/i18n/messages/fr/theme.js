@@ -9,7 +9,7 @@ export default {
     notReadable: 'Le texte n\'est pas lisible',
   },
   main: {
-    title: 'Principaux éléments de l\'interface utilisateur',
+    title: 'Couleurs principales de l\'interface',
 
     primary: 'Marque principale',
     primaryHelpText: 'Couleur principale de l\'identité visuelle (en-tête Canopsis)',
