@@ -231,9 +231,12 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	result.AddedExternalTags = alarm.ExternalTags
+
 	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Author = author
 	stateStep.Value = *params.State
+	alarm.Value.InitialState = *params.State
+
 	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
 	statusStep.Author = author
 	statusStep.Value = types.AlarmStatusOngoing

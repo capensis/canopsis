@@ -569,7 +569,8 @@ type AlarmValue struct {
 	// CloseDelay should have a state step copy when alarm is closed by a close delay job.
 	CloseDelay *AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
 
-	MaxState CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	MaxState     CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	InitialState CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
 }
 
 func (v *AlarmValue) Transform() {
