@@ -1,27 +1,87 @@
-# Documentation Canopsis
+# Documentation officielle de **Canopsis** 
 
-Bienvenue sur la nouvelle documentation Canopsis !
+Canopsis est une solution d’hypervision conçue pour **centraliser, corréler et piloter intelligemment** les événements issus de vos outils de supervision, d'observabilité et de monitoring en général.
 
-Cette plateforme regroupe toutes les informations permettant de mettre en place, d'utiliser et de contribuer à Canopsis.
+> Cette documentation est votre guide pour **découvrir, déployer, configurer et maîtriser Canopsis** dans tous ses usages.
 
 
-[:material-clock-fast: Installation de Canopsis](guide-administration/installation/index.md){ .md-button }
-[:material-link: Interconnexions](interconnexions/index.md){ .md-button }
-[:material-spellcheck: Un peu de vocabulaire](guide-utilisation/vocabulaire/index.md){ .md-button }
+<div class="grid cards" markdown>
 
-## Guides
+-   :material-clock-fast:{ .lg .middle } __Installer Canopsis__
 
-*  [Guide d'administration](guide-administration/index.md) : comment installer, maintenir et mettre à jour un environnement Canopsis, gestion des moteurs.
-*  [Guide de dépannage](guide-de-depannage/index.md) : comment réaliser un diagnostic, aide aux questions fréquentes.
-*  [Guide de développement](guide-developpement/index.md) : comment utiliser les API de Canopsis ou développer des composants supplémentaires.
-*  [Guide d'utilisation](guide-utilisation/index.md) : comment utiliser l'interface de Canopsis au quotidien.
-*  [Guide des interconnexions](interconnexions/index.md) : comment brancher des sources de supervision et des données externes à Canopsis.
+    ---
 
-## Cycle de vie des versions
+    Découvrez comment installer Canopsis et réaliser les premiers paramétrages système et réseau.
+
+    [:octicons-arrow-right-24: Guide d'installation](guide-administration/installation/index.md)
+
+-   :material-link:{ .lg .middle } __Connecter vos outils__
+
+    ---
+
+    Intégrez vos outils de supervision grâce aux nombreux connecteurs fournis par Canopsis.
+
+    [:octicons-arrow-right-24: Connecteurs](interconnexions/index.md)
+
+-   :material-spellcheck:{ .lg .middle } __Comprendre les concepts clés__
+
+    ---
+
+    Familiarisez-vous avec les notions fondamentales de Canopsis pour bien démarrer.
+
+    [:octicons-arrow-right-24: Glossaire](guide-utilisation/vocabulaire/index.md)
+
+
+-   :material-monitor-dashboard:{ .lg .middle } __Découvrir l’interface__
+
+    ---
+
+    Apprenez à naviguer dans l’interface, utiliser les vues, les widgets et le bac à alarmes.
+
+    [:octicons-arrow-right-24: Interface utilisateur](guide-utilisation/interface)
+
+</div>
+
+---
+
+## 👥 À qui s’adresse cette documentation ?
+
+- **Pilotes et exploitants** : pour comprendre comment lire les alarmes, filtrer les vues, et réagir efficacement.
+- **Administrateurs système** : pour déployer, configurer et maintenir une instance Canopsis.
+- **Développeurs** : pour exploiter les API, créer des scénarios, intégrer de nouvelles sources de données.
+- **Formateurs et consultants** : pour mettre en œuvre des cas concrets et des démonstrations pédagogiques.
+
+---
+
+## 🧭 Comment naviguer dans la documentation ?
+
+=== "Utilisateurs"
+    - [Guides utilisateur](guide-utilisation/)
+    - [Interface](guide-utilisation/interface)
+    - [Widgets](guide-utilisation/interface/widgets/)
+
+=== "Administrateurs"
+    - [Installation & configuration](guide-administration/)
+    - [Menu Administration](guide-utilisation/menu-administration)
+    - [Sécurité & permissions](guide-administration/securite/)
+    - [Maintenance](guide-administration/maintenance/)
+
+=== "Développeurs & intégrateurs"
+    - [Développement](guide-developpement/)
+    - [Structure des événements](guide-developpement/structures/)
+    - [API REST](guide-developpement/api/)
+
+---
+
+## 📆 Cycle de vie des versions
 
 Le cycle de vie des versions Canopsis est détaillé sur le [site commercial de Canopsis](https://www.canopsis.fr/cycle-de-vie-des-versions-canopsis/)
 
-## Notes de version
+---
+
+
+
+## 📝 Notes de version
 
 Liste des changements et procédures particulières à suivre pour chaque mise à jour de Canopsis.
 
@@ -29,4 +89,8 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | API | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| --- | ---------- | --------- |
-    | **25.04.0**  | [:material-file-document:](notes-de-version/25.04.0.md)  | Changelog [:material-api:](notes-de-version/api/changelog-25.04.0.md)<br>Breaking [:material-api-off:](notes-de-version/api/breaking-25.04.0.md) | 28/04/2025 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-25.04.0.md) |
+    | **25.04.0**  | [📝](notes-de-version/25.04.0.md)  | 🔄 [Changelog](notes-de-version/api/changelog-25.04.0.md)<br>⚠️ [Breaking](notes-de-version/api/breaking-25.04.0.md) | 28/04/2025 | 🧭 [Guide de migration](notes-de-version/migration/migration-25.04.0.md) |
+
+
+
+
