@@ -8,6 +8,8 @@ Pour plus d'informations sur les fonctionnalités, consultez la [documentation s
 
 ## Options de démarrage
 
+L'option `-h` permet d'afficher toutes les options disponibles au lancement du moteur.
+
 | Option | Description |
 |--------|------------|
 | `-configPath string` | Chemin du fichier de configuration du moteur Webhook (défaut : "/opt/canopsis/etc/webhook.conf.toml") |

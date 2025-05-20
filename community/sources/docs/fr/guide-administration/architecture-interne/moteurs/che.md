@@ -10,6 +10,8 @@ Pour plus d'informations sur les fonctionnalités, consultez :
 
 ## Options de démarrage
 
+L'option `-h` permet d'afficher toutes les options disponibles au lancement du moteur.
+
 | Option | Description |
 |--------|------------|
 | `-consumeQueue string` | *Obsolète* : File d'attente pour la consommation des événements |
