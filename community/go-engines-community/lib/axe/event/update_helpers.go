@@ -787,6 +787,10 @@ func updateMetaAlarmState(
 			return nil, nil, err
 		}
 
+		if alarm.Value.InitialState == 0 {
+			alarm.Value.InitialState = newStep.Value
+		}
+
 		alarm.Value.TotalStateChanges++
 		alarm.Value.LastUpdateDate = timestamp
 		alarm.Value.LastStateOrStatusUpdateDate = timestamp
