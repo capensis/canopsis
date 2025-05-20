@@ -14,7 +14,7 @@ export default {
   props: {
     color: {
       type: String,
-      default: CSS_COLORS_VARS.success,
+      default: CSS_COLORS_VARS.state.ok,
     },
   },
   computed: {

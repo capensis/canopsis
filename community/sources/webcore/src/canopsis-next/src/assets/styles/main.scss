@@ -287,6 +287,14 @@ html {
   overflow: visible !important;
 }
 
+.color--inherit {
+  color: inherit !important;
+}
+
+.color--current-color {
+  color: currentColor !important;
+}
+
 .table {
   &__grid  > .v-data-table__wrapper > table {
     & > tbody > tr > td,
@@ -380,5 +388,89 @@ html {
   }
   .col-gap-#{$i}, .gap-#{$i} {
     column-gap: $i * 4px;
+  }
+}
+
+.state {
+  &-ok {
+    background-color: var(--v-state-ok-base);
+
+    &, & * {
+      color: var(--v-state-ok-text-base);
+    }
+  }
+
+  &-minor {
+    background-color: var(--v-state-minor-base);
+
+    &, & * {
+      color: var(--v-state-minor-text-base);
+    }
+  }
+
+  &-major {
+    background-color: var(--v-state-major-base);
+
+    &, & * {
+      color: var(--v-state-major-text-base);
+    }
+  }
+
+  &-critical {
+    background-color: var(--v-state-critical-base);
+
+    &, & * {
+      color: var(--v-state-critical-text-base);
+    }
+  }
+
+  &-pause {
+    background-color: var(--v-state-pause-base);
+
+    &, & * {
+      color: white;
+    }
+  }
+}
+
+.impact-state {
+  &-0 {
+    background-color: var(--v-impact-state-0-base);
+
+    &, & * {
+      color: white;
+    }
+  }
+
+  &-1 {
+    background-color: var(--v-impact-state-1-base);
+
+    &, & * {
+      color: black;
+    }
+  }
+
+  &-2 {
+    background-color: var(--v-impact-state-2-base);
+
+    &, & * {
+      color: black;
+    }
+  }
+
+  &-3 {
+    background-color: var(--v-impact-state-3-base);
+
+    &, & * {
+      color: black;
+    }
+  }
+
+  &-4 {
+    background-color: var(--v-impact-state-4-base);
+
+    &, & * {
+      color: white;
+    }
   }
 }

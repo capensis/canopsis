@@ -1,19 +1,21 @@
 import { COLORS, CSS_COLORS_VARS } from '@/config';
 import { ALARM_STATES, ALARM_STATUSES } from '@/constants';
 
+export const getAlarmImpactStateGroupedColorIndex = (impactState) => {
+  const divider = Math.floor(COLORS.impactState.length / COLORS.impactStateGrouped.length);
+
+  return Math.min(Math.floor(impactState / divider), COLORS.impactStateGrouped.length - 1);
+};
+
 /**
  * Get color by impact state
  *
  * @param {number} impactState
  * @returns {string}
  */
-export const getAlarmImpactStateColor = (impactState) => {
-  const divider = Math.floor(COLORS.impactState.length / COLORS.impactStateGrouped.length);
-
-  return COLORS.impactStateGrouped[
-    Math.min(Math.floor(impactState / divider), COLORS.impactStateGrouped.length - 1)
-  ];
-};
+export const getAlarmImpactStateColor = impactState => (
+  COLORS.impactStateGrouped[getAlarmImpactStateGroupedColorIndex(impactState)]
+);
 
 /**
  * Get color by entity impact state

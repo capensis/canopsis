@@ -8,7 +8,6 @@
         <v-layout justify-end>
           <v-btn
             color="secondary"
-            icon
             fab
             small
             @click="addPopup"

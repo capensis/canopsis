@@ -1,9 +1,9 @@
 import { kebabCase, merge, pick } from 'lodash';
 
-import { DEFAULT_THEME_COLORS } from '@/config';
+import { DEFAULT_THEME_COLORS, COLORS } from '@/config';
 import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants';
 
-import { colorToRgba, getDarkenColor, isDarkColor } from '@/helpers/color';
+import { colorToRgba, getDarkenColor, isDarkColor, getMostReadableTextColor } from '@/helpers/color';
 import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 import { convertTypeColors } from '@/helpers/entities/theme/form';
 
@@ -64,9 +64,20 @@ export const systemThemeMixin = {
       const black = '#000';
       const isDark = isDarkColor(main.background);
 
+      const stateText = Object.entries(state).reduce((acc, [key, color]) => {
+        acc[`${key}-text`] = getMostReadableTextColor(color);
+
+        return acc;
+      }, {});
+
       const vuetifyVariables = merge({}, DEFAULT_THEME_COLORS, {
         table,
-        state,
+        'impact-state': COLORS.impactStateGrouped,
+
+        state: {
+          ...state,
+          ...stateText,
+        },
         applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
 
         ...main,

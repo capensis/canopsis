@@ -7,6 +7,7 @@
       :color="item.color"
       :background-color="item.backgroundColor"
       :font-size="item.fontSize"
+      :text="item.text"
     />
   </v-layout>
 </template>

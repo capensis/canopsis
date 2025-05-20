@@ -105,7 +105,6 @@ export const getProgressElement = () => {
     'v-progress-circular',
     'v-progress-circular--indeterminate',
     'v-progress-circular--visible',
-    'white--text',
     'position-relative',
   );
 

@@ -129,7 +129,7 @@ export const isCSSVariable = property => /^var\(.+\)$/.test(property);
 export const getCSSVariableName = property => property.match(/^var\((.+)\)$/)[1];
 
 /**
- * Get darken color
+ * Get color from css variable
  *
  * @param {Element} element
  * @param {string} property

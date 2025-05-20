@@ -3,7 +3,7 @@
 exports[`service-weather-item Renders \`service-weather-item\` with custom props 1`] = `
 <card-with-see-alarms-btn-stub
   class="cursor-pointer service-weather-item mt-0 mr-0 mb-0 ml-0"
-  style="height: 4em; color: black;"
+  style="height: 4em;"
 >
   <div
     class="layout fill-height service-weather-item__content justify-space-between"
@@ -22,7 +22,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
-          color="black"
+          class="color--current-color"
           top=""
         />
         <impact-state-indicator-stub
@@ -34,7 +34,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
       </div>
       <i
         aria-hidden="true"
-        class="v-icon notranslate service-weather-item__background material-icons theme--light black--text"
+        class="v-icon notranslate service-weather-item__background color--current-color material-icons theme--light"
         style="font-size: 5em;"
       />
       <!---->
@@ -47,9 +47,9 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
 
 exports[`service-weather-item Renders \`service-weather-item\` with full access 1`] = `
 <card-with-see-alarms-btn-stub
-  class="cursor-pointer service-weather-item mt-1 mr-3 mb-5 ml-7"
+  class="cursor-pointer service-weather-item mt-1 mr-3 mb-5 ml-7 impact-state-0"
   showbutton="true"
-  style="height: 16em; color: black;"
+  style="height: 16em;"
 >
   <div
     class="layout fill-height service-weather-item__content justify-space-between"
@@ -83,12 +83,12 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
-          color="black"
+          class="color--current-color"
           top=""
         />
         <impact-state-indicator-stub
           class="mr-1"
-          value="0"
+          value="3"
         />
         <button
           class="v-btn v-btn--icon v-btn--round theme--light v-size--small"
@@ -99,11 +99,11 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           >
             <span
               aria-hidden="true"
-              class="v-icon notranslate theme--light white--text"
+              class="v-icon notranslate theme--light"
               style="font-size: 16px; height: 16px; width: 16px;"
             >
               <svg
-                class="v-icon__component theme--light white--text"
+                class="v-icon__component theme--light"
                 height="15"
                 style="font-size: 16px; height: 16px; width: 16px;"
                 viewBox="0 0 14 15"
@@ -126,7 +126,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light white--text"
+              class="v-icon notranslate material-icons theme--light"
               style="font-size: 16px;"
             >
               help
@@ -136,7 +136,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
       </div>
       <i
         aria-hidden="true"
-        class="v-icon notranslate service-weather-item__background material-icons theme--light black--text"
+        class="v-icon notranslate service-weather-item__background color--current-color material-icons theme--light"
         style="font-size: 5em;"
       />
       <!---->
