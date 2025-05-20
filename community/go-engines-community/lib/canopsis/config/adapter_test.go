@@ -13,7 +13,7 @@ func TestConfWriteAndRead(t *testing.T) {
 	Convey("Given a session, config DB adapter and a config", t, func() {
 		ctx := t.Context()
 
-		dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+		dbClient, err := mongo.NewClient(ctx)
 		if err != nil {
 			panic(err)
 		}
@@ -39,7 +39,7 @@ func TestConfSave(t *testing.T) {
 	Convey("Given a session, config DB adapter and a config", t, func() {
 		ctx := t.Context()
 
-		dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+		dbClient, err := mongo.NewClient(ctx)
 		if err != nil {
 			panic(err)
 		}

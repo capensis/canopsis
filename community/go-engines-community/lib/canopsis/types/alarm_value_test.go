@@ -123,7 +123,7 @@ func TestAlarmSteps_Crop_GivenGreaterThenLimitSteps_ShouldCropSteps(t *testing.T
 func TestAlarmSteps_Crop_GivenCounterStep_ShouldSaveInDB(t *testing.T) {
 	ctx := t.Context()
 
-	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		t.Fatalf("expected no error but got %v", err)
 	}

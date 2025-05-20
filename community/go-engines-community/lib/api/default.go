@@ -106,7 +106,7 @@ func Default(
 	}
 
 	// Retrieve config.
-	primaryDbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	primaryDbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot create primary mongodb client: %w", err)
 	}

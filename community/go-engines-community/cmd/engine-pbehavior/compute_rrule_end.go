@@ -14,7 +14,7 @@ import (
 )
 
 func computeRruleEnd(ctx context.Context, logger zerolog.Logger) error {
-	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		return err
 	}
