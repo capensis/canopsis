@@ -341,7 +341,7 @@ func BenchmarkInheritedServicesPbhResolve1Parent100000Children(b *testing.B) {
 func benchmarkInheritedRecompute(b *testing.B, fixturesPath string) {
 	ctx := b.Context()
 
-	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}

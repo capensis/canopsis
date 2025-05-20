@@ -98,7 +98,7 @@ func CheckRedis(ctx context.Context, logger zerolog.Logger) error {
 }
 
 func CheckMongo(ctx context.Context, _ zerolog.Logger) error {
-	c, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	c, err := mongo.NewClient(ctx)
 	if err != nil {
 		return err
 	}

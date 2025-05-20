@@ -370,7 +370,14 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	return res, nil
 }
 
-func NewClient(ctx context.Context, clientOptions ClientOptions) (DbClient, error) {
+func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
+	var clientOptions ClientOptions
+	if len(opts) == 1 {
+		clientOptions = opts[0]
+	} else if len(opts) > 1 {
+		return nil, errors.New("only one ClientOptions is allowed")
+	}
+
 	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err

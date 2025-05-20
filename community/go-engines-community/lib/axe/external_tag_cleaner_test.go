@@ -17,7 +17,7 @@ import (
 
 func TestExternalTagCleaner_Clean(t *testing.T) {
 	ctx := t.Context()
-	client, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	client, err := mongo.NewClient(ctx)
 	if err != nil {
 		t.Fatalf("cannot connect to mongodb: %v", err)
 	}
