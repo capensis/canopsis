@@ -68,7 +68,7 @@ func BenchmarkStore_Find_GivenRequestWithIncludeInstructionsFilter(b *testing.B)
 func benchmarkStoreFind(b *testing.B, fixturesPath string, request ListRequestWithPagination, userID string) {
 	ctx := b.Context()
 
-	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
