@@ -294,6 +294,13 @@ export const ALARM_STATES_ICONS = {
   [ALARM_STATES.critical]: 'assistant_photo',
 };
 
+export const ALARM_STATES_CLASSES = {
+  [ALARM_STATES.ok]: 'state-ok',
+  [ALARM_STATES.minor]: 'state-minor',
+  [ALARM_STATES.major]: 'state-major',
+  [ALARM_STATES.critical]: 'state-critical',
+};
+
 export const ALARM_STATUSES = {
   closed: 0,
   ongoing: 1,

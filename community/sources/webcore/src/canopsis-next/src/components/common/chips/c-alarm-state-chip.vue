@@ -10,7 +10,7 @@
       @click="$emit('click', $event)"
     >
       <template v-if="appendIconName" #append>
-        <v-icon color="white" size="14">
+        <v-icon size="14">
           {{ appendIconName }}
         </v-icon>
       </template>
@@ -61,9 +61,17 @@ export default {
       'c-alarm-state-chip--small': props.small,
     }));
 
+    const chipClasses = computed(() => ({
+      'state-ok': props.value === ALARM_STATES.ok,
+      'state-minor': props.value === ALARM_STATES.minor,
+      'state-major': props.value === ALARM_STATES.major,
+      'state-critical': props.value === ALARM_STATES.critical,
+    }));
+
     return {
       showIcon,
       classes,
+      chipClasses,
     };
   },
 };

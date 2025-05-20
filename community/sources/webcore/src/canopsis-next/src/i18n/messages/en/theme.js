@@ -9,7 +9,7 @@ export default {
     notReadable: 'Text is not readable',
   },
   main: {
-    title: 'Main UI elements',
+    title: 'Main UI colors',
 
     primary: 'Main brand',
     primaryHelpText: 'Main brand color (Canopsis header)',
