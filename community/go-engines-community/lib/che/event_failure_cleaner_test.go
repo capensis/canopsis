@@ -17,7 +17,7 @@ import (
 
 func TestEventFailureCleaner_Clean(t *testing.T) {
 	ctx := t.Context()
-	client, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+	client, err := mongo.NewClient(ctx)
 	if err != nil {
 		t.Fatalf("cannot connect to mongodb: %v", err)
 	}

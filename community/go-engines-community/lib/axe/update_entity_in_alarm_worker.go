@@ -25,6 +25,7 @@ func (w *updateEntityInAlarmWorker) Work(ctx context.Context) error {
 	}
 
 	defer stream.Close(ctx)
+
 	for stream.Next(ctx) {
 		select {
 		case <-ctx.Done():

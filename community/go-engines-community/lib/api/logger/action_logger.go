@@ -1,12 +1,10 @@
 package logger
 
 import (
-	"bytes"
 	"cmp"
 	"context"
 	"errors"
 	"fmt"
-	"log"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -237,17 +235,21 @@ func (l *logger) startLockRefresher(ctx context.Context, lock libredis.Lock) cha
 	return exitChan
 }
 
-func (l *logger) Watch(ctx context.Context) error {
+func (l *logger) Watch(ctx context.Context) (err error) {
+	ctx, cancel := context.WithCancel(ctx)
+
 	var lock libredis.Lock
 
 	defer func() {
+		cancel()
+
 		if lock == nil {
 			return
 		}
 
-		err := lock.Release(context.WithoutCancel(ctx))
-		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) {
-			l.zLog.Err(err).Msg("failed to release lock")
+		lockErr := lock.Release(context.WithoutCancel(ctx))
+		if lockErr != nil && !errors.Is(lockErr, redislock.ErrLockNotHeld) {
+			l.zLog.Err(lockErr).Msg("failed to release lock")
 		}
 
 		l.zLog.Debug().Msg("action logger redis lock is released")
@@ -378,21 +380,11 @@ func (l *logger) runWatcher(ctx context.Context, g *errgroup.Group) (<-chan Acti
 		}()
 
 		for stream.Next(ctx) {
-			var raw bson.Raw
-
-			err := stream.Decode(&raw)
-			if err != nil {
-				l.zLog.Err(err).Msg("failed to decode change stream event")
-				continue
-			}
-
 			var event ActionLogEvent
 
-			decoder := bson.NewDecoder(bson.NewDocumentReader(bytes.NewReader(raw)))
-			decoder.ObjectIDAsHexString()
-
-			if err := decoder.Decode(&event); err != nil {
-				log.Println("Custom decoding error:", err)
+			err := stream.Decode(&event)
+			if err != nil {
+				l.zLog.Err(err).Msg("failed to decode change stream event")
 				continue
 			}
 

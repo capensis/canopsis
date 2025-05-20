@@ -4,13 +4,13 @@ package mongo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/url"
 	"os"
 	"strings"
 	"time"
 
-	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -97,7 +97,6 @@ type DbClient interface {
 	Ping(ctx context.Context, rp *readpref.ReadPref) error
 	WithTransaction(ctx context.Context, f func(context.Context) error) error
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error)
-	IsDistributed() bool
 	RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
 	RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
 }
@@ -107,8 +106,6 @@ type dbClient struct {
 	Database        *mongo.Database
 	RetryCount      int
 	MinRetryTimeout time.Duration
-
-	isDistributed bool
 }
 
 // dbCollection
@@ -117,6 +114,17 @@ type dbCollection struct {
 	mongoCollection *mongo.Collection
 	retryCount      int
 	minRetryTimeout time.Duration
+}
+
+type ClientOptions struct {
+	RetryCount             int
+	MinRetryTimeout        time.Duration
+	ServerSelectionTimeout time.Duration
+	ClientTimeout          time.Duration
+	ReadPreference         *readpref.ReadPref
+
+	// if NoClientTimeout set to true, then client timeout set to 0 and ClientTimeout value is ignored
+	NoClientTimeout bool
 }
 
 func (c *dbCollection) Name() string {
@@ -362,13 +370,19 @@ func (c *dbCollection) UpdateOne(ctx context.Context, filter interface{}, update
 	return res, nil
 }
 
-// NewClient creates a new connection to the MongoDB database.
-// It uses EnvURL as configuration source.
-func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duration, logger zerolog.Logger) (DbClient, error) {
+func NewClient(ctx context.Context, opts ...ClientOptions) (DbClient, error) {
+	var clientOptions ClientOptions
+	if len(opts) == 1 {
+		clientOptions = opts[0]
+	} else if len(opts) > 1 {
+		return nil, errors.New("only one ClientOptions is allowed")
+	}
+
 	mongoURL, dbName, err := getURL()
 	if err != nil {
 		return nil, err
 	}
+
 	if dbName == "*" {
 		dbName = DB
 	}
@@ -378,90 +392,59 @@ func NewClient(ctx context.Context, retryCount int, minRetryTimeout time.Duratio
 		ObjectIDAsHexString: true,
 	}
 
-	clientOptions := options.Client().ApplyURI(mongoURL).SetBSONOptions(bsonOpts)
-	//if clientOptions.Timeout == nil {
-	//	clientOptions.SetTimeout(DefaultClientTimeout)
-	//}
-	client, err := mongo.Connect(clientOptions)
+	mongoClientOptions := options.Client().ApplyURI(mongoURL).SetBSONOptions(bsonOpts)
+
+	if clientOptions.ServerSelectionTimeout <= 0 {
+		if mongoClientOptions.ServerSelectionTimeout == nil {
+			mongoClientOptions.SetServerSelectionTimeout(DefaultServerSelectionTimeout)
+		}
+	} else {
+		mongoClientOptions.SetServerSelectionTimeout(clientOptions.ServerSelectionTimeout)
+	}
+
+	if clientOptions.NoClientTimeout {
+		mongoClientOptions.SetTimeout(0)
+	} else if clientOptions.ClientTimeout <= 0 {
+		if mongoClientOptions.Timeout == nil {
+			mongoClientOptions.SetTimeout(DefaultClientTimeout)
+		}
+	} else {
+		mongoClientOptions.SetTimeout(clientOptions.ClientTimeout)
+	}
+
+	if clientOptions.ReadPreference == nil {
+		// don't get readPreference from mongoClientOptions, it should be defined ONLY by clientOptions to avoid the readPreference misusing by the end user.
+		mongoClientOptions.SetReadPreference(readpref.Primary())
+	} else {
+		mongoClientOptions.SetReadPreference(clientOptions.ReadPreference)
+	}
+
+	isDistributed, err := isMongoReplicaSetEnabled(ctx, mongoClientOptions)
+	if err != nil {
+		return nil, fmt.Errorf("failed to check if replica set is enabled: %w", err)
+	}
+
+	if !isDistributed {
+		return nil, errors.New("replica set is required")
+	}
+
+	mongoClient, err := mongo.Connect(mongoClientOptions)
 	if err != nil {
 		return nil, err
 	}
 
-	err = client.Ping(ctx, nil)
+	err = mongoClient.Ping(ctx, nil)
 	if err != nil {
+		_ = mongoClient.Disconnect(ctx)
 		return nil, err
 	}
 
-	dbClient := &dbClient{
-		Client:          client,
-		Database:        client.Database(dbName),
-		RetryCount:      retryCount,
-		MinRetryTimeout: minRetryTimeout,
-	}
-
-	err = dbClient.checkTransactionEnabled(ctx, logger)
-	if err != nil {
-		return nil, err
-	}
-
-	return dbClient, nil
-}
-
-func NewClientWithOptions(
-	ctx context.Context,
-	retryCount int,
-	minRetryTimeout time.Duration,
-	serverSelectionTimeout time.Duration,
-	clientTimeout time.Duration,
-	logger zerolog.Logger,
-) (DbClient, error) {
-	mongoURL, dbName, err := getURL()
-	if err != nil {
-		return nil, err
-	}
-	if dbName == "*" {
-		dbName = DB
-	}
-
-	bsonOpts := &options.BSONOptions{
-		DefaultDocumentM:    true,
-		ObjectIDAsHexString: true,
-	}
-
-	clientOptions := options.Client().ApplyURI(mongoURL).SetBSONOptions(bsonOpts)
-	if serverSelectionTimeout < 0 {
-		serverSelectionTimeout = DefaultServerSelectionTimeout
-	}
-	if clientTimeout < 0 {
-		clientTimeout = DefaultClientTimeout
-	}
-
-	clientOptions.SetServerSelectionTimeout(serverSelectionTimeout)
-	clientOptions.SetTimeout(clientTimeout)
-
-	client, err := mongo.Connect(clientOptions)
-	if err != nil {
-		return nil, err
-	}
-
-	err = client.Ping(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	dbClient := &dbClient{
-		Client:          client,
-		Database:        client.Database(dbName),
-		RetryCount:      retryCount,
-		MinRetryTimeout: minRetryTimeout,
-	}
-
-	err = dbClient.checkTransactionEnabled(ctx, logger)
-	if err != nil {
-		return nil, err
-	}
-
-	return dbClient, nil
+	return &dbClient{
+		Client:          mongoClient,
+		Database:        mongoClient.Database(dbName),
+		RetryCount:      clientOptions.RetryCount,
+		MinRetryTimeout: clientOptions.MinRetryTimeout,
+	}, nil
 }
 
 func (c *dbClient) Name() string {
@@ -503,10 +486,6 @@ func (c *dbClient) SetRetry(count int, timeout time.Duration) {
 }
 
 func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) error) error {
-	if !c.isDistributed {
-		return f(ctx)
-	}
-
 	txnOpts := options.Transaction().SetReadPreference(readpref.Primary())
 	sessOpts := options.Session().SetDefaultTransactionOptions(txnOpts)
 
@@ -531,29 +510,6 @@ func (c *dbClient) WithTransaction(ctx context.Context, f func(context.Context) 
 	return err
 }
 
-func (c *dbClient) checkTransactionEnabled(ctx context.Context, logger zerolog.Logger) error {
-	var err error
-
-	c.isDistributed, err = isMongoReplicaSetEnabled(ctx)
-	if err != nil {
-		return err
-	}
-
-	if c.isDistributed {
-		logger.Info().Msg("replica set is detected, transactions are enabled")
-	} else {
-		logger.Warn().Msg("replica set is not detected, transactions are disabled")
-	}
-
-	return nil
-}
-
-// IsDistributed returns true if MongoDB is Replica Set or Sharded Cluster.
-// Use to check feature availability : Transactions, Change Streams, etc.
-func (c *dbClient) IsDistributed() bool {
-	return c.isDistributed
-}
-
 func (c *dbClient) RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper {
 	return c.Database.RunCommand(ctx, runCommand, opts...)
 }
@@ -562,13 +518,8 @@ func (c *dbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...
 	return c.Database.Client().Database("admin").RunCommand(ctx, runCommand, opts...)
 }
 
-func isMongoReplicaSetEnabled(ctx context.Context) (bool, error) {
-	mongoURL, _, err := getURL()
-	if err != nil {
-		return false, fmt.Errorf("could not get mongo url: %w", err)
-	}
-
-	cfg, err := topology.NewConfig(options.Client().ApplyURI(mongoURL), nil)
+func isMongoReplicaSetEnabled(ctx context.Context, clientOptions *options.ClientOptions) (bool, error) {
+	cfg, err := topology.NewConfig(clientOptions, nil)
 	if err != nil {
 		return false, fmt.Errorf("could not create topology config: %w", err)
 	}
@@ -670,6 +621,11 @@ func retry(ctx context.Context, retryCount int, retryTimeout time.Duration, f fu
 }
 
 func IsConnectionError(err error) bool {
-	return mongo.IsNetworkError(err) ||
-		strings.Contains(err.Error(), "server selection error")
+	var sse topology.ServerSelectionError
+
+	return mongo.IsNetworkError(err) || errors.As(err, &sse)
+}
+
+func SecondaryPreferred(opts ...readpref.Option) *readpref.ReadPref {
+	return readpref.SecondaryPreferred(opts...)
 }
