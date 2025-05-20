@@ -48,7 +48,7 @@ func BenchmarkEventfilterIntervalsWorker_Work_Given100Exdates_100ExceptionsWith_
 func benchmarkRulesChangesWatcher(b *testing.B, fixturesPath string) {
 	ctx := b.Context()
 
-	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}

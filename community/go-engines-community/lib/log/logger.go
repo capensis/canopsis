@@ -74,7 +74,7 @@ func NewLogger(ctx context.Context, debug bool) zerolog.Logger {
 }
 
 func loadLoggerConfig(ctx context.Context) (*config.SectionLogger, error) {
-	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{})
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		return nil, err
 	}
