@@ -604,7 +604,6 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     >
       <field-switcher-stub
         title="Hide massive actions under more button"
-        value="true"
       />
       <field-quick-alarm-actions-stub
         description=""
@@ -1262,7 +1261,6 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     >
       <field-switcher-stub
         title="Hide massive actions under more button"
-        value="true"
       />
       <field-quick-alarm-actions-stub
         description=""
@@ -1916,7 +1914,6 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     >
       <field-switcher-stub
         title="Hide massive actions under more button"
-        value="true"
       />
       <field-quick-alarm-actions-stub
         description=""
@@ -2571,7 +2568,6 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     >
       <field-switcher-stub
         title="Hide massive actions under more button"
-        value="true"
       />
       <field-quick-alarm-actions-stub
         description=""
