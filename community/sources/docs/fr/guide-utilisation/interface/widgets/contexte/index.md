@@ -1,31 +1,25 @@
 # Explorateur de contexte
 
+L'Explorateur de contexte est un widget central dans Canopsis. Il permet d'afficher, filtrer, rechercher et manipuler l'ensemble des [entités](../../..//vocabulaire/#entite) du système : composants, connecteurs, ressources et services. C'est, en quelque sorte, le référentiel interne de toutes les entités connues de la plateforme.
+
+Ce widget est composé de plusieurs zones clés :
+
+* Un tableau personnalisable listant les entités
+* Une barre de recherche avancée
+* Un système de filtres (simples ou combinés)
+* Des actions de gestion d'entités (création, modification, suppression, duplication)
+* Un accès direct aux comportements périodiques
+
 ![Explorateur de contexte](./img/context-explorer.png  "Explorateur de contexte")
-
-## Sommaire
-
-### Guide utilisateur
-
-1. [Entités](#entites)
-2. [Recherche](#recherche)
-3. [Filtres](#filtres)
-4. [Création d'entités et de services](#creation-dentites-et-de-services)
-5. [Actions](#actions)
-6. [Comportements périodiques](#comportements-periodiques)
-
-### Guide exploitant
-1. [Aide sur les variables](#aide-variables)
-2. [Paramètres du widget](#parametres-du-widget)
 
 ## Guide utilisateur
 
 ### Entités
 
-Le tableau d'entités présente la liste de toutes les entités. Une ligne correspond à une entité.
-Les colonnes affichées sont personnalisables (*Cf: [Guide exploitant](#guide-exploitant)*).
-En plus de détails de l'entité, chaque ligne expose une liste d'actions opérables sur l'entité (*Cf: [Actions](#actions)*).
+Le tableau d'entités présente la liste de toutes les entités. Une ligne correspond à une entité.  
+En plus de détails de l'entité, chaque ligne expose une liste d'actions opérables sur l'entité.
 
-Au clic sur une entité (en dehors du texte des colonnes), des détails supplémentaires concernant l'entité s'affichent (comportements périodiques, informations, impacts et dépendances, etc.).
+Des détails supplémentaires concernant l'entité s'affichent en la "dépliant" (comportements périodiques, informations, impacts et dépendances, etc.).
 
 ![Plus d'infos entités](./img/context-entity-more-infos.png "Plus d'infos entités").
 
@@ -33,90 +27,43 @@ Au clic sur une entité (en dehors du texte des colonnes), des détails supplém
 
 Le champ de recherche permet de réaliser une recherche parmi les entités.
 
-![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
+![Champ de recherche](./img/champ-recherche.png "Champ de recherche")
 
-Pour faire une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
+Pour faire une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone :material-magnify:
 
-Dans l'explorateur de contexte, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cet aspect [ici](../../recherche/index.md) !
+Dans l'explorateur de contexte, il est possible d'effectuer des recherches plus avancées à l'aide de l'icône :material-tune:.
 
-Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche")
+Pour supprimer la recherche, cliquez sur l'icone :material-close:.
+
+### Catégorie
+
+Une entité peut être positionnée dans une "catégorie" au moment de sa création ou de son import.  
+L'explorateur de contexte permet de filtrer les entités selon ces catégories.
 
 ### Filtres
 
-Le sélecteur de filtre permet d'appliquer un filtre sur l'Explorateur de contexte. Seuls les entités correspondant aux critères du filtres seront affichées.
+Le sélecteur de filtre permet d'appliquer un [filtre](../../patterns) sur l'Explorateur de contexte. Seuls les entités correspondant aux critères du filtres seront affichées.
 
-![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
+![Sélecteur de filtre](./img/filter-selector.png "Sélecteur de filtre")
 
 Pour sélectionner un filtre, il suffit de cliquer sur le champ 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
 Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
 Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icône présente au bout du champ de sélection de filtre. L'explorateur de contexte se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
 
-#### Mix filters
+L'option "Mix filters", présente dans l'entête du sélecteur de filtre permet de cumuler plusieurs filtres avec un **ET logique**.
 
-L'option "Mix filters", présente à gauche du sélecteur de filtre permet de cumuler plusieurs filtres.
+### Filtre "Aucun événement"
 
-Pour activer cette option, cliquez sur le bouton ![Mix filters](../../filtres/img/mix-filters.png "Mix filters").
-Une fois l'options activée, un sélecteur apparaît à droite du bouton d'activation ![Mix filters operator](../../filtres/img/mix-filters-operator.png "Mix filters operator"). Ce sélecteur permet de choisir l'opérateur utilisé pour réunir les filtres.
+L'explorateur de contexte permet de filtrer les entités pour lesquelles aucun événement n'a été reçu depuis un certain temps.  
+Ces entotés sont régies par les [règles d'inactivité](../../../menu-exploitation/regles-inactivite/).
 
-- "AND": Les critères présents dans tout les filtres doivent êtres vérifiés
-- "OR": Les critères présents dans un ou plusieurs des filtres doivent êtres vérifiés.
+### Création d'entités "services"
 
-Une fois l'opérateur sélectionné, il ne vous reste plus qu'à sélectionner les filtres à appliquer dans le menu déroulant de sélection de filtres.
+Depuis l'Explorateur de contexte, il vous est possible de créer des entités de type "Service".
 
-### Création d'entités et de services
+Pour accéder aux fenêtres de création, cliquer sur le bouton ![Icône Création Entité](./img/add-entity-button.png "Icône Création Entité").
 
-<!-- XXX: probablement à refaire après Canopsis 4.3.0 -->
-
-Depuis l'Explorateur de contexte, il vous est possible de créer des entités et des services.
-
-Pour accéder aux fenêtres de création, survoler le bouton ![Icône Création Entité](./img/add-entity-button.png "Icône Création Entité").
-Au survol de ce bouton, un menu s'ouvre avec deux boutons disponibles.
-
-![Icônes Création Entité](./img/add-entity-button-hover.png "Icônes Création Entité").
-
-La première icône à gauche permet de créer une entité, la deuxième permet de créer un service.
-
-#### Création d'entité
-
-Au clic sur l'icône de création d'entité, une fenêtre s'ouvre.
-
-![Formulaire création Entité](./img/entity-creation-form.png "Formulaire création Entité")
-
-Le 1er onglet, 'Formulaire', vous demande de renseigner les informations principales de l'entité :
-
-- Nom (*requis*)
-- Description
-- Activé(e) : Définit si l'entité est activée, ou non.
-- Type (*requis*) : Définit le type d'entité (connecteur, composant ou ressource)
-- Impacts et Dépendances : Permet de définir les entités que l'entité que vous êtes en train de créer impacte, et celles dont elle dépend. Pour ajouter des entités dans une de ces listes, réalisez une recherche grâce au champ de recherche, puis cliquez sur l'icône ![Icône Ajout impact/dépendance](./img/add-impact-depends.png "Icône Ajout impact/dépendance"). La liste des entités sélectionnées apparaît au dessus du tableau d'entités utilisés pour ajouter des entités.
-
-Le 2ème onglet permet de gérer les infos contenues dans le champ 'infos' de l'entité. Les infos se composent d'un nom, d'une description et d'une valeur.
-Pour ajouter une information, remplissez les champs demandés, puis cliquez sur le bouton 'Ajouter'. L'information apparaît dans la liste située au dessus du formulaire.
-
-![Formulaire Gérer infos](./img/manage-infos.png "Formulaire Gérer infos")
-
-Au clic sur une information dans la liste des infos, les détails de cette information apparaissent.
-Deux actions sont disponibles pour chaque information.
-
-- Editer : Permet d'éditer une information. Au clic sur l'icône ![Icône Editer infos](./img/edit-info-icon.png "Icône Editer infos"), le formulaire situé en dessous s'auto-complète avec les détails de l'information à éditer. Editez les informations, puis cliquez sur le bouton 'Ajouter'. Votre information est éditée.
-- Supprimer : Permet de supprimer une information. Il vous suffit de cliquer sur l'icône ![Icône Suppression info](./img/delete-info-icon.png "Icône Suppression infos"). Votre information a été supprimée !
-
-Cliquez ensuite sur le bouton 'Envoyer' pour sauvegarder votre entité !
-
-<!-- XXX: toute cette partie est obsolète avec la 4.3.0 -->
-
-#### Création de service
-
-Au clic sur l'icône de création de services, une fenêtre s'ouvre.
-
-![Formulaire création Services](./img/watcher-creation-form.png "Formulaire création Services")
-
-Pour créer un service, il vous suffit d'entrer deux informations :
-
-*  Nom (*requis*)
-*  Filtre : Pour plus de détails sur les filtres et leur création, voir : [Les filtres](../../filtres/index.md)
-
-Cliquez ensuite sur le bouton 'Envoyer'. Votre service est créé !
+Tous les paramètres concernant les services sont [documentés ici](../../../services)
 
 ### Actions
 
