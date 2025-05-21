@@ -121,14 +121,6 @@ type BaseFilterRequest struct {
 	OnlyBookmarks       bool     `form:"only_bookmarks" json:"only_bookmarks"`
 }
 
-type InstructionFilterRequest struct {
-	Running      *bool    `form:"running" json:"running"`
-	IncludeTypes []int    `form:"include_types[]" json:"include_types"`
-	ExcludeTypes []int    `form:"exclude_types[]" json:"exclude_types"`
-	Include      []string `form:"include[]" json:"include"`
-	Exclude      []string `form:"exclude[]" json:"exclude"`
-}
-
 type ListByServiceRequest struct {
 	pagination.Query
 	SortRequest

@@ -43,10 +43,15 @@ const (
 )
 
 const (
+	instrFilterInstrTypeManual = iota
+)
+
+const (
 	instrFilterExecStatusInProgress = iota
 	instrFilterExecStatusCompleted
 	instrFilterExecStatusFailed
 	instrFilterExecStatusNotInProgressAndNotCompleted
+	maxPossibleUniqueExecutionStatuses
 )
 
 const (
@@ -54,8 +59,6 @@ const (
 	instrFilterExecOptOnlyEmptyExecs
 	instrFilterExecOptWithEmptyExecs
 )
-
-const maxPossibleUniqueExecutionStatuses = 4
 
 var ErrUnknownQuery = errors.New("unknown query type")
 
@@ -1003,7 +1006,7 @@ func (q *MongoQueryBuilder) addInstructionsFilter(ctx context.Context, r FilterR
 		withMatch = true
 
 		if r.InstructionType != nil {
-			if *r.InstructionType == 0 {
+			if *r.InstructionType == instrFilterInstrTypeManual {
 				instructionQuery["type"] = bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}}
 				instructionExecutionLookupQuery["type"] = bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}}
 			} else {
@@ -1431,18 +1434,12 @@ func getInstructionExecutionLookup(pipelineLookupQuery bson.M, executionStatuses
 	pipeline := []bson.M{
 		{
 			"$lookup": bson.M{
-				"from": mongo.InstructionExecutionMongoCollection,
-				"let":  bson.M{"alarm": "$_id"},
+				"from":         mongo.InstructionExecutionMongoCollection,
+				"localField":   "_id",
+				"foreignField": "alarm",
 				"pipeline": []bson.M{
 					{
-						"$match": bson.M{"$and": []bson.M{
-							{
-								"$expr": bson.M{
-									"$eq": bson.A{"$$alarm", "$alarm"},
-								},
-							},
-							pipelineLookupQuery,
-						}},
+						"$match": pipelineLookupQuery,
 					},
 					{
 						"$sort": bson.M{"created_at": -1},
