@@ -80,6 +80,10 @@ func (f *Faker) ResetUniqueName() {
 	f.usedNames = make(map[string]struct{})
 }
 
+func (f *Faker) UUID() string {
+	return utils.NewID()
+}
+
 func (f *Faker) JWT() (string, error) {
 	registeredClaims := jwt.RegisteredClaims{
 		ID:       utils.NewID(),
