@@ -7,7 +7,9 @@
     :items="fields"
     :hide-input="selectedAllFields"
     multiple
+    chips
     clearable
+    hide-details
     @input="updateFilter"
   >
     <template #selection="{ item }">

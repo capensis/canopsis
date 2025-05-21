@@ -1,6 +1,8 @@
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules, createRemediationInstructionModule } from '@unit/utils/store';
 
+import { REMEDIATION_INSTRUCTION_FILTER_TYPES, REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
+
 import AlarmsListRemediationInstructionsFilter from '@/components/widgets/alarm/partials/alarms-list-remediation-instructions-filter.vue';
 
 const stubs = {
@@ -149,9 +151,12 @@ describe('alarms-list-remediation-instructions-filter', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `alarms-list-remediation-instructions-filter` with only instructionFilterType', async () => {
+  it('Renders `alarms-list-remediation-instructions-filter` with instructionFilterType and instructionType', async () => {
     fetchRemediationInstructionsListWithoutStore.mockResolvedValue({
-      data: [{ _id: 'id1', name: 'name1' }, { _id: 'id2', name: 'name2' }],
+      data: [
+        { _id: 'id1', name: 'name1', type: REMEDIATION_INSTRUCTION_TYPES.manual },
+        { _id: 'id2', name: 'name2', type: REMEDIATION_INSTRUCTION_TYPES.auto },
+      ],
       meta: {
         total_count: 2,
       },
@@ -160,7 +165,8 @@ describe('alarms-list-remediation-instructions-filter', () => {
     const wrapper = snapshotFactory({
       propsData: {
         filter: {
-          instruction_filter_type: 2,
+          instruction_filter_type: REMEDIATION_INSTRUCTION_FILTER_TYPES.hasInstructions,
+          instruction_type: REMEDIATION_INSTRUCTION_TYPES.manual,
         },
       },
     });
@@ -172,9 +178,9 @@ describe('alarms-list-remediation-instructions-filter', () => {
 
   it('Renders `alarms-list-remediation-instructions-filter` with loading state', async () => {
     fetchRemediationInstructionsListWithoutStore.mockResolvedValue({
-      data: [{ _id: 'id1', name: 'name1' }, { _id: 'id2', name: 'name2' }],
+      data: [],
       meta: {
-        total_count: 2,
+        total_count: 0,
       },
     });
 

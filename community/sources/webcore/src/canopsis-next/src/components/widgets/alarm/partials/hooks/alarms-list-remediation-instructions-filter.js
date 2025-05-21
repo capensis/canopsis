@@ -1,7 +1,13 @@
 import { isNil } from 'lodash';
 import { ref, unref, computed, onMounted } from 'vue';
 
-import { MAX_LIMIT, REMEDIATION_INSTRUCTION_FILTER_FIELDS } from '@/constants';
+import { MAX_LIMIT, REMEDIATION_INSTRUCTION_FILTER_FIELDS, REMEDIATION_INSTRUCTION_FILTER_TYPES } from '@/constants';
+
+import {
+  isAutoInstructionType,
+  isManualInstructionType,
+  isAnyManualInstructionType,
+} from '@/helpers/entities/remediation/instruction/list';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemdeitionInstructionStore } from '@/hooks/store/modules/remediation-instruction';
@@ -29,8 +35,15 @@ export const useAlarmsListRemediationInstructionsFilterFetch = (filter) => {
   const preparedInstructions = computed(() => {
     const unwrappedFilter = unref(filter);
 
+    const isManualInstructionSelectedType = isManualInstructionType(unwrappedFilter.instruction_type);
+    const isAutoInstructionSelectedType = isAutoInstructionType(unwrappedFilter.instruction_type);
+
     return instructions.value
-      .filter(instruction => (instruction.type === unwrappedFilter.instruction_type));
+      .filter(instruction => (
+        isManualInstructionSelectedType && isAnyManualInstructionType(instruction.type)
+      ) || (
+        isAutoInstructionSelectedType && isAutoInstructionType(instruction.type)
+      ));
   });
 
   onMounted(fetchInstructionsList);
@@ -55,6 +68,10 @@ export const useAlarmsListRemediationInstructionsFilterFields = (filter) => {
   const fields = computed(() => {
     const unwrappedFilter = unref(filter);
     const result = [REMEDIATION_INSTRUCTION_FILTER_FIELDS.instructionFilterType];
+
+    if (unwrappedFilter.instruction_filter_type !== REMEDIATION_INSTRUCTION_FILTER_TYPES.hasInstructions) {
+      return result;
+    }
 
     if (!isNil(unwrappedFilter.instruction_filter_type)) {
       result.push(REMEDIATION_INSTRUCTION_FILTER_FIELDS.instructionType);
