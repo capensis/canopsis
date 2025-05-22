@@ -3,25 +3,26 @@
     v-bind="$attrs"
     :value="range"
     :items="quickRanges"
-    :label="$t('quickRanges.title')"
+    :label="label || $t('quickRanges.title')"
     :hide-details="hideDetails"
     :disabled="disabled"
     :return-object="returnObject"
-    @input="updateModel($event)"
+    @input="updateModel"
   />
 </template>
 
 <script>
 import { isObject } from 'lodash';
+import { computed } from 'vue';
 
 import { QUICK_RANGES } from '@/constants';
 
 import { findQuickRangeValue } from '@/helpers/date/date-intervals';
 
-import { formMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
-  mixins: [formMixin],
   inheritAttrs: false,
   model: {
     prop: 'value',
@@ -34,6 +35,10 @@ export default {
     },
     ranges: {
       type: Array,
+      required: false,
+    },
+    label: {
+      type: String,
       required: false,
     },
     hideDetails: {
@@ -49,25 +54,34 @@ export default {
       required: false,
     },
   },
-  computed: {
-    quickRanges() {
-      const ranges = this.ranges ?? Object.values(QUICK_RANGES);
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const { updateModel } = useModelField(props, emit);
+
+    const quickRanges = computed(() => {
+      const ranges = props.ranges ?? Object.values(QUICK_RANGES);
 
       return ranges.map(range => ({
         ...range,
-        text: this.$t(`quickRanges.types.${range.value}`),
+        text: t(`quickRanges.types.${range.value}`),
       }));
-    },
+    });
 
-    range() {
-      if (!isObject(this.value)) {
-        return this.value;
+    const range = computed(() => {
+      if (!isObject(props.value)) {
+        return props.value;
       }
 
-      const range = findQuickRangeValue(this.value.start, this.value.stop, this.ranges);
+      const localRange = findQuickRangeValue(props.value.start, props.value.stop, props.ranges);
 
-      return this.quickRanges.find(({ value }) => value === range.value);
-    },
+      return quickRanges.value.find(({ value }) => value === localRange.value);
+    });
+
+    return {
+      quickRanges,
+      range,
+      updateModel,
+    };
   },
 };
 </script>
