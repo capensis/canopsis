@@ -210,6 +210,26 @@ export default {
     dateOptions() {
       return {
         type: PATTERN_RULE_TYPES.date,
+        operators: [
+          PATTERN_OPERATORS.within,
+          PATTERN_OPERATORS.olderThan,
+          PATTERN_OPERATORS.inRangeDates,
+          PATTERN_OPERATORS.inRangePeriod,
+        ],
+        valueField: {
+          is: 'pattern-rule-field-date-value',
+          props(rule) {
+            return {
+              rule,
+              value: rule.range,
+            };
+          },
+          on() {
+            return {
+              input: value => this.updateField('range', value),
+            };
+          },
+        },
       };
     },
 

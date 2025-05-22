@@ -64,6 +64,11 @@ export const PATTERN_OPERATORS = {
   ruleIs: 'rule_is',
 
   regexp: 'regexp',
+
+  within: 'within',
+  olderThan: 'older_than',
+  inRangeDates: 'in_range_dates',
+  inRangePeriod: 'in_range_period',
 };
 
 export const PATTERN_CONDITIONS = {
