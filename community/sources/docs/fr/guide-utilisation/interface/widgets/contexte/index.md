@@ -1,6 +1,8 @@
 # Explorateur de contexte
 
-L'Explorateur de contexte est un widget central dans Canopsis. Il permet d'afficher, filtrer, rechercher et manipuler l'ensemble des [entités](../../..//vocabulaire/#entite) du système : composants, connecteurs, ressources et services. C'est, en quelque sorte, le référentiel interne de toutes les entités connues de la plateforme.
+L'Explorateur de contexte est un widget central dans Canopsis. Il permet d'afficher, filtrer, rechercher et manipuler l'ensemble des [entités](../../../vocabulaire/#entite) du système : composants, connecteurs, ressources et services. 
+
+C'est, en quelque sorte, le référentiel interne de toutes les entités connues de la plateforme.
 
 Ce widget est composé de plusieurs zones clés :
 
@@ -12,7 +14,7 @@ Ce widget est composé de plusieurs zones clés :
 
 ![Explorateur de contexte](./img/context-explorer.png  "Explorateur de contexte")
 
-## Guide utilisateur
+## Utilisation courante
 
 ### Entités
 
@@ -42,20 +44,16 @@ L'explorateur de contexte permet de filtrer les entités selon ces catégories.
 
 ### Filtres
 
-Le sélecteur de filtre permet d'appliquer un [filtre](../../patterns) sur l'Explorateur de contexte. Seuls les entités correspondant aux critères du filtres seront affichées.
+Le sélecteur de filtre permet d'appliquer un [filtre](../../patterns) sur l'Explorateur de contexte. Seules les entités correspondant aux critères du filtre seront affichées.
 
 ![Sélecteur de filtre](./img/filter-selector.png "Sélecteur de filtre")
 
-Pour sélectionner un filtre, il suffit de cliquer sur le champ 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
-Cliquez sur un filtre. Celui-ci est sélectionné, et directement appliqué.
-Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icône présente au bout du champ de sélection de filtre. L'explorateur de contexte se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
-
-L'option "Mix filters", présente dans l'entête du sélecteur de filtre permet de cumuler plusieurs filtres avec un **ET logique**.
+L'option "Combiner les filtres", présente dans l'entête du sélecteur de filtre, permet de cumuler plusieurs filtres avec un **ET logique**.
 
 ### Filtre "Aucun événement"
 
 L'explorateur de contexte permet de filtrer les entités pour lesquelles aucun événement n'a été reçu depuis un certain temps.  
-Ces entotés sont régies par les [règles d'inactivité](../../../menu-exploitation/regles-inactivite/).
+Ces entités sont régies par les [règles d'inactivité](../../../menu-exploitation/regles-inactivite/).
 
 ### Création d'entités "services"
 
@@ -63,106 +61,117 @@ Depuis l'Explorateur de contexte, il vous est possible de créer des entités de
 
 Pour accéder aux fenêtres de création, cliquer sur le bouton ![Icône Création Entité](./img/add-entity-button.png "Icône Création Entité").
 
-Tous les paramètres concernant les services sont [documentés ici](../../../services)
+Tous les paramètres concernant les services sont [documentés ici](../../../services).
 
 ### Actions
 
-Pour chaque entité de l'explorateur de contexte, trois actions sont disponibles :
+En fonction du type d'entité, plusieurs actions sont disponibles :
 
-- **Éditer** : Au clic sur l'icône d'édition ![Icône Editer entité](./img/edit-entity-icon.png "Icône Editer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de le service (*Cf: [Création d'entités et de services](#creation-dentites-et-de-services)*). Après avoir modifié les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe que l'édition a été effectuée avec succès.
-- **Dupliquer**: Au clic sur l'icône ![Icône Dupliquer entité](./img/duplicate-entity-icon.png "Icône Dupliquer entité"), une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité ou de le service que vous souhaitez dupliquer. Après avoir entré les informations souhaitées, cliquez sur 'Envoyer'. Une fenêtre vous informe qu'une nouvelle entité a été créée avec succès !
-- **Supprimer** : Permet de supprimer une entité/un service. Au clic sur l'icône de suppression ![icône Supprimer entité](./img/delete-entity-icon.png "icône Supprimer entité"), une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité/de le service.
-- **Ajouter un comportement périodique** : Permet d'ajouter un comportement périodique à l'entité/à le service. Au clic sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"), une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+* **Éditer** : Au clic sur l'icône d'édition :material-pencil:, une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité. Après avoir modifié les informations souhaitées, cliquez sur 'Soumettre'. Un tooltip vous informe que l'édition a été effectuée avec succès.
 
-### Comportements périodiques
+* **Dupliquer**: Au clic sur l'icône :material-content-copy:, une fenêtre s'ouvre. Celle-ci reprend les informations de l'entité que vous souhaitez dupliquer. Après avoir entré les informations souhaitées, cliquez sur 'Soumettre'. Un tooltip vous informe qu'une nouvelle entité a été créée avec succès !
 
-Depuis l'explorateur de contexte, il est possible d'ajouter un comportement périodique directement sur une entité, ou sur un sélection d'entités.
+* **Supprimer** : Permet de supprimer une entité. Au clic sur l'icône de suppression :material-delete:, une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression de l'entité.
 
-Pour plus de détails sur l'ajout de comportements périodiques, voir : [Les comportement périodiques - Pbehaviors](../../pbehaviors/index.md).
+* **Comportement périodique** : Permet d'ajouter un comportement périodique à l'entité. Au clic sur l'icône :material-pause:, une fenêtre de création de comportement périodique s'affiche. Pour plus d'information, voir : [Les comportement périodiques - Pbehaviors](../../../menu-exploitation/comportements-periodiques/).
 
-Pour ajouter un comportement périodique sur une entité, cliquez sur l'icône ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior") sur la ligne de l'entité sur laquelle vous souhaitez ajouter le comportement.
+* **Lister les variables** : Permet de lister toutes les variables relatives à l'entité. Au clic sur l'icône :material-help:, une fenêtre s'ouvre et propose une liste brute de variables.
 
-Pour ajouter un comportement périodique sur une sélection d'entités, sélectionnez les entités en cochant les cases (présentes en début de ligne de chaque entités). Une fois une entité ou plus sélectionnées, deux icônes sont apparues en haut de l'explorateur de contexte. La première icône permet de supprimer toutes les entités sélectionnées, le deuxième permet d'ajouter un comportement périodique à ces entités. Cliquez sur le bouton ![icône Ajouter Pbehavior](./img/add-pbehavior-icon.png "icône Ajouter Pbehavior"). Une fenêtre de création de comportement périodique apparaît alors.
-
-## Guide exploitant
+## Paramètres du widget
 
 Vous pouvez configurer les widgets (taille, remplacement, nom, etc.) directement dans une vue via le mode édition (*Cf: [Vues - Documentation de la grille d'edition](../../vues/edition-grille.md)*).
 
-### Aide - Variables
-
-Durant la configuration de votre widget Exporateur de contexte, notamment la liste des colonnes, il vous sera possible d'accéder à des variables concernant les entités.
-
-Afin de connaitre les variables disponibles, une modale d'aide est disponible.
-
-Pour y accéder, entrez dans le mode d'édition (*Cf: [Vues - Mode d'édition](../../vues/index.md#mode-édition)*).
-
-Un bouton d'action supplémentaire "Liste des variables disponibles" apparaît alors pour chaque entité du tableau.
-
-Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles dans vos différents paramètres. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
-
-### Paramètres du widget
-
-1. Titre
-2. Paramètres avancés
-  1. Colonne de tri par défaut
-  2. Nom des colonnes
-  3. Filtres
-  4. Types d'entités
-
-#### Titre (*optionnel*)
+### Titre (*optionnel*)
 
 Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus de celui-ci.
 
 Un champ de texte vous permet de définir ce titre.
 
-#### Paramètres avancés
+### Paramètres avancés
 
-##### Colonne de tri par défaut
+#### Colonne de tri par défaut
 
 Ce paramètre permet de définir la colonne par laquelle trier les alarmes.
 
 ![Paramètre colonne de tri par défaut](../img/settings/default-column-sort.png "Paramètre colonne de tri par défaut")
-
-Un champ de texte vous permet d'abord de définir la colonne à utiliser. Il faut ici entrer la **valeur** de la colonne, et non son nom (*Cf: [Paramètre "Nom des colonnes"](#nom-des-colonnes)*).
 
 Un sélecteur vous permet ensuite de définir le sens de tri :
 
 *  "ASC" = Ascendant
 *  "DESC" = Descendant
 
-##### Nom des colonnes
+#### Colonnes
 
-Ce paramètre permet de définir quels colonnes seront affichées dans l'explorateur de contexte.
+Les paramètres qui sont décrits dans ce paragraphe concernent les éléments suivants :
 
-![Paramètre Nom des colonnes](../img/settings/column-names.png "Paramètre Nom des colonnes")
+* Nom des colonnes : colonnes affichées dans la liste des entités
+* Nom des colonnes pour l'arborescence des dépendances : colonnes visbles dans l'onglet "Arbre de dépendances"
+* Nom des colonnes pour les alarmes actives : colonnes visbles dans l'onglet "Alarme active"
+* Nom des colonnes pour les alarmes résolues : colonnes visbles dans l'onglet "Alarmes résolues"
 
-Afin d'**ajouter une colonne**, cliquez sur le bouton 'Ajouter'.
-Une colonne vide est alors ajoutée. Afin de finaliser l'ajout, il est nécessaire de remplir les champs demandés.
-Le champ "Label" définit le nom de la colonne, qui sera affiché en haut de tableau. Le champ "Valeur" définit la valeur que doit prendre ce champ. Tous les champs de l'entité sont directement disponibles.
+![Paramètre Nom des colonnes](./img/noms-des-colonnes.png "Paramètre Nom des colonnes")
 
-Exemple : "name", qui contient le nom de l'entité, ou encore "type", qui contient le type de l'entité.
+Afin d'**ajouter une colonne**, cliquez sur le bouton :material-plus:.  
+Il vous reste alors à sélectionner la colonne souhaitée dans la liste.  
+
+!!! tip "Astuce"
+    Vous pouvez modifier le label de la colonne en activant l'option "Etiquette personnalisée".  
+    Cela est très utile lorsque vous utilisez des informations enrichies.
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
-Dans la liste des colonnes sont égalements présentes, pour chaque colonne, des flèches permettant de modifier l'ordre des colonnes. Les colonnes sont présentées dans l'ordre de haut en bas. Pour modifier la place d'une colonne, cliquez sur une des flèches. Pour faire monter/descendre une colonne dans la liste.
+L'ordre des colonnes est modifiable par drag'n drop.
 
-##### Filtres
+!!! tip "Recommandation"
+    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres/#modeles-de-widgets) pour faciliter la maintenance générale.
 
-Ce paramètre permet de sélectionner un filtre à appliquer à l'explorateur de contexte, et d'en créer de nouveaux.
 
-Un champ de sélection permet d'abord de choisir un filtre à appliquer à l'explorateur de contexte parmi les filtres existants. Sélectionnez le filtre que vous souhaitez appliquer parmi les filtres disponibles. Une fois les paramètres sauvegardés, le filtre sera appliquer à l'explorateur de contexte (*Cf: [filtres](#filtres)*).
+#### Paramètres de l'arborescence des dépendances
 
-Pour créer un nouveau filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre. Pour plus de détails sur les filtres et leur création, cliquez [ici](../../filtres/index.md).
-Une fois votre filtre créé, celui-ci apparaît dans la liste disponible en dessous du sélecteur de filtre. Cette liste vous permet d'éditer, ou de supprimer les filtres.
+Ce paramètre est directement dépendant de la configuration de [calcul d'état/sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité/) réalisée.
 
-L'option "Mix filters" est également disponible depuis ce menu. Pour plus de détails concernant cette option, voir  [Mix filters](#mix-filters).
+| Option                                      | Signification |
+| ------------------------------------------- | ------------------ |
+| Afficher toutes les dépendances             | L'onglet Arbre de dépendances affiche toutes les dépendances de l'entité |
+| Afficher les dépendances définissant l'état | L'onglet Arbre de dépendances n'affiche que les dépendances responsables de la sévérité de l'entité |
+| Afficher le sélecteur                       | L'onglet Arbre de dépendances propose à l'utilisateur de choisir une des deux options |
+
+#### Paramètres du graphique de disponibilité
+
+En activant cette option, vous pouvez choisir les paramètres par défaut qui seront utilisés pour présenter la "disponibilité" de l'entité.  
+Ces paramètres concernent la période temporelle à considérer ainsi que le type d'affichage en pourcentage ou en durée de la disponibilité.
+
+![Graph de dispo](./img/graph-disponibilite.png)
+
+#### Paramètres du diagramme de cause racine
+
+Les dépendances d'une entité peuvent être visualisées sous forme de diagramme, accessible depuis la colonne de criticité/sévérité.  
+Vous pouvez choisir de présenter les dépendances avec leur sévérité ou leur priorité.
+
+![Diagramme de cause racine](./img/diagramme-cause-racine.png)
+
+
+#### Filtres
+
+Ce paramètre permet créer des [filtres](../../patterns/) qui seront disponibles dans l'explorateur de contexte.  
+Il est également possible de sélectionner un filtre par défaut à appliquer.
+
+L'ordre des filtres est modifiable par drag'n drop.
 
 #### Types d'entités
 
-Ce paramètre permet de sélectionner les différents types d'entités que vous souhaitez voir apparaître dans l'explorateur de contexte.
+Ce paramètre permet de "spécialiser" l'explorateur de contexte en filtrant sur un ou des types d'entités.
 
-![Paramètre Types d'entités](../img/settings/entities-types.png "Paramètre Types d'entités")
+![Paramètre Types d'entités](./img/types-entites.png "Paramètre Types d'entités")
 
 Les types d'entités sont : Composant, Connecteur, Ressource et Service.
 
 Il vous suffit de cocher les cases correspondantes aux types d'entités que vous souhaitez voir apparaître.
+
+#### Largeur-position "Plus d'infos"
+
+Vous pouvez définir la "largeur" et la "position" de la fenêtre qui est affichée lorsqu'une entité est "dépliée".
+
+#### Exporter CSV
+
+Les entités sont exportables au format CSV. Ce menu permet de sélectionner les colonnes que vous souhaitez exporter.  
