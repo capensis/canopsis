@@ -14,6 +14,14 @@
     :ranges="intervalRanges"
     :label="$t('common.value')"
   />
+  <c-quick-date-interval-type-range-field
+    v-else-if="isIntervalRange"
+    v-field="value"
+    :name="name"
+    :disabled="disabled"
+    :ranges="intervalRanges"
+    :label="$t('common.value')"
+  />
 </template>
 
 <script>
