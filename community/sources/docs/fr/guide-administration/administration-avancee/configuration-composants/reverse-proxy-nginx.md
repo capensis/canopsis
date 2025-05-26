@@ -4,7 +4,7 @@ Le *reverse proxy* HTTP [Nginx](https://nginx.org) fournit l'accès à l'interfa
 
 ## Configuration par défaut
 
-Le fichier principal de configuration de Nginx est `/etc/nginx/conf.d/default.conf`.
+Le fichier principal de configuration de Nginx est `/etc/nginx/conf.d/canopsis.conf`.
 
 Ce fichier de configuration évolue lors des mises à jour de Canopsis.
 
@@ -18,7 +18,7 @@ Actuellement, cette configuration apporte :
 * une prise en charge optionnelle d'HTTPS, HTTP/2 et des Websockets (voir ci-dessous).
 
 !!! information
-        La configuration Nginx par défaut déployée avec Canopsis est consultable sur le [dépôt Gitlab](https://git.canopsis.net/canopsis/canopsis-community/-/tree/develop/community/deploy-ansible/playbook/roles/canopsis/templates/nginx).
+        La configuration Nginx par défaut déployée avec Canopsis est consultable sur le [dépôt Gitlab](https://git.canopsis.net/canopsis/canopsis-community/-/blob/develop/community/sources/webcore/src/canopsis-next/config/nginx/canopsis.conf).
 
 ## Configuration additionnelle
 
@@ -28,9 +28,9 @@ Nginx est configuré pour utiliser le nom de serveur `localhost`, par défaut.
 
 Suivez la procédure suivante, si le service HTTP doit être accessible avec un autre nom.
 
-=== "Paquets CentOS 7"
+=== "Paquets RHEL"
 
-    Éditez la variable `canopsis_server_name` du fichier `/etc/nginx/conf.d/default.conf`.
+    Éditez la variable `canopsis_server_name` du fichier `/etc/nginx/conf.d/canopsis.conf`.
 
     Par exemple :
     ```nginx
@@ -42,7 +42,7 @@ Suivez la procédure suivante, si le service HTTP doit être accessible avec un 
 
 === "Docker Compose"
 
-    Si vous voulez éviter de surcharger l'intégralité du fichier `/etc/nginx/conf.d/default.conf`, vous pouvez modifier la variable d'environnement `CPS_SERVER_NAME` dans le fichier `compose.env` lié à votre Compose :
+    Si vous voulez éviter de surcharger l'intégralité du fichier `/etc/nginx/conf.d/canopsis.conf`, vous pouvez modifier la variable d'environnement `CPS_SERVER_NAME` dans le fichier `compose.env` lié à votre Compose :
 
     ```ini
     CPS_SERVER_NAME=canopsis.mon-si.fr
