@@ -392,85 +392,35 @@ html {
 }
 
 .state {
-  &-ok {
-    background-color: var(--v-state-ok-base);
+  $states: ok, minor, major, critical;
 
-    &, & * {
-      color: var(--v-state-ok-text-base);
-    }
-  }
-
-  &-minor {
-    background-color: var(--v-state-minor-base);
-
-    &, & * {
-      color: var(--v-state-minor-text-base);
-    }
-  }
-
-  &-major {
-    background-color: var(--v-state-major-base);
-
-    &, & * {
-      color: var(--v-state-major-text-base);
-    }
-  }
-
-  &-critical {
-    background-color: var(--v-state-critical-base);
-
-    &, & * {
-      color: var(--v-state-critical-text-base);
+  @each $state in $states {
+    &-#{$state} {
+      &, & *:not(svg, g, path) {
+        color: var(--v-state-#{$state}-text-base);
+      }
     }
   }
 
   &-pause {
     background-color: var(--v-state-pause-base);
 
-    &, & * {
+    &, & *:not(svg, g, path) {
       color: white;
     }
   }
 }
 
 .impact-state {
-  &-0 {
-    background-color: var(--v-impact-state-0-base);
+  $impactStates: (0: white, 1: black, 2: black, 3: black, 4: white);
 
-    &, & * {
-      color: white;
-    }
-  }
+  @each $state, $color in $impactStates {
+    &-#{$state} {
+      background-color: var(--v-impact-state-#{$state}-base);
 
-  &-1 {
-    background-color: var(--v-impact-state-1-base);
-
-    &, & * {
-      color: black;
-    }
-  }
-
-  &-2 {
-    background-color: var(--v-impact-state-2-base);
-
-    &, & * {
-      color: black;
-    }
-  }
-
-  &-3 {
-    background-color: var(--v-impact-state-3-base);
-
-    &, & * {
-      color: black;
-    }
-  }
-
-  &-4 {
-    background-color: var(--v-impact-state-4-base);
-
-    &, & * {
-      color: white;
+      &, & *:not(svg, g, path) {
+        color: $color;
+      }
     }
   }
 }
