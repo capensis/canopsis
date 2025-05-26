@@ -15,7 +15,8 @@ Voici un aperçu des principaux widgets disponibles.
   ![Explorateur de contexte](./contexte/img/context-explorer.png)
 
 - :material-weather-cloudy-alert: __[Météo de services](meteo-des-services/index.md)__  
-  Vue synthétique sous forme de tuiles de l'état des services, avec couleurs et icônes pour repérer rapidement les anomalies.
+  Vue synthétique sous forme de tuiles de l'état des services, avec couleurs et icônes pour repérer rapidement les anomalies.  
+  ![Météo des services](./meteo-des-services/img/meteo-des-services.png)
 
 - :material-calendar: __[Calendrier](stats/index.md)__  
   Affiche une répartition du nombre d'alarmes par rapport à une période de temps (jour, mois, heure).
