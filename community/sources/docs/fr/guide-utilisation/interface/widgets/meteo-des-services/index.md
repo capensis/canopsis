@@ -1,47 +1,53 @@
 # Météo des services
 
+Le widget **Météo de services** permet d'afficher en un coup d'oeil l’état de plusieurs services du SI. Il s’agit d’une **représentation synthétique et visuelle** de la santé des services métier, avec une codification par couleur et icône.
+
+C’est un outil précieux pour les exploitants souhaitant identifier rapidement les dégradations ou indisponibilités de services critiques.
+
 ![Météo de services](./img/weather.png  "Météo de services")
 
-## Sommaire
-
-### Guide utilisateur
-
-1. [Présentation générale](#presentation-generale)
-2. [Les tuiles](#les-tuiles)
-3. [La modale](#la-modale)
-
-### Guide exploitant
-
-1. [Aide sur les variables](#aide-variables)
-2. [Paramètres du widget](#parametres-du-widget)
-
-## Guide utilisateur
+## Utilisation courante
 
 ### Présentation générale
-
-### Les tuiles
 
 La météo de services est composée de tuiles.
 
 Exemple d'une tuile :
 
-![Exemple d'une tuile - Météo de services](./img/tuile-weather.png  "Exemple d'une tuile - Météo de services")
+![Exemple d'une tuile - Météo de services](./img/exemple-tuile.png  "Exemple d'une tuile - Météo de services")
 
-Chaque tuile correspond à un service.
+Chaque **tuile** représente un [service](../../../services) et indique son état actuel, calculé en fonction des entités rattachées au service et de leur criticité.
 
-Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur le service.
+L'état est basé sur :
 
-La couleur de la tuile et une icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** du service.
+* La sévérité : sévérité calculée d'après les dépendances du service Info / Mineure / Majeure / Critique (par défaut : pire sévérité ; ou autre algorithme)
+
+ou
+
+* La priorité : produit sévérité × impact (0 à 30 avec échelle de couleurs)
+
+### Anatomie d'une tuile
+
+TODO : refaire un screen de tuile avec les détail sur chacun des paramètres
+
+#### Icônes
+
+:material-weather-cloudy:
+
+:material-account:
+
+:material-weather-sunny:
+
 
 #### Bac à alarmes
 
-Sur le partie inférieuré des tuiles, une indication "See alarms" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
+Sur le partie inférieuré des tuiles, une indication "Voir les alarmes" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
 
 #### La couleur
 
 Il est possible de définir la couleur des tuiles par criticité d'alarme (par défaut) ou par priorité de service.
 
-![](./img/color_indicator.png)
+![](./img/couleurs-tuiles.png)
 
 ##### Par criticité
 
