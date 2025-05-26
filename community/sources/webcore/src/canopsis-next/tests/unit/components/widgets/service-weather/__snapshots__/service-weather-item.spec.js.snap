@@ -22,7 +22,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
-          class="color--current-color"
+          color="white"
           top=""
         />
         <impact-state-indicator-stub
@@ -34,7 +34,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
       </div>
       <i
         aria-hidden="true"
-        class="v-icon notranslate service-weather-item__background color--current-color material-icons theme--light"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->
@@ -83,7 +83,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
         class="layout service-weather-item__toolbar pt-1 pr-1 align-center"
       >
         <c-no-events-icon-stub
-          class="color--current-color"
+          color="white"
           top=""
         />
         <impact-state-indicator-stub
@@ -99,11 +99,11 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           >
             <span
               aria-hidden="true"
-              class="v-icon notranslate theme--light"
+              class="v-icon notranslate theme--light white--text"
               style="font-size: 16px; height: 16px; width: 16px;"
             >
               <svg
-                class="v-icon__component theme--light"
+                class="v-icon__component theme--light white--text"
                 height="15"
                 style="font-size: 16px; height: 16px; width: 16px;"
                 viewBox="0 0 14 15"
@@ -126,7 +126,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light white--text"
               style="font-size: 16px;"
             >
               help
@@ -136,7 +136,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
       </div>
       <i
         aria-hidden="true"
-        class="v-icon notranslate service-weather-item__background color--current-color material-icons theme--light"
+        class="v-icon notranslate service-weather-item__background material-icons theme--light white--text"
         style="font-size: 5em;"
       />
       <!---->

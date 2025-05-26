@@ -1,6 +1,6 @@
 <template>
   <div class="impact-state-indicator">
-    <span class="impact-state-text">{{ value }}</span>
+    <span class="impact-state-text white--text">{{ value }}</span>
     <div class="pointer-wrapper">
       <div
         :style="pointerStyle"
@@ -45,7 +45,7 @@ export default {
 $fontSize: 12px;
 $fontWeight: 500;
 
-$borderColor: currentColor;
+$borderColor: white;
 $borderHeight: 5px;
 
 $sectionWidth: 1px;

@@ -29,7 +29,7 @@
         >
           <c-no-events-icon
             :value="service.idle_since"
-            class="color--current-color"
+            color="white"
             top
           />
           <impact-state-indicator
@@ -43,7 +43,7 @@
             small
             @click.stop="$emit('show:root-cause')"
           >
-            <v-icon small>
+            <v-icon color="white" small>
               $vuetify.icons.root_cause
             </v-icon>
           </v-btn>
@@ -53,20 +53,21 @@
             small
             @click.stop="showVariablesHelpModal(service)"
           >
-            <v-icon small>
+            <v-icon color="white" small>
               help
             </v-icon>
           </v-btn>
         </v-layout>
         <v-icon
-          class="service-weather-item__background color--current-color"
+          class="service-weather-item__background"
           size="5em"
+          color="white"
         >
           {{ backgroundIcon }}
         </v-icon>
         <v-icon
           v-if="secondaryIconEnabled && service.secondary_icon"
-          class="service-weather-item__secondary-icon color--current-color mb-1 mr-1"
+          class="service-weather-item__secondary-icon white-text mb-1 mr-1"
         >
           {{ service.secondary_icon }}
         </v-icon>
@@ -312,6 +313,11 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
+
+    ::v-deep hr {
+      border-color: currentColor;
+      background-color: currentColor;
+    }
   }
 
   &__background {

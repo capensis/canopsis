@@ -5,7 +5,7 @@ exports[`impact-state-indicator Renders \`impact-state-indicator\` with custom p
   class="impact-state-indicator"
 >
   <span
-    class="impact-state-text"
+    class="impact-state-text white--text"
   >
     8
   </span>
@@ -153,7 +153,7 @@ exports[`impact-state-indicator Renders \`impact-state-indicator\` with default 
   class="impact-state-indicator"
 >
   <span
-    class="impact-state-text"
+    class="impact-state-text white--text"
   >
     0
   </span>
