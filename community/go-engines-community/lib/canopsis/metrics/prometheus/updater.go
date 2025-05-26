@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/redis/go-redis/v9"
@@ -35,8 +36,14 @@ const (
 	DeclareTicketRuleLabel = "declare-ticket-rule"
 )
 
+const (
+	instrTypeLabelManual           = "manual"
+	instrTypeLabelAuto             = "auto"
+	instrTypeLabelSimplifiedManual = "simplified_manual"
+)
+
 type Updater interface {
-	Update(ctx context.Context, m *Metrics)
+	Update(ctx context.Context, m *DbCollectionsMetrics)
 }
 
 type updater struct {
@@ -54,8 +61,12 @@ type updater struct {
 	metaAlarmRulesCollection     libmongo.DbCollection
 	eventfilterFailureCollection libmongo.DbCollection
 	dynamicInfosCollection       libmongo.DbCollection
+	instructionCollection        libmongo.DbCollection
 
 	rulesLabelCollMap map[string]libmongo.DbCollection
+
+	entityTypeLabels      []string
+	instructionTypeLabels []string
 }
 
 func NewUpdater(
@@ -81,6 +92,7 @@ func NewUpdater(
 		metaAlarmRulesCollection:     client.Collection(libmongo.MetaAlarmRulesMongoCollection),
 		eventfilterFailureCollection: client.Collection(libmongo.EventFilterFailureCollection),
 		dynamicInfosCollection:       client.Collection(libmongo.DynamicInfosRulesMongoCollection),
+		instructionCollection:        client.Collection(libmongo.InstructionMongoCollection),
 
 		rulesLabelCollMap: map[string]libmongo.DbCollection{
 			DynamicInfosLabel:      client.Collection(libmongo.DynamicInfosRulesMongoCollection),
@@ -95,27 +107,55 @@ func NewUpdater(
 			ScenarioLabel:          client.Collection(libmongo.ScenarioMongoCollection),
 			DeclareTicketRuleLabel: client.Collection(libmongo.DeclareTicketRuleMongoCollection),
 		},
+
+		entityTypeLabels: []string{
+			types.EntityTypeResource,
+			types.EntityTypeComponent,
+			types.EntityTypeConnector,
+			types.EntityTypeService,
+		},
+		instructionTypeLabels: []string{
+			instrTypeLabelManual,
+			instrTypeLabelAuto,
+			instrTypeLabelSimplifiedManual,
+		},
 	}
 }
 
-func (u *updater) Update(ctx context.Context, m *Metrics) {
+func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 	u.logger.Debug().Msg("fetching metrics from the db")
 
-	metricsValues := newMetricsValues()
+	metricsValues := newDbCollectionsMetricsValues()
 
 	var wg sync.WaitGroup
 
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
+	wg.Add(len(u.entityTypeLabels))
+	for _, label := range u.entityTypeLabels {
+		go func() {
+			defer wg.Done()
 
-		count, err := u.entityMongoCollection.CountDocuments(ctx, bson.M{"enabled": true})
-		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count active entities from db")
-		}
+			count, err := u.entityMongoCollection.CountDocuments(ctx, bson.M{"enabled": true, "type": label})
+			if err != nil {
+				u.logger.Error().Err(err).Str("label", label).Msg("failed to count entities from db")
+			}
 
-		metricsValues.SetGauge(ActiveEntitiesGauge, float64(count))
-	}()
+			metricsValues.SetGaugeVector(ActiveEntitiesGaugeVector, label, float64(count))
+		}()
+	}
+
+	wg.Add(len(u.instructionTypeLabels))
+	for t, label := range u.instructionTypeLabels {
+		go func() {
+			defer wg.Done()
+
+			count, err := u.instructionCollection.CountDocuments(ctx, bson.M{"enabled": true, "type": t})
+			if err != nil {
+				u.logger.Error().Err(err).Str("label", label).Msg("failed to count instructions from db")
+			}
+
+			metricsValues.SetGaugeVector(InstructionsGaugeVector, label, float64(count))
+		}()
+	}
 
 	wg.Add(1)
 	go func() {
@@ -181,12 +221,18 @@ func (u *updater) Update(ctx context.Context, m *Metrics) {
 	go func() {
 		defer wg.Done()
 
-		count, err := u.alarmCollection.CountDocuments(ctx, bson.M{"v.resolved": nil})
+		countActive, err := u.alarmCollection.CountDocuments(ctx, bson.M{"v.resolved": nil, "v.activation_date": bson.M{"$exists": true}})
 		if err != nil {
 			u.logger.Error().Err(err).Msg("failed to count number of active alarms from db")
 		}
 
-		metricsValues.SetGauge(OpenedAlarmsGauge, float64(count))
+		countInactive, err := u.alarmCollection.CountDocuments(ctx, bson.M{"v.resolved": nil, "v.activation_date": bson.M{"$exists": false}})
+		if err != nil {
+			u.logger.Error().Err(err).Msg("failed to count number of active alarms from db")
+		}
+
+		metricsValues.SetGaugeVector(OpenedAlarmsGaugeVector, "true", float64(countActive))
+		metricsValues.SetGaugeVector(OpenedAlarmsGaugeVector, "false", float64(countInactive))
 	}()
 
 	wg.Add(1)
