@@ -8,7 +8,7 @@ La configuration HTTPS proposée dans Nginx vous permet :
 
 * de sécuriser vos échanges HTTP, ce qui est notamment recommandé si votre accès à Canopsis ne se fait pas au travers d'un intranet sécurisé ou d'un VPN ;
 * d'activer implicitement la prise en charge d'HTTP/2, pour de meilleures performances web dans certaines conditions ;
-* de bénéficier des [Websockets](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API) et donc de la fonctionnalité Healthcheck.
+* de bénéficier des [Websockets](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API) et donc de la nouvelle Healthcheck.
 
 !!! note
     Les prérequis pour ces fonctionnalités sont les suivants :
@@ -16,7 +16,7 @@ La configuration HTTPS proposée dans Nginx vous permet :
     * assigner un [FQDN](https://fr.wikipedia.org/wiki/Fully_qualified_domain_name) à votre service web Canopsis (ex : `canopsis.mon-si.fr`) ;
     * avoir un navigateur [officiellement pris en charge](../../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs) et raisonnablement récent ;
     * disposer d'au moins HTTP/1.1 et des Websockets dans ce navigateur ;
-    * disposer de TLSv1.2 ou de TLSv1.3 sur vos clients HTTPS (note : TLSv1.3 n'est pas disponible dans les paquets CentOS 7) ;
+    * disposer de TLSv1.2 ou de TLSv1.3 sur vos clients HTTPS ;
     * disposer d'OpenSSL sur votre serveur, avec ses dernières mises à jour de sécurité ;
     * utiliser une autorité de certification SSL/TLS en raccord avec les pratiques internes de votre SI (voir ci-dessous) ;
     * mettre en place une politique de renouvellement des certificats et une surveillance de leur expiration.
@@ -116,7 +116,7 @@ Notez au préalable que :
 
 === "Paquets RHEL"
 
-    Éditez le fichier `/etc/nginx/conf.d/default.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
+    Éditez le fichier `/etc/nginx/conf.d/canopsis.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
 
     ```nginx hl_lines="1 5"
     set $canopsis_server_name "canopsis.mon-si.fr";
