@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics/prometheus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -29,6 +30,8 @@ type messageProcessor struct {
 	Logger             zerolog.Logger
 
 	TechMetricsSender techmetrics.Sender
+
+	prometheusMetrics *prometheus.Metrics
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
@@ -72,6 +75,10 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.Format()
 	event.ReceivedTimestamp = datetime.NewMicroTime()
 	p.MetricsSender.SendMessageRate(time.Now(), event.EventType, event.ConnectorName)
+
+	if p.prometheusMetrics != nil {
+		p.prometheusMetrics.CounterVectorInc(prometheus.EventsRateCounter, event.EventType)
+	}
 
 	err = event.InjectExtraInfos(msg)
 	if err != nil {
