@@ -52,8 +52,6 @@ set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
 systemctl restart canopsis.service
 ```
 
-
-
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
 
 ### Mise à jour en environnement Docker Compose
