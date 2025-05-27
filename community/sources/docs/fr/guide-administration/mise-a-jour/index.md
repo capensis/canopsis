@@ -41,11 +41,6 @@ Après avoir pris en compte toute éventuelle remarque des notes de version au s
 !!! attention
     Dans le cas où des configurations spécifiques sont appliqués au travers d'un fichier `/opt/canopsis/etc/conf.d/canopsis-override.toml`. Il est nécessaire d'ajouter l'argument `-override /opt/canopsis/etc/conf.d/canopsis-override.toml` à la fin de votre commande `canopsis-reconfigure`.
 
-Après avoir pris en compte toute éventuelle remarque des notes de version au sujet de paramètres dans les fichiers de type `canopsis.toml`, appliquez les changements de configuration en fonction de votre édition de Canopsis (Community ou Pro) :
-
-!!! attention
-    Dans le cas où des configurations spécifiques sont appliqués au travers d'un fichier `/opt/canopsis/etc/conf.d/canopsis-override.toml`. Il est nécessaire d'ajouter l'argument `-override /opt/canopsis/etc/conf.d/canopsis-override.toml` à la fin de votre commande `canopsis-reconfigure`.
-
 ```sh
 set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
 /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
