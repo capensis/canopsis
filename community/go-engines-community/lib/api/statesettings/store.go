@@ -174,9 +174,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		response = nil
 
 		unset := make(bson.M)
-		if r.Method == statesetting.MethodDependencies {
+		switch r.Method {
+		case statesetting.MethodDependencies:
 			unset["inherited_entity_pattern"] = 1
-		} else if r.Method == statesetting.MethodInherited {
+		case statesetting.MethodInherited:
 			unset["state_thresholds"] = 1
 		}
 

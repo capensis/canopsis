@@ -589,11 +589,7 @@ func (w *worker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, 
 
 	start := 0
 	end := 0
-	for {
-		if end == len(writeModels) {
-			break
-		}
-
+	for end < len(writeModels) {
 		start = end
 		end = start + limit
 

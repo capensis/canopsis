@@ -1445,5 +1445,5 @@ func getDurationValue(v interface{}) (datetime.DurationWithUnit, error) {
 }
 
 func sqlQuoteString(str string) string {
-	return "'" + strings.Replace(str, "'", "''", -1) + "'"
+	return "'" + strings.ReplaceAll(str, "'", "''") + "'"
 }
