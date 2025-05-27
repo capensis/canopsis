@@ -1,4 +1,4 @@
-## :material-view-dashboard-outline: Les widgets dans Canopsis
+# :material-view-dashboard-outline: Les widgets dans Canopsis
 
 Canopsis propose de nombreux widgets pour afficher, manipuler et analyser les différentes données de supervision. Ces widgets peuvent être disposés librement dans des vues personnalisées, en fonction des besoins des utilisateurs.
 
@@ -18,11 +18,13 @@ Voici un aperçu des principaux widgets disponibles.
   Vue synthétique sous forme de tuiles de l'état des services, avec couleurs et icônes pour repérer rapidement les anomalies.  
   ![Météo des services](./meteo-des-services/img/meteo-des-services.png)
 
-- :material-calendar: __[Calendrier](stats/index.md)__  
-  Affiche une répartition du nombre d'alarmes par rapport à une période de temps (jour, mois, heure).
+- :material-calendar: __[Calendrier](calendrier/index.md)__  
+  Affiche une répartition du nombre d'alarmes par rapport à une période de temps (jour, mois, heure).  
+  ![Calendrier](./calendrier/img/calendrier.png)
 
 - :material-text-box-outline: __[Texte](texte/index.md)__  
-  Affiche du texte à partir d'un modèle.
+  Affiche du texte à partir d'un modèle.  
+  ![Texte](./texte/img/texte.png)
 
 - :material-counter: __[Compteur](compteur/index.md)__  
   Affiche des compteurs d'alarmes sous forme de tuiles selon des seuils définis. Tuiles colorées pour une lecture rapide.  
