@@ -41,11 +41,11 @@ Après avoir pris en compte toute éventuelle remarque des notes de version au s
 !!! attention
     Dans le cas où des configurations spécifiques sont appliqués au travers d'un fichier `/opt/canopsis/etc/conf.d/canopsis-override.toml`. Il est nécessaire d'ajouter l'argument `-override /opt/canopsis/etc/conf.d/canopsis-override.toml` à la fin de votre commande `canopsis-reconfigure`.
 
-    ```sh
-    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
-    systemctl restart canopsis.service
-    ```
+```sh
+set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+/opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
+systemctl restart canopsis.service
+```
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
 
