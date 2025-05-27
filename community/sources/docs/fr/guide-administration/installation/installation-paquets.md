@@ -97,223 +97,113 @@ systemctl enable --now disable-transparent-huge-pages
 
 ### Ajout des dépôts tiers
 
-=== "RHEL 8"
+Ajout du dépôt pour PostgreSQL :
 
-    Ajout du dépôt pour PostgreSQL :
+```sh
+dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(cat /etc/redhat-release | cut -d'.' -f1 | awk '{print $NF}')-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+```
 
-    ```sh
-    dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-    ```
+Ajout du dépôt pour MongoDB :
 
-    Ajout du dépôt pour MongoDB :
+```sh
+cat << EOF > /etc/yum.repos.d/mongodb-org-7.0.repo
+[mongodb-org-7.0]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/7.0/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
+EOF
+```
 
-    ```sh
-    cat << EOF > /etc/yum.repos.d/mongodb-org-7.0.repo
-    [mongodb-org-7.0]
-    name=MongoDB Repository
-    baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/7.0/x86_64/
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
-    EOF
-    ```
+Ajout du dépôt pour RabbitMQ :
 
-    Ajout du dépôt pour RabbitMQ :
+```sh
+## primary RabbitMQ signing key
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
+## modern Erlang repository
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
+## RabbitMQ server repository
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
+```
+```sh
+cat << EOF > /etc/yum.repos.d/rabbitmq.repo
+##
+## Zero dependency Erlang RPM
+##
 
-    ```sh
-    ## primary RabbitMQ signing key
-    rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
-    ## modern Erlang repository
-    rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
-    ## RabbitMQ server repository
-    rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
+[modern-erlang]
+name=modern-erlang
+# Use a set of mirrors maintained by the RabbitMQ core team.
+# The mirrors have significantly higher bandwidth quotas.
+baseurl=https://yum1.rabbitmq.com/erlang/el/\$releasever/\$basearch
+        https://yum2.rabbitmq.com/erlang/el/\$releasever/\$basearch
+repo_gpgcheck=1
+enabled=1
+gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
+gpgcheck=1
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+pkg_gpgcheck=1
+autorefresh=1
+type=rpm-md
 
-    cat << EOF > /etc/yum.repos.d/rabbitmq.repo
-    ##
-    ## Zero dependency Erlang RPM
-    ##
+##
+## RabbitMQ Server
+##
 
-    [modern-erlang]
-    name=modern-erlang-el8
-    # Use a set of mirrors maintained by the RabbitMQ core team.
-    # The mirrors have significantly higher bandwidth quotas.
-    baseurl=https://yum1.novemberain.com/erlang/el/8/\$basearch
-            https://yum2.novemberain.com/erlang/el/8/\$basearch
-    repo_gpgcheck=1
-    enabled=1
-    gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
-    gpgcheck=1
-    sslverify=1
-    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-    metadata_expire=300
-    pkg_gpgcheck=1
-    autorefresh=1
-    type=rpm-md
+[rabbitmq-noarch]
+name=rabbitmq-noarch
+baseurl=https://yum2.rabbitmq.com/rabbitmq/el/\$releasever/noarch
+        https://yum1.rabbitmq.com/rabbitmq/el/\$releasever/noarch
+repo_gpgcheck=1
+enabled=1
+# Cloudsmith's repository key and RabbitMQ package signing key
+gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
+    https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
+gpgcheck=1
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+pkg_gpgcheck=1
+autorefresh=1
+type=rpm-md
+EOF
+```
 
-    ##
-    ## RabbitMQ Server
-    ##
+Ajout du dépôt pour TimescaleDB :
 
-    [rabbitmq-el8-noarch]
-    name=rabbitmq-el8-noarch
-    baseurl=https://yum1.rabbitmq.com/erlang/el/8/SRPMS
-            https://yum2.rabbitmq.com/erlang/el/8/SRPMS
-    repo_gpgcheck=1
-    enabled=1
-    # Cloudsmith's repository key and RabbitMQ package signing key
-    gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
-        https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
-    gpgcheck=1
-    sslverify=1
-    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-    metadata_expire=300
-    pkg_gpgcheck=1
-    autorefresh=1
-    type=rpm-md
-    EOF
-    ```
+```sh
+cat << EOF > /etc/yum.repos.d/timescale_timescaledb.repo
+[timescale_timescaledb]
+name=timescale_timescaledb
+baseurl=https://packagecloud.io/timescale/timescaledb/el/\$releasever/\$basearch
+repo_gpgcheck=1
+# TimescaleDB doesn’t sign all its packages
+gpgcheck=0
+enabled=1
+gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
+sslverify=1
+sslcacert=/etc/pki/tls/certs/ca-bundle.crt
+metadata_expire=300
+EOF
+```
 
-    Ajout du dépôt pour TimescaleDB :
+Ajout des dépôts pour nginx : 
 
-    ```sh
-    cat << EOF > /etc/yum.repos.d/timescale_timescaledb.repo
-    [timescale_timescaledb]
-    name=timescale_timescaledb
-    baseurl=https://packagecloud.io/timescale/timescaledb/el/8/\$basearch
-    repo_gpgcheck=1
-    # TimescaleDB doesn’t sign all its packages
-    gpgcheck=0
-    enabled=1
-    gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
-    sslverify=1
-    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-    metadata_expire=300
-    EOF
-    ```
-
-    Ajout des dépôts pour nginx : 
-
-    ```sh
-    cat << EOF > /etc/yum.repos.d/nginx-stable.repo
-    [nginx-stable]
-    name=nginx stable repo
-    baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
-    repo_gpgcheck=1
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://nginx.org/keys/nginx_signing.key
-    module_hotfixes=true
-    EOF
-    ```
-
-=== "RHEL 9"
-
-    Ajout du dépôt pour PostgreSQL :
-
-    ```sh
-    dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm
-    ```
-
-    Ajout du dépôt pour MongoDB :
-
-    ```sh
-    cat << EOF > /etc/yum.repos.d/mongodb-org-7.0.repo
-    [mongodb-org-7.0]
-    name=MongoDB Repository
-    baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/7.0/x86_64/
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
-    EOF
-    ```
-
-    Ajout du dépôt pour RabbitMQ :
-
-    ```sh
-    ## primary RabbitMQ signing key
-    rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
-    ## modern Erlang repository
-    rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
-    ## RabbitMQ server repository
-    rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
-
-    cat << EOF > /etc/yum.repos.d/rabbitmq.repo
-    ##
-    ## Zero dependency Erlang RPM
-    ##
-
-    [modern-erlang]
-    name=modern-erlang-el9
-    # Use a set of mirrors maintained by the RabbitMQ core team.
-    # The mirrors have significantly higher bandwidth quotas.
-    baseurl=https://yum1.rabbitmq.com/erlang/el/9/\$basearch
-            https://yum2.rabbitmq.com/erlang/el/9/\$basearch
-    repo_gpgcheck=1
-    enabled=1
-    gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
-    gpgcheck=1
-    sslverify=1
-    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-    metadata_expire=300
-    pkg_gpgcheck=1
-    autorefresh=1
-    type=rpm-md
-
-    ##
-    ## RabbitMQ Server
-    ##
-
-    [rabbitmq-el9-noarch]
-    name=rabbitmq-el9-noarch
-    baseurl=https://yum1.rabbitmq.com/erlang/el/9/noarch
-            https://yum2.rabbitmq.com/erlang/el/9/noarch
-    repo_gpgcheck=1
-    enabled=1
-    # Cloudsmith's repository key and RabbitMQ package signing key
-    gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key
-        https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc
-    gpgcheck=1
-    sslverify=1
-    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-    metadata_expire=300
-    pkg_gpgcheck=1
-    autorefresh=1
-    type=rpm-md
-    EOF
-    ```
-
-    Ajout du dépôt pour TimescaleDB :
-
-    ```sh
-    cat << EOF > /etc/yum.repos.d/timescale_timescaledb.repo
-    [timescale_timescaledb]
-    name=timescale_timescaledb
-    baseurl=https://packagecloud.io/timescale/timescaledb/el/9/\$basearch
-    repo_gpgcheck=1
-    # TimescaleDB doesn’t sign all its packages
-    gpgcheck=0
-    enabled=1
-    gpgkey=https://packagecloud.io/timescale/timescaledb/gpgkey
-    sslverify=1
-    sslcacert=/etc/pki/tls/certs/ca-bundle.crt
-    metadata_expire=300
-    EOF
-    ```
-
-    Ajout des dépôts pour nginx : 
-
-    ```sh
-    cat << EOF > /etc/yum.repos.d/nginx-stable.repo
-    [nginx-stable]
-    name=nginx stable repo
-    baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
-    repo_gpgcheck=1
-    gpgcheck=1
-    enabled=1
-    gpgkey=https://nginx.org/keys/nginx_signing.key
-    module_hotfixes=true
-    EOF
-    ```
+```sh
+cat << EOF > /etc/yum.repos.d/nginx-stable.repo
+[nginx-stable]
+name=nginx stable repo
+baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/
+repo_gpgcheck=1
+gpgcheck=1
+enabled=1
+gpgkey=https://nginx.org/keys/nginx_signing.key
+module_hotfixes=true
+EOF
+```
 
 ### Configuration des dépôts
 
@@ -358,7 +248,7 @@ dnf module disable nginx php
 
     ```sh
     dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1 
-    dnf install erlang rabbitmq-server
+    dnf install erlang-26.2.5.6 rabbitmq-server-3.12.13
     ```
 
     Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
@@ -691,7 +581,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     ```sh
     dnf makecache
-    dnf install canopsis
+    dnf install canopsis-24.10.1
     ```
 
 === "Canopsis Pro (souscription commerciale)"
@@ -745,7 +635,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     ```sh
     dnf makecache
-    dnf install canopsis-pro
+    dnf install canopsis-pro-24.10.1
     ```
 
 ## Initialisation de Canopsis
@@ -841,7 +731,7 @@ Installer le paquet :
     Le package `canopsis-webui` est disponible pour EL9 uniquement à partir de la version 24.04.2 !
 
 ```sh
-dnf install canopsis-webui
+dnf install canopsis-webui-24.10.1
 ```
 
 Activation de https dans Canopsis:
