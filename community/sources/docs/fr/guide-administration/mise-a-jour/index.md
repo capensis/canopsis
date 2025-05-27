@@ -41,21 +41,18 @@ Après avoir pris en compte toute éventuelle remarque des notes de version au s
 !!! attention
     Dans le cas où des configurations spécifiques sont appliqués au travers d'un fichier `/opt/canopsis/etc/conf.d/canopsis-override.toml`. Il est nécessaire d'ajouter l'argument `-override /opt/canopsis/etc/conf.d/canopsis-override.toml` à la fin de votre commande `canopsis-reconfigure`.
 
-=== "Canopsis Community"
+Après avoir pris en compte toute éventuelle remarque des notes de version au sujet de paramètres dans les fichiers de type `canopsis.toml`, appliquez les changements de configuration en fonction de votre édition de Canopsis (Community ou Pro) :
 
-    ```sh
-    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -edition community -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
-    systemctl restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service
-    ```
+!!! attention
+    Dans le cas où des configurations spécifiques sont appliqués au travers d'un fichier `/opt/canopsis/etc/conf.d/canopsis-override.toml`. Il est nécessaire d'ajouter l'argument `-override /opt/canopsis/etc/conf.d/canopsis-override.toml` à la fin de votre commande `canopsis-reconfigure`.
 
-=== "Canopsis Pro"
+```sh
+set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
+/opt/canopsis/bin/canopsis-reconfigure -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
+systemctl restart canopsis.service
+```
 
-    ```sh
-    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
-    /opt/canopsis/bin/canopsis-reconfigure -edition pro -migrate-postgres=true -migrate-mongo=true -migrate-tech-postgres
-    systemctl restart canopsis-engine-go@engine-action canopsis-engine-go@engine-axe canopsis-engine-go@engine-che.service canopsis-engine-go@engine-correlation.service canopsis-engine-go@engine-dynamic-infos.service canopsis-engine-go@engine-fifo.service canopsis-engine-go@engine-pbehavior.service canopsis-engine-go@engine-service.service canopsis-service@canopsis-api.service canopsis-engine-go@engine-remediation canopsis-engine-go@engine-webhook
-    ```
+
 
 Ne pas oublier d'appliquer toute éventuelle procédure supplémentaire décrite dans chacune des [notes de version](../../index.md#notes-de-version) qui vous concerne.
 
