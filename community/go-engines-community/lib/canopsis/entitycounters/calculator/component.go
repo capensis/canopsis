@@ -248,17 +248,18 @@ func (s *componentCountersCalculator) calculateCounters(
 
 	// todo: garbage condition, but it works, is it possible to simplify?
 	if calcData.AlarmExists && calcData.PrevActive {
-		if alarmChange.Type == types.AlarmChangeTypeStateDecrease ||
-			alarmChange.Type == types.AlarmChangeTypeStateIncrease ||
-			alarmChange.Type == types.AlarmChangeTypeChangeState {
+		switch alarmChange.Type {
+		case types.AlarmChangeTypeStateDecrease,
+			types.AlarmChangeTypeStateIncrease,
+			types.AlarmChangeTypeChangeState:
 			if calcData.CurActive {
 				calcData.PrevState = int(alarmChange.PreviousState)
 			}
-		} else if alarmChange.Type == types.AlarmChangeTypeResolve {
+		case types.AlarmChangeTypeResolve:
 			if calcData.CurActive {
 				calcData.PrevState = int(alarm.CurrentState())
 			}
-		} else {
+		default:
 			calcData.PrevState = int(alarm.CurrentState())
 		}
 	}
