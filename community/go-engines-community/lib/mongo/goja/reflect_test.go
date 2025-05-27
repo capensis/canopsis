@@ -92,7 +92,7 @@ func getTestTransformOptionsDataSet() []struct {
 	Expected    testOptions
 	ExpectedErr string
 } {
-	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local)
+	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local) //nolint:gosmopolitan
 	if err != nil {
 		panic(err)
 	}
@@ -158,7 +158,7 @@ func getTestTransformValueDataSet() []struct {
 	Expected    any
 	ExpectedErr string
 } {
-	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local)
+	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local) //nolint:gosmopolitan
 	if err != nil {
 		panic(err)
 	}
