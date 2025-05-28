@@ -238,22 +238,18 @@ func (m *DbCollectionsMetrics) Collect(ch chan<- prometheus.Metric) {
 
 func (m *DbCollectionsMetrics) Set(value *DbCollectionsMetricsValue) {
 	m.collUpdMx.Lock()
+	defer m.collUpdMx.Unlock()
+
 	value.gaugesMx.Lock()
-	value.gaugeVectorsMx.Lock()
-
-	defer func() {
-		m.collUpdMx.Unlock()
-		value.gaugesMx.Unlock()
-		value.gaugeVectorsMx.Unlock()
-	}()
-
 	for k, v := range value.gauges {
 		gauge, ok := m.gauges[k]
 		if ok {
 			gauge.Set(v)
 		}
 	}
+	value.gaugesMx.Unlock()
 
+	value.gaugeVectorsMx.Lock()
 	for k, v := range value.gaugeVectors {
 		gaugeVector, ok := m.gaugeVectors[k]
 		if ok {
@@ -262,6 +258,7 @@ func (m *DbCollectionsMetrics) Set(value *DbCollectionsMetricsValue) {
 			}
 		}
 	}
+	value.gaugeVectorsMx.Unlock()
 }
 
 type DbCollectionsMetricsValue struct {
