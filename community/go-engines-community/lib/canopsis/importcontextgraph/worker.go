@@ -588,14 +588,9 @@ func (w *worker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, 
 	var updated, deleted int64
 
 	start := 0
-	end := 0
-	for end < len(writeModels) {
+	for end := 0; end < len(writeModels); {
 		start = end
-		end = start + limit
-
-		if end > len(writeModels) {
-			end = len(writeModels)
-		}
+		end = min(start+limit, len(writeModels))
 
 		bulkSize := 0
 		for i := start; i < end; i++ {
