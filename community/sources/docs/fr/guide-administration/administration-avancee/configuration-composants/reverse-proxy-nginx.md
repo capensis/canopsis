@@ -10,7 +10,6 @@ Ce fichier de configuration évolue lors des mises à jour de Canopsis.
 
 Actuellement, cette configuration apporte :
 
-* un accès unique à l'interface Canopsis par le port HTTP `80` standard ;
 * un relais vers les API REST fournies par `canopsis-api` ;
 * une mise en cache de certains éléments (fichiers CSS, fichiers JavaScript, images), afin d'améliorer le temps de chargement de l'interface ;
 * une compression à la volée de la plupart des ressources, afin d'en accélérer le téléchargement dans les navigateurs ;
