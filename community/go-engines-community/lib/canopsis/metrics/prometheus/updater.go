@@ -136,7 +136,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 			count, err := u.entityMongoCollection.CountDocuments(ctx, bson.M{"enabled": true, "type": label})
 			if err != nil {
-				u.logger.Error().Err(err).Str("label", label).Msg("failed to count entities from db")
+				u.logger.Err(err).Str("label", label).Msg("failed to count entities from db")
 			}
 
 			metricsValues.SetGaugeVector(ActiveEntitiesGaugeVector, label, float64(count))
@@ -150,7 +150,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 			count, err := u.instructionCollection.CountDocuments(ctx, bson.M{"enabled": true, "type": t})
 			if err != nil {
-				u.logger.Error().Err(err).Str("label", label).Msg("failed to count instructions from db")
+				u.logger.Err(err).Str("label", label).Msg("failed to count instructions from db")
 			}
 
 			metricsValues.SetGaugeVector(InstructionsGaugeVector, label, float64(count))
@@ -163,7 +163,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.entityMongoCollection.CountDocuments(ctx, bson.M{"enabled": false})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of disabled entities from db")
+			u.logger.Err(err).Msg("failed to count number of disabled entities from db")
 		}
 
 		metricsValues.SetGauge(DisabledEntitiesGauge, float64(count))
@@ -175,7 +175,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.userCollection.CountDocuments(ctx, bson.M{"enable": true})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of active users from db")
+			u.logger.Err(err).Msg("failed to count number of active users from db")
 		}
 
 		metricsValues.SetGauge(EnabledUsersGauge, float64(count))
@@ -187,7 +187,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.eventfilterCollection.CountDocuments(ctx, bson.M{"enabled": true})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of event filter rules from db")
+			u.logger.Err(err).Msg("failed to count number of event filter rules from db")
 		}
 
 		metricsValues.SetGauge(EventFiltersGauge, float64(count))
@@ -199,7 +199,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.metaAlarmRulesCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of meta alarm rules from db")
+			u.logger.Err(err).Msg("failed to count number of meta alarm rules from db")
 		}
 
 		metricsValues.SetGauge(MetaAlarmsRulesGauge, float64(count))
@@ -211,7 +211,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.dynamicInfosCollection.CountDocuments(ctx, bson.M{"enabled": true})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of dynamic infos rules from db")
+			u.logger.Err(err).Msg("failed to count number of dynamic infos rules from db")
 		}
 
 		metricsValues.SetGauge(DynamicInfosRulesGauge, float64(count))
@@ -223,12 +223,12 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		countActive, err := u.alarmCollection.CountDocuments(ctx, bson.M{"v.resolved": nil, "v.activation_date": bson.M{"$exists": true}})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of active alarms from db")
+			u.logger.Err(err).Msg("failed to count number of active alarms from db")
 		}
 
 		countInactive, err := u.alarmCollection.CountDocuments(ctx, bson.M{"v.resolved": nil, "v.activation_date": bson.M{"$exists": false}})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of active alarms from db")
+			u.logger.Err(err).Msg("failed to count number of active alarms from db")
 		}
 
 		metricsValues.SetGaugeVector(OpenedAlarmsGaugeVector, "true", float64(countActive))
@@ -241,7 +241,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.resolvedAlarmCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to count number of closed alarms from db")
+			u.logger.Err(err).Msg("failed to count number of closed alarms from db")
 		}
 
 		metricsValues.SetGauge(ResolvedAlarmsGauge, float64(count))
@@ -253,7 +253,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.eventfilterFailureCollection.CountDocuments(ctx, bson.M{})
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to get event filter failures from db")
+			u.logger.Err(err).Msg("failed to get event filter failures from db")
 		}
 
 		metricsValues.SetGauge(EventfilterErrorsGauge, float64(count))
@@ -265,7 +265,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		count, err := u.websocketStore.GetActiveConnections(ctx)
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to get active connections")
+			u.logger.Err(err).Msg("failed to get active connections")
 		}
 
 		metricsValues.SetGauge(UserConnectionsGauge, float64(count))
@@ -277,12 +277,12 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 
 		cfg, err := u.healthCheckAdapter.GetConfig(ctx)
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to get healthcheck config")
+			u.logger.Err(err).Msg("failed to get healthcheck config")
 		}
 
 		runInfo, err := u.runInfoManager.GetEngines(ctx)
 		if err != nil {
-			u.logger.Error().Err(err).Msg("failed to get engines run info")
+			u.logger.Err(err).Msg("failed to get engines run info")
 		}
 
 		runInfoMap := make(map[string]bool, len(runInfo))
@@ -324,7 +324,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 		for {
 			res := u.pbhRedisClient.Scan(ctx, cursor, libredis.PbehaviorComputedKey+"*", redisStep)
 			if err := res.Err(); err != nil {
-				u.logger.Error().Err(err).Msg("cannot scan active pbehavior keys")
+				u.logger.Err(err).Msg("cannot scan active pbehavior keys")
 				break
 			}
 
@@ -357,7 +357,7 @@ func (u *updater) Update(ctx context.Context, m *DbCollectionsMetrics) {
 			err := coll.FindOne(ctx, bson.M{}, opts).Decode(&doc)
 			if err != nil {
 				if !errors.Is(err, mongo.ErrNoDocuments) {
-					u.logger.Error().Err(err).Msgf("failed to get latest update timestamp for %s", label)
+					u.logger.Err(err).Msgf("failed to get latest update timestamp for %s", label)
 				}
 			} else {
 				val = doc.Updated
