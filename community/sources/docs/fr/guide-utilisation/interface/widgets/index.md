@@ -34,7 +34,8 @@ Voici un aperçu des principaux widgets disponibles.
   Affiche les résultats de tests automatisés formatés en XML JUnit.
 
 - :material-map-outline: __[Cartographie](cartographie/index.md)__  
-  Affiche les alarmes sous forme de cartes géographiques, logiques ou arborescentes.
+  Affiche les alarmes sous forme de cartes géographiques, logiques ou arborescentes.  
+  ![Cartographie](./cartographie/img/cartographie.png)
 
 - :material-calendar-clock: __[Disponibilité](disponibilite/index.md)__  
   Présente les temps de disponibilité ou d'indisponibilité des entités sur une période définie.  
