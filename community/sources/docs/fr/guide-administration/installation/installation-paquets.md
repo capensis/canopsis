@@ -137,8 +137,8 @@ cat << EOF > /etc/yum.repos.d/rabbitmq.repo
 name=modern-erlang-el8
 # Use a set of mirrors maintained by the RabbitMQ core team.
 # The mirrors have significantly higher bandwidth quotas.
-baseurl=https://yum1.rabbitmq.com/erlang/el/8/$basearch
-        https://yum2.rabbitmq.com/erlang/el/8/$basearch
+baseurl=https://yum1.rabbitmq.com/erlang/el/\$releasever/\$basearch
+        https://yum2.rabbitmq.com/erlang/el/\$releasever/\$basearch
 repo_gpgcheck=1
 enabled=1
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
@@ -156,8 +156,8 @@ type=rpm-md
 
 [rabbitmq-el8-noarch]
 name=rabbitmq-el8-noarch
-baseurl=https://yum2.rabbitmq.com/rabbitmq/el/8/noarch
-        https://yum1.rabbitmq.com/rabbitmq/el/8/noarch
+baseurl=https://yum2.rabbitmq.com/rabbitmq/el/\$releasever/noarch
+        https://yum1.rabbitmq.com/rabbitmq/el/\$releasever/noarch
 repo_gpgcheck=1
 enabled=1
 # Cloudsmith's repository key and RabbitMQ package signing key
@@ -179,7 +179,7 @@ Ajout du dépôt pour TimescaleDB :
 cat << EOF > /etc/yum.repos.d/timescale_timescaledb.repo
 [timescale_timescaledb]
 name=timescale_timescaledb
-baseurl=https://packagecloud.io/timescale/timescaledb/el/8/\$basearch
+baseurl=https://packagecloud.io/timescale/timescaledb/el/\$releasever/\$basearch
 repo_gpgcheck=1
 # TimescaleDB doesn’t sign all its packages
 gpgcheck=0
@@ -575,7 +575,7 @@ dnf install canopsis-webui-24.04.7
 
 Activation de https dans Canopsis:
 
-Une configuration HTTPS est proposée avec Nginx, mais elle n'est cependant pas encore activée par défaut.  
+Une configuration HTTPS est proposée avec Nginx, elle est nécessaire pour avoir accès à toutes les fonctionnalités de Canopsis.  
 Vous pouvez suivre la procédure suivante: [activation de https dans Canopsis](../administration-avancee/configuration-composants/reverse-proxy-nginx-https.md)
 
 Activer et démarrer Nginx :
