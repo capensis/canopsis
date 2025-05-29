@@ -7,8 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"github.com/kylelemons/godebug/pretty"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func TestEventPatternToMongoQuery(t *testing.T) {
@@ -17,7 +16,7 @@ func TestEventPatternToMongoQuery(t *testing.T) {
 		t.Fatalf("invalid regexp condition: %v", err)
 	}
 
-	f := func(pattern pattern.Event, expectedQuery primitive.M, expectedError error) {
+	f := func(pattern pattern.Event, expectedQuery bson.M, expectedError error) {
 		t.Helper()
 
 		mongoQuery, err := db.EventPatternToMongoQuery(pattern, "event")
