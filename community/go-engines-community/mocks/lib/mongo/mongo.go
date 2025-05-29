@@ -15,10 +15,10 @@ import (
 	time "time"
 
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	bson "go.mongodb.org/mongo-driver/bson"
-	mongo0 "go.mongodb.org/mongo-driver/mongo"
-	options "go.mongodb.org/mongo-driver/mongo/options"
-	readpref "go.mongodb.org/mongo-driver/mongo/readpref"
+	bson "go.mongodb.org/mongo-driver/v2/bson"
+	mongo0 "go.mongodb.org/mongo-driver/v2/mongo"
+	options "go.mongodb.org/mongo-driver/v2/mongo/options"
+	readpref "go.mongodb.org/mongo-driver/v2/mongo/readpref"
 	gomock "go.uber.org/mock/gomock"
 )
 
@@ -47,7 +47,7 @@ func (m *MockDbCollection) EXPECT() *MockDbCollectionMockRecorder {
 }
 
 // Aggregate mocks base method.
-func (m *MockDbCollection) Aggregate(ctx context.Context, pipeline any, opts ...*options.AggregateOptions) (mongo.Cursor, error) {
+func (m *MockDbCollection) Aggregate(ctx context.Context, pipeline any, opts ...options.Lister[options.AggregateOptions]) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, pipeline}
 	for _, a := range opts {
@@ -67,7 +67,7 @@ func (mr *MockDbCollectionMockRecorder) Aggregate(ctx, pipeline any, opts ...any
 }
 
 // BulkWrite mocks base method.
-func (m *MockDbCollection) BulkWrite(ctx context.Context, models []mongo0.WriteModel, opts ...*options.BulkWriteOptions) (*mongo0.BulkWriteResult, error) {
+func (m *MockDbCollection) BulkWrite(ctx context.Context, models []mongo0.WriteModel, opts ...options.Lister[options.BulkWriteOptions]) (*mongo0.BulkWriteResult, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, models}
 	for _, a := range opts {
@@ -87,7 +87,7 @@ func (mr *MockDbCollectionMockRecorder) BulkWrite(ctx, models any, opts ...any) 
 }
 
 // CountDocuments mocks base method.
-func (m *MockDbCollection) CountDocuments(ctx context.Context, filter any, opts ...*options.CountOptions) (int64, error) {
+func (m *MockDbCollection) CountDocuments(ctx context.Context, filter any, opts ...options.Lister[options.CountOptions]) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter}
 	for _, a := range opts {
@@ -107,7 +107,7 @@ func (mr *MockDbCollectionMockRecorder) CountDocuments(ctx, filter any, opts ...
 }
 
 // DeleteMany mocks base method.
-func (m *MockDbCollection) DeleteMany(ctx context.Context, filter any, opts ...*options.DeleteOptions) (int64, error) {
+func (m *MockDbCollection) DeleteMany(ctx context.Context, filter any, opts ...options.Lister[options.DeleteManyOptions]) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter}
 	for _, a := range opts {
@@ -127,7 +127,7 @@ func (mr *MockDbCollectionMockRecorder) DeleteMany(ctx, filter any, opts ...any)
 }
 
 // DeleteOne mocks base method.
-func (m *MockDbCollection) DeleteOne(ctx context.Context, filter any, opts ...*options.DeleteOptions) (int64, error) {
+func (m *MockDbCollection) DeleteOne(ctx context.Context, filter any, opts ...options.Lister[options.DeleteOneOptions]) (int64, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter}
 	for _, a := range opts {
@@ -147,16 +147,15 @@ func (mr *MockDbCollectionMockRecorder) DeleteOne(ctx, filter any, opts ...any) 
 }
 
 // Distinct mocks base method.
-func (m *MockDbCollection) Distinct(ctx context.Context, fieldName string, filter any, opts ...*options.DistinctOptions) ([]any, error) {
+func (m *MockDbCollection) Distinct(ctx context.Context, fieldName string, filter any, opts ...options.Lister[options.DistinctOptions]) *mongo0.DistinctResult {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, fieldName, filter}
 	for _, a := range opts {
 		varargs = append(varargs, a)
 	}
 	ret := m.ctrl.Call(m, "Distinct", varargs...)
-	ret0, _ := ret[0].([]any)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret0, _ := ret[0].(*mongo0.DistinctResult)
+	return ret0
 }
 
 // Distinct indicates an expected call of Distinct.
@@ -181,7 +180,7 @@ func (mr *MockDbCollectionMockRecorder) Drop(ctx any) *gomock.Call {
 }
 
 // Find mocks base method.
-func (m *MockDbCollection) Find(ctx context.Context, filter any, opts ...*options.FindOptions) (mongo.Cursor, error) {
+func (m *MockDbCollection) Find(ctx context.Context, filter any, opts ...options.Lister[options.FindOptions]) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter}
 	for _, a := range opts {
@@ -201,7 +200,7 @@ func (mr *MockDbCollectionMockRecorder) Find(ctx, filter any, opts ...any) *gomo
 }
 
 // FindOne mocks base method.
-func (m *MockDbCollection) FindOne(ctx context.Context, filter any, opts ...*options.FindOneOptions) mongo.SingleResultHelper {
+func (m *MockDbCollection) FindOne(ctx context.Context, filter any, opts ...options.Lister[options.FindOneOptions]) mongo.SingleResultHelper {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter}
 	for _, a := range opts {
@@ -220,7 +219,7 @@ func (mr *MockDbCollectionMockRecorder) FindOne(ctx, filter any, opts ...any) *g
 }
 
 // FindOneAndDelete mocks base method.
-func (m *MockDbCollection) FindOneAndDelete(ctx context.Context, filter any, opts ...*options.FindOneAndDeleteOptions) mongo.SingleResultHelper {
+func (m *MockDbCollection) FindOneAndDelete(ctx context.Context, filter any, opts ...options.Lister[options.FindOneAndDeleteOptions]) mongo.SingleResultHelper {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter}
 	for _, a := range opts {
@@ -239,7 +238,7 @@ func (mr *MockDbCollectionMockRecorder) FindOneAndDelete(ctx, filter any, opts .
 }
 
 // FindOneAndReplace mocks base method.
-func (m *MockDbCollection) FindOneAndReplace(ctx context.Context, filter, replacement any, opts ...*options.FindOneAndReplaceOptions) mongo.SingleResultHelper {
+func (m *MockDbCollection) FindOneAndReplace(ctx context.Context, filter, replacement any, opts ...options.Lister[options.FindOneAndReplaceOptions]) mongo.SingleResultHelper {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter, replacement}
 	for _, a := range opts {
@@ -258,7 +257,7 @@ func (mr *MockDbCollectionMockRecorder) FindOneAndReplace(ctx, filter, replaceme
 }
 
 // FindOneAndUpdate mocks base method.
-func (m *MockDbCollection) FindOneAndUpdate(ctx context.Context, filter, update any, opts ...*options.FindOneAndUpdateOptions) mongo.SingleResultHelper {
+func (m *MockDbCollection) FindOneAndUpdate(ctx context.Context, filter, update any, opts ...options.Lister[options.FindOneAndUpdateOptions]) mongo.SingleResultHelper {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter, update}
 	for _, a := range opts {
@@ -291,7 +290,7 @@ func (mr *MockDbCollectionMockRecorder) Indexes() *gomock.Call {
 }
 
 // InsertMany mocks base method.
-func (m *MockDbCollection) InsertMany(ctx context.Context, documents []any, opts ...*options.InsertManyOptions) ([]any, error) {
+func (m *MockDbCollection) InsertMany(ctx context.Context, documents []any, opts ...options.Lister[options.InsertManyOptions]) ([]any, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, documents}
 	for _, a := range opts {
@@ -311,7 +310,7 @@ func (mr *MockDbCollectionMockRecorder) InsertMany(ctx, documents any, opts ...a
 }
 
 // InsertOne mocks base method.
-func (m *MockDbCollection) InsertOne(ctx context.Context, document any, opts ...*options.InsertOneOptions) (any, error) {
+func (m *MockDbCollection) InsertOne(ctx context.Context, document any, opts ...options.Lister[options.InsertOneOptions]) (any, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, document}
 	for _, a := range opts {
@@ -345,7 +344,7 @@ func (mr *MockDbCollectionMockRecorder) Name() *gomock.Call {
 }
 
 // ReplaceOne mocks base method.
-func (m *MockDbCollection) ReplaceOne(ctx context.Context, filter, replacement any, opts ...*options.ReplaceOptions) (*mongo0.UpdateResult, error) {
+func (m *MockDbCollection) ReplaceOne(ctx context.Context, filter, replacement any, opts ...options.Lister[options.ReplaceOptions]) (*mongo0.UpdateResult, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter, replacement}
 	for _, a := range opts {
@@ -365,7 +364,7 @@ func (mr *MockDbCollectionMockRecorder) ReplaceOne(ctx, filter, replacement any,
 }
 
 // UpdateMany mocks base method.
-func (m *MockDbCollection) UpdateMany(ctx context.Context, filter, update any, opts ...*options.UpdateOptions) (*mongo0.UpdateResult, error) {
+func (m *MockDbCollection) UpdateMany(ctx context.Context, filter, update any, opts ...options.Lister[options.UpdateManyOptions]) (*mongo0.UpdateResult, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter, update}
 	for _, a := range opts {
@@ -385,7 +384,7 @@ func (mr *MockDbCollectionMockRecorder) UpdateMany(ctx, filter, update any, opts
 }
 
 // UpdateOne mocks base method.
-func (m *MockDbCollection) UpdateOne(ctx context.Context, filter, update any, opts ...*options.UpdateOptions) (*mongo0.UpdateResult, error) {
+func (m *MockDbCollection) UpdateOne(ctx context.Context, filter, update any, opts ...options.Lister[options.UpdateOneOptions]) (*mongo0.UpdateResult, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter, update}
 	for _, a := range opts {
@@ -405,7 +404,7 @@ func (mr *MockDbCollectionMockRecorder) UpdateOne(ctx, filter, update any, opts 
 }
 
 // Watch mocks base method.
-func (m *MockDbCollection) Watch(ctx context.Context, pipeline any, opts ...*options.ChangeStreamOptions) (mongo.ChangeStream, error) {
+func (m *MockDbCollection) Watch(ctx context.Context, pipeline any, opts ...options.Lister[options.ChangeStreamOptions]) (mongo.ChangeStream, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, pipeline}
 	for _, a := range opts {
@@ -463,7 +462,7 @@ func (mr *MockDbClientMockRecorder) Collection(arg0 any) *gomock.Call {
 }
 
 // CreateCollection mocks base method.
-func (m *MockDbClient) CreateCollection(ctx context.Context, name string, opts ...*options.CreateCollectionOptions) error {
+func (m *MockDbClient) CreateCollection(ctx context.Context, name string, opts ...options.Lister[options.CreateCollectionOptions]) error {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, name}
 	for _, a := range opts {
@@ -495,22 +494,8 @@ func (mr *MockDbClientMockRecorder) Disconnect(ctx any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Disconnect", reflect.TypeOf((*MockDbClient)(nil).Disconnect), ctx)
 }
 
-// IsDistributed mocks base method.
-func (m *MockDbClient) IsDistributed() bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsDistributed")
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsDistributed indicates an expected call of IsDistributed.
-func (mr *MockDbClientMockRecorder) IsDistributed() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsDistributed", reflect.TypeOf((*MockDbClient)(nil).IsDistributed))
-}
-
 // ListCollectionNames mocks base method.
-func (m *MockDbClient) ListCollectionNames(ctx context.Context, filter any, opts ...*options.ListCollectionsOptions) ([]string, error) {
+func (m *MockDbClient) ListCollectionNames(ctx context.Context, filter any, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, filter}
 	for _, a := range opts {
@@ -558,7 +543,7 @@ func (mr *MockDbClientMockRecorder) Ping(ctx, rp any) *gomock.Call {
 }
 
 // RunAdminCommand mocks base method.
-func (m *MockDbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) mongo.SingleResultHelper {
+func (m *MockDbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) mongo.SingleResultHelper {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, runCommand}
 	for _, a := range opts {
@@ -577,7 +562,7 @@ func (mr *MockDbClientMockRecorder) RunAdminCommand(ctx, runCommand any, opts ..
 }
 
 // RunCommand mocks base method.
-func (m *MockDbClient) RunCommand(ctx context.Context, runCommand any, opts ...*options.RunCmdOptions) mongo.SingleResultHelper {
+func (m *MockDbClient) RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) mongo.SingleResultHelper {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, runCommand}
 	for _, a := range opts {
@@ -608,7 +593,7 @@ func (mr *MockDbClientMockRecorder) SetRetry(count, timeout any) *gomock.Call {
 }
 
 // Watch mocks base method.
-func (m *MockDbClient) Watch(ctx context.Context, pipeline any, opts ...*options.ChangeStreamOptions) (*mongo0.ChangeStream, error) {
+func (m *MockDbClient) Watch(ctx context.Context, pipeline any, opts ...options.Lister[options.ChangeStreamOptions]) (*mongo0.ChangeStream, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, pipeline}
 	for _, a := range opts {
@@ -679,21 +664,6 @@ func (mr *MockSingleResultHelperMockRecorder) Decode(v any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Decode", reflect.TypeOf((*MockSingleResultHelper)(nil).Decode), v)
 }
 
-// DecodeBytes mocks base method.
-func (m *MockSingleResultHelper) DecodeBytes() (bson.Raw, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "DecodeBytes")
-	ret0, _ := ret[0].(bson.Raw)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// DecodeBytes indicates an expected call of DecodeBytes.
-func (mr *MockSingleResultHelperMockRecorder) DecodeBytes() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DecodeBytes", reflect.TypeOf((*MockSingleResultHelper)(nil).DecodeBytes))
-}
-
 // Err mocks base method.
 func (m *MockSingleResultHelper) Err() error {
 	m.ctrl.T.Helper()
@@ -706,6 +676,21 @@ func (m *MockSingleResultHelper) Err() error {
 func (mr *MockSingleResultHelperMockRecorder) Err() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Err", reflect.TypeOf((*MockSingleResultHelper)(nil).Err))
+}
+
+// Raw mocks base method.
+func (m *MockSingleResultHelper) Raw() (bson.Raw, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Raw")
+	ret0, _ := ret[0].(bson.Raw)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Raw indicates an expected call of Raw.
+func (mr *MockSingleResultHelperMockRecorder) Raw() *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Raw", reflect.TypeOf((*MockSingleResultHelper)(nil).Raw))
 }
 
 // MockCursor is a mock of Cursor interface.

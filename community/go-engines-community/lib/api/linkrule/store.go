@@ -3,7 +3,7 @@ package linkrule
 import (
 	"cmp"
 	"context"
-	"fmt"
+	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -13,8 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const defaultCategoriesLimit = 100
@@ -204,8 +203,8 @@ func (s *store) GetCategories(ctx context.Context, r CategoriesRequest) (*Catego
 	)
 	if r.Search != "" {
 		pipeline = append(pipeline, bson.M{"$match": bson.M{
-			"links.category": primitive.Regex{
-				Pattern: fmt.Sprintf(".*%s.*", r.Search),
+			"links.category": bson.Regex{
+				Pattern: ".*" + regexp.QuoteMeta(r.Search) + ".*",
 				Options: "i",
 			},
 		}})
