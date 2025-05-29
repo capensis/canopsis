@@ -5,9 +5,8 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/x/bsonx/bsoncore"
 )
 
 type OptionalStringArray struct {
@@ -15,8 +14,8 @@ type OptionalStringArray struct {
 	Value []string
 }
 
-func (a *OptionalStringArray) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	if valueType != bson.TypeArray {
+func (a *OptionalStringArray) UnmarshalBSONValue(valueType byte, b []byte) error {
+	if bson.Type(valueType) != bson.TypeArray {
 		return errors.New("unable to parse array")
 	}
 	var raw bson.Raw
@@ -44,12 +43,13 @@ func (a *OptionalStringArray) UnmarshalBSONValue(valueType bsontype.Type, b []by
 	return nil
 }
 
-func (a OptionalStringArray) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (a OptionalStringArray) MarshalBSONValue() (byte, []byte, error) {
 	if a.Set {
-		return bson.MarshalValue(a.Value)
+		bsonType, bsonBytes, err := bson.MarshalValue(a.Value)
+		return byte(bsonType), bsonBytes, err
 	}
 
-	return bson.TypeUndefined, nil, nil
+	return byte(bson.TypeUndefined), nil, nil
 }
 
 // OptionalInt64 is a wrapper around int64 that implements the bson.Setter
@@ -72,8 +72,8 @@ type OptionalInt64 struct {
 	Value int64
 }
 
-func (i *OptionalInt64) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
+func (i *OptionalInt64) UnmarshalBSONValue(valueType byte, b []byte) error {
+	switch bson.Type(valueType) {
 	case bson.TypeInt32:
 		value, _, ok := bsoncore.ReadInt32(b)
 		if !ok {
@@ -107,12 +107,13 @@ func (i *OptionalInt64) UnmarshalBSONValue(valueType bsontype.Type, b []byte) er
 	return nil
 }
 
-func (i OptionalInt64) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (i OptionalInt64) MarshalBSONValue() (byte, []byte, error) {
 	if i.Set {
-		return bson.MarshalValue(i.Value)
+		bsonType, bsonBytes, err := bson.MarshalValue(i.Value)
+		return byte(bsonType), bsonBytes, err
 	}
 
-	return bson.TypeUndefined, nil, nil
+	return byte(bson.TypeUndefined), nil, nil
 }
 
 // OptionalBool is a wrapper around bool that implements the bson.Setter
@@ -135,8 +136,8 @@ type OptionalBool struct {
 	Value bool
 }
 
-func (s *OptionalBool) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
+func (s *OptionalBool) UnmarshalBSONValue(valueType byte, b []byte) error {
+	switch bson.Type(valueType) {
 	case bson.TypeBoolean:
 		value, _, ok := bsoncore.ReadBoolean(b)
 		if !ok {
@@ -152,12 +153,13 @@ func (s *OptionalBool) UnmarshalBSONValue(valueType bsontype.Type, b []byte) err
 	return nil
 }
 
-func (s OptionalBool) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (s OptionalBool) MarshalBSONValue() (byte, []byte, error) {
 	if s.Set {
-		return bson.MarshalValue(s.Value)
+		bsonType, bsonBytes, err := bson.MarshalValue(s.Value)
+		return byte(bsonType), bsonBytes, err
 	}
 
-	return bson.TypeUndefined, nil, nil
+	return byte(bson.TypeUndefined), nil, nil
 }
 
 // OptionalString is a wrapper around string that implements the bson.Setter
@@ -180,8 +182,8 @@ type OptionalString struct {
 	Value string
 }
 
-func (s *OptionalString) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
+func (s *OptionalString) UnmarshalBSONValue(valueType byte, b []byte) error {
+	switch bson.Type(valueType) {
 	case bson.TypeString:
 		value, _, ok := bsoncore.ReadString(b)
 		if !ok {
@@ -197,12 +199,13 @@ func (s *OptionalString) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 	return nil
 }
 
-func (s OptionalString) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (s OptionalString) MarshalBSONValue() (byte, []byte, error) {
 	if s.Set {
-		return bson.MarshalValue(s.Value)
+		bsonType, bsonBytes, err := bson.MarshalValue(s.Value)
+		return byte(bsonType), bsonBytes, err
 	}
 
-	return bson.TypeUndefined, nil, nil
+	return byte(bson.TypeUndefined), nil, nil
 }
 
 // OptionalInterface is a wrapper around interface{} that implements the
@@ -219,8 +222,10 @@ type OptionalInterface struct {
 	Value interface{}
 }
 
-func (i *OptionalInterface) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
+func (i *OptionalInterface) UnmarshalBSONValue(valueType byte, b []byte) error {
+	bsonValueType := bson.Type(valueType)
+
+	switch bsonValueType {
 	case bson.TypeInt32:
 		value, _, ok := bsoncore.ReadInt32(b)
 		if !ok {
@@ -257,19 +262,20 @@ func (i *OptionalInterface) UnmarshalBSONValue(valueType bsontype.Type, b []byte
 
 		i.Value = value
 	default:
-		return fmt.Errorf("unsupported type = %s", valueType.String())
+		return fmt.Errorf("unsupported type = %s", bsonValueType)
 	}
 
 	i.Set = true
 	return nil
 }
 
-func (i OptionalInterface) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (i OptionalInterface) MarshalBSONValue() (byte, []byte, error) {
 	if i.Set {
-		return bson.MarshalValue(i.Value)
+		bsonType, bsonBytes, err := bson.MarshalValue(i.Value)
+		return byte(bsonType), bsonBytes, err
 	}
 
-	return bson.TypeUndefined, nil, nil
+	return byte(bson.TypeUndefined), nil, nil
 }
 
 // OptionalRegexp is a wrapper around regexp.Regexp that implements the
@@ -294,8 +300,8 @@ type OptionalRegexp struct {
 	Value utils.RegexExpression
 }
 
-func (r *OptionalRegexp) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
+func (r *OptionalRegexp) UnmarshalBSONValue(valueType byte, b []byte) error {
+	switch bson.Type(valueType) {
 	case bson.TypeString:
 		value, _, ok := bsoncore.ReadString(b)
 		if !ok {
@@ -315,10 +321,11 @@ func (r *OptionalRegexp) UnmarshalBSONValue(valueType bsontype.Type, b []byte) e
 	return nil
 }
 
-func (r OptionalRegexp) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (r OptionalRegexp) MarshalBSONValue() (byte, []byte, error) {
 	if r.Set {
-		return bson.MarshalValue(r.Value)
+		bsonType, bsonBytes, err := bson.MarshalValue(r.Value)
+		return byte(bsonType), bsonBytes, err
 	}
 
-	return bson.TypeUndefined, nil, nil
+	return byte(bson.TypeUndefined), nil, nil
 }

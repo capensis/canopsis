@@ -16,7 +16,7 @@ import (
 	datetime "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	types "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	mongo0 "go.mongodb.org/mongo-driver/mongo"
+	mongo0 "go.mongodb.org/mongo-driver/v2/mongo"
 	gomock "go.uber.org/mock/gomock"
 )
 

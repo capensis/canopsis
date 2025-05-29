@@ -5,7 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	. "github.com/smartystreets/goconvey/convey"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type intWrapper struct {

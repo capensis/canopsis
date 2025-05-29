@@ -13,7 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const PermissionGroupPlaylist = "commonviews_playlist"

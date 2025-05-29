@@ -16,8 +16,7 @@ import (
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.uber.org/mock/gomock"
 )
 
@@ -1245,7 +1244,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
@@ -1324,7 +1323,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
@@ -1418,7 +1417,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
@@ -1512,7 +1511,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}

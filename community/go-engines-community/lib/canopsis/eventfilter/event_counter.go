@@ -10,8 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type EventCounter interface {

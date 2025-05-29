@@ -12,8 +12,7 @@ import (
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // NewStore creates new mongo store.
@@ -53,9 +52,9 @@ type MongoStore struct {
 
 // sessionData represents mongo collection structure.
 type sessionData struct {
-	ID      primitive.ObjectID `bson:"_id"`
-	Data    string             `bson:"data"`
-	Expires int64              `bson:"expires"`
+	ID      bson.ObjectID `bson:"_id"`
+	Data    string        `bson:"data"`
+	Expires int64         `bson:"expires"`
 }
 
 // Get returns a session for the given name after adding it to the registry.
@@ -162,7 +161,7 @@ func (s *MongoStore) load(ctx context.Context, session *sessions.Session) error 
 		return nil
 	}
 
-	id, err := primitive.ObjectIDFromHex(session.ID)
+	id, err := bson.ObjectIDFromHex(session.ID)
 	if err != nil {
 		return err
 	}
@@ -203,7 +202,7 @@ func (s *MongoStore) erase(ctx context.Context, session *sessions.Session) error
 		return nil
 	}
 
-	id, err := primitive.ObjectIDFromHex(session.ID)
+	id, err := bson.ObjectIDFromHex(session.ID)
 	if err != nil {
 		return err
 	}
@@ -251,7 +250,7 @@ func (s *MongoStore) save(ctx context.Context, session *sessions.Session, expire
 			return err
 		}
 
-		if id, ok := res.(primitive.ObjectID); ok {
+		if id, ok := res.(bson.ObjectID); ok {
 			session.ID = id.Hex()
 
 			return nil
@@ -260,7 +259,7 @@ func (s *MongoStore) save(ctx context.Context, session *sessions.Session, expire
 		return fmt.Errorf("cannot parse string from %v", res)
 	}
 
-	id, err := primitive.ObjectIDFromHex(session.ID)
+	id, err := bson.ObjectIDFromHex(session.ID)
 	if err != nil {
 		return err
 	}

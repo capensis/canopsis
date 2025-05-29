@@ -8,8 +8,7 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/kylelemons/godebug/pretty"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func TestTransformOptions(t *testing.T) {
@@ -241,7 +240,7 @@ func getTestTransformValueDataSet() []struct {
 		},
 		{
 			JSCode: `test(/^foo/i)`,
-			Expected: primitive.Regex{
+			Expected: bson.Regex{
 				Pattern: "^foo",
 				Options: "i",
 			},

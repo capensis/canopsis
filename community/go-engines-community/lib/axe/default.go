@@ -89,6 +89,7 @@ func NewEngine(
 	ctx context.Context,
 	options Options,
 	dbClient mongo.DbClient,
+	noTimeoutClient mongo.DbClient,
 	amqpConnection amqp.Connection,
 	cfg config.CanopsisConf,
 	metricsSender metrics.Sender,
@@ -470,8 +471,8 @@ func NewEngine(
 	))
 
 	updateEntityInAlarmWorker := &updateEntityInAlarmWorker{
-		AlarmCollection:  dbClient.Collection(mongo.AlarmMongoCollection),
-		EntityCollection: dbClient.Collection(mongo.EntityMongoCollection),
+		AlarmCollection:  noTimeoutClient.Collection(mongo.AlarmMongoCollection),
+		EntityCollection: noTimeoutClient.Collection(mongo.EntityMongoCollection),
 	}
 	engineAxe.AddRoutine(updateEntityInAlarmWorker.Work)
 

@@ -57,7 +57,7 @@ import (
 	"github.com/gin-gonic/gin"
 	gorillawebsocket "github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const (
@@ -104,18 +104,43 @@ func Default(
 	services := Services{
 		DocsFile: docsFile,
 	}
+
 	// Retrieve config.
-	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
+	primaryDbClient, err := mongo.NewClient(ctx)
 	if err != nil {
-		return nil, services, fmt.Errorf("cannot connect to mongodb: %w", err)
+		return nil, services, fmt.Errorf("cannot create primary mongodb client: %w", err)
 	}
-	configAdapter := config.NewAdapter(dbClient)
+
+	configAdapter := config.NewAdapter(primaryDbClient)
 	cfg, err := configAdapter.GetConfig(ctx)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot load config: %w", err)
 	}
 
-	services.Enforcer, err = libsecurity.NewEnforcer(flags.ConfigDir, dbClient)
+	// Set mongodb setting.
+	config.SetDbClientRetry(primaryDbClient, cfg)
+
+	secondaryDbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
+		RetryCount:      cfg.Global.ReconnectRetries,
+		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
+		ReadPreference:  mongo.SecondaryPreferred(),
+	})
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot create secondary mongodb client: %w", err)
+	}
+
+	// noTimeoutClient should be used by change stream watchers only.
+	noTimeoutClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
+		RetryCount:      cfg.Global.ReconnectRetries,
+		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
+		ReadPreference:  mongo.SecondaryPreferred(),
+		NoClientTimeout: true,
+	})
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot create mongodb client without timeout: %w", err)
+	}
+
+	services.Enforcer, err = libsecurity.NewEnforcer(flags.ConfigDir, primaryDbClient)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot create security enforcer: %w", err)
 	}
@@ -123,8 +148,6 @@ func Default(
 	services.TimezoneConfigProvider = config.NewTimezoneConfigProvider(cfg, logger)
 	services.DataStorageConfigProvider = config.NewDataStorageConfigProvider(cfg, logger)
 	services.TemplateConfigProvider = config.NewTemplateConfigProvider(cfg, logger)
-	// Set mongodb setting.
-	config.SetDbClientRetry(dbClient, cfg)
 	// Connect to rmq.
 	amqpConn, err := libamqp.NewConnection(logger, -1, cfg.Global.GetReconnectTimeout())
 	if err != nil {
@@ -155,18 +178,20 @@ func Default(
 	}
 
 	cookieOptions := DefaultCookieOptions()
-	sessionStore := mongostore.NewStore(dbClient, GetSessionKeyVar(logger))
+	sessionStore := mongostore.NewStore(primaryDbClient, GetSessionKeyVar(logger))
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, cfg, dbClient, sessionStore, services.Enforcer, services.ApiConfigProvider, config.NewMaintenanceAdapter(dbClient), cookieOptions, logger)
+	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer, services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
 	}
 
-	dbExportClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
-		services.ApiConfigProvider.Get().ExportMongoClientTimeout, logger)
+	dbExportClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
+		ClientTimeout:  services.ApiConfigProvider.Get().ExportMongoClientTimeout,
+		ReadPreference: mongo.SecondaryPreferred(),
+	})
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to mongodb: %w", err)
 	}
@@ -183,13 +208,13 @@ func Default(
 	entityCleanerTaskChan := make(chan entity.CleanTask)
 	disabledEntityCleaner := entity.NewDisabledCleaner(
 		lockRedisSession,
-		datastorage.NewAdapter(dbClient),
+		datastorage.NewAdapter(primaryDbClient),
 		services.DataStorageConfigProvider,
 		metricsEntityMetaUpdater,
 		logger,
 	)
 
-	userInterfaceAdapter := config.NewUserInterfaceAdapter(dbClient)
+	userInterfaceAdapter := config.NewUserInterfaceAdapter(primaryDbClient)
 	userInterfaceConfig, err := userInterfaceAdapter.GetConfig(ctx)
 	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return nil, services, fmt.Errorf("cannot load user interface config: %w", err)
@@ -198,7 +223,7 @@ func Default(
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
 	workersRunner := workers.NewRunner(amqpChannel, amqpChannel, logger)
 	// Create csv exporter.
-	services.ExportTaskExecutor = export.NewTaskExecutor(dbClient, workers.NewJobPublisher(jobKeyExport, workersRunner),
+	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, workersRunner),
 		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 	workersRunner.AddJobExecutor(jobKeyExport, func(ctx context.Context, id string) error {
 		return services.ExportTaskExecutor.ExecuteTask(ctx, id)
@@ -206,9 +231,9 @@ func Default(
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
 		contextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
-		contextgraph.NewMongoStatusReporter(dbClient),
+		contextgraph.NewMongoStatusReporter(primaryDbClient),
 		importcontextgraph.NewWorker(
-			dbClient,
+			primaryDbClient,
 			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
@@ -221,7 +246,7 @@ func Default(
 		return importWorker.ProcessFirstJob(ctx)
 	})
 	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
-	websocketStore := websocket.NewStore(dbClient, flags.IntegrationPeriodicalWaitTime)
+	websocketStore := websocket.NewStore(primaryDbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  websocketReadBufferSize,
 		WriteBufferSize: websocketWriteBufferSize,
@@ -238,11 +263,11 @@ func Default(
 	}
 
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
-	services.LinkGenerator = link.NewGenerator(dbClient, tplExecutor, services.ExternalDataContainer, logger)
+	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
-	alarmStore := alarmapi.NewStore(dbClient, dbExportClient, services.LinkGenerator, services.TimezoneConfigProvider,
+	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, services.TimezoneConfigProvider,
 		authorProvider, tplExecutor, json.NewDecoder(), logger)
-	alarmWatcher := alarmapi.NewWatcher(dbClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
+	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
 	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
 		json.NewEncoder(), json.NewDecoder(), flags.IntegrationPeriodicalWaitTime, logger)
@@ -257,9 +282,9 @@ func Default(
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
-	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(dbClient), filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
+	techMetricsTaskExecutor := apitechmetrics.NewTaskExecutor(apitechmetrics.NewStore(primaryDbClient), filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 
-	healthCheckConfigAdapter := config.NewHealthCheckAdapter(dbClient)
+	healthCheckConfigAdapter := config.NewHealthCheckAdapter(primaryDbClient)
 	healthCheckCfg, err := healthCheckConfigAdapter.GetConfig(ctx)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot load healthcheck config: %w", err)
@@ -267,7 +292,7 @@ func Default(
 
 	healthCheckConfigProvider := config.NewBaseHealthCheckConfigProvider(healthCheckCfg, logger)
 	healthcheckStore := healthcheck.NewStore(
-		dbClient,
+		primaryDbClient,
 		engine.NewRunInfoManager(runInfoClient),
 		healthCheckConfigAdapter,
 		healthCheckConfigProvider,
@@ -275,7 +300,7 @@ func Default(
 		websocketHub,
 	)
 
-	exdataImportWorker := apiexternaldata.NewImportWorker(dbClient, pgPoolProvider,
+	exdataImportWorker := apiexternaldata.NewImportWorker(primaryDbClient, pgPoolProvider,
 		filepath.Join(cfg.File.Dir, canopsis.SubDirExDataImport), workers.NewJobPublisher(jobKeyExtDataImport, workersRunner),
 		logger)
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
@@ -291,14 +316,26 @@ func Default(
 			close(entityCleanerTaskChan)
 			close(broadcastMessageChan)
 
-			err := dbClient.Disconnect(context.WithoutCancel(ctx))
+			err := primaryDbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
-				logger.Error().Err(err).Msg("failed to close mongo connection")
+				logger.Error().Err(err).Msg("failed to close primary mongo connection")
 			}
+
+			err = secondaryDbClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close secondary mongo connection")
+			}
+
+			err = noTimeoutClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection without timeout")
+			}
+
 			err = dbExportClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
 			}
+
 			err = amqpConn.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close amqp connection")
@@ -345,7 +382,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(dbClient, security.GetConfig())
+		RegisterValidators(primaryDbClient, security.GetConfig())
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -353,7 +390,8 @@ func Default(
 			security,
 			services.Enforcer,
 			services.LinkGenerator,
-			dbClient,
+			primaryDbClient,
+			secondaryDbClient,
 			dbExportClient,
 			pgPoolProvider,
 			amqpChannel,
@@ -414,10 +452,10 @@ func Default(
 	})
 	api.SetWebsocketHub(websocketHub)
 
-	actionLogger := apilogger.NewActionLogger(dbClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
+	actionLogger := apilogger.NewActionLogger(noTimeoutClient, libredis.NewLockClient(lockRedisSession), pgPoolProvider, logger, cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	api.AddWorker("action_log", func(ctx context.Context) {
 		err := actionLogger.Watch(ctx)
-		if err != nil && !errors.Is(err, context.Canceled) && !errors.Is(err, context.DeadlineExceeded) {
+		if err != nil && !errors.Is(err, context.Canceled) {
 			panic(FatalWorkerError{err: err})
 		}
 	})
@@ -440,7 +478,7 @@ func Default(
 	})
 	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
 
-	stateSettingsListener := statesetting.NewListener(dbClient, amqpChannel, canopsis.ApiConnector,
+	stateSettingsListener := statesetting.NewListener(primaryDbClient, amqpChannel, canopsis.ApiConnector,
 		flags.IntegrationPeriodicalWaitTime, flags.StateSettingRecomputeDelay, json.NewEncoder(), logger)
 	api.AddWorker("state_settings_listener", func(ctx context.Context) {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
@@ -472,8 +510,8 @@ func Default(
 	api.AddWorker("tech_metrics_export", func(ctx context.Context) {
 		techMetricsTaskExecutor.Run(ctx)
 	})
-	tokenStore := token.NewMongoStore(dbClient, logger)
-	shareTokenStore := sharetoken.NewMongoStore(dbClient, logger)
+	tokenStore := token.NewMongoStore(primaryDbClient, logger)
+	shareTokenStore := sharetoken.NewMongoStore(primaryDbClient, logger)
 	api.AddWorker("auth_token_activity", updateTokenActivity(flags.IntegrationPeriodicalWaitTime, tokenStore, shareTokenStore,
 		websocketHub, logger))
 	api.AddWorker("auth_token_expiration", removeExpiredTokens(flags.PeriodicalWaitTime, tokenStore, shareTokenStore,
@@ -483,8 +521,8 @@ func Default(
 	})
 	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
 
-	maintenanceAdapter := config.NewMaintenanceAdapter(dbClient)
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(dbClient, maintenanceAdapter, authorProvider), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
+	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), websocketHub, canopsis.PeriodicalWaitTime, logger)
 	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})

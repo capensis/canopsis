@@ -3,8 +3,7 @@ package associativetable
 import (
 	"encoding/json"
 
-	mongobson "go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const bsonKey = "val"
@@ -39,16 +38,16 @@ func (c Content) MarshalJSON() ([]byte, error) {
 
 // MarshalBSONValue stores value to map because it's impossible to decode struct and array of struct
 // to interface without bson.D and bson.D cannot be encoded to JSON properly.
-// Try to use interface{} in mongo-driver > 1.3.7
-func (c Content) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	return mongobson.MarshalValue(map[string]interface{}{
+func (c Content) MarshalBSONValue() (byte, []byte, error) {
+	bsonType, bsonBytes, err := bson.MarshalValue(map[string]any{
 		bsonKey: c.value,
 	})
+	return byte(bsonType), bsonBytes, err
 }
 
-func (c *Content) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
+func (c *Content) UnmarshalBSONValue(_ byte, b []byte) error {
 	var v map[string]interface{}
-	err := mongobson.Unmarshal(b, &v)
+	err := bson.Unmarshal(b, &v)
 	if err != nil {
 		return err
 	}
