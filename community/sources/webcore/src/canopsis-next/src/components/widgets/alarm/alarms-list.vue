@@ -80,14 +80,11 @@
           @input="updateTags"
         />
       </v-flex>
-      <v-flex v-if="hasAccessToUserRemediationInstructionsFilter">
-        <alarms-list-remediation-instructions-filters
-          :filters.sync="remediationInstructionsFilters"
-          :locked-filters.sync="widgetRemediationInstructionsFilters"
-          editable
-          addable
-        />
-      </v-flex>
+      <alarms-list-remediation-instructions-filter
+        v-if="hasAccessToUserRemediationInstructionsFilter"
+        :filter="query.instructionsFilter"
+        @input="updateRemediationInstructionsFilters"
+      />
       <v-flex>
         <v-chip
           v-if="activeRange"
@@ -167,7 +164,6 @@ import { widgetAlarmAdvancedSearchSavedItemsMixin } from '@/mixins/widget/advanc
 import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { widgetPeriodicRefreshMixin } from '@/mixins/widget/periodic-refresh';
 import { widgetAlarmsSocketMixin } from '@/mixins/widget/alarms-socket';
-import { widgetRemediationInstructionsFilterMixin } from '@/mixins/widget/remediation-instructions-filter-select';
 import {
   widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
 } from '@/mixins/widget/handlebars/alarms-list-precompile-templates';
@@ -187,8 +183,7 @@ import FilterSelector from '@/components/other/filter/partials/filter-selector.v
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
 
 import AlarmsListTable from './partials/alarms-list-table.vue';
-import AlarmsListRemediationInstructionsFilters from './partials/alarms-list-remediation-instructions-filters.vue';
-
+import AlarmsListRemediationInstructionsFilter from './partials/alarms-list-remediation-instructions-filter.vue';
 /**
  * Alarm-list component
  *
@@ -203,7 +198,7 @@ export default {
     FilterSelector,
     FiltersListBtn,
     AlarmsListTable,
-    AlarmsListRemediationInstructionsFilters,
+    AlarmsListRemediationInstructionsFilter,
   },
   mixins: [
     authMixin,
@@ -212,7 +207,6 @@ export default {
     widgetFilterSelectMixin,
     widgetPeriodicRefreshMixin,
     widgetAlarmsSocketMixin,
-    widgetRemediationInstructionsFilterMixin,
     widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
     entitiesWidgetMixin,
     entitiesAlarmMixin,
@@ -306,6 +300,16 @@ export default {
           }
         });
       }
+    },
+
+    updateRemediationInstructionsFilters(instructionsFilter) {
+      this.updateContentInUserPreference({ instructionsFilter });
+
+      this.query = {
+        ...this.query,
+
+        instructionsFilter,
+      };
     },
 
     updateColumnsSettings(columnsSettings) {
