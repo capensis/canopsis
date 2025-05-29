@@ -102,16 +102,23 @@ type BaseFilterRequest struct {
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
 	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
 
-	Instructions  []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
-	OnlyBookmarks bool                       `form:"only_bookmarks" json:"only_bookmarks"`
-}
-
-type InstructionFilterRequest struct {
-	Running      *bool    `form:"running" json:"running"`
-	IncludeTypes []int    `form:"include_types[]" json:"include_types"`
-	ExcludeTypes []int    `form:"exclude_types[]" json:"exclude_types"`
-	Include      []string `form:"include[]" json:"include"`
-	Exclude      []string `form:"exclude[]" json:"exclude"`
+	// Possible instruction filter type values.
+	//   * `0` - No instructions.
+	//   * `1` - No instructions or not in progress.
+	//   * `2` - Has instructions.
+	InstructionFilterType *int `form:"instruction_filter_type" json:"instruction_filter_type" binding:"omitempty,oneof=0 1 2"`
+	// Possible instruction type values.
+	//   * `0` - Manual.
+	//   * `1` - Auto.
+	InstructionType *int `form:"instruction_type" json:"instruction_type" binding:"omitempty,oneof=0 1"`
+	// Possible instruction status values.
+	//   * `0` - In progress.
+	//   * `1` - Completed.
+	//   * `2` - Failed.
+	//   * `3` - Not in progress and not completed.
+	InstructionStatuses []int    `form:"instruction_statuses[]" json:"instruction_statuses" binding:"unique,dive,oneof=0 1 2 3"`
+	InstructionIDs      []string `form:"instruction_ids[]" json:"instruction_ids" binding:"unique"`
+	OnlyBookmarks       bool     `form:"only_bookmarks" json:"only_bookmarks"`
 }
 
 type ListByServiceRequest struct {
