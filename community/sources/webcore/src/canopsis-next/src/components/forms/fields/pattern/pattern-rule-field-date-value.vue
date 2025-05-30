@@ -124,7 +124,22 @@ export default {
     const fromTimestamp = computed(() => (props.value.from ? convertDateToTimestamp(props.value.from) : null));
     const toTimestamp = computed(() => (props.value.to ? convertDateToTimestamp(props.value.to) : null));
 
+    /**
+     * Validates if a given date is allowed as a "from" date.
+     * A date is allowed if there's no upper bound (toTimestamp) or if the date is before the upper bound.
+     *
+     * @param {Date|string|number} date - The date to validate
+     * @returns {boolean} True if the date is allowed as a "from" date, false otherwise
+     */
     const isAllowedFromDate = date => !toTimestamp.value || convertDateToTimestamp(date) < toTimestamp.value;
+
+    /**
+     * Validates if a given date is allowed as a "to" date.
+     * A date is allowed if there's no lower bound (fromTimestamp) or if the date is after the lower bound.
+     *
+     * @param {Date|string|number} date - The date to validate
+     * @returns {boolean} True if the date is allowed as a "to" date, false otherwise
+     */
     const isAllowedToDate = date => !fromTimestamp.value || convertDateToTimestamp(date) > fromTimestamp.value;
 
     /**
