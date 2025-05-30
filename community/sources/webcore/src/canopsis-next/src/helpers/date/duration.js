@@ -210,3 +210,15 @@ export const convertDurationToString = (duration, format = DEFAULT_DURATION_FORM
  * @return {boolean}
  */
 export const isValidDuration = duration => isNumber(duration?.value) && isValidTimeUnit(duration.unit);
+
+/**
+ * Check duration is valid
+ *
+ * @param {Duration | *} duration
+ * @return {boolean}
+ */
+export const isValidRangeDuration = duration => isValidDuration(duration) || (
+  isValidDuration(duration.from)
+  && isValidDuration(duration.to)
+  && durationToSeconds(duration.from) > durationToSeconds(duration.to)
+);

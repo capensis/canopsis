@@ -1,0 +1,57 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with custom intervalRanges 1`] = `
+<c-quick-date-interval-type-field-stub
+  label="Value"
+  ranges="[object Object],[object Object]"
+  value="last15Minutes"
+/>
+`;
+
+exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with disabled state 1`] = `
+<c-quick-date-interval-type-field-stub
+  disabled="true"
+  label="Value"
+  name="test-disabled"
+  ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  value="last1Hour"
+/>
+`;
+
+exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with inRangeDates operator 1`] = `
+<c-date-time-interval-field-stub
+  is-allowed-from-date="date => !toTimestamp.value || (0, _date.convertDateToTimestamp)(date) < toTimestamp.value"
+  is-allowed-to-date="date => !fromTimestamp.value || (0, _date.convertDateToTimestamp)(date) > fromTimestamp.value"
+  label="Value"
+  name="test-date-range"
+  value="[object Object]"
+/>
+`;
+
+exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with inRangePeriod operator 1`] = `
+<c-quick-date-interval-type-range-field-stub
+  from-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  label="Value"
+  name="test-period-range"
+  to-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  value="[object Object]"
+/>
+`;
+
+exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with olderThan operator 1`] = `
+<c-quick-date-interval-type-field-stub
+  label="Value"
+  name="test-older-than"
+  ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  value="last2Days"
+/>
+`;
+
+exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with within operator 1`] = `
+<c-quick-date-interval-type-field-stub
+  label="Value"
+  name="test-interval"
+  ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  value="last1Hour"
+/>
+`;

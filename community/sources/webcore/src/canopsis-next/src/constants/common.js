@@ -127,7 +127,7 @@ export const CANOPSIS_WEBSITE = 'https://www.capensis.fr/canopsis/';
 
 export const CANOPSIS_FORUM = 'https://community.capensis.org/';
 
-export const QUICK_RANGES_WITHOUT_CUSTOM = {
+export const QUICK_RANGES = {
   last15Minutes: {
     value: 'last15Minutes',
     start: 'now-15m',
@@ -247,11 +247,6 @@ export const QUICK_RANGES_WITHOUT_CUSTOM = {
     start: 'today-6M/M',
     stop: 'today-1M/M',
   },
-};
-
-export const QUICK_RANGES = {
-  ...QUICK_RANGES_WITHOUT_CUSTOM,
-
   custom: {
     value: 'custom',
   },
