@@ -104,14 +104,51 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: instructions[]
+        - name: instruction_filter_type
           in: query
-          style: form
-          explode: true
+          description: |-
+            Possible instruction filter type values.
+              * `0` - No instructions.
+              * `1` - No instructions or not in progress.
+              * `2` - Has instructions.
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+              - 2
+        - name: instruction_ids[]
+          in: query
           schema:
             type: array
             items:
-              $ref: 'schemas_swagger.yaml#/definitions/alarm.InstructionFilterRequest'
+              type: string
+        - name: instruction_statuses[]
+          in: query
+          description: |-
+            Possible instruction filter type values.
+              * `0` - No instructions.
+              * `1` - No instructions or not in progress.
+              * `2` - Has instructions.
+          schema:
+            type: array
+            items:
+              type: integer
+              enum:
+                - 0
+                - 1
+                - 2
+        - name: instruction_type
+          in: query
+          description: |-
+            Possible instruction type values.
+              * `0` - Manual.
+              * `1` - Auto.
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
         - name: opened
           in: query
           schema:
@@ -710,14 +747,51 @@ paths:
           in: query
           schema:
             type: boolean
-        - name: instructions[]
+        - name: instruction_filter_type
           in: query
-          style: form
-          explode: true
+          description: |-
+            Possible instruction filter type values.
+              * `0` - No instructions.
+              * `1` - No instructions or not in progress.
+              * `2` - Has instructions.
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+              - 2
+        - name: instruction_ids[]
+          in: query
           schema:
             type: array
             items:
-              $ref: 'schemas_swagger.yaml#/definitions/alarm.InstructionFilterRequest'
+              type: string
+        - name: instruction_statuses[]
+          in: query
+          description: |-
+            Possible instruction filter type values.
+              * `0` - No instructions.
+              * `1` - No instructions or not in progress.
+              * `2` - Has instructions.
+          schema:
+            type: array
+            items:
+              type: integer
+              enum:
+                - 0
+                - 1
+                - 2
+        - name: instruction_type
+          in: query
+          description: |-
+            Possible instruction type values.
+              * `0` - Manual.
+              * `1` - Auto.
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
         - name: opened
           in: query
           schema:

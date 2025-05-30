@@ -2,7 +2,7 @@ export default {
   selector: {
     defaultFilter: 'Default filter',
     fields: {
-      mixFilters: 'Mix filters',
+      mixFilters: 'Mix filters (AND)',
     },
     buttons: {
       list: 'Manage filters',

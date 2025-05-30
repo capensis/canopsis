@@ -13,9 +13,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func NewPbhEnterProcessor(
@@ -78,8 +78,8 @@ func (p *pbhEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	} else {
 		update = []bson.M{
 			{"$set": bson.M{
-				"v.pbehavior_info": event.Parameters.PbehaviorInfo,
-				"v.steps":          bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+				"v.pbehavior_info": bson.M{"$literal": event.Parameters.PbehaviorInfo},
+				"v.steps":          bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{bson.M{"$literal": newStep}}}},
 				"v.inactive_duration": bson.M{"$sum": bson.A{
 					"$v.inactive_duration",
 					bson.M{"$cond": bson.M{

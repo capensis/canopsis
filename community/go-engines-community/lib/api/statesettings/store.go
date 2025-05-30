@@ -14,9 +14,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const StickySortField = "on_top"
@@ -294,7 +294,7 @@ func (s *store) updateNotify(ctx context.Context) error {
 		ctx,
 		bson.M{"_id": statesetting.StateSettingsNotificationID},
 		bson.M{"$set": bson.M{"time": time.Now()}},
-		options.Update().SetUpsert(true),
+		options.UpdateOne().SetUpsert(true),
 	)
 
 	return err

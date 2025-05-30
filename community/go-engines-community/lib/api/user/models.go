@@ -6,7 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type ListRequest struct {

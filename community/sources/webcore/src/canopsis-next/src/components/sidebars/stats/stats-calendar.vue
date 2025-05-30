@@ -22,14 +22,14 @@
         with-pbehavior
         hide-selector
       />
-      <field-opened-resolved-filter v-field="form.parameters.opened" />
+      <field-opened-resolved-filter v-model="form.parameters.opened" />
       <field-switcher
-        v-field="form.parameters.considerPbehaviors"
+        v-model="form.parameters.considerPbehaviors"
         :title="$t('settings.considerPbehaviors.title')"
       />
-      <field-criticity-levels v-field="form.parameters.criticityLevels" />
+      <field-criticity-levels v-model="form.parameters.criticityLevels" />
       <field-levels-colors-selector
-        v-field="form.parameters.criticityLevelsColors"
+        v-model="form.parameters.criticityLevelsColors"
         color-type="hex"
         hide-suffix
       />

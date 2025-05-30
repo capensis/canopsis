@@ -27,6 +27,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   <field-info-popup-stub
     columns=""
     popups=""
+    variables=""
   />
   <field-text-editor-with-template-stub
     defaultvalue=""
@@ -279,6 +280,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
   <field-info-popup-stub
     columns=""
     popups=""
+    variables=""
   />
   <field-text-editor-with-template-stub
     defaultvalue=""

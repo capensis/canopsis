@@ -15,7 +15,7 @@ import (
 	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.uber.org/mock/gomock"
 )
 
@@ -249,12 +249,12 @@ func TestActionProcessor(t *testing.T) {
 			expectedEntityUpdated: true,
 		},
 		{
-			testName: "given set_entity_info action should return success with primitive.A",
+			testName: "given set_entity_info action should return success with bson.A",
 			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       primitive.A{"test2", "test"},
+				Value:       bson.A{"test2", "test"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{
@@ -376,12 +376,12 @@ func TestActionProcessor(t *testing.T) {
 			expectedEntityUpdated: false,
 		},
 		{
-			testName: "given set_entity_info action should return error with primitive.A, where some are not strings",
+			testName: "given set_entity_info action should return error with bson.A, where some are not strings",
 			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfo,
 				Name:        "Info 1",
 				Description: "Test description",
-				Value:       primitive.A{"test", 1, "test2"},
+				Value:       bson.A{"test", 1, "test2"},
 			},
 			event: types.Event{
 				Entity: &types.Entity{},
@@ -958,7 +958,7 @@ func TestActionProcessor(t *testing.T) {
 			expectedEntityUpdated: true,
 		},
 		{
-			testName: "given copy_to_entity_info action should return success with primitive.A",
+			testName: "given copy_to_entity_info action should return success with bson.A",
 			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
@@ -968,7 +968,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test2", "test"},
+					"Test": bson.A{"test2", "test"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
@@ -984,7 +984,7 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test2", "test"},
+					"Test": bson.A{"test2", "test"},
 				},
 			},
 			expectedError:         false,
@@ -1107,7 +1107,7 @@ func TestActionProcessor(t *testing.T) {
 			expectedEntityUpdated: false,
 		},
 		{
-			testName: "given copy_to_entity_info action should return error with primitive.A, where some are not strings",
+			testName: "given copy_to_entity_info action should return error with bson.A, where some are not strings",
 			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionCopyToEntityInfo,
 				Name:        "Info 1",
@@ -1117,7 +1117,7 @@ func TestActionProcessor(t *testing.T) {
 			event: types.Event{
 				Entity: &types.Entity{},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test1", 1, "test2"},
+					"Test": bson.A{"test1", 1, "test2"},
 				},
 			},
 			regexMatches: eventfilter.RegexMatch{},
@@ -1125,7 +1125,7 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 				ExtraInfos: map[string]interface{}{
-					"Test": primitive.A{"test1", 1, "test2"},
+					"Test": bson.A{"test1", 1, "test2"},
 				},
 			},
 			expectedError:         true,
@@ -1290,7 +1290,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       primitive.A{"test3", "test1", "test2"},
+							Value:       bson.A{"test3", "test1", "test2"},
 						},
 					},
 				},
@@ -1303,7 +1303,7 @@ func TestActionProcessor(t *testing.T) {
 						"Info 1": {
 							Name:        "Info 1",
 							Description: "Test description",
-							Value:       primitive.A{"test3", "test1", "test2"},
+							Value:       bson.A{"test3", "test1", "test2"},
 						},
 					},
 					IsUpdated: false,

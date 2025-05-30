@@ -11,8 +11,8 @@ import (
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/gorilla/securecookie"
 	"github.com/gorilla/sessions"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.uber.org/mock/gomock"
 )
 
@@ -49,7 +49,7 @@ func TestMongoStore_New_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	sessionId := "5ed0e4be448c4dd1274c31e3"
-	objectId, err := primitive.ObjectIDFromHex(sessionId)
+	objectId, err := bson.ObjectIDFromHex(sessionId)
 	if err != nil {
 		t.Fatal("fail to create object id", err)
 	}
@@ -136,7 +136,7 @@ func TestMongoStore_Get_GivenCookie_ShouldReturnSessionFromDB(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	sessionId := "5ed0e4be448c4dd1274c31e3"
-	objectId, err := primitive.ObjectIDFromHex(sessionId)
+	objectId, err := bson.ObjectIDFromHex(sessionId)
 	if err != nil {
 		t.Fatal("fail to create object id", err)
 	}
@@ -200,7 +200,7 @@ func TestMongoStore_Save_GivenNoCookie_ShouldCreateNewSessionAndSaveSessionToDBA
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	sessionId := "5ed0e4be448c4dd1274c31e3"
-	objectId, err := primitive.ObjectIDFromHex(sessionId)
+	objectId, err := bson.ObjectIDFromHex(sessionId)
 	if err != nil {
 		t.Fatal("fail to create object id", err)
 	}

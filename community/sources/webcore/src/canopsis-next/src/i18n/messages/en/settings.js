@@ -77,7 +77,7 @@ export default {
   isPriorityEnabled: 'Show priority',
   isHideGrayEnabled: 'Show hide gray',
   isSecondaryIconEnabled: 'Show secondary icon',
-  clearFilterDisabled: 'Clear of selected filter allowed',
+  clearFilterEnabled: 'Clear of selected filter allowed',
   showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
   rootCauseSettings: 'Root cause diagram settings',
   entitiesColorIndicator: 'Entities color indicator',

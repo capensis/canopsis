@@ -82,9 +82,18 @@ func Default(
 	var m depmake.DependencyMaker
 	s := Services{}
 
-	s.DbClient = m.DepMongoClient(ctx, logger)
+	s.DbClient = m.DepMongoClient(ctx, mongo.ClientOptions{})
+
 	s.Cfg = m.DepConfig(ctx, s.DbClient)
 	config.SetDbClientRetry(s.DbClient, s.Cfg)
+
+	// noTimeoutClient should be used by change stream watchers only.
+	noTimeoutClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+		RetryCount:      s.Cfg.Global.ReconnectRetries,
+		MinRetryTimeout: s.Cfg.Global.GetReconnectTimeout(),
+		NoClientTimeout: true,
+	})
+
 	s.PgPoolProvider = postgres.NewPoolProvider(s.Cfg.Global.ReconnectRetries, s.Cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(s.Cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(s.PgPoolProvider, metricsConfigProvider, logger)
@@ -154,20 +163,19 @@ func Default(
 
 			scheduler.Start(ctx)
 
-			if !s.DbClient.IsDistributed() {
-				err := eventfilterService.LoadRules(ctx, []string{eventfilter.RuleTypeChangeEntity})
-				if err != nil {
-					return err
-				}
-			}
-
 			return nil
 		},
 		func(ctx context.Context) {
 			scheduler.Stop(context.WithoutCancel(ctx))
+
 			err := s.DbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = noTimeoutClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close mongo connection without timeout")
 			}
 
 			err = amqpConnection.Close()
@@ -256,8 +264,9 @@ func Default(
 
 	s.DataStoragePeriodicalWorker = datastorage.NewPeriodicalWorker(
 		func(ctx context.Context, clientTimeout time.Duration) (mongo.DbClient, error) {
-			return mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
-				clientTimeout, logger)
+			return mongo.NewClient(ctx, mongo.ClientOptions{
+				ClientTimeout: clientTimeout,
+			})
 		},
 		time.Hour,
 		timezoneConfigProvider,
@@ -285,31 +294,23 @@ func Default(
 		templateConfigProvider,
 		metricsConfigProvider,
 	))
-	if s.DbClient.IsDistributed() {
-		engine.AddRoutine(func(ctx context.Context) error {
-			w := eventfilter.NewRulesChangesWatcher(s.DbClient, eventfilterService)
+	engine.AddRoutine(func(ctx context.Context) error {
+		w := eventfilter.NewRulesChangesWatcher(noTimeoutClient, eventfilterService)
 
-			logger.Debug().Msg("Loading event filter rules")
+		logger.Debug().Msg("Loading event filter rules")
 
-			for {
-				select {
-				case <-ctx.Done():
-					return nil
-				default:
-					err := w.Watch(ctx, []string{eventfilter.RuleTypeChangeEntity})
-					if err != nil {
-						logger.Error().Err(err).Msg("failed to watch eventfilter collection")
-					}
+		for {
+			select {
+			case <-ctx.Done():
+				return nil
+			default:
+				err := w.Watch(ctx, []string{eventfilter.RuleTypeChangeEntity})
+				if err != nil {
+					logger.Error().Err(err).Msg("failed to watch eventfilter collection")
 				}
 			}
-		})
-	} else {
-		engine.AddPeriodicalWorker("local_cache", &periodicalWorker{
-			RuleService:        eventfilterService,
-			PeriodicalInterval: options.PeriodicalWaitTime,
-			Logger:             logger,
-		})
-	}
+		}
+	})
 	engine.AddRoutine(func(ctx context.Context) error {
 		eventFilterEventCounter.Run(ctx)
 
