@@ -14,9 +14,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -122,7 +122,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 			_, errUpd := w.entityInfosDictCollection.UpdateOne(
 				ctx, bson.M{"_id": stopListId},
 				bson.M{"$set": bson.M{"stop_values": stopList, "limit": limit}},
-				options.Update().SetUpsert(true))
+				options.UpdateOne().SetUpsert(true))
 			if errUpd != nil && err == nil {
 				err = fmt.Errorf("unable to update stop list: %w", errUpd)
 			}

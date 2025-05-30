@@ -13,9 +13,9 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	mock_entitycounters "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/entitycounters"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"go.uber.org/mock/gomock"
 )
 
@@ -4723,7 +4723,7 @@ func runComponentsDataset(
 
 	if len(dSet.expectedDiff) > 0 {
 		countersCollection.EXPECT().UpdateOne(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
-			func(_ context.Context, _ any, update any, _ ...*options.UpdateOptions) (*mongo.UpdateResult, error) {
+			func(_ context.Context, _ any, update any, _ ...*options.UpdateOneOptionsBuilder) (*mongo.UpdateResult, error) {
 				m, ok := update.(bson.M)
 				if !ok {
 					t.Fatal("update argument should be a bson.M")

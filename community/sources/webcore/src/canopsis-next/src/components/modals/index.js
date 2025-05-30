@@ -309,10 +309,6 @@ export const Rate = () => ({
   component: import(/* webpackChunkName: "Remediation" */ './common/rate.vue'),
   loading: LoaderOverlay,
 });
-export const CreateRemediationInstructionsFilter = () => ({
-  component: import(/* webpackChunkName: "Remediation" */ './remediation/create-remediation-instructions-filter.vue'),
-  loading: LoaderOverlay,
-});
 export const TestSuite = () => ({
   component: import(/* webpackChunkName: "Junit" */ './test-suite/test-suite.vue'),
   loading: LoaderOverlay,

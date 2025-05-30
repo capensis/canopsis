@@ -67,7 +67,6 @@ export const MODALS = {
   createRemediationInstruction: 'create-remediation-instruction',
   createRemediationConfiguration: 'create-remediation-configuration',
   createRemediationJob: 'create-remediation-job',
-  createRemediationInstructionsFilter: 'create-remediation-instructions-filter',
   executeRemediationInstruction: 'execute-remediation-instruction',
   executeRemediationSimpleInstruction: 'execute-remediation-simple-instruction',
   pbehaviorPatterns: 'pbehavior-patterns',

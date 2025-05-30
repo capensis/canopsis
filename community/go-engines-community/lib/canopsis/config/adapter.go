@@ -7,9 +7,9 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // Adapter to the concrete database
@@ -40,7 +40,7 @@ func (c *adapter) GetConfig(ctx context.Context) (CanopsisConf, error) {
 func (c *adapter) UpsertConfig(ctx context.Context, conf CanopsisConf) error {
 	conf.ID = ConfigKeyName
 	_, err := c.collection.UpdateOne(ctx, bson.M{"_id": ConfigKeyName},
-		bson.M{"$set": conf}, options.Update().SetUpsert(true))
+		bson.M{"$set": conf}, options.UpdateOne().SetUpsert(true))
 
 	return err
 }
@@ -90,7 +90,7 @@ func (a *remediationAdapter) GetConfig(ctx context.Context) (RemediationConf, er
 
 func (a *remediationAdapter) UpsertConfig(ctx context.Context, conf RemediationConf) error {
 	_, err := a.collection.UpdateOne(ctx, bson.M{"_id": RemediationKeyName},
-		bson.M{"$set": conf}, options.Update().SetUpsert(true))
+		bson.M{"$set": conf}, options.UpdateOne().SetUpsert(true))
 
 	return err
 }
@@ -122,7 +122,7 @@ func (a *healthCheckAdapter) UpsertConfig(ctx context.Context, conf HealthCheckC
 		bson.M{"$set": bson.M{
 			"engine_order":    conf.EngineOrder,
 			"update_interval": conf.UpdateInterval,
-		}}, options.Update().SetUpsert(true))
+		}}, options.UpdateOne().SetUpsert(true))
 
 	return err
 }

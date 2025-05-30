@@ -114,3 +114,29 @@ export const REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES = {
   skipped: 5,
   waiting: 6,
 };
+
+export const REMEDIATION_INSTRUCTION_FILTER_TYPES = {
+  noInstructions: 0,
+  noInstructionsOrNotInProgress: 1,
+  hasInstructions: 2,
+};
+
+export const REMEDIATION_INSTRUCTION_FILTER_MANUAL_STATUSES = [
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted,
+];
+
+export const REMEDIATION_INSTRUCTION_FILTER_AUTO_STATUSES = [
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed,
+];
+
+export const REMEDIATION_INSTRUCTION_FILTER_FIELDS = {
+  instructionFilterType: 'instruction_filter_type',
+  instructionType: 'instruction_type',
+  instructionStatuses: 'instruction_statuses',
+  instructionIds: 'instruction_ids',
+};
