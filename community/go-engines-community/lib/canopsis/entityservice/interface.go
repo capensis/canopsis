@@ -5,7 +5,7 @@ package entityservice
 import (
 	"context"
 
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 // Adapter is an interface that provides methods for database queries regarding

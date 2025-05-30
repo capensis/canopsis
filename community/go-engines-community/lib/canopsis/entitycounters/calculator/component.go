@@ -10,9 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type componentCountersCalculator struct {
@@ -20,7 +20,7 @@ type componentCountersCalculator struct {
 	entityCollection         mongo.DbCollection
 	eventsSender             entitycounters.EventsSender
 
-	options *options.FindOneOptions
+	options *options.FindOneOptionsBuilder
 }
 
 func NewComponentCountersCalculator(dbClient mongo.DbClient, eventsSender entitycounters.EventsSender) ComponentCountersCalculator {
@@ -136,7 +136,7 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 		ctx,
 		bson.M{"_id": component.ID},
 		bson.M{"$set": counters},
-		options.Update().SetUpsert(true),
+		options.UpdateOne().SetUpsert(true),
 	)
 	if err != nil {
 		return 0, err
@@ -290,7 +290,7 @@ func (s *componentCountersCalculator) calculateCounters(
 		ctx,
 		bson.M{"_id": entity.Component},
 		bson.M{"$inc": diff},
-		options.Update().SetUpsert(true),
+		options.UpdateOne().SetUpsert(true),
 	)
 	if err != nil {
 		return false, false, 0, err

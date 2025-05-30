@@ -19,13 +19,13 @@ import (
 	"github.com/kylelemons/godebug/pretty"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.uber.org/mock/gomock"
 )
 
 func TestEventFailureCleaner_Clean(t *testing.T) {
 	ctx := t.Context()
-	client, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+	client, err := mongo.NewClient(ctx)
 	if err != nil {
 		t.Fatalf("cannot connect to mongodb: %v", err)
 	}

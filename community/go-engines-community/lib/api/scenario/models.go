@@ -15,9 +15,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/x/bsonx/bsoncore"
 )
 
 type FilteredQuery struct {
@@ -69,8 +68,8 @@ type Trigger struct {
 	Threshold int    `json:"threshold,omitempty" binding:"required_if=Type eventscount,excluded_unless=Type eventscount,omitempty,gt=1"`
 }
 
-func (t *Trigger) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	if valueType != bson.TypeString {
+func (t *Trigger) UnmarshalBSONValue(valueType byte, b []byte) error {
+	if bson.Type(valueType) != bson.TypeString {
 		return errors.New("trigger should be a string")
 	}
 	value, _, ok := bsoncore.ReadString(b)

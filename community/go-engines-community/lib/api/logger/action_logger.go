@@ -14,8 +14,8 @@ import (
 	"github.com/bsm/redislock"
 	"github.com/jackc/pgx/v5"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -237,17 +237,21 @@ func (l *logger) startLockRefresher(ctx context.Context, lock libredis.Lock) cha
 	return exitChan
 }
 
-func (l *logger) Watch(ctx context.Context) error {
+func (l *logger) Watch(ctx context.Context) (err error) {
+	ctx, cancel := context.WithCancel(ctx)
+
 	var lock libredis.Lock
 
 	defer func() {
+		cancel()
+
 		if lock == nil {
 			return
 		}
 
-		err := lock.Release(context.WithoutCancel(ctx))
-		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) {
-			l.zLog.Err(err).Msg("failed to release lock")
+		lockErr := lock.Release(context.WithoutCancel(ctx))
+		if lockErr != nil && !errors.Is(lockErr, redislock.ErrLockNotHeld) {
+			l.zLog.Err(lockErr).Msg("failed to release lock")
 		}
 
 		l.zLog.Debug().Msg("action logger redis lock is released")

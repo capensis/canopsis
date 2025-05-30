@@ -16,8 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const (
@@ -162,7 +161,7 @@ type Info struct {
 	Value       interface{} `bson:"value" json:"value"`
 }
 
-func (i *Infos) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
+func (i *Infos) UnmarshalBSONValue(_ byte, b []byte) error {
 	var tmp map[string]Info
 	err := bson.Unmarshal(b, &tmp)
 	if err != nil {

@@ -1,4 +1,9 @@
-import { ALARM_LIST_STEPS, ALARM_METRIC_PARAMETERS } from '@/constants';
+import {
+  ALARM_LIST_STEPS,
+  ALARM_METRIC_PARAMETERS,
+  REMEDIATION_INSTRUCTION_FILTER_TYPES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES,
+} from '@/constants';
 
 export default {
   liveReporting: 'Set a custom date range',
@@ -224,5 +229,24 @@ export default {
     canceledInitiator: 'Canceled initiator',
     changeState: 'Change state',
     closeDelay: 'Close delay',
+  },
+  instructionsFilter: {
+    filter: 'Instruction filter',
+    type: 'Instruction type',
+    status: 'Instruction status',
+    name: 'Instruction name',
+    statusSelector: '<strong>Statuses</strong>:&nbsp;{statuses}',
+    nameSelector: '<strong>Names</strong>:&nbsp;{names}',
+    filters: {
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructions]: 'No instructions',
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructionsOrNotInProgress]: 'No instructions or not in progress',
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.hasInstructions]: 'Has instructions',
+    },
+    statuses: {
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]: 'In progress',
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: 'Finished successfully',
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: 'Failed',
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: 'Not in progress and not executed',
+    },
   },
 };

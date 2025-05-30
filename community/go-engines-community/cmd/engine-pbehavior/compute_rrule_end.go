@@ -9,12 +9,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func computeRruleEnd(ctx context.Context, logger zerolog.Logger) error {
-	dbClient, err := mongo.NewClient(ctx, 0, 0, logger)
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		return err
 	}

@@ -13,9 +13,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type entityServiceCountersCalculator struct {
@@ -24,7 +24,7 @@ type entityServiceCountersCalculator struct {
 	templateExecutor          template.Executor
 	eventsSender              entitycounters.EventsSender
 
-	options *options.FindOneOptions
+	options *options.FindOneOptionsBuilder
 }
 
 func NewEntityServiceCountersCalculator(dbClient mongo.DbClient, executor template.Executor, eventsSender entitycounters.EventsSender) EntityServiceCountersCalculator {
@@ -155,7 +155,7 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 		return nil, err
 	}
 
-	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": service.ID}, bson.M{"$set": counters}, options.Update().SetUpsert(true))
+	_, err = s.serviceCountersCollection.UpdateOne(ctx, bson.M{"_id": service.ID}, bson.M{"$set": counters}, options.UpdateOne().SetUpsert(true))
 	if err != nil {
 		return nil, err
 	}

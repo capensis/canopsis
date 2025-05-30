@@ -10,8 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Assigner interface {
@@ -29,7 +29,7 @@ type assigner struct {
 	serviceRules   []StateSetting
 
 	ruleQuery        bson.M
-	ruleQueryOptions *options.FindOptions
+	ruleQueryOptions *options.FindOptionsBuilder
 
 	logger zerolog.Logger
 }
@@ -146,7 +146,7 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 				ctx,
 				bson.M{"_id": entity.ID},
 				bson.M{"$set": bson.M{"rule": a.componentRules[idx]}},
-				options.Update().SetUpsert(true),
+				options.UpdateOne().SetUpsert(true),
 			)
 			if err != nil {
 				return false, err
@@ -195,7 +195,7 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 				ctx,
 				bson.M{"_id": entity.ID},
 				bson.M{"$set": bson.M{"rule": a.serviceRules[idx]}},
-				options.Update().SetUpsert(true),
+				options.UpdateOne().SetUpsert(true),
 			)
 			if err != nil {
 				return false, err
