@@ -66,6 +66,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-info-popup-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       popups=""
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -83,16 +84,12 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <field-remediation-instructions-filters-stub
-      addable="true"
-      editable="true"
-      filters=""
-    />
     <field-switcher-stub
       title="Correlation"
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -705,6 +702,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-info-popup-stub
       columns="[object Object]"
       popups=""
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -714,12 +712,12 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <!---->
     <field-switcher-stub
       title="Correlation"
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -1336,6 +1334,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-info-popup-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       popups=""
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -1345,12 +1344,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <!---->
     <field-switcher-stub
       title="Correlation"
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -1964,6 +1963,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     <field-info-popup-stub
       columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       popups=""
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub
@@ -1973,12 +1973,12 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     <field-opened-resolved-filter-stub
       value="true"
     />
-    <!---->
     <field-switcher-stub
       title="Correlation"
     />
     <field-switcher-stub
       title="Clear of selected filter allowed"
+      value="true"
     />
   </widget-settings-group-stub>
   <widget-settings-group-stub

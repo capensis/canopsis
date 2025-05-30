@@ -23,6 +23,7 @@ describe('convertAlarmUserPreferenceToQuery', () => {
       only_bookmarks: true,
       correlation: true,
       itemsPerPage: 20,
+      instructionsFilter: {},
     });
   });
 
@@ -33,6 +34,7 @@ describe('convertAlarmUserPreferenceToQuery', () => {
 
     expect(result).toEqual({
       only_bookmarks: false,
+      instructionsFilter: {},
     });
   });
 });
