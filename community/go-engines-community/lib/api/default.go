@@ -311,10 +311,10 @@ func Default(
 		return exdataImportWorker.ProcessJob(ctx, id)
 	})
 
-	services.NotificationStore = usernotification.NewStore(dbClient, amqpChannel, json.NewEncoder(),
+	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(dbClient, amqpChannel, websocketHub,
-		notification.NewStore(dbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpChannel, websocketHub,
+		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	// Create api.
 	api := New(
