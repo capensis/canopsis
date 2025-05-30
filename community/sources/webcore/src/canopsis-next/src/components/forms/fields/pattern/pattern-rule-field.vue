@@ -69,8 +69,7 @@
         </v-flex>
         <v-flex
           v-if="shownOperatorField"
-          :xs6="!isAnyInfosRule"
-          :xs4="isAnyInfosRule"
+          v-bind="operatorFlexSizeAttrs"
           class="pl-3"
         >
           <pattern-operator-field
@@ -83,8 +82,7 @@
         </v-flex>
         <v-flex
           v-if="rule.operator && operatorHasValue"
-          :xs7="isAnyInfosRule"
-          :xs6="!isAnyInfosRule"
+          v-bind="valueFlexSizeAttrs"
           class="pl-3"
         >
           <component
@@ -101,7 +99,7 @@
 <script>
 import { isFunction } from 'lodash';
 
-import { PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES, PATTERN_RULE_INFOS_FIELDS, PATTERN_RULE_TYPES } from '@/constants';
+import { PATTERN_FIELD_TYPES, PATTERN_RULE_INFOS_FIELDS, PATTERN_RULE_TYPES } from '@/constants';
 
 import {
   convertValueByType,
@@ -160,10 +158,6 @@ export default {
         { value: PATTERN_FIELD_TYPES.boolean },
         { value: PATTERN_FIELD_TYPES.stringArray },
       ],
-    },
-    intervalRanges: {
-      type: Array,
-      default: () => PATTERN_QUICK_RANGES,
     },
     valueField: {
       type: Object,
@@ -276,6 +270,21 @@ export default {
         };
       }
 
+      if (this.isDateRule) {
+        return {
+          is: 'pattern-rule-field-date-value',
+          props: {
+            value: this.rule.range,
+            operator: this.rule.operator,
+            disabled: this.disabled,
+            name: this.valueFieldName,
+          },
+          on: {
+            input: this.updateRange,
+          },
+        };
+      }
+
       return {
         is: 'c-mixed-input-field',
         props: {
@@ -304,6 +313,26 @@ export default {
     objectDictionaryName() {
       return `${this.name}.dictionary`;
     },
+
+    operatorFlexSizeAttrs() {
+      if (this.isDateRule) {
+        return { xs5: true };
+      }
+
+      if (this.isAnyInfosRule) {
+        return { xs4: true };
+      }
+
+      return { xs6: true };
+    },
+
+    valueFlexSizeAttrs() {
+      if (this.isAnyInfosRule || this.isDateRule) {
+        return { xs7: true };
+      }
+
+      return { xs6: true };
+    },
   },
   methods: {
     preparedItemDisabled(item) {
@@ -312,6 +341,10 @@ export default {
 
     updateDuration(duration) {
       this.updateField('duration', duration);
+    },
+
+    updateRange(duration) {
+      this.updateField('range', duration);
     },
 
     updateValue(value) {

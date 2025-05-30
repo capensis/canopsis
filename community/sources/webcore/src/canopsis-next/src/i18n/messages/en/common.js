@@ -314,6 +314,7 @@ export default {
   true: 'True',
   false: 'False',
   customField: 'Custom field|Custom fields',
+  last: 'Last',
   variableTypes: {
     string: 'String',
     number: 'Number',
