@@ -30,7 +30,7 @@ export default {
   },
   props: {
     value: {
-      type: [String, Object],
+      type: [String, Number, Object],
       required: false,
     },
     ranges: {
@@ -63,7 +63,7 @@ export default {
 
       return ranges.map(range => ({
         ...range,
-        text: t(`quickRanges.types.${range.value}`),
+        text: range.text ?? t(`quickRanges.types.${range.value}`),
       }));
     });
 

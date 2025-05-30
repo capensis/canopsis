@@ -2,7 +2,7 @@
   <v-layout class="gap-2">
     <c-quick-date-interval-type-field
       v-field="value.from"
-      :items="quickRanges"
+      :ranges="fromQuickRanges"
       :item-disabled="itemFromDisabled"
       :label="$t('common.from')"
       :hide-details="hideDetails"
@@ -10,7 +10,7 @@
     />
     <c-quick-date-interval-type-field
       v-field="value.to"
-      :items="quickRanges"
+      :ranges="toQuickRanges"
       :item-disabled="itemToDisabled"
       :label="$t('common.to')"
       :hide-details="hideDetails"
@@ -22,7 +22,9 @@
 <script>
 import { computed } from 'vue';
 
-import { QUICK_RANGES_WITHOUT_CUSTOM } from '@/constants';
+import { PATTERN_QUICK_RANGES_WITHOUT_CUSTOM } from '@/constants';
+
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
@@ -37,7 +39,11 @@ export default {
       type: [String, Object],
       required: false,
     },
-    ranges: {
+    fromRanges: {
+      type: Array,
+      required: false,
+    },
+    toRanges: {
       type: Array,
       required: false,
     },
@@ -62,21 +68,60 @@ export default {
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    const quickRanges = computed(() => {
-      const ranges = props.ranges ?? Object.values(QUICK_RANGES_WITHOUT_CUSTOM);
+    const fromQuickRanges = computed(() => {
+      const ranges = props.fromRanges ?? PATTERN_QUICK_RANGES_WITHOUT_CUSTOM;
 
       return ranges.map(range => ({
         ...range,
-        text: t(`quickRanges.types.${range.value}`),
+        text: range.text ?? t(`quickRanges.types.${range.value}`),
       }));
     });
 
-    const itemFromDisabled = () => {};
+    const toQuickRanges = computed(() => {
+      const ranges = props.toRanges ?? PATTERN_QUICK_RANGES_WITHOUT_CUSTOM;
 
-    const itemToDisabled = () => {};
+      return ranges.map(range => ({
+        ...range,
+        text: range.text ?? t(`quickRanges.types.${range.value}`),
+      }));
+    });
+
+    const allQuickRangesIntervals = computed(() => [
+      ...fromQuickRanges.value,
+      ...toQuickRanges.value,
+    ].reduce((acc, range) => {
+      acc[range.value] = {
+        start: convertStartDateIntervalToTimestamp(range.start),
+        stop: convertStopDateIntervalToTimestamp(range.stop),
+      };
+
+      return acc;
+    }, {}));
+
+    const itemFromDisabled = (item) => {
+      if (!props.value.to) {
+        return false;
+      }
+      const { start: itemStart } = allQuickRangesIntervals.value[item.value] ?? {};
+      const { start: toStart } = allQuickRangesIntervals.value[props.value.to] ?? {};
+
+      return toStart <= itemStart;
+    };
+
+    const itemToDisabled = (item) => {
+      if (!props.value.from) {
+        return false;
+      }
+
+      const { start: fromStart } = allQuickRangesIntervals.value[props.value.from] ?? {};
+      const { start: itemStart } = allQuickRangesIntervals.value[item.value] ?? {};
+
+      return fromStart >= itemStart;
+    };
 
     return {
-      quickRanges,
+      fromQuickRanges,
+      toQuickRanges,
       updateModel,
       itemFromDisabled,
       itemToDisabled,
