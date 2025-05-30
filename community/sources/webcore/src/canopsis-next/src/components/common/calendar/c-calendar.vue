@@ -840,5 +840,9 @@ export default {
     right: 0;
     pointer-events: none;
   }
+
+  .v-calendar-monthly, .v-calendar-weekly__week {
+    overflow: hidden;
+  }
 }
 </style>

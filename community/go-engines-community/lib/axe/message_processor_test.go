@@ -36,7 +36,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func BenchmarkMessageProcessor_Process_GivenNewAlarm(b *testing.B) {
@@ -245,7 +245,7 @@ func benchmarkMessageProcessor(
 ) {
 	ctx := b.Context()
 
-	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
