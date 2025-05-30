@@ -17,8 +17,8 @@ import (
 	"github.com/jackc/pgx/v5"
 	libredis "github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Store interface {
@@ -353,7 +353,10 @@ func (s *store) getServices() []Service {
 func (s *store) checkMongoDB(ctx context.Context) bool {
 	if s.mongoClient == nil {
 		var err error
-		s.mongoClient, err = mongo.NewClientWithOptions(ctx, 0, 0, time.Second, time.Second, zerolog.Nop())
+		s.mongoClient, err = mongo.NewClient(ctx, mongo.ClientOptions{
+			ServerSelectionTimeout: time.Second,
+			ClientTimeout:          time.Second,
+		})
 		if err != nil {
 			s.logger.Err(err).Msg("cannot connect to mongo")
 			return false

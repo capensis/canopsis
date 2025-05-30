@@ -12,12 +12,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func TestEventFailureCleaner_Clean(t *testing.T) {
 	ctx := t.Context()
-	client, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+	client, err := mongo.NewClient(ctx)
 	if err != nil {
 		t.Fatalf("cannot connect to mongodb: %v", err)
 	}

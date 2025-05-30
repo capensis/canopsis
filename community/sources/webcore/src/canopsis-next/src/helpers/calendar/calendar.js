@@ -62,10 +62,13 @@ export function convertEventsToGroupedEvents({ events, groupByValue = 'hour', ge
 
     if (groupedEvent.length > 1) {
       const sum = groupedEvent.reduce((acc, event) => acc + event.data.meta.sum, 0);
+      const color = getColor(sum);
 
       return {
         ...groupedEvent[0],
 
+        color,
+        name: sum,
         data: {
           title: sum,
           color: getColor(sum),

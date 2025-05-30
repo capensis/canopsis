@@ -11,8 +11,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 var ErrUnsupportedField = errors.New("unsupported field")
@@ -1146,7 +1145,7 @@ func (c *Condition) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (c *Condition) UnmarshalBSONValue(_ bsontype.Type, b []byte) error {
+func (c *Condition) UnmarshalBSONValue(_ byte, b []byte) error {
 	type Alias Condition
 	v := Alias{}
 	err := bson.Unmarshal(b, &v)
