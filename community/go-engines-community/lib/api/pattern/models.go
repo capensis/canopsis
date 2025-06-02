@@ -81,4 +81,5 @@ type CountEntitiesResponse struct {
 type Count struct {
 	Count     int64 `bson:"count" json:"count"`
 	OverLimit bool  `bson:"-" json:"over_limit"`
+	Millisecs int64 `json:"ms"`
 }

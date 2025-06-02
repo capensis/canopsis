@@ -3731,6 +3731,8 @@ definitions:
     properties:
       count:
         type: integer
+      ms:
+        type: integer
       over_limit:
         type: boolean
     type: object
@@ -4035,6 +4037,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
@@ -4099,6 +4103,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
@@ -4233,6 +4239,10 @@ definitions:
         type: string
       origin:
         type: string
+      pattern_exec_at:
+        type: integer
+      pattern_ms:
+        type: integer
       reason:
         $ref: '#/definitions/pbehaviorreason.Response'
       rrule:
@@ -4298,6 +4308,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
