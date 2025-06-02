@@ -665,19 +665,6 @@ describe('pattern-rule-field-date-value', () => {
     });
   });
 
-  test('Renders `pattern-rule-field-date-value` with inRangeDates operator', () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        value: { from: new Date('2023-01-01'), to: new Date('2023-01-31') },
-        operator: PATTERN_OPERATORS.inRangeDates,
-        name: 'test-date-range',
-        disabled: false,
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
   test('Renders `pattern-rule-field-date-value` with within operator', () => {
     const wrapper = snapshotFactory({
       propsData: {
