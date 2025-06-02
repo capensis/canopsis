@@ -859,12 +859,13 @@ func (m *manager) getResourceEntities(ctx context.Context, resourceID, component
 			return nil, componentExist, componentInfos, connectorExist, err
 		}
 
-		if ent.Type == types.EntityTypeResource {
+		switch ent.Type {
+		case types.EntityTypeResource:
 			resource = &ent
-		} else if ent.Type == types.EntityTypeComponent {
+		case types.EntityTypeComponent:
 			componentExist = true
 			componentInfos = ent.Infos
-		} else {
+		default:
 			connectorExist = true
 		}
 	}
