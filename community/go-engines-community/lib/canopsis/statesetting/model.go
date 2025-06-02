@@ -76,7 +76,8 @@ func (s *StateThreshold) IsReached(c Counters) bool {
 		return false
 	}
 
-	if s.Method == CalculationMethodNumber {
+	switch s.Method {
+	case CalculationMethodNumber:
 		switch s.State {
 		case types.AlarmStateTitleOK:
 			return s.matchNumberCondition(c.OK)
@@ -87,7 +88,7 @@ func (s *StateThreshold) IsReached(c Counters) bool {
 		case types.AlarmStateTitleCritical:
 			return s.matchNumberCondition(c.Critical)
 		}
-	} else if s.Method == CalculationMethodShare {
+	case CalculationMethodShare:
 		switch s.State {
 		case types.AlarmStateTitleOK:
 			return s.matchShareCondition(c.OK, c.GetTotal())
