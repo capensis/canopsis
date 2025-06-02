@@ -75,4 +75,6 @@ type PBehavior struct {
 	Inherited bool `bson:"inherited"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
+	PatternMs                        int64             `bson:"pattern_ms,omitempty"`
+	PatternExecAt                    *datetime.CpsTime `bson:"pattern_exec_at,omitempty"`
 }
