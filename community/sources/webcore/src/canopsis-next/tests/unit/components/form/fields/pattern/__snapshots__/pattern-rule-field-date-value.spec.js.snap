@@ -18,16 +18,6 @@ exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\`
 />
 `;
 
-exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with inRangeDates operator 1`] = `
-<c-date-time-interval-field-stub
-  is-allowed-from-date="date => !toTimestamp.value || (0, _date.convertDateToTimestamp)(date) < toTimestamp.value"
-  is-allowed-to-date="date => !fromTimestamp.value || (0, _date.convertDateToTimestamp)(date) > fromTimestamp.value"
-  label="Value"
-  name="test-date-range"
-  value="[object Object]"
-/>
-`;
-
 exports[`pattern-rule-field-date-value Renders \`pattern-rule-field-date-value\` with inRangePeriod operator 1`] = `
 <c-quick-date-interval-type-range-field-stub
   from-ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
