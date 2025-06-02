@@ -25,6 +25,7 @@ import (
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
@@ -69,6 +70,7 @@ const (
 	jobKeyExport        = "export"
 	jobKeyImport        = "import"
 	jobKeyExtDataImport = "extdataimport"
+	jobKeyPbhPatterns   = "pbhpatterns"
 )
 
 //go:embed swaggerui/*
@@ -306,6 +308,12 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
 	})
+	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
+		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
+		services.TimezoneConfigProvider, authorProvider, websocketHub)
+	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
+		return apiPbhStore.ExecPatternsAndUpdate(ctx)
+	})
 
 	// Create api.
 	api := New(
@@ -395,6 +403,7 @@ func Default(
 			dbExportClient,
 			pgPoolProvider,
 			amqpChannel,
+			lockRedisSession,
 			services.ApiConfigProvider,
 			services.TimezoneConfigProvider,
 			services.TemplateConfigProvider,
@@ -573,6 +582,10 @@ func registerWebsocketRooms(websocketHub websocket.Hub) error {
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := websocketHub.RegisterRoom(websocket.RoomPbhPatterns, apisecurity.PermPbhPatterns, securitymodel.PermissionCan); err != nil {
 		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 

@@ -49,6 +49,7 @@ type EditRequest struct {
 	Inherited  bool                               `json:"inherited"`
 
 	common.EntityPatternFieldsRequest
+	ExecPattern bool `json:"exec_pattern"`
 }
 
 type CreateRequest struct {
@@ -123,6 +124,8 @@ type Response struct {
 	Editable *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
+	PatternMs                        int64             `bson:"pattern_ms,omitempty" json:"pattern_ms"`
+	PatternExecAt                    *datetime.CpsTime `bson:"pattern_exec_at,omitempty" json:"pattern_exec_at" swaggertype:"integer"`
 
 	RRuleComputedStart *datetime.CpsTime `bson:"rrule_cstart" json:"-"`
 
