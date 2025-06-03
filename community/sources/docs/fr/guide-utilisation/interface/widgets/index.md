@@ -46,6 +46,11 @@ Voici un aperçu des principaux widgets disponibles.
   Permet de gérer les collections/tables de données utilisées pour les enrichissements externes.  
   ![Données externes](./donnees-externes/img/donnees_externes_widget.png)
 
+- :material-chart-box-outline: __[Graphiques](graphiques/index.md)__  
+  Affiche des graphiques (barres, lignes, camemberts ou chiffres) à partir de métriques internes ou externes, pour analyser les tendances, ratios ou totaux.  
+  ![Widgets graphiques](./graphiques/img/graphiques.png)
+
+
 </div>
 
 
