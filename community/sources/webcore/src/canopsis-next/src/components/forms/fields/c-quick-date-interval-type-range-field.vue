@@ -1,21 +1,25 @@
 <template>
   <v-layout class="gap-2">
-    <c-quick-date-interval-type-field
-      v-field="value.from"
-      :ranges="fromQuickRanges"
-      :item-disabled="itemFromDisabled"
-      :label="$t('common.from')"
-      :hide-details="hideDetails"
-      :disabled="disabled"
-    />
-    <c-quick-date-interval-type-field
-      v-field="value.to"
-      :ranges="toQuickRanges"
-      :item-disabled="itemToDisabled"
-      :label="$t('common.to')"
-      :hide-details="hideDetails"
-      :disabled="disabled"
-    />
+    <v-flex xs6>
+      <c-quick-date-interval-type-field
+        v-field="value.from"
+        :ranges="fromQuickRanges"
+        :item-disabled="itemFromDisabled"
+        :label="$t('common.from')"
+        :hide-details="hideDetails"
+        :disabled="disabled"
+      />
+    </v-flex>
+    <v-flex xs6>
+      <c-quick-date-interval-type-field
+        v-field="value.to"
+        :ranges="toQuickRanges"
+        :item-disabled="itemToDisabled"
+        :label="$t('common.to')"
+        :hide-details="hideDetails"
+        :disabled="disabled"
+      />
+    </v-flex>
   </v-layout>
 </template>
 
