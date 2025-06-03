@@ -1,7 +1,4 @@
-# JUnit
-
-!!! Info
-    Disponible uniquement en édition Pro. (Canopsis ≥ [4.3.0](../../../../notes-de-version/4.3.0.md))
+# Scénarios JUnit
 
 Ce module est capable de recevoir des résultats d'exécution de scénarios au format XML [JUnit](https://fr.wikipedia.org/wiki/JUnit).
 
@@ -11,7 +8,7 @@ Il comprend :
 * Un moteur capable de parser, générer des alarmes à partir des résultats reçus.
 * Un widget pour l'interface graphique capable de présenter les résultats sous diverses formes.
 
-![junit-screenshot1](../../../../notes-de-version/img/4.3.0-junit-screenshot1.png){: .link width=80%"}
+![junit-screenshot1](./img/junit.png)
 
 ## Sommaire
 
@@ -30,11 +27,10 @@ La configuration peut être changée dans le fichier [canopsis.toml](../../../..
 ```
 [Canopsis.file]
 …
-# Local storage for Junit artifacts.
-Junit = "/opt/canopsis/var/lib/junit-files"
-# Temporary local storage for Junit data which are uploaded by API.
-JunitApi = "/tmp/canopsis/junit"
+Dir = "/opt/canopsis/var/lib"
 ```
+
+Tous les fichiers nécessaires au bon fonctionnement du connecteur seront stockés dans `Dir/junit-files`
 
 ## Création du widget
 
