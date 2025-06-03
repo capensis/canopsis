@@ -25,7 +25,7 @@ Il existe 4 types de cartes :
 * Géographique : nécessite les coordonnées des entités dans le référentiel
 * Flowchart : réalisé à partir d'un "fond" de carte
 * Mermaid : interprétation du format [Mermaid](https://mermaid.js.org/). Un [éditeur en ligne](https://mermaid.live) est disponible.
-* Arbre de dépendances : modélisation des [services Canopsis](../../services)
+* Arbre de dépendances : modélisation des [services Canopsis](../../../services/)
 
 ### Actions
 
