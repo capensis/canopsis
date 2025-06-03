@@ -30,8 +30,9 @@ Voici un aperçu des principaux widgets disponibles.
   Affiche des compteurs d'alarmes sous forme de tuiles selon des seuils définis. Tuiles colorées pour une lecture rapide.  
   ![Compteur](./compteur/img/counter.png)
 
-- :material-clipboard-text-outline: __[JUnit](junit/index.md)__  
-  Affiche les résultats de tests automatisés formatés en XML JUnit.
+- :material-clipboard-text-outline: __[Scénarios JUnit](junit/index.md)__  
+  Affiche les résultats de tests automatisés formatés en XML JUnit.  
+  ![Junit](./junit/img/junit.png)
 
 - :material-map-outline: __[Cartographie](cartographie/index.md)__  
   Affiche les alarmes sous forme de cartes géographiques, logiques ou arborescentes.  
