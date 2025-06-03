@@ -217,8 +217,8 @@ export const isValidDuration = duration => isNumber(duration?.value) && isValidT
  * @param {Duration | *} duration
  * @return {boolean}
  */
-export const isValidRangeDuration = duration => isValidDuration(duration) || (
-  isValidDuration(duration.from)
-  && isValidDuration(duration.to)
-  && durationToSeconds(duration.from) > durationToSeconds(duration.to)
-);
+export const isValidRangeDuration = duration => isValidDuration(duration)
+ || (isValidDuration(duration.to) && !duration.from)
+ || (isValidDuration(duration.from)
+    && isValidDuration(duration.to)
+    && durationToSeconds(duration.from) > durationToSeconds(duration.to));
