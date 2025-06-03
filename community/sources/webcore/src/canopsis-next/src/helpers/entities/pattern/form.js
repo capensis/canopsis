@@ -339,6 +339,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
   ALARM_PATTERN_FIELDS.canceledInitiator,
+  ALARM_PATTERN_FIELDS.stateInitiator,
   ENTITY_PATTERN_FIELDS.id,
   ENTITY_PATTERN_FIELDS.name,
   ENTITY_PATTERN_FIELDS.category,
