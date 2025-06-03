@@ -6,6 +6,8 @@ Les données affichées peuvent provenir de métriques internes à Canopsis (nom
 
 Chaque widget peut être personnalisé (période, méthode de calcul, comparaison temporelle, couleurs…) pour répondre à des besoins d’analyse ponctuelle ou continue.
 
+![Graphiques](./img/graphiques.png)
+
 ## Types de widgets graphiques
 
 Canopsis propose 4 types principaux de widgets graphiques, chacun adapté à une visualisation spécifique des métriques :
@@ -14,7 +16,6 @@ Canopsis propose 4 types principaux de widgets graphiques, chacun adapté à une
 - **Graphique en ligne (Line chart)** : pour suivre l’évolution de valeurs dans le temps.
 - **Diagramme circulaire (Pie chart)** : pour montrer des proportions entre différentes métriques.
 - **Valeurs numériques (Numbers)** : pour afficher directement les valeurs agrégées de certaines métriques.
-
 
 ## Métriques internes disponibles
 
@@ -89,7 +90,6 @@ Pour toutes les métriques (internes et externes), différentes méthodes de cal
 | **Average**        | Moyenne des valeurs                                                          |
 | **Min / Max**      | Valeur minimale ou maximale                                                  |
 | **Last**           | Dernière valeur reçue (utile pour les compteurs ou l’état courant)           |
-| **Cumulative sum** | Valeur finale reçue sur la période (équivalent à Last pour séries continues) |
 
 
 ## Affichages des graphiques dans les widgets Bac à alarmes et Explorateur de contexte
@@ -103,10 +103,10 @@ Ils s’affichent dans un onglet `Graphiques` si des métriques externes ont ét
 
 Les types de graphes supportés ici sont :
 
-- Bar chart
-- Line chart
-- Numbers  
-_(Pas de pie chart pour ces vues)_
+- Histogramme
+- Graphique en ligne
+- Nombre
+_(Pas de diagramme circulaire pour ces vues)_
 
 
 ## Bonnes pratiques
@@ -124,39 +124,6 @@ _(Pas de pie chart pour ces vues)_
 La politique de rétention peut être ajustée dans les [paramètres de stockage](../../../menu-administration/parametres-de-stockage/)
 
 
-## Presets fournis pour chaque type de widget
-
-Les presets facilitent la création de widgets en proposant des regroupements de métriques prêtes à l’emploi avec des paramètres préconfigurés (titre, période, méthode de calcul, etc).
-
-### Histogramme
-
-| Nom du preset                          | Affichage       | Métriques incluses                                                            | Détails                |
-|----------------------------------------|-----------------|-------------------------------------------------------------------------------|------------------------|
-| Nombre d’alarmes actives               | Barres séparées | Nombre d'alarmes actives                                                      | Comparaison activée    |
-| Statistiques des acquittements         | Empilé          | Nombre d'alarmes avec acquittement, Nombre d'alarmes non acquittées           | Comparaison désactivée |
-| Statistiques des tickets               | Empilé          | Nombre d'alarmes actives avec tickets, Nombre d'alarmes actives sans tickets  | Comparaison désactivée |
-| Statistiques des acquittements annulés | Empilé          | Nombre d'alarmes avec acquittement, Nombre d'alarmes avec acquittement annulé | Comparaison désactivée |
-
-
-### Diagramme circulaire
-
-| Nom du preset                 | Métriques incluses                                                            | Méthode de calcul | Détails                  |
-|-------------------------------|-------------------------------------------------------------------------------|-------------------|--------------------------|
-| Répartition des acquittements | Nombre d'alarmes avec acquittement, Nombre d'alarmes non acquittées           | Sum               |                          |
-| Répartition des tickets       | Nombre d'alarmes actives avec tickets, Nombre d'alarmes actives sans tickets  | Sum               |                          |
-| Corrélation vs non-corrélées  | % d'alarmes corrélées, % d'alarmes non corrélées                              | Sum               | Si % non-corrélées dispo |
-
-
-### Nombres
-
-| Nom du preset                        | Métriques incluses                                                           | Méthode de calcul par défaut |
-|--------------------------------------|------------------------------------------------------------------------------|------------------------------|
-| Nombre d’alarmes créées              | Nombre d'alarmes créées                                                      | Sum                          |
-| Nombre d’alarmes actives             | Nombre d'alarmes actives                                                     | Average                      |
-| Alarmes acquittées vs non acquittées | Nombre d'alarmes avec acquittement, Nombre d'alarmes non acquittées          | Average                      |
-| Alarmes avec vs sans tickets         | Nombre d'alarmes actives avec tickets, Nombre d'alarmes actives sans tickets | Average                      |
-| Moyenne des temps d’acquittement     | Délai moyen d'acquittement des alarmes                                       | Average                      |
-| Moyenne des temps de résolution      | Délai moyen de résolution des alarmes                                        | Average                      |
 
 
 ## Cas d’usage supportés
@@ -171,7 +138,7 @@ Les presets facilitent la création de widgets en proposant des regroupements de
 
 ## Intégration avec les événements `perf_data`
 
-Pour exploiter des métriques dans Canopsis via des événements (ex : venant des [connecteurs](../../../../interconnexions/), le champ `perf_data` doit suivre ce format :
+Pour exploiter des métriques dans Canopsis via des événements (ex : venant des [connecteurs](../../../../interconnexions/)), le champ `perf_data` doit suivre ce format :
 
 ```text
 'label'=value[UOM];[warn];[crit];[min];[max]
@@ -190,44 +157,86 @@ Exemple :
 
 ##  Paramètres des widgets
 
-Tous les widgets possèdent les paramètres suivants :
+Voici la liste des paramètres de widgets graphiques. Ces paramètrent varient en fonction du type de widget.
 
-
-### Titre (*optionnel*)
+### Titre
 
 Ce paramètre permet de définir le titre du widget, qui sera affiché au-dessus de celui-ci.
 
 Un champ de texte vous permet de définir ce titre.
 
-### Filtres (*requis*)
+### Presets fournis pour chaque type de widget
 
-Ce paramètre permet de définir les filtres pour lesquels vous souhaitez des compteurs.
+Les presets facilitent la création de widgets en proposant des regroupements de métriques prêtes à l’emploi avec des paramètres préconfigurés (titre, période, méthode de calcul, etc).
+
+### Histogramme
+
+| Nom du preset                          | Affichage       | Métriques incluses                                                            | Détails                |
+|----------------------------------------|-----------------|-------------------------------------------------------------------------------|------------------------|
+| Nombre d’alarmes actives               | Barres séparées | Nombre d'alarmes actives                                                      | Comparaison activée    |
+| Statistiques des acquittements         | Empilé          | Nombre d'alarmes avec acquittement, Nombre d'alarmes non acquittées           | Comparaison désactivée |
+| Statistiques des tickets               | Empilé          | Nombre d'alarmes actives avec tickets, Nombre d'alarmes actives sans tickets  | Comparaison désactivée |
+| Statistiques des acquittements annulés | Empilé          | Nombre d'alarmes avec acquittement, Nombre d'alarmes avec acquittement annulé | Comparaison désactivée |
+
+### Diagramme circulaire
+
+| Nom du preset                 | Métriques incluses                                                            | Méthode de calcul | Détails                  |
+|-------------------------------|-------------------------------------------------------------------------------|-------------------|--------------------------|
+| Répartition des acquittements | Nombre d'alarmes avec acquittement, Nombre d'alarmes non acquittées           | Sum               |                          |
+| Répartition des tickets       | Nombre d'alarmes actives avec tickets, Nombre d'alarmes actives sans tickets  | Sum               |                          |
+| Corrélation vs non-corrélées  | % d'alarmes corrélées, % d'alarmes non corrélées                              | Sum               | Si % non-corrélées dispo |
+
+### Nombres
+
+| Nom du preset                        | Métriques incluses                                                           | Méthode de calcul par défaut |
+|--------------------------------------|------------------------------------------------------------------------------|------------------------------|
+| Nombre d’alarmes créées              | Nombre d'alarmes créées                                                      | Sum                          |
+| Nombre d’alarmes actives             | Nombre d'alarmes actives                                                     | Average                      |
+| Alarmes acquittées vs non acquittées | Nombre d'alarmes avec acquittement, Nombre d'alarmes non acquittées          | Average                      |
+| Alarmes avec vs sans tickets         | Nombre d'alarmes actives avec tickets, Nombre d'alarmes actives sans tickets | Average                      |
+| Moyenne des temps d’acquittement     | Délai moyen d'acquittement des alarmes                                       | Average                      |
+| Moyenne des temps de résolution      | Délai moyen de résolution des alarmes                                        | Average                      |
+
+
+### Affichage des métriques
+
+Il s'agit de la sélection des métriques que vous souhaitez afficher sur le graphique.
+
+* Bouton "AJOUTER"  : Sélection de [métriques internes](#metriques-internes-disponibles)
+* Bouton "AJOUTER EXTERNE" : Sélection de métriques externes
+* Bouton "AJOUT AUTOMATIQUE" : Sélection de métriques externes par l'intermédiaire d'un masque
+
+Vous pouvez ensuite définir : 
+
+* **Etiquette affichée** : Label pour la métrique
+* **Couleur personnalisée** : Couleur de la courbe, de la barre
+* **Méthode de calcul** : Fonction d'agrégation appliquée (moyenne, somme, min, max, dernier)
+
+### Paramètres avancées
+
+#### Plage horaire par défaut
+
+Il s'agit d'un sélecteur de plages horaires avec des valeurs usuelles.
+
+#### Échantillonnage par défaut
+
+Une fonction d'agrégation est appliquée sur les valeurs des métriques.  
+L'échantillonage permet d'appliquer cette fonction sur une période données : heure, jour, semaine, mois
+
+#### Filtres
+
+Ce paramètre permet de définir les filtres pour lesquels vous souhaitez des métriques.
 Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/).
 
 Pour créer un filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre alors.
 Vous avez la possibilité d'éditer ou de supprimer des filtres existants.
 
+#### Afficher la comparaison
 
-### Affichage des métriques
+Cette option permet d'afficher un graphique fantôme pour comparer les valeurs avec la période période précédente.
 
-[Métrique](#metriques-internes-disponibles) à afficher sur le graphique
-  - **Couleur personnalisée**
-  - **Méthode de calcul** : moyenne, somme, min, max, dernier
+#### Tendance (pour les Nombres)
 
-### Plage horaire par défaut
-
-aujourd’hui, hier, 7j, 30j, 3 mois, 1 an
-
-
-### Échantillonnage par défaut
-heure, jour, semaine, mois
-
-### Afficher la comparaison
-
-(graphique fantôme pour comparer avec période précédente)
-
-### Tendance (pour les Numbers)
-
-flèche ↑ ou ↓ si la valeur a évolué
+Une flêche ↑ ou ↓ est affcihée en fonction de la tendance.
 
 
