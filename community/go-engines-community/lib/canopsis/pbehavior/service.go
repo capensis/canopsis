@@ -20,9 +20,9 @@ import (
 // Service computes pbehavior timespans and figures out state
 // of provided entity by computed data.
 type Service interface {
-	Compute(ctx context.Context, span timespan.Span) (ComputedEntityTypeResolver, int, error)
-	Recompute(ctx context.Context) (ComputedEntityTypeResolver, error)
-	RecomputeByIds(ctx context.Context, pbehaviorIds []string) (ComputedEntityTypeResolver, error)
+	Compute(ctx context.Context, span timespan.Span, location *time.Location) (ComputedEntityTypeResolver, int, error)
+	Recompute(ctx context.Context, location *time.Location) (ComputedEntityTypeResolver, error)
+	RecomputeByIds(ctx context.Context, pbehaviorIds []string, location *time.Location) (ComputedEntityTypeResolver, error)
 }
 
 // service uses TypeComputer to compute data and TypeResolver to resolve type by this data.
@@ -63,7 +63,7 @@ func NewService(
 	}
 }
 
-func (s *service) Compute(ctx context.Context, span timespan.Span) (ComputedEntityTypeResolver, int, error) {
+func (s *service) Compute(ctx context.Context, span timespan.Span, location *time.Location) (ComputedEntityTypeResolver, int, error) {
 	currentSpan, err := s.store.GetSpan(ctx)
 	if err == nil {
 		if currentSpan.To().Sub(span.From()) >= span.To().Sub(span.From())/2 {
@@ -78,15 +78,15 @@ func (s *service) Compute(ctx context.Context, span timespan.Span) (ComputedEnti
 		return nil, 0, err
 	}
 
-	return s.compute(ctx, &span)
+	return s.compute(ctx, &span, location)
 }
 
-func (s *service) Recompute(ctx context.Context) (ComputedEntityTypeResolver, error) {
-	r, _, err := s.compute(ctx, nil)
+func (s *service) Recompute(ctx context.Context, location *time.Location) (ComputedEntityTypeResolver, error) {
+	r, _, err := s.compute(ctx, nil, location)
 	return r, err
 }
 
-func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (_ ComputedEntityTypeResolver, resErr error) {
+func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string, location *time.Location) (_ ComputedEntityTypeResolver, resErr error) {
 	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
 		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
 	})
@@ -106,7 +106,7 @@ func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (_ 
 		return nil, err
 	}
 
-	res, err := s.computer.ComputeByIds(ctx, span, pbehaviorIds)
+	res, err := s.computer.ComputeByIds(ctx, span, pbehaviorIds, location)
 	if err != nil {
 		return nil, err
 	}
@@ -130,7 +130,7 @@ func (s *service) RecomputeByIds(ctx context.Context, pbehaviorIds []string) (_ 
 	return s.load(ctx, span)
 }
 
-func (s *service) compute(ctx context.Context, span *timespan.Span) (_ ComputedEntityTypeResolver, _ int, resErr error) {
+func (s *service) compute(ctx context.Context, span *timespan.Span, location *time.Location) (_ ComputedEntityTypeResolver, _ int, resErr error) {
 	lock, err := s.lockClient.Obtain(ctx, s.lockKey, s.lockDuration, &redislock.Options{
 		RetryStrategy: redislock.LimitRetry(redislock.LinearBackoff(s.lockBackoff), s.lockRetries),
 	})
@@ -153,7 +153,7 @@ func (s *service) compute(ctx context.Context, span *timespan.Span) (_ ComputedE
 		span = &currentSpan
 	}
 
-	res, err := s.computer.Compute(ctx, *span)
+	res, err := s.computer.Compute(ctx, *span, location)
 	if err != nil {
 		return nil, 0, fmt.Errorf("cannot compute data: %w", err)
 	}
