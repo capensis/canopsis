@@ -133,7 +133,7 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 	}
 
 	oldPbhIds = append(oldPbhIds, pbehavior.ID)
-	resolver, err := p.PbhService.RecomputeByIds(ctx, oldPbhIds)
+	resolver, err := p.PbhService.RecomputeByIds(ctx, oldPbhIds, p.TimezoneConfigProvider.Get().Location)
 	if err != nil {
 		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
 	}
@@ -179,7 +179,7 @@ func (p *rpcServerMessageProcessor) processDeletePbhEvent(
 		return nil, err
 	}
 
-	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbhId})
+	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbhId}, p.TimezoneConfigProvider.Get().Location)
 	if err != nil {
 		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
 	}
