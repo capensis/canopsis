@@ -52,7 +52,7 @@ Cette section présente la configuration à réaliser dans l'ordonnanceur et la
 liaison à ajouter dans Canopsis.
 
 Les opérations sont décrites séparément pour les deux ordonnanceurs supportés :
-Rundeck, AWX, jennkins, et Visual Tom. (La documentation `Visual Tom` est en cours de rédaction).
+Rundeck, AWX, jennkins, et Visual Tom.
 
 ### Configuration pour Rundeck
 
