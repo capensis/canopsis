@@ -8,7 +8,7 @@ Voici un aperçu des principaux widgets disponibles.
 
 - :material-bell-alert-outline: __[Bac à alarmes](bac-a-alarmes/index.md)__  
   Visualise les alarmes en cours ou résolues du SI. Permet les interactions sur les alarmes (acquittement, commentaire, ticket, etc.).  
-  ![Bac à alarmes](./bac-a-alarmes/img/listalarm.png)
+  ![Bac à alarmes](./bac-a-alarmes/img/bac-a-alarmes.png)
 
 - :material-eye-outline: __[Explorateur de contexte](contexte/index.md)__  
   Permet de parcourir l'ensemble des entités connues par Canopsis. Il s'agit de la gestion du référentiel interne de Canopsis.
