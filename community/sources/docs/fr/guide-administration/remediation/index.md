@@ -224,6 +224,7 @@ Coté VisualTom, pour trouver le Job ID, il faut récupérer le nom du « trait
 
 Coté Canopsis, dans le menu d'administration de la remédiation, onglet « JOBS »,
 cliquez sur « + » et renseignez les différents champs.
+
 ![vtom5](./img/remediation_vtom5.png)
 
 Le job est maintenant prêt à être utilisé dans des [opérations][doc-op] de
