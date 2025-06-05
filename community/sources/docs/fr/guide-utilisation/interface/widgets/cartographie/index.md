@@ -47,37 +47,37 @@ Un champ de texte vous permet de définir ce titre.
 
 ### Cartographie
 
-Il s'agit ici de sélectionner la cartographie qui doit êtr présentée dans le widget.
+Il s'agit ici de sélectionner la cartographie qui doit être présentée dans le widget.
 
 ### Paramètres d'affichage des entités
 
 #### Indicateur de couleur
     
-La couleur d'un tuile correspond t-elle à la sévérité ou la priorité du service ?
+La couleur d'un tuile correspond-elle à la sévérité ou la priorité du service ?
 
 ### Paramètres avancés
 
 #### Filtres
 
-Ce paramètre permet créer des [filtres](../../patterns/) qui seront appliquées sur les cartographies.
+Ce paramètre permet de créer des [filtres](../../patterns/) qui seront appliqués sur les cartographies.
 
 L'ordre des filtres est modifiable par drag'n drop.
 
 #### Fenêtre contextuelle d'informations sur l'entité
 
-Ce paramètre permet de personnaliser les informations affichées dans la modale des entités/
+Ce paramètre permet de personnaliser les informations affichées dans la modale des entités.
 
 Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars/).
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entrez le texte souhaité pour le template des tuiles, puis cliquez sur 'Soumettre'.
 
-L'ensemble des variables utiliables dans ce template pet être parcouru dans l'éditeur en cliquant sur l'icône `(x)`.
+L'ensemble des variables utilisables dans ce template pet être parcouru dans l'éditeur en cliquant sur l'icône `(x)`.
 
 #### Colonnes
 
 Les paramètres qui sont décrits dans ce paragraphe concernent les éléments suivants :
 
-* Colonnes de la liste des alarmes : colonnes visbles dans l'onglet "Alarmes"
+* Colonnes de la liste des alarmes : colonnes visibles dans l'onglet "Alarmes"
 * Colonnes de l'explorateur de contexte : colonnes visibles lorsque l'on regarde les entités
 
 ![Paramètre Nom des colonnes](./img/noms-des-colonnes.png "Paramètre Nom des colonnes")

@@ -1,25 +1,25 @@
 # Widgets graphiques
 
-Les widgets graphiques permettent de visualiser des métriques sous forme de graphiques pour analyser l’état ou l’évolution du système d’information.  
-Ils supportent plusieurs types de rendus : histogramme, graphique en ligne, diagramme circulaire (camembert) et valeurs chiffrées.  
+Les widgets graphiques permettent de visualiser des métriques sous forme de graphiques pour analyser l’état et suivre l’évolution du système d’information.  
+Ils supportent plusieurs types de rendus : histogramme, graphique en ligne, diagramme circulaire (camembert) et valeurs numériques.  
 Les données affichées peuvent provenir de métriques internes à Canopsis (nombre d’alarmes, taux d’ack, etc.) ou de métriques externes issues d’événements (au format perf_data).
 
-Chaque widget peut être personnalisé (période, méthode de calcul, comparaison temporelle, couleurs…) pour répondre à des besoins d’analyse ponctuelle ou continue.
+Chaque widget est personnalisable (période, méthode de calcul, comparaison temporelle, couleurs…) pour répondre à des besoins d’analyse ponctuelle ou continue.
 
 ![Graphiques](./img/graphiques.png)
 
 ## Types de widgets graphiques
 
-Canopsis propose 4 types principaux de widgets graphiques, chacun adapté à une visualisation spécifique des métriques :
+4 types de widgets graphiques sont proposés, chacun adapté à une visualisation spécifique des métriques :
 
 - **Histogramme (Bar chart)** : pour visualiser des valeurs sur une période, empilées ou séparées.
-- **Graphique en ligne (Line chart)** : pour suivre l’évolution de valeurs dans le temps.
+- **Graphique en coubre (Line chart)** : pour suivre l’évolution de valeurs dans le temps.
 - **Diagramme circulaire (Pie chart)** : pour montrer des proportions entre différentes métriques.
 - **Valeurs numériques (Numbers)** : pour afficher directement les valeurs agrégées de certaines métriques.
 
 ## Métriques internes disponibles
 
-Voici la liste complète des **métriques internes** disponibles dans Canopsis. Elles sont issues des alarmes, entités et actions utilisateur.
+Voici la liste complète des **métriques internes** disponibles dans Canopsis. Elles sont issues des alarmes, des entités et des actions utilisateur.
 
 
 | Nom de la métrique                                      | Unité    | Méthodes de calcul disponibles | Méthode par défaut |
