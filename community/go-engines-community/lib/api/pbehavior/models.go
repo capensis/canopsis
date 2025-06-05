@@ -24,7 +24,7 @@ const (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string   `form:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
+	SortBy string   `form:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date pattern_ms pattern_exec_at"`
 	IDs    []string `form:"ids[]"`
 }
 

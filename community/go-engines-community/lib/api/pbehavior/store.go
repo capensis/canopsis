@@ -983,10 +983,19 @@ func (s *store) ExecPatternAndUpdate(ctx context.Context, id string) (*Response,
 	now := datetime.NewCpsTime()
 	res.PatternExecAt = &now
 
-	_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{
-		"pattern_ms":      res.PatternMs,
-		"pattern_exec_at": res.PatternExecAt,
-	}})
+	_, err = s.dbCollection.UpdateOne(ctx,
+		bson.M{
+			"_id": id,
+			"$or": []bson.M{
+				{"pattern_exec_at": nil},
+				{"pattern_exec_at": bson.M{"$lt": res.PatternExecAt}},
+			},
+		},
+		bson.M{"$set": bson.M{
+			"pattern_ms":      res.PatternMs,
+			"pattern_exec_at": res.PatternExecAt,
+		}},
+	)
 
 	return res, err
 }
@@ -1062,10 +1071,19 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 						return err
 					}
 
-					_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": pbh.ID}, bson.M{"$set": bson.M{
-						"pattern_ms":      ms,
-						"pattern_exec_at": now,
-					}})
+					_, err = s.dbCollection.UpdateOne(ctx,
+						bson.M{
+							"_id": pbh.ID,
+							"$or": []bson.M{
+								{"pattern_exec_at": nil},
+								{"pattern_exec_at": bson.M{"$lt": now}},
+							},
+						},
+						bson.M{"$set": bson.M{
+							"pattern_ms":      ms,
+							"pattern_exec_at": now,
+						}},
+					)
 					if err != nil {
 						return err
 					}
