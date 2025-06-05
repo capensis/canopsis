@@ -5,8 +5,8 @@ Ce module est capable de recevoir des résultats d'exécution de scénarios au f
 Il comprend :
 
 * Un récepteur (via API) de fichiers XML au format JUnit.
-* Un moteur capable de parser, générer des alarmes à partir des résultats reçus.
-* Un widget pour l'interface graphique capable de présenter les résultats sous diverses formes.
+* Un moteur capable d'analyser et générer des alarmes à partir des résultats reçus.
+* Un widget pour l'interface graphique permettant présenter les résultats sous diverses formes.
 
 ![junit-screenshot1](./img/junit.png)
 
@@ -34,7 +34,7 @@ Tous les fichiers nécessaires au bon fonctionnement du connecteur seront stock�
 
 ## Création du widget
 
-Aller dans la vue créée. Dans le menu latéral, cliquer sur **Ajouter un widget** :
+Accédez à la vue créée. Dans le menu latéral, cliquer sur **Ajouter un widget** :
 
 ![Création widget 1/3](./img/widget1.png)
 
@@ -42,7 +42,7 @@ Sélectionner le *widget* **Scénarios JUnit** :
 
 ![Création widget 2/3](./img/widget2.png)
 
-Configurer le scénario en activant la réponse de l’API :
+Configurer le scénario en activant l'option de réponse via l’API :
 
 ![Création widget 3/3](./img/widget3.png)
 
@@ -62,12 +62,13 @@ curl --location \
 --form 'files=@"</path/to/result.xml>"'
 ```
 
-Le retour de l'API doit être le suivant en cas de succès :
+L'API renoie la réponse suivante en cas de succès :
+
 ```
 {"upload_errors":{}}
 ```
 
-Le résultat sera affiché lors du rafraichissement du *widget* :
+Le résultat sera affiché lors du rafraîchissement du *widget* :
 
 ![Tableau de bord](./img/tableaudebord.png)
 

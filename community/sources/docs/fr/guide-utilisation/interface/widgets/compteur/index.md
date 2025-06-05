@@ -1,8 +1,8 @@
 # Compteur
 
 Le widget "Compteur" permet d'afficher, sous forme de tuiles numériques, le nombre d’alarmes correspondant à un ou plusieurs filtres prédéfinis.  
-Chaque tuile représente un filtre et indique en temps réel le total d’alarmes qui lui sont associées (d'autres compteurs sont également disponibles).  
-Ce widget est particulièrement utile pour visualiser en un coup d’oeil l’état global d’un périmètre, d’un service ou d’une application. La couleur de chaque tuile peut être configurée en fonction de seuils, afin d’attirer rapidement l’attention sur les situations critiques.
+Chaque tuile représente un filtre et indique en temps réel le total d’alarmes qui lui sont associées (d'autres types de compteurs sont également disponibles).  
+Ce widget est particulièrement utile pour visualiser en un coup d’oeil l’état global d’un périmètre, d’un service ou d’une application. La couleur de chaque tuile est configurable en fonction de seuils, afin d’attirer rapidement l’attention sur les situations critiques.
 
 ![Compteur](./img/counter.png  "Compteur")
 
@@ -31,17 +31,17 @@ Exemple d'une tuile :
 ![Exemple d'une tuile - Compteur](./img/tuile-counter.png  "Exemple d'une tuile - Compteur")
 
 Chaque tuile est associée à un [filtre d'alarmes](../../patterns/) et met à disposition un ensemble de compteurs relatifs à ce filtre.  
-Le contenu de texte de cette tuile est personnalisable grâce à un template. Il permet de présenter les compteurs sous la forme souhaitée.
+Le contenu textuel de cette tuile est personnalisable grâce à un template. Il permet de présenter les compteurs sous la forme souhaitée.
 
 La couleur de la tuile et l'icône présente sur celle-ci représentent des dépassements de seuils.
 
-#### La couleur et icône
+#### La couleur et l'icône
 
 La couleur et l'icône de la tuile représentent l'atteinte ou non d'un seuil défini pour un des compteurs.  
 Le compteur de référence ainsi que les seuils doivent être spécifiés dans les paramètres du widget.
 
 Exemple :
-Le compteur principal d'alarmes vaut 250, le seuil `mineur` vaut 100, le seuil `majeur` vaut 200, le seuil critique vaut 300.
+Le compteur principal d'alarmes vaut 250, le seuil `mineur` vaut 100, le seuil `majeur` vaut 200, et le seuil critique vaut 300.
 
 - Vert/Soleil: Le compteur principal est < seuil mineur
 - Jaune/Personne: Le compteur principal est < seuil majeur
@@ -52,7 +52,7 @@ Le compteur principal d'alarmes vaut 250, le seuil `mineur` vaut 100, le seuil `
 
 ### Aide - Variables
 
-Durant la configuration de votre widget `Compteur`, notamment le Template, il vous sera possible d'accéder à des variables concernant les compteurs, les filtres, ainsi que les seuils.
+Lors de la configuration de votre widget `Compteur`, notamment le Template, il vous sera possible d'accéder à des variables concernant les compteurs, les filtres, ainsi que les seuils.
 
 Afin de connaitre les variables disponibles, une modale d'aide est disponible grâce au point d'interrogation présent en haut à droite de la tuile.  
 Au clic sur ce bouton, une fenêtre s'ouvre. Celle-ci liste toutes les variables disponibles pour le template de tuile. Un bouton, à droite de chacune des variables, vous permet de copier directement dans le Presse-papier le chemin de cette variable.
