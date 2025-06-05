@@ -132,7 +132,7 @@ cliquez sur « + » et renseignez les différents champs.
 ### Configuration VisualTom (vtom) 
 
 !!! attention
-    Dans ce guide, nous utiliserons le client lourd !
+    Ce guide a été réalisé avec le client lourd.
 
 #### Création d'un token d'authentification VisualTom
 
@@ -420,7 +420,7 @@ devez préciser les variables en suivant cette structure :
 
 Dans VisualTom, vous pourrez exploiter ces paramètres dans un script de traitement.
 
-Les paramètres contenues dans `parameters` seront alors automatiquement utilisables par le job.
+Les paramètres contenus dans `parameters` seront alors automatiquement utilisables par le job.
 
 Voici un exemple complet de passage de paramètres de Canopsis vers VisualTom :
 
