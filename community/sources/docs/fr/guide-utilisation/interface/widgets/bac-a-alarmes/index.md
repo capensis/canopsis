@@ -3,7 +3,7 @@
 Le widget **Bac à alarmes** est l’un des composants centraux de l’interface Canopsis.  
 Il permet d’**afficher, filtrer et interagir avec les alarmes en temps réel**, issues de l’ensemble du système d’information.
 
-Ce widget offre une vue structurée et dynamique des alarmes actives, avec la possibilité d’agir directement sur chacune d’elles (acquittement, commentaire, ticketing, mise en maintenance, etc.).
+Ce widget offre une vue structurée et dynamique des alarmes actives, avec la possibilité d’intervenir directement sur chacune d’elles (acquittement, commentaire, ticketing, mise en maintenance, etc.).
 
 Il est souvent utilisé dans les vues principales des exploitants et NOC pour assurer un suivi réactif des incidents en cours.
 
@@ -15,7 +15,7 @@ Il est souvent utilisé dans les vues principales des exploitants et NOC pour as
 
 Le tableau [d'alarmes](../../../vocabulaire/#alarme) présente la liste des alarmes. Une ligne correspond à une alarme.  
 Les colonnes affichées sont personnalisables ([Paramètres colonnes](#colonnes)).
-En plus de détails de l'alarme, chaque alarme est éligible à des [actions](#actions).
+En plus des détails de l'alarme, chaque alarme est éligible à des [actions](#actions).
 
 Il est possible d'attacher à chaque colonne une [Info popup](#fenetre-dinformation-pour-la-colonne), qui s'ouvrira au clic sur le texte de la colonne, présentant dans une fenêtre un texte personnalisable.
 
@@ -48,25 +48,25 @@ Séquence :
 
 * Des suggestions de champs sont présentées à l'utilisateur : Composant, Information d'entité, Message de l'alarme, etc.
 * Le module complète avec des opérateurs en fonction du champ précédent : Egal, Contient, Est l'un de, etc.
-* L'utilisateur complète la partie droite de l'opérateur
+* L'utilisateur complète la valeur attendue par l'opérateur
 * Le module propose de combiner la recherche avec un opérateur `ET` ou `OU`. 
-    * En cliquant sur la :material-magnify:, la recherche est déclenchée
+    * En cliquant sur la :material-magnify:, la recherche se lance
     * En sélectionnant un opérateur, une nouvelle séquence démarre
 
 #### Catégorie
 
-Il est possible de présenter les alarmes dont l'entité est attachée à une [catégorie](../contexte/#categorie)
+Il est possible d'afficher les alarmes dont l'entité est attachée à une [catégorie](../contexte/#categorie)
 
 #### Filtres
 
 L'utilisateur peut sélectionner un [filtre](../../patterns/) parmi la liste. 
 
-Il peut également, en fonction de ses droits, gérer ses propres filtres en cliquant sur le bouton :material-filter-variant:.
+Il peut également, selon ses droits, gérer ses propres filtres en cliquant sur le bouton :material-filter-variant:.
 
 
 #### Signet / Bookmark
 
-En activant cette option, seules les alarmes bookmarquées sont affichées.
+En activant cette option, seules les alarmes marquées avec un signet (bookmarquées) sont affichées.
 
 #### Tags
 

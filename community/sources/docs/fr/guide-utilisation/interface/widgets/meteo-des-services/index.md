@@ -1,21 +1,21 @@
 # Météo des services
 
-Le widget **Météo de services** permet d'afficher en un coup d'oeil l’état de plusieurs services du SI.  
+Le widget **Météo des services** permet d'afficher en un coup d'oeil l’état global de plusieurs services du SI.  
 Il s’agit d’une **représentation synthétique et visuelle** de la santé des services métier, avec une codification par couleur et icône.
 
 C’est un outil précieux pour les exploitants souhaitant identifier rapidement les dégradations ou indisponibilités de services critiques.
 
-![Météo de services](./img/meteo-des-services.png  "Météo de services")
+![Météo des services](./img/meteo-des-services.png  "Météo des services")
 
 ## Utilisation courante
 
 ### Présentation générale
 
-La météo de services est composée de tuiles.
+La météo des services est composée de tuiles.
 
 Exemple d'une tuile :
 
-![Exemple d'une tuile - Météo de services](./img/exemple-tuile.png  "Exemple d'une tuile - Météo de services")
+![Exemple d'une tuile - Météos de services](./img/exemple-tuile.png  "Exemple d'une tuile - Météo des services")
 
 Chaque **tuile** représente un [service](../../../services) et indique son état actuel, calculé en fonction des entités rattachées au service et de leur criticité.
 
@@ -29,7 +29,7 @@ ou
 
 ### Anatomie d'une tuile
 
-![Anatomie d'une tuile - Météo de services](./img/anatomie-tuile.png  "Anatomie d'une tuile- Météo de services")
+![Anatomie d'une tuile - Météo des services](./img/anatomie-tuile.png  "Anatomie d'une tuile- Météo des services")
 
 #### Contenu personnalisable
 
@@ -40,18 +40,18 @@ Différentes variables sont accessibles et peuvent être utilisées pour cette p
 
 _Icône principale_
 
-L'icône principale représente l'état général du service sous-jaccent.  
+L'icône principale représente l'état général du service sous-jacent.  
 
 Il peut être équivalent à une sévérité avec les icônes :  
 
 * :material-weather-cloudy: : La sévérité du service est `Critique`
 * :material-account: : La sévérité du service est `Mineure` ou `Majeure`
-* :material-weather-sunny: : La sévirité du service est `Ok`. 
+* :material-weather-sunny: : La sévirité du service est `OK`. 
 
 Le calcul de sévérité est réalisé selon un algorithme qui peut être :
 
-* La pire sévérité des dépendances du service; Il s'agit du mode de calcul par défaut
-* Une règle de gestion définie par des [paramètres de calcul de sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité/)
+* La pire sévérité des dépendances du service; C'est le mode calcul utilisé par défaut.
+* Une règle de gestion définie par des [paramètres de calcul de sévérité](../../../menu-administration/parametres-de-calculd-etat-severite/)
 
 L'état général du service peut également être représenté par un comportement périodique
 
@@ -67,7 +67,7 @@ Il s'agit du type avec la priorité la plus haute actuellement appliqué aux dé
 
 #### Bac à alarmes
 
-Sur le partie inférieure des tuiles, une indication "Voir les alarmes" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
+Sur la partie inférieure des tuiles, une indication "Voir les alarmes" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
 
 #### La couleur
 
@@ -131,7 +131,7 @@ La partie droite d'une tuile présente différents types de compteurs :
 
 ### La modale
 
-Au clic sur une tuile de la météo de services, une fenêtre s'ouvre.
+Au clic sur une tuile de la météo des services, une fenêtre s'ouvre.
 
 Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
@@ -171,11 +171,11 @@ Dans la liste des entités affichées, des actions sont disponibles sur chacune 
 
 ### Aide - Variables
 
-Durant la configuration de votre widget Météo de services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les services.
+Durant la configuration de votre widget Météo des services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les services.
 
 > **Exemple**
 >
-> Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom du service, ou son identifiant, etc.
+> Il vous sera possible d'afficher, pour chacune des tuiles de la météo des services, le nom du service, ou son identifiant, etc.
 
 Afin de connaitre les variables disponibles, cliquer sur [le point d'interrogation](#le-point-dinterrogation) d'une tuile.
 
@@ -187,7 +187,7 @@ Un champ de texte vous permet de définir ce titre.
 
 #### Editeur de filtre (*optionnel*)
 
-Ce paramètre permet de définir le filtre à appliquer à la météo de services.
+Ce paramètre permet de définir le filtre à appliquer à la météo des services.
 Ce filtre permet de n'afficher qu'une partie des services.
 Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/).
 
@@ -257,7 +257,7 @@ Vous pouvez choisir de présenter les dépendances avec leur sévérité ou leur
 
 #### Template - Tuile
 
-Ce paramètre permet de personaliser les informations affichées à l'intérieur des tuiles de la météo de service.
+Ce paramètre permet de personaliser les informations affichées à l'intérieur des tuiles de la météo des service.
 
 Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars/).
 
@@ -306,7 +306,7 @@ Ces paramètres vous permettent de sélectionner le nombre de tuiles qui seront 
 
 #### Marges
 
-Ce paramètre permet de régler les espaces séparant les tuiles de la Météo de services.
+Ce paramètre permet de régler les espaces séparant les tuiles de la Météo des services.
 
 Celui-ci est séparé en quatre, vous permettant de régler l'espace que vous souhaitez pour chaque côté des tuiles (haut, bas, droite et gauche).
 
@@ -316,7 +316,7 @@ Par défaut, ce paramètre est réglé sur une valeur de 1 pour chacun des côt�
 
 #### Hauteur
 
-Ce paramètre permet de régler la hauteur des tuiles de la Météo de services.
+Ce paramètre permet de régler la hauteur des tuiles de la Météo des services.
 
 Pour le modifier, faites glisser le sélecteur, afin de choisir une valeur entre 1 (hauteur minimale) et 20 (hauteur maximale).
 

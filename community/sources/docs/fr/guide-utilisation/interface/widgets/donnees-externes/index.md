@@ -17,12 +17,12 @@ Ce widget reprend les fonctionnalités principales abordées dans [cette documen
 
 ### Recherche
 
-Un champ de recherche vous permet de filtrer l'affichage sur des enregistrements contenant la chaine de caractères souhaitée.  
-Notez qu'il est possible de trier les enregistrements par colonne en ascendant ou descendant.
+Un champ de recherche vous permet de filtrer l'affichage sur des enregistrements contenant la chaîne de caractères souhaitée.  
+Notez qu'il est possible de trier les enregistrements par colonne en ordre croissant ou décroissant.
 
 ### Exporter en CSV
 
-Le widget permet d'exporter les données de la source au format CSV; Cela permet de retravailler les enregistrements dans un outil tiers si cela s'avérait nécessaire.
+Le widget permet d'exporter les données de la source au format CSV; Cela permet de retravailler les enregistrements dans un outil tiers si besoin.
 
 ### Insérer des enregistrements
 
@@ -32,9 +32,9 @@ Les boutons :material-file-upload: et :material-plus: permettent respectivement 
 
 Plusieurs actions sont disponibles :
 
-* **Éditer** : Au clic sur l'icône d'édition :material-pencil:, une fenêtre s'ouvre. Celle-ci reprend les informations de l'enregistrement. Après avoir modifié les informations souhaitées, cliquez sur 'Soumettre'. Un tooltip vous informe que l'édition a été effectuée avec succès.
+* **Éditer** : Au clic sur l'icône d'édition :material-pencil:, une fenêtre s'ouvre, reprenant les informations de l'enregistrement. Après avoir modifié les informations souhaitées, cliquez sur 'Soumettre'. Un tooltip vous informe que l'édition a été effectuée avec succès.
 
-* **Dupliquer**: Au clic sur l'icône :material-content-copy:, une fenêtre s'ouvre. Celle-ci reprend les informations de l'enregistrement que vous souhaitez dupliquer. Après avoir entré les informations souhaitées, cliquez sur 'Soumettre'. Un tooltip vous informe que l'action a été exécutée avec succès !
+* **Dupliquer**: Au clic sur l'icône :material-content-copy:, une fenêtre s'ouvre. Celle-ci reprend les informations de l'enregistrement que vous souhaitez dupliquer. Après avoir entré les informations souhaitées, cliquez sur 'Soumettre'. Un tooltip confirme la réussite de l'action.
 
 * **Supprimer** : Permet de supprimer un enregistrement. Au clic sur l'icône de suppression :material-delete:, une fenêtre de confirmation s'ouvre. Cliquez sur 'Oui' pour confirmer la suppression.
 
@@ -43,13 +43,13 @@ Plusieurs actions sont disponibles :
 
 ### Titre (*optionnel*)
 
-Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus de celui-ci.
+Ce paramètre permet de définir le titre du widget, qui sera affiché au-dessus de celui-ci.
 
 Un champ de texte vous permet de définir ce titre.
 
 ### Données externes
 
-Ce paramètre vous permet de sélectionner la collection de données que vous souhaitez manipuler.
+Ce paramètre vous permet de sélectionner la collection de données que vous souhaitez consulter ou modifier.
 
 
 ### Paramètres avancés

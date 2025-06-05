@@ -1,11 +1,11 @@
 # Texte
 
-Le widget Texte permet d’afficher librement du contenu destiné aux utilisateurs de l’interface Canopsis.  
+Le widget Texte permet d’afficher librement du contenu informatif ou contextuel destiné aux utilisateurs de l’interface Canopsis.  
 
 C’est un widget polyvalent, souvent utilisé pour :
 
 * Ajouter du contexte ou des consignes aux vues métiers
-* Intégrer des liens vers des ressources externes (wiki, ticketing, dashboards…)
+* Intégrer des liens vers des ressources externes (wiki, ticketing, dashboards...)
 * Afficher des visualisations personnalisées via des iframe
 * Mettre en valeur des informations dynamiques via le templating Handlebars
 
@@ -21,13 +21,13 @@ La liste des [helpers disponibles](../../helpers/) permet d'enrichir dynamiqueme
 
 ## Utilisation courante
 
-Le widget permet d'afficher du texte formatté, il vous reste donc à lire le contenu !
+Le widget permet d'afficher du texte formaté, il vous reste donc à lire le contenu !
 
 ## Paramètres du widget
 
 ### Aide - Contexte
 
-Pour connaitre l'esnemble des variables disponibles à partir du widget Texte, vous pouvez utiliser un template qui va parcourir le contexte et afficher ces variables.
+Pour connaitre l'ensemble des variables disponibles à partir du widget Texte, vous pouvez utiliser un template qui parcourt et affiche ces variables.
 
 ```html
 <div style="font-family:monospace;padding:20px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:8px">
