@@ -1,89 +1,97 @@
 # Bac à alarmes
 
+Le widget **Bac à alarmes** est l’un des composants centraux de l’interface Canopsis.  
+Il permet d’**afficher, filtrer et interagir avec les alarmes en temps réel**, issues de l’ensemble du système d’information.
+
+Ce widget offre une vue structurée et dynamique des alarmes actives, avec la possibilité d’agir directement sur chacune d’elles (acquittement, commentaire, ticketing, mise en maintenance, etc.).
+
+Il est souvent utilisé dans les vues principales des exploitants et NOC pour assurer un suivi réactif des incidents en cours.
+
 ![Bac à alarmes](./img/bac-a-alarmes.png  "Bac à alarmes")
 
 ## Utilisation courante
 
 ### Alarmes
 
-Le tableau d'alarmes présente la liste des alarmes. Une ligne correspond à une alarme.
-Les colonnes affichées sont personnalisables (*Cf: [Guide exploitant](#guide-exploitant)*).
-En plus de détails de l'alarme, chaque ligne expose une liste d'actions opérables sur l'alarme (*Cf: [Actions](#actions)*).
+Le tableau [d'alarmes](../../../vocabulaire/#alarme) présente la liste des alarmes. Une ligne correspond à une alarme.  
+Les colonnes affichées sont personnalisables ([Paramètres colonnes](#colonnes)).
+En plus de détails de l'alarme, chaque alarme est éligible à des [actions](#actions).
 
-Il est possible d'attacher à chaque colonne une Info popup, qui s'ouvrira au clic sur le texte de la colonne, présentant dans une fenêtre un texte personnalisable (*Cf: [Guide exploitant](#guide-exploitant)*).
+Il est possible d'attacher à chaque colonne une [Info popup](#fenetre-dinformation-pour-la-colonne), qui s'ouvrira au clic sur le texte de la colonne, présentant dans une fenêtre un texte personnalisable.
 
-Au clic sur une alarme (en dehors du texte des colonnes), la chronologie de l'alarme s'affiche.
+Au clic sur le chevron d'une alarme (tout à gauche), la chronologie de l'alarme s'affiche.
 
-![Chronologie de l'alarme](./img/timeline.png "Chronologie de l'alarme")
+![Chronologie de l'alarme](./img/chronologie.png "Chronologie de l'alarme")
 
-Cette chronologie reprend certains éléments du cycle de vie de l'alarme (notamment les actions effectuées sur celle-ci).
+Tous les changements opérés sur une alarme sont indiqués dans cette chronologie.
 
-### Recherche
+### Filtrage des alarmes
 
-Le champ de recherche permet de réaliser une recherche parmi les alarmes.
+Tout l'entête du widget est prévu pour filtrer les alarmes à afficher dans la liste.
 
-![Champ de recherche](../../recherche/img/champ-recherche.png "Champ de recherche")
+![Entête](./img/entete.png)
 
-Pour faire une recherche 'simple', il suffit d'entrer les termes de la recherche dans le champ de texte, puis d'appuyer sur la touche Entrée, ou de cliquer sur l'icone ![Icone recherche](../../recherche/img/search-icon.png "Icone recherche")
+#### Recherche
 
-Dans le bac à alarmes, il est possible d'effectuer des recherches plus avancées. Une aide concernant la syntaxe à utiliser est disponible en survolant avec la souris l'icone d'aide ![Icone aide recherche avancée](./img/advanced-search-icon.png "Icone aide recherche avancée"). Une documentation est également disponible pour cette aspect [ici](../../recherche/index.md) !
+Le bac à alarmes met à disposition 2 types de recherche, la recherche simple et l'avancée.  
 
-Pour supprimer la recherche, cliquez sur l'icone ![Icone suppression recherche](../../recherche/img/delete-search-icon.png "Icone suppression recherche")
+**Recherche simple**
 
-### Filtres
+Il s'agit d'une recherche textuelle, opérée parmi les colonnes affichées sur le bac.  
+Cette recherche est également capable de rechercher parmi les alarmes conséquences d'une méta-alarme.
 
-Le sélecteur de filtre permet d'appliquer un filtre sur le Bac à alarmes. Seules les alarmes correspondant aux critères du filtres seront affichées.
+**Recherche avancée**
 
-![Sélecteur de filtre](../../filtres/img/filter-selector.png "Sélecteur de filtre")
+La recherche avancée est accessible en cliquant dans la zone de recherche.  
 
-Pour sélectionner un filtre, il suffit de cliquer sur le champ 'Sélectionner un filtre'. Une liste des filtres disponibles apparaît.
-Cliquez sur un filtre. Celui-ci est sélectionné et directement appliqué.
-Pour ne plus appliquer de filtre, il suffit de cliquer sur l'icone présent au bout du champ de sélection de filtre. Le bac à alarmes se rafraichit, le champ de sélection revient dans état initial, le filtre n'est plus appliqué !
+Séquence :
 
-#### Mix filters
+* Des suggestions de champs sont présentées à l'utilisateur : Composant, Information d'entité, Message de l'alarme, etc.
+* Le module complète avec des opérateurs en fonction du champ précédent : Egal, Contient, Est l'un de, etc.
+* L'utilisateur complète la partie droite de l'opérateur
+* Le module propose de combiner la recherche avec un opérateur `ET` ou `OU`. 
+    * En cliquant sur la :material-magnify:, la recherche est déclenchée
+    * En sélectionnant un opérateur, une nouvelle séquence démarre
 
-L'option "Mix filters", présente à gauche du sélecteur de filtre permet de cumuler plusieurs filtres.
+#### Catégorie
 
-Pour activer cette option, cliquez sur le bouton ![Mix filters](../../filtres/img/mix-filters.png "Mix filters").
-Une fois l'options activée, un sélecteur apparaît à droite du bouton d'activation ![Mix filters operator](../../filtres/img/mix-filters-operator.png "Mix filters operator"). Ce sélecteur permet de choisir l'opérateur utilisé pour réunir les filtres.
+Il est possible de présenter les alarmes dont l'entité est attachée à une [catégorie](../contexte/#categorie)
 
-- "AND": Les critères présents dans tout les filtres doivent êtres vérifiés
-- "OR": Les critères présents dans un ou plusieurs des filtres doivent êtres vérifiés.
+#### Filtres
 
-Une fois l'opérateur sélectionné, il ne vous reste plus qu'à sélectionner les filtres à appliquer dans le menu déroulant de sélection de filtres.
+L'utilisateur peut sélectionner un [filtre](../../patterns/) parmi la liste. 
 
-#### Suivi personnalisé
+Il peut également, en fonction de ses droits, gérer ses propres filtres en cliquant sur le bouton :material-filter-variant:.
 
-Le Suivi personnalisé sert à paramétrer des filtres par période. Ils permet de filtrer les alarmes en ne conservant que les alarmes d'une période donnée.
 
-Ce filtre est disponible en cliquant sur l'icone ![Filtre par période](./img/period-filter.png "Filtre par période") présente à droite du sélecteur de filtre. Une fenêtre apparaît.
+#### Signet / Bookmark
 
-![modale filtre par période](./img/modal-filtre-periode.png "modale filtre par période")
+En activant cette option, seules les alarmes bookmarquées sont affichées.
 
-Il suffit alors de sélectionner la période souhaitée parmi les périodes prédéfinies, ou d'en créer une personalisée en sélectionnant 'Custom', puis en renseignant les dates de début et de fin.
+#### Tags
 
-Dans un bac à alarmes en cours, le filtre est appliqué sur la date de création.
+La zone `Tags` permet de filtrer la liste des alarmes en fonction des tags qui leur sont assignés. La multi sélection est permise.  
+Si le bac à alarme présente la colonne `tags` alors il est possible de cliquer sur un tag pour sélectionner les alarmes disposant de ce tag.
 
-Dans un bac à alarmes résolues, le filtre est appliqué sur la date de résolution.
+#### Intervalle de date
 
-Cliquez ensuite sur 'Appliquer'.
+Ce paramètre permet de définir un intervalle de date pour "borner" les alarmes à afficher.
+Le critère de temps peut être :
 
-La fenêtre se ferme, le bac à alarmes se rafraîchit. Votre filtre par période est appliqué.
-Celui-ci est visible en haut du Bac à alarmes.
+* Date de création de l'alarme
+* Date de résolution de l'alarme
+* Date de la dernière mise à jour de l'alarme
+* Date du dernier événement reçu par l'alarme
 
-![Filtre par période selectionné](./img/filter-current-period.png "Filtre par période selectionné")
+### Corrélation
 
-Afin de supprimer ce filtre, cliquez sur le bouton de fermeture présent sur le filtre (*Cf Image ci-dessus*)
+Lorsque ce paramètre est activé, les [méta alarmes](../../../menu-exploitation/regles-metaalarme/index.md) sont présentées sur la bac à alarmes avec la possibilité de visualiser les alarmes conséquences dans un onglet dédié.
+Lorsqu'il est désactivé, les méta alarmes sont masquées.
 
-#### Lien direct vers une alarme
+### Export CSV
 
-Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
-Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
-
-* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
-* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
-
-L'identifiant d'un widget est disponible pour copie dans le mode **édition** d'une vue en bas d'un widget.
+En cliquant sur le bouton :material-cloud-download:, un fichier CSV vous sera proposé en téléchargement.  
+Les options de l'export sont définis dans les [paramètres du widget](#exporter-csv)
 
 ### Actions
 
@@ -91,17 +99,15 @@ Pour chaque alarme, des actions sont disponibles.
 
 Pour le détail de chacune des actions, voir la [liste des actions](actions.md) du Bac à alarmes.
 
-### Éléments par page
-
-Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à afficher sur chaque page.
-
-Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
-
-### Suivi personnalisé
-
-Le champ 'Eléments par page' permet de sélectionner le nombre d'alarmes à afficher sur chaque page.
-
-Le choix par défaut est réglable dans les paramètres du bac à alarmes (*Cf: [Guide exploitant](#guide-exploitant)*)
+!!! info "Information"
+    Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
+    Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
+    
+    * `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
+    * `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
+    
+    L'identifiant d'un widget est disponible pour copie dans le mode **édition**.  
+    ![Copier l'identifiant du widget](./img/copier-identifiant-widget.png)
 
 ## Paramètres du widget
 
