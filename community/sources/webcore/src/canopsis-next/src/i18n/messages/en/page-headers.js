@@ -153,9 +153,8 @@ export default {
   /**
    * Notifications
    */
-  [USER_PERMISSIONS.technical.notification.instructionStats]: {
-    title: 'Instruction rating',
-    message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
+  [USER_PERMISSIONS.technical.notification.common]: {
+    title: 'Notifications',
   },
 
   /**

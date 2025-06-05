@@ -25,6 +25,7 @@ export const useRemdeitionInstructionStatsStore = () => {
 
   const actions = useActions({
     fetchRemediationInstructionStatsList: 'fetchList',
+    fetchRemediationInstructionStatsListWithoutStore: 'fetchListWithoutStore',
     fetchRemediationInstructionStatsSummaryWithoutStore: 'fetchSummaryWithoutStore',
     fetchRemediationInstructionStatsCommentsListWithoutStore: 'fetchCommentsWithoutStore',
     fetchRemediationInstructionStatsChangesListWithoutStore: 'fetchChangesWithoutStore',

@@ -150,6 +150,9 @@ export const SOCKET_ROOMS = {
   alarmDetails: 'alarm-details',
   icons: 'icons',
   testscenario: 'testscenario',
+  notifications: 'notifications',
+  executions: 'executions',
+  simplifiedManualExecutions: 'simplified-manual-executions',
 };
 
 export const API_ROUTES = {
@@ -269,7 +272,8 @@ export const API_ROUTES = {
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
   dataStorage: '/api/v4/data-storage',
-  notification: '/api/v4/notification',
+  notificationSettings: '/api/v4/notification-settings',
+  notifications: '/api/v4/notifications',
   idleRules: '/api/v4/idle-rules',
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
@@ -343,8 +347,10 @@ export const API_ROUTES = {
     executions: '/api/v4/cat/executions',
     jobExecutions: '/api/v4/cat/job-executions',
     alarmExecutions: '/api/v4/cat/alarm-executions',
-    pausedExecutions: '/api/v4/cat/account/paused-executions',
+    pausedExecutions: '/api/v4/cat/account/executions',
     instructionComments: '/api/v4/cat/instruction-comments',
+    executionStatuses: '/api/v4/cat/execution-statuses',
+    readExecution: '/api/v4/cat/executions',
   },
   junit: {
     directory: '/api/v4/cat/junit/directory',

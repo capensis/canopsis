@@ -6,6 +6,7 @@ import { createCRUDModule } from '@/store/plugins/entities';
 
 export default createCRUDModule({
   route: API_ROUTES.remediation.instructionStats,
+  withWithoutStore: true,
 }, {
   actions: {
     fetchSummaryWithoutStore(context, { id, params }) {

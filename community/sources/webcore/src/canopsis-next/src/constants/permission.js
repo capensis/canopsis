@@ -226,7 +226,7 @@ export const USER_PERMISSIONS = {
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`,
     },
     notification: {
-      common: USER_PERMISSIONS_PREFIXES.technical.notification,
+      common: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`, // TODO: USER_PERMISSIONS_PREFIXES.technical.notification,
       instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
     },
     profile: {

@@ -31,7 +31,8 @@
     <template #unread_failures_count="{ item }">
       <c-circle-badge
         v-if="item.unread_failures_count"
-        class="error"
+        color="error"
+        small
       >
         {{ item.unread_failures_count }}
       </c-circle-badge>
