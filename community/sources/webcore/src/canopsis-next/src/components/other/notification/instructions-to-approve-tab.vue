@@ -4,47 +4,39 @@
       <h3 class="mb-4">
         {{ $t('notifications.tabs.instructionsToApprove') }}
       </h3>
-      <c-advanced-data-table
-        :headers="headers"
-        :items="items"
-        :loading="pending"
+      <remediation-instructions-list
+        :remediation-instructions="items"
+        :pending="pending"
         :total-items="meta.total_count"
         :options="options"
-        advanced-pagination
+        :updatable="hasUpdateAnyRemediationInstructionAccess"
+        :removable="hasDeleteAnyRemediationInstructionAccess"
+        :duplicable="hasCreateAnyRemediationInstructionAccess"
         @update:options="$emit('update:options', $event)"
-      >
-        <template #actions="{ item }">
-          <v-btn
-            class="mr-2"
-            color="success"
-            small
-            @click="showApproveModal(item)"
-          >
-            {{ $t('common.approve') }}
-          </v-btn>
-          <v-btn
-            color="error"
-            small
-            @click="showDismissModal(item)"
-          >
-            {{ $t('common.dismiss') }}
-          </v-btn>
-        </template>
-      </c-advanced-data-table>
+        @remove-selected="showRemoveSelectedRemediationInstructionModal"
+        @duplicate="showDuplicateRemediationInstructionModal"
+        @remove="showRemoveRemediationInstructionModal"
+        @approve="showApproveRemediationInstructionModal"
+        @edit="showEditRemediationInstructionModal"
+      />
     </div>
   </v-card-text>
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { MODALS } from '@/constants';
+import { MODALS, USER_PERMISSIONS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useCRUDPermissions } from '@/hooks/auth';
+
+import RemediationInstructionsList from '@/components/other/remediation/instructions/remediation-instructions-list.vue';
 
 export default {
+  components: {
+    RemediationInstructionsList,
+  },
   props: {
     items: {
       type: Array,
@@ -67,16 +59,55 @@ export default {
     const { t } = useI18n();
     const modals = useModals();
     const { updateInstructionApproval } = useRemdeitionInstruction();
+    const {
+      hasCreateAccess: hasCreateAnyRemediationInstructionAccess,
+      hasUpdateAccess: hasUpdateAnyRemediationInstructionAccess,
+      hasDeleteAccess: hasDeleteAnyRemediationInstructionAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstruction);
 
-    // Computed
-    const headers = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      { text: t('common.description'), value: 'description' },
-      { text: t('common.author'), value: 'author' },
-      { text: t('common.actions'), value: 'actions', sortable: false },
-    ]);
+    const showRemoveSelectedRemediationInstructionModal = (instructions) => {
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          title: t('modals.removeSelectedInstructions.title'),
+          text: t('modals.removeSelectedInstructions.text', { count: instructions.length }),
+        },
+      });
+    };
 
-    const showApproveModal = (instruction) => {
+    const showRemoveRemediationInstructionModal = (instruction) => {
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          title: t('modals.removeInstruction.title'),
+          text: t('modals.removeInstruction.text', { name: instruction.name }),
+          action: async () => {},
+        },
+      });
+    };
+
+    const showDuplicateRemediationInstructionModal = (instruction) => {
+      modals.show({
+        name: MODALS.confirmation,
+        config: {
+          title: t('modals.duplicateInstruction.title'),
+          text: t('modals.duplicateInstruction.text', { name: instruction.name }),
+          action: async () => {},
+        },
+      });
+    };
+
+    const showEditRemediationInstructionModal = (instruction) => {
+      modals.show({
+        name: MODALS.remediationInstruction,
+        config: {
+          title: t('modals.editInstruction.title'),
+          instruction,
+        },
+      });
+    };
+
+    const showApproveRemediationInstructionModal = (instruction) => {
       modals.show({
         name: MODALS.confirmation,
         config: {
@@ -93,27 +124,16 @@ export default {
       });
     };
 
-    const showDismissModal = (instruction) => {
-      modals.show({
-        name: MODALS.confirmation,
-        config: {
-          title: t('modals.dismissInstruction.title'),
-          text: t('modals.dismissInstruction.text', { name: instruction.name }),
-          action: async () => {
-            await updateInstructionApproval({
-              id: instruction._id,
-              data: { approved: false },
-            });
-            emit('refresh');
-          },
-        },
-      });
-    };
-
     return {
-      headers,
-      showApproveModal,
-      showDismissModal,
+      hasUpdateAnyRemediationInstructionAccess,
+      hasDeleteAnyRemediationInstructionAccess,
+      hasCreateAnyRemediationInstructionAccess,
+
+      showApproveRemediationInstructionModal, // TODO: move this functions to hook from remediation-instructions.vue
+      showRemoveSelectedRemediationInstructionModal,
+      showRemoveRemediationInstructionModal,
+      showDuplicateRemediationInstructionModal,
+      showEditRemediationInstructionModal,
     };
   },
 };
