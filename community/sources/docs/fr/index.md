@@ -38,7 +38,7 @@ Canopsis est une solution d’hypervision conçue pour **centraliser, corréler 
 
     Apprenez à naviguer dans l’interface, utiliser les vues, les widgets et le bac à alarmes.
 
-    [:octicons-arrow-right-24: Interface utilisateur](guide-utilisation/interface)
+    [:octicons-arrow-right-24: Interface utilisateur](guide-utilisation/interface/index.md)
 
 </div>
 
@@ -56,19 +56,19 @@ Canopsis est une solution d’hypervision conçue pour **centraliser, corréler 
 ## 🧭 Comment naviguer dans la documentation ?
 
 === "Utilisateurs"
-    - [Guides utilisateur](guide-utilisation/)
-    - [Interface](guide-utilisation/interface)
-    - [Widgets](guide-utilisation/interface/widgets/)
+    - [Guides utilisateur](guide-utilisation/index.md)
+    - [Interface](guide-utilisation/interface/index.md)
+    - [Widgets](guide-utilisation/interface/widgets/index.md)
 
 === "Administrateurs"
-    - [Installation & configuration](guide-administration/)
-    - [Menu Administration](guide-utilisation/menu-administration)
+    - [Installation & configuration](guide-administration/index.md)
+    - [Menu Administration](guide-utilisation/menu-administration/)
     - [Sécurité & permissions](guide-administration/securite/)
     - [Maintenance](guide-administration/maintenance/)
 
 === "Développeurs & intégrateurs"
-    - [Développement](guide-developpement/)
-    - [Structure des événements](guide-developpement/structures/)
+    - [Développement](guide-developpement/index.md)
+    - [Structure des événements](guide-developpement/structures/index.md)
     - [API REST](guide-developpement/api/)
 
 ---
