@@ -100,7 +100,7 @@ systemctl enable --now disable-transparent-huge-pages
 Ajout du dépôt pour PostgreSQL :
 
 ```sh
-dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-8-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(cat /etc/redhat-release | cut -d'.' -f1 | awk '{print $NF}')-x86_64/pgdg-redhat-repo-latest.noarch.rpm
 ```
 
 Ajout du dépôt pour MongoDB :
@@ -119,6 +119,15 @@ EOF
 Ajout du dépôt pour RabbitMQ :
 
 ```sh
+## primary RabbitMQ signing key
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
+## modern Erlang repository
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
+## RabbitMQ server repository
+rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
+```
+
+```sh
 cat << EOF > /etc/yum.repos.d/rabbitmq.repo
 ##
 ## Zero dependency Erlang RPM
@@ -128,8 +137,8 @@ cat << EOF > /etc/yum.repos.d/rabbitmq.repo
 name=modern-erlang-el8
 # Use a set of mirrors maintained by the RabbitMQ core team.
 # The mirrors have significantly higher bandwidth quotas.
-baseurl=https://yum1.novemberain.com/erlang/el/8/$basearch
-        https://yum2.novemberain.com/erlang/el/8/$basearch
+baseurl=https://yum1.rabbitmq.com/erlang/el/\$releasever/\$basearch
+        https://yum2.rabbitmq.com/erlang/el/\$releasever/\$basearch
 repo_gpgcheck=1
 enabled=1
 gpgkey=https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key
@@ -147,8 +156,8 @@ type=rpm-md
 
 [rabbitmq-el8-noarch]
 name=rabbitmq-el8-noarch
-baseurl=https://yum2.novemberain.com/rabbitmq/el/8/noarch
-        https://yum1.novemberain.com/rabbitmq/el/8/noarch
+baseurl=https://yum2.rabbitmq.com/rabbitmq/el/\$releasever/noarch
+        https://yum1.rabbitmq.com/rabbitmq/el/\$releasever/noarch
 repo_gpgcheck=1
 enabled=1
 # Cloudsmith's repository key and RabbitMQ package signing key
@@ -170,7 +179,7 @@ Ajout du dépôt pour TimescaleDB :
 cat << EOF > /etc/yum.repos.d/timescale_timescaledb.repo
 [timescale_timescaledb]
 name=timescale_timescaledb
-baseurl=https://packagecloud.io/timescale/timescaledb/el/8/\$basearch
+baseurl=https://packagecloud.io/timescale/timescaledb/el/\$releasever/\$basearch
 repo_gpgcheck=1
 # TimescaleDB doesn’t sign all its packages
 gpgcheck=0
@@ -214,7 +223,7 @@ dnf module enable redis:6
 
 ```sh
 dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-13-2.14.2 timescaledb-2-loader-postgresql-13-2.14.2
-dnf install rabbitmq-server
+dnf install erlang-26.2.5.6 rabbitmq-server-3.12.*
 ```
 
 Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
@@ -223,6 +232,7 @@ ou RabbitMQ, vous devriez utiliser [*versionlock*][dnf-versionlock] :
 ```sh
 dnf install 'dnf-command(versionlock)'
 dnf versionlock add timescaledb-2-loader-postgresql-13 timescaledb-2-postgresql-13
+dnf versionlock add --raw 'erlang-26.*'
 dnf versionlock add --raw 'rabbitmq-server-3.*'
 ```
 
@@ -238,8 +248,8 @@ Pratiquer les ouvertures de ports nécessaires à l'accès au service.
 Les commandes données couvrent le cas standard où le pare-feu système `firewalld` est utilisé, et servent surtout à rappeler les ports ou services à ouvrir. (cf. [matrice des flux réseau](../matrice-des-flux-reseau/index.md))
 
 ```sh
+firewall-cmd --add-service=https --permanent
 firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
-firewall-cmd --add-port=8080/tcp --permanent
 firewall-cmd --add-port=27017/tcp --permanent
 firewall-cmd --add-service=postgresql --permanent
 firewall-cmd --add-service=redis --permanent
@@ -286,12 +296,13 @@ On peut à présent activer et démarrer le service :
 systemctl enable --now mongod.service
 ```
 
+
 L'instance MongoDB étant démarrée, il reste à la configurer.
 
-On se connecte dans un shell `mongo` et on désactive la télémétrie :
+On se connecte dans un shell `mongosh` avec l'identifiant `root` sur la base de donnée `admin` et on désactive la télémétrie :
 
 ```sh
-mongosh
+mongosh admin
 > disableTelemetry()
 ```
 
@@ -307,34 +318,33 @@ L'état du *replicaset* peut être vérifié avec la commande `rs.status()` :
 > rs.status()
 ```
 
-Au bout de quelques secondes, le prompt du shell `mongo` doit faire apparaître
+Au bout de quelques secondes, le prompt du shell `mongosh` doit faire apparaître
 que le nœud est PRIMARY :
 
 ```sh
-rs0:PRIMARY>
+rs0 [direct: primary] admin>
 ```
 
-Lorsque c'est le cas, le *replicaset* est prêt. On poursuit avec la création
-des utilisateurs MongoDB `root` puis `canopsis`, toujours dans le shell
-`mongo` :
+Lorsque c'est le cas, le *replicaset* est prêt. On poursuit avec la création des comptes `root` et `canopsis`, toujours dans le shell
+`mongosh` :
 
 ```sh
-> use admin
 > db.createUser({user: "root", pwd: "UNMOTDEPASSEFORT", roles: [ { role: "root", db: "admin" }]})
 > exit
 ```
 
-On se reconnecte avec le shell `mongo`, cette fois-ci en s'authentifiant en tant
+On se reconnecte avec le shell `mongosh`, cette fois-ci en s'authentifiant en tant
 que `root` MongoDB :
 
 ```sh
-mongosh -u root -p UNMOTDEPASSEFORT
+mongosh -u root -p UNMOTDEPASSEFORT admin
 > use canopsis
 > db.createUser({user: "cpsmongo", pwd: "canopsis", roles: [ { role: "dbOwner", db: "canopsis" }, { role: "clusterMonitor", db: "admin"}]})
 > exit
 ```
 
 Les manipulations d'installation dans MongoDB sont terminées.
+
 
 ### Configuration de TimescaleDB
 
@@ -433,7 +443,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     ```sh
     dnf makecache
-    dnf install canopsis
+    dnf install canopsis-24.04.*
     ```
 
 === "Canopsis Pro (souscription commerciale)"
@@ -465,7 +475,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     ```sh
     dnf makecache
-    dnf install canopsis-pro
+    dnf install canopsis-pro-24.04.*
     ```
 
 ## Initialisation de Canopsis
@@ -477,9 +487,8 @@ est normalement dans l'état suivant :
 CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost:27017/canopsis?replicaSet=rs0"
 CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost:5672/canopsis"
 CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"
-CPS_REDIS_URL="redis://localhost:6379/0"
+CPS_REDIS_URL="redis://:canopsis@localhost:6379/0"
 CPS_API_URL="http://localhost:8082"
-#CPS_OLD_API_URL="http://localhost:8081"
 CPS_POSTGRES_TECH_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis_tech_metrics"
 ```
 
@@ -559,12 +568,12 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 Installer le paquet :
 
 ```sh
-dnf install canopsis-webui
+dnf install canopsis-webui-24.04.*
 ```
 
 Activation de https dans Canopsis:
 
-Une configuration HTTPS est proposée avec Nginx, mais elle n'est cependant pas encore activée par défaut.  
+Une configuration HTTPS est proposée avec Nginx, elle est nécessaire pour avoir accès à toutes les fonctionnalités de Canopsis.  
 Vous pouvez suivre la procédure suivante: [activation de https dans Canopsis](../administration-avancee/configuration-composants/reverse-proxy-nginx-https.md)
 
 Activer et démarrer Nginx :
