@@ -727,9 +727,6 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 Installer le paquet :
 
-!!! attention
-    Le package `canopsis-webui` est disponible pour EL9 uniquement à partir de la version 24.04.2 !
-
 ```sh
 dnf install canopsis-webui-24.10.*
 ```
