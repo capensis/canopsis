@@ -248,7 +248,7 @@ dnf module disable nginx php
 
     ```sh
     dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1 
-    dnf install erlang-26.2.5.6 rabbitmq-server-3.12.13
+    dnf install erlang-26.2.5.6 rabbitmq-server-3.*
     ```
 
     Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
@@ -257,6 +257,7 @@ dnf module disable nginx php
     ```sh
     dnf install 'dnf-command(versionlock)'
     dnf versionlock add timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
+    dnf versionlock add --raw 'erlang-26.*'
     dnf versionlock add --raw 'rabbitmq-server-3.*'
     ```
 
@@ -269,7 +270,7 @@ dnf module disable nginx php
 
     ```sh
     dnf install logrotate socat mongodb-org nginx redis timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1
-    dnf install erlang-26.2.5.6 rabbitmq-server-3.12.13
+    dnf install erlang-26.2.5.6 rabbitmq-server-3.*
     ```
 
     Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB
@@ -580,7 +581,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     ```sh
     dnf makecache
-    dnf install canopsis-24.10.1
+    dnf install canopsis-24.10.*
     ```
 
 === "Canopsis Pro (souscription commerciale)"
@@ -634,7 +635,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     ```sh
     dnf makecache
-    dnf install canopsis-pro-24.10.1
+    dnf install canopsis-pro-24.10.*
     ```
 
 ## Initialisation de Canopsis
@@ -730,7 +731,7 @@ Installer le paquet :
     Le package `canopsis-webui` est disponible pour EL9 uniquement à partir de la version 24.04.2 !
 
 ```sh
-dnf install canopsis-webui-24.10.1
+dnf install canopsis-webui-24.10.*
 ```
 
 Activation de https dans Canopsis:
