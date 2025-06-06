@@ -17,7 +17,7 @@ Vous y trouvez les principales briques logicielles de l'hyperviseur ainsi que le
 
 ## Moteurs et Services Canopsis
 
-* [Fonctionnement des Moteurs et Services](./moteurs/)
+* [Fonctionnement des Moteurs et Services](./moteurs/index.md)
 * [Enchainement des moteurs](./moteurs/index.md#enchainement-des-moteurs)
 
 ## Documentation des différentes parties
