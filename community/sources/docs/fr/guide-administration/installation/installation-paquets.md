@@ -391,9 +391,6 @@ canopsis=# ALTER DATABASE canopsis OWNER TO cpspostgres;
 canopsis=# exit
 ```
 
-!!! Information
-    Depuis la version 24.10 de Canopsis, les métriques techniques sont activables directement depuis la WebUI. Il est donc nécessaire de mettre en place la base avant le premier lancement.
-
 !!! Warning
     Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
 
@@ -633,9 +630,6 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 ## Lancement de la Web UI de Canopsis
 
 Installer le paquet :
-
-!!! attention
-    Le package `canopsis-webui` est disponible pour EL9 uniquement à partir de la version 24.04.2 !
 
 ```sh
 dnf install canopsis-webui
