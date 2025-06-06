@@ -27,3 +27,4 @@ mkdocs-awesome-pages-plugin==2.9.2
 # Mkdocs plugin that allow to include markdown inline
 mkdocs-include-markdown-plugin==7.1.5
 
+mkdocs-glightbox==0.4.0
