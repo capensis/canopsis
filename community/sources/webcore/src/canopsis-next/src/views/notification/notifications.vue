@@ -3,46 +3,24 @@
     <c-page-header />
     <v-card class="ma-6">
       <v-tabs
-        v-model="activeTab"
+        :value="$route.fullPath"
         slider-color="primary"
         centered
       >
-        <v-tab>
-          {{ $t('notifications.tabs.instructionsToApprove') }}
+        <v-tab v-for="tab in tabs" :key="tab.key" :to="tab.to">
+          {{ tab.label }}
           <c-circle-badge
-            :outlined="!instructionsToApproveMeta.total_count"
-            :pending="instructionsToApprovePending"
+            :outlined="!tab.active"
+            :pending="tab.pending"
             class="ml-2"
             color="primary"
           >
-            {{ instructionsToApproveMeta.total_count }}
-          </c-circle-badge>
-        </v-tab>
-        <v-tab>
-          {{ $t('notifications.tabs.instructionsToRate') }}
-          <c-circle-badge
-            :outlined="!instructionsToRateMeta.total_count"
-            :pending="instructionsToRatePending"
-            class="ml-2"
-            color="primary"
-          >
-            {{ instructionsToRateMeta.total_count }}
-          </c-circle-badge>
-        </v-tab>
-        <v-tab>
-          {{ $t('notifications.tabs.eventFilterFailures') }}
-          <c-circle-badge
-            :outlined="!eventFilterFailuresMeta.total_count"
-            :pending="eventFilterFailuresPending"
-            class="ml-2"
-            color="primary"
-          >
-            {{ eventFilterFailuresMeta.total_count }}
+            {{ tab.count }}
           </c-circle-badge>
         </v-tab>
       </v-tabs>
-      <v-tabs-items v-model="activeTab">
-        <v-tab-item>
+      <v-tabs-items :value="$route.fullPath">
+        <v-tab-item v-for="tab in tabs" :key="tab.key">
           <instructions-to-approve-tab
             :items="instructionsToApprove"
             :pending="instructionsToApprovePending"
@@ -78,10 +56,12 @@
 </template>
 
 <script>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { onMounted, onBeforeUnmount, computed } from 'vue';
+import { useRouter, useRoute } from 'vue-router/composables';
 
 import { SOCKET_ROOMS } from '@/config';
 
+import { useI18n } from '@/hooks/i18n';
 import { useComponentInstance } from '@/hooks/vue';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useEventFilterStore } from '@/hooks/store/modules/event-filter';
@@ -99,7 +79,16 @@ export default {
     InstructionsToApproveTab,
   },
   setup() {
+    const router = useRouter();
+    const route = useRoute();
+    const { t } = useI18n();
     const instance = useComponentInstance();
+
+    const getTabHrefByKeyValue = (key, value) => { // TODO: move this function to router.js helper file
+      const { href } = router.resolve({ query: { [key]: value } }, route);
+
+      return href.replace('#', '');
+    };
 
     const { fetchRemediationInstructionsListWithoutStore } = useRemdeitionInstruction();
     const {
@@ -155,14 +144,41 @@ export default {
       }),
     });
 
+    const TABS_KEYS = {
+      instructionsToApprove: 'instructionsToApprove',
+      instructionsToRate: 'instructionsToRate',
+      eventFilterFailures: 'eventFilterFailures',
+    };
+
+    const tabs = computed(() => [
+      {
+        key: TABS_KEYS.instructionsToApprove,
+        label: t('notifications.tabs.instructionsToApprove'),
+        to: getTabHrefByKeyValue('tabId', TABS_KEYS.instructionsToApprove),
+        pending: instructionsToApprovePending.value,
+        count: instructionsToApproveMeta.value.total_count,
+      },
+      {
+        key: TABS_KEYS.instructionsToRate,
+        label: t('notifications.tabs.instructionsToRate'),
+        to: getTabHrefByKeyValue('tabId', TABS_KEYS.instructionsToRate),
+        pending: instructionsToRatePending.value,
+        count: instructionsToRateMeta.value.total_count,
+      },
+      {
+        key: TABS_KEYS.eventFilterFailures,
+        label: t('notifications.tabs.eventFilterFailures'),
+        to: getTabHrefByKeyValue('tabId', TABS_KEYS.eventFilterFailures),
+        pending: eventFilterFailuresPending.value,
+        count: eventFilterFailuresMeta.value.total_count,
+      },
+    ].map(tab => ({ ...tab, active: tab.key === route.query.tabId })));
+
     const fetchAllLists = () => {
       fetchEventFilterFailuresList();
       fetchInstructionsToApproveList();
       fetchInstructionsToRateList();
     };
-
-    // Reactive data
-    const activeTab = ref(0);
 
     const handleNotificationUpdate = () => {};
 
@@ -185,7 +201,7 @@ export default {
     });
 
     return {
-      activeTab,
+      tabs,
 
       eventFilterFailures,
       eventFilterFailuresMeta,
