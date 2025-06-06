@@ -294,8 +294,8 @@ Pratiquer les ouvertures de ports nécessaires à l'accès au service.
 Les commandes données couvrent le cas standard où le pare-feu système `firewalld` est utilisé, et servent surtout à rappeler les ports ou services à ouvrir. (cf. [matrice des flux réseau](../matrice-des-flux-reseau/index.md))
 
 ```sh
+firewall-cmd --add-service=https --permanent
 firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
-firewall-cmd --add-port=8080/tcp --permanent
 firewall-cmd --add-port=27017/tcp --permanent
 firewall-cmd --add-service=postgresql --permanent
 firewall-cmd --add-service=redis --permanent
@@ -342,12 +342,13 @@ On peut à présent activer et démarrer le service :
 systemctl enable --now mongod.service
 ```
 
+
 L'instance MongoDB étant démarrée, il reste à la configurer.
 
-On se connecte dans un shell `mongosh` et on désactive la télémétrie :
+On se connecte dans un shell `mongosh` avec l'identifiant `root` sur la base de donnée `admin` et on désactive la télémétrie :
 
 ```sh
-mongosh
+mongosh admin
 > disableTelemetry()
 ```
 
@@ -367,15 +368,13 @@ Au bout de quelques secondes, le prompt du shell `mongosh` doit faire apparaîtr
 que le nœud est PRIMARY :
 
 ```sh
-rs0:PRIMARY>
+rs0 [direct: primary] admin>
 ```
 
-Lorsque c'est le cas, le *replicaset* est prêt. On poursuit avec la création
-des utilisateurs MongoDB `root` puis `canopsis`, toujours dans le shell
+Lorsque c'est le cas, le *replicaset* est prêt. On poursuit avec la création des comptes `root` et `canopsis`, toujours dans le shell
 `mongosh` :
 
 ```sh
-> use admin
 > db.createUser({user: "root", pwd: "UNMOTDEPASSEFORT", roles: [ { role: "root", db: "admin" }]})
 > exit
 ```
@@ -384,7 +383,7 @@ On se reconnecte avec le shell `mongosh`, cette fois-ci en s'authentifiant en ta
 que `root` MongoDB :
 
 ```sh
-mongosh -u root -p UNMOTDEPASSEFORT
+mongosh -u root -p UNMOTDEPASSEFORT admin
 > use canopsis
 > db.createUser({user: "cpsmongo", pwd: "canopsis", roles: [ { role: "dbOwner", db: "canopsis" }, { role: "clusterMonitor", db: "admin"}]})
 > exit
