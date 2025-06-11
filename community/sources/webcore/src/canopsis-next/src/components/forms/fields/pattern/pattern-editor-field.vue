@@ -66,10 +66,9 @@
           align-center
           justify-end
         >
-          <pattern-count-message
-            :error="count === 0"
-            :message="$tc('common.itemFound', count, { count })"
-          />
+          <pattern-count-message :error="count === 0">
+            <span v-html="countMessage" />
+          </pattern-count-message>
           <slot name="append-count" />
         </v-layout>
       </v-layout>
@@ -97,9 +96,10 @@
 <script>
 import { isEqual, isEmpty } from 'lodash';
 
-import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS } from '@/constants';
+import { PATTERN_CUSTOM_ITEM_VALUE, PATTERN_EDITOR_TABS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
 
 import { formGroupsToPatternRules, patternsToGroups, patternToForm } from '@/helpers/entities/pattern/form';
+import { convertDurationToString } from '@/helpers/date/duration';
 
 import { formMixin, validationChildrenMixin } from '@/mixins/form';
 
@@ -202,6 +202,14 @@ export default {
 
     overLimit() {
       return this.counter?.over_limit ?? false;
+    },
+
+    countMessage() {
+      const { ms = 0 } = this.counter ?? {};
+      const duration = convertDurationToString(ms, PATTERN_DURATION_FORMAT, TIME_UNITS.millisecond);
+      const durationMessage = this.$t('pattern.searchTime', { duration });
+
+      return `${this.$tc('pattern.itemFound', this.count, { count: this.count })} / ${durationMessage}`;
     },
   },
   watch: {
