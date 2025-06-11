@@ -12,14 +12,16 @@
     expand
     @update:options="$emit('update:options', $event)"
   >
-    <template v-if="shownUserTimezone" #toolbar="">
-      <v-layout justify-end>
-        <v-flex xs3>
+    <template #toolbar="">
+      <v-layout class="gap-3" justify-end align-center>
+        <v-flex v-if="shownUserTimezone" xs3>
           <c-timezone-field
             v-model="timezone"
             server
+            hide-details
           />
         </v-flex>
+        <pbehaviors-list-alarm-filtering-btn class="ma-0" @refresh="$emit('refresh')" />
       </v-layout>
     </template>
     <template #mass-actions="{ selected, clearSelected }">
@@ -48,6 +50,12 @@
     </template>
     <template #last_alarm_date="{ item }">
       {{ item.last_alarm_date | timezone(timezone) }}
+    </template>
+    <template #pattern_ms="{ item }">
+      {{ item.pattern_ms | duration }}
+    </template>
+    <template #pattern_exec_at="{ item }">
+      {{ item.pattern_exec_at | timezone(timezone) }}
     </template>
     <template #created="{ item }">
       {{ item.created | timezone(timezone) }}
@@ -96,6 +104,7 @@ import { PBEHAVIOR_LIST_FIELDS } from '@/constants/pbehavior';
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorActions from './partials/pbehavior-actions.vue';
 import PbehaviorsListExpandItem from './partials/pbehaviors-list-expand-item.vue';
+import PbehaviorsListAlarmFilteringBtn from './partials/pbehaviors-list-alarm-filtering-btn.vue';
 
 export default {
   inject: ['$system'],
@@ -103,6 +112,7 @@ export default {
     PbehaviorActions,
     PbehaviorsListExpandItem,
     PbehaviorsMassActionsPanel,
+    PbehaviorsListAlarmFilteringBtn,
   },
   props: {
     pbehaviors: {
@@ -160,6 +170,8 @@ export default {
       { text: t('common.updated'), value: PBEHAVIOR_LIST_FIELDS.updated },
       { text: t('pbehavior.lastAlarmDate'), value: PBEHAVIOR_LIST_FIELDS.lastAlarmDate },
       { text: t('pbehavior.alarmCount'), value: PBEHAVIOR_LIST_FIELDS.alarmCount, sortable: false },
+      { text: t('pbehavior.alarmFilteringTime'), value: PBEHAVIOR_LIST_FIELDS.patternMs },
+      { text: t('pbehavior.lastFilteringDate'), value: PBEHAVIOR_LIST_FIELDS.patternExecAt },
       { text: tc('common.icon', 1), value: PBEHAVIOR_LIST_FIELDS.typeIcon },
       { text: t('common.status'), value: PBEHAVIOR_LIST_FIELDS.status, sortable: false },
       { text: t('common.actionsLabel'), value: PBEHAVIOR_LIST_FIELDS.actions, sortable: false },
@@ -179,6 +191,7 @@ export default {
       PBEHAVIOR_LIST_FIELDS.ends,
       PBEHAVIOR_LIST_FIELDS.created,
       PBEHAVIOR_LIST_FIELDS.updated,
+      PBEHAVIOR_LIST_FIELDS.patternExecAt,
     ];
 
     const advancedSearchFields = computed(() => (

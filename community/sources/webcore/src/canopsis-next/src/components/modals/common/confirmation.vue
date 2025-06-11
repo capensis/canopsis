@@ -10,7 +10,7 @@
       v-if="config.text"
       #text=""
     >
-      <span class="text-subtitle-1 pre-wrap">{{ config.text }}</span>
+      <span v-html="config.text" class="text-subtitle-1 pre-wrap" />
     </template>
     <template #actions="">
       <v-layout
@@ -41,6 +41,8 @@
 <script>
 import { MODALS } from '@/constants';
 
+import { sanitizeHtml } from '@/helpers/html';
+
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 
@@ -66,6 +68,12 @@ export default {
   computed: {
     title() {
       return this.config.title ?? this.$t('common.confirmation');
+    },
+
+    sanitizedText() {
+      return this.config.text
+        ? sanitizeHtml(this.config.text)
+        : '';
     },
   },
   beforeDestroy() {
