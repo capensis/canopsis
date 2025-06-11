@@ -111,10 +111,9 @@
       justify-end
       align-center
     >
-      <pattern-count-message
-        :error="hasError"
-        :message="checkFilterMessages"
-      />
+      <pattern-count-message :error="hasError">
+        <span v-html="checkFilterMessages" />
+      </pattern-count-message>
       <template v-if="hasAllInCounter">
         <v-btn
           v-if="entityCountersType"
@@ -151,14 +150,16 @@ import { isString, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { PATTERNS_FIELDS } from '@/constants';
+import { PATTERNS_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
 
+import { sanitizeHtml } from '@/helpers/html';
 import {
   isValidPatternRule,
   formGroupsToPatternRules,
   formGroupsToPatternRulesQuery,
 } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { convertDurationToString } from '@/helpers/date/duration';
 
 import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-alarms-modal';
 import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
@@ -375,21 +376,29 @@ export default {
         return '';
       }
 
-      const allCount = this.counters?.all?.count ?? 0;
-      const entitiesCount = this.counters?.entities?.count ?? 0;
+      const entitiesCount = this.counters?.entity_pattern?.count ?? 0;
+      const alarmsCount = this.counters?.alarm_pattern?.count ?? 0;
+      const allDuration = convertDurationToString(
+        this.counters?.all?.ms,
+        PATTERN_DURATION_FORMAT,
+        TIME_UNITS.millisecond,
+      );
+      const durationMessage = this.$t('pattern.searchTime', { duration: allDuration });
+
+      let message = '';
 
       if (this.entityCountersType) {
-        return this.$t('pattern.entitiesCount', { entitiesCount: allCount });
-      }
-
-      if (this.bothCounters) {
-        return this.$t('pattern.alarmsEntitiesCount', {
+        message = this.$t('pattern.entitiesCount', { entitiesCount });
+      } else if (this.bothCounters) {
+        message = this.$t('pattern.alarmsEntitiesCount', {
           entitiesCount,
-          alarmsCount: allCount,
+          alarmsCount,
         });
+      } else {
+        message = this.$t('pattern.alarmsCount', { alarmsCount });
       }
 
-      return this.$t('pattern.alarmsCount', { alarmsCount: allCount });
+      return sanitizeHtml(`${message} / ${durationMessage}`);
     },
 
     patternsFields() {

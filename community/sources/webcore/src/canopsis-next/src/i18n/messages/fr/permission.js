@@ -377,5 +377,6 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorException]: 'Dates d\'exceptions de comportements périodiques',
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'Raisons de comportements périodiques',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'Types de comportements périodiques',
+    [USER_PERMISSIONS.api.planning.pbehaviorPatterns]: 'Modèles de comportements périodiques',
   },
 };
