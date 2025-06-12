@@ -483,10 +483,13 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     Installation de l'édition open-source de Canopsis :
 
+    !!! Information
+        Il est possible d'installer la version latest des paquets en utilisant le paquet `canopsis` et `canopsis-webui`.
+
     ```sh
     dnf makecache
-    dnf install canopsis
-    ```
+    dnf install canopsis-25.04.* canopsis-webui-25.04.*
+    ``` 
 
 === "Canopsis Pro (souscription commerciale)"
 
@@ -537,9 +540,13 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     Installation de Canopsis Pro :
 
+    !!! Information
+        Il est possible d'installer la version latest des paquets en utilisant le paquet `canopsis-pro` et `canopsis-webui`.
+
     ```sh
     dnf makecache
-    dnf install canopsis-pro
+    dnf install canopsis-pro-25.04.* canopsis-webui-25.04.*
+
     ```
 
 ## Initialisation de Canopsis
@@ -628,12 +635,6 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 ```
 
 ## Lancement de la Web UI de Canopsis
-
-Installer le paquet :
-
-```sh
-dnf install canopsis-webui
-```
 
 Activation de https dans Canopsis:
 
