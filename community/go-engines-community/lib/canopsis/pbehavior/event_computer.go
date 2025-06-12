@@ -29,12 +29,13 @@ func NewEventComputer(typesByID map[string]Type, defaultTypes map[string]string)
 }
 
 type PbhEventParams struct {
-	ID      string
-	Start   datetime.CpsTime
-	End     datetime.CpsTime
-	RRule   string
-	Type    string
-	Exdates []Exdate
+	ID       string
+	Start    datetime.CpsTime
+	End      datetime.CpsTime
+	RRule    string
+	Type     string
+	Exdates  []Exdate
+	Location *time.Location
 }
 
 // ComputedType represents type for determined time span.
@@ -50,36 +51,35 @@ func (c *eventComputer) Compute(
 	span timespan.Span,
 ) ([]ComputedType, error) {
 	var event Event
-	location := span.From().Location()
+	location := params.Location
 	var stop time.Time
 	if params.End.Unix() <= 0 {
 		stop = span.To()
 	} else {
 		stop = params.End.Time
 	}
-	stop = stop.In(location)
 
 	if params.RRule == "" {
-		event = NewEvent(params.Start.Time.In(location), stop)
+		event = NewEvent(params.Start.Time.In(location), stop.In(location))
 	} else {
 		rOption, err := rrule.StrToROption(params.RRule)
 		if err != nil {
 			return nil, err
 		}
 
-		event = NewRecEvent(params.Start.Time.In(location), stop, rOption)
+		event = NewRecEvent(params.Start.Time.In(location), stop.In(location), rOption)
 	}
 
 	err := c.sortExdates(params.Exdates)
 	if err != nil {
 		return nil, err
 	}
-	computed, err := c.computeByRrule(event, span, c.typesByID[params.Type], params.Exdates)
+	computed, err := c.computeByRrule(event, span, c.typesByID[params.Type], params.Exdates, params.Location)
 	if err != nil {
 		return nil, err
 	}
 
-	computedByActiveType, err := c.computeByActiveType(event, span, params.Type)
+	computedByActiveType, err := c.computeByActiveType(event, span.From().In(location), span.To().In(location), params.Type)
 	if err != nil {
 		return nil, err
 	}
@@ -95,8 +95,8 @@ func (c *eventComputer) computeByRrule(
 	span timespan.Span,
 	t Type,
 	exdates []Exdate,
+	location *time.Location,
 ) ([]ComputedType, error) {
-	location := event.span.From().Location()
 	eventTimespans, err := GetTimeSpans(event, span)
 	if err != nil {
 		return nil, err
@@ -153,7 +153,7 @@ func (c *eventComputer) computeByRrule(
 // active type and pbehavior is in action for the date.
 func (c *eventComputer) computeByActiveType(
 	event Event,
-	span timespan.Span,
+	from, to time.Time,
 	typeID string,
 ) ([]ComputedType, error) {
 	t, ok := c.typesByID[typeID]
@@ -167,7 +167,7 @@ func (c *eventComputer) computeByActiveType(
 
 	computed := make([]ComputedType, 0)
 	// Check each day in the span if behavior is in action for this day.
-	for date := utils.DateOf(span.From()); date.Before(span.To()); date = date.AddDate(0, 0, 1) {
+	for date := utils.DateOf(from); date.Before(to); date = date.AddDate(0, 0, 1) {
 		// Interval from midnight to next day midnight.
 		dateSpan := timespan.New(date, date.AddDate(0, 0, 1))
 		eventTimespans, err := GetTimeSpans(event, dateSpan)
@@ -180,8 +180,8 @@ func (c *eventComputer) computeByActiveType(
 
 		timespans := []timespan.Span{
 			timespan.New(
-				utils.MaxTime(dateSpan.From(), span.From()),
-				utils.MinTime(dateSpan.To(), span.To()),
+				utils.MaxTime(dateSpan.From(), from),
+				utils.MinTime(dateSpan.To(), to),
 			),
 		}
 		// Exclude event intervals from inactive intervals.
