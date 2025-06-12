@@ -128,6 +128,33 @@ cliquez sur « + » et renseignez les différents champs.
 
 ![jenkins4](./img/remediation_jenkins4.png)
 
+### Configuration VisualTom (vtom) 
+
+!!! attention
+    Ce guide a été réalisé avec le client lourd.
+
+#### Création d'un token d'authentification VisualTom
+
+Dans le client lourd, cliquer sur l'onglet « Outils » puis sur le menu « Sécurité du serveur d'API ».
+
+[![vtom1](./img/remediation_vtom1.png)](./img/remediation_vtom1.png){target=_blank}
+
+Appuyez sur le bouton « + » pour créer une nouvelle clé et remplissez les informations demandées.
+
+[![vtom2](./img/remediation_vtom2.png)](./img/remediation_vtom2.png){target=_blank}
+
+Vous disposez maintenant d'un token qui va être utilisé juste après dans la
+configuration de la remédiation côté Canopsis.
+
+#### Création d'une configuration associée dans Canopsis
+
+Dans le menu d'administration de la remédiation, onglet « CONFIGURATIONS »,
+cliquez sur « + » et renseignez les différents champs.
+
+!!! attention 
+    Pour l'adresse de connexion, il est nécessaire d'utiliser le format suivant: `https://visualtom:30002/vtom/public/monitoring/2.0/environments/[VOTRE ENVIRONNEMENT]/applications/[VOTRE APPLICATION]`
+
+[![vtom3](./img/remediation_vtom3.png)](./img/remediation_vtom3.png){target=_blank}
 
 ## Configuration des jobs
 
@@ -188,6 +215,25 @@ Si vous devez passer des variables à votre job, suivez la section
 
 [doc-op]: ../../guide-utilisation/remediation/mise-en-oeuvre/#associer-un-job-a-une-operation
 
+### Association de job VisualTom (vtom) dans Canopsis
+
+Coté VisualTom, pour trouver le Job ID, il faut récupérer le nom du « traitement » qui se trouve dans votre application :
+
+![vtom4](./img/remediation_vtom4.png)
+
+Coté Canopsis, dans le menu d'administration de la remédiation, onglet « JOBS »,
+cliquez sur « + » et renseignez les différents champs.
+
+Le champs « Identifiant de la tâche » de Canopsis correspond au « Nom » du traitement dans VisualTom.    
+
+![vtom5](./img/remediation_vtom5.png)
+
+Le job est maintenant prêt à être utilisé dans des [opérations][doc-op] de
+consignes.
+Si vous devez passer des variables à votre job, la section suivante,
+[Payload](#utilisation-des-payloads) vous explique comment faire.
+
+[doc-op]: ../../guide-utilisation/menu-administration/consignes.md#associer-un-job-à-une-opération
 
 ## Utilisation des `payloads`
 
@@ -354,6 +400,38 @@ echo -e "\tId de l'entité : ${entity_id}"
 echo -e "\tComposant : ${component}"
 echo -e "\tResource : ${resource}"
 echo "Terminé"
+```
+
+### VisualTom (vtom)
+
+L'ordonnanceur attend les paramètres via un payload pour son api.
+Ainsi, lorsque vous paramétrez le contenu du payload dans un job Canopsis, vous
+devez préciser les variables en suivant cette structure :
+
+```json
+{
+  "parameters": [
+    "test1", 
+    "test2"
+  ]
+}
+```
+
+Dans VisualTom, vous pourrez exploiter ces paramètres dans un script de traitement.
+
+Les paramètres contenus dans `parameters` seront alors automatiquement utilisables par le job.
+
+Voici un exemple complet de passage de paramètres de Canopsis vers VisualTom :
+
+**Payload Job Canopsis**
+
+```json
+{
+  "parameters": [
+    "{{.Alarm.Value.Component}}", 
+    "{{.Alarm.Value.Resource}}"
+  ]
+}
 ```
 
 ## Avancé
