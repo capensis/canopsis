@@ -204,9 +204,8 @@ func (s *store) CalendarByEntityID(ctx context.Context, entity libtypes.Entity, 
 		return nil, err
 	}
 
-	location := s.timezoneConfigProvider.Get().Location
-	span := timespan.New(r.From.In(location).Time, r.To.In(location).Time)
-	computed, err := s.pbhTypeComputer.ComputeByIds(ctx, span, pbhIDs)
+	span := timespan.New(r.From.Time, r.To.Time)
+	computed, err := s.pbhTypeComputer.ComputeByIds(ctx, span, pbhIDs, s.timezoneConfigProvider.Get().Location)
 	if err != nil {
 		return nil, err
 	}
@@ -958,8 +957,7 @@ func (s *store) transformResponse(ctx context.Context, result []Response) error 
 }
 
 func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error {
-	location := s.timezoneConfigProvider.Get().Location
-	now := time.Now().In(location)
+	now := time.Now()
 	ids := make([]string, len(result))
 	for i, pbh := range result {
 		ids[i] = pbh.ID

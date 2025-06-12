@@ -54,7 +54,7 @@ func TestService(t *testing.T) {
 					mockStore.EXPECT().SetSpan(gomock.Any(), gomock.Any()).Return(nil)
 					mockStore.EXPECT().SetComputed(gomock.Any(), gomock.Any()).Return(nil)
 					service := pbehavior.NewService(mockDbClient, typeComputer, mockStore, mockLockClient, zerolog.Nop())
-					resolver, _, err := service.Compute(ctx, data.date)
+					resolver, _, err := service.Compute(ctx, data.date, data.date.From().Location())
 					if err != nil {
 						t.Errorf("expected no error but got %v", err)
 						return
