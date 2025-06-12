@@ -657,11 +657,13 @@ export const createActiveViewModule = () => {
   const fetchActiveView = jest.fn();
   const toggleEditing = jest.fn();
   const editing = jest.fn().mockReturnValue(false);
+  const item = jest.fn().mockReturnValue({});
 
   const activeViewModule = {
     name: 'activeView',
     getters: {
       editing,
+      item,
     },
     actions: {
       registerEditingOffHandler,
@@ -680,6 +682,7 @@ export const createActiveViewModule = () => {
   });
 
   return {
+    item,
     editing,
     registerEditingOffHandler,
     unregisterEditingOffHandler,

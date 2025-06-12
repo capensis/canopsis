@@ -173,6 +173,10 @@ html {
   flex-shrink: 0;
 }
 
+.group-item__active, .group-panel__active {
+  background-color: var(--v-secondary-darken1) !important;
+}
+
 .c-extra-details__message {
   max-width: 600px;
   white-space: pre-line;
