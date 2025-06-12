@@ -142,8 +142,6 @@ describe('groups-side-bar-group', () => {
   });
 
   test('Renders `groups-side-bar-group` with empty groups', () => {
-    // activeView.mockReturnValue({});
-
     const wrapper = snapshotFactory({
       store,
       propsData: {
