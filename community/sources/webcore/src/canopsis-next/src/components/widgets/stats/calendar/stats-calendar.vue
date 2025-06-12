@@ -143,10 +143,10 @@ export default {
     },
 
     noPbehaviorPattern() {
-      return JSON.stringify([Object.values(PBEHAVIOR_CANONICAL_TYPES).map(type => ({
+      return JSON.stringify([[{
         field: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
-        cond: { type: PATTERN_CONDITIONS.notEqual, value: type },
-      }))]);
+        cond: { type: PATTERN_CONDITIONS.equal, value: PBEHAVIOR_CANONICAL_TYPES.active },
+      }]]);
     },
   },
   methods: {
@@ -205,8 +205,8 @@ export default {
             : this.$t('modals.alarmsList.title'),
           fetchList: (params) => {
             const newParams = {
-              ...this.getCommonQuery(),
               ...params,
+              ...this.getCommonQuery(),
 
               tstart: convertDateToTimestamp(meta.tstart),
               tstop: convertDateToTimestamp(meta.tstop),
