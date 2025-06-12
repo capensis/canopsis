@@ -7,6 +7,7 @@
   >
     <v-expansion-panel-header
       :hide-actions="hideActions"
+      :class="{ 'group-panel__active': active }"
       class="pa-0 pr-6"
     >
       <div class="px-6 py-4 group-panel__title">
@@ -39,6 +40,10 @@
 export default {
   props: {
     isEditing: {
+      type: Boolean,
+      default: false,
+    },
+    active: {
       type: Boolean,
       default: false,
     },
