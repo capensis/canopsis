@@ -34,10 +34,9 @@ type service struct {
 }
 
 func (s *service) GetTimespans(ctx context.Context, r TimespansRequest) ([]ItemResponse, error) {
-	location := s.timezoneConfigProvider.Get().Location
 	viewSpan := timespan.New(
-		r.ViewFrom.Time.In(location),
-		r.ViewTo.Time.In(location),
+		r.ViewFrom.Time,
+		r.ViewTo.Time,
 	)
 
 	exdates, err := s.getExdates(ctx, r)
@@ -54,13 +53,16 @@ func (s *service) GetTimespans(ctx context.Context, r TimespansRequest) ([]ItemR
 	if err != nil {
 		return nil, err
 	}
+
+	location := s.timezoneConfigProvider.Get().Location
 	eventComputer := pbehavior.NewEventComputer(pbhTypes, defaultTypes)
 	params := pbehavior.PbhEventParams{
-		Start:   r.StartAt,
-		End:     r.EndAt,
-		RRule:   r.RRule,
-		Type:    r.Type,
-		Exdates: exdates,
+		Start:    r.StartAt,
+		End:      r.EndAt,
+		RRule:    r.RRule,
+		Type:     r.Type,
+		Exdates:  exdates,
+		Location: location,
 	}
 	computed, err := eventComputer.Compute(params, viewSpan)
 	if err != nil {

@@ -119,7 +119,7 @@ func (p *rpcServerMessageProcessor) processCreatePbhEvent(
 		return nil, err
 	}
 
-	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbehavior.ID})
+	resolver, err := p.PbhService.RecomputeByIds(ctx, []string{pbehavior.ID}, p.TimezoneConfigProvider.Get().Location)
 	if err != nil {
 		return nil, fmt.Errorf("pbehavior recompute failed: %w", err)
 	}
