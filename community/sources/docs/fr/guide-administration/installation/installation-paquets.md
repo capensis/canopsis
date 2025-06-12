@@ -484,7 +484,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
     Installation de l'édition open-source de Canopsis :
 
     !!! Information
-        Il est possible d'installer la version latest des paquets en utilisant le paquet `canopsis` et `canopsis-webui`.
+        Il est possible d'installer la version latest des paquets en utilisant la commande `dnf install canopsis canopsis-webui`.
 
     ```sh
     dnf makecache
@@ -541,7 +541,7 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
     Installation de Canopsis Pro :
 
     !!! Information
-        Il est possible d'installer la version latest des paquets en utilisant le paquet `canopsis-pro` et `canopsis-webui`.
+        Il est possible d'installer la version latest des paquets en utilisant la commande `dnf install canopsis-pro canopsis-webui`.
 
     ```sh
     dnf makecache
