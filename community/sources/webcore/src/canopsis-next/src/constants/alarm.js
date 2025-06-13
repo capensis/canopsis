@@ -306,12 +306,17 @@ export const ALARM_STATUSES = {
 };
 
 export const ALARM_STATUSES_ICONS = {
-  [ALARM_STATUSES.closed]: 'check_circle_outline',
+  [ALARM_STATUSES.closed]: '$vuetify.icons.delayed_check',
   [ALARM_STATUSES.ongoing]: 'warning',
   [ALARM_STATUSES.stealthy]: 'swap_vert',
   [ALARM_STATUSES.flapping]: 'swap_vert',
-  [ALARM_STATUSES.cancelled]: 'highlight_off',
+  [ALARM_STATUSES.cancelled]: '$vuetify.icons.delayed_cancel',
   [ALARM_STATUSES.noEvents]: 'sync_problem',
+};
+
+export const ALARM_STATUSES_RESOLVED_ICONS = {
+  [ALARM_STATUSES.closed]: 'check_circle',
+  [ALARM_STATUSES.cancelled]: 'cancel',
 };
 
 export const ALARM_STATUSES_TEXTS = {
@@ -479,7 +484,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.autoInstructionComplete]: 'assignment',
   [ALARM_LIST_STEPS.autoInstructionFail]: 'assignment',
   [ALARM_LIST_STEPS.activate]: 'notifications',
-  [ALARM_LIST_STEPS.resolve]: 'check_circle_outline',
+  [ALARM_LIST_STEPS.resolve]: 'check_circle',
 };
 
 export const ALARM_STEPS_COLORS = {
@@ -511,6 +516,7 @@ export const ALARM_STEPS_COLORS = {
   [ALARM_LIST_STEPS.declareTicketRuleInProgress]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketRuleComplete]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketRuleFail]: COLORS.alarmSteps.declareTicket,
+  [ALARM_LIST_STEPS.resolve]: COLORS.alarmSteps.resolve,
 };
 
 export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
