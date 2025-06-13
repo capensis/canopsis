@@ -4,7 +4,7 @@ Dans l'interface graphique de Canopsis, il est possible en de multiples endroits
 Pour faciliter les tâches de l'administrateur, Canopsis met à disposition :
 
 * les helpers officiels [Handlebars](https://handlebarsjs.com/)
-* des helpers handlebars spécifiques à Canopsis
+* des helpers handlebars [spécifiques à Canopsis](../../interface/helpers/)
 
 Voici un tour d'horizon des espaces dans lesquels vous pouvez personnaliser les rendus.
 
