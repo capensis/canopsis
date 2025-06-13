@@ -52,7 +52,7 @@ Cette section présente la configuration à réaliser dans l'ordonnanceur et la
 liaison à ajouter dans Canopsis.
 
 Les opérations sont décrites séparément pour les deux ordonnanceurs supportés :
-Rundeck, AWX, jennkins, et Visual Tom.
+Rundeck, AWX, jennkins, et Visual Tom. (La documentation `Visual Tom` est en cours de rédaction).
 
 ### Configuration pour Rundeck
 
@@ -127,7 +127,6 @@ Dans le menu d'administration de la remédiation, onglet « CONFIGURATIONS »,
 cliquez sur « + » et renseignez les différents champs.
 
 ![jenkins4](./img/remediation_jenkins4.png)
-
 
 ### Configuration VisualTom (vtom) 
 
@@ -434,6 +433,7 @@ Voici un exemple complet de passage de paramètres de Canopsis vers VisualTom :
   ]
 }
 ```
+
 
 ## Avancé
 
