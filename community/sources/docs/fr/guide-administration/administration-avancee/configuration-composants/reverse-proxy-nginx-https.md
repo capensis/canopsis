@@ -1,6 +1,6 @@
 # Activation de HTTPS dans Canopsis
 
-À partir de Canopsis 4.4.0, une configuration HTTPS est proposée avec [Nginx](reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit sa configuration et son activation.
+Une configuration HTTPS est proposée avec [Nginx](reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit sa configuration et son activation.
 
 ## Apports de la configuration HTTPS
 
@@ -8,7 +8,7 @@ La configuration HTTPS proposée dans Nginx vous permet :
 
 * de sécuriser vos échanges HTTP, ce qui est notamment recommandé si votre accès à Canopsis ne se fait pas au travers d'un intranet sécurisé ou d'un VPN ;
 * d'activer implicitement la prise en charge d'HTTP/2, pour de meilleures performances web dans certaines conditions ;
-* de bénéficier des [Websockets](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API) et donc de la nouvelle fonctionnalité Healthcheck apparue avec Canopsis 4.4.0.
+* de bénéficier des [Websockets](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API) et donc de la nouvelle Healthcheck.
 
 !!! note
     Les prérequis pour ces fonctionnalités sont les suivants :
@@ -116,7 +116,7 @@ Notez au préalable que :
 
 === "Paquets RHEL"
 
-    Éditez le fichier `/etc/nginx/conf.d/canopsis.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
+    Éditez le fichier `/etc/nginx/conf.d/canopsis.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
 
     ```nginx hl_lines="1 5"
     set $canopsis_server_name "canopsis.mon-si.fr";
