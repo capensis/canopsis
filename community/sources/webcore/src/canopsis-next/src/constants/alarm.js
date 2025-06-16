@@ -82,6 +82,8 @@ export const ALARM_FIELDS = {
   canceledInitiator: 'v.canceled.initiator',
   snooze: 'v.snooze',
   pbehaviorInfo: 'v.pbehavior_info',
+  stateObject: 'v.state',
+  statusObject: 'v.status',
 
   /**
    * VIRTUAL
@@ -304,12 +306,17 @@ export const ALARM_STATUSES = {
 };
 
 export const ALARM_STATUSES_ICONS = {
-  [ALARM_STATUSES.closed]: 'check_circle_outline',
+  [ALARM_STATUSES.closed]: '$vuetify.icons.delayed_check',
   [ALARM_STATUSES.ongoing]: 'warning',
   [ALARM_STATUSES.stealthy]: 'swap_vert',
   [ALARM_STATUSES.flapping]: 'swap_vert',
-  [ALARM_STATUSES.cancelled]: 'highlight_off',
+  [ALARM_STATUSES.cancelled]: '$vuetify.icons.delayed_cancel',
   [ALARM_STATUSES.noEvents]: 'sync_problem',
+};
+
+export const ALARM_STATUSES_RESOLVED_ICONS = {
+  [ALARM_STATUSES.closed]: 'check_circle',
+  [ALARM_STATUSES.cancelled]: 'cancel',
 };
 
 export const ALARM_STATUSES_TEXTS = {
@@ -551,7 +558,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.autoInstructionComplete]: 'assignment',
   [ALARM_LIST_STEPS.autoInstructionFail]: 'assignment',
   [ALARM_LIST_STEPS.activate]: 'notifications',
-  [ALARM_LIST_STEPS.resolve]: 'check_circle_outline',
+  [ALARM_LIST_STEPS.resolve]: 'check_circle',
 };
 
 export const ALARM_STEPS_COLORS = {
@@ -583,6 +590,7 @@ export const ALARM_STEPS_COLORS = {
   [ALARM_LIST_STEPS.declareTicketRuleInProgress]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketRuleComplete]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketRuleFail]: COLORS.alarmSteps.declareTicket,
+  [ALARM_LIST_STEPS.resolve]: COLORS.alarmSteps.resolve,
 };
 
 export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
@@ -871,8 +879,8 @@ export const ALARM_EVENT_INITIATORS = {
 export const ALARM_TEMPLATE_FIELDS = {
   id: `alarm.${ALARM_FIELDS.id}`,
   ack: `alarm.${ALARM_FIELDS.ack}`,
-  state: `alarm.${ALARM_FIELDS.state}`,
-  status: `alarm.${ALARM_FIELDS.status}`,
+  state: `alarm.${ALARM_FIELDS.stateObject}`,
+  status: `alarm.${ALARM_FIELDS.statusObject}`,
   ticket: `alarm.${ALARM_FIELDS.ticket}`,
   component: `alarm.${ALARM_FIELDS.component}`,
   connector: `alarm.${ALARM_FIELDS.connector}`,
@@ -1022,6 +1030,8 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.canceledInitiator]: 'alarm.fields.canceledInitiator',
   [ALARM_FIELDS.snooze]: 'common.snooze',
   [ALARM_FIELDS.pbehaviorInfo]: 'pbehavior.pbehaviorInfo',
+  [ALARM_FIELDS.stateObject]: 'common.state',
+  [ALARM_FIELDS.statusObject]: 'common.status',
 
   /**
    * VIRTUAL

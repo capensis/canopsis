@@ -12,9 +12,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func NewAckProcessor(
@@ -53,7 +53,21 @@ type ackProcessor struct {
 
 func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil || !event.Entity.Enabled {
+	// rare case: event cannot have empty entity
+	if event.Entity == nil {
+		return result, nil
+	}
+
+	// events can be safely ignored if entity is disabled but add log msg for external events
+	if !event.Entity.Enabled {
+		if event.Parameters.Initiator == types.InitiatorExternal {
+			p.logger.Warn().
+				Str("event_type", event.EventType).
+				Str("connector", event.Parameters.Connector+"/"+event.Parameters.ConnectorName).
+				Str("entity", event.Entity.ID).
+				Msg("entity is disabled, event cannot be processed")
+		}
+
 		return result, nil
 	}
 

@@ -1,6 +1,6 @@
 package priority
 
-import "go.mongodb.org/mongo-driver/bson"
+import "go.mongodb.org/mongo-driver/v2/bson"
 
 func GetSortPipeline() []bson.M {
 	return []bson.M{
