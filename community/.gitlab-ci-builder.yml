@@ -65,7 +65,7 @@ build_rpm:
   script:
     - export DEFINE_version_upstream="$(printf $CI_COMMIT_TAG)"
     - export DEFINE_version_safe="$(echo ${DEFINE_version_upstream} | sed -e 's/\(.*\)-\([^g][^-]*\)/\1~\2/g' -e 's/-/_/g')"
-    - export DEFINE_python_version="$(echo $(grep "^PYTHON_VERSION" ~/community/.env | awk -F '=' '{print $NF}' | sed 's/ //g') | awk -F . '{print $1 "." $2}')"
+    - export DEFINE_version_python="$(echo $(grep "^PYTHON_VERSION" $CI_PROJECT_DIR/community/.env | awk -F '=' '{print $NF}' | sed 's/ //g') | awk -F . '{print $1 "." $2}')"
     - set -e; for dist in almalinux-8-x86_64 almalinux-9-x86_64; do
           MOCK_CONFIG=dist/build/${dist}/canopsis.cfg RPMBUILD_DIR=dist/build/${dist} /build.sh;
       done
