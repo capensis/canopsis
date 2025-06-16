@@ -4,83 +4,64 @@ Canopsis permet de journaliser certaines actions réalisées par un utilisateur 
 
 ## Actions et types pris en charge
 
-!!! attention "Avertissement"
-    En version Canopsis 4.1, seuls les types `pbehaviortype`, `pbehaviorreason`, `pbehaviorexception`, `pbehavior`, `heartbeat`, `jobconfig`, `job`, `instruction` sont traités. 
-    Les autres types seront pris en charge dans les versions à venir de Canopsis
-
 Actions  | Description  
 --|---
 `create`  | Création d'un objet (ex : Création d'un groupe de vues)
 `update`  | Mise à jour d'un objet (ex : Mise à jour d'une règle Heartbeat)
 `delete`  | Suppression d'un objet (ex : Suppression d'une règle de corrélation)
-`export`  | Export d'un objet (ex : Export d'une vue)
-`import`  | Import d'un objet (ex : Import d'une entité)
 
 Types  | Description  
 --|---
-`view`                  | [Les vues](../../guide-utilisation/interface/vues/index.md)
-`viewgroup`             | [Les groupes de vues](../../guide-utilisation/interface/vues/index.md)
+`user`                  | [Les utilisateurs](../../guide-utilisation/menu-administration/utilisateurs.md)
+`role`                  | [Les rôles](../../guide-utilisation/menu-administration/roles.md)
+`playlist`              | [ Les listes de lecture](../../guide-utilisation/menu-administration/listes-de-lecture.md)
 `eventfilter`           | [Les règles de filtrage/enrichissement](../../guide-utilisation/menu-exploitation/filtres-evenements.md)
+`scenario`              | [Les règles de scénarios](../../guide-utilisation/menu-exploitation/scenarios.md)
 `metaalarmrule`         | [Les règles de méta alarmes/corrélation](../../guide-utilisation/menu-exploitation/regles-metaalarme.md)
 `dynamicinfo`           | [Les règles d'enrichissement d'alarmes](../../guide-utilisation/cas-d-usage/enrichissement.md)
-`service`               | [Les entités de type `service`](../../guide-utilisation/services/index.md)
+`entity`<br/>`entityservice`<br/>`entitycategory` | [Gestion des entitées](../../guide-utilisation/menu-administration/)
 `pbehavior`<br/>`pbehaviortype`<br/>`pbehaviorreason`<br/>`pbehaviorexception`  | [Les comportements périodiques](../../guide-utilisation/cas-d-usage/comportements_periodiques.md)
-`heartbeat`             | [Les règles de lignes de vie](../../guide-utilisation/menu-exploitation/regles-inactivite.md)
-`instruction`<br/>`jobconfig`             | [Les objets de remédiation](../../guide-utilisation/remediation/index.md)
+`instruction`<br/>`job`<br/>`jobconfig`             | [Les objets de remédiation](../../guide-utilisation/remediation/index.md)
+`statesetting`          | [Les paramètres](../../guide-utilisation/menu-administration/parametres-de-calculd-etat-sévérité.md)
+`broadcastmessage`      | [La diffusion de messages](../../guide-utilisation/menu-administration/diffusion-de-messages.md)
+`idlerule`              | [Les règles d'inactivité](../../guide-utilisation/menu-exploitation/regles-inactivite.md)
+`view`<br/>`viewgroup`<br/>`viewtab`  | [Les vues](../../guide-utilisation/interface/vues/index.md)
+`widget`<br/>`widgetfilter`<br/>`widgettemplate` | [Les widgets](../../guide-utilisation/interface/widgets/index.md)
+`resolverule`           | [Les règles de résolution](../../guide-utilisation/menu-exploitation/regles-resolution.md)
+`flappingrule`          | [Les règles de bagot](../../guide-utilisation/menu-exploitation/regles-bagot.md)
+`kpi_filter`            | [Les KPI](../../guide-utilisation/menu-administration/kpi.md)
+`pattern`               | [Les patterns](../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md#filtres)
+`map`                   | [Les cartographies](../../guide-utilisation/menu-administration/cartographie.md)
+`snmprule`              | [Les règles SNMP](../../guide-utilisation/menu-exploitation/regles-snmp.md)
+`declareticketrule`     | [Les règles de déclarations de tickets](../../guide-utilisation/menu-exploitation/regles-declaration-tickets.md)
+`linkrule`              | [Les règles de générateurs de liens](../../guide-utilisation/menu-exploitation/generateur-liens.md)
+`alarmtag`              | [Les tags d'alarmes](../../guide-utilisation/menu-administration/gestion-des-tags.md)
+`eventrecord`           | [Les enregistrements d'évenements](../../guide-utilisation/menu-administration/enregistrements-d-evenements.md)
 
+## Récupérer les logs des actions depuis la base TimescaleDB
 
-## Exploitation des journaux
+Par ailleurs, une table TimescaleDB, `action_log`, propose de conserver les actions effectuées sur l'ensemble des objets.
 
-### Consultation
+Le format de la table est le suivant:
+Champs  | Description  
+--|---
+`id` |  ID interne à TimescaleDB.
+`type`| L'action réalisée<br/>0 - create<br/>1 - update<br/>2 - delete 
+`value_type` | Le type de l'action. 
+`value_id` | L'identifiant de la tâche. 
+`author` | L'auteur est l'utilisateur qui a effectué l'action.
+`time` | Le moment où l'action s'est effectuée
+`data` | L'ensemble des informations techniques sur l'action qui a été réalisée
 
-Les actions sont consignées dans le journal de l'API Canopsis. Voici la méthode qui vous permet de le consulter en fonction de votre type d'installation
+Exemple d'un log:
+```
+psql (15.7)
+Type "help" for help.
 
-=== "Paquets"
-
-    ```sh
-    journalctl -u canopsis-service@canopsis-api.service
-    ```
-
-=== "Docker Compose Community"
-
-    ```sh
-    CPS_EDITION=community docker compose logs api
-    ```
-
-=== "Docker Compose Pro"
-
-    ```sh
-    CPS_EDITION=pro docker compose logs api
-    ```
-
-
-### Anatomie du journal
-
-Une ligne de journal présente ainsi : une date, une action, un type, et un identifiant d'objet.
+canopsis=> select * from action_log;
+...
+  5 |    0 | eventfilter | action_log_test                      | d7f523ac-ae68-4e95-92ec-9fc80abf3c28 | 2025-05-22 07:08:11 | {"_id": "action_log_test", "type": "enrichment", "rrule": "", "author": "d7f523ac-ae68-4e95-92ec-9fc80abf3c28", "config": {"actions": [{"name": "software", "type": "set_entity_info", "value": "canopsis", "description": "add software name"}], "on_failure": "pass", "on_success": "pass"}, "created": 1747897691, "enabled": true, "exdates": [], "updated": 1747897691, "priority": 0, "exceptions": [], "description": "This is an event filter rule", "event_pattern": [], "external_data": [], "entity_pattern": [[{"cond": {"type": "eq", "value": "capensis"}, "field": "infos.customer", "field_type": "string"}]], "resolved_exdates": null, "corporate_entity_pattern": "", "corporate_entity_pattern_title": ""}
+...
 
 ```
-févr. 10 09:18:09 localhost.localdomain canopsis-api[2699]: 2021-02-10T09:18:09+01:00 INF root/canopsis/go-engines/lib/api/logger/action_logger.go:86 > ActionLog:  action=create author=root value_id=2c2a146f-0861-411b-ac5d-02e153514c0c value_type=pbehaviorreason
-```
 
-## Collection MongoDB des dernières actions
-
-Par ailleurs, une collection mongodb, `action_log`, propose de conserver la dernière action effectuée sur un objet.
-
-Cette collection sera exploitée par l'interface web de Canopsis dans une future version.
-
-```
-MongoDB shell version v3.6.8
-connecting to: mongodb://localhost:27017/canopsis
-Implicit session: session { "id" : UUID("cff59761-6f70-4d8a-b592-d33d13f43ec5") }
-MongoDB server version: 3.6.21
-> db.action_log.find().pretty()
-
-{
-	"_id" : ObjectId("602396c113fa8b223784d93c"),
-	"value_id" : "2c2a146f-0861-411b-ac5d-02e153514c0c",
-	"value_type" : "pbehaviorreason",
-	"action" : "create",
-	"author" : "root",
-	"time" : ISODate("2021-02-10T08:20:35.806Z")
-}
-```
