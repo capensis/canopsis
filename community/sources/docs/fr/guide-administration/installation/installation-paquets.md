@@ -259,8 +259,8 @@ Pratiquer les ouvertures de ports nécessaires à l'accès au service.
 Les commandes données couvrent le cas standard où le pare-feu système `firewalld` est utilisé, et servent surtout à rappeler les ports ou services à ouvrir. (cf. [matrice des flux réseau](../matrice-des-flux-reseau/index.md))
 
 ```sh
+firewall-cmd --add-service=https --permanent
 firewall-cmd --add-port=5672/tcp --add-port=15672/tcp --permanent
-firewall-cmd --add-port=8080/tcp --permanent
 firewall-cmd --add-port=27017/tcp --permanent
 firewall-cmd --add-service=postgresql --permanent
 firewall-cmd --add-service=redis --permanent
@@ -307,12 +307,13 @@ On peut à présent activer et démarrer le service :
 systemctl enable --now mongod.service
 ```
 
+
 L'instance MongoDB étant démarrée, il reste à la configurer.
 
-On se connecte dans un shell `mongosh` et on désactive la télémétrie :
+On se connecte dans un shell `mongosh` avec l'identifiant `root` sur la base de donnée `admin` et on désactive la télémétrie :
 
 ```sh
-mongosh
+mongosh admin
 > disableTelemetry()
 ```
 
@@ -332,15 +333,13 @@ Au bout de quelques secondes, le prompt du shell `mongosh` doit faire apparaîtr
 que le nœud est PRIMARY :
 
 ```sh
-rs0 [direct: primary] test>
+rs0 [direct: primary] admin>
 ```
 
-Lorsque c'est le cas, le *replicaset* est prêt. On poursuit avec la création
-des utilisateurs MongoDB `root` puis `canopsis`, toujours dans le shell
+Lorsque c'est le cas, le *replicaset* est prêt. On poursuit avec la création des comptes `root` et `canopsis`, toujours dans le shell
 `mongosh` :
 
 ```sh
-> use admin
 > db.createUser({user: "root", pwd: "UNMOTDEPASSEFORT", roles: [ { role: "root", db: "admin" }]})
 > exit
 ```
@@ -349,7 +348,7 @@ On se reconnecte avec le shell `mongosh`, cette fois-ci en s'authentifiant en ta
 que `root` MongoDB :
 
 ```sh
-mongosh -u root -p UNMOTDEPASSEFORT
+mongosh -u root -p UNMOTDEPASSEFORT admin
 > use canopsis
 > db.createUser({user: "cpsmongo", pwd: "canopsis", roles: [ { role: "dbOwner", db: "canopsis" }, { role: "clusterMonitor", db: "admin"}]})
 > exit
@@ -391,9 +390,6 @@ canopsis=# GRANT ALL ON DATABASE canopsis TO cpspostgres;
 canopsis=# ALTER DATABASE canopsis OWNER TO cpspostgres;
 canopsis=# exit
 ```
-
-!!! Information
-    Depuis la version 24.10 de Canopsis, les métriques techniques sont activables directement depuis la WebUI. Il est donc nécessaire de mettre en place la base avant le premier lancement.
 
 !!! Warning
     Cette base de données **DOIT** être différente de celle utilisée pour les KPI Canopsis.
@@ -487,10 +483,13 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     Installation de l'édition open-source de Canopsis :
 
+    !!! Information
+        Il est possible d'installer la version latest des paquets en utilisant la commande `dnf install canopsis canopsis-webui`.
+
     ```sh
     dnf makecache
-    dnf install canopsis
-    ```
+    dnf install canopsis-25.04.* canopsis-webui-25.04.*
+    ``` 
 
 === "Canopsis Pro (souscription commerciale)"
 
@@ -541,9 +540,13 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
     Installation de Canopsis Pro :
 
+    !!! Information
+        Il est possible d'installer la version latest des paquets en utilisant la commande `dnf install canopsis-pro canopsis-webui`.
+
     ```sh
     dnf makecache
-    dnf install canopsis-pro
+    dnf install canopsis-pro-25.04.* canopsis-webui-25.04.*
+
     ```
 
 ## Initialisation de Canopsis
@@ -555,7 +558,7 @@ est normalement dans l'état suivant :
 CPS_MONGO_URL="mongodb://cpsmongo:canopsis@localhost:27017/canopsis?replicaSet=rs0"
 CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost:5672/canopsis"
 CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"
-CPS_REDIS_URL="redis://localhost:6379/0"
+CPS_REDIS_URL="redis://:canopsis@localhost:6379/0"
 CPS_API_URL="http://localhost:8082"
 CPS_POSTGRES_TECH_URL="postgresql://cpspostgres_tech_metrics:canopsis@localhost:5432/canopsis_tech_metrics"
 ```
@@ -633,18 +636,9 @@ curl -X POST -u root:root -H "Content-Type: application/json" -d '{
 
 ## Lancement de la Web UI de Canopsis
 
-Installer le paquet :
-
-!!! attention
-    Le package `canopsis-webui` est disponible pour EL9 uniquement à partir de la version 24.04.2 !
-
-```sh
-dnf install canopsis-webui
-```
-
 Activation de https dans Canopsis:
 
-Une configuration HTTPS est proposée avec Nginx, mais elle n'est cependant pas encore activée par défaut.  
+Une configuration HTTPS est proposée avec Nginx, elle est nécessaire pour avoir accès à toutes les fonctionnalités de Canopsis.  
 Vous pouvez suivre la procédure suivante: [activation de https dans Canopsis](../administration-avancee/configuration-composants/reverse-proxy-nginx-https.md)
 
 Activer et démarrer Nginx :
