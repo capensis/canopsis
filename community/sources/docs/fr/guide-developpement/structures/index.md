@@ -102,6 +102,7 @@ Champs additionnels :
 * `output` : Message court - Optionnel
 * `long_output` : Message détaillé - Optionnel
 * `close_delay` : Délai de résolution automatique en secondes - Optionnel 
+* `perf_data` : [Métrique de performance](../../guide-utilisation/interface/widgets/graphiques/)
 
 ```json
 {
@@ -109,12 +110,28 @@ Champs additionnels :
   "state": 2,
   "output": "CPU usage high",
   "long_output": "CPU usage over 90% for 5 minutes",
-  "timestamp": 1639403732
+  "timestamp": 1639403732,
+  "perf_data": "cpu=20%;80;90;0;100"
 }
 ```
 
-!!! info "Information"
+!!! info "Information close_delay"
     Le champ `close_delay` permet à une alarme d'être cloturée automatiquement après un délai dans le cas où aucune contre alarme ne serait émise vers Canopsis
+
+!!! info "Information perf_data"
+    Le format attendu pour le champ `perf_data` est le suivant :  
+    ```text
+    'label'=value[UOM];[warn];[crit];[min];[max]
+    ```
+    Exemple :
+    ```json
+    "perf_data": "cpu=20%;80;90;0;100"
+    ```
+     
+    - Seules la **valeur** et l’**unité** sont prises en compte
+    - Les valeurs `warn`, `crit`, `min`, `max` sont **ignorées**
+    - Les métriques sont associées aux entités Canopsis via leur `entity_id`
+
 
 #### Evénement `contextupdate`
 

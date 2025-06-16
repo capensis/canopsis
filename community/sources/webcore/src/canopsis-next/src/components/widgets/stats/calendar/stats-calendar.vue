@@ -277,5 +277,9 @@ export default {
         justify-content: center;
       }
     }
+
+    .c-calendar__toolbar {
+      z-index: 3;
+    }
   }
 </style>

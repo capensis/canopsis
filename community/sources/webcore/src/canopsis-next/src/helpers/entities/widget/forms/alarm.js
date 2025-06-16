@@ -206,7 +206,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {number[]} expandGridRangeSize
  * @property {WidgetCsvSeparator} exportCsvSeparator
  * @property {string} exportCsvDatetimeFormat
- * @property {boolean} clearFilterDisabled
+ * @property {boolean} clearFilterEnabled
  * @property {WidgetKioskParameters} kiosk
  * @property {AlarmChart[]} charts
  * @property {WidgetColumnsParameters} [columns]
@@ -429,7 +429,7 @@ export const alarmListWidgetParametersToForm = (parameters = {}) => ({
   periodic_refresh: periodicRefreshToDurationForm(parameters.periodic_refresh),
   liveWatching: parameters.liveWatching ?? false,
   mainFilter: parameters.mainFilter ?? null,
-  clearFilterDisabled: parameters.clearFilterDisabled ?? false,
+  clearFilterEnabled: parameters.clearFilterEnabled ?? true,
   liveReporting: parameters.liveReporting
     ? cloneDeep(parameters.liveReporting)
     : {},

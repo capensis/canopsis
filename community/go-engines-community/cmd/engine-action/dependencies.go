@@ -6,6 +6,7 @@ import (
 	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/action"
 	libconfig "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 )
 
@@ -15,7 +16,7 @@ func NewEngineAction(
 	logger zerolog.Logger,
 ) libengine.Engine {
 	m := libaction.DependencyMaker{}
-	dbClient := m.DepMongoClient(ctx, logger)
+	dbClient := m.DepMongoClient(ctx, mongo.ClientOptions{})
 	cfg := m.DepConfig(ctx, dbClient)
 	libconfig.SetDbClientRetry(dbClient, cfg)
 	amqpConnection := m.DepAmqpConnection(logger, cfg)

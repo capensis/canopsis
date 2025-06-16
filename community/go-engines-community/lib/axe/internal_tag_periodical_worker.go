@@ -12,9 +12,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type internalTagPeriodicalWorker struct {
@@ -294,7 +294,7 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 			SetUpdate([]bson.M{
 				{"$set": bson.M{
 					"itags_upd": microNow,
-					"itags":     matchedTags,
+					"itags":     bson.M{"$literal": matchedTags},
 					"tags": bson.M{"$concatArrays": bson.A{
 						bson.M{"$cond": bson.M{
 							"if":   "$etags",
@@ -306,7 +306,7 @@ func (w *internalTagPeriodicalWorker) updateByCursor(
 							"then": "$imtags",
 							"else": bson.A{},
 						}},
-						matchedTags,
+						bson.M{"$literal": matchedTags},
 					}},
 				}},
 			}),

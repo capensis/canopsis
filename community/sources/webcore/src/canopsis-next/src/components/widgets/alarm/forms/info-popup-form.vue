@@ -13,6 +13,7 @@
       v-field="form.template"
       v-validate="'required'"
       :error-messages="errors.collect('template')"
+      :variables="variables"
       name="template"
     />
   </v-layout>
@@ -34,6 +35,10 @@ export default {
       default: () => ({}),
     },
     columns: {
+      type: Array,
+      default: () => [],
+    },
+    variables: {
       type: Array,
       default: () => [],
     },

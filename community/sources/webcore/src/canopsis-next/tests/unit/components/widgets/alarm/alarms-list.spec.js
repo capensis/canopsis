@@ -13,7 +13,6 @@ import {
   EXPORT_STATUSES,
   MODALS,
   LIVE_REPORTING_QUICK_RANGES,
-  REMEDIATION_INSTRUCTION_TYPES,
   TIME_UNITS,
   USER_PERMISSIONS,
 } from '@/constants';
@@ -29,7 +28,7 @@ const stubs = {
   'v-switch': true,
   'filter-selector': true,
   'filters-list-btn': true,
-  'alarms-list-remediation-instructions-filters': true,
+  'alarms-list-remediation-instructions-filter': true,
   'c-action-btn': true,
   'c-pagination': true,
   'c-density-btn-toggle': true,
@@ -51,7 +50,7 @@ const snapshotStubs = {
   'v-switch': true,
   'filter-selector': true,
   'filters-list-btn': true,
-  'alarms-list-remediation-instructions-filters': true,
+  'alarms-list-remediation-instructions-filter': true,
   'c-action-btn': true,
   'c-pagination': true,
   'alarms-list-table': true,
@@ -67,7 +66,7 @@ const selectCategoryField = wrapper => wrapper.find('c-entity-category-field-stu
 const selectAlarmTagField = wrapper => wrapper.find('c-alarm-tag-field-stub');
 const selectExportButton = wrapper => wrapper.findAll('c-action-btn-stub').at(1);
 const selectLiveReportingButton = wrapper => wrapper.findAll('c-action-btn-stub').at(0);
-const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filters-stub');
+const selectInstructionsFiltersField = wrapper => wrapper.find('alarms-list-remediation-instructions-filter-stub');
 const selectRemoveHistoryButton = wrapper => wrapper.find('v-chip-stub');
 const selectAlarmAdvancedSearchField = wrapper => wrapper.find('c-alarm-advanced-search-field-stub');
 const selectAlarmsListTable = wrapper => wrapper.find('.alarms-list-table');
@@ -114,6 +113,7 @@ describe('alarms-list', () => {
     filters: [],
     sortBy: [],
     sortDesc: [],
+    instructionsFilter: {},
     active_columns: widget.parameters.widgetColumns.map(v => v.value),
     correlation: userPreferences.content.isCorrelationEnabled,
     only_bookmarks: userPreferences.content.onlyBookmarks,
@@ -630,43 +630,16 @@ describe('alarms-list', () => {
 
     updateQuery.mockClear();
 
-    const manualInstructionFilter = {
-      manual: true,
-      running: null,
-      instructions: [{
-        _id: 'manual-instruction-id',
-      }],
-      _id: 'id1',
-    };
-    const autoInstructionFilter = {
-      auto: true,
-      running: true,
-      instructions: [{
-        _id: 'auto-instruction-id',
-      }],
-      _id: 'id2',
-    };
-    const allAndWithInstructionFilter = {
-      all: true,
-      with: true,
-      running: false,
-      instructions: [{
-        _id: 'all-and-with-instruction-id',
-      }, {
-        _id: 'all-instruction-id',
-      }],
-      _id: 'id3',
+    const newInstructionsFilter = {
+      instruction_filter_type: 'manual',
+      instruction_type: 'auto',
+      instruction_statuses: ['pending', 'done'],
+      instruction_ids: ['id1', 'id2'],
     };
 
-    const newRemediationInstructionsFilters = [
-      manualInstructionFilter,
-      autoInstructionFilter,
-      allAndWithInstructionFilter,
-    ];
+    const filterComponent = selectInstructionsFiltersField(wrapper);
 
-    const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
-
-    instructionsFiltersField.triggerCustomEvent('update:filters', newRemediationInstructionsFilters);
+    filterComponent.triggerCustomEvent('input', newInstructionsFilter);
 
     await flushPromises();
 
@@ -676,7 +649,7 @@ describe('alarms-list', () => {
         data: {
           content: {
             ...userPreferences.content,
-            remediationInstructionsFilters: newRemediationInstructionsFilters,
+            instructionsFilter: newInstructionsFilter,
           },
         },
       },
@@ -687,120 +660,7 @@ describe('alarms-list', () => {
         id: widget._id,
         query: {
           ...defaultQuery,
-          instructions: [
-            {
-              exclude: [manualInstructionFilter.instructions[0]._id],
-              exclude_types: [
-                REMEDIATION_INSTRUCTION_TYPES.manual,
-                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
-              ],
-            },
-            {
-              exclude: [autoInstructionFilter.instructions[0]._id],
-              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.auto],
-              running: true,
-            },
-            {
-              include: [
-                allAndWithInstructionFilter.instructions[0]._id,
-                allAndWithInstructionFilter.instructions[1]._id,
-              ],
-              include_types: [
-                REMEDIATION_INSTRUCTION_TYPES.auto,
-                REMEDIATION_INSTRUCTION_TYPES.manual,
-                REMEDIATION_INSTRUCTION_TYPES.simpleManual,
-              ],
-              running: false,
-            },
-          ],
-          page: 1,
-        },
-      },
-    );
-  });
-
-  it('Locked instruction filters updated after trigger filter field', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        alarmModule,
-        sideBarModule,
-        infoModule,
-        queryModule,
-        viewModule,
-        userPreferenceModule,
-        alarmTagModule,
-        serviceModule,
-        {
-          ...authModule,
-          getters: {
-            currentUser: {},
-            currentUserPermissionsById: {
-              [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: { actions: [] },
-            },
-          },
-        },
-      ]),
-      propsData: {
-        widget,
-      },
-    });
-
-    await flushPromises();
-
-    updateQuery.mockClear();
-
-    const manualInstructionFilter = {
-      manual: true,
-      instructions: [{
-        _id: 'manual-instruction-id',
-      }],
-      _id: 'id1',
-    };
-    const autoInstructionFilter = {
-      auto: true,
-      disabled: true,
-      instructions: [{
-        _id: 'auto-instruction-id',
-      }],
-      _id: 'id2',
-    };
-    const disabledFilters = [autoInstructionFilter._id];
-
-    const newRemediationInstructionsFilters = [
-      manualInstructionFilter,
-      autoInstructionFilter,
-    ];
-
-    const instructionsFiltersField = selectInstructionsFiltersField(wrapper);
-
-    instructionsFiltersField.triggerCustomEvent('update:locked-filters', newRemediationInstructionsFilters);
-
-    await flushPromises();
-
-    expect(updateUserPreference).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        data: {
-          content: {
-            ...userPreferences.content,
-            disabledWidgetRemediationInstructionsFilters: disabledFilters,
-          },
-        },
-      },
-    );
-    expect(updateQuery).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        id: widget._id,
-        query: {
-          ...defaultQuery,
-          instructions: [
-            {
-              exclude: [manualInstructionFilter.instructions[0]._id],
-              exclude_types: [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.simpleManual],
-            },
-          ],
-          page: 1,
+          instructionsFilter: newInstructionsFilter,
         },
       },
     );
@@ -1548,7 +1408,7 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage', 'instructionsFilter']),
 
           limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
@@ -1599,7 +1459,7 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage', 'instructionsFilter']),
 
           limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
@@ -1655,7 +1515,7 @@ describe('alarms-list', () => {
       {
         widgetId: widget._id,
         params: {
-          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage']),
+          ...omit(defaultQuery, ['sortBy', 'sortDesc', 'itemsPerPage', 'instructionsFilter']),
 
           limit: defaultQuery.itemsPerPage,
           tstart: expect.any(Number),
@@ -2070,7 +1930,7 @@ describe('alarms-list', () => {
           parameters: {
             ...widget.parameters,
 
-            clearFilterDisabled: true,
+            clearFilterEnabled: true,
           },
         },
       },

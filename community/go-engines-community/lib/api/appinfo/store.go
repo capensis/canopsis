@@ -15,9 +15,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/jackc/pgx/v5"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const defaultPopupInterval = 3 //seconds
@@ -203,7 +203,7 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedModel = UserInterfaceConf{}
 		_, err := s.configCollection.UpdateOne(ctx, bson.M{"_id": config.UserInterfaceKeyName},
-			bson.M{"$set": model}, options.Update().SetUpsert(true))
+			bson.M{"$set": model}, options.UpdateOne().SetUpsert(true))
 
 		if err != nil {
 			return err

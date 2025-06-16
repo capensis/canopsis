@@ -10,9 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type MongoQuery struct {
@@ -146,7 +145,7 @@ func (q *MongoQuery) getSearchFilter(ctx context.Context, search string) (bson.M
 		return expr.MongoQuery(), nil
 	}
 
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
