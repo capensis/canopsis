@@ -24,7 +24,7 @@
             class="mx-1 my-0 c-action-btn__button"
             @click.stop.prevent="$listeners.click"
           >
-            <v-icon :color="preparedProps.color">
+            <v-icon :color="preparedProps.color" :small="iconSmall">
               {{ preparedProps.icon }}
             </v-icon>
           </v-btn>
@@ -100,6 +100,10 @@ export default {
     inputValue: {
       type: Boolean,
       required: false,
+    },
+    iconSmall: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {

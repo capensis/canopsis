@@ -1,4 +1,4 @@
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { groupedPermissionToPermission } from '@/helpers/permission';
 
