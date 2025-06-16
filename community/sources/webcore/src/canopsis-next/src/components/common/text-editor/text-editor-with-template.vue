@@ -66,20 +66,33 @@ export default {
   setup(props, { emit }) {
     const { updateModel, updateField } = useModelField(props, emit);
 
+    /**
+     * Handles template selection and updates the model with the selected template and its content.
+     *
+     * @param {Object} param - The template update payload.
+     * @param {string} param.value - The selected template value.
+     * @param {string} param.content - The content associated with the selected template.
+     */
     const updateTemplate = ({ value, content }) => {
       if (value === props.form.template) {
         return;
       }
 
-      updateModel({ emit }, {
+      updateModel({
         template: value,
         text: content,
       });
     };
 
+    /**
+     * Handles text changes. If a custom template is used, updates both text and template fields in the model.
+     * Otherwise, updates only the text field.
+     *
+     * @param {string} text - The new text value.
+     */
     const updateText = (text) => {
       if (props.form.template !== CUSTOM_WIDGET_TEMPLATE && text !== props.form.text) {
-        updateModel({ emit }, {
+        updateModel({
           text,
           template: CUSTOM_WIDGET_TEMPLATE,
         });
@@ -87,7 +100,7 @@ export default {
         return;
       }
 
-      updateField({ emit }, 'text', text);
+      updateField('text', text);
     };
 
     return {

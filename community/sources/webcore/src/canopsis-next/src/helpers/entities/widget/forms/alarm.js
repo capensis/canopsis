@@ -629,6 +629,24 @@ export const getAlarmsListWidgetColumnComponentGetter = (
         return component;
       };
 
+    case ALARM_FIELDS.maxState:
+      return context => ({
+        bind: {
+          is: 'c-alarm-state-chip',
+          value: context.alarm.v?.max_state,
+          small: context.small,
+        },
+      });
+
+    case ALARM_FIELDS.initialState:
+      return context => ({
+        bind: {
+          is: 'c-alarm-state-chip',
+          value: context.alarm.v?.initial_state,
+          small: context.small,
+        },
+      });
+
     case ALARM_FIELDS.status:
       return context => ({
         bind: {
