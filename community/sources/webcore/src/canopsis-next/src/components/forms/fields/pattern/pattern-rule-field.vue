@@ -93,6 +93,7 @@ import {
   isInfosRuleType,
   isObjectRuleType,
   isOperatorHasValue,
+  isNumberRuleType,
 } from '@/helpers/entities/pattern/form';
 
 import { formMixin } from '@/mixins/form';
@@ -202,6 +203,10 @@ export default {
       return isDurationRuleType(this.type);
     },
 
+    isNumberRule() {
+      return isNumberRuleType(this.type);
+    },
+
     valueComponent() {
       const valueProps = {
         value: this.rule.value,
@@ -248,6 +253,14 @@ export default {
           on: {
             input: this.updateDuration,
           },
+        };
+      }
+
+      if (this.isNumberRule) {
+        return {
+          is: 'c-number-field',
+          props: valueProps,
+          on: valueHandlers,
         };
       }
 
