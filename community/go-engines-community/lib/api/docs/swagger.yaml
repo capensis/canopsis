@@ -9456,7 +9456,7 @@ paths:
             application/octet-stream:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
-  /pbehavior-patterns:
+  /all-pbehavior-patterns:
     put:
       tags:
         - pbehaviors
@@ -9469,7 +9469,7 @@ paths:
       responses:
         204:
           description: OK
-  /pbehavior-patterns/{id}:
+  /pbehavior-patterns:
     put:
       tags:
         - pbehaviors
@@ -9479,15 +9479,20 @@ paths:
 
         -  PERMISSIONS: `api_pbehavior:update`
       operationId: pbehaviors-exec-pattern
-      parameters:
-        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.ExecPatternRequest'
+        required: true
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/pbehavior.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
         404:
           description: Not Found
           content:

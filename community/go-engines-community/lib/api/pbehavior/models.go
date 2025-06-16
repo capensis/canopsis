@@ -248,3 +248,8 @@ type BulkConnectorEditRequestItem struct {
 	Type     string            `json:"type"`
 	Color    string            `json:"color" binding:"iscolororempty"`
 }
+
+type ExecPatternRequest struct {
+	ID            string         `json:"_id"`
+	EntityPattern pattern.Entity `json:"entity_pattern" binding:"required,entity_pattern"`
+}

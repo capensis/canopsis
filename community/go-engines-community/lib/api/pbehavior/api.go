@@ -634,9 +634,17 @@ func (a *api) DBExport(c *gin.Context) {
 }
 
 // ExecPattern
-// @Success 200 {object} Response
+// @Param body body ExecPatternRequest true "body"
+// @Success 200 {object} pattern.CountResponse
 func (a *api) ExecPattern(c *gin.Context) {
-	res, err := a.store.ExecPatternAndUpdate(c, c.Param("id"))
+	request := ExecPatternRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	res, err := a.store.ExecPatternAndUpdate(c, request.ID, request.EntityPattern)
 	if err != nil {
 		panic(err)
 	}

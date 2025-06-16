@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"regexp"
 	"sort"
 	"time"
@@ -13,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -59,7 +61,7 @@ type Store interface {
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
 	ConnectorCreate(ctx context.Context, r BulkConnectorCreateRequestItem) (*Response, error)
 	ConnectorDelete(ctx context.Context, r BulkConnectorDeleteRequestItem) (string, error)
-	ExecPatternAndUpdate(ctx context.Context, id string) (*Response, error)
+	ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error)
 	ExecPatternsAndUpdate(ctx context.Context) error
 }
 
@@ -71,12 +73,13 @@ type store struct {
 	dbCollection       mongo.DbCollection
 	entityDbCollection mongo.DbCollection
 
-	authorProvider         author.Provider
-	entityTypeResolver     pbehavior.EntityTypeResolver
-	pbhTypeComputer        pbehavior.TypeComputer
-	timezoneConfigProvider config.TimezoneConfigProvider
-	websocketHub           websocket.Hub
-	defaultSortBy          string
+	authorProvider              author.Provider
+	entityTypeResolver          pbehavior.EntityTypeResolver
+	pbhTypeComputer             pbehavior.TypeComputer
+	timezoneConfigProvider      config.TimezoneConfigProvider
+	websocketHub                websocket.Hub
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider
+	defaultSortBy               string
 
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
@@ -95,6 +98,7 @@ func NewStore(
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
 	websocketHub websocket.Hub,
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 ) Store {
 	return &store{
 		dbClient:                      dbClient,
@@ -107,6 +111,7 @@ func NewStore(
 		timezoneConfigProvider:        timezoneConfigProvider,
 		authorProvider:                authorProvider,
 		websocketHub:                  websocketHub,
+		userInterfaceConfigProvider:   userInterfaceConfigProvider,
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
@@ -138,7 +143,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	doc.Comments = make([]pbehavior.Comment, 0)
 	doc.RRuleEnd = rruleEnd
 	if r.ExecPattern {
-		doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
+		_, doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
 		if err != nil {
 			return nil, err
 		}
@@ -380,7 +385,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 	}
 
 	if r.ExecPattern {
-		doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
+		_, doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
 		if err != nil {
 			return nil, false, err
 		}
@@ -969,35 +974,52 @@ func (s *store) ConnectorDelete(ctx context.Context, r BulkConnectorDeleteReques
 	return id, err
 }
 
-func (s *store) ExecPatternAndUpdate(ctx context.Context, id string) (*Response, error) {
-	res, err := s.GetOneBy(ctx, id)
+func (s *store) ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error) {
+	conf := s.userInterfaceConfigProvider.Get()
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	defer cancel()
+	updateStats := false
+	if id != "" {
+		pbh, err := s.GetOneBy(ctx, id)
+		if err != nil || pbh == nil {
+			return nil, err
+		}
+
+		updateStats = reflect.DeepEqual(pbh.EntityPattern, pattern)
+	}
+
+	count, ms, err := s.execPattern(ctx, pattern)
 	if err != nil {
 		return nil, err
 	}
 
-	res.PatternMs, err = s.execPattern(ctx, res.EntityPattern)
-	if err != nil {
-		return nil, err
-	}
-
-	now := datetime.NewCpsTime()
-	res.PatternExecAt = &now
-
-	_, err = s.dbCollection.UpdateOne(ctx,
-		bson.M{
-			"_id": id,
-			"$or": []bson.M{
-				{"pattern_exec_at": nil},
-				{"pattern_exec_at": bson.M{"$lt": res.PatternExecAt}},
+	if updateStats {
+		now := datetime.NewCpsTime()
+		_, err = s.dbCollection.UpdateOne(ctx,
+			bson.M{
+				"_id": id,
+				"$or": []bson.M{
+					{"pattern_exec_at": nil},
+					{"pattern_exec_at": bson.M{"$lt": now}},
+				},
 			},
-		},
-		bson.M{"$set": bson.M{
-			"pattern_ms":      res.PatternMs,
-			"pattern_exec_at": res.PatternExecAt,
-		}},
-	)
+			bson.M{"$set": bson.M{
+				"pattern_ms":      ms,
+				"pattern_exec_at": now,
+			}},
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
 
-	return res, err
+	res := apipattern.CountResponse{
+		Count:     count,
+		OverLimit: count > int64(conf.MaxMatchedItems),
+		Millisecs: ms,
+	}
+
+	return &res, nil
 }
 
 func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
@@ -1066,11 +1088,16 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 						return nil
 					}
 
-					ms, err := s.execPattern(ctx, pbh.EntityPattern)
+					conf := s.userInterfaceConfigProvider.Get()
+					execCtx, cancel := context.WithTimeout(ctx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+					_, ms, err := s.execPattern(execCtx, pbh.EntityPattern)
 					if err != nil {
+						cancel()
+
 						return err
 					}
 
+					cancel()
 					_, err = s.dbCollection.UpdateOne(ctx,
 						bson.M{
 							"_id": pbh.ID,
@@ -1295,10 +1322,10 @@ func (s *store) parseDupError(err error) error {
 	return fmt.Errorf("can't parse duplication error: %w", err)
 }
 
-func (s *store) execPattern(ctx context.Context, entityPattern pattern.Entity) (int64, error) {
+func (s *store) execPattern(ctx context.Context, entityPattern pattern.Entity) (int64, int64, error) {
 	q, err := db.EntityPatternToMongoQuery(entityPattern, "")
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	pipeline := []bson.M{
@@ -1309,15 +1336,25 @@ func (s *store) execPattern(ctx context.Context, entityPattern pattern.Entity) (
 	start := time.Now()
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	defer cursor.Close(ctx)
-	if err = cursor.Err(); err != nil {
-		return 0, err
+	res := struct {
+		Count int64 `bson:"total_count"`
+	}{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+		if err != nil {
+			return 0, 0, err
+		}
 	}
 
-	return max(time.Since(start).Milliseconds(), 1), nil
+	if err = cursor.Err(); err != nil {
+		return 0, 0, err
+	}
+
+	return res.Count, max(time.Since(start).Milliseconds(), 1), nil
 }
 
 func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {

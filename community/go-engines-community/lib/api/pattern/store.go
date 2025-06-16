@@ -505,7 +505,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 	var alarmPatternQuery, alarmPatternAddFields, entityPatternQuery, pbhPatternQuery bson.M
 	alarmsPipeline := make([]bson.M, 0)
 	entitiesPipeline := make([]bson.M, 0)
-	var alarmPatternCount, entityPatternCount, pbhPatternCount, alarmsCount, entitiesCount Count
+	var alarmPatternCount, entityPatternCount, pbhPatternCount, alarmsCount, entitiesCount CountResponse
 	if len(r.AlarmPattern) > 0 {
 		alarmPatternQuery, err = db.AlarmPatternToMongoQuery(r.AlarmPattern, "")
 		if err != nil {
@@ -664,7 +664,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	var err error
 	var alarmPatternQuery, alarmPatternAddFields, entityPatternQuery, pbhPatternQuery bson.M
 	entitiesPipeline := make([]bson.M, 0)
-	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount Count
+	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount CountResponse
 	if len(r.EntityPattern) > 0 {
 		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "")
 		if err != nil {

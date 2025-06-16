@@ -531,6 +531,7 @@ func RegisterRoutes(
 				timezoneConfigProvider,
 				authorProvider,
 				websocketHub,
+				userInterfaceConfig,
 			),
 			dbexport.NewExporter(primaryDbClient),
 			pbhComputeChan,
@@ -582,12 +583,12 @@ func RegisterRoutes(
 			pbehaviorApi.DBExport,
 		)
 		protected.PUT(
-			"/pbehavior-patterns/:id",
+			"/pbehavior-patterns",
 			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
 			pbehaviorApi.ExecPattern,
 		)
 		protected.PUT(
-			"/pbehavior-patterns",
+			"/all-pbehavior-patterns",
 			middleware.Authorize(apisecurity.PermPbhPatterns, model.PermissionCan, enforcer),
 			pbehaviorApi.ExecAllPatterns,
 		)
