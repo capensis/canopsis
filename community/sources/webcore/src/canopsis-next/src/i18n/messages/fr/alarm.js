@@ -55,6 +55,8 @@ export default {
       exportPdf: 'Exporter l\'alarme au format PDF',
       addBookmark: 'Ajouter un signet',
       removeBookmark: 'Supprimer le signet',
+      executeInstruction: 'Exécuter l\'instruction',
+      links: 'Liens',
     },
     iconsTitles: {
       ack: 'Acquittée',

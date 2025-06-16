@@ -401,6 +401,80 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: '$vuetify.icons.bookmark_remove',
 };
 
+export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
+  [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: ALARM_LIST_ACTIONS_TYPES.addBookmark,
+};
+
+export const UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS = {
+  // Acknowledgment actions
+  [ALARM_LIST_ACTIONS_TYPES.ack]: 'alarm.actions.titles.ack',
+  [ALARM_LIST_ACTIONS_TYPES.fastAck]: 'alarm.actions.titles.fastAck',
+  [ALARM_LIST_ACTIONS_TYPES.ackRemove]: 'alarm.actions.titles.ackRemove',
+
+  // Cancel actions
+  [ALARM_LIST_ACTIONS_TYPES.cancel]: 'alarm.actions.titles.cancel',
+  [ALARM_LIST_ACTIONS_TYPES.unCancel]: 'alarm.actions.titles.unCancel',
+  [ALARM_LIST_ACTIONS_TYPES.fastCancel]: 'alarm.actions.titles.fastCancel',
+
+  // Pbehavior actions
+  [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'alarm.actions.titles.pbehavior',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'alarm.actions.titles.fastPbehaviorAdd',
+
+  // Ticket actions
+  [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'alarm.actions.titles.declareTicket',
+  [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'alarm.actions.titles.associateTicket',
+
+  // Meta alarm actions
+  [ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm]: 'alarm.actions.titles.linkToMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromManualMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromAutoMetaAlarm',
+
+  // Information actions
+  [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: 'alarm.actions.titles.variablesHelp',
+  [ALARM_LIST_ACTIONS_TYPES.history]: 'alarm.actions.titles.history',
+
+  // Remediation instructions actions
+  [ALARM_LIST_ACTIONS_TYPES.executeInstruction]: 'alarm.actions.titles.executeInstruction',
+
+  // Bookmark actions
+  [ALARM_LIST_ACTIONS_TYPES.addBookmark]: 'alarm.actions.titles.addBookmark',
+
+  // Other actions
+  [ALARM_LIST_ACTIONS_TYPES.comment]: 'alarm.actions.titles.comment',
+  [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm.actions.titles.snooze',
+  [ALARM_LIST_ACTIONS_TYPES.links]: 'alarm.actions.titles.links',
+};
+
+export const UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS = {
+  // Acknowledgment actions
+  [ALARM_LIST_ACTIONS_TYPES.ack]: 'alarm.actions.titles.ack',
+  [ALARM_LIST_ACTIONS_TYPES.fastAck]: 'alarm.actions.titles.fastAck',
+  [ALARM_LIST_ACTIONS_TYPES.ackRemove]: 'alarm.actions.titles.ackRemove',
+
+  // Cancel actions
+  [ALARM_LIST_ACTIONS_TYPES.cancel]: 'alarm.actions.titles.cancel',
+  [ALARM_LIST_ACTIONS_TYPES.unCancel]: 'alarm.actions.titles.unCancel',
+  [ALARM_LIST_ACTIONS_TYPES.fastCancel]: 'alarm.actions.titles.fastCancel',
+
+  // Pbehavior actions
+  [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'alarm.actions.titles.pbehavior',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'alarm.actions.titles.fastPbehaviorAdd',
+
+  // Ticket actions
+  [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'alarm.actions.titles.declareTicket',
+  [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'alarm.actions.titles.associateTicket',
+
+  // Meta alarm actions
+  [ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm]: 'alarm.actions.titles.linkToMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromManualMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromAutoMetaAlarm',
+
+  // Other actions
+  [ALARM_LIST_ACTIONS_TYPES.comment]: 'alarm.actions.titles.comment',
+  [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm.actions.titles.snooze',
+  [ALARM_LIST_ACTIONS_TYPES.links]: 'alarm.actions.titles.links',
+};
+
 export const ALARM_LIST_STEPS = {
   stateinc: 'stateinc',
   statedec: 'statedec',
@@ -1055,3 +1129,9 @@ export const ALARM_ACTIONS_PADDINGS = {
 };
 
 export const DEFAULT_ALARM_ACTIONS_INLINE_COUNT = 4;
+
+export const DEFAULT_ALARMS_QUICK_ACTIONS = [
+  ALARM_LIST_ACTIONS_TYPES.ack,
+  ALARM_LIST_ACTIONS_TYPES.fastAck,
+  ALARM_LIST_ACTIONS_TYPES.cancel,
+];
