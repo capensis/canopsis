@@ -475,10 +475,10 @@ export default {
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
 
-    [PATTERN_OPERATORS.within]: 'Dans',
+    [PATTERN_OPERATORS.within]: 'Au cours des',
     [PATTERN_OPERATORS.olderThan]: 'Plus ancien que',
-    [PATTERN_OPERATORS.inRangeDates]: 'Dans la plage (dates)',
-    [PATTERN_OPERATORS.inRangePeriod]: 'Dans la plage (période)',
+    [PATTERN_OPERATORS.inRangeDates]: 'Dans l\'intervalle (dates)',
+    [PATTERN_OPERATORS.inRangePeriod]: 'Dans l\'intervalle (période)',
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {
