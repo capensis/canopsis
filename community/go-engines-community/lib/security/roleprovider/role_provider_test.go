@@ -8,9 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"go.uber.org/mock/gomock"
 )
 
@@ -64,7 +64,7 @@ func TestRoleProvider_GetValidRoles(t *testing.T) {
 
 		return cursor, nil
 	}).AnyTimes()
-	dbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, rawFilter interface{}, _ ...*options.FindOneOptions) mongo.SingleResultHelper {
+	dbCollection.EXPECT().FindOne(gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(func(_ context.Context, rawFilter interface{}, _ ...*options.FindOneOptionsBuilder) mongo.SingleResultHelper {
 		filter, ok := rawFilter.(bson.M)
 		if !ok || len(filter) == 0 {
 			t.Fatal("invalid FindOne filter")

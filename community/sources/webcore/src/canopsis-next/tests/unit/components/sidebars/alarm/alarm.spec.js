@@ -56,7 +56,6 @@ const stubs = {
   'field-filters': createInputStub('field-filters'),
   'field-root-cause-settings': createInputStub('field-root-cause-settings'),
   'field-availability-graph-settings': createInputStub('field-availability-graph-settings'),
-  'field-remediation-instructions-filters': createInputStub('field-remediation-instructions-filters'),
   'field-live-reporting': createInputStub('field-live-reporting'),
   'field-info-popup': createInputStub('field-info-popup'),
   'field-text-editor-with-template': createInputStub('field-text-editor-with-template'),
@@ -83,7 +82,6 @@ const snapshotStubs = {
   'field-default-elements-per-page': true,
   'field-opened-resolved-filter': true,
   'field-filters': true,
-  'field-remediation-instructions-filters': true,
   'field-live-reporting': true,
   'field-info-popup': true,
   'field-text-editor-with-template': true,
@@ -111,7 +109,6 @@ const selectFieldServiceDependenciesColumns = wrapper => wrapper.findAll('input.
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('input.field-default-elements-per-page');
 const selectFieldOpenedResolvedFilter = wrapper => wrapper.find('input.field-opened-resolved-filter');
 const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
-const selectFieldRemediationInstructionsFilters = wrapper => wrapper.find('input.field-remediation-instructions-filters');
 const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-reporting');
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
 const selectFieldMoreInfo = wrapper => wrapper.findAll('input.field-text-editor-with-template').at(1);
@@ -719,67 +716,6 @@ describe('alarm', () => {
     });
   });
 
-  test('Instruction filters changed after trigger remediation instructions field', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        activeViewModule,
-        widgetModule,
-        userPreferenceModule,
-        widgetTemplateModule,
-        serviceModule,
-        infosModule,
-        {
-          ...authModule,
-          getters: {
-            currentUserPermissionsById: {
-              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
-                actions: [],
-              },
-            },
-          },
-        },
-      ]),
-      propsData: {
-        sidebar,
-      },
-      mocks: {
-        $sidebar,
-      },
-    });
-
-    const fieldRemediationInstructionsFilters = selectFieldRemediationInstructionsFilters(wrapper);
-
-    const remediationInstruction = {
-      _id: 'instruction_1',
-      name: 'instruction-1',
-      type: {
-        _id: 'instruction-type-1',
-      },
-    };
-    const remediationInstructionsFilters = [{
-      with: true,
-      all: false,
-      auto: true,
-      manual: false,
-      locked: true,
-      disabled: false,
-      instructions: [remediationInstruction],
-      _id: 'id1',
-    }];
-
-    fieldRemediationInstructionsFilters.triggerCustomEvent('input', remediationInstructionsFilters);
-
-    await submitWithExpects(wrapper, {
-      fetchActiveView,
-      hideSidebar: $sidebar.hide,
-      widgetMethod: updateWidget,
-      expectData: {
-        id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'remediationInstructionsFilters', remediationInstructionsFilters),
-      },
-    });
-  });
-
   test('Live reporting changed after trigger live reporting field', async () => {
     const wrapper = factory({
       store,
@@ -920,9 +856,9 @@ describe('alarm', () => {
 
     const fieldHtmlEnabledSwitcher = selectFieldClearFilterDisabled(wrapper);
 
-    const clearFilterDisabled = Faker.datatype.boolean();
+    const clearFilterEnabled = Faker.datatype.boolean();
 
-    fieldHtmlEnabledSwitcher.triggerCustomEvent('input', clearFilterDisabled);
+    fieldHtmlEnabledSwitcher.triggerCustomEvent('input', clearFilterEnabled);
 
     await submitWithExpects(wrapper, {
       fetchActiveView,
@@ -930,7 +866,7 @@ describe('alarm', () => {
       widgetMethod: updateWidget,
       expectData: {
         id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterDisabled', clearFilterDisabled),
+        data: getWidgetRequestWithNewParametersProperty(widget, 'clearFilterEnabled', clearFilterEnabled),
       },
     });
   });
@@ -1671,9 +1607,6 @@ describe('alarm', () => {
             currentUserPermissionsById: {
               [USER_PERMISSIONS.business.alarmsList.actions.filter]: { actions: [] },
               [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
-                actions: [],
-              },
               [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
                 actions: [],
               },

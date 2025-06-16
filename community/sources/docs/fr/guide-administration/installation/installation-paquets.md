@@ -237,11 +237,14 @@ dnf module disable nginx php
 dnf install logrotate socat mongodb-org nginx valkey timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1 erlang rabbitmq-server
 ```
 
-Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB, vous devriez utiliser [*versionlock*][dnf-versionlock] :
+Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB, RabbitMQ ou Valkey, vous devriez utiliser [*versionlock*][dnf-versionlock] :
 
 ```sh
 dnf install 'dnf-command(versionlock)'
 dnf versionlock add timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
+dnf versionlock add --raw 'rabbitmq-server-4.*'
+dnf versionlock add --raw 'erlang-27.*'
+dnf versionlock add --raw 'valkey-8.*'
 ```
 
 Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
@@ -554,7 +557,7 @@ CPS_AMQP_URL="amqp://cpsrabbit:canopsis@localhost:5672/canopsis"
 CPS_POSTGRES_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis"
 CPS_REDIS_URL="redis://localhost:6379/0"
 CPS_API_URL="http://localhost:8082"
-CPS_POSTGRES_TECH_URL="postgresql://cpspostgres:canopsis@localhost:5432/canopsis_tech_metrics"
+CPS_POSTGRES_TECH_URL="postgresql://cpspostgres_tech_metrics:canopsis@localhost:5432/canopsis_tech_metrics"
 ```
 
 !!! Note

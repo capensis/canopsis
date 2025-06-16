@@ -25,9 +25,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -485,7 +485,7 @@ func copyAlarmToResolvedCollection(
 		ctx,
 		bson.M{"_id": alarm.ID},
 		bson.M{"$set": alarm},
-		options.Update().SetUpsert(true),
+		options.UpdateOne().SetUpsert(true),
 	)
 
 	return alarm.Alarm, err
@@ -626,7 +626,7 @@ func getResolveAlarmUpdate(t datetime.CpsTime, params rpc.AxeParameters) []bson.
 		}},
 		{"$set": bson.M{
 			"v.resolved": t,
-			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{newStep}}},
+			"v.steps":    bson.M{"$concatArrays": bson.A{"$v.steps", bson.A{bson.M{"$literal": newStep}}}},
 			"v.current_state_duration": bson.M{"$subtract": bson.A{
 				t,
 				"$v.state.t",

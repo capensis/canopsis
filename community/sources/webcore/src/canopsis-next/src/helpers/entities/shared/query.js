@@ -117,10 +117,11 @@ export const convertWidgetQueryToRequest = (query) => {
     category,
     filter,
     lockedFilter,
+    instructionsFilter,
     search,
   } = query;
 
-  const result = {
+  let result = {
     ...omit(query, [
       'tstart',
       'tstop',
@@ -129,6 +130,7 @@ export const convertWidgetQueryToRequest = (query) => {
       'category',
       'filter',
       'lockedFilter',
+      'instructionsFilter',
       'search',
       'itemsPerPage',
     ]),
@@ -140,6 +142,13 @@ export const convertWidgetQueryToRequest = (query) => {
 
   if (lockedFilter || filter) {
     result.filters = convertFiltersToQuery(filter, lockedFilter);
+  }
+
+  if (instructionsFilter) {
+    result = {
+      ...result,
+      ...instructionsFilter,
+    };
   }
 
   if (tstart) {

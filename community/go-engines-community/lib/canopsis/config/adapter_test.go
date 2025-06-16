@@ -6,7 +6,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/testutils"
-	"github.com/rs/zerolog"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
@@ -14,7 +13,7 @@ func TestConfWriteAndRead(t *testing.T) {
 	Convey("Given a session, config DB adapter and a config", t, func() {
 		ctx := t.Context()
 
-		dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+		dbClient, err := mongo.NewClient(ctx)
 		if err != nil {
 			panic(err)
 		}
@@ -40,7 +39,7 @@ func TestConfSave(t *testing.T) {
 	Convey("Given a session, config DB adapter and a config", t, func() {
 		ctx := t.Context()
 
-		dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+		dbClient, err := mongo.NewClient(ctx)
 		if err != nil {
 			panic(err)
 		}

@@ -1419,3 +1419,28 @@ export const createAvailabilityModule = () => {
     fetchAvailabilityHistoryExport,
   };
 };
+
+export const createRemediationInstructionModule = () => {
+  const fetchRemediationInstructionsListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      total_count: 0,
+    },
+  });
+
+  afterEach(() => {
+    fetchRemediationInstructionsListWithoutStore.mockClear();
+  });
+
+  const remediationInstructionModule = {
+    name: 'remediationInstruction',
+    actions: {
+      fetchListWithoutStore: fetchRemediationInstructionsListWithoutStore,
+    },
+  };
+
+  return {
+    remediationInstructionModule,
+    fetchRemediationInstructionsListWithoutStore,
+  };
+};

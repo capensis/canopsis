@@ -27,8 +27,8 @@ import (
 	pgxdriver "github.com/jackc/pgx/v5"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func main() {
@@ -60,7 +60,7 @@ func main() {
 	}
 
 	// remove timeout to not limit long migrations
-	client, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout, 0, logger)
+	client, err := mongo.NewClient(ctx)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to connect to mongo")
 	}
