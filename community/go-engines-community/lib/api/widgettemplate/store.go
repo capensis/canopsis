@@ -3,6 +3,7 @@ package widgettemplate
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -213,6 +214,11 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID st
 				view.WidgetTemplateTypeServiceWeatherModal,
 				view.WidgetTemplateTypeServiceWeatherEntity:
 				val = tpl.Content
+			case view.WidgetTemplateTypeAlarmQuickActions,
+				view.WidgetTemplateTypeAlarmQuickMassActions:
+				val = tpl.Actions
+			default:
+				return fmt.Errorf("unknown template type: %s", tpl.Type)
 			}
 
 			_, err := s.widgetCollection.UpdateMany(
@@ -272,6 +278,7 @@ func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
 		Type:    r.Type,
 		Columns: r.Columns,
 		Content: r.Content,
+		Actions: r.Actions,
 		Author:  r.Author,
 	}
 }

@@ -15,6 +15,12 @@ Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues
 
 Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonctionnement, rendez-vous dans les sections "Les widgets", en cliquant [ici](./widgets/index.md).
 
+## Les patterns ou filtres
+
+Les patterns permettent de filtrer dynamiquement les alarmes, les entités, les événements.  
+Ils sont utiles pour paramétrer le comportement de Canopsis attendu.  
+Cette [page de documentation](./patterns/) vous donne tous les détails.
+
 ## Thèmes
 
 L'interface de Canopsis est livrée avec plusieurs thèmes de base qui ne sont pas modifiables par l'utilisateur : 

@@ -198,10 +198,6 @@ definitions:
       impact_state:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       instruction_execution_icon:
         type: integer
@@ -289,15 +285,13 @@ definitions:
       events_count:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       initial_long_output:
         type: string
       initial_output:
         type: string
+      initial_state:
+        type: integer
       last_comment:
         $ref: '#/definitions/common.AlarmStep'
       last_event_date:
@@ -312,6 +306,8 @@ definitions:
         items:
           type: string
         type: array
+      max_state:
+        type: integer
       meta:
         type: string
       output:
@@ -3725,7 +3721,8 @@ definitions:
     properties:
       type:
         type: string
-      value: {}
+      value:
+        type: object
     type: object
   pattern.Count:
     properties:
@@ -6602,6 +6599,10 @@ definitions:
     type: object
   widgettemplate.EditRequest:
     properties:
+      actions:
+        items:
+          type: string
+        type: array
       columns:
         items:
           $ref: '#/definitions/view.WidgetColumn'
@@ -6617,6 +6618,8 @@ definitions:
         - entity_columns
         - alarm_more_infos
         - alarm_export_to_pdf
+        - alarm_quick_actions
+        - alarm_mass_quick_actions
         - weather_item
         - weather_modal
         - weather_entity
@@ -6629,6 +6632,10 @@ definitions:
     properties:
       _id:
         type: string
+      actions:
+        items:
+          type: string
+        type: array
       author:
         $ref: '#/definitions/author.Author'
       columns:

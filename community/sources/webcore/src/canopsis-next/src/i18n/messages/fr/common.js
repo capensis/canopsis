@@ -419,6 +419,10 @@ export default {
     [ALARM_STATUSES.cancelled]: 'Annulée',
     [ALARM_STATUSES.noEvents]: 'Pas d\'événements',
   },
+  statusResolvedTypes: {
+    [ALARM_STATUSES.closed]: 'Fermée et résolue',
+    [ALARM_STATUSES.cancelled]: 'Annulée et résolue',
+  },
   operators: {
     [PATTERN_OPERATORS.equal]: 'Égal',
     [PATTERN_OPERATORS.contains]: 'Contient',

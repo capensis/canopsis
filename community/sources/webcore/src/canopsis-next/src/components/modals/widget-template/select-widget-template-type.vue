@@ -33,32 +33,43 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { MODALS, WIDGET_TEMPLATES_TYPES, COLUMNS_WIDGET_TEMPLATES_TYPES } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
+import { useInnerModal, useModals } from '@/hooks/modals';
+import { useI18n } from '@/hooks/i18n';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
-/**
- * Modal to create widget
- */
 export default {
   name: MODALS.createWidgetTemplate,
-  components: { ModalWrapper },
-  mixins: [modalInnerMixin],
-  computed: {
-    availableTypes() {
-      return Object.values(WIDGET_TEMPLATES_TYPES).map(type => ({
-        value: type,
-        icon: COLUMNS_WIDGET_TEMPLATES_TYPES.includes(type) ? 'view_week' : 'description',
-        text: this.$t(`widgetTemplate.types.${type}`),
-      }));
+
+  components: {
+    ModalWrapper,
+  },
+
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  methods: {
-    selectType(type) {
+
+  setup(props) {
+    const { config } = useInnerModal(props);
+    const { t } = useI18n();
+    const modals = useModals();
+
+    const availableTypes = computed(() => Object.values(WIDGET_TEMPLATES_TYPES).map(type => ({
+      value: type,
+      icon: COLUMNS_WIDGET_TEMPLATES_TYPES.includes(type) ? 'view_week' : 'description',
+      text: t(`widgetTemplate.types.${type}`),
+    })));
+
+    const selectType = (type) => {
       const TEMPLATE_TYPES_TO_DEFAULT_DATA = {
         [WIDGET_TEMPLATES_TYPES.alarmExportToPdf]: { content: ALARM_EXPORT_PDF_TEMPLATE },
       };
@@ -70,18 +81,22 @@ export default {
         widgetTemplate = { ...widgetTemplate, ...defaultData };
       }
 
-      this.$modals.show({
+      modals.show({
         name: MODALS.createWidgetTemplate,
         config: {
           widgetTemplate,
-
-          title: this.$t('modals.createWidgetTemplate.create.title'),
-          action: this.config.action,
+          title: t('modals.createWidgetTemplate.create.title'),
+          action: config.value.action,
         },
       });
 
-      this.$modals.hide();
-    },
+      modals.hide();
+    };
+
+    return {
+      availableTypes,
+      selectType,
+    };
   },
 };
 </script>
