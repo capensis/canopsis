@@ -231,6 +231,8 @@ export default {
     canceledInitiator: 'Canceled initiator',
     changeState: 'Change state',
     closeDelay: 'Close delay',
+    maxState: 'Max severity',
+    initialState: 'Initial severity',
   },
   instructionsFilter: {
     filter: 'Instruction filter',

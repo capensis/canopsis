@@ -1,6 +1,7 @@
 <template>
   <card-iterator-item
     :drag-handle-class="dragHandleClass"
+    :default-expanded="isExpanded"
     class="column-field"
     small
     @remove="$emit('remove')"
@@ -163,6 +164,7 @@ export default {
   },
   setup(props, { emit }) {
     const isCustom = ref(false);
+    const isExpanded = ref(!props.column.column);
 
     const { t, tc } = useI18n();
     const validator = useValidator();
@@ -278,6 +280,7 @@ export default {
     };
 
     return {
+      isExpanded,
       isCustom,
       bootedExpandPanel,
       availableColumns,
