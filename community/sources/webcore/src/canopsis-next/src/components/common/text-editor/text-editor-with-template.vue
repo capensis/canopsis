@@ -1,10 +1,8 @@
 <template>
   <v-layout column>
-    <v-select
+    <c-widget-template-field
       :value="form.template"
-      :items="templatesWithCustom"
-      :label="$t('common.template')"
-      return-object
+      :templates="templates"
       @input="updateTemplate"
     />
     <text-editor-field
@@ -24,18 +22,20 @@
 <script>
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
-import { formMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form/model-field';
 
 import TextEditorField from './text-editor.vue';
 
 export default {
   inject: ['$validator', '$system'],
+
   components: { TextEditorField },
-  mixins: [formMixin],
+
   model: {
     prop: 'form',
     event: 'input',
   },
+
   props: {
     form: {
       type: Object,
@@ -62,24 +62,24 @@ export default {
       required: false,
     },
   },
-  computed: {
-    templatesWithCustom() {
-      return [
-        { value: CUSTOM_WIDGET_TEMPLATE, text: this.$t('common.custom'), content: '' },
 
-        ...this.templates.map(template => ({
-          ...template,
+  setup(props, { emit }) {
+    const { updateModel, updateField } = useModelField(props, emit);
 
-          value: template._id,
-          text: template.title,
-        })),
-      ];
-    },
-  },
-  methods: {
-    updateText(text) {
-      if (this.form.template !== CUSTOM_WIDGET_TEMPLATE && text !== this.form.text) {
-        this.updateModel({
+    const updateTemplate = ({ value, content }) => {
+      if (value === props.form.template) {
+        return;
+      }
+
+      updateModel({ emit }, {
+        template: value,
+        text: content,
+      });
+    };
+
+    const updateText = (text) => {
+      if (props.form.template !== CUSTOM_WIDGET_TEMPLATE && text !== props.form.text) {
+        updateModel({ emit }, {
           text,
           template: CUSTOM_WIDGET_TEMPLATE,
         });
@@ -87,19 +87,13 @@ export default {
         return;
       }
 
-      this.updateField('text', text);
-    },
+      updateField({ emit }, 'text', text);
+    };
 
-    updateTemplate({ value, content }) {
-      if (value === this.form.template) {
-        return;
-      }
-
-      this.updateModel({
-        template: value,
-        text: content,
-      });
-    },
+    return {
+      updateTemplate,
+      updateText,
+    };
   },
 };
 </script>

@@ -7,6 +7,10 @@ FROM node:${NODE_VERSION} AS build
 
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y make && rm -rf /var/lib/apt/lists/*
 
+ARG YARN_VERSION
+ENV YARN_VERSION ${YARN_VERSION}
+RUN yarn policies set-version ${YARN_VERSION}
+
 # Copy only files needed to build the frontend
 COPY ./community/.env /app/community/.env
 COPY ./community/sources/webcore/src/canopsis-next /app/community/sources/webcore/src/canopsis-next

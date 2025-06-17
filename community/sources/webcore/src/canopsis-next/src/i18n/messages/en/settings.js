@@ -331,4 +331,12 @@ export default {
     defaultAvailabilityDisplay: 'Default availability display',
     defaultParameterToDisplay: 'Default parameter to display',
   },
+  quickActions: {
+    title: 'Quick actions',
+    description: 'These actions will be shown, remaining actions will be hidden under more button',
+  },
+  quickMassActions: {
+    title: 'Quick massive actions',
+    hideSwitcher: 'Hide massive actions under more button',
+  },
 };

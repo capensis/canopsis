@@ -1,51 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: critical 1`] = `
-<c-simple-tooltip-stub
-  content="Ongoing"
-  top=""
->
-  <i
-    aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
-    style="caret-color: var(--v-state-critical-base);"
-  >
-    warning
-  </i>
-</c-simple-tooltip-stub>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: major 1`] = `
-<c-simple-tooltip-stub
-  content="Ongoing"
-  top=""
->
-  <i
-    aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
-    style="caret-color: var(--v-state-major-base);"
-  >
-    warning
-  </i>
-</c-simple-tooltip-stub>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: minor 1`] = `
-<c-simple-tooltip-stub
-  content="Ongoing"
-  top=""
->
-  <i
-    aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
-    style="caret-color: var(--v-state-minor-base);"
-  >
-    warning
-  </i>
-</c-simple-tooltip-stub>
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: ok 1`] = `
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: 0 1`] = `
 <c-simple-tooltip-stub
   content="Ongoing"
   top=""
@@ -60,24 +15,81 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with on
 </c-simple-tooltip-stub>
 `;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: cancelled 1`] = `
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: 1 1`] = `
 <c-simple-tooltip-stub
-  content="Canceled"
+  content="Ongoing"
   top=""
 >
   <i
     aria-hidden="true"
     class="v-icon notranslate material-icons theme--light"
-    style="caret-color: var(--v-status-cancelled-base);"
+    style="caret-color: var(--v-state-minor-base);"
   >
-    highlight_off
+    warning
   </i>
 </c-simple-tooltip-stub>
 `;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: closed 1`] = `
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: 2 1`] = `
+<c-simple-tooltip-stub
+  content="Ongoing"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-state-major-base);"
+  >
+    warning
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with ongoing status and state: 3 1`] = `
+<c-simple-tooltip-stub
+  content="Ongoing"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-state-critical-base);"
+  >
+    warning
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 0 1`] = `
 <c-simple-tooltip-stub
   content="Closed"
+  top=""
+>
+  <span
+    aria-hidden="true"
+    class="v-icon notranslate theme--light"
+    style="caret-color: var(--v-status-closed-base);"
+  >
+    <svg
+      class="v-icon__component theme--light"
+      fill="none"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 2C17.52 2 22 6.48 22 12C22 12.715 21.9231 13.4123 21.7803 14.085C23.1273 15.0874 24 16.6918 24 18.5C24 21.5376 21.5376 24 18.5 24C16.6918 24 15.0874 23.1273 14.085 21.7803C13.4123 21.9231 12.715 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2ZM18.5 15.2002C18.3541 15.2002 18.2145 15.2582 18.1113 15.3613C18.0082 15.4645 17.9502 15.6041 17.9502 15.75V18.5C17.9502 18.6459 18.0082 18.7856 18.1113 18.8887L19.7607 20.5391C19.8645 20.6392 20.0042 20.6946 20.1484 20.6934C20.2925 20.692 20.4303 20.6341 20.5322 20.5322C20.6341 20.4303 20.692 20.2925 20.6934 20.1484C20.6946 20.0042 20.6392 19.8645 20.5391 19.7607L19.0498 18.2725V15.75C19.0498 15.6041 18.9918 15.4645 18.8887 15.3613C18.7855 15.2582 18.6459 15.2002 18.5 15.2002ZM12 4C7.58 4 4 7.58 4 12C4 16.42 7.58 20 12 20C12.4019 20 12.7967 19.9692 13.1826 19.9121C13.0633 19.4615 13 18.9881 13 18.5C13 15.4624 15.4624 13 18.5 13C18.9881 13 19.4615 13.0633 19.9121 13.1826C19.9692 12.7967 20 12.4019 20 12C20 7.58 16.42 4 12 4ZM18 9L10 17L5 12L6.41016 10.5898L10 14.1699L16.5898 7.58008L18 9Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 0 and resolved: true 1`] = `
+<c-simple-tooltip-stub
+  content="Closed and resolved"
   top=""
 >
   <i
@@ -85,12 +97,57 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
     class="v-icon notranslate material-icons theme--light"
     style="caret-color: var(--v-status-closed-base);"
   >
-    check_circle_outline
+    check_circle
   </i>
 </c-simple-tooltip-stub>
 `;
 
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: flapping 1`] = `
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 1 and resolved: true 1`] = `
+<c-simple-tooltip-stub
+  content="Ongoing"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-state-ok-base);"
+  >
+    warning
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 2 1`] = `
+<c-simple-tooltip-stub
+  content="Stealth"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-stealthy-base);"
+  >
+    swap_vert
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 2 and resolved: true 1`] = `
+<c-simple-tooltip-stub
+  content="Stealth"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-stealthy-base);"
+  >
+    swap_vert
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 3 1`] = `
 <c-simple-tooltip-stub
   content="Flapping"
   top=""
@@ -105,25 +162,74 @@ exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with st
 </c-simple-tooltip-stub>
 `;
 
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 3 and resolved: true 1`] = `
+<c-simple-tooltip-stub
+  content="Flapping"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-flapping-base);"
+  >
+    swap_vert
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 4 1`] = `
+<c-simple-tooltip-stub
+  content="Canceled"
+  top=""
+>
+  <span
+    aria-hidden="true"
+    class="v-icon notranslate theme--light"
+    style="caret-color: var(--v-status-cancelled-base);"
+  >
+    <svg
+      class="v-icon__component theme--light"
+      fill="none"
+      height="24"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 2C17.53 2 22 6.47 22 12C22 12.7154 21.9225 13.4124 21.7803 14.085C23.1273 15.0874 24 16.6918 24 18.5C24 21.5376 21.5376 24 18.5 24C16.6918 24 15.0874 23.1273 14.085 21.7803C13.4124 21.9225 12.7154 22 12 22C6.47 22 2 17.53 2 12C2 6.47 6.47 2 12 2ZM18.5 15.2002C18.3541 15.2002 18.2145 15.2582 18.1113 15.3613C18.0082 15.4645 17.9502 15.6041 17.9502 15.75V18.5C17.9502 18.6459 18.0082 18.7856 18.1113 18.8887L19.7607 20.5391C19.8645 20.6392 20.0042 20.6946 20.1484 20.6934C20.2925 20.692 20.4303 20.6341 20.5322 20.5322C20.6341 20.4303 20.692 20.2925 20.6934 20.1484C20.6946 20.0042 20.6392 19.8645 20.5391 19.7607L19.0498 18.2725V15.75C19.0498 15.6041 18.9918 15.4645 18.8887 15.3613C18.7855 15.2582 18.6459 15.2002 18.5 15.2002ZM12 4C7.59 4 4 7.59 4 12C4 16.41 7.59 20 12 20C12.4018 20 12.7965 19.9686 13.1826 19.9111C13.0634 19.4608 13 18.9878 13 18.5C13 17.3414 13.358 16.2664 13.9697 15.3799L12 13.4102L8.41016 17L7 15.5898L10.5898 12L7 8.41016L8.41016 7L12 10.5898L15.5898 7L17 8.41016L13.4102 12L15.3799 13.9697C16.2664 13.358 17.3414 13 18.5 13C18.9878 13 19.4608 13.0634 19.9111 13.1826C19.9686 12.7965 20 12.4018 20 12C20 7.59 16.41 4 12 4Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 4 and resolved: true 1`] = `
+<c-simple-tooltip-stub
+  content="Canceled and resolved"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate material-icons theme--light"
+    style="caret-color: var(--v-status-cancelled-base);"
+  >
+    cancel
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: 5 and resolved: true 1`] = `
+<c-no-events-icon-stub
+  color="error"
+  top=""
+/>
+`;
+
 exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: noEvents 1`] = `
 <c-no-events-icon-stub
   color="error"
   top=""
   value="1386435600000"
 />
-`;
-
-exports[`alarm-column-value-status Renders \`alarm-column-value-status\` with status: stealthy 1`] = `
-<c-simple-tooltip-stub
-  content="Stealth"
-  top=""
->
-  <i
-    aria-hidden="true"
-    class="v-icon notranslate material-icons theme--light"
-    style="caret-color: var(--v-status-stealthy-base);"
-  >
-    swap_vert
-  </i>
-</c-simple-tooltip-stub>
 `;

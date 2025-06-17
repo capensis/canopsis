@@ -1,8 +1,9 @@
 <template>
   <shared-actions-panel
     ref="sharedActionsPanel"
-    v-bind="$attrs"
+    v-bind="additionalProps"
     :actions="preparedActions"
+    :small="small"
   />
 </template>
 
@@ -15,10 +16,12 @@ import {
   LINK_RULE_ACTIONS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
   BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
+  DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
 } from '@/constants';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
+import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/actions-panel';
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { isManualGroupMetaAlarmRuleType, isAutoMetaAlarmRuleType } from '@/helpers/entities/meta-alarm/rule/form';
 import { isInstructionExecutionIconInProgress } from '@/helpers/entities/remediation/instruction-execution/form';
@@ -32,6 +35,7 @@ import {
   isAlarmStatusClosed,
   isAlarmStatusFlapping,
   isAlarmStatusOngoing,
+  isAlarmStatusNoEvents,
 } from '@/helpers/entities/alarm/form';
 
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
@@ -77,8 +81,24 @@ export default {
       type: Function,
       default: () => {},
     },
+    inlineCount: {
+      type: Number,
+      default: DEFAULT_ALARM_ACTIONS_INLINE_COUNT,
+    },
+    ignoreMediaQuery: {
+      type: Boolean,
+      default: false,
+    },
+    small: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
+    quickActions() {
+      return this.widget.parameters.quickActions ?? [];
+    },
+
     isCancelledAlarm() {
       return isCancelledAlarmStatus(this.item);
     },
@@ -97,6 +117,10 @@ export default {
 
     isAlarmStatusOngoing() {
       return isAlarmStatusOngoing(this.item);
+    },
+
+    isAlarmStatusNoEvents() {
+      return isAlarmStatusNoEvents(this.item);
     },
 
     isAlarmStatusFlapping() {
@@ -149,6 +173,7 @@ export default {
 
         return {
           type,
+          link: true,
           icon: link.icon_name,
           title: this.$t('alarm.followLink', { title: link.label }),
           method: link.action === LINK_RULE_ACTIONS.copy
@@ -227,7 +252,9 @@ export default {
 
       const isAckAndChangeStateAvailable = (this.isAlarmStatusClosed && this.isActionsAllowWithOkState)
         || this.isAlarmStatusOngoing
+        || this.isAlarmStatusNoEvents
         || this.isAlarmStatusFlapping;
+
       const isNotResolvedOpenedAlarm = !this.isResolvedAlarm && this.isOpenedAlarm;
 
       const variablesHelpAction = {
@@ -244,6 +271,11 @@ export default {
         type: ALARM_LIST_ACTIONS_TYPES.ack,
         title: this.$t('alarm.actions.titles.ack'),
         method: this.showAckModal,
+      };
+      const fastAckAction = {
+        type: ALARM_LIST_ACTIONS_TYPES.fastAck,
+        title: this.$t('alarm.actions.titles.fastAck'),
+        method: this.createFastAckEvent,
       };
 
       if (!this.isResolvedAlarm && isAckAndChangeStateAvailable) {
@@ -262,17 +294,10 @@ export default {
           );
 
           if (this.widget.parameters.isMultiAckEnabled) {
-            actions.push(ackAction);
+            actions.push(ackAction, fastAckAction);
           }
         } else {
-          actions.push(
-            ackAction,
-            {
-              type: ALARM_LIST_ACTIONS_TYPES.fastAck,
-              title: this.$t('alarm.actions.titles.fastAck'),
-              method: this.createFastAckEvent,
-            },
-          );
+          actions.push(ackAction, fastAckAction);
         }
       }
 
@@ -425,12 +450,26 @@ export default {
     },
 
     preparedActions() {
-      return this.filteredActions.map(action => ({
+      return sortActionsByQuickActions(this.filteredActions, this.quickActions).map(action => ({
         ...action,
 
         icon: action.icon ?? getAlarmActionIcon(action.type),
         loading: this.isActionTypeInPending(action.type),
       }));
+    },
+
+    additionalProps() {
+      if (this.ignoreMediaQuery) {
+        return {
+          inlineCount: this.inlineCount,
+          ignoreMediaQuery: this.ignoreMediaQuery,
+        };
+      }
+
+      return {
+        inlineCount: getActionsInlineCount(this.preparedActions, this.quickActions) || this.inlineCount,
+        ignoreMediaQuery: false,
+      };
     },
   },
   methods: {
