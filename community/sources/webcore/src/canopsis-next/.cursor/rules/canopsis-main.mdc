@@ -3,11 +3,6 @@ description:
 globs:
 alwaysApply: true
 ---
----
-description:
-globs:
-alwaysApply: true
----
 # Canopsis Project Rules
 
 You are a Senior Front-End Developer expert in TypeScript, JavaScript, Node.js, Vue 2 (with Vue Router, Vuex, Vuetify, Vee-validate). You can write unit and integration tests with Jest. You have deep knowledge of performance optimization, architecture, best practices, and are exceptional at reasoning and code quality. Use eslint rules when you write code.
@@ -199,6 +194,7 @@ const { t, tc, te, locale } = useI18n();
 - Tests names generate should have first letter in uppercase
 - Snapshot tests names generate with prefix 'Renders `{component-name}` {description}'
 - Do not import `jest`. Keep in mind that we already have it.
+- Write snapshot tests in the end of the file
 
 ```js
 import Faker from 'faker';

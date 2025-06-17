@@ -14,7 +14,7 @@
       v-field="form.delete_after"
       :label="$t('storageSetting.eventFilterFailure.deleteAfter')"
       :help-text="$t('storageSetting.eventFilterFailure.deleteAfterHelpText')"
-      :name="errorsDeleteAfterFieldName"
+      name="errors.delete_after"
     />
   </c-information-block>
 </template>
@@ -34,13 +34,8 @@ export default {
       required: true,
     },
     history: {
-      type: Number,
+      type: [Number, Object],
       required: false,
-    },
-  },
-  computed: {
-    errorsDeleteAfterFieldName() {
-      return 'errors.delete_after';
     },
   },
 };
