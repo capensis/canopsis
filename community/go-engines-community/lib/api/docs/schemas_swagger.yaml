@@ -198,10 +198,6 @@ definitions:
       impact_state:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       instruction_execution_icon:
         type: integer
@@ -289,15 +285,13 @@ definitions:
       events_count:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       initial_long_output:
         type: string
       initial_output:
         type: string
+      initial_state:
+        type: integer
       last_comment:
         $ref: '#/definitions/common.AlarmStep'
       last_event_date:
@@ -312,6 +306,8 @@ definitions:
         items:
           type: string
         type: array
+      max_state:
+        type: integer
       meta:
         type: string
       output:
@@ -3725,7 +3721,8 @@ definitions:
     properties:
       type:
         type: string
-      value: {}
+      value:
+        type: object
     type: object
   pattern.Count:
     properties:

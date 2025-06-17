@@ -681,17 +681,17 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 
 		err = q.handleAlarmPattern(filter.AlarmPattern)
 		if err != nil {
-			return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
+			return common.NewValidationError("filters."+strconv.Itoa(i), fmt.Sprintf("invalid alarm pattern in widget filter id=%q: %s", filter.ID, err.Error()))
 		}
 
 		err = q.handlePbehaviorPattern(filter.PbehaviorPattern)
 		if err != nil {
-			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
+			return common.NewValidationError("filters."+strconv.Itoa(i), fmt.Sprintf("invalid pbehavior pattern in widget filter id=%q: %s", filter.ID, err.Error()))
 		}
 
 		err = q.handleEntityPattern(filter.EntityPattern)
 		if err != nil {
-			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+			return common.NewValidationError("filters."+strconv.Itoa(i), fmt.Sprintf("invalid entity pattern in widget filter id=%q: %s", filter.ID, err.Error()))
 		}
 	}
 

@@ -231,6 +231,8 @@ export default {
     canceledInitiator: 'Initiateur annulé',
     changeState: 'Changement et verrouillage de la criticité',
     closeDelay: 'Délai de fermeture',
+    maxState: 'Criticité maximale',
+    initialState: 'Criticité initiale',
   },
   instructionsFilter: {
     filter: 'Filtre de consigne',
