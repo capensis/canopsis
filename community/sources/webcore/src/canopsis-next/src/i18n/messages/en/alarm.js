@@ -55,6 +55,8 @@ export default {
       exportPdf: 'Export alarm to PDF file',
       addBookmark: 'Add bookmark',
       removeBookmark: 'Remove bookmark',
+      executeInstruction: 'Execute instruction',
+      links: 'Links',
     },
     iconsTitles: {
       ack: 'Ack',

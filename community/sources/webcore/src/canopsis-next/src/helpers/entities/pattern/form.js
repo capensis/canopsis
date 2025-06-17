@@ -218,6 +218,14 @@ export const isDurationRuleType = type => type === PATTERN_RULE_TYPES.duration;
 export const isObjectRuleType = type => type === PATTERN_RULE_TYPES.object;
 
 /**
+ * Check rule is number
+ *
+ * @param {string} type
+ * @return {boolean}
+ */
+export const isNumberRuleType = type => type === PATTERN_RULE_TYPES.number;
+
+/**
  * Check field type is string array
  *
  * @param {PatternFieldType} type
@@ -306,6 +314,7 @@ export const isDatePatternRuleField = value => [
 export const isNumberPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.state,
   ALARM_PATTERN_FIELDS.status,
+  ALARM_PATTERN_FIELDS.totalStateChanges,
   EVENT_FILTER_PATTERN_FIELDS.state,
   ENTITY_PATTERN_FIELDS.impactLevel,
   SERVICE_WEATHER_PATTERN_FIELDS.state,
@@ -339,6 +348,7 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
   ALARM_PATTERN_FIELDS.canceledInitiator,
+  ALARM_PATTERN_FIELDS.stateInitiator,
   ENTITY_PATTERN_FIELDS.id,
   ENTITY_PATTERN_FIELDS.name,
   ENTITY_PATTERN_FIELDS.category,
