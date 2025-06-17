@@ -419,6 +419,10 @@ export default {
     [ALARM_STATUSES.cancelled]: 'Canceled',
     [ALARM_STATUSES.noEvents]: 'No events',
   },
+  statusResolvedTypes: {
+    [ALARM_STATUSES.closed]: 'Closed and resolved',
+    [ALARM_STATUSES.cancelled]: 'Canceled and resolved',
+  },
   operators: {
     [PATTERN_OPERATORS.equal]: 'Equal',
     [PATTERN_OPERATORS.contains]: 'Contains',

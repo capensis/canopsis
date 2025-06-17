@@ -1,6 +1,6 @@
 import { MEDIA_QUERIES_BREAKPOINTS } from '@/config';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { CANOPSIS_EDITION } from './permission';
 import { ALARM_METRIC_PARAMETERS } from './alarm';
@@ -225,6 +225,8 @@ export const WIDGET_TEMPLATES_TYPES = {
   entityColumns: 'entity_columns',
   alarmMoreInfos: 'alarm_more_infos',
   alarmExportToPdf: 'alarm_export_to_pdf',
+  alarmQuickActions: 'alarm_quick_actions',
+  alarmMassQuickActions: 'alarm_mass_quick_actions',
   weatherItem: 'weather_item',
   weatherModal: 'weather_modal',
   weatherEntity: 'weather_entity',
@@ -233,6 +235,16 @@ export const WIDGET_TEMPLATES_TYPES = {
 export const COLUMNS_WIDGET_TEMPLATES_TYPES = [
   WIDGET_TEMPLATES_TYPES.alarmColumns,
   WIDGET_TEMPLATES_TYPES.entityColumns,
+];
+
+export const QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES = [
+  WIDGET_TEMPLATES_TYPES.alarmQuickActions,
+  WIDGET_TEMPLATES_TYPES.alarmMassQuickActions,
+];
+
+export const ALARM_QUICK_ACTIONS_WIDGET_TEMPLATE_TYPES = [
+  WIDGET_TEMPLATES_TYPES.alarmQuickActions,
+  WIDGET_TEMPLATES_TYPES.alarmMassQuickActions,
 ];
 
 export const CUSTOM_WIDGET_TEMPLATE = Symbol('custom').toString();

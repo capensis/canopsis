@@ -196,7 +196,7 @@ import {
   MODALS,
 } from '@/constants';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 import { AsyncBooting } from '@/services/async-booting';
 import { TableIntersectionObserver } from '@/services/table-intersection-observer';
 
