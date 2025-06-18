@@ -243,6 +243,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    counterMethod: {
+      type: Function,
+      required: false,
+    },
     bothCounters: {
       type: Boolean,
       default: false,
@@ -376,8 +380,7 @@ export default {
         return '';
       }
 
-      const entitiesCount = this.counters?.entity_pattern?.count ?? 0;
-      const alarmsCount = this.counters?.alarm_pattern?.count ?? 0;
+      const alarmsCount = this.counters?.all?.count ?? 0;
       const allDuration = convertDurationToString(
         this.counters?.all?.ms,
         PATTERN_DURATION_FORMAT,
@@ -388,11 +391,15 @@ export default {
       let message = '';
 
       if (this.entityCountersType) {
+        const entitiesCount = this.counters?.entity_pattern?.count ?? 0;
+
         message = this.$t('pattern.entitiesCount', { entitiesCount });
       } else if (this.bothCounters) {
+        const entitiesCount = this.counters?.entities?.count ?? 0;
+
         message = this.$t('pattern.alarmsEntitiesCount', {
-          entitiesCount,
           alarmsCount,
+          entitiesCount,
         });
       } else {
         message = this.$t('pattern.alarmsCount', { alarmsCount });
@@ -452,9 +459,10 @@ export default {
       try {
         this.countersPending = true;
 
-        const method = this.entityCountersType
-          ? this.checkPatternsEntitiesCount
-          : this.checkPatternsAlarmsCount;
+        const method = this.counterMethod ?? {
+          [true]: this.checkPatternsAlarmsCount,
+          [this.entityCountersType]: this.checkPatternsEntitiesCount,
+        }.true;
 
         this.counters = await method({ data: this.patterns });
       } catch (err) {

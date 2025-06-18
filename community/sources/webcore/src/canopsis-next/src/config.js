@@ -250,6 +250,7 @@ export const API_ROUTES = {
     calendar: '/api/v4/pbehavior-calendar',
     bulkEntityPbehaviors: '/api/v4/bulk/entity-pbehaviors',
     patterns: '/api/v4/pbehavior-patterns',
+    allPatterns: '/api/v4/all-pbehavior-patterns',
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
