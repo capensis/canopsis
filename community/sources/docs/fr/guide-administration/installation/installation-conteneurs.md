@@ -177,5 +177,5 @@ logrotate -fv /etc/logrotate.d/docker-container
 [prereq-versions]: https://doc.canopsis.net/latest/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
 [compose-spec]: https://docs.docker.com/compose/compose-file/
 [docker-compose]: https://docs.docker.com/compose/install/#install-compose
-[canopsis-pro]: https://git.canopsis.net/canopsis/canopsis-pro/-/releases
+[canopsis-pro]: https://git.canopsis.net/sources/canopsis-pro-sources/-/releases
 [canopsis-community]: https://git.canopsis.net/canopsis/canopsis-community/-/releases
