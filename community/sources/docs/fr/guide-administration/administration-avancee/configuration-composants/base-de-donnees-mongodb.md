@@ -73,6 +73,13 @@ Pour réaliser un backup de mongodb, nous recommendons d'utiliser la commande:
 mongodump --uri "$CPS_MONGO_URL" --gzip --archive > /tmp/canopsis-prod-mongodb-$(date +"%Y-%m-%d")-dump.gz
 ```
 
+!!! info "Information"
+    La variable `CPS_MONGO_URL` doit correspondre à celle de votre environnement, dans le fichier `/opt/canopsis/etc/go-engines-vars.conf`.  
+    Vous pouvez utiliser la commande suivante pour la valoriser correctement :  
+    ```sh
+    set -o allexport; source /opt/canopsis/etc/go-engines-vars.conf
+    ```
+
 ### Optimisation    
 
 Pour permettre un bon fonctionnement et une bonne vitesse de traitement de la plateforme, plusieurs optimisations peuvent être mises en oeuvre.
