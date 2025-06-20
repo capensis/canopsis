@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -32,6 +34,8 @@ func NewChangeStateProcessor(
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	encoder encoding.Encoder,
+	eventGenerator libevent.Generator,
+	amqpPublisher amqp.Publisher,
 	logger zerolog.Logger,
 ) Processor {
 	return &changeStateProcessor{
@@ -48,6 +52,8 @@ func NewChangeStateProcessor(
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
 		encoder:                         encoder,
+		eventGenerator:                  eventGenerator,
+		amqpPublisher:                   amqpPublisher,
 		logger:                          logger,
 	}
 }
@@ -66,6 +72,8 @@ type changeStateProcessor struct {
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
 	encoder                         encoding.Encoder
+	eventGenerator                  libevent.Generator
+	amqpPublisher                   amqp.Publisher
 	logger                          zerolog.Logger
 }
 
@@ -82,7 +90,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	entity := *event.Entity
 	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["$and"] = []bson.M{
-		{"v.state.val": bson.M{"$ne": types.AlarmStateOK}},
+		{"v.status.val": bson.M{"$ne": types.AlarmStatusOff}},
 		{"$or": []bson.M{
 			{"v.state.val": bson.M{"$ne": event.Parameters.State}},
 			{"v.change_state": nil},
@@ -128,7 +136,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		}
 
 		currentStatus := alarm.Value.Status.Value
-		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
+		newStatus, statusRuleName := p.alarmStatusService.ComputeStatusOnStateChange(alarm, *event.Entity)
 		var update bson.M
 		if newStatus == currentStatus {
 			update = bson.M{
@@ -252,5 +260,13 @@ func (p *changeStateProcessor) postProcess(
 	err = sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
 	if err != nil {
 		p.logger.Err(err).Msg("cannot send event to engine-remediation")
+	}
+
+	alarmStatus := result.Alarm.Value.Status.Value
+	if result.AlarmChange.Type == types.AlarmChangeTypeChangeState && result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff {
+		err = sendEventsForUnknownDownstreams(ctx, *event.Entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot send downstream events")
+		}
 	}
 }

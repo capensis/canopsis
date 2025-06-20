@@ -471,6 +471,9 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 			LastEventDate:  lastEventDate,
 			Healthcheck:    event.Healthcheck,
 		}
+		if resource.ID != event.Upstream {
+			resource.Upstream = event.Upstream
+		}
 
 		commRegister.RegisterInsert(resource)
 		report.CheckResource = true
@@ -509,6 +512,11 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 	} else if lastEventDate != nil {
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": *lastEventDate})
 		commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": *lastEventDate})
+	}
+
+	if resource.Upstream != event.Upstream && resourceID != event.Upstream {
+		commRegister.RegisterUpdate(resourceID, bson.M{"upstream": event.Upstream})
+		resource.Upstream = event.Upstream
 	}
 
 	resource.LastEventDate = lastEventDate
@@ -593,11 +601,15 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 			Type:          types.EntityTypeComponent,
 			Connector:     connectorID,
 			Component:     componentID,
+			Upstream:      event.Upstream,
 			Infos:         map[string]types.Info{},
 			ImpactLevel:   types.EntityDefaultImpactLevel,
 			Created:       now,
 			LastEventDate: lastEventDate,
 			Healthcheck:   event.Healthcheck,
+		}
+		if component.ID != event.Upstream {
+			component.Upstream = event.Upstream
 		}
 
 		commRegister.RegisterInsert(component)
@@ -637,6 +649,11 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	} else if lastEventDate != nil {
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": *lastEventDate})
 		commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": *lastEventDate})
+	}
+
+	if component.Upstream != event.Upstream && componentID != event.Upstream {
+		commRegister.RegisterUpdate(componentID, bson.M{"upstream": event.Upstream})
+		component.Upstream = event.Upstream
 	}
 
 	component.LastEventDate = lastEventDate
