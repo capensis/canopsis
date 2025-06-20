@@ -4,9 +4,8 @@ La base de données [MongoDB](https://www.mongodb.com) contient la plupart des d
 
 ## Recommandations d'utilisation avancée
 
-<<<<<<< HEAD
 ## Optimisations système
-=======
+
 ### Modification à effectuer sur le système
 
 En suivant les recommendations fournies par MongoDB, des modifications dans le limiteur de ressources systèmes s'imposent.
@@ -16,7 +15,6 @@ Pour ce faire, créez le fichier `/etc/security/limits.d/mongo.conf` avec la com
 ```shell
 touch /etc/security/limits.d/mongo.conf
 ```
->>>>>>> 8bea2d1b67 (ajout des tips mongo que nous connaissons)
 
 Puis venir y mettre la configuration suivante :
 
