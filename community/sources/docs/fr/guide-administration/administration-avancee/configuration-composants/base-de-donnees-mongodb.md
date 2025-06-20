@@ -4,9 +4,21 @@ La base de données [MongoDB](https://www.mongodb.com) contient la plupart des d
 
 ## Recommandations d'utilisation avancée
 
+<<<<<<< HEAD
 ## Optimisations système
+=======
+### Modification à effectuer sur le système
 
-Si vous constatez que votre utilisation de MongoDB est importante dans votre environnement Canopsis, et si MongoDB a déjà été déplacé sur une instance dédiée, il peut être utile d'appliquer les recommandations officielles de MongoDB sur [les limites système](https://docs.mongodb.com/v4.2/reference/ulimit/#linux-distributions-using-systemd) et [les Transparent Huge Pages](https://docs.mongodb.com/v4.2/tutorial/transparent-huge-pages/).
+En suivant les recommendations fournies par MongoDB, des modifications dans le limiteur de ressources systèmes s'imposent.
+
+Pour ce faire, créez le fichier `/etc/security/limits.d/mongo.conf` avec la commande
+
+```shell
+touch /etc/security/limits.d/mongo.conf
+```
+>>>>>>> 8bea2d1b67 (ajout des tips mongo que nous connaissons)
+
+Puis venir y mettre la configuration suivante :
 
 ```shell
 cat << EOF > /etc/security/limits.d/mongo.conf
