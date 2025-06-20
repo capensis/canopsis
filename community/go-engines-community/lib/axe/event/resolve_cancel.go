@@ -3,13 +3,16 @@ package event
 import (
 	"context"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -24,6 +27,8 @@ func NewResolveCancelProcessor(
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	eventGenerator event.Generator,
+	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -42,6 +47,8 @@ func NewResolveCancelProcessor(
 		metaAlarmStatesService:          metaAlarmStatesService,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
+		eventGenerator:                  eventGenerator,
+		amqpPublisher:                   amqpPublisher,
 		encoder:                         encoder,
 		logger:                          logger,
 	}
@@ -62,6 +69,8 @@ type resolveCancelProcessor struct {
 	metaAlarmStatesService          correlation.MetaAlarmStateService
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
+	eventGenerator                  event.Generator
+	amqpPublisher                   libamqp.Publisher
 	encoder                         encoding.Encoder
 	logger                          zerolog.Logger
 }
@@ -92,22 +101,27 @@ func (p *resolveCancelProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, err
 	}
 
-	go postProcessResolve(
-		context.Background(),
-		event,
-		result,
-		updatedServiceStates,
-		componentStateChanged,
-		newComponentState,
-		notAckedMetricType,
-		p.eventsSender,
-		p.metaAlarmPostProcessor,
-		p.metricsSender,
-		p.remediationRpcClient,
-		p.pbehaviorCollection,
-		p.encoder,
-		p.logger,
-	)
+	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
+		go postProcessResolve(
+			context.Background(),
+			event,
+			result,
+			updatedServiceStates,
+			componentStateChanged,
+			newComponentState,
+			notAckedMetricType,
+			p.eventsSender,
+			p.metaAlarmPostProcessor,
+			p.metricsSender,
+			p.remediationRpcClient,
+			p.pbehaviorCollection,
+			p.entityCollection,
+			p.eventGenerator,
+			p.amqpPublisher,
+			p.encoder,
+			p.logger,
+		)
+	}
 
 	return result, nil
 }

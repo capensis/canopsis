@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -29,6 +31,8 @@ func NewRecomputeEntityServiceProcessor(
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	eventGenerator event.Generator,
+	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -46,6 +50,8 @@ func NewRecomputeEntityServiceProcessor(
 		metaAlarmStatesService:          metaAlarmStatesService,
 		metricsSender:                   metricsSender,
 		remediationRpcClient:            remediationRpcClient,
+		eventGenerator:                  eventGenerator,
+		amqpPublisher:                   amqpPublisher,
 		encoder:                         encoder,
 		logger:                          logger,
 	}
@@ -66,6 +72,8 @@ type recomputeEntityServiceProcessor struct {
 	metricsSender                   metrics.Sender
 	remediationRpcClient            engine.RPCClient
 	encoder                         encoding.Encoder
+	eventGenerator                  event.Generator
+	amqpPublisher                   libamqp.Publisher
 	logger                          zerolog.Logger
 }
 
@@ -173,22 +181,41 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 		return result, err
 	}
 
-	go postProcessResolve(
-		context.Background(),
-		event,
-		result,
-		updatedServiceStates,
-		false,
-		0,
-		notAckedMetricType,
-		p.eventsSender,
-		p.metaAlarmPostProcessor,
-		p.metricsSender,
-		p.remediationRpcClient,
-		p.pbehaviorCollection,
-		p.encoder,
-		p.logger,
-	)
+	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
+		go postProcessResolve(
+			context.Background(),
+			event,
+			result,
+			updatedServiceStates,
+			false,
+			0,
+			notAckedMetricType,
+			p.eventsSender,
+			p.metaAlarmPostProcessor,
+			p.metricsSender,
+			p.remediationRpcClient,
+			p.pbehaviorCollection,
+			p.entityCollection,
+			p.eventGenerator,
+			p.amqpPublisher,
+			p.encoder,
+			p.logger,
+		)
+	} else {
+		go p.postProcess(context.WithoutCancel(ctx), updatedServiceStates)
+	}
 
 	return result, nil
+}
+
+func (p *recomputeEntityServiceProcessor) postProcess(
+	ctx context.Context,
+	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
+) {
+	for servID, servInfo := range updatedServiceStates {
+		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
+		if err != nil {
+			p.logger.Err(err).Msg("failed to update service state")
+		}
+	}
 }

@@ -105,10 +105,10 @@ func (a *mongoAdapter) GetOpenedAlarmsWithEntityByIDs(ctx context.Context, ids [
 	return err
 }
 
-func (a *mongoAdapter) GetOpenedOkAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
+func (a *mongoAdapter) GetOpenedOffAlarmsWithEntity(ctx context.Context) (libmongo.Cursor, error) {
 	filter := bson.M{
-		"v.resolved":  nil,
-		"v.state.val": types.AlarmStateOK,
+		"v.resolved":   nil,
+		"v.status.val": types.AlarmStatusOff,
 	}
 
 	return a.entityAggregateCursor(ctx, filter)
@@ -151,7 +151,7 @@ func (a *mongoAdapter) GetOpenedAlarmsWithLastDatesBefore(
 ) (libmongo.Cursor, error) {
 	return a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"v.status.val": bson.M{"$ne": types.AlarmStatusNoEvents},
+			"v.status.val": bson.M{"$nin": bson.A{types.AlarmStatusNoEvents, types.AlarmStatusCancelled, types.AlarmStatusUnknown}},
 			"v.resolved":   nil,
 			"$or": []bson.M{
 				{"v.last_update_date": bson.M{"$lte": time}},

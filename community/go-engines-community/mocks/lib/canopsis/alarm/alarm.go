@@ -309,19 +309,19 @@ func (mr *MockAdapterMockRecorder) GetOpenedAlarmsWithLastDatesBefore(ctx, arg1 
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedAlarmsWithLastDatesBefore", reflect.TypeOf((*MockAdapter)(nil).GetOpenedAlarmsWithLastDatesBefore), ctx, arg1)
 }
 
-// GetOpenedOkAlarmsWithEntity mocks base method.
-func (m *MockAdapter) GetOpenedOkAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error) {
+// GetOpenedOffAlarmsWithEntity mocks base method.
+func (m *MockAdapter) GetOpenedOffAlarmsWithEntity(ctx context.Context) (mongo.Cursor, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetOpenedOkAlarmsWithEntity", ctx)
+	ret := m.ctrl.Call(m, "GetOpenedOffAlarmsWithEntity", ctx)
 	ret0, _ := ret[0].(mongo.Cursor)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetOpenedOkAlarmsWithEntity indicates an expected call of GetOpenedOkAlarmsWithEntity.
-func (mr *MockAdapterMockRecorder) GetOpenedOkAlarmsWithEntity(ctx any) *gomock.Call {
+// GetOpenedOffAlarmsWithEntity indicates an expected call of GetOpenedOffAlarmsWithEntity.
+func (mr *MockAdapterMockRecorder) GetOpenedOffAlarmsWithEntity(ctx any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedOkAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedOkAlarmsWithEntity), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetOpenedOffAlarmsWithEntity", reflect.TypeOf((*MockAdapter)(nil).GetOpenedOffAlarmsWithEntity), ctx)
 }
 
 // GetWorstAlarmStateAndMaxLastEventDate mocks base method.

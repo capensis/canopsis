@@ -539,6 +539,9 @@ func postProcessResolve(
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	pbehaviorCollection mongo.DbCollection,
+	entityCollection mongo.DbCollection,
+	eventGenerator event.Generator,
+	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) {
@@ -584,6 +587,13 @@ func postProcessResolve(
 		err = updatePbehaviorAlarmCount(ctx, pbehaviorCollection, "", result.Alarm.Value.PbehaviorInfo.ID)
 		if err != nil {
 			logger.Err(err).Msg("cannot update pbehavior")
+		}
+	}
+
+	if result.Alarm.Value.State.Value != types.AlarmStateOK {
+		err = sendEventsForUnknownDownstreams(ctx, *event.Entity, entityCollection, eventGenerator, encoder, amqpPublisher)
+		if err != nil {
+			logger.Err(err).Msg("cannot send downstream events")
 		}
 	}
 }
@@ -796,7 +806,7 @@ func updateMetaAlarmState(
 		alarm.Value.LastStateOrStatusUpdateDate = timestamp
 	}
 
-	newStatus, statusRuleName := service.ComputeStatus(*alarm, entity)
+	newStatus, statusRuleName := service.ComputeStatusOnStateChange(*alarm, entity)
 	statusStepMessage := ConcatOutputAndRuleName(output, statusRuleName)
 	if newStatus == currentStatus {
 		if state == currentState {
@@ -1008,4 +1018,95 @@ func getMetaAlarmEntityInfos(
 	}
 
 	return infos
+}
+
+func sendEventsForUnknownDownstreams(ctx context.Context, entity types.Entity, entityCollection mongo.DbCollection,
+	eventGenerator event.Generator, encoder encoding.Encoder, amqpPublisher libamqp.Publisher) error {
+
+	return sendEventsForDownstreams(ctx, entity, bson.M{"$eq": types.AlarmStatusUnknown}, entityCollection,
+		eventGenerator, encoder, amqpPublisher)
+}
+
+func sendEventsForNotUnknownDownstreams(ctx context.Context, entity types.Entity, entityCollection mongo.DbCollection,
+	eventGenerator event.Generator, encoder encoding.Encoder, amqpPublisher libamqp.Publisher) error {
+
+	return sendEventsForDownstreams(ctx, entity, bson.M{"$nin": bson.A{types.AlarmStatusUnknown, types.AlarmStatusCancelled}},
+		entityCollection, eventGenerator, encoder, amqpPublisher)
+}
+
+func sendEventsForDownstreams(ctx context.Context, entity types.Entity, statusMatch bson.M, entityCollection mongo.DbCollection,
+	eventGenerator event.Generator, encoder encoding.Encoder, amqpPublisher libamqp.Publisher) error {
+	switch entity.Type {
+	case types.EntityTypeResource, types.EntityTypeComponent:
+	default:
+		return nil
+	}
+
+	cursor, err := entityCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"upstream": entity.ID,
+			"enabled":  true,
+		}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmMongoCollection,
+			"localField":   "_id",
+			"foreignField": "d",
+			"as":           "alarm",
+			"pipeline": []bson.M{
+				{"$match": bson.M{
+					"v.resolved":   nil,
+					"v.status.val": statusMatch,
+				}},
+				{"$limit": 1},
+			},
+		}},
+		{"$unwind": "$alarm"},
+		{"$project": bson.M{"alarm": 0}},
+	})
+	if err != nil {
+		return err
+	}
+
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		d := types.Entity{}
+		err = cursor.Decode(&d)
+		if err != nil {
+			return err
+		}
+
+		e, err := eventGenerator.Generate(d)
+		if err != nil {
+			return err
+		}
+
+		e.EventType = types.EventTypeUpdateStatus
+		e.Timestamp = datetime.NewCpsTime()
+		body, err := encoder.Encode(e)
+		if err != nil {
+			return err
+		}
+
+		err = amqpPublisher.PublishWithContext(
+			ctx,
+			canopsis.DefaultExchangeName,
+			canopsis.FIFOQueueName,
+			false,
+			false,
+			amqp.Publishing{
+				ContentType:  canopsis.JsonContentType,
+				Body:         body,
+				DeliveryMode: amqp.Persistent,
+			},
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return err
+	}
+
+	return nil
 }

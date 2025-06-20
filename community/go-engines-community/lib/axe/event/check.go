@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strings"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
@@ -16,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -45,6 +47,8 @@ func NewCheckProcessor(
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
+	eventGenerator event.Generator,
+	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
@@ -67,6 +71,8 @@ func NewCheckProcessor(
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
+		eventGenerator:                  eventGenerator,
+		amqpPublisher:                   amqpPublisher,
 		encoder:                         encoder,
 		logger:                          logger,
 	}
@@ -91,6 +97,8 @@ type checkProcessor struct {
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
+	eventGenerator                  event.Generator
+	amqpPublisher                   libamqp.Publisher
 	encoder                         encoding.Encoder
 	logger                          zerolog.Logger
 }
@@ -253,17 +261,23 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Author = author
 	stateStep.Value = *params.State
-	alarm.Value.InitialState = *params.State
-
-	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
-	statusStep.Author = author
-	statusStep.Value = types.AlarmStatusOngoing
 	alarm.Value.State = &stateStep
+	alarm.Value.InitialState = stateStep.Value
 	alarm.Value.MaxState = stateStep.Value
 	err = alarm.Value.Steps.Add(stateStep)
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
 	}
+
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
+	statusStep.Author = author
+	var statusRuleName string
+	statusStep.Value, statusRuleName, err = p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, entity)
+	if err != nil {
+		return result, fmt.Errorf("cannot compute alarm status: %w", err)
+	}
+
+	statusStep.Message = ConcatOutputAndRuleName(params.Output, statusRuleName)
 	alarm.Value.Status = &statusStep
 	err = alarm.Value.Steps.Add(statusStep)
 	if err != nil {
@@ -475,7 +489,9 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		}
 	}
 
-	newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, entity)
+	alarm.Value.NoEventsDate = nil
+	unset["v.no_events_date"] = ""
+	newStatus, statusRuleName := p.alarmStatusService.ComputeStatusOnStateChange(alarm, entity)
 	if newStatus == previousStatus {
 		if stateStep.Type != "" {
 			match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
@@ -741,6 +757,32 @@ func (p *checkProcessor) postProcess(
 			err = updatePbehaviorAlarmCount(ctx, p.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
 			if err != nil {
 				p.logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}
+	}
+
+	switch result.AlarmChange.Type {
+	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
+		err = sendEventsForNotUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot send downstream events")
+		}
+	case types.AlarmChangeTypeStateDecrease:
+		alarmStatus := result.Alarm.Value.Status.Value
+		alarmState := result.Alarm.Value.State.Value
+		if result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
+			result.AlarmChange.PreviousStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
+			err = sendEventsForUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+			if err != nil {
+				p.logger.Err(err).Msg("cannot send downstream events")
+			}
+		}
+	case types.AlarmChangeTypeStateIncrease:
+		alarmStatus := result.Alarm.Value.Status.Value
+		if result.AlarmChange.PreviousStatus != alarmStatus && result.AlarmChange.PreviousStatus == types.AlarmStatusOff {
+			err = sendEventsForNotUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+			if err != nil {
+				p.logger.Err(err).Msg("cannot send downstream events")
 			}
 		}
 	}
