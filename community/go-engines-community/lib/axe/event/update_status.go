@@ -3,8 +3,12 @@ package event
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -18,13 +22,20 @@ func NewUpdateStatusProcessor(
 	dbClient mongo.DbClient,
 	alarmStatusService alarmstatus.Service,
 	metaAlarmPostProcessor MetaAlarmPostProcessor,
+	encoder encoding.Encoder,
+	eventGenerator libevent.Generator,
+	amqpPublisher amqp.Publisher,
 	logger zerolog.Logger,
 ) Processor {
 	return &updateStatusProcessor{
 		dbClient:               dbClient,
 		alarmCollection:        dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       dbClient.Collection(mongo.EntityMongoCollection),
 		alarmStatusService:     alarmStatusService,
 		metaAlarmPostProcessor: metaAlarmPostProcessor,
+		eventGenerator:         eventGenerator,
+		encoder:                encoder,
+		amqpPublisher:          amqpPublisher,
 		logger:                 logger,
 	}
 }
@@ -32,8 +43,12 @@ func NewUpdateStatusProcessor(
 type updateStatusProcessor struct {
 	dbClient               mongo.DbClient
 	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
 	alarmStatusService     alarmstatus.Service
 	metaAlarmPostProcessor MetaAlarmPostProcessor
+	encoder                encoding.Encoder
+	eventGenerator         libevent.Generator
+	amqpPublisher          amqp.Publisher
 	logger                 zerolog.Logger
 }
 
@@ -58,7 +73,11 @@ func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 		}
 
 		currentStatus := alarm.Value.Status.Value
-		newStatus, statusRuleName := p.alarmStatusService.ComputeStatus(alarm, *event.Entity)
+		newStatus, statusRuleName, err := p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, *event.Entity)
+		if err != nil {
+			return fmt.Errorf("cannot compute alarm status: %w", err)
+		}
+
 		if newStatus == currentStatus {
 			return nil
 		}
@@ -119,5 +138,12 @@ func (p *updateStatusProcessor) postProcess(
 	})
 	if err != nil {
 		p.logger.Err(err).Msg("cannot process meta alarm")
+	}
+
+	if result.AlarmChange.Type == types.AlarmChangeTypeUpdateStatus && result.Alarm.Value.Status.Value == types.AlarmStatusOff {
+		err = sendEventsForUnknownDownstreams(ctx, *event.Entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+		if err != nil {
+			p.logger.Err(err).Msg("cannot send downstream events")
+		}
 	}
 }

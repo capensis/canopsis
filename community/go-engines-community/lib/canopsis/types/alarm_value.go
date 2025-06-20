@@ -28,6 +28,7 @@ const (
 	OutputStepPrefix       = "Step: "
 	OutputJobPrefix        = "Job: "
 	OutputFailReasonPrefix = "Fail reason: "
+	OutputUpstreamPrefix   = "Upstream: "
 )
 
 // PbhCanonicalTypeActive is duplicate of pbehavior.TypeActive because of package cycle.
@@ -510,8 +511,9 @@ type AlarmValue struct {
 	ChangeState *AlarmStep  `bson:"change_state,omitempty" json:"change_state,omitempty"`
 	Tickets     []AlarmStep `bson:"tickets,omitempty" json:"tickets,omitempty"`
 	// Ticket contains the last created ticket
-	Ticket *AlarmStep `bson:"ticket,omitempty" json:"ticket,omitempty"`
-	Steps  AlarmSteps `bson:"steps" json:"steps"`
+	Ticket       *AlarmStep        `bson:"ticket,omitempty" json:"ticket,omitempty"`
+	Steps        AlarmSteps        `bson:"steps" json:"steps"`
+	NoEventsDate *datetime.CpsTime `bson:"no_events_date,omitempty" json:"no_events_date,omitempty"`
 
 	Component                   string            `bson:"component" json:"component"`
 	Connector                   string            `bson:"connector" json:"connector"`

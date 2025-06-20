@@ -102,6 +102,7 @@ type Entity struct {
 
 	Connector string `bson:"connector,omitempty" json:"connector,omitempty"`
 	Component string `bson:"component,omitempty" json:"component,omitempty"`
+	Upstream  string `bson:"upstream,omitempty" json:"upstream,omitempty"`
 
 	// ConnectorType contains a part before "/" of connector id.
 	ConnectorType string `bson:"-" json:"connector_type,omitempty"`
