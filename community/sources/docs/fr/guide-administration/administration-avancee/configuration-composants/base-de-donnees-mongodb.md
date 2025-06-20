@@ -15,3 +15,28 @@ Canopsis ne propose ces configurations que par le biais de certaines souscriptio
 Si vous constatez que votre utilisation de MongoDB est importante dans votre environnement Canopsis, et si MongoDB a déjà été déplacé sur une instance dédiée, il peut être utile d'appliquer les recommandations officielles de MongoDB sur [les limites système](https://docs.mongodb.com/v4.2/reference/ulimit/#linux-distributions-using-systemd) et [les Transparent Huge Pages](https://docs.mongodb.com/v4.2/tutorial/transparent-huge-pages/).
 
 Par défaut, MongoDB recommande aussi l'utilisation du système de fichiers XFS pour le dossier `/var/lib/mongodb`. Il s'agit du système de fichiers par défaut de CentOS.
+
+## ReadPreference
+
+https://www.mongodb.com/docs/manual/core/read-preference/
+
+Nous avons désactivé la possibilité de surcharger le [readPreference](https://www.mongodb.com/docs/manual/core/read-preference/) via l’URL de connexion Mongo.  
+Le readPreference est maintenant défini par l’application elle-même et non modifiable depuis l’extérieur.
+
+Par défaut, toutes les lectures sont effectuées depuis le noeud primaire.
+
+Des exceptions existent dans certains composants, où la lecture depuis les secondaires est explicitement activée.
+
+Cette décision a été prise pour éviter les erreurs fréquentes liées à un usage incorrect ou abusif du readPreference.  
+Cela causait des anomalies difficiles à diagnostiquer, comme des erreurs du type : "mongo: no documents in result."
+
+**Composants utilisant les lectures sur noeuds secondaires**
+
+Les lectures depuis les réplicas secondaires sont actuellement activées dans :
+
+* L'API des alarmes
+* L'API d’export des alarmes
+* Les moteurs engine-che et engine-dynamic-infos (dictionnaires d’info)
+* Le Prometheus exporter
+
+Cela permet de répartir la charge de manière plus équilibrée.
