@@ -74,7 +74,7 @@ type DbCollection interface {
 	Indexes() mongo.IndexView
 	InsertOne(ctx context.Context, document interface{},
 		opts ...options.Lister[options.InsertOneOptions]) (interface{}, error)
-	InsertMany(ctx context.Context, documents []interface{},
+	InsertMany(ctx context.Context, documents interface{},
 		opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error)
 	ReplaceOne(ctx context.Context, filter interface{},
 		replacement interface{}, opts ...options.Lister[options.ReplaceOptions]) (*mongo.UpdateResult, error)
@@ -305,7 +305,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	return res.InsertedID, nil
 }
 
-func (c *dbCollection) InsertMany(ctx context.Context, documents []interface{},
+func (c *dbCollection) InsertMany(ctx context.Context, documents interface{},
 	opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error) {
 	var res *mongo.InsertManyResult
 	var err error

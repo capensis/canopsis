@@ -36,9 +36,10 @@ type Store interface {
 }
 
 type store struct {
-	client         mongo.DbClient
-	collection     mongo.DbCollection
-	authorProvider author.Provider
+	client                        mongo.DbClient
+	collection                    mongo.DbCollection
+	entityInfosPropertyCollection mongo.DbCollection
+	authorProvider                author.Provider
 
 	linkedCollections []string
 
@@ -49,6 +50,8 @@ type store struct {
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
+	transformer common.PatternFieldsTransformer
+
 	logger zerolog.Logger
 }
 
@@ -57,15 +60,16 @@ func NewStore(
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		client:         dbClient,
-		collection:     dbClient.Collection(mongo.PatternMongoCollection),
-		authorProvider: authorProvider,
-
-		defaultSearchByFields: []string{"_id", "author.name", "title"},
-		defaultSortBy:         "created",
+		client:                        dbClient,
+		collection:                    dbClient.Collection(mongo.PatternMongoCollection),
+		entityInfosPropertyCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		authorProvider:                authorProvider,
+		defaultSearchByFields:         []string{"_id", "author.name", "title"},
+		defaultSortBy:                 "created",
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
@@ -84,11 +88,10 @@ func NewStore(
 			mongo.AlarmTagCollection,
 		},
 
-		pbhComputeChan: pbhComputeChan,
-
+		pbhComputeChan:        pbhComputeChan,
 		serviceChangeListener: serviceChangeListener,
-
-		logger: logger,
+		transformer:           transformer,
+		logger:                logger,
 	}
 }
 
@@ -102,7 +105,13 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.collection.InsertOne(ctx, model)
+
+		err := s.transformEntityPatternToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
 			return err
 		}
@@ -211,7 +220,13 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		pbhIds = nil
 		serviceIds = nil
 		prevPattern := savedpattern.SavedPattern{}
-		err := s.collection.FindOneAndUpdate(
+
+		err := s.transformEntityPatternToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
+		err = s.collection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": request.ID},
 			bson.M{"$set": model},
@@ -876,8 +891,6 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	switch request.Type {
 	case savedpattern.TypeAlarm:
 		model.AlarmPattern = request.AlarmPattern
-	case savedpattern.TypeEntity:
-		model.EntityPattern = request.EntityPattern
 	case savedpattern.TypePbehavior:
 		model.PbehaviorPattern = request.PbehaviorPattern
 	case savedpattern.TypeWeatherService:
@@ -885,4 +898,24 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	}
 
 	return model
+}
+
+func (s *store) transformEntityPatternToModel(
+	ctx context.Context,
+	r EditRequest,
+	model *savedpattern.SavedPattern,
+) error {
+	if r.Type == savedpattern.TypeEntity {
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: r.EntityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		model.Aliases = transformedEntityPatternRequest.Aliases
+		model.EntityPattern = transformedEntityPatternRequest.EntityPattern
+	}
+
+	return nil
 }

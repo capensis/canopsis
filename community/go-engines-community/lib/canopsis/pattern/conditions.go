@@ -60,6 +60,7 @@ type FieldCondition struct {
 	// FieldType is only defined for custom fields, ex: infos.
 	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty"`
 	Condition Condition `json:"cond" bson:"cond"`
+	Alias     string    `json:"alias,omitempty" bson:"alias,omitempty"`
 }
 
 // Condition represents an expression to decide if a value fits.

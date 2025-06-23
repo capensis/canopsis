@@ -32,17 +32,19 @@ type store struct {
 	collection            mongo.DbCollection
 	exdataTableCollection mongo.DbCollection
 	authorProvider        author.Provider
+	transformer           common.PatternFieldsTransformer
 
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
 	return &store{
 		client:                dbClient,
 		collection:            dbClient.Collection(mongo.LinkRuleMongoCollection),
 		exdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
 		authorProvider:        authorProvider,
+		transformer:           transformer,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name"},
 		defaultSortBy:         "created",
@@ -51,6 +53,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 
 func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
+
 	model, err := s.transformRequestToModel(ctx, request)
 	if err != nil {
 		return nil, err
@@ -63,6 +66,12 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		err = s.transformPatternRequestsToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
 		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
 			return err
@@ -142,6 +151,7 @@ func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResu
 
 func (s *store) Update(ctx context.Context, request EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
+
 	model, err := s.transformRequestToModel(ctx, request)
 	if err != nil {
 		return nil, err
@@ -149,9 +159,16 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 
 	model.ID = request.ID
 	model.Updated = now
+
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		err = s.transformPatternRequestsToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
 		res, err := s.collection.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID},
@@ -271,4 +288,30 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (lin
 	}
 
 	return rule, nil
+}
+
+func (s *store) transformPatternRequestsToModel(ctx context.Context, req EditRequest, model *link.Rule) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, req.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	if req.Type == link.TypeAlarm {
+		transformedAlarmPatternReq, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, req.AlarmPatternFieldsRequest)
+		if err != nil {
+			return err
+		}
+
+		model.AlarmPatternFields = transformedAlarmPatternReq.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
+		)
+	}
+
+	model.Aliases = transformedEntityPatternRequest.Aliases
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
+	)
+
+	return nil
 }
