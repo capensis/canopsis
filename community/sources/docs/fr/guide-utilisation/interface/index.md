@@ -47,7 +47,8 @@ Pour les découvrir, cliquez [ici](../menu-administration/parametres.md)
 
 À différents endroits de l'interface de Canopsis, le texte affiché est personnalisable grâce au langage Handlebars.  
 Différents *helpers* sont disponibles pour ajouter un peu de logique dans ces templates.  
-Pour plus de détails, consultez la [documentation des helpers Handlebars de Canopsis](helpers/index.md).
+Pour plus de détails, consultez la [documentation des helpers Handlebars de Canopsis](helpers/index.md).  
+Un [exemple complet et documenté](helpers/exemple_handlebars.md) vous donne un aperçu des possibilités offertes.
 
 ## La diffusion de messages
 
