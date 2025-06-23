@@ -132,6 +132,7 @@ func (a *api) StartExport(c *gin.Context) {
 		panic(err)
 	}
 
+	//nolint:forcetypeassert
 	task, err := a.exportExecutor.StartExecute(c, export.TaskParameters{
 		Type:           "entity",
 		Parameters:     string(params),

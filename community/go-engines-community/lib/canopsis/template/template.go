@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"math"
 	"reflect"
 	"regexp"
 	"strings"
@@ -401,6 +402,9 @@ func toInt64(v any) (int64, bool) {
 	case int64:
 		return val, true
 	case uint:
+		if val > math.MaxInt64 {
+			return 0, false
+		}
 		return int64(val), true
 	case uint8:
 		return int64(val), true
@@ -409,6 +413,9 @@ func toInt64(v any) (int64, bool) {
 	case uint32:
 		return int64(val), true
 	case uint64:
+		if val > math.MaxInt64 {
+			return 0, false
+		}
 		return int64(val), true
 	default:
 		return 0, false

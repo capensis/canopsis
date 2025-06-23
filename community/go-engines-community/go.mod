@@ -14,9 +14,6 @@ toolchain go1.22.12
 // https://git.canopsis.net/canopsis/canopsis-pro/-/issues/590
 
 require (
-	// No GPL or AGPL libs allowed below!
-
-	github.com/ajg/form v1.5.1
 	github.com/alecthomas/participle v0.7.1
 	github.com/apognu/gocal v0.9.0
 	github.com/beevik/etree v1.3.0
