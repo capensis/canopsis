@@ -20,6 +20,9 @@ type Rule struct {
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases,omitempty" json:"-"`
 }
 
 // Matches returns true if alarm and entity match field patterns.
