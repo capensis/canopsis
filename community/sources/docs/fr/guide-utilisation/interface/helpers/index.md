@@ -10,6 +10,9 @@ Le langage Handlebars propose, par défaut, un ensemble de *helpers* permettant 
 
 En plus de ces helpers officiels, Canopsis met à disposition certains helpers supplémentaires qui lui sont propres. La documentation suivante décrit leur fonctionnement.
 
+!!! info "Exemple complet"
+    En parallèle de cette documentation, vous pouvez retrouver un [exemple complet documenté](./exemple_handlebars.md).
+
 ## Liste des helpers Handlebars propres à Canopsis
 
 L'ensemble des helpers suivants sont génériques, et peuvent être utilisés à chaque endroit où la syntaxe Handlebars est permise.
@@ -121,7 +124,7 @@ Ce helper accepte les attributs suivants :
 *  `style` (optionnel). Des instructions de style CSS.
     *  `instructions-css` peut être une chaîne de caractères telle que `"color: blue;"` qui stylise le lien cliquable en bleu.
 
-#### Exemples d'utilisation du helper `compare`
+#### Exemples d'utilisation du helper `internal-link`
 
 Créer un lien (en gras) redirigeant vers la page de météo liée à une entité :
 
@@ -350,7 +353,7 @@ Afficher le produit entre 5 et 6 :
 ### Helper `divide`
 
 ```handlebars
-{{divde 10 2}}
+{{divide 10 2}}
 ```
 
 Ce helper attend en paramètre 2 nombres et renvoie le résultat de leur division
