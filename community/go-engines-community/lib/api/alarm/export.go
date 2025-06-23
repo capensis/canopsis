@@ -2,19 +2,22 @@ package alarm
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfosproperty"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 var stateTitles = map[int]string{
@@ -33,7 +36,7 @@ var statusTitles = map[int]string{
 }
 
 func newExportCursor(
-	cursor mongo.Cursor,
+	cursor libmongo.Cursor,
 	fields export.Fields,
 	timeFormat string,
 	location *time.Location,
@@ -42,35 +45,38 @@ func newExportCursor(
 	linkUser liblink.User,
 	tplExecutor template.Executor,
 	withModel bool,
+	entityInfoPropCollection libmongo.DbCollection,
 	logger zerolog.Logger,
 ) export.DataCursor {
 	return &mongoCursor{
-		cursor:        cursor,
-		fields:        fields,
-		timeFormat:    timeFormat,
-		location:      location,
-		instructions:  instructions,
-		linkGenerator: linkGenerator,
-		linkUser:      linkUser,
-		tplExecutor:   tplExecutor,
-		tpls:          make(map[int]template.ParsedTemplate),
-		withModel:     withModel,
-		logger:        logger,
+		cursor:                   cursor,
+		fields:                   fields,
+		timeFormat:               timeFormat,
+		location:                 location,
+		instructions:             instructions,
+		linkGenerator:            linkGenerator,
+		linkUser:                 linkUser,
+		tplExecutor:              tplExecutor,
+		tpls:                     make(map[int]template.ParsedTemplate),
+		withModel:                withModel,
+		entityInfoPropCollection: entityInfoPropCollection,
+		logger:                   logger,
 	}
 }
 
 type mongoCursor struct {
-	cursor        mongo.Cursor
-	fields        export.Fields
-	timeFormat    string
-	location      *time.Location
-	instructions  []Instruction
-	linkGenerator liblink.Generator
-	linkUser      liblink.User
-	tplExecutor   template.Executor
-	tpls          map[int]template.ParsedTemplate
-	withModel     bool
-	logger        zerolog.Logger
+	cursor                   libmongo.Cursor
+	fields                   export.Fields
+	timeFormat               string
+	location                 *time.Location
+	instructions             []Instruction
+	linkGenerator            liblink.Generator
+	linkUser                 liblink.User
+	tplExecutor              template.Executor
+	tpls                     map[int]template.ParsedTemplate
+	withModel                bool
+	entityInfoPropCollection libmongo.DbCollection
+	logger                   zerolog.Logger
 }
 
 func (c *mongoCursor) Next(ctx context.Context) bool {
@@ -123,7 +129,7 @@ func (c *mongoCursor) filterFields(
 	res := make(map[string]any, len(fields))
 	for i, field := range fields {
 		v, _ := c.getNestedVal(m, strings.Split(field.Name, "."))
-		res[field.Name], err = c.transformField(i, field, v, model, links)
+		res[field.Name], err = c.transformField(ctx, i, field, v, model, links)
 		if err != nil {
 			return nil, err
 		}
@@ -132,7 +138,7 @@ func (c *mongoCursor) filterFields(
 	return res, nil
 }
 
-func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.AlarmWithEntity, linksByCategory liblink.LinksByCategory) (any, error) {
+func (c *mongoCursor) transformField(ctx context.Context, i int, f export.Field, v any, model types.AlarmWithEntity, linksByCategory liblink.LinksByCategory) (any, error) {
 	if f.Template != "" {
 		tpl, ok := c.tpls[i]
 		if !ok {
@@ -187,18 +193,22 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 		return strings.Join(values, ","), nil
 	case "entity.infos",
 		"entity.component_infos":
-		values := make([]string, 0)
 		if m, ok := v.(bson.M); ok {
 			for mk, mv := range m {
 				if info, ok := mv.(bson.M); ok {
-					if s, ok := info["value"].(string); ok {
-						values = append(values, mk+": "+s)
+					if i, ok := c.getInt64(info["value"]); ok {
+						var err error
+
+						info["value"], err = c.transformIntInfoValue(ctx, mk, i)
+						if err != nil {
+							return nil, err
+						}
 					}
 				}
 			}
 		}
 
-		return strings.Join(values, ","), nil
+		return v, nil
 	case "assigned_instructions":
 		names := c.matchInstructions(model)
 		return strings.Join(names, ","), nil
@@ -218,6 +228,16 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 			}
 		}
 
+		for _, prefix := range []string{"entity.infos.", "entity.component_infos."} {
+			if cut, ok := strings.CutPrefix(f.Name, prefix); ok {
+				if key, ok := strings.CutSuffix(cut, ".value"); ok {
+					if i, ok := c.getInt64(v); ok {
+						return c.transformIntInfoValue(ctx, key, i)
+					}
+				}
+			}
+		}
+
 		if category, ok := strings.CutPrefix(f.Name, "links."); ok {
 			values := make([]string, 0, len(linksByCategory[category]))
 			for _, link := range linksByCategory[category] {
@@ -226,6 +246,19 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 
 			return strings.Join(values, ","), nil
 		}
+	}
+
+	return v, nil
+}
+
+func (c *mongoCursor) transformIntInfoValue(ctx context.Context, key string, v int64) (any, error) {
+	err := c.entityInfoPropCollection.FindOne(ctx, bson.M{"key": key, "type": entityinfosproperty.EntityInfosTypeTimestamp}).Err()
+	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+		return nil, err
+	}
+
+	if err == nil {
+		return datetime.NewCpsTime(v).In(c.location).Time.Format(c.timeFormat), nil
 	}
 
 	return v, nil
@@ -256,6 +289,10 @@ func (c *mongoCursor) getInt64(v any) (int64, bool) {
 	case int32:
 		return int64(i), true
 	case int:
+		return int64(i), true
+	case float32:
+		return int64(i), true
+	case float64:
 		return int64(i), true
 	default:
 		return 0, false

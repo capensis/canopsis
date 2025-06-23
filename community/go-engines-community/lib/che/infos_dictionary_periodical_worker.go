@@ -32,6 +32,14 @@ const (
 	entitiesLimit = batchSize / 10
 )
 
+const (
+	TypeBoolean = iota
+	TypeNumber
+	TypeTimestamp
+	TypeString
+	TypeStringArray
+)
+
 // A composite id is used, because it works faster with a lot of bulk upserts instead of filter and uuid
 type infosDictID struct {
 	Key   string `bson:"k"`
@@ -41,6 +49,7 @@ type infosDictID struct {
 type infosDictDoc struct {
 	ID    infosDictID `bson:"_id"`
 	EntID string      `bson:"ent_id"`
+	Type  int         `bson:"type"`
 }
 
 func NewInfosDictionaryPeriodicalWorker(
@@ -145,15 +154,38 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 			{"$project": bson.M{"_id": 1, "Infos": 1}},
 			{"$sort": bson.M{"_id": 1}},
 			{"$unwind": "$Infos"},
+			{"$addFields": bson.M{
+				"type": bson.M{
+					"$switch": bson.M{
+						"branches": []bson.M{
+							{"case": bson.M{"$eq": bson.A{bson.M{"$type": "$Infos.v.value"}, "bool"}}, "then": TypeBoolean},
+							{"case": bson.M{"$isNumber": "$Infos.v.value"}, "then": TypeNumber},
+							{"case": bson.M{"$isArray": "$Infos.v.value"}, "then": TypeStringArray},
+						},
+						"default": TypeString,
+					},
+				}},
+			},
 			{"$unwind": "$Infos.v.value"},
-			{"$project": bson.M{"k": "$Infos.k", "v": "$Infos.v.value"}},
-
+			{"$project": bson.M{"k": "$Infos.k", "v": "$Infos.v.value", "type": "$type"}},
 			{"$match": bson.M{"k": bson.M{"$nin": stopList}}},
-			{"$project": bson.M{"_id": bson.M{"k": "$k", "v": bson.M{
-				"$cond": bson.M{"if": bson.M{"$and": []bson.M{
-					{"$eq": bson.A{bson.M{"$type": "$v"}, "string"}},
-					{"$gt": bson.A{bson.M{"$strLenCP": "$v"}, minInfoLength}},
-				}}, "then": "$v", "else": ""}}}, "ent_id": "$_id"}},
+			{"$project": bson.M{
+				"_id": bson.M{
+					"k": "$k",
+					"v": bson.M{
+						"$cond": bson.M{
+							"if": bson.M{"$and": []bson.M{
+								{"$eq": bson.A{bson.M{"$type": "$v"}, "string"}},
+								{"$gt": bson.A{bson.M{"$strLenCP": "$v"}, minInfoLength}},
+							}},
+							"then": "$v",
+							"else": "",
+						},
+					},
+				},
+				"ent_id": "$_id",
+				"type":   "$type",
+			}},
 		}
 		entCursor, err := w.entityCollection.Aggregate(ctx, pipeline)
 		if err != nil {
@@ -199,7 +231,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 					SetFilter(bson.M{"_id.k": key, "last_update": t}) // current generation of values
 				delete(keysCounts, key)
 			} else {
-				newModel = getUpsertOneModel(infoDictDocs[i].ID, t)
+				newModel = getUpsertOneModel(infoDictDocs[i].ID, t, infoDictDocs[i].Type)
 			}
 			writeModels, bulkBytesSize, err = w.appendWriteModel(ctx, writeModels, newModel, bulkBytesSize)
 			if err != nil {
@@ -221,7 +253,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 		bulkBytesSize := 0
 
 		for _, key := range stopList {
-			newModel := getUpsertOneModel(infosDictID{Key: key, Value: ""}, t)
+			newModel := getUpsertOneModel(infosDictID{Key: key, Value: ""}, t, TypeString)
 
 			writeModels, bulkBytesSize, err = w.appendWriteModel(ctx, writeModels, newModel, bulkBytesSize)
 			if err != nil {
@@ -263,10 +295,10 @@ func (w *infosDictionaryPeriodicalWorker) appendWriteModel(ctx context.Context, 
 	return writeModels, bulkBytesSize, nil
 }
 
-func getUpsertOneModel(id infosDictID, t datetime.CpsTime) mongodriver.WriteModel {
+func getUpsertOneModel(id infosDictID, t datetime.CpsTime, vType int) mongodriver.WriteModel {
 	return mongodriver.
 		NewUpdateOneModel().
 		SetFilter(bson.M{"_id": id}).
-		SetUpdate(bson.M{"$set": bson.M{"last_update": t}}).
+		SetUpdate(bson.M{"$set": bson.M{"last_update": t, "type": vType}}).
 		SetUpsert(true)
 }

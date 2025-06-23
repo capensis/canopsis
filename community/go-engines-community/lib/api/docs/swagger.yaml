@@ -5195,6 +5195,192 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /entity-infos-properties:
+    get:
+      tags:
+        - entityinfosproperties
+      summary: Find all entity infos properties
+      description: |
+        Get paginated list of entity infos properties.
+
+        -  PERMISSIONS: `api_entity_infos_property:read`
+      operationId: entityinfosproperties-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - name: sort_by
+          in: query
+          description: sort by query
+          schema:
+            type: string
+            enum:
+              - key
+              - alias
+              - type
+        - name: type
+          in: query
+          description: type query
+          schema:
+            type: string
+            enum:
+              - string
+              - number
+              - boolean
+              - string_array
+              - timestamp
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - entityinfosproperties
+      summary: Create entity infos property
+      description: |
+        Create entity infos property.
+
+        -  PERMISSIONS: `api_entity_infos_property:create`
+      operationId: entityinfosproperties-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.CreateRequest'
+            examples:
+              create:
+                summary: Create an entity infos property
+                description: Create an entity infos property
+                value: {
+                  "key": "canopsis-entity-info-key",
+                  "description": "canopsis-entity-info-description",
+                  "alias": "canopsis-entity-info-alias",
+                  "type": "string"
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /entity-infos-properties/{id}:
+    get:
+      tags:
+        - entityinfosproperties
+      summary: Get entity info property by id
+      description: |
+        Get entity info property by id.
+
+        -  PERMISSIONS: `api_entity_infos_property:read`
+      operationId: entityinfosproperties-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - entityinfosproperties
+      summary: Update entity info property by id
+      description: |
+        Update entity info property by id.
+
+        -  PERMISSIONS: `api_entity_infos_property:update`
+      operationId: entityinfosproperties-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.UpdateRequest'
+            examples:
+              create:
+                summary: Update an entity infos property
+                description: Update an entity infos property
+                value: {
+                  "key": "canopsis-entity-info-key",
+                  "description": "canopsis-entity-info-description",
+                  "alias": "canopsis-entity-info-alias",
+                  "type": "string"
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.Response'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - entityinfosproperties
+      summary: Delete entity info property by id
+      description: |
+        Delete entity info property by id.
+
+        -  PERMISSIONS: `api_resolve_rule:delete`
+      operationId: entityinfosproperties-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /entitybasics:
     get:
       tags:

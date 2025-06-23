@@ -75,4 +75,7 @@ type PBehavior struct {
 	Inherited bool `bson:"inherited"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases,omitempty" json:"-"`
 }

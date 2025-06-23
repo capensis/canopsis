@@ -1787,6 +1787,8 @@ definitions:
         type: string
       separator:
         type: string
+      time_format:
+        type: string
       type:
         items:
           type: string
@@ -2084,8 +2086,72 @@ definitions:
     type: object
   entityinfodictionary.Result:
     properties:
+      type:
+        type: string
       value:
         type: string
+    type: object
+  entityinfosproperty.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alias:
+        maxLength: 255
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      key:
+        type: string
+      type:
+        enum:
+        - string
+        - number
+        - boolean
+        - string_array
+        - timestamp
+        type: string
+    required:
+    - key
+    - type
+    type: object
+  entityinfosproperty.Response:
+    properties:
+      _id:
+        type: string
+      alias:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      description:
+        type: string
+      key:
+        type: string
+      type:
+        type: string
+      updated:
+        type: integer
+    type: object
+  entityinfosproperty.UpdateRequest:
+    properties:
+      alias:
+        maxLength: 255
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      type:
+        enum:
+        - string
+        - number
+        - boolean
+        - string_array
+        - timestamp
+        type: string
+    required:
+    - type
     type: object
   entityservice.BulkDeleteRequestItem:
     properties:
@@ -3821,6 +3887,8 @@ definitions:
     type: object
   pattern.FieldCondition:
     properties:
+      alias:
+        type: string
       cond:
         $ref: '#/definitions/pattern.Condition'
       field:
@@ -4783,7 +4851,6 @@ definitions:
     required:
     - duration
     - name
-    - priority
     type: object
   resolverule.Response:
     properties:
@@ -4856,7 +4923,6 @@ definitions:
     required:
     - duration
     - name
-    - priority
     type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:

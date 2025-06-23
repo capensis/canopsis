@@ -27,6 +27,7 @@ type store struct {
 	dbClient       mongo.DbClient
 	dbCollection   mongo.DbCollection
 	authorProvider author.Provider
+	transformer    common.PatternFieldsTransformer
 
 	defaultSearchByFields []string
 }
@@ -34,11 +35,13 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 ) Store {
 	return &store{
 		dbClient:       dbClient,
 		dbCollection:   dbClient.Collection(mongo.FlappingRuleMongoCollection),
 		authorProvider: authorProvider,
+		transformer:    transformer,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name", "description"},
 	}
@@ -56,7 +59,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		resp = nil
 
-		_, err := s.dbCollection.InsertOne(ctx, rule)
+		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &rule)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, rule)
 		if err != nil {
 			return err
 		}
@@ -127,29 +135,37 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
-	model := transformRequestToModel(r.EditRequest)
-	model.ID = r.ID
-	model.Updated = datetime.NewCpsTime()
+	rule := transformRequestToModel(r.EditRequest)
+	rule.ID = r.ID
+	rule.Updated = datetime.NewCpsTime()
+
 	var resp *Response
+
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		resp = nil
 
-		_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
+		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &rule)
 		if err != nil {
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, model.ID, model.Priority)
+		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": rule.ID}, bson.M{"$set": rule})
 		if err != nil {
 			return err
 		}
 
-		resp, err = s.GetByID(ctx, model.ID)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, rule.ID, rule.Priority)
+		if err != nil {
+			return err
+		}
+
+		resp, err = s.GetByID(ctx, rule.ID)
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
+
 	return resp, nil
 }
 
@@ -172,20 +188,36 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *flappingrule.Rule) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	transformedAlarmPatternReq, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	model.Aliases = transformedEntityPatternRequest.Aliases
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection),
+	)
+	model.AlarmPatternFields = transformedAlarmPatternReq.ToModelWithoutFields(
+		common.GetForbiddenFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
+		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
+	)
+
+	return nil
+}
+
 func transformRequestToModel(r EditRequest) flappingrule.Rule {
 	return flappingrule.Rule{
 		Name:        r.Name,
 		Description: r.Description,
 		FreqLimit:   r.FreqLimit,
 		Duration:    r.Duration,
-		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
-		),
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection),
-		),
-		Priority: r.Priority,
-		Author:   r.Author,
+		Priority:    r.Priority,
+		Author:      r.Author,
 	}
 }
