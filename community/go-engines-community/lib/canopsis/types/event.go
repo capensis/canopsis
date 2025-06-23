@@ -394,10 +394,10 @@ func (e *Event) GetRequiredKeys() []string {
 }
 
 var cpsNumberType = reflect.TypeOf(CpsNumber(0))
-var cpsNumberPtrType = reflect.PtrTo(cpsNumberType)
+var cpsNumberPtrType = reflect.PointerTo(cpsNumberType)
 var cpsTimeType = reflect.TypeOf(datetime.CpsTime{})
 var stringType = reflect.TypeOf("")
-var stringPtrType = reflect.PtrTo(stringType)
+var stringPtrType = reflect.PointerTo(stringType)
 var boolType = reflect.TypeOf(false)
 var mapStringStringType = reflect.TypeOf(map[string]string{})
 

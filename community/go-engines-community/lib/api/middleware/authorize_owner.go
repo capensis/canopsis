@@ -23,13 +23,19 @@ func AuthorizeOwnership(strategy security.OwnershipStrategy) gin.HandlerFunc {
 			panic(errors.New("missing ownership strategy"))
 		}
 
-		subj, ok := c.Get(auth.UserKey)
+		userID, ok := c.Get(auth.UserKey)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
 		}
 
-		ownership, err := strategy.IsOwner(c, obj, subj.(string))
+		subj, ok := userID.(string)
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			return
+		}
+
+		ownership, err := strategy.IsOwner(c, obj, subj)
 		if err != nil {
 			panic(err)
 		}

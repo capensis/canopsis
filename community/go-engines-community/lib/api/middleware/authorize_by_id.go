@@ -22,14 +22,20 @@ func AuthorizeByID(
 			panic(errors.New("missing id parameter"))
 		}
 
-		subj, ok := c.Get(auth.UserKey)
+		userID, ok := c.Get(auth.UserKey)
 
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
 		}
 
-		ok, err := enforcer.Enforce(subj.(string), obj, act)
+		subj, ok := userID.(string)
+		if !ok {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			return
+		}
+
+		ok, err := enforcer.Enforce(subj, obj, act)
 
 		if err != nil {
 			panic(err)
