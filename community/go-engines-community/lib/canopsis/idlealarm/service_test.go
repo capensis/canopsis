@@ -42,7 +42,7 @@ func TestService_Process_GivenAlarmRuleByLastEventDate_ShouldReturnEvent(t *test
 	alarm := types.Alarm{
 		ID: "test-alarm",
 		Value: types.AlarmValue{
-			LastEventDate: datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
+			LastEventDate: &datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 			Connector:     "test-connector",
 			ConnectorName: "test-connector",
 			Component:     "test-component",

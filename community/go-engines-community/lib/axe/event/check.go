@@ -212,17 +212,14 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 		Forward: true,
 	}
 
+	state := *params.State
 	if event.Parameters.StateSettingUpdated {
 		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
 		if err != nil {
 			return Result{}, err
 		}
 
-		*params.State = types.CpsNumber(componentState)
-	}
-
-	if *params.State == types.AlarmStateOK {
-		return result, nil
+		state = types.CpsNumber(componentState)
 	}
 
 	alarmChange := types.NewAlarmChange()
@@ -260,8 +257,28 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 
 	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Author = author
-	stateStep.Value = *params.State
+	stateStep.Value = state
 	alarm.Value.State = &stateStep
+	status, statusRuleName, err := p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, entity)
+	if err != nil {
+		return result, fmt.Errorf("cannot compute alarm status: %w", err)
+	}
+
+	statusOutput := ""
+	if state == types.AlarmStateOK {
+		if status == types.AlarmStatusUnknown {
+			statusOutput = statusRuleName
+			state = types.AlarmStateMinor
+			alarm.Value.State.Message = statusRuleName
+			alarm.Value.State.Value = state
+			alarm.Value.LastEventDate = nil
+		} else {
+			return result, nil
+		}
+	} else {
+		statusOutput = ConcatOutputAndRuleName(params.Output, statusRuleName)
+	}
+
 	alarm.Value.InitialState = stateStep.Value
 	alarm.Value.MaxState = stateStep.Value
 	err = alarm.Value.Steps.Add(stateStep)
@@ -271,14 +288,10 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 
 	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
 	statusStep.Author = author
-	var statusRuleName string
-	statusStep.Value, statusRuleName, err = p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, entity)
-	if err != nil {
-		return result, fmt.Errorf("cannot compute alarm status: %w", err)
-	}
-
-	statusStep.Message = ConcatOutputAndRuleName(params.Output, statusRuleName)
+	statusStep.Value = status
+	statusStep.Message = statusOutput
 	alarm.Value.Status = &statusStep
+	alarm.Value.InitialStatus = statusStep.Value
 	err = alarm.Value.Steps.Add(statusStep)
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
@@ -626,7 +639,7 @@ func (p *checkProcessor) newAlarm(
 			LongOutputHistory:           []string{params.LongOutput},
 			LastUpdateDate:              params.Timestamp,
 			LastStateOrStatusUpdateDate: params.Timestamp,
-			LastEventDate:               timestamp,
+			LastEventDate:               &timestamp,
 			Parents:                     []string{},
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
@@ -763,7 +776,7 @@ func (p *checkProcessor) postProcess(
 
 	switch result.AlarmChange.Type {
 	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
-		err = sendEventsForNotUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+		err = sendDownstreamEventsOnKO(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send downstream events")
 		}
@@ -772,7 +785,7 @@ func (p *checkProcessor) postProcess(
 		alarmState := result.Alarm.Value.State.Value
 		if result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
 			result.AlarmChange.PreviousStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
-			err = sendEventsForUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+			err = sendDownstreamEventsOnOK(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
 			if err != nil {
 				p.logger.Err(err).Msg("cannot send downstream events")
 			}
@@ -780,7 +793,7 @@ func (p *checkProcessor) postProcess(
 	case types.AlarmChangeTypeStateIncrease:
 		alarmStatus := result.Alarm.Value.Status.Value
 		if result.AlarmChange.PreviousStatus != alarmStatus && result.AlarmChange.PreviousStatus == types.AlarmStatusOff {
-			err = sendEventsForNotUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+			err = sendDownstreamEventsOnKO(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
 			if err != nil {
 				p.logger.Err(err).Msg("cannot send downstream events")
 			}
