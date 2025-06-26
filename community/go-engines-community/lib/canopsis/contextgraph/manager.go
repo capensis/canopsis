@@ -412,9 +412,9 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 	}
 
 	now := datetime.NewCpsTime()
-	lastEventDate := &now
-	if event.EventType == types.EventTypeContextUpdate {
-		lastEventDate = nil
+	var lastEventDate *datetime.CpsTime
+	if event.EventType == types.EventTypeCheck {
+		lastEventDate = &now
 	}
 
 	if resource == nil {
@@ -568,9 +568,9 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	}
 
 	now := datetime.NewCpsTime()
-	lastEventDate := &now
-	if event.EventType == types.EventTypeContextUpdate {
-		lastEventDate = nil
+	var lastEventDate *datetime.CpsTime
+	if event.EventType == types.EventTypeCheck {
+		lastEventDate = &now
 	}
 
 	if component == nil {
@@ -679,7 +679,7 @@ func (m *manager) HandleService(ctx context.Context, event *types.Event, commReg
 		return Report{}, nil
 	}
 
-	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType != types.EventTypeContextUpdate {
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType == types.EventTypeCheck {
 		now := datetime.NewCpsTime()
 		commRegister.RegisterUpdate(serviceID, bson.M{"last_event_date": now})
 		service.LastEventDate = &now
@@ -702,7 +702,7 @@ func (m *manager) HandleConnector(ctx context.Context, event *types.Event, commR
 		return Report{}, fmt.Errorf("connector %s doesn't exist", connectorID)
 	}
 
-	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType != types.EventTypeContextUpdate {
+	if event.IsContextable() && !event.IsOnlyServiceUpdate() && event.EventType == types.EventTypeCheck {
 		now := datetime.NewCpsTime()
 		commRegister.RegisterUpdate(connectorID, bson.M{"last_event_date": now})
 		connector.LastEventDate = &now

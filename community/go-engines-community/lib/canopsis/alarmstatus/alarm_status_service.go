@@ -67,10 +67,6 @@ func (s *service) Load(ctx context.Context) error {
 }
 
 func (s *service) ComputeStatusOnStatusChange(ctx context.Context, alarm types.Alarm, entity types.Entity) (types.CpsNumber, string, error) {
-	if alarm.Value.Canceled != nil {
-		return types.AlarmStatusCancelled, "", nil
-	}
-
 	isUpstreamOK, err := s.isUpstreamOK(ctx, entity.Upstream)
 	if err != nil {
 		return 0, "", err
@@ -78,6 +74,10 @@ func (s *service) ComputeStatusOnStatusChange(ctx context.Context, alarm types.A
 
 	if !isUpstreamOK {
 		return types.AlarmStatusUnknown, types.OutputUpstreamPrefix + entity.Upstream, nil
+	}
+
+	if alarm.Value.Canceled != nil {
+		return types.AlarmStatusCancelled, "", nil
 	}
 
 	if alarm.Value.NoEventsDate != nil {
@@ -100,12 +100,12 @@ func (s *service) ComputeStatusOnStatusChange(ctx context.Context, alarm types.A
 }
 
 func (s *service) ComputeStatusOnStateChange(alarm types.Alarm, entity types.Entity) (types.CpsNumber, string) {
-	if alarm.Value.Status != nil && alarm.Value.Status.Value == types.AlarmStatusCancelled {
-		return types.AlarmStatusCancelled, ""
-	}
-
 	if alarm.Value.Status != nil && alarm.Value.Status.Value == types.AlarmStatusUnknown {
 		return types.AlarmStatusUnknown, ""
+	}
+
+	if alarm.Value.Status != nil && alarm.Value.Status.Value == types.AlarmStatusCancelled {
+		return types.AlarmStatusCancelled, ""
 	}
 
 	if alarm.Value.NoEventsDate != nil {
