@@ -409,7 +409,7 @@ func (a *mongoAdapter) FindToCheckPbehaviorInfo(ctx context.Context, createdBefo
 	})
 }
 
-func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (int64, int64, error) {
+func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context, entityIds []string) (types.CpsNumber, *datetime.CpsTime, error) {
 	cursor, err := a.mainDbCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
 			"d":          bson.M{"$in": entityIds},
@@ -422,14 +422,14 @@ func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context
 		}},
 	})
 	if err != nil {
-		return 0, 0, err
+		return 0, nil, err
 	}
 
 	defer cursor.Close(ctx)
 	for cursor.Next(ctx) {
 		res := struct {
-			State         int64 `bson:"state"`
-			LastEventDate int64 `bson:"last_event_date"`
+			State         types.CpsNumber   `bson:"state"`
+			LastEventDate *datetime.CpsTime `bson:"last_event_date"`
 		}{}
 
 		err := cursor.Decode(&res)
@@ -437,7 +437,7 @@ func (a *mongoAdapter) GetWorstAlarmStateAndMaxLastEventDate(ctx context.Context
 		return res.State, res.LastEventDate, err
 	}
 
-	return 0, 0, nil
+	return 0, nil, nil
 }
 
 func (a *mongoAdapter) UpdateLastEventDate(ctx context.Context, entityIds []string, t datetime.CpsTime) error {

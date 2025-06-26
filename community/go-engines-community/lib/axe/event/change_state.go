@@ -264,7 +264,7 @@ func (p *changeStateProcessor) postProcess(
 
 	alarmStatus := result.Alarm.Value.Status.Value
 	if result.AlarmChange.Type == types.AlarmChangeTypeChangeState && result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff {
-		err = sendEventsForUnknownDownstreams(ctx, *event.Entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+		err = sendDownstreamEventsOnOK(ctx, *event.Entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send downstream events")
 		}

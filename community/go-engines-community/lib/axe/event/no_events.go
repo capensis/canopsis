@@ -109,6 +109,8 @@ func (p *noEventsProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result = Result{}
 		entity = *event.Entity
 		updatedServiceStates = nil
+		componentStateChanged = false
+		newComponentState = 0
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, bson.M{
@@ -211,6 +213,7 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 
 	statusStep.Message = ConcatOutputAndRuleName(params.Output, statusRuleName)
 	alarm.Value.Status = &statusStep
+	alarm.Value.InitialStatus = statusStep.Value
 	err = alarm.Value.Steps.Add(statusStep)
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
@@ -261,16 +264,16 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 		return result, fmt.Errorf("cannot create alarm: %w", err)
 	}
 
-	entityUpdate := bson.M{"$set": bson.M{
+	entityUpdate := bson.M{
 		"idle_since":           params.Timestamp,
 		"last_idle_rule_apply": params.IdleRuleApply,
-	}}
+	}
 	if alarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter && updateEntityPbhInfo {
 		entityUpdate["pbehavior_info"] = alarm.Value.PbehaviorInfo
 		entityUpdate["last_pbehavior_date"] = alarm.Value.PbehaviorInfo.Timestamp
 	}
 
-	result.Entity, err = updateEntityByID(ctx, entity.ID, entityUpdate, p.entityCollection)
+	result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$set": entityUpdate}, p.entityCollection)
 	if err != nil {
 		return result, err
 	}
@@ -432,7 +435,6 @@ func (p *noEventsProcessor) newAlarm(
 			LongOutputHistory:           []string{params.LongOutput},
 			LastUpdateDate:              params.Timestamp,
 			LastStateOrStatusUpdateDate: params.Timestamp,
-			LastEventDate:               timestamp,
 			Parents:                     []string{},
 			Children:                    []string{},
 			UnlinkedParents:             []string{},
@@ -539,14 +541,14 @@ func (p *noEventsProcessor) postProcess(
 
 	switch result.AlarmChange.Type {
 	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
-		err = sendEventsForNotUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+		err = sendDownstreamEventsOnKO(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
 		if err != nil {
 			p.logger.Err(err).Msg("cannot send downstream events")
 		}
 	case types.AlarmChangeTypeStateIncrease:
 		alarmStatus := result.Alarm.Value.Status.Value
 		if result.AlarmChange.PreviousStatus != alarmStatus && result.AlarmChange.PreviousStatus == types.AlarmStatusOff {
-			err = sendEventsForNotUnknownDownstreams(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
+			err = sendDownstreamEventsOnKO(ctx, entity, p.entityCollection, p.eventGenerator, p.encoder, p.amqpPublisher)
 			if err != nil {
 				p.logger.Err(err).Msg("cannot send downstream events")
 			}

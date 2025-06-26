@@ -580,7 +580,11 @@ func (a *Alarm) GetTimeField(f string) (time.Time, bool) {
 	case "v.creation_date":
 		return a.Value.CreationDate.Time, true
 	case "v.last_event_date":
-		return a.Value.LastEventDate.Time, true
+		if a.Value.LastEventDate != nil {
+			return a.Value.LastEventDate.Time, true
+		}
+
+		return time.Time{}, true
 	case "v.last_update_date":
 		return a.Value.LastUpdateDate.Time, true
 	case "v.ack.t":

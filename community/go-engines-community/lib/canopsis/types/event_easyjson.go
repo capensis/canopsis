@@ -3167,8 +3167,16 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.AddError((out.LastUpdateDate).UnmarshalJSON(data))
 			}
 		case "last_event_date":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.LastEventDate).UnmarshalJSON(data))
+			if in.IsNull() {
+				in.Skip()
+				out.LastEventDate = nil
+			} else {
+				if out.LastEventDate == nil {
+					out.LastEventDate = new(datetime.CpsTime)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.LastEventDate).UnmarshalJSON(data))
+				}
 			}
 		case "last_st_upd_dt":
 			if data := in.Raw(); in.Ok() {
@@ -3358,6 +3366,10 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		case "initial_state":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.InitialState).UnmarshalJSON(data))
+			}
+		case "initial_status":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.InitialStatus).UnmarshalJSON(data))
 			}
 		default:
 			in.SkipRecursive()
@@ -3589,10 +3601,10 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix)
 		out.Raw((in.LastUpdateDate).MarshalJSON())
 	}
-	{
+	if in.LastEventDate != nil {
 		const prefix string = ",\"last_event_date\":"
 		out.RawString(prefix)
-		out.Raw((in.LastEventDate).MarshalJSON())
+		out.Raw((*in.LastEventDate).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"last_st_upd_dt\":"
@@ -3793,6 +3805,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"initial_state\":"
 		out.RawString(prefix)
 		out.Raw((in.InitialState).MarshalJSON())
+	}
+	if in.InitialStatus != 0 {
+		const prefix string = ",\"initial_status\":"
+		out.RawString(prefix)
+		out.Raw((in.InitialStatus).MarshalJSON())
 	}
 	out.RawByte('}')
 }
