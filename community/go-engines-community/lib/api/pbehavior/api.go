@@ -577,28 +577,42 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
-	bulk.Handler(c, func(request BulkConnectorCreateRequestItem) (string, error) {
-		pbh, err := a.store.ConnectorCreate(c, request)
-		if err != nil || pbh == nil {
-			return "", err
-		}
+	bulk.HandlerWithGrouping(c,
+		func(prev, cur BulkConnectorCreateRequestItem) bool {
+			return cur.Origin == prev.Origin &&
+				cur.Comment == prev.Comment &&
+				cur.Start.Unix() == prev.Start.Unix() &&
+				cur.Stop.Unix() == prev.Stop.Unix()
+		},
+		func(merged, cur BulkConnectorCreateRequestItem) BulkConnectorCreateRequestItem {
+			merged.Entities = append(merged.Entities, cur.Entities...)
 
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionCreate,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   pbh.ID,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
+			return merged
+		},
+		func(request BulkConnectorCreateRequestItem) (string, error) {
+			pbh, err := a.store.ConnectorCreate(c, request)
+			if err != nil || pbh == nil {
+				return "", err
+			}
 
-		if _, ok := exists[pbh.ID]; !ok {
-			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
-			exists[pbh.ID] = struct{}{}
-		}
+			err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+				Action:    logger.ActionCreate,
+				ValueType: logger.ValueTypePbehavior,
+				ValueID:   pbh.ID,
+			})
+			if err != nil {
+				a.actionLogger.Err(err, "failed to log action")
+			}
 
-		return pbh.ID, nil
-	}, a.logger)
+			if _, ok := exists[pbh.ID]; !ok {
+				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
+				exists[pbh.ID] = struct{}{}
+			}
+
+			return pbh.ID, nil
+		},
+		a.logger,
+	)
 
 	for origin, ids := range idsByOrigin {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -615,28 +629,42 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
-	bulk.Handler(c, func(request BulkConnectorDeleteRequestItem) (string, error) {
-		id, err := a.store.ConnectorDelete(c, request)
-		if err != nil || id == "" {
-			return "", err
-		}
+	bulk.HandlerWithGrouping(c,
+		func(prev, cur BulkConnectorDeleteRequestItem) bool {
+			return cur.Origin == prev.Origin &&
+				cur.Comment == prev.Comment &&
+				cur.Start.Unix() == prev.Start.Unix() &&
+				cur.Stop.Unix() == prev.Stop.Unix()
+		},
+		func(merged, cur BulkConnectorDeleteRequestItem) BulkConnectorDeleteRequestItem {
+			merged.Entities = append(merged.Entities, cur.Entities...)
 
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   id,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
+			return merged
+		},
+		func(request BulkConnectorDeleteRequestItem) (string, error) {
+			id, err := a.store.ConnectorDelete(c, request)
+			if err != nil || id == "" {
+				return "", err
+			}
 
-		if _, ok := exists[id]; !ok {
-			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
-			exists[id] = struct{}{}
-		}
+			err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+				Action:    logger.ActionDelete,
+				ValueType: logger.ValueTypePbehavior,
+				ValueID:   id,
+			})
+			if err != nil {
+				a.actionLogger.Err(err, "failed to log action")
+			}
 
-		return id, nil
-	}, a.logger)
+			if _, ok := exists[id]; !ok {
+				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
+				exists[id] = struct{}{}
+			}
+
+			return id, nil
+		},
+		a.logger,
+	)
 
 	for origin, ids := range idsByOrigin {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -653,60 +681,75 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 	userId := c.MustGet(auth.UserKey).(string)
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
-	bulk.Handler(c, func(request BulkConnectorEditRequestItem) (string, error) {
-		var id string
-		var err error
-		switch request.Action {
-		case BulkConnectorActionCreate:
-			var pbh *Response
-			pbh, err = a.store.ConnectorCreate(c, BulkConnectorCreateRequestItem{
-				Author:   request.Author,
-				Entities: request.Entities,
-				Origin:   request.Origin,
-				Start:    request.Start,
-				Stop:     request.Stop,
-				Comment:  request.Comment,
-				Name:     request.Name,
-				Reason:   request.Reason,
-				Type:     request.Type,
-				Color:    request.Color,
-			})
-			if pbh != nil {
-				id = pbh.ID
+	bulk.HandlerWithGrouping(c,
+		func(prev, cur BulkConnectorEditRequestItem) bool {
+			return cur.Action == prev.Action &&
+				cur.Origin == prev.Origin &&
+				cur.Comment == prev.Comment &&
+				cur.Start.Unix() == prev.Start.Unix() &&
+				cur.Stop.Unix() == prev.Stop.Unix()
+		},
+		func(merged, cur BulkConnectorEditRequestItem) BulkConnectorEditRequestItem {
+			merged.Entities = append(merged.Entities, cur.Entities...)
+
+			return merged
+		},
+		func(request BulkConnectorEditRequestItem) (string, error) {
+			var id string
+			var err error
+			switch request.Action {
+			case BulkConnectorActionCreate:
+				var pbh *Response
+				pbh, err = a.store.ConnectorCreate(c, BulkConnectorCreateRequestItem{
+					Author:   request.Author,
+					Entities: request.Entities,
+					Origin:   request.Origin,
+					Start:    request.Start,
+					Stop:     request.Stop,
+					Comment:  request.Comment,
+					Name:     request.Name,
+					Reason:   request.Reason,
+					Type:     request.Type,
+					Color:    request.Color,
+				})
+				if pbh != nil {
+					id = pbh.ID
+				}
+			case BulkConnectorActionDelete:
+				id, err = a.store.ConnectorDelete(c, BulkConnectorDeleteRequestItem{
+					Author:   request.Author,
+					Entities: request.Entities,
+					Origin:   request.Origin,
+					Start:    request.Start,
+					Stop:     request.Stop,
+					Comment:  request.Comment,
+				})
+			default:
+				return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
 			}
-		case BulkConnectorActionDelete:
-			id, err = a.store.ConnectorDelete(c, BulkConnectorDeleteRequestItem{
-				Author:   request.Author,
-				Entities: request.Entities,
-				Origin:   request.Origin,
-				Start:    request.Start,
-				Stop:     request.Stop,
-				Comment:  request.Comment,
+
+			if err != nil || id == "" {
+				return "", err
+			}
+
+			err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
+				Action:    logger.ActionDelete,
+				ValueType: logger.ValueTypePbehavior,
+				ValueID:   id,
 			})
-		default:
-			return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
-		}
+			if err != nil {
+				a.actionLogger.Err(err, "failed to log action")
+			}
 
-		if err != nil || id == "" {
-			return "", err
-		}
+			if _, ok := exists[id]; !ok {
+				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
+				exists[id] = struct{}{}
+			}
 
-		err = a.actionLogger.Action(context.Background(), userId, logger.LogEntry{
-			Action:    logger.ActionDelete,
-			ValueType: logger.ValueTypePbehavior,
-			ValueID:   id,
-		})
-		if err != nil {
-			a.actionLogger.Err(err, "failed to log action")
-		}
-
-		if _, ok := exists[id]; !ok {
-			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
-			exists[id] = struct{}{}
-		}
-
-		return id, nil
-	}, a.logger)
+			return id, nil
+		},
+		a.logger,
+	)
 
 	for origin, ids := range idsByOrigin {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
