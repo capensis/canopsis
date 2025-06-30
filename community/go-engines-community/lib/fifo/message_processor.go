@@ -15,13 +15,20 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
+	"github.com/bsm/redislock"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 )
 
-type messageProcessor struct {
-	FeaturePrintEventOnError bool
+const (
+	lockBackoff = time.Second
+	// lockRetries is the number of retries to obtain or refresh the redis lock.
+	lockRetries     = 15
+	lockMinDuration = 2 * time.Minute
+)
 
+type messageProcessor struct {
 	EventFilterService eventfilter.Service
 	Scheduler          scheduler.Scheduler
 	MetricsSender      metrics.Sender
@@ -29,9 +36,37 @@ type messageProcessor struct {
 	Logger             zerolog.Logger
 
 	TechMetricsSender techmetrics.Sender
+
+	FeaturePrintEventOnError bool
+	exclusiveProcessor       bool
+}
+
+func NewMessageProcessor(
+	eventFilterService eventfilter.Service,
+	scheduler scheduler.Scheduler,
+	metricsSender metrics.Sender,
+	decoder encoding.Decoder,
+	logger zerolog.Logger,
+	techMetricsSender techmetrics.Sender,
+	featurePrintEvenotOnError bool,
+) *messageProcessor {
+	return &messageProcessor{
+		EventFilterService:       eventFilterService,
+		Scheduler:                scheduler,
+		MetricsSender:            metricsSender,
+		Decoder:                  decoder,
+		Logger:                   logger,
+		TechMetricsSender:        techMetricsSender,
+		FeaturePrintEventOnError: featurePrintEvenotOnError,
+		exclusiveProcessor:       false,
+	}
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
+	if !p.exclusiveProcessor {
+		return nil, errors.New("exclusive processor is not active, cannot process message")
+	}
+
 	eventMetric := techmetrics.FifoEventMetric{}
 	eventMetric.Timestamp = time.Now()
 
@@ -111,4 +146,61 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 	} else {
 		p.Logger.Err(err).Msg(errMsg)
 	}
+}
+
+func (p *messageProcessor) RefreshExclusiveProcessor(ctx context.Context, refreshInterval, lockDuration time.Duration, l redis.Lock) {
+	if l == nil {
+		p.Logger.Warn().Msg("exclusive processor lock is nil, cannot refresh exclusive processor")
+		return
+	}
+	p.exclusiveProcessor = true
+	go func(ctx context.Context, l redis.Lock) {
+		var err error
+		defer func() {
+			p.Logger.Err(err).Msg("failed to refresh redis lock")
+			p.exclusiveProcessor = false
+		}()
+		ticker := time.NewTicker(refreshInterval)
+		defer ticker.Stop()
+		var retryTicker *time.Ticker
+
+		retry := newRetryStrategy()
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ticker.C:
+				// Refresh doesn't handle retry strategy in v0.9.4, so we need to handle it manually.
+				for {
+					err = l.Refresh(ctx, lockDuration, nil)
+					if err != nil {
+						backoff := retry.NextBackoff()
+						if backoff < 1 {
+							return
+						}
+						if retryTicker == nil {
+							retryTicker = time.NewTicker(backoff)
+							defer retryTicker.Stop()
+						} else {
+							retryTicker.Reset(backoff)
+						}
+						select {
+						case <-ctx.Done():
+							return
+						case <-retryTicker.C:
+						}
+						continue
+					}
+					break
+				}
+				// on success re-define retry for the next Refresh call
+				retry = newRetryStrategy()
+			}
+		}
+	}(ctx, l)
+}
+
+// newRetryStrategy is used to create a new retry strategy with reset inner counters.
+func newRetryStrategy() redislock.RetryStrategy {
+	return redislock.LimitRetry(redislock.LinearBackoff(lockBackoff), lockRetries)
 }
