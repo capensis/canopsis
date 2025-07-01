@@ -88,6 +88,7 @@ import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 - Use **standard Composition API** (`setup()` function), **not** `<script setup>` syntax
 - Keep reactive logic (refs, computed, watchers) clearly organized at the top of `setup`
 - Don't use `defineComponent` function
+- Don't use `value` key for reactive properties in the template (example: `someReactiveProperty` instead of `someReactiveProperty.value`)
 
 ### Component Structure
 ```js

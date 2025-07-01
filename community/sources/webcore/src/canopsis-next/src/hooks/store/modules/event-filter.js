@@ -17,7 +17,7 @@ export const useEventFilterStore = () => {
   const { useActions } = useEventFilterStoreModule();
 
   const actions = useActions({
-    fetchEventFilterRulesListWithoutStore: 'fetchRulesListWithoutStore',
+    fetchEventFilterRulesListWithoutStore: 'fetchListWithoutStore',
   });
 
   return {

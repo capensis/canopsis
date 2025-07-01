@@ -4,39 +4,33 @@
       <h3 class="mb-4">
         {{ $t('notifications.tabs.instructionsToRate') }}
       </h3>
-      <c-advanced-data-table
-        :headers="headers"
-        :items="items"
-        :loading="pending"
-        :total-items="meta.total_count"
+      <remediation-instruction-stats-list
+        :remediation-instruction-stats="items"
+        :pending="pending"
         :options="options"
-        advanced-pagination
+        :total-items="meta.total_count"
+        :accumulated-before="meta.accumulated_before"
+        :interval="interval"
+        @rate="showRateInstructionModal"
         @update:options="$emit('update:options', $event)"
-      >
-        <template #actions="{ item }">
-          <v-btn
-            color="primary"
-            small
-            @click="showRateModal(item)"
-          >
-            {{ $t('common.rate') }}
-          </v-btn>
-        </template>
-      </c-advanced-data-table>
+      />
     </div>
   </v-card-text>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { MODALS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
 
+import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
+
 export default {
+  components: {
+    RemediationInstructionStatsList,
+  },
   props: {
     items: {
       type: Array,
@@ -54,36 +48,36 @@ export default {
       type: Object,
       default: () => {},
     },
+    interval: {
+      type: Object,
+      default: () => {},
+    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
     const modals = useModals();
-    const { rateInstruction } = useRemdeitionInstruction();
+    const { rateRemediationInstruction } = useRemdeitionInstruction();
 
-    // Computed
-    const headers = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      { text: t('remediation.instructionStat.lastExecutedOn'), value: 'last_executed_on' },
-      { text: t('common.actions'), value: 'actions', sortable: false },
-    ]);
+    const refresh = () => emit('refresh');
 
-    const showRateModal = (instruction) => {
-      modals.show({
-        name: MODALS.rate,
-        config: {
-          title: t('modals.rateInstruction.title', { name: instruction.name }),
-          text: t('modals.rateInstruction.text'),
-          action: async (data) => {
-            await rateInstruction({ id: instruction._id, data });
-            emit('refresh');
-          },
+    /**
+     * @todo: MAY BE REFACTORED TO USE A HOOK BECAUSE WE HAVE A DOUBLICATED MODAL
+     */
+    const showRateInstructionModal = (instruction = {}) => modals.show({
+      name: MODALS.rate,
+      config: {
+        title: t('modals.rateInstruction.title', { name: instruction.name }),
+        text: t('modals.rateInstruction.text'),
+        action: async (data) => {
+          await rateRemediationInstruction({ id: instruction._id, data });
+
+          return refresh();
         },
-      });
-    };
+      },
+    });
 
     return {
-      headers,
-      showRateModal,
+      showRateInstructionModal,
     };
   },
 };

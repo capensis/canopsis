@@ -7,7 +7,13 @@
         slider-color="primary"
         centered
       >
-        <v-tab v-for="tab in tabs" :key="tab.key" :to="tab.to">
+        <v-tab
+          v-for="tab in tabs"
+          :key="tab.key"
+          :to="tab.to"
+          exact
+          ripple
+        >
           {{ tab.label }}
           <c-circle-badge
             :outlined="!tab.active"
@@ -19,34 +25,12 @@
           </c-circle-badge>
         </v-tab>
       </v-tabs>
-      <v-tabs-items :value="$route.fullPath">
-        <v-tab-item v-for="tab in tabs" :key="tab.key">
-          <instructions-to-approve-tab
-            :items="instructionsToApprove"
-            :pending="instructionsToApprovePending"
-            :meta="instructionsToApproveMeta"
-            :options="instructionsToApproveOptions"
-            @update:options="instructionsToApproveUpdateOptions"
-            @refresh="fetchInstructionsToApproveList"
-          />
-        </v-tab-item>
-        <v-tab-item>
-          <instructions-to-rate-tab
-            :items="instructionsToRate"
-            :pending="instructionsToRatePending"
-            :meta="instructionsToRateMeta"
-            :options="instructionsToRateOptions"
-            @update:options="instructionsToRateUpdateOptions"
-            @refresh="fetchInstructionsToRateList"
-          />
-        </v-tab-item>
-        <v-tab-item>
-          <event-filter-failures-tab
-            :items="eventFilterFailures"
-            :pending="eventFilterFailuresPending"
-            :meta="eventFilterFailuresMeta"
-            :options="eventFilterFailuresOptions"
-            @update:options="eventFilterFailuresUpdateOptions"
+      <v-tabs-items :value="$route.fullPath" touchless>
+        <v-tab-item v-for="tab in tabs" :key="tab.key" :value="tab.to">
+          <component
+            :is="tab.component"
+            v-bind="tab.componentProps"
+            v-on="tab.componentOn"
           />
         </v-tab-item>
       </v-tabs-items>
@@ -56,10 +40,13 @@
 </template>
 
 <script>
-import { onMounted, onBeforeUnmount, computed } from 'vue';
+import { onBeforeMount, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router/composables';
 
 import { SOCKET_ROOMS } from '@/config';
+import { QUICK_RANGES } from '@/constants';
+
+import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { useI18n } from '@/hooks/i18n';
 import { useComponentInstance } from '@/hooks/vue';
@@ -68,15 +55,21 @@ import { useEventFilterStore } from '@/hooks/store/modules/event-filter';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useRemdeitionInstructionStatsStore } from '@/hooks/store/modules/remediation-instruction-stats';
 
-import EventFilterFailuresTab from '@/components/other/notification/event-filter-failures-tab.vue';
-import InstructionsToRateTab from '@/components/other/notification/instructions-to-rate-tab.vue';
 import InstructionsToApproveTab from '@/components/other/notification/instructions-to-approve-tab.vue';
+import InstructionsToRateTab from '@/components/other/notification/instructions-to-rate-tab.vue';
+import EventFilterFailuresTab from '@/components/other/notification/event-filter-failures-tab.vue';
 
 export default {
   components: {
-    EventFilterFailuresTab,
-    InstructionsToRateTab,
     InstructionsToApproveTab,
+    InstructionsToRateTab,
+    EventFilterFailuresTab,
+  },
+  props: {
+    tabId: {
+      type: String,
+      default: '',
+    },
   },
   setup() {
     const router = useRouter();
@@ -108,6 +101,35 @@ export default {
       }),
     });
 
+    const { fetchRemediationInstructionStatsListWithoutStore } = useRemdeitionInstructionStatsStore();
+    const {
+      data: instructionsToRate,
+      meta: instructionsToRateMeta,
+      pending: instructionsToRatePending,
+      options: instructionsToRateOptions,
+      updateOptions: instructionsToRateUpdateOptions,
+      fetchList: fetchInstructionsToRateList,
+    } = useFetchListWithoutStoreWithOptions({
+      initialQuery: {
+        page: 1,
+        itemsPerPage: 10,
+        interval: {
+          from: QUICK_RANGES.last7Days.start,
+          to: QUICK_RANGES.last7Days.stop,
+        },
+      },
+      fetchListHandler: ({ params }) => fetchRemediationInstructionStatsListWithoutStore({
+        params: {
+          ...params,
+          only_to_rate: true,
+        },
+      }),
+    });
+
+    const instructionsRateQueryInterval = computed(() => (
+      convertMetricIntervalToTimestamp({ interval: instructionsToRateOptions.value.interval })
+    ));
+
     const { fetchEventFilterRulesListWithoutStore } = useEventFilterStore();
     const {
       data: eventFilterFailures,
@@ -126,28 +148,10 @@ export default {
       }),
     });
 
-    const { fetchRemediationInstructionStatsListWithoutStore } = useRemdeitionInstructionStatsStore();
-    const {
-      data: instructionsToRate,
-      meta: instructionsToRateMeta,
-      pending: instructionsToRatePending,
-      options: instructionsToRateOptions,
-      updateOptions: instructionsToRateUpdateOptions,
-      fetchList: fetchInstructionsToRateList,
-    } = useFetchListWithoutStoreWithOptions({
-      initialQuery: { page: 1, itemsPerPage: 10 },
-      fetchListHandler: ({ params }) => fetchRemediationInstructionStatsListWithoutStore({
-        params: {
-          ...params,
-          only_to_rate: true,
-        },
-      }),
-    });
-
     const TABS_KEYS = {
-      instructionsToApprove: 'instructionsToApprove',
-      instructionsToRate: 'instructionsToRate',
-      eventFilterFailures: 'eventFilterFailures',
+      instructionsToApprove: 'instructions-to-approve',
+      instructionsToRate: 'instructions-to-rate',
+      eventFilterFailures: 'event-filter-failures',
     };
 
     const tabs = computed(() => [
@@ -157,6 +161,17 @@ export default {
         to: getTabHrefByKeyValue('tabId', TABS_KEYS.instructionsToApprove),
         pending: instructionsToApprovePending.value,
         count: instructionsToApproveMeta.value.total_count,
+        component: InstructionsToApproveTab,
+        componentProps: {
+          items: instructionsToApprove.value,
+          pending: instructionsToApprovePending.value,
+          meta: instructionsToApproveMeta.value,
+          options: instructionsToApproveOptions.value,
+        },
+        componentOn: {
+          refresh: fetchInstructionsToApproveList,
+          'update:options': instructionsToApproveUpdateOptions,
+        },
       },
       {
         key: TABS_KEYS.instructionsToRate,
@@ -164,6 +179,19 @@ export default {
         to: getTabHrefByKeyValue('tabId', TABS_KEYS.instructionsToRate),
         pending: instructionsToRatePending.value,
         count: instructionsToRateMeta.value.total_count,
+        component: InstructionsToRateTab,
+        componentProps: {
+          items: instructionsToRate.value,
+          pending: instructionsToRatePending.value,
+          meta: instructionsToRateMeta.value,
+          options: instructionsToRateOptions.value,
+          interval: instructionsRateQueryInterval.value,
+          accumulatedBefore: instructionsToRateMeta.value.accumulated_before,
+        },
+        componentOn: {
+          refresh: fetchInstructionsToRateList,
+          'update:options': instructionsToRateUpdateOptions,
+        },
       },
       {
         key: TABS_KEYS.eventFilterFailures,
@@ -171,6 +199,17 @@ export default {
         to: getTabHrefByKeyValue('tabId', TABS_KEYS.eventFilterFailures),
         pending: eventFilterFailuresPending.value,
         count: eventFilterFailuresMeta.value.total_count,
+        component: EventFilterFailuresTab,
+        componentProps: {
+          items: eventFilterFailures.value,
+          pending: eventFilterFailuresPending.value,
+          meta: eventFilterFailuresMeta.value,
+          options: eventFilterFailuresOptions.value,
+        },
+        componentOn: {
+          refresh: fetchEventFilterFailuresList,
+          'update:options': eventFilterFailuresUpdateOptions,
+        },
       },
     ].map(tab => ({ ...tab, active: tab.key === route.query.tabId })));
 
@@ -181,6 +220,12 @@ export default {
     };
 
     const handleNotificationUpdate = () => {};
+
+    onBeforeMount(() => {
+      if (!route.query.tabId) {
+        router.replace({ query: { tabId: TABS_KEYS.instructionsToApprove } });
+      }
+    });
 
     // Lifecycle
     onMounted(() => {
@@ -203,13 +248,6 @@ export default {
     return {
       tabs,
 
-      eventFilterFailures,
-      eventFilterFailuresMeta,
-      eventFilterFailuresPending,
-      eventFilterFailuresOptions,
-      eventFilterFailuresUpdateOptions,
-      fetchEventFilterFailuresList,
-
       instructionsToApprove,
       instructionsToApproveMeta,
       instructionsToApprovePending,
@@ -223,6 +261,13 @@ export default {
       instructionsToRateOptions,
       instructionsToRateUpdateOptions,
       fetchInstructionsToRateList,
+
+      eventFilterFailures,
+      eventFilterFailuresMeta,
+      eventFilterFailuresPending,
+      eventFilterFailuresOptions,
+      eventFilterFailuresUpdateOptions,
+      fetchEventFilterFailuresList,
 
       fetchAllLists,
     };

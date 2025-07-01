@@ -26,7 +26,13 @@ import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
-import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
+import {
+  EXCLUDED_SERVER_ERROR_STATUSES,
+  MAX_LIMIT,
+  RESPONSE_STATUSES,
+  ROUTES_NAMES,
+  ROUTES_NAMES_WITH_PARAMS,
+} from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
@@ -80,7 +86,7 @@ export default {
     },
 
     routeViewKey() {
-      if (this.$route.name === ROUTES_NAMES.view) {
+      if (ROUTES_NAMES_WITH_PARAMS.includes(this.$route.name)) {
         return this.$route.path;
       }
 
