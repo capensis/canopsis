@@ -10,10 +10,10 @@ import { getMapEntityText } from '@/helpers/entities/map/list';
  * Create vuetify icon element
  *
  * @param {string} name
- * @param {string} [color = 'white']
+ * @param {string} [color]
  * @return {HTMLElement}
  */
-export const getIconElement = (name, color = 'white') => {
+export const getIconElement = (name, color) => {
   const badgeIconEl = document.createElement('i');
   badgeIconEl.classList.add(
     'v-icon',
@@ -70,7 +70,7 @@ export const getStateSettingsNodeIconElement = (node) => {
     ? 'textsms'
     : (ENTITY_TYPES_ICONS_FOR_CYTOSCAPE[entity.type] ?? 'perm_identity');
 
-  const element = getIconElement(icon, null);
+  const element = getIconElement(icon);
 
   element.style.fontSize = size;
 
