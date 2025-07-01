@@ -1,6 +1,6 @@
 <template>
   <span
-    :style="style"
+    :class="chipClass"
     class="c-state-count-changes-chip"
   >
     <slot />
@@ -8,19 +8,23 @@
 </template>
 
 <script>
-import { CSS_COLORS_VARS } from '@/config';
+import { computed } from 'vue';
+
+import { ALARM_STATES, ALARM_STATES_CLASSES } from '@/constants';
 
 export default {
   props: {
-    color: {
-      type: String,
-      default: CSS_COLORS_VARS.state.ok,
+    state: {
+      type: Number,
+      default: ALARM_STATES.ok,
     },
   },
-  computed: {
-    style() {
-      return { backgroundColor: this.color };
-    },
+  setup(props) {
+    const chipClass = computed(() => ALARM_STATES_CLASSES[props.state]);
+
+    return {
+      chipClass,
+    };
   },
 };
 </script>

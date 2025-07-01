@@ -61,17 +61,9 @@ export default {
       'c-alarm-state-chip--small': props.small,
     }));
 
-    const chipClasses = computed(() => ({
-      'state-ok': props.value === ALARM_STATES.ok,
-      'state-minor': props.value === ALARM_STATES.minor,
-      'state-major': props.value === ALARM_STATES.major,
-      'state-critical': props.value === ALARM_STATES.critical,
-    }));
-
     return {
       showIcon,
       classes,
-      chipClasses,
     };
   },
 };
