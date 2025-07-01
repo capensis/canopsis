@@ -310,7 +310,7 @@ export default {
         badge.dataset.id = entity._id;
 
         badge.appendChild(
-          pending ? getProgressElement() : getIconElement(opened ? 'remove' : 'add'),
+          pending ? getProgressElement() : getIconElement(opened ? 'remove' : 'add', 'white'),
         );
 
         element.appendChild(badge);

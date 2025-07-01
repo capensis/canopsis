@@ -46,7 +46,7 @@ export const getEntityColorClass = (
   }
 
   if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
-    return ALARM_STATES_CLASSES[state?.val];
+    return ALARM_STATES_CLASSES[state?.val] ?? ALARM_STATES_CLASSES[state];
   }
 
   return `impact-state-${getAlarmImpactStateGroupedColorIndex(impactState)}`;
