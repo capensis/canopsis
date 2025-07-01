@@ -14,7 +14,7 @@
     <template #activator="{ on }">
       <v-icon
         :size="iconSize"
-        :style="{ color: statusColor, caretColor: statusColor }"
+        :style="iconStyle"
         v-on="on"
       >
         {{ status.icon }}
@@ -24,6 +24,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { ALARM_STATUSES } from '@/constants';
 
 import { formatAlarmState, formatAlarmStatus } from '@/helpers/entities/alarm/formatting';
@@ -39,38 +41,27 @@ export default {
       default: false,
     },
   },
-  computed: {
-    iconSize() {
-      return this.small ? 24 : undefined;
-    },
+  setup(props) {
+    const statusValue = computed(() => props.alarm.v.status.val);
+    const isNoEventsStatus = computed(() => statusValue.value === ALARM_STATUSES.noEvents);
+    const isOngoingStatus = computed(() => statusValue.value === ALARM_STATUSES.ongoing);
+    const idleSince = computed(() => props.alarm.entity.idle_since);
+    const status = computed(() => formatAlarmStatus(statusValue.value));
+    const state = computed(() => formatAlarmState(props.alarm.v.state.val));
+    const statusColor = computed(() => (isOngoingStatus.value ? state.value.color : status.value.color));
+    const iconSize = computed(() => (props.small ? 24 : undefined));
+    const iconStyle = computed(() => ({ color: statusColor.value, caretColor: statusColor.value }));
 
-    statusValue() {
-      return this.alarm.v.status.val;
-    },
-
-    isNoEventsStatus() {
-      return this.statusValue === ALARM_STATUSES.noEvents;
-    },
-
-    isOngoingStatus() {
-      return this.statusValue === ALARM_STATUSES.ongoing;
-    },
-
-    idleSince() {
-      return this.alarm.entity.idle_since;
-    },
-
-    status() {
-      return formatAlarmStatus(this.statusValue);
-    },
-
-    state() {
-      return formatAlarmState(this.alarm.v.state.val);
-    },
-
-    statusColor() {
-      return this.isOngoingStatus ? this.state.color : this.status.color;
-    },
+    return {
+      statusValue,
+      isNoEventsStatus,
+      isOngoingStatus,
+      idleSince,
+      status,
+      state,
+      iconSize,
+      iconStyle,
+    };
   },
 };
 </script>

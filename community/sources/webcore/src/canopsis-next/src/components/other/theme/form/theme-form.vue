@@ -133,6 +133,8 @@ import { computed } from 'vue';
 
 import { THEME_FONT_PIXEL_SIZES } from '@/constants';
 
+import { getMostReadableTextColor } from '@/helpers/color';
+
 import { useI18n } from '@/hooks/i18n';
 
 import ThemeEnabledColorPickerField from '@/components/other/theme/form/fields/theme-enabled-color-picker-field.vue';
@@ -202,22 +204,22 @@ export default {
       {
         backgroundColor: props.form.colors.state.ok,
         text: t('theme.state.ok'),
-        color: '#fff',
+        color: getMostReadableTextColor(props.form.colors.state.ok),
       },
       {
         backgroundColor: props.form.colors.state.minor,
         text: t('theme.state.minor'),
-        color: '#000',
+        color: getMostReadableTextColor(props.form.colors.state.minor),
       },
       {
         backgroundColor: props.form.colors.state.major,
         text: t('theme.state.major'),
-        color: '#000',
+        color: getMostReadableTextColor(props.form.colors.state.major),
       },
       {
         backgroundColor: props.form.colors.state.critical,
         text: t('theme.state.critical'),
-        color: '#fff',
+        color: getMostReadableTextColor(props.form.colors.state.critical),
       },
     ]));
 
