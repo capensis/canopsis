@@ -15,15 +15,27 @@ const useRemdeitionInstructionStore = () => useStoreModuleHooks('remediationInst
  * - Actions to fetch lists and summaries without using the store.
  */
 export const useRemdeitionInstruction = () => {
-  const { useActions } = useRemdeitionInstructionStore();
+  const { useGetters, useActions } = useRemdeitionInstructionStore();
+
+  const getters = useGetters({
+    remediationInstructions: 'items',
+    remediationInstructionsMeta: 'meta',
+    remediationInstructionsPending: 'pending',
+  });
 
   const actions = useActions({
+    fetchRemediationInstructionsList: 'fetchList',
+    fetchRemediationInstructionsListWithPreviousParams: 'fetchListWithPreviousParams',
     fetchRemediationInstructionsListWithoutStore: 'fetchListWithoutStore',
-    rateInstruction: 'rateInstruction',
-    updateInstructionApproval: 'updateApproval',
+    createRemediationInstruction: 'create',
+    updateRemediationInstruction: 'update',
+    removeRemediationInstruction: 'remove',
+    rateRemediationInstruction: 'rateInstruction',
+    updateRemediationInstructionApproval: 'updateApproval',
   });
 
   return {
+    ...getters,
     ...actions,
   };
 };
