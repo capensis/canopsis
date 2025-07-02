@@ -1,5 +1,7 @@
 import { ref } from 'vue';
 
+import { SOCKET_ROOMS } from '@/config';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 import { useSocket } from '@/hooks/socket';
@@ -46,18 +48,18 @@ export const useAlarmFiltering = (refreshHandler = () => {}) => {
       if (ok) {
         pending.value = false;
 
-        socket.leave('pbehavior-patterns').removeListener(completionListener);
+        socket.leave(SOCKET_ROOMS.pbehaviorPatterns).removeListener(completionListener);
         refreshHandler?.();
       }
     };
 
     try {
-      socket.join('pbehavior-patterns').addListener(completionListener);
+      socket.join(SOCKET_ROOMS.pbehaviorPatterns).addListener(completionListener);
       await runAlarmFilteringAction();
     } catch (err) {
       pending.value = false;
 
-      socket.leave('pbehavior-patterns').removeListener(completionListener);
+      socket.leave(SOCKET_ROOMS.pbehaviorPatterns).removeListener(completionListener);
       console.error('Error running alarm filtering:', err);
       popups.error({ text: t('pbehavior.alarmFilteringError') });
     }

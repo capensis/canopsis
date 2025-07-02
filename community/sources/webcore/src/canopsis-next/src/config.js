@@ -150,6 +150,7 @@ export const SOCKET_ROOMS = {
   alarmDetails: 'alarm-details',
   icons: 'icons',
   testscenario: 'testscenario',
+  pbehaviorPatterns: 'pbehavior-patterns',
 };
 
 export const API_ROUTES = {
