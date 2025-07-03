@@ -15,6 +15,7 @@
       <v-list-item-subtitle v-if="notification.message">
         <p>{{ notification.message }}</p>
       </v-list-item-subtitle>
+      <v-divider />
     </v-list-item-content>
   </v-list-item>
 </template>
@@ -22,7 +23,7 @@
 <script>
 import { computed } from 'vue';
 
-import { ROUTES_NAMES } from '@/constants';
+import { NOTIFICATIONS_PAGE_TABS_KEYS_BY_TYPE, ROUTES_NAMES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -38,6 +39,12 @@ export default {
 
     const link = computed(() => ({
       name: ROUTES_NAMES.notifications,
+      params: {
+        tabId: NOTIFICATIONS_PAGE_TABS_KEYS_BY_TYPE[props.notification.type],
+      },
+      query: {
+        id: props.notification?.rule?._id,
+      },
     }));
 
     const typeMessage = computed(() => t(`notifications.topBar.types.${props.notification.type}`));

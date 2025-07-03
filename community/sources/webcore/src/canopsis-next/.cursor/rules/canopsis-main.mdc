@@ -89,6 +89,7 @@ import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 - Keep reactive logic (refs, computed, watchers) clearly organized at the top of `setup`
 - Don't use `defineComponent` function
 - Don't use `value` key for reactive properties in the template (example: `someReactiveProperty` instead of `someReactiveProperty.value`)
+- Don't use `t` in templates. Use global defined `$t` instead. We don't need to return it from setup. We already have it globally. (example: `<span>$t('common.name')</span>` instead of `<span>t('common.name')</span>`)
 
 ### Component Structure
 ```js
