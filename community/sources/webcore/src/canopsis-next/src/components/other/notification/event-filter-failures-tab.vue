@@ -1,28 +1,38 @@
 <template>
-  <v-card-text>
-    <div class="text-center pa-4">
-      <h3 class="mb-4">
-        {{ $t('notifications.tabs.eventFilterFailures') }}
-      </h3>
-      <c-advanced-data-table
-        :headers="headers"
-        :items="items"
-        :loading="pending"
-        :total-items="meta.total_count"
-        :options="options"
-        advanced-pagination
-        @update:options="$emit('update:options', $event)"
-      />
-    </div>
-  </v-card-text>
+  <event-filters-list
+    ref="eventFiltersListEl"
+    :event-filters="items"
+    :pending="pending"
+    :total-items="meta.total_count"
+    :options="options"
+    :updatable="hasUpdateAnyEventFilterAccess"
+    :removable="hasDeleteAnyEventFilterAccess"
+    :duplicable="hasCreateAnyEventFilterAccess"
+    @update:options="$emit('update:options', $event)"
+    @remove-selected="showDeleteSelectedRulesModal"
+    @duplicate="showDuplicateRuleModal"
+    @remove="showDeleteRuleModal"
+    @edit="showEditRuleModal"
+  />
 </template>
 
 <script>
-import { computed } from 'vue';
+import { nextTick, ref, toRef } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
+import { USER_PERMISSIONS, EVENT_FILTER_EXPAND_PANEL_TABS } from '@/constants';
+
+import { useCRUDPermissions } from '@/hooks/auth';
+
+import { useEventFilterActions } from '@/components/other/event-filter/hooks/event-filters';
+
+import EventFiltersList from '@/components/other/event-filter/event-filters-list.vue';
+
+import { useNotificationActiveId } from './hooks/notifications';
 
 export default {
+  components: {
+    EventFiltersList,
+  },
   props: {
     items: {
       type: Array,
@@ -40,19 +50,62 @@ export default {
       type: Object,
       default: () => {},
     },
+    activeId: {
+      type: String,
+      required: false,
+    },
   },
-  setup() {
-    const { t } = useI18n();
+  setup(props, { emit }) {
+    const eventFiltersListEl = ref(null);
 
-    // Computed
-    const headers = computed(() => [
-      { text: t('common.name'), value: 'name' },
-      { text: t('common.description'), value: 'description' },
-      { text: t('common.created'), value: 'created' },
-    ]);
+    const {
+      hasCreateAccess: hasCreateAnyEventFilterAccess,
+      hasUpdateAccess: hasUpdateAnyEventFilterAccess,
+      hasDeleteAccess: hasDeleteAnyEventFilterAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.eventFilter);
+
+    const refresh = () => emit('refresh');
+
+    const {
+      showDuplicateRuleModal,
+      showEditRuleModal,
+      showDeleteRuleModal,
+      showDeleteSelectedRulesModal,
+    } = useEventFilterActions(refresh);
+
+    /**
+     * Expands the given rule in the event filters list and switches the expand panel to the errors tab.
+     *
+     * @param {Object} rule - The rule object to expand. Defaults to an empty object.
+     * @sideEffect Manipulates refs to expand the rule and set the active tab.
+     */
+    const showRuleExpandPanelErrorTab = (rule = {}) => {
+      eventFiltersListEl.value?.$refs?.advancedDataTable?.$refs?.dataTable?.expand?.(rule);
+
+      nextTick(() => {
+        if (eventFiltersListEl.value?.$refs?.expandPanel?.activeTab !== EVENT_FILTER_EXPAND_PANEL_TABS.errors) {
+          eventFiltersListEl.value.$refs.expandPanel.activeTab = EVENT_FILTER_EXPAND_PANEL_TABS.errors;
+        }
+      });
+    };
+
+    useNotificationActiveId({
+      activeId: toRef(props, 'activeId'),
+      items: toRef(props, 'items'),
+      action: showRuleExpandPanelErrorTab,
+    });
 
     return {
-      headers,
+      eventFiltersListEl,
+
+      hasCreateAnyEventFilterAccess,
+      hasUpdateAnyEventFilterAccess,
+      hasDeleteAnyEventFilterAccess,
+
+      showDuplicateRuleModal,
+      showEditRuleModal,
+      showDeleteRuleModal,
+      showDeleteSelectedRulesModal,
     };
   },
 };

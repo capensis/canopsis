@@ -1,24 +1,19 @@
 <template>
-  <v-card-text>
-    <div class="text-center pa-4">
-      <h3 class="mb-4">
-        {{ $t('notifications.tabs.instructionsToRate') }}
-      </h3>
-      <remediation-instruction-stats-list
-        :remediation-instruction-stats="items"
-        :pending="pending"
-        :options="options"
-        :total-items="meta.total_count"
-        :accumulated-before="meta.accumulated_before"
-        :interval="interval"
-        @rate="showRateInstructionModal"
-        @update:options="$emit('update:options', $event)"
-      />
-    </div>
-  </v-card-text>
+  <remediation-instruction-stats-list
+    :remediation-instruction-stats="items"
+    :pending="pending"
+    :options="options"
+    :total-items="meta.total_count"
+    :accumulated-before="meta.accumulated_before"
+    :interval="interval"
+    @rate="showRateInstructionModal"
+    @update:options="$emit('update:options', $event)"
+  />
 </template>
 
 <script>
+import { toRef } from 'vue';
+
 import { MODALS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
@@ -26,6 +21,8 @@ import { useModals } from '@/hooks/modals';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
 
 import RemediationInstructionStatsList from '@/components/other/remediation/instruction-stats/remediation-instruction-stats-list.vue';
+
+import { useNotificationActiveId } from './hooks/notifications';
 
 export default {
   components: {
@@ -52,6 +49,10 @@ export default {
       type: Object,
       default: () => {},
     },
+    activeId: {
+      type: String,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -74,6 +75,12 @@ export default {
           return refresh();
         },
       },
+    });
+
+    useNotificationActiveId({
+      activeId: toRef(props, 'activeId'),
+      items: toRef(props, 'items'),
+      action: showRateInstructionModal,
     });
 
     return {

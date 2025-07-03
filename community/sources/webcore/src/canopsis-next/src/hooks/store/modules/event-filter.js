@@ -14,13 +14,27 @@ const useEventFilterStoreModule = () => useStoreModuleHooks('eventFilter');
  * - Actions to fetch event filter rules and manage them.
  */
 export const useEventFilterStore = () => {
-  const { useActions } = useEventFilterStoreModule();
+  const { useGetters, useActions } = useEventFilterStoreModule();
+
+  const getters = useGetters({
+    eventFiltersPending: 'pending',
+    eventFilters: 'items',
+    eventFiltersMeta: 'meta',
+  });
 
   const actions = useActions({
-    fetchEventFilterRulesListWithoutStore: 'fetchListWithoutStore',
+    fetchEventFiltersList: 'fetchList',
+    fetchEventFiltersListWithoutStore: 'fetchListWithoutStore',
+    refreshEventFiltersList: 'fetchListWithPreviousParams',
+    fetchEventFilterFailuresListWithoutStore: 'fetchEventFilterFailuresListWithoutStore',
+    markNewEventFilterFailuresAsRead: 'markNewEventFilterFailuresAsRead',
+    createEventFilter: 'create',
+    updateEventFilter: 'update',
+    removeEventFilter: 'remove',
   });
 
   return {
+    ...getters,
     ...actions,
   };
 };

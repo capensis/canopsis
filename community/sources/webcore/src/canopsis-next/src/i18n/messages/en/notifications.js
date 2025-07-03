@@ -27,5 +27,7 @@ export default {
       [NOTIFICATION_TYPES.instructionDismiss]: 'Instruction dismiss',
       [NOTIFICATION_TYPES.instructionApprove]: 'Instruction approval (request)',
     },
+    seeAll: 'See all notifications',
+    noNotifications: 'No notifications',
   },
 };
