@@ -1,6 +1,8 @@
 <template>
   <v-menu
     :disabled="pending"
+    :min-width="300"
+    :close-on-content-click="false"
     bottom
     offset-y
   >
@@ -35,6 +37,21 @@
         :key="notification._id"
         :notification="notification"
       />
+      <v-list-item v-if="!notifications.length">
+        <v-list-item-content>
+          <v-list-item-title class="text-center">
+            <strong class="font-italic grey--text">{{ $t('notifications.topBar.noNotifications') }}</strong>
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+      <v-layout class="pa-4" justify-center>
+        <v-btn
+          :to="linkToSeeAllNotifications"
+          color="primary"
+        >
+          {{ $t('notifications.topBar.seeAll') }}
+        </v-btn>
+      </v-layout>
     </v-list>
   </v-menu>
 </template>
@@ -43,7 +60,7 @@
 import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
 
 import { SOCKET_ROOMS } from '@/config';
-import { DEFAULT_NOTIFICATION_TOP_BAR_LIMIT } from '@/constants';
+import { DEFAULT_NOTIFICATION_TOP_BAR_LIMIT, NOTIFICATIONS_PAGE_TABS_KEYS, ROUTES_NAMES } from '@/constants';
 
 import { useComponentInstance } from '@/hooks/vue';
 import { useInfo } from '@/hooks/store/modules/info';
@@ -60,6 +77,11 @@ export default {
     const instance = useComponentInstance();
     const { notificationDisplayCount } = useInfo();
     const { fetchNotificationsListWithoutStore } = useNotifications();
+
+    const linkToSeeAllNotifications = {
+      name: ROUTES_NAMES.notifications,
+      params: { tabId: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove },
+    };
 
     const notifications = ref([]);
     const totalCount = ref(0);
@@ -81,29 +103,32 @@ export default {
       totalCount.value = meta?.total_count ?? 0;
     });
 
+    const updateNotifications = ({ data, total_count: newTotalCount } = {}) => {
+      notifications.value = data ?? [];
+      totalCount.value = newTotalCount ?? 0;
+    };
+
     const joinNotificationsRoom = () => {
       if (instance?.$socket) {
-        instance.$socket.join(SOCKET_ROOMS.notifications, ({ data, total_count: newTotalCount } = {}) => {
-          notifications.value = data ?? [];
-          totalCount.value = newTotalCount ?? 0;
-        });
+        instance.$socket.join(SOCKET_ROOMS.notifications).addListener(updateNotifications);
       }
     };
 
     const leaveNotificationsRoom = () => {
       if (instance?.$socket) {
-        instance.$socket.leave(SOCKET_ROOMS.notifications);
+        instance.$socket.leave(SOCKET_ROOMS.notifications).removeListener(updateNotifications);
       }
     };
 
     onMounted(() => {
-      fetchList();
       joinNotificationsRoom();
+      fetchList();
     });
 
     onBeforeUnmount(leaveNotificationsRoom);
 
     return {
+      linkToSeeAllNotifications,
       notifications,
       pending,
       totalCount,

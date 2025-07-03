@@ -39,16 +39,6 @@ export const ROUTES_NAMES = {
   profileThemes: 'profile-themes',
 };
 
-/**
- * List of route names that require parameters in their paths.
- * Used to identify routes where dynamic segments (e.g., :id) are expected.
- * In app.vue, this is used to determine when to use `$route.path` as the router-view key,
- * ensuring correct component re-rendering when route params change.
- *
- * @type {string[]}
- */
-export const ROUTES_NAMES_WITH_PARAMS = [ROUTES_NAMES.view, ROUTES_NAMES.notifications];
-
 export const ROUTES = {
   home: '/',
   login: '/login',
@@ -85,7 +75,7 @@ export const ROUTES = {
   exploitationLinkRules: '/exploitation/link-rules',
   exploitationExternalDataTables: '/exploitation/external-data-tables',
   notificationInstructionStats: '/notification/instruction-stats', // TODO: remove
-  notifications: '/notifications', // TODO: remove
+  notifications: '/notifications/:tabId',
   profilePatterns: '/filters',
   profileThemes: '/themes',
 };

@@ -52,7 +52,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
           }),
         });
 
-        return refresh();
+        refresh();
       },
     },
   });
@@ -83,7 +83,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
             }),
           });
 
-          return refresh();
+          refresh();
         },
       },
     });
@@ -115,7 +115,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
       action: async () => {
         await removeRemediationInstruction({ id: remediationInstruction._id });
 
-        return refresh();
+        refresh();
       },
     },
   });
@@ -132,7 +132,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
       action: async () => {
         await Promise.all(selected.map(({ _id: id }) => removeRemediationInstruction({ id })));
 
-        return refresh();
+        refresh();
       },
     },
   });

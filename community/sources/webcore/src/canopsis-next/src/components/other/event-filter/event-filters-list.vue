@@ -1,5 +1,6 @@
 <template>
   <c-advanced-data-table
+    ref="advancedDataTable"
     :items="eventFilters"
     :headers="headers"
     :loading="pending"
@@ -71,6 +72,7 @@
     </template>
     <template #expand="{ item }">
       <event-filters-list-expand-panel
+        ref="expandPanel"
         :event-filter="item"
         @refresh="$emit('refresh')"
       />

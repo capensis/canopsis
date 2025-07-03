@@ -2,38 +2,40 @@
   <div>
     <c-page-header />
     <v-card class="ma-6">
-      <v-tabs
-        :value="$route.fullPath"
-        slider-color="primary"
-        centered
-      >
-        <v-tab
-          v-for="tab in tabs"
-          :key="tab.key"
-          :to="tab.to"
-          exact
-          ripple
+      <v-card-text>
+        <v-tabs
+          :value="$route.path"
+          slider-color="primary"
+          centered
         >
-          {{ tab.label }}
-          <c-circle-badge
-            :outlined="!tab.active"
-            :pending="tab.pending"
-            class="ml-2"
-            color="primary"
+          <v-tab
+            v-for="tab in tabs"
+            :key="tab.key"
+            :to="tab.to"
+            exact
+            ripple
           >
-            {{ tab.count }}
-          </c-circle-badge>
-        </v-tab>
-      </v-tabs>
-      <v-tabs-items :value="$route.fullPath" touchless>
-        <v-tab-item v-for="tab in tabs" :key="tab.key" :value="tab.to">
-          <component
-            :is="tab.component"
-            v-bind="tab.componentProps"
-            v-on="tab.componentOn"
-          />
-        </v-tab-item>
-      </v-tabs-items>
+            {{ tab.label }}
+            <c-circle-badge
+              :outlined="!tab.active"
+              :pending="tab.pending"
+              class="ml-2"
+              color="primary"
+            >
+              {{ tab.count }}
+            </c-circle-badge>
+          </v-tab>
+        </v-tabs>
+        <v-tabs-items :value="$route.path" touchless>
+          <v-tab-item v-for="tab in tabs" :key="tab.key" :value="tab.to">
+            <component
+              :is="tab.component"
+              v-bind="tab.componentProps"
+              v-on="tab.componentOn"
+            />
+          </v-tab-item>
+        </v-tabs-items>
+      </v-card-text>
     </v-card>
     <c-fab-btn @refresh="fetchAllLists" />
   </div>
@@ -44,7 +46,7 @@ import { onBeforeMount, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useRouter, useRoute } from 'vue-router/composables';
 
 import { SOCKET_ROOMS } from '@/config';
-import { QUICK_RANGES } from '@/constants';
+import { NOTIFICATIONS_PAGE_TABS_KEYS, QUICK_RANGES } from '@/constants';
 
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
@@ -70,17 +72,21 @@ export default {
       type: String,
       default: '',
     },
+    activeId: {
+      type: String,
+      default: '',
+    },
   },
-  setup() {
+  setup(props) {
     const router = useRouter();
     const route = useRoute();
     const { t } = useI18n();
     const instance = useComponentInstance();
 
     const getTabHrefByKeyValue = (key, value) => { // TODO: move this function to router.js helper file
-      const { href } = router.resolve({ query: { [key]: value } }, route);
+      const { href } = router.resolve({ params: { [key]: value } }, route);
 
-      return href.replace('#', '');
+      return href;
     };
 
     const { fetchRemediationInstructionsListWithoutStore } = useRemdeitionInstruction();
@@ -130,7 +136,7 @@ export default {
       convertMetricIntervalToTimestamp({ interval: instructionsToRateOptions.value.interval })
     ));
 
-    const { fetchEventFilterRulesListWithoutStore } = useEventFilterStore();
+    const { fetchEventFiltersListWithoutStore } = useEventFilterStore();
     const {
       data: eventFilterFailures,
       meta: eventFilterFailuresMeta,
@@ -140,7 +146,7 @@ export default {
       fetchList: fetchEventFilterFailuresList,
     } = useFetchListWithoutStoreWithOptions({
       initialQuery: { page: 1, itemsPerPage: 10 },
-      fetchListHandler: ({ params }) => fetchEventFilterRulesListWithoutStore({
+      fetchListHandler: ({ params }) => fetchEventFiltersListWithoutStore({
         params: {
           ...params,
           only_unread_failure: true,
@@ -148,17 +154,13 @@ export default {
       }),
     });
 
-    const TABS_KEYS = {
-      instructionsToApprove: 'instructions-to-approve',
-      instructionsToRate: 'instructions-to-rate',
-      eventFilterFailures: 'event-filter-failures',
-    };
+    const getActiveIdByTabId = tabId => (tabId === props.tabId ? props.activeId : undefined);
 
     const tabs = computed(() => [
       {
-        key: TABS_KEYS.instructionsToApprove,
+        key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove,
         label: t('notifications.tabs.instructionsToApprove'),
-        to: getTabHrefByKeyValue('tabId', TABS_KEYS.instructionsToApprove),
+        to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove),
         pending: instructionsToApprovePending.value,
         count: instructionsToApproveMeta.value.total_count,
         component: InstructionsToApproveTab,
@@ -167,6 +169,7 @@ export default {
           pending: instructionsToApprovePending.value,
           meta: instructionsToApproveMeta.value,
           options: instructionsToApproveOptions.value,
+          activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove),
         },
         componentOn: {
           refresh: fetchInstructionsToApproveList,
@@ -174,9 +177,9 @@ export default {
         },
       },
       {
-        key: TABS_KEYS.instructionsToRate,
+        key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate,
         label: t('notifications.tabs.instructionsToRate'),
-        to: getTabHrefByKeyValue('tabId', TABS_KEYS.instructionsToRate),
+        to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate),
         pending: instructionsToRatePending.value,
         count: instructionsToRateMeta.value.total_count,
         component: InstructionsToRateTab,
@@ -187,6 +190,7 @@ export default {
           options: instructionsToRateOptions.value,
           interval: instructionsRateQueryInterval.value,
           accumulatedBefore: instructionsToRateMeta.value.accumulated_before,
+          activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate),
         },
         componentOn: {
           refresh: fetchInstructionsToRateList,
@@ -194,9 +198,9 @@ export default {
         },
       },
       {
-        key: TABS_KEYS.eventFilterFailures,
+        key: NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures,
         label: t('notifications.tabs.eventFilterFailures'),
-        to: getTabHrefByKeyValue('tabId', TABS_KEYS.eventFilterFailures),
+        to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures),
         pending: eventFilterFailuresPending.value,
         count: eventFilterFailuresMeta.value.total_count,
         component: EventFilterFailuresTab,
@@ -205,6 +209,7 @@ export default {
           pending: eventFilterFailuresPending.value,
           meta: eventFilterFailuresMeta.value,
           options: eventFilterFailuresOptions.value,
+          activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures),
         },
         componentOn: {
           refresh: fetchEventFilterFailuresList,
@@ -219,29 +224,23 @@ export default {
       fetchInstructionsToRateList();
     };
 
-    const handleNotificationUpdate = () => {};
-
     onBeforeMount(() => {
-      if (!route.query.tabId) {
-        router.replace({ query: { tabId: TABS_KEYS.instructionsToApprove } });
+      if (!props.tabId) {
+        router.replace({ query: { tabId: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove } });
       }
     });
 
-    // Lifecycle
     onMounted(() => {
-      // Initialize data
-      fetchAllLists();
-
-      // Join notifications websocket room
       if (instance?.$socket) {
-        instance.$socket.join(SOCKET_ROOMS.notifications).addListener(handleNotificationUpdate);
+        instance.$socket.join(SOCKET_ROOMS.notifications).addListener(fetchAllLists);
       }
+
+      fetchAllLists();
     });
 
     onBeforeUnmount(() => {
-      // Leave notifications websocket room
       if (instance?.$socket) {
-        instance.$socket.leave(SOCKET_ROOMS.notifications).removeListener(handleNotificationUpdate);
+        instance.$socket.leave(SOCKET_ROOMS.notifications).removeListener(fetchAllLists);
       }
     });
 

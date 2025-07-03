@@ -97,6 +97,7 @@
       ],
       "alphabetical": false
     }],
+    "vue/valid-v-slot": ["error", { "allowModifiers": true }],
     "vuejs-accessibility/label-has-for": "off",
     "vuejs-accessibility/click-events-have-key-events": "off",
     "vuejs-accessibility/form-control-has-label": "off",

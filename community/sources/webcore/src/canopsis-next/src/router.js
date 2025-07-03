@@ -449,7 +449,7 @@ const routes = [
         id: USER_PERMISSIONS.technical.notification.common,
       },
     },
-    props: route => ({ tabId: route.query.tabId }),
+    props: route => ({ tabId: route.params.tabId, activeId: route.query.id }),
   },
   {
     path: ROUTES.error,
