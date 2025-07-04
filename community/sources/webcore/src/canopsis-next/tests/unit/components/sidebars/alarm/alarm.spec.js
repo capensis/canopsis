@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
@@ -56,7 +56,6 @@ const stubs = {
   'field-filters': createInputStub('field-filters'),
   'field-root-cause-settings': createInputStub('field-root-cause-settings'),
   'field-availability-graph-settings': createInputStub('field-availability-graph-settings'),
-  'field-remediation-instructions-filters': createInputStub('field-remediation-instructions-filters'),
   'field-live-reporting': createInputStub('field-live-reporting'),
   'field-info-popup': createInputStub('field-info-popup'),
   'field-text-editor-with-template': createInputStub('field-text-editor-with-template'),
@@ -65,6 +64,7 @@ const stubs = {
   'field-fast-action-output': createInputStub('field-fast-action-output'),
   'field-number': createInputStub('field-number'),
   'field-density': createInputStub('field-density'),
+  'field-quick-alarm-actions': createInputStub('field-quick-alarm-actions'),
   'fast-pbehavior-form': createInputStub('fast-pbehavior-form'),
   'export-csv-form': createInputStub('export-csv-form'),
   'charts-form': createInputStub('charts-form'),
@@ -82,7 +82,6 @@ const snapshotStubs = {
   'field-default-elements-per-page': true,
   'field-opened-resolved-filter': true,
   'field-filters': true,
-  'field-remediation-instructions-filters': true,
   'field-live-reporting': true,
   'field-info-popup': true,
   'field-text-editor-with-template': true,
@@ -97,6 +96,7 @@ const snapshotStubs = {
   'field-resize-column-behavior': true,
   'field-root-cause-settings': true,
   'field-availability-graph-settings': true,
+  'field-quick-alarm-actions': true,
 };
 
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
@@ -109,7 +109,6 @@ const selectFieldServiceDependenciesColumns = wrapper => wrapper.findAll('input.
 const selectFieldDefaultElementsPerPage = wrapper => wrapper.find('input.field-default-elements-per-page');
 const selectFieldOpenedResolvedFilter = wrapper => wrapper.find('input.field-opened-resolved-filter');
 const selectFieldFilters = wrapper => wrapper.find('input.field-filters');
-const selectFieldRemediationInstructionsFilters = wrapper => wrapper.find('input.field-remediation-instructions-filters');
 const selectFieldLiveReporting = wrapper => wrapper.find('input.field-live-reporting');
 const selectFieldInfoPopups = wrapper => wrapper.find('input.field-info-popup');
 const selectFieldMoreInfo = wrapper => wrapper.findAll('input.field-text-editor-with-template').at(1);
@@ -144,6 +143,12 @@ const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
 );
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
+const selectFieldQuickActions = wrapper => wrapper.findAll('.field-quick-alarm-actions').at(0);
+const selectFieldQuickMassActions = wrapper => wrapper.findAll('.field-quick-alarm-actions').at(1);
+const selectFieldHideMassActions = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Hide massive actions under more button',
+);
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -707,67 +712,6 @@ describe('alarm', () => {
       expectData: {
         id: widget._id,
         data: getWidgetRequestWithNewParametersProperty(widget, 'mainFilter', filter),
-      },
-    });
-  });
-
-  test('Instruction filters changed after trigger remediation instructions field', async () => {
-    const wrapper = factory({
-      store: createMockedStoreModules([
-        activeViewModule,
-        widgetModule,
-        userPreferenceModule,
-        widgetTemplateModule,
-        serviceModule,
-        infosModule,
-        {
-          ...authModule,
-          getters: {
-            currentUserPermissionsById: {
-              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
-                actions: [],
-              },
-            },
-          },
-        },
-      ]),
-      propsData: {
-        sidebar,
-      },
-      mocks: {
-        $sidebar,
-      },
-    });
-
-    const fieldRemediationInstructionsFilters = selectFieldRemediationInstructionsFilters(wrapper);
-
-    const remediationInstruction = {
-      _id: 'instruction_1',
-      name: 'instruction-1',
-      type: {
-        _id: 'instruction-type-1',
-      },
-    };
-    const remediationInstructionsFilters = [{
-      with: true,
-      all: false,
-      auto: true,
-      manual: false,
-      locked: true,
-      disabled: false,
-      instructions: [remediationInstruction],
-      _id: 'id1',
-    }];
-
-    fieldRemediationInstructionsFilters.triggerCustomEvent('input', remediationInstructionsFilters);
-
-    await submitWithExpects(wrapper, {
-      fetchActiveView,
-      hideSidebar: $sidebar.hide,
-      widgetMethod: updateWidget,
-      expectData: {
-        id: widget._id,
-        data: getWidgetRequestWithNewParametersProperty(widget, 'remediationInstructionsFilters', remediationInstructionsFilters),
       },
     });
   });
@@ -1455,6 +1399,171 @@ describe('alarm', () => {
     });
   });
 
+  test('Quick actions changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickActions = selectFieldQuickActions(wrapper);
+    const newQuickActions = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickActions.triggerCustomEvent('input', newQuickActions);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'quickActions', map(newQuickActions, 'value')),
+      },
+    });
+  });
+
+  test('Quick mass actions changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickMassActions = selectFieldQuickMassActions(wrapper);
+    const newQuickMassActions = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickMassActions.triggerCustomEvent('input', newQuickMassActions);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'quickMassActions', map(newQuickMassActions, 'value')),
+      },
+    });
+  });
+
+  test('Quick actions template changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickActions = selectFieldQuickActions(wrapper);
+    const template = Faker.datatype.uuid();
+    const value = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickActions.triggerCustomEvent('update:template', template, value);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            quickActionsTemplate: template,
+            quickActions: map(value, 'value'),
+          },
+        ),
+      },
+    });
+  });
+
+  test('Quick mass actions template changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickMassActions = selectFieldQuickMassActions(wrapper);
+    const template = Faker.datatype.uuid();
+    const value = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickMassActions.triggerCustomEvent('update:template', template, value);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            quickMassActionsTemplate: template,
+            quickMassActions: map(value, 'value'),
+          },
+        ),
+      },
+    });
+  });
+
+  test('Hide mass actions changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldHideMassActions = selectFieldHideMassActions(wrapper);
+    const hideMassActions = Faker.datatype.boolean();
+
+    fieldHideMassActions.triggerCustomEvent('input', hideMassActions);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'hideMassActions', hideMassActions),
+      },
+    });
+  });
+
   test('Renders `alarm` widget settings with default props', async () => {
     const wrapper = snapshotFactory({
       store,
@@ -1498,9 +1607,6 @@ describe('alarm', () => {
             currentUserPermissionsById: {
               [USER_PERMISSIONS.business.alarmsList.actions.filter]: { actions: [] },
               [USER_PERMISSIONS.business.alarmsList.actions.userFilter]: { actions: [] },
-              [USER_PERMISSIONS.business.alarmsList.actions.remediationInstructionsFilter]: {
-                actions: [],
-              },
               [USER_PERMISSIONS.business.alarmsList.actions.userRemediationInstructionsFilter]: {
                 actions: [],
               },

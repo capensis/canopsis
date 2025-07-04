@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 var ErrInvalidInfoType = errors.New("info value should be int, string, bool or array of strings")

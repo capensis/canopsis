@@ -9,9 +9,8 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 // mongoProvider decorates request to mongo db.
@@ -75,7 +74,7 @@ func (p *mongoProvider) FindByAuthApiKey(ctx context.Context, apiKey string) (*s
 func (p *mongoProvider) FindByID(ctx context.Context, id string) (*security.User, error) {
 	var objID interface{}
 	var err error
-	objID, err = primitive.ObjectIDFromHex(id)
+	objID, err = bson.ObjectIDFromHex(id)
 	if err != nil {
 		objID = id
 	}
@@ -107,7 +106,7 @@ func (p *mongoProvider) Save(ctx context.Context, u *security.User) error {
 			ctx,
 			bson.M{"_id": u.ID},
 			bson.M{"$set": u},
-			options.Update().SetUpsert(true),
+			options.UpdateOne().SetUpsert(true),
 		)
 
 		if err != nil {

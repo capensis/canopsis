@@ -4,7 +4,7 @@ module git.canopsis.net/canopsis/canopsis-community/community/go-engines-communi
 // The .env:GOLANG_VERSION be greater than or equal to the version below.
 go 1.24
 
-toolchain go1.24.2
+toolchain go1.24.4
 
 // Note: External libs under GPL, AGPL or other viral licenses are not allowed here.
 // Canopsis Pro contains Canopsis Community, and Canopsis Pro can't contain viral
@@ -52,12 +52,12 @@ require (
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.4
-	go.mongodb.org/mongo-driver v1.17.3
+	go.mongodb.org/mongo-driver/v2 v2.2.1
 	go.uber.org/mock v0.5.1
-	golang.org/x/crypto v0.37.0
-	golang.org/x/oauth2 v0.29.0
-	golang.org/x/sync v0.13.0
-	golang.org/x/text v0.24.0
+	golang.org/x/crypto v0.39.0
+	golang.org/x/oauth2 v0.30.0
+	golang.org/x/sync v0.15.0
+	golang.org/x/text v0.26.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -111,7 +111,6 @@ require (
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/montanaflynn/stats v0.7.1 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/onsi/gomega v1.36.2 // indirect
 	github.com/prometheus/client_model v0.6.1 // indirect
@@ -127,11 +126,11 @@ require (
 	github.com/xdg-go/stringprep v1.0.4 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/arch v0.16.0 // indirect
-	golang.org/x/mod v0.24.0 // indirect
-	golang.org/x/net v0.39.0 // indirect
-	golang.org/x/sys v0.32.0 // indirect
-	golang.org/x/tools v0.32.0 // indirect
+	golang.org/x/arch v0.18.0 // indirect
+	golang.org/x/mod v0.25.0 // indirect
+	golang.org/x/net v0.41.0 // indirect
+	golang.org/x/sys v0.33.0 // indirect
+	golang.org/x/tools v0.34.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

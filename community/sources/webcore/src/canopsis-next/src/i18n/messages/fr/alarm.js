@@ -1,4 +1,9 @@
-import { ALARM_LIST_STEPS, ALARM_METRIC_PARAMETERS } from '@/constants';
+import {
+  ALARM_LIST_STEPS,
+  ALARM_METRIC_PARAMETERS,
+  REMEDIATION_INSTRUCTION_FILTER_TYPES,
+  REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES,
+} from '@/constants';
 
 export default {
   liveReporting: 'Définir un intervalle de dates',
@@ -50,6 +55,8 @@ export default {
       exportPdf: 'Exporter l\'alarme au format PDF',
       addBookmark: 'Ajouter un signet',
       removeBookmark: 'Supprimer le signet',
+      executeInstruction: 'Exécuter l\'instruction',
+      links: 'Liens',
     },
     iconsTitles: {
       ack: 'Acquittée',
@@ -224,5 +231,26 @@ export default {
     canceledInitiator: 'Initiateur annulé',
     changeState: 'Changement et verrouillage de la criticité',
     closeDelay: 'Délai de fermeture',
+    maxState: 'Criticité maximale',
+    initialState: 'Criticité initiale',
+  },
+  instructionsFilter: {
+    filter: 'Filtre de consigne',
+    type: 'Type de consigne',
+    status: 'Statut de la consigne',
+    name: 'Nom de la consigne',
+    statusSelector: '<strong>Statuts</strong>&nbsp;: {statuses}',
+    nameSelector: '<strong>Noms</strong>&nbsp;: {names}',
+    filters: {
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructions]: 'Aucune consigne',
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.noInstructionsOrNotInProgress]: 'Aucune consigne ou pas en cours',
+      [REMEDIATION_INSTRUCTION_FILTER_TYPES.hasInstructions]: 'Avec consigne',
+    },
+    statuses: {
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.running]: 'En cours',
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.completed]: 'Terminé avec succès',
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.failed]: 'Échec',
+      [REMEDIATION_INSTRUCTION_EXECUTION_STEP_STATUSES.aborted]: 'Non en cours et non exécuté',
+    },
   },
 };

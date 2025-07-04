@@ -12,9 +12,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var ErrEnabled = errors.New("maintenance mode has already been enabled")
@@ -64,7 +64,7 @@ func (s *store) Enable(ctx context.Context, message, color, userID string) error
 			"enabled":      true,
 			"broadcast_id": broadcastID,
 		}},
-		options.Update().SetUpsert(true),
+		options.UpdateOne().SetUpsert(true),
 	)
 	if err != nil {
 		if mongodriver.IsDuplicateKeyError(err) {

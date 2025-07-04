@@ -11,9 +11,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Store interface {
@@ -86,7 +86,10 @@ func (s *store) FindViewId(ctx context.Context, id string) (string, string, bool
 
 		return doc.View, doc.Author, doc.IsPrivate, nil
 	}
-
+	if err = cursor.Err(); err != nil {
+		return "", "", false, err
+	}
+	// If no documents found, return empty values
 	return "", "", false, nil
 }
 
@@ -121,7 +124,10 @@ func (s *store) FindViewIdByWidget(ctx context.Context, widgetId string) (string
 
 		return doc.View, doc.Author, doc.IsPrivate, nil
 	}
-
+	if err = cursor.Err(); err != nil {
+		return "", "", false, err
+	}
+	// If no documents found, return empty values
 	return "", "", false, nil
 }
 
@@ -179,7 +185,9 @@ func (s *store) Find(ctx context.Context, r ListRequest, userID string) (*Aggreg
 			return nil, err
 		}
 	}
-
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
 	return &res, nil
 }
 
@@ -210,7 +218,9 @@ func (s *store) GetOneBy(ctx context.Context, id, userID string) (*Response, err
 
 		return &model, nil
 	}
-
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
 	return nil, nil
 }
 
@@ -253,9 +263,6 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	filter.Updated = now
 	filter.IsPrivate = r.IsPrivate
 
-	update := bson.M{
-		"$set": filter,
-	}
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
@@ -273,10 +280,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 		filter.Position = oldFilter.Position
 
-		_, err = s.collection.UpdateOne(ctx,
-			bson.M{"_id": filter.ID},
-			update,
-		)
+		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": filter.ID}, bson.M{"$set": filter})
 		if err != nil {
 			return err
 		}
@@ -367,6 +371,9 @@ func (s *store) UpdatePositions(ctx context.Context, ids []string, widgetId, use
 				return ValidationError{error: errors.New("filters are related to different widgets or users")}
 			}
 		}
+		if err = cursor.Err(); err != nil {
+			return err
+		}
 
 		if len(notFoundIds) > 0 {
 			return ValidationError{error: errors.New("filters are related to different widgets or users")}
@@ -436,7 +443,9 @@ func (s *store) getNextPosition(ctx context.Context, widget string, isPrivate bo
 		err = cursor.Decode(&data)
 		return data.Position + 1, err
 	}
-
+	if err = cursor.Err(); err != nil {
+		return 0, err
+	}
 	return 0, nil
 }
 
