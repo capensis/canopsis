@@ -2,7 +2,7 @@ package event
 
 import (
 	"context"
-	"fmt"
+	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -19,27 +19,32 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func NewUpdateStatusProcessor(
+func NewContextUpdateProcessor(
 	dbClient mongo.DbClient,
 	alarmConfigProvider config.AlarmConfigProvider,
 	alarmStatusService alarmstatus.Service,
 	pbhTypeResolver pbehavior.EntityTypeResolver,
 	autoInstructionMatcher AutoInstructionMatcher,
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
-	componentCountersCalculator calculator.ComponentCountersCalculator,
-	eventsSender entitycounters.EventsSender,
 	metaAlarmPostProcessor MetaAlarmPostProcessor,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
 	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
+	componentCountersCalculator calculator.ComponentCountersCalculator,
+	eventsSender entitycounters.EventsSender,
 	eventGenerator libevent.Generator,
 	amqpPublisher amqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
-	return &updateStatusProcessor{
+	return &contextUpdateProcessor{
+		dbClient:                          dbClient,
+		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
+		logger:                            logger,
+		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			dbClient,
 			alarmConfigProvider,
@@ -61,14 +66,51 @@ func NewUpdateStatusProcessor(
 	}
 }
 
-type updateStatusProcessor struct {
-	upstreamHelper *upstreamHelper
+type contextUpdateProcessor struct {
+	dbClient                          mongo.DbClient
+	alarmCollection                   mongo.DbCollection
+	logger                            zerolog.Logger
+	componentAndServiceCountersHelper *componentAndServiceCountersHelper
+	upstreamHelper                    *upstreamHelper
 }
 
-func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
-	if event.Parameters.Initiator != types.InitiatorSystem {
-		return Result{}, fmt.Errorf("unknown initiator %q", event.Parameters.Initiator)
+func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+	result := Result{}
+	if event.Entity == nil || event.Entity.ID == "" || !event.Entity.Enabled {
+		return result, nil
 	}
 
-	return p.upstreamHelper.Process(ctx, event)
+	entity := *event.Entity
+	if entity.IsUpstreamChanged {
+		return p.upstreamHelper.Process(ctx, event)
+	}
+
+	countersRes := componentAndServiceCountersResult{}
+	match := getOpenAlarmMatch(event)
+	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+		result = Result{}
+		entity = *event.Entity
+		countersRes = componentAndServiceCountersResult{}
+		alarm := types.Alarm{}
+		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+			ctx,
+			&alarm,
+			&entity,
+			result.AlarmChange,
+		)
+
+		return err
+	})
+	if err != nil {
+		return result, err
+	}
+
+	go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
+
+	return result, nil
 }
