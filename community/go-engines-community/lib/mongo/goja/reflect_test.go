@@ -8,8 +8,7 @@ import (
 
 	"github.com/dop251/goja"
 	"github.com/kylelemons/godebug/pretty"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func TestTransformOptions(t *testing.T) {
@@ -92,7 +91,7 @@ func getTestTransformOptionsDataSet() []struct {
 	Expected    testOptions
 	ExpectedErr string
 } {
-	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local)
+	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local) //nolint:gosmopolitan
 	if err != nil {
 		panic(err)
 	}
@@ -158,7 +157,7 @@ func getTestTransformValueDataSet() []struct {
 	Expected    any
 	ExpectedErr string
 } {
-	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local)
+	timeInLocalTZ, err := time.ParseInLocation(time.DateTime, "2023-01-01 10:00:00", time.Local) //nolint:gosmopolitan
 	if err != nil {
 		panic(err)
 	}
@@ -241,7 +240,7 @@ func getTestTransformValueDataSet() []struct {
 		},
 		{
 			JSCode: `test(/^foo/i)`,
-			Expected: primitive.Regex{
+			Expected: bson.Regex{
 				Pattern: "^foo",
 				Options: "i",
 			},

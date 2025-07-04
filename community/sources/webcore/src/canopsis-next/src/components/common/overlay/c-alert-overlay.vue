@@ -5,8 +5,7 @@
       class="alert"
     >
       <div
-        :class="backgroundColor"
-        :style="{ opacity: opacity }"
+        :style="{ opacity: opacity, backgroundColor }"
         class="overlay"
       />
       <div class="content">
@@ -21,6 +20,8 @@
 </template>
 
 <script>
+import { CSS_COLORS_VARS } from '@/config';
+
 export default {
   props: {
     value: {
@@ -33,7 +34,7 @@ export default {
     },
     backgroundColor: {
       type: String,
-      default: 'white',
+      default: CSS_COLORS_VARS.background,
     },
     message: {
       type: String,
@@ -51,10 +52,23 @@ export default {
 
 <style lang="scss" scoped>
   .alert {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     z-index: 2;
 
     &, .overlay {
       min-height: 100px;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
     }
 
     .content {

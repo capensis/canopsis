@@ -20,8 +20,8 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type parseResult struct {
@@ -588,18 +588,9 @@ func (w *worker) bulkWrite(ctx context.Context, writeModels []mongo.WriteModel, 
 	var updated, deleted int64
 
 	start := 0
-	end := 0
-	for {
-		if end == len(writeModels) {
-			break
-		}
-
+	for end := 0; end < len(writeModels); {
 		start = end
-		end = start + limit
-
-		if end > len(writeModels) {
-			end = len(writeModels)
-		}
+		end = min(start+limit, len(writeModels))
 
 		bulkSize := 0
 		for i := start; i < end; i++ {

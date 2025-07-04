@@ -2,7 +2,7 @@
   <v-fade-transition>
     <c-simple-tooltip
       v-if="pageScrolled"
-      :message="$t('common.toTheTop')"
+      :content="$t('common.toTheTop')"
       top
     >
       <template #activator="{ on }">

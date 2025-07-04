@@ -8,9 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type MetaAlarmStateService interface {
@@ -92,7 +92,7 @@ func (a *metaAlarmStateService) UpdateOpenedState(
 			},
 			"$set": set,
 		},
-		options.Update().SetUpsert(upsert),
+		options.UpdateOne().SetUpsert(upsert),
 	)
 	if err != nil || res.MatchedCount == 0 && res.UpsertedCount == 0 {
 		if mongodriver.IsDuplicateKeyError(err) {
@@ -152,7 +152,7 @@ func (a *metaAlarmStateService) SwitchStateToReady(
 				"version":                   0,
 			},
 		},
-		options.Update().SetUpsert(upsert),
+		options.UpdateOne().SetUpsert(upsert),
 	)
 	if err != nil || res.MatchedCount == 0 && res.UpsertedCount == 0 {
 		if mongodriver.IsDuplicateKeyError(err) {
@@ -332,11 +332,7 @@ func (a *metaAlarmStateService) UpdateInactiveDelay(ctx context.Context, entityI
 				"meta_alarm_inactive_delay.$[delay].expired": d,
 			},
 		},
-		options.Update().SetArrayFilters(options.ArrayFilters{
-			Filters: []any{bson.M{
-				"delay._id": ruleId,
-			}},
-		}),
+		options.UpdateOne().SetArrayFilters([]any{bson.M{"delay._id": ruleId}}),
 	)
 
 	return err

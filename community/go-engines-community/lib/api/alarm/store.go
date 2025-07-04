@@ -24,9 +24,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const (
@@ -731,7 +731,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		cursor, err := s.dbInstructionCollection.Find(ctx, bson.M{
 			"type":   bson.M{"$in": bson.A{InstructionTypeManual, InstructionTypeSimplifiedManual}},
 			"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
-		}, options.Find().SetProjection(bson.M{"steps": 0}))
+		}, options.Find().SetProjection(bson.M{"steps": 0}).SetSort(bson.M{"_id": 1}))
 		if err != nil {
 			return nil, err
 		}

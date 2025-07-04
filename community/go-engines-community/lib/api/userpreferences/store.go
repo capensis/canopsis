@@ -8,8 +8,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Store interface {
@@ -134,7 +134,7 @@ func (s *store) Update(ctx context.Context, userID string, request EditRequest) 
 				"user":   userID,
 				"widget": request.Widget,
 			},
-		}, options.Update().SetUpsert(true))
+		}, options.UpdateOne().SetUpsert(true))
 
 		if err != nil {
 			return err

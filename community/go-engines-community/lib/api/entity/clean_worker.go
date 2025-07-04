@@ -103,8 +103,9 @@ func (w *worker) processTask(ctx context.Context, task CleanTask) {
 }
 
 func (w *worker) doTask(ctx context.Context, task CleanTask) {
-	dbClient, err := mongo.NewClientWithOptions(ctx, 0, 0, mongo.DefaultServerSelectionTimeout,
-		w.dataStorageConfigProvider.Get().MongoClientTimeout, w.logger)
+	dbClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
+		ClientTimeout: w.dataStorageConfigProvider.Get().MongoClientTimeout,
+	})
 	if err != nil {
 		w.logger.Err(err).Msg("cannot connect to mongo")
 		return

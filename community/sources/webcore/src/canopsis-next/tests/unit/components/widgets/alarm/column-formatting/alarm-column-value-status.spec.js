@@ -17,7 +17,7 @@ describe('alarm-column-value-status', () => {
     attachTo: document.body,
   });
 
-  it.each(Object.entries(ALARM_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', (_, state) => {
+  it.each(Object.values(ALARM_STATES))('Renders `alarm-column-value-status` with ongoing status and state: %s', (state) => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
@@ -37,9 +37,30 @@ describe('alarm-column-value-status', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  it.each(Object.values(ALARM_STATUSES))('Renders `alarm-column-value-status` with status: %s and resolved: true', (status) => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          entity: {},
+          v: {
+            state: {
+              val: ALARM_STATES.ok,
+            },
+            status: {
+              val: status,
+            },
+            resolved: 1,
+          },
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   it.each(
-    Object.entries(omit(ALARM_STATUSES, ['ongoing', 'noEvents'])),
-  )('Renders `alarm-column-value-status` with status: %s', (_, status) => {
+    Object.values(omit(ALARM_STATUSES, ['ongoing', 'noEvents'])),
+  )('Renders `alarm-column-value-status` with status: %s', (status) => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {

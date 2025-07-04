@@ -1,0 +1,121 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-list-remediation-instructions-filter Renders \`alarms-list-remediation-instructions-filter\` with default props 1`] = `
+<c-select-field-stub
+  chips=""
+  clearable=""
+  hide-details=""
+  items="instruction_filter_type"
+  label="Instruction filter"
+  menu-props="[object Object]"
+  multiple=""
+  value=""
+>
+  <alarms-list-remediation-instructions-filter-chip-stub
+    field=""
+    filter="[object Object]"
+    instructions=""
+  />
+  <div
+    class="v-list-item theme--light"
+    tabindex="-1"
+  >
+    <alarms-list-remediation-instructions-filter-fields-stub
+      field=""
+      filter="[object Object]"
+      instructions=""
+    />
+  </div>
+</c-select-field-stub>
+`;
+
+exports[`alarms-list-remediation-instructions-filter Renders \`alarms-list-remediation-instructions-filter\` with filter and loading 1`] = `
+<c-select-field-stub
+  chips=""
+  clearable=""
+  hide-details=""
+  hide-input="true"
+  items="instruction_filter_type,instruction_type,instruction_statuses,instruction_ids"
+  label="Instruction filter"
+  menu-props="[object Object]"
+  multiple=""
+  value="instruction_filter_type,instruction_type,instruction_statuses,instruction_ids"
+>
+  <alarms-list-remediation-instructions-filter-chip-stub
+    field=""
+    filter="[object Object]"
+    instructions=""
+  />
+  <div
+    class="v-list-item theme--light"
+    tabindex="-1"
+  >
+    <alarms-list-remediation-instructions-filter-fields-stub
+      field=""
+      filter="[object Object]"
+      instructions=""
+    />
+  </div>
+</c-select-field-stub>
+`;
+
+exports[`alarms-list-remediation-instructions-filter Renders \`alarms-list-remediation-instructions-filter\` with instructionFilterType and instructionType 1`] = `
+<c-select-field-stub
+  chips=""
+  clearable=""
+  hide-details=""
+  items="instruction_filter_type,instruction_type,instruction_statuses,instruction_ids"
+  label="Instruction filter"
+  menu-props="[object Object]"
+  multiple=""
+  value="instruction_filter_type,instruction_type"
+>
+  <alarms-list-remediation-instructions-filter-chip-stub
+    field=""
+    filter="[object Object]"
+    instructions="[object Object]"
+  />
+  <div
+    class="v-list-item theme--light"
+    tabindex="-1"
+  >
+    <alarms-list-remediation-instructions-filter-fields-stub
+      field=""
+      filter="[object Object]"
+      instructions="[object Object]"
+    />
+  </div>
+</c-select-field-stub>
+`;
+
+exports[`alarms-list-remediation-instructions-filter Renders \`alarms-list-remediation-instructions-filter\` with loading state 1`] = `
+<c-select-field-stub
+  chips=""
+  clearable=""
+  hide-details=""
+  items="instruction_filter_type"
+  label="Instruction filter"
+  loading="true"
+  menu-props="[object Object]"
+  multiple=""
+  value=""
+>
+  <alarms-list-remediation-instructions-filter-chip-stub
+    field=""
+    filter="[object Object]"
+    instructions=""
+    instructionspending="true"
+  />
+  <div
+    class="v-list-item theme--light"
+    tabindex="-1"
+  >
+    <alarms-list-remediation-instructions-filter-fields-stub
+      field=""
+      filter="[object Object]"
+      instructions=""
+      instructionspending="true"
+    />
+  </div>
+</c-select-field-stub>
+`;
