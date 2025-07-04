@@ -5,6 +5,11 @@ import (
 	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
+
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -25,6 +30,10 @@ import (
 
 func NewResolveDeletedProcessor(
 	dbClient mongo.DbClient,
+	alarmConfigProvider config.AlarmConfigProvider,
+	alarmStatusService alarmstatus.Service,
+	pbhTypeResolver pbehavior.EntityTypeResolver,
+	autoInstructionMatcher AutoInstructionMatcher,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
@@ -32,52 +41,47 @@ func NewResolveDeletedProcessor(
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	eventGenerator event.Generator,
 	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
 	return &resolveDeletedProcessor{
-		dbClient:                        dbClient,
-		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
-		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
-		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
-		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
-		closeDelayJobCollection:         dbClient.Collection(mongo.CloseDelayJobCollection),
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		metaAlarmPostProcessor:          metaAlarmPostProcessor,
-		metaAlarmStatesService:          metaAlarmStatesService,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		eventGenerator:                  eventGenerator,
-		amqpPublisher:                   amqpPublisher,
-		encoder:                         encoder,
-		logger:                          logger,
+		dbClient:                dbClient,
+		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
+		closeDelayJobCollection: dbClient.Collection(mongo.CloseDelayJobCollection),
+		logger:                  logger,
+		helper: newResolveHelper(
+			dbClient,
+			alarmConfigProvider,
+			alarmStatusService,
+			pbhTypeResolver,
+			autoInstructionMatcher,
+			internalTagAlarmMatcher,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			metaAlarmStatesService,
+			eventsSender,
+			metaAlarmPostProcessor,
+			metricsSender,
+			remediationRpcClient,
+			eventGenerator,
+			amqpPublisher,
+			encoder,
+			logger,
+		),
+		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type resolveDeletedProcessor struct {
-	dbClient                        mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
-	resolvedAlarmCollection         mongo.DbCollection
-	pbehaviorCollection             mongo.DbCollection
-	metaAlarmRuleCollection         mongo.DbCollection
-	closeDelayJobCollection         mongo.DbCollection
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	metaAlarmPostProcessor          MetaAlarmPostProcessor
-	metaAlarmStatesService          correlation.MetaAlarmStateService
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	eventGenerator                  event.Generator
-	amqpPublisher                   libamqp.Publisher
-	encoder                         encoding.Encoder
-	logger                          zerolog.Logger
+	helper                            *resolveHelper
+	dbClient                          mongo.DbClient
+	entityCollection                  mongo.DbCollection
+	closeDelayJobCollection           mongo.DbCollection
+	logger                            zerolog.Logger
+	componentAndServiceCountersHelper *componentAndServiceCountersHelper
 }
 
 func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -88,18 +92,14 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 
 	now := datetime.NewCpsTime()
 	match := getOpenAlarmMatch(event)
-	var componentStateChanged bool
-	var newComponentState int
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	countersRes := componentAndServiceCountersResult{}
 	notAckedMetricType := ""
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		componentStateChanged = false
-		newComponentState = 0
-		updatedServiceStates = nil
+		countersRes = componentAndServiceCountersResult{}
 		notAckedMetricType = ""
 
-		beforeAlarm, err := updateAlarmToResolve(ctx, p.alarmCollection, match, event.Parameters)
+		beforeAlarm, err := p.helper.UpdateAlarmToResolve(ctx, match, event.Parameters)
 		if err != nil {
 			return err
 		}
@@ -115,19 +115,19 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}
 
-			alarm, err := copyAlarmToResolvedCollection(ctx, p.alarmCollection, p.resolvedAlarmCollection, beforeAlarm.ID)
+			alarm, err := p.helper.CopyAlarmToResolvedCollection(ctx, beforeAlarm.ID)
 			if err != nil || alarm.ID == "" {
 				return err
 			}
 
-			entityUpdate = getResolveEntityUpdate()
+			entityUpdate = p.helper.GetResolveEntityUpdate()
 			alarmChange := types.NewAlarmChange()
 			alarmChange.Type = types.AlarmChangeTypeResolve
 			result.Forward = true
 			result.Alarm = alarm
 			result.AlarmChange = alarmChange
 
-			err = removeMetaAlarmStateOnResolve(ctx, p.metaAlarmRuleCollection, p.metaAlarmStatesService, result.Alarm)
+			err = p.helper.RemoveMetaAlarmStateOnResolve(ctx, result.Alarm)
 			if err != nil {
 				return err
 			}
@@ -146,10 +146,8 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 		}
 
 		result.Entity = entity
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&entity,
 			result.AlarmChange,
@@ -163,50 +161,10 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 	}
 
 	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
-		go postProcessResolve(
-			context.Background(),
-			event,
-			result,
-			updatedServiceStates,
-			componentStateChanged,
-			newComponentState,
-			notAckedMetricType,
-			p.eventsSender,
-			p.metaAlarmPostProcessor,
-			p.metricsSender,
-			p.remediationRpcClient,
-			p.pbehaviorCollection,
-			p.entityCollection,
-			p.eventGenerator,
-			p.amqpPublisher,
-			p.encoder,
-			p.logger,
-		)
+		go p.helper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes, notAckedMetricType)
 	} else {
-		go p.postProcess(context.WithoutCancel(ctx), &event, updatedServiceStates, componentStateChanged, newComponentState)
+		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
 	}
 
 	return result, nil
-}
-
-func (p *resolveDeletedProcessor) postProcess(
-	ctx context.Context,
-	event *rpc.AxeEvent,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
-) {
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
 }
