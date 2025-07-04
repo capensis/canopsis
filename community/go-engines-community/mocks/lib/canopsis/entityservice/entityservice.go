@@ -14,7 +14,7 @@ import (
 	reflect "reflect"
 
 	entityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
-	mongo "go.mongodb.org/mongo-driver/mongo"
+	mongo "go.mongodb.org/mongo-driver/v2/mongo"
 	gomock "go.uber.org/mock/gomock"
 )
 

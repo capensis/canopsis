@@ -16,8 +16,7 @@ import (
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.uber.org/mock/gomock"
 )
 
@@ -671,8 +670,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockInstructionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockInstructionDbCollection.EXPECT().Find(gomock.Any(), gomock.Eq(bson.M{
-		"_id":    bson.M{"$in": []string{instructionId}},
-		"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+		"_id":     bson.M{"$in": []string{instructionId}},
+		"status":  bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+		"enabled": true,
 	})).Return(mockCursor, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(name string) mongo.DbCollection {
@@ -687,17 +687,17 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	}).AnyTimes()
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
-	hasRunningExecution := false
+	instructionFilterType := instrFilterHasInstructions
+
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Instructions: []InstructionFilterRequest{
-						{
-							Running: &hasRunningExecution,
-							Include: []string{instructionId},
-						},
+					InstructionFilterType: &instructionFilterType,
+					InstructionIDs:        []string{instructionId},
+					InstructionStatuses: []int{
+						instrFilterExecStatusNotInProgressAndNotCompleted,
 					},
 				},
 			},
@@ -739,24 +739,21 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
-	expected = append(expected, getInstructionExecutionLookup(false)...)
+	expected = append(expected, getInstructionExecutionLookup(bson.M{"instruction": bson.M{"$in": bson.A{instructionId}}}, []int{}, instrFilterExecOptWithEmptyExecs)...)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"e.enabled": true},
-			{"$and": []bson.M{
-				{"instruction_execution.instruction": bson.M{"$nin": []string{instructionId}}},
-				{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"$or": []bson.M{{"$and": []bson.M{
-							{"v.duration": bson.M{"$gt": 600}},
-							{"v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}}}},
-						}}}},
-						{"$or": []bson.M{{"$and": []bson.M{
-							{"e.category": bson.M{"$eq": "test-category"}},
-						}}}},
-						{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
-						{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
-					}},
+			{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{{"$and": []bson.M{
+						{"v.duration": bson.M{"$gt": 600}},
+						{"v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}}}},
+					}}}},
+					{"$or": []bson.M{{"$and": []bson.M{
+						{"e.category": bson.M{"$eq": "test-category"}},
+					}}}},
+					{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
+					{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
 				}},
 			}},
 		}}},
@@ -833,8 +830,9 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	mockFilterDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockInstructionDbCollection := mock_mongo.NewMockDbCollection(ctrl)
 	mockInstructionDbCollection.EXPECT().Find(gomock.Any(), gomock.Eq(bson.M{
-		"_id":    bson.M{"$in": []string{instructionId}},
-		"status": bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+		"_id":     bson.M{"$in": []string{instructionId}},
+		"status":  bson.M{"$in": bson.A{InstructionStatusApproved, nil}},
+		"enabled": true,
 	})).Return(mockCursor, nil)
 	mockDbClient := mock_mongo.NewMockDbClient(ctrl)
 	mockDbClient.EXPECT().Collection(gomock.Any()).DoAndReturn(func(name string) mongo.DbCollection {
@@ -849,17 +847,17 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	}).AnyTimes()
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
-	hasRunningExecution := false
+	instructionFilterType := instrFilterHasInstructions
+
 	request := ListRequestWithPagination{
 		Query: pagination.GetDefaultQuery(),
 		ListRequest: ListRequest{
 			FilterRequest: FilterRequest{
 				BaseFilterRequest: BaseFilterRequest{
-					Instructions: []InstructionFilterRequest{
-						{
-							Running: &hasRunningExecution,
-							Include: []string{instructionId},
-						},
+					InstructionFilterType: &instructionFilterType,
+					InstructionIDs:        []string{instructionId},
+					InstructionStatuses: []int{
+						instrFilterExecStatusNotInProgressAndNotCompleted,
 					},
 				},
 			},
@@ -903,24 +901,21 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 		{"$match": bson.M{"$and": []bson.M{{"v.meta": nil}}}},
 	}
 	expected = append(expected, getEntityLookup()...)
-	expected = append(expected, getInstructionExecutionLookup(false)...)
+	expected = append(expected, getInstructionExecutionLookup(bson.M{"instruction": bson.M{"$in": bson.A{instructionId}}}, []int{}, instrFilterExecOptWithEmptyExecs)...)
 	expected = append(expected,
 		bson.M{"$match": bson.M{"$and": []bson.M{
 			{"e.enabled": true},
-			{"$and": []bson.M{
-				{"instruction_execution.instruction": bson.M{"$nin": []string{instructionId}}},
-				{"$or": []bson.M{
-					{"$and": []bson.M{
-						{"$or": []bson.M{{"$and": []bson.M{
-							{"v.duration": bson.M{"$gt": 600}},
-							{"v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}}}},
-						}}}},
-						{"$or": []bson.M{{"$and": []bson.M{
-							{"e.category": bson.M{"$eq": "test-category"}},
-						}}}},
-						{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
-						{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
-					}},
+			{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"$or": []bson.M{{"$and": []bson.M{
+						{"v.duration": bson.M{"$gt": 600}},
+						{"v.infos_array": bson.M{"$elemMatch": bson.M{"v.info_name": bson.M{"$eq": 3}}}},
+					}}}},
+					{"$or": []bson.M{{"$and": []bson.M{
+						{"e.category": bson.M{"$eq": "test-category"}},
+					}}}},
+					{"v.pbehavior_info.type": bson.M{"$in": []string{"maintenance"}}},
+					{"v.pbehavior_info.type": bson.M{"$nin": []string{"pause"}}},
 				}},
 			}},
 		}}},
@@ -1249,7 +1244,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
@@ -1328,7 +1323,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
@@ -1422,7 +1417,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}
@@ -1516,7 +1511,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	mockDbClient := createMockDbClient(ctrl)
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 	search := "test-search"
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}

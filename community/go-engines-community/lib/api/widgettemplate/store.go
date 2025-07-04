@@ -3,6 +3,7 @@ package widgettemplate
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -11,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Store interface {
@@ -213,6 +214,11 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID st
 				view.WidgetTemplateTypeServiceWeatherModal,
 				view.WidgetTemplateTypeServiceWeatherEntity:
 				val = tpl.Content
+			case view.WidgetTemplateTypeAlarmQuickActions,
+				view.WidgetTemplateTypeAlarmQuickMassActions:
+				val = tpl.Actions
+			default:
+				return fmt.Errorf("unknown template type: %s", tpl.Type)
 			}
 
 			_, err := s.widgetCollection.UpdateMany(
@@ -272,6 +278,7 @@ func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
 		Type:    r.Type,
 		Columns: r.Columns,
 		Content: r.Content,
+		Actions: r.Actions,
 		Author:  r.Author,
 	}
 }

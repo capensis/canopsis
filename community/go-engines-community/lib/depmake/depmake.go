@@ -27,8 +27,8 @@ type DependencyMaker struct {
 }
 
 // DepMongoClient opens a mongo session.
-func (m DependencyMaker) DepMongoClient(ctx context.Context, logger zerolog.Logger) mongo.DbClient {
-	c, err := mongo.NewClient(ctx, 0, 0, logger)
+func (m DependencyMaker) DepMongoClient(ctx context.Context, clientOptions mongo.ClientOptions) mongo.DbClient {
+	c, err := mongo.NewClient(ctx, clientOptions)
 	Panic("mongo session", err)
 	return c
 }

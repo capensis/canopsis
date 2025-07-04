@@ -25,9 +25,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 func NewCheckProcessor(
@@ -97,10 +97,28 @@ type checkProcessor struct {
 
 func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil ||
-		!event.Entity.Enabled ||
-		event.Parameters.State == nil ||
+	// rare case: event cannot have empty entity
+	if event.Entity == nil {
+		return result, nil
+	}
+
+	// events can be safely ignored if entity is disabled but add log msg for external events
+	if !event.Entity.Enabled {
+		if event.Parameters.Initiator == types.InitiatorExternal {
+			p.logger.Warn().
+				Str("event_type", event.EventType).
+				Str("connector", event.Parameters.Connector+"/"+event.Parameters.ConnectorName).
+				Str("entity", event.Entity.ID).
+				Msg("entity is disabled, event cannot be processed")
+		}
+
+		return result, nil
+	}
+
+	// invalid event
+	if event.Parameters.State == nil ||
 		event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
+
 		return result, nil
 	}
 
@@ -231,13 +249,17 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	result.AddedExternalTags = alarm.ExternalTags
+
 	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
 	stateStep.Author = author
 	stateStep.Value = *params.State
+	alarm.Value.InitialState = *params.State
+
 	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
 	statusStep.Author = author
 	statusStep.Value = types.AlarmStatusOngoing
 	alarm.Value.State = &stateStep
+	alarm.Value.MaxState = stateStep.Value
 	err = alarm.Value.Steps.Add(stateStep)
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
@@ -295,7 +317,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 				Delay:     *event.Parameters.CloseDelayValue,
 				ExecTime:  alarm.Value.CreationDate.Unix() + *event.Parameters.CloseDelayValue,
 			},
-		}, options.Update().SetUpsert(true))
+		}, options.UpdateOne().SetUpsert(true))
 		if err != nil {
 			return result, fmt.Errorf("cannot upsert close delay job on alarm create: %w", err)
 		}
@@ -393,6 +415,9 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 		if newState < previousState {
 			alarmChange.Type = types.AlarmChangeTypeStateDecrease
 			stateStep.Type = types.AlarmStepStateDecrease
+		} else if alarm.Value.MaxState < newState {
+			alarm.Value.MaxState = newState
+			set["v.max_state"] = newState
 		}
 
 		alarm.Value.State = &stateStep
@@ -430,7 +455,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 					Delay:     *params.CloseDelayValue,
 					ExecTime:  params.Timestamp.Unix() + *params.CloseDelayValue,
 				},
-			}, options.Update().SetUpsert(true))
+			}, options.UpdateOne().SetUpsert(true))
 			if err != nil {
 				return result, fmt.Errorf("cannot upsert close delay job on alarm update: %w", err)
 			}

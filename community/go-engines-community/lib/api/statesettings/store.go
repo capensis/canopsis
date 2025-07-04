@@ -14,9 +14,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const StickySortField = "on_top"
@@ -174,9 +174,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		response = nil
 
 		unset := make(bson.M)
-		if r.Method == statesetting.MethodDependencies {
+		switch r.Method {
+		case statesetting.MethodDependencies:
 			unset["inherited_entity_pattern"] = 1
-		} else if r.Method == statesetting.MethodInherited {
+		case statesetting.MethodInherited:
 			unset["state_thresholds"] = 1
 		}
 
@@ -294,7 +295,7 @@ func (s *store) updateNotify(ctx context.Context) error {
 		ctx,
 		bson.M{"_id": statesetting.StateSettingsNotificationID},
 		bson.M{"$set": bson.M{"time": time.Now()}},
-		options.Update().SetUpsert(true),
+		options.UpdateOne().SetUpsert(true),
 	)
 
 	return err

@@ -17,7 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const (
@@ -102,16 +102,23 @@ type BaseFilterRequest struct {
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
 	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
 
-	Instructions  []InstructionFilterRequest `form:"instructions[]" json:"instructions"`
-	OnlyBookmarks bool                       `form:"only_bookmarks" json:"only_bookmarks"`
-}
-
-type InstructionFilterRequest struct {
-	Running      *bool    `form:"running" json:"running"`
-	IncludeTypes []int    `form:"include_types[]" json:"include_types"`
-	ExcludeTypes []int    `form:"exclude_types[]" json:"exclude_types"`
-	Include      []string `form:"include[]" json:"include"`
-	Exclude      []string `form:"exclude[]" json:"exclude"`
+	// Possible instruction filter type values.
+	//   * `0` - No instructions.
+	//   * `1` - No instructions or not in progress.
+	//   * `2` - Has instructions.
+	InstructionFilterType *int `form:"instruction_filter_type" json:"instruction_filter_type" binding:"omitempty,oneof=0 1 2"`
+	// Possible instruction type values.
+	//   * `0` - Manual.
+	//   * `1` - Auto.
+	InstructionType *int `form:"instruction_type" json:"instruction_type" binding:"omitempty,oneof=0 1"`
+	// Possible instruction status values.
+	//   * `0` - In progress.
+	//   * `1` - Completed.
+	//   * `2` - Failed.
+	//   * `3` - Not in progress and not completed.
+	InstructionStatuses []int    `form:"instruction_statuses[]" json:"instruction_statuses" binding:"unique,dive,oneof=0 1 2 3"`
+	InstructionIDs      []string `form:"instruction_ids[]" json:"instruction_ids" binding:"unique"`
+	OnlyBookmarks       bool     `form:"only_bookmarks" json:"only_bookmarks"`
 }
 
 type ListByServiceRequest struct {
@@ -273,7 +280,7 @@ type Alarm struct {
 	Entity entity.Entity             `bson:"entity" json:"entity"`
 	Value  AlarmValue                `bson:"v" json:"v"`
 	Tags   []string                  `bson:"tags" json:"tags"`
-	Infos  map[string]map[string]any `bson:"infos" json:"infos"`
+	Infos  map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
 
@@ -359,10 +366,13 @@ type AlarmValue struct {
 
 	EventsCount types.CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos map[string]map[string]any `bson:"infos" json:"infos"`
+	Infos map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	CloseDelayValue int64             `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
 	CloseDelay      *common.AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
+
+	MaxState     types.CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	InitialState types.CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
 }
 
 type Pbehavior struct {

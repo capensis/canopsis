@@ -19,9 +19,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -375,9 +375,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 				"updated": datetime.NewCpsTime(),
 				"author":  author,
 			}},
-			options.Update().SetArrayFilters(options.ArrayFilters{
-				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
-			}),
+			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
 		)
 		if err != nil {
 			return err
@@ -395,9 +393,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 				"updated": datetime.NewCpsTime(),
 				"author":  author,
 			}},
-			options.Update().SetArrayFilters(options.ArrayFilters{
-				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
-			}),
+			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_alarm_pattern": pattern.ID}}),
 		)
 		if err != nil {
 			return err
@@ -470,9 +466,7 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response, author 
 					"actions.$[action].corporate_entity_pattern_title": "",
 				},
 			},
-			options.Update().SetArrayFilters(options.ArrayFilters{
-				Filters: []interface{}{bson.M{"action.corporate_entity_pattern": pattern.ID}},
-			}),
+			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
 		)
 		if err != nil {
 			return err
@@ -490,9 +484,7 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response, author 
 					"actions.$[action].corporate_alarm_pattern_title": "",
 				},
 			},
-			options.Update().SetArrayFilters(options.ArrayFilters{
-				Filters: []interface{}{bson.M{"action.corporate_alarm_pattern": pattern.ID}},
-			}),
+			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_alarm_pattern": pattern.ID}}),
 		)
 		if err != nil {
 			return err

@@ -1,5 +1,5 @@
 <template>
-  <shared-mass-actions-panel :actions="preparedActions" />
+  <shared-mass-actions-panel :actions="preparedActions" :inline-count="inlineCount" />
 </template>
 
 <script>
@@ -8,7 +8,7 @@ import { difference } from 'lodash';
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import { ALARM_LIST_ACTIONS_TYPES, BUSINESS_USER_PERMISSIONS_ACTIONS_MAP } from '@/constants';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { getAlarmActionIcon } from '@/helpers/entities/alarm/icons';
 import { harmonizeAlarmsLinks, getLinkRuleLinkActionType } from '@/helpers/entities/link/list';
@@ -18,12 +18,12 @@ import {
   isClosedAlarmStatus,
   isResolvedAlarm,
 } from '@/helpers/entities/alarm/form';
+import { sortActionsByQuickActions, getActionsInlineCount } from '@/helpers/actions-panel';
 
 import { widgetActionsPanelAlarmMixin } from '@/mixins/widget/actions-panel/alarm';
 import { entitiesDeclareTicketRuleMixin } from '@/mixins/entities/declare-ticket-rule';
 
 import SharedMassActionsPanel from '@/components/common/actions-panel/mass-actions-panel.vue';
-
 /**
  * Panel regrouping mass actions icons
  *
@@ -57,6 +57,10 @@ export default {
     };
   },
   computed: {
+    quickMassActions() {
+      return this.widget.parameters.quickMassActions ?? [];
+    },
+
     openedAlarms() {
       return this.localItems.filter(item => !isCancelledAlarmStatus(item) && !isClosedAlarmStatus(item));
     },
@@ -256,6 +260,10 @@ export default {
       return actions;
     },
 
+    sortedActions() {
+      return sortActionsByQuickActions(this.actions, this.quickMassActions);
+    },
+
     filteredActions() {
       return this.actions.filter(this.actionsAccessFilterHandler);
     },
@@ -270,6 +278,7 @@ export default {
 
         return {
           type,
+          link: true,
           icon: link.icon_name,
           title: this.$t('alarm.followLink', { title: link.label }),
           method: () => this.linkAction(link, type),
@@ -278,14 +287,28 @@ export default {
     },
 
     preparedActions() {
-      return [
+      const actions = [
         ...this.filteredActions,
         ...this.linksActions,
-      ].map(action => ({
+      ];
+
+      return sortActionsByQuickActions(actions, this.quickMassActions).map(action => ({
         ...action,
         icon: action.icon ?? getAlarmActionIcon(action.type),
         loading: this.isActionTypeInPending(action.type),
       }));
+    },
+
+    inlineCount() {
+      if (!this.widget.parameters.hideMassActions) {
+        return this.preparedActions.length;
+      }
+
+      if (this.preparedActions.length && !this.quickMassActions.length) {
+        return 1;
+      }
+
+      return getActionsInlineCount(this.preparedActions, this.quickMassActions);
     },
   },
   watch: {

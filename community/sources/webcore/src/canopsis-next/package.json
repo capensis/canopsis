@@ -164,5 +164,6 @@
     "@vue/cli-plugin-unit-jest/jest": "29.7.0",
     "@vue/cli-plugin-unit-jest/babel-jest": "29.7.0",
     "postcss": "^8.2.15"
-  }
+  },
+  "packageManager": "yarn@4.9.1"
 }
