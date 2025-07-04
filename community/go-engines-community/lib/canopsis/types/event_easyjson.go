@@ -1487,6 +1487,8 @@ func easyjsonF642ad3eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				in.Delim(']')
 			}
+		case "is_upstream_changed":
+			out.IsUpstreamChanged = bool(in.Bool())
 		case "last_idle_rule_apply":
 			out.LastIdleRuleApply = string(in.String())
 		case "idle_since":
@@ -1819,6 +1821,11 @@ func easyjsonF642ad3eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.IsUpstreamChanged {
+		const prefix string = ",\"is_upstream_changed\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.IsUpstreamChanged))
 	}
 	if in.LastIdleRuleApply != "" {
 		const prefix string = ",\"last_idle_rule_apply\":"

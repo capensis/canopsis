@@ -31,34 +31,30 @@ func NewPbhLeaveAndEnterProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &pbhLeaveAndEnterProcessor{
-		client:                          client,
-		alarmCollection:                 client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                client.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:             client.Collection(mongo.PbehaviorMongoCollection),
-		autoInstructionMatcher:          autoInstructionMatcher,
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		encoder:                         encoder,
-		logger:                          logger,
+		client:                            client,
+		alarmCollection:                   client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:                  client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:               client.Collection(mongo.PbehaviorMongoCollection),
+		autoInstructionMatcher:            autoInstructionMatcher,
+		metricsSender:                     metricsSender,
+		remediationRpcClient:              remediationRpcClient,
+		encoder:                           encoder,
+		logger:                            logger,
+		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type pbhLeaveAndEnterProcessor struct {
-	client                          mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
-	pbehaviorCollection             mongo.DbCollection
-	autoInstructionMatcher          AutoInstructionMatcher
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	encoder                         encoding.Encoder
-	logger                          zerolog.Logger
+	client                            mongo.DbClient
+	alarmCollection                   mongo.DbCollection
+	entityCollection                  mongo.DbCollection
+	pbehaviorCollection               mongo.DbCollection
+	autoInstructionMatcher            AutoInstructionMatcher
+	metricsSender                     metrics.Sender
+	remediationRpcClient              engine.RPCClient
+	encoder                           encoding.Encoder
+	logger                            zerolog.Logger
+	componentAndServiceCountersHelper *componentAndServiceCountersHelper
 }
 
 func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -72,14 +68,11 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 	match["v.pbehavior_info"] = bson.M{"$ne": event.Parameters.PbehaviorInfo}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+	countersRes := componentAndServiceCountersResult{}
 	var prevPbehaviorID string
-	var componentStateChanged bool
-	var newComponentState int
-
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		updatedServiceStates = nil
+		countersRes = componentAndServiceCountersResult{}
 		prevPbehaviorID = ""
 
 		alarm := types.Alarm{}
@@ -174,10 +167,8 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&result.Entity,
 			result.AlarmChange,
@@ -194,7 +185,7 @@ func (p *pbhLeaveAndEnterProcessor) Process(ctx context.Context, event rpc.AxeEv
 		result.IsInstructionMatched = isInstructionMatched(event, result, p.autoInstructionMatcher, p.logger)
 	}
 
-	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState, prevPbehaviorID)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes, prevPbehaviorID)
 
 	return result, nil
 }
@@ -203,9 +194,7 @@ func (p *pbhLeaveAndEnterProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
+	countersRes componentAndServiceCountersResult,
 	prevPbehaviorID string,
 ) {
 	entity := *event.Entity
@@ -224,19 +213,7 @@ func (p *pbhLeaveAndEnterProcessor) postProcess(
 		"",
 	)
 
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
+	p.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
 
 	if result.Alarm.ID == "" {
 		err := updatePbehaviorLastAlarmDate(ctx, p.pbehaviorCollection, result.Entity.PbehaviorInfo.ID, result.Entity.PbehaviorInfo.Timestamp)
