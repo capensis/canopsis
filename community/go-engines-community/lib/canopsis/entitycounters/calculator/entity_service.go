@@ -287,28 +287,28 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 	calcData.EntityEnabled = entity.Enabled
 	calcData.AlarmExists = alarm != nil && alarm.ID != ""
 
-	// todo: garbage condition, but it works, is it possible to simplify?
-	if calcData.AlarmExists && calcData.PrevActive {
-		if alarmChange.Type == types.AlarmChangeTypeStateDecrease ||
-			alarmChange.Type == types.AlarmChangeTypeStateIncrease ||
-			alarmChange.Type == types.AlarmChangeTypeChangeState {
-			if calcData.CurActive {
-				calcData.PrevState = int(alarmChange.PreviousState)
-			}
-		} else if alarmChange.Type == types.AlarmChangeTypeResolve {
-			if calcData.CurActive {
+	if calcData.AlarmExists {
+		if calcData.PrevActive {
+			switch alarmChange.Type {
+			case types.AlarmChangeTypeStateDecrease,
+				types.AlarmChangeTypeStateIncrease,
+				types.AlarmChangeTypeChangeState:
+				if calcData.CurActive {
+					calcData.PrevState = int(alarmChange.PreviousState)
+				}
+			case types.AlarmChangeTypeResolve:
+				if calcData.CurActive {
+					calcData.PrevState = int(alarm.CurrentState())
+				}
+			default:
 				calcData.PrevState = int(alarm.CurrentState())
 			}
-		} else {
-			calcData.PrevState = int(alarm.CurrentState())
 		}
-	}
 
-	if calcData.AlarmExists && calcData.CurActive {
-		calcData.CurState = int(alarm.CurrentState())
-	}
+		if calcData.CurActive {
+			calcData.CurState = int(alarm.CurrentState())
+		}
 
-	if calcData.AlarmExists {
 		calcData.IsAcked = alarm.IsAck()
 	}
 

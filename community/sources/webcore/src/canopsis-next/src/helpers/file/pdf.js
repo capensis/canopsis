@@ -74,7 +74,7 @@ class AlarmExportToPdfVisitor extends Visitor {
 /**
  * Prepare alarm state fpr exporting
  *
- * @param {AlarmStep} state
+ * @param {number} state
  * @returns {string}
  */
 export const prepareAlarmStateForExport = state => ({
@@ -82,12 +82,12 @@ export const prepareAlarmStateForExport = state => ({
   [ALARM_STATES.minor]: '1 - Minor',
   [ALARM_STATES.major]: '2 - Major',
   [ALARM_STATES.critical]: '3 - Critical',
-}[state?.val] ?? `Invalid value (${state?.val})`);
+}[state] ?? `Invalid value (${state})`);
 
 /**
  * Prepare alarm status fpr exporting
  *
- * @param {AlarmStep} status
+ * @param {number} status
  * @returns {string}
  */
 const prepareAlarmStatusForExport = status => ({
@@ -97,7 +97,7 @@ const prepareAlarmStatusForExport = status => ({
   [ALARM_STATUSES.stealthy]: 'Stealth',
   [ALARM_STATUSES.cancelled]: 'Canceled',
   [ALARM_STATUSES.noEvents]: 'No events',
-}[status?.val] ?? `Invalid value (${status?.val})`);
+}[status] ?? `Invalid value (${status})`);
 
 /**
  * Prepare alarm for exporting
@@ -113,8 +113,10 @@ const prepareAlarmForExport = (alarm = {}, timezone) => {
     alarm,
 
     [ALARM_EXPORT_PDF_FIELDS.displayName]: v.display_name,
-    [ALARM_EXPORT_PDF_FIELDS.state]: prepareAlarmStateForExport(v.state),
-    [ALARM_EXPORT_PDF_FIELDS.status]: prepareAlarmStatusForExport(v.status),
+    [ALARM_EXPORT_PDF_FIELDS.state]: prepareAlarmStateForExport(v.state?.val),
+    [ALARM_EXPORT_PDF_FIELDS.initialState]: prepareAlarmStateForExport(v.initial_state),
+    [ALARM_EXPORT_PDF_FIELDS.maxState]: prepareAlarmStateForExport(v.max_state),
+    [ALARM_EXPORT_PDF_FIELDS.status]: prepareAlarmStatusForExport(v.status?.val),
     [ALARM_EXPORT_PDF_FIELDS.connector]: v.connector,
     [ALARM_EXPORT_PDF_FIELDS.connectorName]: v.connector_name,
     [ALARM_EXPORT_PDF_FIELDS.component]: v.component,

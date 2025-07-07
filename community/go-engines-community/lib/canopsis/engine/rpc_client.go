@@ -71,6 +71,7 @@ func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
 			CorrelationId: m.CorrelationID,
 			ReplyTo:       c.queue,
 			Body:          m.Body,
+			DeliveryMode:  amqp.Persistent,
 		},
 	)
 	if err != nil {

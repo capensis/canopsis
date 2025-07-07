@@ -46,3 +46,4 @@ export { default as CCardIteratorField } from '@/components/forms/fields/card-it
 export { default as CCardIteratorItem } from '@/components/forms/fields/card-iterator/c-card-iterator-item.vue';
 export { default as CMovableCardIteratorField } from '@/components/forms/fields/card-iterator/c-movable-card-iterator-field.vue';
 export { default as CCsvSeparatorField } from '@/components/forms/fields/c-csv-separator-field.vue';
+export { default as CWidgetTemplateField } from '@/components/forms/fields/c-widget-template.vue';

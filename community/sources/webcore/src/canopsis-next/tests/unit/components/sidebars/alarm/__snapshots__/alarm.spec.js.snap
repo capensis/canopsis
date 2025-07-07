@@ -583,8 +583,34 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
   </table>
 </div>
 "
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+    <widget-settings-group-stub
+      title="Quick actions"
+    >
+      <field-quick-alarm-actions-stub
+        description=""
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Quick massive actions"
+    >
+      <field-switcher-stub
+        title="Hide massive actions under more button"
+      />
+      <field-quick-alarm-actions-stub
+        description=""
+        massive="true"
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
     title="Expand panel"
@@ -1215,8 +1241,34 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
   </table>
 </div>
 "
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+    <widget-settings-group-stub
+      title="Quick actions"
+    >
+      <field-quick-alarm-actions-stub
+        description=""
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Quick massive actions"
+    >
+      <field-switcher-stub
+        title="Hide massive actions under more button"
+      />
+      <field-quick-alarm-actions-stub
+        description=""
+        massive="true"
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
     title="Expand panel"
@@ -1843,8 +1895,34 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
   </table>
 </div>
 "
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+    <widget-settings-group-stub
+      title="Quick actions"
+    >
+      <field-quick-alarm-actions-stub
+        description=""
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Quick massive actions"
+    >
+      <field-switcher-stub
+        title="Hide massive actions under more button"
+      />
+      <field-quick-alarm-actions-stub
+        description=""
+        massive="true"
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
     title="Expand panel"
@@ -2472,8 +2550,34 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
   </table>
 </div>
 "
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     />
+    <widget-settings-group-stub
+      title="Quick actions"
+    >
+      <field-quick-alarm-actions-stub
+        description=""
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
+    <widget-settings-group-stub
+      title="Quick massive actions"
+    >
+      <field-switcher-stub
+        title="Hide massive actions under more button"
+      />
+      <field-quick-alarm-actions-stub
+        description=""
+        massive="true"
+        template="Symbol(custom)"
+        templates=""
+        title=""
+        value="[object Object],[object Object],[object Object]"
+      />
+    </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
     title="Expand panel"
