@@ -1,4 +1,5 @@
 import { QUICK_RANGES } from './common';
+import { TIME_UNITS } from './date';
 
 export const PATTERN_TYPES = {
   alarm: 'alarm',
@@ -64,6 +65,11 @@ export const PATTERN_OPERATORS = {
   ruleIs: 'rule_is',
 
   regexp: 'regexp',
+
+  within: 'within',
+  olderThan: 'older_than',
+  inRangeDates: 'in_range_dates',
+  inRangePeriod: 'in_range_period',
 };
 
 export const PATTERN_CONDITIONS = {
@@ -193,11 +199,10 @@ export const PATTERN_ALARM_TAG_LABEL_OPERATORS = [
   PATTERN_OPERATORS.withoutLabel,
 ];
 
-export const PATTERN_QUICK_RANGES = [
+export const PATTERN_QUICK_RANGES_WITHOUT_CUSTOM = [
   QUICK_RANGES.last15Minutes,
   QUICK_RANGES.last30Minutes,
   QUICK_RANGES.last1Hour,
-  QUICK_RANGES.last3Hour,
   QUICK_RANGES.last3Hour,
   QUICK_RANGES.last6Hour,
   QUICK_RANGES.last12Hour,
@@ -205,7 +210,23 @@ export const PATTERN_QUICK_RANGES = [
   QUICK_RANGES.last2Days,
   QUICK_RANGES.last7Days,
   QUICK_RANGES.last30Days,
-  QUICK_RANGES.last1Year,
+];
+
+export const PATTERN_QUICK_RANGES_DURATIONS = {
+  [QUICK_RANGES.last15Minutes.value]: { value: 15, unit: TIME_UNITS.minute },
+  [QUICK_RANGES.last30Minutes.value]: { value: 30, unit: TIME_UNITS.minute },
+  [QUICK_RANGES.last1Hour.value]: { value: 1, unit: TIME_UNITS.hour },
+  [QUICK_RANGES.last3Hour.value]: { value: 3, unit: TIME_UNITS.hour },
+  [QUICK_RANGES.last6Hour.value]: { value: 6, unit: TIME_UNITS.hour },
+  [QUICK_RANGES.last12Hour.value]: { value: 12, unit: TIME_UNITS.hour },
+  [QUICK_RANGES.last24Hour.value]: { value: 24, unit: TIME_UNITS.hour },
+  [QUICK_RANGES.last2Days.value]: { value: 2, unit: TIME_UNITS.day },
+  [QUICK_RANGES.last7Days.value]: { value: 7, unit: TIME_UNITS.day },
+  [QUICK_RANGES.last30Days.value]: { value: 30, unit: TIME_UNITS.day },
+};
+
+export const PATTERN_QUICK_RANGES = [
+  ...PATTERN_QUICK_RANGES_WITHOUT_CUSTOM,
   QUICK_RANGES.custom,
 ];
 
