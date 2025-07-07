@@ -34,6 +34,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with bookmarked alarm 1`] =
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         refreshalarmslist="[Function]"
         widget="[object Object]"
@@ -116,6 +117,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with custom props 1`] = `
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         refreshalarmslist="[Function]"
         widget="[object Object]"
@@ -173,6 +175,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         refreshalarmslist="[Function]"
         widget="[object Object]"
@@ -219,6 +222,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with default and required p
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         refreshalarmslist="[Function]"
         widget="[object Object]"
@@ -262,6 +266,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with expand button 1`] = `
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         refreshalarmslist="[Function]"
         widget="[object Object]"
@@ -302,6 +307,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with feature classes 1`] = 
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         refreshalarmslist="[Function]"
         widget="[object Object]"
@@ -348,6 +354,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with filtered children in p
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         parentalarm="[object Object]"
         refreshalarmslist="[Function]"
@@ -373,6 +380,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with instructions 1`] = `
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         parentalarm="[object Object]"
         refreshalarmslist="[Function]"
@@ -427,6 +435,7 @@ exports[`alarms-list-row Renders \`alarms-list-row\` with resolved alarm 1`] = `
       class="layout align-center"
     >
       <actions-panel-stub
+        inlinecount="4"
         item="[object Object]"
         refreshalarmslist="[Function]"
         widget="[object Object]"

@@ -280,7 +280,7 @@ type Alarm struct {
 	Entity entity.Entity             `bson:"entity" json:"entity"`
 	Value  AlarmValue                `bson:"v" json:"v"`
 	Tags   []string                  `bson:"tags" json:"tags"`
-	Infos  map[string]map[string]any `bson:"infos" json:"infos"`
+	Infos  map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
 
@@ -366,10 +366,13 @@ type AlarmValue struct {
 
 	EventsCount types.CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos map[string]map[string]any `bson:"infos" json:"infos"`
+	Infos map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	CloseDelayValue int64             `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
 	CloseDelay      *common.AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
+
+	MaxState     types.CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	InitialState types.CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
 }
 
 type Pbehavior struct {

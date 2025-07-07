@@ -55,6 +55,8 @@ export default {
       exportPdf: 'Export alarm to PDF file',
       addBookmark: 'Add bookmark',
       removeBookmark: 'Remove bookmark',
+      executeInstruction: 'Execute instruction',
+      links: 'Links',
     },
     iconsTitles: {
       ack: 'Ack',
@@ -229,6 +231,8 @@ export default {
     canceledInitiator: 'Canceled initiator',
     changeState: 'Change state',
     closeDelay: 'Close delay',
+    maxState: 'Max severity',
+    initialState: 'Initial severity',
   },
   instructionsFilter: {
     filter: 'Instruction filter',

@@ -93,6 +93,14 @@ export const alarmVariablesMixin = {
           text: this.$t('common.state'),
         },
         {
+          value: ALARM_EXPORT_PDF_FIELDS.initialState,
+          text: this.$t('alarm.fields.initialState'),
+        },
+        {
+          value: ALARM_EXPORT_PDF_FIELDS.maxState,
+          text: this.$t('alarm.fields.maxState'),
+        },
+        {
           value: ALARM_EXPORT_PDF_FIELDS.status,
           text: this.$t('common.status'),
         },

@@ -120,6 +120,11 @@ func (t *RequestTransformer) transformTemplateFields(ctx context.Context, r *Edi
 				view.WidgetTemplateTypeServiceWeatherModal,
 				view.WidgetTemplateTypeServiceWeatherEntity:
 				parameters[key] = tpl.Content
+			case view.WidgetTemplateTypeAlarmQuickActions,
+				view.WidgetTemplateTypeAlarmQuickMassActions:
+				parameters[key] = tpl.Actions
+			default:
+				// do nothing
 			}
 		}
 	}

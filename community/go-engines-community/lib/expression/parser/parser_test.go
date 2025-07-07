@@ -54,20 +54,20 @@ func TestParser_ParsePostgres(t *testing.T) {
 				arg := "@" + k
 				switch val := v.(type) {
 				case string:
-					resQuery = strings.Replace(resQuery, arg, "'"+val+"'", -1)
+					resQuery = strings.ReplaceAll(resQuery, arg, "'"+val+"'")
 				case int:
-					resQuery = strings.Replace(resQuery, arg, strconv.Itoa(val), -1)
+					resQuery = strings.ReplaceAll(resQuery, arg, strconv.Itoa(val))
 				case float64:
-					resQuery = strings.Replace(resQuery, arg, strconv.FormatFloat(val, 'f', -1, 64), -1)
+					resQuery = strings.ReplaceAll(resQuery, arg, strconv.FormatFloat(val, 'f', -1, 64))
 				case bool:
-					resQuery = strings.Replace(resQuery, arg, strconv.FormatBool(val), -1)
+					resQuery = strings.ReplaceAll(resQuery, arg, strconv.FormatBool(val))
 				case []any:
 					strSlice := make([]string, len(val))
 					for idx := range val {
 						strSlice[idx] = "'" + val[idx].(string) + "'"
 					}
 
-					resQuery = strings.Replace(resQuery, arg, "ARRAY ["+strings.Join(strSlice, ",")+"]", -1)
+					resQuery = strings.ReplaceAll(resQuery, arg, "ARRAY ["+strings.Join(strSlice, ",")+"]")
 				}
 			}
 
