@@ -149,7 +149,7 @@ export default {
       });
     },
 
-    async showPausedExecutionsPopup() {
+    async showPausedExecutionsPopup() { // TODO: change the behavior of the popup
       const pausedExecutions = await this.fetchPausedExecutionsWithoutStore({
         params: { limit: MAX_LIMIT },
       });

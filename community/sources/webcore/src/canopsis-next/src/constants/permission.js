@@ -50,9 +50,6 @@ export const ADMIN_PAGES_RULES = {
   tag: { edition: CANOPSIS_EDITION.pro },
   map: { edition: CANOPSIS_EDITION.pro },
   eventsRecord: { edition: CANOPSIS_EDITION.pro },
-};
-
-export const NOTIFICATIONS_PAGES_RULES = {
   instructionStats: { edition: CANOPSIS_EDITION.pro },
 };
 
@@ -194,6 +191,7 @@ export const USER_PERMISSIONS = {
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
+    remediationinstructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`, // TODO: rename it to admin
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
@@ -227,7 +225,6 @@ export const USER_PERMISSIONS = {
     },
     notification: {
       common: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`, // TODO: USER_PERMISSIONS_PREFIXES.technical.notification,
-      instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
     },
     profile: {
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
@@ -612,6 +609,7 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
   [USER_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
   [USER_PERMISSIONS.technical.eventsRecord]: ADMIN_PAGES_RULES.eventsRecord,
+  [USER_PERMISSIONS.technical.remediationinstructionStats]: ADMIN_PAGES_RULES.remediationinstructionStats,
 
   /**
    * Grouped
@@ -626,10 +624,6 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
-  /**
-   * Notifications pages
-   */
-  [USER_PERMISSIONS.technical.notification.instructionStats]: NOTIFICATIONS_PAGES_RULES.instructionStats,
 };
 
 export const DOCUMENTATION_LINKS = {
@@ -672,9 +666,4 @@ export const DOCUMENTATION_LINKS = {
    */
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-utilisation/menu-administration/planification/',
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
-
-  /**
-   * Notifications
-   */
-  // [USER_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
 };

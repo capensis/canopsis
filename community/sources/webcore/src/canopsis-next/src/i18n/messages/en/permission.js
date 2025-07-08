@@ -246,6 +246,7 @@ export default {
     [USER_PERMISSIONS.technical.remediationInstruction]: 'Instructions - instructions tab',
     [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
     [USER_PERMISSIONS.technical.storageSettings]: 'Storage settings',
     [USER_PERMISSIONS.technical.tag]: 'Tags management',
@@ -280,7 +281,6 @@ export default {
      * Technical Admin Notification
      */
     [USER_PERMISSIONS.technical.notification.common]: 'Parameters - notification settings ',
-    [USER_PERMISSIONS.technical.notification.instructionStats]: 'Instructions stats',
 
     /**
      * Technical Admin Views and widgets

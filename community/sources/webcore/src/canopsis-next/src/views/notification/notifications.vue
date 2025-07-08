@@ -55,7 +55,7 @@ import { useComponentInstance } from '@/hooks/vue';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useEventFilterStore } from '@/hooks/store/modules/event-filter';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
-import { useRemdeitionInstructionStatsStore } from '@/hooks/store/modules/remediation-instruction-stats';
+import { useRemdeitionInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
 
 import InstructionsToApproveTab from '@/components/other/notification/instructions-to-approve-tab.vue';
 import InstructionsToRateTab from '@/components/other/notification/instructions-to-rate-tab.vue';
@@ -107,7 +107,7 @@ export default {
       }),
     });
 
-    const { fetchRemediationInstructionStatsListWithoutStore } = useRemdeitionInstructionStatsStore();
+    const { fetchRemediationInstructionStatsListWithoutStore } = useRemdeitionInstructionStats();
     const {
       data: instructionsToRate,
       meta: instructionsToRateMeta,

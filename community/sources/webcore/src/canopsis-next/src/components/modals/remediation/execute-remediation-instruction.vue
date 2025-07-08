@@ -1,9 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper
-      :close="close"
-      minimize
-    >
+    <modal-wrapper close>
       <template #title="">
         <span>{{ config.assignedInstruction.name }}</span>
       </template>
@@ -31,6 +28,13 @@
           </v-layout>
         </v-fade-transition>
       </template>
+      <template #actions="">
+        <remediation-instruction-execute-btns
+          v-if="instructionExecution"
+          :instruction-execution="instructionExecution"
+          @close="closeModal"
+        />
+      </template>
     </modal-wrapper>
   </v-form>
 </template>
@@ -57,6 +61,7 @@ import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediat
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionExecuteBtns from '@/components/other/remediation/instruction-execute/partials/remediation-instruction-execute-btns.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -65,6 +70,7 @@ export default {
   components: {
     ModalWrapper,
     RemediationInstructionExecute,
+    RemediationInstructionExecuteBtns,
   },
   mixins: [
     modalInnerMixin,
@@ -451,33 +457,6 @@ export default {
       }
 
       this.pending = false;
-    },
-
-    /**
-     * Close handler
-     */
-    close() {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          hideTitle: true,
-          text: this.$t('remediation.instructionExecute.closeConfirmationText'),
-          action: async () => {
-            await this.pauseExecution();
-
-            await this.closeModal();
-          },
-          cancel: async (cancelled) => {
-            if (!cancelled) {
-              return;
-            }
-
-            await this.cancelExecution();
-
-            await this.closeModal();
-          },
-        },
-      });
     },
   },
 };
