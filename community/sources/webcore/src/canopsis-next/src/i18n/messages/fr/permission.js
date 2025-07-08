@@ -246,6 +246,7 @@ export default {
     [USER_PERMISSIONS.technical.remediationInstruction]: 'Consignes - onglet instructions',
     [USER_PERMISSIONS.technical.remediationJob]: 'Consignes - onglet tâches',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
+    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
     [USER_PERMISSIONS.technical.stateSetting]: 'Paramètres de calcul d\'état/sévérité',
     [USER_PERMISSIONS.technical.storageSettings]: 'Paramètres de stockage',
     [USER_PERMISSIONS.technical.tag]: 'Gestion des tags',
@@ -280,7 +281,6 @@ export default {
      * Technical Admin Notification
      */
     [USER_PERMISSIONS.technical.notification.common]: 'Paramètres - paramètres de notification',
-    [USER_PERMISSIONS.technical.notification.instructionStats]: 'Statistiques des consignes',
 
     /**
      * Technical Admin Views and widgets

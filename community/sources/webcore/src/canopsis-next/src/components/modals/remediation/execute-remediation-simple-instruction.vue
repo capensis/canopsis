@@ -1,8 +1,5 @@
 <template>
-  <modal-wrapper
-    :close="closeModal"
-    minimize
-  >
+  <modal-wrapper close>
     <template #title="">
       <span>{{ config.assignedInstruction.name }}</span>
     </template>
@@ -26,13 +23,11 @@
       </v-fade-transition>
     </template>
     <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="closeModal"
-      >
-        {{ $t('common.close') }}
-      </v-btn>
+      <remediation-instruction-execute-btns
+        v-if="instructionExecution"
+        :instruction-execution="instructionExecution"
+        @close="closeModal"
+      />
     </template>
   </modal-wrapper>
 </template>
@@ -49,6 +44,7 @@ import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediati
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
 import RemediationInstructionSimpleExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-simple-execute.vue';
+import RemediationInstructionExecuteBtns from '@/components/other/remediation/instruction-execute/partials/remediation-instruction-execute-btns.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -56,6 +52,7 @@ export default {
   name: MODALS.executeRemediationSimpleInstruction,
   components: {
     RemediationInstructionSimpleExecute,
+    RemediationInstructionExecuteBtns,
     ModalWrapper,
   },
   mixins: [

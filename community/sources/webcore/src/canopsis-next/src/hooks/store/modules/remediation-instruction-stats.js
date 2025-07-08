@@ -8,13 +8,13 @@ import { useStoreModuleHooks } from '@/hooks/store';
 const useRemdeitionInstructionStatsStoreModule = () => useStoreModuleHooks('remediationInstructionStats');
 
 /**
- * Hook to access remediation instruction stats store.
+ * Hook to access remediation instruction stats.
  *
  * @returns {Object} An object containing:
  * - Getters for remediation instruction stats, pending status, and metadata.
  * - Actions to fetch lists and summaries without using the store.
  */
-export const useRemdeitionInstructionStatsStore = () => {
+export const useRemdeitionInstructionStats = () => {
   const { useGetters, useActions } = useRemdeitionInstructionStatsStoreModule();
 
   const getters = useGetters({

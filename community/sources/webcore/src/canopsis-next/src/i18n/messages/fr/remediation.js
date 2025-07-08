@@ -10,6 +10,7 @@ export default {
     configurations: 'Configurations',
     jobs: 'Tâches',
     statistics: 'Statistiques de remédiation',
+    instructionStats: 'Évaluation des consignes',
   },
 
   instruction: {
