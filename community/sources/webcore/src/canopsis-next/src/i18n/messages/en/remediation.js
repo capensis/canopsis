@@ -10,6 +10,7 @@ export default {
     configurations: 'Configurations',
     jobs: 'Jobs',
     statistics: 'Remediation statistics',
+    instructionStats: 'Instruction rating',
   },
 
   instruction: {
@@ -65,6 +66,8 @@ export default {
   },
 
   instructionExecute: {
+    cancelInstruction: 'Cancel instruction',
+    pauseInstruction: 'Pause instruction',
     timeToComplete: '{duration} to complete',
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
