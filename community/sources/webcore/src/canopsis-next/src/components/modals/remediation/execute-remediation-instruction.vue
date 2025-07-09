@@ -28,9 +28,8 @@
           </v-layout>
         </v-fade-transition>
       </template>
-      <template #actions="">
+      <template v-if="hasActions" #actions="">
         <remediation-instruction-execute-btns
-          v-if="instructionExecution"
           :instruction-execution="instructionExecution"
           @close="closeModal"
         />
@@ -55,6 +54,7 @@ import {
   isInstructionExecutionPaused,
   isInstructionExecutionRunning,
 } from '@/helpers/entities/remediation/instruction-execution/form';
+import { remediationInstructionExecutionIsRunning } from '@/helpers/entities/remediation/instruction-execution/list';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
@@ -86,6 +86,10 @@ export default {
     };
   },
   computed: {
+    hasActions() {
+      return this.instructionExecution && remediationInstructionExecutionIsRunning(this.instructionExecution);
+    },
+
     instruction() {
       return this.config.assignedInstruction;
     },
@@ -409,6 +413,13 @@ export default {
      * @param {RemediationInstructionStepOperation} operation
      */
     setOperation(operation) {
+      if (!operation) {
+        this.$modals.hide();
+        this.leaveFromSocketRoom();
+
+        return;
+      }
+
       for (const step of this.instructionExecution.steps) {
         const operationIndex = step.operations
           .findIndex(({ operation_id: operationId }) => operationId === operation.operation_id);
@@ -428,7 +439,7 @@ export default {
      */
     async closeModal() {
       if (this.config.onClose) {
-        await this.config.onClose();
+        this.config.onClose();
       }
 
       this.$modals.hide();
