@@ -161,6 +161,7 @@
     }],
     "no-unused-expressions": "off",
     "no-restricted-syntax": ["off"],
+    "vue/no-v-for-template-key-on-root": "off",
     "no-restricted-imports": ["error", {
       "patterns": [
         {

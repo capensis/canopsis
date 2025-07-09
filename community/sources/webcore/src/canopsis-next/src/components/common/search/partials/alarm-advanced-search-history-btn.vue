@@ -102,6 +102,7 @@ export default {
 </script>
 
 <style lang="scss">
+.v-list-item
 .c-alarm-advanced-search__history-menu {
   max-height: 95vh;
 }

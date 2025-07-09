@@ -25,7 +25,7 @@
 import { isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY, SOCKET_ROOMS } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
@@ -118,6 +118,9 @@ export default {
       this.setTheme(this.defaultColorTheme);
     }
   },
+  beforeDestroy() {
+    this.leaveFromSimpleManualExecutions();
+  },
   methods: {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
@@ -147,6 +150,20 @@ export default {
           unwatch();
         }
       });
+    },
+
+    simpleManualExecutionsHandler() {
+      // TODO: finish it
+    },
+
+    joinToSimpleManualExecutions() {
+      this.$socket.join(SOCKET_ROOMS.simplifiedManualExecutions)
+        .addListner(this.simpleManualExecutionsHandler);
+    },
+
+    leaveFromSimpleManualExecutions() {
+      this.$socket.leave(SOCKET_ROOMS.simplifiedManualExecutions)
+        .removeListner(this.simpleManualExecutionsHandler);
     },
 
     async showPausedExecutionsPopup() { // TODO: change the behavior of the popup
