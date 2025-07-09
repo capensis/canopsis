@@ -187,7 +187,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 	}
 
 	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
-		go p.helper.PostProcess(context.Background(), event, result, countersRes, notAckedMetricType)
+		go p.helper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes, notAckedMetricType)
 	} else {
 		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
 	}

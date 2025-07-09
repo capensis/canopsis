@@ -81,13 +81,19 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	entity := *event.Entity
+	var err error
 	if entity.IsUpstreamChanged {
-		return p.upstreamHelper.Process(ctx, event)
+		result, _, err = p.upstreamHelper.Process(ctx, event, true)
+		if err != nil {
+			return result, err
+		}
+
+		return result, nil
 	}
 
 	countersRes := componentAndServiceCountersResult{}
 	match := getOpenAlarmMatch(event)
-	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		entity = *event.Entity
 		countersRes = componentAndServiceCountersResult{}
