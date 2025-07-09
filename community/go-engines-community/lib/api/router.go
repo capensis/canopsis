@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityupstream"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
@@ -703,6 +705,20 @@ func RegisterRoutes(
 				"/entityservice-impacts",
 				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer),
 				entityserviceAPI.GetImpacts,
+			)
+		}
+
+		entityupstreamAPI := entityupstream.NewApi(entityupstream.NewStore(primaryDbClient, authorProvider))
+		{
+			protected.GET(
+				"/entity-downstreams",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
+				entityupstreamAPI.GetDownstreams,
+			)
+			protected.GET(
+				"/entity-upstream",
+				middleware.Authorize(apisecurity.ObjEntity, model.PermissionRead, enforcer),
+				entityupstreamAPI.GetUpstream,
 			)
 		}
 

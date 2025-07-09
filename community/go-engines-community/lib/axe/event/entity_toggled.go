@@ -2,7 +2,6 @@ package event
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
@@ -22,7 +21,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
-	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func NewEntityToggledProcessor(
@@ -113,45 +111,21 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	countersRes := componentAndServiceCountersResult{}
 	var err error
 	if event.Entity.Enabled {
-		result, err = p.upstreamHelper.Process(ctx, event)
+		var alarm types.Alarm
+		result, alarm, err = p.upstreamHelper.Process(ctx, event, true)
 		if err != nil {
 			return result, err
 		}
 
 		if result.AlarmChange.Type != "" {
-			return result, nil
-		}
-
-		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-			result = Result{}
-			countersRes = componentAndServiceCountersResult{}
-
-			alarm := types.Alarm{}
-			err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
-			if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-				return err
-			}
-
 			alarmChange := types.NewAlarmChange()
 			alarmChange.Type = types.AlarmChangeTypeEnabled
 			result.Forward = true
 			result.Alarm = alarm
 			result.AlarmChange = alarmChange
-
-			result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
-				ctx,
-				&result.Alarm,
-				event.Entity,
-				result.AlarmChange,
-			)
-
-			return err
-		})
-		if err != nil {
-			return result, err
 		}
 
-		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
+		go p.upstreamHelper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
 
 		return result, nil
 	}

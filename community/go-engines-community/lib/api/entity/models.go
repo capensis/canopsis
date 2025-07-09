@@ -130,6 +130,8 @@ type Entity struct {
 	// ImpactsCount contains only services
 	ImpactsCount *int `bson:"impacts_count" json:"impacts_count,omitempty"`
 
+	DownstreamCount *int `bson:"downstream_count" json:"downstream_count,omitempty"`
+
 	Coordinates *types.Coordinates `bson:"coordinates,omitempty" json:"coordinates,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
