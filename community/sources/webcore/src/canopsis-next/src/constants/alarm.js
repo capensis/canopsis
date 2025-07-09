@@ -23,6 +23,8 @@ export const ALARM_FIELDS = {
   stateMessage: 'v.state.m',
   statusMessage: 'v.status.m',
   state: 'v.state.val',
+  maxState: 'v.max_state',
+  initialState: 'v.initial_state',
   stateInitiator: 'v.state.initiator',
   status: 'v.status.val',
   totalStateChanges: 'v.total_state_changes',
@@ -181,80 +183,6 @@ export const ALARM_GROUPED_ADVANCED_SEARCH_FIELDS = {
   ],
 };
 
-export const ALARM_ADVANCED_SEARCH_FIELDS = [
-  ALARM_FIELDS.id,
-  ALARM_FIELDS.assignedInstructions,
-  ALARM_FIELDS.displayName,
-  ALARM_FIELDS.output,
-  ALARM_FIELDS.longOutput,
-  ALARM_FIELDS.initialOutput,
-  ALARM_FIELDS.initialLongOutput,
-  ALARM_FIELDS.connector,
-  ALARM_FIELDS.connectorName,
-  ALARM_FIELDS.component,
-  ALARM_FIELDS.resource,
-  ALARM_FIELDS.lastComment,
-  ALARM_FIELDS.lastCommentInitiator,
-  ALARM_FIELDS.ackBy,
-  ALARM_FIELDS.ackMessage,
-  ALARM_FIELDS.ackInitiator,
-  ALARM_FIELDS.stateMessage,
-  ALARM_FIELDS.statusMessage,
-  ALARM_FIELDS.totalStateChanges,
-  ALARM_FIELDS.timestamp,
-  ALARM_FIELDS.creationDate,
-  ALARM_FIELDS.lastUpdateDate,
-  ALARM_FIELDS.lastEventDate,
-  ALARM_FIELDS.ackAt,
-  ALARM_FIELDS.stateAt,
-  ALARM_FIELDS.statusAt,
-  ALARM_FIELDS.resolved,
-  ALARM_FIELDS.activationDate,
-  ALARM_FIELDS.duration,
-  ALARM_FIELDS.currentStateDuration,
-  ALARM_FIELDS.snoozeDuration,
-  ALARM_FIELDS.pbhInactiveDuration,
-  ALARM_FIELDS.activeDuration,
-  ALARM_FIELDS.eventsCount,
-  ALARM_FIELDS.tags,
-  ALARM_FIELDS.impactState,
-  ALARM_FIELDS.ticketAuthor,
-  ALARM_FIELDS.ticketMessage,
-  ALARM_FIELDS.ticketInitiator,
-  ALARM_FIELDS.ticketValue,
-  ALARM_FIELDS.ticketCreatedAt,
-  ALARM_FIELDS.changeState,
-  ALARM_FIELDS.meta,
-  ALARM_FIELDS.entityId,
-  ALARM_FIELDS.entityName,
-  ALARM_FIELDS.entityCategoryName,
-  ALARM_FIELDS.entityType,
-  ALARM_FIELDS.entityComponent,
-  ALARM_FIELDS.entityConnector,
-  ALARM_FIELDS.entityImpactLevel,
-  ALARM_FIELDS.entityKoEvents,
-  ALARM_FIELDS.entityOkEvents,
-  ALARM_FIELDS.entityInfos,
-  ALARM_FIELDS.entityComponentInfos,
-  ALARM_FIELDS.entityLastPbehaviorDate,
-
-  /**
-   * OBJECTS
-   */
-  ALARM_FIELDS.ack,
-  ALARM_FIELDS.ticket,
-  ALARM_FIELDS.ticketData,
-  ALARM_FIELDS.canceled,
-  ALARM_FIELDS.canceledInitiator,
-  ALARM_FIELDS.snooze,
-  ALARM_FIELDS.pbehaviorInfo,
-
-  /**
-   * VIRTUAL
-   */
-  ALARM_FIELDS.activated,
-];
-
 export const ALARM_LEVELS = {
   minor: 20,
   major: 30,
@@ -306,12 +234,17 @@ export const ALARM_STATUSES = {
 };
 
 export const ALARM_STATUSES_ICONS = {
-  [ALARM_STATUSES.closed]: 'check_circle_outline',
+  [ALARM_STATUSES.closed]: '$vuetify.icons.delayed_check',
   [ALARM_STATUSES.ongoing]: 'warning',
   [ALARM_STATUSES.stealthy]: 'swap_vert',
   [ALARM_STATUSES.flapping]: 'swap_vert',
-  [ALARM_STATUSES.cancelled]: 'highlight_off',
+  [ALARM_STATUSES.cancelled]: '$vuetify.icons.delayed_cancel',
   [ALARM_STATUSES.noEvents]: 'sync_problem',
+};
+
+export const ALARM_STATUSES_RESOLVED_ICONS = {
+  [ALARM_STATUSES.closed]: 'check_circle',
+  [ALARM_STATUSES.cancelled]: 'cancel',
 };
 
 export const ALARM_STATUSES_TEXTS = {
@@ -394,6 +327,80 @@ export const ALARM_LIST_ACTIONS_TYPES_ICONS = {
 
   [ALARM_LIST_ACTIONS_TYPES.addBookmark]: '$vuetify.icons.bookmark_add',
   [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: '$vuetify.icons.bookmark_remove',
+};
+
+export const ALARM_LIST_TOGGLE_ACTIONS_TYPES_MAP = {
+  [ALARM_LIST_ACTIONS_TYPES.removeBookmark]: ALARM_LIST_ACTIONS_TYPES.addBookmark,
+};
+
+export const UNIQUE_ALARM_LIST_ACTIONS_TYPES_TO_LABELS_KEYS = {
+  // Acknowledgment actions
+  [ALARM_LIST_ACTIONS_TYPES.ack]: 'alarm.actions.titles.ack',
+  [ALARM_LIST_ACTIONS_TYPES.fastAck]: 'alarm.actions.titles.fastAck',
+  [ALARM_LIST_ACTIONS_TYPES.ackRemove]: 'alarm.actions.titles.ackRemove',
+
+  // Cancel actions
+  [ALARM_LIST_ACTIONS_TYPES.cancel]: 'alarm.actions.titles.cancel',
+  [ALARM_LIST_ACTIONS_TYPES.unCancel]: 'alarm.actions.titles.unCancel',
+  [ALARM_LIST_ACTIONS_TYPES.fastCancel]: 'alarm.actions.titles.fastCancel',
+
+  // Pbehavior actions
+  [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'alarm.actions.titles.pbehavior',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'alarm.actions.titles.fastPbehaviorAdd',
+
+  // Ticket actions
+  [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'alarm.actions.titles.declareTicket',
+  [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'alarm.actions.titles.associateTicket',
+
+  // Meta alarm actions
+  [ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm]: 'alarm.actions.titles.linkToMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromManualMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromAutoMetaAlarm',
+
+  // Information actions
+  [ALARM_LIST_ACTIONS_TYPES.variablesHelp]: 'alarm.actions.titles.variablesHelp',
+  [ALARM_LIST_ACTIONS_TYPES.history]: 'alarm.actions.titles.history',
+
+  // Remediation instructions actions
+  [ALARM_LIST_ACTIONS_TYPES.executeInstruction]: 'alarm.actions.titles.executeInstruction',
+
+  // Bookmark actions
+  [ALARM_LIST_ACTIONS_TYPES.addBookmark]: 'alarm.actions.titles.addBookmark',
+
+  // Other actions
+  [ALARM_LIST_ACTIONS_TYPES.comment]: 'alarm.actions.titles.comment',
+  [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm.actions.titles.snooze',
+  [ALARM_LIST_ACTIONS_TYPES.links]: 'alarm.actions.titles.links',
+};
+
+export const UNIQUE_ALARM_LIST_MASS_ACTIONS_TYPES_TO_LABELS_KEYS = {
+  // Acknowledgment actions
+  [ALARM_LIST_ACTIONS_TYPES.ack]: 'alarm.actions.titles.ack',
+  [ALARM_LIST_ACTIONS_TYPES.fastAck]: 'alarm.actions.titles.fastAck',
+  [ALARM_LIST_ACTIONS_TYPES.ackRemove]: 'alarm.actions.titles.ackRemove',
+
+  // Cancel actions
+  [ALARM_LIST_ACTIONS_TYPES.cancel]: 'alarm.actions.titles.cancel',
+  [ALARM_LIST_ACTIONS_TYPES.unCancel]: 'alarm.actions.titles.unCancel',
+  [ALARM_LIST_ACTIONS_TYPES.fastCancel]: 'alarm.actions.titles.fastCancel',
+
+  // Pbehavior actions
+  [ALARM_LIST_ACTIONS_TYPES.pbehaviorAdd]: 'alarm.actions.titles.pbehavior',
+  [ALARM_LIST_ACTIONS_TYPES.fastPbehaviorAdd]: 'alarm.actions.titles.fastPbehaviorAdd',
+
+  // Ticket actions
+  [ALARM_LIST_ACTIONS_TYPES.declareTicket]: 'alarm.actions.titles.declareTicket',
+  [ALARM_LIST_ACTIONS_TYPES.associateTicket]: 'alarm.actions.titles.associateTicket',
+
+  // Meta alarm actions
+  [ALARM_LIST_ACTIONS_TYPES.linkToMetaAlarm]: 'alarm.actions.titles.linkToMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromManualMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromManualMetaAlarm',
+  [ALARM_LIST_ACTIONS_TYPES.removeAlarmsFromAutoMetaAlarm]: 'alarm.actions.titles.removeAlarmsFromAutoMetaAlarm',
+
+  // Other actions
+  [ALARM_LIST_ACTIONS_TYPES.comment]: 'alarm.actions.titles.comment',
+  [ALARM_LIST_ACTIONS_TYPES.snooze]: 'alarm.actions.titles.snooze',
+  [ALARM_LIST_ACTIONS_TYPES.links]: 'alarm.actions.titles.links',
 };
 
 export const ALARM_LIST_STEPS = {
@@ -479,7 +486,7 @@ export const ALARM_STEPS_ICONS = {
   [ALARM_LIST_STEPS.autoInstructionComplete]: 'assignment',
   [ALARM_LIST_STEPS.autoInstructionFail]: 'assignment',
   [ALARM_LIST_STEPS.activate]: 'notifications',
-  [ALARM_LIST_STEPS.resolve]: 'check_circle_outline',
+  [ALARM_LIST_STEPS.resolve]: 'check_circle',
 };
 
 export const ALARM_STEPS_COLORS = {
@@ -511,6 +518,7 @@ export const ALARM_STEPS_COLORS = {
   [ALARM_LIST_STEPS.declareTicketRuleInProgress]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketRuleComplete]: COLORS.alarmSteps.declareTicket,
   [ALARM_LIST_STEPS.declareTicketRuleFail]: COLORS.alarmSteps.declareTicket,
+  [ALARM_LIST_STEPS.resolve]: COLORS.alarmSteps.resolve,
 };
 
 export const ALARM_STEPS_WITH_AUTHOR_IN_TITLE = [
@@ -676,6 +684,8 @@ export const ALARM_LIST_WIDGET_GROUPED_COLUMNS = {
     ALARM_FIELDS.component,
     ALARM_FIELDS.resource,
     ALARM_FIELDS.state,
+    ALARM_FIELDS.maxState,
+    ALARM_FIELDS.initialState,
     ALARM_FIELDS.status,
     ALARM_FIELDS.tags,
     ALARM_FIELDS.extraDetails,
@@ -800,6 +810,8 @@ export const ALARM_TEMPLATE_FIELDS = {
   id: `alarm.${ALARM_FIELDS.id}`,
   ack: `alarm.${ALARM_FIELDS.ack}`,
   state: `alarm.${ALARM_FIELDS.stateObject}`,
+  maxState: `alarm.${ALARM_FIELDS.maxState}`,
+  initialState: `alarm.${ALARM_FIELDS.initialState}`,
   status: `alarm.${ALARM_FIELDS.statusObject}`,
   ticket: `alarm.${ALARM_FIELDS.ticket}`,
   component: `alarm.${ALARM_FIELDS.component}`,
@@ -820,6 +832,8 @@ export const ALARM_EXPORT_PDF_FIELDS = {
   currentDate: 'current_date',
   displayName: 'display_name',
   state: 'state',
+  maxState: 'max_state',
+  initialState: 'initial_state',
   status: 'status',
   connector: 'connector',
   connectorName: 'connector_name',
@@ -847,6 +861,8 @@ export const ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS = {
   [ALARM_EXPORT_PDF_FIELDS.currentDate]: 'current_date',
   [ALARM_EXPORT_PDF_FIELDS.displayName]: 'alarm.v.display_name',
   [ALARM_EXPORT_PDF_FIELDS.state]: 'alarm.v.state',
+  [ALARM_EXPORT_PDF_FIELDS.maxState]: 'alarm.v.max_state',
+  [ALARM_EXPORT_PDF_FIELDS.initialState]: 'alarm.v.initial_state',
   [ALARM_EXPORT_PDF_FIELDS.status]: 'alarm.v.status',
   [ALARM_EXPORT_PDF_FIELDS.connector]: 'alarm.v.connector',
   [ALARM_EXPORT_PDF_FIELDS.connectorName]: 'alarm.v.connector_name',
@@ -921,6 +937,8 @@ export const ALARM_FIELDS_TO_LABELS_KEYS = {
   [ALARM_FIELDS.ticketValue]: 'alarm.fields.ticketId',
   [ALARM_FIELDS.ticketInitiator]: 'alarm.fields.ticketInitiator',
   [ALARM_FIELDS.ticketCreatedAt]: 'alarm.fields.ticketCreatedAt',
+  [ALARM_FIELDS.maxState]: 'alarm.fields.maxState',
+  [ALARM_FIELDS.initialState]: 'alarm.fields.initialState',
   [ALARM_FIELDS.entityId]: 'common.entityId',
   [ALARM_FIELDS.entityName]: 'alarm.fields.entityName',
   [ALARM_FIELDS.entityCategoryName]: 'alarm.fields.entityCategoryName',
@@ -1049,3 +1067,9 @@ export const ALARM_ACTIONS_PADDINGS = {
 };
 
 export const DEFAULT_ALARM_ACTIONS_INLINE_COUNT = 4;
+
+export const DEFAULT_ALARMS_QUICK_ACTIONS = [
+  ALARM_LIST_ACTIONS_TYPES.ack,
+  ALARM_LIST_ACTIONS_TYPES.fastAck,
+  ALARM_LIST_ACTIONS_TYPES.cancel,
+];
