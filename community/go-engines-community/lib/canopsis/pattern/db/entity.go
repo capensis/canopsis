@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -123,6 +124,7 @@ func getEntityPatternGroupMongoQueries(p pattern.Entity, prefix string) ([]bson.
 	emptyEntity := &types.Entity{}
 	groupQueries := make([]bson.M, len(p))
 	var err error
+	now := time.Now() // to compute relative time values
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
@@ -183,7 +185,7 @@ func getEntityPatternGroupMongoQueries(p pattern.Entity, prefix string) ([]bson.
 			} else if _, ok := emptyEntity.GetIntField(cond.Field); ok {
 				condQueries[j], err = cond.Condition.IntToMongoQuery(mongoField, false)
 			} else if _, ok := emptyEntity.GetTimeField(cond.Field); ok {
-				condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField)
+				condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField, now)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}

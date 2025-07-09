@@ -76,8 +76,9 @@ func (s *sender) UpdateComponentState(ctx context.Context, id string, state int)
 		false,
 		false,
 		libamqp.Publishing{
-			Body:        body,
-			ContentType: "application/json",
+			Body:         body,
+			ContentType:  "application/json",
+			DeliveryMode: libamqp.Persistent,
 		},
 	)
 	if err != nil {
@@ -111,8 +112,9 @@ func (s *sender) RecomputeService(ctx context.Context, serviceID string) error {
 		false,
 		false,
 		libamqp.Publishing{
-			Body:        body,
-			ContentType: "application/json",
+			Body:         body,
+			ContentType:  "application/json",
+			DeliveryMode: libamqp.Persistent,
 		},
 	)
 	if err != nil {
@@ -149,8 +151,9 @@ func (s *sender) UpdateServiceState(ctx context.Context, serviceID string, servi
 		false,
 		false,
 		libamqp.Publishing{
-			Body:        body,
-			ContentType: "application/json",
+			Body:         body,
+			ContentType:  "application/json",
+			DeliveryMode: libamqp.Persistent,
 		},
 	)
 	if err != nil {
@@ -184,8 +187,9 @@ func (s *sender) RecomputeComponent(ctx context.Context, componentID string) err
 		false,
 		false,
 		libamqp.Publishing{
-			Body:        body,
-			ContentType: "application/json",
+			Body:         body,
+			ContentType:  "application/json",
+			DeliveryMode: libamqp.Persistent,
 		},
 	)
 	if err != nil {

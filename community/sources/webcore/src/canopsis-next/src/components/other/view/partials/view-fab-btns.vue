@@ -1,12 +1,9 @@
 <template>
   <div class="view-fab-btns fab ma-2">
-    <v-layout>
-      <v-flex class="mr-3">
-        <view-scroll-top-btn />
-      </v-flex>
-      <v-flex class="mr-3">
-        <view-periodic-refresh-btn />
-      </v-flex>
+    <v-layout class="gap-3">
+      <view-scroll-top-btn />
+      <view-executions-btn />
+      <view-periodic-refresh-btn />
       <c-speed-dial
         direction="top"
         transition="slide-y-reverse-transition"
@@ -76,7 +73,7 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { MODALS, WIDGET_TYPES } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
@@ -87,6 +84,7 @@ import ViewEditingBtn from './view-editing-btn.vue';
 import ViewScrollTopBtn from './view-scroll-top-btn.vue';
 import ViewFullscreenBtn from './view-fullscreen-btn.vue';
 import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
+import ViewExecutionsBtn from './view-executions-btn.vue';
 
 export default {
   components: {
@@ -95,6 +93,7 @@ export default {
     ViewScrollTopBtn,
     ViewFullscreenBtn,
     ViewPeriodicRefreshBtn,
+    ViewExecutionsBtn,
   },
   mixins: [
     activeViewMixin,
@@ -120,6 +119,11 @@ export default {
       opened: false,
       fullscreen: false,
     };
+  },
+  computed: {
+    hasAlarmWidget() {
+      return this.view.tabs.some(tab => tab.widgets.some(widget => widget.type === WIDGET_TYPES.alarmList));
+    },
   },
   created() {
     document.addEventListener('keydown', this.keyDownListener);

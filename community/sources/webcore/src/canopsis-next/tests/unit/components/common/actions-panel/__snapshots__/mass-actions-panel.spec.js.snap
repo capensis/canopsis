@@ -1,29 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 1`] = `
-<div>
-  <!---->
-  <div>
-    <div
-      class="v-menu"
+<div
+  class="layout"
+>
+  <div
+    class="v-menu"
+  >
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
     >
-      <button
-        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-        type="button"
+      <span
+        class="v-btn__content"
       >
-        <span
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </span>
-      </button>
-      <!---->
-    </div>
+          more_vert
+        </i>
+      </span>
+    </button>
+    <!---->
   </div>
 </div>
 `;
@@ -31,29 +30,28 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the mobile size 2`] = `undefined`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 1`] = `
-<div>
-  <!---->
-  <div>
-    <div
-      class="v-menu"
+<div
+  class="layout"
+>
+  <div
+    class="v-menu"
+  >
+    <button
+      class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
+      type="button"
     >
-      <button
-        class="v-btn v-btn--icon v-btn--round theme--light v-size--default"
-        type="button"
+      <span
+        class="v-btn__content"
       >
-        <span
-          class="v-btn__content"
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
-          >
-            more_vert
-          </i>
-        </span>
-      </button>
-      <!---->
-    </div>
+          more_vert
+        </i>
+      </span>
+    </button>
+    <!---->
   </div>
 </div>
 `;
@@ -61,19 +59,19 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctl
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions correctly on the tablet size 2`] = `undefined`;
 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with actions on the large size 1`] = `
-<div>
-  <div>
-    <c-action-btn-stub
-      color="primary"
-      icon="edit"
-      tooltip="Edit title"
-    />
-    <c-action-btn-stub
-      color="secondary"
-      icon="delete"
-      tooltip="Delete title"
-    />
-  </div>
+<div
+  class="layout"
+>
+  <c-action-btn-stub
+    color="primary"
+    icon="edit"
+    tooltip="Edit title"
+  />
+  <c-action-btn-stub
+    color="secondary"
+    icon="delete"
+    tooltip="Delete title"
+  />
   <!---->
 </div>
 `;
