@@ -104,7 +104,7 @@
 <script>
 import { flow, isNumber } from 'lodash';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 

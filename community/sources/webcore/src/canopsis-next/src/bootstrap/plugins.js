@@ -15,7 +15,7 @@ import SetOnlyDiffPlugin from '@/plugins/set-only-diff';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import SocketPlugin from '@/plugins/socket';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import store from '@/store';
 import i18n from '@/i18n';

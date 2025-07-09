@@ -4,7 +4,7 @@ import { merge } from 'lodash';
 
 import { DEFAULT_LOCALE } from '@/config';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { updateDateLocaleMessages } from '@/helpers/date/date';
 
