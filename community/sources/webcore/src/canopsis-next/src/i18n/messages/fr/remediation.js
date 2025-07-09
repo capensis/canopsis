@@ -66,6 +66,8 @@ export default {
   },
 
   instructionExecute: {
+    cancelInstruction: 'Annuler l\'instruction',
+    pauseInstruction: 'Suspendre l\'instruction',
     timeToComplete: '{duration} pour terminer',
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',

@@ -46,8 +46,10 @@
 </template>
 
 <script>
-import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
-import { getLetterByIndex } from '@/helpers/string';
+import {
+  remediationInstructionStepOperationToForm,
+  getOperationNumber,
+} from '@/helpers/entities/remediation/instruction/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -117,7 +119,7 @@ export default {
   },
   methods: {
     getOperationNumber(index) {
-      return `${this.stepNumber}${getLetterByIndex(index)}`;
+      return getOperationNumber(this.stepNumber, index);
     },
 
     addOperation() {

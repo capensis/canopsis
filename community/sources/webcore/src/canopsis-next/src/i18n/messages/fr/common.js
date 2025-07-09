@@ -254,6 +254,7 @@ export default {
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
   failed: 'Échoué',
+  finished: 'Terminé',
   close: 'Fermer',
   alarmId: 'Identifiant de l\'alarme',
   entityId: 'ID d\'entité',
@@ -315,6 +316,7 @@ export default {
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
+  inProgress: 'En cours',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
