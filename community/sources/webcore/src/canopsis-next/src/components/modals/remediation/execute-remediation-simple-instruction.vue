@@ -228,7 +228,6 @@ export default {
         }
       } catch (err) {
         console.error(err);
-
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
         this.closeModal();
