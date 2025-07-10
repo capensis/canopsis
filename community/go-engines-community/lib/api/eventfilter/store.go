@@ -126,9 +126,18 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
+	andCond := make([]bson.M, 0)
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
+		andCond = append(andCond, filter)
+	}
+
+	if query.OnlyUnreadFailure {
+		andCond = append(andCond, bson.M{"unread_failures_count": bson.M{"$gt": 0}})
+	}
+
+	if len(andCond) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": andCond}})
 	}
 
 	sort := common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
@@ -275,10 +284,6 @@ func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (
 	match := bson.M{"rule": id}
 	if r.Type != nil {
 		match["type"] = r.Type
-	}
-
-	if r.OnlyUnreadFailure {
-		match["unread_failures_count"] = bson.M{"$gt": 0}
 	}
 
 	cursor, err := s.dbFailureCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
