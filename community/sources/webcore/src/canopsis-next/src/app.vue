@@ -23,17 +23,15 @@
 
 <script>
 import { isEmpty } from 'lodash';
-import { createNamespacedHelpers } from 'vuex';
 
-import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY, SOCKET_ROOMS } from '@/config';
-import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
 import localStorageService from '@/services/local-storage';
 
 import { reloadPageWithTrailingSlashes } from '@/helpers/url';
-import { convertDateToString } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
@@ -41,13 +39,12 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
 import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
+import { appRemediationInstructionExecutionsPopupsMixin } from '@/mixins/app/remediation-instruction-executions-popups';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import '@/assets/styles/main.scss';
-
-const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
 export default {
   components: {
@@ -61,6 +58,7 @@ export default {
     entitiesUserMixin,
     entitiesTemplateVarsMixin,
     vuetifyCustomIconsRegisterMixin,
+    appRemediationInstructionExecutionsPopupsMixin,
   ],
   data() {
     return {
@@ -100,7 +98,6 @@ export default {
     reloadPageWithTrailingSlashes();
   },
   created() {
-    this.registerCurrentUserOnceWatcher();
     this.socketConnectWithErrorHandling();
   },
   async mounted() {
@@ -114,6 +111,8 @@ export default {
 
     await this.fetchAppInfoWithErrorHandling();
 
+    this.registerCurrentUserOnceWatcher();
+
     if (!this.isLoggedIn) {
       this.setTheme(this.defaultColorTheme);
     }
@@ -122,10 +121,6 @@ export default {
     this.leaveFromSimpleManualExecutions();
   },
   methods: {
-    ...mapActions({
-      fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
-    }),
-
     showLocalStorageWarningPopupMessage() {
       const text = localStorageService.pop('warningPopup');
 
@@ -140,48 +135,15 @@ export default {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
 
           this.setTheme(currentUser.ui_theme_colors);
-
-          await this.filesAccess();
+          this.filesAccess();
 
           if (this.isProVersion) {
-            this.showPausedExecutionsPopup();
+            this.runExecutionsPopups();
           }
 
           unwatch();
         }
       });
-    },
-
-    simpleManualExecutionsHandler() {
-      // TODO: finish it
-    },
-
-    joinToSimpleManualExecutions() {
-      this.$socket.join(SOCKET_ROOMS.simplifiedManualExecutions)
-        .addListner(this.simpleManualExecutionsHandler);
-    },
-
-    leaveFromSimpleManualExecutions() {
-      this.$socket.leave(SOCKET_ROOMS.simplifiedManualExecutions)
-        .removeListner(this.simpleManualExecutionsHandler);
-    },
-
-    async showPausedExecutionsPopup() { // TODO: change the behavior of the popup
-      const pausedExecutions = await this.fetchPausedExecutionsWithoutStore({
-        params: { limit: MAX_LIMIT },
-      });
-
-      if (!pausedExecutions || !pausedExecutions.length) {
-        return;
-      }
-
-      pausedExecutions.forEach((execution = {}) => this.$popups.info({
-        text: this.$t('remediation.instructionExecute.popups.wasPaused', {
-          instructionName: execution.instruction_name,
-          alarmName: execution.alarm_name,
-          date: convertDateToString(execution.paused),
-        }),
-      }));
     },
 
     socketConnectWithErrorHandling() {

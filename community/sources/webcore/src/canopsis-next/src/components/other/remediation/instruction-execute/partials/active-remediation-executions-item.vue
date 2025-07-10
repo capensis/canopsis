@@ -1,5 +1,5 @@
 <template>
-  <v-list-item @click="openExecutionModal">
+  <v-list-item @click="showExecutionModal">
     <v-list-item-content>
       <v-list-item-title class="primary--text cursor-pointer mb-3">
         {{ execution.name }}
@@ -37,16 +37,19 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, toRef } from 'vue';
 
-import { MODALS, REMEDIATION_INSTRUCTION_TYPES, LONG_DURATION_FORMAT } from '@/constants';
+import { REMEDIATION_INSTRUCTION_TYPES, LONG_DURATION_FORMAT } from '@/constants';
 
 import { convertDurationToString } from '@/helpers/date/duration';
 import { getOperationNumber } from '@/helpers/entities/remediation/instruction/form';
 
-import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useRemediationInstructionExecution } from '@/hooks/store/modules/remediation-instruction-execution';
+
+import {
+  useShowExecutionModal,
+} from '@/components/other/remediation/instruction-execute/hooks/active-remediation-executions-item';
 
 import ActiveRemediationExecutionsItemJobs from './active-remediation-executions-item-jobs.vue';
 
@@ -61,7 +64,6 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const modals = useModals();
     const { readRemediationInstructionExecution } = useRemediationInstructionExecution();
 
     const currentOperation = computed(() => props.execution?.current_operation);
@@ -94,25 +96,14 @@ export default {
       emit('refresh');
     };
 
-    const openExecutionModal = () => modals.show({
-      name: props.execution.type === REMEDIATION_INSTRUCTION_TYPES.simpleManual
-        ? MODALS.executeRemediationSimpleInstruction
-        : MODALS.executeRemediationInstruction,
-      config: {
-        alarmId: props.execution.alarm?._id,
-        assignedInstruction: {
-          _id: props.execution.instruction_id,
-          execution: props.execution,
-        },
-      },
-    });
+    const { showExecutionModal } = useShowExecutionModal(toRef(props, 'execution'));
 
     return {
       timeToComplete,
       stepFullNumber,
       hasJobs,
       hasActions,
-      openExecutionModal,
+      showExecutionModal,
       removing,
       removeExecution,
     };

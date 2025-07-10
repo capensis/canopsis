@@ -80,7 +80,9 @@ export default {
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
       wasAborted: '{instructionName} a été abandonnée',
-      wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
+      wasPaused: 'La consigne {instructionName} a été mise en pause.',
+      wasFinished: 'La consigne {instructionName} s\'est terminée.',
+      wasFailed: 'La consigne {instructionName} a échoué.',
       wasRemovedOrDisabled: 'La consigne {instructionName} a été supprimée ou désactivée.',
     },
     jobs: {
