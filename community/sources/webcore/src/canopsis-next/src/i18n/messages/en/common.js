@@ -317,6 +317,7 @@ export default {
   customField: 'Custom field|Custom fields',
   inProgress: 'In progress',
   last: 'Last',
+  seeDetails: 'See details',
   variableTypes: {
     string: 'String',
     number: 'Number',
