@@ -87,7 +87,8 @@ type BulkDeleteRequestItem struct {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author.name author.display_name priority created updated on_success on_failure"`
+	SortBy            string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id author.name author.display_name priority created updated on_success on_failure"`
+	OnlyUnreadFailure bool   `json:"only_unread_failure" form:"only_unread_failure"`
 }
 
 type AggregationResult struct {
@@ -105,8 +106,7 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type FailureRequest struct {
 	pagination.Query
-	Type              *int `json:"type" form:"type"`
-	OnlyUnreadFailure bool `json:"only_unread_failure" form:"only_unread_failure"`
+	Type *int `json:"type" form:"type"`
 }
 
 type FailureResponse struct {
