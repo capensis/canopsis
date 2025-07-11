@@ -117,7 +117,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return result, err
 		}
 
-		if result.AlarmChange.Type != "" {
+		if result.AlarmChange.Type == "" {
 			alarmChange := types.NewAlarmChange()
 			alarmChange.Type = types.AlarmChangeTypeEnabled
 			result.Forward = true

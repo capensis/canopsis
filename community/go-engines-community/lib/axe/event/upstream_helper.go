@@ -244,14 +244,20 @@ func (h *upstreamHelper) UpdateAlarm(ctx context.Context, event rpc.AxeEvent, al
 
 		entity = v
 
-		return h.createAlarm(ctx, entity, event.Parameters, newStatus, statusRuleName)
+		return h.createAlarm(ctx, entity, event, newStatus, statusRuleName)
 	}
 
 	if h.shouldCloseAlarm(alarm) {
-		return h.closeAlarm(ctx, alarm, entity, event.Parameters, newStatus, statusRuleName)
+		// close an alarm or update its status to a status which was shadowed by unknown status
+		newState := types.CpsNumber(types.AlarmStateOK)
+		if newStatus == types.AlarmStatusOngoing {
+			newStatus = types.AlarmStatusOff
+		}
+
+		return h.UpdateAlarmStateAndStatus(ctx, alarm, entity, event, newState, newStatus, statusRuleName)
 	}
 
-	return h.updateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
+	return h.UpdateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
 }
 
 func (h *upstreamHelper) PostProcess(
@@ -356,7 +362,7 @@ func (h *upstreamHelper) shouldCloseAlarm(alarm types.Alarm) bool {
 		!alarm.IsStateLocked()
 }
 
-func (h *upstreamHelper) updateAlarmStatus(
+func (h *upstreamHelper) UpdateAlarmStatus(
 	ctx context.Context,
 	alarm types.Alarm,
 	entity types.Entity,
@@ -417,7 +423,7 @@ func (h *upstreamHelper) updateAlarmStatus(
 func (h *upstreamHelper) createAlarm(
 	ctx context.Context,
 	entity types.Entity,
-	params rpc.AxeParameters,
+	event rpc.AxeEvent,
 	newStatus types.CpsNumber,
 	statusRuleName string,
 ) (Result, error) {
@@ -442,12 +448,12 @@ func (h *upstreamHelper) createAlarm(
 	}
 
 	alarmConfig := h.alarmConfigProvider.Get()
-	alarm, err := h.newAlarm(params, entity, now, alarmConfig)
+	alarm, err := h.newAlarm(event.Parameters, entity, now, alarmConfig)
 	if err != nil {
 		return result, err
 	}
 
-	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, event.Parameters, false)
 	stateStep.Value = types.AlarmStateMinor
 	stateStep.Message = statusRuleName
 	stateStep.Author = canopsis.DefaultEventAuthor
@@ -460,7 +466,7 @@ func (h *upstreamHelper) createAlarm(
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
 	}
 
-	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters, false)
 	statusStep.Value = newStatus
 	statusStep.Message = statusRuleName
 	statusStep.Author = canopsis.DefaultEventAuthor
@@ -549,26 +555,20 @@ func (h *upstreamHelper) createAlarm(
 	return result, nil
 }
 
-// closeAlarm closes an alarm or update its status to a status which was shadowed by unknown status.
-func (h *upstreamHelper) closeAlarm(
+func (h *upstreamHelper) UpdateAlarmStateAndStatus(
 	ctx context.Context,
 	alarm types.Alarm,
 	entity types.Entity,
-	params rpc.AxeParameters,
-	newStatus types.CpsNumber,
+	event rpc.AxeEvent,
+	newState, newStatus types.CpsNumber,
 	statusRuleName string,
 ) (Result, error) {
-	newState := types.CpsNumber(types.AlarmStateOK)
-	if newStatus == types.AlarmStatusOngoing {
-		newStatus = types.AlarmStatusOff
-	}
-
 	result := Result{}
 	alarmChange := types.NewAlarmChange()
 	alarmChange.PreviousState = alarm.Value.State.Value
 	alarmChange.PreviousStatusChange = alarm.Value.State.Timestamp
 	alarmChange.PreviousStatus = alarm.Value.Status.Value
-	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, event.Parameters, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 	stateStep.Value = newState
 	stateStep.Message = statusRuleName
 	alarmChange.Type = types.AlarmChangeTypeStateIncrease
@@ -588,10 +588,10 @@ func (h *upstreamHelper) closeAlarm(
 	}
 
 	set["v.state"] = stateStep
-	set["v.last_update_date"] = params.Timestamp
-	set["v.last_st_upd_dt"] = params.Timestamp
+	set["v.last_update_date"] = event.Parameters.Timestamp
+	set["v.last_st_upd_dt"] = event.Parameters.Timestamp
 
-	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 	statusStep.Value = newStatus
 	statusStep.Message = statusRuleName
 	if newStatus < alarmChange.PreviousStatus {

@@ -137,9 +137,12 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	// invalid event
-	if event.Parameters.State == nil ||
-		event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
+	if event.Parameters.State == nil {
+		return result, nil
+	}
 
+	// ignore external events if component has state settings method
+	if event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
 		return result, nil
 	}
 
@@ -218,7 +221,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	state := *params.State
-	if event.Parameters.StateSettingUpdated {
+	if event.Parameters.StateSettingUpdated && entity.StateInfo != nil {
 		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
 		if err != nil {
 			return Result{}, err
@@ -414,7 +417,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 
 	var newState types.CpsNumber
 
-	if params.StateSettingUpdated {
+	if params.StateSettingUpdated && entity.StateInfo != nil {
 		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
 		if err != nil {
 			return Result{}, err
