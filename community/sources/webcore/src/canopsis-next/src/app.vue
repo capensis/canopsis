@@ -117,9 +117,6 @@ export default {
       this.setTheme(this.defaultColorTheme);
     }
   },
-  beforeDestroy() {
-    this.leaveFromSimpleManualExecutions();
-  },
   methods: {
     showLocalStorageWarningPopupMessage() {
       const text = localStorageService.pop('warningPopup');

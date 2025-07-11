@@ -72,7 +72,6 @@ export default {
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
-    closeConfirmationText: 'Would you like to resume this instruction later?',
     queueNumber: '{number} {name} jobs are in the queue',
     runJobs: 'Run jobs',
     popups: {

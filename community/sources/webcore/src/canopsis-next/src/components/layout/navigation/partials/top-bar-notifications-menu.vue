@@ -57,12 +57,12 @@
 </template>
 
 <script>
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 
 import { SOCKET_ROOMS } from '@/config';
 import { DEFAULT_NOTIFICATION_TOP_BAR_LIMIT, NOTIFICATIONS_PAGE_TABS_KEYS, ROUTES_NAMES } from '@/constants';
 
-import { useComponentInstance } from '@/hooks/vue';
+import { useSocketRoom } from '@/hooks/socket';
 import { useInfo } from '@/hooks/store/modules/info';
 import { useNotifications } from '@/hooks/store/modules/notification';
 import { usePendingHandler } from '@/hooks/query/pending';
@@ -74,7 +74,6 @@ export default {
     TopBarNotificationsMenuItem,
   },
   setup() {
-    const instance = useComponentInstance();
     const { notificationDisplayCount } = useInfo();
     const { fetchNotificationsListWithoutStore } = useNotifications();
 
@@ -91,6 +90,9 @@ export default {
       'white--text': !totalCount.value,
     }));
 
+    /**
+     * Fetches notifications list from the API and updates the component state
+     */
     const { pending, handler: fetchList } = usePendingHandler(async () => {
       const { data, meta } = await fetchNotificationsListWithoutStore({
         params: {
@@ -103,29 +105,21 @@ export default {
       totalCount.value = meta?.total_count ?? 0;
     });
 
+    /**
+     * Updates notifications data and total count from socket events
+     *
+     * @param {Object} params - The update parameters
+     * @param {Array} [params.data] - Array of notification objects
+     * @param {number} [params.total_count] - Total count of notifications
+     */
     const updateNotifications = ({ data, total_count: newTotalCount } = {}) => {
       notifications.value = data ?? [];
       totalCount.value = newTotalCount ?? 0;
     };
 
-    const joinNotificationsRoom = () => {
-      if (instance?.$socket) {
-        instance.$socket.join(SOCKET_ROOMS.notifications).addListener(updateNotifications);
-      }
-    };
+    useSocketRoom(SOCKET_ROOMS.notifications, updateNotifications);
 
-    const leaveNotificationsRoom = () => {
-      if (instance?.$socket) {
-        instance.$socket.leave(SOCKET_ROOMS.notifications).removeListener(updateNotifications);
-      }
-    };
-
-    onMounted(() => {
-      joinNotificationsRoom();
-      fetchList();
-    });
-
-    onBeforeUnmount(leaveNotificationsRoom);
+    onMounted(fetchList);
 
     return {
       linkToSeeAllNotifications,

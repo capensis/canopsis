@@ -5,7 +5,7 @@ import { MODALS } from '@/constants';
 import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
 import { usePopups } from '@/hooks/popups';
-import { useEventFilterStore } from '@/hooks/store/modules/event-filter';
+import { useEventFilter } from '@/hooks/store/modules/event-filter';
 
 /**
  * Provides modal actions for event filter CRUD operations using the event filter store and popups.
@@ -27,12 +27,10 @@ export const useEventFilterActions = (refresh = () => {}) => {
     createEventFilter,
     updateEventFilter,
     removeEventFilter,
-  } = useEventFilterStore();
+  } = useEventFilter();
 
   /**
    * Show modal to create a new event filter.
-   *
-   * @returns {void}
    */
   const showCreateRuleModal = () => {
     modals.show({
@@ -50,8 +48,7 @@ export const useEventFilterActions = (refresh = () => {}) => {
   /**
    * Show modal to duplicate an event filter.
    *
-   * @param {Object} [rule={}] - The event filter rule to duplicate.
-   * @returns {void}
+   * @param {Object} [rule={}] - The event filter rule to duplicate
    */
   const showDuplicateRuleModal = (rule = {}) => {
     modals.show({
@@ -72,7 +69,6 @@ export const useEventFilterActions = (refresh = () => {}) => {
    * Show modal to edit an event filter.
    *
    * @param {Object} [rule={}] - The event filter rule to edit.
-   * @returns {void}
    */
   const showEditRuleModal = (rule = {}) => {
     modals.show({

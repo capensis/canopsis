@@ -147,7 +147,9 @@ export default {
      */
     joinToSocketRoom() {
       if (
-        !this.instructionExecutionId
+        // eslint-disable-next-line no-underscore-dangle
+        this._isDestroyed
+        || !this.instructionExecutionId
         || isInstructionExecutionFailed(this.instructionExecution)
         || isInstructionExecutionAborted(this.instructionExecution)
         || isInstructionExecutionCompleted(this.instructionExecution)
@@ -290,28 +292,6 @@ export default {
           id: this.instructionExecutionId,
         });
       });
-    },
-
-    /**
-     * Cancel remediation instruction execution with error handler
-     *
-     * @return {Promise<void>}
-     */
-    cancelExecution() {
-      return this.tryToCallWithHandleNotFound(
-        () => this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId }),
-      );
-    },
-
-    /**
-     * Pause remediation instruction execution with error handler
-     *
-     * @return {Promise<void>}
-     */
-    pauseExecution() {
-      return this.tryToCallWithHandleNotFound(
-        () => this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId }),
-      );
     },
 
     /**

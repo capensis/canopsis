@@ -5,7 +5,7 @@ import { useStoreModuleHooks } from '@/hooks/store';
  *
  * @returns {Object} An object containing getters and actions for event filters.
  */
-const useEventFilterStoreModule = () => useStoreModuleHooks('eventFilter');
+const useEventFilterStore = () => useStoreModuleHooks('eventFilter');
 
 /**
  * Hook to access event filter store.
@@ -13,8 +13,8 @@ const useEventFilterStoreModule = () => useStoreModuleHooks('eventFilter');
  * @returns {Object} An object containing:
  * - Actions to fetch event filter rules and manage them.
  */
-export const useEventFilterStore = () => {
-  const { useGetters, useActions } = useEventFilterStoreModule();
+export const useEventFilter = () => {
+  const { useGetters, useActions } = useEventFilterStore();
 
   const getters = useGetters({
     eventFiltersPending: 'pending',

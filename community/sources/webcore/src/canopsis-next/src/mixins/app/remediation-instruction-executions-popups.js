@@ -21,6 +21,9 @@ const EXECUTION_STATUSES_TO_POPUPS = {
 const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
 export const appRemediationInstructionExecutionsPopupsMixin = {
+  beforeDestroy() {
+    this.leaveFromSimpleManualExecutions();
+  },
   methods: {
     ...mapActions({
       fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',

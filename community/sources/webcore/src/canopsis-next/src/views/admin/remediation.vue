@@ -168,7 +168,7 @@ export default {
           this.fetchStatisticsList();
           break;
         case REMEDIATION_TABS.instructionStats:
-          this.fetchInstructionStatsList();
+          this.fetchRemediationInstructionStatsListWithPreviousParams();
           break;
       }
     },
