@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -43,6 +44,7 @@ func NewContextUpdateProcessor(
 	return &contextUpdateProcessor{
 		dbClient:                          dbClient,
 		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
+		alarmStatusService:                alarmStatusService,
 		logger:                            logger,
 		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
@@ -69,6 +71,7 @@ func NewContextUpdateProcessor(
 type contextUpdateProcessor struct {
 	dbClient                          mongo.DbClient
 	alarmCollection                   mongo.DbCollection
+	alarmStatusService                alarmstatus.Service
 	logger                            zerolog.Logger
 	componentAndServiceCountersHelper *componentAndServiceCountersHelper
 	upstreamHelper                    *upstreamHelper
@@ -83,6 +86,93 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	entity := *event.Entity
 	var err error
 	if entity.IsUpstreamChanged {
+		if event.Parameters.StateSettingUpdated && entity.StateInfo == nil {
+			countersRes := componentAndServiceCountersResult{}
+			match := getOpenAlarmMatch(event)
+			err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+				result = Result{}
+				entity = *event.Entity
+				countersRes = componentAndServiceCountersResult{}
+
+				alarm := types.Alarm{}
+				err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
+				if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+					return err
+				}
+
+				if alarm.ID == "" {
+					result, err = p.upstreamHelper.UpdateAlarm(ctx, event, alarm, entity)
+					if err != nil {
+						return err
+					}
+
+					result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+						ctx,
+						&result.Alarm,
+						&entity,
+						result.AlarmChange,
+					)
+
+					return err
+				}
+
+				newStatus, statusRuleName, err := p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, entity)
+				if err != nil {
+					return fmt.Errorf("cannot compute alarm status: %w", err)
+				}
+
+				var newState types.CpsNumber
+				switch newStatus {
+				case types.AlarmStatusOngoing:
+					// close alarm which were created by state setting method
+					newState = types.AlarmStateOK
+					newStatus = types.AlarmStatusOff
+				case types.AlarmStatusUnknown:
+					// override state which were created by state setting method
+					newState = types.AlarmStateMinor
+				}
+
+				currentStatus := alarm.Value.Status.Value
+				if newStatus != currentStatus {
+					currentState := alarm.Value.State.Value
+					if newState == currentState {
+						result, err = p.upstreamHelper.UpdateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
+					} else {
+						result, err = p.upstreamHelper.UpdateAlarmStateAndStatus(ctx, alarm, entity, event, newState, newStatus, statusRuleName)
+					}
+
+					if err != nil {
+						return err
+					}
+
+					result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+						ctx,
+						&result.Alarm,
+						&entity,
+						result.AlarmChange,
+					)
+
+					return err
+				}
+
+				result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+					ctx,
+					&alarm,
+					&entity,
+					result.AlarmChange,
+				)
+
+				return err
+			})
+			if err != nil || result.Alarm.ID == "" {
+				return result, err
+			}
+
+			go p.upstreamHelper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
+
+			return result, nil
+		}
+
 		result, _, err = p.upstreamHelper.Process(ctx, event, true)
 		if err != nil {
 			return result, err
