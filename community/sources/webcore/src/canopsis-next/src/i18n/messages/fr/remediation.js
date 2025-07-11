@@ -72,7 +72,6 @@ export default {
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
-    closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
     queueNumber: '{number} {name} travaux sont dans la file d\'attente',
     runJobs: 'Exécuter des tâches',
     popups: {

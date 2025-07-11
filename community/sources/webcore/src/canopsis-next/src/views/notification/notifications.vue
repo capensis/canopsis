@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { onBeforeMount, onMounted, onBeforeUnmount, computed } from 'vue';
+import { computed, onBeforeMount, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router/composables';
 
 import { SOCKET_ROOMS } from '@/config';
@@ -51,9 +51,9 @@ import { NOTIFICATIONS_PAGE_TABS_KEYS, QUICK_RANGES } from '@/constants';
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { useI18n } from '@/hooks/i18n';
-import { useComponentInstance } from '@/hooks/vue';
+import { useSocketRoom } from '@/hooks/socket';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
-import { useEventFilterStore } from '@/hooks/store/modules/event-filter';
+import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
 import { useRemdeitionInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
 
@@ -81,9 +81,15 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const { t } = useI18n();
-    const instance = useComponentInstance();
 
-    const getTabHrefByKeyValue = (key, value) => { // TODO: move this function to router.js helper file
+    /**
+     * Generates a tab href by key-value pair for routing
+     *
+     * @param {string} key - The parameter key
+     * @param {string} value - The parameter value
+     * @returns {string} The resolved href for the route
+     */
+    const getTabHrefByKeyValue = (key, value) => {
       const { href } = router.resolve({ params: { [key]: value } }, route);
 
       return href;
@@ -132,11 +138,16 @@ export default {
       }),
     });
 
+    /**
+     * Computed property that converts the instructions rate query interval to timestamp
+     *
+     * @returns {Object} The converted timestamp interval
+     */
     const instructionsRateQueryInterval = computed(() => (
       convertMetricIntervalToTimestamp({ interval: instructionsToRateOptions.value.interval })
     ));
 
-    const { fetchEventFiltersListWithoutStore } = useEventFilterStore();
+    const { fetchEventFiltersListWithoutStore } = useEventFilter();
     const {
       data: eventFilterFailures,
       meta: eventFilterFailuresMeta,
@@ -154,8 +165,19 @@ export default {
       }),
     });
 
+    /**
+     * Gets the active ID based on the current tab ID
+     *
+     * @param {string} tabId - The tab identifier
+     * @returns {string|undefined} The active ID if the tab matches, undefined otherwise
+     */
     const getActiveIdByTabId = tabId => (tabId === props.tabId ? props.activeId : undefined);
 
+    /**
+     * Computed property that defines the tabs configuration with their properties
+     *
+     * @returns {Array} Array of tab objects with their configuration
+     */
     const tabs = computed(() => [
       {
         key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove,
@@ -218,11 +240,16 @@ export default {
       },
     ].map(tab => ({ ...tab, active: tab.key === route.query.tabId })));
 
+    /**
+     * Fetches all notification lists (event filter failures, instructions to approve, and instructions to rate)
+     */
     const fetchAllLists = () => {
       fetchEventFilterFailuresList();
       fetchInstructionsToApproveList();
       fetchInstructionsToRateList();
     };
+
+    useSocketRoom(SOCKET_ROOMS.notifications, fetchAllLists);
 
     onBeforeMount(() => {
       if (!props.tabId) {
@@ -230,19 +257,7 @@ export default {
       }
     });
 
-    onMounted(() => {
-      if (instance?.$socket) {
-        instance.$socket.join(SOCKET_ROOMS.notifications).addListener(fetchAllLists);
-      }
-
-      fetchAllLists();
-    });
-
-    onBeforeUnmount(() => {
-      if (instance?.$socket) {
-        instance.$socket.leave(SOCKET_ROOMS.notifications).removeListener(fetchAllLists);
-      }
-    });
+    onMounted(fetchAllLists);
 
     return {
       tabs,

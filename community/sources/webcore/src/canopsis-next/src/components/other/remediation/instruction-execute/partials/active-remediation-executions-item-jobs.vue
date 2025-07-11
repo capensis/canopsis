@@ -53,7 +53,7 @@ export default {
 
       return notEmptyJobs.reduce((acc, [key, value]) => {
         if (value) {
-          const textPrefix = notEmptyJobs.length === 1 && notEmptyJobs[0] !== JOBS_TYPES.running
+          const textPrefix = notEmptyJobs.length === 1 && key !== JOBS_TYPES.running
             ? `${t('common.all')}`
             : `${value}`;
 

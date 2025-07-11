@@ -50,7 +50,6 @@ export const ADMIN_PAGES_RULES = {
   tag: { edition: CANOPSIS_EDITION.pro },
   map: { edition: CANOPSIS_EDITION.pro },
   eventsRecord: { edition: CANOPSIS_EDITION.pro },
-  instructionStats: { edition: CANOPSIS_EDITION.pro },
 };
 
 export const USER_PERMISSIONS_PREFIXES = {
@@ -191,7 +190,7 @@ export const USER_PERMISSIONS = {
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
-    remediationinstructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`, // TODO: rename it to admin
+    remediationinstructionStats: `${USER_PERMISSIONS_PREFIXES.technical.admin}_instructionStats`, // TODO: rename it to admin
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
@@ -224,7 +223,7 @@ export const USER_PERMISSIONS = {
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`,
     },
     notification: {
-      common: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`, // TODO: USER_PERMISSIONS_PREFIXES.technical.notification,
+      common: `${USER_PERMISSIONS_PREFIXES.technical.notification}_common`,
     },
     profile: {
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
@@ -609,7 +608,6 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.tag]: ADMIN_PAGES_RULES.tag,
   [USER_PERMISSIONS.technical.map]: ADMIN_PAGES_RULES.map,
   [USER_PERMISSIONS.technical.eventsRecord]: ADMIN_PAGES_RULES.eventsRecord,
-  [USER_PERMISSIONS.technical.remediationinstructionStats]: ADMIN_PAGES_RULES.remediationinstructionStats,
 
   /**
    * Grouped
