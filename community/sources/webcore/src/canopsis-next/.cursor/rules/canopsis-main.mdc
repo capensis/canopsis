@@ -34,7 +34,12 @@ This is a **Vue 2.7.14** application with:
 - Prioritize maintainability and clarity over premature optimization
 - Use early returns (guard clauses) to simplify logic flow
 - Always verify your solution thoroughly — do not assume something "should work"
+
+## Documentation
+
 - Generate all documentations in english (except if I'm asking another language)
+- Don't write return void and Promise<void> in jsdoc. Just ignore it
+- Put new line after function description before @params
 
 ## Code Style and Structure
 

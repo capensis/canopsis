@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import { MODALS, WIDGET_TYPES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import { activeViewMixin } from '@/mixins/active-view';
 import { viewRouterMixin } from '@/mixins/view/router';
@@ -119,11 +119,6 @@ export default {
       opened: false,
       fullscreen: false,
     };
-  },
-  computed: {
-    hasAlarmWidget() {
-      return this.view.tabs.some(tab => tab.widgets.some(widget => widget.type === WIDGET_TYPES.alarmList));
-    },
   },
   created() {
     document.addEventListener('keydown', this.keyDownListener);

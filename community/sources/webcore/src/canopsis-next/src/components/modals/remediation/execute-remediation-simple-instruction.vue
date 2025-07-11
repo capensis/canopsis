@@ -82,7 +82,7 @@ export default {
     instructionExecutionId() {
       const { execution } = this.config.assignedInstruction;
 
-      return execution?._id;
+      return execution?._id ?? this.instructionExecution?._id;
     },
 
     instructionJobs() {

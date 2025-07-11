@@ -162,6 +162,7 @@ export default {
       clearInterval(closeInterval.value);
       clearTimeout(animationTimeout.value);
     });
+
     return {
       visible,
       progressLineStyle,
