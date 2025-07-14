@@ -45,6 +45,8 @@ type Hub interface {
 	Send(room string, msg any)
 	SendGroupRoom(group, id string, msg any)
 	SendGroupRoomByConnections(connIds []string, group, id string, b any)
+	SendToConn(connID string, room string, msg any)
+	SendToUser(userID string, room string, msg any)
 	// RegisterRoom adds room with permissions.
 	RegisterRoom(room string, perms ...string) error
 	RegisterGroup(group string, params GroupParameters, perms ...string) error
@@ -54,6 +56,7 @@ type Hub interface {
 	CloseGroupRoomAndNotify(group, id string) error
 	GetUserTokens() []string
 	GetConnections() []UserConnection
+	GetConnectionsByRoom(room string) []UserConnection
 }
 
 type GroupParameters struct {
@@ -196,12 +199,12 @@ func (h *hub) Connect(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func (h *hub) Send(room string, b any) {
+func (h *hub) Send(room string, msg any) {
 	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageSuccess,
 		Room: room,
-		Msg:  b,
-	})
+		Msg:  msg,
+	}, "", "")
 	if len(closedConns) > 0 {
 		h.closeConnections(closedConns...)
 	}
@@ -218,6 +221,28 @@ func (h *hub) SendGroupRoomByConnections(connIds []string, group, id string, b a
 		Room: room,
 		Msg:  b,
 	})
+	if len(closedConns) > 0 {
+		h.closeConnections(closedConns...)
+	}
+}
+
+func (h *hub) SendToConn(connID string, room string, msg any) {
+	closedConns := h.sendToRoom(room, WMessage{
+		Type: WMessageSuccess,
+		Room: room,
+		Msg:  msg,
+	}, connID, "")
+	if len(closedConns) > 0 {
+		h.closeConnections(closedConns...)
+	}
+}
+
+func (h *hub) SendToUser(userID string, room string, msg any) {
+	closedConns := h.sendToRoom(room, WMessage{
+		Type: WMessageSuccess,
+		Room: room,
+		Msg:  msg,
+	}, "", userID)
 	if len(closedConns) > 0 {
 		h.closeConnections(closedConns...)
 	}
@@ -295,7 +320,7 @@ func (h *hub) CloseGroupRoomAndNotify(group, id string) error {
 	closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageCloseRoom,
 		Room: room,
-	})
+	}, "", "")
 	if len(closedConns) > 0 {
 		h.closeConnections(closedConns...)
 	}
@@ -330,6 +355,32 @@ func (h *hub) GetConnections() []UserConnection {
 		if conn.userID != "" {
 			conns = append(conns, UserConnection{
 				ID:     connId,
+				UserID: conn.userID,
+				Token:  conn.token,
+			})
+		}
+	}
+
+	return conns
+}
+
+func (h *hub) GetConnectionsByRoom(room string) []UserConnection {
+	h.roomsMx.RLock()
+	defer h.roomsMx.RUnlock()
+
+	roomConns, ok := h.rooms[room]
+	if !ok {
+		return nil
+	}
+
+	h.connsMx.RLock()
+	defer h.connsMx.RUnlock()
+
+	conns := make([]UserConnection, 0, len(roomConns))
+	for _, connID := range roomConns {
+		if conn, ok := h.conns[connID]; ok {
+			conns = append(conns, UserConnection{
+				ID:     connID,
 				UserID: conn.userID,
 				Token:  conn.token,
 			})
@@ -908,7 +959,7 @@ func (h *hub) sendToConn(connId string, msg WMessage) (closed bool) {
 	return
 }
 
-func (h *hub) sendToRoom(room string, msg WMessage) []string {
+func (h *hub) sendToRoom(room string, msg WMessage, toConnID, toUserID string) []string {
 	h.connsMx.RLock()
 	h.roomsMx.RLock()
 	defer func() {
@@ -928,14 +979,22 @@ func (h *hub) sendToRoom(room string, msg WMessage) []string {
 				Msg("send to webhook room")
 		}
 	}()
-	for _, connId := range h.rooms[room] {
-		conn := h.conns[connId].conn
-		err := conn.WriteJSON(msg)
+	for _, connID := range h.rooms[room] {
+		if toConnID != "" && connID != toConnID {
+			continue
+		}
+
+		c := h.conns[connID]
+		if toUserID != "" && c.userID != toUserID {
+			continue
+		}
+
+		err := c.conn.WriteJSON(msg)
 		if err != nil {
-			closedConns = append(closedConns, connId)
+			closedConns = append(closedConns, connID)
 			h.logger.Err(err).
 				Str("room", room).
-				Str("addr", conn.RemoteAddr().String()).
+				Str("addr", c.conn.RemoteAddr().String()).
 				Msg("cannot write message to connection, connection will be closed")
 		}
 	}
