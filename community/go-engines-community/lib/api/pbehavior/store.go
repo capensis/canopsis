@@ -1039,18 +1039,18 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 		}
 	}()
 
-	g, ctx := errgroup.WithContext(ctx)
+	g, gCtx := errgroup.WithContext(ctx)
 	ch := make(chan pbehavior.PBehavior)
 	g.Go(func() error {
 		defer close(ch)
 		cursor, err := s.readDbClient.Collection(mongo.PbehaviorMongoCollection).
-			Find(ctx, bson.M{}, options.Find().SetProjection(bson.M{"entity_pattern": 1}))
+			Find(gCtx, bson.M{}, options.Find().SetProjection(bson.M{"entity_pattern": 1}))
 		if err != nil {
 			return err
 		}
 
-		defer cursor.Close(ctx)
-		for cursor.Next(ctx) {
+		defer cursor.Close(gCtx)
+		for cursor.Next(gCtx) {
 			pbh := pbehavior.PBehavior{}
 			err = cursor.Decode(&pbh)
 			if err != nil {
@@ -1058,7 +1058,7 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 			}
 
 			select {
-			case <-ctx.Done():
+			case <-gCtx.Done():
 			case ch <- pbh:
 			}
 		}
@@ -1076,12 +1076,12 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 		g.Go(func() error {
 			for {
 				select {
-				case <-ctx.Done():
+				case <-gCtx.Done():
 					return nil
 				case pbh, ok := <-ch:
 					if !ok {
 						select {
-						case <-ctx.Done():
+						case <-gCtx.Done():
 						case done <- struct{}{}:
 						}
 
@@ -1089,7 +1089,7 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 					}
 
 					conf := s.userInterfaceConfigProvider.Get()
-					execCtx, cancel := context.WithTimeout(ctx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+					execCtx, cancel := context.WithTimeout(gCtx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 					_, ms, err := s.execPattern(execCtx, pbh.EntityPattern)
 					if err != nil {
 						cancel()
@@ -1098,7 +1098,7 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 					}
 
 					cancel()
-					_, err = s.dbCollection.UpdateOne(ctx,
+					_, err = s.dbCollection.UpdateOne(gCtx,
 						bson.M{
 							"_id": pbh.ID,
 							"$or": []bson.M{
@@ -1130,10 +1130,10 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 				if doneCount == s.workers {
 					return nil
 				}
-			case <-ctx.Done():
+			case <-gCtx.Done():
 				return nil
 			case <-ticker.C:
-				err := s.redisClient.SetEx(ctx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
+				err := s.redisClient.SetEx(gCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
 				if err != nil {
 					return err
 				}
@@ -1143,6 +1143,8 @@ func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
 
 	err := g.Wait()
 	if err != nil {
+		s.websocketHub.Send(websocket.RoomPbhPatterns, map[string]bool{"ok": false})
+
 		return err
 	}
 
