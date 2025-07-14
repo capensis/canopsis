@@ -83,7 +83,7 @@ func NewActionLogger(
 		mongo.WidgetFiltersMongoCollection:      ValueTypeWidgetFilter,
 		mongo.EntityMongoCollection:             ValueTypeEntity,
 		mongo.EntityCategoryMongoCollection:     ValueTypeEntityCategory,
-		mongo.BroadcastMessageMongoCollection:   ValueTypeBroadcastMessage,
+		mongo.BroadcastMessageCollection:        ValueTypeBroadcastMessage,
 		mongo.EventFilterRuleCollection:         ValueTypeEventFilter,
 		mongo.FlappingRuleMongoCollection:       ValueTypeFlappingRule,
 		mongo.IdleRuleMongoCollection:           ValueTypeIdleRule,

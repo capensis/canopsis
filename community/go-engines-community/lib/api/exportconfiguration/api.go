@@ -46,7 +46,7 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"dynamic_infos":       mongo.DynamicInfosRulesMongoCollection,
 			"playlist":            mongo.PlaylistMongoCollection,
 			"state_settings":      mongo.StateSettingsMongoCollection,
-			"broadcast":           mongo.BroadcastMessageMongoCollection,
+			"broadcast":           mongo.BroadcastMessageCollection,
 			"associative_table":   mongo.AssociativeTableCollection,
 			"notification":        mongo.NotificationMongoCollection,
 			"view":                mongo.ViewMongoCollection,

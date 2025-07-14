@@ -27,7 +27,7 @@ type UpdateRequest struct {
 	ID          string `bson:"_id" json:"-"`
 }
 
-type FilteredQuery struct {
+type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id message"`
 }
