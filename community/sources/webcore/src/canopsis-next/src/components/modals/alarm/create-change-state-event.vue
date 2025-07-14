@@ -5,6 +5,11 @@
         <span>{{ $t('modals.createChangeStateEvent.title') }}</span>
       </template>
       <template #text="">
+        <alarm-general-table
+          v-if="config.items"
+          :items="config.items"
+          class="mb-4"
+        />
         <c-change-state-field
           v-model="form"
           :label="$t('modals.createChangeStateEvent.fields.output')"
@@ -14,7 +19,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -32,12 +37,15 @@
 </template>
 
 <script>
+import { ref } from 'vue';
+
 import { MODALS, ALARM_STATES } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+
+import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -49,33 +57,44 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    entitiesInfoMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const [firstItem] = this.modal.config.items ?? [];
+  components: { AlarmGeneralTable, ModalWrapper },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { config, close } = useInnerModal(props);
+
+    const { items } = props.modal.config;
+    const [firstItem] = items ?? [];
+    const moreThanOne = items?.length > 1;
+    const stateForSingle = firstItem ? firstItem.v.state.val : ALARM_STATES.major;
+    const defaultState = moreThanOne ? null : stateForSingle;
+
+    const form = ref({
+      comment: '',
+      state: defaultState,
+    });
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(form.value);
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form: {
-        comment: '',
-        state: firstItem ? firstItem.v.state.val : ALARM_STATES.major,
-      },
+      form,
+      isDisabled,
+      submitting,
+      submit,
+      close,
     };
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        await this.config?.action?.(this.form);
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>
