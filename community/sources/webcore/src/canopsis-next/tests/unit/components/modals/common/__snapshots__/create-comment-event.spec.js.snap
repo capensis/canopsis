@@ -26,6 +26,7 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
         <c-name-field
           autofocus=""
           label="Comment"
+          max-length="255"
           name="comment"
           required=""
         />
@@ -92,6 +93,7 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
         <c-name-field
           autofocus=""
           label="Comment"
+          max-length="255"
           name="comment"
           required=""
         />

@@ -10,8 +10,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Assigner interface {
@@ -29,7 +29,7 @@ type assigner struct {
 	serviceRules   []StateSetting
 
 	ruleQuery        bson.M
-	ruleQueryOptions *options.FindOptions
+	ruleQueryOptions *options.FindOptionsBuilder
 
 	logger zerolog.Logger
 }
@@ -76,10 +76,11 @@ func (a *assigner) LoadRules(ctx context.Context) error {
 			return err
 		}
 
-		if rule.Type == RuleTypeComponent {
+		switch rule.Type {
+		case RuleTypeComponent:
 			componentRules = append(componentRules, rule)
 			componentRulesIDs = append(componentRulesIDs, rule.ID)
-		} else if rule.Type == RuleTypeService {
+		case RuleTypeService:
 			serviceRules = append(serviceRules, rule)
 			serviceRulesIDs = append(serviceRulesIDs, rule.ID)
 		}
@@ -114,9 +115,10 @@ func (a *assigner) AssignStateSetting(ctx context.Context, entity *types.Entity,
 	a.rulesMutex.RLock()
 	defer a.rulesMutex.RUnlock()
 
-	if entity.Type == types.EntityTypeComponent {
+	switch entity.Type {
+	case types.EntityTypeComponent:
 		return a.assignToComponent(ctx, entity, prevStateMethodID, commRegister)
-	} else if entity.Type == types.EntityTypeService {
+	case types.EntityTypeService:
 		return a.assignToService(ctx, entity, prevStateMethodID, commRegister)
 	}
 
@@ -146,7 +148,7 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 				ctx,
 				bson.M{"_id": entity.ID},
 				bson.M{"$set": bson.M{"rule": a.componentRules[idx]}},
-				options.Update().SetUpsert(true),
+				options.UpdateOne().SetUpsert(true),
 			)
 			if err != nil {
 				return false, err
@@ -195,7 +197,7 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 				ctx,
 				bson.M{"_id": entity.ID},
 				bson.M{"$set": bson.M{"rule": a.serviceRules[idx]}},
-				options.Update().SetUpsert(true),
+				options.UpdateOne().SetUpsert(true),
 			)
 			if err != nil {
 				return false, err

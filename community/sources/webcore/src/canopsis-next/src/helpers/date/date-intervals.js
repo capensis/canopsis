@@ -350,32 +350,46 @@ export const getValueFromQuickRange = ({ value, start, stop }) => {
 };
 
 /**
+ * Get start timestamp of quick range type
+ *
+ * @param {string} type
+ * @return {number}
+ */
+export const getQickRangeStartTimestamp = (type) => {
+  const { start } = QUICK_RANGES[type];
+
+  if (!start) {
+    return 0;
+  }
+
+  return convertStartDateIntervalToTimestamp(start);
+};
+
+/**
+ * Get start timestamp of quick range type
+ *
+ * @param {string} type
+ * @return {number}
+ */
+export const getQickRangeStopTimestamp = (type) => {
+  const { stop } = QUICK_RANGES[type];
+
+  if (!stop) {
+    return 0;
+  }
+
+  return convertStopDateIntervalToTimestamp(stop);
+};
+
+/**
  * Get diff between start and stop of quick range type
  *
  * @param {string} type
  * @return {number}
  */
-export const getDiffBetweenStartAndStopQuickInterval = (type) => {
-  const { start, stop } = QUICK_RANGES[type];
-
-  if (!start || !stop) {
-    return 0;
-  }
-
-  return convertStopDateIntervalToTimestamp(stop) - convertStartDateIntervalToTimestamp(start);
-};
-
-/**
- * Get quick range by diff
- *
- * @param {number} diff
- * @param {Array} ranges
- * @return {Object}
- */
-export const getQuickRangeByDiffBetweenStartAndStop = (
-  diff,
-  ranges = Object.values(QUICK_RANGES),
-) => ranges.find(range => getDiffBetweenStartAndStopQuickInterval(range.value) === diff) || QUICK_RANGES.custom;
+export const getDiffBetweenStartAndStopQuickInterval = type => (
+  getQickRangeStopTimestamp(type) - getQickRangeStartTimestamp(type)
+);
 
 /**
  * Find quick range by interval

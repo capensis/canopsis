@@ -4,8 +4,7 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 // GetSortQuery returns sort query which support consistent sort : sort by "_id" is added
@@ -37,7 +36,7 @@ func GetSearchQuery(search string, searchBy []string) bson.M {
 		return expr.MongoQuery()
 	}
 
-	searchRegexp := primitive.Regex{
+	searchRegexp := bson.Regex{
 		Pattern: fmt.Sprintf(".*%s.*", search),
 		Options: "i",
 	}

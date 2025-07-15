@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 var stateTitles = map[int]string{
@@ -171,9 +172,9 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 		}
 	case "v.infos":
 		values := make([]string, 0)
-		if m, ok := v.(map[string]any); ok {
+		if m, ok := v.(bson.M); ok {
 			for _, mv := range m {
-				if infos, ok := mv.(map[string]any); ok {
+				if infos, ok := mv.(bson.M); ok {
 					for ik, iv := range infos {
 						if s, ok := iv.(string); ok {
 							values = append(values, ik+": "+s)
@@ -187,9 +188,9 @@ func (c *mongoCursor) transformField(i int, f export.Field, v any, model types.A
 	case "entity.infos",
 		"entity.component_infos":
 		values := make([]string, 0)
-		if m, ok := v.(map[string]any); ok {
+		if m, ok := v.(bson.M); ok {
 			for mk, mv := range m {
-				if info, ok := mv.(map[string]any); ok {
+				if info, ok := mv.(bson.M); ok {
 					if s, ok := info["value"].(string); ok {
 						values = append(values, mk+": "+s)
 					}
@@ -240,7 +241,7 @@ func (c *mongoCursor) getNestedVal(m map[string]any, keys []string) (any, bool) 
 			return v, true
 		}
 
-		if mv, ok := v.(map[string]any); ok {
+		if mv, ok := v.(bson.M); ok {
 			return c.getNestedVal(mv, keys[1:])
 		}
 	}

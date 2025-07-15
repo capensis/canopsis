@@ -2,14 +2,10 @@ import { isArray, omit } from 'lodash';
 
 import { WIDGET_TYPES } from '@/constants';
 
-import featuresService from '@/services/features';
+import { featuresService } from '@/services/features';
 
 import { mapIds } from '@/helpers/array';
 
-import {
-  prepareRemediationInstructionsFiltersToQuery,
-  getRemediationInstructionsFilters,
-} from '../remediation/instruction-filter/query';
 import { convertAlarmUserPreferenceToQuery, convertAlarmWidgetToQuery } from '../alarm/query';
 import {
   convertChartUserPreferenceToQuery,
@@ -124,15 +120,6 @@ export function prepareWidgetQuery(widget, userPreference) {
     } else if (!allFiltersIds.includes(query.filter)) {
       query = omit(query, ['filter']);
     }
-  }
-
-  const remediationInstructionsFilters = getRemediationInstructionsFilters(widget, userPreference);
-
-  if (remediationInstructionsFilters.length) {
-    query = {
-      ...query,
-      ...prepareRemediationInstructionsFiltersToQuery(remediationInstructionsFilters),
-    };
   }
 
   return query;

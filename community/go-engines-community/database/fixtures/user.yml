@@ -149,6 +149,22 @@ widget_templates:
     title: Default columns
     type: alarm_columns
     columns: *widget_alarm_columns
+  tpl_alarm_quick_actions:
+    <<: *widget_tpl
+    title: Default quick actions
+    type: alarm_quick_actions
+    actions:
+      - ack
+      - fastAck
+      - cancel
+  tpl_alarm_mass_quick_actions:
+    <<: *widget_tpl
+    title: Default quick massive actions
+    type: alarm_mass_quick_actions
+    actions:
+      - ack
+      - fastAck
+      - cancel
   tpl_entity_columns:
     <<: *widget_tpl
     title: Default columns
@@ -1955,17 +1971,6 @@ permission:
         *api_permissions_entity_pattern,
         *api_permissions_pbehavior_pattern
       ]
-  permission_listalarm_remediationInstructionsFilter:
-    <<: *permission
-    _id: listalarm_remediationInstructionsFilter
-    name: <Current()._id>
-    description: Set filters by remediation instructions
-    groups:
-      - "@group_widgets"
-      - "@group_widgets_alarmslist"
-      - "@group_widgets_alarmslist_widgetsettings"
-    api_permissions:
-      "@permission_api_instruction": 4
 
   # widgets -> alarmslist -> viewsettings
   permission_listalarm_userFilter:
@@ -3408,7 +3413,6 @@ role:
       "@permission_listalarm_comment": 1
       "@permission_listalarm_filter": 1
       "@permission_listalarm_userFilter": 1
-      "@permission_listalarm_remediationInstructionsFilter": 1
       "@permission_listalarm_userRemediationInstructionsFilter": 1
       "@permission_listalarm_links": 1
       "@permission_listalarm_correlation": 1
@@ -3580,7 +3584,6 @@ role_template:
       "@permission_listalarm_bookmark": 1
       "@permission_listalarm_filterByBookmark": 1
       "@permission_listalarm_userFilter": 1
-      "@permission_listalarm_remediationInstructionsFilter": 1
       "@permission_listalarm_userRemediationInstructionsFilter": 1
       "@permission_listalarm_links": 1
       "@permission_listalarm_correlation": 1

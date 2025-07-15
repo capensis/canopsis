@@ -12,8 +12,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	libmongo "go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 const ResolveDeletedEventWaitTime = time.Hour
@@ -45,6 +45,8 @@ func (w *softDeletePeriodicalWorker) GetInterval() time.Duration {
 // If service counters are recomputed it deletes entity. If not it sends another event (but not for services).
 func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 	now := datetime.NewCpsTime()
+	softDeleteTime := now.Add(-w.softDeleteWaitTime)
+	resolveDeletedEventAfterTime := now.Add(-ResolveDeletedEventWaitTime)
 	cursor, err := w.entityCollection.Aggregate(
 		ctx,
 		[]bson.M{
@@ -67,156 +69,131 @@ func (w *softDeletePeriodicalWorker) Work(ctx context.Context) {
 		},
 	)
 	if err != nil {
-		w.logger.Error().Err(err).Msg("unable to load soft deleted entities")
+		w.logger.Err(err).Msg("unable to load soft deleted entities")
+
 		return
 	}
 
 	defer cursor.Close(ctx)
 
-	writeModels := make([]libmongo.WriteModel, 0, canopsis.DefaultBulkSize)
-	serviceCountersIDs := make([]string, 0, canopsis.DefaultBulkSize)
+	idsToRemove := make([]string, 0, canopsis.DefaultBulkSize)
+	idsToUpdateEventDate := make([]string, 0, canopsis.DefaultBulkSize)
+	serviceIDs := make([]string, 0, canopsis.DefaultBulkSize)
+	connectorIDs := make([]string, 0, canopsis.DefaultBulkSize)
 	events := make([]types.Event, 0, canopsis.DefaultBulkSize)
-	bulkBytesSize := 0
 
 	for cursor.Next(ctx) {
-		sendEvent := false
 		var ent entityData
 		err = cursor.Decode(&ent)
 		if err != nil {
-			w.logger.Error().Err(err).Msg("unable to decode an entity")
+			w.logger.Err(err).Msg("unable to decode an entity")
 			continue
-		}
-
-		var newModels []libmongo.WriteModel
-		if ent.Type == types.EntityTypeService {
-			serviceCountersIDs = append(serviceCountersIDs, ent.ID)
-			if len(serviceCountersIDs) == canopsis.DefaultBulkSize {
-				_, err = w.serviceCountersCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": serviceCountersIDs}})
-				if err != nil {
-					w.logger.Error().Err(err).Msg("unable to delete entity service counters")
-				}
-
-				serviceCountersIDs = serviceCountersIDs[:0]
-			}
 		}
 
 		if ent.ResolveDeletedEventProcessed != nil {
-			if now.Add(-w.softDeleteWaitTime).Before(ent.SoftDeleted.Time) {
+			if softDeleteTime.Before(ent.SoftDeleted.Time) {
 				continue
 			}
 
+			idsToRemove = append(idsToRemove, ent.ID)
 			switch ent.Type {
 			case types.EntityTypeConnector:
-				newModels = []libmongo.WriteModel{
-					libmongo.NewUpdateManyModel().
-						SetFilter(bson.M{"connector": ent.ID}).
-						SetUpdate(bson.M{"$unset": bson.M{"connector": ""}}),
-				}
+				connectorIDs = append(connectorIDs, ent.ID)
 			case types.EntityTypeService:
-				newModels = []libmongo.WriteModel{
-					libmongo.NewUpdateManyModel().
-						SetFilter(bson.M{"services": ent.ID}).
-						SetUpdate(bson.M{"$pull": bson.M{"services": ent.ID}}),
-				}
+				serviceIDs = append(serviceIDs, ent.ID)
 			}
-
-			newModels = append(newModels,
-				libmongo.
-					NewDeleteOneModel().
-					SetFilter(bson.M{"_id": ent.ID, "soft_deleted": bson.M{"$exists": true}}),
-			)
-		} else if ent.Type != types.EntityTypeService && (ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Add(ResolveDeletedEventWaitTime).Before(now.Time)) {
-			sendEvent = true
-			newModels = []libmongo.WriteModel{
-				libmongo.
-					NewUpdateOneModel().
-					SetFilter(bson.M{"_id": ent.ID, "soft_deleted": bson.M{"$exists": true}}).
-					SetUpdate(bson.M{"$set": bson.M{"resolve_deleted_event_sent": now}}),
-			}
-		} else {
-			continue
-		}
-
-		b, err := bson.Marshal(struct {
-			Arr []libmongo.WriteModel
-		}{Arr: writeModels})
-		if err != nil {
-			w.logger.Error().Err(err).Msg("unable to marshal eventfilter update model")
-			continue
-		}
-
-		newModelLen := len(b)
-		if bulkBytesSize+newModelLen > canopsis.DefaultBulkBytesSize {
-			_, err := w.entityCollection.BulkWrite(ctx, writeModels)
-			if err != nil {
-				w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
-			}
-
-			for _, event := range events {
-				err = w.eventPublisher.SendEvent(ctx, event)
-				if err != nil {
-					w.logger.Error().Err(err).Msg("failed to send event")
-					continue
-				}
-			}
-
-			writeModels = writeModels[:0]
-			events = events[:0]
-			bulkBytesSize = 0
-		}
-
-		if sendEvent {
+		} else if ent.Type != types.EntityTypeService && (ent.ResolveDeletedEventSend == nil || ent.ResolveDeletedEventSend.Time.Before(resolveDeletedEventAfterTime)) {
 			event, err := w.createEvent(types.EventTypeResolveDeleted, ent, now)
 			if err != nil {
-				w.logger.Error().Err(err).Msg("failed to create event")
+				w.logger.Err(err).Msg("failed to create event")
 				continue
 			}
 
 			events = append(events, event)
+			idsToUpdateEventDate = append(idsToUpdateEventDate, ent.ID)
+		} else {
+			continue
 		}
 
-		writeModels = append(writeModels, newModels...)
-		bulkBytesSize += newModelLen
-
-		if len(writeModels) == canopsis.DefaultBulkSize {
-			_, err := w.entityCollection.BulkWrite(ctx, writeModels)
+		if len(idsToRemove) == canopsis.DefaultBulkSize {
+			_, err = w.entityCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": idsToRemove}, "soft_deleted": bson.M{"$exists": true}})
 			if err != nil {
-				w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
+				w.logger.Err(err).Msg("unable to delete soft deletable entities")
+			}
+
+			err = w.removeLinksToServices(ctx, serviceIDs)
+			if err != nil {
+				w.logger.Err(err).Msg("unable to remove links to services")
+			}
+
+			err = w.removeLinksToConnectors(ctx, connectorIDs)
+			if err != nil {
+				w.logger.Err(err).Msg("unable to remove links to services")
+			}
+
+			idsToRemove = idsToRemove[:0]
+			serviceIDs = serviceIDs[:0]
+			connectorIDs = connectorIDs[:0]
+		}
+
+		if len(idsToUpdateEventDate) == canopsis.DefaultBulkSize {
+			_, err = w.entityCollection.UpdateMany(ctx,
+				bson.M{"_id": bson.M{"$in": idsToUpdateEventDate}, "soft_deleted": bson.M{"$exists": true}},
+				bson.M{"$set": bson.M{"resolve_deleted_event_sent": now}},
+			)
+			if err != nil {
+				w.logger.Err(err).Msg("unable to update soft deletable entities")
 			}
 
 			for _, event := range events {
 				err = w.eventPublisher.SendEvent(ctx, event)
 				if err != nil {
-					w.logger.Error().Err(err).Msg("failed to send event")
-					continue
+					w.logger.Warn().Err(err).Msg("failed to send event")
 				}
 			}
 
-			writeModels = writeModels[:0]
+			idsToUpdateEventDate = idsToUpdateEventDate[:0]
 			events = events[:0]
-			bulkBytesSize = 0
 		}
 	}
 
-	if len(writeModels) > 0 {
-		_, err := w.entityCollection.BulkWrite(ctx, writeModels)
+	if err = cursor.Err(); err != nil {
+		w.logger.Err(err).Msg("unable to fetch soft deleted entities")
+
+		return
+	}
+
+	if len(idsToRemove) > 0 {
+		_, err = w.entityCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": idsToRemove}, "soft_deleted": bson.M{"$exists": true}})
 		if err != nil {
-			w.logger.Error().Err(err).Msg("unable to bulk write soft deletable entities")
+			w.logger.Err(err).Msg("unable to delete soft deletable entities")
+		}
+
+		err = w.removeLinksToServices(ctx, serviceIDs)
+		if err != nil {
+			w.logger.Err(err).Msg("unable to remove links to services")
+		}
+
+		err = w.removeLinksToConnectors(ctx, connectorIDs)
+		if err != nil {
+			w.logger.Err(err).Msg("unable to remove links to services")
+		}
+	}
+
+	if len(idsToUpdateEventDate) > 0 {
+		_, err = w.entityCollection.UpdateMany(ctx,
+			bson.M{"_id": bson.M{"$in": idsToUpdateEventDate}, "soft_deleted": bson.M{"$exists": true}},
+			bson.M{"$set": bson.M{"resolve_deleted_event_sent": now}},
+		)
+		if err != nil {
+			w.logger.Err(err).Msg("unable to update soft deletable entities")
 		}
 
 		for _, event := range events {
 			err = w.eventPublisher.SendEvent(ctx, event)
 			if err != nil {
-				w.logger.Error().Err(err).Msg("failed to send event")
-				return
+				w.logger.Warn().Err(err).Msg("failed to send event")
 			}
-		}
-	}
-
-	if len(serviceCountersIDs) > 0 {
-		_, err = w.serviceCountersCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": serviceCountersIDs}})
-		if err != nil {
-			w.logger.Error().Err(err).Msg("unable to delete entity service counters")
 		}
 	}
 }
@@ -255,4 +232,119 @@ func (w *softDeletePeriodicalWorker) createEvent(eventType string, ent entityDat
 	}
 
 	return event, nil
+}
+
+func (w *softDeletePeriodicalWorker) removeLinksToServices(ctx context.Context, ids []string) error {
+	if len(ids) == 0 {
+		return nil
+	}
+
+	_, err := w.serviceCountersCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+	if err != nil {
+		return fmt.Errorf("unable to delete entity service counters: %w", err)
+	}
+
+	for _, id := range ids {
+		err = w.removeLinksToService(ctx, id)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (w *softDeletePeriodicalWorker) removeLinksToService(ctx context.Context, id string) error {
+	cursor, err := w.entityCollection.Find(ctx, bson.M{"services": id}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return fmt.Errorf("unable to find linked entities: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	linkedIDs := make([]string, 0, canopsis.DefaultBulkSize)
+	for cursor.Next(ctx) {
+		ent := struct {
+			ID string `bson:"_id"`
+		}{}
+		err = cursor.Decode(&ent)
+		if err != nil {
+			return fmt.Errorf("unable to decode linked entity: %w", err)
+		}
+
+		linkedIDs = append(linkedIDs, ent.ID)
+		if len(linkedIDs) == canopsis.DefaultBulkSize {
+			_, err := w.entityCollection.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": linkedIDs}}, bson.M{"$pull": bson.M{"services": id}})
+			if err != nil {
+				return fmt.Errorf("unable to update linked entities: %w", err)
+			}
+
+			linkedIDs = linkedIDs[:0]
+		}
+	}
+
+	if len(linkedIDs) > 0 {
+		_, err := w.entityCollection.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": linkedIDs}}, bson.M{"$pull": bson.M{"services": id}})
+		if err != nil {
+			return fmt.Errorf("unable to update linked entities: %w", err)
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return fmt.Errorf("unable to fetch linked entities: %w", err)
+	}
+
+	return nil
+}
+
+func (w *softDeletePeriodicalWorker) removeLinksToConnectors(ctx context.Context, ids []string) error {
+	for _, id := range ids {
+		err := w.removeLinksToConnector(ctx, id)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (w *softDeletePeriodicalWorker) removeLinksToConnector(ctx context.Context, id string) error {
+	cursor, err := w.entityCollection.Find(ctx, bson.M{"connector": id}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return fmt.Errorf("unable to find linked entities: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	linkedIDs := make([]string, 0, canopsis.DefaultBulkSize)
+	for cursor.Next(ctx) {
+		ent := struct {
+			ID string `bson:"_id"`
+		}{}
+		err = cursor.Decode(&ent)
+		if err != nil {
+			return fmt.Errorf("unable to decode linked entity: %w", err)
+		}
+
+		linkedIDs = append(linkedIDs, ent.ID)
+		if len(linkedIDs) == canopsis.DefaultBulkSize {
+			_, err := w.entityCollection.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": linkedIDs}}, bson.M{"$unset": bson.M{"connector": ""}})
+			if err != nil {
+				return fmt.Errorf("unable to update linked entities: %w", err)
+			}
+
+			linkedIDs = linkedIDs[:0]
+		}
+	}
+
+	if len(linkedIDs) > 0 {
+		_, err := w.entityCollection.UpdateMany(ctx, bson.M{"_id": bson.M{"$in": linkedIDs}}, bson.M{"$unset": bson.M{"connector": ""}})
+		if err != nil {
+			return fmt.Errorf("unable to update linked entities: %w", err)
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return fmt.Errorf("unable to fetch linked entities: %w", err)
+	}
+
+	return nil
 }

@@ -8,7 +8,7 @@
   />
   <c-simple-tooltip
     v-else
-    :content="$t(`common.statusTypes.${statusValue}`)"
+    :content="tooltipContent"
     top
   >
     <template #activator="{ on }">
@@ -30,6 +30,8 @@ import { ALARM_STATUSES } from '@/constants';
 
 import { formatAlarmState, formatAlarmStatus } from '@/helpers/entities/alarm/formatting';
 
+import { useI18n } from '@/hooks/i18n';
+
 export default {
   props: {
     alarm: {
@@ -42,15 +44,22 @@ export default {
     },
   },
   setup(props) {
-    const statusValue = computed(() => props.alarm.v.status.val);
+    const { t, te } = useI18n();
+
+    const statusValue = computed(() => props.alarm.v.status?.val);
     const isNoEventsStatus = computed(() => statusValue.value === ALARM_STATUSES.noEvents);
     const isOngoingStatus = computed(() => statusValue.value === ALARM_STATUSES.ongoing);
     const idleSince = computed(() => props.alarm.entity.idle_since);
+    const resolved = computed(() => !!props.alarm.v.resolved);
     const status = computed(() => formatAlarmStatus(statusValue.value));
     const state = computed(() => formatAlarmState(props.alarm.v.state.val));
     const statusColor = computed(() => (isOngoingStatus.value ? state.value.color : status.value.color));
     const iconSize = computed(() => (props.small ? 24 : undefined));
     const iconStyle = computed(() => ({ color: statusColor.value, caretColor: statusColor.value }));
+    const tooltipContent = computed(() => (resolved.value && te(`common.statusResolvedTypes.${statusValue.value}`)
+      ? t(`common.statusResolvedTypes.${statusValue.value}`)
+      : t(`common.statusTypes.${statusValue.value}`)));
+
 
     return {
       statusValue,
@@ -61,6 +70,7 @@ export default {
       state,
       iconSize,
       iconStyle,
+      tooltipContent,
     };
   },
 };

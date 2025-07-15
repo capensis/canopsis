@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type updateEntityInAlarmWorker struct {
@@ -25,6 +25,7 @@ func (w *updateEntityInAlarmWorker) Work(ctx context.Context) error {
 	}
 
 	defer stream.Close(ctx)
+
 	for stream.Next(ctx) {
 		select {
 		case <-ctx.Done():

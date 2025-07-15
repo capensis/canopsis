@@ -1,10 +1,9 @@
-package alarm_test
+package alarm
 
 import (
 	"context"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -16,81 +15,60 @@ import (
 )
 
 func BenchmarkStore_Find_GivenRequestWithBookmarksFilterWithoutUser(b *testing.B) {
-	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", alarm.ListRequestWithPagination{
+	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", ListRequestWithPagination{
 		Query: pagination.Query{
 			Page:     1,
 			Limit:    100,
 			Paginate: true,
 		},
-		ListRequest: alarm.ListRequest{
-			FilterRequest: alarm.FilterRequest{
-				BaseFilterRequest: alarm.BaseFilterRequest{},
+		ListRequest: ListRequest{
+			FilterRequest: FilterRequest{
+				BaseFilterRequest: BaseFilterRequest{},
 			},
 		},
 	}, "")
 }
 
 func BenchmarkStore_Find_GivenRequestWithBookmarksFilterWithUser(b *testing.B) {
-	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", alarm.ListRequestWithPagination{
+	benchmarkStoreFind(b, "./testdata/fixtures/bookmarks_filter.yml", ListRequestWithPagination{
 		Query: pagination.Query{
 			Page:     1,
 			Limit:    100,
 			Paginate: true,
 		},
-		ListRequest: alarm.ListRequest{
-			FilterRequest: alarm.FilterRequest{
-				BaseFilterRequest: alarm.BaseFilterRequest{},
+		ListRequest: ListRequest{
+			FilterRequest: FilterRequest{
+				BaseFilterRequest: BaseFilterRequest{},
 			},
 		},
 	}, "user_500")
 }
 
 func BenchmarkStore_Find_GivenRequestWithIncludeInstructionsFilter(b *testing.B) {
-	benchmarkStoreFind(b, "./testdata/fixtures/include_instructions_filter.yml", alarm.ListRequestWithPagination{
+	instructionFilterType := instrFilterHasInstructions
+	instructionType := InstructionTypeManual
+
+	benchmarkStoreFind(b, "./testdata/fixtures/include_instructions_filter.yml", ListRequestWithPagination{
 		Query: pagination.Query{
 			Page:     1,
 			Limit:    100,
 			Paginate: true,
 		},
-		ListRequest: alarm.ListRequest{
-			FilterRequest: alarm.FilterRequest{
-				BaseFilterRequest: alarm.BaseFilterRequest{
-					Instructions: []alarm.InstructionFilterRequest{
-						{
-							IncludeTypes: []int{alarm.InstructionTypeManual},
-						},
-					},
+		ListRequest: ListRequest{
+			FilterRequest: FilterRequest{
+				BaseFilterRequest: BaseFilterRequest{
+					InstructionFilterType: &instructionFilterType,
+					InstructionType:       &instructionType,
 				},
 			},
 		},
 	}, "test")
 }
 
-func BenchmarkStore_Find_GivenRequestWithExcludeInstructionsFilter(b *testing.B) {
-	benchmarkStoreFind(b, "./testdata/fixtures/exclude_instructions_filter.yml", alarm.ListRequestWithPagination{
-		Query: pagination.Query{
-			Page:     1,
-			Limit:    100,
-			Paginate: true,
-		},
-		ListRequest: alarm.ListRequest{
-			FilterRequest: alarm.FilterRequest{
-				BaseFilterRequest: alarm.BaseFilterRequest{
-					Instructions: []alarm.InstructionFilterRequest{
-						{
-							ExcludeTypes: []int{alarm.InstructionTypeManual},
-						},
-					},
-				},
-			},
-		},
-	}, "test")
-}
-
-func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListRequestWithPagination, userID string) {
+func benchmarkStoreFind(b *testing.B, fixturesPath string, request ListRequestWithPagination, userID string) {
 	ctx := b.Context()
 
-	dbClient, err := mongo.NewClient(ctx, 0, 0, zerolog.Nop())
+	dbClient, err := mongo.NewClient(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
 	}
@@ -115,7 +93,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request alarm.ListReq
 	})
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	s := alarm.NewStore(dbClient, dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+	s := NewStore(dbClient, dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
 		authorProvider, nil, json.NewDecoder(), zerolog.Nop())
 
 	b.ResetTimer()

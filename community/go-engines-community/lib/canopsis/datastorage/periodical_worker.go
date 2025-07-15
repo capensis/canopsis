@@ -10,9 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type PeriodicalWorker interface {
@@ -136,7 +136,7 @@ func (w *worker) Work(ctx context.Context) {
 					w.logger.Warn().Msg("cannot finish data cleaning for " + schConf.Timeout.String())
 					_, err = confCollection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{"$set": bson.M{
 						"history." + c.Key: h,
-					}}, options.Update().SetUpsert(true))
+					}}, options.UpdateOne().SetUpsert(true))
 					if err != nil {
 						w.logger.Err(err).Msg("cannot update config history")
 					}
@@ -149,7 +149,7 @@ func (w *worker) Work(ctx context.Context) {
 
 			_, err = confCollection.UpdateOne(ctx, bson.M{"_id": ID}, bson.M{"$set": bson.M{
 				"history." + c.Key: h,
-			}}, options.Update().SetUpsert(true))
+			}}, options.UpdateOne().SetUpsert(true))
 			if err != nil {
 				w.logger.Err(err).Msg("cannot update config history")
 			}

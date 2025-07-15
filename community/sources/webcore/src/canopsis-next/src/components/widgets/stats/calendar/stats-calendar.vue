@@ -34,7 +34,15 @@
 import { get, isEmpty, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, MAX_LIMIT, CALENDAR_TYPES } from '@/constants';
+import {
+  MODALS,
+  MAX_LIMIT,
+  CALENDAR_TYPES,
+  PBEHAVIOR_CANONICAL_TYPES,
+  PBEHAVIOR_PATTERN_FIELDS,
+  PATTERN_CONDITIONS,
+  PATTERNS_FIELDS,
+} from '@/constants';
 
 import { convertDateToTimestamp, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/calendar';
@@ -133,6 +141,13 @@ export default {
     hasFilters() {
       return this.query?.filters?.length > 0;
     },
+
+    noPbehaviorPattern() {
+      return JSON.stringify([[{
+        field: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
+        cond: { type: PATTERN_CONDITIONS.equal, value: PBEHAVIOR_CANONICAL_TYPES.active },
+      }]]);
+    },
   },
   methods: {
     ...alarmMapActions({
@@ -164,7 +179,13 @@ export default {
     },
 
     getCommonQuery() {
-      return omit(this.query, ['filters', 'considerPbehaviors']);
+      const query = omit(this.query, ['filters', 'considerPbehaviors']);
+
+      if (this.query.considerPbehaviors) {
+        query[PATTERNS_FIELDS.pbehavior] = this.noPbehaviorPattern;
+      }
+
+      return query;
     },
 
     showAlarmsListModal(meta) {
@@ -184,8 +205,8 @@ export default {
             : this.$t('modals.alarmsList.title'),
           fetchList: (params) => {
             const newParams = {
-              ...this.getCommonQuery(),
               ...params,
+              ...this.getCommonQuery(),
 
               tstart: convertDateToTimestamp(meta.tstart),
               tstop: convertDateToTimestamp(meta.tstop),
@@ -204,7 +225,9 @@ export default {
     },
 
     changeCalendar() {
-      this.fetchList();
+      if (!isEmpty(this.query)) {
+        this.fetchList();
+      }
     },
 
     async fetchList() {
@@ -219,13 +242,9 @@ export default {
         this.serverErrorMessage = null;
 
         if (isEmpty(this.query.filters)) {
-          let { data: alarms } = await this.fetchAlarmsListWithoutStore({
+          const { data: alarms } = await this.fetchAlarmsListWithoutStore({
             params: query,
           });
-
-          if (this.query.considerPbehaviors) {
-            alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
-          }
 
           this.alarms = alarms;
           this.alarmsCollections = [];
@@ -238,14 +257,7 @@ export default {
             },
           })));
 
-          this.alarmsCollections = results.map(({ data: alarms }) => {
-            if (this.query.considerPbehaviors) {
-              return alarms.filter(alarm => isEmpty(alarm.pbehaviors));
-            }
-
-            return alarms;
-          });
-
+          this.alarmsCollections = results.map(({ data: alarms }) => alarms);
           this.alarms = [];
         }
       } catch (err) {
@@ -276,6 +288,10 @@ export default {
         align-items: center;
         justify-content: center;
       }
+    }
+
+    .c-calendar__toolbar {
+      z-index: 3;
     }
   }
 </style>

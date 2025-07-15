@@ -22,9 +22,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"go.mongodb.org/mongo-driver/bson"
-	mongodriver "go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"golang.org/x/sync/errgroup"
 )
 
@@ -277,12 +277,12 @@ func (p *metaAlarmPostProcessor) addNewTagsToParents(ctx context.Context, parent
 							bson.M{"$ifNull": bson.A{"$filter_ctags", bson.A{}}},
 							bson.A{},
 						}},
-						"then": externalTags,
+						"then": bson.M{"$literal": externalTags},
 						"else": bson.M{"$map": bson.M{
 							"in": "$$this.tag",
 							"input": bson.M{"$filter": bson.M{
 								"input": bson.M{"$map": bson.M{
-									"input": externalTags,
+									"input": bson.M{"$literal": externalTags},
 									"in": bson.M{
 										"tag": "$$this",
 										"label": bson.M{"$arrayElemAt": bson.A{
