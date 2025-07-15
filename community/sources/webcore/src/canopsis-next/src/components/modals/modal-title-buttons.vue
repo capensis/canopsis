@@ -18,10 +18,7 @@
             v-on="on"
             @click="$modals.minimize({ id: $modal.id })"
           >
-            <v-icon
-              color="white"
-              large
-            >
+            <v-icon large>
               minimize
             </v-icon>
           </v-btn>
@@ -35,7 +32,7 @@
         small
         @click="$modals.maximize({ id: $modal.id })"
       >
-        <v-icon color="white">
+        <v-icon>
           maximize
         </v-icon>
       </v-btn>
@@ -49,10 +46,7 @@
         icon
         @click="closeHandler"
       >
-        <v-icon
-          :large="!$modal.minimized"
-          color="white"
-        >
+        <v-icon :large="!$modal.minimized">
           close
         </v-icon>
       </v-btn>
@@ -98,12 +92,18 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .modal-title-buttons {
   display: flex;
+  color: white;
 
   .v-btn--minimize {
     pointer-events: auto;
+  }
+
+   // We are fixing default color of the icons buttons in light theme
+  .theme--light.v-btn.v-btn--icon {
+    color: inherit;
   }
 }
 </style>
