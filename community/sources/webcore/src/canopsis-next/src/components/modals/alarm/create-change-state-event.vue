@@ -69,13 +69,10 @@ export default {
 
     const { items } = props.modal.config;
     const [firstItem] = items ?? [];
-    const moreThanOne = items?.length > 1;
-    const stateForSingle = firstItem ? firstItem.v.state.val : ALARM_STATES.major;
-    const defaultState = moreThanOne ? null : stateForSingle;
 
     const form = ref({
       comment: '',
-      state: defaultState,
+      state: firstItem && items.length === 1 ? firstItem.v.state.val : ALARM_STATES.major,
     });
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
@@ -89,6 +86,7 @@ export default {
     useFormConfirmableCloseModal({ form, submit, close });
 
     return {
+      config,
       form,
       isDisabled,
       submitting,
