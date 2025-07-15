@@ -3825,13 +3825,19 @@ paths:
                       "info": "#AAAAAA",
                       "success": "#AAAAAA",
                       "warning": "#AAAAAA",
-                      "background": "#AAAAAA"
+                      "background": "#AAAAAA",
+                      "active_color": "#AAAAAA",
+                      "error_background": "#AAAAAA",
+                      "warning_background": "#AAAAAA",
+                      "info_background": "#AAAAAA",
+                      "success_background": "#AAAAAA"
                     },
                     "table": {
                       "background": "#AAAAAA",
-                      "active_color": "#AAAAAA",
                       "row_color": "#AAAAAA",
+                      "shift_row": false,
                       "shift_row_color": "#AAAAAA",
+                      "hover_row": true,
                       "hover_row_color": "#AAAAAA"
                     },
                     "state": {
@@ -3914,13 +3920,19 @@ paths:
                       "info": "#FFFFFF",
                       "success": "#FFFFFF",
                       "warning": "#FFFFFF",
-                      "background": "#FFFFFF"
+                      "background": "#FFFFFF",
+                      "active_color": "#AAAAAA",
+                      "error_background": "#AAAAAA",
+                      "warning_background": "#AAAAAA",
+                      "info_background": "#AAAAAA",
+                      "success_background": "#AAAAAA"
                     },
                     "table": {
                       "background": "#FFFFFF",
-                      "active_color": "#FFFFFF",
                       "row_color": "#FFFFFF",
+                      "shift_row": false,
                       "shift_row_color": "#FFFFFF",
+                      "hover_row": false,
                       "hover_row_color": "#FFFFFF"
                     },
                     "state": {
