@@ -188,7 +188,7 @@ type WidgetFilter struct {
 	IsUserPreference bool `bson:"is_user_preference"`
 
 	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases,omitempty" json:"-"`
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type WidgetTemplate struct {

@@ -5270,10 +5270,10 @@ paths:
                 summary: Create an entity infos property
                 description: Create an entity infos property
                 value: {
-                  "key": "canopsis-entity-info-key",
+                  "name": "canopsis-entity-info-key",
                   "description": "canopsis-entity-info-description",
                   "alias": "canopsis-entity-info-alias",
-                  "type": "string"
+                  "type": 3
                 }
         required: true
       responses:
@@ -5336,10 +5336,10 @@ paths:
                 summary: Update an entity infos property
                 description: Update an entity infos property
                 value: {
-                  "key": "canopsis-entity-info-key",
+                  "name": "canopsis-entity-info-key",
                   "description": "canopsis-entity-info-description",
                   "alias": "canopsis-entity-info-alias",
-                  "type": "string"
+                  "type": 3
                 }
         required: true
       responses:
