@@ -9,7 +9,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfosproperty"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -403,6 +402,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 
 	location := s.timezoneConfigProvider.Get().Location
 	timeFormat := common.GetRealFormatTime(t.TimeFormat)
+	timestampPropsCache := map[string]bool{}
 
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), func(k string, v any) (any, error) {
 		switch k {
@@ -414,7 +414,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 						if i, ok := s.getInt64(info["value"]); ok {
 							var err error
 
-							info["value"], err = s.transformIntInfoValue(ctx, mk, timeFormat, location, i)
+							info["value"], err = s.transformIntInfoValue(ctx, mk, timeFormat, location, timestampPropsCache, i)
 							if err != nil {
 								return nil, err
 							}
@@ -428,7 +428,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			if cut, ok := strings.CutPrefix(k, prefix); ok {
 				if key, ok := strings.CutSuffix(cut, ".value"); ok {
 					if i, ok := s.getInt64(v); ok {
-						return s.transformIntInfoValue(ctx, key, timeFormat, location, i)
+						return s.transformIntInfoValue(ctx, key, timeFormat, location, timestampPropsCache, i)
 					}
 				}
 
@@ -457,13 +457,21 @@ func (s *store) getInt64(v any) (int64, bool) {
 	}
 }
 
-func (s *store) transformIntInfoValue(ctx context.Context, key, timeFormat string, location *time.Location, v int64) (any, error) {
-	err := s.entityInfoPropCollection.FindOne(ctx, bson.M{"key": key, "type": entityinfosproperty.EntityInfosTypeTimestamp}).Err()
-	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return nil, err
+func (s *store) transformIntInfoValue(ctx context.Context, name, timeFormat string, location *time.Location, timestampPropsCache map[string]bool, v int64) (any, error) {
+	var isTimestamp bool
+	var ok bool
+
+	if isTimestamp, ok = timestampPropsCache[name]; !ok {
+		err := s.entityInfoPropCollection.FindOne(ctx, bson.M{"name": name, "type": types.EntityInfoTypeTimestamp}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return nil, err
+		}
+
+		isTimestamp = err == nil
+		timestampPropsCache[name] = isTimestamp
 	}
 
-	if err == nil {
+	if isTimestamp {
 		return datetime.NewCpsTime(v).In(location).Time.Format(timeFormat), nil
 	}
 

@@ -2,10 +2,11 @@ package entityinfodictionary
 
 import (
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/che"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -39,43 +40,61 @@ func (s *store) FindKeys(ctx context.Context, r ListKeysRequest) (AggregationRes
 
 	pipeline = append(pipeline, []bson.M{
 		{
-			"$group": bson.M{"_id": "$_id.k", "type": bson.M{"$max": "$type"}},
-		},
-		{
-			"$lookup": bson.M{
-				"from":         mongo.EntityInfosPropertyCollection,
-				"localField":   "_id",
-				"foreignField": "key",
-				"as":           "props",
+			"$unionWith": bson.M{
+				"coll": mongo.EntityInfosPropertyCollection,
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"name": bson.Regex{
+								Pattern: fmt.Sprintf(".*%s.*", r.Search),
+								Options: "i",
+							},
+						},
+					},
+					{
+						"$project": bson.M{
+							"_id.k":    "$name",
+							"proptype": "$type",
+						},
+					},
+				},
 			},
 		},
 		{
-			"$unwind": bson.M{"path": "$props", "preserveNullAndEmptyArrays": true},
+			"$group": bson.M{
+				"_id":      "$_id.k",
+				"type":     bson.M{"$max": "$type"},
+				"proptype": bson.M{"$max": "$proptype"},
+			},
 		},
 		{
 			"$set": bson.M{
 				"type": bson.M{
 					"$cond": bson.A{
-						bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$props", ""}}, ""}},
+						bson.M{"$or": bson.A{
+							bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$proptype", ""}}, ""}},
+							bson.M{"$gt": bson.A{"$proptype", types.EntityInfoTypeStringArray}},
+							bson.M{"$lt": bson.A{"$proptype", types.EntityInfoTypeBoolean}},
+						}},
 						bson.M{
-							"$switch": bson.M{
-								"branches": []bson.M{
-									{"case": bson.M{"$eq": bson.A{"$type", che.TypeStringArray}}, "then": "string_array"},
-									{"case": bson.M{"$eq": bson.A{"$type", che.TypeString}}, "then": "string"},
-									{"case": bson.M{"$eq": bson.A{"$type", che.TypeNumber}}, "then": "number"},
-									{"case": bson.M{"$eq": bson.A{"$type", che.TypeBoolean}}, "then": "boolean"},
-								},
-								"default": che.TypeString,
+							"$cond": bson.A{
+								bson.M{"$or": bson.A{
+									bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$type", ""}}, ""}},
+									bson.M{"$gt": bson.A{"$type", types.EntityInfoTypeStringArray}},
+									bson.M{"$lt": bson.A{"$type", types.EntityInfoTypeBoolean}},
+								}},
+								types.EntityInfoTypeString,
+								"$type",
 							},
 						},
-						"$props.type",
+						"$proptype",
 					},
 				},
 			},
 		},
 		{
 			"$project": bson.M{
-				"props": 0,
+				"proptype": 0,
 			},
 		},
 	}...)

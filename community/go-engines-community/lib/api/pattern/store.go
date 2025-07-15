@@ -239,12 +239,14 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
+		removedAliases := s.getRemovedAliases(prevPattern.Aliases, model.Aliases)
+
 		response, err = s.GetByID(ctx, model.ID, model.Author)
 		if err != nil || response == nil {
 			return err
 		}
 
-		err = s.updateLinkedModels(ctx, *response, request.Author)
+		err = s.updateLinkedModels(ctx, *response, request.Author, removedAliases)
 		if err != nil {
 			return err
 		}
@@ -307,7 +309,32 @@ func (s *store) Delete(ctx context.Context, pattern Response, userID string) (bo
 	return deleted > 0, nil
 }
 
-func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string) error {
+func (s *store) getRemovedAliases(prevAliases, curAliases []string) []string {
+	if len(prevAliases) == 0 {
+		return []string{}
+	}
+
+	curAliasesLen := len(curAliases)
+	if curAliasesLen == 0 {
+		return prevAliases
+	}
+
+	curAliasesMap := make(map[string]bool, curAliasesLen)
+	for _, alias := range curAliases {
+		curAliasesMap[alias] = true
+	}
+
+	removedAliases := make([]string, 0)
+	for _, alias := range prevAliases {
+		if !curAliasesMap[alias] {
+			removedAliases = append(removedAliases, alias)
+		}
+	}
+
+	return removedAliases
+}
+
+func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string, removedAliases []string) error {
 	if !pattern.IsCorporate {
 		return nil
 	}
@@ -354,9 +381,13 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 		}
 
-		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
-			"$set": set,
-		})
+		update := bson.M{"$set": set}
+
+		if len(removedAliases) > 0 {
+			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
+		}
+
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
 		if err != nil {
 			return err
 		}
@@ -364,32 +395,39 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 
 	switch pattern.Type {
 	case savedpattern.TypeEntity:
+		update := bson.M{}
+		if len(removedAliases) > 0 {
+			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
+		}
+
 		metaAlarmRulesCollection := mongo.MetaAlarmRulesMongoCollection
-		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
-			"$set": bson.M{
-				"total_entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
-				),
-				"corporate_total_entity_pattern_title": pattern.Title,
-				"updated":                              datetime.NewCpsTime(),
-				"author":                               author,
-			},
-		})
+		update["$set"] = bson.M{
+			"total_entity_pattern": pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
+			),
+			"corporate_total_entity_pattern_title": pattern.Title,
+			"updated":                              datetime.NewCpsTime(),
+			"author":                               author,
+		}
+
+		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, update)
 		if err != nil {
 			return err
 		}
 
 		scenarioCollection := mongo.ScenarioMongoCollection
+		update["$set"] = bson.M{
+			"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
+			),
+			"actions.$[action].corporate_entity_pattern_title": pattern.Title,
+			"updated": datetime.NewCpsTime(),
+			"author":  author,
+		}
+
 		_, err = s.client.Collection(scenarioCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_entity_pattern": pattern.ID},
-			bson.M{"$set": bson.M{
-				"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
-				),
-				"actions.$[action].corporate_entity_pattern_title": pattern.Title,
-				"updated": datetime.NewCpsTime(),
-				"author":  author,
-			}},
+			update,
 			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
 		)
 		if err != nil {

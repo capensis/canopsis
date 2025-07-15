@@ -46,7 +46,7 @@ func NewStore(
 		dbCollection:   dbClient.Collection(libmongo.EntityInfosPropertyCollection),
 		authorProvider: authorProvider,
 
-		defaultSearchByFields: []string{"key", "description", "alias"},
+		defaultSearchByFields: []string{"name", "description", "alias"},
 		dupErrorRegexp:        regexp.MustCompile(`{ ([^:]+)`),
 
 		linkedCollections: []libmongo.DbCollection{
@@ -133,7 +133,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		filter = bson.M{}
 	}
 
-	if query.Type != "" {
+	if query.Type != nil {
 		filter["type"] = query.Type
 	}
 
@@ -186,43 +186,30 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 
-		query := []bson.M{
-			{
-				"$set": bson.M{
-					"entity_pattern": getUpdateAliasQuery("entity_pattern", oldProp.Alias, r.Alias),
-				},
-			},
-		}
-
 		for _, collection := range s.linkedCollections {
-			if collection.Name() == libmongo.MetaAlarmRulesMongoCollection {
-				query[0]["$set"].(bson.M)["total_entity_pattern"] = getUpdateAliasQuery("total_entity_pattern", oldProp.Alias, r.Alias) //nolint:forcetypeassert
-			}
-
-			if collection.Name() == libmongo.ScenarioMongoCollection {
-				query = []bson.M{
-					{
-						"$set": bson.M{
-							"actions": bson.M{
-								"$map": bson.M{
-									"input": "$actions",
-									"as":    "action",
-									"in": bson.M{
-										"$mergeObjects": []any{
-											"$$action",
-											bson.M{
-												"entity_pattern": getUpdateAliasQuery("$action.entity_pattern", oldProp.Alias, r.Alias),
-											},
-										},
-									},
-								},
-							},
-						},
-					},
+			var update bson.M
+			switch collection.Name() {
+			case libmongo.MetaAlarmRulesMongoCollection:
+				update = bson.M{
+					"entity_pattern.$[].$[i].alias":       r.Alias,
+					"total_entity_pattern.$[].$[i].alias": r.Alias,
+				}
+			case libmongo.ScenarioMongoCollection:
+				update = bson.M{
+					"actions.$[].entity_pattern.$[].$[i].alias": r.Alias,
+				}
+			default:
+				update = bson.M{
+					"entity_pattern.$[].$[i].alias": r.Alias,
 				}
 			}
 
-			_, err = collection.UpdateMany(ctx, bson.M{"aliases": r.ID}, query)
+			_, err = collection.UpdateMany(
+				ctx,
+				bson.M{"aliases": r.ID},
+				bson.M{"$set": update},
+				options.UpdateMany().SetArrayFilters([]any{bson.M{"i.alias": oldProp.Alias}}),
+			)
 			if err != nil {
 				return err
 			}
@@ -254,50 +241,30 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			}
 		}
 
-		query := []bson.M{
-			{
-				"$set": bson.M{
-					"aliases": bson.M{
-						"$filter": bson.M{
-							"input": "$aliases",
-							"as":    "a",
-							"cond":  bson.M{"$ne": bson.A{"$$a", id}},
-						},
-					},
-					"entity_pattern": getUpdateAliasQuery("entity_pattern", oldProp.Alias, ""),
-				},
-			},
-		}
-
 		for _, collection := range s.linkedCollections {
-			if collection.Name() == libmongo.MetaAlarmRulesMongoCollection {
-				query[0]["$set"].(bson.M)["total_entity_pattern"] = getUpdateAliasQuery("total_entity_pattern", oldProp.Alias, "") //nolint:forcetypeassert
-			}
-
-			if collection.Name() == libmongo.ScenarioMongoCollection {
-				query = []bson.M{
-					{
-						"$set": bson.M{
-							"actions": bson.M{
-								"$map": bson.M{
-									"input": "$actions",
-									"as":    "action",
-									"in": bson.M{
-										"$mergeObjects": []any{
-											"$$action",
-											bson.M{
-												"entity_pattern": getUpdateAliasQuery("$action.entity_pattern", oldProp.Alias, ""),
-											},
-										},
-									},
-								},
-							},
-						},
-					},
+			var update bson.M
+			switch collection.Name() {
+			case libmongo.MetaAlarmRulesMongoCollection:
+				update = bson.M{
+					"entity_pattern.$[].$[i].alias":       "",
+					"total_entity_pattern.$[].$[i].alias": "",
+				}
+			case libmongo.ScenarioMongoCollection:
+				update = bson.M{
+					"actions.$[].entity_pattern.$[].$[i].alias": "",
+				}
+			default:
+				update = bson.M{
+					"entity_pattern.$[].$[i].alias": "",
 				}
 			}
 
-			_, err = collection.UpdateMany(ctx, bson.M{"aliases": id}, query)
+			_, err = collection.UpdateMany(
+				ctx,
+				bson.M{"aliases": id},
+				bson.M{"$set": update, "$pull": bson.M{"aliases": id}},
+				options.UpdateMany().SetArrayFilters([]any{bson.M{"i.alias": oldProp.Alias}}),
+			)
 			if err != nil {
 				return err
 			}
@@ -316,8 +283,8 @@ func (s *store) parseDupError(err error) error {
 		matchedStr := match[1]
 
 		switch matchedStr {
-		case "key":
-			return common.NewValidationError("key", "Key already exists.")
+		case "name":
+			return common.NewValidationError("name", "Name already exists.")
 		case "alias":
 			return common.NewValidationError("alias", "Alias already exists.")
 		default:
@@ -326,33 +293,4 @@ func (s *store) parseDupError(err error) error {
 	}
 
 	return fmt.Errorf("can't parse duplication error: %w", err)
-}
-
-func getUpdateAliasQuery(patternFieldName, oldAlias, newAlias string) bson.M {
-	return bson.M{
-		"$map": bson.M{
-			"input": "$" + patternFieldName,
-			"as":    "subarray",
-			"in": bson.M{
-				"$map": bson.M{
-					"input": "$$subarray",
-					"as":    "elem",
-					"in": bson.M{
-						"$mergeObjects": []any{
-							"$$elem",
-							bson.M{
-								"alias": bson.M{
-									"$cond": []any{
-										bson.M{"$eq": []any{"$$elem.alias", oldAlias}},
-										newAlias,
-										"$$elem.alias",
-									},
-								},
-							},
-						},
-					},
-				},
-			},
-		},
-	}
 }

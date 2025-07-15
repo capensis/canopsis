@@ -22,7 +22,7 @@ type AlarmTag struct {
 	LastEventDate datetime.CpsTime `bson:"last_event_date,omitempty" json:"last_event_date,omitempty"`
 
 	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases,omitempty" json:"-"`
+	Aliases []string `bson:"aliases" json:"-"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`

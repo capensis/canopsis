@@ -194,7 +194,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 		return err
 	}
 
-	transformedAlarmPatternReq, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
+	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
 	if err != nil {
 		return err
 	}
@@ -203,7 +203,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
 		common.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection),
 	)
-	model.AlarmPatternFields = transformedAlarmPatternReq.ToModelWithoutFields(
+	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
 		common.GetForbiddenFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
 		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
 	)

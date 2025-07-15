@@ -89,7 +89,7 @@ type Rule struct {
 	ResolvedExdates []types.Exdate `json:"-" bson:"resolved_exdates"`
 
 	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases,omitempty" json:"-"`
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type RuleConfig struct {

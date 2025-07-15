@@ -14,7 +14,7 @@ type EntityService struct {
 	savedpattern.EntityPatternFields `bson:",inline"`
 
 	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases,omitempty" json:"-"`
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 func (s *EntityService) GetMongoQueries() (bson.M, bson.M, error) {

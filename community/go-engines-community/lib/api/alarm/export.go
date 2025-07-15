@@ -7,7 +7,6 @@ import (
 	"strings"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfosproperty"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
@@ -60,6 +59,7 @@ func newExportCursor(
 		tpls:                     make(map[int]template.ParsedTemplate),
 		withModel:                withModel,
 		entityInfoPropCollection: entityInfoPropCollection,
+		timestampPropsCache:      make(map[string]bool),
 		logger:                   logger,
 	}
 }
@@ -76,6 +76,7 @@ type mongoCursor struct {
 	tpls                     map[int]template.ParsedTemplate
 	withModel                bool
 	entityInfoPropCollection libmongo.DbCollection
+	timestampPropsCache      map[string]bool
 	logger                   zerolog.Logger
 }
 
@@ -251,13 +252,21 @@ func (c *mongoCursor) transformField(ctx context.Context, i int, f export.Field,
 	return v, nil
 }
 
-func (c *mongoCursor) transformIntInfoValue(ctx context.Context, key string, v int64) (any, error) {
-	err := c.entityInfoPropCollection.FindOne(ctx, bson.M{"key": key, "type": entityinfosproperty.EntityInfosTypeTimestamp}).Err()
-	if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
-		return nil, err
+func (c *mongoCursor) transformIntInfoValue(ctx context.Context, name string, v int64) (any, error) {
+	var isTimestamp bool
+	var ok bool
+
+	if isTimestamp, ok = c.timestampPropsCache[name]; !ok {
+		err := c.entityInfoPropCollection.FindOne(ctx, bson.M{"name": name, "type": types.EntityInfoTypeTimestamp}).Err()
+		if err != nil && !errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, err
+		}
+
+		isTimestamp = err == nil
+		c.timestampPropsCache[name] = isTimestamp
 	}
 
-	if err == nil {
+	if isTimestamp {
 		return datetime.NewCpsTime(v).In(c.location).Time.Format(c.timeFormat), nil
 	}
 

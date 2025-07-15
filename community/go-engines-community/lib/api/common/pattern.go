@@ -250,7 +250,7 @@ func (t *basePatternFieldsTransformer) TransformTotalEntityPatternFieldsRequest(
 }
 
 func (t *basePatternFieldsTransformer) transformAliases(ctx context.Context, origPattern pattern.Entity, errPrefix string) (pattern.Entity, []string, error) {
-	var uniqueAliasesMap = make(map[string]bool)
+	var uniqueAliasesMap = make(map[string]string)
 	var uniqueAliases []string
 
 	mutPattern := make([][]pattern.FieldCondition, len(origPattern))
@@ -265,28 +265,29 @@ func (t *basePatternFieldsTransformer) transformAliases(ctx context.Context, ori
 			}
 
 			var doc struct {
-				ID  string `bson:"_id"`
-				Key string `bson:"key"`
+				ID   string `bson:"_id"`
+				Name string `bson:"name"`
 			}
 
-			err := t.entityInfosPropertyCollection.FindOne(
-				ctx,
-				bson.M{"alias": subP.Alias},
-				options.FindOne().SetProjection(bson.M{"key": 1}),
-			).Decode(&doc)
-			if err != nil {
-				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil, nil, NewValidationError(errPrefix+".alias", "Alias doesn't exist.")
+			if k, ok := uniqueAliasesMap[subP.Alias]; ok {
+				p[idx].Field = "infos." + k
+			} else {
+				err := t.entityInfosPropertyCollection.FindOne(
+					ctx,
+					bson.M{"alias": subP.Alias},
+					options.FindOne().SetProjection(bson.M{"name": 1}),
+				).Decode(&doc)
+				if err != nil {
+					if errors.Is(err, mongodriver.ErrNoDocuments) {
+						return nil, nil, NewValidationError(errPrefix+".alias", "Alias doesn't exist.")
+					}
+
+					return nil, nil, err
 				}
 
-				return nil, nil, err
-			}
-
-			p[idx].Field = "infos." + doc.Key
-
-			if !uniqueAliasesMap[doc.ID] {
+				p[idx].Field = "infos." + doc.Name
 				uniqueAliases = append(uniqueAliases, doc.ID)
-				uniqueAliasesMap[doc.ID] = true
+				uniqueAliasesMap[subP.Alias] = doc.Name
 			}
 		}
 	}

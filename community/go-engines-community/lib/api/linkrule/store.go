@@ -297,12 +297,12 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, req EditReq
 	}
 
 	if req.Type == link.TypeAlarm {
-		transformedAlarmPatternReq, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, req.AlarmPatternFieldsRequest)
+		transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, req.AlarmPatternFieldsRequest)
 		if err != nil {
 			return err
 		}
 
-		model.AlarmPatternFields = transformedAlarmPatternReq.ToModelWithoutFields(
+		model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
 			common.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
 			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
 		)

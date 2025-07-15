@@ -1,4 +1,6 @@
-db.entity_infos_property.dropIndex("key_1");
+db.runCommand({collMod: "entity_infos_property", changeStreamPreAndPostImages: {enabled: false}})
+
+db.entity_infos_property.dropIndex("name_1");
 db.entity_infos_property.dropIndex("alias_1");
 db.entity_infos_property.dropIndex("type_1");
 

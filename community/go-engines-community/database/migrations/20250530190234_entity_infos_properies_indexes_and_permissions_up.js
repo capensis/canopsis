@@ -1,4 +1,10 @@
-db.entity_infos_property.createIndex({key: 1}, {name: "key_1", unique: true});
+if (db.getCollectionNames().includes("entity_infos_property")) {
+    db.runCommand({collMod: "entity_infos_property", changeStreamPreAndPostImages: {enabled: true}})
+} else {
+    db.createCollection("entity_infos_property", {changeStreamPreAndPostImages: {enabled: true}})
+}
+
+db.entity_infos_property.createIndex({name: 1}, {name: "name_1", unique: true});
 db.entity_infos_property.createIndex({alias: 1}, {name: "alias_1", unique: true});
 db.entity_infos_property.createIndex({type: 1}, {name: "type_1"});
 

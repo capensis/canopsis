@@ -24,7 +24,7 @@ type Scenario struct {
 	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
 
 	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases,omitempty" json:"-"`
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 func (s Scenario) IsTriggered(triggers []string) string {

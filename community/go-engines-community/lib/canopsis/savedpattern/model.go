@@ -26,7 +26,7 @@ type SavedPattern struct {
 	Updated               datetime.CpsTime              `bson:"updated,omitempty"`
 
 	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases,omitempty" json:"-"`
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type AlarmPatternFields struct {
