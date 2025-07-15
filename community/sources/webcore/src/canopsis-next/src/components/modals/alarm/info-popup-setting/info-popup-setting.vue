@@ -114,6 +114,7 @@ export default {
         name: MODALS.addInfoPopup,
         config: {
           columns: this.config.columns,
+          variables: this.config.variables,
           action: popup => this.form.popups.push(popup),
         },
       });
@@ -128,6 +129,7 @@ export default {
         name: MODALS.addInfoPopup,
         config: {
           columns: this.config.columns,
+          variables: this.config.variables,
           popup,
           action: (editedPopup) => {
             this.$set(this.form.popups, index, editedPopup);

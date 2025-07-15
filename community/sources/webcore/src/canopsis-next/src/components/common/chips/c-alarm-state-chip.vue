@@ -10,7 +10,10 @@
       @click="$emit('click', $event)"
     >
       <template v-if="appendIconName" #append>
-        <v-icon size="14">
+        <v-icon
+          class="c-alarm-state-chip__append-icon"
+          size="14"
+        >
           {{ appendIconName }}
         </v-icon>
       </template>
@@ -77,6 +80,10 @@ export default {
 
   &--small {
     margin-top: 8px;
+  }
+
+  &__append-icon {
+    color: currentColor !important;
   }
 }
 </style>

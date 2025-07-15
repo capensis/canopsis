@@ -198,10 +198,6 @@ definitions:
       impact_state:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       instruction_execution_icon:
         type: integer
@@ -289,15 +285,13 @@ definitions:
       events_count:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       initial_long_output:
         type: string
       initial_output:
         type: string
+      initial_state:
+        type: integer
       last_comment:
         $ref: '#/definitions/common.AlarmStep'
       last_event_date:
@@ -312,6 +306,8 @@ definitions:
         items:
           type: string
         type: array
+      max_state:
+        type: integer
       meta:
         type: string
       output:
@@ -504,10 +500,42 @@ definitions:
         items:
           type: string
         type: array
-      instructions:
+      instruction_filter_type:
+        description: |-
+          Possible instruction filter type values.
+            * `0` - No instructions.
+            * `1` - No instructions or not in progress.
+            * `2` - Has instructions.
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      instruction_ids:
         items:
-          $ref: '#/definitions/alarm.InstructionFilterRequest'
+          type: string
         type: array
+        uniqueItems: true
+      instruction_statuses:
+        description: |-
+          Possible instruction status values.
+            * `0` - In progress.
+            * `1` - Completed.
+            * `2` - Failed.
+            * `3` - Not in progress and not completed.
+        items:
+          type: integer
+        type: array
+        uniqueItems: true
+      instruction_type:
+        description: |-
+          Possible instruction type values.
+            * `0` - Manual.
+            * `1` - Auto.
+        enum:
+        - 0
+        - 1
+        type: integer
       only_bookmarks:
         type: boolean
       opened:
@@ -545,27 +573,6 @@ definitions:
             * `1` - Succeeded
             * `2` - Failed
         type: integer
-    type: object
-  alarm.InstructionFilterRequest:
-    properties:
-      exclude:
-        items:
-          type: string
-        type: array
-      exclude_types:
-        items:
-          type: integer
-        type: array
-      include:
-        items:
-          type: string
-        type: array
-      include_types:
-        items:
-          type: integer
-        type: array
-      running:
-        type: boolean
     type: object
   alarm.MetaAlarmRule:
     properties:
@@ -3714,7 +3721,8 @@ definitions:
     properties:
       type:
         type: string
-      value: {}
+      value:
+        type: object
     type: object
   pattern.Count:
     properties:
@@ -6591,6 +6599,10 @@ definitions:
     type: object
   widgettemplate.EditRequest:
     properties:
+      actions:
+        items:
+          type: string
+        type: array
       columns:
         items:
           $ref: '#/definitions/view.WidgetColumn'
@@ -6606,6 +6618,8 @@ definitions:
         - entity_columns
         - alarm_more_infos
         - alarm_export_to_pdf
+        - alarm_quick_actions
+        - alarm_mass_quick_actions
         - weather_item
         - weather_modal
         - weather_entity
@@ -6618,6 +6632,10 @@ definitions:
     properties:
       _id:
         type: string
+      actions:
+        items:
+          type: string
+        type: array
       author:
         $ref: '#/definitions/author.Author'
       columns:

@@ -8,9 +8,8 @@ import (
 	"strconv"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/bsontype"
-	"go.mongodb.org/mongo-driver/x/bsonx/bsoncore"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/x/bsonx/bsoncore"
 )
 
 // CpsTime allows conversion from time.Time to time.Time.Unix()
@@ -67,13 +66,15 @@ func (t *CpsTime) UnmarshalJSON(b []byte) error {
 }
 
 // MarshalBSONValue converts from CpsTime to timestamp as bytes
-func (t CpsTime) MarshalBSONValue() (bsontype.Type, []byte, error) {
-	return bson.MarshalValue(t.Time.Unix())
+func (t CpsTime) MarshalBSONValue() (byte, []byte, error) {
+	bsonType, bsonBytes, err := bson.MarshalValue(t.Time.Unix())
+	return byte(bsonType), bsonBytes, err
 }
 
 // UnmarshalBSONValue converts from timestamp as bytes to CpsTime
-func (t *CpsTime) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
+func (t *CpsTime) UnmarshalBSONValue(valueType byte, b []byte) error {
+	bsonValueType := bson.Type(valueType)
+	switch bsonValueType {
 	case bson.TypeDouble:
 		double, _, ok := bsoncore.ReadDouble(b)
 		if !ok {
@@ -98,7 +99,7 @@ func (t *CpsTime) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
 	case bson.TypeNull:
 		//do nothing
 	default:
-		return fmt.Errorf("unexpected type %v", valueType)
+		return fmt.Errorf("unexpected type %s", bsonValueType)
 	}
 
 	return nil
@@ -162,17 +163,18 @@ func (t *MicroTime) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-func (t MicroTime) MarshalBSONValue() (bsontype.Type, []byte, error) {
+func (t MicroTime) MarshalBSONValue() (byte, []byte, error) {
 	unixMicro := t.Time.UnixMicro()
 	if unixMicro <= 0 {
-		return bson.TypeNull, nil, nil
+		return byte(bson.TypeNull), nil, nil
 	}
 
-	return bson.MarshalValue(unixMicro)
+	bsonType, bsonBytes, err := bson.MarshalValue(unixMicro)
+	return byte(bsonType), bsonBytes, err
 }
 
-func (t *MicroTime) UnmarshalBSONValue(valueType bsontype.Type, b []byte) error {
-	switch valueType {
+func (t *MicroTime) UnmarshalBSONValue(valueType byte, b []byte) error {
+	switch bson.Type(valueType) {
 	case bson.TypeDouble:
 		double, _, ok := bsoncore.ReadDouble(b)
 		if !ok {

@@ -1,4 +1,5 @@
-import { getZIndex } from 'vuetify/lib/util/helpers';
+import { isObject } from 'lodash';
+import { getZIndex, getPropertyFromItem } from 'vuetify/lib/util/helpers';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
@@ -29,6 +30,7 @@ export const getMaxZIndex = (base, minZIndex = 6, exclude = []) => {
   const activeElements = [
     ...document.getElementsByClassName('v-menu__content--active'),
     ...document.getElementsByClassName('v-dialog__content--active'),
+    ...document.getElementsByClassName('v-navigation-drawer--open'),
   ];
 
   for (let index = 0; index < activeElements.length; index += 1) {
@@ -38,4 +40,17 @@ export const getMaxZIndex = (base, minZIndex = 6, exclude = []) => {
   }
 
   return Math.max(...zis);
+};
+
+export const getSelectionText = (items, selectionItem, itemValue = 'value', itemText = 'text') => {
+  const text = getPropertyFromItem(selectionItem, itemText, selectionItem);
+
+  if (isObject(selectionItem)) {
+    return text;
+  }
+
+  const value = getPropertyFromItem(selectionItem, itemValue, text);
+  const selectionItemObject = items.find(item => getPropertyFromItem(item, itemValue) === value);
+
+  return selectionItemObject ? getPropertyFromItem(selectionItemObject, itemText, text) : text;
 };

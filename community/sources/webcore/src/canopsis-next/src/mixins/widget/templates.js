@@ -1,9 +1,15 @@
 import { filter } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import { COLUMNS_WIDGET_TEMPLATES_TYPES, MAX_LIMIT, WIDGET_TEMPLATES_TYPES } from '@/constants';
+import {
+  COLUMNS_WIDGET_TEMPLATES_TYPES,
+  QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES,
+  MAX_LIMIT,
+  WIDGET_TEMPLATES_TYPES,
+} from '@/constants';
 
 import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { widgetQuickActionsToForm } from '@/helpers/entities/widget/quick-action/form';
 
 const { mapActions } = createNamespacedHelpers('widgetTemplate');
 
@@ -19,11 +25,17 @@ export const widgetTemplatesMixin = {
   },
   computed: {
     preparedWidgetTemplates() {
-      return this.widgetTemplates.map(template => (
-        COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)
-          ? { ...template, columns: widgetColumnsToForm(template.columns) }
-          : template
-      ));
+      return this.widgetTemplates.map((template) => {
+        if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+          return { ...template, columns: widgetColumnsToForm(template.columns) };
+        }
+
+        if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(template.type)) {
+          return { ...template, actions: widgetQuickActionsToForm(template.actions) };
+        }
+
+        return template;
+      });
     },
 
     alarmColumnsWidgetTemplates() {
@@ -40,6 +52,14 @@ export const widgetTemplatesMixin = {
 
     alarmExportToPdfWidgetTemplates() {
       return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.alarmExportToPdf });
+    },
+
+    alarmQuickActionsWidgetTemplates() {
+      return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.alarmQuickActions });
+    },
+
+    alarmMassQuickActionsWidgetTemplates() {
+      return filter(this.preparedWidgetTemplates, { type: WIDGET_TEMPLATES_TYPES.alarmMassQuickActions });
     },
 
     weatherItemWidgetTemplates() {

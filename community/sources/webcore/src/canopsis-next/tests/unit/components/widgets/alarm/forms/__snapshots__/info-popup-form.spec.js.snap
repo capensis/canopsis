@@ -83,6 +83,7 @@ exports[`info-popup-form Renders \`info-popup-form\` with custom props 1`] = `
     label=""
     name="template"
     value="template"
+    variables=""
   />
 </div>
 `;
@@ -171,6 +172,7 @@ exports[`info-popup-form Renders \`info-popup-form\` with default props 1`] = `
     label=""
     name="template"
     value=""
+    variables=""
   />
 </div>
 `;
