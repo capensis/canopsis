@@ -8,6 +8,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` after validate co
     class="layout"
   >
     <state-criticity-field-stub
+      mandatory="true"
       statevalues="[object Object]"
       value="2"
     />
@@ -74,6 +75,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with allowed chan
     class="layout"
   >
     <state-criticity-field-stub
+      mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
@@ -133,6 +135,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with custom label
     class="layout"
   >
     <state-criticity-field-stub
+      mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
@@ -192,6 +195,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` with errors corre
     class="layout"
   >
     <state-criticity-field-stub
+      mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
@@ -258,6 +262,7 @@ exports[`c-change-state-field Renders \`c-change-state-field\` without allowed c
     class="layout"
   >
     <state-criticity-field-stub
+      mandatory="true"
       statevalues="[object Object]"
       value="0"
     />
