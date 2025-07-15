@@ -42,7 +42,7 @@ type Rule struct {
 	Updated *datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
 
 	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases,omitempty" json:"-"`
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 func (r *Rule) Matches(alarmWithEntity types.AlarmWithEntity) (bool, error) {

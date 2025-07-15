@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -30,14 +31,6 @@ const (
 	batchSize = 100000
 	// entitiesLimit is 1/10 of batchSize to have about 10 infos per entity
 	entitiesLimit = batchSize / 10
-)
-
-const (
-	TypeBoolean = iota
-	TypeNumber
-	TypeTimestamp
-	TypeString
-	TypeStringArray
 )
 
 // A composite id is used, because it works faster with a lot of bulk upserts instead of filter and uuid
@@ -158,11 +151,11 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 				"type": bson.M{
 					"$switch": bson.M{
 						"branches": []bson.M{
-							{"case": bson.M{"$eq": bson.A{bson.M{"$type": "$Infos.v.value"}, "bool"}}, "then": TypeBoolean},
-							{"case": bson.M{"$isNumber": "$Infos.v.value"}, "then": TypeNumber},
-							{"case": bson.M{"$isArray": "$Infos.v.value"}, "then": TypeStringArray},
+							{"case": bson.M{"$eq": bson.A{bson.M{"$type": "$Infos.v.value"}, "bool"}}, "then": types.EntityInfoTypeBoolean},
+							{"case": bson.M{"$isNumber": "$Infos.v.value"}, "then": types.EntityInfoTypeNumber},
+							{"case": bson.M{"$isArray": "$Infos.v.value"}, "then": types.EntityInfoTypeStringArray},
 						},
-						"default": TypeString,
+						"default": types.EntityInfoTypeString,
 					},
 				}},
 			},
@@ -253,7 +246,7 @@ func (w *infosDictionaryPeriodicalWorker) buildDictionary(ctx context.Context, t
 		bulkBytesSize := 0
 
 		for _, key := range stopList {
-			newModel := getUpsertOneModel(infosDictID{Key: key, Value: ""}, t, TypeString)
+			newModel := getUpsertOneModel(infosDictID{Key: key, Value: ""}, t, types.EntityInfoTypeString)
 
 			writeModels, bulkBytesSize, err = w.appendWriteModel(ctx, writeModels, newModel, bulkBytesSize)
 			if err != nil {

@@ -6,12 +6,17 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 )
 
-const EntityInfosTypeTimestamp = "timestamp"
-
 type EditRequest struct {
 	Description string `bson:"description,omitempty" json:"description,omitempty" binding:"max=255"`
 	Alias       string `bson:"alias" json:"alias" binding:"max=255"`
-	Type        string `bson:"type" json:"type" binding:"required,oneof=string number boolean string_array timestamp"`
+
+	// Possible type values.
+	//   * `0` - type boolean
+	//   * `1` - type number
+	//   * `2` - type timestamp
+	//   * `3` - type string
+	//   * `4` - type string_array
+	Type int `bson:"type" json:"type" binding:"required,oneof=0 1 2 3 4"`
 
 	Author  string           `bson:"author,omitempty" json:"author,omitempty" swaggerignore:"true"`
 	Created datetime.CpsTime `bson:"created,omitempty" json:"-" swaggerignore:"true"`
@@ -21,7 +26,7 @@ type EditRequest struct {
 type CreateRequest struct {
 	EditRequest `bson:",inline"`
 	ID          string `bson:"_id" json:"_id" binding:"id"`
-	Key         string `bson:"key" json:"key" binding:"required"`
+	Name        string `bson:"name" json:"name" binding:"required"`
 }
 
 type UpdateRequest struct {
@@ -31,13 +36,20 @@ type UpdateRequest struct {
 
 type InfoProperty struct {
 	ID          string `bson:"_id" json:"_id"`
-	Key         string `bson:"key" json:"key"`
+	Name        string `bson:"name" json:"name"`
 	Description string `bson:"description,omitempty" json:"description,omitempty"`
 	Alias       string `bson:"alias" json:"alias"`
-	Type        string `bson:"type" json:"type"`
 
-	Created datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
-	Updated datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitempty" swaggertype:"integer"`
+	// Possible type values.
+	//   * `0` - type boolean
+	//   * `1` - type number
+	//   * `2` - type timestamp
+	//   * `3` - type string
+	//   * `4` - type string_array
+	Type int `bson:"type" json:"type"`
+
+	Created datetime.CpsTime `bson:"created,omitempty" json:"created,omitzero" swaggertype:"integer"`
+	Updated datetime.CpsTime `bson:"updated,omitempty" json:"updated,omitzero" swaggertype:"integer"`
 }
 
 type Response struct {
@@ -60,6 +72,13 @@ func (r *AggregationResult) GetTotal() int64 {
 
 type FilteredQuery struct {
 	pagination.FilteredQuery
-	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=key alias type"`
-	Type   string `json:"type" form:"type" binding:"oneoforempty=string number boolean string_array timestamp"`
+	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=name alias type"`
+
+	// Possible type values.
+	//   * `0` - type boolean
+	//   * `1` - type number
+	//   * `2` - type timestamp
+	//   * `3` - type string
+	//   * `4` - type string_array
+	Type *int `json:"type" form:"type" binding:"omitempty,oneof=0 1 2 3 4"`
 }

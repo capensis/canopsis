@@ -15,7 +15,7 @@ type ListKeysRequest struct {
 
 type Result struct {
 	Value string `bson:"value" json:"value"`
-	Type  string `bson:"type" json:"type"`
+	Type  *int   `bson:"type" json:"type,omitempty"`
 }
 
 type AggregationResult struct {
