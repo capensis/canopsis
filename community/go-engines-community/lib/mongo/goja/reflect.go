@@ -3,13 +3,14 @@ package goja
 import (
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/dop251/goja"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type mappingFunc func(v any) error
@@ -141,7 +142,7 @@ func transformValue(vm *goja.Runtime, v goja.Value) (any, error) {
 				return nil, errors.New("invalid regular expression: " + str)
 			}
 
-			return primitive.Regex{
+			return bson.Regex{
 				Pattern: p,
 				Options: o,
 			}, nil
@@ -155,4 +156,53 @@ func transformValue(vm *goja.Runtime, v goja.Value) (any, error) {
 	}
 
 	return nil, errors.New("unsupported value type: " + vt.String())
+}
+
+func transformCommitQuorum(v goja.Value) (int32, error) {
+	if v == nil {
+		return 0, nil
+	}
+
+	vt := v.ExportType()
+	if vt == nil {
+		return 0, nil
+	}
+
+	rawVal := v.Export()
+
+	switch val := rawVal.(type) {
+	case int:
+		return int32(val), nil
+	case int8:
+		return int32(val), nil
+	case int16:
+		return int32(val), nil
+	case int32:
+		return val, nil
+	case int64:
+		return int32(val), nil
+	case uint:
+		return int32(val), nil
+	case uint8:
+		return int32(val), nil
+	case uint16:
+		return int32(val), nil
+	case uint32:
+		return int32(val), nil
+	case uint64:
+		return int32(val), nil
+	case string:
+		iVal, err := strconv.Atoi(val)
+		if err != nil {
+			return 0, err
+		}
+
+		if iVal > math.MaxInt32 {
+			return 0, fmt.Errorf("int32 type mismatch for value %d", iVal)
+		}
+
+		return int32(iVal), nil //nolint:gosec
+	default:
+		return 0, fmt.Errorf("unsupported type: %T", rawVal)
+	}
 }

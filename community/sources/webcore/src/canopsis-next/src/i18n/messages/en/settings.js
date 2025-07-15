@@ -77,7 +77,7 @@ export default {
   isPriorityEnabled: 'Show priority',
   isHideGrayEnabled: 'Show hide gray',
   isSecondaryIconEnabled: 'Show secondary icon',
-  clearFilterDisabled: 'Clear of selected filter allowed',
+  clearFilterEnabled: 'Clear of selected filter allowed',
   showRootCauseByStateClick: 'Show root cause diagram called from Severity column',
   rootCauseSettings: 'Root cause diagram settings',
   entitiesColorIndicator: 'Entities color indicator',
@@ -330,5 +330,13 @@ export default {
     graphSettings: 'Availability graph settings',
     defaultAvailabilityDisplay: 'Default availability display',
     defaultParameterToDisplay: 'Default parameter to display',
+  },
+  quickActions: {
+    title: 'Quick actions',
+    description: 'These actions will be shown, remaining actions will be hidden under more button',
+  },
+  quickMassActions: {
+    title: 'Quick massive actions',
+    hideSwitcher: 'Hide massive actions under more button',
   },
 };

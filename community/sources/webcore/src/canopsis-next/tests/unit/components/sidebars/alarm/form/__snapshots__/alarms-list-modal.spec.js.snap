@@ -27,6 +27,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
   <field-info-popup-stub
     columns=""
     popups=""
+    variables=""
   />
   <field-text-editor-with-template-stub
     defaultvalue=""
@@ -245,7 +246,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with custom props 1`] =
     templates=""
     title="Export PDF template"
     value=""
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
   <field-root-cause-settings-stub
     parameters="[object Object]"
@@ -279,6 +280,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
   <field-info-popup-stub
     columns=""
     popups=""
+    variables=""
   />
   <field-text-editor-with-template-stub
     defaultvalue=""
@@ -497,7 +499,7 @@ exports[`alarms-list-modal Renders \`alarms-list-modal\` with default props 1`] 
     templates=""
     title="Export PDF template"
     value=""
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
   <field-root-cause-settings-stub
     parameters="[object Object]"

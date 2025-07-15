@@ -668,6 +668,7 @@ export const COLORS = {
 };
 
 export const CSS_COLORS_VARS = {
+  background: 'var(--v-application-background-base)',
   primary: 'var(--v-primary-base)',
   secondary: 'var(--v-secondary-base)',
   error: 'var(--v-error-base)',

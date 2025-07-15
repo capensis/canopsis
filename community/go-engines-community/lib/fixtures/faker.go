@@ -14,7 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/golang-jwt/jwt/v5"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type Faker struct {
@@ -80,6 +80,10 @@ func (f *Faker) ResetUniqueName() {
 	f.usedNames = make(map[string]struct{})
 }
 
+func (f *Faker) UUID() string {
+	return utils.NewID()
+}
+
 func (f *Faker) JWT() (string, error) {
 	registeredClaims := jwt.RegisteredClaims{
 		ID:       utils.NewID(),
@@ -124,13 +128,13 @@ func (*Faker) GenerateBookmarks(prefix string, count int) []string {
 // ToObjectID converts a string of hex digits to a MongoDB ObjectId
 func (*Faker) ToObjectID(s string) interface{} {
 	s = utils.ToObjectIDHex(s)
-	objectID, err := primitive.ObjectIDFromHex(s)
+	objectID, err := bson.ObjectIDFromHex(s)
 	if err != nil {
-		return primitive.NilObjectID
+		return bson.NilObjectID
 	}
 	return objectID
 }
 
 func (*Faker) ObjectID() interface{} {
-	return primitive.NewObjectID()
+	return bson.NewObjectID()
 }

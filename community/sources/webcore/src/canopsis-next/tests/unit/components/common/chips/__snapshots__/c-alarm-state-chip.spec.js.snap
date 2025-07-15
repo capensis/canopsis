@@ -28,7 +28,7 @@ exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state, sma
   >
     <i
       aria-hidden="true"
-      class="v-icon notranslate material-icons theme--light"
+      class="v-icon notranslate c-alarm-state-chip__append-icon material-icons theme--light"
       style="font-size: 14px;"
     >
       lock

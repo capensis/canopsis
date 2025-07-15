@@ -24,6 +24,7 @@ exports[`tag-form Renders \`tag-form\` with default props 1`] = `
 >
   <c-name-field-stub
     autofocus=""
+    disabled="true"
     max-length="20"
     name="value"
     required=""
