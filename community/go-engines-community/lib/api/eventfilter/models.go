@@ -1,6 +1,8 @@
 package eventfilter
 
 import (
+	"encoding/json"
+
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
@@ -128,4 +130,38 @@ func (r *AggregationFailureResult) GetData() interface{} {
 
 func (r *AggregationFailureResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type TemplateRequest struct {
+	Request CreateRequest `json:"request"`
+	Data    struct {
+		Event        *EventRequest  `json:"event" binding:"required"`
+		ExternalData map[string]any `json:"external_data"`
+	} `json:"data"`
+}
+
+type EventRequest struct {
+	types.Event
+}
+
+func (e *EventRequest) UnmarshalJSON(b []byte) error {
+	var v types.Event
+	err := json.Unmarshal(b, &v)
+	if err != nil {
+		return err
+	}
+
+	err = v.InjectExtraInfos(b)
+	if err != nil {
+		return err
+	}
+
+	e.Event = v
+
+	return nil
+}
+
+type TemplateVarsResponse struct {
+	ExternalData []string `json:"external_data"`
+	Config       []string `json:"config"`
 }
