@@ -419,6 +419,7 @@ func Default(
 			event.NewGenerator(canopsis.ApiConnector, canopsis.ApiConnector),
 			securityConfig,
 			exdataImportWorker,
+			services.ExternalDataContainer,
 			workersRunner,
 			logger,
 		)

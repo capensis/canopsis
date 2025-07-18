@@ -76,6 +76,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libpbehavior "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -137,6 +138,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	externalDataContainer *externaldata.GetterContainer,
 	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
@@ -476,7 +478,7 @@ func RegisterRoutes(
 
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
-			eventfilter.NewStore(primaryDbClient, authorProvider),
+			eventfilter.NewStore(primaryDbClient, authorProvider, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
 			common.NewPatternFieldsTransformer(primaryDbClient),
@@ -518,6 +520,14 @@ func RegisterRoutes(
 			"eventfilter-db-export",
 			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
 			eventFilterApi.DBExport)
+		protected.POST(
+			"/eventfilter-template-validate",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			eventFilterApi.ValidateTemplates)
+		protected.GET(
+			"/eventfilter-template-vars",
+			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			eventFilterApi.GetTemplateVars)
 
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
@@ -2431,29 +2441,13 @@ func RegisterRoutes(
 			)
 		}
 
-		templateValidatorApi := template.NewApi(validator.NewValidator(timezoneConfigProvider), templateConfigProvider)
-		templateValidatorRouter := protected.Group("/template-validator")
+		templateValidatorAPI := template.NewApi(templateConfigProvider)
 		{
-			templateValidatorRouter.POST(
-				"/declare-ticket-rules",
-				middleware.OnlyAuth(),
-				templateValidatorApi.ValidateDeclareTicketRules,
-			)
-			templateValidatorRouter.POST(
-				"/scenarios",
-				middleware.OnlyAuth(),
-				templateValidatorApi.ValidateScenarios,
-			)
-			templateValidatorRouter.POST(
-				"/event-filter-rules",
-				middleware.OnlyAuth(),
-				templateValidatorApi.ValidateEventFilterRules,
+			protected.GET(
+				"/template-vars",
+				templateValidatorAPI.GetEnvVars,
 			)
 		}
-		protected.GET(
-			"/template-vars",
-			templateValidatorApi.GetEnvVars,
-		)
 
 		maintenanceApi := maintenance.NewApi(
 			maintenance.NewStore(

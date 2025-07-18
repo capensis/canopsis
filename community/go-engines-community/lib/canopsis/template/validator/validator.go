@@ -5,9 +5,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"text/template"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 )
 
@@ -17,53 +15,32 @@ const (
 	parseErrorMatches   = 3
 )
 
-const (
-	ErrTypeUndefined = iota
-	ErrTypeUnexpectedBlock
-	ErrTypeUnexpectedSymbol
-	ErrTypeUnexpectedFunction
-	ErrTypeUnexpectedEOF
-)
-
-const (
-	WrnTypeOutsideBlockVar = iota
-)
-
 type RegexpInfo struct {
-	errRegexp *regexp.Regexp
-	errType   int
+	errRegexp     *regexp.Regexp
+	fullErrRegexp *regexp.Regexp
 	// matchesNumber equals number of matched groups in errRegexp + 1
 	matchesNumber int
 	getErrMessage func([]string) string
 }
 
 type Validator interface {
-	ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error)
-	ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport, error)
-	ValidateEventFilterRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error)
+	Validate(s string, data any) (bool, *ErrReport, error)
 }
 
 type validator struct {
-	timezoneConfigProvider config.TimezoneConfigProvider
+	templateExecutor libtemplate.Executor
 
 	parseErrorRegex         *regexp.Regexp
 	parseErrorsMsgRegexInfo []RegexpInfo
-
-	declareTicketTplDataKeys []string
-	scenarioTplDataKeys      []string
-	eventFilterTplDataKeys   []string
-
-	warningOutOfBlockRegex *regexp.Regexp
 }
 
-func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validator {
+func NewValidator(templateExecutor libtemplate.Executor) Validator {
 	return &validator{
-		timezoneConfigProvider: timezoneConfigProvider,
+		templateExecutor: templateExecutor,
 
 		parseErrorRegex: regexp.MustCompile("^template: (.+): (.+)$"),
 		parseErrorsMsgRegexInfo: []RegexpInfo{
 			{
-				errType:       ErrTypeUnexpectedFunction,
 				errRegexp:     regexp.MustCompile("^function \"(.+)\" not defined$"),
 				matchesNumber: 2,
 				getErrMessage: func(matches []string) string {
@@ -71,7 +48,6 @@ func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validato
 				},
 			},
 			{
-				errType:       ErrTypeUnexpectedSymbol,
 				errRegexp:     regexp.MustCompile("^unexpected \"(.+)\" in (.+)$"),
 				matchesNumber: 3,
 				getErrMessage: func(matches []string) string {
@@ -79,7 +55,6 @@ func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validato
 				},
 			},
 			{
-				errType:       ErrTypeUnexpectedEOF,
 				errRegexp:     regexp.MustCompile("^unexpected EOF$"),
 				matchesNumber: 1,
 				getErrMessage: func(_ []string) string {
@@ -87,7 +62,6 @@ func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validato
 				},
 			},
 			{
-				errType:       ErrTypeUnexpectedBlock,
 				errRegexp:     regexp.MustCompile("^unexpected (.+)$"),
 				matchesNumber: 2,
 				getErrMessage: func(matches []string) string {
@@ -98,128 +72,93 @@ func NewValidator(timezoneConfigProvider config.TimezoneConfigProvider) Validato
 					return fmt.Sprintf("Unexpected \"%s\"", matches[1])
 				},
 			},
+			{
+				errRegexp:     regexp.MustCompile("^can't evaluate field (.+) in type"),
+				matchesNumber: 2,
+				getErrMessage: func(matches []string) string {
+					return fmt.Sprintf("Unknown key or field \"%s\"", matches[1])
+				},
+			},
+			{
+				errRegexp:     regexp.MustCompile("no entry for key \"(.+)\"$"),
+				matchesNumber: 2,
+				getErrMessage: func(matches []string) string {
+					return fmt.Sprintf("Unknown key or field \"%s\"", matches[1])
+				},
+			},
+			{
+				fullErrRegexp: regexp.MustCompile("executing \".+\" at <(.+)>: nil pointer evaluating"),
+				matchesNumber: 2,
+				getErrMessage: func(matches []string) string {
+					return fmt.Sprintf("Undefined key or field \"%s\"", matches[1])
+				},
+			},
 		},
-		declareTicketTplDataKeys: []string{
-			"." + libtemplate.EnvVar,
-			".Alarms",
-			".Response",
-			".ResponseMap",
-			".Header",
-			// for range alarms case
-			".Value",
-			".Entity",
-		},
-		scenarioTplDataKeys: []string{
-			"." + libtemplate.EnvVar,
-			".Alarm",
-			".Entity",
-			".Children",
-			".Response",
-			".ResponseMap",
-			".Header",
-			".AdditionalData",
-			// for range children case
-			".Value",
-		},
-		eventFilterTplDataKeys: []string{
-			"." + libtemplate.EnvVar,
-			".Event",
-			".RegexMatch",
-			".ExternalData",
-		},
-		warningOutOfBlockRegex: regexp.MustCompile(`\{{2}[^\}]*\}{2}`),
 	}
 }
 
 type ErrReport struct {
-	Line int `json:"line"`
-
-	// Possible error type values.
-	//   * `0` - Undefined error
-	//   * `1` - Unexpected block
-	//   * `2` - Unexpected symbol
-	//   * `3` - Unexpected function
-	//   * `4` - Unexpected EOF
-	Type    int    `json:"type"`
+	Line    int    `json:"line"`
 	Message string `json:"message"`
-
-	// Var is defined only for template exec errors
-	Var string `json:"var,omitempty"`
 }
 
-type WrnReport struct {
-	// Possible warning type values.
-	//   * `0` - Might be unfinished variable block
-	Type int `json:"type"`
+func (v *validator) Validate(s string, data any) (bool, *ErrReport, error) {
+	p := v.templateExecutor.Parse(s)
+	if tplErr := p.Err; tplErr != nil {
+		report, err := v.getReport(tplErr)
 
-	Message string `json:"message"`
-	Var     string `json:"var,omitempty"`
+		return false, report, err
+	}
+
+	_, tplErr := v.templateExecutor.ExecuteByTpl(p.Tpl, data)
+	if tplErr != nil {
+		report, err := v.getReport(tplErr)
+
+		return false, report, err
+	}
+
+	return true, nil, nil
 }
 
-func (v *validator) ValidateDeclareTicketRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error) {
-	return v.validate(s, v.declareTicketTplDataKeys)
-}
+func (v *validator) getReport(tplErr error) (*ErrReport, error) {
+	fullErrString := tplErr.Error()
+	report := &ErrReport{
+		Message: fullErrString,
+	}
 
-func (v *validator) ValidateScenarioTemplate(s string) (bool, *ErrReport, []WrnReport, error) {
-	return v.validate(s, v.scenarioTplDataKeys)
-}
-
-func (v *validator) ValidateEventFilterRuleTemplate(s string) (bool, *ErrReport, []WrnReport, error) {
-	return v.validate(s, v.eventFilterTplDataKeys)
-}
-
-func (v *validator) validate(s string, tplKeys []string) (bool, *ErrReport, []WrnReport, error) {
-	location := v.timezoneConfigProvider.Get().Location
-
-	_, err := template.New("tpl").Funcs(libtemplate.GetFunctions(location)).Parse(s)
-	if err != nil {
-		fullErrString := err.Error()
-		report := &ErrReport{
-			Type:    ErrTypeUndefined,
-			Message: fullErrString,
+	// parse template error
+	tplErrorMatches := v.parseErrorRegex.FindStringSubmatch(fullErrString)
+	if len(tplErrorMatches) == parseErrorMatches {
+		var err error
+		report.Line, err = v.getLine(tplErrorMatches[locationStringMatch])
+		if err != nil {
+			return nil, err
 		}
 
-		// parse template parse error
-		tplErrorMatches := v.parseErrorRegex.FindStringSubmatch(fullErrString)
-		if len(tplErrorMatches) == parseErrorMatches {
-			report.Line, err = getLine(tplErrorMatches[locationStringMatch])
-			if err != nil {
-				return false, nil, nil, err
-			}
-
-			report.Message = tplErrorMatches[messageStringMatch]
-
-			for _, regexInfo := range v.parseErrorsMsgRegexInfo {
+		report.Message = tplErrorMatches[messageStringMatch]
+		for _, regexInfo := range v.parseErrorsMsgRegexInfo {
+			if regexInfo.errRegexp != nil {
 				errMsgMatches := regexInfo.errRegexp.FindStringSubmatch(report.Message)
 				if len(errMsgMatches) == regexInfo.matchesNumber {
-					report.Type = regexInfo.errType
+					report.Message = regexInfo.getErrMessage(errMsgMatches)
+
+					break
+				}
+			} else if regexInfo.fullErrRegexp != nil {
+				errMsgMatches := regexInfo.fullErrRegexp.FindStringSubmatch(fullErrString)
+				if len(errMsgMatches) == regexInfo.matchesNumber {
 					report.Message = regexInfo.getErrMessage(errMsgMatches)
 
 					break
 				}
 			}
 		}
-
-		return false, report, nil, nil
 	}
 
-	var warnings []WrnReport
-
-	// try to find out of block variables in the filtered text
-	for _, key := range tplKeys {
-		if strings.Contains(v.warningOutOfBlockRegex.ReplaceAllString(s, ""), key) {
-			warnings = append(warnings, WrnReport{
-				Type:    WrnTypeOutsideBlockVar,
-				Message: "Variable is out of a template block",
-				Var:     key,
-			})
-		}
-	}
-
-	return true, nil, warnings, nil
+	return report, nil
 }
 
-func getLine(s string) (int, error) {
+func (v *validator) getLine(s string) (int, error) {
 	locationSplit := strings.Split(s, ":")
 	if len(locationSplit) < 2 {
 		return 0, fmt.Errorf("template exec error contains invalid location value = %s", s)

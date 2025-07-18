@@ -37,15 +37,15 @@ func (v *Validator) ValidateBulkUpdateRequestItem(ctx context.Context, sl valida
 }
 
 func (v *Validator) validateEventFilter(ctx context.Context, sl validator.StructLevel, r EditRequest) {
-	if r.Type == eventfilter.RuleTypeChangeEntity &&
-		r.Config.Component == "" &&
-		r.Config.Resource == "" &&
-		r.Config.Connector == "" &&
-		r.Config.ConnectorName == "" {
-		sl.ReportError(r.Config, "config", "Config", "required", "")
-	}
-
-	if r.Type == eventfilter.RuleTypeEnrichment {
+	switch r.Type {
+	case eventfilter.RuleTypeChangeEntity:
+		if r.Config.Component == "" &&
+			r.Config.Resource == "" &&
+			r.Config.Connector == "" &&
+			r.Config.ConnectorName == "" {
+			sl.ReportError(r.Config, "config", "Config", "required", "")
+		}
+	case eventfilter.RuleTypeEnrichment:
 		if len(r.Config.Actions) == 0 {
 			sl.ReportError(r.Config.Actions, "actions", "Actions", "required", "")
 		}
@@ -76,9 +76,16 @@ func (v *Validator) validateEventFilter(ctx context.Context, sl validator.Struct
 		}
 	}
 
-	if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" && len(r.EventPattern) == 0 {
-		sl.ReportError(r.EventPattern, "EventPattern", "EventPattern", "required_or", "EntityPattern")
-		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_or", "EventPattern")
+	switch r.Type {
+	case eventfilter.RuleTypeChangeEntity:
+		if len(r.EventPattern) == 0 {
+			sl.ReportError(r.EventPattern, "EventPattern", "EventPattern", "required_or", "EntityPattern")
+		}
+	default:
+		if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" && len(r.EventPattern) == 0 {
+			sl.ReportError(r.EventPattern, "EventPattern", "EventPattern", "required_or", "EntityPattern")
+			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_or", "EventPattern")
+		}
 	}
 
 	if r.Start == nil && r.Stop != nil {
