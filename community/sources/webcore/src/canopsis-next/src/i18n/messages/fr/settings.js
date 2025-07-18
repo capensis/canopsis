@@ -172,6 +172,7 @@ export default {
     inlineLinksCount: 'Nombre de liens en ligne',
     linksInRowCount: 'Nombre de liens dans la ligne',
     linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
+    filterOnClick: 'Filtrer au clic',
   },
   liveReporting: {
     title: 'Reportage en direct',
