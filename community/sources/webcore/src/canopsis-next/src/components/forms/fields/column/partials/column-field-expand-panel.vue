@@ -124,6 +124,13 @@
         :disabled="!!column.template"
       />
     </v-layout>
+    <v-switch
+      v-if="filterOnClickAvailable"
+      v-field="column.isFilter"
+      :label="$t('settings.columns.filterOnClick')"
+      :disabled="!!column.template"
+      class="pa-0 my-2"
+    />
   </v-layout>
 </template>
 
@@ -137,6 +144,7 @@ import {
   ALARM_LIST_WIDGET_COLUMNS,
   CONTEXT_WIDGET_COLUMNS,
   ALARM_FIELDS,
+  ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK,
 } from '@/constants';
 
 import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
@@ -264,6 +272,10 @@ export default {
     columnValueErrorMessages() {
       return this.errors.collect(this.columnValueFieldName);
     },
+
+    filterOnClickAvailable() {
+      return !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.column?.column);
+    },
   },
   watch: {
     withLabel: {
@@ -289,6 +301,7 @@ export default {
         template,
         isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
         colorIndicator: checked && this.column.colorIndicator ? null : this.column.colorIndicator,
+        isFilter: checked && this.column.isFilter ? false : this.column.isFilter,
       });
     },
 

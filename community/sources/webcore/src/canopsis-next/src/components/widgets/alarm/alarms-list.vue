@@ -9,6 +9,7 @@
     >
       <v-flex>
         <c-alarm-advanced-search-field
+          ref="advancedSearchField"
           :searches="searches"
           @submit="updateSearch"
           @reset="resetSearch"
