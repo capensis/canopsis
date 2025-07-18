@@ -1583,6 +1583,11 @@ definitions:
       time:
         type: integer
     type: object
+  datetime.CpsTime:
+    properties:
+      time.Time:
+        type: string
+    type: object
   datetime.DurationWithEnabled:
     properties:
       enabled:
@@ -1623,6 +1628,11 @@ definitions:
     required:
     - unit
     - value
+    type: object
+  datetime.MicroTime:
+    properties:
+      time.Time:
+        type: string
     type: object
   dbexport.Request:
     properties:
@@ -2559,6 +2569,171 @@ definitions:
     - description
     - type
     type: object
+  eventfilter.EventRequest:
+    properties:
+      _id:
+        type: string
+      added_to_services:
+        description: AddedToServices contains ids of entity services to which entity
+          has been added as dependency.
+        items:
+          type: string
+        type: array
+      aid:
+        description: AlarmID is used if an event is emitted for the specific alarm.
+        type: string
+      alarm_change:
+        $ref: '#/definitions/types.AlarmChange'
+      author:
+        type: string
+      close_delay:
+        description: CloseDelayValue shows a close delay timeout in seconds.
+        type: integer
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      current_alarm:
+        $ref: '#/definitions/types.Alarm'
+      current_entity:
+        $ref: '#/definitions/types.Entity'
+      debug:
+        type: boolean
+      delayed_scenario_data:
+        type: string
+      delayed_scenario_id:
+        description: Only for EventTypeRunDelayedScenario
+        type: string
+      display_name:
+        description: DisplayName is used for manual meta alarms.
+        type: string
+      duration:
+        description: EventsCount accumulates count of check events.
+        type: integer
+      event_type:
+        type: string
+      execution:
+        description: 'Execution is used only for instruction events: EventTypeInstructionStarted,
+          EventTypeInstructionCompleted, etc..'
+        type: string
+      extra:
+        additionalProperties: true
+        type: object
+      healthcheck:
+        type: boolean
+      idle_rule_apply:
+        description: IdleRuleApply is used if event is emitted by idle rule.
+        type: string
+      impsrc:
+        type: string
+      imtags:
+        additionalProperties:
+          type: string
+        type: object
+      initiator:
+        description: |-
+          Initiator is used to detect who emits event.
+          InitiatorUser - UI
+          InitiatorSystem - engines
+          InitiatorExternal - third tool
+        type: string
+      instr_matched:
+        description: IsInstructionMatched is true if an alarm is matched to an auto
+          instruction on an event.
+        type: boolean
+      instruction:
+        description: Instruction is used only for manual instructions kpi metrics
+        type: string
+      is_close_delay:
+        description: IsCloseDelayJob shows if an event is triggered by a close delay
+          job.
+        type: boolean
+      long_output:
+        type: string
+      ma_children:
+        items:
+          type: string
+        type: array
+      ma_infos:
+        items:
+          $ref: '#/definitions/types.CorrelationRuleInfo'
+        type: array
+      ma_parents:
+        items:
+          type: string
+        type: array
+      ma_tags:
+        $ref: '#/definitions/types.CorrelationRuleTags'
+      ma_updated:
+        description: IsMetaAlarmUpdated is true if an alarm is added to a meta alarm
+          on an event.
+        type: boolean
+      metaalarm_rule_id:
+        type: string
+      metaalarm_value_path:
+        type: string
+      output:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+      perf_data:
+        type: string
+      removed_from_services:
+        description: RemovedFromServices contains ids of entity services from which
+          entity has been removed as dependency.
+        items:
+          type: string
+        type: array
+      resource:
+        type: string
+      role:
+        type: string
+      routing_key:
+        type: string
+      rt:
+        $ref: '#/definitions/datetime.MicroTime'
+      source_type:
+        type: string
+      stat_name:
+        type: string
+      state:
+        type: integer
+      state_setting_updated:
+        type: boolean
+      status:
+        type: integer
+      tags:
+        additionalProperties:
+          type: string
+        description: Tags contains external tags for alarm.
+        type: object
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_meta_alarm_id:
+        type: string
+      ticket_rule_id:
+        type: string
+      ticket_rule_name:
+        type: string
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      ticket_url_title:
+        type: string
+      timestamp:
+        $ref: '#/definitions/datetime.CpsTime'
+      user_id:
+        type: string
+    type: object
   eventfilter.Exception:
     properties:
       _id:
@@ -2667,6 +2842,33 @@ definitions:
         type: string
       resource:
         type: string
+    type: object
+  eventfilter.TemplateRequest:
+    properties:
+      data:
+        properties:
+          event:
+            $ref: '#/definitions/eventfilter.EventRequest'
+          external_data:
+            additionalProperties:
+              type: any
+            type: object
+        required:
+        - event
+        type: object
+      request:
+        $ref: '#/definitions/eventfilter.CreateRequest'
+    type: object
+  eventfilter.TemplateVarsResponse:
+    properties:
+      config:
+        items:
+          type: string
+        type: array
+      external_data:
+        items:
+          type: string
+        type: array
     type: object
   eventfilter.UpdateRequest:
     properties:
@@ -5794,20 +5996,308 @@ definitions:
       enabled:
         type: boolean
     type: object
-  template.Request:
-    properties:
-      text:
-        type: string
-    type: object
   template.Response:
     properties:
       err:
         $ref: '#/definitions/validator.ErrReport'
       is_valid:
         type: boolean
-      warnings:
+    type: object
+  types.Alarm:
+    properties:
+      _id:
+        type: string
+      auto_instruction_in_progress:
+        description: InactiveAutoInstructionInProgress shows that autoremediation
+          is launched and alarm is not active until the remediation is finished
+        type: boolean
+      cinfos:
         items:
-          $ref: '#/definitions/validator.WrnReport'
+          type: string
+        type: array
+      copy_ctags:
+        type: boolean
+      d:
+        type: string
+      etags:
+        items:
+          type: string
+        type: array
+      filter_ctags:
+        items:
+          type: string
+        type: array
+      imtags:
+        items:
+          type: string
+        type: array
+      inactive_delay_meta_alarm_in_progress:
+        type: boolean
+      itags:
+        items:
+          type: string
+        type: array
+      itags_upd:
+        $ref: '#/definitions/datetime.MicroTime'
+      kpi_assigned_auto_instructions:
+        description: is used only for auto instructions KPI metrics
+        items:
+          type: string
+        type: array
+      kpi_assigned_instructions:
+        description: is used only for manual instructions KPI metrics
+        items:
+          type: string
+        type: array
+      kpi_executed_auto_instructions:
+        items:
+          type: string
+        type: array
+      kpi_executed_instructions:
+        items:
+          type: string
+        type: array
+      meta_alarm_inactive_delay:
+        description: MetaAlarmInactiveDelay shows that an alarm is matched to some
+          meta alarm rules with child_inactive_delay
+        items:
+          $ref: '#/definitions/types.MetaAlarmInactiveDelay'
+        type: array
+      t:
+        $ref: '#/definitions/datetime.CpsTime'
+      tags:
+        items:
+          type: string
+        type: array
+      v:
+        $ref: '#/definitions/types.AlarmValue'
+        description: todo move all field from Value to Alarm
+    type: object
+  types.AlarmChange:
+    properties:
+      EventsCount:
+        type: integer
+      PreviousEntityPbehaviorTime:
+        $ref: '#/definitions/datetime.CpsTime'
+      PreviousPbehaviorCannonicalType:
+        type: string
+      PreviousPbehaviorTime:
+        $ref: '#/definitions/datetime.CpsTime'
+      PreviousPbehaviorTypeID:
+        type: string
+      PreviousState:
+        description: EventsCount accumulates count of check events.
+        type: integer
+      PreviousStateChange:
+        $ref: '#/definitions/datetime.CpsTime'
+      PreviousStatus:
+        description: EventsCount accumulates count of check events.
+        type: integer
+      PreviousStatusChange:
+        $ref: '#/definitions/datetime.CpsTime'
+      Type:
+        type: string
+    type: object
+  types.AlarmStep:
+    properties:
+      _t:
+        type: string
+      a:
+        type: string
+      color:
+        type: string
+      dgroup:
+        type: string
+      exec:
+        description: |-
+          Execution contains id
+          - of instruction execution for instruction steps
+          - of webhook execution for webhook steps
+        type: string
+      icon_name:
+        type: string
+      in_pbh:
+        type: boolean
+      initiator:
+        type: string
+      m:
+        type: string
+      pbehavior_canonical_type:
+        type: string
+      role:
+        type: string
+      statecounter:
+        $ref: '#/definitions/types.CropCounter'
+      t:
+        $ref: '#/definitions/datetime.CpsTime'
+      ticket:
+        type: string
+      ticket_comment:
+        type: string
+      ticket_data:
+        additionalProperties:
+          type: string
+        type: object
+      ticket_meta_alarm_id:
+        type: string
+      ticket_rule_id:
+        type: string
+      ticket_rule_name:
+        type: string
+      ticket_system_name:
+        type: string
+      ticket_url:
+        type: string
+      ticket_url_title:
+        type: string
+      user_id:
+        type: string
+      val:
+        type: integer
+    type: object
+  types.AlarmValue:
+    properties:
+      ack:
+        $ref: '#/definitions/types.AlarmStep'
+      activation_date:
+        $ref: '#/definitions/datetime.CpsTime'
+      active_duration:
+        description: |-
+          ActiveDuration represents a duration when an alarm wasn't in snooze or in maintenance, pause, inactive pbehavior interval.
+          Keep omitempty.
+        type: integer
+      canceled:
+        $ref: '#/definitions/types.AlarmStep'
+      change_state:
+        $ref: '#/definitions/types.AlarmStep'
+      children:
+        items:
+          type: string
+        type: array
+      close_delay:
+        $ref: '#/definitions/types.AlarmStep'
+        description: CloseDelay should have a state step copy when alarm is closed
+          by a close delay job.
+      close_delay_value:
+        description: CloseDelayValue represents a close delay timeout, used only in
+          the API response.
+        type: integer
+      comments:
+        items:
+          $ref: '#/definitions/types.AlarmStep'
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      creation_date:
+        $ref: '#/definitions/datetime.CpsTime'
+      current_state_duration:
+        description: |-
+          CurrentStateDuration represents a duration when an alarm was in current state.
+          Keep omitempty.
+        type: integer
+      display_name:
+        type: string
+      duration:
+        description: |-
+          Duration represents a duration from creation date to resolve date.
+          Keep omitempty.
+        type: integer
+      events_count:
+        description: EventsCount accumulates count of check events.
+        type: integer
+      hard_limit:
+        type: integer
+      inactive_duration:
+        description: InactiveDuration represents a duration when an alarm was in snooze
+          or in maintenance, pause, inactive pbehavior interval.
+        type: integer
+      inactive_start:
+        $ref: '#/definitions/datetime.CpsTime'
+        description: |-
+          InactiveStart represents start of snooze or maintenance, pause, inactive pbehavior interval.
+          It's used only to compute InactiveDuration.
+      infos:
+        additionalProperties:
+          additionalProperties: true
+          type: object
+        type: object
+      initial_long_output:
+        type: string
+      initial_output:
+        type: string
+      initial_state:
+        description: EventsCount accumulates count of check events.
+        type: integer
+      last_comment:
+        $ref: '#/definitions/types.AlarmStep'
+      last_event_date:
+        $ref: '#/definitions/datetime.CpsTime'
+      last_infos_update:
+        $ref: '#/definitions/datetime.MicroTime'
+      last_st_upd_dt:
+        $ref: '#/definitions/datetime.CpsTime'
+      last_update_date:
+        $ref: '#/definitions/datetime.CpsTime'
+      long_output:
+        type: string
+      long_output_history:
+        items:
+          type: string
+        type: array
+      max_state:
+        description: EventsCount accumulates count of check events.
+        type: integer
+      meta:
+        type: string
+      meta_value_path:
+        type: string
+      output:
+        type: string
+      parents:
+        items:
+          type: string
+        type: array
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+      pbh_inactive_duration:
+        description: PbehaviorInactiveDuration represents a duration when an alarm
+          was in maintenance, pause, inactive pbehavior interval.
+        type: integer
+      resolved:
+        $ref: '#/definitions/datetime.CpsTime'
+      resource:
+        type: string
+      snooze:
+        $ref: '#/definitions/types.AlarmStep'
+      snooze_duration:
+        description: SnoozeDuration represents a duration when an alarm was in snooze.
+        type: integer
+      state:
+        $ref: '#/definitions/types.AlarmStep'
+      state_changes_since_status_update:
+        type: integer
+      status:
+        $ref: '#/definitions/types.AlarmStep'
+      steps:
+        items:
+          $ref: '#/definitions/types.AlarmStep'
+        type: array
+      ticket:
+        $ref: '#/definitions/types.AlarmStep'
+        description: Ticket contains the last created ticket
+      tickets:
+        items:
+          $ref: '#/definitions/types.AlarmStep'
+        type: array
+      total_state_changes:
+        type: integer
+      unlinked_parents:
+        items:
+          type: string
         type: array
     type: object
   types.Author:
@@ -5827,6 +6317,152 @@ definitions:
     - lat
     - lng
     type: object
+  types.CorrelationRuleInfo:
+    properties:
+      copy_from_children:
+        type: boolean
+      description:
+        type: string
+      name:
+        type: string
+      value:
+        type: any
+    type: object
+  types.CorrelationRuleTags:
+    properties:
+      copy_from_children:
+        type: boolean
+      filter_by_label:
+        items:
+          type: string
+        type: array
+    type: object
+  types.CropCounter:
+    properties:
+      state:0:
+        type: integer
+      state:1:
+        type: integer
+      state:2:
+        type: integer
+      state:3:
+        type: integer
+      statechanges:
+        type: integer
+      statedec:
+        type: integer
+      stateinc:
+        type: integer
+    type: object
+  types.Entity:
+    properties:
+      _id:
+        type: string
+      author:
+        type: string
+      category:
+        type: string
+      comments:
+        items:
+          $ref: '#/definitions/types.EntityComment'
+        type: array
+      component:
+        type: string
+      component_infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      component_state_settings:
+        type: boolean
+      component_state_settings_to_add:
+        type: boolean
+      component_state_settings_to_remove:
+        type: boolean
+      connector:
+        type: string
+      created:
+        $ref: '#/definitions/datetime.CpsTime'
+      description:
+        type: string
+      enable_history:
+        items:
+          $ref: '#/definitions/datetime.CpsTime'
+        type: array
+      enabled:
+        type: boolean
+      idle_since:
+        $ref: '#/definitions/datetime.CpsTime'
+        description: IdleSince represents since when entity didn't receive any events.
+      impact_level:
+        type: integer
+      import_source:
+        type: string
+      imported:
+        $ref: '#/definitions/datetime.CpsTime'
+      imtags:
+        items:
+          type: string
+        type: array
+      infos:
+        additionalProperties:
+          $ref: '#/definitions/types.Info'
+        type: object
+      last_comment:
+        $ref: '#/definitions/types.EntityComment'
+      last_event_date:
+        $ref: '#/definitions/datetime.CpsTime'
+      last_idle_rule_apply:
+        description: LastIdleRuleApply is used to mark entity if some idle rule was
+          applied.
+        type: string
+      last_pbehavior_date:
+        $ref: '#/definitions/datetime.CpsTime'
+      measurements:
+        description: unused collection ids
+      name:
+        type: string
+      pbehavior_info:
+        $ref: '#/definitions/types.PbehaviorInfo'
+      resolve_deleted_event_processed:
+        $ref: '#/definitions/datetime.CpsTime'
+        description: ResolveDeletedEventProcessed is set after processing service
+          counters recalculation event on soft delete.
+      services:
+        items:
+          type: string
+        type: array
+      services_to_add:
+        items:
+          type: string
+        type: array
+      services_to_remove:
+        items:
+          type: string
+        type: array
+      sli_avail_state:
+        type: integer
+      soft_deleted:
+        $ref: '#/definitions/datetime.CpsTime'
+        description: SoftDeleted is used to recompute service counters after dependency
+          delete.
+      state_info:
+        $ref: '#/definitions/types.StateInfo'
+      type:
+        type: string
+      updated:
+        $ref: '#/definitions/datetime.CpsTime'
+    type: object
+  types.EntityComment:
+    properties:
+      _id:
+        type: string
+      a:
+        $ref: '#/definitions/types.Author'
+      m:
+        type: string
+      t:
+        $ref: '#/definitions/datetime.CpsTime'
+    type: object
   types.Exdate:
     properties:
       begin:
@@ -5841,6 +6477,61 @@ definitions:
       name:
         type: string
       value: {}
+    type: object
+  types.MetaAlarmInactiveDelay:
+    properties:
+      expired:
+        $ref: '#/definitions/datetime.CpsTime'
+      id:
+        type: string
+    type: object
+  types.PbehaviorInfo:
+    properties:
+      author:
+        type: string
+      canonical_type:
+        description: CanonicalType is Type of pbehavior.Type.
+        type: string
+      color:
+        type: string
+      icon_name:
+        type: string
+      id:
+        description: ID is ID of pbehavior.PBehavior.
+        type: string
+      name:
+        description: Name is Name of pbehavior.PBehavior.
+        type: string
+      reason:
+        description: ReasonID is ID of pbehavior.Reason.
+        type: string
+      reason_name:
+        description: ReasonName is Name of pbehavior.Reason.
+        type: string
+      rule_name:
+        type: string
+      timestamp:
+        description: |-
+          Timestamp is time when entity enters pbehavior.
+          Use pointer of CpsTime to unmarshal null and undefined to nil pointer instead of zero CpsTime.
+        type: integer
+      type:
+        description: TypeID is ID of pbehavior.Type.
+        type: string
+      type_name:
+        description: TypeName is Name of pbehavior.Type.
+        type: string
+    type: object
+  types.StateInfo:
+    properties:
+      _id:
+        type: string
+      inherited_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
     type: object
   user.BulkDeleteRequestItem:
     properties:
@@ -6141,30 +6832,6 @@ definitions:
       line:
         type: integer
       message:
-        type: string
-      type:
-        description: |-
-          Possible error type values.
-            * `0` - Undefined error
-            * `1` - Unexpected block
-            * `2` - Unexpected symbol
-            * `3` - Unexpected function
-            * `4` - Unexpected EOF
-        type: integer
-      var:
-        description: Var is defined only for template exec errors
-        type: string
-    type: object
-  validator.WrnReport:
-    properties:
-      message:
-        type: string
-      type:
-        description: |-
-          Possible warning type values.
-            * `0` - Might be unfinished variable block
-        type: integer
-      var:
         type: string
     type: object
   view.EditPositionItemRequest:
