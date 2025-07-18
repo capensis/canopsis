@@ -19,14 +19,14 @@
           v-if="column.isHtml"
           v-html="sanitizedValue"
           :class="textClass"
-          v-on="on"
+          v-on="componentOn"
         />
         <div
           v-else
           v-bind="component.bind"
           :is="component.is"
           :class="textClass"
-          v-on="on"
+          v-on="componentOn"
         />
         <v-btn
           :class="{ 'alarms-column-cell__show-info-btn--small': small }"
@@ -55,14 +55,14 @@
     v-else-if="column.isHtml"
     v-html="sanitizedValue"
     :class="textClass"
-    v-on="on"
+    v-on="componentOn"
   />
   <div
     v-else
     v-bind="component.bind"
     :is="component.is"
     :class="textClass"
-    v-on="on"
+    v-on="componentOn"
   />
 </template>
 
@@ -120,7 +120,7 @@ export default {
     },
   },
   setup(props, { listeners }) {
-    const selectAdvancedSearchField = inject('$selectAdvancedSearchField');
+    const selectAdvancedSearchField = inject('$selectAdvancedSearchField', () => {});
 
     const opened = ref(false);
 
@@ -149,7 +149,7 @@ export default {
       props.column.getComponent({ ...props, value: value.value, $listeners: listeners })
     ));
 
-    const on = computed(() => {
+    const componentOn = computed(() => {
       const result = { ...component.value?.on };
 
       if (props.column.isFilter) {
@@ -173,7 +173,7 @@ export default {
       textClass,
       showInfoPopup,
       hideInfoPopup,
-      on,
+      componentOn,
     };
   },
 };
