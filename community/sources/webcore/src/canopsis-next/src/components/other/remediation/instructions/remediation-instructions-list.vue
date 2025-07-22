@@ -37,7 +37,7 @@
       {{ item.last_executed_on | date }}
     </template>
     <template #actions="{ item }">
-      <v-layout justify-end>
+      <v-layout>
         <c-action-btn
           v-if="isInstructionDismissed(item)"
           :tooltip="$t('remediation.instruction.approvalDismissed')"
@@ -141,6 +141,7 @@ export default {
         {
           text: this.$t('common.priority'),
           value: 'priority',
+          sortable: false,
         },
         {
           text: this.$t('common.status'),
