@@ -280,7 +280,7 @@ export default {
     /**
      * Technical Admin Notification
      */
-    [USER_PERMISSIONS.technical.notification.common]: 'Parameters - notification settings ',
+    [USER_PERMISSIONS.technical.notification.common]: 'Notifications',
 
     /**
      * Technical Admin Views and widgets

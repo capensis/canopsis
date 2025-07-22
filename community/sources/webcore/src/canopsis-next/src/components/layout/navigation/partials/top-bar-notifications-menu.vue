@@ -97,7 +97,7 @@ export default {
       const { data, meta } = await fetchNotificationsListWithoutStore({
         params: {
           page: 1,
-          limit: notificationDisplayCount.value ?? DEFAULT_NOTIFICATION_TOP_BAR_LIMIT,
+          limit: notificationDisplayCount.value || DEFAULT_NOTIFICATION_TOP_BAR_LIMIT,
         },
       });
 

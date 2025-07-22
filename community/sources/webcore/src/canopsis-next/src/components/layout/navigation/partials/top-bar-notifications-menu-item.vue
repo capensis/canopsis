@@ -10,11 +10,11 @@
         </router-link>
       </v-list-item-title>
       <v-list-item-subtitle v-if="notification.author?.display_name" class="mb-2">
-        <strong class="grey--text">By: {{ notification.author.display_name }}</strong>
+        <strong>By: {{ notification.author.display_name }}</strong>
       </v-list-item-subtitle>
-      <v-list-item-subtitle v-if="notification.message">
-        <p>{{ notification.message }}</p>
-      </v-list-item-subtitle>
+      <v-list-item-text v-if="notification.comment" class="">
+        <p>{{ notification.comment }}</p>
+      </v-list-item-text>
       <v-divider />
     </v-list-item-content>
   </v-list-item>

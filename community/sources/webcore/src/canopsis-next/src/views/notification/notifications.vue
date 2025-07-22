@@ -238,7 +238,7 @@ export default {
           'update:options': eventFilterFailuresUpdateOptions,
         },
       },
-    ].map(tab => ({ ...tab, active: tab.key === route.query.tabId })));
+    ].map(tab => ({ ...tab, active: tab.key === props.tabId })));
 
     /**
      * Fetches all notification lists (event filter failures, instructions to approve, and instructions to rate)
