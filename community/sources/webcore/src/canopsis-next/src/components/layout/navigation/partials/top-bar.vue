@@ -33,7 +33,7 @@
     <v-toolbar-items v-if="!$route.meta.simpleNavigation">
       <top-bar-exploitation-menu />
       <top-bar-administration-menu />
-      <top-bar-notifications-menu />
+      <top-bar-notifications-menu v-if="hasAccessToNotifications" />
       <top-bar-user-menu />
     </v-toolbar-items>
     <template
@@ -48,8 +48,8 @@
 <script>
 import { USER_PERMISSIONS } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { useAuth, useCanPermission } from '@/hooks/auth';
+import { useInfo } from '@/hooks/store/modules/info';
 
 import HealthcheckChipsList from '@/components/other/healthcheck/partials/healthcheck-chips-list.vue';
 
@@ -81,14 +81,21 @@ export default {
     TopBarUserMenu,
     TopBarTitle,
   },
-  mixins: [
-    authMixin,
-    entitiesInfoMixin,
-  ],
-  computed: {
-    hasAccessToHealthcheckStatus() {
-      return this.checkAccess(USER_PERMISSIONS.technical.healthcheckStatus);
-    },
+  setup() {
+    const { isShownGroupsTopBar, isShownGroupsSideBar } = useAuth();
+    const { isProVersion, appTitle } = useInfo();
+
+    const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(USER_PERMISSIONS.technical.healthcheckStatus);
+    const { hasAccess: hasAccessToNotifications } = useCanPermission(USER_PERMISSIONS.technical.notification.common);
+
+    return {
+      isProVersion,
+      appTitle,
+      hasAccessToHealthcheckStatus,
+      hasAccessToNotifications,
+      isShownGroupsSideBar,
+      isShownGroupsTopBar,
+    };
   },
 };
 </script>

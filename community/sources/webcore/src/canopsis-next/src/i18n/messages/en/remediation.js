@@ -15,6 +15,7 @@ export default {
 
   instruction: {
     name: 'Instruction name',
+    manualInstructionsProgress: 'Manual instructions progress',
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
     addOperation: 'Add operation',

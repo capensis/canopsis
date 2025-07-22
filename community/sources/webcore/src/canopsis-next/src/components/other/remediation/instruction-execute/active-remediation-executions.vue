@@ -1,10 +1,22 @@
 <template>
   <v-card>
+    <v-card-title class="primary white--text">
+      <span class="text-h6 font-weight-regular">
+        {{ $t('remediation.instruction.manualInstructionsProgress') }}
+      </span>
+    </v-card-title>
     <v-card-text>
-      <v-tabs fixed-tabs>
-        <template v-for="type in types">
+      <v-tabs v-model="activeTab" fixed-tabs>
+        <template v-for="(type, index) in types">
           <v-tab :key="type">
-            {{ $t(`remediation.instruction.types.${type}`) }}
+            <span>{{ $t(`remediation.instruction.types.${type}`) }}</span>
+            <c-circle-badge
+              :outlined="activeTab !== index"
+              class="ml-2"
+              color="primary"
+            >
+              {{ executionsByType[type]?.length ?? 0 }}
+            </c-circle-badge>
           </v-tab>
           <v-tab-item :key="`${type}-item`">
             <v-list>
@@ -31,7 +43,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import { REMEDIATION_INSTRUCTION_TYPES } from '@/constants';
 
@@ -48,6 +60,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const activeTab = ref(REMEDIATION_INSTRUCTION_TYPES.manual);
+
     const executionsByType = computed(() => props.executions.reduce((acc, execution) => {
       if (!acc[execution.type]) {
         acc[execution.type] = [];
@@ -63,6 +77,7 @@ export default {
     const refresh = () => emit('refresh');
 
     return {
+      activeTab,
       types,
       executionsByType,
       refresh,

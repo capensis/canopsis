@@ -36,6 +36,7 @@ export default {
     const classes = computed(() => ({
       'c-circle-badge--small': props.small,
       'c-circle-badge--outlined': props.outlined,
+      [`${props.color}--text`]: props.outlined,
       [props.color]: true,
     }));
 
@@ -70,7 +71,7 @@ export default {
     --c-circle-badge-font-size: calc(var(--c-circle-badge-size) * 0.6);
   }
 
-  .v-application &--outlined {
+  .v-application &--outlined.c-circle-badge {
     background-color: transparent !important;
     border: 1px solid currentColor;
   }

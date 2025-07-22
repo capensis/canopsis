@@ -15,6 +15,7 @@ export default {
 
   instruction: {
     name: 'Nom de l\'instruction',
+    manualInstructionsProgress: 'Progression des consignes manuelles',
     usingInstruction: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     addStep: 'Ajouter une étape',
     addOperation: 'Ajouter une opération',

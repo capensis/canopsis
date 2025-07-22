@@ -21,6 +21,8 @@ import { toRef } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
 
+import { isInstructionDismissed } from '@/helpers/entities/remediation/instruction/form';
+
 import { useCRUDPermissions } from '@/hooks/auth';
 
 import {
@@ -74,10 +76,25 @@ export default {
       showRemoveSelectedRemediationInstructionModal,
     } = useRemediationInstructionsActions(refresh);
 
+    /**
+     * Handles notification action for a remediation instruction by showing appropriate modal
+     *
+     * @param {Object} remediationInstruction - The remediation instruction object to process
+     */
+    const notificationAction = (remediationInstruction) => {
+      if (isInstructionDismissed(remediationInstruction)) {
+        showEditRemediationInstructionModal(remediationInstruction);
+
+        return;
+      }
+
+      showApproveRemediationInstructionModal(remediationInstruction);
+    };
+
     useNotificationActiveId({
       activeId: toRef(props, 'activeId'),
       items: toRef(props, 'items'),
-      action: showApproveRemediationInstructionModal,
+      action: notificationAction,
     });
 
     return {
