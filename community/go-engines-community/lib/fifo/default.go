@@ -160,22 +160,17 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 		options.PrintEventOnError,
 	)
 
-	var rl redis.Lock
 	lockDuration := max(options.PeriodicalWaitTime, lockMinDuration) + lockBackoff*time.Duration(lockRetries)
 
 	engine := libengine.New(
 		func(ctx context.Context) (err error) {
-			initRedisLock := redis.NewLockClient(engineLockRedisClient)
-			rl, err = initRedisLock.Obtain(ctx, redis.FifoEngineLockKey, lockDuration, &redislock.Options{
-				RetryStrategy: newRetryStrategy(),
-			})
+			err = mainMessageProcessor.ObtainExclusive(ctx, redis.NewLockClient(engineLockRedisClient), lockDuration)
 			if err != nil {
 				if !errors.Is(err, redislock.ErrNotObtained) {
 					logger.Err(err).Msg("cannot obtain lock for engine initialization, exiting")
 				}
 				return err
 			}
-			mainMessageProcessor.RefreshExclusiveProcessor(ctx, options.PeriodicalWaitTime, lockDuration, rl)
 			runInfoPeriodicalWorker.Work(ctx)
 			queueMetricsPeriodicalWorker.Work(ctx)
 
@@ -201,11 +196,8 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
-			if rl != nil {
-				err = rl.Release(context.WithoutCancel(ctx))
-				if err != nil {
-					logger.Warn().Err(err).Msg("failed to release redis lock")
-				}
+			if err = mainMessageProcessor.ReleaseExclusive(ctx); err != nil && !errors.Is(err, redislock.ErrLockNotHeld) {
+				logger.Warn().Err(err).Msg("failed to release exclusive processor lock")
 			}
 
 			err = lockRedisClient.Close()
@@ -236,6 +228,10 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 	engine.AddRoutine(func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
 		return nil
+	})
+
+	engine.AddRoutine(func(ctx context.Context) error {
+		return mainMessageProcessor.RefreshExclusiveProcessor(ctx, options.PeriodicalWaitTime, lockDuration)
 	})
 
 	engine.AddConsumer(libengine.NewConcurrentConsumer(

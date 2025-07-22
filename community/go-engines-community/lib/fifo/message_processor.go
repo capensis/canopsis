@@ -38,7 +38,8 @@ type messageProcessor struct {
 	TechMetricsSender techmetrics.Sender
 
 	FeaturePrintEventOnError bool
-	exclusiveProcessor       bool
+	// redis lock used to ensure that only one instance of the message processor is running at a time
+	rl redis.Lock
 }
 
 func NewMessageProcessor(
@@ -58,15 +59,10 @@ func NewMessageProcessor(
 		Logger:                   logger,
 		TechMetricsSender:        techMetricsSender,
 		FeaturePrintEventOnError: featurePrintEvenotOnError,
-		exclusiveProcessor:       false,
 	}
 }
 
 func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) ([]byte, error) {
-	if !p.exclusiveProcessor {
-		return nil, errors.New("exclusive processor is not active, cannot process message")
-	}
-
 	eventMetric := techmetrics.FifoEventMetric{}
 	eventMetric.Timestamp = time.Now()
 
@@ -148,56 +144,69 @@ func (p *messageProcessor) logError(err error, errMsg string, msg []byte) {
 	}
 }
 
-func (p *messageProcessor) RefreshExclusiveProcessor(ctx context.Context, refreshInterval, lockDuration time.Duration, l redis.Lock) {
-	if l == nil {
-		p.Logger.Warn().Msg("exclusive processor lock is nil, cannot refresh exclusive processor")
-		return
+func (p *messageProcessor) ObtainExclusive(ctx context.Context, initRedisLock redis.LockClient, lockDuration time.Duration) error {
+	rl, err := initRedisLock.Obtain(ctx, redis.FifoEngineLockKey, lockDuration, &redislock.Options{
+		RetryStrategy: newRetryStrategy(),
+	})
+	if err != nil {
+		return err
 	}
-	p.exclusiveProcessor = true
-	go func(ctx context.Context, l redis.Lock) {
-		var err error
-		defer func() {
-			p.Logger.Err(err).Msg("failed to refresh redis lock")
-			p.exclusiveProcessor = false
-		}()
-		ticker := time.NewTicker(refreshInterval)
-		defer ticker.Stop()
-		var retryTicker *time.Ticker
+	if rl == nil {
+		return errors.New("cannot obtain exclusive processor lock, lock is nil")
+	}
+	p.rl = rl
+	return nil
+}
 
-		retry := newRetryStrategy()
-		for {
-			select {
-			case <-ctx.Done():
-				return
-			case <-ticker.C:
-				// Refresh doesn't handle retry strategy in v0.9.4, so we need to handle it manually.
-				for {
-					err = l.Refresh(ctx, lockDuration, nil)
-					if err != nil {
-						backoff := retry.NextBackoff()
-						if backoff < 1 {
-							return
-						}
-						if retryTicker == nil {
-							retryTicker = time.NewTicker(backoff)
-							defer retryTicker.Stop()
-						} else {
-							retryTicker.Reset(backoff)
-						}
-						select {
-						case <-ctx.Done():
-							return
-						case <-retryTicker.C:
-						}
-						continue
-					}
-					break
+func (p *messageProcessor) ReleaseExclusive(ctx context.Context) error {
+	if p.rl == nil {
+		return nil
+	}
+	return p.rl.Release(context.WithoutCancel(ctx))
+}
+
+func (p *messageProcessor) RefreshExclusiveProcessor(ctx context.Context, refreshInterval, lockDuration time.Duration) error {
+	var err error
+	defer func() {
+		p.Logger.Err(err).Msg("end of refresh redis lock")
+	}()
+	ticker := time.NewTicker(refreshInterval)
+	defer ticker.Stop()
+	var retryTicker *time.Ticker
+
+	retry := newRetryStrategy()
+	for {
+		select {
+		case <-ctx.Done():
+			return nil
+		case <-ticker.C:
+			// Refresh doesn't handle retry strategy in v0.9.4, so we need to handle it manually.
+			for {
+				err = p.rl.Refresh(ctx, lockDuration, nil)
+				if err == nil {
+					break // retry is not needed
 				}
-				// on success re-define retry for the next Refresh call
-				retry = newRetryStrategy()
+				// if we have an error, we need to wait for the next retry
+				backoff := retry.NextBackoff()
+				if backoff < 1 {
+					return errors.New("refresh exclusive processor error: no more attempts left")
+				}
+				if retryTicker == nil {
+					retryTicker = time.NewTicker(backoff)
+					defer retryTicker.Stop()
+				} else {
+					retryTicker.Reset(backoff)
+				}
+				select {
+				case <-ctx.Done():
+					return nil
+				case <-retryTicker.C:
+				}
 			}
+			// on success re-define retry for the next Refresh call
+			retry = newRetryStrategy()
 		}
-	}(ctx, l)
+	}
 }
 
 // newRetryStrategy is used to create a new retry strategy with reset inner counters.
