@@ -34,6 +34,7 @@ export default {
     editingProcess: state => state.editingProcess,
     pending: state => state.pending,
     screenMode: state => state.screenMode,
+    isKioskScreenMode: state => [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(state.screenMode),
     item: (state, getters, rootState, rootGetters) => rootGetters['view/getViewById'](state.id),
   },
   mutations: {
