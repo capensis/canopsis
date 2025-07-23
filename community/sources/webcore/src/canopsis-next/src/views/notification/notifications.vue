@@ -134,6 +134,7 @@ export default {
         params: {
           ...params,
           only_to_rate: true,
+          with_flags: true,
         },
       }),
     });
