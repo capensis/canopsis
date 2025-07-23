@@ -119,7 +119,7 @@ export default {
       default: false,
     },
   },
-  setup(props, { listeners }) {
+  setup(props, { emit, listeners }) {
     const selectAdvancedSearchField = inject('$selectAdvancedSearchField', () => {});
 
     const opened = ref(false);
@@ -146,7 +146,7 @@ export default {
     };
 
     const component = computed(() => (
-      props.column.getComponent({ ...props, value: value.value, $listeners: listeners })
+      props.column.getComponent({ ...props, value: value.value, $emit: emit, $listeners: listeners })
     ));
 
     const componentOn = computed(() => {
