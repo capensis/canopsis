@@ -1,3 +1,5 @@
+import { VIEW_SCREEN_MODES } from '@/constants';
+
 import activeWidgetsModule from './active-widgets';
 
 export const types = {
@@ -12,6 +14,8 @@ export const types = {
   FETCH_ITEM_FAILED: 'FETCH_ITEM_FAILED',
 
   CLEAR: 'CLEAR',
+
+  SET_SCREEN_MODE: 'SET_SCREEN_MODE',
 };
 
 export default {
@@ -22,12 +26,14 @@ export default {
     pending: false,
     editing: false,
     editingProcess: false,
+    screenMode: VIEW_SCREEN_MODES.default,
     editingOffHandlers: [],
   },
   getters: {
     editing: state => state.editing,
     editingProcess: state => state.editingProcess,
     pending: state => state.pending,
+    screenMode: state => state.screenMode,
     item: (state, getters, rootState, rootGetters) => rootGetters['view/getViewById'](state.id),
   },
   mutations: {
@@ -66,7 +72,12 @@ export default {
       state.id = null;
       state.pending = false;
       state.editing = false;
+      state.screenMode = VIEW_SCREEN_MODES.default;
       state.editingOffHandlers = [];
+    },
+
+    [types.SET_SCREEN_MODE]: (state, screenMode) => {
+      state.screenMode = screenMode;
     },
   },
   actions: {
@@ -115,6 +126,14 @@ export default {
     clear({ commit, dispatch }) {
       commit(types.CLEAR);
       dispatch('activeWidgets/clear');
+    },
+
+    setScreenMode({ commit, getters }, screenMode) {
+      if (getters.screenMode === screenMode) {
+        return;
+      }
+
+      commit(types.SET_SCREEN_MODE, screenMode);
     },
   },
 };

@@ -81,6 +81,7 @@ export default {
 
   created() {
     this.clearActiveView();
+    this.enterActiveViewKiosk();
 
     this.$periodicRefresh.register(this.refreshView);
   },
