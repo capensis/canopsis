@@ -29,6 +29,7 @@
         with-template
         with-html
         with-color-indicator
+        with-filter-on-click
         @update:template="updateWidgetColumnsTemplate"
       />
       <field-columns
@@ -41,6 +42,7 @@
         with-template
         with-html
         with-color-indicator
+        with-filter-on-click
         @update:template="updateWidgetGroupColumnsTemplate"
       />
       <field-columns

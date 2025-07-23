@@ -132,6 +132,8 @@ export const ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK = [
   ALARM_FIELDS.infos,
   ALARM_FIELDS.assignedInstructions,
   ALARM_FIELDS.changeState,
+  ALARM_FIELDS.stateAt,
+  ALARM_FIELDS.statusAt,
   ALARM_FIELDS.stateMessage,
   ALARM_FIELDS.statusMessage,
 
