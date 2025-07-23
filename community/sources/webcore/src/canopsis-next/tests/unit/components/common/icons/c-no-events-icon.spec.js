@@ -1,5 +1,4 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { mockDateNow } from '@unit/utils/mock-hooks';
 
 import CNoEventsIcon from '@/components/common/icons/c-no-events-icon.vue';
 
@@ -13,7 +12,7 @@ const snapshotStubs = {
 };
 
 describe('c-no-events-icon', () => {
-  mockDateNow(mockData.secondTimestamp);
+  beforeAll(() => jest.useFakeTimers({ now: mockData.secondTimestamp }));
 
   const factory = generateRenderer(CNoEventsIcon, {
     attachTo: document.body,
@@ -30,6 +29,7 @@ describe('c-no-events-icon', () => {
     const wrapper = factory({
       propsData: {
         value: mockData.firstTimestamp,
+        color: 'error',
       },
     });
 
