@@ -32,8 +32,6 @@
         <widget-wrapper
           :widget="item.widget"
           :tab="tab"
-          :kiosk="kiosk"
-          :editing="editing"
           :visible="visible"
         />
       </template>
@@ -73,10 +71,6 @@ export default {
     tab: {
       type: Object,
       required: true,
-    },
-    kiosk: {
-      type: Boolean,
-      default: false,
     },
     visible: {
       type: Boolean,

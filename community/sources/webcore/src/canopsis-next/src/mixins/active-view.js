@@ -11,7 +11,8 @@ export const activeViewMixin = {
       view: 'item',
       pending: 'pending',
       editing: 'editing',
-      mode: 'mode',
+      screenMode: 'screenMode',
+      isKioskScreenMode: 'isKioskScreenMode',
       editingProcess: 'editingProcess',
     }),
   },
@@ -22,7 +23,7 @@ export const activeViewMixin = {
       unregisterEditingOffHandler: 'unregisterEditingOffHandler',
       fetchActiveView: 'fetch',
       clearActiveView: 'clear',
-      setActiveViewMode: 'setMode',
+      setActiveViewScreenMode: 'setScreenMode',
     }),
   },
 };

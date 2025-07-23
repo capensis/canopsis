@@ -37,6 +37,7 @@ export const useActiveView = () => {
     pending: 'pending',
     editing: 'editing',
     screenMode: 'screenMode',
+    isKioskScreenMode: 'isKioskScreenMode',
     editingProcess: 'editingProcess',
   });
 
