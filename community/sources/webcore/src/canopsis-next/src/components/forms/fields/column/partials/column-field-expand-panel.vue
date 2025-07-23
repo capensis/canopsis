@@ -101,12 +101,13 @@
     </v-layout>
     <v-switch
       v-if="withHtml"
-      v-field="column.isHtml"
+      :input-value="column.isHtml"
       :label="$t('settings.columns.isHtml')"
       :disabled="!!column.template"
       class="pa-0 my-2"
       color="primary"
       hide-details
+      @change="switchChangeIsHtml($event)"
     />
     <v-switch
       v-if="withColorIndicator"
@@ -128,7 +129,7 @@
       v-if="filterOnClickAvailable"
       v-field="column.isFilter"
       :label="$t('settings.columns.filterOnClick')"
-      :disabled="!!column.template"
+      :disabled="!!column.template || !!column.isHtml"
       class="pa-0 my-2"
     />
   </v-layout>
@@ -195,6 +196,10 @@ export default {
       default: false,
     },
     withoutInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withFilterOnClick: {
       type: Boolean,
       default: false,
     },
@@ -274,7 +279,7 @@ export default {
     },
 
     filterOnClickAvailable() {
-      return !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.column?.column);
+      return this.withFilterOnClick && !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.column?.column);
     },
   },
   watch: {
@@ -341,6 +346,15 @@ export default {
           ...this.templateModalConfig,
           action: value => this.updateField('template', value),
         },
+      });
+    },
+
+    switchChangeIsHtml(isHtml) {
+      this.updateModel({
+        ...this.column,
+
+        isHtml,
+        isFilter: isHtml ? false : this.column.isFilter,
       });
     },
   },
