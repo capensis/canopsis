@@ -199,7 +199,7 @@ export default {
   &__filter {
     cursor: pointer !important;
 
-    &:hover {
+    &:not(.c-alarm-state-chip):hover, &.c-alarm-state-chip:hover .chip {
       text-decoration: underline !important;
     }
   }

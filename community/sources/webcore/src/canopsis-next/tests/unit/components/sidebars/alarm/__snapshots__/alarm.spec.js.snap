@@ -36,6 +36,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
@@ -46,6 +47,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
@@ -698,6 +700,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
@@ -708,6 +711,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
@@ -1356,6 +1360,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
@@ -1366,6 +1371,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
@@ -2011,6 +2017,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
@@ -2021,6 +2028,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
       templates=""
       type="alarm"
       withcolorindicator="true"
+      withfilteronclick="true"
       withhtml="true"
       withtemplate="true"
     />
