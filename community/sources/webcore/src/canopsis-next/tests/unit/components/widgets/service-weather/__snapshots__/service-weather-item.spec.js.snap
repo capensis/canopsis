@@ -3,7 +3,7 @@
 exports[`service-weather-item Renders \`service-weather-item\` with custom props 1`] = `
 <card-with-see-alarms-btn-stub
   class="cursor-pointer service-weather-item mt-0 mr-0 mb-0 ml-0"
-  style="height: 4em; color: white;"
+  style="height: 4em;"
 >
   <div
     class="layout fill-height service-weather-item__content justify-space-between"
@@ -47,9 +47,9 @@ exports[`service-weather-item Renders \`service-weather-item\` with custom props
 
 exports[`service-weather-item Renders \`service-weather-item\` with full access 1`] = `
 <card-with-see-alarms-btn-stub
-  class="cursor-pointer service-weather-item mt-1 mr-3 mb-5 ml-7"
+  class="cursor-pointer service-weather-item mt-1 mr-3 mb-5 ml-7 impact-state-0"
   showbutton="true"
-  style="height: 16em; color: white;"
+  style="height: 16em;"
 >
   <div
     class="layout fill-height service-weather-item__content justify-space-between"
@@ -88,7 +88,7 @@ exports[`service-weather-item Renders \`service-weather-item\` with full access 
         />
         <impact-state-indicator-stub
           class="mr-1"
-          value="0"
+          value="3"
         />
         <button
           class="v-btn v-btn--icon v-btn--round theme--light v-size--small"

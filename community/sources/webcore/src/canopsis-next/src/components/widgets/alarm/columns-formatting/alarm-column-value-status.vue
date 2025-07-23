@@ -14,7 +14,7 @@
     <template #activator="{ on }">
       <v-icon
         :size="iconSize"
-        :style="{ color: statusColor, caretColor: statusColor }"
+        :style="iconStyle"
         v-on="on"
       >
         {{ status.icon }}
@@ -46,25 +46,29 @@ export default {
   setup(props) {
     const { t, te } = useI18n();
 
-    const iconSize = computed(() => (props.small ? 24 : undefined));
     const statusValue = computed(() => props.alarm.v.status?.val);
     const isNoEventsStatus = computed(() => statusValue.value === ALARM_STATUSES.noEvents);
     const isOngoingStatus = computed(() => statusValue.value === ALARM_STATUSES.ongoing);
     const idleSince = computed(() => props.alarm.entity.idle_since);
     const resolved = computed(() => !!props.alarm.v.resolved);
-    const status = computed(() => formatAlarmStatus(statusValue.value, resolved.value));
+    const status = computed(() => formatAlarmStatus(statusValue.value));
     const state = computed(() => formatAlarmState(props.alarm.v.state.val));
     const statusColor = computed(() => (isOngoingStatus.value ? state.value.color : status.value.color));
+    const iconSize = computed(() => (props.small ? 24 : undefined));
+    const iconStyle = computed(() => ({ color: statusColor.value, caretColor: statusColor.value }));
     const tooltipContent = computed(() => (resolved.value && te(`common.statusResolvedTypes.${statusValue.value}`)
       ? t(`common.statusResolvedTypes.${statusValue.value}`)
       : t(`common.statusTypes.${statusValue.value}`)));
 
     return {
-      iconSize,
+      statusValue,
       isNoEventsStatus,
+      isOngoingStatus,
       idleSince,
       status,
-      statusColor,
+      state,
+      iconSize,
+      iconStyle,
       tooltipContent,
     };
   },
