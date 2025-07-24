@@ -21,6 +21,7 @@ import permissionModule from './permission';
 import eventFilterModule from './event-filter';
 import infoModule from './info';
 import infosModule from './infos';
+import entityInfoPropertyModule from './entity-info-property';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import dynamicInfoModule from './dynamic-info';
@@ -84,6 +85,7 @@ export default {
   eventFilter: eventFilterModule,
   info: infoModule,
   infos: infosModule,
+  entityInfoProperty: entityInfoPropertyModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
   dynamicInfo: dynamicInfoModule,

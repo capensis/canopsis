@@ -48,6 +48,7 @@ const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusR
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
 const ExploitationExternalDataTables = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/external-data-tables.vue');
+const ExploitationEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/exploitation/entity-infos-properties.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
@@ -417,6 +418,17 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USER_PERMISSIONS.technical.exploitation.externalDataTable,
+      },
+    },
+  },
+  {
+    path: ROUTES.exploitationEntityInfosProperties,
+    name: ROUTES_NAMES.exploitationEntityInfosProperties,
+    component: ExploitationEntityInfosProperties,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
       },
     },
   },

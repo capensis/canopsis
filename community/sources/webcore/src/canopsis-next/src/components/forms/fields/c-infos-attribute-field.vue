@@ -15,7 +15,15 @@
         :hide-details="row"
         item-text="value"
         item-value="value"
-      />
+      >
+        <template #no-data="">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title>{{ $t('common.pressEnterToApply') }}</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+      </v-combobox>
       <v-text-field
         v-else
         v-field="value.dictionary"
@@ -46,7 +54,11 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { PATTERN_RULE_INFOS_FIELDS } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   inject: ['$validator'],
@@ -96,27 +108,29 @@ export default {
       required: false,
     },
   },
-  computed: {
-    dictionaryName() {
-      return `${this.name}.dictionary`;
-    },
+  setup(props) {
+    // Composables
+    const { t } = useI18n();
 
-    fieldName() {
-      return `${this.name}.field`;
-    },
+    // Computed properties
+    const dictionaryName = computed(() => `${props.name}.dictionary`);
+    const fieldName = computed(() => `${props.name}.field`);
+    const fieldItems = computed(() => [
+      {
+        text: t('common.name'),
+        value: PATTERN_RULE_INFOS_FIELDS.name,
+      },
+      {
+        text: t('common.value'),
+        value: PATTERN_RULE_INFOS_FIELDS.value,
+      },
+    ]);
 
-    fieldItems() {
-      return [
-        {
-          text: this.$t('common.name'),
-          value: PATTERN_RULE_INFOS_FIELDS.name,
-        },
-        {
-          text: this.$t('common.value'),
-          value: PATTERN_RULE_INFOS_FIELDS.value,
-        },
-      ];
-    },
+    return {
+      dictionaryName,
+      fieldName,
+      fieldItems,
+    };
   },
 };
 </script>

@@ -43,10 +43,18 @@ export default {
   },
   createEntityInfo: {
     create: {
-      title: 'Ajouter une information',
+      title: 'Ajouter des propriétés d\'info d\'entité',
+      success: 'Propriété d\'info d\'entité créée avec succès',
     },
     edit: {
-      title: 'Éditer une information',
+      title: 'Modifier les propriétés d\'info d\'entité',
+      success: 'Propriété d\'info d\'entité mise à jour avec succès',
+    },
+    duplicate: {
+      title: 'Dupliquer les propriétés d\'info d\'entité',
+    },
+    remove: {
+      success: 'Propriété d\'info d\'entité supprimée avec succès',
     },
   },
   view: {
