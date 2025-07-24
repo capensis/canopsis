@@ -1,6 +1,7 @@
 import {
   ALARM_STATES_ICONS,
   ALARM_STATES_TEXTS,
+  ALARM_STATES_CLASSES,
   ALARM_STATUSES_ICONS,
   ALARM_STATUSES_RESOLVED_ICONS,
   ALARM_STATUSES_TEXTS,
@@ -35,6 +36,7 @@ export const formatAlarmState = state => ({
   icon: getAlarmStateIcon(state) ?? ALARM_UNKNOWN_VALUE.icon,
   text: getAlarmStateText(state) ?? ALARM_UNKNOWN_VALUE.text,
   color: getAlarmStateColor(state) ?? ALARM_UNKNOWN_VALUE.color,
+  class: ALARM_STATES_CLASSES[state],
 });
 
 /**

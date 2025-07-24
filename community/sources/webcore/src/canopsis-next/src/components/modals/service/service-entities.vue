@@ -1,6 +1,6 @@
 <template>
   <modal-wrapper
-    :title-color="color"
+    :title-class="titleClass"
     close
   >
     <template #title="">
@@ -159,8 +159,8 @@ export default {
       return this.config.service;
     },
 
-    color() {
-      return this.config.color;
+    titleClass() {
+      return this.config.titleClass;
     },
 
     widgetParameters() {
