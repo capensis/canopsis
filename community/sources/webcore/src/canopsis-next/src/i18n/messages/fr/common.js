@@ -313,6 +313,7 @@ export default {
   true: 'Vrai',
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
+  last: 'Dernier',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -476,6 +477,11 @@ export default {
     [PATTERN_OPERATORS.ruleIs]: 'La règle est',
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
+
+    [PATTERN_OPERATORS.within]: 'Au cours des',
+    [PATTERN_OPERATORS.olderThan]: 'Plus ancien que',
+    [PATTERN_OPERATORS.inRangeDates]: 'Dans l\'intervalle (dates)',
+    [PATTERN_OPERATORS.inRangePeriod]: 'Dans l\'intervalle (période)',
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {

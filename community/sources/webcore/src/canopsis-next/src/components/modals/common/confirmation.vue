@@ -18,7 +18,6 @@
         justify-center
       >
         <v-btn
-          :outlined="$system.dark"
           color="error"
           @click="cancel"
         >
@@ -53,7 +52,6 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.confirmation,
-  inject: ['$system'],
   components: { ModalWrapper },
   mixins: [
     modalInnerMixin,

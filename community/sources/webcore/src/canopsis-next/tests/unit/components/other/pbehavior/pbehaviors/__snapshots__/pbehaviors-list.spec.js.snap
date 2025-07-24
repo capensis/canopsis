@@ -785,10 +785,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -1179,10 +1179,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -1573,10 +1573,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -1967,10 +1967,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -2361,10 +2361,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -3434,10 +3434,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -3828,10 +3828,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -4222,10 +4222,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -4616,10 +4616,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -5010,10 +5010,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -6542,10 +6542,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -6888,10 +6888,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -7234,10 +7234,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -7580,10 +7580,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"
@@ -7926,10 +7926,10 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             >
               <span
                 aria-hidden="true"
-                class="v-icon notranslate theme--light primary--text"
+                class="v-icon notranslate theme--light success--text"
               >
                 <svg
-                  class="v-icon__component theme--light primary--text"
+                  class="v-icon__component theme--light success--text"
                   fill="currentColor"
                   version="1.1"
                   viewBox="0 0 57 50"

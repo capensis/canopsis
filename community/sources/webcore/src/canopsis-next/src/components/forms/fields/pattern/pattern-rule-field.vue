@@ -53,72 +53,44 @@
       :xs7="isAnyInfosRule"
     >
       <v-layout>
-        <template v-if="isDateRule">
-          <v-flex
-            class="pl-3"
-            xs5
-          >
-            <c-quick-date-interval-type-field
-              v-field="rule.range.type"
-              :name="name"
-              :disabled="disabled"
-              :ranges="intervalRanges"
-            />
-          </v-flex>
-          <v-flex
-            v-if="isCustomRange"
-            class="pl-3"
-            xs7
-          >
-            <c-date-time-interval-field
-              v-field="rule.range"
-              :name="name"
-              :disabled="disabled"
-            />
-          </v-flex>
-        </template>
-        <template v-else>
-          <v-flex
-            v-if="isInfosValueField"
-            class="pl-3"
-            xs1
-          >
-            <c-input-type-field
-              :value="rule.fieldType"
-              :label="$t('common.type')"
-              :types="inputTypes"
-              :disabled="disabled"
-              :name="name"
-              @input="updateType"
-            />
-          </v-flex>
-          <v-flex
-            v-if="shownOperatorField"
-            :xs6="!isAnyInfosRule"
-            :xs4="isAnyInfosRule"
-            class="pl-3"
-          >
-            <pattern-operator-field
-              v-field="rule.operator"
-              :operators="operators"
-              :disabled="disabled"
-              :name="operatorFieldName"
-              required
-            />
-          </v-flex>
-          <v-flex
-            v-if="rule.operator && operatorHasValue"
-            :xs7="isAnyInfosRule"
-            :xs6="!isAnyInfosRule"
-            class="pl-3"
-          >
-            <component
-              v-bind="valueComponent.props"
-              :is="valueComponent.is"
-              v-on="valueComponent.on"
-            />
-          </v-flex>
-        </template>
+        <v-flex
+          v-if="isInfosValueField"
+          class="pl-3"
+          xs1
+        >
+          <c-input-type-field
+            :value="rule.fieldType"
+            :label="$t('common.type')"
+            :types="inputTypes"
+            :disabled="disabled"
+            :name="name"
+            @input="updateType"
+          />
+        </v-flex>
+        <v-flex
+          v-if="shownOperatorField"
+          v-bind="operatorFlexSizeAttrs"
+          class="pl-3"
+        >
+          <pattern-operator-field
+            v-field="rule.operator"
+            :operators="operators"
+            :disabled="disabled"
+            :name="operatorFieldName"
+            required
+          />
+        </v-flex>
+        <v-flex
+          v-if="rule.operator && operatorHasValue"
+          v-bind="valueFlexSizeAttrs"
+          class="pl-3"
+        >
+          <component
+            v-bind="valueComponent.props"
+            :is="valueComponent.is"
+            v-on="valueComponent.on"
+          />
+        </v-flex>
       </v-layout>
     </v-flex>
   </v-layout>
@@ -127,13 +99,7 @@
 <script>
 import { isFunction } from 'lodash';
 
-import {
-  PATTERN_FIELD_TYPES,
-  PATTERN_QUICK_RANGES,
-  PATTERN_RULE_INFOS_FIELDS,
-  PATTERN_RULE_TYPES,
-  QUICK_RANGES,
-} from '@/constants';
+import { PATTERN_FIELD_TYPES, PATTERN_RULE_INFOS_FIELDS, PATTERN_RULE_TYPES } from '@/constants';
 
 import {
   convertValueByType,
@@ -153,10 +119,16 @@ import DateTimePickerTextField from '@/components/forms/fields/date-time-picker/
 
 import PatternAttributeField from './pattern-attribute-field.vue';
 import PatternOperatorField from './pattern-operator-field.vue';
+import PatternRuleFieldDateValue from './pattern-rule-field-date-value.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DateTimePickerTextField, PatternAttributeField, PatternOperatorField },
+  components: {
+    DateTimePickerTextField,
+    PatternAttributeField,
+    PatternOperatorField,
+    PatternRuleFieldDateValue,
+  },
   mixins: [formMixin],
   model: {
     prop: 'rule',
@@ -188,10 +160,6 @@ export default {
         { value: PATTERN_FIELD_TYPES.stringArray },
       ],
     },
-    intervalRanges: {
-      type: Array,
-      default: () => PATTERN_QUICK_RANGES,
-    },
     valueField: {
       type: Object,
       required: false,
@@ -208,6 +176,10 @@ export default {
       type: String,
       default: 'rule',
     },
+    itemDisabled: {
+      type: Function,
+      required: false,
+    },
   },
   computed: {
     operatorFieldName() {
@@ -220,10 +192,6 @@ export default {
 
     inputType() {
       return getFieldType(this.rule.value);
-    },
-
-    isCustomRange() {
-      return this.rule.range.type === QUICK_RANGES.custom.value;
     },
 
     isInfosRule() {
@@ -307,6 +275,21 @@ export default {
         };
       }
 
+      if (this.isDateRule) {
+        return {
+          is: 'pattern-rule-field-date-value',
+          props: {
+            value: this.rule.range,
+            operator: this.rule.operator,
+            disabled: this.disabled,
+            name: this.valueFieldName,
+          },
+          on: {
+            input: this.updateRange,
+          },
+        };
+      }
+
       if (this.isNumberRule) {
         return {
           is: 'c-number-field',
@@ -343,10 +326,38 @@ export default {
     objectDictionaryName() {
       return `${this.name}.dictionary`;
     },
+
+    operatorFlexSizeAttrs() {
+      if (this.isDateRule) {
+        return { xs5: true };
+      }
+
+      if (this.isAnyInfosRule) {
+        return { xs4: true };
+      }
+
+      return { xs6: true };
+    },
+
+    valueFlexSizeAttrs() {
+      if (this.isAnyInfosRule || this.isDateRule) {
+        return { xs7: true };
+      }
+
+      return { xs6: true };
+    },
   },
   methods: {
+    preparedItemDisabled(item) {
+      return this.itemDisabled?.(this.rule, item);
+    },
+
     updateDuration(duration) {
       this.updateField('duration', duration);
+    },
+
+    updateRange(duration) {
+      this.updateField('range', duration);
     },
 
     updateValue(value) {
