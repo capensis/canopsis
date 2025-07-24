@@ -18,6 +18,8 @@ import (
 
 type API interface {
 	DBExport(c *gin.Context)
+	ValidateTemplates(c *gin.Context)
+	GetTemplateVars(c *gin.Context)
 	common.BulkCrudAPI
 }
 
@@ -265,6 +267,51 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.ScenarioMongoCollection, b)
+}
+
+// ValidateTemplates
+// @Param body body TemplateRequest true "body"
+// @Success 200 {object} template.ValidateResponse
+func (a *api) ValidateTemplates(c *gin.Context) {
+	var request TemplateRequest
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	err := a.transformEditRequest(c, &request.Request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			valErr = valErr.AddFieldPrefix("request")
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	response, err := a.store.ValidateTemplates(c, request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// GetTemplateVars
+// @Success 200 {array} TemplateVarsResponse
+func (a *api) GetTemplateVars(c *gin.Context) {
+	c.JSON(http.StatusOK, a.store.GetTemplateVars())
 }
 
 func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {

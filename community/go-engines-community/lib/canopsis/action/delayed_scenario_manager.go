@@ -13,7 +13,7 @@ import (
 )
 
 type DelayedScenarioManager interface {
-	AddDelayedScenario(context.Context, types.Alarm, Scenario, AdditionalData) error
+	AddDelayedScenario(context.Context, types.Alarm, Scenario, types.AdditionalData) error
 	PauseDelayedScenarios(context.Context, types.Alarm) error
 	ResumeDelayedScenarios(context.Context, types.Alarm) error
 	Run(context.Context) (<-chan DelayedScenarioTask, error)
@@ -49,10 +49,10 @@ type DelayedScenarioTask struct {
 	Entity   types.Entity
 	Scenario Scenario
 
-	AdditionalData AdditionalData
+	AdditionalData types.AdditionalData
 }
 
-func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm types.Alarm, scenario Scenario, additionalData AdditionalData) error {
+func (m *delayedScenarioManager) AddDelayedScenario(ctx context.Context, alarm types.Alarm, scenario Scenario, additionalData types.AdditionalData) error {
 	if scenario.Delay == nil || scenario.Delay.Value == 0 {
 		return errors.New("scenario is not delayed")
 	}
