@@ -1,6 +1,7 @@
 <template>
   <v-menu
     v-if="preparedLinks.length"
+    v-bind="$attrs"
     bottom
     offset-y
   >
@@ -31,6 +32,7 @@ import TopBarMenuLink from './top-bar-menu-link.vue';
 export default {
   components: { TopBarMenuLink },
   mixins: [layoutNavigationTopBarMenuMixin],
+  inheritAttrs: false,
   props: {
     title: {
       type: String,

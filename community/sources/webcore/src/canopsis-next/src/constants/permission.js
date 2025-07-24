@@ -224,6 +224,7 @@ export const USER_PERMISSIONS = {
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`,
+      entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`, // TODO: change it to _entityInfoProperty
     },
     notification: {
       common: USER_PERMISSIONS_PREFIXES.technical.notification,

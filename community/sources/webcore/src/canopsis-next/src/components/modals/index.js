@@ -448,3 +448,8 @@ export const ImportExternalDataTableRecords = () => ({
   component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/import-external-data-table-records.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateEntityInfoProperty = () => ({
+  component: import(/* webpackChunkName: "EntityInfoProperty" */ './entity-info-property/create-entity-info-property.vue'),
+  loading: LoaderOverlay,
+});

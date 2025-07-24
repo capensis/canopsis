@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Toggle view edition mode',
   toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',
+  alias: 'Alias',
   namePrefix: 'Name prefix',
   description: 'Description',
   author: 'Author',
@@ -321,6 +322,7 @@ export default {
     boolean: 'Boolean',
     null: 'Null',
     array: 'Array',
+    stringArray: 'Array of strings',
     object: 'Object',
   },
   mixedField: {

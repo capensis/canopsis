@@ -376,6 +376,14 @@ html {
   }
 }
 
+.top-bar-menu__content {
+  max-height: 95vh;
+
+  .v-avatar {
+    border-radius: unset;
+  }
+}
+
 *[aria-required="true"] label:before {
   content: '*';
   padding-right: 4px;
