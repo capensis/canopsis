@@ -14,6 +14,7 @@ import {
   ALARM_LIST_ACTIONS_TYPES,
   LINK_RULE_ACTIONS,
   REMEDIATION_INSTRUCTION_EXECUTION_STATUSES,
+  BUSINESS_USER_PERMISSIONS_ACTIONS_MAP,
 } from '@/constants';
 
 import featuresService from '@/services/features';
@@ -139,6 +140,10 @@ export default {
     },
 
     linksActions() {
+      if (!this.checkAccess(BUSINESS_USER_PERMISSIONS_ACTIONS_MAP.alarmsList[ALARM_LIST_ACTIONS_TYPES.links])) {
+        return [];
+      }
+
       return this.visibleLinks.map((link) => {
         const type = getLinkRuleLinkActionType(link);
 
