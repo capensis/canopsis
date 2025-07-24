@@ -49,6 +49,22 @@ export default {
       title: 'Edit an information',
     },
   },
+  createEntityInfoProperty: {
+    create: {
+      title: 'Add entity infos properties',
+      success: 'Entity info property created successfully',
+    },
+    edit: {
+      title: 'Edit entity infos properties',
+      success: 'Entity info property updated successfully',
+    },
+    duplicate: {
+      title: 'Duplicate entity infos properties',
+    },
+    remove: {
+      success: 'Entity info property removed successfully',
+    },
+  },
   view: {
     create: {
       title: 'Create a view',

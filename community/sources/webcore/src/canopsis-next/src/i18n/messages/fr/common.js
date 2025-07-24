@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
+  alias: 'Alias',
   namePrefix: 'Préfixe du nom',
   description: 'Description',
   author: 'Auteur',
@@ -321,6 +322,7 @@ export default {
     boolean: 'Booléen',
     null: 'Nul',
     array: 'Tableau',
+    stringArray: 'Tableau de chaînes',
     object: 'Object',
   },
   mixedField: {
