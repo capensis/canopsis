@@ -104,4 +104,6 @@ const (
 
 	ExternalDataTableCollection        = "external_data_table"
 	ExternalDataImportWorkerCollection = "external_data_import_worker"
+
+	TemplateDataCollection = "template_data"
 )

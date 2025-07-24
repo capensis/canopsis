@@ -3599,6 +3599,56 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/template-data:
+    delete:
+      tags:
+        - tpldata
+      summary: Bulk delete template data
+      description: |
+        Bulk delete template data.
+        
+        -  PERMISSIONS: `api_template_data:delete`
+      operationId: tpldata-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/template.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete template data.
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/template.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/users:
     put:
       tags:
@@ -6559,30 +6609,16 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.TemplateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/eventfilter.TemplateRequest'
             examples:
               check:
                 summary: Validate
                 description: Validate rule
                 value: {
                   "data": {
-                    "event": {
-                      "event_type": "check",
-                      "output": "Lorem ipsum dolor",
-                      "state": 1,
-                      "connector": "cps_connector",
-                      "connector_name": "cps_connector_name",
-                      "resource": "cps_resource",
-                      "component": "cps_component",
-                      "source_type": "resource",
-                      "host": "cps_host",
-                    },
+                    "event": "9c848e2c-bc55-484f-a433-a9e4d1031867",
                     "external_data": {
-                      "ref2": {
-                        "id": "9c848e2c-bc55-484f-a433-a9e4d1031867"
-                      }
+                      1: "0dbb862b-cd5d-4643-b069-72ec13a57d63"
                     }
                   },
                   "request": {
@@ -6643,9 +6679,9 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: 'schemas_swagger.yaml#/definitions/template.Response'
+                type: object
+                additionalProperties:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
         400:
           description: Bad Request
           content:
@@ -12362,7 +12398,174 @@ paths:
             text/plain:
               schema:
                 type: string
-                format: binary                
+                format: binary
+  /scenario-template-vars:
+    get:
+      tags:
+        - scenarios
+      summary: Get available template variables for action scenarios
+      description: |
+        Get available template variables for action scenarios.
+
+        -  PERMISSIONS: `api_action:read`
+      operationId: scenarios-tpl-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/scenario.TemplateVarsResponse'
+  /scenario-template-validate:
+    post:
+      tags:
+        - scenarios
+      summary: Validate action scenario templates
+      description: |
+        Validate action scenario templates.
+
+        -  PERMISSIONS: `api_action:read`
+      operationId: scenarios-tpl-validate
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/scenario.TemplateRequest'
+            examples:
+              check:
+                summary: Validate
+                description: Validate rule
+                value: {
+                  "data": {
+                    "event": "9c848e2c-bc55-484f-a433-a9e4d1031867",
+                    "responses": {
+                      1: "0dbb862b-cd5d-4643-b069-72ec13a57d63",
+                      2: "e4166204-fa3c-4b37-aaaa-8b441047e543"
+                    }
+                  },
+                  "request": {
+                    "name": "Scenario with webhook action",
+                    "comment": "The scenario does webhook request for an alarm on activate",
+                    "enabled": true,
+                    "priority": 10,
+                    "triggers": [
+                      {
+                        "type": "activate"
+                      }
+                    ],
+                    "actions": [
+                      {
+                        "type": "ack",
+                        "parameters": {
+                          "output": "Ack by {{ .AdditionalData.RuleName }}"
+                        },
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
+                                "value": "g1"
+                              }
+                            }
+                          ]
+                        ],
+                        "drop_scenario_if_not_matched": false,
+                        "emit_trigger": false
+                      },
+                      {
+                        "type": "webhook",
+                        "parameters": {
+                          "request": {
+                            "method": "GET",
+                            "url": "{{ .Env.TicketURL }}/info",
+                            "headers": { "Content-Type": "application/json" }
+                          }
+                        },
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
+                                "value": "g1"
+                              }
+                            }
+                          ]
+                        ],
+                        "drop_scenario_if_not_matched": false,
+                        "emit_trigger": false
+                      },
+                      {
+                        "type": "webhook",
+                        "parameters": {
+                          "request": {
+                            "method": "POST",
+                            "url": "{{ .Env.TicketURL }}/ticket",
+                            "headers": { "Content-Type": "application/json" },
+                            "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
+                          },
+                          "declare_ticket": {
+                            "empty_response": false,
+                            "ticket_id_tpl": "{{ .Response.id }}",
+                            "ticket_id_url": "{{ index .ResponseMap \"1.url\" }}/ticket/{{ .Response.id }}"
+                          }
+                        },
+                        "entity_pattern": [
+                          [
+                            {
+                              "field": "type",
+                              "cond": {
+                                "type": "eq",
+                                "value": "resource"
+                              }
+                            },
+                            {
+                              "field": "infos.group",
+                              "cond": {
+                                "type": "eq",
+                                "value": "g1"
+                              }
+                            }
+                          ]
+                        ],
+                        "drop_scenario_if_not_matched": false,
+                        "emit_trigger": false
+                      }
+                    ]
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /share-tokens:
     get:
       tags:
@@ -13244,6 +13447,230 @@ paths:
               schema:
                 type: string
                 format: binary
+  /template-data:
+    get:
+      tags:
+        - tpldata
+      summary: Find all template data
+      description: |
+        Get paginated list of template data.
+        
+        -  PERMISSIONS: `api_template_data:read`
+      operationId: tpldata-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - name: type
+          in: query
+          description: >
+            Filter by type:
+             * `0` - Event data
+             * `1` - Response data
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - tpldata
+      summary: Create template data
+      description: |
+        Create template data.
+        
+        -  PERMISSIONS: `api_template_data:create`
+      operationId: tpldata-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.EditDataRequest'
+            examples:
+              event:
+                summary: Create event data
+                description: Create event data
+                value: {
+                  "name": "Check event",
+                  "description": "Check event",
+                  "type": 0,
+                  "body": {
+                    "event_type": "check",
+                    "connector": "cps_connector",
+                    "connector_name": "cps_connector_name",
+                    "component": "cps_component",
+                    "resource": "cps_resource",
+                    "source_type": "resource",
+                    "state": 3,
+                    "output":  "Alert"
+                  }
+                }
+              response:
+                summary: Create response data
+                description: Create response data
+                value: {
+                  "name": "External API response",
+                  "description": "External API response",
+                  "type": 1,
+                  "body": {
+                    "id": "e4166204-fa3c-4b37-aaaa-8b441047e543"
+                  },
+                  "headers": {
+                    "Content-Type": "application/json"
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /template-data/{id}:
+    get:
+      tags:
+        - tpldata
+      summary: Get template data by id
+      description: |
+        Get template data by id.
+        
+        -  PERMISSIONS: `api_template_data:read`
+      operationId: tpldata-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - tpldata
+      summary: Update template data by id
+      description: |
+        Update template data by id.
+        
+        -  PERMISSIONS: `api_template_data:update`
+      operationId: tpldata-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.EditDataRequest'
+            examples:
+              event:
+                summary: Update event data
+                description: Update event data
+                value: {
+                  "name": "Check event",
+                  "description": "Check event",
+                  "type": 0,
+                  "body": {
+                    "event_type": "check",
+                    "connector": "cps_connector",
+                    "connector_name": "cps_connector_name",
+                    "component": "cps_component",
+                    "resource": "cps_resource",
+                    "source_type": "resource",
+                    "state": 3,
+                    "output":  "Alert"
+                  }
+                }
+              response:
+                summary: Update response data
+                description: Update response data
+                value: {
+                  "name": "External API response",
+                  "description": "External API response",
+                  "type": 1,
+                  "body": {
+                    "id": "e4166204-fa3c-4b37-aaaa-8b441047e543"
+                  },
+                  "headers": {
+                    "Content-Type": "application/json"
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.DataResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - tpldata
+      summary: Delete template data by id
+      description: |
+        Delete template data by id.
+        
+        -  PERMISSIONS: `api_template_data:delete`
+      operationId: tpldata-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /template-vars:
     get:
       tags:

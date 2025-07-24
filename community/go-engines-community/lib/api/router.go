@@ -1442,7 +1442,7 @@ func RegisterRoutes(
 		}
 
 		scenarioAPI := scenario.NewApi(
-			scenario.NewStore(primaryDbClient, authorProvider),
+			scenario.NewStore(primaryDbClient, authorProvider, validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider),
 			dbexport.NewExporter(primaryDbClient),
 			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
@@ -1481,6 +1481,14 @@ func RegisterRoutes(
 			"scenarios-db-export",
 			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
 			scenarioAPI.DBExport)
+		protected.POST(
+			"/scenario-template-validate",
+			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
+			scenarioAPI.ValidateTemplates)
+		protected.GET(
+			"/scenario-template-vars",
+			middleware.Authorize(apisecurity.ObjAction, model.PermissionRead, enforcer),
+			scenarioAPI.GetTemplateVars)
 
 		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(primaryDbClient),
 			workers.NewJobPublisher(jobKeyImport, workersRunner), conf.File.ImportMaxSize, logger)
@@ -1926,6 +1934,8 @@ func RegisterRoutes(
 			)
 		}
 
+		templateAPI := template.NewAPI(template.NewStore(primaryDbClient), templateConfigProvider, logger)
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -2221,6 +2231,16 @@ func RegisterRoutes(
 				middleware.PreProcessBulk(apiConfigProvider, false),
 				externalDataTableAPI.BulkDeleteData,
 			)
+
+			tplDataRouter := bulkRouter.Group("/template-data")
+			{
+				tplDataRouter.DELETE(
+					"",
+					middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionDelete, enforcer),
+					middleware.PreProcessBulk(apiConfigProvider, false),
+					templateAPI.BulkDeleteData,
+				)
+			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -2441,11 +2461,38 @@ func RegisterRoutes(
 			)
 		}
 
-		templateValidatorAPI := template.NewApi(templateConfigProvider)
+		tplDataRouter := protected.Group("/template-data")
 		{
 			protected.GET(
 				"/template-vars",
-				templateValidatorAPI.GetEnvVars,
+				templateAPI.GetEnvVars,
+			)
+			tplDataRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				templateAPI.CreateData,
+			)
+			tplDataRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionRead, enforcer),
+				templateAPI.ListData,
+			)
+			tplDataRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionRead, enforcer),
+				templateAPI.GetData,
+			)
+			tplDataRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				templateAPI.UpdateData,
+			)
+			tplDataRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionDelete, enforcer),
+				templateAPI.DeleteData,
 			)
 		}
 
