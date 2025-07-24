@@ -1,13 +1,12 @@
 package eventfilter
 
 import (
-	"encoding/json"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -135,33 +134,12 @@ func (r *AggregationFailureResult) GetTotal() int64 {
 type TemplateRequest struct {
 	Request CreateRequest `json:"request"`
 	Data    struct {
-		Event        *EventRequest  `json:"event" binding:"required"`
-		ExternalData map[string]any `json:"external_data"`
+		Event        string         `json:"event" binding:"required"`
+		ExternalData map[int]string `json:"external_data"`
 	} `json:"data"`
 }
 
-type EventRequest struct {
-	types.Event
-}
-
-func (e *EventRequest) UnmarshalJSON(b []byte) error {
-	var v types.Event
-	err := json.Unmarshal(b, &v)
-	if err != nil {
-		return err
-	}
-
-	err = v.InjectExtraInfos(b)
-	if err != nil {
-		return err
-	}
-
-	e.Event = v
-
-	return nil
-}
-
 type TemplateVarsResponse struct {
-	ExternalData []string `json:"external_data"`
-	Config       []string `json:"config"`
+	ExternalData []template.VarResponse `json:"external_data"`
+	Config       []template.VarResponse `json:"config"`
 }
