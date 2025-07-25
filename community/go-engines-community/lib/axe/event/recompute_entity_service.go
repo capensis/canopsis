@@ -70,18 +70,18 @@ func NewRecomputeEntityServiceProcessor(
 			encoder,
 			logger,
 		),
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		countersHelper: newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type recomputeEntityServiceProcessor struct {
-	dbClient                          mongo.DbClient
-	entityCollection                  mongo.DbCollection
-	entityServiceCountersCalculator   calculator.EntityServiceCountersCalculator
-	eventsSender                      entitycounters.EventsSender
-	logger                            zerolog.Logger
-	helper                            *resolveHelper
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
+	dbClient                        mongo.DbClient
+	entityCollection                mongo.DbCollection
+	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
+	eventsSender                    entitycounters.EventsSender
+	logger                          zerolog.Logger
+	helper                          *resolveHelper
+	countersHelper                  *countersHelper
 }
 
 func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -117,11 +117,11 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 
 	now := datetime.NewCpsTime()
 	match := getOpenAlarmMatch(event)
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	notAckedMetricType := ""
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		notAckedMetricType = ""
 
 		beforeAlarm, err := p.helper.UpdateAlarmToResolve(ctx, match, event.Parameters)
@@ -173,7 +173,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 			result.Entity = entity
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&result.Alarm,
 			&entity,
@@ -189,7 +189,7 @@ func (p *recomputeEntityServiceProcessor) Process(ctx context.Context, event rpc
 	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
 		go p.helper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes, notAckedMetricType)
 	} else {
-		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
+		go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
 	}
 
 	return result, nil

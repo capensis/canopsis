@@ -43,11 +43,11 @@ func NewEntityToggledProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &entityToggledProcessor{
-		dbClient:                          dbClient,
-		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
-		closeDelayJobCollection:           dbClient.Collection(mongo.CloseDelayJobCollection),
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		dbClient:                dbClient,
+		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
+		closeDelayJobCollection: dbClient.Collection(mongo.CloseDelayJobCollection),
+		logger:                  logger,
+		countersHelper:          newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		resolveHelper: newResolveHelper(
 			dbClient,
 			alarmConfigProvider,
@@ -89,13 +89,13 @@ func NewEntityToggledProcessor(
 }
 
 type entityToggledProcessor struct {
-	dbClient                          mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	closeDelayJobCollection           mongo.DbCollection
-	logger                            zerolog.Logger
-	resolveHelper                     *resolveHelper
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
-	upstreamHelper                    *upstreamHelper
+	dbClient                mongo.DbClient
+	alarmCollection         mongo.DbCollection
+	closeDelayJobCollection mongo.DbCollection
+	logger                  zerolog.Logger
+	resolveHelper           *resolveHelper
+	countersHelper          *countersHelper
+	upstreamHelper          *upstreamHelper
 }
 
 func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -108,7 +108,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return Result{}, fmt.Errorf("unknown initiator %q", event.Parameters.Initiator)
 	}
 
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	var err error
 	if event.Entity.Enabled {
 		var alarm types.Alarm
@@ -134,7 +134,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	notAckedMetricType := ""
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		notAckedMetricType = ""
 
 		beforeAlarm, err := p.resolveHelper.UpdateAlarmToResolve(ctx, match, event.Parameters)
@@ -176,7 +176,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&result.Alarm,
 			&entity,
@@ -198,7 +198,7 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			notAckedMetricType,
 		)
 	} else {
-		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
+		go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
 	}
 
 	return result, nil

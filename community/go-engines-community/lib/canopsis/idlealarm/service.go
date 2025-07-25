@@ -334,7 +334,7 @@ func (s *baseService) applyEntityRule(
 
 	event.EventType = types.EventTypeNoEvents
 	event.Timestamp = datetime.NewCpsTime()
-	event.State = types.AlarmStateCritical
+	event.State = types.AlarmStateForNoEvents
 	event.Output = s.getEventOutput(rule)
 	event.IdleRuleApply = rule.Type
 
