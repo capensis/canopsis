@@ -30,6 +30,8 @@ var statusTitles = map[int]string{
 	types.AlarmStatusStealthy:  types.AlarmStatusTitleStealthy,
 	types.AlarmStatusFlapping:  types.AlarmStatusTitleFlapping,
 	types.AlarmStatusCancelled: types.AlarmStatusTitleCancelled,
+	types.AlarmStatusNoEvents:  types.AlarmStatusTitleNoEvents,
+	types.AlarmStatusUnknown:   types.AlarmStatusTitleUnknown,
 }
 
 func newExportCursor(

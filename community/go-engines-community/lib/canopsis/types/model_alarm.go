@@ -47,6 +47,8 @@ const (
 	AlarmStatusTitleStealthy  = "stealthy"
 	AlarmStatusTitleFlapping  = "flapping"
 	AlarmStatusTitleCancelled = "cancelled"
+	AlarmStatusTitleNoEvents  = "noevents"
+	AlarmStatusTitleUnknown   = "unknown"
 )
 
 // Alarm steps
