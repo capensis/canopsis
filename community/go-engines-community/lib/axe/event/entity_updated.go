@@ -43,13 +43,13 @@ func NewEntityUpdatedProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &entityUpdatedProcessor{
-		dbClient:                          dbClient,
-		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
-		componentCountersCalculator:       componentCountersCalculator,
-		externalTagUpdater:                externalTagUpdater,
-		metaAlarmPostProcessor:            metaAlarmPostProcessor,
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		dbClient:                    dbClient,
+		alarmCollection:             dbClient.Collection(mongo.AlarmMongoCollection),
+		componentCountersCalculator: componentCountersCalculator,
+		externalTagUpdater:          externalTagUpdater,
+		metaAlarmPostProcessor:      metaAlarmPostProcessor,
+		logger:                      logger,
+		countersHelper:              newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			dbClient,
 			alarmConfigProvider,
@@ -72,14 +72,14 @@ func NewEntityUpdatedProcessor(
 }
 
 type entityUpdatedProcessor struct {
-	dbClient                          mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	componentCountersCalculator       calculator.ComponentCountersCalculator
-	externalTagUpdater                alarmtag.ExternalUpdater
-	metaAlarmPostProcessor            MetaAlarmPostProcessor
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
-	upstreamHelper                    *upstreamHelper
+	dbClient                    mongo.DbClient
+	alarmCollection             mongo.DbCollection
+	componentCountersCalculator calculator.ComponentCountersCalculator
+	externalTagUpdater          alarmtag.ExternalUpdater
+	metaAlarmPostProcessor      MetaAlarmPostProcessor
+	logger                      zerolog.Logger
+	countersHelper              *countersHelper
+	upstreamHelper              *upstreamHelper
 }
 
 func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -91,11 +91,11 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	entity := *event.Entity
 	importTags := types.TransformEventTags(event.Parameters.ImportTags)
 	var alarm types.Alarm
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		alarm = types.Alarm{}
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
@@ -169,7 +169,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&alarm,
 			&entity,
@@ -205,7 +205,7 @@ func (p *entityUpdatedProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	countersRes componentAndServiceCountersResult,
+	countersRes countersResult,
 ) {
 	if event.Parameters.ImportSource != "" {
 		p.externalTagUpdater.Add(event.Parameters.ImportTags)
