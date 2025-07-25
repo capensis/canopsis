@@ -118,7 +118,7 @@ func (h *upstreamHelper) SendDownstreamEventsOnOK(ctx context.Context, entity ty
 		{"$project": bson.M{"alarm": 0}},
 	})
 	if err != nil {
-		return fmt.Errorf("cannot find downstream entitis: %w", err)
+		return fmt.Errorf("cannot find downstream entities: %w", err)
 	}
 
 	return h.sendEventsForDownstreams(ctx, cursor)
@@ -156,16 +156,17 @@ func (h *upstreamHelper) SendDownstreamEventsOnKO(ctx context.Context, entity ty
 		{"$project": bson.M{"alarm": 0}},
 	})
 	if err != nil {
-		return fmt.Errorf("cannot find downstream entitis: %w", err)
+		return fmt.Errorf("cannot find downstream entities: %w", err)
 	}
 
 	return h.sendEventsForDownstreams(ctx, cursor)
 }
 
-func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
+func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceCountersUpdate bool) (Result, types.Alarm, error) {
 	result := Result{}
+	alarm := types.Alarm{}
 	if event.Entity == nil || event.Entity.ID == "" || !event.Entity.Enabled {
-		return result, nil
+		return result, alarm, nil
 	}
 
 	entity := *event.Entity
@@ -173,90 +174,186 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	match := getOpenAlarmMatch(event)
 	err := h.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
+		alarm = types.Alarm{}
 		entity = *event.Entity
 		countersRes = componentAndServiceCountersResult{}
 
-		alarm := types.Alarm{}
 		err := h.alarmCollection.FindOne(ctx, match).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
 
-		currentStatus := types.CpsNumber(types.AlarmStatusOff)
-		if alarm.ID != "" {
-			currentStatus = alarm.Value.Status.Value
-		}
-
-		newStatus, statusRuleName, err := h.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, *event.Entity)
+		result, err = h.UpdateAlarm(ctx, event, alarm, entity)
 		if err != nil {
-			return fmt.Errorf("cannot compute alarm status: %w", err)
+			return err
 		}
 
-		if newStatus == currentStatus {
-			return nil
-		}
-
-		if alarm.ID == "" {
-			if newStatus != types.AlarmStatusUnknown {
-				return nil
-			}
-
-			var v types.Entity
-			err = h.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&v)
-			if err != nil {
-				return err
-			}
-
-			entity = v
-			result, err = h.createAlarm(ctx, entity, event.Parameters, newStatus, statusRuleName)
-			if err != nil {
-				return err
-			}
-
+		if forceCountersUpdate || result.AlarmChange.Type != "" && result.AlarmChange.Type != types.AlarmChangeTypeUpdateStatus {
 			result.IsCountersUpdated, countersRes, err = h.componentAndServiceCountersHelper.Process(
 				ctx,
 				&result.Alarm,
 				&entity,
 				result.AlarmChange,
 			)
-
-			return err
 		}
-
-		prevStatus := alarm.Value.Status.Value
-		if prevStatus == types.AlarmStatusUnknown && alarm.Value.InitialStatus == types.AlarmStatusUnknown &&
-			alarm.Value.LastEventDate == nil && !alarm.IsStateLocked() {
-			newState := types.CpsNumber(types.AlarmStateOK)
-			if newStatus == types.AlarmStatusOngoing {
-				newStatus = types.AlarmStatusOff
-			}
-
-			result, err = h.updateAlarmStateAndStatus(ctx, alarm, entity, event.Parameters, newState, newStatus, statusRuleName)
-			if err != nil {
-				return err
-			}
-
-			result.IsCountersUpdated, countersRes, err = h.componentAndServiceCountersHelper.Process(
-				ctx,
-				&result.Alarm,
-				&entity,
-				result.AlarmChange,
-			)
-
-			return err
-		}
-
-		result, err = h.updateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
 
 		return err
 	})
 	if err != nil || result.Alarm.ID == "" {
-		return result, err
+		return result, alarm, err
 	}
 
-	go h.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
+	go h.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
 
-	return result, nil
+	return result, alarm, nil
+}
+
+func (h *upstreamHelper) UpdateAlarm(ctx context.Context, event rpc.AxeEvent, alarm types.Alarm, entity types.Entity) (Result, error) {
+	result := Result{}
+	newStatus, statusRuleName, err := h.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, entity)
+	if err != nil {
+		return result, fmt.Errorf("cannot compute alarm status: %w", err)
+	}
+
+	currentStatus := types.CpsNumber(types.AlarmStatusOff)
+	if alarm.ID != "" {
+		currentStatus = alarm.Value.Status.Value
+	}
+
+	if newStatus == currentStatus {
+		if entity.IsUpstreamChanged {
+			result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": bson.M{"is_upstream_changed": ""}}, h.entityCollection)
+			if err != nil {
+				return result, err
+			}
+		}
+
+		return result, nil
+	}
+
+	if alarm.ID == "" {
+		if !h.shouldCreateAlarm(newStatus) {
+			return result, nil
+		}
+
+		var v types.Entity
+		err = h.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&v)
+		if err != nil {
+			return result, err
+		}
+
+		entity = v
+
+		return h.createAlarm(ctx, entity, event.Parameters, newStatus, statusRuleName)
+	}
+
+	if h.shouldCloseAlarm(alarm) {
+		return h.closeAlarm(ctx, alarm, entity, event.Parameters, newStatus, statusRuleName)
+	}
+
+	return h.updateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
+}
+
+func (h *upstreamHelper) PostProcess(
+	ctx context.Context,
+	event rpc.AxeEvent,
+	result Result,
+	countersRes componentAndServiceCountersResult,
+) {
+	entity := *event.Entity
+	if result.Entity.ID != "" {
+		entity = result.Entity
+	}
+
+	h.metricsSender.SendEventMetrics(
+		result.Alarm,
+		entity,
+		result.AlarmChange,
+		event.Parameters.Timestamp.Time,
+		event.Parameters.Initiator,
+		event.Parameters.User,
+		event.Parameters.Instruction,
+		"",
+	)
+
+	h.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
+
+	err := h.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
+		Alarm:               &result.Alarm,
+		AlarmChangeType:     result.AlarmChange.Type,
+		AddedExternalTags:   result.AddedExternalTags,
+		RemovedExternalTags: result.RemovedExternalTags,
+	})
+	if err != nil {
+		h.logger.Err(err).Msg("cannot process meta alarm")
+	}
+
+	err = sendRemediationEvent(ctx, event, result, h.remediationRpcClient, h.encoder)
+	if err != nil {
+		h.logger.Err(err).Msg("cannot send event to engine-remediation")
+	}
+
+	if result.AlarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter {
+		err = updatePbehaviorLastAlarmDate(ctx, h.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
+		if err != nil {
+			h.logger.Err(err).Msg("cannot update pbehavior")
+		}
+
+		if !result.Alarm.Value.PbehaviorInfo.IsDefaultActive() {
+			err = updatePbehaviorAlarmCount(ctx, h.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
+			if err != nil {
+				h.logger.Err(err).Msg("cannot update pbehavior")
+			}
+		}
+	}
+
+	switch result.AlarmChange.Type {
+	case types.AlarmChangeTypeUpdateStatus:
+		if result.Alarm.Value.Status.Value == types.AlarmStatusOff {
+			err = h.SendDownstreamEventsOnOK(ctx, entity)
+			if err != nil {
+				h.logger.Err(err).Msg("cannot send downstream events")
+			}
+		} else if result.AlarmChange.PreviousStatus == types.AlarmStatusOff {
+			err = h.SendDownstreamEventsOnKO(ctx, entity)
+			if err != nil {
+				h.logger.Err(err).Msg("cannot send downstream events")
+			}
+		}
+	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
+		err = h.SendDownstreamEventsOnKO(ctx, entity)
+		if err != nil {
+			h.logger.Err(err).Msg("cannot send downstream events")
+		}
+	case types.AlarmChangeTypeStateDecrease:
+		alarmStatus := result.Alarm.Value.Status.Value
+		alarmState := result.Alarm.Value.State.Value
+		if result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
+			result.AlarmChange.PreviousStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
+			err = h.SendDownstreamEventsOnOK(ctx, entity)
+			if err != nil {
+				h.logger.Err(err).Msg("cannot send downstream events")
+			}
+		}
+	}
+}
+
+// shouldCreateAlarm
+// An alarm can only be created on an entity update if an upstream is changed and an alarm with unknown status should exist.
+func (h *upstreamHelper) shouldCreateAlarm(newStatus types.CpsNumber) bool {
+	return newStatus == types.AlarmStatusUnknown
+}
+
+// shouldCloseAlarm
+// An alarm can only be closed on an entity update if an upstream is changed and
+// an alarm with unknown status exists and never were updated.
+func (h *upstreamHelper) shouldCloseAlarm(alarm types.Alarm) bool {
+	prevStatus := alarm.Value.Status.Value
+
+	return prevStatus == types.AlarmStatusUnknown &&
+		alarm.Value.InitialStatus == types.AlarmStatusUnknown && // created by upstream change
+		alarm.Value.LastEventDate == nil && // no check events
+		!alarm.IsStateLocked()
 }
 
 func (h *upstreamHelper) updateAlarmStatus(
@@ -300,13 +397,8 @@ func (h *upstreamHelper) updateAlarmStatus(
 		return result, err
 	}
 
-	unsetEntity := bson.M{}
 	if entity.IsUpstreamChanged {
-		unsetEntity["is_upstream_changed"] = ""
-	}
-
-	if len(unsetEntity) > 0 {
-		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": unsetEntity}, h.entityCollection)
+		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": bson.M{"is_upstream_changed": ""}}, h.entityCollection)
 		if err != nil {
 			return result, err
 		}
@@ -457,14 +549,20 @@ func (h *upstreamHelper) createAlarm(
 	return result, nil
 }
 
-func (h *upstreamHelper) updateAlarmStateAndStatus(
+// closeAlarm closes an alarm or update its status to a status which was shadowed by unknown status.
+func (h *upstreamHelper) closeAlarm(
 	ctx context.Context,
 	alarm types.Alarm,
 	entity types.Entity,
 	params rpc.AxeParameters,
-	newState, newStatus types.CpsNumber,
+	newStatus types.CpsNumber,
 	statusRuleName string,
 ) (Result, error) {
+	newState := types.CpsNumber(types.AlarmStateOK)
+	if newStatus == types.AlarmStatusOngoing {
+		newStatus = types.AlarmStatusOff
+	}
+
 	result := Result{}
 	alarmChange := types.NewAlarmChange()
 	alarmChange.PreviousState = alarm.Value.State.Value
@@ -527,13 +625,8 @@ func (h *upstreamHelper) updateAlarmStateAndStatus(
 		return result, fmt.Errorf("cannot update alarm: %w", err)
 	}
 
-	unsetEntity := bson.M{}
 	if entity.IsUpstreamChanged {
-		unsetEntity["is_upstream_changed"] = ""
-	}
-
-	if len(unsetEntity) > 0 {
-		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": unsetEntity}, h.entityCollection)
+		result.Entity, err = updateEntityByID(ctx, entity.ID, bson.M{"$unset": bson.M{"is_upstream_changed": ""}}, h.entityCollection)
 		if err != nil {
 			return result, err
 		}
@@ -545,88 +638,6 @@ func (h *upstreamHelper) updateAlarmStateAndStatus(
 	result.IsInstructionMatched, err = h.autoInstructionMatcher.Match(alarmChange.GetTriggers(), types.AlarmWithEntity{Alarm: newAlarm, Entity: entity})
 
 	return result, err
-}
-
-func (h *upstreamHelper) postProcess(
-	ctx context.Context,
-	event rpc.AxeEvent,
-	result Result,
-	countersRes componentAndServiceCountersResult,
-) {
-	entity := *event.Entity
-	if result.Entity.ID != "" {
-		entity = result.Entity
-	}
-
-	h.metricsSender.SendEventMetrics(
-		result.Alarm,
-		entity,
-		result.AlarmChange,
-		event.Parameters.Timestamp.Time,
-		event.Parameters.Initiator,
-		event.Parameters.User,
-		event.Parameters.Instruction,
-		"",
-	)
-
-	h.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
-
-	err := h.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
-		Alarm:           &result.Alarm,
-		AlarmChangeType: result.AlarmChange.Type,
-	})
-	if err != nil {
-		h.logger.Err(err).Msg("cannot process meta alarm")
-	}
-
-	err = sendRemediationEvent(ctx, event, result, h.remediationRpcClient, h.encoder)
-	if err != nil {
-		h.logger.Err(err).Msg("cannot send event to engine-remediation")
-	}
-
-	if result.AlarmChange.Type == types.AlarmChangeTypeCreateAndPbhEnter {
-		err = updatePbehaviorLastAlarmDate(ctx, h.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, result.Alarm.Value.PbehaviorInfo.Timestamp)
-		if err != nil {
-			h.logger.Err(err).Msg("cannot update pbehavior")
-		}
-
-		if !result.Alarm.Value.PbehaviorInfo.IsDefaultActive() {
-			err = updatePbehaviorAlarmCount(ctx, h.pbehaviorCollection, result.Alarm.Value.PbehaviorInfo.ID, "")
-			if err != nil {
-				h.logger.Err(err).Msg("cannot update pbehavior")
-			}
-		}
-	}
-
-	switch result.AlarmChange.Type {
-	case types.AlarmChangeTypeUpdateStatus:
-		if result.Alarm.Value.Status.Value == types.AlarmStatusOff {
-			err = h.SendDownstreamEventsOnOK(ctx, entity)
-			if err != nil {
-				h.logger.Err(err).Msg("cannot send downstream events")
-			}
-		} else if result.AlarmChange.PreviousStatus == types.AlarmStatusOff {
-			err = h.SendDownstreamEventsOnKO(ctx, entity)
-			if err != nil {
-				h.logger.Err(err).Msg("cannot send downstream events")
-			}
-		}
-	case types.AlarmChangeTypeCreate, types.AlarmChangeTypeCreateAndPbhEnter:
-		err = h.SendDownstreamEventsOnKO(ctx, entity)
-		if err != nil {
-			h.logger.Err(err).Msg("cannot send downstream events")
-		}
-	case types.AlarmChangeTypeStateDecrease:
-		alarmStatus := result.Alarm.Value.Status.Value
-		alarmState := result.Alarm.Value.State.Value
-		if result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
-			result.AlarmChange.PreviousStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
-			err = h.SendDownstreamEventsOnOK(ctx, entity)
-			if err != nil {
-				h.logger.Err(err).Msg("cannot send downstream events")
-			}
-		}
-	}
 }
 
 func (h *upstreamHelper) newAlarm(
