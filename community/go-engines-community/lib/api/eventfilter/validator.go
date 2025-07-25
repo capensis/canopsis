@@ -41,7 +41,8 @@ func (v *Validator) validateEventFilter(ctx context.Context, sl validator.Struct
 		r.Config.Component == "" &&
 		r.Config.Resource == "" &&
 		r.Config.Connector == "" &&
-		r.Config.ConnectorName == "" {
+		r.Config.ConnectorName == "" &&
+		r.Config.Upstream == "" {
 		sl.ReportError(r.Config, "config", "Config", "required", "")
 	}
 

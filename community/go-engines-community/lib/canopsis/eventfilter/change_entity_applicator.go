@@ -78,5 +78,15 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		event.ConnectorName = connectorName
 	}
 
+	if rule.Config.Upstream.Text != "" {
+		upstream, err := ExecuteParsedTemplate(rule.ID, "Upstream", rule.Config.Upstream,
+			templateParams, event, a.failureService, a.templateExecutor)
+		if err != nil {
+			return OutcomeDrop, false, nil, err
+		}
+
+		event.Upstream = upstream
+	}
+
 	return OutcomePass, false, externalRequestCount, nil
 }
