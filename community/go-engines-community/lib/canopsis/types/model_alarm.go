@@ -37,6 +37,11 @@ const (
 )
 
 const (
+	AlarmStateForNoEvents = AlarmStateCritical
+	AlarmStateForUnknown  = AlarmStateMinor
+)
+
+const (
 	AlarmStatusTitleOff       = "off"
 	AlarmStatusTitleOngoing   = "ongoing"
 	AlarmStatusTitleStealthy  = "stealthy"

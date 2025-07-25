@@ -63,16 +63,23 @@ func (a *api) GetUpstream(c *gin.Context) {
 	var r UpstreamRequest
 	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
 		return
 	}
 
-	res, err := a.store.GetUpstream(c, r.ID)
+	res, entityExists, err := a.store.GetUpstream(c, r.ID)
 	if err != nil {
 		panic(err)
 	}
 
-	if res == nil {
+	if !entityExists {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	if res == nil {
+		c.JSON(http.StatusOK, map[string]string{})
 
 		return
 	}

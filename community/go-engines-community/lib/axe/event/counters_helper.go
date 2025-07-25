@@ -9,13 +9,13 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func newComponentAndServiceCountersHelper(
+func newCountersHelper(
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
 	logger zerolog.Logger,
-) *componentAndServiceCountersHelper {
-	return &componentAndServiceCountersHelper{
+) *countersHelper {
+	return &countersHelper{
 		entityServiceCountersCalculator: entityServiceCountersCalculator,
 		componentCountersCalculator:     componentCountersCalculator,
 		eventsSender:                    eventsSender,
@@ -23,27 +23,29 @@ func newComponentAndServiceCountersHelper(
 	}
 }
 
-type componentAndServiceCountersHelper struct {
+// countersHelper is used to update dependency counters for services and components.
+type countersHelper struct {
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
 	componentCountersCalculator     calculator.ComponentCountersCalculator
 	eventsSender                    entitycounters.EventsSender
 	logger                          zerolog.Logger
 }
 
-type componentAndServiceCountersResult struct {
+// countersHelper contains updated dependency counters for services and components.
+type countersResult struct {
 	UpdatedServiceStates    map[string]entitycounters.UpdatedServicesInfo
 	IsComponentStateChanged bool
 	ComponentID             string
 	NewComponentState       int
 }
 
-func (h *componentAndServiceCountersHelper) Process(
+func (h *countersHelper) CalculateCounters(
 	ctx context.Context,
 	alarm *types.Alarm,
 	entity *types.Entity,
 	alarmChange types.AlarmChange,
-) (bool, componentAndServiceCountersResult, error) {
-	res := componentAndServiceCountersResult{}
+) (bool, countersResult, error) {
+	res := countersResult{}
 	serviceCountersUpdated, updatedServiceStates, err := h.entityServiceCountersCalculator.CalculateCounters(ctx, entity, alarm, alarmChange)
 	if err != nil {
 		return false, res, err
@@ -67,9 +69,9 @@ func (h *componentAndServiceCountersHelper) Process(
 	return serviceCountersUpdated || componentCountersUpdated, res, nil
 }
 
-func (h *componentAndServiceCountersHelper) PostProcess(
+func (h *countersHelper) UpdateStates(
 	ctx context.Context,
-	res componentAndServiceCountersResult,
+	res countersResult,
 ) {
 	for servID, servInfo := range res.UpdatedServiceStates {
 		err := h.eventsSender.UpdateServiceState(ctx, servID, servInfo)
