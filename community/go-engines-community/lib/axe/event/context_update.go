@@ -3,6 +3,7 @@ package event
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
@@ -41,10 +42,11 @@ func NewContextUpdateProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &contextUpdateProcessor{
-		dbClient:                          dbClient,
-		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		dbClient:           dbClient,
+		alarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+		alarmStatusService: alarmStatusService,
+		logger:             logger,
+		countersHelper:     newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			dbClient,
 			alarmConfigProvider,
@@ -67,11 +69,12 @@ func NewContextUpdateProcessor(
 }
 
 type contextUpdateProcessor struct {
-	dbClient                          mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
-	upstreamHelper                    *upstreamHelper
+	dbClient           mongo.DbClient
+	alarmCollection    mongo.DbCollection
+	alarmStatusService alarmstatus.Service
+	logger             zerolog.Logger
+	countersHelper     *countersHelper
+	upstreamHelper     *upstreamHelper
 }
 
 func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -83,6 +86,93 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	entity := *event.Entity
 	var err error
 	if entity.IsUpstreamChanged {
+		if event.Parameters.StateSettingUpdated && entity.StateInfo == nil {
+			countersRes := countersResult{}
+			match := getOpenAlarmMatch(event)
+			err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+				result = Result{}
+				entity = *event.Entity
+				countersRes = countersResult{}
+
+				alarm := types.Alarm{}
+				err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
+				if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+					return err
+				}
+
+				if alarm.ID == "" {
+					result, err = p.upstreamHelper.UpdateAlarm(ctx, event, alarm, entity)
+					if err != nil {
+						return err
+					}
+
+					result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+						ctx,
+						&result.Alarm,
+						&entity,
+						result.AlarmChange,
+					)
+
+					return err
+				}
+
+				newStatus, statusRuleName, err := p.alarmStatusService.ComputeStatusOnStatusChange(ctx, alarm, entity)
+				if err != nil {
+					return fmt.Errorf("cannot compute alarm status: %w", err)
+				}
+
+				var newState types.CpsNumber
+				switch newStatus {
+				case types.AlarmStatusOngoing:
+					// close alarm which were created by state setting method
+					newState = types.AlarmStateOK
+					newStatus = types.AlarmStatusOff
+				case types.AlarmStatusUnknown:
+					// override state which were created by state setting method
+					newState = types.AlarmStateForUnknown
+				}
+
+				currentStatus := alarm.Value.Status.Value
+				if newStatus != currentStatus {
+					currentState := alarm.Value.State.Value
+					if newState == currentState {
+						result, err = p.upstreamHelper.UpdateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
+					} else {
+						result, err = p.upstreamHelper.UpdateAlarmStateAndStatus(ctx, alarm, entity, event, newState, newStatus, statusRuleName)
+					}
+
+					if err != nil {
+						return err
+					}
+
+					result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+						ctx,
+						&result.Alarm,
+						&entity,
+						result.AlarmChange,
+					)
+
+					return err
+				}
+
+				result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
+					ctx,
+					&alarm,
+					&entity,
+					result.AlarmChange,
+				)
+
+				return err
+			})
+			if err != nil || result.Alarm.ID == "" {
+				return result, err
+			}
+
+			go p.upstreamHelper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes)
+
+			return result, nil
+		}
+
 		result, _, err = p.upstreamHelper.Process(ctx, event, true)
 		if err != nil {
 			return result, err
@@ -91,19 +181,19 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, nil
 	}
 
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	match := getOpenAlarmMatch(event)
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		entity = *event.Entity
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&alarm,
 			&entity,
@@ -116,7 +206,7 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, err
 	}
 
-	go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
+	go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
 
 	return result, nil
 }
