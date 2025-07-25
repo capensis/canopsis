@@ -24,6 +24,7 @@
           <c-description-field
             v-model="form.comment"
             :label="$tc('common.comment')"
+            :max-length="255"
             name="comment"
           />
           <c-alert
