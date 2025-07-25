@@ -53,25 +53,25 @@ func NewCheckProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &checkProcessor{
-		client:                            client,
-		alarmCollection:                   client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                  client.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:               client.Collection(mongo.PbehaviorMongoCollection),
-		closeDelayJobCollection:           client.Collection(mongo.CloseDelayJobCollection),
-		alarmConfigProvider:               alarmConfigProvider,
-		alarmStatusService:                alarmStatusService,
-		pbhTypeResolver:                   pbhTypeResolver,
-		autoInstructionMatcher:            autoInstructionMatcher,
-		metaAlarmPostProcessor:            metaAlarmPostProcessor,
-		metricsSender:                     metricsSender,
-		eventStatisticsSender:             eventStatisticsSender,
-		remediationRpcClient:              remediationRpcClient,
-		externalTagUpdater:                externalTagUpdater,
-		internalTagAlarmMatcher:           internalTagAlarmMatcher,
-		componentCountersCalculator:       componentCountersCalculator,
-		encoder:                           encoder,
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		client:                      client,
+		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:            client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:         client.Collection(mongo.PbehaviorMongoCollection),
+		closeDelayJobCollection:     client.Collection(mongo.CloseDelayJobCollection),
+		alarmConfigProvider:         alarmConfigProvider,
+		alarmStatusService:          alarmStatusService,
+		pbhTypeResolver:             pbhTypeResolver,
+		autoInstructionMatcher:      autoInstructionMatcher,
+		metaAlarmPostProcessor:      metaAlarmPostProcessor,
+		metricsSender:               metricsSender,
+		eventStatisticsSender:       eventStatisticsSender,
+		remediationRpcClient:        remediationRpcClient,
+		externalTagUpdater:          externalTagUpdater,
+		internalTagAlarmMatcher:     internalTagAlarmMatcher,
+		componentCountersCalculator: componentCountersCalculator,
+		encoder:                     encoder,
+		logger:                      logger,
+		countersHelper:              newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			client,
 			alarmConfigProvider,
@@ -94,26 +94,26 @@ func NewCheckProcessor(
 }
 
 type checkProcessor struct {
-	client                            mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	entityCollection                  mongo.DbCollection
-	pbehaviorCollection               mongo.DbCollection
-	closeDelayJobCollection           mongo.DbCollection
-	alarmConfigProvider               config.AlarmConfigProvider
-	alarmStatusService                alarmstatus.Service
-	pbhTypeResolver                   pbehavior.EntityTypeResolver
-	autoInstructionMatcher            AutoInstructionMatcher
-	metaAlarmPostProcessor            MetaAlarmPostProcessor
-	metricsSender                     metrics.Sender
-	eventStatisticsSender             statistics.EventStatisticsSender
-	remediationRpcClient              engine.RPCClient
-	externalTagUpdater                alarmtag.ExternalUpdater
-	internalTagAlarmMatcher           alarmtag.InternalTagAlarmMatcher
-	componentCountersCalculator       calculator.ComponentCountersCalculator
-	encoder                           encoding.Encoder
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
-	upstreamHelper                    *upstreamHelper
+	client                      mongo.DbClient
+	alarmCollection             mongo.DbCollection
+	entityCollection            mongo.DbCollection
+	pbehaviorCollection         mongo.DbCollection
+	closeDelayJobCollection     mongo.DbCollection
+	alarmConfigProvider         config.AlarmConfigProvider
+	alarmStatusService          alarmstatus.Service
+	pbhTypeResolver             pbehavior.EntityTypeResolver
+	autoInstructionMatcher      AutoInstructionMatcher
+	metaAlarmPostProcessor      MetaAlarmPostProcessor
+	metricsSender               metrics.Sender
+	eventStatisticsSender       statistics.EventStatisticsSender
+	remediationRpcClient        engine.RPCClient
+	externalTagUpdater          alarmtag.ExternalUpdater
+	internalTagAlarmMatcher     alarmtag.InternalTagAlarmMatcher
+	componentCountersCalculator calculator.ComponentCountersCalculator
+	encoder                     encoding.Encoder
+	logger                      zerolog.Logger
+	countersHelper              *countersHelper
+	upstreamHelper              *upstreamHelper
 }
 
 func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -137,18 +137,21 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 	}
 
 	// invalid event
-	if event.Parameters.State == nil ||
-		event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
+	if event.Parameters.State == nil {
+		return result, nil
+	}
 
+	// ignore external events if component has state settings method
+	if event.Entity.StateInfo != nil && event.Parameters.Initiator != types.InitiatorSystem && !event.Parameters.StateSettingUpdated {
 		return result, nil
 	}
 
 	entity := *event.Entity
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		entity = *event.Entity
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, bson.M{
@@ -181,7 +184,7 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		}
 
 		if !event.Healthcheck {
-			result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+			result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 				ctx,
 				&result.Alarm,
 				&entity,
@@ -218,7 +221,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	}
 
 	state := *params.State
-	if event.Parameters.StateSettingUpdated {
+	if event.Parameters.StateSettingUpdated && entity.StateInfo != nil {
 		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
 		if err != nil {
 			return Result{}, err
@@ -274,7 +277,7 @@ func (p *checkProcessor) createAlarm(ctx context.Context, entity types.Entity, e
 	if state == types.AlarmStateOK {
 		if status == types.AlarmStatusUnknown {
 			statusOutput = statusRuleName
-			state = types.AlarmStateMinor
+			state = types.AlarmStateForUnknown
 			author = canopsis.DefaultEventAuthor
 			initiator = types.InitiatorSystem
 			alarm.Value.Connector = canopsis.DefaultSystemAlarmConnector
@@ -414,7 +417,7 @@ func (p *checkProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, ent
 
 	var newState types.CpsNumber
 
-	if params.StateSettingUpdated {
+	if params.StateSettingUpdated && entity.StateInfo != nil {
 		componentState, err := p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
 		if err != nil {
 			return Result{}, err
@@ -746,7 +749,7 @@ func (p *checkProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	countersRes componentAndServiceCountersResult,
+	countersRes countersResult,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -766,7 +769,7 @@ func (p *checkProcessor) postProcess(
 
 	p.externalTagUpdater.Add(event.Parameters.Tags)
 
-	p.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
+	p.countersHelper.UpdateStates(ctx, countersRes)
 
 	p.sendEventStatistics(ctx, event)
 
@@ -816,7 +819,8 @@ func (p *checkProcessor) postProcess(
 		}
 	case types.AlarmChangeTypeStateIncrease:
 		alarmStatus := result.Alarm.Value.Status.Value
-		if result.AlarmChange.PreviousStatus != alarmStatus && result.AlarmChange.PreviousStatus == types.AlarmStatusOff {
+		prevStatus := result.AlarmChange.PreviousStatus
+		if prevStatus != alarmStatus && prevStatus == types.AlarmStatusOff {
 			err = p.upstreamHelper.SendDownstreamEventsOnKO(ctx, entity)
 			if err != nil {
 				p.logger.Err(err).Msg("cannot send downstream events")

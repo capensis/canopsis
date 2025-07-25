@@ -49,44 +49,44 @@ func newUpstreamHelper(
 	logger zerolog.Logger,
 ) *upstreamHelper {
 	return &upstreamHelper{
-		dbClient:                          dbClient,
-		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                  dbClient.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:               dbClient.Collection(mongo.PbehaviorMongoCollection),
-		alarmConfigProvider:               alarmConfigProvider,
-		alarmStatusService:                alarmStatusService,
-		pbhTypeResolver:                   pbhTypeResolver,
-		autoInstructionMatcher:            autoInstructionMatcher,
-		metaAlarmPostProcessor:            metaAlarmPostProcessor,
-		metricsSender:                     metricsSender,
-		remediationRpcClient:              remediationRpcClient,
-		internalTagAlarmMatcher:           internalTagAlarmMatcher,
-		eventGenerator:                    eventGenerator,
-		amqpPublisher:                     amqpPublisher,
-		encoder:                           encoder,
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		dbClient:                dbClient,
+		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:     dbClient.Collection(mongo.PbehaviorMongoCollection),
+		alarmConfigProvider:     alarmConfigProvider,
+		alarmStatusService:      alarmStatusService,
+		pbhTypeResolver:         pbhTypeResolver,
+		autoInstructionMatcher:  autoInstructionMatcher,
+		metaAlarmPostProcessor:  metaAlarmPostProcessor,
+		metricsSender:           metricsSender,
+		remediationRpcClient:    remediationRpcClient,
+		internalTagAlarmMatcher: internalTagAlarmMatcher,
+		eventGenerator:          eventGenerator,
+		amqpPublisher:           amqpPublisher,
+		encoder:                 encoder,
+		logger:                  logger,
+		countersHelper:          newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type upstreamHelper struct {
-	dbClient                          mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	entityCollection                  mongo.DbCollection
-	pbehaviorCollection               mongo.DbCollection
-	alarmConfigProvider               config.AlarmConfigProvider
-	alarmStatusService                alarmstatus.Service
-	pbhTypeResolver                   pbehavior.EntityTypeResolver
-	autoInstructionMatcher            AutoInstructionMatcher
-	metaAlarmPostProcessor            MetaAlarmPostProcessor
-	metricsSender                     metrics.Sender
-	remediationRpcClient              engine.RPCClient
-	internalTagAlarmMatcher           alarmtag.InternalTagAlarmMatcher
-	eventGenerator                    event.Generator
-	amqpPublisher                     libamqp.Publisher
-	encoder                           encoding.Encoder
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
+	dbClient                mongo.DbClient
+	alarmCollection         mongo.DbCollection
+	entityCollection        mongo.DbCollection
+	pbehaviorCollection     mongo.DbCollection
+	alarmConfigProvider     config.AlarmConfigProvider
+	alarmStatusService      alarmstatus.Service
+	pbhTypeResolver         pbehavior.EntityTypeResolver
+	autoInstructionMatcher  AutoInstructionMatcher
+	metaAlarmPostProcessor  MetaAlarmPostProcessor
+	metricsSender           metrics.Sender
+	remediationRpcClient    engine.RPCClient
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher
+	eventGenerator          event.Generator
+	amqpPublisher           libamqp.Publisher
+	encoder                 encoding.Encoder
+	logger                  zerolog.Logger
+	countersHelper          *countersHelper
 }
 
 func (h *upstreamHelper) SendDownstreamEventsOnOK(ctx context.Context, entity types.Entity) error {
@@ -170,13 +170,13 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 	}
 
 	entity := *event.Entity
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	match := getOpenAlarmMatch(event)
 	err := h.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		alarm = types.Alarm{}
 		entity = *event.Entity
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 
 		err := h.alarmCollection.FindOne(ctx, match).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -189,7 +189,7 @@ func (h *upstreamHelper) Process(ctx context.Context, event rpc.AxeEvent, forceC
 		}
 
 		if forceCountersUpdate || result.AlarmChange.Type != "" && result.AlarmChange.Type != types.AlarmChangeTypeUpdateStatus {
-			result.IsCountersUpdated, countersRes, err = h.componentAndServiceCountersHelper.Process(
+			result.IsCountersUpdated, countersRes, err = h.countersHelper.CalculateCounters(
 				ctx,
 				&result.Alarm,
 				&entity,
@@ -244,21 +244,27 @@ func (h *upstreamHelper) UpdateAlarm(ctx context.Context, event rpc.AxeEvent, al
 
 		entity = v
 
-		return h.createAlarm(ctx, entity, event.Parameters, newStatus, statusRuleName)
+		return h.createAlarm(ctx, entity, event, newStatus, statusRuleName)
 	}
 
 	if h.shouldCloseAlarm(alarm) {
-		return h.closeAlarm(ctx, alarm, entity, event.Parameters, newStatus, statusRuleName)
+		// close an alarm or update its status to a status which was shadowed by unknown status
+		newState := types.CpsNumber(types.AlarmStateOK)
+		if newStatus == types.AlarmStatusOngoing {
+			newStatus = types.AlarmStatusOff
+		}
+
+		return h.UpdateAlarmStateAndStatus(ctx, alarm, entity, event, newState, newStatus, statusRuleName)
 	}
 
-	return h.updateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
+	return h.UpdateAlarmStatus(ctx, alarm, entity, event, newStatus, statusRuleName)
 }
 
 func (h *upstreamHelper) PostProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	countersRes componentAndServiceCountersResult,
+	countersRes countersResult,
 ) {
 	entity := *event.Entity
 	if result.Entity.ID != "" {
@@ -276,7 +282,7 @@ func (h *upstreamHelper) PostProcess(
 		"",
 	)
 
-	h.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
+	h.countersHelper.UpdateStates(ctx, countersRes)
 
 	err := h.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:               &result.Alarm,
@@ -309,12 +315,14 @@ func (h *upstreamHelper) PostProcess(
 
 	switch result.AlarmChange.Type {
 	case types.AlarmChangeTypeUpdateStatus:
-		if result.Alarm.Value.Status.Value == types.AlarmStatusOff {
+		alarmStatus := result.Alarm.Value.Status.Value
+		prevStatus := result.AlarmChange.PreviousStatus
+		if alarmStatus == types.AlarmStatusOff {
 			err = h.SendDownstreamEventsOnOK(ctx, entity)
 			if err != nil {
 				h.logger.Err(err).Msg("cannot send downstream events")
 			}
-		} else if result.AlarmChange.PreviousStatus == types.AlarmStatusOff {
+		} else if prevStatus == types.AlarmStatusOff {
 			err = h.SendDownstreamEventsOnKO(ctx, entity)
 			if err != nil {
 				h.logger.Err(err).Msg("cannot send downstream events")
@@ -328,8 +336,10 @@ func (h *upstreamHelper) PostProcess(
 	case types.AlarmChangeTypeStateDecrease:
 		alarmStatus := result.Alarm.Value.Status.Value
 		alarmState := result.Alarm.Value.State.Value
-		if result.AlarmChange.PreviousStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
-			result.AlarmChange.PreviousStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
+		prevStatus := result.AlarmChange.PreviousStatus
+		// if alarm state is ok and status is off/cancelled
+		if prevStatus != alarmStatus && alarmStatus == types.AlarmStatusOff ||
+			prevStatus == alarmStatus && alarmStatus == types.AlarmStatusCancelled && alarmState == types.AlarmStateOK {
 			err = h.SendDownstreamEventsOnOK(ctx, entity)
 			if err != nil {
 				h.logger.Err(err).Msg("cannot send downstream events")
@@ -356,7 +366,7 @@ func (h *upstreamHelper) shouldCloseAlarm(alarm types.Alarm) bool {
 		!alarm.IsStateLocked()
 }
 
-func (h *upstreamHelper) updateAlarmStatus(
+func (h *upstreamHelper) UpdateAlarmStatus(
 	ctx context.Context,
 	alarm types.Alarm,
 	entity types.Entity,
@@ -417,7 +427,7 @@ func (h *upstreamHelper) updateAlarmStatus(
 func (h *upstreamHelper) createAlarm(
 	ctx context.Context,
 	entity types.Entity,
-	params rpc.AxeParameters,
+	event rpc.AxeEvent,
 	newStatus types.CpsNumber,
 	statusRuleName string,
 ) (Result, error) {
@@ -442,13 +452,13 @@ func (h *upstreamHelper) createAlarm(
 	}
 
 	alarmConfig := h.alarmConfigProvider.Get()
-	alarm, err := h.newAlarm(params, entity, now, alarmConfig)
+	alarm, err := h.newAlarm(event.Parameters, entity, now, alarmConfig)
 	if err != nil {
 		return result, err
 	}
 
-	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, false)
-	stateStep.Value = types.AlarmStateMinor
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, event.Parameters, false)
+	stateStep.Value = types.AlarmStateForUnknown
 	stateStep.Message = statusRuleName
 	stateStep.Author = canopsis.DefaultEventAuthor
 	stateStep.Initiator = types.InitiatorSystem
@@ -460,7 +470,7 @@ func (h *upstreamHelper) createAlarm(
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
 	}
 
-	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters, false)
 	statusStep.Value = newStatus
 	statusStep.Message = statusRuleName
 	statusStep.Author = canopsis.DefaultEventAuthor
@@ -549,26 +559,20 @@ func (h *upstreamHelper) createAlarm(
 	return result, nil
 }
 
-// closeAlarm closes an alarm or update its status to a status which was shadowed by unknown status.
-func (h *upstreamHelper) closeAlarm(
+func (h *upstreamHelper) UpdateAlarmStateAndStatus(
 	ctx context.Context,
 	alarm types.Alarm,
 	entity types.Entity,
-	params rpc.AxeParameters,
-	newStatus types.CpsNumber,
+	event rpc.AxeEvent,
+	newState, newStatus types.CpsNumber,
 	statusRuleName string,
 ) (Result, error) {
-	newState := types.CpsNumber(types.AlarmStateOK)
-	if newStatus == types.AlarmStatusOngoing {
-		newStatus = types.AlarmStatusOff
-	}
-
 	result := Result{}
 	alarmChange := types.NewAlarmChange()
 	alarmChange.PreviousState = alarm.Value.State.Value
 	alarmChange.PreviousStatusChange = alarm.Value.State.Timestamp
 	alarmChange.PreviousStatus = alarm.Value.Status.Value
-	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+	stateStep := NewAlarmStep(types.AlarmStepStateIncrease, event.Parameters, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 	stateStep.Value = newState
 	stateStep.Message = statusRuleName
 	alarmChange.Type = types.AlarmChangeTypeStateIncrease
@@ -588,10 +592,10 @@ func (h *upstreamHelper) closeAlarm(
 	}
 
 	set["v.state"] = stateStep
-	set["v.last_update_date"] = params.Timestamp
-	set["v.last_st_upd_dt"] = params.Timestamp
+	set["v.last_update_date"] = event.Parameters.Timestamp
+	set["v.last_st_upd_dt"] = event.Parameters.Timestamp
 
-	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, !alarm.Value.PbehaviorInfo.IsDefaultActive())
+	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, event.Parameters, !alarm.Value.PbehaviorInfo.IsDefaultActive())
 	statusStep.Value = newStatus
 	statusStep.Message = statusRuleName
 	if newStatus < alarmChange.PreviousStatus {

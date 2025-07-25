@@ -16,7 +16,7 @@ import (
 
 type Store interface {
 	GetDownstreams(ctx context.Context, r DownstreamsRequest) (*AggregationResult, error)
-	GetUpstream(ctx context.Context, id string) (*Response, error)
+	GetUpstream(ctx context.Context, id string) (res *Response, entityExists bool, err error)
 }
 
 type store struct {
@@ -78,7 +78,7 @@ func (s *store) GetDownstreams(ctx context.Context, r DownstreamsRequest) (*Aggr
 	return result, nil
 }
 
-func (s *store) GetUpstream(ctx context.Context, id string) (*Response, error) {
+func (s *store) GetUpstream(ctx context.Context, id string) (*Response, bool, error) {
 	e := types.Entity{}
 	err := s.dbCollection.FindOne(ctx,
 		bson.M{
@@ -90,10 +90,10 @@ func (s *store) GetUpstream(ctx context.Context, id string) (*Response, error) {
 	).Decode(&e)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, nil
+			return nil, false, nil
 		}
 
-		return nil, err
+		return nil, false, err
 	}
 
 	match := bson.M{
@@ -106,20 +106,24 @@ func (s *store) GetUpstream(ctx context.Context, id string) (*Response, error) {
 	pipeline := s.getQueryBuilder().CreateUpstreamPipeline(match, now)
 	cursor, err := s.dbCollection.Aggregate(ctx, pipeline)
 	if err != nil {
-		return nil, err
+		return nil, false, err
 	}
 
 	defer cursor.Close(ctx)
 	if cursor.Next(ctx) {
 		err = cursor.Decode(result)
 		if err != nil {
-			return nil, err
+			return nil, false, err
 		}
 
-		return result, nil
+		return result, true, nil
 	}
 
-	return nil, nil
+	if err = cursor.Err(); err != nil {
+		return nil, false, err
+	}
+
+	return nil, true, nil
 }
 
 func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {

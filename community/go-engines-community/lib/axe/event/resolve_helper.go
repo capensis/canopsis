@@ -47,20 +47,20 @@ func newResolveHelper(
 	logger zerolog.Logger,
 ) *resolveHelper {
 	return &resolveHelper{
-		dbClient:                          dbClient,
-		metaAlarmStatesService:            metaAlarmStatesService,
-		metaAlarmPostProcessor:            metaAlarmPostProcessor,
-		metricsSender:                     metricsSender,
-		remediationRpcClient:              remediationRpcClient,
-		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                  dbClient.Collection(mongo.EntityMongoCollection),
-		resolvedCollection:                dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
-		metaAlarmRuleCollection:           dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
-		closeDelayJobCollection:           dbClient.Collection(mongo.CloseDelayJobCollection),
-		pbehaviorCollection:               dbClient.Collection(mongo.PbehaviorMongoCollection),
-		encoder:                           encoder,
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		dbClient:                dbClient,
+		metaAlarmStatesService:  metaAlarmStatesService,
+		metaAlarmPostProcessor:  metaAlarmPostProcessor,
+		metricsSender:           metricsSender,
+		remediationRpcClient:    remediationRpcClient,
+		alarmCollection:         dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:        dbClient.Collection(mongo.EntityMongoCollection),
+		resolvedCollection:      dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
+		metaAlarmRuleCollection: dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
+		closeDelayJobCollection: dbClient.Collection(mongo.CloseDelayJobCollection),
+		pbehaviorCollection:     dbClient.Collection(mongo.PbehaviorMongoCollection),
+		encoder:                 encoder,
+		logger:                  logger,
+		countersHelper:          newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			dbClient,
 			alarmConfigProvider,
@@ -83,30 +83,30 @@ func newResolveHelper(
 }
 
 type resolveHelper struct {
-	dbClient                          mongo.DbClient
-	metaAlarmStatesService            correlation.MetaAlarmStateService
-	metaAlarmPostProcessor            MetaAlarmPostProcessor
-	metricsSender                     metrics.Sender
-	remediationRpcClient              engine.RPCClient
-	alarmCollection                   mongo.DbCollection
-	entityCollection                  mongo.DbCollection
-	resolvedCollection                mongo.DbCollection
-	metaAlarmRuleCollection           mongo.DbCollection
-	closeDelayJobCollection           mongo.DbCollection
-	pbehaviorCollection               mongo.DbCollection
-	encoder                           encoding.Encoder
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
-	upstreamHelper                    *upstreamHelper
+	dbClient                mongo.DbClient
+	metaAlarmStatesService  correlation.MetaAlarmStateService
+	metaAlarmPostProcessor  MetaAlarmPostProcessor
+	metricsSender           metrics.Sender
+	remediationRpcClient    engine.RPCClient
+	alarmCollection         mongo.DbCollection
+	entityCollection        mongo.DbCollection
+	resolvedCollection      mongo.DbCollection
+	metaAlarmRuleCollection mongo.DbCollection
+	closeDelayJobCollection mongo.DbCollection
+	pbehaviorCollection     mongo.DbCollection
+	encoder                 encoding.Encoder
+	logger                  zerolog.Logger
+	countersHelper          *countersHelper
+	upstreamHelper          *upstreamHelper
 }
 
 func (h *resolveHelper) Process(ctx context.Context, match bson.M, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	notAckedMetricType := ""
 	err := h.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		notAckedMetricType = ""
 
 		beforeAlarm, err := h.UpdateAlarmToResolve(ctx, match, event.Parameters)
@@ -134,11 +134,10 @@ func (h *resolveHelper) Process(ctx context.Context, match bson.M, event rpc.Axe
 		result.Alarm = alarm
 		result.Entity = entity
 		result.AlarmChange = alarmChange
-
-		result.IsCountersUpdated, countersRes, err = h.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = h.countersHelper.CalculateCounters(
 			ctx,
 			&result.Alarm,
-			&entity,
+			&result.Entity,
 			result.AlarmChange,
 		)
 		if err != nil {
@@ -167,7 +166,7 @@ func (h *resolveHelper) PostProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	countersRes componentAndServiceCountersResult,
+	countersRes countersResult,
 	notAckedMetricType string,
 ) {
 	h.metricsSender.SendEventMetrics(
@@ -181,7 +180,7 @@ func (h *resolveHelper) PostProcess(
 		notAckedMetricType,
 	)
 
-	h.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
+	h.countersHelper.UpdateStates(ctx, countersRes)
 
 	err := h.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,

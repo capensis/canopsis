@@ -70,17 +70,17 @@ func NewResolveDeletedProcessor(
 			encoder,
 			logger,
 		),
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		countersHelper: newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type resolveDeletedProcessor struct {
-	helper                            *resolveHelper
-	dbClient                          mongo.DbClient
-	entityCollection                  mongo.DbCollection
-	closeDelayJobCollection           mongo.DbCollection
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
+	helper                  *resolveHelper
+	dbClient                mongo.DbClient
+	entityCollection        mongo.DbCollection
+	closeDelayJobCollection mongo.DbCollection
+	logger                  zerolog.Logger
+	countersHelper          *countersHelper
 }
 
 func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -91,11 +91,11 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 
 	now := datetime.NewCpsTime()
 	match := getOpenAlarmMatch(event)
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	notAckedMetricType := ""
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		notAckedMetricType = ""
 
 		beforeAlarm, err := p.helper.UpdateAlarmToResolve(ctx, match, event.Parameters)
@@ -145,7 +145,7 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 		}
 
 		result.Entity = entity
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&result.Alarm,
 			&entity,
@@ -162,7 +162,7 @@ func (p *resolveDeletedProcessor) Process(ctx context.Context, event rpc.AxeEven
 	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
 		go p.helper.PostProcess(context.WithoutCancel(ctx), event, result, countersRes, notAckedMetricType)
 	} else {
-		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
+		go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
 	}
 
 	return result, nil

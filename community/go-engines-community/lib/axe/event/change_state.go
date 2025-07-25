@@ -44,18 +44,18 @@ func NewChangeStateProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &changeStateProcessor{
-		client:                            client,
-		alarmCollection:                   client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                  client.Collection(mongo.EntityMongoCollection),
-		userInterfaceConfigProvider:       userInterfaceConfigProvider,
-		alarmStatusService:                alarmStatusService,
-		autoInstructionMatcher:            autoInstructionMatcher,
-		metaAlarmPostProcessor:            metaAlarmPostProcessor,
-		metricsSender:                     metricsSender,
-		remediationRpcClient:              remediationRpcClient,
-		encoder:                           encoder,
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		client:                      client,
+		alarmCollection:             client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:            client.Collection(mongo.EntityMongoCollection),
+		userInterfaceConfigProvider: userInterfaceConfigProvider,
+		alarmStatusService:          alarmStatusService,
+		autoInstructionMatcher:      autoInstructionMatcher,
+		metaAlarmPostProcessor:      metaAlarmPostProcessor,
+		metricsSender:               metricsSender,
+		remediationRpcClient:        remediationRpcClient,
+		encoder:                     encoder,
+		logger:                      logger,
+		countersHelper:              newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			client,
 			alarmConfigProvider,
@@ -78,19 +78,19 @@ func NewChangeStateProcessor(
 }
 
 type changeStateProcessor struct {
-	client                            mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	entityCollection                  mongo.DbCollection
-	userInterfaceConfigProvider       config.UserInterfaceConfigProvider
-	alarmStatusService                alarmstatus.Service
-	autoInstructionMatcher            AutoInstructionMatcher
-	metaAlarmPostProcessor            MetaAlarmPostProcessor
-	metricsSender                     metrics.Sender
-	remediationRpcClient              engine.RPCClient
-	encoder                           encoding.Encoder
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
-	upstreamHelper                    *upstreamHelper
+	client                      mongo.DbClient
+	alarmCollection             mongo.DbCollection
+	entityCollection            mongo.DbCollection
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider
+	alarmStatusService          alarmstatus.Service
+	autoInstructionMatcher      AutoInstructionMatcher
+	metaAlarmPostProcessor      MetaAlarmPostProcessor
+	metricsSender               metrics.Sender
+	remediationRpcClient        engine.RPCClient
+	encoder                     encoding.Encoder
+	logger                      zerolog.Logger
+	countersHelper              *countersHelper
+	upstreamHelper              *upstreamHelper
 }
 
 func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -114,11 +114,11 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	}
 	matchUpdate := getOpenAlarmMatch(event)
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
@@ -208,7 +208,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 			}
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&result.Alarm,
 			&entity,
@@ -231,7 +231,7 @@ func (p *changeStateProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	countersRes componentAndServiceCountersResult,
+	countersRes countersResult,
 ) {
 	p.metricsSender.SendEventMetrics(
 		result.Alarm,
@@ -244,7 +244,7 @@ func (p *changeStateProcessor) postProcess(
 		"",
 	)
 
-	p.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
+	p.countersHelper.UpdateStates(ctx, countersRes)
 
 	err := p.metaAlarmPostProcessor.Process(ctx, event, rpc.AxeResultEvent{
 		Alarm:           &result.Alarm,

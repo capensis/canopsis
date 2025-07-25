@@ -665,6 +665,7 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 	}
 
 	if component.Upstream != event.Upstream {
+		report.CheckComponent = true
 		if componentID == event.Upstream {
 			commRegister.RegisterUpdate(componentID, bson.M{
 				"upstream":            "",

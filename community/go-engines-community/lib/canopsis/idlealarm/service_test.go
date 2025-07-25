@@ -249,7 +249,7 @@ func TestService_Process_GivenEntityRule_ShouldReturnEvent(t *testing.T) {
 		Name:          resource,
 		LastEventDate: &datetime.CpsTime{Time: time.Now().Add(-6 * time.Hour)},
 	}
-	state := types.CpsNumber(types.AlarmStateCritical)
+	state := types.CpsNumber(types.AlarmStateForNoEvents)
 	rule := idlerule.Rule{
 		ID:     "test-rule",
 		Type:   idlerule.RuleTypeEntity,
