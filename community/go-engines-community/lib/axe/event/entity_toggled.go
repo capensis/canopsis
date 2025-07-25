@@ -6,6 +6,9 @@ import (
 	"fmt"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmstatus"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
@@ -13,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -23,6 +27,10 @@ import (
 
 func NewEntityToggledProcessor(
 	dbClient mongo.DbClient,
+	alarmConfigProvider config.AlarmConfigProvider,
+	alarmStatusService alarmstatus.Service,
+	pbhTypeResolver pbehavior.EntityTypeResolver,
+	autoInstructionMatcher AutoInstructionMatcher,
 	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator,
 	componentCountersCalculator calculator.ComponentCountersCalculator,
 	eventsSender entitycounters.EventsSender,
@@ -30,52 +38,66 @@ func NewEntityToggledProcessor(
 	metaAlarmStatesService correlation.MetaAlarmStateService,
 	metricsSender metrics.Sender,
 	remediationRpcClient engine.RPCClient,
+	internalTagAlarmMatcher alarmtag.InternalTagAlarmMatcher,
 	eventGenerator event.Generator,
 	amqpPublisher libamqp.Publisher,
 	encoder encoding.Encoder,
 	logger zerolog.Logger,
 ) Processor {
 	return &entityToggledProcessor{
-		dbClient:                        dbClient,
-		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                dbClient.Collection(mongo.EntityMongoCollection),
-		resolvedAlarmCollection:         dbClient.Collection(mongo.ResolvedAlarmMongoCollection),
-		pbehaviorCollection:             dbClient.Collection(mongo.PbehaviorMongoCollection),
-		metaAlarmRuleCollection:         dbClient.Collection(mongo.MetaAlarmRulesMongoCollection),
-		closeDelayJobCollection:         dbClient.Collection(mongo.CloseDelayJobCollection),
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		metaAlarmPostProcessor:          metaAlarmPostProcessor,
-		metaAlarmStatesService:          metaAlarmStatesService,
-		metricsSender:                   metricsSender,
-		remediationRpcClient:            remediationRpcClient,
-		eventGenerator:                  eventGenerator,
-		amqpPublisher:                   amqpPublisher,
-		encoder:                         encoder,
-		logger:                          logger,
+		dbClient:                          dbClient,
+		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
+		closeDelayJobCollection:           dbClient.Collection(mongo.CloseDelayJobCollection),
+		logger:                            logger,
+		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		resolveHelper: newResolveHelper(
+			dbClient,
+			alarmConfigProvider,
+			alarmStatusService,
+			pbhTypeResolver,
+			autoInstructionMatcher,
+			internalTagAlarmMatcher,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			metaAlarmStatesService,
+			eventsSender,
+			metaAlarmPostProcessor,
+			metricsSender,
+			remediationRpcClient,
+			eventGenerator,
+			amqpPublisher,
+			encoder,
+			logger,
+		),
+		upstreamHelper: newUpstreamHelper(
+			dbClient,
+			alarmConfigProvider,
+			alarmStatusService,
+			pbhTypeResolver,
+			autoInstructionMatcher,
+			metaAlarmPostProcessor,
+			metricsSender,
+			remediationRpcClient,
+			internalTagAlarmMatcher,
+			entityServiceCountersCalculator,
+			componentCountersCalculator,
+			eventsSender,
+			eventGenerator,
+			amqpPublisher,
+			encoder,
+			logger,
+		),
 	}
 }
 
 type entityToggledProcessor struct {
-	dbClient                        mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityCollection                mongo.DbCollection
-	resolvedAlarmCollection         mongo.DbCollection
-	pbehaviorCollection             mongo.DbCollection
-	metaAlarmRuleCollection         mongo.DbCollection
-	closeDelayJobCollection         mongo.DbCollection
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	metaAlarmPostProcessor          MetaAlarmPostProcessor
-	metaAlarmStatesService          correlation.MetaAlarmStateService
-	metricsSender                   metrics.Sender
-	remediationRpcClient            engine.RPCClient
-	eventGenerator                  event.Generator
-	amqpPublisher                   libamqp.Publisher
-	encoder                         encoding.Encoder
-	logger                          zerolog.Logger
+	dbClient                          mongo.DbClient
+	alarmCollection                   mongo.DbCollection
+	closeDelayJobCollection           mongo.DbCollection
+	logger                            zerolog.Logger
+	resolveHelper                     *resolveHelper
+	componentAndServiceCountersHelper *componentAndServiceCountersHelper
+	upstreamHelper                    *upstreamHelper
 }
 
 func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -84,16 +106,25 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, nil
 	}
 
-	var componentStateChanged bool
-	var newComponentState int
+	if event.Parameters.Initiator != types.InitiatorSystem {
+		return Result{}, fmt.Errorf("unknown initiator %q", event.Parameters.Initiator)
+	}
 
+	countersRes := componentAndServiceCountersResult{}
+	var err error
 	if event.Entity.Enabled {
-		var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
+		result, err = p.upstreamHelper.Process(ctx, event)
+		if err != nil {
+			return result, err
+		}
+
+		if result.AlarmChange.Type != "" {
+			return result, nil
+		}
+
 		err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-			componentStateChanged = false
-			newComponentState = 0
-			updatedServiceStates = nil
 			result = Result{}
+			countersRes = componentAndServiceCountersResult{}
 
 			alarm := types.Alarm{}
 			err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
@@ -107,10 +138,8 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			result.Alarm = alarm
 			result.AlarmChange = alarmChange
 
-			result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+			result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
 				ctx,
-				p.entityServiceCountersCalculator,
-				p.componentCountersCalculator,
 				&result.Alarm,
 				event.Entity,
 				result.AlarmChange,
@@ -122,23 +151,19 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			return result, err
 		}
 
-		go p.postProcess(context.WithoutCancel(ctx), &event, updatedServiceStates, componentStateChanged, newComponentState)
+		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
 
 		return result, nil
 	}
 
 	match := getOpenAlarmMatch(event)
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
 	notAckedMetricType := ""
-
-	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		componentStateChanged = false
-		newComponentState = 0
-		updatedServiceStates = nil
+		countersRes = componentAndServiceCountersResult{}
 		notAckedMetricType = ""
 
-		beforeAlarm, err := updateAlarmToResolve(ctx, p.alarmCollection, match, event.Parameters)
+		beforeAlarm, err := p.resolveHelper.UpdateAlarmToResolve(ctx, match, event.Parameters)
 		if err != nil {
 			return err
 		}
@@ -154,12 +179,12 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 				notAckedMetricType = beforeAlarm.NotAckedMetricType
 			}
 
-			entity, err = updateEntityOfResolvedAlarm(ctx, p.entityCollection, event.Entity.ID)
+			entity, err = p.resolveHelper.UpdateEntityOfResolvedAlarm(ctx, event.Entity.ID)
 			if err != nil || entity.ID == "" {
 				return err
 			}
 
-			alarm, err := copyAlarmToResolvedCollection(ctx, p.alarmCollection, p.resolvedAlarmCollection, beforeAlarm.ID)
+			alarm, err := p.resolveHelper.CopyAlarmToResolvedCollection(ctx, beforeAlarm.ID)
 			if err != nil || alarm.ID == "" {
 				return err
 			}
@@ -171,16 +196,14 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			result.Entity = entity
 			result.AlarmChange = alarmChange
 
-			err = removeMetaAlarmStateOnResolve(ctx, p.metaAlarmRuleCollection, p.metaAlarmStatesService, result.Alarm)
+			err = p.resolveHelper.RemoveMetaAlarmStateOnResolve(ctx, result.Alarm)
 			if err != nil {
 				return err
 			}
 		}
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&result.Alarm,
 			&entity,
 			result.AlarmChange,
@@ -193,50 +216,16 @@ func (p *entityToggledProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	}
 
 	if result.AlarmChange.Type == types.AlarmChangeTypeResolve {
-		go postProcessResolve(
-			context.Background(),
+		go p.resolveHelper.PostProcess(
+			context.WithoutCancel(ctx),
 			event,
 			result,
-			updatedServiceStates,
-			componentStateChanged,
-			newComponentState,
+			countersRes,
 			notAckedMetricType,
-			p.eventsSender,
-			p.metaAlarmPostProcessor,
-			p.metricsSender,
-			p.remediationRpcClient,
-			p.pbehaviorCollection,
-			p.entityCollection,
-			p.eventGenerator,
-			p.amqpPublisher,
-			p.encoder,
-			p.logger,
 		)
 	} else {
-		go p.postProcess(context.WithoutCancel(ctx), &event, updatedServiceStates, componentStateChanged, newComponentState)
+		go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
 	}
 
 	return result, nil
-}
-
-func (p *entityToggledProcessor) postProcess(
-	ctx context.Context,
-	event *rpc.AxeEvent,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
-) {
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
 }
