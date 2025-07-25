@@ -35,7 +35,7 @@
         >
           <v-icon>arrow_right_alt</v-icon>
           <v-chip
-            :color="getEntityColor(item.entity)"
+            :class="getEntityColorClass(item.entity)"
             class="ma-0"
             text-color="white"
           >
@@ -52,6 +52,7 @@
             <c-no-events-icon
               v-if="!index"
               :value="item.entity | get('idle_since')"
+              color="error"
               top
             />
             <service-dependencies-entity-cell
@@ -75,7 +76,7 @@ import { MODALS, ENTITY_FIELDS, COLOR_INDICATOR_TYPES, TREE_OF_DEPENDENCIES_SHOW
 
 import Observer from '@/services/observer';
 
-import { getEntityColor } from '@/helpers/entities/entity/color';
+import { getEntityColorClass } from '@/helpers/entities/entity/color';
 import {
   dependencyToTreeviewDependency,
   normalizeDependencies,
@@ -267,8 +268,8 @@ export default {
       this.dependenciesByIds = dependenciesByIds;
     },
 
-    getEntityColor(entity) {
-      return getEntityColor(entity, COLOR_INDICATOR_TYPES.impactState);
+    getEntityColorClass(entity) {
+      return getEntityColorClass(entity, COLOR_INDICATOR_TYPES.impactState);
     },
 
     isInRootIds(id) {

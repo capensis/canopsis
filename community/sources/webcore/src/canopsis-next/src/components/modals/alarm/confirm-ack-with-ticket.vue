@@ -19,7 +19,7 @@
       <v-btn
         :loading="submitting"
         :disabled="isDisabled || submittingWithTicket"
-        class="primary"
+        color="primary"
         @click="submit"
       >
         {{ $t('common.continue') }}
@@ -27,7 +27,8 @@
       <v-btn
         :loading="submittingWithTicket"
         :disabled="isDisabledWithTicket || submitting"
-        class="warning"
+        color="primary"
+        outlined
         @click="submitWithTicket"
       >
         {{ $t('modals.confirmAckWithTicket.continueAndAssociateTicket') }}
