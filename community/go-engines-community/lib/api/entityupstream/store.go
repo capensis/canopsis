@@ -119,6 +119,10 @@ func (s *store) GetUpstream(ctx context.Context, id string) (*Response, bool, er
 		return result, true, nil
 	}
 
+	if err = cursor.Err(); err != nil {
+		return nil, false, err
+	}
+
 	return nil, true, nil
 }
 

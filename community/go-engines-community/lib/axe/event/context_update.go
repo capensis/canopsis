@@ -42,11 +42,11 @@ func NewContextUpdateProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &contextUpdateProcessor{
-		dbClient:                          dbClient,
-		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
-		alarmStatusService:                alarmStatusService,
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		dbClient:           dbClient,
+		alarmCollection:    dbClient.Collection(mongo.AlarmMongoCollection),
+		alarmStatusService: alarmStatusService,
+		logger:             logger,
+		countersHelper:     newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 		upstreamHelper: newUpstreamHelper(
 			dbClient,
 			alarmConfigProvider,
@@ -69,12 +69,12 @@ func NewContextUpdateProcessor(
 }
 
 type contextUpdateProcessor struct {
-	dbClient                          mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	alarmStatusService                alarmstatus.Service
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
-	upstreamHelper                    *upstreamHelper
+	dbClient           mongo.DbClient
+	alarmCollection    mongo.DbCollection
+	alarmStatusService alarmstatus.Service
+	logger             zerolog.Logger
+	countersHelper     *countersHelper
+	upstreamHelper     *upstreamHelper
 }
 
 func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -87,12 +87,12 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	var err error
 	if entity.IsUpstreamChanged {
 		if event.Parameters.StateSettingUpdated && entity.StateInfo == nil {
-			countersRes := componentAndServiceCountersResult{}
+			countersRes := countersResult{}
 			match := getOpenAlarmMatch(event)
 			err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 				result = Result{}
 				entity = *event.Entity
-				countersRes = componentAndServiceCountersResult{}
+				countersRes = countersResult{}
 
 				alarm := types.Alarm{}
 				err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
@@ -106,7 +106,7 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 						return err
 					}
 
-					result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+					result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 						ctx,
 						&result.Alarm,
 						&entity,
@@ -129,7 +129,7 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 					newStatus = types.AlarmStatusOff
 				case types.AlarmStatusUnknown:
 					// override state which were created by state setting method
-					newState = types.AlarmStateMinor
+					newState = types.AlarmStateForUnknown
 				}
 
 				currentStatus := alarm.Value.Status.Value
@@ -145,7 +145,7 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 						return err
 					}
 
-					result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+					result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 						ctx,
 						&result.Alarm,
 						&entity,
@@ -155,7 +155,7 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 					return err
 				}
 
-				result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+				result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 					ctx,
 					&alarm,
 					&entity,
@@ -181,19 +181,19 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, nil
 	}
 
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	match := getOpenAlarmMatch(event)
 	err = p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
 		entity = *event.Entity
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		alarm := types.Alarm{}
 		err := p.alarmCollection.FindOne(ctx, match).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
 		}
 
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&alarm,
 			&entity,
@@ -206,7 +206,7 @@ func (p *contextUpdateProcessor) Process(ctx context.Context, event rpc.AxeEvent
 		return result, err
 	}
 
-	go p.componentAndServiceCountersHelper.PostProcess(context.WithoutCancel(ctx), countersRes)
+	go p.countersHelper.UpdateStates(context.WithoutCancel(ctx), countersRes)
 
 	return result, nil
 }

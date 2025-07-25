@@ -31,30 +31,30 @@ func NewPbhLeaveProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &pbhLeaveProcessor{
-		client:                            client,
-		alarmCollection:                   client.Collection(mongo.AlarmMongoCollection),
-		entityCollection:                  client.Collection(mongo.EntityMongoCollection),
-		pbehaviorCollection:               client.Collection(mongo.PbehaviorMongoCollection),
-		autoInstructionMatcher:            autoInstructionMatcher,
-		metricsSender:                     metricsSender,
-		remediationRpcClient:              remediationRpcClient,
-		encoder:                           encoder,
-		logger:                            logger,
-		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
+		client:                 client,
+		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
+		entityCollection:       client.Collection(mongo.EntityMongoCollection),
+		pbehaviorCollection:    client.Collection(mongo.PbehaviorMongoCollection),
+		autoInstructionMatcher: autoInstructionMatcher,
+		metricsSender:          metricsSender,
+		remediationRpcClient:   remediationRpcClient,
+		encoder:                encoder,
+		logger:                 logger,
+		countersHelper:         newCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type pbhLeaveProcessor struct {
-	client                            mongo.DbClient
-	alarmCollection                   mongo.DbCollection
-	entityCollection                  mongo.DbCollection
-	pbehaviorCollection               mongo.DbCollection
-	autoInstructionMatcher            AutoInstructionMatcher
-	metricsSender                     metrics.Sender
-	remediationRpcClient              engine.RPCClient
-	encoder                           encoding.Encoder
-	logger                            zerolog.Logger
-	componentAndServiceCountersHelper *componentAndServiceCountersHelper
+	client                 mongo.DbClient
+	alarmCollection        mongo.DbCollection
+	entityCollection       mongo.DbCollection
+	pbehaviorCollection    mongo.DbCollection
+	autoInstructionMatcher AutoInstructionMatcher
+	metricsSender          metrics.Sender
+	remediationRpcClient   engine.RPCClient
+	encoder                encoding.Encoder
+	logger                 zerolog.Logger
+	countersHelper         *countersHelper
 }
 
 func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -67,11 +67,11 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 	match["v.pbehavior_info.id"] = bson.M{"$nin": bson.A{nil, ""}}
 	opts := options.FindOneAndUpdate().SetReturnDocument(options.After)
 
-	countersRes := componentAndServiceCountersResult{}
+	countersRes := countersResult{}
 	var prevPbehaviorID string
 	err := p.client.WithTransaction(ctx, func(ctx context.Context) error {
 		result = Result{}
-		countersRes = componentAndServiceCountersResult{}
+		countersRes = countersResult{}
 		prevPbehaviorID = ""
 
 		alarm := types.Alarm{}
@@ -162,7 +162,7 @@ func (p *pbhLeaveProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Re
 		result.Alarm = alarm
 		result.AlarmChange = alarmChange
 
-		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
+		result.IsCountersUpdated, countersRes, err = p.countersHelper.CalculateCounters(
 			ctx,
 			&result.Alarm,
 			&result.Entity,
@@ -189,7 +189,7 @@ func (p *pbhLeaveProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	countersRes componentAndServiceCountersResult,
+	countersRes countersResult,
 	prevPbehaviorID string,
 ) {
 	entity := *event.Entity
@@ -208,7 +208,7 @@ func (p *pbhLeaveProcessor) postProcess(
 		"",
 	)
 
-	p.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
+	p.countersHelper.UpdateStates(ctx, countersRes)
 
 	if result.Alarm.ID != "" {
 		err := sendRemediationEvent(ctx, event, result, p.remediationRpcClient, p.encoder)
