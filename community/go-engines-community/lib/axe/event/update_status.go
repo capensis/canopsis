@@ -70,5 +70,7 @@ func (p *updateStatusProcessor) Process(ctx context.Context, event rpc.AxeEvent)
 		return Result{}, fmt.Errorf("unknown initiator %q", event.Parameters.Initiator)
 	}
 
-	return p.upstreamHelper.Process(ctx, event)
+	result, _, err := p.upstreamHelper.Process(ctx, event, false)
+
+	return result, err
 }
