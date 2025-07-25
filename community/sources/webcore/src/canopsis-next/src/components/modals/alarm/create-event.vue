@@ -10,6 +10,7 @@
           v-model="form.comment"
           :label="$t('common.note')"
           :required="isCommentRequired"
+          :max-length="255"
           name="comment"
           autofocus
         />
