@@ -514,9 +514,22 @@ func (m *manager) HandleResource(ctx context.Context, event *types.Event, commRe
 		commRegister.RegisterUpdate(resourceID, bson.M{"last_event_date": *lastEventDate})
 	}
 
-	if resource.Upstream != event.Upstream && resourceID != event.Upstream {
-		commRegister.RegisterUpdate(resourceID, bson.M{"upstream": event.Upstream})
-		resource.Upstream = event.Upstream
+	if resource.Upstream != event.Upstream {
+		if resourceID == event.Upstream {
+			commRegister.RegisterUpdate(resourceID, bson.M{
+				"upstream":            "",
+				"is_upstream_changed": true,
+			})
+			resource.IsUpstreamChanged = true
+			resource.Upstream = ""
+		} else {
+			commRegister.RegisterUpdate(resourceID, bson.M{
+				"upstream":            event.Upstream,
+				"is_upstream_changed": true,
+			})
+			resource.IsUpstreamChanged = true
+			resource.Upstream = event.Upstream
+		}
 	}
 
 	resource.LastEventDate = lastEventDate
@@ -651,9 +664,22 @@ func (m *manager) HandleComponent(ctx context.Context, event *types.Event, commR
 		commRegister.RegisterUpdate(componentID, bson.M{"last_event_date": *lastEventDate})
 	}
 
-	if component.Upstream != event.Upstream && componentID != event.Upstream {
-		commRegister.RegisterUpdate(componentID, bson.M{"upstream": event.Upstream})
-		component.Upstream = event.Upstream
+	if component.Upstream != event.Upstream {
+		if componentID == event.Upstream {
+			commRegister.RegisterUpdate(componentID, bson.M{
+				"upstream":            "",
+				"is_upstream_changed": true,
+			})
+			component.IsUpstreamChanged = true
+			component.Upstream = ""
+		} else {
+			commRegister.RegisterUpdate(componentID, bson.M{
+				"upstream":            event.Upstream,
+				"is_upstream_changed": true,
+			})
+			component.IsUpstreamChanged = true
+			component.Upstream = event.Upstream
+		}
 	}
 
 	component.LastEventDate = lastEventDate
