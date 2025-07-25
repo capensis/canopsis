@@ -25,26 +25,24 @@ func NewEntityUpdatedProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &entityUpdatedProcessor{
-		dbClient:                        dbClient,
-		alarmCollection:                 dbClient.Collection(mongo.AlarmMongoCollection),
-		entityServiceCountersCalculator: entityServiceCountersCalculator,
-		componentCountersCalculator:     componentCountersCalculator,
-		eventsSender:                    eventsSender,
-		externalTagUpdater:              externalTagUpdater,
-		metaAlarmPostProcessor:          metaAlarmPostProcessor,
-		logger:                          logger,
+		dbClient:                          dbClient,
+		alarmCollection:                   dbClient.Collection(mongo.AlarmMongoCollection),
+		componentCountersCalculator:       componentCountersCalculator,
+		externalTagUpdater:                externalTagUpdater,
+		metaAlarmPostProcessor:            metaAlarmPostProcessor,
+		logger:                            logger,
+		componentAndServiceCountersHelper: newComponentAndServiceCountersHelper(entityServiceCountersCalculator, componentCountersCalculator, eventsSender, logger),
 	}
 }
 
 type entityUpdatedProcessor struct {
-	dbClient                        mongo.DbClient
-	alarmCollection                 mongo.DbCollection
-	entityServiceCountersCalculator calculator.EntityServiceCountersCalculator
-	componentCountersCalculator     calculator.ComponentCountersCalculator
-	eventsSender                    entitycounters.EventsSender
-	externalTagUpdater              alarmtag.ExternalUpdater
-	metaAlarmPostProcessor          MetaAlarmPostProcessor
-	logger                          zerolog.Logger
+	dbClient                          mongo.DbClient
+	alarmCollection                   mongo.DbCollection
+	componentCountersCalculator       calculator.ComponentCountersCalculator
+	externalTagUpdater                alarmtag.ExternalUpdater
+	metaAlarmPostProcessor            MetaAlarmPostProcessor
+	logger                            zerolog.Logger
+	componentAndServiceCountersHelper *componentAndServiceCountersHelper
 }
 
 func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -55,14 +53,12 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 	entity := *event.Entity
 	importTags := types.TransformEventTags(event.Parameters.ImportTags)
-	var updatedServiceStates map[string]entitycounters.UpdatedServicesInfo
-	var componentStateChanged bool
-	var newComponentState int
 	var alarm types.Alarm
+	countersRes := componentAndServiceCountersResult{}
 	err := p.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		updatedServiceStates = nil
 		result = Result{}
 		alarm = types.Alarm{}
+		countersRes = componentAndServiceCountersResult{}
 		err := p.alarmCollection.FindOne(ctx, getOpenAlarmMatch(event)).Decode(&alarm)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return err
@@ -124,10 +120,8 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 			}
 		}
 
-		result.IsCountersUpdated, updatedServiceStates, componentStateChanged, newComponentState, err = processComponentAndServiceCounters(
+		result.IsCountersUpdated, countersRes, err = p.componentAndServiceCountersHelper.Process(
 			ctx,
-			p.entityServiceCountersCalculator,
-			p.componentCountersCalculator,
 			&alarm,
 			&entity,
 			result.AlarmChange,
@@ -138,9 +132,9 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 
 		if entity.Type == types.EntityTypeComponent {
 			// force update
-			componentStateChanged = true
-
-			newComponentState, err = p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
+			countersRes.IsComponentStateChanged = true
+			countersRes.ComponentID = entity.ID
+			countersRes.NewComponentState, err = p.componentCountersCalculator.RecomputeCounters(ctx, &entity)
 			if err != nil {
 				return err
 			}
@@ -158,7 +152,7 @@ func (p *entityUpdatedProcessor) Process(ctx context.Context, event rpc.AxeEvent
 	result.Alarm = alarm
 	result.AlarmChange = types.NewAlarmChange()
 
-	go p.postProcess(context.WithoutCancel(ctx), event, result, updatedServiceStates, componentStateChanged, newComponentState)
+	go p.postProcess(context.WithoutCancel(ctx), event, result, countersRes)
 
 	return result, nil
 }
@@ -167,23 +161,9 @@ func (p *entityUpdatedProcessor) postProcess(
 	ctx context.Context,
 	event rpc.AxeEvent,
 	result Result,
-	updatedServiceStates map[string]entitycounters.UpdatedServicesInfo,
-	componentStateChanged bool,
-	newComponentState int,
+	countersRes componentAndServiceCountersResult,
 ) {
-	for servID, servInfo := range updatedServiceStates {
-		err := p.eventsSender.UpdateServiceState(ctx, servID, servInfo)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update service state")
-		}
-	}
-
-	if componentStateChanged {
-		err := p.eventsSender.UpdateComponentState(ctx, event.Entity.Component, newComponentState)
-		if err != nil {
-			p.logger.Err(err).Msg("failed to update component state")
-		}
-	}
+	p.componentAndServiceCountersHelper.PostProcess(ctx, countersRes)
 
 	if event.Parameters.ImportSource != "" {
 		p.externalTagUpdater.Add(event.Parameters.ImportTags)
