@@ -1,0 +1,46 @@
+pbehavior_type:
+  default_maintenance:
+    _id: "default_maintenance"
+    priority: <Index()>
+    name: Default maintenance
+    description: Default maintenance
+    icon_name: build
+    type: maintenance
+    color: "#BF360C"
+    author: root,
+    created: <NowUnix()>
+    updated: <Current().created>
+
+pbehavior_reason:
+  default_reason:
+    _id: "default_reason"
+    name: Default
+    description: Default
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+
+pbehavior:
+  pbehavior_{1..10000}:
+    _id: <UUID()>
+    name: <UniqueName()>
+    enabled: true
+    tstart: <NowUnix()>
+    tstop: <NowUnix()>
+    color: <HexColor()>
+    rrule: ""
+    reason: default_reason
+    type_: default_maintenance
+    author: root
+    created: <NowUnix()>
+    updated: <Current().created>
+    entity_pattern:
+      - - field: name
+          cond:
+            type: eq
+            value: <LoremIpsumWord()>
+    comments:
+      - _id: <UUID()>
+        author: root
+        message: <LoremIpsumSentence(3)>
+        ts: <NowUnix()>

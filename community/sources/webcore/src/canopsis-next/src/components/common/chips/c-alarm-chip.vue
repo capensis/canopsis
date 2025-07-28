@@ -14,6 +14,7 @@
       </template>
       <span
         :style="{ backgroundColor: style.color }"
+        :class="style.class"
         class="chip"
       >
         {{ style.text }}
@@ -72,7 +73,6 @@ export default {
     .chip {
       padding: 3px 7px;
       font-size: 14px;
-      color: #fff;
       white-space: nowrap;
       border-radius: 10px;
     }
