@@ -445,10 +445,6 @@ const routes = [
     component: Notifications,
     meta: {
       requiresLogin: true,
-      requiresPermission: {
-        action: CRUD_ACTIONS.can,
-        id: USER_PERMISSIONS.technical.notification.common,
-      },
     },
     props: route => ({ tabId: route.params.tabId, activeId: route.query.id }),
   },

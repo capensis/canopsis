@@ -114,15 +114,12 @@ export default {
         const isFailedExecution = isInstructionExecutionFailed(instructionExecution)
           || isInstructionExecutionAborted(instructionExecution);
 
-        const type = isFailedExecution ? 'failed' : 'success';
-        const text = this.$t(`remediation.instructionExecute.popups.${type}`, {
-          instructionName: instructionExecution.name,
-        });
-
         if (isFailedExecution) {
+          const text = this.$t('remediation.instructionExecute.popups.failed', {
+            instructionName: instructionExecution.name,
+          });
+
           this.$popups.error({ text });
-        } else {
-          this.$popups.success({ text });
         }
 
         if (this.config.onComplete) {

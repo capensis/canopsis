@@ -1,7 +1,7 @@
 import { createNamespacedHelpers } from 'vuex';
 
 import { SOCKET_ROOMS } from '@/config';
-import { MAX_LIMIT, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
+import { MAX_LIMIT, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES, USER_PERMISSIONS } from '@/constants';
 
 const EXECUTION_STATUSES_TO_POPUPS = {
   [REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed]: {
@@ -23,6 +23,11 @@ const { mapActions } = createNamespacedHelpers('remediationInstructionExecution'
 export const appRemediationInstructionExecutionsPopupsMixin = {
   beforeDestroy() {
     this.leaveFromSimpleManualExecutions();
+  },
+  computed: {
+    hasExecuteInstructionAccess() {
+      return this.checkAccess(USER_PERMISSIONS.business.alarmsList.actions.executeInstruction);
+    },
   },
   methods: {
     ...mapActions({
@@ -68,6 +73,10 @@ export const appRemediationInstructionExecutionsPopupsMixin = {
      * and adds a listener to show instruction popups
      */
     joinToSimpleManualExecutions() {
+      if (!this.hasExecuteInstructionAccess) {
+        return;
+      }
+
       this.$socket.join(SOCKET_ROOMS.simplifiedManualExecutions)
         .addListener(this.showInstructionPopup);
     },
@@ -77,6 +86,10 @@ export const appRemediationInstructionExecutionsPopupsMixin = {
      * and removes the instruction popup listener
      */
     leaveFromSimpleManualExecutions() {
+      if (!this.hasExecuteInstructionAccess) {
+        return;
+      }
+
       this.$socket.leave(SOCKET_ROOMS.simplifiedManualExecutions)
         .removeListener(this.showInstructionPopup);
     },
