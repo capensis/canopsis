@@ -52,6 +52,10 @@ import { useValidationChildren } from '@/hooks/validator/validation-children';
 export default {
   inject: ['$validator'],
   props: {
+    defaultExpanded: {
+      type: Boolean,
+      default: false,
+    },
     itemNumber: {
       type: [Number, String],
       default: 0,
@@ -69,8 +73,8 @@ export default {
       default: 'item-drag-handler',
     },
   },
-  setup() {
-    const expanded = ref(false);
+  setup(props) {
+    const expanded = ref(props.defaultExpanded);
 
     const { hasChildrenError } = useValidationChildren();
 

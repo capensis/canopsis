@@ -116,6 +116,11 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		alarmChange.PreviousStateChange = alarm.Value.State.Timestamp
 		alarmChange.PreviousStatus = alarm.Value.Status.Value
 		alarm.Value.ChangeState = &newStepState
+
+		if alarm.Value.MaxState < newStepState.Value {
+			alarm.Value.MaxState = newStepState.Value
+		}
+
 		alarm.Value.State = &newStepState
 		err = alarm.Value.Steps.Add(newStepState)
 		if err != nil {
@@ -132,6 +137,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 					"v.change_state":     newStepState,
 					"v.last_update_date": event.Parameters.Timestamp,
 					"v.last_st_upd_dt":   event.Parameters.Timestamp,
+					"v.max_state":        alarm.Value.MaxState,
 				},
 				"$push": bson.M{"v.steps": newStepState},
 			}
@@ -151,6 +157,7 @@ func (p *changeStateProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 					"v.state_changes_since_status_update": 0,
 					"v.last_update_date":                  event.Parameters.Timestamp,
 					"v.last_st_upd_dt":                    event.Parameters.Timestamp,
+					"v.max_state":                         alarm.Value.MaxState,
 				},
 				"$push": bson.M{"v.steps": bson.M{"$each": bson.A{newStepState, newStepStatus}}},
 			}

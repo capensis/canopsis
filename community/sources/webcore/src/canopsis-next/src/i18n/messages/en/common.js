@@ -314,6 +314,7 @@ export default {
   true: 'True',
   false: 'False',
   customField: 'Custom field|Custom fields',
+  last: 'Last',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -477,6 +478,11 @@ export default {
     [PATTERN_OPERATORS.ruleIs]: 'Rule is',
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
+
+    [PATTERN_OPERATORS.within]: 'Within',
+    [PATTERN_OPERATORS.olderThan]: 'Older than',
+    [PATTERN_OPERATORS.inRangeDates]: 'In range (dates)',
+    [PATTERN_OPERATORS.inRangePeriod]: 'In range (period)',
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {

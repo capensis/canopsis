@@ -116,6 +116,26 @@ export default {
     dateString() {
       return convertDateToString(this.localValue, DATETIME_FORMATS.datePicker, null);
     },
+
+    /**
+     * Returns a function that validates allowed time based on allowedDates prop.
+     * Uses computed instead of method because we need to recalculate this function on
+     * every change of allowedDates and value props.
+     */
+    allowedTime() {
+      if (!this.allowedDates || !this.value) {
+        return () => true;
+      }
+
+      return (time) => {
+        const [hours, minutes] = time.split(':');
+        const currentDate = convertDateToDateObject(this.value);
+
+        currentDate.setHours(hours, minutes);
+
+        return this.allowedDates?.(currentDate);
+      };
+    },
   },
   watch: {
     value() {
@@ -131,19 +151,6 @@ export default {
 
     updateDate(date) {
       this.localValue = getDateObjectByDate(this.localValue, date);
-    },
-
-    allowedTime(time) {
-      if (!this.allowedDates) {
-        return true;
-      }
-
-      const [hours, minutes] = time.split(':');
-      const currentDate = convertDateToDateObject(this.value);
-
-      currentDate.setHours(hours, minutes);
-
-      return this.allowedDates?.(currentDate);
     },
 
     submit() {

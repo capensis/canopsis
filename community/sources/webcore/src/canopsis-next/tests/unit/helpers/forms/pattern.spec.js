@@ -569,15 +569,16 @@ describe('pattern form converters', () => {
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
   });
 
-  it('should be converted to form and back to pattern with `relative time` condition', () => {
-    const lastHour = 3600;
+  it('should be converted to form and back to pattern with `relative time` condition with `to` value', () => {
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.creationDate,
       cond: {
         type: PATTERN_CONDITIONS.relativeTime,
         value: {
-          value: lastHour,
-          unit: TIME_UNITS.second,
+          to: {
+            value: 1,
+            unit: TIME_UNITS.hour,
+          },
         },
       },
     };
@@ -587,6 +588,7 @@ describe('pattern form converters', () => {
     expect(form).toEqual({
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.creationDate,
+      operator: PATTERN_OPERATORS.olderThan,
       range: {
         type: QUICK_RANGES.last1Hour.value,
         from: 0,
@@ -611,9 +613,11 @@ describe('pattern form converters', () => {
     expect(form).toEqual({
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.creationDate,
+      operator: PATTERN_OPERATORS.inRangeDates,
       range: {
-        type: QUICK_RANGES.custom.value,
-        ...value,
+        type: QUICK_RANGES.last1Hour.value,
+        from: new Date(value.from * 1000),
+        to: new Date(value.to * 1000),
       },
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);
@@ -775,14 +779,13 @@ describe('pattern form converters', () => {
   });
 
   it('should be converted to form and back to pattern with `relative time` condition for activation date', () => {
-    const lastHour = 3600;
     const patternRule = {
       field: ALARM_PATTERN_FIELDS.activationDate,
       cond: {
         type: PATTERN_CONDITIONS.relativeTime,
         value: {
-          value: lastHour,
-          unit: TIME_UNITS.second,
+          value: 15,
+          unit: TIME_UNITS.minute,
         },
       },
     };
@@ -792,8 +795,9 @@ describe('pattern form converters', () => {
     expect(form).toEqual({
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.activationDate,
+      operator: PATTERN_OPERATORS.within,
       range: {
-        type: QUICK_RANGES.last1Hour.value,
+        type: QUICK_RANGES.last15Minutes.value,
         from: 0,
         to: 0,
       },
@@ -816,9 +820,192 @@ describe('pattern form converters', () => {
     expect(form).toEqual({
       ...defaultForm,
       attribute: ALARM_PATTERN_FIELDS.activationDate,
+      operator: PATTERN_OPERATORS.inRangeDates,
+      range: {
+        type: QUICK_RANGES.last1Hour.value,
+        from: new Date(value.from * 1000),
+        to: new Date(value.to * 1000),
+      },
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `relative time` condition and custom duration for `within` operator', () => {
+    const customDuration = {
+      value: Faker.datatype.number({ min: 1, max: 100 }),
+      unit: TIME_UNITS.hour,
+    };
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.creationDate,
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: customDuration,
+      },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.creationDate,
+      operator: PATTERN_OPERATORS.within,
       range: {
         type: QUICK_RANGES.custom.value,
-        ...value,
+        typeCustom: customDuration,
+        from: 0,
+        to: 0,
+      },
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `relative time` condition and custom duration for `olderThan` operator', () => {
+    const customDuration = {
+      value: Faker.datatype.number({ min: 1, max: 100 }),
+      unit: TIME_UNITS.day,
+    };
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.creationDate,
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          to: customDuration,
+        },
+      },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.creationDate,
+      operator: PATTERN_OPERATORS.olderThan,
+      range: {
+        type: QUICK_RANGES.custom.value,
+        typeCustom: customDuration,
+        from: 0,
+        to: 0,
+      },
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `relative time` condition and custom durations for `inRangePeriod` operator with custom `from` range', () => {
+    const customFromDuration = {
+      value: Faker.datatype.number({ min: 1, max: 100 }),
+      unit: TIME_UNITS.week,
+    };
+    const toDuration = {
+      value: 1,
+      unit: TIME_UNITS.hour,
+    };
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.activationDate,
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          from: customFromDuration,
+          to: toDuration,
+        },
+      },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.activationDate,
+      operator: PATTERN_OPERATORS.inRangePeriod,
+      range: {
+        type: QUICK_RANGES.last1Hour.value,
+        from: QUICK_RANGES.custom.value,
+        fromCustom: customFromDuration,
+        to: QUICK_RANGES.last1Hour.value,
+      },
+    });
+    expect(formRuleToPatternRule(form)).toEqual(patternRule);
+  });
+
+  it('should be converted to form and back to pattern with `relative time` condition and custom durations for `inRangePeriod` operator with custom `to` range', () => {
+    const fromDuration = {
+      value: 3,
+      unit: TIME_UNITS.hour,
+    };
+    const customToDuration = {
+      value: Faker.datatype.number({ min: 1, max: 100 }),
+      unit: TIME_UNITS.day,
+    };
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.activationDate,
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          from: fromDuration,
+          to: customToDuration,
+        },
+      },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.activationDate,
+      operator: PATTERN_OPERATORS.inRangePeriod,
+      range: {
+        type: QUICK_RANGES.last1Hour.value,
+        from: QUICK_RANGES.last3Hour.value,
+        to: QUICK_RANGES.custom.value,
+        toCustom: customToDuration,
+      },
+    });
+
+    const convertedBack = formRuleToPatternRule(form);
+
+    expect(convertedBack).toEqual({
+      field: ALARM_PATTERN_FIELDS.activationDate,
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          from: fromDuration,
+          to: customToDuration,
+        },
+      },
+    });
+  });
+
+  it('should be converted to form and back to pattern with `relative time` condition and both custom durations for `inRangePeriod` operator', () => {
+    const customFromDuration = {
+      value: Faker.datatype.number({ min: 10, max: 100 }),
+      unit: TIME_UNITS.minute,
+    };
+    const customToDuration = {
+      value: Faker.datatype.number({ min: 1, max: 9 }),
+      unit: TIME_UNITS.minute,
+    };
+    const patternRule = {
+      field: ALARM_PATTERN_FIELDS.creationDate,
+      cond: {
+        type: PATTERN_CONDITIONS.relativeTime,
+        value: {
+          from: customFromDuration,
+          to: customToDuration,
+        },
+      },
+    };
+
+    const form = patternRuleToForm(patternRule);
+
+    expect(form).toEqual({
+      ...defaultForm,
+      attribute: ALARM_PATTERN_FIELDS.creationDate,
+      operator: PATTERN_OPERATORS.inRangePeriod,
+      range: {
+        type: QUICK_RANGES.last1Hour.value,
+        from: QUICK_RANGES.custom.value,
+        fromCustom: customFromDuration,
+        to: QUICK_RANGES.custom.value,
+        toCustom: customToDuration,
       },
     });
     expect(formRuleToPatternRule(form)).toEqual(patternRule);

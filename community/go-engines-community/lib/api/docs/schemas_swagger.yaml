@@ -198,10 +198,6 @@ definitions:
       impact_state:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       instruction_execution_icon:
         type: integer
@@ -289,15 +285,13 @@ definitions:
       events_count:
         type: integer
       infos:
-        additionalProperties:
-          additionalProperties:
-            type: any
-          type: object
         type: object
       initial_long_output:
         type: string
       initial_output:
         type: string
+      initial_state:
+        type: integer
       last_comment:
         $ref: '#/definitions/common.AlarmStep'
       last_event_date:
@@ -312,6 +306,8 @@ definitions:
         items:
           type: string
         type: array
+      max_state:
+        type: integer
       meta:
         type: string
       output:
@@ -1261,7 +1257,11 @@ definitions:
             type: string
           error:
             type: string
+          error_background:
+            type: string
           info:
+            type: string
+          info_background:
             type: string
           primary:
             type: string
@@ -1269,18 +1269,26 @@ definitions:
             type: string
           success:
             type: string
+          success_background:
+            type: string
           warning:
+            type: string
+          warning_background:
             type: string
         required:
         - accent
         - active_color
         - background
         - error
+        - error_background
         - info
+        - info_background
         - primary
         - secondary
         - success
+        - success_background
         - warning
+        - warning_background
         type: object
       state:
         properties:
@@ -1302,15 +1310,21 @@ definitions:
         properties:
           background:
             type: string
+          hover_row:
+            type: boolean
           hover_row_color:
             type: string
           row_color:
             type: string
+          shift_row:
+            type: boolean
           shift_row_color:
             type: string
         required:
         - background
+        - hover_row
         - row_color
+        - shift_row
         type: object
     type: object
   colortheme.EditRequest:
@@ -1791,6 +1805,8 @@ definitions:
         type: string
       separator:
         type: string
+      time_format:
+        type: string
       type:
         items:
           type: string
@@ -2088,8 +2104,93 @@ definitions:
     type: object
   entityinfodictionary.Result:
     properties:
+      type:
+        type: integer
       value:
         type: string
+    type: object
+  entityinfosproperty.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alias:
+        maxLength: 255
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      name:
+        type: string
+      type:
+        description: |-
+          Possible type values.
+            * `0` - type boolean
+            * `1` - type number
+            * `2` - type timestamp
+            * `3` - type string
+            * `4` - type string_array
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        type: integer
+    required:
+    - name
+    - type
+    type: object
+  entityinfosproperty.Response:
+    properties:
+      _id:
+        type: string
+      alias:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      type:
+        description: |-
+          Possible type values.
+            * `0` - type boolean
+            * `1` - type number
+            * `2` - type timestamp
+            * `3` - type string
+            * `4` - type string_array
+        type: integer
+      updated:
+        type: integer
+    type: object
+  entityinfosproperty.UpdateRequest:
+    properties:
+      alias:
+        maxLength: 255
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      type:
+        description: |-
+          Possible type values.
+            * `0` - type boolean
+            * `1` - type number
+            * `2` - type timestamp
+            * `3` - type string
+            * `4` - type string_array
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        type: integer
+    required:
+    - type
     type: object
   entityservice.BulkDeleteRequestItem:
     properties:
@@ -2768,6 +2869,7 @@ definitions:
             * `declare_ticket_rule` - export declare_ticket_rule collection
             * `link_rule` - export link_rule collection
             * `map` - export map collection
+            * `entity_infos_property` - export entity_infos_property collection
         items:
           type: string
         type: array
@@ -3725,7 +3827,8 @@ definitions:
     properties:
       type:
         type: string
-      value: {}
+      value:
+        type: object
     type: object
   pattern.CountAlarmsResponse:
     properties:
@@ -3826,6 +3929,9 @@ definitions:
     type: object
   pattern.FieldCondition:
     properties:
+      alias:
+        description: Alias can only be defined for entity infos.
+        type: string
       cond:
         $ref: '#/definitions/pattern.Condition'
       field:
@@ -4811,7 +4917,6 @@ definitions:
     required:
     - duration
     - name
-    - priority
     type: object
   resolverule.Response:
     properties:
@@ -4884,7 +4989,6 @@ definitions:
     required:
     - duration
     - name
-    - priority
     type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:

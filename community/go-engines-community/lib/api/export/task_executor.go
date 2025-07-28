@@ -118,8 +118,9 @@ func (e *taskExecutor) Create(ctx context.Context, params TaskParameters) (*Task
 		Separator:  params.Separator,
 		Filename: params.FilenamePrefix + "-" + now.Time.Format(fileNameTimeLayout) +
 			e.GetFormatter(params.Type).GetFileExtension(),
-		User:    params.UserID,
-		Created: now,
+		User:       params.UserID,
+		TimeFormat: params.TimeFormat,
+		Created:    now,
 	}
 
 	_, err := e.collection.InsertOne(ctx, t)

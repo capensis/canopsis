@@ -2,6 +2,7 @@ package match
 
 import (
 	"fmt"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -46,6 +47,7 @@ func (m *EntityRegexMatches) SetComponentInfoRegexMatches(fieldName string, matc
 
 func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 	emptyEntity := types.Entity{}
+	now := time.Now() // to compute relative time values
 
 	forbiddenFieldsMap := make(map[string]bool, len(forbiddenFields))
 	for _, field := range forbiddenFields {
@@ -59,6 +61,11 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 
 		for _, v := range p[idx] {
 			f := v.Field
+
+			// if an alias is present, then fill the field with some valid value to validate condition
+			if v.Alias != "" {
+				f = "infos.validate"
+			}
 
 			if pattern.IsForbiddenEntityField(v, forbiddenFieldsMap) {
 				return false
@@ -86,7 +93,7 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 			} else if i, ok := emptyEntity.GetIntField(f); ok {
 				_, err = v.Condition.MatchInt(i)
 			} else if t, ok := emptyEntity.GetTimeField(f); ok {
-				_, err = v.Condition.MatchTime(t)
+				_, err = v.Condition.MatchTime(t, now)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}
@@ -104,6 +111,8 @@ func MatchEntityPattern(p pattern.Entity, entity *types.Entity) (bool, error) {
 	if len(p) == 0 {
 		return true, nil
 	}
+
+	now := time.Now() // to compute relative time values
 
 	for idx := range p {
 		matched := false
@@ -149,7 +158,7 @@ func MatchEntityPattern(p pattern.Entity, entity *types.Entity) (bool, error) {
 			} else if i, ok := entity.GetIntField(f); ok {
 				matched, err = v.Condition.MatchInt(i)
 			} else if t, ok := entity.GetTimeField(f); ok {
-				matched, err = v.Condition.MatchTime(t)
+				matched, err = v.Condition.MatchTime(t, now)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}
@@ -177,6 +186,8 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 	if len(p) == 0 {
 		return true, entityRegexMatches, nil
 	}
+
+	now := time.Now() // to compute relative time values
 
 	for idx := range p {
 		matched := false
@@ -287,7 +298,7 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 			} else if i, ok := entity.GetIntField(f); ok {
 				matched, err = v.Condition.MatchInt(i)
 			} else if t, ok := entity.GetTimeField(f); ok {
-				matched, err = v.Condition.MatchTime(t)
+				matched, err = v.Condition.MatchTime(t, now)
 			} else {
 				err = pattern.ErrUnsupportedField
 			}
