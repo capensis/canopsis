@@ -1,10 +1,8 @@
 package scenario
 
 import (
-	"context"
 	"errors"
 	"net/http"
-	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
@@ -24,21 +22,18 @@ type API interface {
 type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
-	transformer   common.PatternFieldsTransformer
 	logger        zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
-	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:         store,
 		mongoExporter: mongoExporter,
 		logger:        logger,
-		transformer:   transformer,
 	}
 }
 
@@ -94,18 +89,13 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err = a.transformEditRequest(c, &request.EditRequest)
+	scenario, err := a.store.Insert(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
-	}
-
-	scenario, err := a.store.Insert(c, request)
-	if err != nil {
 		panic(err)
 	}
 
@@ -139,18 +129,13 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err = a.transformEditRequest(c, &request.EditRequest)
+	newScenario, err := a.store.Update(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
-	}
-
-	newScenario, err := a.store.Update(c, request)
-	if err != nil {
 		panic(err)
 	}
 
@@ -192,11 +177,6 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		scenario, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
@@ -212,11 +192,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		oldScenario, err := a.store.GetOneBy(c, request.ID)
 		if err != nil || oldScenario == nil {
-			return "", err
-		}
-
-		err = a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
 			return "", err
 		}
 
@@ -265,32 +240,4 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.ScenarioMongoCollection, b)
-}
-
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-	var valErr common.ValidationError
-	for idx, actionRequest := range request.Actions {
-		actionRequest.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return err
-		}
-
-		actionRequest.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return err
-		}
-
-		request.Actions[idx] = actionRequest
-	}
-
-	return nil
 }

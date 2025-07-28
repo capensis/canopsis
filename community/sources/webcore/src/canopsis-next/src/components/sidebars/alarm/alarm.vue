@@ -363,7 +363,7 @@ export default {
     },
 
     updateExportPdfTemplate(value, template) {
-      this.updateTemplate('exportPdf', template, value);
+      this.updateTemplate('exportPdfTemplate', template, value);
     },
 
     updateWidgetColumnsTemplate(template, value) {

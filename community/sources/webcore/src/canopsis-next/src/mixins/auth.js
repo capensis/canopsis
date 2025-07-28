@@ -42,7 +42,7 @@ export const authMixin = {
     hasCurrentViewActionsAccess() {
       const { name, params } = this.$route;
 
-      if (name !== ROUTES_NAMES.view) {
+      if (![ROUTES_NAMES.view, ROUTES_NAMES.viewKiosk].includes(name)) {
         return false;
       }
 

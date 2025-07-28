@@ -1284,6 +1284,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.Condition).UnmarshalJSON(data))
 			}
+		case "alias":
+			out.Alias = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -1312,6 +1314,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"cond\":"
 		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(out, in.Condition)
+	}
+	if in.Alias != "" {
+		const prefix string = ",\"alias\":"
+		out.RawString(prefix)
+		out.String(string(in.Alias))
 	}
 	out.RawByte('}')
 }
@@ -2554,6 +2561,14 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(in, out.CloseDelay)
 			}
+		case "max_state":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.MaxState).UnmarshalJSON(data))
+			}
+		case "initial_state":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.InitialState).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -2973,6 +2988,16 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"close_delay\":"
 		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisTypes10(out, *in.CloseDelay)
+	}
+	if in.MaxState != 0 {
+		const prefix string = ",\"max_state\":"
+		out.RawString(prefix)
+		out.Raw((in.MaxState).MarshalJSON())
+	}
+	if in.InitialState != 0 {
+		const prefix string = ",\"initial_state\":"
+		out.RawString(prefix)
+		out.Raw((in.InitialState).MarshalJSON())
 	}
 	out.RawByte('}')
 }

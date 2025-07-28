@@ -37,10 +37,11 @@ type Store interface {
 }
 
 type store struct {
-	client         mongo.DbClient
-	readClient     mongo.DbClient
-	collection     mongo.DbCollection
-	authorProvider author.Provider
+	client                        mongo.DbClient
+	readClient                    mongo.DbClient
+	collection                    mongo.DbCollection
+	entityInfosPropertyCollection mongo.DbCollection
+	authorProvider                author.Provider
 
 	linkedCollections []string
 
@@ -51,6 +52,8 @@ type store struct {
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
+	transformer common.PatternFieldsTransformer
+
 	logger zerolog.Logger
 }
 
@@ -60,16 +63,17 @@ func NewStore(
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		client:         dbClient,
-		collection:     dbClient.Collection(mongo.PatternMongoCollection),
-		readClient:     readDbClient,
-		authorProvider: authorProvider,
-
-		defaultSearchByFields: []string{"_id", "author.name", "title"},
-		defaultSortBy:         "created",
+		client:                        dbClient,
+		collection:                    dbClient.Collection(mongo.PatternMongoCollection),
+		readClient:                    readClient,
+		entityInfosPropertyCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		authorProvider:                authorProvider,
+		defaultSearchByFields:         []string{"_id", "author.name", "title"},
+		defaultSortBy:                 "created",
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
@@ -88,11 +92,10 @@ func NewStore(
 			mongo.AlarmTagCollection,
 		},
 
-		pbhComputeChan: pbhComputeChan,
-
+		pbhComputeChan:        pbhComputeChan,
 		serviceChangeListener: serviceChangeListener,
-
-		logger: logger,
+		transformer:           transformer,
+		logger:                logger,
 	}
 }
 
@@ -106,7 +109,13 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.collection.InsertOne(ctx, model)
+
+		err := s.transformEntityPatternToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
 			return err
 		}
@@ -215,7 +224,13 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		pbhIds = nil
 		serviceIds = nil
 		prevPattern := savedpattern.SavedPattern{}
-		err := s.collection.FindOneAndUpdate(
+
+		err := s.transformEntityPatternToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
+		err = s.collection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": request.ID},
 			bson.M{"$set": model},
@@ -228,12 +243,14 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
+		removedAliases := s.getRemovedAliases(prevPattern.Aliases, model.Aliases)
+
 		response, err = s.GetByID(ctx, model.ID, model.Author)
 		if err != nil || response == nil {
 			return err
 		}
 
-		err = s.updateLinkedModels(ctx, *response, request.Author)
+		err = s.updateLinkedModels(ctx, *response, request.Author, removedAliases)
 		if err != nil {
 			return err
 		}
@@ -296,7 +313,32 @@ func (s *store) Delete(ctx context.Context, pattern Response, userID string) (bo
 	return deleted > 0, nil
 }
 
-func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string) error {
+func (s *store) getRemovedAliases(prevAliases, curAliases []string) []string {
+	if len(prevAliases) == 0 {
+		return []string{}
+	}
+
+	curAliasesLen := len(curAliases)
+	if curAliasesLen == 0 {
+		return prevAliases
+	}
+
+	curAliasesMap := make(map[string]bool, curAliasesLen)
+	for _, alias := range curAliases {
+		curAliasesMap[alias] = true
+	}
+
+	removedAliases := make([]string, 0)
+	for _, alias := range prevAliases {
+		if !curAliasesMap[alias] {
+			removedAliases = append(removedAliases, alias)
+		}
+	}
+
+	return removedAliases
+}
+
+func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string, removedAliases []string) error {
 	if !pattern.IsCorporate {
 		return nil
 	}
@@ -343,9 +385,13 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 		}
 
-		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
-			"$set": set,
-		})
+		update := bson.M{"$set": set}
+
+		if len(removedAliases) > 0 {
+			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
+		}
+
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
 		if err != nil {
 			return err
 		}
@@ -353,32 +399,39 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 
 	switch pattern.Type {
 	case savedpattern.TypeEntity:
+		update := bson.M{}
+		if len(removedAliases) > 0 {
+			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
+		}
+
 		metaAlarmRulesCollection := mongo.MetaAlarmRulesMongoCollection
-		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
-			"$set": bson.M{
-				"total_entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
-				),
-				"corporate_total_entity_pattern_title": pattern.Title,
-				"updated":                              datetime.NewCpsTime(),
-				"author":                               author,
-			},
-		})
+		update["$set"] = bson.M{
+			"total_entity_pattern": pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
+			),
+			"corporate_total_entity_pattern_title": pattern.Title,
+			"updated":                              datetime.NewCpsTime(),
+			"author":                               author,
+		}
+
+		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, update)
 		if err != nil {
 			return err
 		}
 
 		scenarioCollection := mongo.ScenarioMongoCollection
+		update["$set"] = bson.M{
+			"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
+			),
+			"actions.$[action].corporate_entity_pattern_title": pattern.Title,
+			"updated": datetime.NewCpsTime(),
+			"author":  author,
+		}
+
 		_, err = s.client.Collection(scenarioCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_entity_pattern": pattern.ID},
-			bson.M{"$set": bson.M{
-				"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
-				),
-				"actions.$[action].corporate_entity_pattern_title": pattern.Title,
-				"updated": datetime.NewCpsTime(),
-				"author":  author,
-			}},
+			update,
 			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
 		)
 		if err != nil {
@@ -889,8 +942,6 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	switch request.Type {
 	case savedpattern.TypeAlarm:
 		model.AlarmPattern = request.AlarmPattern
-	case savedpattern.TypeEntity:
-		model.EntityPattern = request.EntityPattern
 	case savedpattern.TypePbehavior:
 		model.PbehaviorPattern = request.PbehaviorPattern
 	case savedpattern.TypeWeatherService:
@@ -898,4 +949,24 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	}
 
 	return model
+}
+
+func (s *store) transformEntityPatternToModel(
+	ctx context.Context,
+	r EditRequest,
+	model *savedpattern.SavedPattern,
+) error {
+	if r.Type == savedpattern.TypeEntity {
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: r.EntityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		model.Aliases = transformedEntityPatternRequest.Aliases
+		model.EntityPattern = transformedEntityPatternRequest.EntityPattern
+	}
+
+	return nil
 }

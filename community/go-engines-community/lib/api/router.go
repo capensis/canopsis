@@ -25,6 +25,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycategory"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitycomment"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfodictionary"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityinfosproperty"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/eventfilter"
@@ -200,7 +201,7 @@ func RegisterRoutes(
 		userPreferencesRouter := protected.Group("/user-preferences")
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
-			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(primaryDbClient, authorProvider), widget.NewStore(primaryDbClient, authorProvider, enforcer), enforcer)
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(primaryDbClient, authorProvider), widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), enforcer)
 			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
@@ -478,10 +479,9 @@ func RegisterRoutes(
 
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
-			eventfilter.NewStore(primaryDbClient, authorProvider),
+			eventfilter.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
-			common.NewPatternFieldsTransformer(primaryDbClient),
 		)
 		eventFilterRouter := protected.Group("/eventfilter/rules")
 		{
@@ -530,12 +530,12 @@ func RegisterRoutes(
 				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
 				timezoneConfigProvider,
 				authorProvider,
+				common.NewPatternFieldsTransformer(primaryDbClient),
 				websocketHub,
 				userInterfaceConfig,
 			),
 			dbexport.NewExporter(primaryDbClient),
 			pbhComputeChan,
-			common.NewPatternFieldsTransformer(primaryDbClient),
 			workers.NewJobPublisher(jobKeyPbhPatterns, workersRunner),
 			logger,
 		)
@@ -686,8 +686,8 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceAPI := entityservice.NewApi(entityservice.NewStore(primaryDbClient, linkGenerator, enableSameServiceNames, authorProvider, logger), entityPublChan,
-			metricsEntityMetaUpdater, common.NewPatternFieldsTransformer(primaryDbClient), logger)
+		entityserviceStore := entityservice.NewStore(primaryDbClient, linkGenerator, enableSameServiceNames, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger)
+		entityserviceAPI := entityservice.NewApi(entityserviceStore, entityPublChan, metricsEntityMetaUpdater, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
 			entityserviceRouter.POST(
@@ -916,7 +916,7 @@ func RegisterRoutes(
 		viewAPI := view.NewApi(
 			view.NewStore(
 				primaryDbClient,
-				viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer), authorProvider, enforcer),
+				viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), authorProvider, enforcer),
 				authorProvider,
 				enforcer,
 			),
@@ -989,7 +989,7 @@ func RegisterRoutes(
 			)
 		}
 
-		viewTabAPI := viewtab.NewApi(viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer), authorProvider, enforcer), enforcer)
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), authorProvider, enforcer), enforcer)
 		viewTabRouter := protected.Group("/view-tabs")
 		{
 			viewTabRouter.POST(
@@ -1056,9 +1056,8 @@ func RegisterRoutes(
 		}
 
 		widgetAPI := widget.NewApi(
-			widget.NewStore(primaryDbClient, authorProvider, enforcer),
+			widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)),
 			enforcer,
-			widget.NewRequestTransformer(common.NewPatternFieldsTransformer(primaryDbClient), primaryDbClient),
 		)
 		widgetRouter := protected.Group("/widgets")
 		{
@@ -1125,7 +1124,7 @@ func RegisterRoutes(
 			)
 		}
 
-		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(primaryDbClient, authorProvider), enforcer, widgetfilter.NewPatternFieldsTransformer(primaryDbClient))
+		widgetFilterAPI := widgetfilter.NewApi(widgetfilter.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)), enforcer)
 		widgetFilterRouter := protected.Group("/widget-filters")
 		{
 			widgetFilterRouter.GET(
@@ -1450,9 +1449,8 @@ func RegisterRoutes(
 		}
 
 		scenarioAPI := scenario.NewApi(
-			scenario.NewStore(primaryDbClient, authorProvider),
+			scenario.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
 			dbexport.NewExporter(primaryDbClient),
-			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
 		)
 		scenarioRouter := protected.Group("/scenarios")
@@ -1557,7 +1555,7 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(primaryDbClient, authorProvider), viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer), authorProvider, enforcer), enforcer)
+			playlistApi := playlist.NewApi(playlist.NewStore(primaryDbClient, authorProvider), viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), authorProvider, enforcer), enforcer)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionCreate, enforcer),
@@ -1592,7 +1590,8 @@ func RegisterRoutes(
 			)
 		}
 
-		idleRuleAPI := idlerule.NewApi(idlerule.NewStore(primaryDbClient, authorProvider), dbexport.NewExporter(primaryDbClient), common.NewPatternFieldsTransformer(primaryDbClient), logger)
+		idleRuleStore := idlerule.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient))
+		idleRuleAPI := idlerule.NewApi(idleRuleStore, dbexport.NewExporter(primaryDbClient), logger)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
 			idleRuleRouter.POST(
@@ -1628,7 +1627,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, logger),
+		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
 			userInterfaceConfig, enforcer, logger)
 		patternRouter := protected.Group("/patterns")
 		{
@@ -1668,9 +1667,8 @@ func RegisterRoutes(
 		)
 
 		linkRuleAPI := linkrule.NewApi(
-			linkrule.NewStore(primaryDbClient, authorProvider),
+			linkrule.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
 			dbexport.NewExporter(primaryDbClient),
-			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
 		)
 		linkRuleRouter := protected.Group("/link-rules")
@@ -1718,8 +1716,7 @@ func RegisterRoutes(
 		}
 
 		alarmTagAPI := alarmtag.NewApi(
-			alarmtag.NewStore(primaryDbClient, authorProvider),
-			common.NewPatternFieldsTransformer(primaryDbClient),
+			alarmtag.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
 			logger,
 		)
 		alarmTagRouter := protected.Group("/alarm-tags")
@@ -2332,8 +2329,7 @@ func RegisterRoutes(
 		resolveRuleRouter := protected.Group("/resolve-rules")
 		{
 			resolveRuleAPI := resolverule.NewApi(
-				resolverule.NewStore(primaryDbClient, authorProvider),
-				common.NewPatternFieldsTransformer(primaryDbClient),
+				resolverule.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
 			)
 			resolveRuleRouter.POST(
 				"",
@@ -2365,9 +2361,8 @@ func RegisterRoutes(
 		}
 
 		flappingRuleAPI := flappingrule.NewApi(
-			flappingrule.NewStore(primaryDbClient, authorProvider),
+			flappingrule.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
 			dbexport.NewExporter(primaryDbClient),
-			common.NewPatternFieldsTransformer(primaryDbClient),
 		)
 		flappingRuleRouter := protected.Group("/flapping-rules")
 		{
@@ -2486,5 +2481,37 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.PermMaintenance, model.PermissionCan, enforcer),
 			maintenanceApi.Maintenance,
 		)
+
+		entityInfosPropertyAPI := entityinfosproperty.NewApi(entityinfosproperty.NewStore(primaryDbClient, authorProvider))
+		entityInfosPropertyRouter := protected.Group("/entity-infos-properties")
+		{
+			entityInfosPropertyRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				entityInfosPropertyAPI.Create,
+			)
+			entityInfosPropertyRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionRead, enforcer),
+				entityInfosPropertyAPI.List,
+			)
+			entityInfosPropertyRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionRead, enforcer),
+				entityInfosPropertyAPI.Get,
+			)
+			entityInfosPropertyRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				entityInfosPropertyAPI.Update,
+			)
+			entityInfosPropertyRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionDelete, enforcer),
+				entityInfosPropertyAPI.Delete,
+			)
+		}
 	}
 }
