@@ -4,6 +4,17 @@
 
 Le moteur FIFO a pour objectif de garantir la chronologie des événements et d'appliquer les règles de transformations d'entités. Ce moteur est disponible en édition Community.
 
+Afin de garantir l’ordre strict de traitement des événements, **une seule instance du moteur FIFO** doit être active à un instant donné. 
+Pour faire respecter cette contrainte, un **mécanisme de verrouillage distribué** a été mis en place pour empêcher tout lancement simultané de plusieurs instances.
+
+Ce mécanisme, basé sur Redis, empêche le lancement simultané de plusieurs instances du moteur. 
+
+Lors du démarrage, le moteur tente d'acquérir un verrou exclusif dans Redis. Si ce verrou n’est pas obtenu après plusieurs tentatives, le moteur s'arrête automatiquement. Le verrou est maintenu pendant l’exécution et libéré à l’arrêt propre du moteur. 
+
+En cas d’arrêt forcé, le verrou expirera au bout de 2 minutes et 15 secondes, ou après la durée définie par `-periodicalWaitTime` + `15s` si cette dernière est plus longue. 
+
+Ce mécanisme garantit qu’une seule instance du moteur FIFO peut s’exécuter à un instant donné.
+
 Pour plus d'informations sur la fonctionnalité de transformation d'entités, consultez la [documentation sur les filtres d'événements](../../../../guide-utilisation/menu-exploitation/filtres-evenements/#type-change-entity).
 
 ## Options de démarrage
