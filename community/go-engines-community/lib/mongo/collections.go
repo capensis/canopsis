@@ -104,6 +104,8 @@ const (
 	ExternalDataTableCollection        = "external_data_table"
 	ExternalDataImportWorkerCollection = "external_data_import_worker"
 
+	EntityInfosPropertyCollection = "entity_infos_property"
+
 	UserNotificationSettingsCollection = "user_notification_settings"
 	UserNotificationCollection         = "user_notification"
 )

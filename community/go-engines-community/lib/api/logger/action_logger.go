@@ -66,6 +66,16 @@ func NewActionLogger(
 	retryCount int,
 	retryTimeout time.Duration,
 ) ActionLogger {
+	/*
+	   NOTE: Each collection listed below MUST have the MongoDB option
+	   `changeStreamPreAndPostImages` enabled.
+	   Without this flag, the `fullDocument` and `fullDocumentBeforeChange`
+	   fields will be nil for update and delete events, breaking the action logger.
+	   Enable it for an existing collection (e.g., in a database migration) with:
+	       db.runCommand({collMod: "collection_name", changeStreamPreAndPostImages: {enabled: true}})
+	   Or when creating a collection:
+	       db.createCollection("collection_name", {changeStreamPreAndPostImages: {enabled: true}})
+	*/
 	collectionValueTypeMap := map[string]string{
 		mongo.AlarmTagCollection:                ValueTypeAlarmTag,
 		mongo.ColorThemeCollection:              ValueTypeColorTheme,
@@ -105,6 +115,7 @@ func NewActionLogger(
 		mongo.InstructionMongoCollection:        ValueTypeInstruction,
 		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
 		mongo.ExternalDataTableCollection:       ValueTypeExternalData,
+		mongo.EntityInfosPropertyCollection:     ValueTypeEntityInfosProperty,
 
 		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
 	}

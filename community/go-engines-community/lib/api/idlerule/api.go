@@ -1,7 +1,6 @@
 package idlerule
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -23,20 +22,18 @@ type API interface {
 type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
-	transformer   common.PatternFieldsTransformer
 	logger        zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
-	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:         store,
-		mongoExporter: mongoExporter, transformer: transformer,
-		logger: logger,
+		mongoExporter: mongoExporter,
+		logger:        logger,
 	}
 }
 
@@ -90,20 +87,17 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request.EditRequest)
+	rule, err := a.store.Insert(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+
 		panic(err)
 	}
 
-	rule, err := a.store.Insert(c, request)
-	if err != nil {
-		panic(err)
-	}
 	if rule == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 		return
@@ -125,18 +119,14 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request.EditRequest)
+	rule, err := a.store.Update(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
-	}
 
-	rule, err := a.store.Update(c, request)
-	if err != nil {
 		panic(err)
 	}
 
@@ -166,11 +156,6 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		rule, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
@@ -184,11 +169,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		rule, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || rule == nil {
 			return "", err
@@ -229,18 +209,4 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.IdleRuleMongoCollection, b)
-}
-
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

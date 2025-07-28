@@ -88,7 +88,7 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with default prop
     class="flex xs12"
   >
     <div
-      class="v-alert v-sheet theme--dark info"
+      class="v-alert v-sheet theme--dark v-alert--light-background"
       role="alert"
     >
       <div
@@ -97,6 +97,7 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with default prop
         <i
           aria-hidden="true"
           class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          style="caret-color: var(--v-info-base);"
         >
           info
         </i>
@@ -125,7 +126,7 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with errors 1`] =
     class="flex xs12"
   >
     <div
-      class="v-alert v-sheet theme--dark info"
+      class="v-alert v-sheet theme--dark v-alert--light-background"
       role="alert"
     >
       <div
@@ -134,6 +135,7 @@ exports[`pattern-groups-field Renders \`pattern-groups-field\` with errors 1`] =
         <i
           aria-hidden="true"
           class="v-icon notranslate v-alert__icon material-icons theme--dark"
+          style="caret-color: var(--v-info-base);"
         >
           info
         </i>
