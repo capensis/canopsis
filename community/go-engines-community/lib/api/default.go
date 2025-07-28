@@ -310,7 +310,8 @@ func Default(
 	})
 	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
 		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
-		services.TimezoneConfigProvider, authorProvider, websocketHub, services.UserInterfaceConfigProvider)
+		services.TimezoneConfigProvider, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
+		websocketHub, services.UserInterfaceConfigProvider)
 	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
 		return apiPbhStore.ExecPatternsAndUpdate(ctx)
 	})
