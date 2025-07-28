@@ -62,6 +62,11 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 		for _, v := range p[idx] {
 			f := v.Field
 
+			// if an alias is present, then fill the field with some valid value to validate condition
+			if v.Alias != "" {
+				f = "infos.validate"
+			}
+
 			if pattern.IsForbiddenEntityField(v, forbiddenFieldsMap) {
 				return false
 			}

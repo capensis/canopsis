@@ -1,7 +1,6 @@
 package alarmtag
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -20,20 +19,17 @@ type API interface {
 }
 
 type api struct {
-	store       Store
-	transformer common.PatternFieldsTransformer
-	logger      zerolog.Logger
+	store  Store
+	logger zerolog.Logger
 }
 
 func NewApi(
 	store Store,
-	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:       store,
-		transformer: transformer,
-		logger:      logger,
+		store:  store,
+		logger: logger,
 	}
 }
 
@@ -112,16 +108,6 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformCreateRequest(c, &request)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
-	}
-
 	response, err := a.store.Create(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -146,16 +132,6 @@ func (a *api) Update(c *gin.Context) {
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
-	}
-
-	err := a.transformUpdateRequest(c, &request)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
 	}
 
 	response, err := a.store.Update(c, request)
@@ -216,32 +192,4 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 		return request.ID, nil
 	}, a.logger)
-}
-
-func (a *api) transformCreateRequest(ctx context.Context, request *CreateRequest) error {
-	var err error
-	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (a *api) transformUpdateRequest(ctx context.Context, request *UpdateRequest) error {
-	var err error
-	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
