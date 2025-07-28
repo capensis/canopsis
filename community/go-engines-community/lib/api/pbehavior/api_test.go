@@ -35,15 +35,15 @@ func init() {
 }
 
 func BenchmarkBulkConnectorEdit_Given100CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 100)
 }
 
 func BenchmarkBulkConnectorEdit_Given500CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 500)
 }
 
 func BenchmarkBulkConnectorEdit_Given1000CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 1000)
 }
 
 func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
@@ -88,8 +88,8 @@ func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
 		}
 	}()
 	authorProvider := author.NewProvider(&config.BaseApiConfigProvider{})
-	store := pbehavior.NewStore(dbClient, nil, nil, nil, authorProvider)
-	api := pbehavior.NewApi(store, nil, ch, nil, zerolog.Nop())
+	store := pbehavior.NewStore(dbClient, nil, nil, nil, authorProvider, nil)
+	api := pbehavior.NewApi(store, nil, ch, zerolog.Nop())
 	reqBodies := make([]io.ReadCloser, b.N)
 	now := time.Now().Unix()
 	tomorrow := time.Now().AddDate(0, 0, 1).Unix()
