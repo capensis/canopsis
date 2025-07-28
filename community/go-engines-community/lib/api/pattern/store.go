@@ -69,7 +69,7 @@ func NewStore(
 	return &store{
 		client:                        dbClient,
 		collection:                    dbClient.Collection(mongo.PatternMongoCollection),
-		readClient:                    readClient,
+		readClient:                    readDbClient,
 		entityInfosPropertyCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
 		authorProvider:                authorProvider,
 		defaultSearchByFields:         []string{"_id", "author.name", "title"},

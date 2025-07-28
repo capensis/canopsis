@@ -147,6 +147,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	doc.Comments = make([]pbehavior.Comment, 0)
 	doc.RRuleEnd = rruleEnd
 	if r.ExecPattern {
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return nil, err
+		}
+
 		_, doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
 		if err != nil {
 			return nil, err
@@ -394,6 +399,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 	}
 
 	if r.ExecPattern {
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return nil, false, err
+		}
+
 		_, doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
 		if err != nil {
 			return nil, false, err
