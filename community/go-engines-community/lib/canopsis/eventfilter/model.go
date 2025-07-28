@@ -87,6 +87,9 @@ type Rule struct {
 
 	// ResolvedExdates shows exdates if their interval intersects with [now(); now() + 2 che periodical processes] interval
 	ResolvedExdates []types.Exdate `json:"-" bson:"resolved_exdates"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type RuleConfig struct {

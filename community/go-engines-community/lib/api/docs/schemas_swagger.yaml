@@ -1809,6 +1809,8 @@ definitions:
         type: string
       separator:
         type: string
+      time_format:
+        type: string
       type:
         items:
           type: string
@@ -2110,8 +2112,93 @@ definitions:
     type: object
   entityinfodictionary.Result:
     properties:
+      type:
+        type: integer
       value:
         type: string
+    type: object
+  entityinfosproperty.CreateRequest:
+    properties:
+      _id:
+        type: string
+      alias:
+        maxLength: 255
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      name:
+        type: string
+      type:
+        description: |-
+          Possible type values.
+            * `0` - type boolean
+            * `1` - type number
+            * `2` - type timestamp
+            * `3` - type string
+            * `4` - type string_array
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        type: integer
+    required:
+    - name
+    - type
+    type: object
+  entityinfosproperty.Response:
+    properties:
+      _id:
+        type: string
+      alias:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      created:
+        type: integer
+      description:
+        type: string
+      name:
+        type: string
+      type:
+        description: |-
+          Possible type values.
+            * `0` - type boolean
+            * `1` - type number
+            * `2` - type timestamp
+            * `3` - type string
+            * `4` - type string_array
+        type: integer
+      updated:
+        type: integer
+    type: object
+  entityinfosproperty.UpdateRequest:
+    properties:
+      alias:
+        maxLength: 255
+        type: string
+      description:
+        maxLength: 255
+        type: string
+      type:
+        description: |-
+          Possible type values.
+            * `0` - type boolean
+            * `1` - type number
+            * `2` - type timestamp
+            * `3` - type string
+            * `4` - type string_array
+        enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        type: integer
+    required:
+    - type
     type: object
   entityservice.BulkDeleteRequestItem:
     properties:
@@ -2888,6 +2975,7 @@ definitions:
             * `declare_ticket_rule` - export declare_ticket_rule collection
             * `link_rule` - export link_rule collection
             * `map` - export map collection
+            * `entity_infos_property` - export entity_infos_property collection
         items:
           type: string
         type: array
@@ -3947,6 +4035,9 @@ definitions:
     type: object
   pattern.FieldCondition:
     properties:
+      alias:
+        description: Alias can only be defined for entity infos.
+        type: string
       cond:
         $ref: '#/definitions/pattern.Condition'
       field:
@@ -4909,7 +5000,6 @@ definitions:
     required:
     - duration
     - name
-    - priority
     type: object
   resolverule.Response:
     properties:
@@ -4982,7 +5072,6 @@ definitions:
     required:
     - duration
     - name
-    - priority
     type: object
   role.BulkUpdatePermissionsRequestItem:
     properties:
