@@ -120,7 +120,7 @@ exports[`c-date-picker-field Renders \`c-date-picker-field\` with custom props 2
                 name="tab-transition"
               >
                 <div
-                  style="color: rgb(43, 62, 79); caret-color: #2b3e4f;"
+                  style="color: rgb(43, 62, 79); caret-color: #2B3E4F;"
                 >
                   <button
                     type="button"

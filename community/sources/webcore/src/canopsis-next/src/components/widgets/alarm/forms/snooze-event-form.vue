@@ -9,6 +9,7 @@
       v-field="form.comment"
       :label="$t('common.note')"
       :required="isNoteRequired"
+      :max-length="255"
       name="comment"
     />
   </v-layout>

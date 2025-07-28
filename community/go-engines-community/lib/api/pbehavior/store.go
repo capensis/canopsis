@@ -84,6 +84,8 @@ type store struct {
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
 
+	transformer common.PatternFieldsTransformer
+
 	dupErrorRegexp *regexp.Regexp
 
 	workers int
@@ -97,6 +99,7 @@ func NewStore(
 	pbhTypeComputer pbehavior.TypeComputer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 	websocketHub websocket.Hub,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 ) Store {
@@ -110,6 +113,7 @@ func NewStore(
 		pbhTypeComputer:               pbhTypeComputer,
 		timezoneConfigProvider:        timezoneConfigProvider,
 		authorProvider:                authorProvider,
+		transformer:                   transformer,
 		websocketHub:                  websocketHub,
 		userInterfaceConfigProvider:   userInterfaceConfigProvider,
 		defaultSortBy:                 "created",
@@ -154,6 +158,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	var pbh *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return err
+		}
 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
@@ -393,7 +402,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		doc.PatternExecAt = &now
 	}
 
-	update := bson.M{"$set": doc}
+	update := make(bson.M)
 	if len(unset) > 0 {
 		update["$unset"] = unset
 	}
@@ -427,6 +436,13 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 				return valErr
 			}
 		}
+
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return err
+		}
+
+		update["$set"] = doc
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
@@ -503,26 +519,13 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 	if r.Color != nil {
 		set["color"] = *r.Color
 	}
-	if r.CorporatePattern != nil {
-		set["entity_pattern"] = r.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
-		set["corporate_entity_pattern"] = r.CorporatePattern.ID
-		set["corporate_entity_pattern_title"] = r.CorporatePattern.Title
-	} else if r.EntityPattern != nil {
-		set["entity_pattern"] = r.EntityPattern
-		unset["corporate_entity_pattern"] = ""
-		unset["corporate_entity_pattern_title"] = ""
-	}
+
 	if r.Inherited != nil {
 		set["inherited"] = *r.Inherited
 	}
 
 	if rruleUpdated {
 		unset["rrule_cstart"] = ""
-	}
-
-	update := bson.M{"$set": set}
-	if len(unset) > 0 {
-		update["$unset"] = unset
 	}
 
 	var pbh *Response
@@ -561,6 +564,34 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 					return valErr
 				}
 			}
+		}
+
+		corpPattern := ""
+		if r.CorporateEntityPattern != nil {
+			corpPattern = *r.CorporateEntityPattern
+		}
+
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			CorporateEntityPattern: corpPattern,
+			EntityPattern:          r.EntityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		if r.CorporateEntityPattern != nil {
+			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
+			set["corporate_entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.ID
+			set["corporate_entity_pattern_title"] = transformedEntityPatternRequest.CorporatePattern.Title
+		} else if r.EntityPattern != nil {
+			set["entity_pattern"] = transformedEntityPatternRequest.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
+			unset["corporate_entity_pattern"] = ""
+			unset["corporate_entity_pattern_title"] = ""
+		}
+
+		update := bson.M{"$set": set}
+		if len(unset) > 0 {
+			update["$unset"] = unset
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -1208,8 +1239,6 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Exceptions: r.Exceptions,
 		Color:      r.Color,
 		Inherited:  r.Inherited,
-
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),
 	}
 }
 
@@ -1387,4 +1416,18 @@ func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 
 		return response[i].Title < response[j].Title
 	}
+}
+
+func (s *store) transformPatternRequestToModel(ctx context.Context, r common.EntityPatternFieldsRequest, model *pbehavior.PBehavior) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+	if err != nil {
+		return err
+	}
+
+	model.Aliases = transformedEntityPatternRequest.Aliases
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection),
+	)
+
+	return nil
 }
