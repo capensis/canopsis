@@ -1298,6 +1298,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.Condition).UnmarshalJSON(data))
 			}
+		case "alias":
+			out.Alias = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -1326,6 +1328,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"cond\":"
 		out.RawString(prefix)
 		easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern1(out, in.Condition)
+	}
+	if in.Alias != "" {
+		const prefix string = ",\"alias\":"
+		out.RawString(prefix)
+		out.String(string(in.Alias))
 	}
 	out.RawByte('}')
 }
