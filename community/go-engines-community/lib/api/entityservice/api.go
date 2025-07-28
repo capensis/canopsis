@@ -1,7 +1,6 @@
 package entityservice
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -31,7 +30,6 @@ type API interface {
 type api struct {
 	store             Store
 	metricMetaUpdater metrics.MetaUpdater
-	transformer       common.PatternFieldsTransformer
 	logger            zerolog.Logger
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
@@ -41,14 +39,12 @@ func NewApi(
 	store Store,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
-	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:                 store,
 		serviceChangeListener: serviceChangeListener,
 		metricMetaUpdater:     metricMetaUpdater,
-		transformer:           transformer,
 		logger:                logger,
 	}
 }
@@ -140,17 +136,6 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request.EditRequest)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
-		panic(err)
-	}
-
 	service, err := a.store.Create(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -185,17 +170,6 @@ func (a *api) Update(c *gin.Context) {
 	if err := c.ShouldBind(&request); err != nil {
 		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
-	}
-
-	err := a.transformEditRequest(c, &request.EditRequest)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
-		panic(err)
 	}
 
 	service, serviceChanges, err := a.store.Update(c, request)
@@ -256,11 +230,6 @@ func (a *api) Delete(c *gin.Context) {
 func (a *api) BulkCreate(c *gin.Context) {
 	serviceIDs := make([]string, 0)
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		service, err := a.store.Create(c, request)
 		if err != nil {
 			return "", err
@@ -286,11 +255,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 func (a *api) BulkUpdate(c *gin.Context) {
 	serviceIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		service, serviceChanges, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || service == nil {
 			return "", err
@@ -346,14 +310,4 @@ func (a *api) sendChangeMsg(msg entityservice.ChangeEntityMessage) {
 			Str("service_id", msg.ID).
 			Msg("fail to send change message")
 	}
-}
-
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
