@@ -151,13 +151,6 @@ export default {
   },
 
   /**
-   * Notifications
-   */
-  [USER_PERMISSIONS.technical.notification.common]: {
-    title: 'Notifications',
-  },
-
-  /**
    * Profile
    */
   [USER_PERMISSIONS.technical.profile.theme]: {

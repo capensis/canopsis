@@ -278,11 +278,6 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'Données externes',
 
     /**
-     * Technical Admin Notification
-     */
-    [USER_PERMISSIONS.technical.notification.common]: 'Notification',
-
-    /**
      * Technical Admin Views and widgets
      */
     [USER_PERMISSIONS.technical.privateView]: 'Vues privées',

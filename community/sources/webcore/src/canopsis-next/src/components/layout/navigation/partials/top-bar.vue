@@ -33,7 +33,7 @@
     <v-toolbar-items v-if="!$route.meta.simpleNavigation">
       <top-bar-exploitation-menu />
       <top-bar-administration-menu />
-      <top-bar-notifications-menu v-if="hasAccessToNotifications" />
+      <top-bar-notifications-menu />
       <top-bar-user-menu />
     </v-toolbar-items>
     <template
@@ -86,13 +86,11 @@ export default {
     const { isProVersion, appTitle } = useInfo();
 
     const { hasAccess: hasAccessToHealthcheckStatus } = useCanPermission(USER_PERMISSIONS.technical.healthcheckStatus);
-    const { hasAccess: hasAccessToNotifications } = useCanPermission(USER_PERMISSIONS.technical.notification.common);
 
     return {
       isProVersion,
       appTitle,
       hasAccessToHealthcheckStatus,
-      hasAccessToNotifications,
       isShownGroupsSideBar,
       isShownGroupsTopBar,
     };

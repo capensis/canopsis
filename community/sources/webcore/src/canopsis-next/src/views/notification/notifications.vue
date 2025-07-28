@@ -4,6 +4,7 @@
     <v-card class="ma-6">
       <v-card-text>
         <v-tabs
+          v-if="!tabs.length"
           :value="$route.path"
           slider-color="primary"
           centered
@@ -46,12 +47,13 @@ import { computed, onBeforeMount, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router/composables';
 
 import { SOCKET_ROOMS } from '@/config';
-import { NOTIFICATIONS_PAGE_TABS_KEYS, QUICK_RANGES } from '@/constants';
+import { NOTIFICATIONS_PAGE_TABS_KEYS, QUICK_RANGES, USER_PERMISSIONS } from '@/constants';
 
 import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
 
 import { useI18n } from '@/hooks/i18n';
 import { useSocketRoom } from '@/hooks/socket';
+import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
@@ -81,6 +83,24 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const { t } = useI18n();
+
+    const {
+      hasReadAccess: hasReadRemediationInstructionAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstruction);
+
+    const {
+      hasReadAccess: hasReadRemediationInstructionStatsAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationinstructionStats);
+
+    const {
+      hasReadAccess: hasReadEventFilterAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.eventFilter);
+
+    const hasReadAccess = computed(() => (
+      hasReadRemediationInstructionAccess.value
+      || hasReadRemediationInstructionStatsAccess.value
+      || hasReadEventFilterAccess.value
+    ));
 
     /**
      * Generates a tab href by key-value pair for routing
@@ -179,67 +199,80 @@ export default {
      *
      * @returns {Array} Array of tab objects with their configuration
      */
-    const tabs = computed(() => [
-      {
-        key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove,
-        label: t('notifications.tabs.instructionsToApprove'),
-        to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove),
-        pending: instructionsToApprovePending.value,
-        count: instructionsToApproveMeta.value.total_count,
-        component: InstructionsToApproveTab,
-        componentProps: {
-          items: instructionsToApprove.value,
+    const tabs = computed(() => {
+      const result = [];
+
+      if (hasReadRemediationInstructionAccess.value) {
+        result.push({
+          key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove,
+          label: t('notifications.tabs.instructionsToApprove'),
+          to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove),
           pending: instructionsToApprovePending.value,
-          meta: instructionsToApproveMeta.value,
-          options: instructionsToApproveOptions.value,
-          activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove),
-        },
-        componentOn: {
-          refresh: fetchInstructionsToApproveList,
-          'update:options': instructionsToApproveUpdateOptions,
-        },
-      },
-      {
-        key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate,
-        label: t('notifications.tabs.instructionsToRate'),
-        to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate),
-        pending: instructionsToRatePending.value,
-        count: instructionsToRateMeta.value.total_count,
-        component: InstructionsToRateTab,
-        componentProps: {
-          items: instructionsToRate.value,
+          count: instructionsToApproveMeta.value.total_count,
+          component: InstructionsToApproveTab,
+          componentProps: {
+            items: instructionsToApprove.value,
+            pending: instructionsToApprovePending.value,
+            meta: instructionsToApproveMeta.value,
+            options: instructionsToApproveOptions.value,
+            activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove),
+          },
+          componentOn: {
+            refresh: fetchInstructionsToApproveList,
+            'update:options': instructionsToApproveUpdateOptions,
+          },
+        });
+      }
+
+      if (hasReadRemediationInstructionStatsAccess.value) {
+        result.push({
+          key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate,
+          label: t('notifications.tabs.instructionsToRate'),
+          to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate),
           pending: instructionsToRatePending.value,
-          meta: instructionsToRateMeta.value,
-          options: instructionsToRateOptions.value,
-          interval: instructionsRateQueryInterval.value,
-          accumulatedBefore: instructionsToRateMeta.value.accumulated_before,
-          activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate),
-        },
-        componentOn: {
-          refresh: fetchInstructionsToRateList,
-          'update:options': instructionsToRateUpdateOptions,
-        },
-      },
-      {
-        key: NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures,
-        label: t('notifications.tabs.eventFilterFailures'),
-        to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures),
-        pending: eventFilterFailuresPending.value,
-        count: eventFilterFailuresMeta.value.total_count,
-        component: EventFilterFailuresTab,
-        componentProps: {
-          items: eventFilterFailures.value,
+          count: instructionsToRateMeta.value.total_count,
+          component: InstructionsToRateTab,
+          componentProps: {
+            items: instructionsToRate.value,
+            pending: instructionsToRatePending.value,
+            meta: instructionsToRateMeta.value,
+            options: instructionsToRateOptions.value,
+            interval: instructionsRateQueryInterval.value,
+            accumulatedBefore: instructionsToRateMeta.value.accumulated_before,
+            activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate),
+          },
+          componentOn: {
+            refresh: fetchInstructionsToRateList,
+            'update:options': instructionsToRateUpdateOptions,
+          },
+        });
+      }
+
+      if (hasReadEventFilterAccess.value) {
+        result.push({
+          key: NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures,
+          label: t('notifications.tabs.eventFilterFailures'),
+          to: getTabHrefByKeyValue('tabId', NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures),
           pending: eventFilterFailuresPending.value,
-          meta: eventFilterFailuresMeta.value,
-          options: eventFilterFailuresOptions.value,
-          activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures),
-        },
-        componentOn: {
-          refresh: fetchEventFilterFailuresList,
-          'update:options': eventFilterFailuresUpdateOptions,
-        },
-      },
-    ].map(tab => ({ ...tab, active: tab.key === props.tabId })));
+          count: eventFilterFailuresMeta.value.total_count,
+          hasAccess: hasReadEventFilterAccess.value,
+          component: EventFilterFailuresTab,
+          componentProps: {
+            items: eventFilterFailures.value,
+            pending: eventFilterFailuresPending.value,
+            meta: eventFilterFailuresMeta.value,
+            options: eventFilterFailuresOptions.value,
+            activeId: getActiveIdByTabId(NOTIFICATIONS_PAGE_TABS_KEYS.eventFilterFailures),
+          },
+          componentOn: {
+            refresh: fetchEventFilterFailuresList,
+            'update:options': eventFilterFailuresUpdateOptions,
+          },
+        });
+      }
+
+      return result.map(tab => ({ ...tab, active: tab.key === props.tabId }));
+    });
 
     /**
      * Fetches all notification lists (event filter failures, instructions to approve, and instructions to rate)
@@ -262,6 +295,11 @@ export default {
 
     return {
       tabs,
+
+      hasReadAccess,
+      hasReadRemediationInstructionAccess,
+      hasReadRemediationInstructionStatsAccess,
+      hasReadEventFilterAccess,
 
       instructionsToApprove,
       instructionsToApproveMeta,
