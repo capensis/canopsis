@@ -292,7 +292,7 @@ func (a *api) DBExport(c *gin.Context) {
 
 // ValidateTemplates
 // @Param body body TemplateRequest true "body"
-// @Success 200 {array} template.Response
+// @Success 200 {object} template.ValidateResponse
 func (a *api) ValidateTemplates(c *gin.Context) {
 	var request TemplateRequest
 	if err := c.ShouldBind(&request); err != nil {

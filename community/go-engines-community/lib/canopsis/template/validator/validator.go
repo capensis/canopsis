@@ -24,7 +24,7 @@ type RegexpInfo struct {
 }
 
 type Validator interface {
-	Validate(s string, data any) (bool, *ErrReport, error)
+	Validate(s string, data any) (bool, *ErrReport, string, error)
 }
 
 type validator struct {
@@ -102,22 +102,22 @@ type ErrReport struct {
 	Message string `json:"message"`
 }
 
-func (v *validator) Validate(s string, data any) (bool, *ErrReport, error) {
+func (v *validator) Validate(s string, data any) (bool, *ErrReport, string, error) {
 	p := v.templateExecutor.Parse(s)
 	if tplErr := p.Err; tplErr != nil {
 		report, err := v.getReport(tplErr)
 
-		return false, report, err
+		return false, report, "", err
 	}
 
-	_, tplErr := v.templateExecutor.ExecuteByTpl(p.Tpl, data)
+	res, tplErr := v.templateExecutor.ExecuteByTpl(p.Tpl, data)
 	if tplErr != nil {
 		report, err := v.getReport(tplErr)
 
-		return false, report, err
+		return false, report, "", err
 	}
 
-	return true, nil, nil
+	return true, nil, res, nil
 }
 
 func (v *validator) getReport(tplErr error) (*ErrReport, error) {
