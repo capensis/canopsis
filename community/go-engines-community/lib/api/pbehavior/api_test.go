@@ -35,15 +35,15 @@ func init() {
 }
 
 func BenchmarkBulkConnectorEdit_Given100CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 100)
 }
 
 func BenchmarkBulkConnectorEdit_Given500CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 500)
 }
 
 func BenchmarkBulkConnectorEdit_Given1000CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 1000)
 }
 
 func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {

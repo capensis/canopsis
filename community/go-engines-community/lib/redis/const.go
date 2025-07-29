@@ -24,6 +24,7 @@ const (
 	AxeSliMetricsPeriodicalLockKey            = "axe-sli-metrics-periodical-lock-key"
 	AxeSoftDeleteCorrelationPeriodicalLockKey = "axe-soft-delete-correlation-periodical-lock-key"
 
+	FifoEngineLockKey      = "fifo-engine-lock-key"
 	FifoDataStorageLockKey = "fifo-datastorage-lock-key"
 
 	ChePeriodicalLockKey                      = "che-periodical-lock-key"
