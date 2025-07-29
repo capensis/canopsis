@@ -1,9 +1,9 @@
 <template>
   <v-layout column>
     <c-entity-info-property-key-field
-      v-field="form.infos_key"
+      v-field="form.name"
       :label="$t('entityInfoProperties.infosKey')"
-      name="infos_key"
+      name="name"
       required
     />
     <c-description-field
@@ -32,9 +32,9 @@
 <script>
 import { computed } from 'vue';
 
-import { useI18n } from '@/hooks/i18n';
+import { ENTITY_INFO_PROPERTY_TYPES, ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS } from '@/constants';
 
-import { ENTITY_INFO_PROPERTY_TYPES, ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS } from '@/constants/entity-info-properties';
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   inject: ['$validator'],

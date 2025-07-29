@@ -15,15 +15,7 @@
         :hide-details="row"
         item-text="value"
         item-value="value"
-      >
-        <template #no-data="">
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title>{{ $t('common.pressEnterToApply') }}</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </template>
-      </v-combobox>
+      />
       <v-text-field
         v-else
         v-field="value.dictionary"

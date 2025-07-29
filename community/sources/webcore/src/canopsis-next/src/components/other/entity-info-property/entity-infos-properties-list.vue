@@ -18,6 +18,9 @@
         @click="$emit('remove-selected', selected)"
       />
     </template>
+    <template #type="{ item }">
+      <span>{{ $t(ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS[item.type]) }}</span>
+    </template>
     <template #actions="{ item }">
       <v-layout>
         <c-action-btn
@@ -42,6 +45,8 @@
 
 <script>
 import { computed } from 'vue';
+
+import { ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -82,7 +87,7 @@ export default {
     const headers = computed(() => [
       {
         text: t('entityInfoProperties.infosKey'),
-        value: 'infos_key',
+        value: 'name',
       },
       {
         text: t('common.description'),
@@ -104,6 +109,8 @@ export default {
     ]);
 
     return {
+      ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS,
+
       headers,
     };
   },

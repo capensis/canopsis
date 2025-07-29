@@ -6,76 +6,86 @@
     @input="updateMenuOpened"
   >
     <template #activator="{ on }">
-      <span v-if="multiple">
-        <v-chip
-          :close="closable && !disabled"
-          :color="color"
-          class="c-alarm-advanced-search__chip c-alarm-advanced-search__array-chip"
-          v-on="multipleChipListeners"
-        >
-          <v-progress-circular
-            v-if="valuesPending"
-            color="primary"
-            size="16"
-            width="2"
-            indeterminate
-          />
-          <v-chip
-            v-for="(item, index) in selectedItems"
-            :key="item[itemValue]"
-            :close="!disabled"
-            @click:close="closeChildChip(index)"
-          >
-            {{ item[itemText] ?? item[itemValue] }}
-          </v-chip>
-          <span v-if="!disabled">
-            <input
-              v-model="inputValue"
-              ref="inputElement"
-              :type="inputType"
-              class="ml-1"
-              autocomplete="off"
-              @keydown="keydownInput"
-              @focus="focusInput"
-              @input="updateInputValue"
-            >
+      <c-simple-tooltip :content="tooltip" :disabled="!tooltip" top>
+        <template #activator="{ on: tooltipOn }">
+          <span v-on="tooltipOn">
+            <span v-if="multiple">
+              <v-chip
+                :close="closable && !disabled"
+                :color="color"
+                class="c-alarm-advanced-search__chip c-alarm-advanced-search__array-chip"
+                v-on="multipleChipListeners"
+              >
+                <v-progress-circular
+                  v-if="valuesPending"
+                  color="primary"
+                  size="16"
+                  width="2"
+                  indeterminate
+                />
+                <v-chip
+                  v-for="(item, index) in selectedItems"
+                  :key="item[itemValue]"
+                  :close="!disabled"
+                  @click:close="closeChildChip(index)"
+                >
+                  {{ item[itemText] ?? item[itemValue] }}
+                </v-chip>
+                <span v-if="!disabled">
+                  <input
+                    v-model="inputValue"
+                    ref="inputElement"
+                    :type="inputType"
+                    class="ml-1"
+                    autocomplete="off"
+                    @keydown="keydownInput"
+                    @focus="focusInput"
+                    @input="updateInputValue"
+                  >
+                </span>
+              </v-chip>
+            </span>
+            <span v-else>
+              <input
+                v-show="active || alwaysActive"
+                ref="inputElement"
+                :value="inputValue"
+                :placeholder="inputPlaceholder"
+                :type="inputType"
+                class="ml-1"
+                autocomplete="off"
+                v-on="on"
+                @keydown="keydownInput"
+                @mouseup="focusInput"
+                @input="updateInputValue"
+              >
+              <v-chip
+                v-if="!active && !alwaysActive"
+                :color="color"
+                :close="closable && !disabled"
+                class="c-alarm-advanced-search__chip"
+                v-on="chipListeners"
+              >
+                <v-progress-circular
+                  v-if="valuesPending"
+                  color="primary"
+                  size="16"
+                  width="2"
+                  indeterminate
+                />
+                <span v-else>
+                  <c-simple-tooltip v-if="icon" :content="icon.tooltip" top>
+                    <template #activator="{ on: tooltipOn }">
+                      <v-icon class="mr-2" small v-on="tooltipOn">{{ icon.icon }}</v-icon>
+                    </template>
+                  </c-simple-tooltip>
+                  {{ chipText }}
+                </span>
+              </v-chip>
+            </span>
           </span>
-        </v-chip>
-      </span>
-      <span v-else>
-        <input
-          v-show="active || alwaysActive"
-          ref="inputElement"
-          :value="inputValue"
-          :placeholder="inputPlaceholder"
-          :type="inputType"
-          class="ml-1"
-          autocomplete="off"
-          v-on="on"
-          @keydown="keydownInput"
-          @mouseup="focusInput"
-          @input="updateInputValue"
-        >
-        <v-chip
-          v-if="!active && !alwaysActive"
-          :color="color"
-          :close="closable && !disabled"
-          class="c-alarm-advanced-search__chip"
-          v-on="chipListeners"
-        >
-          <v-progress-circular
-            v-if="valuesPending"
-            color="primary"
-            size="16"
-            width="2"
-            indeterminate
-          />
-          <span v-else>
-            <v-icon v-if="first && hasNoDataFlagInSelectedItems" class="mr-2" small>text_fields</v-icon>
-            {{ chipText }}
-          </span>
-        </v-chip>
-      </span>
+        </template>
+      </c-simple-tooltip>
     </template>
     <variables-list
       :value="selectedItems"
@@ -193,6 +203,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    tooltip: {
+      type: String,
+      default: '',
+    },
   },
   setup(props, { emit }) {
     const registerLastInputFocus = inject('$registerLastInputFocus', () => {});
@@ -247,6 +261,8 @@ export default {
       multiple: props.multiple,
     }, emit);
 
+    const itemWithAlias = computed(() => selectedItems.value.find(({ alias } = {}) => alias));
+
     const menuProps = computed(() => ({
       openOnClick: false,
       disableKeys: true,
@@ -281,6 +297,24 @@ export default {
       .join(','));
 
     const hasNoDataFlagInSelectedItems = computed(() => selectedItems.value.some(({ noData }) => noData));
+
+    const icon = computed(() => {
+      if (itemWithAlias.value) {
+        return {
+          icon: 'alternate_email',
+          tooltip: `infos.${itemWithAlias.value?.original?.name}`,
+        };
+      }
+
+      if (props.first && hasNoDataFlagInSelectedItems.value) {
+        return {
+          icon: 'text_fields',
+          tooltip: t('advancedSearch.searchByText'),
+        };
+      }
+
+      return null;
+    });
 
     /**
      * Updates the input value and triggers a search update with the new value.
@@ -508,6 +542,7 @@ export default {
       chipListeners,
       multipleChipListeners,
       hasNoDataFlagInSelectedItems,
+      icon,
 
       selectItem,
       keydownInput,

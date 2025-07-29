@@ -103,9 +103,14 @@ export const getInitialFormItemType = (item, union = false) => {
  * @param {string} [params.operator] - The operator of the rule item.
  * @param {string} [params.text] - The text of the rule item.
  * @param {AdvancedSearchChipType | null} [type = null] - The current chip type.
+ * @param {Object} [currentAttribute = {}] - The current attribute.
  * @returns {AdvancedSearchChipType | null} - The next chip type, or null if there is no next type.
  */
-export const getNextForFormItemType = ({ attribute, fieldType, range, operator, text } = {}, type = null) => {
+export const getNextForFormItemType = (
+  { attribute, fieldType, range, operator, text } = {},
+  type = null,
+  currentAttribute = {},
+) => {
   if (text || [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union, ALARM_ADVANCED_SEARCH_CHIP_TYPES.text].includes(type)) {
     return null;
   }
@@ -120,7 +125,7 @@ export const getNextForFormItemType = ({ attribute, fieldType, range, operator, 
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.range;
       }
 
-      if (isValueInfosPatternRuleField(attribute)) {
+      if (isValueInfosPatternRuleField(attribute) || currentAttribute.alias) {
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType;
       }
 
@@ -133,6 +138,10 @@ export const getNextForFormItemType = ({ attribute, fieldType, range, operator, 
     case ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType:
       if (fieldType === PATTERN_FIELD_TYPES.boolean) {
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.value;
+      }
+
+      if (fieldType === PATTERN_FIELD_TYPES.timestamp) {
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.range;
       }
 
       return ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator;

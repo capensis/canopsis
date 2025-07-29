@@ -332,6 +332,7 @@ export default {
       [PATTERN_FIELD_TYPES.boolean]: '@:common.variableTypes.boolean',
       [PATTERN_FIELD_TYPES.null]: '@:common.variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:common.variableTypes.array',
+      [PATTERN_FIELD_TYPES.timestamp]: '@:common.variableTypes.timestamp',
     },
   },
   saveChanges: 'Sauvegarder',
