@@ -57,8 +57,9 @@ type BaseFilterRequest struct {
 
 type ExportRequest struct {
 	BaseFilterRequest
-	Fields    export.Fields `json:"fields"`
-	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+	Fields     export.Fields `json:"fields"`
+	Separator  string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
+	TimeFormat string        `json:"time_format" binding:"time_format"`
 }
 
 type ArchiveDisabledRequest struct {

@@ -22,6 +22,9 @@ type Scenario struct {
 	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
 	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
 	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 func (s Scenario) IsTriggered(triggers []string) string {

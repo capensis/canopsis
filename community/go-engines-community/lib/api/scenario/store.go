@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -41,7 +42,7 @@ type store struct {
 	collection            mongo.DbCollection
 	alarmCollection       mongo.DbCollection
 	tplDataCollection     mongo.DbCollection
-	transformer           ModelTransformer
+	transformer           common.PatternFieldsTransformer
 	authorProvider        author.Provider
 	tplValidator          validator.Validator
 	tplExecutor           libtemplate.Executor
@@ -58,6 +59,7 @@ type store struct {
 func NewStore(
 	db mongo.DbClient,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 	tplValidator validator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
@@ -96,7 +98,7 @@ func NewStore(
 		collection:            db.Collection(mongo.ScenarioMongoCollection),
 		alarmCollection:       db.Collection(mongo.AlarmMongoCollection),
 		tplDataCollection:     db.Collection(mongo.TemplateDataCollection),
-		transformer:           NewModelTransformer(),
+		transformer:           transformer,
 		authorProvider:        authorProvider,
 		tplValidator:          tplValidator,
 		tplExecutor:           tplExecutor,
@@ -168,20 +170,27 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Scenario, error) {
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) {
 	now := datetime.NewCpsTime()
-	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
 
 	if r.ID == "" {
 		r.ID = utils.NewID()
 	}
 
+	model := s.transformEditRequestToModel(r.EditRequest)
 	model.ID = r.ID
-
 	model.Created = now
 	model.Updated = now
-	var result *Scenario
 
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	var result *Scenario
+	var err error
+
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
+
+		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.Actions)
+		if err != nil {
+			return err
+		}
+
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
 			return err
@@ -204,13 +213,21 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) {
 	now := datetime.NewCpsTime()
-	model := s.transformer.TransformEditRequestToModel(r.EditRequest)
+
+	model := s.transformEditRequestToModel(r.EditRequest)
 	model.Updated = now
 
 	var result *Scenario
+	var err error
 
-	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
+
+		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.Actions)
+		if err != nil {
+			return err
+		}
+
 		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil || res.MatchedCount == 0 {
 			return err
@@ -314,6 +331,81 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	}
 
 	return common.GetSortQuery(sortBy, r.Sort)
+}
+
+func (s *store) transformEditRequestToModel(r EditRequest) libaction.Scenario {
+	triggers := make([]string, 0, len(r.Triggers))
+	for _, triggerRequest := range r.Triggers {
+		if triggerRequest.Type == string(types.AlarmChangeEventsCount) {
+			triggers = append(triggers, triggerRequest.Type+strconv.Itoa(triggerRequest.Threshold))
+		} else {
+			triggers = append(triggers, triggerRequest.Type)
+		}
+	}
+
+	return libaction.Scenario{
+		Name:                 r.Name,
+		Author:               r.Author,
+		Enabled:              *r.Enabled,
+		DisableDuringPeriods: r.DisableDuringPeriods,
+		Triggers:             triggers,
+		Priority:             r.Priority,
+		Delay:                r.Delay,
+	}
+}
+
+func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionRequest) ([]libaction.Action, []string, error) {
+	var err error
+	var valErr common.ValidationError
+
+	actions := make([]libaction.Action, len(r))
+
+	uniqueAliasesMap := make(map[string]bool)
+	uniqueAliases := make([]string, 0)
+
+	for idx, actionRequest := range r {
+		transformedAlarmPatternFieldsRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
+		if err != nil {
+			if errors.As(err, &valErr) {
+				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
+			}
+
+			return nil, nil, err
+		}
+
+		transformEntityPatternFieldsRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
+		if err != nil {
+			if errors.As(err, &valErr) {
+				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
+			}
+
+			return nil, nil, err
+		}
+
+		for _, alias := range transformEntityPatternFieldsRequest.Aliases {
+			if !uniqueAliasesMap[alias] {
+				uniqueAliasesMap[alias] = true
+				uniqueAliases = append(uniqueAliases, alias)
+			}
+		}
+
+		actions[idx] = libaction.Action{
+			Type:       r[idx].Type,
+			Comment:    r[idx].Comment,
+			Parameters: r[idx].Parameters,
+			EntityPatternFields: transformEntityPatternFieldsRequest.ToModelWithoutFields(
+				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioMongoCollection),
+			),
+			AlarmPatternFields: transformedAlarmPatternFieldsRequest.ToModelWithoutFields(
+				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+			),
+			DropScenarioIfNotMatched: *r[idx].DropScenarioIfNotMatched,
+			EmitTrigger:              *r[idx].EmitTrigger,
+		}
+	}
+
+	return actions, uniqueAliases, err
 }
 
 func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlarm, error) {
