@@ -26,7 +26,7 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
 <div
   class="shared-actions-panel"
-  inline-count="12"
+  inline-count="13"
 >
   <button
     class="action-fastPbehaviorAdd"
@@ -52,6 +52,11 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
     class="action-ackRemove"
   >
     Cancel ack|remove_done|ackRemove
+  </button>
+  <button
+    class="action-changeState"
+  >
+    Change and lock severity|thumbs_up_down|changeState
   </button>
   <button
     class="action-cancel"
