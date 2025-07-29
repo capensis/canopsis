@@ -131,6 +131,7 @@ describe('mass-actions-panel', () => {
     bulkCreateAlarmAssocticketEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
+    bulkCreateAlarmChangestateEvent,
   } = createAlarmModule();
   const { metaAlarmModule, addAlarmsIntoMetaAlarm, createMetaAlarm } = createMetaAlarmModule();
 
@@ -730,6 +731,58 @@ describe('mass-actions-panel', () => {
       expect.any(Object),
       {
         data: items.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
+      },
+    );
+
+    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(wrapper).toHaveBeenEmit('clear:items');
+  });
+
+  test('Change state modal showed after trigger change state action', async () => {
+    const widgetData = {
+      _id: Faker.datatype.string(),
+      parameters: {},
+    };
+
+    const wrapper = factory({
+      store,
+      propsData: {
+        items: [alarmWithAck],
+        refreshAlarmsList,
+        widget: widgetData,
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    const changeStateAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
+
+    changeStateAction.trigger('click');
+
+    expect($modals.show).toHaveBeenCalledWith(
+      {
+        name: MODALS.createChangeStateEvent,
+        config: {
+          items: [alarmWithAck],
+          action: expect.any(Function),
+        },
+      },
+    );
+
+    const [{ config }] = $modals.show.mock.calls[0];
+
+    const changeStateEvent = {
+      state: Faker.datatype.number(),
+      comment: Faker.datatype.string(),
+    };
+
+    await config.action(changeStateEvent);
+
+    expect(bulkCreateAlarmChangestateEvent).toHaveBeenCalledWith(
+      expect.any(Object),
+      {
+        data: [{ _id: alarmWithAck._id, ...changeStateEvent }],
       },
     );
 
