@@ -255,19 +255,6 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request.Request)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			valErr = valErr.AddFieldPrefix("request")
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
-		panic(err)
-	}
-
 	response, err := a.store.ValidateTemplates(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -287,32 +274,4 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 // @Success 200 {array} TemplateVarsResponse
 func (a *api) GetTemplateVars(c *gin.Context) {
 	c.JSON(http.StatusOK, a.store.GetTemplateVars())
-}
-
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-	var valErr common.ValidationError
-	for idx, actionRequest := range request.Actions {
-		actionRequest.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return err
-		}
-
-		actionRequest.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return err
-		}
-
-		request.Actions[idx] = actionRequest
-	}
-
-	return nil
 }
