@@ -15,7 +15,7 @@ func TestValidator_Validate(t *testing.T) {
 	f := func(str string, data any, expectedIsValid bool, expectedErrReport *validator.ErrReport) {
 		t.Helper()
 
-		isValid, errReport, err := v.Validate(str, data)
+		isValid, errReport, _, err := v.Validate(str, data)
 		if err != nil {
 			t.Errorf("error is not expected, but got %s", err.Error())
 		}
