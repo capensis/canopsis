@@ -32,6 +32,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
@@ -320,4 +321,6 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 
 	appInfoValidator := appinfo.NewValidator(client)
 	v.RegisterStructValidationCtx(appInfoValidator.ValidateRequest, appinfo.UserInterfaceConf{})
+
+	v.RegisterStructValidation(template.ValidateEditDataRequest, template.EditDataRequest{})
 }
