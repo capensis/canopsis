@@ -1033,6 +1033,14 @@ export default {
     title: 'Confirm create tickets',
     text: 'Some alarms already have tickets created.\nDo you want to create new tickets for them?',
   },
+  confirmationRemoveEntityInfoProperty: {
+    title: 'Delete entity info property',
+    alert: 'You are about to delete properties of entity infos <strong>{name}</strong>.\n'
+      + '<strong>Deletion operation won’t be cancellable.</strong>',
+    text: 'In the following places <strong>alias</strong> will be change to <strong>entity infos name</strong>,'
+      + 'selected <strong>type will not be changed</strong>: '
+      + '<ul><li>patterns</li><li>advanced search</li><li>manually added infos</li></ul>',
+  },
   createTag: {
     create: {
       title: 'Create a tag',

@@ -605,6 +605,7 @@ export const getOperatorsByFieldType = (fieldType) => {
   switch (fieldType) {
     case PATTERN_FIELD_TYPES.number:
       return PATTERN_NUMBER_OPERATORS;
+
     case PATTERN_FIELD_TYPES.stringArray:
       return [
         PATTERN_OPERATORS.hasEvery,
@@ -613,8 +614,18 @@ export const getOperatorsByFieldType = (fieldType) => {
         PATTERN_OPERATORS.isEmpty,
         PATTERN_OPERATORS.isNotEmpty,
       ];
+
     case PATTERN_FIELD_TYPES.boolean:
       return [PATTERN_OPERATORS.equal];
+
+    case PATTERN_FIELD_TYPES.timestamp:
+      return [
+        PATTERN_OPERATORS.within,
+        PATTERN_OPERATORS.olderThan,
+        PATTERN_OPERATORS.inRangePeriod,
+        PATTERN_OPERATORS.inRangeDates,
+      ];
+
     default:
       return PATTERN_STRING_OPERATORS;
   }

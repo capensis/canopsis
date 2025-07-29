@@ -103,6 +103,7 @@ export const PATTERN_FIELD_TYPES = {
   boolean: 'bool',
   null: 'null',
   stringArray: 'string_array',
+  timestamp: 'timestamp',
 };
 
 export const PATTERN_OPERATORS_WITHOUT_VALUE = [

@@ -316,6 +316,7 @@ export default {
   false: 'False',
   customField: 'Custom field|Custom fields',
   last: 'Last',
+  defined: 'Defined',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -324,6 +325,7 @@ export default {
     array: 'Array',
     stringArray: 'Array of strings',
     object: 'Object',
+    timestamp: 'Timestamp',
   },
   mixedField: {
     types: {
@@ -332,6 +334,7 @@ export default {
       [PATTERN_FIELD_TYPES.boolean]: '@:common.variableTypes.boolean',
       [PATTERN_FIELD_TYPES.null]: '@:common.variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:common.variableTypes.array',
+      [PATTERN_FIELD_TYPES.timestamp]: '@:common.variableTypes.timestamp',
     },
   },
   saveChanges: 'Save changes',

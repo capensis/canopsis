@@ -31,13 +31,15 @@ export const useEntityInfoProperty = () => {
   const { useGetters, useActions } = useEntityInfoPropertyStoreModule();
 
   const getters = useGetters({
-    items: 'items',
-    meta: 'meta',
-    pending: 'pending',
+    entityInfoProperties: 'items',
+    entityInfoPropertiesWithAlias: 'itemsWithAlias',
+    entityInfoPropertiesWithoutAlias: 'itemsWithoutAlias',
+    entityInfoPropertyMeta: 'meta',
+    entityInfoPropertyPending: 'pending',
   });
 
   const actions = useActions({
-    fetchList: 'fetchList',
+    fetchEntityInfoPropertiesList: 'fetchList',
     createEntityInfoProperty: 'create',
     updateEntityInfoProperty: 'update',
     removeEntityInfoProperty: 'remove',

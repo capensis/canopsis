@@ -20,5 +20,6 @@ export default {
   },
 
   searchForThisText: 'Appuyez sur <kbd>Entrée</kbd> pour rechercher ce texte',
+  searchByText: 'Rechercher par texte',
   listDisabledMessage: 'Il n\'est pas possible de combiner des modèles\n(alarme, entité et comportement) avec OU (uniquement ET)',
 };

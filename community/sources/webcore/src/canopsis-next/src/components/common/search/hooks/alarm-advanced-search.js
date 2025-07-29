@@ -36,6 +36,7 @@ import {
   PBEHAVIOR_TYPE_TYPES,
   PATTERN_ALARM_TAG_LABEL_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
+  ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
 } from '@/constants';
 
 import { deepKeyBy } from '@/helpers/array';
@@ -54,6 +55,7 @@ import { usePbehaviorReason } from '@/hooks/store/modules/pbehavior-reason';
 import { usePbehaviorType } from '@/hooks/store/modules/pbehavior-type';
 import { useComponentInstance } from '@/hooks/vue';
 import { useAlarmTagLabel } from '@/hooks/store/modules/alarm-tag-label';
+import { useEntityInfoProperty } from '@/hooks/store/modules/entity-info-property';
 
 /**
  * Hook to manage fetching and processing entity information keys for advanced search.
@@ -80,12 +82,13 @@ export const useEntityInfosKeys = () => {
    * Generates default child items for a given chip text prefix.
    *
    * @param {string} chipTextPrefix - The prefix to be used for chip text.
+   * @param {string} definedType - The defined type of the item.
    * @returns {Array<Object>} An array of objects, each containing:
    *   - {string} value: The value of the item.
    *   - {string} text: The translated text for the item.
    *   - {string} chipText: The complete chip text including the prefix.
    */
-  const getDefaultItemChildren = (chipTextPrefix = '') => [
+  const getDefaultItemChildren = (chipTextPrefix = '', definedType) => [
     PATTERN_RULE_INFOS_FIELDS.name,
     PATTERN_RULE_INFOS_FIELDS.value,
   ].map((value) => {
@@ -98,10 +101,8 @@ export const useEntityInfosKeys = () => {
 
     if (value === PATTERN_RULE_INFOS_FIELDS.name) {
       result.operators = PATTERN_EXISTS_OPERATORS;
-    }
-
-    if (value === PATTERN_RULE_INFOS_FIELDS.name) {
-      result.operators = PATTERN_EXISTS_OPERATORS;
+    } else {
+      result.definedType = definedType;
     }
 
     return result;
@@ -117,14 +118,16 @@ export const useEntityInfosKeys = () => {
    *   - {string} text: The text for the item.
    *   - {Array<Object>} items: The default child items for the chip text.
    */
-  const getItems = chipTextPrefix => entityInfosKeys.value.map(({ value }) => {
+  const getItems = chipTextPrefix => entityInfosKeys.value.map(({ value, type }) => {
     const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
+    const definedType = ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type];
 
     return {
       value,
       chipText,
+      definedType,
       text: value,
-      items: getDefaultItemChildren(chipText),
+      items: getDefaultItemChildren(chipText, definedType),
     };
   });
 
@@ -533,9 +536,17 @@ export const useAdvancedSearchAttributes = ({
     entityItems: entityInfosItems,
   } = useEntityInfosKeys();
 
+  const {
+    entityInfoPropertiesWithAlias,
+    entityInfoPropertyPending,
+    fetchEntityInfoPropertiesList,
+  } = useEntityInfoProperty();
+
   const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({ infosItems: alarmInfosItems });
   const { attributesMap: entityAttributesMap } = useAdvancedSearchEntityAttributes({ infosItems: entityInfosItems });
   const { attributesMap: pbehaviorAttributesMap } = useAdvancedSearchPbehaviorAttributes();
+
+  const wholePending = computed(() => infosPending.value || entityInfoPropertyPending.value);
 
   const attributesMap = computed(() => ({
     ...alarmAttributesMap.value,
@@ -561,6 +572,24 @@ export const useAdvancedSearchAttributes = ({
 
     const result = Object.entries(ALARM_ADVANCED_SEARCH_GROUPS_GROUPED).reduce((acc, [group, items]) => {
       const header = t(`advancedSearch.groups.${group}`);
+
+      if (group === ALARM_ADVANCED_SEARCH_GROUPS.alias) {
+        if (entityInfoPropertiesWithAlias.value.length) {
+          acc.push(
+            { header, value: header },
+            ...entityInfoPropertiesWithAlias.value.map(item => ({
+              alias: true,
+              value: item.alias,
+              text: item.alias,
+              definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+              original: item,
+              disabled: !unwrappedAllowEntityFields,
+            })),
+          );
+        }
+
+        return acc;
+      }
 
       acc.push(
         { header, value: header },
@@ -588,8 +617,10 @@ export const useAdvancedSearchAttributes = ({
     return result;
   });
 
+  onMounted(fetchEntityInfoPropertiesList);
+
   return {
-    pending: infosPending,
+    pending: wholePending,
     attributes,
   };
 };
@@ -715,6 +746,7 @@ export const useAdvancedSearchRuleActiveItems = ({
     unref(inputTypes).map(type => ({
       ...type,
       text: t(`common.mixedField.types.${type.value}`),
+      defined: currentAttribute.value?.definedType === type.value,
     }))
   ));
 

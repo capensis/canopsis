@@ -7,10 +7,17 @@
       <span>{{ title }}</span>
     </template>
     <template
-      v-if="config.text"
+      v-if="sanitizedText || sanitizedAlertText"
       #text=""
     >
-      <span class="text-subtitle-1 pre-wrap">{{ config.text }}</span>
+      <v-alert
+        v-if="sanitizedAlertText"
+        class="mb-2"
+        type="warning"
+      >
+        <span v-html="sanitizedAlertText" />
+      </v-alert>
+      <span v-html="sanitizedText" class="text-subtitle-1 pre-wrap" />
     </template>
     <template #actions="">
       <v-layout
@@ -38,10 +45,14 @@
 </template>
 
 <script>
+import { ref, computed, onBeforeUnmount } from 'vue';
+
 import { MODALS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
+import { sanitizeHtml } from '@/helpers/html';
+
+import { useInnerModal } from '@/hooks/modals';
+import { useI18n } from '@/hooks/i18n';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -51,40 +62,62 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.confirmation,
   components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      submitted: false,
-      cancelled: false,
-    };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('common.confirmation');
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  beforeDestroy() {
-    if (!this.submitted && this.config.cancel) {
-      this.config.cancel(this.cancelled);
-    }
-  },
-  methods: {
-    cancel() {
-      this.cancelled = true;
+  setup(props) {
+    const { t } = useI18n();
+    const { config, modals } = useInnerModal(props);
 
-      this.$modals.hide();
-    },
-    async submit() {
-      if (this.config.action) {
-        await this.config.action();
+    const submitted = ref(false);
+    const cancelled = ref(false);
+    const submitting = ref(false);
+
+    const title = computed(() => (config.value.title ?? t('common.confirmation')));
+
+    const sanitizedText = computed(() => (config.value.text ? sanitizeHtml(config.value.text) : ''));
+    const sanitizedAlertText = computed(() => (config.value.alert ? sanitizeHtml(config.value.alert) : ''));
+
+    const isDisabled = computed(() => submitting.value);
+
+    const cancel = () => {
+      cancelled.value = true;
+      modals.hide();
+    };
+
+    const submit = async () => {
+      if (config.value.action) {
+        submitting.value = true;
+        try {
+          await config.value.action();
+        } finally {
+          submitting.value = false;
+        }
       }
 
-      this.submitted = true;
-      this.$modals.hide();
-    },
+      submitted.value = true;
+      modals.hide();
+    };
+
+    onBeforeUnmount(() => {
+      if (!submitted.value && config.value.cancel) {
+        config.value.cancel(cancelled.value);
+      }
+    });
+
+    return {
+      config,
+      title,
+      sanitizedText,
+      sanitizedAlertText,
+      submitting,
+      isDisabled,
+      cancel,
+      submit,
+    };
   },
 };
 </script>
