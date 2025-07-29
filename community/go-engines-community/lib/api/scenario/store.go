@@ -13,9 +13,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -334,13 +334,9 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 }
 
 func (s *store) transformEditRequestToModel(r EditRequest) libaction.Scenario {
-	triggers := make([]string, 0, len(r.Triggers))
-	for _, triggerRequest := range r.Triggers {
-		if triggerRequest.Type == string(types.AlarmChangeEventsCount) {
-			triggers = append(triggers, triggerRequest.Type+strconv.Itoa(triggerRequest.Threshold))
-		} else {
-			triggers = append(triggers, triggerRequest.Type)
-		}
+	triggers := make([]string, len(r.Triggers))
+	for i, tr := range r.Triggers {
+		triggers[i] = tr.String()
 	}
 
 	return libaction.Scenario{
