@@ -1,21 +1,27 @@
 <template>
   <c-lazy-search-field
-    :value="value"
-    :label="label"
-    :name="name"
-    :required="required"
+    :value="selectedItem"
     :items="items"
-    :loading="pending"
+    :label="label || $t('externalData.tableField')"
+    :disabled="disabled"
+    :required="required"
+    :loading="wholePending"
+    :has-more="hasMoreItems"
+    :name="name"
     item-text="value"
     item-value="value"
-    @input="$emit('input', $event)"
-    @search="fetchList"
+    return-object
+    @input="changeSelectedItems"
+    @fetch="fetchItems"
+    @fetch:more="fetchMoreItems"
+    @update:search="updateSearch"
   />
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { toRef } from 'vue';
 
+import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useService } from '@/hooks/store/modules/service';
 
 export default {
@@ -32,49 +38,50 @@ export default {
       type: String,
       default: '',
     },
-    name: {
-      type: String,
-      default: '',
+    disabled: {
+      type: Boolean,
+      default: false,
     },
     required: {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: 'name',
+    },
   },
-  setup() {
-    const items = ref([]);
-    const pending = ref(false);
+  setup(props, { emit }) {
+    const { fetchEntityInfosKeysWithoutStore } = useService();
 
-    const { fetchInfosKeysWithoutStore } = useService();
-
-    const fetchList = async (search = '') => {
-      try {
-        pending.value = true;
-
-        const { data } = await fetchInfosKeysWithoutStore({
-          params: {
-            search,
-            limit: 50,
-          },
-        });
-
-        items.value = data || [];
-      } catch (err) {
-        console.error(err);
-        items.value = [];
-      } finally {
-        pending.value = false;
-      }
-    };
-
-    onMounted(() => {
-      fetchList();
-    });
+    const {
+      selectedItem,
+      items,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      removeItemFromSelectedItemsByIndex,
+      updateSearch,
+    } = useLazySearch({
+      value: toRef(props, 'value'),
+      idKey: 'value',
+      idParamsKey: 'ids',
+      fetchHandler: fetchEntityInfosKeysWithoutStore,
+      addable: true,
+    }, emit);
 
     return {
+      selectedItem,
       items,
-      pending,
-      fetchList,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      removeItemFromSelectedItemsByIndex,
+      updateSearch,
     };
   },
 };

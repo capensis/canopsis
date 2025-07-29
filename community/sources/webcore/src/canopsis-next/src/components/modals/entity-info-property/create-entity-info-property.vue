@@ -65,7 +65,7 @@ export default {
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
-    const form = ref(entityInfoPropertyToForm(config.value.entityInfo));
+    const form = ref(entityInfoPropertyToForm(config.value.entityInfoProperty));
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,

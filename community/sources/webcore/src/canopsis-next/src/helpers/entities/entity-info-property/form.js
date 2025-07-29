@@ -1,8 +1,8 @@
-import { ENTITY_INFO_PROPERTY_TYPES } from '@/constants/entity-info-properties';
+import { ENTITY_INFO_PROPERTY_TYPES } from '@/constants';
 
 /**
  * @typedef {Object} EntityInfoProperty
- * @property {string} infos_key
+ * @property {string} name
  * @property {string} [description]
  * @property {number} type
  * @property {string} [alias]
@@ -19,8 +19,8 @@ import { ENTITY_INFO_PROPERTY_TYPES } from '@/constants/entity-info-properties';
  * @returns {EntityInfoPropertyForm}
  */
 export const entityInfoPropertyToForm = (entityInfoProperty = {}) => ({
-  infos_key: entityInfoProperty.infos_key ?? '',
+  name: entityInfoProperty.name ?? '',
   description: entityInfoProperty.description ?? '',
-  type: entityInfoProperty.type ?? ENTITY_INFO_PROPERTY_TYPES.string, // Default to string
+  type: entityInfoProperty.type ?? ENTITY_INFO_PROPERTY_TYPES.string,
   alias: entityInfoProperty.alias ?? '',
 });
