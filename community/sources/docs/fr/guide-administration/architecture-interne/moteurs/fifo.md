@@ -42,6 +42,23 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 
 Cette commande lance le moteur FIFO en mode debug, avec un intervalle de 2 minutes entre les exécutions périodiques et 15 workers pour traiter les événements.
 
+**Acquisition du verrou**
+
+Lorsque le verrou est acquis avec succès, le moteur démarre normalement et initialise ses workers :
+
+```bash
+DBG ../lib/canopsis/scheduler/scheduler.go > subscribed
+INF ../lib/canopsis/engine/engine.go > engine started consumers=2 periodical_workers=5 routines=6
+```
+
+**Echec d'acquision du verrou**
+
+Si le verrou est déjà détenu par une autre instance, le moteur échoue à démarrer et se termine immédiatement avec une erreur du type :
+
+```bash
+ERR ../cmd/engine-fifo/main.go > exit with error error="cannot init engine: redislock: not obtained"
+```
+
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
