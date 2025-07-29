@@ -390,6 +390,12 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		return nil, nil
 	}
 
+	var err error
+	r.Request.EntityPatternFieldsRequest, err = s.transformer.TransformEntityPatternFieldsRequest(ctx, r.Request.EntityPatternFieldsRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	data, err := s.getTplData(ctx, r)
 	if err != nil {
 		return nil, err
