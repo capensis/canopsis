@@ -434,10 +434,10 @@ export default {
       if (props.multiple) {
         const prevValue = props.value || [];
         const index = prevValue.findIndex(item => (
-          item?.[props.itemValue] === value?.[props.itemValue]
-          || item?.[props.itemValue] === value
-          || item === value?.[props.itemValue]
-          || item === value
+          (item?.[props.itemValue] && value?.[props.itemValue] && item?.[props.itemValue] === value?.[props.itemValue])
+          || (item?.[props.itemValue] && item?.[props.itemValue] === value)
+          || (value?.[props.itemValue] && value?.[props.itemValue] === item)
+          || value === item
         ));
 
         newValue = [...prevValue];
@@ -474,7 +474,6 @@ export default {
           const preparedValue = inputValue.value ?? '';
 
           selectItem(props.number ? Number(preparedValue) : preparedValue);
-
           return;
         }
 

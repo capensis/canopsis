@@ -82,6 +82,7 @@ import { uid } from '@/helpers/uid';
  * @property {PatternRuleCondition} cond
  * @property {string} field
  * @property {string} [field_type]
+ * @property {boolean} [alias]
  */
 
 /**
@@ -109,6 +110,7 @@ import { uid } from '@/helpers/uid';
  * @property {number | string} value
  * @property {PatternRuleRangeForm} range
  * @property {Duration} duration
+ * @property {boolean} alias
  */
 
 /**
@@ -859,6 +861,7 @@ export const patternRuleToForm = (rule = {}) => {
     fieldType: rule.field_type ?? PATTERN_FIELD_TYPES.string,
     dictionary: '',
     value: '',
+    alias: false,
     range: {
       type: QUICK_RANGES.last1Hour.value,
       from: 0,
@@ -1180,7 +1183,7 @@ export const formDateIntervalConditionToPatternRuleCondition = (rule) => {
  */
 export const formRuleToPatternRule = (rule) => {
   const pattern = {
-    field: rule.attribute === ALARM_PATTERN_FIELDS.activated
+    [rule.alias ? 'alias' : 'field']: rule.attribute === ALARM_PATTERN_FIELDS.activated
       ? ALARM_PATTERN_FIELDS.activationDate
       : rule.attribute,
     cond: {
@@ -1204,7 +1207,7 @@ export const formRuleToPatternRule = (rule) => {
     return pattern;
   }
 
-  if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
+  if ((rule.alias || isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
     pattern.field_type = rule.fieldType;
   }
 

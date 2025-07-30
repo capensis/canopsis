@@ -23,7 +23,12 @@ import {
   toRef,
 } from 'vue';
 
-import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES } from '@/constants';
+import {
+  ALARM_ADVANCED_SEARCH_CHIP_TYPES,
+  PATTERN_FIELD_TYPES,
+  PATTERN_QUICK_RANGES,
+  PATTERN_OPERATORS_WITHOUT_VALUE,
+} from '@/constants';
 
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
 import {
@@ -180,6 +185,7 @@ export default {
      *                        types in `ALARM_ADVANCED_SEARCH_CHIP_TYPES`.
      */
     const updateChipItem = (value, type) => {
+      const preparedRule = { ...props.rule };
       const oldFilled = props.rule.filled ?? [];
       const typeIndex = oldFilled.indexOf(type);
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
@@ -187,13 +193,9 @@ export default {
       const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
       let skipType = false;
 
-      if (isArrayItem(type, value)) {
+      if (isArrayItem(type, value) && !PATTERN_OPERATORS_WITHOUT_VALUE.includes(value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
         skipType = true;
-
-        if (typeIndex > 0) {
-          // filledForRemove = oldFilled.slice(typeIndex + 1);
-        }
       }
 
       if (isCustomRangeItem(type, value)) {
@@ -206,8 +208,12 @@ export default {
         skipType = true;
       }
 
+      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute) {
+        preparedRule.alias = !!attributesMap.value?.[value]?.alias;
+      }
+
       updateModel({
-        ...props.rule,
+        ...preparedRule,
         ...pick(advancedSearchRuleItemToFormItem(), filledForRemove),
         [type]: value,
         filled: uniq(filled),
@@ -244,7 +250,7 @@ export default {
       const preparedRule = { ...props.rule };
       let skipType = false;
 
-      if (isArrayItem(inputType.value, value)) {
+      if (isArrayItem(inputType.value, value) && !PATTERN_OPERATORS_WITHOUT_VALUE.includes(value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
         preparedRule[ALARM_ADVANCED_SEARCH_CHIP_TYPES.value] = [];
         skipType = true;
@@ -258,6 +264,10 @@ export default {
       if (isDurationItem(inputType.value, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration);
         skipType = true;
+      }
+
+      if (inputType.value === ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute) {
+        preparedRule.alias = !!attributesMap.value?.[value]?.alias;
       }
 
       updateModel({
