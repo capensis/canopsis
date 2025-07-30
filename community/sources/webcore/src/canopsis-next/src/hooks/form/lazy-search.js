@@ -151,7 +151,7 @@ export const useLazySearch = ({
       pageCount.value = meta.page_count;
 
       itemsByValue.value = {
-        ...(params.page !== 1 ? itemsByValue.value : {}),
+        ...(params.page && params.page !== 1 ? itemsByValue.value : {}),
         ...keyBy(data, unref(idKey)),
         ...pick(itemsByValue.value, arrayValue.value),
       };
