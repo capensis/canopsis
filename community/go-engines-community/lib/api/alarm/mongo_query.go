@@ -97,6 +97,8 @@ type MongoQueryBuilder struct {
 	computedFields              bson.M
 	// excludedFields is used to remove redundant data from result
 	excludedFields []string
+
+	transformer common.PatternFieldsTransformer
 }
 
 type lookupWithKey struct {
@@ -104,11 +106,12 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, alarmCollectionName string) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer, alarmCollectionName string) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection:      client.Collection(mongo.WidgetFiltersMongoCollection),
 		instructionCollection: client.Collection(mongo.InstructionMongoCollection),
 		authorProvider:        authorProvider,
+		transformer:           transformer,
 		alarmCollectionName:   alarmCollectionName,
 
 		defaultSearchByFields: []string{
@@ -190,10 +193,10 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", entityDbPrefix + ".services"}
 }
 
-func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now, "")
 
-	err := q.handlePatterns(FilterRequest{
+	err := q.handlePatterns(ctx, FilterRequest{
 		BaseFilterRequest: BaseFilterRequest{
 			AlarmPattern:     r.AlarmPattern,
 			EntityPattern:    r.EntityPattern,
@@ -248,7 +251,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handlePatterns(r.FilterRequest)
+	err = q.handlePatterns(ctx, r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +276,7 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 		return nil, err
 	}
 
-	err = q.handlePatterns(r)
+	err = q.handlePatterns(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -336,7 +339,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		return nil, err
 	}
 
-	err = q.handlePatterns(filterRequest)
+	err = q.handlePatterns(ctx, filterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -494,7 +497,7 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 		return nil, err
 	}
 
-	err = q.handlePatterns(r.FilterRequest)
+	err = q.handlePatterns(ctx, r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -698,7 +701,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 	return nil
 }
 
-func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
+func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest) error {
 	if r.AlarmPattern != "" {
 		var alarmPattern pattern.Alarm
 		err := json.Unmarshal([]byte(r.AlarmPattern), &alarmPattern)
@@ -729,7 +732,15 @@ func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
 		if err != nil {
 			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 		}
-		err = q.handleEntityPattern(entityPattern)
+
+		transformedEntityPattern, err := q.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: entityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		err = q.handleEntityPattern(transformedEntityPattern.EntityPattern)
 		if err != nil {
 			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 		}
