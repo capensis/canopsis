@@ -1,10 +1,12 @@
 <template>
   <div>
-    <c-page-header />
+    <c-page-header name="notifications">
+      {{ $tc('common.notification', 2) }}
+    </c-page-header>
     <v-card class="ma-6">
       <v-card-text>
         <v-tabs
-          v-if="!tabs.length"
+          v-if="tabs.length"
           :value="$route.path"
           slider-color="primary"
           centered
