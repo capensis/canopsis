@@ -16027,6 +16027,72 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /widget-template-vars:
+    get:
+      tags:
+        - widgettemplates
+      summary: Get available template variables for widgets
+      description: |
+        Get available template variables for widgets.
+
+        -  PERMISSIONS: `api_view:read`
+      operationId: widgettemplates-tpl-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.TemplateVarsResponse'
+  /widget-template-validate:
+    post:
+      tags:
+        - widgettemplates
+      summary: Validate widget templates
+      description: |
+        Validate widget templates.
+
+        -  PERMISSIONS: `api_view:read`
+      operationId: widgettemplates-tpl-validate
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.TemplateRequest'
+            examples:
+              validate:
+                summary: Validate
+                description: Validate
+                value: {
+                  "testdata": {
+                    "alarm": "1e433055-253d-4c94-8ec4-d64075c83575"
+                  },
+                  "rule": {
+                    "columns": [
+                      {
+                        "value": "v.resource",
+                        "template": "Service: {{ .Alarm.Value.Resource }}\nHost: {{ .Alarm.Value.Component }}\nGroup: {{ index .Entity.Infos \"group\").Value }}"
+                      }
+                    ]
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /widgets:
     post:
       tags:

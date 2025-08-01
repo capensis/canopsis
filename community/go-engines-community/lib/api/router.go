@@ -1220,7 +1220,8 @@ func RegisterRoutes(
 			widgetFilterAPI.UpdatePositions,
 		)
 
-		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(primaryDbClient, authorProvider))
+		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(primaryDbClient, authorProvider,
+			validator.NewValidator(tplExecutor), templateConfigProvider))
 		widgetTemplateRouter := protected.Group("/widget-templates")
 		{
 			widgetTemplateRouter.GET(
@@ -1251,6 +1252,14 @@ func RegisterRoutes(
 				widgetTemplateAPI.Delete,
 			)
 		}
+		protected.POST(
+			"widget-template-validate",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			widgetTemplateAPI.ValidateTemplates)
+		protected.GET(
+			"widget-template-vars",
+			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
+			widgetTemplateAPI.GetTemplateVars)
 
 		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(primaryDbClient, authorProvider))
 		viewGroupRouter := protected.Group("/view-groups")
