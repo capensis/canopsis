@@ -132,11 +132,12 @@ func (r *AggregationFailureResult) GetTotal() int64 {
 }
 
 type TemplateRequest struct {
-	Request CreateRequest `json:"request"`
-	Data    struct {
-		Event        string         `json:"event" binding:"required"`
+	Rule     CreateRequest `json:"rule"`
+	TestData struct {
+		Event string `json:"event" binding:"required"`
+		// TestData.ExternalData keys correspond with Rule.ExternalData keys
 		ExternalData map[int]string `json:"external_data"`
-	} `json:"data"`
+	} `json:"testdata"`
 }
 
 type TemplateVarsResponse struct {

@@ -16,6 +16,7 @@ import (
 	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -47,6 +48,8 @@ type store struct {
 	tplValidator          validator.Validator
 	tplExecutor           libtemplate.Executor
 	tplConfigProvider     config.TemplateConfigProvider
+	encoder               encoding.Encoder
+	decoder               encoding.Decoder
 	defaultSearchByFields []string
 	defaultSortBy         string
 	outputTplVars         []template.VarResponse
@@ -63,9 +66,19 @@ func NewStore(
 	tplValidator validator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
+	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 ) Store {
-	authorTplVars := template.GetAlarmVars("{{ ", " }}", ".Alarm", "", false)
-	authorTplVars = append(authorTplVars, template.GetEntityVars("{{ ", " }}", ".Entity", "Entity", false)...)
+	authorTplVars := []template.VarResponse{
+		{
+			Name:  "Alarm",
+			Value: template.GetAlarmVars("{{ ", " }}", ".Alarm", false),
+		},
+		{
+			Name:  "Entity",
+			Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
+		},
+	}
 	outputTplVars := make([]template.VarResponse, len(authorTplVars))
 	copy(outputTplVars, authorTplVars)
 	outputTplVars = append(outputTplVars,
@@ -83,8 +96,16 @@ func NewStore(
 	}
 	firstWhTplVars := make([]template.VarResponse, len(outputTplVars))
 	copy(firstWhTplVars, outputTplVars)
-	firstWhTplVars = append(firstWhTplVars, template.GetAlarmVars("{{ range .Children }}{{ ", " }}{{ end }}", "", "Consequence alarm", true)...)
-	firstWhTplVars = append(firstWhTplVars, template.GetEntityVars("{{ range .Children }}{{ ", " }}{{ end }}", ".Entity", "Consequence alarm entity", true)...)
+	firstWhTplVars = append(firstWhTplVars,
+		template.VarResponse{
+			Name:  "Consequence alarms",
+			Value: template.GetAlarmVars("{{ range .Children }}{{ ", " }}{{ end }}", "", true),
+		},
+		template.VarResponse{
+			Name:  "Consequence alarm entities",
+			Value: template.GetEntityVars("{{ range .Children }}{{ ", " }}{{ end }}", ".Entity", true),
+		},
+	)
 	whTplVars := make([]template.VarResponse, 0, len(firstWhTplVars))
 	whTplVars = append(whTplVars, firstWhTplVars...)
 	whTplVars = append(whTplVars,
@@ -103,14 +124,15 @@ func NewStore(
 		tplValidator:          tplValidator,
 		tplExecutor:           tplExecutor,
 		tplConfigProvider:     tplConfigProvider,
+		encoder:               encoder,
+		decoder:               decoder,
 		defaultSearchByFields: []string{"_id", "name", "author.name"},
 		defaultSortBy:         "created",
-
-		outputTplVars:  outputTplVars,
-		authorTplVars:  authorTplVars,
-		firstWhTplVars: firstWhTplVars,
-		whTplVars:      whTplVars,
-		ticketTplVars:  ticketTplVars,
+		outputTplVars:         outputTplVars,
+		authorTplVars:         authorTplVars,
+		firstWhTplVars:        firstWhTplVars,
+		whTplVars:             whTplVars,
+		ticketTplVars:         ticketTplVars,
 	}
 }
 
@@ -268,28 +290,28 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 }
 
 func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {
-	event, err := template.GetEventData(ctx, s.tplDataCollection, r.Data.Event)
+	event, err := template.GetEventData(ctx, s.tplDataCollection, r.TestData.Event, s.encoder, s.decoder)
 	if err != nil {
 		return nil, err
 	}
 
 	if event == nil {
-		return nil, common.NewValidationError("data.event", "Event doesn't exist.")
+		return nil, common.NewValidationError("testdata.event", "Event doesn't exist.")
 	}
 
 	var whTestData map[int]template.ResponseTestData
-	if len(r.Data.Responses) > 0 {
-		if len(r.Data.Responses) > len(r.Request.Actions) {
-			return nil, common.NewValidationError("data.responses."+strconv.Itoa(len(r.Request.Actions)), "Response is redundant.")
+	if len(r.TestData.Responses) > 0 {
+		if len(r.TestData.Responses) > len(r.Rule.Actions) {
+			return nil, common.NewValidationError("testdata.responses."+strconv.Itoa(len(r.Rule.Actions)), "Response is redundant.")
 		}
 
-		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, r.Data.Responses)
+		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, r.TestData.Responses)
 		if err != nil {
 			return nil, err
 		}
 
 		if len(whTestData) == 0 {
-			return nil, common.NewValidationError("data.responses", "Responses don't exist.")
+			return nil, common.NewValidationError("testdata.responses", "Responses don't exist.")
 		}
 	}
 
@@ -299,8 +321,8 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 	}
 
 	trigger := ""
-	if len(r.Request.Triggers) > 0 {
-		trigger = r.Request.Triggers[0].String()
+	if len(r.Rule.Triggers) > 0 {
+		trigger = r.Rule.Triggers[0].String()
 	}
 
 	additionalData := types.AdditionalData{
@@ -308,7 +330,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		AlarmChangeType: trigger,
 		Initiator:       cmp.Or(event.Initiator, types.InitiatorExternal),
 		Output:          event.Output,
-		RuleName:        r.Request.Name,
+		RuleName:        r.Rule.Name,
 	}
 
 	return s.validateActionTpls(r, *event, alarm, additionalData, whTestData)
@@ -404,9 +426,10 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionReq
 	return actions, uniqueAliases, err
 }
 
+// findAlarm fetches alarm with meta-alarm children and related entities.
 func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlarm, error) {
 	if entityID == "" {
-		return webhook.TplAlarm{}, common.NewValidationError("data.event", "Corresponding entity cannot be found.")
+		return webhook.TplAlarm{}, common.NewValidationError("testdata.event", "Corresponding entity cannot be found.")
 	}
 
 	id := struct {
@@ -415,7 +438,7 @@ func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlar
 	err := s.alarmCollection.FindOne(ctx, bson.M{"d": entityID}, options.FindOne().SetSort(bson.M{"t": -1}).SetProjection(bson.M{"_id": 1})).Decode(&id)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return webhook.TplAlarm{}, common.NewValidationError("data.event", "Corresponding alarm doesn't exist.")
+			return webhook.TplAlarm{}, common.NewValidationError("testdata.event", "Corresponding alarm doesn't exist.")
 		}
 
 		return webhook.TplAlarm{}, err
@@ -423,20 +446,25 @@ func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlar
 
 	cursor, err := s.alarmCollection.Aggregate(ctx, webhook.FetchAlarmsForTplPipeline([]string{id.ID}))
 	if err != nil {
-		return webhook.TplAlarm{}, fmt.Errorf("cannot fetch alarms: %w", err)
+		return webhook.TplAlarm{}, fmt.Errorf("cannot find alarm: %w", err)
 	}
 
-	var alarms []webhook.TplAlarm
-	err = cursor.All(ctx, &alarms)
+	defer cursor.Close(ctx)
+	if !cursor.Next(ctx) {
+		return webhook.TplAlarm{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+	}
+
+	var alarm webhook.TplAlarm
+	err = cursor.Decode(&alarm)
 	if err != nil {
-		return webhook.TplAlarm{}, fmt.Errorf("cannot decode alarms: %w", err)
+		return webhook.TplAlarm{}, fmt.Errorf("cannot decode alarm: %w", err)
 	}
 
-	if len(alarms) == 0 {
-		return webhook.TplAlarm{}, common.NewValidationError("data.alarm", "Alarm doesn't exist.")
+	if err = cursor.Err(); err != nil {
+		return webhook.TplAlarm{}, fmt.Errorf("cannot fetch alarm: %w", err)
 	}
 
-	return alarms[0], nil
+	return alarm, nil
 }
 
 func (s *store) validateActionTpls(
@@ -455,7 +483,7 @@ func (s *store) validateActionTpls(
 		Entity: alarm.Entity,
 	}
 	var err error
-	for i, a := range r.Request.Actions {
+	for i, a := range r.Rule.Actions {
 		prefix := "actions." + strconv.Itoa(i) + ".parameters"
 		var authorRes *template.ValidateResponse
 		authorRes, additionalData, err = s.validateAuthorTpl(a, event, additionalData, authorTplData)
@@ -495,7 +523,7 @@ func (s *store) validateActionTpls(
 					whResponseMap[iStr+"."+k] = v
 				}
 			} else {
-				return nil, common.NewValidationError("data.responses."+iStr, "Response is missing.")
+				return nil, common.NewValidationError("testdata.responses."+iStr, "Response is missing.")
 			}
 
 			if a.Parameters.DeclareTicket != nil {
@@ -530,7 +558,7 @@ func (s *store) validateActionTpls(
 			}
 
 			if _, ok := whTestData[i]; ok {
-				return nil, common.NewValidationError("data.responses."+strconv.Itoa(i), "Response is redundant.")
+				return nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is redundant.")
 			}
 		}
 	}
