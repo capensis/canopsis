@@ -497,3 +497,5 @@ export const DENSE_TYPES = {
   medium: 1,
   small: 2,
 };
+
+export const INFOS_NAME_VARIABLE = '%infos_name%';

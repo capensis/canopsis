@@ -1,6 +1,6 @@
 import { COLORS } from '@/config';
 
-import { DENSE_TYPES, WIDGET_COLUMNS_GROUPS } from './common';
+import { DENSE_TYPES, WIDGET_COLUMNS_GROUPS, INFOS_NAME_VARIABLE } from './common';
 
 export const ALARM_FIELDS = {
   id: '_id',
@@ -947,10 +947,10 @@ export const ALARM_PAYLOADS_VARIABLES = {
   ackMessage: '.Value.ACK.Message',
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
-  infosValue: '(index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%")',
+  infosValue: `(index (index .Alarm.Value.Infos "%rule_id%") "${INFOS_NAME_VARIABLE}")`,
 
   entityName: '.Entity.Name',
-  entityInfosValue: '(index .Entity.Infos "%infos_name%").Value',
+  entityInfosValue: `(index .Entity.Infos "${INFOS_NAME_VARIABLE}").Value`,
 };
 
 export const ACK_MODAL_ACTIONS_TYPES = {
