@@ -7,6 +7,8 @@ import {
   USER_PAYLOADS_VARIABLES,
 } from '@/constants';
 
+import { payloadEntityAliasesMixin } from './payload-entity-aliases';
+
 export const payloadVariablesMixin = {
   props: {
     hasPrevious: {
@@ -14,6 +16,7 @@ export const payloadVariablesMixin = {
       default: false,
     },
   },
+  mixins: [payloadEntityAliasesMixin],
   computed: {
     alarmPayloadSubVariables() {
       return [
@@ -117,7 +120,7 @@ export const payloadVariablesMixin = {
     },
 
     alarmPayloadVariables() {
-      return this.alarmPayloadSubVariables.map(
+      const variables = this.alarmPayloadSubVariables.map(
         variable => ({
           ...variable,
           value: [
@@ -128,6 +131,10 @@ export const payloadVariablesMixin = {
             : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
         }),
       );
+
+      variables.push(...this.alarmAliasesVariables);
+
+      return variables;
     },
 
     payloadVariablesFromPreviousStep() {

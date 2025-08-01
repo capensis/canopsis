@@ -1,3 +1,5 @@
+import { INFOS_NAME_VARIABLE } from './common';
+
 export const EXTERNAL_DATA_CONDITION_TYPES = {
   select: 'select',
   regexp: 'regexp',
@@ -23,7 +25,7 @@ export const EXTERNAL_DATA_PAYLOADS_VARIABLES = {
   connectorName: '.Event.ConnectorName',
   resource: '.Event.Resource',
   output: '.Event.Output',
-  extraInfos: 'index .Event.ExtraInfos "%infos_name%"',
+  extraInfos: `index .Event.ExtraInfos "${INFOS_NAME_VARIABLE}"`,
   externalData: '.ExternalData.%reference%',
   regexp: '.RegexMatch.%field%.%name%',
 };

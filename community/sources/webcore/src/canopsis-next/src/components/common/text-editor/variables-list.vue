@@ -30,7 +30,7 @@
         <v-list-item-content>
           <v-list-item-title>
             <v-layout class="gap-4" justify-space-between>
-              <v-layout align-center>
+              <v-layout v-if="item[itemText] || item.alias" align-center>
                 <v-list-item-mask v-if="item[itemText]" :text="item[itemText]" :mask="search" />
                 <v-icon
                   v-if="item.alias"

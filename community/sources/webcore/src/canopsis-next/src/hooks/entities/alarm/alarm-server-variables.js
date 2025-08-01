@@ -3,7 +3,9 @@ import { computed } from 'vue';
 import { ALARM_PAYLOADS_VARIABLES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
-import { useInfosServerVariables } from '@/hooks/entities/common/infos-server-variables';
+
+import { useInfosServerVariables } from '../common/infos-server-variables';
+import { useEntityAliasesVariables } from '../common/entity-aliases-variables';
 
 /**
  * Provides a reactive list of alarm server variables with their corresponding localization texts.
@@ -14,6 +16,8 @@ export const useAlarmServerVariables = ({ infos } = {}) => {
   const { t, tc } = useI18n();
 
   const { variables: infosVariables } = useInfosServerVariables(infos);
+  const { alarmAliasesVariables } = useEntityAliasesVariables();
+
   const variables = computed(() => [
     {
       value: ALARM_PAYLOADS_VARIABLES.id,
@@ -60,6 +64,7 @@ export const useAlarmServerVariables = ({ infos } = {}) => {
       value: ALARM_PAYLOADS_VARIABLES.tags,
       text: tc('common.tag', 2),
     },
+    ...alarmAliasesVariables.value,
   ]);
 
   return {

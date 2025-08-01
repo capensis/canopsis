@@ -245,6 +245,7 @@ import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entitie
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
@@ -314,6 +315,7 @@ export default {
     payloadVariablesMixin,
     widgetSettingsMixin,
     entitiesInfosMixin,
+    entitiesEntityInfoPropertyMixin,
     alarmVariablesMixin,
     widgetTemplatesMixin,
     permissionsWidgetsAlarmsListFilters,
@@ -348,6 +350,7 @@ export default {
   },
   mounted() {
     this.fetchInfos();
+    this.fetchAllEntityInfoPropertiesList();
   },
   methods: {
     updateTemplate(field, template, value) {

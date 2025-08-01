@@ -855,13 +855,13 @@ export const patternDateRangeToForm = (rule = {}) => {
 export const patternRuleToForm = (rule = {}) => {
   const form = {
     key: uid(),
-    attribute: rule.field ?? '',
+    attribute: rule.alias || rule.field || '',
     operator: '',
     field: '',
     fieldType: rule.field_type ?? PATTERN_FIELD_TYPES.string,
     dictionary: '',
     value: '',
-    alias: false,
+    alias: !!rule.alias,
     range: {
       type: QUICK_RANGES.last1Hour.value,
       from: 0,

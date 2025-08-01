@@ -35,6 +35,7 @@ import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/e
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesScenarioMixin } from '@/mixins/entities/scenario';
+import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
@@ -57,6 +58,7 @@ export default {
   mixins: [
     modalInnerMixin,
     entitiesScenarioMixin,
+    entitiesEntityInfoPropertyMixin,
     validationErrorsMixinCreator(),
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
@@ -70,6 +72,12 @@ export default {
     title() {
       return this.config.title ?? this.$t('modals.createScenario.create.title');
     },
+  },
+  mounted() {
+    /**
+     * We need to call this for aliases variables
+     */
+    this.fetchAllEntityInfoPropertiesList();
   },
   methods: {
     async submit() {
