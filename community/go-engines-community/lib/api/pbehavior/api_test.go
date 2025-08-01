@@ -31,7 +31,7 @@ func init() {
 		panic(err)
 	}
 
-	libapi.RegisterValidators(dbClient, security.Config{})
+	libapi.RegisterValidators(dbClient, security.Config{}, nil)
 }
 
 func BenchmarkBulkConnectorEdit_Given100CreateItems(b *testing.B) {
