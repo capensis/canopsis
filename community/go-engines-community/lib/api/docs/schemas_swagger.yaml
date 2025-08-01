@@ -6912,6 +6912,30 @@ definitions:
       updated:
         type: integer
     type: object
+  widgettemplate.TemplateRequest:
+    properties:
+      rule:
+        properties:
+          columns:
+            items:
+              $ref: '#/definitions/view.WidgetColumn'
+            type: array
+        type: object
+      testdata:
+        properties:
+          alarm:
+            type: string
+        required:
+        - alarm
+        type: object
+    type: object
+  widgettemplate.TemplateVarsResponse:
+    properties:
+      column:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+    type: object
 info:
   contact: {}
   description: This doc contains auto generated Open API v2 schemas of requests and

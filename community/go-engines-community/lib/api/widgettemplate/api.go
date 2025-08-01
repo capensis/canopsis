@@ -1,6 +1,7 @@
 package widgettemplate
 
 import (
+	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
@@ -9,16 +10,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type api struct {
-	store Store
+type API interface {
+	common.CrudAPI
+	ValidateTemplates(c *gin.Context)
+	GetTemplateVars(c *gin.Context)
 }
 
 func NewApi(
 	store Store,
-) common.CrudAPI {
+) API {
 	return &api{
 		store: store,
 	}
+}
+
+type api struct {
+	store Store
 }
 
 // List
@@ -134,4 +141,36 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// ValidateTemplates
+// @Param body body TemplateRequest true "body"
+// @Success 200 {object} template.ValidateResponse
+func (a *api) ValidateTemplates(c *gin.Context) {
+	var request TemplateRequest
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	response, err := a.store.ValidateTemplates(c, request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// GetTemplateVars
+// @Success 200 {array} TemplateVarsResponse
+func (a *api) GetTemplateVars(c *gin.Context) {
+	c.JSON(http.StatusOK, a.store.GetTemplateVars())
 }

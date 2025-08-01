@@ -220,7 +220,10 @@ func GetEnvVars(tplConfigProvider config.TemplateConfigProvider) []VarResponse {
 	}
 
 	slices.SortFunc(keys, func(l, r VarResponse) int {
-		return strings.Compare(l.Value.(string), r.Value.(string))
+		lv, _ := l.Value.(string)
+		rv, _ := r.Value.(string)
+
+		return strings.Compare(lv, rv)
 	})
 
 	return keys
