@@ -5968,6 +5968,86 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /entityservice-template-vars:
+    get:
+      tags:
+        - entityservices
+      summary: Get available template variables for entity services
+      description: |
+        Get available template variables for entity services.
+
+        -  PERMISSIONS: `api_entityservice:read`
+      operationId: entityservice-tpl-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/entityservice.TemplateVarsResponse'
+  /entityservice-template-validate:
+    post:
+      tags:
+        - entityservices
+      summary: Validate entity service templates
+      description: |
+        Validate entity service templates.
+
+        -  PERMISSIONS: `api_entityservice:read`
+      operationId: entityservice-tpl-validate
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/entityservice.TemplateRequest'
+            examples:
+              validate:
+                summary: Validate service
+                description: Validate service
+                value: {
+                  "rule": {
+                    "output_template": "All: {{ .All }}\nActive: {{ .Active }}\nDepedencies: {{ .Depends }}\nOK: {{ .State.Ok }}\nMinor: {{ .State.Minor }}\nMajor: {{ .State.Major }}\nCritical: {{ .State.Critical }}\nAcknowledged: {{ .Acknowledged }}\nNotAcknowledged: {{ .NotAcknowledged }}\nUnderPbehavior: {{ .UnderPbehavior }}\nAcknowledgedUnderPbh: {{ .AcknowledgedUnderPbh }}",
+                    "name": "Some service",
+                    "enabled": true,
+                    "impact_level": 1,
+                    "sli_avail_state": 0,
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ]
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /event:
     post:
       tags:
@@ -6301,7 +6381,7 @@ paths:
                         "type": "set_entity_info_from_template",
                         "name": "customer",
                         "description": "Client",
-                        "value": "{{ .Event.ExtraInfos.customer }}"
+                        "value": "{{ index .Event.ExtraInfos \"customer\" }}"
                       }
                     ],
                     "on_success": "pass",
@@ -6797,17 +6877,17 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/eventfilter.TemplateRequest'
             examples:
-              check:
+              validate:
                 summary: Validate
                 description: Validate rule
                 value: {
-                  "data": {
+                  "testdata": {
                     "event": "9c848e2c-bc55-484f-a433-a9e4d1031867",
                     "external_data": {
                       1: "0dbb862b-cd5d-4643-b069-72ec13a57d63"
                     }
                   },
-                  "request": {
+                  "rule": {
                     "type": "enrichment",
                     "description": "Enrich rule",
                     "enabled": true,
@@ -6835,7 +6915,7 @@ paths:
                         "reference": "ref2",
                         "type": "api",
                         "request": {
-                          "url": "{{ .Env.FetchURL }}?name={{ .Event.ExtraInfos.Resource }}",
+                          "url": "{{ .Env.FetchURL }}?id={{ index .Event.ExtraInfos \"externalid\" }}",
                           "method": "GET"
                         }
                       }
@@ -11864,7 +11944,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ (index .Entity.Infos \"group\").Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,
@@ -12426,7 +12506,7 @@ paths:
                             "password": "admin"
                           },
                           "headers": { "Content-Type": "application/json" },
-                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
+                          "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ (index .Entity.Infos \"group\").Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                         },
                         "declare_ticket": {
                           "empty_response": false,
@@ -12619,18 +12699,18 @@ paths:
             schema:
               $ref: 'schemas_swagger.yaml#/definitions/scenario.TemplateRequest'
             examples:
-              check:
+              validate:
                 summary: Validate
                 description: Validate rule
                 value: {
-                  "data": {
+                  "testdata": {
                     "event": "9c848e2c-bc55-484f-a433-a9e4d1031867",
                     "responses": {
                       1: "0dbb862b-cd5d-4643-b069-72ec13a57d63",
                       2: "e4166204-fa3c-4b37-aaaa-8b441047e543"
                     }
                   },
-                  "request": {
+                  "rule": {
                     "name": "Scenario with webhook action",
                     "comment": "The scenario does webhook request for an alarm on activate",
                     "enabled": true,
@@ -12704,7 +12784,7 @@ paths:
                             "method": "POST",
                             "url": "{{ .Env.TicketURL }}/ticket",
                             "headers": { "Content-Type": "application/json" },
-                            "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ .Entity.Infos.group.Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
+                            "payload": "{\"service\":\"{{ .Alarm.Value.Resource }}\",\"host\":\"{{ .Alarm.Value.Component }}\",\"group\":\"{{ (index .Entity.Infos \"group\").Value }}\",\"change\":\"{{ .AdditionalData.Trigger }}\"}"
                           },
                           "declare_ticket": {
                             "empty_response": false,
@@ -13633,6 +13713,142 @@ paths:
               schema:
                 type: string
                 format: binary
+  /link-rule-template-vars:
+    get:
+      tags:
+        - linkrules
+      summary: Get available template variables for link rules
+      description: |
+        Get available template variables for link rules.
+
+        -  PERMISSIONS: `api_link_rule:read`
+      operationId: linkrules-tpl-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/linkrule.TemplateVarsResponse'
+  /link-rule-template-validate:
+    post:
+      tags:
+        - linkrules
+      summary: Validate link rule templates
+      description: |
+        Validate link rule templates.
+
+        -  PERMISSIONS: `api_link_rule:read`
+      operationId: linkrules-tpl-validate
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/linkrule.TemplateRequest'
+            examples:
+              alarm:
+                summary: Validate alarm
+                description: Validate alarm rule
+                value: {
+                  "testdata": {
+                    "alarms": [
+                      "0dbb862b-cd5d-4643-b069-72ec13a57d63",
+                      "e4166204-fa3c-4b37-aaaa-8b441047e543"
+                    ],
+                    "user": "1e433055-253d-4c94-8ec4-d64075c83575"
+                  },
+                  "rule": {
+                    "name": "Rule for alarms",
+                    "type": "alarm",
+                    "enabled": true,
+                    "links": [
+                      {
+                        "label": "{{ range .Alarms }}{{ (index .Entity.Infos \"text\").Value }} / {{ end }}",
+                        "url": "{{ .Env.LinkURL }}?{{ range .Alarms }}id={{ (index .Entity.Infos \"external_id\").Value }}&{{ end }}",
+                        "action": "open",
+                        "icon_name": "build"
+                      }
+                    ],
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ]
+                  }
+                }
+              entity:
+                summary: Validate entity
+                description: Validate entity rule
+                value: {
+                  "testdata": {
+                    "entities": [
+                      "0dbb862b-cd5d-4643-b069-72ec13a57d63",
+                      "e4166204-fa3c-4b37-aaaa-8b441047e543"
+                    ],
+                    "user": "1e433055-253d-4c94-8ec4-d64075c83575"
+                  },
+                  "rule": {
+                    "name": "Rule for entities",
+                    "type": "entity",
+                    "enabled": true,
+                    "links": [
+                      {
+                        "label": "{{ range .Entities }}{{ (index .Infos \"text\").Value }} / {{ end }}",
+                        "url": "{{ .Env.LinkURL }}?{{ range .Entities }}id={{ (index .Infos \"external_id\").Value }}&{{ end }}",
+                        "action": "open",
+                        "icon_name": "build"
+                      }
+                    ],
+                    "entity_pattern": [
+                      [
+                        {
+                          "field": "type",
+                          "cond": {
+                            "type": "eq",
+                            "value": "resource"
+                          }
+                        },
+                        {
+                          "field": "infos.group",
+                          "cond": {
+                            "type": "eq",
+                            "value": "g1"
+                          }
+                        }
+                      ]
+                    ]
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: 'schemas_swagger.yaml#/definitions/template.ValidateResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /template-data:
     get:
       tags:

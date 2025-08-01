@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -87,4 +88,12 @@ type StateSettingResponse struct {
 	ID     string `bson:"_id" json:"_id"`
 	Title  string `bson:"title" json:"title"`
 	Method string `bson:"method" json:"method"`
+}
+
+type TemplateRequest struct {
+	Rule CreateRequest `json:"rule"`
+}
+
+type TemplateVarsResponse struct {
+	Output []template.VarResponse `json:"output"`
 }

@@ -480,7 +480,8 @@ func RegisterRoutes(
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
 			eventfilter.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
-				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer),
+				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer,
+				json.NewEncoder(), json.NewDecoder()),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
 		)
@@ -679,7 +680,9 @@ func RegisterRoutes(
 			)
 		}
 
-		entityserviceStore := entityservice.NewStore(primaryDbClient, linkGenerator, enableSameServiceNames, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger)
+		entityserviceStore := entityservice.NewStore(primaryDbClient, linkGenerator, enableSameServiceNames, authorProvider,
+			common.NewPatternFieldsTransformer(primaryDbClient), validator.NewValidator(tplExecutor), templateConfigProvider,
+			logger)
 		entityserviceAPI := entityservice.NewApi(entityserviceStore, entityPublChan, metricsEntityMetaUpdater, logger)
 		entityserviceRouter := protected.Group("/entityservices")
 		{
@@ -715,6 +718,14 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer),
 				entityserviceAPI.GetImpacts,
 			)
+			protected.POST(
+				"/entityservice-template-validate",
+				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer),
+				entityserviceAPI.ValidateTemplates)
+			protected.GET(
+				"/entityservice-template-vars",
+				middleware.Authorize(apisecurity.ObjEntityService, model.PermissionRead, enforcer),
+				entityserviceAPI.GetTemplateVars)
 		}
 
 		entityCommentRouter := protected.Group("/entity-comments")
@@ -1443,7 +1454,7 @@ func RegisterRoutes(
 
 		scenarioAPI := scenario.NewApi(
 			scenario.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
-				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider),
+				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, json.NewEncoder(), json.NewDecoder()),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
 		)
@@ -1669,7 +1680,8 @@ func RegisterRoutes(
 		)
 
 		linkRuleAPI := linkrule.NewApi(
-			linkrule.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
+			linkrule.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
+				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
 		)
@@ -1707,6 +1719,15 @@ func RegisterRoutes(
 			"link-rules-db-export",
 			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
 			linkRuleAPI.DBExport)
+		protected.POST(
+			"/link-rule-template-validate",
+			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
+			middleware.SetAuthor(),
+			linkRuleAPI.ValidateTemplates)
+		protected.GET(
+			"/link-rule-template-vars",
+			middleware.Authorize(apisecurity.ObjLinkRule, model.PermissionRead, enforcer),
+			linkRuleAPI.GetTemplateVars)
 
 		linkCategoryRouter := protected.Group("/link-categories")
 		{

@@ -2,12 +2,12 @@ package template
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
-	"sort"
+	"slices"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -117,9 +117,52 @@ var entityVars = []tplVar{
 		Value:      "%var%.Name",
 	},
 	{
+		Name:       "Type",
+		PluralName: "Types",
+		Value:      "%var%.Type",
+	},
+	{
 		Name:       "Infos",
 		PluralName: "Infos",
 		Value:      "(index %var%.Infos \"%infos_name%\").Value",
+	},
+	{
+		Name:       "Component infos",
+		PluralName: "Component infos",
+		Value:      "(index %var%.ComponentInfos \"%infos_name%\").Value",
+	},
+}
+
+var eventVars = []tplVar{
+	{
+		Name:       "Connector",
+		PluralName: "Connectors",
+		Value:      "%var%.Connector",
+	},
+	{
+		Name:       "Connector name",
+		PluralName: "Connector names",
+		Value:      "%var%.ConnectorName",
+	},
+	{
+		Name:       "Component",
+		PluralName: "Components",
+		Value:      "%var%.Component",
+	},
+	{
+		Name:       "Resource",
+		PluralName: "Resources",
+		Value:      "%var%.Resource",
+	},
+	{
+		Name:       "Output",
+		PluralName: "Outputs",
+		Value:      "%var%.Output",
+	},
+	{
+		Name:       "Extra infos",
+		PluralName: "Extra infos",
+		Value:      "index %var%.ExtraInfos \"%infos_name%\"",
 	},
 }
 
@@ -149,9 +192,12 @@ func Validate(tplValidator validator.Validator, str string, data any) (ValidateR
 
 func AddEnvVars(vars []VarResponse, tplConfigProvider config.TemplateConfigProvider) []VarResponse {
 	envVars := GetEnvVars(tplConfigProvider)
-	res := make([]VarResponse, 0, len(vars)+len(envVars))
+	res := make([]VarResponse, 0, len(vars)+1)
 	res = append(res, vars...)
-	res = append(res, envVars...)
+	res = append(res, VarResponse{
+		Name:  "Environment variables",
+		Value: envVars,
+	})
 
 	return res
 }
@@ -173,14 +219,14 @@ func GetEnvVars(tplConfigProvider config.TemplateConfigProvider) []VarResponse {
 		keys = append(keys, VarResponse{Value: "{{ ." + libtemplate.EnvVar + "." + k + " }}"})
 	}
 
-	sort.Slice(keys, func(i, j int) bool {
-		return strings.Compare(keys[i].Value, keys[j].Value) < 0
+	slices.SortFunc(keys, func(l, r VarResponse) int {
+		return strings.Compare(l.Value.(string), r.Value.(string))
 	})
 
 	return keys
 }
 
-func GetAlarmVars(prefixVar, suffixVar, alarmVar string, prefixName string, pluralName bool) []VarResponse {
+func GetAlarmVars(prefixVar, suffixVar, alarmVar string, pluralName bool) []VarResponse {
 	res := make([]VarResponse, len(alarmVars))
 	for i, v := range alarmVars {
 		name := ""
@@ -188,10 +234,6 @@ func GetAlarmVars(prefixVar, suffixVar, alarmVar string, prefixName string, plur
 			name = v.PluralName
 		} else {
 			name = v.Name
-		}
-
-		if prefixName != "" {
-			name = prefixName + " " + strings.ToLower(name)
 		}
 
 		res[i] = VarResponse{
@@ -203,7 +245,7 @@ func GetAlarmVars(prefixVar, suffixVar, alarmVar string, prefixName string, plur
 	return res
 }
 
-func GetEntityVars(prefixVar, suffixVar, entityVar string, prefixName string, pluralName bool) []VarResponse {
+func GetEntityVars(prefixVar, suffixVar, entityVar string, pluralName bool) []VarResponse {
 	res := make([]VarResponse, len(entityVars))
 	for i, v := range entityVars {
 		name := ""
@@ -211,10 +253,6 @@ func GetEntityVars(prefixVar, suffixVar, entityVar string, prefixName string, pl
 			name = v.PluralName
 		} else {
 			name = v.Name
-		}
-
-		if prefixName != "" {
-			name = prefixName + " " + strings.ToLower(name)
 		}
 
 		res[i] = VarResponse{
@@ -226,7 +264,26 @@ func GetEntityVars(prefixVar, suffixVar, entityVar string, prefixName string, pl
 	return res
 }
 
-func GetEventData(ctx context.Context, collection mongo.DbCollection, id string) (*types.Event, error) {
+func GetEventVars(prefixVar, suffixVar, eventVar string, pluralName bool) []VarResponse {
+	res := make([]VarResponse, len(eventVars))
+	for i, v := range eventVars {
+		name := ""
+		if pluralName {
+			name = v.PluralName
+		} else {
+			name = v.Name
+		}
+
+		res[i] = VarResponse{
+			Name:  name,
+			Value: prefixVar + strings.Replace(v.Value, "%var%", eventVar, 1) + suffixVar,
+		}
+	}
+
+	return res
+}
+
+func GetEventData(ctx context.Context, collection mongo.DbCollection, id string, encoder encoding.Encoder, decoder encoding.Decoder) (*types.Event, error) {
 	if id == "" {
 		return nil, nil
 	}
@@ -241,13 +298,13 @@ func GetEventData(ctx context.Context, collection mongo.DbCollection, id string)
 		return nil, err
 	}
 
-	b, err := json.Marshal(m.Body)
+	b, err := encoder.Encode(m.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	event := types.Event{}
-	err = json.Unmarshal(b, &event)
+	err = decoder.Decode(b, &event)
 	if err != nil {
 		return nil, err
 	}
