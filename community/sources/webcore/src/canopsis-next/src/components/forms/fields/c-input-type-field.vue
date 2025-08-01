@@ -96,6 +96,7 @@ export default {
         [PATTERN_FIELD_TYPES.boolean]: 'toggle_on',
         [PATTERN_FIELD_TYPES.null]: 'space_bar',
         [PATTERN_FIELD_TYPES.stringArray]: 'view_array',
+        [PATTERN_FIELD_TYPES.timestamp]: 'calendar_today',
       }[type];
     },
   },

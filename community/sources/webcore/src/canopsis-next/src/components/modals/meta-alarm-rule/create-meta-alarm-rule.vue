@@ -56,6 +56,7 @@ import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 
@@ -74,6 +75,7 @@ export default {
   mixins: [
     modalInnerMixin,
     entitiesInfosMixin,
+    entitiesEntityInfoPropertyMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -95,6 +97,7 @@ export default {
   },
   mounted() {
     this.fetchInfos();
+    this.fetchAllEntityInfoPropertiesList();
 
     const handleValidationChanged = () => {
       this.isStepValid = this.isCurrentStepValid();

@@ -138,7 +138,7 @@ export default {
      * @param {boolean} [skipType = false] - Whether to skip the current type and move to the next one.
      */
     const goToNextType = (skipType = false) => {
-      inputType.value = getNextForFormItemType(props.rule, inputType.value, currentAttribute.value);
+      inputType.value = getNextForFormItemType(props.rule, inputType.value);
 
       if (skipType) {
         goToNextType();
