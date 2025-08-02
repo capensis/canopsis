@@ -5,6 +5,7 @@ import {
   DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES,
   DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES,
   USER_PAYLOADS_VARIABLES,
+  ALARM_PAYLOAD_VARIABLES_PREFIXES,
 } from '@/constants';
 
 import { payloadEntityAliasesMixin } from './payload-entity-aliases';
@@ -76,6 +77,7 @@ export const payloadVariablesMixin = {
           value: ALARM_PAYLOADS_VARIABLES.entityInfosValue,
           text: this.$t('common.infos'),
         },
+        ...this.alarmAliasesVariables,
       ];
     },
 
@@ -124,15 +126,13 @@ export const payloadVariablesMixin = {
         variable => ({
           ...variable,
           value: [
-            ALARM_PAYLOADS_VARIABLES.entityInfosValue,
-            ALARM_PAYLOADS_VARIABLES.entityName,
-          ].includes(variable.value)
+            ALARM_PAYLOAD_VARIABLES_PREFIXES.entity,
+            ALARM_PAYLOAD_VARIABLES_PREFIXES.entityInfos,
+          ].some(prefix => variable.value.startsWith(prefix))
             ? variable.value
             : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
         }),
       );
-
-      variables.push(...this.alarmAliasesVariables);
 
       return variables;
     },

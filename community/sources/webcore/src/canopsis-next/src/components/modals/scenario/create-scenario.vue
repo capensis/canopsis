@@ -2,16 +2,17 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ title }}</span>
+        {{ title }}
       </template>
       <template #text="">
         <scenario-form v-model="form" />
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -29,16 +30,20 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { formToScenario, scenarioToForm, scenarioErrorToForm } from '@/helpers/entities/scenario/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { entitiesScenarioMixin } from '@/mixins/entities/scenario';
-import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
+import { useInfo } from '@/hooks/store/modules/info';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { usePopups } from '@/hooks/popups';
+import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
 
@@ -50,55 +55,65 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  inject: ['$system'],
   components: {
     ScenarioForm,
     ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    entitiesScenarioMixin,
-    entitiesEntityInfoPropertyMixin,
-    validationErrorsMixinCreator(),
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: scenarioToForm(this.modal.config.scenario, this.$system.timezone),
-    };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.createScenario.create.title');
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  mounted() {
-    /**
-     * We need to call this for aliases variables
-     */
-    this.fetchAllEntityInfoPropertiesList();
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+  setup(props) {
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+    const { timezone } = useInfo();
+    const popups = usePopups();
 
-      if (isFormValid) {
+    const form = ref(scenarioToForm(config.value.scenario, timezone.value));
+
+    const { setFormErrors } = useValidationFormErrors(form);
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
         try {
-          if (this.config.action) {
-            await this.config.action(formToScenario(this.form, this.$system.timezone));
+          if (config.value.action) {
+            await config.value.action(formToScenario(form.value, timezone.value));
           }
 
-          this.$modals.hide();
+          close();
         } catch (err) {
           if (err.error) {
-            this.$popups.error({ text: err.error });
+            popups.error({ text: err.error });
           } else {
-            this.setFormErrors(scenarioErrorToForm(err, this.form));
+            setFormErrors(scenarioErrorToForm(err, form.value));
           }
+
+          throw err;
         }
-      }
-    },
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+    useEntityInfoPropertyFetching();
+
+    const title = computed(() => config.value.title ?? t('modals.createScenario.create.title'));
+
+    return {
+      config,
+
+      form,
+
+      isDisabled,
+      submitting,
+
+      title,
+
+      submit,
+      close,
+    };
   },
 };
 </script>

@@ -11,7 +11,7 @@ import { useEntityInfoProperty } from '@/hooks/store/modules/entity-info-propert
  * @returns {Object} Object containing reactive variables for entity aliases
  */
 export const useEntityAliasesVariables = () => {
-  const { entityInfoPropertiesWithAlias } = useEntityInfoProperty();
+  const { entityInfoPropertiesWithAlias, entityInfoPropertiesPending } = useEntityInfoProperty();
 
   /**
    * Base variables computed from entity info properties that have aliases.
@@ -53,5 +53,7 @@ export const useEntityAliasesVariables = () => {
     variables,
     alarmAliasesVariables,
     entityAliasesVariables,
+
+    pending: entityInfoPropertiesPending,
   };
 };
