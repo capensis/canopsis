@@ -94,6 +94,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-variables';
 import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
+import { useEntityAliasesVariables } from '@/hooks/entities/common/entity-aliases-variables';
 
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
@@ -135,9 +136,16 @@ export default {
   },
   setup(props, { expose }) {
     const { tc } = useI18n();
+    const { variables: entityAliasesVariables } = useEntityAliasesVariables();
 
-    const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: toRef(props, 'entityInfos') });
+    const entityInfosVariables = computed(() => [
+      ...props.entityInfos,
+      ...entityAliasesVariables.value,
+    ]);
+
+    const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: entityInfosVariables });
     const { variables: alarmPayloadVariables } = useAlarmServerVariables({ infos: toRef(props, 'alarmInfos') });
+
     const variables = computed(() => [
       {
         value: ENTITY_PAYLOADS_VARIABLES.entity,

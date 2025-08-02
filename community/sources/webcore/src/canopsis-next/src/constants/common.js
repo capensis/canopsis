@@ -499,3 +499,5 @@ export const DENSE_TYPES = {
 };
 
 export const INFOS_NAME_VARIABLE = '%infos_name%';
+
+export const INFOS_VARIABLE_PREFIX = '(index ';

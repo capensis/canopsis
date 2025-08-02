@@ -1,3 +1,5 @@
+import { onMounted } from 'vue';
+
 import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
@@ -46,8 +48,34 @@ export const useEntityInfoProperty = () => {
     fetchEntityInfoPropertiesListWithoutStore: 'fetchListWithoutStore',
   });
 
+  /**
+   * Fetches all entity info properties without pagination.
+   * Retrieves the complete list of entity information properties from the server.
+   *
+   * @async
+   * @function fetchAllEntityInfoPropertiesList
+   * @returns {Promise<Object>}
+   */
+  const fetchAllEntityInfoPropertiesList = async () => (
+    actions.fetchEntityInfoPropertiesList({ params: { paginate: false } })
+  );
+
   return {
     ...getters,
     ...actions,
+
+    fetchAllEntityInfoPropertiesList,
   };
+};
+
+/**
+ * Hook for automatically fetching entity info properties on component mount.
+ * This hook combines entity info property functionality with automatic data fetching
+ * when the component is mounted, ensuring that entity info properties are always
+ * available when the component initializes.
+ */
+export const useEntityInfoPropertyFetching = () => {
+  const { fetchAllEntityInfoPropertiesList } = useEntityInfoProperty();
+
+  onMounted(fetchAllEntityInfoPropertiesList);
 };
