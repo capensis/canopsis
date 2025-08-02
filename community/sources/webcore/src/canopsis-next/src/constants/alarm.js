@@ -1,6 +1,6 @@
 import { COLORS } from '@/config';
 
-import { DENSE_TYPES, WIDGET_COLUMNS_GROUPS, INFOS_NAME_VARIABLE } from './common';
+import { DENSE_TYPES, WIDGET_COLUMNS_GROUPS, INFOS_NAME_VARIABLE, INFOS_VARIABLE_PREFIX } from './common';
 
 export const ALARM_FIELDS = {
   id: '_id',
@@ -924,8 +924,14 @@ export const ALARM_UNSORTABLE_FIELDS = [
   ALARM_FIELDS.tags,
 ];
 
-export const ALARM_PAYLOADS_VARIABLES = {
+export const ALARM_PAYLOAD_VARIABLES_PREFIXES = {
   alarm: '.Alarm',
+  entity: '.Entity',
+  entityInfos: `${INFOS_VARIABLE_PREFIX} .Entity.Infos`,
+};
+
+export const ALARM_PAYLOADS_VARIABLES = {
+  alarm: ALARM_PAYLOAD_VARIABLES_PREFIXES.alarm,
   alarms: '.Alarms',
   id: '.ID',
   displayName: '.Value.DisplayName',
@@ -947,10 +953,10 @@ export const ALARM_PAYLOADS_VARIABLES = {
   ackMessage: '.Value.ACK.Message',
   lastCommentAuthor: '.Value.LastComment.Author',
   lastCommentMessage: '.Value.LastComment.Message',
-  infosValue: `(index (index .Alarm.Value.Infos "%rule_id%") "${INFOS_NAME_VARIABLE}")`,
+  infosValue: `${INFOS_VARIABLE_PREFIX} ${INFOS_VARIABLE_PREFIX} .Alarm.Value.Infos "%rule_id%") "${INFOS_NAME_VARIABLE}")`,
 
-  entityName: '.Entity.Name',
-  entityInfosValue: `(index .Entity.Infos "${INFOS_NAME_VARIABLE}").Value`,
+  entityName: `${ALARM_PAYLOAD_VARIABLES_PREFIXES.entity}.Name`,
+  entityInfosValue: `${ALARM_PAYLOAD_VARIABLES_PREFIXES.entityInfos} "${INFOS_NAME_VARIABLE}").Value`,
 };
 
 export const ACK_MODAL_ACTIONS_TYPES = {
