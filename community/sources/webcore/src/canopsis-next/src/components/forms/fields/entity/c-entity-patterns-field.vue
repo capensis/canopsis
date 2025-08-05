@@ -36,12 +36,15 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
+  PATTERN_FIELD_TYPES,
+  ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
 
 import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
+import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -50,7 +53,7 @@ const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export default {
   components: { PatternEditorField },
-  mixins: [patternCountEntitiesModalMixin],
+  mixins: [patternCountEntitiesModalMixin, entitiesEntityInfoPropertyMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -191,10 +194,24 @@ export default {
       };
     },
 
+    infosWithDefinedTypes() {
+      return this.infos.map(({ type, ...info }) => ({
+        ...info,
+        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
+      }));
+    },
+
     infosOptions() {
       return {
-        infos: this.infos,
+        infos: this.infosWithDefinedTypes,
         type: PATTERN_RULE_TYPES.infos,
+        inputTypes: [
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.boolean },
+          { value: PATTERN_FIELD_TYPES.stringArray },
+          { value: PATTERN_FIELD_TYPES.timestamp },
+        ],
       };
     },
 
@@ -338,6 +355,7 @@ export default {
   mounted() {
     this.fetchCategories();
     this.fetchInfos();
+    this.fetchAllEntityInfoPropertiesList();
   },
   methods: {
     ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),
