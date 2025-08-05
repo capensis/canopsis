@@ -215,7 +215,7 @@ export default {
     },
 
     isDateRule() {
-      return isDateRuleType(this.type);
+      return isDateRuleType(this.type) || this.rule.fieldType === PATTERN_FIELD_TYPES.timestamp;
     },
 
     isDurationRule() {
@@ -238,6 +238,21 @@ export default {
       const valueHandlers = {
         input: this.updateValue,
       };
+
+      if (this.isDateRule) {
+        return {
+          is: 'pattern-rule-field-date-value',
+          props: {
+            value: this.rule.range,
+            operator: this.rule.operator,
+            disabled: this.disabled,
+            name: this.valueFieldName,
+          },
+          on: {
+            input: this.updateRange,
+          },
+        };
+      }
 
       if (this.valueField) {
         const valueFieldProps = isFunction(this.valueField.props)
@@ -271,21 +286,6 @@ export default {
           },
           on: {
             input: this.updateDuration,
-          },
-        };
-      }
-
-      if (this.isDateRule) {
-        return {
-          is: 'pattern-rule-field-date-value',
-          props: {
-            value: this.rule.range,
-            operator: this.rule.operator,
-            disabled: this.disabled,
-            name: this.valueFieldName,
-          },
-          on: {
-            input: this.updateRange,
           },
         };
       }

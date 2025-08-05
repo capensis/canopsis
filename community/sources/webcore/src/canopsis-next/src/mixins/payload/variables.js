@@ -193,6 +193,7 @@ export const payloadVariablesMixin = {
           value: ENTITY_PAYLOADS_VARIABLES.infosValue,
           text: this.$t('common.infos'),
         },
+        ...this.entityAliasesVariables,
       ];
     },
 
