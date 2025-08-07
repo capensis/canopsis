@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
@@ -52,6 +53,7 @@ type store struct {
 	dbExdataTableCollection mongo.DbCollection
 	dbEntityCollection      mongo.DbCollection
 	dbTplDataCollection     mongo.DbCollection
+	dbTplTestCollection     mongo.DbCollection
 	transformer             common.PatternFieldsTransformer
 	authorProvider          author.Provider
 	tplValidator            validator.Validator
@@ -91,7 +93,8 @@ func NewStore(
 		dbFailureCollection:     dbClient.Collection(mongo.EventFilterFailureCollection),
 		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
 		dbEntityCollection:      dbClient.Collection(mongo.EntityMongoCollection),
-		dbTplDataCollection:     dbClient.Collection(mongo.TemplateDataCollection),
+		dbTplDataCollection:     dbClient.Collection(mongo.TemplateTestDataCollection),
+		dbTplTestCollection:     dbClient.Collection(mongo.TemplateTestCollection),
 		transformer:             transformer,
 		authorProvider:          authorProvider,
 		tplValidator:            tplValidator,
@@ -271,6 +274,13 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
+		_, err = s.dbTplTestCollection.UpdateMany(ctx, bson.M{"rule._id": model.ID, "type": template.TypeTestEventFilterRule}, bson.M{
+			"$set": bson.M{"rule.name": model.Description},
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetByID(ctx, model.ID)
 		return err
 	})
@@ -301,13 +311,14 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
-		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
-		if err != nil || res.MatchedCount == 0 {
+		_, err = logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestEventFilterRule}, userID,
+			s.dbTplTestCollection)
+		if err != nil {
 			return err
 		}
 
-		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		deleted, err = logger.DeleteOne(ctx, id, userID, s.dbCollection)
+
 		return err
 	})
 
@@ -398,18 +409,18 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		return nil, err
 	}
 
-	data, err := s.getTplData(ctx, r)
+	tplData, exdataTestData, err := s.getTplData(ctx, r)
 	if err != nil {
 		return nil, err
 	}
 
 	response := make(map[string]template.ValidateResponse)
-	response, data.ExternalData, err = s.validateExdataTpls(ctx, r, response, data)
+	response, tplData.ExternalData, err = s.validateExdataTpls(ctx, r, response, tplData, exdataTestData)
 	if err != nil {
 		return nil, err
 	}
 
-	response, err = s.validateConfigTpls(r, response, data)
+	response, err = s.validateConfigTpls(r, response, tplData)
 	if err != nil {
 		return nil, err
 	}
@@ -481,15 +492,59 @@ func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r comm
 	return nil
 }
 
-func (s *store) getTplData(ctx context.Context, request TemplateRequest) (eventfilter.Template, error) {
-	var res eventfilter.Template
-	event, err := template.GetEventData(ctx, s.dbTplDataCollection, request.TestData.Event, s.encoder, s.decoder)
+func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.Template, map[int]template.ResponseTestData, error) {
+	var tplData eventfilter.Template
+	eventDataID := r.TestData.Event
+	exdataTestDataIDs := r.TestData.ExternalData
+	if r.TestData.Test != "" {
+		test := template.TestModel{}
+		err := s.dbTplTestCollection.
+			FindOne(ctx, bson.M{"_id": r.TestData.Test, "type": template.TypeTestEventFilterRule, "rule._id": r.Rule.ID}).
+			Decode(&test)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return tplData, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+			}
+
+			return tplData, nil, err
+		}
+
+		if eventDataID == "" {
+			eventDataID = test.Data.Event
+		}
+
+		if exdataTestDataIDs == nil {
+			exdataTestDataIDs = test.Data.Responses
+		}
+	}
+
+	if eventDataID == "" {
+		return tplData, nil, common.NewValidationError("testdata.event", "Event is missing.")
+	}
+
+	event, err := template.GetEventData(ctx, s.dbTplDataCollection, eventDataID, s.encoder, s.decoder)
 	if err != nil {
-		return res, err
+		return tplData, nil, err
 	}
 
 	if event == nil {
-		return res, common.NewValidationError("testdata.event", "Event doesn't exist.")
+		return tplData, nil, common.NewValidationError("testdata.event", "Event doesn't exist.")
+	}
+
+	var exdataTestData map[int]template.ResponseTestData
+	if len(exdataTestDataIDs) > 0 {
+		if len(exdataTestDataIDs) > len(r.Rule.ExternalData) {
+			return tplData, nil, common.NewValidationError("testdata.external_data."+strconv.Itoa(len(r.Rule.ExternalData)), "ExternalData is redundant.")
+		}
+
+		exdataTestData, err = template.GetResponseData(ctx, s.dbTplDataCollection, exdataTestDataIDs)
+		if err != nil {
+			return tplData, nil, err
+		}
+
+		if len(exdataTestData) == 0 {
+			return tplData, nil, common.NewValidationError("testdata.external_data", "ExternalData doesn't exist.")
+		}
 	}
 
 	var entity types.Entity
@@ -498,47 +553,47 @@ func (s *store) getTplData(ctx context.Context, request TemplateRequest) (eventf
 		err = s.dbEntityCollection.FindOne(ctx, bson.M{"_id": entityID, "soft_deleted": nil}).Decode(&entity)
 		// ignore missing Entity in case only Event is used in templates
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return res, err
+			return tplData, nil, err
 		}
 	}
 
 	var matched bool
 	var eventRegexMatches match.EventRegexMatches
 	var entityRegexMatches match.EntityRegexMatches
-	if len(request.Rule.EventPattern) > 0 {
-		matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(request.Rule.EventPattern, event)
+	if len(r.Rule.EventPattern) > 0 {
+		matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(r.Rule.EventPattern, event)
 		if err != nil {
-			return res, common.NewValidationError("rule.event_pattern", "EventPattern is invalid event pattern.")
+			return tplData, nil, common.NewValidationError("rule.event_pattern", "EventPattern is invalid event pattern.")
 		}
 
 		if !matched {
-			return res, common.NewValidationError("testdata.event", "Event is not matched to event pattern.")
+			return tplData, nil, common.NewValidationError("testdata.event", "Event is not matched to event pattern.")
 		}
 	}
 
 	var entityPattern pattern.Entity
-	if len(request.Rule.CorporatePattern.EntityPattern) > 0 {
-		entityPattern = request.Rule.CorporatePattern.EntityPattern
+	if len(r.Rule.CorporatePattern.EntityPattern) > 0 {
+		entityPattern = r.Rule.CorporatePattern.EntityPattern
 	} else {
-		entityPattern = request.Rule.EntityPattern
+		entityPattern = r.Rule.EntityPattern
 	}
 
 	if len(entityPattern) > 0 {
 		if entity.ID == "" {
-			return res, common.NewValidationError("testdata.event", "Corresponding entity doesn't exist.")
+			return tplData, nil, common.NewValidationError("testdata.event", "Corresponding entity doesn't exist.")
 		}
 
 		matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(entityPattern, &entity)
 		if err != nil {
-			return res, common.NewValidationError("rule.entity_pattern", "EntityPattern is invalid entity pattern.")
+			return tplData, nil, common.NewValidationError("rule.entity_pattern", "EntityPattern is invalid entity pattern.")
 		}
 
 		if !matched {
-			return res, common.NewValidationError("testdata.event", "Corresponding entity is not matched to entity pattern.")
+			return tplData, nil, common.NewValidationError("testdata.event", "Corresponding entity is not matched to entity pattern.")
 		}
 	}
 
-	res = eventfilter.Template{
+	tplData = eventfilter.Template{
 		Event: event,
 		RegexMatch: eventfilter.RegexMatch{
 			EventRegexMatches: eventRegexMatches,
@@ -546,10 +601,10 @@ func (s *store) getTplData(ctx context.Context, request TemplateRequest) (eventf
 		},
 	}
 	if entity.ID != "" {
-		res.Event.Entity = &entity
+		tplData.Event.Entity = &entity
 	}
 
-	return res, nil
+	return tplData, exdataTestData, nil
 }
 
 func (s *store) validateExdataTpls(
@@ -557,25 +612,10 @@ func (s *store) validateExdataTpls(
 	r TemplateRequest,
 	response map[string]template.ValidateResponse,
 	tplData eventfilter.Template,
+	exdataTestData map[int]template.ResponseTestData,
 ) (map[string]template.ValidateResponse, map[string]any, error) {
-	var externalDataTestData map[int]template.ResponseTestData
-	var err error
-	if len(r.TestData.ExternalData) > 0 {
-		if len(r.TestData.ExternalData) > len(r.Rule.ExternalData) {
-			return nil, nil, common.NewValidationError("testdata.external_data."+strconv.Itoa(len(r.Rule.ExternalData)), "ExternalData is redundant.")
-		}
-
-		externalDataTestData, err = template.GetResponseData(ctx, s.dbTplDataCollection, r.TestData.ExternalData)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		if len(externalDataTestData) == 0 {
-			return nil, nil, common.NewValidationError("testdata.external_data", "ExternalData doesn't exist.")
-		}
-	}
-
 	externalData := make(map[string]any, len(r.Rule.ExternalData))
+	var err error
 	for i, d := range r.Rule.ExternalData {
 		prefix := "external_data." + strconv.Itoa(i)
 		switch d.Type {
@@ -612,7 +652,7 @@ func (s *store) validateExdataTpls(
 				}
 			}
 
-			if _, ok := externalDataTestData[i]; ok {
+			if _, ok := exdataTestData[i]; ok {
 				return nil, nil, common.NewValidationError("testdata."+prefix, "ExternalData is redundant.")
 			}
 		case externaldata.RefTypeAPI:
@@ -628,7 +668,7 @@ func (s *store) validateExdataTpls(
 				}
 			}
 
-			if td, ok := externalDataTestData[i]; ok {
+			if td, ok := exdataTestData[i]; ok {
 				externalData[d.Reference] = td.Body
 			} else {
 				return nil, nil, common.NewValidationError("testdata."+prefix, "ExternalData is missing.")

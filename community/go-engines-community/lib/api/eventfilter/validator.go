@@ -21,22 +21,8 @@ func NewValidator(client mongo.DbClient) *Validator {
 	return &Validator{dbClient: client}
 }
 
-func (v *Validator) ValidateCreateRequest(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(CreateRequest)
-	v.validateEventFilter(ctx, sl, r.EditRequest)
-}
-
-func (v *Validator) ValidateUpdateRequest(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(UpdateRequest)
-	v.validateEventFilter(ctx, sl, r.EditRequest)
-}
-
-func (v *Validator) ValidateBulkUpdateRequestItem(ctx context.Context, sl validator.StructLevel) {
-	r := sl.Current().Interface().(BulkUpdateRequestItem)
-	v.validateEventFilter(ctx, sl, r.EditRequest)
-}
-
-func (v *Validator) validateEventFilter(ctx context.Context, sl validator.StructLevel, r EditRequest) {
+func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {
+	r := sl.Current().Interface().(EditRequest)
 	switch r.Type {
 	case eventfilter.RuleTypeChangeEntity:
 		if r.Config.Component == "" &&

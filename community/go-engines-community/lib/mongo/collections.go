@@ -107,5 +107,6 @@ const (
 
 	EntityInfosPropertyCollection = "entity_infos_property"
 
-	TemplateDataCollection = "template_data"
+	TemplateTestDataCollection = "template_data"
+	TemplateTestCollection     = "template_test"
 )
