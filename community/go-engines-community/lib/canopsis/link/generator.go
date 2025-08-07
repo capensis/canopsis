@@ -60,13 +60,13 @@ type generator struct {
 	rules   []parsedRule
 }
 
-type alarmWithData struct {
+type AlarmWithData struct {
 	types.Alarm  `bson:",inline"`
 	Entity       types.Entity              `bson:"entity"`
 	ExternalData map[string]map[string]any `bson:"-"`
 }
 
-type entityWithData struct {
+type EntityWithData struct {
 	types.Entity `bson:",inline"`
 	ExternalData map[string]map[string]any `bson:"-"`
 }
@@ -107,7 +107,7 @@ func (g *generator) Load(ctx context.Context) error {
 
 func (g *generator) GenerateForAlarm(ctx context.Context, alarm types.Alarm, entity types.Entity, user User) (LinksByCategory, error) {
 	res, err := g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
-		return g.generateLinksByAlarms(ctx, rule, []alarmWithData{
+		return g.generateLinksByAlarms(ctx, rule, []AlarmWithData{
 			{
 				Alarm:  alarm,
 				Entity: entity,
@@ -175,9 +175,9 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 		}
 	}
 
-	entities := make([]entityWithData, len(alarms))
+	entities := make([]EntityWithData, len(alarms))
 	for i, alarm := range alarms {
-		entities[i] = entityWithData{Entity: alarm.Entity}
+		entities[i] = EntityWithData{Entity: alarm.Entity}
 	}
 
 	err = g.addExternalData(ctx, rule, alarms, entities)
@@ -338,7 +338,7 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 	return parsedRules, nil
 }
 
-func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithData, error) {
+func (g *generator) getAlarms(ctx context.Context, ids []string) ([]AlarmWithData, error) {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
@@ -364,7 +364,7 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithDat
 		return nil, err
 	}
 
-	var openAlarms []alarmWithData
+	var openAlarms []AlarmWithData
 	err = openCursor.All(ctx, &openAlarms)
 	if err != nil {
 		return nil, err
@@ -385,7 +385,7 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithDat
 		return nil, err
 	}
 
-	var resolvedAlarms []alarmWithData
+	var resolvedAlarms []AlarmWithData
 	err = resolvedCursor.All(ctx, &resolvedAlarms)
 	if err != nil {
 		return nil, err
@@ -418,7 +418,7 @@ func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWith
 	return entities, err
 }
 
-func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData, user User) (map[string][]linkWithCategory, error) {
+func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []AlarmWithData, user User) (map[string][]linkWithCategory, error) {
 	res := make(map[string][]linkWithCategory, len(alarms))
 	for i := range alarms {
 		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarms[i].Alarm)
@@ -439,8 +439,8 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		argAlarms := []alarmWithData{alarms[i]}
-		argEntities := []entityWithData{{Entity: alarms[i].Entity}}
+		argAlarms := []AlarmWithData{alarms[i]}
+		argEntities := []EntityWithData{{Entity: alarms[i].Entity}}
 		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
@@ -494,15 +494,15 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		var argAlarms []alarmWithData
+		var argAlarms []AlarmWithData
 		if entities[i].Alarm != nil {
-			argAlarms = []alarmWithData{{
+			argAlarms = []AlarmWithData{{
 				Alarm:  *entities[i].Alarm,
 				Entity: entities[i].Entity,
 			}}
 		}
 
-		argEntities := []entityWithData{{Entity: entities[i].Entity}}
+		argEntities := []EntityWithData{{Entity: entities[i].Entity}}
 		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
@@ -544,8 +544,8 @@ func (g *generator) getRule(id string) parsedRule {
 func (g *generator) addExternalData(
 	ctx context.Context,
 	rule parsedRule,
-	alarms []alarmWithData,
-	entities []entityWithData,
+	alarms []AlarmWithData,
+	entities []EntityWithData,
 ) error {
 	switch rule.Type {
 	case TypeAlarm:
@@ -560,7 +560,7 @@ func (g *generator) addExternalData(
 func (g *generator) addExternalDataToAlarms(
 	ctx context.Context,
 	externalData []externaldata.ParsedRefParameters,
-	data []alarmWithData,
+	data []AlarmWithData,
 ) error {
 	if len(externalData) == 0 {
 		return nil
@@ -583,7 +583,7 @@ func (g *generator) addExternalDataToAlarms(
 func (g *generator) addExternalDataToEntities(
 	ctx context.Context,
 	externalData []externaldata.ParsedRefParameters,
-	data []entityWithData,
+	data []EntityWithData,
 ) error {
 	if len(externalData) == 0 {
 		return nil
@@ -791,8 +791,8 @@ func (g *generator) getLinksByCode(
 
 func (g *generator) getTplData(
 	rule parsedRule,
-	alarms []alarmWithData,
-	entities []entityWithData,
+	alarms []AlarmWithData,
+	entities []EntityWithData,
 	user User,
 ) map[string]any {
 	var data map[string]any
@@ -814,8 +814,8 @@ func (g *generator) getTplData(
 
 func (g *generator) getCodeArgs(
 	rule parsedRule,
-	alarms []alarmWithData,
-	entities []entityWithData,
+	alarms []AlarmWithData,
+	entities []EntityWithData,
 	user User,
 ) []any {
 	var items any

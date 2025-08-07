@@ -3,14 +3,25 @@ package linkrule
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/go-playground/validator/v10"
 )
 
-func ValidateEditRequest(sl validator.StructLevel) {
+type Validator struct {
+	enforcer security.Enforcer
+}
+
+func NewValidator(enforcer security.Enforcer) *Validator {
+	return &Validator{enforcer: enforcer}
+}
+
+func (v *Validator) ValidateEditRequest(sl validator.StructLevel) {
 	var r = sl.Current().Interface().(EditRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
@@ -48,4 +59,29 @@ func ValidateEditRequest(sl validator.StructLevel) {
 	}
 
 	apiexternaldata.ValidateRefParameters(sl, r.ExternalData, []string{externaldata.RefTypeTable})
+}
+
+func (v *Validator) ValidateTemplateRequest(sl validator.StructLevel) {
+	var r = sl.Current().Interface().(TemplateRequest)
+	switch r.Rule.Type {
+	case liblink.TypeAlarm:
+		if len(r.TestData.Alarms) == 0 {
+			sl.ReportError(r.TestData.Alarms, "TestData.Alarms", "Alarms", "required", "")
+		}
+	case liblink.TypeEntity:
+		if len(r.TestData.Entities) == 0 {
+			sl.ReportError(r.TestData.Entities, "TestData.Entities", "Entities", "required", "")
+		}
+	}
+
+	if r.TestData.User != "" {
+		ok, err := v.enforcer.Enforce(r.Author, apisecurity.PermAcl, securitymodel.PermissionRead)
+		if err != nil {
+			panic(err)
+		}
+
+		if !ok {
+			sl.ReportError(r.TestData.User, "TestData.User", "User", "unauth", "")
+		}
+	}
 }
