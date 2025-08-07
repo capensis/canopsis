@@ -69,6 +69,7 @@ type TplAlarm struct {
 func FetchAlarmsForTplPipeline(ids []string) []bson.M {
 	return []bson.M{
 		{"$match": bson.M{"_id": bson.M{"$in": ids}}},
+		{"$project": bson.M{"v.steps": 0}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
 			"localField":   "d",
@@ -83,9 +84,10 @@ func FetchAlarmsForTplPipeline(ids []string) []bson.M {
 			"from":         mongo.AlarmMongoCollection,
 			"localField":   "v.children",
 			"foreignField": "d",
-			"pipeline": []bson.M{{
-				"$match": bson.M{"v.resolved": nil},
-			}},
+			"pipeline": []bson.M{
+				{"$match": bson.M{"v.resolved": nil}},
+				{"$project": bson.M{"v.steps": 0}},
+			},
 			"as": "children",
 		}},
 		{"$unwind": bson.M{

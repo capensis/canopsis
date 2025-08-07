@@ -52,7 +52,7 @@ import (
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
+func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config, enforcer libsecurity.Enforcer) {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
 		return
@@ -308,10 +308,12 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 	v.RegisterStructValidation(pattern.ValidateEditRequest, pattern.EditRequest{})
 
 	linkRuleUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.LinkRuleMongoCollection, "Name")
+	linkRuleValidator := linkrule.NewValidator(enforcer)
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		linkrule.ValidateEditRequest(sl)
+		linkRuleValidator.ValidateEditRequest(sl)
 		linkRuleUniqueNameValidator.Validate(ctx, sl)
 	}, linkrule.EditRequest{})
+	v.RegisterStructValidation(linkRuleValidator.ValidateTemplateRequest, linkrule.TemplateRequest{})
 
 	v.RegisterStructValidation(alarmtag.ValidateCreateRequest, alarmtag.CreateRequest{})
 	v.RegisterStructValidation(alarmtag.ValidateUpdateRequest, alarmtag.UpdateRequest{})
