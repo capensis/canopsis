@@ -39,7 +39,7 @@ type BulkDeleteRequestItem struct {
 
 type VarResponse struct {
 	Name  string `json:"name"`
-	Value string `json:"value"`
+	Value any    `json:"value"`
 }
 
 type DataResponse struct {
@@ -68,7 +68,7 @@ func (r *AggregationDataResult) GetTotal() int64 {
 
 type DataModel struct {
 	ID          string            `bson:"_id,omitempty"`
-	Type        int               `json:"type"`
+	Type        int               `bson:"type"`
 	Name        string            `bson:"name"`
 	Description string            `bson:"description"`
 	Body        map[string]any    `bson:"body"`

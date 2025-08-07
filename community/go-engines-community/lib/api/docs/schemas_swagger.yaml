@@ -2473,6 +2473,18 @@ definitions:
       title:
         type: string
     type: object
+  entityservice.TemplateRequest:
+    properties:
+      rule:
+        $ref: '#/definitions/entityservice.CreateRequest'
+    type: object
+  entityservice.TemplateVarsResponse:
+    properties:
+      output:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+    type: object
   entityservice.UpdateRequest:
     properties:
       category:
@@ -2757,19 +2769,21 @@ definitions:
     type: object
   eventfilter.TemplateRequest:
     properties:
-      data:
+      rule:
+        $ref: '#/definitions/eventfilter.CreateRequest'
+      testdata:
         properties:
           event:
             type: string
           external_data:
             additionalProperties:
               type: string
+            description: TestData.ExternalData keys correspond with Rule.ExternalData
+              keys
             type: object
         required:
         - event
         type: object
-      request:
-        $ref: '#/definitions/eventfilter.CreateRequest'
     type: object
   eventfilter.TemplateVarsResponse:
     properties:
@@ -3797,6 +3811,46 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  linkrule.TemplateRequest:
+    properties:
+      rule:
+        $ref: '#/definitions/linkrule.EditRequest'
+      testdata:
+        properties:
+          alarms:
+            items:
+              type: string
+            type: array
+          entities:
+            items:
+              type: string
+            type: array
+          user:
+            type: string
+        type: object
+    type: object
+  linkrule.TemplateVarsResponse:
+    properties:
+      alarm:
+        $ref: '#/definitions/linkrule.TemplateVarsResponseItem'
+      entity:
+        $ref: '#/definitions/linkrule.TemplateVarsResponseItem'
+    type: object
+  linkrule.TemplateVarsResponseItem:
+    properties:
+      external_data:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      label:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      url:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
     type: object
   maintenance.Request:
     properties:
@@ -5375,7 +5429,9 @@ definitions:
     type: object
   scenario.TemplateRequest:
     properties:
-      data:
+      rule:
+        $ref: '#/definitions/scenario.EditRequest'
+      testdata:
         properties:
           event:
             type: string
@@ -5386,8 +5442,6 @@ definitions:
         required:
         - event
         type: object
-      request:
-        $ref: '#/definitions/scenario.EditRequest'
     type: object
   scenario.TemplateVarsResponse:
     properties:
@@ -6019,7 +6073,7 @@ definitions:
       name:
         type: string
       value:
-        type: string
+        type: any
     type: object
   types.Author:
     properties:
@@ -6857,6 +6911,30 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  widgettemplate.TemplateRequest:
+    properties:
+      rule:
+        properties:
+          columns:
+            items:
+              $ref: '#/definitions/view.WidgetColumn'
+            type: array
+        type: object
+      testdata:
+        properties:
+          alarm:
+            type: string
+        required:
+        - alarm
+        type: object
+    type: object
+  widgettemplate.TemplateVarsResponse:
+    properties:
+      column:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
     type: object
 info:
   contact: {}

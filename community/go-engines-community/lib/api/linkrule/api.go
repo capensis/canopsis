@@ -19,6 +19,8 @@ type API interface {
 	GetCategories(*gin.Context)
 	BulkDelete(c *gin.Context)
 	DBExport(c *gin.Context)
+	ValidateTemplates(c *gin.Context)
+	GetTemplateVars(c *gin.Context)
 }
 
 type api struct {
@@ -205,4 +207,36 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.LinkRuleMongoCollection, b)
+}
+
+// ValidateTemplates
+// @Param body body TemplateRequest true "body"
+// @Success 200 {object} template.ValidateResponse
+func (a *api) ValidateTemplates(c *gin.Context) {
+	request := TemplateRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	response, err := a.store.ValidateTemplates(c, request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// GetTemplateVars
+// @Success 200 {array} TemplateVarsResponse
+func (a *api) GetTemplateVars(c *gin.Context) {
+	c.JSON(http.StatusOK, a.store.GetTemplateVars())
 }
