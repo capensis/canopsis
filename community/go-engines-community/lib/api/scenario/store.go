@@ -9,6 +9,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
@@ -43,6 +44,7 @@ type store struct {
 	collection            mongo.DbCollection
 	alarmCollection       mongo.DbCollection
 	tplDataCollection     mongo.DbCollection
+	tplTestCollection     mongo.DbCollection
 	transformer           common.PatternFieldsTransformer
 	authorProvider        author.Provider
 	tplValidator          validator.Validator
@@ -118,7 +120,8 @@ func NewStore(
 		dbClient:              db,
 		collection:            db.Collection(mongo.ScenarioMongoCollection),
 		alarmCollection:       db.Collection(mongo.AlarmMongoCollection),
-		tplDataCollection:     db.Collection(mongo.TemplateDataCollection),
+		tplDataCollection:     db.Collection(mongo.TemplateTestDataCollection),
+		tplTestCollection:     db.Collection(mongo.TemplateTestCollection),
 		transformer:           transformer,
 		authorProvider:        authorProvider,
 		tplValidator:          tplValidator,
@@ -260,6 +263,13 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 			return err
 		}
 
+		_, err = s.tplTestCollection.UpdateMany(ctx, bson.M{"rule._id": r.ID, "type": template.TypeTestActionScenario}, bson.M{
+			"$set": bson.M{"rule.name": model.Name},
+		})
+		if err != nil {
+			return err
+		}
+
 		result, err = s.GetOneBy(ctx, r.ID)
 		return err
 	})
@@ -276,13 +286,14 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
-		// required to get the author in action log listener.
-		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
-		if err != nil || res.MatchedCount == 0 {
+		_, err := logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestActionScenario}, userID,
+			s.tplTestCollection)
+		if err != nil {
 			return err
 		}
 
-		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		deleted, err = logger.DeleteOne(ctx, id, userID, s.collection)
+
 		return err
 	})
 
@@ -290,32 +301,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 }
 
 func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {
-	event, err := template.GetEventData(ctx, s.tplDataCollection, r.TestData.Event, s.encoder, s.decoder)
-	if err != nil {
-		return nil, err
-	}
-
-	if event == nil {
-		return nil, common.NewValidationError("testdata.event", "Event doesn't exist.")
-	}
-
-	var whTestData map[int]template.ResponseTestData
-	if len(r.TestData.Responses) > 0 {
-		if len(r.TestData.Responses) > len(r.Rule.Actions) {
-			return nil, common.NewValidationError("testdata.responses."+strconv.Itoa(len(r.Rule.Actions)), "Response is redundant.")
-		}
-
-		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, r.TestData.Responses)
-		if err != nil {
-			return nil, err
-		}
-
-		if len(whTestData) == 0 {
-			return nil, common.NewValidationError("testdata.responses", "Responses don't exist.")
-		}
-	}
-
-	alarm, err := s.findAlarm(ctx, event.GetEID())
+	event, alarm, whTestData, err := s.getTplData(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -326,14 +312,13 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 	}
 
 	additionalData := types.AdditionalData{
-		Trigger:         trigger,
-		AlarmChangeType: trigger,
-		Initiator:       cmp.Or(event.Initiator, types.InitiatorExternal),
-		Output:          event.Output,
-		RuleName:        r.Rule.Name,
+		Trigger:   trigger,
+		Initiator: cmp.Or(event.Initiator, types.InitiatorExternal),
+		Output:    event.Output,
+		RuleName:  r.Rule.Name,
 	}
 
-	return s.validateActionTpls(r, *event, alarm, additionalData, whTestData)
+	return s.validateActionTpls(r, *event, *alarm, additionalData, whTestData)
 }
 
 func (s *store) GetTemplateVars() TemplateVarsResponse {
@@ -424,6 +409,68 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionReq
 	}
 
 	return actions, uniqueAliases, err
+}
+
+func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event, *webhook.TplAlarm, map[int]template.ResponseTestData, error) {
+	eventDataID := r.TestData.Event
+	whTestDataIDs := r.TestData.Responses
+	if r.TestData.Test != "" {
+		test := template.TestModel{}
+		err := s.tplTestCollection.
+			FindOne(ctx, bson.M{"_id": r.TestData.Test, "type": template.TypeTestActionScenario, "rule._id": r.Rule.ID}).
+			Decode(&test)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil, nil, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+			}
+
+			return nil, nil, nil, err
+		}
+
+		if eventDataID == "" {
+			eventDataID = test.Data.Event
+		}
+
+		if whTestDataIDs == nil {
+			whTestDataIDs = test.Data.Responses
+		}
+	}
+
+	if eventDataID == "" {
+		return nil, nil, nil, common.NewValidationError("testdata.event", "Event is missing.")
+	}
+
+	event, err := template.GetEventData(ctx, s.tplDataCollection, eventDataID, s.encoder, s.decoder)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	if event == nil {
+		return nil, nil, nil, common.NewValidationError("testdata.event", "Event doesn't exist.")
+	}
+
+	var whTestData map[int]template.ResponseTestData
+	if len(whTestDataIDs) > 0 {
+		if len(whTestDataIDs) > len(r.Rule.Actions) {
+			return nil, nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(len(r.Rule.Actions)), "Response is redundant.")
+		}
+
+		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, whTestDataIDs)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+
+		if len(whTestData) == 0 {
+			return nil, nil, nil, common.NewValidationError("testdata.responses", "Responses don't exist.")
+		}
+	}
+
+	alarm, err := s.findAlarm(ctx, event.GetEID())
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	return event, &alarm, whTestData, nil
 }
 
 // findAlarm fetches alarm with meta-alarm children and related entities.

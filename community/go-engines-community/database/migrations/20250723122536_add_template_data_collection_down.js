@@ -1,4 +1,6 @@
 db.template_data.dropIndex("name_1");
+db.template_test.dropIndex("name_1");
+db.template_test.dropIndex("type_1_rule._id_1");
 
 db.permission.deleteMany({
     _id: {

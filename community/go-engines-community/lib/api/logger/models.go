@@ -50,6 +50,8 @@ const (
 	ValueTypeEventRecord         = "eventrecord"
 	ValueTypeExternalData        = "externaldata"
 	ValueTypeEntityInfosProperty = "entityinfosproperty"
+	ValueTypeTplTestData         = "tpltestdata"
+	ValueTypeTplTest             = "tpltest"
 )
 
 type ActionLogEvent struct {

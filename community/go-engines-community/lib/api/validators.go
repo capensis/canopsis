@@ -241,12 +241,8 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config, enf
 
 	eventfilterValidator := eventfilter.NewValidator(client)
 	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRuleCollection, "ID")
-	v.RegisterStructValidationCtx(eventfilterValidator.ValidateUpdateRequest, eventfilter.UpdateRequest{})
-	v.RegisterStructValidationCtx(eventfilterValidator.ValidateBulkUpdateRequestItem, eventfilter.BulkUpdateRequestItem{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		eventfilterValidator.ValidateCreateRequest(ctx, sl)
-		eventfilterExistIdValidator.Validate(ctx, sl)
-	}, eventfilter.CreateRequest{})
+	v.RegisterStructValidationCtx(eventfilterValidator.ValidateEditRequest, eventfilter.EditRequest{})
+	v.RegisterStructValidationCtx(eventfilterExistIdValidator.Validate, eventfilter.CreateRequest{})
 
 	broadcastmessageValidator := broadcastmessage.NewValidator(client)
 	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.CreateRequest{})
@@ -308,12 +304,11 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config, enf
 	v.RegisterStructValidation(pattern.ValidateEditRequest, pattern.EditRequest{})
 
 	linkRuleUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.LinkRuleMongoCollection, "Name")
-	linkRuleValidator := linkrule.NewValidator(enforcer)
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		linkRuleValidator.ValidateEditRequest(sl)
+		linkrule.ValidateEditRequest(sl)
 		linkRuleUniqueNameValidator.Validate(ctx, sl)
 	}, linkrule.EditRequest{})
-	v.RegisterStructValidation(linkRuleValidator.ValidateTemplateRequest, linkrule.TemplateRequest{})
+	v.RegisterStructValidation(linkrule.ValidateTemplateRequest, linkrule.TemplateRequest{})
 
 	v.RegisterStructValidation(alarmtag.ValidateCreateRequest, alarmtag.CreateRequest{})
 	v.RegisterStructValidation(alarmtag.ValidateUpdateRequest, alarmtag.UpdateRequest{})
@@ -324,5 +319,7 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config, enf
 	appInfoValidator := appinfo.NewValidator(client)
 	v.RegisterStructValidationCtx(appInfoValidator.ValidateRequest, appinfo.UserInterfaceConf{})
 
-	v.RegisterStructValidation(template.ValidateEditDataRequest, template.EditDataRequest{})
+	tplValidator := template.NewValidator(enforcer)
+	v.RegisterStructValidation(tplValidator.ValidateEditDataRequest, template.EditDataRequest{})
+	v.RegisterStructValidation(tplValidator.ValidateEditTestRequest, template.EditTestRequest{})
 }
