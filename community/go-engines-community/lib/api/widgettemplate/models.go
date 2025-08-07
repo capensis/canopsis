@@ -3,7 +3,6 @@ package widgettemplate
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 )
@@ -47,17 +46,4 @@ func (r *AggregationResult) GetData() interface{} {
 
 func (r *AggregationResult) GetTotal() int64 {
 	return r.TotalCount
-}
-
-type TemplateRequest struct {
-	Rule struct {
-		Columns []view.WidgetColumn `json:"columns" binding:"dive"`
-	} `json:"rule"`
-	TestData struct {
-		Alarm string `json:"alarm" binding:"required"`
-	} `json:"testdata"`
-}
-
-type TemplateVarsResponse struct {
-	Column []template.VarResponse `json:"column"`
 }
