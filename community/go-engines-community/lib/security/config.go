@@ -109,6 +109,7 @@ type CasConfig struct {
 	LoginUrl           string `yaml:"login_url"`
 	ValidateUrl        string `yaml:"validate_url"`
 	DefaultRole        string `yaml:"default_role"`
+	InsecureSkipVerify bool   `yaml:"insecure_skip_verify"`
 }
 
 type SamlConfig struct {
@@ -154,6 +155,7 @@ type OAuth2ProviderConfig struct {
 	AttributesMap      map[string]string `yaml:"attributes_map"`
 	OpenID             bool              `yaml:"open_id"`
 	PKCE               bool              `yaml:"pkce"`
+	InsecureSkipVerify bool              `yaml:"insecure_skip_verify"`
 }
 
 // LoadConfig creates Config by config file.
