@@ -37,6 +37,7 @@ type Provider interface {
 }
 
 type provider struct {
+	client             *http.Client
 	roleProvider       security.RoleProvider
 	userProvider       security.UserProvider
 	tokenService       apisecurity.TokenService
@@ -60,6 +61,7 @@ type provider struct {
 func NewProvider(
 	ctx context.Context,
 	name string,
+	client *http.Client,
 	roleValidator security.RoleProvider,
 	config security.OAuth2ProviderConfig,
 	store sessions.Store,
@@ -72,6 +74,7 @@ func NewProvider(
 ) Provider {
 	p := &provider{
 		name:               name,
+		client:             client,
 		roleProvider:       roleValidator,
 		userProvider:       userProvider,
 		maintenanceAdapter: maintenanceAdapter,
@@ -107,6 +110,7 @@ func NewProvider(
 func (p *provider) loadOpenIDMetadata(ctx context.Context) error {
 	var err error
 
+	ctx = oidc.ClientContext(ctx, p.client)
 	p.oidcProvider, err = oidc.NewProvider(ctx, p.config.Issuer)
 	if err != nil {
 		return fmt.Errorf("failed to connect to %s authentication provider: %w", p.source, err)
