@@ -11,6 +11,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -33,7 +36,13 @@ type Store interface {
 	DeleteTest(ctx context.Context, id, author string) (bool, error)
 }
 
-func NewStore(client mongo.DbClient, authorProvider author.Provider, enforcer security.Enforcer, testTypePermMapping map[int][]any) Store {
+func NewStore(
+	client mongo.DbClient,
+	authorProvider author.Provider,
+	enforcer security.Enforcer,
+	testTypePermMapping map[int][]any,
+	decoder encoding.Decoder,
+) Store {
 	return &store{
 		client:              client,
 		testDataCollection:  client.Collection(mongo.TemplateTestDataCollection),
@@ -44,6 +53,7 @@ func NewStore(client mongo.DbClient, authorProvider author.Provider, enforcer se
 		authorProvider:      authorProvider,
 		enforcer:            enforcer,
 		testTypePermMapping: testTypePermMapping,
+		decoder:             decoder,
 		defaultSortBy:       "name",
 		defaultSearchByFields: []string{
 			"name",
@@ -72,6 +82,7 @@ type store struct {
 	userCollection        mongo.DbCollection
 	authorProvider        author.Provider
 	enforcer              security.Enforcer
+	decoder               encoding.Decoder
 	testTypePermMapping   map[int][]any
 	defaultSortBy         string
 	defaultSearchByFields []string
@@ -83,6 +94,24 @@ func (s *store) FindData(ctx context.Context, r ListDataRequest) (AggregationDat
 	beforeLimit := make([]bson.M, 0)
 	if r.Type != nil {
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"type": r.Type}})
+	}
+
+	if r.EventPattern != "" {
+		var eventPattern pattern.Event
+		err := s.decoder.Decode([]byte(r.EventPattern), &eventPattern)
+		if err != nil {
+			return res, common.NewValidationError("event_pattern", "EventPattern is invalid.")
+		}
+
+		q, err := db.EventPatternToMongoQuery(eventPattern, "body")
+		if err != nil {
+			return res, common.NewValidationError("event_pattern", "EventPattern is invalid.")
+		}
+
+		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"$and": []bson.M{
+			{"type": TypeTestDataEvent},
+			q,
+		}}})
 	}
 
 	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)

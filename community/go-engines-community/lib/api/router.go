@@ -1974,8 +1974,8 @@ func RegisterRoutes(
 			)
 		}
 
-		templateAPI := template.NewAPI(template.NewStore(primaryDbClient, authorProvider, enforcer, tplTestTypePermMapping),
-			templateConfigProvider, logger)
+		templateAPI := template.NewAPI(template.NewStore(primaryDbClient, authorProvider, enforcer,
+			tplTestTypePermMapping, json.NewDecoder()), templateConfigProvider, logger)
 
 		bulkRouter := protected.Group("/bulk")
 		{

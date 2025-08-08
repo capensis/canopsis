@@ -51,7 +51,8 @@ type ListDataRequest struct {
 	// Possible types:
 	//   * `0` - Event test data
 	//   * `1` - Response test data
-	Type *int `form:"type"`
+	Type         *int   `form:"type"`
+	EventPattern string `form:"event_pattern"`
 }
 
 type BulkDeleteRequestItem struct {

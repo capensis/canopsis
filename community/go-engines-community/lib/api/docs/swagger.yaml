@@ -13820,6 +13820,11 @@ paths:
             enum:
               - 0
               - 1
+        - name: event_pattern
+          in: query
+          schema:
+            type: string
+            example: "[[{\"field\": \"event_type\", \"cond\": {\"type\": \"eq\", \"value\": \"check\"}}]]"
       responses:
         200:
           description: OK
