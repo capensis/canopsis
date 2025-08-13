@@ -81,42 +81,8 @@ pbehavior:
 
 ## Liste complète des paramètres disponibles
 
-Chaque paramètres correspond à une collection MongoDB associée.
+La liste des paramètres est disponible ici : [schemas_swagger.yaml](https://github.com/capensis/canopsis/blob/release-24.04/community/go-engines-community/lib/api/docs/schemas_swagger.yaml#L2675)
 
-* `configuration`
-* `user`
-* `role`
-* `permission`
-* `pbehavior`
-* `pbehavior_type`
-* `pbehavior_reason`
-* `pbehavior_exception`
-* `scenario`
-* `metaalarm`
-* `idle_rule`
-* `eventfilter`
-* `dynamic_infos`
-* `playlist`
-* `state_settings`
-* `broadcast`
-* `associative_table`
-* `notification`
-* `view`
-* `view_tab`
-* `widget`
-* `widget_filter`
-* `widget_template`
-* `view_group`
-* `instruction`
-* `job_config`
-* `job`
-* `resolve_rule`
-* `flapping_rule`
-* `user_preferences`
-* `kpi_filter`
-* `pattern`
-* `declare_ticket_rule`
-* `link_rule`
-* `map`
+Chaque paramètres correspond à une collection MongoDB associée.
 
 Il est possible de sélectionner uniquement les collections nécessaires ou bien de toutes les exporter en les listant dans le tableau `export`.
