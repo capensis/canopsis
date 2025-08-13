@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
@@ -44,11 +43,7 @@ func ParseOptions() (Options, []string) {
 	flag.IntVar(&opts.SystemWorkers, "systemWorkers", canopsis.DefaultSystemEventWorkers, "Amount of workers to process system event flow.")
 	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
 
-	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
-	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
-	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
-
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags("workers", "publishQueue", "consumeQueue")
+	return opts, nil
 }
