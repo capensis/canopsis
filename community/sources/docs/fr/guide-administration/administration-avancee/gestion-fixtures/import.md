@@ -1,11 +1,17 @@
 !!! important
-    Les fixtures doivent être importées uniquement sur une installation vierge de Canopsis. L'import ne fonctionnera pas si des données sont déjà présentes dans la base de données MongoDB.
+    Les fixtures doivent être importées uniquement sur une installation vierge de Canopsis.
+    
+    L'import ne fonctionnera pas si des données sont déjà présentes dans la base de données MongoDB.
+    
+    De plus, `reconfigure` embarquant des fixtures prédéfinies ; il faut donc s’assurer qu’une même collection ne soit pas présente dans deux fichiers `.yml`.
+    
+    Dans certains cas, il pourra être nécessaire de vider ou de supprimer certains fichiers fournis par défaut.
 
 !!! warning "Attention"
     L'extension `.yml` doit être respectée, `.yaml` n'est pas supportée.
 
 !!! note "Note"
-    Dans certains cas, il faudra filtrer la sortie de l'export.
+    Selon le contexte, il faudra filtrer la sortie de l'export.
     Par exemple, dans le cas de la collection `user`, ne garder uniquement que les users locaux ou comptes de service.
 
 === "Docker Compose"
