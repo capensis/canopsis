@@ -1,5 +1,5 @@
 !!! important
-    Les fixtures doivent être importées uniquement sur une installation vierge de Canopsis. L'import de fonctionnera pas si des données sont déjà présentes dans la base de données MongoDB.
+    Les fixtures doivent être importées uniquement sur une installation vierge de Canopsis. L'import ne fonctionnera pas si des données sont déjà présentes dans la base de données MongoDB.
 
 !!! warning "Attention"
     L'extension `.yml` doit être respectée, `.yaml` n'est pas supportée.
