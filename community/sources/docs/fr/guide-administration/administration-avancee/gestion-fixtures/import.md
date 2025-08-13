@@ -6,7 +6,7 @@
 
 !!! note "Note"
     Dans certains cas, il faudra filtrer la sortie de l'export.
-    Par exemple, la collection `user`, garder uniquement les users locaux.
+    Par exemple, dans le cas de la collection `user`, ne garder uniquement que les users locaux ou comptes de service.
 
 === "Docker Compose"
 
