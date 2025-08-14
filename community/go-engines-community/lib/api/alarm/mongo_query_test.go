@@ -60,6 +60,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -152,6 +153,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -254,6 +256,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.duration": durationField}},
@@ -346,6 +349,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.infos_array": bson.M{"$objectToArray": "$v.infos"}}},
@@ -453,6 +457,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -531,6 +536,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -675,6 +681,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$addFields": bson.M{
@@ -791,6 +798,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{
+			{Key: "entity._id", Value: -1},
+			{Key: "entity.category.name", Value: 1},
+			{Key: "_id", Value: 1},
+		}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -900,6 +912,11 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{
+			{Key: "v.duration", Value: -1},
+			{Key: "v.active_duration", Value: -1},
+			{Key: "_id", Value: 1},
+		}},
 	)
 	expected := []bson.M{
 		{"$addFields": bson.M{"v.duration": durationField}},
@@ -979,6 +996,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -1069,6 +1087,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 			"pbehavior.comments": 0,
 			"resolved_children":  0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := getOnlyParentsSearchPipeline(bson.M{
 		"v.resolved": nil,
@@ -1167,6 +1186,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 			"pbehavior.comments": 0,
 			"resolved_children":  0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := getOnlyParentsSearchPipeline(bson.M{
 		"v.resolved": nil,
@@ -1246,6 +1266,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -1324,6 +1345,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$addFields": bson.M{
@@ -1403,6 +1425,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$addFields": bson.M{
@@ -1542,6 +1565,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 			"pbehavior.comments": 0,
 			"entity.services":    0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
@@ -1655,6 +1679,7 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepence
 			"v.steps":            0,
 			"pbehavior.comments": 0,
 		}},
+		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
 	)
 	expected := []bson.M{
 		{"$match": bson.M{"healthcheck": bson.M{"$in": bson.A{nil, false}}}},
