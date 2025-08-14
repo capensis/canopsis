@@ -22,12 +22,6 @@
         />
       </v-fade-transition>
     </template>
-    <template v-if="hasActions" #actions="">
-      <remediation-instruction-execute-btns
-        :instruction-execution="instructionExecution"
-        @close="closeModal"
-      />
-    </template>
   </modal-wrapper>
 </template>
 
@@ -37,15 +31,12 @@ import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants'
 
 import Socket from '@/plugins/socket/services/socket';
 
-import { remediationInstructionExecutionIsRunning } from '@/helpers/entities/remediation/instruction-execution/list';
-
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
 import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
 import RemediationInstructionSimpleExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-simple-execute.vue';
-import RemediationInstructionExecuteBtns from '@/components/other/remediation/instruction-execute/partials/remediation-instruction-execute-btns.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -53,7 +44,6 @@ export default {
   name: MODALS.executeRemediationSimpleInstruction,
   components: {
     RemediationInstructionSimpleExecute,
-    RemediationInstructionExecuteBtns,
     ModalWrapper,
   },
   mixins: [
@@ -71,10 +61,6 @@ export default {
     };
   },
   computed: {
-    hasActions() {
-      return this.instructionExecution && remediationInstructionExecutionIsRunning(this.instructionExecution);
-    },
-
     instructionId() {
       return this.config.assignedInstruction?._id;
     },

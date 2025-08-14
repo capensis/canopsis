@@ -30,8 +30,8 @@
     <template #type="{ item }">
       {{ $t(`remediation.instruction.types.${item.type}`) }}
     </template>
-    <template #last_modified="{ item }">
-      {{ item.last_modified | date }}
+    <template #updated="{ item }">
+      {{ item.updated | date }}
     </template>
     <template #last_executed_on="{ item }">
       {{ item.last_executed_on | date }}
@@ -136,7 +136,7 @@ export default {
         },
         {
           text: this.$t('common.lastModifiedOn'),
-          value: 'last_modified',
+          value: 'updated',
         },
         {
           text: this.$t('common.priority'),
