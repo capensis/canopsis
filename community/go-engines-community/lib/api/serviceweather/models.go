@@ -14,11 +14,12 @@ import (
 
 type ListRequest struct {
 	pagination.Query
-	Filters  []string `form:"filters[]" json:"filters"`
-	Category string   `form:"category" json:"category"`
-	HideGrey bool     `form:"hide_grey" json:"hide_grey"`
-	Sort     string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	SortBy   string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
+	Filters       []string `form:"filters[]" json:"filters"`
+	Category      string   `form:"category" json:"category"`
+	HideGrey      bool     `form:"hide_grey" json:"hide_grey"`
+	WithTagColors bool     `form:"with_tag_colors"`
+	Sort          string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	SortBy        string   `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
 
 	EntityPattern         string `form:"entity_pattern" json:"entity_pattern"`
 	WeatherServicePattern string `form:"weather_service_pattern" json:"weather_service_pattern"`
@@ -28,6 +29,7 @@ type EntitiesListRequest struct {
 	pagination.Query
 	WithInstructions   bool   `form:"with_instructions"`
 	WithDeclareTickets bool   `form:"with_declare_tickets"`
+	WithTagColors      bool   `form:"with_tag_colors"`
 	Sort               string `form:"sort"`
 	SortBy             string `form:"sort_by" json:"sort_by" binding:"oneoforempty=name state infos.* impact_state"`
 	PbhOrigin          string `form:"pbh_origin" json:"pbh_origin"`
@@ -49,6 +51,7 @@ type Service struct {
 	Ack              *common.AlarmStep      `json:"ack" bson:"ack"`
 	AlarmLastComment *common.AlarmStep      `json:"alarm_last_comment" bson:"alarm_last_comment"`
 	Tags             []string               `json:"tags" bson:"tags"`
+	TagColors        []alarm.TagColor       `json:"tag_colors" bson:"tag_colors"`
 	Icon             string                 `json:"icon" bson:"icon"`
 	SecondaryIcon    string                 `json:"secondary_icon" bson:"secondary_icon"`
 	Output           string                 `json:"output" bson:"output"`
@@ -133,6 +136,7 @@ type Entity struct {
 	Tickets          []common.AlarmStep         `json:"tickets" bson:"tickets"`
 	AlarmLastComment *common.AlarmStep          `json:"alarm_last_comment" bson:"alarm_last_comment"`
 	Tags             []string                   `json:"tags" bson:"tags"`
+	TagColors        []alarm.TagColor           `json:"tag_colors" bson:"tag_colors"`
 	LastUpdateDate   *datetime.CpsTime          `json:"last_update_date" bson:"last_update_date" swaggertype:"integer"`
 	CreationDate     *datetime.CpsTime          `json:"alarm_creation_date" bson:"creation_date" swaggertype:"integer"`
 	DisplayName      string                     `json:"alarm_display_name" bson:"display_name"`
