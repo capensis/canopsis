@@ -80,12 +80,25 @@ export default {
      * @sideEffect Manipulates refs to expand the rule and set the active tab.
      */
     const showRuleExpandPanelErrorTab = (rule = {}) => {
-      eventFiltersListEl.value?.$refs?.advancedDataTable?.$refs?.dataTable?.expand?.(rule);
-
+      /**
+       * Wait for the list and its child refs to render so advancedDataTable/dataTable
+       * exist before calling expand
+       */
       nextTick(() => {
-        if (eventFiltersListEl.value?.$refs?.expandPanel?.activeTab !== EVENT_FILTER_EXPAND_PANEL_TABS.errors) {
-          eventFiltersListEl.value.$refs.expandPanel.activeTab = EVENT_FILTER_EXPAND_PANEL_TABS.errors;
-        }
+        eventFiltersListEl.value?.$refs?.advancedDataTable?.$refs?.dataTable?.expand?.(rule);
+
+        /**
+         * After expanding the row, wait one more tick for the expand panel to
+         * mount/update, then switch the expand panel to the errors tab
+         */
+        nextTick(() => {
+          if (
+            eventFiltersListEl.value?.$refs?.expandPanel?.activeTab
+            && eventFiltersListEl.value.$refs.expandPanel.activeTab !== EVENT_FILTER_EXPAND_PANEL_TABS.errors
+          ) {
+            eventFiltersListEl.value.$refs.expandPanel.activeTab = EVENT_FILTER_EXPAND_PANEL_TABS.errors;
+          }
+        });
       });
     };
 
