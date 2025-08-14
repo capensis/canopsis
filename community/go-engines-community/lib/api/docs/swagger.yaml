@@ -774,6 +774,11 @@ paths:
           description: count connected services depends_count and impacts_count
           schema:
             type: boolean
+        - name: with_tag_colors
+          in: query
+          description: retrieve tag colors
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
@@ -14361,6 +14366,11 @@ paths:
           in: query
           schema:
             type: boolean
+        - name: with_tag_colors
+          in: query
+          description: retrieve tag colors
+          schema:
+            type: boolean
         - in: query
           name: entity_pattern
           schema:
@@ -14419,6 +14429,11 @@ paths:
         - name: with_declare_tickets
           in: query
           description: show assigned declare ticket rules
+          schema:
+            type: boolean
+        - name: with_tag_colors
+          in: query
+          description: retrieve tag colors
           schema:
             type: boolean
       responses:
