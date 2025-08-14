@@ -90,7 +90,12 @@
 <script>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-import { MODALS, KEYS_TO_VIEW_SCREEN_MODES, VIEW_SCREEN_MODES } from '@/constants';
+import {
+  MODALS,
+  KEYS_TO_VIEW_SCREEN_MODES,
+  VIEW_SCREEN_MODES,
+  FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
+} from '@/constants';
 
 import { useActiveView } from '@/hooks/store/modules/active-view';
 import { useI18n } from '@/hooks/i18n';
@@ -169,6 +174,10 @@ export default {
           }
 
           isFullscreen.value = value;
+
+          if (!value) {
+            setActiveViewScreenMode(FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[screenMode.value]);
+          }
         },
       });
     };
