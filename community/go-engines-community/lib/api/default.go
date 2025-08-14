@@ -237,6 +237,7 @@ func Default(
 			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
+			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
 		),
 		workers.NewJobPublisher(jobKeyImport, workersRunner),
