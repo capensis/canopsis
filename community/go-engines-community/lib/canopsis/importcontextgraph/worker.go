@@ -57,6 +57,8 @@ type worker struct {
 
 	connector string
 
+	transformer common.PatternFieldsTransformer
+
 	logger zerolog.Logger
 }
 
@@ -71,6 +73,7 @@ func NewWorker(
 	publisher EventPublisher,
 	metricMetaUpdater metrics.MetaUpdater,
 	connector string,
+	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) Worker {
 	return &worker{
@@ -82,7 +85,8 @@ func NewWorker(
 		publisher:         publisher,
 		metricMetaUpdater: metricMetaUpdater,
 
-		connector: connector,
+		connector:   connector,
+		transformer: transformer,
 
 		logger: logger,
 	}
@@ -279,9 +283,22 @@ func (w *worker) parseEntities(
 			return res, fmt.Errorf("ci = %s, validation error: %s", id, err.Error())
 		}
 
-		if ci.Type == types.EntityTypeService && !match.ValidateEntityPattern(ci.EntityPattern, common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
-			w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
-			continue
+		if ci.Type == types.EntityTypeService {
+			if !match.ValidateEntityPattern(ci.EntityPattern, common.GetForbiddenFieldsInEntityPattern(libmongo.EntityMongoCollection)) {
+				w.logger.Warn().Str("entity_name", ci.Name).Msg("invalid entity pattern, skip")
+				continue
+			}
+
+			transformedEntityPatternRequest, err := w.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+				EntityPattern: ci.EntityPattern,
+			})
+			if err != nil {
+				w.logger.Warn().Str("entity_name", ci.Name).Msgf("failed to transform entity pattern: %v, skip", err)
+				continue
+			}
+
+			ci.EntityPattern = transformedEntityPatternRequest.EntityPattern
+			ci.Aliases = transformedEntityPatternRequest.Aliases
 		}
 
 		categoryID := ""
@@ -668,6 +685,7 @@ func (w *worker) mergeEntity(c EntityConfiguration, oldEntity Entity, id, catego
 		ImportSource:   source,
 		Imported:       now,
 		ImportTags:     types.TransformEventTags(c.Tags),
+		Aliases:        c.Aliases,
 	}
 
 	if e.ImpactLevel == 0 {
