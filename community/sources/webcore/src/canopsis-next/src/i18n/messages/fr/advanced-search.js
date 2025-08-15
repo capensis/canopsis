@@ -8,6 +8,7 @@ export default {
   switchAdvancedSearchActiveToFalse: 'Passer à la recherche simple',
   noDataList: 'Il n\'y a aucun élément à saisir',
   inputPlaceholder: 'Rechercher ou filtrer les résultats...',
+  definedDifferent: 'La valeur diffère de celle définie',
 
   groups: {
     [ALARM_ADVANCED_SEARCH_GROUPS.basic]: 'Basique',
@@ -16,6 +17,7 @@ export default {
     [ALARM_ADVANCED_SEARCH_GROUPS.dates]: 'Dates',
     [ALARM_ADVANCED_SEARCH_GROUPS.actions]: 'Actions',
     [ALARM_ADVANCED_SEARCH_GROUPS.entity]: 'Entité',
+    [ALARM_ADVANCED_SEARCH_GROUPS.alias]: 'Alias',
     [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportements périodiques',
   },
 

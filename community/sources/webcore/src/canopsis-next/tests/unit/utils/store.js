@@ -1444,3 +1444,75 @@ export const createRemediationInstructionModule = () => {
     fetchRemediationInstructionsListWithoutStore,
   };
 };
+
+export const createEntityInfoPropertyModule = () => {
+  const entityInfoProperties = jest.fn().mockReturnValue([]);
+  const entityInfoPropertiesWithAlias = jest.fn().mockReturnValue([]);
+  const entityInfoPropertiesWithoutAlias = jest.fn().mockReturnValue([]);
+  const entityInfoPropertyMeta = jest.fn().mockReturnValue({
+    total_count: 0,
+  });
+  const entityInfoPropertyPending = jest.fn().mockReturnValue(false);
+
+  const fetchEntityInfoPropertiesList = jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      total_count: 0,
+    },
+  });
+  const fetchEntityInfoPropertiesListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      total_count: 0,
+    },
+  });
+
+  const createEntityInfoProperty = jest.fn();
+  const updateEntityInfoProperty = jest.fn();
+  const removeEntityInfoProperty = jest.fn();
+
+  afterEach(() => {
+    entityInfoProperties.mockClear();
+    entityInfoPropertiesWithAlias.mockClear();
+    entityInfoPropertiesWithoutAlias.mockClear();
+    entityInfoPropertyMeta.mockClear();
+    entityInfoPropertyPending.mockClear();
+    fetchEntityInfoPropertiesList.mockClear();
+    fetchEntityInfoPropertiesListWithoutStore.mockClear();
+    createEntityInfoProperty.mockClear();
+    updateEntityInfoProperty.mockClear();
+    removeEntityInfoProperty.mockClear();
+  });
+
+  const entityInfoPropertyModule = {
+    name: 'entityInfoProperty',
+    getters: {
+      items: entityInfoProperties,
+      itemsWithAlias: entityInfoPropertiesWithAlias,
+      itemsWithoutAlias: entityInfoPropertiesWithoutAlias,
+      meta: entityInfoPropertyMeta,
+      pending: entityInfoPropertyPending,
+    },
+    actions: {
+      fetchList: fetchEntityInfoPropertiesList,
+      create: createEntityInfoProperty,
+      update: updateEntityInfoProperty,
+      remove: removeEntityInfoProperty,
+      fetchListWithoutStore: fetchEntityInfoPropertiesListWithoutStore,
+    },
+  };
+
+  return {
+    entityInfoPropertyModule,
+    entityInfoProperties,
+    entityInfoPropertiesWithAlias,
+    entityInfoPropertiesWithoutAlias,
+    entityInfoPropertyMeta,
+    entityInfoPropertyPending,
+    fetchEntityInfoPropertiesList,
+    fetchEntityInfoPropertiesListWithoutStore,
+    createEntityInfoProperty,
+    updateEntityInfoProperty,
+    removeEntityInfoProperty,
+  };
+};

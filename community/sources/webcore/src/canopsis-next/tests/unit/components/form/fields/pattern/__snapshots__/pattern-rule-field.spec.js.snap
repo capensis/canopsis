@@ -1,367 +1,653 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`] = `
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with alias prop 1`] = `
 <div
-  class="layout"
+  class="layout column"
 >
   <div
-    class="flex xs5"
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs4"
     >
       <div
-        class="flex xs4"
+        class="layout"
       >
-        <pattern-attribute-field-stub
-          disabled="true"
-          items="[object Object]"
-          label=""
-          name="customName"
-          required="true"
-          value="v.display_name"
-        />
+        <div
+          class="flex"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.display_name"
+          />
+        </div>
+        <!---->
       </div>
+    </div>
+    <div
+      class="flex xs7"
+    >
       <div
-        class="flex pl-3 xs8"
+        class="layout"
       >
-        <c-infos-attribute-field-stub
-          combobox="true"
-          disabled="true"
-          items="Infos 1,Infos 2"
-          name="customName"
-          row=""
-          value="[object Object]"
-        />
+        <div
+          class="flex pl-3 xs1"
+        >
+          <c-input-type-field-stub
+            label="Type"
+            name="rule"
+            types="[object Object],[object Object],[object Object],[object Object]"
+            value="string"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs6"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="equal"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs6"
+        >
+          <c-mixed-input-field-stub
+            inputtype="string"
+            label="Value"
+            name="rule.value"
+            required="true"
+            types="[object Object],[object Object],[object Object],[object Object]"
+            value="alias value"
+          />
+        </div>
       </div>
     </div>
   </div>
   <div
-    class="flex xs7"
+    class="layout"
+  >
+    <c-alert-stub
+      type="warning"
+    >
+      Selected type differs from the type set in Entity infos
+    </c-alert-stub>
+  </div>
+</div>
+`;
+
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with custom props 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs5"
     >
       <div
-        class="flex pl-3 xs1"
+        class="layout"
       >
-        <c-input-type-field-stub
-          disabled="true"
-          label="Type"
-          name="customName"
-          types="[object Object],[object Object]"
-        />
-      </div>
-      <div
-        class="flex pl-3 xs4"
-      >
-        <pattern-operator-field-stub
-          disabled="true"
-          label=""
-          name="customName.operator"
-          operators="not_equal,equal"
-          required="true"
-          value="equal"
-        />
-      </div>
-      <div
-        class="flex pl-3 xs7"
-      >
-        <custom-component-stub
-          disabled="true"
-          label="Value"
-          name="test name"
-          required="true"
-          value="ruleValue"
-        />
+        <div
+          class="flex xs4"
+        >
+          <pattern-attribute-field-stub
+            disabled="true"
+            items="[object Object]"
+            label=""
+            name="customName"
+            required="true"
+            returnobject="true"
+            value="v.display_name"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs8"
+        >
+          <c-infos-attribute-field-stub
+            combobox="true"
+            disabled="true"
+            items="Infos 1,Infos 2"
+            name="customName"
+            row=""
+            value="[object Object]"
+          />
+        </div>
       </div>
     </div>
+    <div
+      class="flex xs7"
+    >
+      <div
+        class="layout"
+      >
+        <div
+          class="flex pl-3 xs1"
+        >
+          <c-input-type-field-stub
+            disabled="true"
+            label="Type"
+            name="customName"
+            types="[object Object],[object Object]"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs4"
+        >
+          <pattern-operator-field-stub
+            disabled="true"
+            label=""
+            name="customName.operator"
+            operators="not_equal,equal"
+            required="true"
+            value="equal"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs7"
+        >
+          <custom-component-stub
+            disabled="true"
+            label="Value"
+            name="test name"
+            required="true"
+            value="ruleValue"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <!---->
   </div>
 </div>
 `;
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = `
 <div
-  class="layout"
+  class="layout column"
 >
   <div
-    class="flex xs4"
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs4"
     >
       <div
-        class="flex"
+        class="layout"
       >
-        <pattern-attribute-field-stub
-          items=""
-          label=""
-          name="rule"
-          required="true"
-          value="v.creation_date"
-        />
+        <div
+          class="flex"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.creation_date"
+          />
+        </div>
+        <!---->
       </div>
-      <!---->
+    </div>
+    <div
+      class="flex xs8"
+    >
+      <div
+        class="layout"
+      >
+        <!---->
+        <div
+          class="flex pl-3 xs5"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="in_range_dates"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs7"
+        >
+          <pattern-rule-field-date-value-stub
+            intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+            name="rule.value"
+            operator="in_range_dates"
+            value="[object Object]"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div
-    class="flex xs8"
+    class="layout"
   >
-    <div
-      class="layout"
-    >
-      <!---->
-      <div
-        class="flex pl-3 xs5"
-      >
-        <pattern-operator-field-stub
-          label=""
-          name="rule.operator"
-          operators=""
-          required="true"
-          value="in_range_dates"
-        />
-      </div>
-      <div
-        class="flex pl-3 xs7"
-      >
-        <pattern-rule-field-date-value-stub
-          intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-          name="rule.value"
-          operator="in_range_dates"
-          value="[object Object]"
-        />
-      </div>
-    </div>
+    <!---->
   </div>
 </div>
 `;
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with default props 1`] = `
 <div
-  class="layout"
+  class="layout column"
 >
   <div
-    class="flex xs4"
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs4"
     >
       <div
-        class="flex"
+        class="layout"
       >
-        <pattern-attribute-field-stub
-          items=""
-          label=""
-          name="rule"
-          required="true"
-          value="v.display_name"
-        />
+        <div
+          class="flex"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.display_name"
+          />
+        </div>
+        <!---->
       </div>
-      <!---->
+    </div>
+    <div
+      class="flex xs8"
+    >
+      <div
+        class="layout"
+      >
+        <!---->
+        <div
+          class="flex pl-3 xs6"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="equal"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs6"
+        >
+          <c-mixed-input-field-stub
+            inputtype="string"
+            label="Value"
+            name="rule.value"
+            required="true"
+            types="[object Object],[object Object],[object Object],[object Object]"
+            value="ruleValue"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div
-    class="flex xs8"
+    class="layout"
   >
-    <div
-      class="layout"
-    >
-      <!---->
-      <div
-        class="flex pl-3 xs6"
-      >
-        <pattern-operator-field-stub
-          label=""
-          name="rule.operator"
-          operators=""
-          required="true"
-          value="equal"
-        />
-      </div>
-      <div
-        class="flex pl-3 xs6"
-      >
-        <c-mixed-input-field-stub
-          inputtype="string"
-          label="Value"
-          name="rule.value"
-          required="true"
-          types="[object Object],[object Object],[object Object],[object Object]"
-          value="ruleValue"
-        />
-      </div>
-    </div>
+    <!---->
   </div>
 </div>
 `;
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with duration type 1`] = `
 <div
-  class="layout"
+  class="layout column"
 >
   <div
-    class="flex xs4"
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs4"
     >
       <div
-        class="flex"
+        class="layout"
       >
-        <pattern-attribute-field-stub
-          items=""
-          label=""
-          name="rule"
-          required="true"
-          value="v.duration"
-        />
+        <div
+          class="flex"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.duration"
+          />
+        </div>
+        <!---->
       </div>
-      <!---->
+    </div>
+    <div
+      class="flex xs8"
+    >
+      <div
+        class="layout"
+      >
+        <!---->
+        <div
+          class="flex pl-3 xs6"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="not_equal"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs6"
+        >
+          <c-duration-field-stub
+            duration="[object Object]"
+            name="rule.value"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div
-    class="flex xs8"
+    class="layout"
   >
-    <div
-      class="layout"
-    >
-      <!---->
-      <div
-        class="flex pl-3 xs6"
-      >
-        <pattern-operator-field-stub
-          label=""
-          name="rule.operator"
-          operators=""
-          required="true"
-          value="not_equal"
-        />
-      </div>
-      <div
-        class="flex pl-3 xs6"
-      >
-        <c-duration-field-stub
-          duration="[object Object]"
-          name="rule.value"
-        />
-      </div>
-    </div>
+    <!---->
   </div>
 </div>
 `;
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with extra infos type 1`] = `
 <div
-  class="layout"
+  class="layout column"
 >
   <div
-    class="flex xs5"
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs5"
     >
       <div
-        class="flex xs4"
+        class="layout"
       >
-        <pattern-attribute-field-stub
-          items=""
-          label=""
-          name="rule"
-          required="true"
-          value="extra"
-        />
+        <div
+          class="flex xs4"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="extra"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs8"
+        >
+          <c-infos-attribute-field-stub
+            items=""
+            name="rule"
+            row=""
+            value="[object Object]"
+          />
+        </div>
       </div>
+    </div>
+    <div
+      class="flex xs7"
+    >
       <div
-        class="flex pl-3 xs8"
+        class="layout"
       >
-        <c-infos-attribute-field-stub
-          items=""
-          name="rule"
-          row=""
-          value="[object Object]"
-        />
+        <!---->
+        <div
+          class="flex pl-3 xs4"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="equal"
+          />
+        </div>
+        <!---->
       </div>
     </div>
   </div>
   <div
-    class="flex xs7"
+    class="layout"
   >
-    <div
-      class="layout"
-    >
-      <!---->
-      <div
-        class="flex pl-3 xs4"
-      >
-        <pattern-operator-field-stub
-          label=""
-          name="rule.operator"
-          operators=""
-          required="true"
-          value="equal"
-        />
-      </div>
-      <!---->
-    </div>
+    <!---->
   </div>
 </div>
 `;
 
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with infos type and field is name 1`] = `
 <div
-  class="layout"
+  class="layout column"
 >
   <div
-    class="flex xs5"
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs5"
     >
       <div
-        class="flex xs4"
+        class="layout"
       >
-        <pattern-attribute-field-stub
-          items=""
-          label=""
-          name="rule"
-          required="true"
-          value="v.infos"
-        />
+        <div
+          class="flex xs4"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.infos"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs8"
+        >
+          <c-infos-attribute-field-stub
+            combobox="true"
+            items=""
+            name="rule"
+            row=""
+            value="[object Object]"
+          />
+        </div>
       </div>
+    </div>
+    <div
+      class="flex xs7"
+    >
       <div
-        class="flex pl-3 xs8"
+        class="layout"
       >
-        <c-infos-attribute-field-stub
-          combobox="true"
-          items=""
-          name="rule"
-          row=""
-          value="[object Object]"
-        />
+        <!---->
+        <div
+          class="flex pl-3 xs4"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="equal"
+          />
+        </div>
+        <!---->
       </div>
     </div>
   </div>
   <div
-    class="flex xs7"
+    class="layout"
+  >
+    <!---->
+  </div>
+</div>
+`;
+
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with timestamp field type as date rule 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout"
   >
     <div
-      class="layout"
+      class="flex xs4"
     >
-      <!---->
       <div
-        class="flex pl-3 xs4"
+        class="layout"
       >
-        <pattern-operator-field-stub
-          label=""
-          name="rule.operator"
-          operators=""
-          required="true"
-          value="equal"
-        />
+        <div
+          class="flex"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.display_name"
+          />
+        </div>
+        <!---->
       </div>
-      <!---->
     </div>
+    <div
+      class="flex xs8"
+    >
+      <div
+        class="layout"
+      >
+        <!---->
+        <div
+          class="flex pl-3 xs5"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="in_range_dates"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs7"
+        >
+          <pattern-rule-field-date-value-stub
+            intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+            name="rule.value"
+            operator="in_range_dates"
+            value="[object Object]"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <c-alert-stub
+      type="warning"
+    >
+      Selected type differs from the type set in Entity infos
+    </c-alert-stub>
+  </div>
+</div>
+`;
+
+exports[`pattern-rule-field Renders \`pattern-rule-field\` with type mismatch warning 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex xs4"
+    >
+      <div
+        class="layout"
+      >
+        <div
+          class="flex"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.display_name"
+          />
+        </div>
+        <!---->
+      </div>
+    </div>
+    <div
+      class="flex xs8"
+    >
+      <div
+        class="layout"
+      >
+        <!---->
+        <div
+          class="flex pl-3 xs6"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="equal"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs6"
+        >
+          <c-mixed-input-field-stub
+            inputtype="string"
+            label="Value"
+            name="rule.value"
+            required="true"
+            types="[object Object],[object Object],[object Object],[object Object]"
+            value="test value"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <c-alert-stub
+      type="warning"
+    >
+      Selected type differs from the type set in Entity infos
+    </c-alert-stub>
   </div>
 </div>
 `;

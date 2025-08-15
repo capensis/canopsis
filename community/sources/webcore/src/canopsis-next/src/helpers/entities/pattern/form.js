@@ -3,7 +3,7 @@ import {
   isArray,
   isBoolean,
   isEmpty,
-  isNan,
+  isNaN,
   isNull,
   isNumber,
   isString,
@@ -585,7 +585,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.boolean:
       return Boolean(preparedValue);
     case PATTERN_FIELD_TYPES.string:
-      return (isNan(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
+      return (isNaN(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
         ? ''
         : String(preparedValue);
     case PATTERN_FIELD_TYPES.null:
@@ -1201,14 +1201,14 @@ export const formRuleToPatternRule = (rule) => {
     pattern.field = rule.dictionary ? [rule.attribute, rule.dictionary].join('.') : rule.attribute;
   }
 
-  if (isDate) {
+  if ((rule.alias || isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
+    pattern.field_type = rule.fieldType;
+  }
+
+  if (isDate || rule.fieldType === PATTERN_FIELD_TYPES.timestamp) {
     pattern.cond = formDateIntervalConditionToPatternRuleCondition(rule);
 
     return pattern;
-  }
-
-  if ((rule.alias || isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
-    pattern.field_type = rule.fieldType;
   }
 
   switch (rule.operator) {

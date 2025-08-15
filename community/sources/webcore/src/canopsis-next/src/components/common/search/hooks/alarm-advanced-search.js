@@ -26,7 +26,6 @@ import {
   ALARM_STATUSES,
   BASIC_ENTITY_TYPES,
   ENTITY_TYPES,
-  MAX_LIMIT,
   PATTERN_DURATION_OPERATORS,
   PATTERN_EXISTS_OPERATORS,
   PATTERN_FIELD_TYPES,
@@ -37,6 +36,8 @@ import {
   PATTERN_ALARM_TAG_LABEL_OPERATORS,
   PATTERN_RULE_INFOS_FIELDS,
   ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
+  DEFAULT_PATTERN_FIELD_TYPES,
+  ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import { deepKeyBy } from '@/helpers/array';
@@ -46,6 +47,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useEntity } from '@/hooks/store/modules/entity';
 import { useAlarmTag } from '@/hooks/store/modules/alarm-tag';
 import { useService } from '@/hooks/store/modules/service';
+import { useDynamicInfo } from '@/hooks/store/modules/dynamic-info';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useMetaAlarmRule } from '@/hooks/store/modules/meta-alarm-rule';
 import { useUser } from '@/hooks/store/modules/user';
@@ -67,28 +69,35 @@ import { useEntityInfoProperty } from '@/hooks/store/modules/entity-info-propert
 export const useEntityInfosKeys = () => {
   const { t } = useI18n();
   const { fetchEntityInfosKeysWithoutStore } = useService();
+  const { fetchDynamicInfosKeysWithoutStore } = useDynamicInfo();
 
   const entityInfosKeys = ref([]);
+  const dynamicInfosKeys = ref([]);
   const {
     pending,
     handler,
   } = usePendingHandler(async () => {
-    const { data: infos } = await fetchEntityInfosKeysWithoutStore({ params: { limit: MAX_LIMIT } });
+    const [{ data: entityInfos }, { data: dynamicInfos }] = await Promise.all([
+      fetchEntityInfosKeysWithoutStore({ params: { paginate: false } }),
+      fetchDynamicInfosKeysWithoutStore({ params: { paginate: false } }),
+    ]);
 
-    entityInfosKeys.value = infos;
+    entityInfosKeys.value = entityInfos;
+    dynamicInfosKeys.value = dynamicInfos;
   });
 
   /**
    * Generates default child items for a given chip text prefix.
    *
    * @param {string} chipTextPrefix - The prefix to be used for chip text.
+   * @param {Array<Object>} inputTypes - The input types of the item.
    * @param {string} definedType - The defined type of the item.
    * @returns {Array<Object>} An array of objects, each containing:
    *   - {string} value: The value of the item.
    *   - {string} text: The translated text for the item.
    *   - {string} chipText: The complete chip text including the prefix.
    */
-  const getDefaultItemChildren = (chipTextPrefix = '', definedType) => [
+  const getDefaultItemChildren = (chipTextPrefix = '', definedType, inputTypes) => [
     PATTERN_RULE_INFOS_FIELDS.name,
     PATTERN_RULE_INFOS_FIELDS.value,
   ].map((value) => {
@@ -103,6 +112,7 @@ export const useEntityInfosKeys = () => {
       result.operators = PATTERN_EXISTS_OPERATORS;
     } else {
       result.definedType = definedType;
+      result.inputTypes = inputTypes;
     }
 
     return result;
@@ -112,13 +122,14 @@ export const useEntityInfosKeys = () => {
    * Retrieves items formatted for search configurations, with optional chip text prefix.
    *
    * @param {string} chipTextPrefix - The prefix to be used for chip text.
+   * @param {Array<Object>} keys - The keys to be used for the items.
    * @returns {Array<Object>} An array of objects, each containing:
    *   - {string} value: The value of the item.
    *   - {string} chipText: The complete chip text including the prefix.
    *   - {string} text: The text for the item.
    *   - {Array<Object>} items: The default child items for the chip text.
    */
-  const getItems = chipTextPrefix => entityInfosKeys.value.map(({ value, type }) => {
+  const getItems = (chipTextPrefix, keys, fieldTypes) => keys.map(({ value, type }) => {
     const chipText = chipTextPrefix ? `${chipTextPrefix}.${value}` : undefined;
     const definedType = ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type];
 
@@ -127,12 +138,25 @@ export const useEntityInfosKeys = () => {
       chipText,
       definedType,
       text: value,
-      items: getDefaultItemChildren(chipText, definedType),
+      items: getDefaultItemChildren(chipText, definedType, fieldTypes),
     };
   });
 
-  const alarmItems = computed(() => getItems(t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.infos])));
-  const entityItems = computed(() => getItems(t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.entityInfos])));
+  const alarmItems = computed(() => (
+    getItems(
+      t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.infos]),
+      dynamicInfosKeys.value,
+      DEFAULT_PATTERN_FIELD_TYPES,
+    )
+  ));
+
+  const entityItems = computed(() => (
+    getItems(
+      t(ALARM_FIELDS_TO_LABELS_KEYS[ALARM_FIELDS.entityInfos]),
+      entityInfosKeys.value,
+      ENTITY_PATTERN_FIELD_TYPES,
+    )
+  ));
 
   onMounted(handler);
 
@@ -581,6 +605,7 @@ export const useAdvancedSearchAttributes = ({
               alias: true,
               value: item.alias,
               text: item.alias,
+              inputTypes: ENTITY_PATTERN_FIELD_TYPES,
               definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
               original: item,
               disabled: !unwrappedAllowEntityFields,
@@ -682,7 +707,6 @@ export const useAdvancedSearchValidator = ({ rules }) => {
  * @param {Object} [options.rule = {}] - The rule object to evaluate.
  * @param {Array} [options.attributes = []] - List of available attributes for the rule.
  * @param {Array} [options.intervalRanges = []] - List of interval ranges for range-based rules.
- * @param {Array} [options.inputTypes = []] - List of input types for the rule.
  * @param {boolean} [options.allowOr = false] - Determines if the 'OR' union condition is allowed.
  * @returns {Object} - An object containing the current attribute and items by type.
  */
@@ -690,7 +714,6 @@ export const useAdvancedSearchRuleActiveItems = ({
   rule = {},
   attributes = [],
   intervalRanges = [],
-  inputTypes = [],
   allowOr = false,
 } = {}) => {
   const { t } = useI18n();
@@ -742,13 +765,15 @@ export const useAdvancedSearchRuleActiveItems = ({
   /**
    * INPUT TYPES ITEMS
    */
-  const preparedInputTypes = computed(() => (
-    unref(inputTypes).map(type => ({
+  const preparedInputTypes = computed(() => {
+    const { definedType, inputTypes = DEFAULT_PATTERN_FIELD_TYPES } = unref(currentAttribute) ?? {};
+
+    return unref(inputTypes).map(type => ({
       ...type,
       text: t(`common.mixedField.types.${type.value}`),
-      defined: currentAttribute.value?.definedType === type.value,
-    }))
-  ));
+      defined: definedType === type.value,
+    }));
+  });
 
   /**
    * UNION ITEMS
