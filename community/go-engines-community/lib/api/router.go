@@ -2469,29 +2469,29 @@ func RegisterRoutes(
 		{
 			entityInfosPropertyRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionCreate, enforcer),
 				middleware.SetAuthor(),
 				entityInfosPropertyAPI.Create,
 			)
 			entityInfosPropertyRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer),
 				entityInfosPropertyAPI.List,
 			)
 			entityInfosPropertyRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer),
 				entityInfosPropertyAPI.Get,
 			)
 			entityInfosPropertyRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				entityInfosPropertyAPI.Update,
 			)
 			entityInfosPropertyRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionDelete, enforcer),
 				entityInfosPropertyAPI.Delete,
 			)
 		}

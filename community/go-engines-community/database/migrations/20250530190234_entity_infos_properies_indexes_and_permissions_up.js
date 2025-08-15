@@ -25,17 +25,35 @@ db.dynamic_infos.createIndex({aliases: 1}, {name: "aliases_1"});
 db.instruction.createIndex({aliases: 1}, {name: "aliases_1"});
 db.kpi_filter.createIndex({aliases: 1}, {name: "aliases_1"});
 
-
-if (!db.permission.findOne({_id: "api_entity_infos_property"})) {
+if (!db.permission.findOne({_id: "api_entity_info_property"})) {
     db.permission.insertOne({
-        _id: "api_entity_infos_property",
-        name: "api_entity_infos_property",
+        _id: "api_entity_info_property",
+        name: "api_entity_info_property",
         type: "CRUD",
-        description: "Entity infos properties"
+        description: "Entity info properties",
+        groups: ["api", "api_general"]
     });
     db.role.updateOne({name: "admin"}, {
         $set: {
-            "permissions.api_entity_infos_property": 15
+            "permissions.api_entity_info_property": 15
+        }
+    });
+}
+
+if (!db.permission.findOne({_id: "models_exploitation_entityInfoProperty"})) {
+    db.permission.insertOne({
+        _id: "models_exploitation_entityInfoProperty",
+        name: "models_exploitation_entityInfoProperty",
+        type: "CRUD",
+        description: "Entity info properties",
+        groups: ["technical", "technical_exploitation"],
+        api_permissions: {
+            api_entity_info_property: 0
+        }
+    });
+    db.role.updateOne({name: "admin"}, {
+        $set: {
+            "permissions.models_exploitation_entityInfoProperty": 15
         }
     });
 }
