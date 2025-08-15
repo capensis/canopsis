@@ -316,6 +316,7 @@ export default {
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
+  defined: 'Défini',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -324,6 +325,7 @@ export default {
     array: 'Tableau',
     stringArray: 'Tableau de chaînes',
     object: 'Object',
+    timestamp: 'Horodatage',
   },
   mixedField: {
     types: {

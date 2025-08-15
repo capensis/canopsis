@@ -3,28 +3,30 @@
     <v-flex :xs6="row">
       <v-combobox
         v-if="combobox"
-        v-field="value.dictionary"
         v-validate="'required'"
+        :value="value.dictionary"
         :items="items"
         :disabled="disabled"
         :label="label || $t('common.dictionary')"
-        :return-object="false"
         :name="dictionaryName"
         :error-messages="errors.collect(dictionaryName)"
         :loading="pending"
         :hide-details="row"
         item-text="value"
         item-value="value"
+        return-object
+        @input="updateDictionary"
       />
       <v-text-field
         v-else
-        v-field="value.dictionary"
         v-validate="'required'"
+        :value="value.dictionary"
         :disabled="disabled"
         :label="label || $t('common.dictionary')"
         :error-messages="errors.collect(dictionaryName)"
         :name="dictionaryName"
         :hide-details="row"
+        @input="updateDictionary"
       />
     </v-flex>
     <v-flex
@@ -48,9 +50,10 @@
 <script>
 import { computed } from 'vue';
 
-import { PATTERN_RULE_INFOS_FIELDS } from '@/constants';
+import { PATTERN_RULE_INFOS_FIELDS, PATTERN_FIELD_TYPES } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form';
 
 export default {
   inject: ['$validator'],
@@ -100,9 +103,10 @@ export default {
       required: false,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     // Composables
     const { t } = useI18n();
+    const { updateModel } = useModelField(props, emit);
 
     // Computed properties
     const dictionaryName = computed(() => `${props.name}.dictionary`);
@@ -118,10 +122,19 @@ export default {
       },
     ]);
 
+    const updateDictionary = (infos = {}) => updateModel({
+      ...props.value,
+
+      dictionary: infos?.value ?? infos,
+      definedType: infos?.definedType,
+      fieldType: infos?.definedType ?? PATTERN_FIELD_TYPES.string,
+    });
+
     return {
       dictionaryName,
       fieldName,
       fieldItems,
+      updateDictionary,
     };
   },
 };

@@ -35,6 +35,8 @@ describe('c-infos-attribute-field', () => {
     expect(wrapper).toEmitInput({
       dictionary: newDictionary,
       field: value.field,
+      definedType: undefined,
+      fieldType: 'string',
     });
   });
 

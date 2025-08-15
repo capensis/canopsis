@@ -23,12 +23,7 @@ import {
   toRef,
 } from 'vue';
 
-import {
-  ALARM_ADVANCED_SEARCH_CHIP_TYPES,
-  PATTERN_FIELD_TYPES,
-  PATTERN_QUICK_RANGES,
-  PATTERN_OPERATORS_WITHOUT_VALUE,
-} from '@/constants';
+import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_QUICK_RANGES, PATTERN_OPERATORS_WITHOUT_VALUE } from '@/constants';
 
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
 import {
@@ -77,16 +72,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    inputTypes: {
-      type: Array,
-      default: () => [
-        { value: PATTERN_FIELD_TYPES.string },
-        { value: PATTERN_FIELD_TYPES.number },
-        { value: PATTERN_FIELD_TYPES.boolean },
-        { value: PATTERN_FIELD_TYPES.stringArray },
-        { value: PATTERN_FIELD_TYPES.timestamp },
-      ],
-    },
     intervalRanges: {
       type: Array,
       default: () => PATTERN_QUICK_RANGES,
@@ -122,7 +107,6 @@ export default {
       rule: toRef(props, 'rule'),
       attributes: toRef(props, 'attributes'),
       intervalRanges: toRef(props, 'intervalRanges'),
-      inputTypes: toRef(props, 'inputTypes'),
       allowOr: toRef(props, 'allowOr'),
     });
 
