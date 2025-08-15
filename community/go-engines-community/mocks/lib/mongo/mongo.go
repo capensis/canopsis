@@ -447,6 +447,26 @@ func (m *MockDbClient) EXPECT() *MockDbClientMockRecorder {
 	return m.recorder
 }
 
+// BulkWrite mocks base method.
+func (m *MockDbClient) BulkWrite(ctx context.Context, writes []mongo0.ClientBulkWrite, opts ...options.Lister[options.ClientBulkWriteOptions]) (*mongo0.ClientBulkWriteResult, error) {
+	m.ctrl.T.Helper()
+	varargs := []any{ctx, writes}
+	for _, a := range opts {
+		varargs = append(varargs, a)
+	}
+	ret := m.ctrl.Call(m, "BulkWrite", varargs...)
+	ret0, _ := ret[0].(*mongo0.ClientBulkWriteResult)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// BulkWrite indicates an expected call of BulkWrite.
+func (mr *MockDbClientMockRecorder) BulkWrite(ctx, writes any, opts ...any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	varargs := append([]any{ctx, writes}, opts...)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "BulkWrite", reflect.TypeOf((*MockDbClient)(nil).BulkWrite), varargs...)
+}
+
 // Collection mocks base method.
 func (m *MockDbClient) Collection(arg0 string) mongo.DbCollection {
 	m.ctrl.T.Helper()
