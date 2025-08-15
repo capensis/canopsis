@@ -27,6 +27,7 @@ type API interface {
 	Import(*gin.Context)
 	ImportStatus(*gin.Context)
 	ImportData(*gin.Context)
+	Preview(c *gin.Context)
 	ImportComplete(*gin.Context)
 
 	Export(c *gin.Context)
@@ -72,7 +73,7 @@ type api struct {
 
 // Create
 // @Param body body EditRequest true "body"
-// @Success 200 {array} Response
+// @Success 200 {array} Table
 func (a *api) Create(c *gin.Context) {
 	r := EditRequest{}
 	if err := c.ShouldBind(&r); err != nil {
@@ -97,7 +98,7 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} common.PaginatedListResponse{data=[]Table}
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -123,7 +124,7 @@ func (a *api) List(c *gin.Context) {
 }
 
 // Get
-// @Success 200 {array} Response
+// @Success 200 {array} Table
 func (a *api) Get(c *gin.Context) {
 	res, err := a.store.FindOne(c, c.Param("table"))
 	if err != nil {
@@ -141,7 +142,7 @@ func (a *api) Get(c *gin.Context) {
 
 // Update
 // @Param body body UpdateRequest true "body"
-// @Success 200 {array} Response
+// @Success 200 {array} Table
 func (a *api) Update(c *gin.Context) {
 	r := UpdateRequest{
 		ID: c.Param("table"),
@@ -229,7 +230,7 @@ func (a *api) Import(c *gin.Context) {
 		return
 	}
 
-	job, err := a.importWorker.CreateJob(c, id, separator, f)
+	job, err := a.importWorker.CreateImportJob(c, id, separator, f)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -239,6 +240,39 @@ func (a *api) Import(c *gin.Context) {
 		}
 
 		panic(err)
+	}
+
+	c.JSON(http.StatusOK, job)
+}
+
+// Preview
+// @Success 200 {array} ImportJob
+func (a *api) Preview(c *gin.Context) {
+	id := c.Param("id")
+
+	var r PreviewRequest
+	if err := c.ShouldBindJSON(&r); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+
+		return
+	}
+
+	job, err := a.importWorker.CreatePreviewJob(c, id, r)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	if job.ID == "" {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, job)
@@ -262,7 +296,7 @@ func (a *api) ImportStatus(c *gin.Context) {
 }
 
 func (a *api) ImportData(c *gin.Context) {
-	var r ListDataRequest
+	var r ListPreviewRequest
 	r.Query = pagination.GetDefaultQuery()
 	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
@@ -275,13 +309,13 @@ func (a *api) ImportData(c *gin.Context) {
 		panic(err)
 	}
 
-	if job.ID == "" || job.Status != ImportStatusSucceeded {
+	if job.ID == "" || job.Status != ImportStatusSucceeded && job.Status != ImportStatusPreviewSucceeded && job.Status != ImportStatusPreviewFailed {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
 
 		return
 	}
 
-	aggregationResult, err := a.store.FindData(c, job.getDBTableName(), job.Type, job.Columns, r)
+	aggregationResult, err := a.store.FindPreviewData(c, job, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -313,7 +347,7 @@ func (a *api) ImportComplete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.importWorker.CompleteJob(c, c.Param("id"), r.ColumnTypes)
+	ok, err := a.importWorker.CompleteJob(c, c.Param("id"), r.ColumnTags)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -357,10 +391,12 @@ func (a *api) Export(c *gin.Context) {
 		return
 	}
 
+	columns := t.getColumns()
+
 	if len(r.SearchBy) > 0 || len(r.Fields) > 0 {
-		hasCol := make(map[string]bool, len(t.Columns))
-		for _, v := range t.Columns {
-			hasCol[v] = true
+		hasCol := make(map[string]bool, len(t.ColumnConfigs))
+		for _, v := range t.ColumnConfigs {
+			hasCol[v.Name] = true
 		}
 
 		valErrMsgs := make(map[string]string)
@@ -377,7 +413,7 @@ func (a *api) Export(c *gin.Context) {
 		}
 
 		if len(valErrMsgs) > 0 {
-			errMsg := " must be one of [" + strings.Join(t.Columns, " ") + "]."
+			errMsg := " must be one of [" + strings.Join(columns, " ") + "]."
 			for k := range valErrMsgs {
 				valErrMsgs[k] += errMsg
 			}
@@ -390,8 +426,8 @@ func (a *api) Export(c *gin.Context) {
 
 	fields := r.Fields
 	if len(fields) == 0 {
-		fields = make(export.Fields, len(t.Columns))
-		for i, v := range t.Columns {
+		fields = make(export.Fields, len(columns))
+		for i, v := range columns {
 			fields[i] = export.Field{Name: v}
 		}
 	}
@@ -460,7 +496,7 @@ func (a *api) ExportDownload(c *gin.Context) {
 }
 
 func (a *api) CreateData(c *gin.Context) {
-	r := make(map[string]string)
+	r := make(map[string]any)
 	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 
@@ -508,7 +544,7 @@ func (a *api) ListData(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.FindData(c, table.getDBTableName(), table.Type, table.Columns, r)
+	aggregationResult, err := a.store.FindData(c, table.getDBTableName(), table.Type, table.ColumnConfigs, r)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -546,7 +582,7 @@ func (a *api) GetData(c *gin.Context) {
 }
 
 func (a *api) UpdateData(c *gin.Context) {
-	r := make(map[string]string)
+	r := make(map[string]any)
 	if err := c.ShouldBind(&r); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
 
@@ -638,7 +674,7 @@ func (a *api) GetSchema(c *gin.Context) {
 
 	b := &bytes.Buffer{}
 	w := csv.NewWriter(b)
-	err = w.Write(t.Columns)
+	err = w.Write(t.getColumns())
 	if err != nil {
 		panic(err)
 	}
