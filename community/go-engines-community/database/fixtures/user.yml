@@ -951,6 +951,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_entity_info_property:
+    <<: *permission_crud
+    _id: api_entity_info_property
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_api"
+      - "@group_api_general"
 
   # api -> rules
   permission_api_dynamicinfos:
@@ -1893,6 +1901,16 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_external_data_table": 0
+  permission_models_exploitation_entity_info_property:
+    <<: *permission_crud
+    _id: models_exploitation_entityInfoProperty
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_entity_info_property": 0
 
   # technical -> notification
   permission_models_notification_instructionStats:
@@ -3483,6 +3501,7 @@ role:
       "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       "@permission_models_maintenance": 1
+      "@permission_models_exploitation_entity_info_property": 15
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -3548,6 +3567,7 @@ role:
       "@permission_api_techmetrics_settings": 15
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+      "@permission_api_entity_info_property": 15
       # Views permissions
       "@permission_view_open_alarms_general": 7
       "@permission_view_open_alarms_actions": 1
