@@ -22,6 +22,8 @@ func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	noTag := externaldata.ColumnTagNoTag
+
 	collNames := []string{
 		"test_coll_1",
 		"test_coll_2",
@@ -33,26 +35,47 @@ func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
 	tablesToCreate := []externaldata.Table{
 		{
 			Name: "test_coll_1",
-			Columns: []string{
-				"test_field_1",
-				"test_field_2",
-			},
-			ColumnTypes: []int{
-				externaldata.ColumnTypeNoType,
-				externaldata.ColumnTypeNoType,
+			ColumnConfigs: []externaldata.ColumnConfig{
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_1",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_2",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
 			},
 		},
 		{
 			Name: "test_coll_3",
-			Columns: []string{
-				"test_field_3",
-				"test_field_4",
-				"test_field_5",
-			},
-			ColumnTypes: []int{
-				externaldata.ColumnTypeNoType,
-				externaldata.ColumnTypeNoType,
-				externaldata.ColumnTypeNoType,
+			ColumnConfigs: []externaldata.ColumnConfig{
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_3",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_4",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_5",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
 			},
 		},
 	}
@@ -75,27 +98,41 @@ func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *tes
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
+	noTag := externaldata.ColumnTagNoTag
+
 	collNames := []string{
 		"test_coll_1",
 		"test_coll_2",
 	}
 	tablesToIgnore := []externaldata.Table{
 		{
-			Name:        "test_coll_1",
-			Columns:     []string{},
-			ColumnTypes: []int{},
+			Name:          "test_coll_1",
+			ColumnConfigs: []externaldata.ColumnConfig{},
 		},
 		{
 			Name: "test_coll_2",
-			Columns: []string{
-				"test_field_3",
-				"test_field_4",
-				"test_field_5",
-			},
-			ColumnTypes: []int{
-				externaldata.ColumnTypeNoType,
-				externaldata.ColumnTypeNoType,
-				externaldata.ColumnTypeNoType,
+			ColumnConfigs: []externaldata.ColumnConfig{
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_3",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_4",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
+				{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: "test_field_5",
+						Type: externaldata.ColumnTypeString,
+					},
+					Tag: &noTag,
+				},
 			},
 		},
 	}
@@ -194,10 +231,10 @@ func newMockCollections(
 ) {
 	count := 5
 	for _, table := range tables {
-		doc := make(bson.D, len(table.ColumnTypes)+1)
+		doc := make(bson.D, len(table.ColumnConfigs)+1)
 		doc[0] = bson.E{Key: externaldata.IDColumnName, Value: "test"}
-		for i, s := range table.Columns {
-			doc[i+1] = bson.E{Key: s, Value: fieldVal}
+		for i, s := range table.ColumnConfigs {
+			doc[i+1] = bson.E{Key: s.Name, Value: fieldVal}
 		}
 
 		mockDbCollection := mock_mongo.NewMockDbCollection(ctrl)
@@ -220,9 +257,8 @@ func checkInsertedTables(t *testing.T, expected []externaldata.Table) func(conte
 		for i, doc := range docs {
 			if table, ok := doc.(externaldata.Table); ok {
 				res[i] = externaldata.Table{
-					Name:        table.Name,
-					Columns:     table.Columns,
-					ColumnTypes: table.ColumnTypes,
+					Name:          table.Name,
+					ColumnConfigs: table.ColumnConfigs,
 				}
 			} else {
 				t.Fatalf("unknown doc: %T %+v", doc, doc)

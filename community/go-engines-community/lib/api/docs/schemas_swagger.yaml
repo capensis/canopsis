@@ -2761,6 +2761,56 @@ definitions:
           type: string
         type: array
     type: object
+  externaldata.ColumnConfig:
+    properties:
+      decimal_delimiter:
+        description: |-
+          Possible decimal delimiter values.
+            * `dot` - dot delimiter
+            * `comma` - comma delimiter
+        type: string
+      name:
+        type: string
+      string_array_delimiter:
+        type: string
+      string_array_type:
+        description: |-
+          Possible string array types.
+            * `1` - json array
+            * `2` - custom delimiter array
+        enum:
+        - 1
+        - 2
+        type: integer
+      tag:
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      thousands_delimiter:
+        description: |-
+          Possible thousands delimiter values.
+            * `dot` - dot delimiter
+            * `comma` - comma delimiter
+            * `space` - space delimiter
+        type: string
+      type:
+        description: "Possible type values.\n  * `1` - type string\n  * `2` - type
+          boolean\n  * `3` - type number\n  * `4` - type string_array\n  * `5` - type
+          datetime\n\t * `6` - type timestamp"
+        enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        type: integer
+    required:
+    - name
+    - type
+    type: object
   externaldata.RefParameters:
     properties:
       optional:
@@ -2825,6 +2875,17 @@ definitions:
     - name
     - type
     type: object
+  externaldatatable.ErrorInfo:
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+      rows:
+        items:
+          type: integer
+        type: array
+    type: object
   externaldatatable.ExportRequest:
     properties:
       fields:
@@ -2849,21 +2910,27 @@ definitions:
     type: object
   externaldatatable.ImportCompleteRequest:
     properties:
-      column_types:
+      column_tags:
         items:
           type: integer
         type: array
     required:
-    - column_types
+    - column_tags
     type: object
   externaldatatable.ImportJob:
     properties:
       _id:
         type: string
-      columns:
+      column_configs:
         items:
-          type: string
+          $ref: '#/definitions/externaldata.ColumnConfig'
         type: array
+      error_info:
+        additionalProperties:
+          $ref: '#/definitions/externaldatatable.ErrorInfo'
+        type: object
+      fail_reason:
+        type: string
       status:
         type: integer
     type: object
@@ -2889,22 +2956,18 @@ definitions:
       sort_by:
         type: string
       table:
-        $ref: '#/definitions/externaldatatable.Response'
+        $ref: '#/definitions/externaldatatable.Table'
         description: are used in db external data
       type:
         type: string
     type: object
-  externaldatatable.Response:
+  externaldatatable.Table:
     properties:
       _id:
         type: string
-      column_types:
+      column_configs:
         items:
-          type: integer
-        type: array
-      columns:
-        items:
-          type: string
+          $ref: '#/definitions/externaldata.ColumnConfig'
         type: array
       created:
         type: integer
@@ -2934,7 +2997,7 @@ definitions:
     type: object
   externaldatatable.UpdateRequest:
     properties:
-      column_types:
+      column_tags:
         items:
           type: integer
         type: array
@@ -2949,7 +3012,7 @@ definitions:
         - 1
         type: integer
     required:
-    - column_types
+    - column_tags
     - name
     - type
     type: object

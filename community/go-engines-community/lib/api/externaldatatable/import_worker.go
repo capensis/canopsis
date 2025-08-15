@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
@@ -33,15 +34,18 @@ const (
 	filePerm os.FileMode = 0o770
 
 	maxRetries = 10
+
+	sqlColumnsForCsvColumn = 3
 )
 
 type ImportWorker interface {
-	CreateJob(ctx context.Context, id string, separator rune, f multipart.File) (_ ImportJob, resErr error)
+	CreateImportJob(ctx context.Context, id string, separator rune, f multipart.File) (_ ImportJob, resErr error)
 	ProcessJob(ctx context.Context, id string) error
 	GetJob(ctx context.Context, id string) (ImportJob, error)
-	CompleteJob(ctx context.Context, id string, columnTypes []int) (bool, error)
+	CompleteJob(ctx context.Context, id string, columnTags []int) (bool, error)
 	ProcessAbandonedJobs(ctx context.Context)
 	DeleteOldJobs(ctx context.Context)
+	CreatePreviewJob(ctx context.Context, id string, req PreviewRequest) (ImportJob, error)
 }
 
 func NewImportWorker(
@@ -70,6 +74,8 @@ func NewImportWorker(
 		pingInterval:            time.Second,
 		deleteTickerInterval:    time.Hour,
 		deleteInterval:          24 * time.Hour,
+
+		parser: NewParser(),
 	}
 }
 
@@ -87,9 +93,21 @@ type importWorker struct {
 	deleteTickerInterval    time.Duration
 	deleteInterval          time.Duration
 	logger                  zerolog.Logger
+
+	parser Parser
 }
 
-func (w *importWorker) CreateJob(ctx context.Context, id string, separator rune, f multipart.File) (_ ImportJob, resErr error) {
+type Row struct {
+	ID      string            `bson:"_id"`
+	Columns map[string]Column `bson:",inline"`
+}
+type Column struct {
+	InitialValue     string `bson:"initial_value"`
+	TransformedValue any    `bson:"transformed_value,omitempty"`
+	TransformError   string `bson:"transform_error,omitempty"`
+}
+
+func (w *importWorker) CreateImportJob(ctx context.Context, id string, separator rune, f multipart.File) (_ ImportJob, resErr error) {
 	defer func() {
 		err := f.Close()
 		if err != nil && resErr == nil {
@@ -165,6 +183,42 @@ func (w *importWorker) CreateJob(ctx context.Context, id string, separator rune,
 	return job, nil
 }
 
+func (w *importWorker) CreatePreviewJob(ctx context.Context, id string, req PreviewRequest) (ImportJob, error) {
+	var job ImportJob
+
+	err := w.dbImportCollection.FindOneAndUpdate(ctx,
+		bson.M{
+			"_id":    id,
+			"status": bson.M{"$in": bson.A{ImportStatusSucceeded, ImportStatusPreviewSucceeded, ImportStatusPreviewFailed}},
+		},
+		[]bson.M{
+			{
+				"$set": bson.M{
+					"job_type":            JobTypePreview,
+					"status":              ImportStatusCreated,
+					"prev_column_configs": "$column_configs",
+					"column_configs":      req.ColumnConfigs,
+				},
+			},
+		},
+		options.FindOneAndUpdate().SetReturnDocument(options.After),
+	).Decode(&job)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return job, nil
+		}
+
+		return job, fmt.Errorf("failed to update import job: %w", err)
+	}
+
+	err = w.jobPublisher.Publish(ctx, job.ID)
+	if err != nil {
+		return job, fmt.Errorf("failed to publish job: %w", err)
+	}
+
+	return job, nil
+}
+
 func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error) {
 	job := ImportJob{}
 	err := w.dbImportCollection.FindOneAndUpdate(ctx,
@@ -192,61 +246,125 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 		return err
 	}
 
+	var errorInfo map[string]ErrorInfo
+
 	g, ctx := errgroup.WithContext(ctx)
 	done := make(chan struct{})
 	g.Go(func() (resErr error) {
 		defer close(done)
-		rmFile := false
-		f, err := os.Open(job.Filepath)
-		if err != nil {
-			return fmt.Errorf("failed to open file %q: %w", job.Filepath, err)
-		}
-
-		defer func() {
-			err = f.Close()
-			if err != nil && resErr == nil {
-				resErr = fmt.Errorf("failed to close file %q: %w", job.Filepath, err)
-			}
-
-			if err == nil && rmFile {
-				err = os.Remove(job.Filepath)
-				if err != nil && resErr == nil {
-					resErr = fmt.Errorf("failed to remove file %q for job %q: %w", job.Filepath, job.ID, err)
-				}
-			}
-		}()
-		r := csv.NewReader(f)
-		if job.Separator != 0 {
-			r.Comma = job.Separator
-		}
-
-		r.ReuseRecord = true
-		var columns []string
-		var columnLengths []int
-		var failReason string
-		switch job.Type {
-		case externaldata.TypeMongoDB:
-			columns, failReason, err = w.writeToMongo(ctx, job, r)
-		case externaldata.TypePostgreSQL:
-			columns, columnLengths, failReason, err = w.writeToPostgres(ctx, job, r)
-		}
-
-		if err != nil {
-			return err
-		}
 
 		var update bson.M
-		if failReason == "" {
-			update = bson.M{
-				"status":         ImportStatusSucceeded,
-				"columns":        columns,
-				"column_lengths": columnLengths,
+
+		switch job.JobType {
+		case JobTypeImport:
+			rmFile := false
+			f, err := os.Open(job.Filepath)
+			if err != nil {
+				return fmt.Errorf("failed to open file %q: %w", job.Filepath, err)
 			}
-		} else {
-			w.logger.Err(errors.New(failReason)).Str("job", job.ID).Msg("failed to import external data")
-			update = bson.M{
-				"status":      ImportStatusFailed,
-				"fail_reason": failReason,
+
+			defer func() {
+				err = f.Close()
+				if err != nil && resErr == nil {
+					resErr = fmt.Errorf("failed to close file %q: %w", job.Filepath, err)
+				}
+
+				if err == nil && rmFile {
+					err = os.Remove(job.Filepath)
+					if err != nil && resErr == nil {
+						resErr = fmt.Errorf("failed to remove file %q for job %q: %w", job.Filepath, job.ID, err)
+					}
+				}
+			}()
+			r := csv.NewReader(f)
+			if job.Separator != 0 {
+				r.Comma = job.Separator
+			}
+
+			r.ReuseRecord = true
+			var columnsConfig []externaldata.ColumnConfig
+
+			switch job.Type {
+			case externaldata.TypeMongoDB:
+				columnsConfig, err = w.writeToMongo(ctx, job, r)
+			case externaldata.TypePostgreSQL:
+				columnsConfig, err = w.writeToPostgres(ctx, job, r)
+			}
+
+			var failReason string
+
+			if err != nil {
+				if mongo.IsConnectionError(err) || postgres.IsConnectionError(err) {
+					return err
+				}
+
+				failReason = err.Error()
+				w.logger.Err(errors.New(failReason)).Str("job", job.ID).Msg("failed to import external data")
+
+				update = bson.M{
+					"$set": bson.M{
+						"status":      ImportStatusFailed,
+						"fail_reason": failReason,
+					},
+				}
+			} else {
+				update = bson.M{
+					"$set": bson.M{
+						"status":         ImportStatusSucceeded,
+						"column_configs": columnsConfig,
+					},
+				}
+			}
+
+			rmFile = true
+			if failReason != "" {
+				err = w.deleteTable(ctx, job)
+				if err != nil {
+					return err
+				}
+			}
+		case JobTypePreview:
+			switch job.Type {
+			case externaldata.TypeMongoDB:
+				errorInfo, err = w.previewMongo(ctx, job)
+			case externaldata.TypePostgreSQL:
+				errorInfo, err = w.previewPostgres(ctx, job)
+			}
+
+			if err != nil {
+				if mongo.IsConnectionError(err) || postgres.IsConnectionError(err) {
+					return err
+				}
+
+				update = bson.M{
+					"$set": bson.M{
+						"status":      ImportStatusPreviewFailed,
+						"fail_reason": err.Error(),
+						// replace it with prev configs in order not to save invalid ones.
+						"column_configs": job.PrevColumnConfigs,
+					},
+					"$unset": bson.M{
+						"error_info": "",
+					},
+				}
+			} else if len(errorInfo) != 0 {
+				update = bson.M{
+					"$set": bson.M{
+						"status":      ImportStatusPreviewFailed,
+						"error_info":  errorInfo,
+						"fail_reason": "preview failed",
+					},
+				}
+			} else {
+				update = bson.M{
+					"$set": bson.M{
+						"status": ImportStatusPreviewSucceeded,
+					},
+					"$unset": bson.M{
+						"error_info":  "",
+						"fail_reason": "",
+					},
+				}
 			}
 		}
 
@@ -254,8 +372,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 			bson.M{
 				"_id":    job.ID,
 				"status": ImportStatusRunning,
-			},
-			bson.M{"$set": update},
+			}, update,
 		)
 		if err != nil {
 			return fmt.Errorf("failed to update import job: %w", err)
@@ -263,14 +380,6 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 
 		if updateRes.ModifiedCount == 0 {
 			return errors.New("import job is processing by another worker")
-		}
-
-		rmFile = true
-		if failReason != "" {
-			err = w.deleteTable(ctx, job)
-			if err != nil {
-				return err
-			}
 		}
 
 		return nil
@@ -326,9 +435,10 @@ func (w *importWorker) GetJob(ctx context.Context, id string) (ImportJob, error)
 	return job, nil
 }
 
-func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes []int) (bool, error) {
+func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []int) (bool, error) {
 	job := ImportJob{}
-	err := w.dbImportCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&job)
+
+	err := w.dbImportCollection.FindOne(ctx, bson.M{"_id": id, "status": ImportStatusPreviewSucceeded}).Decode(&job)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
@@ -337,27 +447,19 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes [
 		return false, fmt.Errorf("failed to find import job: %w", err)
 	}
 
-	if job.Status != ImportStatusSucceeded {
-		return false, nil
+	if len(columnTags) != len(job.ColumnConfigs) {
+		return false, common.NewValidationError("column_tags", "ColumnTags must contain "+strconv.Itoa(len(job.ColumnConfigs))+" items.")
 	}
 
-	if len(columnTypes) != len(job.Columns) {
-		return false, common.NewValidationError("column_types", "ColumnTypes must contain "+strconv.Itoa(len(job.Columns))+" items.")
+	for i, columnTag := range columnTags {
+		job.ColumnConfigs[i].Tag = &columnTag
 	}
 
 	table := externaldata.Table{}
-	update := bson.M{
-		"columns":      job.Columns,
-		"column_types": columnTypes,
-	}
-	if len(job.ColumnLengths) > 0 {
-		update["column_lengths"] = job.ColumnLengths
-	}
 
 	err = w.dbCollection.FindOneAndUpdate(ctx,
 		bson.M{"_id": job.ExternalDataTable},
-		bson.M{"$set": update},
-	).Decode(&table)
+		bson.M{"$set": bson.M{"column_configs": job.ColumnConfigs}}).Decode(&table)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
@@ -368,7 +470,13 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes [
 
 	switch table.Type {
 	case externaldata.TypeMongoDB:
+		project := bson.M{}
+		for _, c := range job.ColumnConfigs {
+			project[c.Name] = "$" + c.Name + ".transformed_value"
+		}
+
 		cursor, err := w.dbClient.Collection(job.getDBTableName()).Aggregate(ctx, []bson.M{
+			{"$project": project},
 			{"$out": table.GetDBName()},
 		})
 		if err != nil {
@@ -394,20 +502,36 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes [
 			return false, fmt.Errorf("failed to truncate postgres table: %w", err)
 		}
 
-		existedCols := make(map[string]int, len(table.Columns))
-		for i, c := range table.Columns {
-			existedCols[c] = table.ColumnLengths[i]
+		existedCols := make(map[string]bool, len(table.ColumnConfigs))
+		for _, c := range table.ColumnConfigs {
+			existedCols[c.Name] = true
 		}
 
-		for i, c := range job.Columns {
-			newL := job.ColumnLengths[i]
+		for _, c := range job.ColumnConfigs {
+			var columnType string
+
+			switch c.Type {
+			case externaldata.ColumnTypeString:
+				columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")"
+			case externaldata.ColumnTypeNumber:
+				columnType = "DOUBLE PRECISION"
+			case externaldata.ColumnTypeBoolean:
+				columnType = "BOOLEAN"
+			case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+				columnType = "BIGINT"
+			case externaldata.ColumnTypeStringArray:
+				columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")[]"
+			default:
+				return false, fmt.Errorf("unsupported column type %q", c.Type)
+			}
+
 			sql := ""
-			if l, ok := existedCols[c]; !ok {
+			if existedCols[c.Name] {
 				sql = "ALTER TABLE " + table.GetDBName() +
-					" ADD COLUMN " + pgx.Identifier{c}.Sanitize() + " VARCHAR(" + strconv.Itoa(newL) + ")"
-			} else if l != newL {
+					" ALTER COLUMN " + pgx.Identifier{c.Name}.Sanitize() + " TYPE " + columnType + " USING NULL"
+			} else {
 				sql = "ALTER TABLE " + table.GetDBName() +
-					" ALTER COLUMN " + pgx.Identifier{c}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(newL) + ")"
+					" ADD COLUMN " + pgx.Identifier{c.Name}.Sanitize() + " " + columnType
 			}
 
 			if sql != "" {
@@ -417,7 +541,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes [
 				}
 			}
 
-			delete(existedCols, c)
+			delete(existedCols, c.Name)
 		}
 
 		for c := range existedCols {
@@ -429,14 +553,17 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTypes [
 			}
 		}
 
-		sanColsWithID := make([]string, len(job.Columns)+1)
+		sanColsWithID := make([]string, len(job.ColumnConfigs)+1)
 		sanColsWithID[0] = externaldata.IDColumnName
-		for j, col := range job.Columns {
-			sanColsWithID[j+1] = pgx.Identifier{col}.Sanitize()
+		sanTransformedColsWithID := make([]string, len(job.ColumnConfigs)+1)
+		sanTransformedColsWithID[0] = externaldata.IDColumnName
+		for j, col := range job.ColumnConfigs {
+			sanColsWithID[j+1] = pgx.Identifier{col.Name}.Sanitize()
+			sanTransformedColsWithID[j+1] = pgx.Identifier{col.Name + "_transformed_value"}.Sanitize()
 		}
 
 		_, err = pgPool.Exec(ctx, "INSERT INTO "+table.GetDBName()+"("+strings.Join(sanColsWithID, ",")+
-			") SELECT "+strings.Join(sanColsWithID, ",")+" FROM "+job.getDBTableName())
+			") SELECT "+strings.Join(sanTransformedColsWithID, ",")+" FROM "+job.getDBTableName())
 		if err != nil {
 			return false, fmt.Errorf("failed to copy to postgres table: %w", err)
 		}
@@ -586,8 +713,10 @@ func (w *importWorker) DeleteOldJobs(ctx context.Context) {
 	}
 }
 
-func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) ([]string, string, error) {
-	var columns []string
+func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) ([]externaldata.ColumnConfig, error) {
+	tableName := job.getDBTableName()
+
+	var columns []externaldata.ColumnConfig
 	i := 0
 	docs := make([]any, 0, canopsis.DefaultBulkSize)
 	for {
@@ -598,39 +727,51 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 				break
 			}
 
-			return nil, err.Error(), nil
+			return nil, err
 		}
 
 		if len(record) == 0 {
-			return nil, "empty record " + strconv.Itoa(i), nil
+			return nil, fmt.Errorf("empty record %d", i)
 		}
 
 		if len(columns) == 0 {
-			columns = make([]string, len(record))
-			copy(columns, record)
-			err = w.createTable(ctx, job, columns, nil)
+			columns = make([]externaldata.ColumnConfig, len(record))
+			for idx, r := range record {
+				columns[idx] = externaldata.ColumnConfig{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: r,
+						Type: externaldata.ColumnTypeString,
+					},
+				}
+			}
+
+			err = w.createTable(ctx, job, nil)
 			if err != nil {
-				return nil, "", err
+				return nil, err
 			}
 
 			continue
 		}
 
 		if len(columns) != len(record) {
-			return nil, "invalid record " + strconv.Itoa(i) + ": not match fields", nil
+			return nil, fmt.Errorf("invalid record %d: not match fields", i)
 		}
 
-		doc := make(map[string]string, len(record)+1)
+		doc := make(map[string]any, len(record)+1)
 		doc[externaldata.IDColumnName] = utils.NewID()
 		for j, c := range columns {
-			doc[c] = record[j]
+			if utf8.RuneCountInString(record[j]) > externaldata.MaxStringLen {
+				return nil, fmt.Errorf("invalid record %d: string length must be less than "+externaldata.MaxStringLenStr, i)
+			}
+
+			doc[c.Name] = Column{InitialValue: record[j], TransformedValue: record[j]}
 		}
 
 		docs = append(docs, doc)
 		if len(docs) == canopsis.DefaultBulkSize {
-			_, err = w.dbClient.Collection(job.getDBTableName()).InsertMany(ctx, docs)
+			_, err = w.dbClient.Collection(tableName).InsertMany(ctx, docs)
 			if err != nil {
-				return nil, "", fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
+				return nil, fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
 			}
 
 			docs = docs[:0]
@@ -638,24 +779,24 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 	}
 
 	if len(docs) > 0 {
-		_, err := w.dbClient.Collection(job.getDBTableName()).InsertMany(ctx, docs)
+		_, err := w.dbClient.Collection(tableName).InsertMany(ctx, docs)
 		if err != nil {
-			return nil, "", fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
+			return nil, fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
 		}
 	}
 
-	return columns, "", nil
+	return columns, nil
 }
 
-func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) ([]string, []int, string, error) {
+func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) ([]externaldata.ColumnConfig, error) {
 	pgPool, err := w.pgPoolProvider.Get(ctx)
 	if err != nil {
-		return nil, nil, "", fmt.Errorf("failed to get postgres pool: %w", err)
+		return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 	}
 
-	var columns []string
+	var columnConfigs []externaldata.ColumnConfig
 	var columnsWithID []string
-	var columnLengths []int
+
 	i := 0
 	rows := make([][]any, 0, canopsis.DefaultBulkSize)
 	for {
@@ -666,44 +807,52 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 				break
 			}
 
-			return nil, nil, err.Error(), nil
+			return nil, err
 		}
 
 		if len(record) == 0 {
-			return nil, nil, "empty record " + strconv.Itoa(i), nil
+			return nil, fmt.Errorf("empty record %d", i)
 		}
 
-		if len(columns) == 0 {
-			columnsWithID = make([]string, len(record)+1)
+		if len(columnConfigs) == 0 {
+			columnsWithID = make([]string, len(record)*sqlColumnsForCsvColumn+1)
 			columnsWithID[0] = externaldata.IDColumnName
-			copy(columnsWithID[1:], record)
-			columns = columnsWithID[1:]
-			columnLengths = make([]int, len(columns))
-			for j := range columns {
-				columnLengths[j] = externaldata.PostgresDefaultColumnLen
+
+			columnConfigs = make([]externaldata.ColumnConfig, len(record))
+			for idx, r := range record {
+				columnConfigs[idx] = externaldata.ColumnConfig{
+					BaseColumnConfig: externaldata.BaseColumnConfig{
+						Name: r,
+						Type: externaldata.ColumnTypeString,
+					},
+				}
+
+				columnsWithID[idx*sqlColumnsForCsvColumn+1] = r + "_initial_value"
+				columnsWithID[idx*sqlColumnsForCsvColumn+2] = r + "_transformed_value"
+				columnsWithID[idx*sqlColumnsForCsvColumn+3] = r + "_transform_error"
 			}
 
-			err = w.createTable(ctx, job, columns, columnLengths)
+			err = w.createTable(ctx, job, columnsWithID[1:])
 			if err != nil {
-				return nil, nil, "", err
+				return nil, err
 			}
 
 			continue
 		}
 
-		if len(columns) != len(record) {
-			return nil, nil, "invalid record " + strconv.Itoa(i) + ": not match fields", nil
+		if len(columnConfigs) != len(record) {
+			return nil, fmt.Errorf("invalid record %d: not match fields", i)
 		}
 
-		columnLengths, err = w.alterColumnLengths(ctx, job.getDBTableName(), columns, columnLengths, record)
-		if err != nil {
-			return nil, nil, "", err
-		}
-
-		row := make([]any, len(record)+1)
+		row := make([]any, len(record)*sqlColumnsForCsvColumn+1)
 		row[0] = utils.NewID()
 		for j, v := range record {
-			row[j+1] = v
+			if utf8.RuneCountInString(v) > externaldata.MaxStringLen {
+				return nil, fmt.Errorf("invalid record %d: string length must be less than "+externaldata.MaxStringLenStr, i)
+			}
+
+			row[sqlColumnsForCsvColumn*j+1] = v
+			row[sqlColumnsForCsvColumn*j+2] = v
 		}
 
 		rows = append(rows, row)
@@ -711,7 +860,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 		if len(rows) == canopsis.DefaultBulkSize {
 			_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columnsWithID, pgx.CopyFromRows(rows))
 			if err != nil {
-				return nil, nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
+				return nil, fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
 			}
 
 			rows = rows[:0]
@@ -721,17 +870,288 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 	if len(rows) > 0 {
 		_, err = pgPool.CopyFrom(ctx, externaldata.GetPostgresTableIdentifier(job.Table), columnsWithID, pgx.CopyFromRows(rows))
 		if err != nil {
-			return nil, nil, "", fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
+			return nil, fmt.Errorf("failed to insert into %q table: %w", job.Table, err)
 		}
 	}
 
-	return columns, columnLengths, "", nil
+	return columnConfigs, nil
+}
+
+func (w *importWorker) previewMongo(ctx context.Context, job ImportJob) (map[string]ErrorInfo, error) {
+	prevColumnConfigs := job.PrevColumnConfigs
+	if len(prevColumnConfigs) != len(job.ColumnConfigs) {
+		return nil, errors.New("column config count mismatch")
+	}
+
+	columnConfigs := make([]externaldata.ColumnConfig, 0, len(job.ColumnConfigs))
+	for i := range job.ColumnConfigs {
+		if job.ColumnConfigs[i].BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
+			columnConfigs = append(columnConfigs, job.ColumnConfigs[i])
+		}
+	}
+
+	if len(columnConfigs) == 0 {
+		return nil, nil
+	}
+
+	columnErrRows := make(map[string][]int, len(columnConfigs))
+	columnErrMessages := make(map[string][]string, len(columnConfigs))
+	uniqueColumnErrMessages := make(map[string]map[string]bool, len(columnConfigs))
+
+	for _, columnConfig := range columnConfigs {
+		columnErrRows[columnConfig.Name] = make([]int, 0)
+		columnErrMessages[columnConfig.Name] = make([]string, 0)
+		uniqueColumnErrMessages[columnConfig.Name] = make(map[string]bool)
+	}
+
+	collectionName := job.getDBTableName()
+
+	cursor, err := w.dbClient.Collection(collectionName).Find(ctx, bson.M{}, options.Find().SetSort(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("failed to find temporary external data: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	writeModels := make([]mongodriver.WriteModel, 0, canopsis.DefaultBulkSize)
+
+	for i := 0; cursor.Next(ctx); i++ {
+		var row Row
+
+		if err = cursor.Decode(&row); err != nil {
+			return nil, fmt.Errorf("failed to decode preview data: %w", err)
+		}
+
+		if row.ID == "" {
+			return nil, errors.New("failed to get id for preview data")
+		}
+
+		set := bson.M{}
+		unset := bson.M{}
+
+		for _, columnConfig := range columnConfigs {
+			columnName := columnConfig.Name
+
+			column, ok := row.Columns[columnName]
+			if !ok {
+				return nil, fmt.Errorf("no such column %q", columnName)
+			}
+
+			transformedValue, err := w.parser.Parse(columnConfig, column.InitialValue)
+			if err != nil {
+				errorMsg := err.Error()
+
+				set[columnName+".transform_error"] = errorMsg
+				unset[columnName+".transformed_value"] = ""
+
+				columnErrRows[columnName] = append(columnErrRows[columnName], i)
+				if !uniqueColumnErrMessages[columnName][errorMsg] {
+					uniqueColumnErrMessages[columnName][errorMsg] = true
+					columnErrMessages[columnName] = append(columnErrMessages[columnName], errorMsg)
+				}
+			} else {
+				set[columnName+".transformed_value"] = transformedValue
+				unset[columnName+".transform_error"] = ""
+			}
+		}
+
+		writeModels = append(writeModels, mongodriver.NewUpdateOneModel().
+			SetFilter(bson.M{externaldata.IDColumnName: row.ID}).
+			SetUpdate(bson.M{"$set": set, "$unset": unset}))
+		if len(writeModels) == canopsis.DefaultBulkSize {
+			_, err = w.dbClient.Collection(collectionName).BulkWrite(ctx, writeModels)
+			if err != nil {
+				return nil, fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
+			}
+
+			writeModels = writeModels[:0]
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("failed to read temporary external data: %w", err)
+	}
+
+	if len(writeModels) > 0 {
+		_, err := w.dbClient.Collection(collectionName).BulkWrite(ctx, writeModels)
+		if err != nil {
+			return nil, fmt.Errorf("failed to insert into %q collection: %w", job.Table, err)
+		}
+	}
+
+	errorInfo := make(map[string]ErrorInfo, len(columnErrRows))
+	for columnName := range columnErrRows {
+		if len(columnErrRows[columnName]) == 0 {
+			continue
+		}
+
+		errorInfo[columnName] = ErrorInfo{
+			Rows:     columnErrRows[columnName],
+			Messages: columnErrMessages[columnName],
+		}
+	}
+
+	return errorInfo, nil
+}
+
+func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[string]ErrorInfo, error) {
+	prevColumnConfigs := job.PrevColumnConfigs
+	if len(prevColumnConfigs) != len(job.ColumnConfigs) {
+		return nil, errors.New("column config count mismatch")
+	}
+
+	columnConfigs := make([]externaldata.ColumnConfig, 0, len(job.ColumnConfigs))
+	for i := range job.ColumnConfigs {
+		if job.ColumnConfigs[i].BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
+			columnConfigs = append(columnConfigs, job.ColumnConfigs[i])
+		}
+	}
+
+	if len(columnConfigs) == 0 {
+		return nil, nil
+	}
+
+	pgPool, err := w.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get postgres pool: %w", err)
+	}
+
+	tableName := job.getDBTableName()
+
+	selectCols := make([]string, 0, len(columnConfigs)+1)
+	selectCols = append(selectCols, pgx.Identifier{externaldata.IDColumnName}.Sanitize())
+
+	for _, cfg := range columnConfigs {
+		selectCols = append(selectCols, pgx.Identifier{cfg.Name + "_initial_value"}.Sanitize())
+
+		var columnType string
+		switch cfg.Type {
+		case externaldata.ColumnTypeString:
+			columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")"
+		case externaldata.ColumnTypeNumber:
+			columnType = "DOUBLE PRECISION"
+		case externaldata.ColumnTypeBoolean:
+			columnType = "BOOLEAN"
+		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+			columnType = "BIGINT"
+		case externaldata.ColumnTypeStringArray:
+			columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")[]"
+		default:
+			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
+		}
+
+		if _, err := pgPool.Exec(ctx, "ALTER TABLE "+tableName+" ALTER COLUMN "+pgx.Identifier{cfg.Name + "_transformed_value"}.Sanitize()+" TYPE "+columnType+" USING NULL"); err != nil {
+			return nil, fmt.Errorf("failed to alter column in temprorary table: %w", err)
+		}
+	}
+
+	columnErrRows := make(map[string][]int, len(columnConfigs))
+	columnErrMessages := make(map[string][]string, len(columnConfigs))
+	uniqueColumnErrMessages := make(map[string]map[string]bool, len(columnConfigs))
+
+	for _, columnConfig := range columnConfigs {
+		columnErrRows[columnConfig.Name] = make([]int, 0)
+		columnErrMessages[columnConfig.Name] = make([]string, 0)
+		uniqueColumnErrMessages[columnConfig.Name] = make(map[string]bool)
+	}
+
+	batch := &pgx.Batch{}
+
+	rows, err := pgPool.Query(ctx, "SELECT "+strings.Join(selectCols, ", ")+" FROM "+tableName+" ORDER BY "+pgx.Identifier{externaldata.IDColumnName}.Sanitize())
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for idx := 0; rows.Next(); idx++ {
+		vals, err := rows.Values()
+		if err != nil {
+			return nil, err
+		}
+
+		id, ok := vals[0].(string)
+		if !ok {
+			return nil, fmt.Errorf("%q column doesn't contain string", externaldata.IDColumnName)
+		}
+
+		setStmts := make([]string, 0, len(columnConfigs)*2)
+		args := make([]any, 0, len(columnConfigs)*2+1)
+
+		for i, columnConfig := range columnConfigs {
+			columnName := columnConfig.Name
+
+			initialValue := ""
+			if vals[i+1] != nil {
+				if initialValue, ok = vals[i+1].(string); !ok {
+					return nil, fmt.Errorf("initial value for %q column doesn't contain a string", columnName)
+				}
+			}
+
+			transformedValue, err := w.parser.Parse(columnConfig, initialValue)
+			if err != nil {
+				errorMsg := err.Error()
+
+				args = append(args, errorMsg, nil)
+
+				setStmts = append(setStmts, pgx.Identifier{columnName + "_transform_error"}.Sanitize()+" = $"+strconv.Itoa(len(args)-1))
+				setStmts = append(setStmts, pgx.Identifier{columnName + "_transformed_value"}.Sanitize()+" = $"+strconv.Itoa(len(args)))
+
+				columnErrRows[columnName] = append(columnErrRows[columnName], i)
+				if !uniqueColumnErrMessages[columnName][errorMsg] {
+					uniqueColumnErrMessages[columnName][errorMsg] = true
+					columnErrMessages[columnName] = append(columnErrMessages[columnName], errorMsg)
+				}
+			} else {
+				args = append(args, transformedValue, nil)
+
+				setStmts = append(setStmts, pgx.Identifier{columnName + "_transformed_value"}.Sanitize()+" = $"+strconv.Itoa(len(args)-1))
+				setStmts = append(setStmts, pgx.Identifier{columnName + "_transform_error"}.Sanitize()+" = $"+strconv.Itoa(len(args)))
+			}
+		}
+
+		args = append(args, id)
+		updateSQL := "UPDATE " + tableName + " SET " + strings.Join(setStmts, ", ") +
+			" WHERE " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " = $" + strconv.Itoa(len(args))
+		batch.Queue(updateSQL, args...)
+
+		if batch.Len() == canopsis.DefaultBulkSize {
+			if err := pgPool.SendBatch(ctx, batch); err != nil {
+				return nil, fmt.Errorf("failed to update preview rows: %w", err)
+			}
+			batch = &pgx.Batch{}
+		}
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	if batch.Len() > 0 {
+		if err := pgPool.SendBatch(ctx, batch); err != nil {
+			return nil, fmt.Errorf("failed to update preview rows: %w", err)
+		}
+	}
+
+	errorInfo := make(map[string]ErrorInfo, len(columnErrRows))
+	for columnName := range columnErrRows {
+		if len(columnErrRows[columnName]) == 0 {
+			continue
+		}
+
+		errorInfo[columnName] = ErrorInfo{
+			Rows:     columnErrRows[columnName],
+			Messages: columnErrMessages[columnName],
+		}
+	}
+
+	return errorInfo, nil
 }
 
 func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f multipart.File, separator rune) error {
 	isLinked := false
 	var err error
-	if len(t.Columns) > 0 {
+	if len(t.ColumnConfigs) > 0 {
 		isLinked, err = isTableLinked(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
 		if err != nil {
 			return err
@@ -767,9 +1187,9 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 
 	missingCols := make([]string, 0)
 	if isLinked {
-		for _, c := range t.Columns {
-			if !existColumns[c] {
-				missingCols = append(missingCols, strconv.Quote(c))
+		for _, c := range t.ColumnConfigs {
+			if !existColumns[c.Name] {
+				missingCols = append(missingCols, strconv.Quote(c.Name))
 			}
 		}
 	}
@@ -786,7 +1206,7 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	return nil
 }
 
-func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns []string, columnLens []int) error {
+func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns []string) error {
 	switch job.Type {
 	case externaldata.TypeMongoDB:
 		// clean collection if job is retried
@@ -798,9 +1218,9 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 		return nil
 	case externaldata.TypePostgreSQL:
 		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + strconv.Itoa(externaldata.PostgresIDColumnLen) + ") PRIMARY KEY, "
+			externaldata.IDColumnName + " VARCHAR(" + externaldata.MaxIdLenStr + ") PRIMARY KEY, "
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + strconv.Itoa(columnLens[i]) + ") "
+			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + externaldata.MaxStringLenStr + ") "
 			if i != len(columns)-1 {
 				sql += ","
 			}
@@ -853,40 +1273,4 @@ func (w *importWorker) deleteTable(ctx context.Context, job ImportJob) error {
 	default:
 		return fmt.Errorf("invalid job type: %q", job.Type)
 	}
-}
-
-func (w *importWorker) alterColumnLengths(
-	ctx context.Context,
-	tableName string,
-	columns []string,
-	columnLens []int,
-	record []string,
-) ([]int, error) {
-	updatedLengths := make(map[string]int)
-	for i, v := range record {
-		if len(v) > columnLens[i] {
-			columnLens[i] = len(v)
-			updatedLengths[columns[i]] = columnLens[i]
-		}
-	}
-
-	if len(updatedLengths) == 0 {
-		return columnLens, nil
-	}
-
-	pgPool, err := w.pgPoolProvider.Get(ctx)
-	if err != nil {
-		return columnLens, fmt.Errorf("failed to get postgres pool: %w", err)
-	}
-
-	for c, l := range updatedLengths {
-		sql := "ALTER TABLE " + tableName +
-			" ALTER COLUMN " + pgx.Identifier{c}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(l) + ")"
-		_, err = pgPool.Exec(ctx, sql)
-		if err != nil {
-			return columnLens, fmt.Errorf("failed to alter postgres table: %w", err)
-		}
-	}
-
-	return columnLens, nil
 }
