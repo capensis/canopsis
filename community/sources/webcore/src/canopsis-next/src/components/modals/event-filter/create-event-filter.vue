@@ -95,7 +95,6 @@ export default {
 
     const { validator, setFormErrors } = useValidationFormErrors(form);
 
-    // Template validator actions
     const { validateEventFilterRulesVariables } = useTemplateValidator();
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
@@ -277,7 +276,6 @@ export default {
       }
     };
 
-    // Clear errors when form type changes
     watch(() => form.value.type, () => {
       if (validator?.errors) {
         validator.errors.clear();

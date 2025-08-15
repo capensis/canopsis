@@ -8,7 +8,6 @@ const stubs = {
   'pattern-rule-field': true,
   'c-action-btn': true,
   'c-btn-with-error': true,
-  'c-alert': true,
 };
 
 const selectAddButton = wrapper => wrapper.find('c-btn-with-error-stub');

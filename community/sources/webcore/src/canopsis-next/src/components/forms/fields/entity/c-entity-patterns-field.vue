@@ -283,15 +283,10 @@ export default {
       return this.entityInfoPropertiesWithAlias.map(item => ({
         text: item.alias,
         value: item.alias,
+        alias: true,
         originalValue: item.name,
-        inputTypes: ENTITY_PATTERN_FIELD_TYPES.map(type => ({
-          ...type,
-          defined: type.value === ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
-        })),
-        options: {
-          alias: true,
-          definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
-        },
+        inputTypes: ENTITY_PATTERN_FIELD_TYPES,
+        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
       }));
     },
 

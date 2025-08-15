@@ -192,10 +192,6 @@ export default {
       type: Function,
       required: false,
     },
-    alias: {
-      type: Boolean,
-      default: false,
-    },
   },
   computed: {
     operatorFieldName() {
@@ -227,11 +223,11 @@ export default {
     },
 
     isAnyInfosRuleOrAlias() {
-      return this.isAnyInfosRule || this.alias;
+      return this.isAnyInfosRule || this.rule.alias;
     },
 
     isInfosValueField() {
-      return this.rule.field === PATTERN_RULE_INFOS_FIELDS.value || this.alias;
+      return this.rule.field === PATTERN_RULE_INFOS_FIELDS.value || this.rule.alias;
     },
 
     isDateRule() {
@@ -374,8 +370,11 @@ export default {
       return { xs6: true };
     },
 
+    /**
+     * TODO: FIX DEFINED TYPE INITIALIZATION IT IN THE NEXT COMMIT
+     */
     notDefinedType() {
-      return this.rule.definedType !== this.rule.fieldType;
+      return this.rule.fieldType && this.rule.definedType && this.rule.definedType !== this.rule.fieldType;
     },
   },
   methods: {
@@ -388,12 +387,12 @@ export default {
         ...this.rule,
 
         attribute: attribute.value,
-        alias: attribute.options?.alias,
-        definedType: attribute.options?.definedType ?? PATTERN_FIELD_TYPES.string,
+        alias: attribute.alias ?? false,
+        definedType: attribute.definedType ?? null,
       };
 
-      if (attribute.options?.definedType) {
-        newRule.fieldType = attribute.options.definedType;
+      if (newRule.definedType) {
+        newRule.fieldType = newRule.definedType;
       }
 
       this.updateModel(newRule);
