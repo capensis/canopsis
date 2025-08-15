@@ -106,6 +106,7 @@ import { uid } from '@/helpers/uid';
  * @property {string} operator
  * @property {string} field
  * @property {string} fieldType
+ * @property {string} definedType
  * @property {string} dictionary
  * @property {number | string} value
  * @property {PatternRuleRangeForm} range

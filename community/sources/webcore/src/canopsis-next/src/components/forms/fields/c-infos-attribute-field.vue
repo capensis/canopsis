@@ -15,7 +15,7 @@
         item-text="value"
         item-value="value"
         return-object
-        @input="updateDictionary"
+        @input="updateInfosDictionary"
       />
       <v-text-field
         v-else
@@ -26,7 +26,7 @@
         :error-messages="errors.collect(dictionaryName)"
         :name="dictionaryName"
         :hide-details="row"
-        @input="updateDictionary"
+        @input="updateInfosDictionary"
       />
     </v-flex>
     <v-flex
@@ -34,14 +34,15 @@
       :xs6="row"
     >
       <v-select
-        v-field="value.field"
         v-validate="'required'"
+        :value="value.field"
         :items="fieldItems"
         :disabled="disabled || !value.dictionary"
         :label="label || $t('common.field')"
         :name="fieldName"
         :error-messages="errors.collect(fieldName)"
         :hide-details="row"
+        @input="updateInfosField"
       />
     </v-flex>
   </v-layout>
@@ -104,11 +105,9 @@ export default {
     },
   },
   setup(props, { emit }) {
-    // Composables
     const { t } = useI18n();
     const { updateModel } = useModelField(props, emit);
 
-    // Computed properties
     const dictionaryName = computed(() => `${props.name}.dictionary`);
     const fieldName = computed(() => `${props.name}.field`);
     const fieldItems = computed(() => [
@@ -122,7 +121,20 @@ export default {
       },
     ]);
 
-    const updateDictionary = (infos = {}) => updateModel({
+    /**
+     * Updates `value.dictionary` and related type fields based on the provided infos.
+     *
+     * When a combobox item is selected, `infos` is an object with `value` and optional
+     * `definedType`. When a plain text is entered, `infos` is a string.
+     *
+     * Triggers model update (emits `input`).
+     *
+     * @param {Object|string} [infos={}]
+     * @param {string} [infos.value] Dictionary name when an object is provided
+     * @param {string} [infos.definedType] Field defined type coming from the dictionary item
+     * @returns {void}
+     */
+    const updateInfosDictionary = (infos = {}) => updateModel({
       ...props.value,
 
       dictionary: infos?.value ?? infos,
@@ -130,11 +142,24 @@ export default {
       fieldType: infos?.definedType ?? PATTERN_FIELD_TYPES.string,
     });
 
+    /**
+     * Updates `value.field` and keeps `definedType` only when field is `value`.
+     *
+     * @param {'name'|'value'} field Field key from `PATTERN_RULE_INFOS_FIELDS`
+     * @returns {void}
+     */
+    const updateInfosField = field => updateModel({
+      ...props.value,
+      fieldType: field === PATTERN_RULE_INFOS_FIELDS.value ? props.value.definedType : null,
+      field,
+    });
+
     return {
       dictionaryName,
       fieldName,
       fieldItems,
-      updateDictionary,
+      updateInfosDictionary,
+      updateInfosField,
     };
   },
 };

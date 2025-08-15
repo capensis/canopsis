@@ -14,7 +14,12 @@
   >
     <template #item="{ item }">
       <span>{{ item.text }}</span>
-      <v-tooltip v-if="item.options?.alias" offset-y top>
+      <c-simple-tooltip
+        v-if="item.alias"
+        :content="`infos.${item.originalValue}.value`"
+        offset-y
+        top
+      >
         <template #activator="{ on }">
           <v-icon
             class="ml-1"
@@ -25,12 +30,11 @@
             alternate_email
           </v-icon>
         </template>
-        <span>infos.{{ item.originalValue }}.value</span>
-      </v-tooltip>
+      </c-simple-tooltip>
     </template>
     <template #selection="{ item }">
       <v-icon
-        v-if="item.options?.alias"
+        v-if="item.alias"
         class="mr-1"
         small
       >
@@ -42,6 +46,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   inject: ['$validator'],
   props: {
@@ -74,12 +80,14 @@ export default {
       default: false,
     },
   },
-  computed: {
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
+  setup(props) {
+    const rules = computed(() => ({
+      required: props.required,
+    }));
+
+    return {
+      rules,
+    };
   },
 };
 </script>
