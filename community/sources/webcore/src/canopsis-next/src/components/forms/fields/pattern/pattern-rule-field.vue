@@ -1,105 +1,122 @@
 <template>
-  <v-layout>
-    <v-flex
-      :xs5="isAnyInfosRule"
-      :xs4="!isAnyInfosRule"
-    >
-      <v-layout>
-        <v-flex
-          :xs4="!isObjectRule && isAnyInfosRule"
-          :xs6="isObjectRule"
-        >
-          <pattern-attribute-field
-            v-field="rule.attribute"
-            :items="attributes"
-            :name="name"
-            :disabled="disabled"
-            required
-          />
-        </v-flex>
-        <v-flex
-          v-if="isAnyInfosRule"
-          class="pl-3"
-          xs8
-        >
-          <c-infos-attribute-field
-            v-field="rule"
-            :items="infos"
-            :name="name"
-            :disabled="disabled"
-            :combobox="isInfosRule"
-            row
-          />
-        </v-flex>
-        <v-flex
-          v-else-if="isObjectRule"
-          class="pl-3"
-          xs6
-        >
-          <v-text-field
-            v-field="rule.dictionary"
-            v-validate="'required'"
-            :name="objectDictionaryName"
-            :disabled="disabled"
-            :label="$t('common.dictionary')"
-            :error-messages="errors.collect(objectDictionaryName)"
-          />
-        </v-flex>
-      </v-layout>
-    </v-flex>
-    <v-flex
-      v-if="rule.attribute"
-      :xs8="!isAnyInfosRule"
-      :xs7="isAnyInfosRule"
-    >
-      <v-layout>
-        <v-flex
-          v-if="isInfosValueField"
-          class="pl-3"
-          xs1
-        >
-          <c-input-type-field
-            :value="rule.fieldType"
-            :label="$t('common.type')"
-            :types="inputTypes"
-            :disabled="disabled"
-            :name="name"
-            @input="updateType"
-          />
-        </v-flex>
-        <v-flex
-          v-if="shownOperatorField"
-          v-bind="operatorFlexSizeAttrs"
-          class="pl-3"
-        >
-          <pattern-operator-field
-            v-field="rule.operator"
-            :operators="operators"
-            :disabled="disabled"
-            :name="operatorFieldName"
-            required
-          />
-        </v-flex>
-        <v-flex
-          v-if="rule.operator && operatorHasValue"
-          v-bind="valueFlexSizeAttrs"
-          class="pl-3"
-        >
-          <component
-            v-bind="valueComponent.props"
-            :is="valueComponent.is"
-            v-on="valueComponent.on"
-          />
-        </v-flex>
-      </v-layout>
-    </v-flex>
+  <v-layout column>
+    <v-layout>
+      <v-flex
+        :xs5="isAnyInfosRule"
+        :xs4="!isAnyInfosRule"
+      >
+        <v-layout>
+          <v-flex
+            :xs4="!isObjectRule && isAnyInfosRule"
+            :xs6="isObjectRule"
+          >
+            <pattern-attribute-field
+              :value="rule.attribute"
+              :items="attributes"
+              :name="name"
+              :disabled="disabled"
+              return-object
+              required
+              @input="updateAttribute"
+            />
+          </v-flex>
+          <v-flex
+            v-if="isAnyInfosRule"
+            class="pl-3"
+            xs8
+          >
+            <c-infos-attribute-field
+              v-field="rule"
+              :items="infos"
+              :name="name"
+              :disabled="disabled"
+              :combobox="isInfosRule"
+              row
+            />
+          </v-flex>
+          <v-flex
+            v-else-if="isObjectRule"
+            class="pl-3"
+            xs6
+          >
+            <v-text-field
+              v-field="rule.dictionary"
+              v-validate="'required'"
+              :name="objectDictionaryName"
+              :disabled="disabled"
+              :label="$t('common.dictionary')"
+              :error-messages="errors.collect(objectDictionaryName)"
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+      <v-flex
+        v-if="rule.attribute"
+        :xs8="!isAnyInfosRuleOrAlias"
+        :xs7="isAnyInfosRuleOrAlias"
+      >
+        <v-layout>
+          <v-flex
+            v-if="isInfosValueField"
+            class="pl-3"
+            xs1
+          >
+            <c-input-type-field
+              :value="rule.fieldType"
+              :label="$t('common.type')"
+              :types="inputTypesWithDefinedType"
+              :disabled="disabled"
+              :name="name"
+              @input="updateType"
+            />
+          </v-flex>
+          <v-flex
+            v-if="shownOperatorField"
+            v-bind="operatorFlexSizeAttrs"
+            class="pl-3"
+          >
+            <pattern-operator-field
+              v-field="rule.operator"
+              :operators="operators"
+              :disabled="disabled"
+              :name="operatorFieldName"
+              required
+            />
+          </v-flex>
+          <v-flex
+            v-if="rule.operator && operatorHasValue"
+            v-bind="valueFlexSizeAttrs"
+            class="pl-3"
+          >
+            <component
+              v-bind="valueComponent.props"
+              :is="valueComponent.is"
+              v-on="valueComponent.on"
+            />
+          </v-flex>
+        </v-layout>
+      </v-flex>
+    </v-layout>
+    <v-layout>
+      <c-alert
+        v-if="notDefinedType"
+        type="warning"
+      >
+        {{ $t('pattern.notDefinedType') }}
+      </c-alert>
+    </v-layout>
   </v-layout>
 </template>
 
 <script>
 import { isFunction } from 'lodash';
 
-import { PATTERN_FIELD_TYPES, PATTERN_RULE_INFOS_FIELDS, PATTERN_RULE_TYPES } from '@/constants';
+import {
+  PATTERN_FIELD_TYPES,
+  PATTERN_RULE_INFOS_FIELDS,
+  PATTERN_RULE_TYPES,
+  DEFAULT_PATTERN_FIELD_TYPES,
+} from '@/constants';
 
 import {
   convertValueByType,
@@ -153,12 +170,7 @@ export default {
     },
     inputTypes: {
       type: Array,
-      default: () => [
-        { value: PATTERN_FIELD_TYPES.string },
-        { value: PATTERN_FIELD_TYPES.number },
-        { value: PATTERN_FIELD_TYPES.boolean },
-        { value: PATTERN_FIELD_TYPES.stringArray },
-      ],
+      default: () => DEFAULT_PATTERN_FIELD_TYPES,
     },
     valueField: {
       type: Object,
@@ -179,6 +191,10 @@ export default {
     itemDisabled: {
       type: Function,
       required: false,
+    },
+    alias: {
+      type: Boolean,
+      default: false,
     },
   },
   computed: {
@@ -210,8 +226,12 @@ export default {
       return this.isInfosRule || this.isExtraInfosRule;
     },
 
+    isAnyInfosRuleOrAlias() {
+      return this.isAnyInfosRule || this.alias;
+    },
+
     isInfosValueField() {
-      return this.rule.field === PATTERN_RULE_INFOS_FIELDS.value;
+      return this.rule.field === PATTERN_RULE_INFOS_FIELDS.value || this.alias;
     },
 
     isDateRule() {
@@ -224,6 +244,13 @@ export default {
 
     isNumberRule() {
       return isNumberRuleType(this.type);
+    },
+
+    inputTypesWithDefinedType() {
+      return this.inputTypes.map(type => ({
+        ...type,
+        defined: type.value === this.rule.definedType,
+      }));
     },
 
     valueComponent() {
@@ -346,10 +373,30 @@ export default {
 
       return { xs6: true };
     },
+
+    notDefinedType() {
+      return this.rule.definedType !== this.rule.fieldType;
+    },
   },
   methods: {
     preparedItemDisabled(item) {
       return this.itemDisabled?.(this.rule, item);
+    },
+
+    updateAttribute(attribute) {
+      const newRule = {
+        ...this.rule,
+
+        attribute: attribute.value,
+        alias: attribute.options?.alias,
+        definedType: attribute.options?.definedType ?? PATTERN_FIELD_TYPES.string,
+      };
+
+      if (attribute.options?.definedType) {
+        newRule.fieldType = attribute.options.definedType;
+      }
+
+      this.updateModel(newRule);
     },
 
     updateDuration(duration) {

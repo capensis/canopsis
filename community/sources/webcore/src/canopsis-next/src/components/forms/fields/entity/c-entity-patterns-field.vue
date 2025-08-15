@@ -36,8 +36,8 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
-  PATTERN_FIELD_TYPES,
   ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
+  ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
@@ -205,13 +205,14 @@ export default {
       return {
         infos: this.infosWithDefinedTypes,
         type: PATTERN_RULE_TYPES.infos,
-        inputTypes: [
-          { value: PATTERN_FIELD_TYPES.string },
-          { value: PATTERN_FIELD_TYPES.number },
-          { value: PATTERN_FIELD_TYPES.boolean },
-          { value: PATTERN_FIELD_TYPES.stringArray },
-          { value: PATTERN_FIELD_TYPES.timestamp },
-        ],
+        inputTypes: ENTITY_PATTERN_FIELD_TYPES,
+      };
+    },
+
+    componentInfosOptions() {
+      return {
+        infos: this.infos,
+        type: PATTERN_RULE_TYPES.infos,
       };
     },
 
@@ -278,6 +279,22 @@ export default {
       };
     },
 
+    aliasesAttributes() {
+      return this.entityInfoPropertiesWithAlias.map(item => ({
+        text: item.alias,
+        value: item.alias,
+        originalValue: item.name,
+        inputTypes: ENTITY_PATTERN_FIELD_TYPES.map(type => ({
+          ...type,
+          defined: type.value === ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+        })),
+        options: {
+          alias: true,
+          definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+        },
+      }));
+    },
+
     entityAttributes() {
       return [
         {
@@ -313,7 +330,7 @@ export default {
         {
           text: this.$tc('common.componentInfo', 2),
           value: ENTITY_PATTERN_FIELDS.componentInfos,
-          options: this.infosOptions,
+          options: this.componentInfosOptions,
         },
         {
           text: this.$t('common.category'),
@@ -330,6 +347,7 @@ export default {
           value: ENTITY_PATTERN_FIELDS.lastEventDate,
           options: this.dateOptions,
         },
+        ...this.aliasesAttributes,
       ];
     },
 
