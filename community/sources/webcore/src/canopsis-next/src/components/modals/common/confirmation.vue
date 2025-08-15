@@ -32,7 +32,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="ml-2"
           color="primary"
           @click.prevent="submit"
@@ -53,6 +53,7 @@ import { sanitizeHtml } from '@/helpers/html';
 
 import { useInnerModal } from '@/hooks/modals';
 import { useI18n } from '@/hooks/i18n';
+import { usePendingHandler } from '@/hooks/query/pending';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -74,33 +75,36 @@ export default {
 
     const submitted = ref(false);
     const cancelled = ref(false);
-    const submitting = ref(false);
 
     const title = computed(() => (config.value.title ?? t('common.confirmation')));
 
     const sanitizedText = computed(() => (config.value.text ? sanitizeHtml(config.value.text) : ''));
     const sanitizedAlertText = computed(() => (config.value.alert ? sanitizeHtml(config.value.alert) : ''));
 
-    const isDisabled = computed(() => submitting.value);
+    const {
+      pending: submitting,
+      handler: submit,
+    } = usePendingHandler(async () => {
+      if (config.value.action) {
+        await config.value.action();
+      }
 
+      submitted.value = true;
+      modals.hide();
+    });
+
+    /**
+     * Cancel the confirmation without executing the action.
+     * Sets internal cancelled state and hides the modal.
+     */
     const cancel = () => {
       cancelled.value = true;
       modals.hide();
     };
 
-    const submit = async () => {
-      if (config.value.action) {
-        submitting.value = true;
-        try {
-          await config.value.action();
-        } finally {
-          submitting.value = false;
-        }
-      }
-
-      submitted.value = true;
-      modals.hide();
-    };
+    /**
+     * Confirm the action via wrapped handler.
+     */
 
     onBeforeUnmount(() => {
       if (!submitted.value && config.value.cancel) {
@@ -114,7 +118,6 @@ export default {
       sanitizedText,
       sanitizedAlertText,
       submitting,
-      isDisabled,
       cancel,
       submit,
     };

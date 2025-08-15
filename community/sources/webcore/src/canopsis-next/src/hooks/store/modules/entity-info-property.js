@@ -24,6 +24,7 @@ export const useEntityInfoPropertyStoreModule = () => useStoreModuleHooks('entit
  * @property {Function} update - Updates an entity info property
  * @property {Function} remove - Removes an entity info property
  * @property {Function} fetchListWithoutStore - Fetches list without storing in store
+ * @property {Function} fetchAllEntityInfoPropertiesList - Fetches all entity info properties list
  *
  * @returns {Object} Hook return object
  * @property {EntityInfoPropertyGetters} getters - All available getters
@@ -51,10 +52,6 @@ export const useEntityInfoProperty = () => {
   /**
    * Fetches all entity info properties without pagination.
    * Retrieves the complete list of entity information properties from the server.
-   *
-   * @async
-   * @function fetchAllEntityInfoPropertiesList
-   * @returns {Promise<Object>}
    */
   const fetchAllEntityInfoPropertiesList = async () => (
     actions.fetchEntityInfoPropertiesList({ params: { paginate: false } })

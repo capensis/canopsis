@@ -1,5 +1,78 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`pattern-rule-field Renders \`pattern-rule-field\` c-alert when type mismatch (notDefinedType) 1`] = `
+<div
+  class="layout column"
+>
+  <div
+    class="layout"
+  >
+    <div
+      class="flex xs4"
+    >
+      <div
+        class="layout"
+      >
+        <div
+          class="flex"
+        >
+          <pattern-attribute-field-stub
+            items=""
+            label=""
+            name="rule"
+            required="true"
+            returnobject="true"
+            value="v.display_name"
+          />
+        </div>
+        <!---->
+      </div>
+    </div>
+    <div
+      class="flex xs8"
+    >
+      <div
+        class="layout"
+      >
+        <!---->
+        <div
+          class="flex pl-3 xs6"
+        >
+          <pattern-operator-field-stub
+            label=""
+            name="rule.operator"
+            operators=""
+            required="true"
+            value="equal"
+          />
+        </div>
+        <div
+          class="flex pl-3 xs6"
+        >
+          <c-mixed-input-field-stub
+            inputtype="string"
+            label="Value"
+            name="rule.value"
+            required="true"
+            types="[object Object],[object Object],[object Object],[object Object]"
+            value="any value"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="layout"
+  >
+    <c-alert-stub
+      type="warning"
+    >
+      Selected type differs from the type set in Entity infos
+    </c-alert-stub>
+  </div>
+</div>
+`;
+
 exports[`pattern-rule-field Renders \`pattern-rule-field\` with alias prop 1`] = `
 <div
   class="layout column"

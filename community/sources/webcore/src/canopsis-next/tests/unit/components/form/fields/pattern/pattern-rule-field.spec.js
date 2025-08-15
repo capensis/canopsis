@@ -821,6 +821,22 @@ describe('pattern-rule-field', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  test('Renders `pattern-rule-field` c-alert when type mismatch (notDefinedType)', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        rule: {
+          attribute: ALARM_PATTERN_FIELDS.displayName,
+          operator: PATTERN_OPERATORS.equal,
+          value: 'any value',
+          fieldType: PATTERN_FIELD_TYPES.number,
+          definedType: PATTERN_FIELD_TYPES.string,
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
   test('Renders `pattern-rule-field` with timestamp field type as date rule', () => {
     const wrapper = snapshotFactory({
       propsData: {

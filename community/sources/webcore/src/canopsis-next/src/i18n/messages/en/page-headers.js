@@ -66,6 +66,10 @@ export default {
     title: 'External data',
   },
 
+  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
+    title: 'Entity infos',
+  },
+
   /**
    * Admin access
    */
