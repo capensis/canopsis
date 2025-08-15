@@ -564,7 +564,11 @@ func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.
 
 func getRolePipeline() []bson.M {
 	return []bson.M{
-		{"$unwind": bson.M{"path": "$roles", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{
+			"path":                       "$roles",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "role_index",
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
 			"localField":   "roles",
