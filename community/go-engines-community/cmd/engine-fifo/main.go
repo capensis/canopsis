@@ -25,11 +25,16 @@ func main() {
 
 	logger := log.NewLogger(ctx, opts.ModeDebug)
 	trace := debug.Start(logger)
-
 	libflag.LogDeprecatedFlags(logger, deprecatedFlags)
+	engine, services := NewEngine(ctx, opts, logger)
+	var err error
+	if opts.DataStorageCleanUp {
+		services.DataStoragePeriodicalWorker.OnSchedule(false)
+		services.DataStoragePeriodicalWorker.Work(ctx)
+	} else {
+		err = engine.Run(ctx)
+	}
 
-	engine := NewEngine(ctx, opts, logger)
-	err := engine.Run(ctx)
 	exitStatus := 0
 	if err != nil {
 		logger.Err(err).Msg("exit with error")
