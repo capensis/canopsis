@@ -9,10 +9,8 @@ import (
 	"github.com/rs/zerolog"
 )
 
-func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger) libengine.Engine {
+func NewEngine(ctx context.Context, options fifo.Options, logger zerolog.Logger) (libengine.Engine, fifo.Services) {
 	defer depmake.Catch(logger)
 
-	engine, _ := fifo.Default(ctx, options, logger)
-
-	return engine
+	return fifo.Default(ctx, options, logger)
 }
