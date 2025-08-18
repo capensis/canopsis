@@ -862,7 +862,7 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `relative time` condition and custom duration for `olderThan` operator', () => {
     const customDuration = {
-      value: Faker.datatype.number({ min: 1, max: 100 }),
+      value: 17,
       unit: TIME_UNITS.day,
     };
     const patternRule = {
@@ -893,7 +893,7 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `relative time` condition and custom durations for `inRangePeriod` operator with custom `from` range', () => {
     const customFromDuration = {
-      value: Faker.datatype.number({ min: 1, max: 100 }),
+      value: 14,
       unit: TIME_UNITS.week,
     };
     const toDuration = {
@@ -977,11 +977,11 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `relative time` condition and both custom durations for `inRangePeriod` operator', () => {
     const customFromDuration = {
-      value: Faker.datatype.number({ min: 10, max: 100 }),
+      value: 23,
       unit: TIME_UNITS.minute,
     };
     const customToDuration = {
-      value: Faker.datatype.number({ min: 1, max: 9 }),
+      value: 7,
       unit: TIME_UNITS.minute,
     };
     const patternRule = {
