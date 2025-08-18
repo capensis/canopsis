@@ -41,6 +41,7 @@ type Options struct {
 	PeriodicalWaitTime     time.Duration
 	ExternalDataApiTimeout time.Duration
 	Workers                int
+	DataStorageCleanUp     bool
 }
 
 type Services struct {
@@ -64,6 +65,7 @@ func ParseOptions() (Options, []string) {
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process fifo_ack events flow")
+	flag.BoolVar(&opts.DataStorageCleanUp, "cleanUp", false, "Immediately execute all data storage archive and delete and exit after.")
 
 	flag.Duration("eventsStatsFlushInterval", 60*time.Second, "Deprecated: interval between saving statistics from redis to mongo")
 	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
@@ -288,6 +290,7 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 		dataStorageConfigProvider,
 		logger,
 	)
+	s.DataStoragePeriodicalWorker.OnSchedule(true)
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm", alarm.NewCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm_external_tag", axe.NewExternalTagCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("pbehavior", pbehavior.NewCleaner(logger))
