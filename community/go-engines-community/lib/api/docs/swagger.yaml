@@ -7422,14 +7422,14 @@ paths:
                 summary: Enable
                 description: Enable maintenance
                 value: {
-                  "enable": true,
+                  "enabled": true,
                   "message": "test maintenance"
                 }
               disable:
                 summary: Disable
                 description: Disable maintenance
                 value: {
-                  "enable": false
+                  "enabled": false
                 }
         required: true
       responses:
