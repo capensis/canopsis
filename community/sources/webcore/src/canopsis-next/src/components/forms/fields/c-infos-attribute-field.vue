@@ -138,7 +138,6 @@ export default {
       ...props.value,
 
       dictionary: infos?.value ?? infos,
-      definedType: infos?.definedType,
       fieldType: infos?.definedType ?? PATTERN_FIELD_TYPES.string,
     });
 
