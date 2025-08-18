@@ -60,6 +60,7 @@ describe('c-infos-attribute-field', () => {
     expect(wrapper).toEmitInput({
       dictionary: value.dictionary,
       field: newField,
+      fieldType: null,
     });
   });
 

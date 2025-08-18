@@ -243,9 +243,17 @@ export default {
     },
 
     inputTypesWithDefinedType() {
+      const item = this.isInfosRule
+        ? this.infos.find(info => info.value === this.rule.dictionary)
+        : this.attributes.find(attribute => attribute.value === this.rule.attribute);
+
+      if (!item?.definedType) {
+        return this.inputTypes;
+      }
+
       return this.inputTypes.map(type => ({
         ...type,
-        defined: type.value === this.rule.definedType,
+        defined: type.value === item.definedType,
       }));
     },
 
@@ -374,7 +382,8 @@ export default {
      * TODO: FIX DEFINED TYPE INITIALIZATION IT IN THE NEXT COMMIT
      */
     notDefinedType() {
-      return this.rule.fieldType && this.rule.definedType && this.rule.definedType !== this.rule.fieldType;
+      return this.rule.fieldType
+        && !this.inputTypesWithDefinedType.some(type => type.defined && type.value === this.rule.fieldType);
     },
   },
   methods: {
@@ -388,11 +397,10 @@ export default {
 
         attribute: attribute.value,
         alias: attribute.alias ?? false,
-        definedType: attribute.definedType ?? null,
       };
 
-      if (newRule.definedType) {
-        newRule.fieldType = newRule.definedType;
+      if (attribute.definedType) {
+        newRule.fieldType = attribute.definedType;
       }
 
       this.updateModel(newRule);

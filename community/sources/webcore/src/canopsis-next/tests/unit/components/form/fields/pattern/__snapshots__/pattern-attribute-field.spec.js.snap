@@ -108,19 +108,7 @@ exports[`pattern-attribute-field Renders \`pattern-attribute-field\` menu with a
       <span>
         Infos
       </span>
-      <c-simple-tooltip-stub
-        content="infos.infos.value"
-        offset-y=""
-        top=""
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate ml-1 material-icons theme--light primary--text"
-          style="font-size: 16px;"
-        >
-          alternate_email
-        </i>
-      </c-simple-tooltip-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -151,13 +139,7 @@ exports[`pattern-attribute-field Renders \`pattern-attribute-field\` menu with a
         <div
           class="v-select__selections"
         >
-          <i
-            aria-hidden="true"
-            class="v-icon notranslate mr-1 material-icons theme--light"
-            style="font-size: 16px;"
-          >
-            alternate_email
-          </i>
+          <!---->
           <span>
             Infos
           </span>
@@ -240,19 +222,7 @@ exports[`pattern-attribute-field Renders \`pattern-attribute-field\` menu with a
       <span>
         Infos
       </span>
-      <c-simple-tooltip-stub
-        content="infos.infos.value"
-        offset-y=""
-        top=""
-      >
-        <i
-          aria-hidden="true"
-          class="v-icon notranslate ml-1 material-icons theme--light primary--text"
-          style="font-size: 16px;"
-        >
-          alternate_email
-        </i>
-      </c-simple-tooltip-stub>
+      <!---->
     </div>
   </div>
 </div>

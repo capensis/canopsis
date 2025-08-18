@@ -522,7 +522,7 @@ export const getFieldType = (value) => {
  * @return {boolean}
  */
 export const isValidRuleValueWithFieldType = (rule) => {
-  const { field, cond, field_type: fieldType } = rule;
+  const { field, alias, cond, field_type: fieldType } = rule;
 
   if ([PATTERN_FIELD_TYPES.stringArray, PATTERN_FIELD_TYPES.string].includes(fieldType)) {
     if (isArrayCondition(cond.type)) {
@@ -537,7 +537,7 @@ export const isValidRuleValueWithFieldType = (rule) => {
 
   const isInfos = isInfosPatternRuleField(field) || isExtraInfosPatternRuleField(field);
 
-  return isInfos && getFieldType(cond.value) === fieldType;
+  return (isInfos || alias) && getFieldType(cond.value) === fieldType;
 };
 
 /**
@@ -558,7 +558,7 @@ export const isValidRuleValue = rule => (
  * @param {PatternRule | *} rule
  * @return {boolean}
  */
-export const isValidPatternRule = rule => !!rule?.field
+export const isValidPatternRule = rule => !!(rule?.field || rule?.alias)
   && !isNil(rule.cond?.value)
   && !isNil(rule.cond?.type)
   && (!rule.field_type || isValidRuleFieldType(rule.field_type))
@@ -1035,7 +1035,7 @@ export const patternRuleToForm = (rule = {}) => {
     form.duration = durationToForm(rule.cond.value);
   }
 
-  if (isExtraInfos || isInfos) {
+  if ((isExtraInfos || isInfos) && !rule.alias) {
     if (isExtraInfos) {
       form.attribute = EVENT_FILTER_PATTERN_FIELDS.extraInfos;
       form.dictionary = rule.field.slice(EVENT_FILTER_PATTERN_FIELDS.extraInfos.length + 1);
