@@ -317,6 +317,7 @@ export default {
     [USER_PERMISSIONS.api.general.entitycategory]: 'Entity categories',
     [USER_PERMISSIONS.api.general.entitycomment]: 'Entity comments',
     [USER_PERMISSIONS.api.general.entityservice]: 'Entity services',
+    [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Entity infos properties',
     [USER_PERMISSIONS.api.general.event]: 'Events',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Export configurations',
     [USER_PERMISSIONS.api.general.files]: 'Files',
