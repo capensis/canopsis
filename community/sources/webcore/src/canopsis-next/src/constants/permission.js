@@ -443,6 +443,7 @@ export const USER_PERMISSIONS = {
       entitycategory: `${USER_PERMISSIONS_PREFIXES.api}_entitycategory`,
       entitycomment: `${USER_PERMISSIONS_PREFIXES.api}_entitycomment`,
       entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
+      entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.api}_entity_info_property`,
       event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
       view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
       viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
