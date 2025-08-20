@@ -69,6 +69,8 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"link_rule":             mongo.LinkRuleMongoCollection,
 			"map":                   mongo.MapMongoCollection,
 			"entity_infos_property": mongo.EntityInfosPropertyCollection,
+			"template_data":         mongo.TemplateTestDataCollection,
+			"template_test":         mongo.TemplateTestCollection,
 		},
 	}
 }

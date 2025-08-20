@@ -31,7 +31,7 @@ const (
 	PermDataStorageRead   = "api_datastorage_read"
 	PermDataStorageUpdate = "api_datastorage_update"
 
-	ObjEventFilter = "api_eventfilter"
+	ObjEventFilterRule = "api_eventfilter"
 
 	ObjBroadcastMessage = "api_broadcast_message"
 

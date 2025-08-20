@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -292,7 +293,7 @@ func GetEventData(ctx context.Context, collection mongo.DbCollection, id string,
 	}
 
 	m := DataResponse{}
-	err := collection.FindOne(ctx, bson.M{"_id": id, "type": TypeEvent}, options.FindOne().SetProjection(bson.M{"body": 1})).Decode(&m)
+	err := collection.FindOne(ctx, bson.M{"_id": id, "type": TypeTestDataEvent}, options.FindOne().SetProjection(bson.M{"body": 1})).Decode(&m)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return nil, nil
@@ -332,7 +333,7 @@ func GetResponseData(ctx context.Context, collection mongo.DbCollection, idsByIn
 		idxes[id] = append(idxes[id], i)
 	}
 
-	cursor, err := collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}, "type": TypeResponse},
+	cursor, err := collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}, "type": TypeTestDataResponse},
 		options.Find().SetProjection(bson.M{"body": 1, "headers": 1}))
 	if err != nil {
 		return nil, err
@@ -364,4 +365,28 @@ func GetResponseData(ctx context.Context, collection mongo.DbCollection, idsByIn
 	}
 
 	return res, nil
+}
+
+func GetAlarmDataFromTest(ctx context.Context, collection mongo.DbCollection, testID string, ruleType int, ruleID string) (types.AlarmWithEntity, error) {
+	var alarm types.AlarmWithEntity
+	if testID == "" {
+		return alarm, nil
+	}
+
+	test := TestModel{}
+	err := collection.FindOne(ctx, bson.M{"_id": testID, "type": ruleType, "rule._id": ruleID}).Decode(&test)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return alarm, common.NewValidationError("testdata.test", "Test doesn't exist.")
+		}
+
+		return alarm, err
+	}
+
+	if test.Data.Alarm != nil {
+		alarm.Alarm = test.Data.Alarm.Alarm
+		alarm.Entity = test.Data.Alarm.Entity
+	}
+
+	return alarm, nil
 }

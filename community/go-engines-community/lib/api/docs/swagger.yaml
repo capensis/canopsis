@@ -3599,56 +3599,6 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /bulk/template-data:
-    delete:
-      tags:
-        - tpldata
-      summary: Bulk delete template data
-      description: |
-        Bulk delete template data.
-        
-        -  PERMISSIONS: `api_template_data:delete`
-      operationId: tpldata-bulk-delete
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: 'schemas_swagger.yaml#/definitions/template.BulkDeleteRequestItem'
-            examples:
-              delete:
-                summary: Delete
-                description: Delete template data.
-                value: [
-                  {
-                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
-                  }
-                ]
-        required: true
-      responses:
-        207:
-          description: Multi-Status
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: array
-                  items:
-                    allOf:
-                      - $ref: '#/components/schemas/BulkResponseItem'
-                      - type: object
-                        properties:
-                          item:
-                            $ref: 'schemas_swagger.yaml#/definitions/template.BulkDeleteRequestItem'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/users:
     put:
       tags:
@@ -4032,7 +3982,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'                
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /component-alarms:
     get:
       tags:
@@ -8830,7 +8780,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                format: binary                
+                format: binary
   /internal/user_interface:
     put:
       tags:
@@ -10764,7 +10714,7 @@ paths:
             text/plain:
               schema:
                 type: string
-                format: binary                
+                format: binary
   /permissions:
     get:
       tags:
@@ -13752,10 +13702,7 @@ paths:
                 description: Validate alarm rule
                 value: {
                   "testdata": {
-                    "alarms": [
-                      "0dbb862b-cd5d-4643-b069-72ec13a57d63",
-                      "e4166204-fa3c-4b37-aaaa-8b441047e543"
-                    ],
+                    "alarm": "0dbb862b-cd5d-4643-b069-72ec13a57d63",
                     "user": "1e433055-253d-4c94-8ec4-d64075c83575"
                   },
                   "rule": {
@@ -13795,10 +13742,7 @@ paths:
                 description: Validate entity rule
                 value: {
                   "testdata": {
-                    "entities": [
-                      "0dbb862b-cd5d-4643-b069-72ec13a57d63",
-                      "e4166204-fa3c-4b37-aaaa-8b441047e543"
-                    ],
+                    "entity": "0dbb862b-cd5d-4643-b069-72ec13a57d63",
                     "user": "1e433055-253d-4c94-8ec4-d64075c83575"
                   },
                   "rule": {
@@ -13876,6 +13820,11 @@ paths:
             enum:
               - 0
               - 1
+        - name: event_pattern
+          in: query
+          schema:
+            type: string
+            example: "[[{\"field\": \"event_type\", \"cond\": {\"type\": \"eq\", \"value\": \"check\"}}]]"
       responses:
         200:
           description: OK
@@ -14062,6 +14011,199 @@ paths:
         
         -  PERMISSIONS: `api_template_data:delete`
       operationId: tpldata-delete-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /template-test:
+    get:
+      tags:
+        - tpltest
+      summary: Find all template test
+      description: |
+        Get paginated list of template test.
+      operationId: tpltest-find-all
+      parameters:
+        - $ref: '#/components/parameters/page'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/search'
+        - $ref: '#/components/parameters/sort'
+        - $ref: '#/components/parameters/sort_by'
+        - name: rule
+          in: query
+          description: rule id
+          schema:
+            type: string
+        - name: type
+          in: query
+          description: >
+            Filter by type:
+             * `0` - Event filter rule
+             * `1` - Link rule
+             * `2` - Action scenario
+             * `3` - Widget
+             * `4` - Declare ticket rule
+             * `5` - Dynamic infos rule
+             * `6` - Instruction
+             * `7` - Job
+             * `8` - Meta-alarm rule
+          schema:
+            type: integer
+            enum:
+              - 0
+              - 1
+              - 2
+              - 3
+              - 4
+              - 5
+              - 6
+              - 7
+              - 8
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - type: object
+                    properties:
+                      data:
+                        type: array
+                        items:
+                          $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    post:
+      tags:
+        - tpltest
+      summary: Create template test
+      description: |
+        Create template test.
+      operationId: tpltest-create
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.EditTestRequest'
+            examples:
+              rule:
+                summary: Create test for rule
+                description: Create test for rule
+                value: {
+                  "name": "Test",
+                  "description": "Test",
+                  "type": 0,
+                  "rule": "0dbb862b-cd5d-4643-b069-72ec13a57d63",
+                  "data": {
+                    "event": "1e433055-253d-4c94-8ec4-d64075c83575"
+                  }
+                }
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /template-test/{id}:
+    get:
+      tags:
+        - tpltest
+      summary: Get template test by id
+      description: |
+        Get template test by id.
+      operationId: tpltest-get-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    put:
+      tags:
+        - tpltest
+      summary: Update template test by id
+      description: |
+        Update template test by id.
+      operationId: tpltest-update-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/template.EditTestRequest'
+            examples:
+              rule:
+                summary: Update test for rule
+                description: Update test for rule
+                value: {
+                  "name": "Test",
+                  "description": "Test",
+                  "type": 0,
+                  "rule": "0dbb862b-cd5d-4643-b069-72ec13a57d63",
+                  "data": {
+                    "event": "1e433055-253d-4c94-8ec4-d64075c83575"
+                  }
+                }
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/template.TestResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+    delete:
+      tags:
+        - tpltest
+      summary: Delete template test by id
+      description: |
+        Delete template test by id.
+      operationId: tpltest-delete-by-id
       parameters:
         - $ref: '#/components/parameters/id'
       responses:

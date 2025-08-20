@@ -210,9 +210,14 @@ func (r AggregationResult) GetData() interface{} {
 }
 
 type TemplateRequest struct {
-	Rule     EditRequest `json:"rule"`
+	Rule struct {
+		EditRequest
+		ID string `json:"_id" binding:"id"`
+	} `json:"rule"`
 	TestData struct {
-		Event     string         `json:"event" binding:"required"`
+		Test  string `json:"test"`
+		Event string `json:"event"`
+		// TestData.Responses keys correspond with Rule.Actions keys
 		Responses map[int]string `json:"responses"`
 	} `json:"testdata"`
 }
