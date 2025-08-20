@@ -141,6 +141,7 @@ func RegisterRoutes(
 	exdataImportWorker externaldatatable.ImportWorker,
 	externalDataContainer *externaldata.GetterContainer,
 	workersRunner *workers.Runner,
+	tplTestTypePermMapping map[int][]any,
 	logger zerolog.Logger,
 ) {
 	sessionStore := security.GetSessionStore()
@@ -201,7 +202,10 @@ func RegisterRoutes(
 		userPreferencesRouter := protected.Group("/user-preferences")
 		{
 			userPreferencesRouter.Use(middleware.OnlyAuth())
-			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(primaryDbClient, authorProvider), widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), enforcer)
+			userPreferencesApi := userpreferences.NewApi(userpreferences.NewStore(primaryDbClient, authorProvider),
+				widget.NewStore(primaryDbClient, authorProvider, enforcer,
+					common.NewPatternFieldsTransformer(primaryDbClient), validator.NewValidator(tplExecutor),
+					templateConfigProvider), enforcer)
 			userPreferencesRouter.GET("/:id", userPreferencesApi.Get)
 			userPreferencesRouter.PUT("", userPreferencesApi.Update)
 		}
@@ -489,46 +493,46 @@ func RegisterRoutes(
 		{
 			eventFilterRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionCreate, enforcer),
 				middleware.SetAuthor(),
 				eventFilterApi.Create)
 			eventFilterRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
 				eventFilterApi.Get)
 			eventFilterRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionDelete, enforcer),
 				eventFilterApi.Delete)
 			eventFilterRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
 				eventFilterApi.List)
 			eventFilterRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				eventFilterApi.Update)
 		}
 		protected.GET(
 			"/eventfilter/:id/failures",
-			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
 			eventFilterApi.ListFailures)
 		protected.PUT(
 			"/eventfilter/:id/failures",
-			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionCreate, enforcer),
 			eventFilterApi.ReadFailures)
 		protected.POST(
 			"eventfilter-db-export",
-			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
 			eventFilterApi.DBExport)
 		protected.POST(
 			"/eventfilter-template-validate",
-			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
 			eventFilterApi.ValidateTemplates)
 		protected.GET(
 			"/eventfilter-template-vars",
-			middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionRead, enforcer),
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
 			eventFilterApi.GetTemplateVars)
 
 		pbehaviorApi := pbehavior.NewApi(
@@ -920,7 +924,9 @@ func RegisterRoutes(
 		viewAPI := view.NewApi(
 			view.NewStore(
 				primaryDbClient,
-				viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), authorProvider, enforcer),
+				viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer,
+					common.NewPatternFieldsTransformer(primaryDbClient), validator.NewValidator(tplExecutor),
+					templateConfigProvider), authorProvider, enforcer),
 				authorProvider,
 				enforcer,
 			),
@@ -993,7 +999,9 @@ func RegisterRoutes(
 			)
 		}
 
-		viewTabAPI := viewtab.NewApi(viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), authorProvider, enforcer), enforcer)
+		viewTabAPI := viewtab.NewApi(viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider,
+			enforcer, common.NewPatternFieldsTransformer(primaryDbClient), validator.NewValidator(tplExecutor),
+			templateConfigProvider), authorProvider, enforcer), enforcer)
 		viewTabRouter := protected.Group("/view-tabs")
 		{
 			viewTabRouter.POST(
@@ -1060,7 +1068,8 @@ func RegisterRoutes(
 		}
 
 		widgetAPI := widget.NewApi(
-			widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)),
+			widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient),
+				validator.NewValidator(tplExecutor), templateConfigProvider),
 			enforcer,
 		)
 		widgetRouter := protected.Group("/widgets")
@@ -1220,8 +1229,7 @@ func RegisterRoutes(
 			widgetFilterAPI.UpdatePositions,
 		)
 
-		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(primaryDbClient, authorProvider,
-			validator.NewValidator(tplExecutor), templateConfigProvider))
+		widgetTemplateAPI := widgettemplate.NewApi(widgettemplate.NewStore(primaryDbClient, authorProvider))
 		widgetTemplateRouter := protected.Group("/widget-templates")
 		{
 			widgetTemplateRouter.GET(
@@ -1255,11 +1263,11 @@ func RegisterRoutes(
 		protected.POST(
 			"widget-template-validate",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-			widgetTemplateAPI.ValidateTemplates)
+			widgetAPI.ValidateTemplates)
 		protected.GET(
 			"widget-template-vars",
 			middleware.Authorize(apisecurity.ObjView, model.PermissionRead, enforcer),
-			widgetTemplateAPI.GetTemplateVars)
+			widgetAPI.GetTemplateVars)
 
 		viewGroupAPI := viewgroup.NewApi(viewgroup.NewStore(primaryDbClient, authorProvider))
 		viewGroupRouter := protected.Group("/view-groups")
@@ -1577,7 +1585,10 @@ func RegisterRoutes(
 
 		playlistRouter := protected.Group("/playlists")
 		{
-			playlistApi := playlist.NewApi(playlist.NewStore(primaryDbClient, authorProvider), viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer, common.NewPatternFieldsTransformer(primaryDbClient)), authorProvider, enforcer), enforcer)
+			playlistApi := playlist.NewApi(playlist.NewStore(primaryDbClient, authorProvider),
+				viewtab.NewStore(primaryDbClient, widget.NewStore(primaryDbClient, authorProvider, enforcer,
+					common.NewPatternFieldsTransformer(primaryDbClient), validator.NewValidator(tplExecutor),
+					templateConfigProvider), authorProvider, enforcer), enforcer)
 			playlistRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjPlaylist, model.PermissionCreate, enforcer),
@@ -1690,7 +1701,7 @@ func RegisterRoutes(
 
 		linkRuleAPI := linkrule.NewApi(
 			linkrule.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
-				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer),
+				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer, enforcer),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
 		)
@@ -1963,7 +1974,8 @@ func RegisterRoutes(
 			)
 		}
 
-		templateAPI := template.NewAPI(template.NewStore(primaryDbClient), templateConfigProvider, logger)
+		templateAPI := template.NewAPI(template.NewStore(primaryDbClient, authorProvider, enforcer,
+			tplTestTypePermMapping, json.NewDecoder()), templateConfigProvider, logger)
 
 		bulkRouter := protected.Group("/bulk")
 		{
@@ -2024,19 +2036,19 @@ func RegisterRoutes(
 			{
 				eventFilterRouter.POST(
 					"",
-					middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionCreate, enforcer),
+					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionCreate, enforcer),
 					middleware.PreProcessBulk(apiConfigProvider, true),
 					eventFilterApi.BulkCreate,
 				)
 				eventFilterRouter.PUT(
 					"",
-					middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionUpdate, enforcer),
+					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionUpdate, enforcer),
 					middleware.PreProcessBulk(apiConfigProvider, true),
 					eventFilterApi.BulkUpdate,
 				)
 				eventFilterRouter.DELETE(
 					"",
-					middleware.Authorize(apisecurity.ObjEventFilter, model.PermissionDelete, enforcer),
+					middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionDelete, enforcer),
 					middleware.PreProcessBulk(apiConfigProvider, false),
 					eventFilterApi.BulkDelete,
 				)
@@ -2260,16 +2272,6 @@ func RegisterRoutes(
 				middleware.PreProcessBulk(apiConfigProvider, false),
 				externalDataTableAPI.BulkDeleteData,
 			)
-
-			tplDataRouter := bulkRouter.Group("/template-data")
-			{
-				tplDataRouter.DELETE(
-					"",
-					middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionDelete, enforcer),
-					middleware.PreProcessBulk(apiConfigProvider, false),
-					templateAPI.BulkDeleteData,
-				)
-			}
 		}
 
 		dateStorageRouter := protected.Group("data-storage")
@@ -2520,6 +2522,32 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjTemplateData, model.PermissionDelete, enforcer),
 				templateAPI.DeleteData,
+			)
+		}
+
+		tplTestRouter := protected.Group("/template-test")
+		{
+			tplTestRouter.POST(
+				"",
+				middleware.SetAuthor(),
+				templateAPI.CreateTest,
+			)
+			tplTestRouter.GET(
+				"",
+				templateAPI.ListTest,
+			)
+			tplTestRouter.GET(
+				"/:id",
+				templateAPI.GetTest,
+			)
+			tplTestRouter.PUT(
+				"/:id",
+				middleware.SetAuthor(),
+				templateAPI.UpdateTest,
+			)
+			tplTestRouter.DELETE(
+				"/:id",
+				templateAPI.DeleteTest,
 			)
 		}
 

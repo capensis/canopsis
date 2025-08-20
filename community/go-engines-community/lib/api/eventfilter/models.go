@@ -68,22 +68,22 @@ type Exception struct {
 }
 
 type CreateRequest struct {
-	EditRequest `bson:",inline"`
-	ID          string `bson:"_id" json:"_id" binding:"id"`
+	EditRequest
+	ID string `json:"_id" binding:"id"`
 }
 
 type UpdateRequest struct {
-	EditRequest `bson:",inline"`
-	ID          string `bson:"-" json:"-"`
+	EditRequest
+	ID string `json:"-"`
 }
 
 type BulkUpdateRequestItem struct {
-	EditRequest `bson:",inline"`
-	ID          string `bson:"_id" json:"_id" binding:"required"`
+	EditRequest
+	ID string `json:"_id" binding:"required"`
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `bson:"_id" json:"_id" binding:"required"`
+	ID string `json:"_id" binding:"required"`
 }
 
 type FilteredQuery struct {
@@ -132,9 +132,13 @@ func (r *AggregationFailureResult) GetTotal() int64 {
 }
 
 type TemplateRequest struct {
-	Rule     CreateRequest `json:"rule"`
+	Rule struct {
+		EditRequest
+		ID string `json:"_id" binding:"id"`
+	} `json:"rule"`
 	TestData struct {
-		Event string `json:"event" binding:"required"`
+		Test  string `json:"test"`
+		Event string `json:"event"`
 		// TestData.ExternalData keys correspond with Rule.ExternalData keys
 		ExternalData map[int]string `json:"external_data"`
 	} `json:"testdata"`
