@@ -552,3 +552,8 @@ func (r *GetDisplayNamesResponse) GetData() any {
 func (r *GetDisplayNamesResponse) GetTotal() int64 {
 	return r.TotalCount
 }
+
+type RefResponse struct {
+	ID          string `bson:"_id" json:"_id"`
+	DisplayName string `bson:"display_name" json:"display_name"`
+}

@@ -44,6 +44,7 @@ func NewStore(
 		widgetCollection:       dbClient.Collection(mongo.WidgetMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
+		tplTestCollection:      dbClient.Collection(mongo.TemplateTestCollection),
 
 		passwordEncoder: passwordEncoder,
 		websocketStore:  websocketStore,
@@ -66,6 +67,7 @@ type store struct {
 	widgetCollection       mongo.DbCollection
 	widgetFilterCollection mongo.DbCollection
 	shareTokenCollection   mongo.DbCollection
+	tplTestCollection      mongo.DbCollection
 
 	passwordEncoder password.Encoder
 	websocketStore  websocket.Store
@@ -434,6 +436,11 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		return false, err
 	}
 
+	err = s.clearTplTests(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -502,6 +509,14 @@ func (s *store) deleteShareTokens(ctx context.Context, id string) error {
 	_, err := s.shareTokenCollection.DeleteMany(ctx, bson.M{
 		"user": id,
 	})
+
+	return err
+}
+
+func (s *store) clearTplTests(ctx context.Context, id string) error {
+	_, err := s.tplTestCollection.UpdateMany(ctx,
+		bson.M{"data.user": id},
+		bson.M{"$unset": bson.M{"data.user": ""}})
 
 	return err
 }

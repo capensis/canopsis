@@ -77,12 +77,16 @@ type CategoryResponse struct {
 }
 
 type TemplateRequest struct {
-	Author   string      `json:"author" swaggerignore:"true"`
-	Rule     EditRequest `json:"rule"`
+	Author string `json:"author" swaggerignore:"true"`
+	Rule   struct {
+		EditRequest
+		ID string `json:"_id" binding:"id"`
+	} `json:"rule"`
 	TestData struct {
-		Alarms   []string `json:"alarms"`
-		Entities []string `json:"entities"`
-		User     string   `json:"user"`
+		Test   string `json:"test"`
+		Alarm  string `json:"alarm"`
+		Entity string `json:"entity"`
+		User   string `json:"user"`
 	} `json:"testdata"`
 }
 

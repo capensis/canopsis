@@ -6,13 +6,14 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
-	"slices"
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -21,8 +22,11 @@ import (
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const defaultCategoriesLimit = 100
@@ -45,12 +49,14 @@ type store struct {
 	alarmCollection       mongo.DbCollection
 	entityCollection      mongo.DbCollection
 	userCollection        mongo.DbCollection
+	tplTestCollection     mongo.DbCollection
 	authorProvider        author.Provider
 	transformer           common.PatternFieldsTransformer
 	tplValidator          validator.Validator
 	tplExecutor           libtemplate.Executor
 	tplConfigProvider     config.TemplateConfigProvider
 	externalDataContainer *externaldata.GetterContainer
+	enforcer              security.Enforcer
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -68,6 +74,7 @@ func NewStore(
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
 	externalDataContainer *externaldata.GetterContainer,
+	enforcer security.Enforcer,
 ) Store {
 	userTplVars := []template.VarResponse{
 		{Name: "Email", Value: "{{ .User.Email }}"},
@@ -86,12 +93,14 @@ func NewStore(
 		alarmCollection:       dbClient.Collection(mongo.AlarmMongoCollection),
 		entityCollection:      dbClient.Collection(mongo.EntityMongoCollection),
 		userCollection:        dbClient.Collection(mongo.UserCollection),
+		tplTestCollection:     dbClient.Collection(mongo.TemplateTestCollection),
 		authorProvider:        authorProvider,
 		transformer:           transformer,
 		tplValidator:          tplValidator,
 		tplExecutor:           tplExecutor,
 		tplConfigProvider:     tplConfigProvider,
 		externalDataContainer: externalDataContainer,
+		enforcer:              enforcer,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name"},
 		defaultSortBy:         "created",
@@ -273,6 +282,13 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
+		_, err = s.tplTestCollection.UpdateMany(ctx, bson.M{"rule._id": request.ID, "type": template.TypeTestLinkRule}, bson.M{
+			"$set": bson.M{"rule.name": model.Name},
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetByID(ctx, model.ID)
 
 		return err
@@ -283,17 +299,17 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
-
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
-		// required to get the author in action log listener.
-		result, err := s.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
-		if err != nil || result.MatchedCount == 0 {
+		_, err := logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestLinkRule}, userID,
+			s.tplTestCollection)
+		if err != nil {
 			return err
 		}
 
-		deleted, err = s.collection.DeleteOne(ctx, bson.M{"_id": id})
+		deleted, err = logger.DeleteOne(ctx, id, userID, s.collection)
+
 		return err
 	})
 
@@ -363,27 +379,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		return response, nil
 	}
 
-	user, err := s.findUser(ctx, r)
-	if err != nil {
-		return nil, err
-	}
-
-	if user.Username == "" {
-		return nil, common.NewValidationError("testdata.user", "User doesn't exist.")
-	}
-
-	var alarms []link.AlarmWithData
-	var entities []link.EntityWithData
-	switch r.Rule.Type {
-	case link.TypeAlarm:
-		alarms, err = s.findAlarms(ctx, r)
-		if err != nil {
-			return nil, err
-		}
-	case link.TypeEntity:
-		entities, err = s.findEntities(ctx, r)
-	}
-
+	user, alarms, entities, err := s.getTplData(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -491,12 +487,107 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, req EditReq
 	return nil
 }
 
-// findAlarms fetches alarms with related entities.
-func (s *store) findAlarms(ctx context.Context, r TemplateRequest) ([]link.AlarmWithData, error) {
-	alarmIDs := utils.Unique(r.TestData.Alarms)
+func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, []link.AlarmWithData, []link.EntityWithData, error) {
+	var user link.User
+	var alarm link.AlarmWithData
+	var entity link.EntityWithData
+	userID := r.TestData.User
+	if r.TestData.Test != "" {
+		test := template.TestModel{}
+		err := s.tplTestCollection.
+			FindOne(ctx, bson.M{"_id": r.TestData.Test, "type": template.TypeTestLinkRule, "rule._id": r.Rule.ID}).
+			Decode(&test)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return user, nil, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+			}
+
+			return user, nil, nil, err
+		}
+
+		if userID == "" {
+			userID = test.Data.User
+		}
+
+		switch r.Rule.Type {
+		case link.TypeAlarm:
+			if test.Data.Alarm != nil {
+				alarm = link.AlarmWithData{
+					Alarm:  test.Data.Alarm.Alarm,
+					Entity: test.Data.Alarm.Entity,
+				}
+			}
+		case link.TypeEntity:
+			if test.Data.Entity != nil {
+				entity = link.EntityWithData{
+					Entity: *test.Data.Entity,
+				}
+			}
+		}
+	}
+
+	if userID == "" {
+		userID = r.Author
+	} else {
+		ok, err := s.enforcer.Enforce(r.Author, apisecurity.PermAcl, securitymodel.PermissionRead)
+		if err != nil {
+			return user, nil, nil, err
+		}
+
+		if !ok {
+			return user, nil, nil, common.NewValidationError("testdata.user", "User is not accessible.")
+		}
+	}
+
+	user, err := s.findUser(ctx, userID)
+	if err != nil {
+		return user, nil, nil, err
+	}
+
+	switch r.Rule.Type {
+	case link.TypeAlarm:
+		if r.TestData.Alarm == "" {
+			if alarm.ID == "" {
+				return user, nil, nil, common.NewValidationError("testdata.alarm", "Alarm is missing.")
+			}
+		} else if r.TestData.Alarm != alarm.ID { // keep snapshot from the test
+			alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
+			if err != nil {
+				return user, nil, nil, err
+			}
+		}
+	case link.TypeEntity:
+		if r.TestData.Entity == "" {
+			if entity.ID == "" {
+				return user, nil, nil, common.NewValidationError("testdata.entity", "Entity is missing.")
+			}
+		} else if r.TestData.Entity != entity.ID { // keep snapshot from the test
+			entity, err = s.findEntity(ctx, r.TestData.Entity)
+			if err != nil {
+				return user, nil, nil, err
+			}
+		}
+	}
+
+	var alarms []link.AlarmWithData
+	var entities []link.EntityWithData
+	if alarm.ID != "" {
+		alarms = []link.AlarmWithData{alarm}
+	}
+
+	if entity.ID != "" {
+		entities = []link.EntityWithData{entity}
+	}
+
+	return user, alarms, entities, nil
+}
+
+// findAlarm fetches alarm with related entities.
+func (s *store) findAlarm(ctx context.Context, alarmID string) (link.AlarmWithData, error) {
+	var res link.AlarmWithData
 	cursor, err := s.alarmCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{
-			"_id": bson.M{"$in": alarmIDs},
+			"_id": alarmID,
 		}},
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
@@ -510,66 +601,41 @@ func (s *store) findAlarms(ctx context.Context, r TemplateRequest) ([]link.Alarm
 		}},
 	})
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch alarms: %w", err)
+		return res, fmt.Errorf("cannot find alarm: %w", err)
 	}
 
-	var alarms []link.AlarmWithData
-	err = cursor.All(ctx, &alarms)
+	defer cursor.Close(ctx)
+	if !cursor.Next(ctx) {
+		return res, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+	}
+
+	err = cursor.Decode(&res)
 	if err != nil {
-		return nil, fmt.Errorf("cannot decode alarms: %w", err)
+		return res, fmt.Errorf("cannot decode alarm: %w", err)
 	}
 
-	if len(alarms) != len(alarmIDs) {
-		return nil, common.NewValidationError("testdata.alarms", "Alarms don't exist.")
+	if err = cursor.Err(); err != nil {
+		return res, fmt.Errorf("cannot fetch alarm: %w", err)
 	}
 
-	indexes := make(map[string]int, len(alarmIDs))
-	for i, id := range alarmIDs {
-		indexes[id] = i
-	}
-
-	slices.SortFunc(alarms, func(l, r link.AlarmWithData) int {
-		return cmp.Compare(indexes[l.ID], indexes[r.ID])
-	})
-
-	return alarms, nil
+	return res, nil
 }
 
-func (s *store) findEntities(ctx context.Context, r TemplateRequest) ([]link.EntityWithData, error) {
-	entityIDs := utils.Unique(r.TestData.Entities)
-	cursor, err := s.entityCollection.Find(ctx, bson.M{"_id": bson.M{"$in": entityIDs}})
+func (s *store) findEntity(ctx context.Context, entityID string) (link.EntityWithData, error) {
+	var res link.EntityWithData
+	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entityID}).Decode(&res)
 	if err != nil {
-		return nil, fmt.Errorf("cannot fetch entities: %w", err)
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return res, common.NewValidationError("testdata.entity", "Entity doesn't exist.")
+		}
+
+		return res, fmt.Errorf("cannot fetch entities: %w", err)
 	}
 
-	var entities []link.EntityWithData
-	err = cursor.All(ctx, &entities)
-	if err != nil {
-		return nil, fmt.Errorf("cannot decode entities: %w", err)
-	}
-
-	if len(entities) != len(entityIDs) {
-		return nil, common.NewValidationError("testdata.entities", "Entities don't exist.")
-	}
-
-	indexes := make(map[string]int, len(entityIDs))
-	for i, id := range entityIDs {
-		indexes[id] = i
-	}
-
-	slices.SortFunc(entities, func(l, r link.EntityWithData) int {
-		return cmp.Compare(indexes[l.ID], indexes[r.ID])
-	})
-
-	return entities, nil
+	return res, nil
 }
 
-func (s *store) findUser(ctx context.Context, r TemplateRequest) (link.User, error) {
-	userID := r.Author
-	if r.TestData.User != "" {
-		userID = r.TestData.User
-	}
-
+func (s *store) findUser(ctx context.Context, userID string) (link.User, error) {
 	user := link.User{}
 	cursor, err := s.userCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"_id": userID}},
@@ -581,7 +647,7 @@ func (s *store) findUser(ctx context.Context, r TemplateRequest) (link.User, err
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return user, nil
+		return user, common.NewValidationError("testdata.user", "User doesn't exist.")
 	}
 
 	err = cursor.Decode(&user)

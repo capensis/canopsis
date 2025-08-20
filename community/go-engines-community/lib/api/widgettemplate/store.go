@@ -4,16 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -27,54 +22,30 @@ type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	Update(ctx context.Context, r EditRequest) (*Response, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
-	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
-	GetTemplateVars() TemplateVarsResponse
 }
 
-func NewStore(
-	dbClient mongo.DbClient,
-	authorProvider author.Provider,
-	tplValidator validator.Validator,
-	tplConfigProvider config.TemplateConfigProvider,
-) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		client:            dbClient,
-		collection:        dbClient.Collection(mongo.WidgetTemplateMongoCollection),
-		widgetCollection:  dbClient.Collection(mongo.WidgetMongoCollection),
-		alarmCollection:   dbClient.Collection(mongo.AlarmMongoCollection),
-		authorProvider:    authorProvider,
-		tplValidator:      tplValidator,
-		tplConfigProvider: tplConfigProvider,
+		client:           dbClient,
+		collection:       dbClient.Collection(mongo.WidgetTemplateMongoCollection),
+		widgetCollection: dbClient.Collection(mongo.WidgetMongoCollection),
+		authorProvider:   authorProvider,
 
 		widgetParameters:      view.GetWidgetTemplateParameters(),
 		defaultSearchByFields: []string{"_id", "title", "type", "author.name"},
 		defaultSortBy:         "created",
-		tplVars: []template.VarResponse{
-			{
-				Name:  "Alarm",
-				Value: template.GetAlarmVars("{{ ", " }}", ".Alarm", false),
-			},
-			{
-				Name:  "Entity",
-				Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
-			},
-		},
 	}
 }
 
 type store struct {
-	client            mongo.DbClient
-	collection        mongo.DbCollection
-	widgetCollection  mongo.DbCollection
-	alarmCollection   mongo.DbCollection
-	authorProvider    author.Provider
-	tplValidator      validator.Validator
-	tplConfigProvider config.TemplateConfigProvider
+	client           mongo.DbClient
+	collection       mongo.DbCollection
+	widgetCollection mongo.DbCollection
+	authorProvider   author.Provider
 
 	widgetParameters      map[string]map[string][]string
 	defaultSearchByFields []string
 	defaultSortBy         string
-	tplVars               []template.VarResponse
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -226,31 +197,6 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return res, err
 }
 
-func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {
-	alarm, err := s.findAlarm(ctx, r.TestData.Alarm)
-	if err != nil {
-		return nil, err
-	}
-
-	response := make(map[string]template.ValidateResponse)
-	for i, column := range r.Rule.Columns {
-		if column.Template != "" {
-			response["columns."+strconv.Itoa(i)+".template"], err = template.Validate(s.tplValidator, column.Template, alarm)
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	return response, nil
-}
-
-func (s *store) GetTemplateVars() TemplateVarsResponse {
-	return TemplateVarsResponse{
-		Column: template.AddEnvVars(s.tplVars, s.tplConfigProvider),
-	}
-}
-
 func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID string) error {
 	for widgetType, parametersByType := range s.widgetParameters {
 		parameters := parametersByType[tpl.Type]
@@ -322,42 +268,6 @@ func (s *store) cleanLinkedWidgets(ctx context.Context, model view.WidgetTemplat
 	}
 
 	return nil
-}
-
-func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithEntity, error) {
-	cursor, err := s.alarmCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"_id": alarmID}},
-		{"$replaceRoot": bson.M{"newRoot": bson.M{
-			"alarm": "$$ROOT",
-		}}},
-		{"$lookup": bson.M{
-			"from":         mongo.EntityMongoCollection,
-			"localField":   "alarm.d",
-			"foreignField": "_id",
-			"as":           "entity",
-		}},
-		{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
-	})
-	if err != nil {
-		return types.AlarmWithEntity{}, fmt.Errorf("cannot find alarm: %w", err)
-	}
-
-	defer cursor.Close(ctx)
-	if !cursor.Next(ctx) {
-		return types.AlarmWithEntity{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
-	}
-
-	var alarm types.AlarmWithEntity
-	err = cursor.Decode(&alarm)
-	if err != nil {
-		return types.AlarmWithEntity{}, fmt.Errorf("cannot decode alarm: %w", err)
-	}
-
-	if err = cursor.Err(); err != nil {
-		return types.AlarmWithEntity{}, fmt.Errorf("cannot find alarm: %w", err)
-	}
-
-	return alarm, nil
 }
 
 func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
