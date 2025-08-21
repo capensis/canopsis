@@ -110,13 +110,16 @@
           <td v-if="selectable" />
           <td v-if="expandable" />
           <td v-for="header in sortedHeaders" :key="header.value">
-            <div class="py-1">
-              <external-data-table-column-type-field
-                v-if="header.value !== '_id' && header.value !== 'actions'"
-                v-field="columns[header.value]"
-                :disabled="disabled"
-              />
-            </div>
+            <v-layout class="py-1 gap-2" column>
+              <v-flex>
+                <external-data-table-column-tag-field
+                  v-if="header.value !== '_id' && header.value !== 'actions'"
+                  v-field="columns[header.value].tag"
+                  :disabled="disabled"
+                />
+              </v-flex>
+              <external-data-table-column-data-type-field v-field="columns[header.value]" />
+            </v-layout>
             <span
               v-if="resizingMode"
               :key="`${header.value}.resize`"
@@ -204,14 +207,19 @@ import { useI18n } from '@/hooks/i18n';
 import { useHTMLElement } from '@/hooks/html-elements';
 import { useTableColumnsSettings } from '@/hooks/table/columns-settings';
 
-import ExternalDataTableColumnTypeField from '../form/fields/external-data-table-column-type-field.vue';
+import ExternalDataTableColumnTagField from '../form/fields/external-data-table-column-tag-field.vue';
+import ExternalDataTableColumnDataTypeField from '../form/fields/external-data-table-column-data-type-field.vue';
 
 import ExternalDataTableRecordsListExpandPanel from './external-data-table-records-list-expand-panel.vue';
 
 const DRAGGABLE_CLASS = 'external-data-table-records__draggable-column';
 
 export default {
-  components: { ExternalDataTableRecordsListExpandPanel, ExternalDataTableColumnTypeField },
+  components: {
+    ExternalDataTableColumnTagField,
+    ExternalDataTableColumnDataTypeField,
+    ExternalDataTableRecordsListExpandPanel,
+  },
   model: {
     prop: 'columns',
     event: 'input',

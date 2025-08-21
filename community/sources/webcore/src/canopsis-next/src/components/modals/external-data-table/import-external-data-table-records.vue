@@ -109,7 +109,7 @@ import {
 
 import { convertFileSizeToUnit } from '@/helpers/file/size';
 import { saveCsvFile } from '@/helpers/file/files';
-import { externalDataTableColumnsToForm } from '@/helpers/entities/external-data-table/form';
+import { externalDataTableColumnsConfigToForm } from '@/helpers/entities/external-data-table/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
@@ -238,11 +238,14 @@ export default {
           file,
         };
 
-        const { _id: id, columns = [] } = await importFile({ id: config.value.externalDataTable._id, data });
+        const {
+          _id: id,
+          column_configs: columnConfigs = [],
+        } = await importFile({ id: config.value.externalDataTable._id, data });
 
         activeImportFileId.value = id;
 
-        form.value = externalDataTableColumnsToForm(columns);
+        form.value = externalDataTableColumnsConfigToForm(columnConfigs, true);
 
         fetchList();
       } catch (err) {
