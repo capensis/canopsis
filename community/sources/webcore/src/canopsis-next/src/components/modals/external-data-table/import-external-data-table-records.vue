@@ -69,6 +69,7 @@
             :pending="pending"
             :options="options"
             :total-items="meta.total_count"
+            :separator="separator"
             has-structure
             @update:options="updateOptions"
           />
