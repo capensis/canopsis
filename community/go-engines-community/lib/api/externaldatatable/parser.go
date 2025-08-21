@@ -13,15 +13,15 @@ import (
 )
 
 const (
-	DelimiterComma = ","
-	DelimiterDot   = "."
-	DelimiterSpace = " "
-	DelimiterNone  = ""
+	SeparatorComma = ","
+	SeparatorDot   = "."
+	SeparatorSpace = " "
+	SeparatorNone  = ""
 )
 
 const (
 	jsonArray = iota + 1
-	delimiterArray
+	separatorArray
 )
 
 var errStringIsNotAValidNumber = errors.New("string is not a valid number")
@@ -34,8 +34,8 @@ type Parser interface {
 }
 
 type parser struct {
-	thousandsDelimiters map[string]string
-	decimalDelimiters   map[string]string
+	thousandsSeparators map[string]string
+	decimalSeparators   map[string]string
 	validTrueValues     map[string]bool
 	validFalseValues    map[string]bool
 	validDatetimeFormat []string
@@ -43,16 +43,16 @@ type parser struct {
 
 func NewParser() Parser {
 	return &parser{
-		thousandsDelimiters: map[string]string{
-			"dot":   DelimiterDot,
-			"comma": DelimiterComma,
-			"space": DelimiterSpace,
-			"":      DelimiterNone,
+		thousandsSeparators: map[string]string{
+			"dot":   SeparatorDot,
+			"comma": SeparatorComma,
+			"space": SeparatorSpace,
+			"":      SeparatorNone,
 		},
-		decimalDelimiters: map[string]string{
-			"dot":   DelimiterDot,
-			"comma": DelimiterComma,
-			"":      DelimiterNone,
+		decimalSeparators: map[string]string{
+			"dot":   SeparatorDot,
+			"comma": SeparatorComma,
+			"":      SeparatorNone,
 		},
 		validTrueValues: map[string]bool{
 			"yes":  true,
@@ -89,15 +89,15 @@ func (p *parser) Parse(cfg externaldata.ColumnConfig, initialValue string) (any,
 
 		transformedValue = initialValue
 	case externaldata.ColumnTypeNumber:
-		transformedValue, err = p.parseNumber(initialValue, cfg.ThousandsDelimiter, cfg.DecimalDelimiter)
+		transformedValue, err = p.parseNumber(initialValue, cfg.ThousandsSeparator, cfg.DecimalSeparator)
 	case externaldata.ColumnTypeBoolean:
 		transformedValue, err = p.parseBool(initialValue, p.validTrueValues, p.validFalseValues)
 	case externaldata.ColumnTypeStringArray:
-		if cfg.StringArrayType == delimiterArray && cfg.StringArrayDelimiter == "" {
-			return nil, errors.New("string array delimiter is required")
+		if cfg.StringArrayType == separatorArray && cfg.StringArraySeparator == "" {
+			return nil, errors.New("string array separator is required")
 		}
 
-		transformedValue, err = p.parseStringArray(initialValue, cfg.StringArrayType, cfg.StringArrayDelimiter)
+		transformedValue, err = p.parseStringArray(initialValue, cfg.StringArrayType, cfg.StringArraySeparator)
 	case externaldata.ColumnTypeDateTime:
 		transformedValue, err = p.parseDatetime(initialValue, p.validDatetimeFormat)
 	case externaldata.ColumnTypeTimestamp:
@@ -109,7 +109,7 @@ func (p *parser) Parse(cfg externaldata.ColumnConfig, initialValue string) (any,
 	return transformedValue, err
 }
 
-func (p *parser) parseNumber(stringNumber, thousandsDelimiter, decimalDelimiter string) (float64, error) {
+func (p *parser) parseNumber(stringNumber, thousandsSeparator, decimalSeparator string) (float64, error) {
 	if stringNumber == "" {
 		return 0, errStringIsNotAValidNumber
 	}
@@ -130,19 +130,19 @@ func (p *parser) parseNumber(stringNumber, thousandsDelimiter, decimalDelimiter 
 		return 0, errStringIsNotAValidNumber
 	}
 
-	thousandsDelimiter, ok := p.thousandsDelimiters[thousandsDelimiter]
+	thousandsSeparator, ok := p.thousandsSeparators[thousandsSeparator]
 	if !ok {
-		return 0, fmt.Errorf("thousands delimiter must be one of %q, %q, %q or empty", DelimiterComma, DelimiterDot, DelimiterSpace)
+		return 0, fmt.Errorf("thousands separator must be one of %q, %q, %q or empty", SeparatorComma, SeparatorDot, SeparatorSpace)
 	}
 
-	decimalDelimiter, ok = p.decimalDelimiters[decimalDelimiter]
+	decimalSeparator, ok = p.decimalSeparators[decimalSeparator]
 	if !ok {
-		return 0, fmt.Errorf("decimal delimiter must be one of %q, %q or empty", DelimiterDot, DelimiterComma)
+		return 0, fmt.Errorf("decimal separator must be one of %q, %q or empty", SeparatorDot, SeparatorComma)
 	}
 
 	if len(stringNumber) > 1 && stringNumber[0] == '0' {
-		if decimalDelimiter != DelimiterNone {
-			if !strings.HasPrefix(stringNumber, "0"+decimalDelimiter) {
+		if decimalSeparator != SeparatorNone {
+			if !strings.HasPrefix(stringNumber, "0"+decimalSeparator) {
 				return 0, errStringIsNotAValidNumber
 			}
 		} else {
@@ -152,21 +152,21 @@ func (p *parser) parseNumber(stringNumber, thousandsDelimiter, decimalDelimiter 
 		}
 	}
 
-	var escapedThousandsDelimiter, escapedDecimalDelimiter string
+	var escapedThousandsSeparator, escapedDecimalSeparator string
 
-	switch thousandsDelimiter {
-	case DelimiterDot, DelimiterComma, DelimiterSpace:
-		escapedThousandsDelimiter = regexp.QuoteMeta(thousandsDelimiter)
+	switch thousandsSeparator {
+	case SeparatorDot, SeparatorComma, SeparatorSpace:
+		escapedThousandsSeparator = regexp.QuoteMeta(thousandsSeparator)
 	}
 
-	if decimalDelimiter == DelimiterNone {
-		escapedDecimalDelimiter = regexp.QuoteMeta(DelimiterDot)
+	if decimalSeparator == SeparatorNone {
+		escapedDecimalSeparator = regexp.QuoteMeta(SeparatorDot)
 	} else {
-		escapedDecimalDelimiter = regexp.QuoteMeta(decimalDelimiter)
+		escapedDecimalSeparator = regexp.QuoteMeta(decimalSeparator)
 	}
 
-	if thousandsDelimiter == "" {
-		numberRegexp, err := regexp.Compile(`^(0|[1-9]\d*)(` + escapedDecimalDelimiter + `\d+)?$`)
+	if thousandsSeparator == "" {
+		numberRegexp, err := regexp.Compile(`^(0|[1-9]\d*)(` + escapedDecimalSeparator + `\d+)?$`)
 		if err != nil {
 			return 0, fmt.Errorf("failed to compile regexp: %w", err)
 		}
@@ -175,11 +175,11 @@ func (p *parser) parseNumber(stringNumber, thousandsDelimiter, decimalDelimiter 
 			return 0, errStringIsNotAValidNumber
 		}
 
-		if decimalDelimiter != DelimiterNone && decimalDelimiter != DelimiterDot {
-			stringNumber = strings.ReplaceAll(stringNumber, decimalDelimiter, DelimiterDot)
+		if decimalSeparator != SeparatorNone && decimalSeparator != SeparatorDot {
+			stringNumber = strings.ReplaceAll(stringNumber, decimalSeparator, SeparatorDot)
 		}
 	} else {
-		numberRegexp, err := regexp.Compile(`^(0|[1-9]\d*|\d{1,3}(` + escapedThousandsDelimiter + `\d{3})+)(` + escapedDecimalDelimiter + `\d+)?$`)
+		numberRegexp, err := regexp.Compile(`^(0|[1-9]\d*|\d{1,3}(` + escapedThousandsSeparator + `\d{3})+)(` + escapedDecimalSeparator + `\d+)?$`)
 		if err != nil {
 			return 0, fmt.Errorf("failed to compile regexp: %w", err)
 		}
@@ -188,9 +188,9 @@ func (p *parser) parseNumber(stringNumber, thousandsDelimiter, decimalDelimiter 
 			return 0, errStringIsNotAValidNumber
 		}
 
-		stringNumber = strings.ReplaceAll(stringNumber, thousandsDelimiter, "")
-		if decimalDelimiter != DelimiterNone && decimalDelimiter != DelimiterDot {
-			stringNumber = strings.ReplaceAll(stringNumber, decimalDelimiter, DelimiterDot)
+		stringNumber = strings.ReplaceAll(stringNumber, thousandsSeparator, "")
+		if decimalSeparator != SeparatorNone && decimalSeparator != SeparatorDot {
+			stringNumber = strings.ReplaceAll(stringNumber, decimalSeparator, SeparatorDot)
 		}
 	}
 
@@ -224,7 +224,7 @@ func (p *parser) parseBool(stringBool string, trueValues, falseValues map[string
 	return false, errStringIsNotAValidBool
 }
 
-func (p *parser) parseStringArray(stringStringArray string, arrayType int, delimiter string) ([]string, error) {
+func (p *parser) parseStringArray(stringStringArray string, arrayType int, separator string) ([]string, error) {
 	switch arrayType {
 	case jsonArray:
 		if stringStringArray == "" {
@@ -253,16 +253,16 @@ func (p *parser) parseStringArray(stringStringArray string, arrayType int, delim
 		}
 
 		return result, nil
-	case delimiterArray:
+	case separatorArray:
 		if stringStringArray == "" {
 			return []string{}, nil
 		}
 
-		if delimiter == "" {
-			return nil, errors.New("delimiter cannot be empty for delimiter array type")
+		if separator == "" {
+			return nil, errors.New("separator cannot be empty for separator array type")
 		}
 
-		return strings.Split(stringStringArray, delimiter), nil
+		return strings.Split(stringStringArray, separator), nil
 	default:
 		return nil, fmt.Errorf("invalid array type: %d", arrayType)
 	}
