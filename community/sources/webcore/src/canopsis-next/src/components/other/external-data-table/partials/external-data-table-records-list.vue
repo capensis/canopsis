@@ -118,7 +118,10 @@
                   :disabled="disabled"
                 />
               </v-flex>
-              <external-data-table-column-data-type-field v-field="columns[header.value]" />
+              <external-data-table-column-data-type-field
+                v-field="columns[header.value]"
+                :table-separator="separator"
+              />
             </v-layout>
             <span
               v-if="resizingMode"
@@ -302,6 +305,10 @@ export default {
       default: () => ({}),
     },
     cellsContentBehavior: {
+      type: String,
+      required: false,
+    },
+    separator: {
       type: String,
       required: false,
     },

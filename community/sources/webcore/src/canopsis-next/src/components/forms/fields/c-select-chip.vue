@@ -13,6 +13,14 @@
           <span v-else>
             <slot name="selection-prefix" />
             {{ selectedItemText }}
+            <c-help-icon
+              v-if="selectedItemTooltip"
+              :text="selectedItemTooltip"
+              icon="help"
+              icon-class="ml-1 grey--text"
+              top
+              small
+            />
           </span>
         </slot>
       </c-chip>
@@ -95,12 +103,14 @@ export default {
     const isEmptyValue = computed(() => isNil(props.value));
     const itemsByValue = computed(() => keyBy(props.items, props.itemValue));
     const selectedItemText = computed(() => itemsByValue.value[props.value]?.[props.itemText] ?? props.value);
+    const selectedItemTooltip = computed(() => itemsByValue.value[props.value]?.tooltip);
 
     const selectItem = value => emit('input', value);
 
     return {
       isEmptyValue,
       selectedItemText,
+      selectedItemTooltip,
 
       selectItem,
     };

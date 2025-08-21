@@ -5,7 +5,7 @@
         v-bind="chip.bind"
         class="px-2"
         color="grey"
-        text-color="blue"
+        text-color="blue darken-1"
         outlined
         v-on="chip.on"
       >
@@ -29,7 +29,7 @@ import {
 } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
-import { useModelField } from '@/hooks/form';
+import { useModelField } from '@/hooks/form/model-field';
 
 export default {
   model: {
