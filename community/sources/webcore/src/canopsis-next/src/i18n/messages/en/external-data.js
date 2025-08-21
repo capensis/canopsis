@@ -112,6 +112,6 @@ export default {
         },
       },
     },
+    forbiddenSeparator: 'This separator cannot be used as it conflicts with the table separator',
   },
-  forbiddenSeparator: 'This separator cannot be used as it conflicts with the table separator',
 };
