@@ -39,7 +39,7 @@ import {
 
 import Observer from '@/services/observer';
 
-import { externalDataTableColumnsToForm } from '@/helpers/entities/external-data-table/form';
+import { externalDataTableColumnsConfigToForm } from '@/helpers/entities/external-data-table/form';
 
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 
@@ -90,10 +90,7 @@ export default {
     const observer = inject('$refresh', new Observer());
 
     watch(() => props.externalDataTable, (newExternalDataTable) => {
-      columns.value = externalDataTableColumnsToForm(
-        newExternalDataTable.columns,
-        newExternalDataTable.column_types,
-      );
+      columns.value = externalDataTableColumnsConfigToForm(newExternalDataTable.column_configs);
     }, { deep: true, immediate: true });
 
     onMounted(() => observer.registerChild(fetchList));

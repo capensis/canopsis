@@ -1,14 +1,14 @@
 <template>
   <v-menu :disabled="disabled" bottom nudge-bottom>
     <template #activator="{ on }">
-      <c-alarm-action-chip
+      <c-chip
         :color="activeChip?.color"
         class="px-2"
         text-color="white"
         v-on="on"
       >
         {{ activeChip?.text }}
-      </c-alarm-action-chip>
+      </c-chip>
     </template>
     <v-list>
       <v-list-item
@@ -26,7 +26,7 @@
 <script>
 import { computed } from 'vue';
 
-import { EXTERNAL_DATA_TABLE_COLUMN_TYPES, EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS } from '@/constants';
+import { EXTERNAL_DATA_TABLE_COLUMN_TAGS, EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
@@ -35,7 +35,7 @@ export default {
   props: {
     value: {
       type: Number,
-      default: EXTERNAL_DATA_TABLE_COLUMN_TYPES.noType,
+      default: EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
     },
     disabled: {
       type: Boolean,
@@ -46,7 +46,7 @@ export default {
     const { updateModel } = useModelField(props, emit);
     const { t } = useI18n();
 
-    const items = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_TYPES).map(value => ({
+    const items = computed(() => Object.values(EXTERNAL_DATA_TABLE_COLUMN_TAGS).map(value => ({
       value,
       text: t(`externalData.tableColumnTypes.${value}`),
       color: EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS[value],
