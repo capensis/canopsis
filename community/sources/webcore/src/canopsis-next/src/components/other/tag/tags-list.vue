@@ -21,9 +21,9 @@
       />
     </template>
     <template #value="{ item }">
-      <c-alarm-action-chip :color="item.color" class="px-2">
+      <c-chip :color="item.color" class="px-2">
         {{ item.value }}
-      </c-alarm-action-chip>
+      </c-chip>
     </template>
     <template #type="{ item }">
       <span>{{ $t(`tag.types.${item.type}`) }}</span>
