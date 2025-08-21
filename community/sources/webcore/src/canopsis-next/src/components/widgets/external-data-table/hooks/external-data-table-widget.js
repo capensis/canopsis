@@ -1,9 +1,9 @@
 import { map, pick } from 'lodash';
 import { computed, ref, unref } from 'vue';
 
-import { EXTERNAL_DATA_TABLE_COLUMN_TYPES } from '@/constants';
+import { EXTERNAL_DATA_TABLE_COLUMN_TAGS } from '@/constants';
 
-import { externalDataTableColumnsToForm } from '@/helpers/entities/external-data-table/form';
+import { externalDataTableColumnsConfigToForm } from '@/helpers/entities/external-data-table/form';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
@@ -43,14 +43,13 @@ export const useExternalDataTableWidgetTable = ({
 
   const columns = computed({
     get: () => {
-      const wholeColumns = externalDataTableColumnsToForm(
-        externalDataTable.value.columns,
-        externalDataTable.value.column_types,
+      const wholeColumns = externalDataTableColumnsConfigToForm(
+        externalDataTable.value.column_configs,
       );
 
       return pick({
         ...wholeColumns,
-        _id: EXTERNAL_DATA_TABLE_COLUMN_TYPES.noType,
+        _id: EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
       }, map(unref(widget).parameters.widgetColumns, 'value'));
     },
 
