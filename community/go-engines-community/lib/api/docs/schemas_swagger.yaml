@@ -2763,21 +2763,21 @@ definitions:
     type: object
   externaldata.ColumnConfig:
     properties:
-      decimal_delimiter:
+      decimal_separator:
         description: |-
-          Possible decimal delimiter values.
-            * `dot` - dot delimiter
-            * `comma` - comma delimiter
+          Possible decimal separator values.
+            * `dot` - dot separator
+            * `comma` - comma separator
         type: string
       name:
         type: string
-      string_array_delimiter:
+      string_array_separator:
         type: string
       string_array_type:
         description: |-
           Possible string array types.
             * `1` - json array
-            * `2` - custom delimiter array
+            * `2` - custom separator array
         enum:
         - 1
         - 2
@@ -2788,12 +2788,12 @@ definitions:
         - 1
         - 2
         type: integer
-      thousands_delimiter:
+      thousands_separator:
         description: |-
-          Possible thousands delimiter values.
-            * `dot` - dot delimiter
-            * `comma` - comma delimiter
-            * `space` - space delimiter
+          Possible thousands separator values.
+            * `dot` - dot separator
+            * `comma` - comma separator
+            * `space` - space separator
         type: string
       type:
         description: "Possible type values.\n  * `1` - type string\n  * `2` - type

@@ -57,20 +57,20 @@ type BaseColumnConfig struct {
 	//   * `5` - type datetime
 	//	 * `6` - type timestamp
 	Type int `bson:"type" json:"type" binding:"required,oneof=1 2 3 4 5 6"`
-	// Possible thousands delimiter values.
-	//   * `dot` - dot delimiter
-	//   * `comma` - comma delimiter
-	//   * `space` - space delimiter
-	ThousandsDelimiter string `bson:"thousands_delimiter,omitempty" json:"thousands_delimiter,omitempty" binding:"oneoforempty=dot comma space"`
-	// Possible decimal delimiter values.
-	//   * `dot` - dot delimiter
-	//   * `comma` - comma delimiter
-	DecimalDelimiter string `bson:"decimal_delimiter,omitempty" json:"decimal_delimiter,omitempty" binding:"oneoforempty=dot comma"`
+	// Possible thousands separator values.
+	//   * `dot` - dot separator
+	//   * `comma` - comma separator
+	//   * `space` - space separator
+	ThousandsSeparator string `bson:"thousands_separator,omitempty" json:"thousands_separator,omitempty" binding:"oneoforempty=dot comma space"`
+	// Possible decimal separator values.
+	//   * `dot` - dot separator
+	//   * `comma` - comma separator
+	DecimalSeparator string `bson:"decimal_separator,omitempty" json:"decimal_separator,omitempty" binding:"oneoforempty=dot comma"`
 	// Possible string array types.
 	//   * `1` - json array
-	//   * `2` - custom delimiter array
+	//   * `2` - custom separator array
 	StringArrayType      int    `bson:"string_array_type,omitempty" json:"string_array_type,omitempty" binding:"required_if=Type 4,omitempty,oneof=1 2"`
-	StringArrayDelimiter string `bson:"string_array_delimiter,omitempty" json:"string_array_delimiter,omitempty" binding:"required_if=StringArrayType 2"`
+	StringArraySeparator string `bson:"string_array_separator,omitempty" json:"string_array_separator,omitempty" binding:"required_if=StringArrayType 2"`
 }
 
 type Table struct {
