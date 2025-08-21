@@ -6,7 +6,7 @@
         :items="types"
         class="px-2"
         color="grey"
-        text-color="blue"
+        text-color="blue darken-1"
         outlined
       >
         <template #selection-empty>
