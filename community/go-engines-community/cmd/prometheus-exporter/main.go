@@ -39,7 +39,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(ctx, flags.Debug)
+	logger := log.NewLogger(ctx, flags.Options)
 
 	mongoClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
 		ReadPreference: mongo.SecondaryPreferred(),
