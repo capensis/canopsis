@@ -17,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -24,8 +25,8 @@ import (
 )
 
 type Options struct {
+	log.Options
 	Version                  bool
-	ModeDebug                bool
 	FifoAckQueue             string
 	FifoAckExchange          string
 	FeaturePrintEventOnError bool
@@ -41,8 +42,9 @@ type DependencyMaker struct {
 
 func ParseOptions() Options {
 	opts := Options{}
+
+	log.BindCmdFlags(&opts.Options)
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
-	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.FIFOAckExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.StringVar(&opts.FifoAckQueue, "fifoAckQueue", canopsis.FIFOAckQueueName, "Publish FIFO Ack event to this queue.")
