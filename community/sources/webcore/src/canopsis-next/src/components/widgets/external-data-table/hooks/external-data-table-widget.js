@@ -3,7 +3,7 @@ import { computed, ref, unref } from 'vue';
 
 import { EXTERNAL_DATA_TABLE_COLUMN_TAGS } from '@/constants';
 
-import { externalDataTableColumnsConfigToForm } from '@/helpers/entities/external-data-table/form';
+import { externalDataTableColumnConfigsToForm } from '@/helpers/entities/external-data-table/form';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
@@ -43,7 +43,7 @@ export const useExternalDataTableWidgetTable = ({
 
   const columns = computed({
     get: () => {
-      const wholeColumns = externalDataTableColumnsConfigToForm(
+      const wholeColumns = externalDataTableColumnConfigsToForm(
         externalDataTable.value.column_configs,
       );
 

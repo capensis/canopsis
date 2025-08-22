@@ -111,6 +111,10 @@
           <td v-if="expandable" />
           <td v-for="header in sortedHeaders" :key="header.value">
             <v-layout class="py-1 gap-2" column>
+              <external-data-table-column-data-type-field
+                v-field="columns[header.value]"
+                :table-separator="separator"
+              />
               <v-flex>
                 <external-data-table-column-tag-field
                   v-if="header.value !== '_id' && header.value !== 'actions'"
@@ -118,10 +122,6 @@
                   :disabled="disabled"
                 />
               </v-flex>
-              <external-data-table-column-data-type-field
-                v-field="columns[header.value]"
-                :table-separator="separator"
-              />
             </v-layout>
             <span
               v-if="resizingMode"
@@ -140,9 +140,15 @@
         <span
           :key="`header.${header.value}`"
           :title="header.text"
+          :class="{ 'table-cell__header--error': header.errors?.length }"
           class="table-cell__content"
         >
           {{ header.text }}
+          <c-help-icon
+            v-if="header.errors?.length"
+            :text="header.errors.join(', ')"
+            icon="help"
+          />
         </span>
         <span
           v-if="draggingMode"
@@ -165,9 +171,10 @@
         <span
           :key="`${header.value}`"
           :title="item[header.value]"
+          :class="{ 'table-cell__content--error': item[header.value]?.transform_error }"
           class="table-cell__content"
         >
-          {{ item[header.value] }}
+          {{ item[header.value]?.initial_value ?? item[header.value] }}
         </span>
         <span
           v-if="resizingMode"
@@ -197,6 +204,17 @@
         <external-data-table-records-list-expand-panel :record="item" />
       </template>
     </c-advanced-data-table>
+    <c-alert
+      v-if="errorsMessages.length"
+      type="error"
+    >
+      {{ $tc('externalData.fieldsHasError', { count: errorsMessages.length }, errorsMessages.length) }}
+      <ul>
+        <li v-for="error in errorsMessages" :key="error.name">
+          <strong>{{ error.name }}</strong> {{ error.message }}
+        </li>
+      </ul>
+    </c-alert>
   </div>
 </template>
 
@@ -331,12 +349,26 @@ export default {
      */
     const isEmptyColumns = computed(() => isEmpty(props.columns));
 
+    const errorsMessages = computed(() => (
+      Object.values(props.columns).reduce((acc, column) => {
+        if (column.messages?.length) {
+          acc.push({
+            name: column.name,
+            message: `${column.rows.slice(0, 5)?.join(', ')}${column.rows.length > 5 ? t('externalData.andMore') : ''}`,
+          });
+        }
+
+        return acc;
+      }, [])
+    ));
+
     const headers = computed(() => {
       const result = Object.keys(props.columns).map(column => ({
         value: column,
         text: column,
         class: DRAGGABLE_CLASS,
         sortable: true,
+        errors: column.messages,
       }));
 
       if (props.withActions) {
@@ -382,6 +414,7 @@ export default {
       tableElement,
 
       isEmptyColumns,
+      errorsMessages,
       headers,
       isSmallDense,
       isMediumDense,
@@ -416,6 +449,14 @@ export default {
     th[data-value="data-table-select"], th[data-value="data-table-expand"] {
       width: 60px !important;
     }
+  }
+
+  .table-cell__header--error, .table-cell__content--error  {
+    color: var(--v-error-base);
+  }
+
+  .table-cell__content--error {
+    font-style: italic;
   }
 
   &-records__draggable-column {
