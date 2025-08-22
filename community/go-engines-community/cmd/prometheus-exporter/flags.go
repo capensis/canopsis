@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"time"
+
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 const (
@@ -11,6 +13,7 @@ const (
 )
 
 func (f *Flags) ParseArgs() {
+	log.BindCmdFlags(&f.Options)
 	flag.BoolVar(&f.Version, "version", false, "Show the version information")
 	flag.IntVar(&f.Port, "port", defaultPort, "Server port")
 	flag.BoolVar(&f.Debug, "d", false, "debug")
@@ -19,6 +22,7 @@ func (f *Flags) ParseArgs() {
 }
 
 type Flags struct {
+	log.Options
 	UpdateMetricsInterval time.Duration
 	Port                  int
 	Version               bool
