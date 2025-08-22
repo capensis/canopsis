@@ -51,6 +51,7 @@ export default {
   tableField: 'Collection / table',
 
   andMore: 'and more...',
+  fieldsHasError: '{count} field has errors|{count} fields have errors',
   linkedRules: {
     widgets: '<strong>Widgets</strong> that uses this table<br><ul>{rules}</ul>',
     eventFilters: '<strong>Event filters</strong>\n<ul>{rules}</ul>',

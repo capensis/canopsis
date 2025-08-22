@@ -110,7 +110,10 @@ import {
 
 import { convertFileSizeToUnit } from '@/helpers/file/size';
 import { saveCsvFile } from '@/helpers/file/files';
-import { externalDataTableColumnsConfigToForm } from '@/helpers/entities/external-data-table/form';
+import {
+  externalDataTableColumnConfigsToForm,
+  formToExternalDataTableColumnConfigs,
+} from '@/helpers/entities/external-data-table/form';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
@@ -183,7 +186,7 @@ export default {
         await completeExternalDataTableImport({
           id: activeImportFileId.value,
           data: {
-            column_types: Object.values(form.value),
+            column_configs: formToExternalDataTableColumnConfigs(form.value),
           },
         });
         await config.value.afterSubmit?.(activeImportFileId.value);
@@ -246,7 +249,7 @@ export default {
 
         activeImportFileId.value = id;
 
-        form.value = externalDataTableColumnsConfigToForm(columnConfigs, true);
+        form.value = externalDataTableColumnConfigsToForm(columnConfigs, true);
 
         fetchList();
       } catch (err) {
