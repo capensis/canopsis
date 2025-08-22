@@ -18,9 +18,11 @@ import (
 )
 
 func main() {
+	var logOpts log.Options
 	var retries int
 	var flagTimeout time.Duration
 	var withPostgres, withTechPostgres bool
+	log.BindCmdFlags(&logOpts)
 	flag.IntVar(&retries, "retries", 10, "number of retries per check. if 0, infinite number of retries")
 	flag.DurationVar(&flagTimeout, "timeout", time.Second*60, "timeout after given duration. never timeout if 0s")
 	flag.BoolVar(&withPostgres, "withPostgres", false, "check postgres")
@@ -29,7 +31,7 @@ func main() {
 
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	var logger = log.NewLogger(false)
+	logger := log.NewLogger(logOpts)
 
 	if flagTimeout > 0 {
 		var cancel context.CancelFunc

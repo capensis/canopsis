@@ -118,7 +118,7 @@ func TestService_ResolveCancels(t *testing.T) {
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
 				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
-				log.NewLogger(true),
+				log.NewLogger(log.Options{Debug: true}),
 			)
 
 			events, err := service.ResolveCancels(context.Background(), config.AlarmConfig{
@@ -233,7 +233,7 @@ func TestService_ResolveSnoozes(t *testing.T) {
 				mockResolveRuleAdapter,
 				mockAlarmStatusService,
 				event.NewGenerator(canopsis.AxeConnector, canopsis.AxeConnector),
-				log.NewLogger(true),
+				log.NewLogger(log.Options{Debug: true}),
 			)
 
 			events, err := service.ResolveSnoozes(context.Background(), config.AlarmConfig{})
