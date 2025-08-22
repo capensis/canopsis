@@ -6,15 +6,16 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 type Options struct {
+	log.Options
 	Version                 bool
 	FeatureEventProcessing  bool
 	FeatureContextCreation  bool
 	Purge                   bool
 	PrintEventOnError       bool
-	ModeDebug               bool
 	PeriodicalWaitTime      time.Duration
 	InfosDictionaryWaitTime time.Duration
 	ExternalDataApiTimeout  time.Duration
@@ -28,9 +29,9 @@ type Options struct {
 
 func ParseOptions() (Options, []string) {
 	opts := Options{}
+	log.BindCmdFlags(&opts.Options)
 	flag.BoolVar(&opts.FeatureEventProcessing, "processEvent", true, "enable event processing. enabled by default.")
 	flag.BoolVar(&opts.FeatureContextCreation, "createContext", true, "enable context graph creation. enabled by default. WARNING: disable the old context-graph engine when using this.")
-	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.BoolVar(&opts.Purge, "purge", false, "purge consumer queue(s) before work")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two runs of periodical process")
