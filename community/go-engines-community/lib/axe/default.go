@@ -35,6 +35,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -43,9 +44,9 @@ import (
 )
 
 type Options struct {
+	log.Options
 	Version                          bool
 	FeaturePrintEventOnError         bool
-	ModeDebug                        bool
 	PublishToQueue                   string
 	FifoAckExchange                  string
 	PeriodicalWaitTime               time.Duration
@@ -59,7 +60,7 @@ type Options struct {
 func ParseOptions() Options {
 	opts := Options{}
 
-	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
+	log.BindCmdFlags(&opts.Options)
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.StringVar(&opts.PublishToQueue, "publishQueue", canopsis.ActionQueueName, "Publish event to this queue")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
