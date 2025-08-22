@@ -14,7 +14,7 @@ import (
 func main() {
 	opts := Options{}
 
-	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
+	log.BindCmdFlags(&opts.Options)
 	flag.IntVar(&opts.FrameDuration, "frameDuration", 120, "The engine computes all pbehaviors for a further interval which duration controls this parameter. The default value is 120 minutes. This could be reduced when pre-compute takes too much system resources.")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
@@ -29,7 +29,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(opts.ModeDebug)
+	logger := log.NewLogger(opts.Options)
 	trace := debug.Start(logger)
 
 	// Graceful shutdown.

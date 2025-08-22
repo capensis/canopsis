@@ -241,7 +241,7 @@ func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
 }
 
 func main() {
-	logger := log.NewLogger(false)
+	logger := log.NewLogger(log.Options{})
 
 	feeder, err := NewFeeder(logger)
 	if err != nil {
