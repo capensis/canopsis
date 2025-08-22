@@ -1,3 +1,7 @@
+import { omit } from 'lodash';
+
+import { EXTERNAL_DATA_TABLE_COLUMN_TAGS, EXTERNAL_DATA_TABLES_TYPES } from '@/constants';
+
 /**
  * @typedef {0 | 1} ExternalDataTableTypes
  */
@@ -5,8 +9,6 @@
 /**
  * @typedef {0 | 1 | 2} ExternalDataTableColumnTypes
  */
-
-import { EXTERNAL_DATA_TABLE_COLUMN_TAGS, EXTERNAL_DATA_TABLES_TYPES } from '@/constants';
 
 /**
  * @typedef {Object} ExternalDataTable
@@ -25,6 +27,8 @@ import { EXTERNAL_DATA_TABLE_COLUMN_TAGS, EXTERNAL_DATA_TABLES_TYPES } from '@/c
  * @property {string} [thousands_separator]
  * @property {string} [string_array_type]
  * @property {string} [string_array_separator]
+ * @property {number[]} [rows]
+ * @property {string[]} [messages]
  */
 
 /**
@@ -58,7 +62,7 @@ export const externalDataTableToForm = (externalDataTable = {}) => ({
  * ];
  *
  * // For import mode (preserves types)
- * const importForm = externalDataTableColumnsConfigToForm(columnsConfigs, true);
+ * const importForm = externalDataTableColumnConfigsToForm(columnsConfigs, true);
  * // Result:
  * // {
  * //   user_name: {
@@ -91,15 +95,17 @@ export const externalDataTableToForm = (externalDataTable = {}) => ({
  * // }
  *
  * // For edit mode (resets types to null)
- * const editForm = externalDataTableColumnsConfigToForm(columnsConfigs, false);
+ * const editForm = externalDataTableColumnConfigsToForm(columnsConfigs, false);
  * // Same structure but all type properties will be null
  */
-export const externalDataTableColumnsConfigToForm = (columnsConfigs = [], isImport = false) => (
+export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImport = false) => (
   (columnsConfigs ?? []).reduce((acc, columnConfig) => {
     const name = columnConfig.name ?? '';
 
     acc[name] = {
       name,
+      rows: columnConfig.rows ?? [],
+      messages: columnConfig.messages ?? [],
       tag: columnConfig.tag ?? EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
       type: isImport ? null : columnConfig.type,
       decimal_separator: columnConfig.decimal_separator ?? null,
@@ -110,4 +116,14 @@ export const externalDataTableColumnsConfigToForm = (columnsConfigs = [], isImpo
 
     return acc;
   }, {})
+);
+
+/**
+ * Converts a form representation of external data table columns to a config representation.
+ *
+ * @param {Object<string, ExternalDataTableColumnConfig>} form
+ * @returns {ExternalDataTableColumnConfig[]}
+ */
+export const formToExternalDataTableColumnConfigs = (form = {}) => (
+  Object.values(form).map(columnConfig => omit(columnConfig, ['rows', 'messages']))
 );
