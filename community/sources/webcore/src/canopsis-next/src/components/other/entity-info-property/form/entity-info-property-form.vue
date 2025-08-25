@@ -1,10 +1,12 @@
 <template>
   <v-layout column>
     <c-entity-info-property-key-field
-      v-field="form.name"
+      :value="form.name"
       :label="$t('entityInfoProperties.infosKey')"
+      :disabled="!isNew"
       name="name"
       required
+      @update:selected-items="updateSelectedItems"
     />
     <c-description-field
       v-field="form.description"
@@ -15,29 +17,28 @@
     <c-name-field
       v-field="form.alias"
       :label="$t('common.alias')"
+      :max-length="255"
       name="alias"
     />
-    <v-select
+    <entity-info-property-type-field
       v-field="form.type"
-      v-validate="'required'"
-      :items="typeOptions"
-      :label="$t('common.type')"
-      :error-messages="errors.collect('type')"
-      name="type"
       required
     />
   </v-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { ref } from 'vue';
 
-import { ENTITY_INFO_PROPERTY_TYPES, ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS } from '@/constants';
+import { useModelField } from '@/hooks/form';
 
-import { useI18n } from '@/hooks/i18n';
+import EntityInfoPropertyTypeField from './entity-info-property-type-field.vue';
 
 export default {
   inject: ['$validator'],
+  components: {
+    EntityInfoPropertyTypeField,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -52,16 +53,34 @@ export default {
       default: false,
     },
   },
-  setup() {
-    const { t } = useI18n();
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
 
-    const typeOptions = computed(() => Object.values(ENTITY_INFO_PROPERTY_TYPES).map(value => ({
-      text: t(ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS[value]),
-      value,
-    })));
+    const wasInit = ref(props.isNew);
+
+    const updateSelectedItems = (selectedItems) => {
+      if (!wasInit.value) {
+        wasInit.value = true;
+
+        return;
+      }
+
+      if (!selectedItems.length) {
+        updateModel({ ...props.form, name: '' });
+
+        return;
+      }
+
+      updateModel({
+        ...props.form,
+
+        name: selectedItems[0].value,
+        type: selectedItems[0].type,
+      });
+    };
 
     return {
-      typeOptions,
+      updateSelectedItems,
     };
   },
 };

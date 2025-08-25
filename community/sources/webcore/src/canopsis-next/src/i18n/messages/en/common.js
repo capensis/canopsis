@@ -317,6 +317,8 @@ export default {
   customField: 'Custom field|Custom fields',
   last: 'Last',
   defined: 'Defined',
+  filterByType: 'Filter by type',
+  bulkDelete: 'Remove selected',
   variableTypes: {
     string: 'String',
     number: 'Number',

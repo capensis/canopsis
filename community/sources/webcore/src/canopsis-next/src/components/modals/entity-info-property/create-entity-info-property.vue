@@ -5,7 +5,7 @@
         {{ title }}
       </template>
       <template #text="">
-        <entity-info-property-form v-model="form" />
+        <entity-info-property-form v-model="form" :is-new="isNew" />
       </template>
       <template #actions="">
         <v-btn
@@ -79,7 +79,7 @@ export default {
     useFormConfirmableCloseModal({ form, submit, close });
 
     const title = computed(() => config.value.title || t('modals.createEntityInfoProperty.create.title'));
-    const isNew = computed(() => !config.value.entityInfo);
+    const isNew = computed(() => !config.value.entityInfoProperty);
 
     return {
       form,

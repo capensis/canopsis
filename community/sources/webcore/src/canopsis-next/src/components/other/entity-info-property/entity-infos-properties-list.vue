@@ -10,6 +10,15 @@
     search
     @update:options="$emit('update:options', $event)"
   >
+    <template #toolbar>
+      <v-flex xs2>
+        <entity-info-property-type-field
+          :value="options.type"
+          :label="$t('common.filterByType')"
+          @input="updateType"
+        />
+      </v-flex>
+    </template>
     <template #mass-actions="{ selected }">
       <c-action-btn
         :tooltip="$t('common.bulkDelete')"
@@ -36,7 +45,7 @@
         <c-action-btn
           v-if="removable"
           type="delete"
-          @click="$emit('remove', item._id)"
+          @click="$emit('remove', item)"
         />
       </v-layout>
     </template>
@@ -50,7 +59,12 @@ import { ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
 
+import EntityInfoPropertyTypeField from './form/entity-info-property-type-field.vue';
+
 export default {
+  components: {
+    EntityInfoPropertyTypeField,
+  },
   props: {
     entityInfosProperties: {
       type: Array,
@@ -81,7 +95,7 @@ export default {
       default: false,
     },
   },
-  setup() {
+  setup(props, { emit }) {
     const { t } = useI18n();
 
     const headers = computed(() => [
@@ -92,6 +106,7 @@ export default {
       {
         text: t('common.description'),
         value: 'description',
+        sortable: false,
       },
       {
         text: t('common.type'),
@@ -108,10 +123,19 @@ export default {
       },
     ]);
 
+    /**
+     * Updates the type option in the options object and emits the change to the parent component
+     *
+     * @param {string} type - The new type value to set in the options
+     */
+    const updateType = type => emit('update:options', { ...props.options, type });
+
     return {
       ENTITY_INFO_PROPERTY_TYPE_I18N_KEYS,
 
       headers,
+
+      updateType,
     };
   },
 };

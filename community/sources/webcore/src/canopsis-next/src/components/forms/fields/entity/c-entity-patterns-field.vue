@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { keyBy, mergeWith, isArray } from 'lodash';
+import { isArray, mergeWith } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -42,6 +42,7 @@ import {
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
+import { indexesByKey } from '@/helpers/array';
 
 import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
@@ -285,8 +286,10 @@ export default {
         value: item.alias,
         alias: true,
         originalValue: item.name,
-        inputTypes: ENTITY_PATTERN_FIELD_TYPES,
         definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+        options: {
+          inputTypes: ENTITY_PATTERN_FIELD_TYPES,
+        },
       }));
     },
 
@@ -346,23 +349,28 @@ export default {
       ];
     },
 
-    availableAttributesByValue() {
-      return keyBy(this.entityAttributes, 'value');
-    },
-
-    externalAttributesByValue() {
-      return keyBy(this.attributes, 'value');
-    },
-
     availableEntityAttributes() {
-      const mergedAttributes = mergeWith(
-        {},
-        this.availableAttributesByValue,
-        this.externalAttributesByValue,
-        (a, b) => (isArray(b) ? b : undefined),
-      );
+      const mergedAttributes = [...this.entityAttributes];
+      const availableAttributesIndexesByValue = indexesByKey(this.attributes, 'value');
 
-      return Object.values(mergedAttributes);
+      this.attributes.forEach((attribute) => {
+        const index = availableAttributesIndexesByValue[attribute.value];
+
+        if (index !== -1) {
+          mergedAttributes.push(attribute);
+
+          return;
+        }
+
+        mergedAttributes[index] = mergeWith(
+          {},
+          mergedAttributes[index],
+          attribute,
+          (a, b) => (isArray(b) ? b : undefined),
+        );
+      });
+
+      return mergedAttributes;
     },
   },
   mounted() {
