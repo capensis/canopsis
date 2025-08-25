@@ -1,6 +1,13 @@
 import { omit } from 'lodash';
 
-import { EXTERNAL_DATA_TABLE_COLUMN_TAGS, EXTERNAL_DATA_TABLES_TYPES } from '@/constants';
+import {
+  EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES,
+  EXTERNAL_DATA_TABLE_COLUMN_TAGS,
+  EXTERNAL_DATA_TABLES_TYPES,
+  CSV_SEPARATORS_TO_SYMBOLS,
+  EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS,
+  EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR,
+} from '@/constants';
 
 /**
  * @typedef {0 | 1} ExternalDataTableTypes
@@ -104,8 +111,8 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
 
     acc[name] = {
       name,
-      rows: columnConfig.rows ?? [],
-      messages: columnConfig.messages ?? [],
+      rows: [],
+      messages: [],
       tag: columnConfig.tag ?? EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
       type: isImport ? null : columnConfig.type,
       decimal_separator: columnConfig.decimal_separator ?? null,
@@ -125,5 +132,66 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
  * @returns {ExternalDataTableColumnConfig[]}
  */
 export const formToExternalDataTableColumnConfigs = (form = {}) => (
-  Object.values(form).map(columnConfig => omit(columnConfig, ['rows', 'messages']))
+  Object.values(form).map(columnConfig => ({
+    ...omit(columnConfig, ['rows', 'messages']),
+
+    type: columnConfig.type ?? EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string,
+  }))
 );
+
+/**
+ * Converts a form representation of external data table columns to a tags representation.
+ *
+ * @param {Object<string, ExternalDataTableColumnConfig>} form
+ * @returns {number[]}
+ */
+export const formToExternalDataTableColumnTags = (form = {}) => (
+  Object.values(form).map(columnConfig => columnConfig.tag)
+);
+
+/**
+ * Checks if a separator is a predefined standard separator
+ * @param {string} separator - The separator to check
+ * @returns {boolean} True if the separator is predefined, false otherwise
+ */
+const isStandardSeparator = separator => Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS)
+  .includes(separator);
+
+/**
+ * Gets the fallback separator when no separator is defined
+ * Avoids using the same separator as the table's CSV separator
+ * @param {string} tableSeparator - The table's CSV separator
+ * @returns {string} A safe fallback separator
+ */
+const getFallbackSeparator = (tableSeparator) => {
+  const tableSymbol = CSV_SEPARATORS_TO_SYMBOLS[tableSeparator];
+  const { comma, semicolon } = EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS;
+
+  return tableSymbol !== comma ? comma : semicolon;
+};
+
+/**
+ * Gets the default separator value based on the current value and table separator
+ *
+ * Logic:
+ * 1. If value has a custom separator (not in predefined list) → return 'custom'
+ * 2. If value has no separator → return a safe fallback separator
+ * 3. If value has a standard separator → return it as-is
+ *
+ * @param {Object} value - The current column data type value
+ * @param {string} tableSeparator - The table's CSV separator
+ * @returns {string} The default separator value or 'custom' if custom separator is needed
+ */
+export const getDefaultSeparator = (value, tableSeparator) => {
+  const { string_array_separator: currentSeparator } = value;
+
+  if (currentSeparator && !isStandardSeparator(currentSeparator)) {
+    return EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR;
+  }
+
+  if (!currentSeparator) {
+    return getFallbackSeparator(tableSeparator);
+  }
+
+  return currentSeparator;
+};
