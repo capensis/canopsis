@@ -12,6 +12,8 @@ export default {
   title: 'External data',
   add: 'Add external data',
   empty: 'No external data added yet',
+  updatePreview: 'Update preview',
+  loadingPreview: 'Loading preview',
   fields: {
     reference: 'Reference',
     collection: 'Collection',

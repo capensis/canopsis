@@ -93,14 +93,14 @@ export default {
         key: 'decimal_separator',
         selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectDecimalSeparator'),
         selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.decimalSeparator'),
-        bind: { value: props.value.decimal_separator, items: decimalSeparators.value },
+        bind: { value: props.value.decimal_separator, items: decimalSeparators.value, clearable: true },
         on: { input: separator => updateField('decimal_separator', separator) },
       },
       {
         key: 'thousands_separator',
         selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectThousandsSeparator'),
         selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.thousandsSeparator'),
-        bind: { value: props.value.thousands_separator, items: thousandsSeparators.value },
+        bind: { value: props.value.thousands_separator, items: thousandsSeparators.value, clearable: true },
         on: { input: separator => updateField('thousands_separator', separator) },
       },
     ]);
