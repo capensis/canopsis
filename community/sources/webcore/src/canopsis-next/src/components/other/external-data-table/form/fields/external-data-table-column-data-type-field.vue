@@ -34,8 +34,8 @@ import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form';
 
 import ExternalDataTableColumnDataTypeFieldNumberForm from './partials/external-data-table-column-data-type-field-number-form.vue';
-import ExternalDataTableColumnDataTypeFieldStringArrayForm
-  from './partials/external-data-table-column-data-type-field-string-array-form.vue';
+import ExternalDataTableColumnDataTypeFieldStringArrayMenu
+  from './partials/external-data-table-column-data-type-field-string-array-menu.vue';
 
 export default {
   model: {
@@ -79,7 +79,7 @@ export default {
         return {
           is: props.value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number
             ? ExternalDataTableColumnDataTypeFieldNumberForm
-            : ExternalDataTableColumnDataTypeFieldStringArrayForm,
+            : ExternalDataTableColumnDataTypeFieldStringArrayMenu,
           bind: {
             value: props.value,
             tableSeparator: props.tableSeparator,
