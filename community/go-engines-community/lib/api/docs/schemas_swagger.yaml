@@ -5984,6 +5984,8 @@ definitions:
         $ref: '#/definitions/user.View'
       name:
         type: string
+      type:
+        type: string
     type: object
   user.UpdateRequest:
     properties:
