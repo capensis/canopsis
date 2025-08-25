@@ -33,6 +33,7 @@
       :ultra-dense="isSmallDense"
       :table-class="tableClass"
       :style="tableStyle"
+      class="external-data-table"
       advanced-pagination
       @update:options="$emit('update:options', $event)"
     >
@@ -147,7 +148,10 @@
           <c-help-icon
             v-if="header.errors?.length"
             :text="header.errors.join(', ')"
+            color="error"
             icon="help"
+            small
+            top
           />
         </span>
         <span
@@ -170,7 +174,7 @@
       >
         <span
           :key="`${header.value}`"
-          :title="item[header.value]"
+          :title="item[header.value]?.initial_value ?? item[header.value]"
           :class="{ 'table-cell__content--error': item[header.value]?.transform_error }"
           class="table-cell__content"
         >
@@ -208,12 +212,14 @@
       v-if="errorsMessages.length"
       type="error"
     >
-      {{ $tc('externalData.fieldsHasError', { count: errorsMessages.length }, errorsMessages.length) }}
-      <ul>
-        <li v-for="error in errorsMessages" :key="error.name">
-          <strong>{{ error.name }}</strong> {{ error.message }}
-        </li>
-      </ul>
+      <span class="text-body-1">
+        {{ $tc('externalData.fieldsHasError', errorsMessages.length, { count: errorsMessages.length }) }}
+        <ul>
+          <li v-for="error in errorsMessages" :key="error.name">
+            <strong>{{ error.name }}</strong>: {{ error.message }}
+          </li>
+        </ul>
+      </span>
     </c-alert>
   </div>
 </template>
@@ -363,9 +369,9 @@ export default {
     ));
 
     const headers = computed(() => {
-      const result = Object.keys(props.columns).map(column => ({
-        value: column,
-        text: column,
+      const result = Object.values(props.columns).map((column = {}) => ({
+        value: column.name,
+        text: column.name,
         class: DRAGGABLE_CLASS,
         sortable: true,
         errors: column.messages,
