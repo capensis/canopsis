@@ -7,7 +7,13 @@
     offset-y
   >
     <template #activator="{ on }">
-      <c-chip v-bind="$attrs" class="px-2" v-on="on">
+      <c-chip
+        v-bind="$attrs"
+        :closable="!isEmptyValue && clearable"
+        class="px-2"
+        v-on="on"
+        @close="selectItem(null)"
+      >
         <slot name="selection">
           <slot v-if="isEmptyValue" name="selection-empty" />
           <span v-else>
@@ -35,8 +41,8 @@
         >
           <v-list-item-content>
             <div>{{ item[itemText] }}</div>
-            <div v-if="item.disabledText" class="text-caption">
-              {{ item.disabledText }}
+            <div v-if="item.disabledMessage" class="text-caption">
+              {{ item.disabledMessage }}
             </div>
           </v-list-item-content>
           <v-list-item-action>
@@ -95,6 +101,10 @@ export default {
       default: false,
     },
     right: {
+      type: Boolean,
+      default: false,
+    },
+    clearable: {
       type: Boolean,
       default: false,
     },
