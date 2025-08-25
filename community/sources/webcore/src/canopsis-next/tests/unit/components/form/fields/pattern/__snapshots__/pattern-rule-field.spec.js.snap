@@ -488,11 +488,7 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with timestamp field 
   <div
     class="layout"
   >
-    <c-alert-stub
-      type="warning"
-    >
-      Selected type differs from the type set in Entity infos
-    </c-alert-stub>
+    <!---->
   </div>
 </div>
 `;

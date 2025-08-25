@@ -99,7 +99,7 @@
     </v-layout>
     <v-layout>
       <c-alert
-        v-if="notDefinedType"
+        v-if="notDefinedType && !disabled"
         type="warning"
       >
         {{ $t('pattern.notDefinedType') }}
@@ -378,12 +378,12 @@ export default {
       return { xs6: true };
     },
 
-    /**
-     * TODO: FIX DEFINED TYPE INITIALIZATION IT IN THE NEXT COMMIT
-     */
+    definedType() {
+      return this.inputTypesWithDefinedType.find(type => type.defined);
+    },
+
     notDefinedType() {
-      return this.rule.fieldType
-        && !this.inputTypesWithDefinedType.some(type => type.defined && type.value === this.rule.fieldType);
+      return this.rule.fieldType && this.definedType && this.definedType.value !== this.rule.fieldType;
     },
   },
   methods: {
