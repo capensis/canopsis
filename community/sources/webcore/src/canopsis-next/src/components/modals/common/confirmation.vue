@@ -12,7 +12,7 @@
     >
       <v-alert
         v-if="sanitizedAlertText"
-        class="mb-2"
+        class="mb-2 pre-line"
         type="warning"
       >
         <span v-html="sanitizedAlertText" />

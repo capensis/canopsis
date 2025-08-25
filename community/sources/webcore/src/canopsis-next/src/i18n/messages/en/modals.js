@@ -1035,7 +1035,7 @@ export default {
   },
   confirmationRemoveEntityInfoProperty: {
     title: 'Delete entity info property',
-    alert: 'You are about to delete properties of entity infos <strong>{name}</strong>.\n'
+    alert: '<span class="text-body-1">You are about to delete properties of entity infos <strong>{name}</strong>.</span>\n'
       + '<strong>Deletion operation won’t be cancellable.</strong>',
     text: 'In the following places <strong>alias</strong> will be change to <strong>entity infos name</strong>,'
       + 'selected <strong>type will not be changed</strong>: '

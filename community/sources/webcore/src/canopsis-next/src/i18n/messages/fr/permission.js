@@ -275,6 +275,7 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scénarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
     [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'Données externes',
+    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Informations d\'entité',
 
     /**
      * Technical Admin Notification

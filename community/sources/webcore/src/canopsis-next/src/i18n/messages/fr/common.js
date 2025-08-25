@@ -317,6 +317,8 @@ export default {
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
   defined: 'Défini',
+  filterByType: 'Filtrer par type',
+  bulkDelete: 'Supprimer la sélection',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

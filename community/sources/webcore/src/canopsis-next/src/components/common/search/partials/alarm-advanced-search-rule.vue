@@ -174,7 +174,6 @@ export default {
       const typeIndex = oldFilled.indexOf(type);
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
 
-      const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
       let skipType = false;
 
       if (isArrayItem(type, value) && !PATTERN_OPERATORS_WITHOUT_VALUE.includes(value)) {
@@ -193,12 +192,20 @@ export default {
       }
 
       if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute) {
-        preparedRule.alias = !!attributesMap.value?.[value]?.alias;
+        const { alias, definedType } = attributesMap.value?.[value] ?? {};
+
+        preparedRule.alias = !!alias;
+
+        if (definedType) {
+          preparedRule.fieldType = definedType;
+          filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType);
+          skipType = true;
+        }
       }
 
       updateModel({
         ...preparedRule,
-        ...pick(advancedSearchRuleItemToFormItem(), filledForRemove),
+        ...pick(advancedSearchRuleItemToFormItem(), oldFilled.filter(field => !filled.includes(field))),
         [type]: value,
         filled: uniq(filled),
       });
@@ -251,7 +258,16 @@ export default {
       }
 
       if (inputType.value === ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute) {
-        preparedRule.alias = !!attributesMap.value?.[value]?.alias;
+        const { alias, definedType } = attributesMap.value?.[value] ?? {};
+
+        preparedRule.alias = !!alias;
+
+        if (definedType) {
+          preparedRule.fieldType = definedType;
+          filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType);
+
+          skipType = true;
+        }
       }
 
       updateModel({

@@ -1,7 +1,7 @@
 <template>
   <v-select
     v-field="value"
-    :label="$t('eventFilter.filterByType')"
+    :label="$t('common.filterByType')"
     :items="types"
     :error-messages="errors.collect(name)"
     :name="name"

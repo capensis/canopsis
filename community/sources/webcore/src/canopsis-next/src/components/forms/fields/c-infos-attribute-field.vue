@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { keyBy } from 'lodash';
 import { computed } from 'vue';
 
 import { PATTERN_RULE_INFOS_FIELDS, PATTERN_FIELD_TYPES } from '@/constants';
@@ -121,6 +122,8 @@ export default {
       },
     ]);
 
+    const itemsByValue = computed(() => keyBy(props.items, 'value'));
+
     /**
      * Updates `value.dictionary` and related type fields based on the provided infos.
      *
@@ -147,11 +150,17 @@ export default {
      * @param {'name'|'value'} field Field key from `PATTERN_RULE_INFOS_FIELDS`
      * @returns {void}
      */
-    const updateInfosField = field => updateModel({
-      ...props.value,
-      fieldType: field === PATTERN_RULE_INFOS_FIELDS.value ? props.value.definedType : null,
-      field,
-    });
+    const updateInfosField = (field) => {
+      const fieldType = field === PATTERN_RULE_INFOS_FIELDS.value
+        ? itemsByValue.value[props.value.dictionary]?.definedType
+        : null;
+
+      updateModel({
+        ...props.value,
+        fieldType,
+        field,
+      });
+    };
 
     return {
       dictionaryName,

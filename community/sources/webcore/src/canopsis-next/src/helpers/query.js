@@ -1,3 +1,5 @@
+import { isNil } from 'lodash';
+
 import { convertSortToRequest } from '@/helpers/entities/shared/query';
 
 /**
@@ -7,6 +9,7 @@ import { convertSortToRequest } from '@/helpers/entities/shared/query';
  * @param {number} params.page - The current page number.
  * @param {string} [params.search] - The search term to filter results.
  * @param {number} params.itemsPerPage - The number of items per page.
+ * @param {number} [params.type] - The type of the items to filter by.
  * @param {string[]} [params.sortBy=[]] - An array of fields to sort by.
  * @param {boolean[]} [params.sortDesc=[]] - An array indicating the sort direction for each field in `sortBy`.
  * @returns {Object} The request object containing pagination, sorting, and search parameters.
@@ -15,6 +18,7 @@ export const convertQueryToRequest = ({
   page,
   search,
   itemsPerPage,
+  type,
   sortBy = [],
   sortDesc = [],
 }) => {
@@ -27,6 +31,10 @@ export const convertQueryToRequest = ({
 
   if (search) {
     query.search = search;
+  }
+
+  if (!isNil(type)) {
+    query.type = type;
   }
 
   return query;

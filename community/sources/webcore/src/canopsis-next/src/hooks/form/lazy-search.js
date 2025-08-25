@@ -6,6 +6,7 @@ import {
   isNumber,
   isUndefined,
   debounce,
+  uniq,
   uniqBy,
 } from 'lodash';
 import {
@@ -65,6 +66,7 @@ export const useLazySearch = ({
 }, emit) => {
   const pageCount = ref(1);
   const itemsByValue = ref({});
+  const itemsValues = ref([]);
   const selectedItems = ref([]);
 
   const { updateModel } = useModelField({}, emit);
@@ -73,7 +75,7 @@ export const useLazySearch = ({
    * Computed property to get the list of items from the itemsByValue map.
    * @type {ComputedRef<Array>}
    */
-  const items = computed(() => Object.values(itemsByValue.value));
+  const items = computed(() => itemsValues.value.map(itemValue => itemsByValue.value[itemValue]));
 
   /**
    * Computed property to convert the value into an array format.
@@ -149,6 +151,14 @@ export const useLazySearch = ({
       });
 
       pageCount.value = meta.page_count;
+
+      /**
+       * We need to use it for saving order of items
+       */
+      itemsValues.value = uniq([
+        ...(params.page && params.page !== 1 ? itemsValues.value : []),
+        ...data.map(item => item[unref(idKey)]),
+      ]);
 
       itemsByValue.value = {
         ...(params.page && params.page !== 1 ? itemsByValue.value : {}),
