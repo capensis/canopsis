@@ -19,7 +19,6 @@ import ExternalDataTableRecordsList
   from '@/components/other/external-data-table/partials/external-data-table-records-list.vue';
 
 export default {
-  name: 'ImportPreviewSection',
   components: {
     ExternalDataTableRecordsList,
   },
