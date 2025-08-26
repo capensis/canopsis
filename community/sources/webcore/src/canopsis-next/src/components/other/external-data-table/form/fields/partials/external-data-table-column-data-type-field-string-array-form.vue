@@ -43,7 +43,7 @@
               <template v-if="!separator.label" #label>
                 <v-text-field
                   v-field="form.customSeparator"
-                  v-validate="'required|forbidden_separator'"
+                  v-validate="rule"
                   :error-messages="errors.collect('separator')"
                   :disabled="!isCustomSeparatorSelected"
                   name="separator"
@@ -114,6 +114,12 @@ export default {
       { value: CUSTOM_SEPARATOR_VALUE, class: 'radio-string-array-separator-custom' },
     ]);
 
+    const rule = computed(() => (
+      isCustomSeparatorSelected.value
+        ? { required: true, forbidden_separator: true }
+        : {}
+    ));
+
     /**
      * Validates the custom separator field
      */
@@ -124,6 +130,7 @@ export default {
       isCustomSeparatorSelected,
       types,
       separatorsWithCustom,
+      rule,
       validateCustomSeparator,
     };
   },

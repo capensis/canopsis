@@ -23,7 +23,7 @@
       ref="tableElement"
       :loading="pending"
       :options="options"
-      :items="records"
+      :items="preparedRecords"
       :headers="sortedHeadersWithWidth"
       :expand="expandable"
       :select-all="selectable"
@@ -106,19 +106,19 @@
           @click="$emit('remove-selected', selected)"
         />
       </template>
-      <template #body.prepend="">
+      <template #body.prepend>
         <tr>
           <td v-if="selectable" />
           <td v-if="expandable" />
           <td v-for="header in sortedHeaders" :key="header.value">
-            <v-layout class="py-1 gap-2" column>
+            <v-layout v-if="header.value !== '_id' && header.value !== 'actions'" class="py-1 gap-2" column>
               <external-data-table-column-data-type-field
                 v-field="columns[header.value]"
                 :table-separator="separator"
+                :disabled="disabledTypes"
               />
               <v-flex>
                 <external-data-table-column-tag-field
-                  v-if="header.value !== '_id' && header.value !== 'actions'"
                   v-field="columns[header.value].tag"
                   :disabled="disabled"
                 />
@@ -228,7 +228,9 @@
 import { isEmpty } from 'lodash';
 import { computed, ref, toRef } from 'vue';
 
-import { DENSE_TYPES } from '@/constants';
+import { DENSE_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 import { useHTMLElement } from '@/hooks/html-elements';
@@ -240,6 +242,11 @@ import ExternalDataTableColumnDataTypeField from '../form/fields/external-data-t
 import ExternalDataTableRecordsListExpandPanel from './external-data-table-records-list-expand-panel.vue';
 
 const DRAGGABLE_CLASS = 'external-data-table-records__draggable-column';
+
+const EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS = {
+  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime]: convertDateToString,
+  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: convertDateToString,
+};
 
 export default {
   components: {
@@ -336,6 +343,10 @@ export default {
       type: String,
       required: false,
     },
+    disabledTypes: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -349,6 +360,16 @@ export default {
       parentElement: tableElement,
       selector: 'table > thead tr',
     });
+
+    const preparedRecords = computed(() => props.records.map(record => (
+      Object.entries(record).reduce((acc, [key, value]) => {
+        const filter = EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[props.columns?.[key]?.type];
+
+        acc[key] = filter ? filter(value) : value;
+
+        return acc;
+      }, {})
+    )));
 
     /**
      * COMPUTED
@@ -419,6 +440,7 @@ export default {
     return {
       tableElement,
 
+      preparedRecords,
       isEmptyColumns,
       errorsMessages,
       headers,
