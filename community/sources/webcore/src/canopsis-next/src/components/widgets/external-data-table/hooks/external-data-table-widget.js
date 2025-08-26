@@ -3,7 +3,10 @@ import { computed, ref, unref } from 'vue';
 
 import { EXTERNAL_DATA_TABLE_COLUMN_TAGS } from '@/constants';
 
-import { externalDataTableColumnConfigsToForm } from '@/helpers/entities/external-data-table/form';
+import {
+  externalDataTableColumnConfigsToForm,
+  formToExternalDataTableColumnTags,
+} from '@/helpers/entities/external-data-table/form';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
@@ -57,11 +60,7 @@ export const useExternalDataTableWidgetTable = ({
       externalDataTable.value = await updateExternalDataTable({
         id: externalDataTable.value._id,
         data: {
-          ...pick(externalDataTable.value, ['type', 'name', 'description']),
-
-          column_types: externalDataTable.value.columns.map((column, index) => (
-            newColumns[column] ?? externalDataTable.value.column_types[index]
-          )),
+          column_tags: formToExternalDataTableColumnTags(newColumns),
         },
       });
     },
