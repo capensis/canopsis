@@ -169,6 +169,7 @@ func (s *pool) RunWorkers(ctx context.Context, taskChannel <-chan Task) (<-chan 
 
 								break
 							}
+
 							if skip {
 								resultChannel <- TaskResult{
 									Source:            source,
@@ -334,13 +335,24 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		return nil, false, err
 	}
 
+	stopOnFail, stopOnSuccess := false, false
+	if task.Action.Parameters.StopOnFail != nil {
+		stopOnFail = *task.Action.Parameters.StopOnFail
+	}
+
+	if task.Action.Parameters.StopOnSuccess != nil {
+		stopOnSuccess = *task.Action.Parameters.StopOnSuccess
+	}
+
 	history, historyResult := libwebhook.History{
-		ID:        utils.NewID(),
-		Alarms:    []string{task.Alarm.ID},
-		Scenario:  task.ScenarioID,
-		Index:     int64(task.Step),
-		Execution: task.ExecutionID,
-		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
+		ID:            utils.NewID(),
+		Alarms:        []string{task.Alarm.ID},
+		Scenario:      task.ScenarioID,
+		Index:         int64(task.Step),
+		StopOnFail:    stopOnFail,
+		StopOnSuccess: stopOnSuccess,
+		Execution:     task.ExecutionID,
+		Name:          types.RuleNameScenarioPrefix + task.ScenarioName,
 
 		SystemName:     task.Action.Parameters.TicketSystemName,
 		Status:         libwebhook.StatusCreated,
