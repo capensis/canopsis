@@ -4,6 +4,7 @@
     :bottom="bottom"
     :left="left"
     :right="right"
+    :disabled="disabled"
     offset-y
   >
     <template #activator="{ on }">
@@ -37,6 +38,7 @@
           v-for="item in items"
           :key="item[itemValue]"
           :disabled="item.disabled"
+          :input-value="item[itemValue] === value"
           @click="selectItem(item[itemValue])"
         >
           <v-list-item-content>
@@ -105,6 +107,10 @@ export default {
       default: false,
     },
     clearable: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

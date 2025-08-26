@@ -8,11 +8,12 @@
           :pending="pending"
           :options="options"
           :total-items="meta.total_count"
-          :has-structure="!!externalDataTable.columns?.length"
+          :has-structure="hasStructure"
           with-toolbar
           with-actions
           selectable
           expandable
+          disabled-types
           @input="updateColumns"
           @import="showImportExternalDataTablesModal"
           @add="showCreateExternalDataTableRecordModal"
@@ -39,7 +40,10 @@ import {
 
 import Observer from '@/services/observer';
 
-import { externalDataTableColumnConfigsToForm } from '@/helpers/entities/external-data-table/form';
+import {
+  externalDataTableColumnConfigsToForm,
+  formToExternalDataTableColumnTags,
+} from '@/helpers/entities/external-data-table/form';
 
 import { useExternalDataTable } from '@/hooks/store/modules/external-data-table';
 
@@ -63,6 +67,7 @@ export default {
       records,
       pending,
       meta,
+      hasStructure,
       options,
       updateOptions,
 
@@ -83,7 +88,7 @@ export default {
       data: {
         ...pick(props.externalDataTable, ['type', 'name', 'description']),
 
-        column_types: Object.values(newColumns),
+        column_tags: formToExternalDataTableColumnTags(newColumns),
       },
     });
 
@@ -100,6 +105,7 @@ export default {
       records,
       meta,
       pending,
+      hasStructure,
       options,
       updateOptions,
 

@@ -91,6 +91,7 @@ export default {
       text: '@:common.variableTypes.array',
     },
   },
+  selectDataType: 'Select data type',
   tableColumnDataTypesAdditionalChips: {
     number: {
       selectDecimalSeparator: 'Select decimal separator',
