@@ -21,6 +21,7 @@ type History struct {
 	DeclareTicketRule string   `bson:"declare_ticket_rule,omitempty" json:"declare_ticket_rule,omitempty"`
 	NextExec          string   `bson:"next_exec,omitempty" json:"next_exec,omitempty"`
 	StopOnFail        bool     `bson:"stop_on_fail,omitempty" json:"stop_on_fail,omitempty"`
+	StopOnSuccess     bool     `bson:"stop_on_success,omitempty" json:"stop_on_success,omitempty"`
 	Execution         string   `bson:"execution" json:"execution"`
 	Name              string   `bson:"name" json:"name"`
 
