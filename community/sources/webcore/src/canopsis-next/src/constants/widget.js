@@ -220,11 +220,6 @@ export const IMPORT_STATUSES = {
   failed: 3,
 };
 
-export const IMPORT_PREVIEW_STATUSES = {
-  completed: 4,
-  failed: 5,
-};
-
 export const WIDGET_TEMPLATES_TYPES = {
   alarmColumns: 'alarm_columns',
   entityColumns: 'entity_columns',

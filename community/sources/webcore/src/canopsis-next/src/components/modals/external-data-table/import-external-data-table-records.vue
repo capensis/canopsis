@@ -68,11 +68,10 @@ import {
 
 import ExternalDataTableGeneralInfoForm
   from '@/components/other/external-data-table/form/external-data-table-general-info-form.vue';
+import ImportFileUploadSection from '@/components/other/external-data-table/partials/import-file-upload-section.vue';
+import ImportPreviewSection from '@/components/other/external-data-table/partials/import-preview-section.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
-
-import ImportFileUploadSection from './partials/import-file-upload-section.vue';
-import ImportPreviewSection from './partials/import-preview-section.vue';
 
 export default {
   name: MODALS.importExternalDataTableRecords,
