@@ -1,7 +1,7 @@
 import { mapValues } from 'lodash';
 import { computed, nextTick, ref } from 'vue';
 
-import { CSV_SEPARATORS, IMPORT_STATUSES, IMPORT_PREVIEW_STATUSES } from '@/constants';
+import { CSV_SEPARATORS, IMPORT_STATUSES, EXTERNAL_DATA_TABLE_IMPORT_PREVIEW_STATUSES } from '@/constants';
 
 import {
   externalDataTableColumnConfigsToForm,
@@ -217,7 +217,12 @@ const useExternalDataTableImportPreview = ({
         id: activeImportFileId.value,
       });
 
-      if ([IMPORT_PREVIEW_STATUSES.completed, IMPORT_PREVIEW_STATUSES.failed].includes(response.status)) {
+      if (
+        [
+          EXTERNAL_DATA_TABLE_IMPORT_PREVIEW_STATUSES.completed,
+          EXTERNAL_DATA_TABLE_IMPORT_PREVIEW_STATUSES.failed,
+        ].includes(response.status)
+      ) {
         return resolve(response);
       }
 
