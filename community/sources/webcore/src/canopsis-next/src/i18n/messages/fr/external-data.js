@@ -50,6 +50,11 @@ export default {
 
   tableField: 'Collection / Table',
 
+  updatePreview: 'Mettre à jour l\'aperçu',
+  loadingPreview: 'Chargement de l\'aperçu',
+  selectDataType: 'Sélectionner le type de données',
+  fieldsHasError: '{count} champ contient des erreurs|{count} champs contiennent des erreurs',
+
   andMore: 'et plus...',
   linkedRules: {
     widgets: '<strong>Widgets</strong> qui utilisent ce tableau<br><ul>{rules}</ul>',
@@ -112,6 +117,6 @@ export default {
         },
       },
     },
+    forbiddenSeparator: 'Ce séparateur ne peut pas être utilisé car il entre en conflit avec le séparateur de table',
   },
-  forbiddenSeparator: 'Ce séparateur ne peut pas être utilisé car il entre en conflit avec le séparateur de table',
 };

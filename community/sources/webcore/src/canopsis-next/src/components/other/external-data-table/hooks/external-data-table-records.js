@@ -207,7 +207,7 @@ export const useExternalDataTableRecordsList = ({ externalDataTable, fetchExtern
     },
   });
 
-  const hasStructure = computed(() => !!unref(externalDataTable).columns?.length);
+  const hasStructure = computed(() => !!unref(externalDataTable).column_configs?.length);
 
   const {
     showImportExternalDataTablesModal,

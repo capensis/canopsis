@@ -1,5 +1,5 @@
 <template>
-  <v-form class="import-external-data-table-records-form" @submit.prevent="submitButton.action">
+  <v-form class="import-external-data-table-records-form" @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
         {{ title }}
@@ -22,6 +22,7 @@
           :options="options"
           :total-items="meta.total_count"
           :separator="separator"
+          @input="validate"
           @update:options="updateOptions"
         />
       </template>
@@ -96,54 +97,63 @@ export default {
     const { config, close } = useInnerModal(props);
 
     const {
+      validator,
       separator,
       activeImportFileId,
       form,
       needPreview,
-      isReadyForComplete,
+      hasErrors,
       records,
       meta,
       pending,
       options,
-      updatingPreview,
       uploading,
       updateOptions,
       updatePreview,
       chooseFile,
       completeImport,
-      toggleOnNeedPreview,
+      validate,
     } = useExternalDataTableImportFile({ config });
 
-    const { submit: complete, isDisabled, submitting } = useSubmittableForm({
+    const { submit, isDisabled, submitting } = useSubmittableForm({
       form: separator,
       method: async () => {
-        await completeImport(config.value.afterSubmit);
-        close();
+        const isValid = await validator.validateAll();
+
+        if (isValid) {
+          if (needPreview.value) {
+            await updatePreview();
+
+            return;
+          }
+
+          await completeImport(config.value.afterSubmit);
+
+          close();
+        }
       },
     });
 
     const title = computed(() => config.value.title || t('modals.createExternalDataTableRecord.create.title'));
 
     const submitButton = computed(() => {
-      if (updatingPreview.value) {
-        return {
-          text: t('externalData.loadingPreview'),
-          loading: true,
-        };
-      }
-
       if (needPreview.value) {
+        if (submitting.value) {
+          return {
+            text: t('externalData.loadingPreview'),
+            loading: true,
+          };
+        }
+
         return {
           text: t('externalData.updatePreview'),
-          action: updatePreview,
+          disabled: hasErrors.value,
         };
       }
 
       return {
         text: t('common.import'),
         loading: submitting.value,
-        disabled: !isReadyForComplete.value,
-        action: complete,
       };
     });
 
@@ -152,6 +162,7 @@ export default {
       separator,
       activeImportFileId,
       form,
+      submit,
       isDisabled,
       submitting,
       pending,
@@ -165,7 +176,7 @@ export default {
       uploading,
       close,
       chooseFile,
-      toggleOnNeedPreview,
+      validate,
     };
   },
 };

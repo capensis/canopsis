@@ -1,52 +1,114 @@
 import { mapValues } from 'lodash';
-import { computed, ref } from 'vue';
+import { computed, nextTick, ref } from 'vue';
 
 import { CSV_SEPARATORS, IMPORT_STATUSES, IMPORT_PREVIEW_STATUSES } from '@/constants';
 
 import {
   externalDataTableColumnConfigsToForm,
-  formToExternalDataTableColumnTags,
   formToExternalDataTableColumnConfigs,
+  formToExternalDataTableColumnTags,
 } from '@/helpers/entities/external-data-table/form';
 
+import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
+import { useExternalDataTableImport } from '@/hooks/store/modules/external-data-table-import';
+import { useFilePolling, usePolling } from '@/hooks/polling';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useValidator } from '@/hooks/validator/validator';
-import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
-import { usePolling, useFilePolling } from '@/hooks/polling';
-import { useExternalDataTableImport } from '@/hooks/store/modules/external-data-table-import';
 
-export const useExternalDataTableImportFile = ({ config }) => {
+/**
+ * Composable for managing external data table import form state and validation.
+ * Handles form data, error states, and form-related operations.
+ *
+ * @returns {Object} Form state management utilities
+ * @returns {Object} returns.validator - Validator instance for form validation
+ * @returns {Object} returns.form - Reactive form data reference
+ * @returns {Object} returns.needPreview - Reactive flag indicating if preview is needed
+ * @returns {Object} returns.hasErrors - Computed property indicating if form has validation errors
+ * @returns {Function} returns.toggleOnNeedPreview - Function to enable preview mode
+ * @returns {Function} returns.toggleOffNeedPreview - Function to disable preview mode
+ * @returns {Function} returns.setForm - Function to set form data
+ * @returns {Function} returns.clearErrors - Function to clear all form errors and validation messages
+ */
+const useExternalDataTableImportForm = () => {
   const validator = useValidator();
 
+  const form = ref({});
+  const needPreview = ref(false);
+
+  /**
+   * Computed property that checks if the form has any validation errors.
+   *
+   * @returns {boolean} True if any form field has error messages
+   */
+  const hasErrors = computed(() => Object.values(form.value).some(value => value?.messages?.length));
+
+  /**
+   * Enables the preview mode for the data table import.
+   * Sets the needPreview flag to true, indicating that a preview is required.
+   */
+  const toggleOnNeedPreview = () => needPreview.value = true;
+
+  /**
+   * Disables the preview mode for the data table import.
+   * Sets the needPreview flag to false, indicating that no preview is needed.
+   */
+  const toggleOffNeedPreview = () => needPreview.value = false;
+
+  /**
+   * Sets the form data.
+   *
+   * @param {Object} newForm - New form data to set
+   */
+  const setForm = (newForm) => {
+    form.value = newForm;
+  };
+
+  /**
+   * Clears all form errors and validation messages.
+   * Resets both form field messages and validator errors.
+   */
+  const clearErrors = () => {
+    setForm(mapValues(form.value, value => ({ ...value, messages: [], rows: [] })));
+    validator.errors.clear();
+  };
+
+  return {
+    validator,
+
+    form,
+    needPreview,
+
+    hasErrors,
+
+    toggleOnNeedPreview,
+    toggleOffNeedPreview,
+    setForm,
+    clearErrors,
+  };
+};
+
+/**
+ * Composable for handling external data table file upload operations.
+ * Manages file selection, upload process, and initial configuration setup.
+ *
+ * @param {Object} params - Configuration parameters
+ * @param {Object} params.config - External data table configuration
+ * @param {Object} params.validator - Validator instance
+ * @param {Function} params.setForm - Function to set form data
+ * @returns {Object} File upload utilities and state
+ */
+const useExternalDataTableFileUpload = ({
+  config,
+  validator,
+  setForm,
+}) => {
   const {
     createExternalDataTableImport,
     fetchExternalDataTableImportStatus,
-    fetchExternalDataTableImportData,
-    previewExternalDataTableImport,
-    completeExternalDataTableImport,
   } = useExternalDataTableImport();
 
   const separator = ref(CSV_SEPARATORS.comma);
   const activeImportFileId = ref(null);
-  const form = ref({});
-  const needPreview = ref(false);
-
-  const isReadyForComplete = computed(() => !Object.values(form.value).some(value => value.messages.length));
-
-  const {
-    data: records,
-    meta,
-    pending,
-    resetQuery,
-    options,
-    updateOptions,
-    fetchList,
-  } = useFetchListWithoutStoreWithOptions({
-    fetchListHandler: rest => fetchExternalDataTableImportData({
-      ...rest,
-      id: activeImportFileId.value,
-    }),
-  });
 
   const { poll: importFile } = useFilePolling({
     createHandler: createExternalDataTableImport,
@@ -55,58 +117,17 @@ export const useExternalDataTableImportFile = ({ config }) => {
     failedStatus: IMPORT_STATUSES.failed,
   });
 
-  const { poll: pollPreview } = usePolling({
-    startHandler: () => previewExternalDataTableImport({
-      id: activeImportFileId.value,
-      data: {
-        column_configs: formToExternalDataTableColumnConfigs(form.value),
-      },
-    }),
-    processHandler: async (_, resolve) => {
-      const response = await fetchExternalDataTableImportStatus({
-        id: activeImportFileId.value,
-      });
-
-      if ([IMPORT_PREVIEW_STATUSES.completed, IMPORT_PREVIEW_STATUSES.failed].includes(response.status)) {
-        return resolve(response);
-      }
-
-      return response;
-    },
-  });
-
-  const toggleOnNeedPreview = () => needPreview.value = true;
-  const toggleOffNeedPreview = () => needPreview.value = false;
-
-  const { pending: updatingPreview, handler: updatePreview } = usePendingHandler(async () => {
-    const newForm = mapValues(form.value, value => ({ ...value, messages: [], rows: [] }));
-
+  /**
+   * Handles the file selection and import process for external data table.
+   * Uploads the selected file, processes column configurations, and updates the form state.
+   *
+   * @param {File[]} [files=[]] - Array of selected files, typically from file input
+   * @param {Function} resetQuery - Function to reset query state
+   * @param {Function} fetchList - Function to fetch data list
+   */
+  const chooseFileHandler = async ([file] = [], resetQuery, fetchList) => {
     try {
-      const { error_info: errorInfo = {} } = await pollPreview();
-
-      Object.entries(errorInfo).forEach(([key, value]) => newForm[key] = {
-        ...newForm[key],
-        ...value,
-      });
-    } catch (err) {
-      console.error(err);
-    } finally {
-      await fetchList();
-
-      form.value = newForm;
-
-      if (isReadyForComplete.value) {
-        toggleOffNeedPreview();
-      }
-    }
-  });
-
-  const {
-    pending: uploading,
-    handler: chooseFile,
-  } = usePendingHandler(async ([file] = []) => {
-    try {
-      resetQuery();
+      resetQuery?.();
 
       activeImportFileId.value = null;
 
@@ -128,9 +149,9 @@ export const useExternalDataTableImportFile = ({ config }) => {
 
       activeImportFileId.value = id;
 
-      form.value = externalDataTableColumnConfigsToForm(columnConfigs, true);
+      setForm(externalDataTableColumnConfigsToForm(columnConfigs, true));
 
-      fetchList();
+      fetchList?.();
     } catch (err) {
       if (!err.file) {
         throw err;
@@ -141,8 +162,121 @@ export const useExternalDataTableImportFile = ({ config }) => {
         msg: err.file,
       });
     }
+  };
+
+  const {
+    pending: uploading,
+    handler: chooseFile,
+  } = usePendingHandler(chooseFileHandler);
+
+  return {
+    separator,
+    activeImportFileId,
+    uploading,
+    chooseFile,
+  };
+};
+
+/**
+ * Composable for managing external data table import preview functionality.
+ * Handles preview generation, polling, and error information processing.
+ *
+ * @param {Object} params - Configuration parameters
+ * @param {Object} params.activeImportFileId - Reference to active import file ID
+ * @param {Object} params.form - Form state reference
+ * @param {Function} params.clearErrors - Function to clear form errors
+ * @param {Function} params.fetchList - Function to fetch data list
+ * @param {Function} params.toggleOffNeedPreview - Function to disable preview mode
+ * @param {Object} params.hasErrors - Computed property indicating if form has errors
+ * @param {Function} params.setForm - Function to set form data
+ * @returns {Object} Preview utilities and state
+ */
+const useExternalDataTableImportPreview = ({
+  activeImportFileId,
+  form,
+  clearErrors,
+  fetchList,
+  toggleOffNeedPreview,
+  hasErrors,
+  setForm,
+}) => {
+  const {
+    fetchExternalDataTableImportStatus,
+    previewExternalDataTableImport,
+  } = useExternalDataTableImport();
+
+  const { poll: pollPreview } = usePolling({
+    startHandler: () => previewExternalDataTableImport({
+      id: activeImportFileId.value,
+      data: {
+        column_configs: formToExternalDataTableColumnConfigs(form.value),
+      },
+    }),
+    processHandler: async (_, resolve) => {
+      const response = await fetchExternalDataTableImportStatus({
+        id: activeImportFileId.value,
+      });
+
+      if ([IMPORT_PREVIEW_STATUSES.completed, IMPORT_PREVIEW_STATUSES.failed].includes(response.status)) {
+        return resolve(response);
+      }
+
+      return response;
+    },
   });
 
+  /**
+   * Updates the preview data for the imported file by polling for error information
+   * and refreshing the data list. Handles form state updates and preview mode management.
+   */
+  const updatePreview = async () => {
+    clearErrors();
+
+    const newForm = mapValues(form.value, value => ({ ...value }));
+
+    try {
+      const { error_info: errorInfo = {} } = await pollPreview();
+
+      Object.entries(errorInfo).forEach(([key, value]) => newForm[key] = {
+        ...newForm[key],
+        ...value,
+      });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      await fetchList();
+
+      setForm(newForm);
+
+      if (!hasErrors.value) {
+        toggleOffNeedPreview();
+      }
+    }
+  };
+
+  return {
+    updatePreview,
+  };
+};
+
+/**
+ * Composable for handling external data table import completion operations.
+ * Manages the final submission and completion of the import process.
+ *
+ * @param {Object} params - Configuration parameters
+ * @param {Object} params.activeImportFileId - Reference to active import file ID
+ * @param {Object} params.form - Form state reference
+ * @returns {Object} Import completion utilities
+ */
+const useExternalDataTableImportCompletion = ({ activeImportFileId, form }) => {
+  const { completeExternalDataTableImport } = useExternalDataTableImport();
+
+  /**
+   * Completes the external data table import process by submitting the final configuration
+   * and executing an optional callback after successful completion.
+   *
+   * @param {Function} [afterSubmitCallback] - Optional callback function to execute after import completion
+   */
   const completeImport = async (afterSubmitCallback) => {
     await completeExternalDataTableImport({
       id: activeImportFileId.value,
@@ -155,6 +289,92 @@ export const useExternalDataTableImportFile = ({ config }) => {
   };
 
   return {
+    completeImport,
+  };
+};
+
+/**
+ * Main composable for external data table import functionality.
+ * Orchestrates file upload, form management, preview, and completion operations.
+ *
+ * @param {Object} params - Configuration parameters
+ * @param {Object} params.config - External data table configuration
+ * @returns {Object} Complete import functionality interface
+ */
+export const useExternalDataTableImportFile = ({ config }) => {
+  const { fetchExternalDataTableImportData } = useExternalDataTableImport();
+
+  // Form state management
+  const {
+    validator,
+    form,
+    needPreview,
+    hasErrors,
+    toggleOnNeedPreview,
+    toggleOffNeedPreview,
+    clearErrors,
+    setForm,
+  } = useExternalDataTableImportForm();
+
+  // File upload functionality
+  const {
+    separator,
+    activeImportFileId,
+    uploading,
+    chooseFile: chooseFileBase,
+  } = useExternalDataTableFileUpload({
+    config,
+    form,
+    validator,
+    setForm,
+  });
+
+  // Data fetching with pagination
+  const {
+    data: records,
+    meta,
+    pending,
+    resetQuery,
+    options,
+    updateOptions,
+    fetchList,
+  } = useFetchListWithoutStoreWithOptions({
+    fetchListHandler: rest => fetchExternalDataTableImportData({
+      ...rest,
+      id: activeImportFileId.value,
+    }),
+  });
+
+  const chooseFile = files => chooseFileBase(files, resetQuery, fetchList);
+
+  const { updatePreview } = useExternalDataTableImportPreview({
+    activeImportFileId,
+    form,
+    clearErrors,
+    fetchList,
+    toggleOffNeedPreview,
+    hasErrors,
+    setForm,
+  });
+
+  const { completeImport } = useExternalDataTableImportCompletion({
+    activeImportFileId,
+    form,
+  });
+
+  /**
+   * Validates the form and triggers preview mode.
+   * Sets preview requirement and validates all form fields in the next tick.
+   */
+  const validate = () => {
+    toggleOnNeedPreview();
+
+    nextTick(() => validator.validateAll());
+  };
+
+  return {
+    validator,
+
     // State
     separator,
     activeImportFileId,
@@ -162,7 +382,7 @@ export const useExternalDataTableImportFile = ({ config }) => {
     needPreview,
 
     // Computed
-    isReadyForComplete,
+    hasErrors,
 
     // Data
     records,
@@ -171,7 +391,6 @@ export const useExternalDataTableImportFile = ({ config }) => {
     options,
 
     // Loading states
-    updatingPreview,
     uploading,
 
     // Methods
@@ -179,6 +398,6 @@ export const useExternalDataTableImportFile = ({ config }) => {
     updatePreview,
     chooseFile,
     completeImport,
-    toggleOnNeedPreview,
+    validate,
   };
 };
