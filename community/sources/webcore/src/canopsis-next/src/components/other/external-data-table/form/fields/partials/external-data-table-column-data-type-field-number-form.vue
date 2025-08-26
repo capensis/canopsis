@@ -3,6 +3,7 @@
     <v-flex v-for="chip in chips" :key="chip.key">
       <c-select-chip
         v-bind="chip.bind"
+        :disabled="disabled"
         class="px-2"
         color="grey"
         text-color="blue darken-1"
@@ -44,6 +45,10 @@ export default {
     tableSeparator: {
       type: String,
       required: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {
