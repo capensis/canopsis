@@ -104,4 +104,8 @@ type Parameters struct {
 	SkipForInstruction *bool `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
 	// DeclareTicket is used in webhook action.
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket,omitempty"`
+	// StopOnFail is used in webhook action.
+	StopOnFail *bool `json:"stop_on_fail,omitempty" bson:"stop_on_fail,omitempty"`
+	// StopOnSuccess is used in webhook action.
+	StopOnSuccess *bool `json:"stop_on_success,omitempty" bson:"stop_on_success,omitempty"`
 }
