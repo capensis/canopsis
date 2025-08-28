@@ -379,4 +379,9 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'Raisons de comportements périodiques',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'Types de comportements périodiques',
   },
+
+  conditionalTooltips: {
+    approveInstructions: 'Activé car ce rôle a les permissions d\'approuver les consignes',
+    executeManualInstructions: 'Activé car ce rôle a les permissions d\'exécuter des consignes manuelles',
+  },
 };
