@@ -43,6 +43,7 @@ const (
 	IconManualSuccessfulOtherInProgress
 	IconAutoSuccessfulManualAvailable
 	IconManualSuccessfulManualAvailable
+	IconManualNotExecuted
 )
 
 const (
@@ -303,6 +304,7 @@ type Alarm struct {
 	FailedAutoInstructions       []string               `bson:"-" json:"failed_auto_instructions,omitempty"`
 	SuccessfulManualInstructions []string               `bson:"-" json:"successful_manual_instructions,omitempty"`
 	SuccessfulAutoInstructions   []string               `bson:"-" json:"successful_auto_instructions,omitempty"`
+	KpiAssignedInstructions      []string               `bson:"kpi_assigned_instructions,omitempty" json:"-"`
 
 	Links       link.LinksByCategory `bson:"-" json:"links,omitempty"`
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
