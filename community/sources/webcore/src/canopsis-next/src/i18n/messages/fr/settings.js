@@ -47,6 +47,7 @@ export default {
   treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
+  pausePeriodicRefreshOnExpandPanel: 'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
   elementsPerPage: 'Élements par page',
   filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
