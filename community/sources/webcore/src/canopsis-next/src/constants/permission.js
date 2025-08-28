@@ -625,6 +625,58 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
 
 };
 
+/**
+ * Map of permissions that enable other permissions conditionally
+ * Key: Permission ID that triggers the condition
+ * Value: Array of objects with dependent permission ID and i18n tooltip key
+ *
+ * @example
+ * // To add a new conditional permission:
+ * [USER_PERMISSIONS.some.triggerPermission]: [
+ *   {
+ *     dependentPermission: USER_PERMISSIONS.some.dependentPermission,
+ *     tooltipKey: 'permission.conditionalTooltips.someTooltipKey',
+ *   },
+ *   // Multiple dependencies can be added for one trigger permission
+ * ],
+ */
+export const CONDITIONAL_PERMISSIONS_MAP = {
+  [USER_PERMISSIONS.technical.remediationInstructionApprove]: [
+    {
+      dependentPermission: USER_PERMISSIONS.technical.remediationInstruction,
+      tooltipKey: 'permission.conditionalTooltips.approveInstructions',
+    },
+  ],
+  [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: [
+    {
+      dependentPermission: USER_PERMISSIONS.technical.remediationinstructionStats,
+      tooltipKey: 'permission.conditionalTooltips.executeManualInstructions',
+    },
+  ],
+};
+
+/**
+ * Inverse map for efficient lookup of conditional dependencies
+ * Key: Dependent permission ID
+ * Value: Array of objects with trigger permission and tooltip key
+ *
+ * This is automatically generated from CONDITIONAL_PERMISSIONS_MAP for O(1) lookup performance
+ */
+export const INVERSE_CONDITIONAL_PERMISSIONS_MAP = Object.entries(CONDITIONAL_PERMISSIONS_MAP)
+  .reduce((acc, [triggerPermission, dependencies]) => {
+    dependencies.forEach(({ dependentPermission, tooltipKey }) => {
+      if (!acc[dependentPermission]) {
+        acc[dependentPermission] = [];
+      }
+      acc[dependentPermission].push({
+        triggerPermission,
+        tooltipKey,
+      });
+    });
+
+    return acc;
+  }, {});
+
 export const DOCUMENTATION_LINKS = {
   /**
    * Exploitation
