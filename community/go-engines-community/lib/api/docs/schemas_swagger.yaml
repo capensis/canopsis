@@ -98,6 +98,9 @@ definitions:
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
+      multiple_urls:
+        description: MultipleURLs is used in webhook action.
+        type: boolean
       name:
         description: Name is used in pbehavior action.
         maxLength: 255
@@ -5278,6 +5281,8 @@ definitions:
         $ref: '#/definitions/datetime.DurationWithUnit'
         description: Snooze and Pbehavior
       forward_author:
+        type: boolean
+      multiple_urls:
         type: boolean
       name:
         description: Pbehavior

@@ -108,4 +108,6 @@ type Parameters struct {
 	StopOnFail *bool `json:"stop_on_fail,omitempty" bson:"stop_on_fail,omitempty"`
 	// StopOnSuccess is used in webhook action.
 	StopOnSuccess *bool `json:"stop_on_success,omitempty" bson:"stop_on_success,omitempty"`
+	// MultipleURLs is used in webhook action.
+	MultipleURLs *bool `json:"multiple_urls,omitempty" bson:"multiple_urls,omitempty"`
 }
