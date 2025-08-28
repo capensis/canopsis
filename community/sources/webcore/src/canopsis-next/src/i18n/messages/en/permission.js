@@ -379,4 +379,9 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'PBehavior reasons',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'PBehavior types',
   },
+
+  conditionalTooltips: {
+    approveInstructions: 'Enabled because this role has permissions to approve instructions',
+    executeManualInstructions: 'Enabled because this role has permissions to execute manual instructions',
+  },
 };

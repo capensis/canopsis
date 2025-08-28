@@ -87,20 +87,20 @@ export default {
     const { t } = useI18n();
 
     const {
-      hasReadAccess: hasReadRemediationInstructionAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstruction);
+      hasReadAccess: hasReadInstructionApprovalAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstructionApprove);
 
     const {
-      hasReadAccess: hasReadRemediationInstructionStatsAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationinstructionStats);
+      hasReadAccess: hasReadExecuteManualInstructionsAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.business.alarmsList.actions.executeInstruction);
 
     const {
       hasReadAccess: hasReadEventFilterAccess,
     } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.eventFilter);
 
     const hasReadAccess = computed(() => (
-      hasReadRemediationInstructionAccess.value
-      || hasReadRemediationInstructionStatsAccess.value
+      hasReadInstructionApprovalAccess.value
+      || hasReadExecuteManualInstructionsAccess.value
       || hasReadEventFilterAccess.value
     ));
 
@@ -204,7 +204,7 @@ export default {
     const tabs = computed(() => {
       const result = [];
 
-      if (hasReadRemediationInstructionAccess.value) {
+      if (hasReadInstructionApprovalAccess.value) {
         result.push({
           key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove,
           label: t('notifications.tabs.instructionsToApprove'),
@@ -226,7 +226,7 @@ export default {
         });
       }
 
-      if (hasReadRemediationInstructionStatsAccess.value) {
+      if (hasReadExecuteManualInstructionsAccess.value) {
         result.push({
           key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate,
           label: t('notifications.tabs.instructionsToRate'),
@@ -299,8 +299,8 @@ export default {
       tabs,
 
       hasReadAccess,
-      hasReadRemediationInstructionAccess,
-      hasReadRemediationInstructionStatsAccess,
+      hasReadInstructionApprovalAccess,
+      hasReadExecuteManualInstructionsAccess,
       hasReadEventFilterAccess,
 
       instructionsToApprove,
