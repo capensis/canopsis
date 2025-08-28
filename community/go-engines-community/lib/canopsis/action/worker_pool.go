@@ -335,22 +335,18 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		return nil, false, err
 	}
 
-	stopOnFail, stopOnSuccess := false, false
-	if task.Action.Parameters.StopOnFail != nil {
-		stopOnFail = *task.Action.Parameters.StopOnFail
-	}
-
-	if task.Action.Parameters.StopOnSuccess != nil {
-		stopOnSuccess = *task.Action.Parameters.StopOnSuccess
-	}
-
-	history, historyResult := libwebhook.History{
+	stopOnFail := task.Action.Parameters.StopOnFail != nil && *task.Action.Parameters.StopOnFail
+	stopOnSuccess := task.Action.Parameters.StopOnSuccess != nil && *task.Action.Parameters.StopOnSuccess
+	multipleURLs := task.Action.Parameters.MultipleURLs != nil && *task.Action.Parameters.MultipleURLs
+	now := datetime.NewCpsTime()
+	history := libwebhook.History{
 		ID:            utils.NewID(),
 		Alarms:        []string{task.Alarm.ID},
 		Scenario:      task.ScenarioID,
 		Index:         int64(task.Step),
 		StopOnFail:    stopOnFail,
 		StopOnSuccess: stopOnSuccess,
+		MultipleURLs:  multipleURLs,
 		Execution:     task.ExecutionID,
 		Name:          types.RuleNameScenarioPrefix + task.ScenarioName,
 
@@ -362,12 +358,13 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 		UserID:         additionalData.User,
 		Username:       additionalData.Author,
 		Initiator:      types.InitiatorSystem,
-		CreatedAt:      datetime.NewCpsTime(),
+		CreatedAt:      now,
 		EventInitiator: additionalData.Initiator,
 		EventOutput:    additionalData.Output,
 		Trigger:        additionalData.Trigger,
-	}, libwebhook.History{}
-
+	}
+	// check if this action was already started
+	var historyResult libwebhook.History
 	err = s.webhookHistoryCollection.FindOneAndUpdate(ctx,
 		bson.M{
 			"execution": history.Execution,
