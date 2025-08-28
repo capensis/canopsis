@@ -244,6 +244,7 @@ export default {
     [USER_PERMISSIONS.technical.planningType]: 'Type de comportement périodique',
     [USER_PERMISSIONS.technical.remediationConfiguration]: 'Consignes - onglet consignes',
     [USER_PERMISSIONS.technical.remediationInstruction]: 'Consignes - onglet instructions',
+    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Consignes - approuver',
     [USER_PERMISSIONS.technical.remediationJob]: 'Consignes - onglet tâches',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
     [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
