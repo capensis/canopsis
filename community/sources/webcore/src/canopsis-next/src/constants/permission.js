@@ -187,6 +187,7 @@ export const USER_PERMISSIONS = {
     planningReason: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningReason`,
     planningExceptions: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningExceptions`,
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
+    remediationInstructionApprove: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstructionApprove`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
