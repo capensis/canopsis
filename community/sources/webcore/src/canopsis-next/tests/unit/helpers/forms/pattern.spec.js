@@ -832,7 +832,7 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `relative time` condition and custom duration for `within` operator', () => {
     const customDuration = {
-      value: Faker.datatype.number({ min: 1, max: 100 }),
+      value: 28,
       unit: TIME_UNITS.hour,
     };
     const patternRule = {
