@@ -48,7 +48,8 @@ type AxeParameters struct {
 	WebhookFailReason string `json:"webhook_fail_reason,omitempty"`
 	WebhookError      *Error `json:"webhook_error,omitempty"`
 	EmitTrigger       bool   `json:"emit_trigger,omitempty"`
-	RuleExecution     string `bson:"rule_execution,omitempty"`
+	RuleExecution     string `json:"rule_execution,omitempty"`
+	IsLastWebhook     bool   `json:"is_last_webhook,omitempty"`
 	// Snooze and Pbehavior
 	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
