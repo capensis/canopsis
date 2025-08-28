@@ -11040,9 +11040,10 @@ paths:
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
-        - name: sort_by
+        - $ref: '#/components/parameters/sort_by'
+        - name: permission
           in: query
-          description: sort query
+          description: role permission
           schema:
             type: string
       responses:
