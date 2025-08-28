@@ -8,6 +8,7 @@ import {
   createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
+  createActiveViewModule,
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
@@ -75,13 +76,14 @@ describe('service-weather', () => {
   } = createServiceModule();
   const { queryModule, updateQuery, getQueryById } = createQueryModule();
   const { alarmTagModule } = createAlarmTagModule();
-
+  const { activeViewModule } = createActiveViewModule();
   const createStore = () => createMockedStoreModules([
     authModule,
     userPreferenceModule,
     serviceModule,
     queryModule,
     alarmTagModule,
+    activeViewModule,
   ]);
 
   const store = createStore();
@@ -174,6 +176,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
     });
 
@@ -219,6 +222,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
     });
 
@@ -306,6 +310,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
       propsData: {
         widget,
@@ -358,6 +363,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
       propsData: {
         widget: {
@@ -394,6 +400,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
       propsData: {
         widget,
@@ -431,6 +438,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
       propsData: {
         widget,
@@ -460,6 +468,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
       propsData: {
         tabId: 'tab-id',
@@ -506,6 +515,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
     });
 
@@ -536,6 +546,7 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
+        activeViewModule,
       ]),
     });
 
