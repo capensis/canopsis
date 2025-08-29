@@ -55,7 +55,7 @@ import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals'
 
 import { useI18n } from '@/hooks/i18n';
 import { useSocketRoom } from '@/hooks/socket';
-import { useCRUDPermissions } from '@/hooks/auth';
+import { useCanPermission, useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useEventFilter } from '@/hooks/store/modules/event-filter';
 import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
@@ -87,20 +87,20 @@ export default {
     const { t } = useI18n();
 
     const {
-      hasReadAccess: hasReadInstructionApprovalAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstructionApprove);
+      hasAccess: hasInstructionApprovalAccess,
+    } = useCanPermission(USER_PERMISSIONS.technical.remediationInstructionApprove);
 
     const {
-      hasReadAccess: hasReadExecuteManualInstructionsAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.business.alarmsList.actions.executeInstruction);
+      hasAccess: hasExecuteManualInstructionsAccess,
+    } = useCanPermission(USER_PERMISSIONS.business.alarmsList.actions.executeInstruction);
 
     const {
       hasReadAccess: hasReadEventFilterAccess,
     } = useCRUDPermissions(USER_PERMISSIONS.technical.exploitation.eventFilter);
 
     const hasReadAccess = computed(() => (
-      hasReadInstructionApprovalAccess.value
-      || hasReadExecuteManualInstructionsAccess.value
+      hasInstructionApprovalAccess.value
+      || hasExecuteManualInstructionsAccess.value
       || hasReadEventFilterAccess.value
     ));
 
@@ -204,7 +204,7 @@ export default {
     const tabs = computed(() => {
       const result = [];
 
-      if (hasReadInstructionApprovalAccess.value) {
+      if (hasInstructionApprovalAccess.value) {
         result.push({
           key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToApprove,
           label: t('notifications.tabs.instructionsToApprove'),
@@ -226,7 +226,7 @@ export default {
         });
       }
 
-      if (hasReadExecuteManualInstructionsAccess.value) {
+      if (hasExecuteManualInstructionsAccess.value) {
         result.push({
           key: NOTIFICATIONS_PAGE_TABS_KEYS.instructionsToRate,
           label: t('notifications.tabs.instructionsToRate'),
@@ -299,8 +299,8 @@ export default {
       tabs,
 
       hasReadAccess,
-      hasReadInstructionApprovalAccess,
-      hasReadExecuteManualInstructionsAccess,
+      hasInstructionApprovalAccess,
+      hasExecuteManualInstructionsAccess,
       hasReadEventFilterAccess,
 
       instructionsToApprove,
