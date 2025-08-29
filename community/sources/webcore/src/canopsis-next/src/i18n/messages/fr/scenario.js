@@ -5,7 +5,13 @@ export default {
   key: 'Clé',
   declareTicket: 'Déclarer un ticket',
   workflow: 'Comportement si cette action ne correspond pas :',
+  workflowInCaseOfSuccess: 'Comportement en cas de succès',
+  workflowInCaseOfFailure: 'Comportement en cas d\'échec',
+  caseFailure: 'En cas d\'échec',
+  caseSuccess: 'En cas de succès',
+  actionDidNotMatch: 'L\'action ne correspond pas',
   remainingAction: 'Continuer avec les actions restantes',
+  remainingStep: 'Continuer avec les étapes restantes',
   addAction: 'Ajouter une action',
   emptyActions: 'Aucune action ajoutée pour le moment',
   output: 'Format d\'action de sortie',
@@ -47,4 +53,6 @@ export default {
   tooltips: {
     pbehaviorActionsNamePrefix: 'Le nom va être `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
   },
+  allowMultipleUrls: 'Autoriser plusieurs URLs',
+  allowMultipleUrlsTooltip: 'Si activé, le champ URL peut contenir plusieurs URLs, elles seront analysées et la requête sera envoyée à toutes.\nLa virgule doit être utilisée comme délimiteur.\nPar exemple, l\'URL peut contenir : {{ range $link := .Alarm.Value.Infos }}{{ if (eq $link.type "webhook") }}{{ $link.webhookURL }},{{ end }}{{ end }}',
 };
