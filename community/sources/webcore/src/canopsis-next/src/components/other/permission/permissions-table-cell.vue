@@ -7,14 +7,16 @@
       top
     >
       <template #activator="{ on, attrs }">
-        <v-checkbox
-          v-bind="{ ...checkbox.bind, ...attrs }"
-          :disabled="disabled || !role.editable || checkbox.disabled"
-          class="ma-0 pa-0"
-          color="primary"
-          hide-details
-          v-on="{ ...checkbox.on, ...on }"
-        />
+        <span v-bind="attrs" v-on="on">
+          <v-checkbox
+            v-bind="checkbox.bind"
+            :disabled="disabled || !role.editable || checkbox.disabled"
+            class="ma-0 pa-0"
+            color="primary"
+            hide-details
+            v-on="checkbox.on"
+          />
+        </span>
       </template>
       <span>{{ checkbox.tooltip }}</span>
     </v-tooltip>
