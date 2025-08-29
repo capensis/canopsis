@@ -8,7 +8,7 @@
       :disabled="disabled"
       :url-variables="urlVariables"
     />
-    <v-layout>
+    <v-layout v-if="withMultipleUrls">
       <v-flex
         offset-xs6
         xs6
@@ -144,9 +144,7 @@ export default {
   },
 
   setup(props, { emit }) {
-    const updateMultiple = (multiple) => {
-      emit('update:multiple', multiple);
-    };
+    const updateMultiple = multiple => emit('update:multiple', multiple);
 
     return {
       updateMultiple,
