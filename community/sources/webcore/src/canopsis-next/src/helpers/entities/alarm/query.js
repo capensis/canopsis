@@ -62,10 +62,10 @@ export const getAlarmVariablesByTemplate = template => getTemplateVariables(temp
  * @returns {string[]}
  */
 export const convertAlarmWidgetParametersToActiveColumns = ({
-  widgetColumns,
+  widgetColumns = [],
   moreInfoTemplate,
   infoPopups,
-}) => {
+} = {}) => {
   const activeColumns = [];
 
   widgetColumns.forEach(({ template, value }) => {
