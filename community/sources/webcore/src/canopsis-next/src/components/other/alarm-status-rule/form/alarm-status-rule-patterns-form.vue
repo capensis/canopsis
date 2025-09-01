@@ -12,8 +12,6 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
 
 export default {
@@ -32,7 +30,7 @@ export default {
     },
   },
   setup() {
-    const alarmAttributes = computed(() => [
+    const alarmAttributes = [
       {
         value: ALARM_PATTERN_FIELDS.creationDate,
       },
@@ -55,14 +53,14 @@ export default {
         value: ALARM_PATTERN_FIELDS.activationDate,
         options: { disabled: true },
       },
-    ]);
+    ];
 
-    const entityAttributes = computed(() => [
+    const entityAttributes = [
       {
         value: ENTITY_PATTERN_FIELDS.lastEventDate,
         options: { disabled: true },
       },
-    ]);
+    ];
 
     return {
       alarmAttributes,
