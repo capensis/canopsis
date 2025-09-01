@@ -56,7 +56,7 @@ describe('alarms-list-row-instructions-icon', () => {
     const wrapper = snapshotFactory({
       propsData: {
         alarm: {
-          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoFailed,
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoInProgress,
           running_auto_instructions: instructions,
         },
       },
@@ -84,6 +84,19 @@ describe('alarms-list-row-instructions-icon', () => {
         alarm: {
           instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.manualInProgress,
           running_manual_instructions: instructions,
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `alarms-list-row-instructions-icon` with withoutAnyExecution state', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.withoutAnyExecution,
+          assigned_instructions: instructions,
         },
       },
     });
