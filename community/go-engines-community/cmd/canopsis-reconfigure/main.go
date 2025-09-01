@@ -445,6 +445,9 @@ func parseConfig(f flags, logger zerolog.Logger) (Conf, error) {
 		return Conf{}, err
 	}
 	if f.overrideConfFile != "" {
+		if f.overrideConfFile != DefaultOverrideCfgFile {
+			logger.Info().Msgf("using configuration override file: %s", f.overrideConfFile)
+		}
 		overrideData, err := os.ReadFile(f.overrideConfFile)
 		if err == nil {
 			data, err = mergeConfigs(data, overrideData)

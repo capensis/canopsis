@@ -35,6 +35,7 @@ type store struct {
 	dbCollection            mongo.DbCollection
 	dbFailureCollection     mongo.DbCollection
 	dbExdataTableCollection mongo.DbCollection
+	transformer             common.PatternFieldsTransformer
 	authorProvider          author.Provider
 	defaultSearchByFields   []string
 	defaultSortBy           string
@@ -43,12 +44,14 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 ) Store {
 	return &store{
 		dbClient:                dbClient,
 		dbCollection:            dbClient.Collection(mongo.EventFilterRuleCollection),
 		dbFailureCollection:     dbClient.Collection(mongo.EventFilterFailureCollection),
 		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
+		transformer:             transformer,
 		authorProvider:          authorProvider,
 		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
 		defaultSortBy:           "created",
@@ -71,9 +74,16 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	model.Updated = &now
 
 	var response *Response
+
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.dbCollection.InsertOne(ctx, model)
+
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityPatternFieldsRequest, &model)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			return err
 		}
@@ -168,7 +178,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	model.Created = nil
 	model.Updated = &updated
 
-	update := bson.M{"$set": model}
+	update := make(bson.M)
 	unset := bson.M{
 		"events_count":          "",
 		"unread_failures_count": "",
@@ -190,7 +200,15 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	var response *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.dbCollection.UpdateOne(
+
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityPatternFieldsRequest, &model)
+		if err != nil {
+			return err
+		}
+
+		update["$set"] = model
+
+		_, err = s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": model.ID},
 			update,
@@ -331,22 +349,21 @@ func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (
 	}
 
 	return eventfilter.Rule{
-		Author:              r.Author,
-		Description:         r.Description,
-		Type:                r.Type,
-		Priority:            r.Priority,
-		Enabled:             r.Enabled,
-		Config:              r.Config,
-		ExternalData:        externalData,
-		EventPattern:        r.EventPattern,
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
-		RRule:               r.RRule,
-		Start:               r.Start,
-		Stop:                r.Stop,
-		ResolvedStart:       r.Start,
-		ResolvedStop:        r.Stop,
-		Exdates:             exdates,
-		Exceptions:          r.Exceptions,
+		Author:        r.Author,
+		Description:   r.Description,
+		Type:          r.Type,
+		Priority:      r.Priority,
+		Enabled:       r.Enabled,
+		Config:        r.Config,
+		ExternalData:  externalData,
+		EventPattern:  r.EventPattern,
+		RRule:         r.RRule,
+		Start:         r.Start,
+		Stop:          r.Stop,
+		ResolvedStart: r.Start,
+		ResolvedStop:  r.Stop,
+		Exdates:       exdates,
+		Exceptions:    r.Exceptions,
 	}, nil
 }
 
@@ -362,4 +379,16 @@ func (s *store) getResponseLookups() []bson.M {
 	})
 
 	return pipeline
+}
+
+func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r common.EntityPatternFieldsRequest, model *eventfilter.Rule) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+	if err != nil {
+		return err
+	}
+
+	model.Aliases = transformedEntityPatternRequest.Aliases
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModel()
+
+	return nil
 }
