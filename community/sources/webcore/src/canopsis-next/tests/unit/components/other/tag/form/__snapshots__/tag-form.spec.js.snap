@@ -12,7 +12,7 @@ exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
     required=""
   />
   <c-color-picker-field-stub
-    value="#2b3e4f"
+    value="#2B3E4F"
   />
   <!---->
 </div>
