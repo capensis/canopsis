@@ -146,6 +146,7 @@ export default {
     resetChangeColumns: 'Reset columns ordering/resizing',
     startChangeColumns: 'Start change columns ordering/resizing',
     finishChangeColumns: 'Finish change columns ordering/resizing',
+    withoutAnyExecution: 'Manual instruction wasn\'t executed',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',
