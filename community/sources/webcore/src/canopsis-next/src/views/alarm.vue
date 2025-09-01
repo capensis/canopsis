@@ -12,85 +12,83 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
-import { useRoute } from 'vue-router/composables';
-
 import { WIDGET_TYPES } from '@/constants';
 
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
 
-import { useAlarm } from '@/hooks/store/modules/alarm';
-import { useWidget } from '@/hooks/store/modules/widget';
-import { usePopups } from '@/hooks/popups';
-import { useI18n } from '@/hooks/i18n';
-import { usePendingHandler } from '@/hooks/query/pending';
+import { authMixin } from '@/mixins/auth';
+import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
+import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
 
 export default {
   components: { AlarmsListTable },
+  mixins: [
+    authMixin,
+    entitiesAlarmMixin,
+    entitiesWidgetMixin,
+  ],
   props: {
     id: {
       type: [String, Number],
       required: true,
     },
   },
-  setup(props) {
-    const widget = ref(generatePreparedDefaultAlarmListWidget());
+  data() {
+    return {
+      pending: false,
+      widget: generatePreparedDefaultAlarmListWidget(),
+    };
+  },
+  computed: {
+    widgetId() {
+      return this.$route.query.widgetId;
+    },
 
-    const { t } = useI18n();
-    const popups = usePopups();
-    const { getAlarmItem, fetchAlarmItem } = useAlarm();
-    const { fetchWidgetWithoutStore } = useWidget();
-    const route = useRoute();
-
-    const widgetId = computed(() => route.query.widgetId);
-
-    const alarmItems = computed(() => {
-      const alarm = getAlarmItem.value(props.id);
+    alarmItems() {
+      const alarm = this.getAlarmItem(this.id);
 
       return alarm ? [alarm] : [];
-    });
+    },
 
-    const columns = computed(() => widget.value.parameters.widgetColumns.map(column => ({
-      ...column,
-      sortable: false,
-    })));
+    columns() {
+      return this.widget.parameters.widgetColumns.map(column => ({
+        ...column,
 
-    /**
-     * Fetches alarm data and optional widget configuration for the alarm view.
-     */
-    const fetchAlarmAndWidgetHandler = async () => {
+        sortable: false,
+      }));
+    },
+  },
+
+  async mounted() {
+    this.fetchAlarmAndWidget();
+  },
+  methods: {
+    async fetchAlarmAndWidget() {
       try {
-        const requests = [fetchAlarmItem({ id: props.id })];
+        this.pending = true;
 
-        if (widgetId.value) {
-          requests.push(fetchWidgetWithoutStore({ id: widgetId.value }));
+        const requests = [this.fetchAlarmItem({ id: this.id })];
+
+        if (this.widgetId) {
+          requests.push(this.fetchWidgetWithoutStore({ id: this.widgetId }));
         }
 
-        const [, widgetResponse] = await Promise.all(requests);
+        const [, widget] = await Promise.all(requests);
 
-        if (widgetResponse?.type === WIDGET_TYPES.alarmList) {
-          widget.value = prepareAlarmListWidget(widgetResponse);
+        if (widget?.type === WIDGET_TYPES.alarmList) {
+          this.widget = prepareAlarmListWidget(widget);
         }
       } catch (err) {
         console.error(err);
 
-        popups.error({ text: err.description || t('errors.default') });
+        this.$popups.error({ text: err.description || this.$t('errors.default') });
+      } finally {
+        this.pending = false;
       }
-    };
-
-    const { pending, handler: fetchAlarmAndWidget } = usePendingHandler(fetchAlarmAndWidgetHandler);
-
-    onMounted(fetchAlarmAndWidget);
-
-    return {
-      pending,
-      widget,
-      alarmItems,
-      columns,
-    };
+    },
   },
 };
 </script>
