@@ -290,7 +290,7 @@ func (mr *MockDbCollectionMockRecorder) Indexes() *gomock.Call {
 }
 
 // InsertMany mocks base method.
-func (m *MockDbCollection) InsertMany(ctx context.Context, documents []any, opts ...options.Lister[options.InsertManyOptions]) ([]any, error) {
+func (m *MockDbCollection) InsertMany(ctx context.Context, documents any, opts ...options.Lister[options.InsertManyOptions]) ([]any, error) {
 	m.ctrl.T.Helper()
 	varargs := []any{ctx, documents}
 	for _, a := range opts {

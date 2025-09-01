@@ -187,7 +187,7 @@ describe('service-weather', () => {
 
     selectEntityCategoryField(wrapper).triggerCustomEvent('input', category);
 
-    expect(updateUserPreference).toBeCalledWith(
+    expect(updateUserPreference).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: {
@@ -198,7 +198,7 @@ describe('service-weather', () => {
       },
     );
 
-    expect(updateQuery).toBeCalledWith(
+    expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
       {
         id: widget._id,
@@ -318,7 +318,7 @@ describe('service-weather', () => {
     alarmListWidget.parameters.serviceDependenciesColumns = widget.parameters.serviceDependenciesColumns;
     alarmListWidget.parameters.widgetColumns = widget.parameters.alarmsList.widgetColumns;
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.alarmsList,
         config: {
@@ -337,7 +337,7 @@ describe('service-weather', () => {
 
     await modalArguments.config.fetchList(params);
 
-    expect(fetchServiceAlarmsWithoutStore).toBeCalledWith(
+    expect(fetchServiceAlarmsWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       { id: service._id, params },
     );
@@ -374,7 +374,7 @@ describe('service-weather', () => {
 
     await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.alarmsList,
         config: expect.any(Object),
@@ -404,7 +404,7 @@ describe('service-weather', () => {
 
     await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:root-cause');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.entitiesRootCauseDiagram,
         config: {
@@ -441,11 +441,11 @@ describe('service-weather', () => {
 
     await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.serviceEntities,
         config: {
-          color: 'var(--v-state-pause-base)',
+          titleClass: 'state-pause',
           service,
           widgetParameters: widget.parameters,
         },
