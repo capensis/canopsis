@@ -32,6 +32,9 @@ describe('convertAlarmUserPreferenceToQuery', () => {
     const result = convertAlarmUserPreferenceToQuery(userPreference);
 
     expect(result).toEqual({
+      category: undefined,
+      correlation: false,
+      filter: undefined,
       only_bookmarks: false,
     });
   });
@@ -64,7 +67,6 @@ describe('convertAlarmWidgetToQuery', () => {
       sortBy: [],
       sortDesc: [],
       lockedFilter: widget.parameters.mainFilter,
-      correlation: true,
     });
   });
 
@@ -74,6 +76,7 @@ describe('convertAlarmWidgetToQuery', () => {
     };
 
     const result = convertAlarmWidgetToQuery(widget);
+
     expect(result).toEqual({
       opened: ALARMS_OPENED_VALUES.opened,
       itemsPerPage: PAGINATION_LIMIT,
