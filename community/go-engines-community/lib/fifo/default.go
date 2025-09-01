@@ -157,7 +157,7 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 		logger,
 	)
 
-	var prometheusMetrics *libprometheus.Metrics
+	prometheusMetrics := libprometheus.NewFifoMetrics()
 
 	mainMessageProcessor := NewMessageProcessor(
 		eventfilterService,
@@ -245,8 +245,6 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 	})
 
 	if options.EnablePrometheusExporter {
-		prometheusMetrics = libprometheus.NewFifoMetrics()
-
 		engine.AddRoutine(func(ctx context.Context) error {
 			return libprometheus.RunPrometheusExporter(ctx, options.PrometheusExporterPort, logger, prometheusMetrics)
 		})
