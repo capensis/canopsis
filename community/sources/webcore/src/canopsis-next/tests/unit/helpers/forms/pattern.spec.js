@@ -932,7 +932,7 @@ describe('pattern form converters', () => {
       unit: TIME_UNITS.hour,
     };
     const customToDuration = {
-      value: Faker.datatype.number({ min: 1, max: 100 }),
+      value: 29,
       unit: TIME_UNITS.day,
     };
     const patternRule = {
