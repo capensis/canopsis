@@ -180,6 +180,12 @@ func HandlerWithGrouping[T any](
 					continue
 				}
 
+				badRequestError := BadRequestError{}
+				if errors.As(err, &badRequestError) {
+					response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
+					continue
+				}
+
 				logger.Err(err).Msg("cannot process bulk item")
 				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusInternalServerError, rawObject, arena.NewString(common.InternalServerErrorResponse.Error)))
 			}
