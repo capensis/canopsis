@@ -127,6 +127,7 @@ describe('service-weather-item', () => {
       propsData: {
         service: {
           _id: 'service-id',
+          impact_state: 3,
         },
         priorityEnabled: true,
         countersSettings: {

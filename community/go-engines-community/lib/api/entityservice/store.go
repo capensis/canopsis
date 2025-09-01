@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -48,6 +49,7 @@ type store struct {
 	entityCounters            mongo.DbCollection
 	userDbCollection          mongo.DbCollection
 	stateSettingDbCollection  mongo.DbCollection
+	transformer               common.PatternFieldsTransformer
 	linkGenerator             link.Generator
 	enableSameServiceNames    bool
 	authorProvider            author.Provider
@@ -59,6 +61,7 @@ func NewStore(
 	linkGenerator link.Generator,
 	enableSameServiceNames bool,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -69,6 +72,7 @@ func NewStore(
 		entityCounters:            db.Collection(mongo.EntityCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
 		stateSettingDbCollection:  db.Collection(mongo.StateSettingsMongoCollection),
+		transformer:               transformer,
 		linkGenerator:             linkGenerator,
 		enableSameServiceNames:    enableSameServiceNames,
 		authorProvider:            authorProvider,
@@ -309,8 +313,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			Created:       now,
 			Updated:       &now,
 		},
-		EntityPatternFields: request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)),
-		OutputTemplate:      request.OutputTemplate,
+		OutputTemplate: request.OutputTemplate,
 	}
 	if request.Coordinates != nil {
 		service.Coordinates = *request.Coordinates
@@ -320,6 +323,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
 		if !s.enableSameServiceNames {
 			err := s.dbCollection.FindOne(ctx, bson.M{
 				"name":         service.Name,
@@ -335,7 +339,15 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			}
 		}
 
-		_, err := s.dbCollection.InsertOne(ctx, service)
+		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityPatternFieldsRequest)
+		if err != nil {
+			return err
+		}
+
+		service.Aliases = aliases
+		service.EntityPatternFields = transformedEntityPattern
+
+		_, err = s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
 			return err
 		}
@@ -356,7 +368,6 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 }
 
 func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error) {
-	pattern := request.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
 	set := bson.M{
 		"name":            request.Name,
 		"output_template": request.OutputTemplate,
@@ -365,13 +376,8 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		"enabled":         request.Enabled,
 		"infos":           transformInfos(request.EditRequest),
 		"sli_avail_state": request.SliAvailState,
-
-		"entity_pattern":                 pattern.EntityPattern,
-		"corporate_entity_pattern":       pattern.CorporateEntityPattern,
-		"corporate_entity_pattern_title": pattern.CorporateEntityPatternTitle,
-
-		"author":  request.Author,
-		"updated": datetime.NewCpsTime(),
+		"author":          request.Author,
+		"updated":         datetime.NewCpsTime(),
 	}
 	unset := bson.M{}
 
@@ -388,10 +394,12 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 
 	var service *Response
 	serviceChanges := ServiceChanges{}
+
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		service = nil
 		serviceChanges = ServiceChanges{}
-		oldValues := &entityservice.EntityService{}
+		oldValues := entityservice.EntityService{}
+
 		if !s.enableSameServiceNames {
 			err := s.dbCollection.FindOne(ctx, bson.M{
 				"_id":          bson.M{"$ne": request.ID},
@@ -408,7 +416,17 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			}
 		}
 
-		err := s.dbCollection.FindOneAndUpdate(
+		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityPatternFieldsRequest)
+		if err != nil {
+			return err
+		}
+
+		set["aliases"] = aliases
+		set["entity_pattern"] = transformedEntityPattern.EntityPattern
+		set["corporate_entity_pattern"] = transformedEntityPattern.CorporateEntityPattern
+		set["corporate_entity_pattern_title"] = transformedEntityPattern.CorporateEntityPatternTitle
+
+		err = s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{
 				"_id":  request.ID,
@@ -418,7 +436,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			options.FindOneAndUpdate().
 				SetProjection(bson.M{"enabled": 1, "entity_pattern": 1}).
 				SetReturnDocument(options.Before),
-		).Decode(oldValues)
+		).Decode(&oldValues)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
@@ -516,6 +534,17 @@ func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	}
 
 	return user, errors.New("user not found")
+}
+
+func (s *store) transformEntityPatternRequest(ctx context.Context, r common.EntityPatternFieldsRequest) (savedpattern.EntityPatternFields, []string, error) {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+	if err != nil {
+		return savedpattern.EntityPatternFields{}, nil, err
+	}
+
+	transformedPattern := transformedEntityPatternRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
+
+	return transformedPattern, transformedEntityPatternRequest.Aliases, nil
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {
