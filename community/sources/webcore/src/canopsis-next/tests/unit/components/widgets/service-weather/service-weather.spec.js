@@ -52,6 +52,7 @@ describe('service-weather', () => {
     sortDesc: [],
     sortBy: [],
     itemsPerPage: DEFAULT_WEATHER_LIMIT,
+    with_tag_colors: true,
     hide_grey: false,
   };
 
