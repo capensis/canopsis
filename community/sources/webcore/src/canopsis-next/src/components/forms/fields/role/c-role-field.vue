@@ -20,12 +20,13 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { ref, computed, watch, onMounted } from 'vue';
 import { isArray, isObject } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
-const { mapActions } = createNamespacedHelpers('role');
+import { usePendingHandler } from '@/hooks/query/pending';
+import { useRole } from '@/hooks/store/modules/role';
 
 export default {
   inject: ['$validator'],
@@ -71,72 +72,64 @@ export default {
       required: false,
     },
   },
-  data() {
-    return {
-      pending: false,
-      items: [],
-    };
-  },
-  computed: {
-    component() {
-      if (this.autocomplete) {
-        return 'v-autocomplete';
-      }
+  setup(props) {
+    const items = ref([]);
 
-      return 'v-select';
-    },
+    const rules = computed(() => ({
+      required: props.required,
+    }));
 
-    availableRoles() {
-      if (!this.items.length) {
-        if (isArray(this.value)) {
-          return this.value;
+    const component = computed(() => (props.autocomplete ? 'v-autocomplete' : 'v-select'));
+
+    const availableRoles = computed(() => {
+      if (!items.value.length) {
+        if (isArray(props.value)) {
+          return props.value;
         }
 
-        if (isObject(this.value)) {
-          return [this.value];
+        if (isObject(props.value)) {
+          return [props.value];
         }
       }
 
-      return this.items;
-    },
+      return items.value;
+    });
 
-    rules() {
-      return {
-        required: this.required,
-      };
-    },
-  },
-  watch: {
-    disabled(value) {
-      if (!value && !this.items.length) {
-        this.fetchList();
-      }
-    },
-  },
-  mounted() {
-    if (!this.disabled) {
-      this.fetchList();
-    }
-  },
-  methods: {
-    ...mapActions({
-      fetchRolesListWithoutStore: 'fetchListWithoutStore',
-    }),
+    const { fetchRolesListWithoutStore } = useRole();
 
-    async fetchList() {
-      this.pending = true;
-
+    const { pending, handler: fetchList } = usePendingHandler(async () => {
       const params = { limit: MAX_LIMIT };
 
-      if (this.permission) {
-        params.permission = this.permission;
+      if (props.permission) {
+        params.permission = props.permission;
       }
 
-      const { data: items } = await this.fetchRolesListWithoutStore({ params });
+      const { data } = await fetchRolesListWithoutStore({ params });
 
-      this.items = items;
-      this.pending = false;
-    },
+      items.value = data;
+    });
+
+    watch(() => props.disabled, (newValue) => {
+      if (!newValue && !items.value.length) {
+        fetchList();
+      }
+    });
+
+    onMounted(() => {
+      if (!props.disabled) {
+        fetchList();
+      }
+    });
+
+    return {
+      pending,
+      items,
+      component,
+      availableRoles,
+      rules,
+
+      fetchList,
+    };
   },
 };
 </script>

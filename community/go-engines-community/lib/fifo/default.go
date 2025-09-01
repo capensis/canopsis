@@ -2,6 +2,7 @@ package fifo
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"time"
@@ -29,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
 
@@ -79,11 +81,7 @@ func ParseOptions() (Options, []string) {
 	return opts, libflag.FindDeprecatedFlags("eventsStatsFlushInterval", "consumeQueue", "publishQueue")
 }
 
-func Default(
-	ctx context.Context,
-	options Options,
-	logger zerolog.Logger,
-) (libengine.Engine, Services) {
+func Default(ctx context.Context, options Options, logger zerolog.Logger) (libengine.Engine, Services) {
 	var m depmake.DependencyMaker
 	s := Services{}
 
@@ -159,8 +157,30 @@ func Default(
 		logger,
 	)
 
+	var prometheusMetrics *libprometheus.Metrics
+
+	mainMessageProcessor := NewMessageProcessor(
+		eventfilterService,
+		scheduler,
+		metricsSender,
+		json.NewDecoder(),
+		logger,
+		techMetricsSender,
+		prometheusMetrics,
+		options.PrintEventOnError,
+	)
+
+	lockDuration := max(options.PeriodicalWaitTime, lockMinDuration) + lockBackoff*time.Duration(lockRetries)
+
 	engine := libengine.New(
-		func(ctx context.Context) error {
+		func(ctx context.Context) (err error) {
+			err = mainMessageProcessor.ObtainExclusive(ctx, redis.NewLockClient(engineLockRedisClient), lockDuration)
+			if err != nil {
+				if !errors.Is(err, redislock.ErrNotObtained) {
+					logger.Err(err).Msg("cannot obtain lock for engine initialization, exiting")
+				}
+				return err
+			}
 			runInfoPeriodicalWorker.Work(ctx)
 			queueMetricsPeriodicalWorker.Work(ctx)
 
@@ -186,7 +206,16 @@ func Default(
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
+			if err = mainMessageProcessor.ReleaseExclusive(ctx); err != nil && !errors.Is(err, redislock.ErrLockNotHeld) {
+				logger.Warn().Err(err).Msg("failed to release exclusive processor lock")
+			}
+
 			err = lockRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = engineLockRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -211,7 +240,9 @@ func Default(
 		return nil
 	})
 
-	var prometheusMetrics *libprometheus.Metrics
+	engine.AddRoutine(func(ctx context.Context) error {
+		return mainMessageProcessor.RefreshExclusiveProcessor(ctx, options.PeriodicalWaitTime, lockDuration)
+	})
 
 	if options.EnablePrometheusExporter {
 		prometheusMetrics = libprometheus.NewFifoMetrics()
@@ -219,19 +250,6 @@ func Default(
 		engine.AddRoutine(func(ctx context.Context) error {
 			return libprometheus.RunPrometheusExporter(ctx, options.PrometheusExporterPort, logger, prometheusMetrics)
 		})
-	}
-
-	mainMessageProcessor := &messageProcessor{
-		FeaturePrintEventOnError: options.PrintEventOnError,
-
-		EventFilterService: eventfilterService,
-		TechMetricsSender:  techMetricsSender,
-		Scheduler:          scheduler,
-		MetricsSender:      metricsSender,
-		Decoder:            json.NewDecoder(),
-		Logger:             logger,
-
-		prometheusMetrics: prometheusMetrics,
 	}
 
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
