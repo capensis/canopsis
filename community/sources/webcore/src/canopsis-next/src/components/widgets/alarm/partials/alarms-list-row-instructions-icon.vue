@@ -23,6 +23,7 @@ import {
   isInstructionExecutionIconInProgress,
   isInstructionExecutionIconSuccess,
   isInstructionExecutionManual,
+  hasInstructionWithoutAnyExecution,
 } from '@/helpers/entities/remediation/instruction-execution/form';
 
 import { useI18n } from '@/hooks/i18n';
@@ -35,7 +36,7 @@ export default {
     },
   },
   setup(props) {
-    const { tc } = useI18n();
+    const { t, tc } = useI18n();
 
     const alarmInstructionExecutionIcon = computed(() => (
       props.alarm.instruction_execution_icon ?? INSTRUCTION_EXECUTION_ICONS.manualAvailable
@@ -57,12 +58,24 @@ export default {
       isInstructionExecutionManual(alarmInstructionExecutionIcon.value)
     ));
 
-    const iconName = computed(() => (
-      isManualInstructionIcon.value ? '$vuetify.icons.manual_instruction' : 'assignment'
+    const withoutAnyExecution = computed(() => (
+      hasInstructionWithoutAnyExecution(alarmInstructionExecutionIcon.value)
     ));
+
+    const iconName = computed(() => {
+      if (withoutAnyExecution.value) {
+        return '$vuetify.icons.assignment_warning';
+      }
+
+      return isManualInstructionIcon.value ? '$vuetify.icons.manual_instruction' : 'assignment';
+    });
 
     const iconClass = computed(() => {
       const classNames = [];
+
+      if (withoutAnyExecution.value) {
+        classNames.push('instruction-icon--warning');
+      }
 
       if (hasRunningInstruction.value) {
         classNames.push('blinking', 'instruction-icon--dotted');
@@ -110,7 +123,11 @@ export default {
       }, []);
 
       if (assignedInstructions?.length) {
-        tooltips.push(tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
+        tooltips.push(
+          withoutAnyExecution.value
+            ? t('alarm.tooltips.withoutAnyExecution')
+            : tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length),
+        );
       }
 
       return `<span class="pre-wrap">${tooltips.join('\n')}</span>`;
@@ -154,6 +171,10 @@ export default {
   &--with-manual-available {
     border-style: dashed;
     border-color: currentColor;
+  }
+
+  &--warning svg {
+    color: var(--v-warning-base);
   }
 }
 </style>

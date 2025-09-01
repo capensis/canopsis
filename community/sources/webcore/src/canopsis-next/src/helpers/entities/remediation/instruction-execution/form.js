@@ -1,6 +1,14 @@
 import { INSTRUCTION_EXECUTION_ICONS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
 
 /**
+ * Check type is instruction without any execution
+ *
+ * @param {number} icon
+ * @returns {boolean}
+ */
+export const hasInstructionWithoutAnyExecution = icon => icon === INSTRUCTION_EXECUTION_ICONS.withoutAnyExecution;
+
+/**
  * Check type is manual in progress
  *
  * @param {number} icon
@@ -88,7 +96,7 @@ export const isInstructionExecutionManual = icon => [
  */
 export const isInstructionExecutionCompleted = ({
   status,
-}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed;
+} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed;
 
 /**
  * Check instruction execution status is failed
