@@ -12,9 +12,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
 export default {
   model: {
@@ -33,12 +31,16 @@ export default {
   },
 
   setup() {
-    const alarmAttributes = computed(() => [
+    const intervalOptions = { intervalRanges: [QUICK_RANGES.custom] };
+
+    const alarmAttributes = [
       {
         value: ALARM_PATTERN_FIELDS.creationDate,
+        options: intervalOptions,
       },
       {
         value: ALARM_PATTERN_FIELDS.ackAt,
+        options: intervalOptions,
       },
       {
         value: ALARM_PATTERN_FIELDS.lastUpdateDate,
@@ -56,14 +58,12 @@ export default {
         value: ALARM_PATTERN_FIELDS.activationDate,
         options: { disabled: true },
       },
-    ]);
+    ];
 
-    const entityAttributes = computed(() => [
-      {
-        value: ENTITY_PATTERN_FIELDS.lastEventDate,
-        options: { disabled: true },
-      },
-    ]);
+    const entityAttributes = [{
+      value: ENTITY_PATTERN_FIELDS.lastEventDate,
+      options: { disabled: true },
+    }];
 
     return {
       alarmAttributes,
