@@ -1,11 +1,13 @@
 <template>
   <v-menu
     v-if="hasExecutions"
+    v-model="isMenuOpen"
     ref="menuEl"
     :close-on-content-click="false"
     content-class="remediation-executions-menu__content"
     min-width="400"
     offset-overflow
+    ignore-click-outside
     top
     offset-y
   >
@@ -29,6 +31,7 @@
       :executions="executions"
       class="fill-height"
       @refresh="fetchList"
+      @minimize="minimizeMenu"
     />
   </v-menu>
 </template>
@@ -52,6 +55,7 @@ export default {
   },
   setup() {
     const menuEl = ref(null);
+    const isMenuOpen = ref(false);
     const executions = ref([]);
 
     const { fetchExecutionsStatusesWithoutStore } = useRemediationInstructionExecution();
@@ -66,17 +70,24 @@ export default {
 
     const hasExecutions = computed(() => executions.value.length > 0);
 
+    /**
+     * Closes the executions menu by setting isMenuOpen to false
+     */
+    const minimizeMenu = () => isMenuOpen.value = false;
+
     useSocketRoom(SOCKET_ROOMS.executions, (data = []) => executions.value = data);
 
     onMounted(fetchList);
 
     return {
       menuEl,
+      isMenuOpen,
       executions,
       pending,
       badgeValue,
       hasExecutions,
       fetchList,
+      minimizeMenu,
     };
   },
 };

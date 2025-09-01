@@ -1,9 +1,20 @@
 <template>
   <v-card>
     <v-card-title class="primary white--text">
-      <span class="text-h6 font-weight-regular">
-        {{ $t('remediation.instruction.manualInstructionsProgress') }}
-      </span>
+      <v-layout align-center justify-space-between>
+        <span class="text-h6 font-weight-regular">
+          {{ $t('remediation.instruction.manualInstructionsProgress') }}
+        </span>
+        <v-btn
+          icon
+          small
+          @click="minimize"
+        >
+          <v-icon color="white">
+            minimize
+          </v-icon>
+        </v-btn>
+      </v-layout>
     </v-card-title>
     <v-card-text>
       <v-tabs v-model="activeTab" fixed-tabs>
@@ -74,13 +85,22 @@ export default {
 
     const types = computed(() => [REMEDIATION_INSTRUCTION_TYPES.manual, REMEDIATION_INSTRUCTION_TYPES.simpleManual]);
 
+    /**
+     * Emits refresh event to parent component
+     */
     const refresh = () => emit('refresh');
+
+    /**
+     * Emits minimize event to parent component to minimize the modal
+     */
+    const minimize = () => emit('minimize');
 
     return {
       activeTab,
       types,
       executionsByType,
       refresh,
+      minimize,
     };
   },
 };
