@@ -19,6 +19,14 @@ func TestGetTriggers(t *testing.T) {
 				Type:        types.AlarmChangeTypeNone,
 				EventsCount: 0,
 			},
+			expectedTriggers: []string{},
+		},
+		{
+			name: "none type, > 0 events",
+			alarmChange: types.AlarmChange{
+				Type:        types.AlarmChangeTypeNone,
+				EventsCount: 1,
+			},
 			expectedTriggers: []string{"eventscount"},
 		},
 		{
@@ -34,6 +42,14 @@ func TestGetTriggers(t *testing.T) {
 			alarmChange: types.AlarmChange{
 				Type:        types.AlarmChangeTypeStateIncrease,
 				EventsCount: 0,
+			},
+			expectedTriggers: []string{"stateinc"},
+		},
+		{
+			name: "state increase, > 0 events",
+			alarmChange: types.AlarmChange{
+				Type:        types.AlarmChangeTypeStateIncrease,
+				EventsCount: 1,
 			},
 			expectedTriggers: []string{"stateinc", "eventscount"},
 		},
