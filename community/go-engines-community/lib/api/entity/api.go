@@ -132,6 +132,7 @@ func (a *api) StartExport(c *gin.Context) {
 		Parameters:     string(params),
 		Fields:         r.Fields,
 		Separator:      separator,
+		TimeFormat:     r.TimeFormat,
 		FilenamePrefix: "entities",
 		UserID:         userID,
 	})
