@@ -3,7 +3,7 @@
     class="theme-form"
     column
   >
-    <c-name-field v-field="form.name" autofocus />
+    <c-name-field v-field="form.name" autofocus required />
     <c-information-block :title="$t('theme.main.title')">
       <v-layout
         class="theme-form__colors"
@@ -22,41 +22,47 @@
         <theme-color-picker-field
           v-field="form.colors.main.accent"
           :label="$t('theme.main.accent')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.error"
           :label="$t('theme.main.error')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.info"
-          :label="$t('theme.main.info')"
-          :help-text="$t('theme.main.secondaryHelpText')"
-        />
-        <theme-color-picker-field
-          v-field="form.colors.main.success"
-          :label="$t('theme.main.success')"
-          :help-text="$t('theme.main.secondaryHelpText')"
+          v-field="form.colors.main.error_background"
+          :label="$t('theme.main.errorBackground')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.warning"
           :label="$t('theme.main.warning')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
-          v-field="form.colors.main.background"
-          :label="$t('theme.main.background')"
+          v-field="form.colors.main.warning_background"
+          :label="$t('theme.main.warningBackground')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.success"
+          :label="$t('theme.main.success')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.success_background"
+          :label="$t('theme.main.successBackground')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.info"
+          :label="$t('theme.main.info')"
+        />
+        <theme-color-picker-field
+          v-field="form.colors.main.info_background"
+          :label="$t('theme.main.infoBackground')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.active_color"
           :label="$t('theme.main.activeColor')"
           :help-text="$t('theme.main.activeColorHelpText')"
         />
-        <theme-colors-preview
-          :background-color="form.colors.main.background"
-          :color="form.colors.main.active_color"
-          :font-size="fontSize"
+        <theme-color-picker-field
+          v-field="form.colors.main.background"
+          :label="$t('theme.main.background')"
         />
       </v-layout>
     </c-information-block>
@@ -76,31 +82,23 @@
         <theme-color-picker-field
           v-field="form.colors.table.background"
           :label="$t('theme.table.background')"
-          :help-text="$t('theme.table.backgroundHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.table.row_color"
           :label="$t('theme.table.rowColor')"
-          :help-text="$t('theme.table.rowColorHelpText')"
         />
         <theme-enabled-color-picker-field
           v-field="form.colors.table.shift_row_color"
           :enable-label="$t('theme.table.shiftRowEnable')"
           :enable-help-text="$t('theme.table.shiftRowEnableHelpText')"
           :label="$t('theme.table.shiftRowColor')"
-          :help-text="$t('theme.table.shiftRowColorHelpText')"
         />
         <theme-enabled-color-picker-field
           v-field="form.colors.table.hover_row_color"
           :enable-label="$t('theme.table.hoverRowEnable')"
-          :enable-help-text="$t('theme.table.hoverRowEnableHelpText')"
           :label="$t('theme.table.hoverRowColor')"
         />
-        <theme-colors-preview
-          :background-color="form.colors.table.background"
-          :color="form.colors.main.active_color"
-          :font-size="fontSize"
-        />
+        <theme-colors-preview-list :items="tableColors" />
       </v-layout>
     </c-information-block>
     <c-information-block :title="$t('theme.state.title')">
@@ -111,41 +109,49 @@
         <theme-color-picker-field
           v-field="form.colors.state.ok"
           :label="$t('theme.state.ok')"
-          :help-text="$t('theme.state.okHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.state.minor"
           :label="$t('theme.state.minor')"
-          :help-text="$t('theme.state.minorHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.state.major"
           :label="$t('theme.state.major')"
-          :help-text="$t('theme.state.majorHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.state.critical"
           :label="$t('theme.state.critical')"
-          :help-text="$t('theme.state.criticalHelpText')"
         />
+        <theme-colors-preview-list :items="stateColors" />
       </v-layout>
     </c-information-block>
   </v-layout>
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { THEME_FONT_PIXEL_SIZES } from '@/constants';
+
+import { getMostReadableTextColor } from '@/helpers/color';
+
+import { useI18n } from '@/hooks/i18n';
+
 import ThemeEnabledColorPickerField from '@/components/other/theme/form/fields/theme-enabled-color-picker-field.vue';
 import ThemeColorFontSizeField from '@/components/other/theme/form/fields/theme-color-font-size-field.vue';
 
-import { THEME_FONT_PIXEL_SIZES } from '@/constants/theme';
-
-import ThemeColorsPreview from '../partials/theme-colors-preview.vue';
+import ThemeColorsPreviewList from '../partials/theme-colors-preview-list.vue';
 
 import ThemeColorPickerField from './fields/theme-color-picker-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ThemeColorFontSizeField, ThemeColorsPreview, ThemeEnabledColorPickerField, ThemeColorPickerField },
+  components: {
+    ThemeColorFontSizeField,
+    ThemeColorsPreviewList,
+    ThemeEnabledColorPickerField,
+    ThemeColorPickerField,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -156,19 +162,89 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    fontSize() {
-      return THEME_FONT_PIXEL_SIZES[this.form.font_size];
-    },
+  setup(props) {
+    const { t } = useI18n();
+
+    const fontSize = computed(() => THEME_FONT_PIXEL_SIZES[props.form.font_size]);
+
+    const attachFontSizeAndActiveColor = items => (
+      items.map(item => ({ color: props.form.colors.main.active_color, fontSize: fontSize.value, ...item }))
+    );
+
+    const tableColors = computed(() => {
+      const result = [
+        {
+          backgroundColor: props.form.colors.table.background,
+          text: t('theme.table.background'),
+        },
+        {
+          backgroundColor: props.form.colors.table.row_color,
+          text: t('theme.table.rowColor'),
+        },
+      ];
+
+      if (props.form.colors.table.shift_row_color?.enabled) {
+        result.push({
+          backgroundColor: props.form.colors.table.shift_row_color.color,
+          text: t('theme.table.shiftRowColor'),
+        });
+      }
+
+      if (props.form.colors.table.hover_row_color?.enabled) {
+        result.push({
+          backgroundColor: props.form.colors.table.hover_row_color.color,
+          text: t('theme.table.hoverRowColor'),
+        });
+      }
+
+      return attachFontSizeAndActiveColor(result);
+    });
+
+    const stateColors = computed(() => attachFontSizeAndActiveColor([
+      {
+        backgroundColor: props.form.colors.state.ok,
+        text: t('theme.state.ok'),
+        color: getMostReadableTextColor(props.form.colors.state.ok),
+      },
+      {
+        backgroundColor: props.form.colors.state.minor,
+        text: t('theme.state.minor'),
+        color: getMostReadableTextColor(props.form.colors.state.minor),
+      },
+      {
+        backgroundColor: props.form.colors.state.major,
+        text: t('theme.state.major'),
+        color: getMostReadableTextColor(props.form.colors.state.major),
+      },
+      {
+        backgroundColor: props.form.colors.state.critical,
+        text: t('theme.state.critical'),
+        color: getMostReadableTextColor(props.form.colors.state.critical),
+      },
+    ]));
+
+    return {
+      tableColors,
+      stateColors,
+    };
   },
 };
 </script>
 
 <style lang="scss">
 .theme-form {
+  --item-divider-border: 1px solid var(--v-divider-border-color);
+
   &__colors {
-    padding: 16px 0 24px 16px;
-    gap: 15px;
+    padding: 16px 0 24px 0;
+
+    & > * {
+      padding: 10px 0 10px 16px;
+
+      &:not(:last-of-type) {
+        border-bottom: var(--item-divider-border);
+      }
+    }
   }
 }
 </style>
