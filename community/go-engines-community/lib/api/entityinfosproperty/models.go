@@ -7,8 +7,8 @@ import (
 )
 
 type EditRequest struct {
-	Description string `bson:"description,omitempty" json:"description,omitempty" binding:"max=255"`
-	Alias       string `bson:"alias" json:"alias" binding:"max=255"`
+	Description string `bson:"description" json:"description" binding:"max=255"`
+	Alias       string `bson:"alias,omitempty" json:"alias,omitempty" binding:"max=255"`
 
 	// Possible type values.
 	//   * `0` - type boolean
@@ -16,7 +16,7 @@ type EditRequest struct {
 	//   * `2` - type timestamp
 	//   * `3` - type string
 	//   * `4` - type string_array
-	Type int `bson:"type" json:"type" binding:"required,oneof=0 1 2 3 4"`
+	Type *int `bson:"type" json:"type" binding:"required,oneof=0 1 2 3 4"`
 
 	Author  string           `bson:"author,omitempty" json:"author,omitempty" swaggerignore:"true"`
 	Created datetime.CpsTime `bson:"created,omitempty" json:"-" swaggerignore:"true"`
@@ -37,7 +37,7 @@ type UpdateRequest struct {
 type InfoProperty struct {
 	ID          string `bson:"_id" json:"_id"`
 	Name        string `bson:"name" json:"name"`
-	Description string `bson:"description,omitempty" json:"description,omitempty"`
+	Description string `bson:"description" json:"description"`
 	Alias       string `bson:"alias" json:"alias"`
 
 	// Possible type values.

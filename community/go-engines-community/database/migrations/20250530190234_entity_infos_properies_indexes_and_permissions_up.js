@@ -5,7 +5,7 @@ if (db.getCollectionNames().includes("entity_infos_property")) {
 }
 
 db.entity_infos_property.createIndex({name: 1}, {name: "name_1", unique: true});
-db.entity_infos_property.createIndex({alias: 1}, {name: "alias_1", unique: true});
+db.entity_infos_property.createIndex({alias: 1}, {name: "alias_1", unique: true, partialFilterExpression: {alias: {$exists: true}}});
 db.entity_infos_property.createIndex({type: 1}, {name: "type_1"});
 
 db.alarm_tag.createIndex({aliases: 1}, {name: "aliases_1"});
