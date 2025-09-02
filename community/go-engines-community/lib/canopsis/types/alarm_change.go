@@ -138,7 +138,9 @@ func (ac *AlarmChange) GetTriggers() []string {
 			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
 		}
 
-		triggers = append(triggers, string(AlarmChangeEventsCount))
+		if ac.EventsCount > 0 {
+			triggers = append(triggers, string(AlarmChangeEventsCount))
+		}
 	case AlarmChangeTypeCreateAndPbhEnter:
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
 	case AlarmChangeTypePbhLeaveAndEnter:
