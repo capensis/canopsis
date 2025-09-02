@@ -3,9 +3,10 @@
     <v-card-text>
       <v-layout column>
         <v-layout align-center>
-          <c-name-field
+          <c-payload-text-field
             v-field="form.label"
             :label="$t('common.label')"
+            :variables="variables"
             :name="labelFieldName"
             class="mr-2"
             required
@@ -48,7 +49,7 @@
         <c-payload-text-field
           v-field="form.url"
           :label="$t('common.url')"
-          :variables="urlVariables"
+          :variables="variables"
           :name="form.key"
           required
         />
@@ -111,7 +112,7 @@ export default {
       return `${this.name}.icon`;
     },
 
-    alarmUrlVariables() {
+    alarmVariables() {
       return [
         ...this.alarmPayloadRangeVariables,
         ...this.externalDataAlarmPayloadVariables,
@@ -119,7 +120,7 @@ export default {
       ];
     },
 
-    entityUrlVariables() {
+    entityVariables() {
       return [
         {
           value: ENTITY_PAYLOADS_VARIABLES.entities,
@@ -137,10 +138,10 @@ export default {
       ];
     },
 
-    urlVariables() {
+    variables() {
       return this.isAlarmType
-        ? this.alarmUrlVariables
-        : this.entityUrlVariables;
+        ? this.alarmVariables
+        : this.entityVariables;
     },
   },
   methods: {
