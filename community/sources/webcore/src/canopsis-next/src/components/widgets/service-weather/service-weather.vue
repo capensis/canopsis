@@ -128,7 +128,7 @@
 import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
-import { getEntityColor } from '@/helpers/entities/entity/color';
+import { getEntityColorClass } from '@/helpers/entities/entity/color';
 
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 import { permissionsWidgetsServiceWeatherCategory } from '@/mixins/permissions/widgets/service-weather/category';
@@ -239,8 +239,8 @@ export default {
       this.$modals.show({
         name: MODALS.serviceEntities,
         config: {
-          color: getEntityColor(service, this.widget.parameters.colorIndicator),
           service,
+          titleClass: getEntityColorClass(service, this.widget.parameters.colorIndicator),
           widgetParameters: this.widget.parameters,
         },
       });

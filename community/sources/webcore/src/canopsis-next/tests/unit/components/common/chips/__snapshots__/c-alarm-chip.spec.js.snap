@@ -46,7 +46,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with default props 1`] = `
     class="v-badge v-badge--overlap theme--light"
   >
     <span
-      class="chip"
+      class="chip state-ok"
     >
       ok
     </span>
@@ -84,7 +84,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: critical 1`] = `
     class="v-badge v-badge--overlap theme--light"
   >
     <span
-      class="chip"
+      class="chip state-critical"
     >
       critical
     </span>
@@ -122,7 +122,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: major 1`] = `
     class="v-badge v-badge--overlap theme--light"
   >
     <span
-      class="chip"
+      class="chip state-major"
     >
       major
     </span>
@@ -160,7 +160,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: minor 1`] = `
     class="v-badge v-badge--overlap theme--light"
   >
     <span
-      class="chip"
+      class="chip state-minor"
     >
       minor
     </span>
@@ -198,7 +198,7 @@ exports[`c-alarm-chip Renders \`c-alarm-chip\` with state: ok 1`] = `
     class="v-badge v-badge--overlap theme--light"
   >
     <span
-      class="chip"
+      class="chip state-ok"
     >
       ok
     </span>
