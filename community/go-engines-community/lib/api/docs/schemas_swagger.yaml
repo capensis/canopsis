@@ -1257,7 +1257,11 @@ definitions:
             type: string
           error:
             type: string
+          error_background:
+            type: string
           info:
+            type: string
+          info_background:
             type: string
           primary:
             type: string
@@ -1265,18 +1269,26 @@ definitions:
             type: string
           success:
             type: string
+          success_background:
+            type: string
           warning:
+            type: string
+          warning_background:
             type: string
         required:
         - accent
         - active_color
         - background
         - error
+        - error_background
         - info
+        - info_background
         - primary
         - secondary
         - success
+        - success_background
         - warning
+        - warning_background
         type: object
       state:
         properties:
@@ -1298,15 +1310,21 @@ definitions:
         properties:
           background:
             type: string
+          hover_row:
+            type: boolean
           hover_row_color:
             type: string
           row_color:
             type: string
+          shift_row:
+            type: boolean
           shift_row_color:
             type: string
         required:
         - background
+        - hover_row
         - row_color
+        - shift_row
         type: object
     type: object
   colortheme.EditRequest:
