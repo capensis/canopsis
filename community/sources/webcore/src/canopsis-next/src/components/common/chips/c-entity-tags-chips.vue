@@ -38,5 +38,9 @@ export default {
 <style lang="scss">
 .c-entity-tags-chips__chip .v-chip__content {
   padding: 0 4px;
+
+  * {
+    color: white;
+  }
 }
 </style>
