@@ -54,7 +54,12 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+
 import { REMEDIATION_INSTRUCTION_APPROVAL_TYPES, USER_PERMISSIONS } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
 
 import RemediationInstructionApprovalTypeField from './fields/remediation-instruction-approval-type-field.vue';
 
@@ -83,44 +88,61 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      needApprove: !!this.approval?.comment || this.required,
-    };
-  },
-  computed: {
-    approvePermission() {
-      return USER_PERMISSIONS.api.remediation.instructionApprove;
-    },
+  setup(props) {
+    const { tc } = useI18n();
+    const validator = useValidator();
 
-    isRoleType() {
-      return this.approval.type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role;
-    },
+    const needApprove = ref(!!(props.approval && props.approval.comment) || props.required);
 
-    roleFieldName() {
-      return `${this.name}.role`;
-    },
+    const approvePermission = computed(() => USER_PERMISSIONS.technical.remediationInstructionApprove);
 
-    userFieldName() {
-      return `${this.name}.user`;
-    },
+    const isRoleType = computed(() => (
+      props.approval
+      && props.approval.type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role
+    ));
 
-    assignLabel() {
-      return this.isRoleType ? this.$tc('common.role') : this.$tc('common.user');
-    },
+    const roleFieldName = computed(() => `${props.name}.role`);
+    const userFieldName = computed(() => `${props.name}.user`);
 
-    assignValue() {
-      return this.isRoleType ? this.approval.role.name : this.approval.user.display_name;
-    },
-  },
-  methods: {
-    resetErrors(type) {
+    const assignLabel = computed(() => (isRoleType.value ? tc('common.role') : tc('common.user')));
+
+    const assignValue = computed(() => {
+      if (isRoleType.value) {
+        return props.approval && props.approval.role ? props.approval.role.name : '';
+      }
+      return props.approval && props.approval.user ? props.approval.user.display_name : '';
+    });
+
+    /**
+     * Clear validate errors for the irrelevant approval assignment field
+     * when the approval type changes.
+     *
+     * If the type is 'role', it clears errors for the user field; otherwise it
+     * clears errors for the role field.
+     *
+     * @param {'role'|'user'} type - Newly selected approval type.
+     * @returns {void}
+     */
+    const resetErrors = (type) => {
       const removingField = type === REMEDIATION_INSTRUCTION_APPROVAL_TYPES.role
-        ? this.userFieldName
-        : this.roleFieldName;
+        ? userFieldName.value
+        : roleFieldName.value;
 
-      this.errors.remove(removingField);
-    },
+      if (validator.errors && typeof validator.errors.remove === 'function') {
+        validator.errors.remove(removingField);
+      }
+    };
+
+    return {
+      needApprove,
+      approvePermission,
+      isRoleType,
+      roleFieldName,
+      userFieldName,
+      assignLabel,
+      assignValue,
+      resetErrors,
+    };
   },
 };
 </script>
