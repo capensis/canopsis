@@ -55,7 +55,7 @@ describe('modal-title-buttons', () => {
 
     closeButton.triggerCustomEvent('click');
 
-    expect($modals.hide).toBeCalledWith({ id: modal.id });
+    expect($modals.hide).toHaveBeenCalledWith({ id: modal.id });
   });
 
   test('Custom close handler called after close button', () => {
@@ -82,7 +82,7 @@ describe('modal-title-buttons', () => {
 
     closeButton.triggerCustomEvent('click');
 
-    expect(close).toBeCalled();
+    expect(close).toHaveBeenCalled();
   });
 
   test('Modals minimize handler called after trigger minimize button', async () => {
@@ -108,7 +108,7 @@ describe('modal-title-buttons', () => {
 
     selectButton(wrapper).triggerCustomEvent('click');
 
-    expect($modals.minimize).toBeCalledWith({ id: modal.id });
+    expect($modals.minimize).toHaveBeenCalledWith({ id: modal.id });
   });
 
   test('Modals maximize handler called after trigger maximize button', () => {
@@ -135,7 +135,7 @@ describe('modal-title-buttons', () => {
 
     maximizeButton.triggerCustomEvent('click');
 
-    expect($modals.maximize).toBeCalledWith({ id: modal.id });
+    expect($modals.maximize).toHaveBeenCalledWith({ id: modal.id });
   });
 
   test('Renders `modal-title-buttons` with default props', () => {

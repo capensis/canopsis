@@ -105,6 +105,7 @@ export default {
             is: 'c-no-events-icon',
             value: Number(this.value),
             top: true,
+            color: 'error',
           },
         },
         ko_events: {

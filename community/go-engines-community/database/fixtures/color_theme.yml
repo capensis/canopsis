@@ -4,24 +4,31 @@ color_theme:
     name: "Canopsis"
     colors:
       main:
-        primary: '#2fab63'
-        secondary: '#2b3e4f'
-        accent: '#82b1ff'
-        error: '#ff5252'
-        info: '#2196f3'
-        success: '#4caf50'
-        warning: '#fb8c00'
-        background: '#ffffff'
-        active_color: '#000'
+        primary: '#2DAC61'
+        secondary: '#2B3E4F'
+        accent: '#678CCA'
+        background: '#FFFFFF'
+        active_color: '#212121'
+        error: '#D22E2E'
+        error_background: '#FFCABE'
+        warning: '#FB8C00'
+        warning_background: '#FFD27A'
+        success: '#22874C'
+        success_background: '#90DFB1'
+        info: '#0A6EBD'
+        info_background: '#A6D9FF'
       state:
-        ok: '#00a65a'
-        minor: '#fcdc00'
-        major: '#ff9900'
-        critical: '#f56954'
+        ok: '#22874C'
+        minor: '#FFF176'
+        major: '#FFA800'
+        critical: '#C62828'
       table:
-        background: '#fff'
-        row_color: '#fff'
-        hover_row_color: '#eee'
+        background: '#FFFFFF'
+        row_color: '#FFFFFF'
+        shift_row: false
+        shift_row_color: '#F5F5F5'
+        hover_row: true
+        hover_row_color: '#E5E5E5'
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -32,23 +39,30 @@ color_theme:
     name: "Canopsis dark"
     colors:
       main:
-        primary: '#2fab63'
-        secondary: '#2b3e4f'
-        accent: '#82b1ff'
-        error: '#ff8b8b'
-        info: '#2196f3'
-        success: '#4caf50'
-        warning: '#fb8c00'
+        primary: '#2DAC61'
+        secondary: '#2B3E4F'
+        accent: '#678CCA'
         background: '#424242'
-        active_color: '#fff'
+        active_color: '#FFFFFF'
+        error: '#FB9E9E'
+        error_background: '#995656'
+        warning: '#FFC658'
+        warning_background: '#826742'
+        success: '#90DFB1'
+        success_background: '#4B7D60'
+        info: '#A6D9FF'
+        info_background: '#216B9C'
       state:
-        ok: '#00a65a'
-        minor: '#fcdc00'
-        major: '#ff9900'
-        critical: '#f56954'
+        ok: '#4B7D60'
+        minor: '#FFF176'
+        major: '#FFA800'
+        critical: '#995656'
       table:
         background: '#424242'
         row_color: '#424242'
+        shift_row: false
+        shift_row_color: '#515151'
+        hover_row: true
         hover_row_color: '#616161'
     font_size: 2
     author: root
@@ -60,24 +74,31 @@ color_theme:
     name: "Color blind"
     colors:
       main:
-        primary: '#2196f3'
-        secondary: '#2b3e4f'
-        accent: '#82b1ff'
-        error: '#ff5252'
-        info: '#2196f3'
-        success: '#4caf50'
-        warning: '#fb8c00'
-        background: '#ffffff'
-        active_color: '#000'
+        primary: '#2196F3'
+        secondary: '#2B3E4F'
+        accent: '#678CCA'
+        background: '#FFFFFF'
+        active_color: '#212121'
+        error: '#D22E2E'
+        error_background: '#FFCABE'
+        warning: '#FB8C00'
+        warning_background: '#FFDD9A'
+        success: '#368472'
+        success_background: '#A0EDDB'
+        info: '#0A6EBD'
+        info_background: '#C2D0FF'
       state:
-        ok: '#00a65a'
-        minor: '#fcdc00'
-        major: '#ff9900'
-        critical: '#f56954'
+        ok: '#22874C'
+        minor: '#FFF176'
+        major: '#FFA800'
+        critical: '#C62828'
       table:
-        background: '#fff'
-        row_color: '#fff'
-        hover_row_color: '#eee'
+        background: '#FFFFFF'
+        row_color: '#FFFFFF'
+        shift_row: false
+        shift_row_color: '#F5F5F5'
+        hover_row: true
+        hover_row_color: '#E5E5E5'
     font_size: 2
     author: root
     created: <NowUnix()>
@@ -88,23 +109,30 @@ color_theme:
     name: "Color blind dark"
     colors:
       main:
-        primary: '#2196f3'
-        secondary: '#2b3e4f'
-        accent: '#82b1ff'
-        error: '#ff8b8b'
-        info: '#2196f3'
-        success: '#4caf50'
-        warning: '#fb8c00'
+        primary: '#2196F3'
+        secondary: '#2B3E4F'
+        accent: '#678CCA'
         background: '#424242'
-        active_color: '#fff'
+        active_color: '#FFFFFF'
+        error: '#FB9E9E'
+        error_background: '#995656'
+        warning: '#FFC658'
+        warning_background: '#826742'
+        success: '#A0EDDB'
+        success_background: '#368484'
+        info: '#A6D9FF'
+        info_background: '#446AAF'
       state:
-        ok: '#00a65a'
-        minor: '#fcdc00'
-        major: '#ff9900'
-        critical: '#f56954'
+        ok: '#368484'
+        minor: '#FFF176'
+        major: '#FFA800'
+        critical: '#995656'
       table:
         background: '#424242'
         row_color: '#424242'
+        shift_row: false
+        shift_row_color: '#515151'
+        hover_row: true
         hover_row_color: '#616161'
     font_size: 2
     author: root
