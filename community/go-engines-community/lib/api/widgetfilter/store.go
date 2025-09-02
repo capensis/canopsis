@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -27,13 +28,14 @@ type Store interface {
 	UpdatePositions(ctx context.Context, filters []string, widgetId, userID string, isPrivate bool) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		widgetCollection:   dbClient.Collection(mongo.WidgetMongoCollection),
 		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		authorProvider:     authorProvider,
+		transformer:        transformer,
 	}
 }
 
@@ -43,6 +45,7 @@ type store struct {
 	widgetCollection   mongo.DbCollection
 	userPrefCollection mongo.DbCollection
 	authorProvider     author.Provider
+	transformer        common.PatternFieldsTransformer
 }
 
 func (s *store) FindViewId(ctx context.Context, id string) (string, string, bool, error) {
@@ -244,6 +247,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		}
 		filter.Position = position
 
+		err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &filter)
+		if err != nil {
+			return err
+		}
+
 		_, err = s.collection.InsertOne(ctx, filter)
 		if err != nil {
 			return err
@@ -271,14 +279,19 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		err := s.collection.
 			FindOne(ctx, bson.M{"_id": filter.ID}, options.FindOne().SetProjection(bson.M{"position": 1})).
 			Decode(&oldFilter)
-
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
 				return nil
 			}
 			return err
 		}
+
 		filter.Position = oldFilter.Position
+
+		err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &filter)
+		if err != nil {
+			return err
+		}
 
 		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": filter.ID}, bson.M{"$set": filter})
 		if err != nil {
@@ -454,10 +467,55 @@ func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 		Title:            request.Title,
 		IsUserPreference: *request.IsUserPreference,
 		Author:           request.Author,
-
-		AlarmPatternFields:          request.AlarmPatternFieldsRequest.ToModel(),
-		EntityPatternFields:         request.EntityPatternFieldsRequest.ToModel(),
-		PbehaviorPatternFields:      request.PbehaviorPatternFieldsRequest.ToModel(),
-		WeatherServicePatternFields: request.WeatherServicePatternFieldsRequest.ToModel(),
 	}
+}
+
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *view.WidgetFilter) error {
+	transformedAlarmPattern, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, common.AlarmPatternFieldsRequest{
+		AlarmPattern:          r.AlarmPattern,
+		CorporateAlarmPattern: r.CorporateAlarmPattern,
+		IsPrivate:             *r.IsUserPreference,
+		User:                  r.Author,
+	})
+	if err != nil {
+		return err
+	}
+
+	transformedEntityPattern, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		EntityPattern:          r.EntityPattern,
+		CorporateEntityPattern: r.CorporateEntityPattern,
+		IsPrivate:              *r.IsUserPreference,
+		User:                   r.Author,
+	})
+	if err != nil {
+		return err
+	}
+
+	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorPatternFieldsRequest(ctx, common.PbehaviorPatternFieldsRequest{
+		PbehaviorPattern:          r.PbehaviorPattern,
+		CorporatePbehaviorPattern: r.CorporatePbehaviorPattern,
+		IsPrivate:                 *r.IsUserPreference,
+		User:                      r.Author,
+	})
+	if err != nil {
+		return err
+	}
+
+	transformedWeatherPattern, err := s.transformer.TransformWeatherServicePatternFieldsRequest(ctx, common.WeatherServicePatternFieldsRequest{
+		WeatherServicePattern:          r.WeatherServicePattern,
+		CorporateWeatherServicePattern: r.CorporateWeatherServicePattern,
+		IsPrivate:                      *r.IsUserPreference,
+		User:                           r.Author,
+	})
+	if err != nil {
+		return err
+	}
+
+	model.Aliases = transformedEntityPattern.Aliases
+	model.AlarmPatternFields = transformedAlarmPattern.ToModel()
+	model.EntityPatternFields = transformedEntityPattern.ToModel()
+	model.PbehaviorPatternFields = transformedPbehaviorPattern.ToModel()
+	model.WeatherServicePatternFields = transformedWeatherPattern.ToModel()
+
+	return nil
 }
