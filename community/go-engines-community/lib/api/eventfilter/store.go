@@ -81,11 +81,11 @@ func NewStore(
 ) Store {
 	exdataTplVars := template.GetEventVars("{{ ", " }}", ".Event", false)
 	exdataTplVars = append(exdataTplVars,
-		template.VarResponse{Name: "Regexp match", Value: "{{ .RegexMatch.%field%.%name% }}"},
+		template.VarResponse{Name: "regexpMatch", Value: "{{ .RegexMatch.%field%.%name% }}"},
 	)
 	configTplVars := make([]template.VarResponse, 0, len(exdataTplVars)+1)
 	configTplVars = append(configTplVars, exdataTplVars...)
-	configTplVars = append(configTplVars, template.VarResponse{Name: "External data", Value: "{{ .ExternalData.%reference% }}"})
+	configTplVars = append(configTplVars, template.VarResponse{Name: "externalData", Value: "{{ .ExternalData.%reference% }}"})
 
 	return &store{
 		dbClient:                dbClient,

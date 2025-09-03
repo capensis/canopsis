@@ -73,47 +73,47 @@ func NewStore(
 ) Store {
 	authorTplVars := []template.VarResponse{
 		{
-			Name:  "Alarm",
+			Name:  "alarm",
 			Value: template.GetAlarmVars("{{ ", " }}", ".Alarm", false),
 		},
 		{
-			Name:  "Entity",
+			Name:  "entity",
 			Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
 		},
 	}
 	outputTplVars := make([]template.VarResponse, len(authorTplVars))
 	copy(outputTplVars, authorTplVars)
 	outputTplVars = append(outputTplVars,
-		template.VarResponse{Name: "Trigger", Value: "{{ .AdditionalData.Trigger }}"},
-		template.VarResponse{Name: "Author", Value: "{{ .AdditionalData.Author }}"},
-		template.VarResponse{Name: "User id", Value: "{{ .AdditionalData.User }}"},
-		template.VarResponse{Name: "Trigger event message", Value: "{{ .AdditionalData.Output }}"},
-		template.VarResponse{Name: "Action initiator", Value: "{{ .AdditionalData.Initiator }}"},
-		template.VarResponse{Name: "Rule name", Value: "{{ .AdditionalData.RuleName }}"},
+		template.VarResponse{Name: "trigger", Value: "{{ .AdditionalData.Trigger }}"},
+		template.VarResponse{Name: "author", Value: "{{ .AdditionalData.Author }}"},
+		template.VarResponse{Name: "userID", Value: "{{ .AdditionalData.User }}"},
+		template.VarResponse{Name: "triggerEventMessage", Value: "{{ .AdditionalData.Output }}"},
+		template.VarResponse{Name: "actionInitiator", Value: "{{ .AdditionalData.Initiator }}"},
+		template.VarResponse{Name: "ruleName", Value: "{{ .AdditionalData.RuleName }}"},
 	)
 	ticketTplVars := []template.VarResponse{
-		{Name: "Header field", Value: "{{ index .Header \"%field_name%\" }}"},
-		{Name: "Response field", Value: "{{ index .Response \"%field_name%\" }}"},
-		{Name: "Response field from the step #N", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
+		{Name: "headerField", Value: "{{ index .Header \"%field_name%\" }}"},
+		{Name: "responseField", Value: "{{ index .Response \"%field_name%\" }}"},
+		{Name: "responseFieldFromStep", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
 	}
 	firstWhTplVars := make([]template.VarResponse, len(outputTplVars))
 	copy(firstWhTplVars, outputTplVars)
 	firstWhTplVars = append(firstWhTplVars,
 		template.VarResponse{
-			Name:  "Consequence alarms",
+			Name:  "consequenceAlarms",
 			Value: template.GetAlarmVars("{{ range .Children }}{{ ", " }}{{ end }}", "", true),
 		},
 		template.VarResponse{
-			Name:  "Consequence alarm entities",
+			Name:  "consequenceAlarmEntities",
 			Value: template.GetEntityVars("{{ range .Children }}{{ ", " }}{{ end }}", ".Entity", true),
 		},
 	)
 	whTplVars := make([]template.VarResponse, 0, len(firstWhTplVars))
 	whTplVars = append(whTplVars, firstWhTplVars...)
 	whTplVars = append(whTplVars,
-		template.VarResponse{Name: "Header field from the previous steps", Value: "{{ index .Header \"%field_name%\" }}"},
-		template.VarResponse{Name: "Response field from the previous steps", Value: "{{ index .Response \"%field_name%\" }}"},
-		template.VarResponse{Name: "Response field from the step #N", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
+		template.VarResponse{Name: "headerFieldFromPreviousSteps", Value: "{{ index .Header \"%field_name%\" }}"},
+		template.VarResponse{Name: "responseFieldFromPreviousSteps", Value: "{{ index .Response \"%field_name%\" }}"},
+		template.VarResponse{Name: "responseFieldFromStep", Value: "{{ index .ResponseMap \"%N%.%field_name%\" }}"},
 	)
 
 	return &store{

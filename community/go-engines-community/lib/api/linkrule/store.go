@@ -77,13 +77,13 @@ func NewStore(
 	enforcer security.Enforcer,
 ) Store {
 	userTplVars := []template.VarResponse{
-		{Name: "Email", Value: "{{ .User.Email }}"},
-		{Name: "Username", Value: "{{ .User.Username }}"},
-		{Name: "Firstname", Value: "{{ .User.Firstname }}"},
-		{Name: "Lastname", Value: "{{ .User.Lastname }}"},
-		{Name: "External id", Value: "{{ .User.ExternalID }}"},
-		{Name: "External source", Value: "{{ .User.Source }}"},
-		{Name: "Role ids", Value: "{{ range .User.Roles }}{{ . }}{{ end }}"},
+		{Name: "email", Value: "{{ .User.Email }}"},
+		{Name: "username", Value: "{{ .User.Username }}"},
+		{Name: "firstname", Value: "{{ .User.Firstname }}"},
+		{Name: "lastname", Value: "{{ .User.Lastname }}"},
+		{Name: "externalID", Value: "{{ .User.ExternalID }}"},
+		{Name: "externalSource", Value: "{{ .User.Source }}"},
+		{Name: "roleIDs", Value: "{{ range .User.Roles }}{{ . }}{{ end }}"},
 	}
 
 	return &store{
@@ -106,49 +106,49 @@ func NewStore(
 		defaultSortBy:         "created",
 		alarmTplVars: []template.VarResponse{
 			{
-				Name:  "Alarms",
+				Name:  "alarms",
 				Value: template.GetAlarmVars("{{ range .Alarms }}{{ ", " }}{{ end }}", "", true),
 			},
 			{
-				Name:  "Entities",
+				Name:  "entities",
 				Value: template.GetEntityVars("{{ range .Alarms }}{{ ", " }}{{ end }}", ".Entity", true),
 			},
 			{
-				Name:  "External data",
+				Name:  "externalData",
 				Value: "{{ range .Alarms }}{{ .ExternalData.%reference% }}{{ end }}",
 			},
 			{
-				Name:  "User",
+				Name:  "user",
 				Value: userTplVars,
 			},
 		},
 		entityTplVars: []template.VarResponse{
 			{
-				Name:  "Entities",
+				Name:  "entities",
 				Value: template.GetEntityVars("{{ range .Entities }}{{ ", " }}{{ end }}", "", true),
 			},
 			{
-				Name:  "External data",
+				Name:  "externalData",
 				Value: "{{ range .Entities }}{{ .ExternalData.%reference% }}{{ end }}",
 			},
 			{
-				Name:  "User",
+				Name:  "user",
 				Value: userTplVars,
 			},
 		},
 		alarmExdataTplVars: []template.VarResponse{
 			{
-				Name:  "Alarm",
+				Name:  "alarm",
 				Value: template.GetAlarmVars("{{ ", " }}", "", false),
 			},
 			{
-				Name:  "Entity",
+				Name:  "entity",
 				Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
 			},
 		},
 		entityExdataTplVars: []template.VarResponse{
 			{
-				Name:  "Entity",
+				Name:  "entity",
 				Value: template.GetEntityVars("{{ ", " }}", "", false),
 			},
 		},
