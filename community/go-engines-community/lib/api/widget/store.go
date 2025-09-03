@@ -64,11 +64,11 @@ func NewStore(
 		tplConfigProvider:        tplConfigProvider,
 		tplVars: []template.VarResponse{
 			{
-				Name:  "Alarm",
+				Name:  "alarm",
 				Value: template.GetAlarmVars("{{ ", " }}", ".Alarm", false),
 			},
 			{
-				Name:  "Entity",
+				Name:  "entity",
 				Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
 			},
 		},

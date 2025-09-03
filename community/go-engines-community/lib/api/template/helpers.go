@@ -20,149 +20,149 @@ import (
 
 var alarmVars = []tplVar{
 	{
-		Name:       "Display name",
-		PluralName: "Display names",
+		Name:       "displayName",
+		PluralName: "displayNames",
 		Value:      "%var%.Value.DisplayName",
 	},
 	{
-		Name:       "Connector",
-		PluralName: "Connectors",
+		Name:       "connector",
+		PluralName: "connectors",
 		Value:      "%var%.Value.Connector",
 	},
 	{
-		Name:       "Connector name",
-		PluralName: "Connector names",
+		Name:       "connectorName",
+		PluralName: "connectorNames",
 		Value:      "%var%.Value.ConnectorName",
 	},
 	{
-		Name:       "Component",
-		PluralName: "Components",
+		Name:       "component",
+		PluralName: "components",
 		Value:      "%var%.Value.Component",
 	},
 	{
-		Name:       "Resource",
-		PluralName: "Resources",
+		Name:       "resource",
+		PluralName: "resources",
 		Value:      "%var%.Value.Resource",
 	},
 	{
-		Name:       "Output",
-		PluralName: "Outputs",
+		Name:       "output",
+		PluralName: "outputs",
 		Value:      "%var%.Value.Output",
 	},
 	{
-		Name:       "Initial output",
-		PluralName: "Initial outputs",
+		Name:       "initialOutput",
+		PluralName: "initialOutputs",
 		Value:      "%var%.Value.InitialOutput",
 	},
 	{
-		Name:       "State message",
-		PluralName: "State messages",
+		Name:       "stateMessage",
+		PluralName: "stateMessages",
 		Value:      "%var%.Value.State.Message",
 	},
 	{
-		Name:       "State value",
-		PluralName: "State values",
+		Name:       "stateValue",
+		PluralName: "stateValues",
 		Value:      "%var%.Value.State.Value",
 	},
 	{
-		Name:       "Status value",
-		PluralName: "Status values",
+		Name:       "statusValue",
+		PluralName: "statusValues",
 		Value:      "%var%.Value.Status.Value",
 	},
 	{
-		Name:       "Ticket author",
-		PluralName: "Ticket authors",
+		Name:       "ticketAuthor",
+		PluralName: "ticketAuthors",
 		Value:      "%var%.Value.Ticket.Author",
 	},
 	{
-		Name:       "Ticket id",
-		PluralName: "Ticket ids",
+		Name:       "ticketID",
+		PluralName: "ticketIDs",
 		Value:      "%var%.Value.Ticket.Ticket",
 	},
 	{
-		Name:       "Ticket message",
-		PluralName: "Ticket messages",
+		Name:       "ticketMessage",
+		PluralName: "ticketMessages",
 		Value:      "%var%.Value.Ticket.Message",
 	},
 	{
-		Name:       "Ack author",
-		PluralName: "Ack authors",
+		Name:       "ackAuthor",
+		PluralName: "ackAuthors",
 		Value:      "%var%.Value.ACK.Author",
 	},
 	{
-		Name:       "Ack message",
-		PluralName: "Ack messages",
+		Name:       "ackMessage",
+		PluralName: "ackMessages",
 		Value:      "%var%.Value.ACK.Message",
 	},
 	{
-		Name:       "Last comment author",
-		PluralName: "Last comment authors",
+		Name:       "lastCommentAuthor",
+		PluralName: "lastCommentAuthors",
 		Value:      "%var%.Value.LastComment.Author",
 	},
 	{
-		Name:       "Last comment message",
-		PluralName: "Last comment messages",
+		Name:       "lastCommentMessage",
+		PluralName: "lastCommentMessages",
 		Value:      "%var%.Value.LastComment.Message",
 	},
 	{
-		Name:       "Infos",
-		PluralName: "Infos",
+		Name:       "infos",
+		PluralName: "infos",
 		Value:      "(index (index %var%.Value.Infos \"%rule_id%\") \"%infos_name%\")",
 	},
 }
 
 var entityVars = []tplVar{
 	{
-		Name:       "Name",
-		PluralName: "Names",
+		Name:       "name",
+		PluralName: "names",
 		Value:      "%var%.Name",
 	},
 	{
-		Name:       "Type",
-		PluralName: "Types",
+		Name:       "type",
+		PluralName: "types",
 		Value:      "%var%.Type",
 	},
 	{
-		Name:       "Infos",
-		PluralName: "Infos",
+		Name:       "infos",
+		PluralName: "infos",
 		Value:      "(index %var%.Infos \"%infos_name%\").Value",
 	},
 	{
-		Name:       "Component infos",
-		PluralName: "Component infos",
+		Name:       "componentInfos",
+		PluralName: "componentInfos",
 		Value:      "(index %var%.ComponentInfos \"%infos_name%\").Value",
 	},
 }
 
 var eventVars = []tplVar{
 	{
-		Name:       "Connector",
-		PluralName: "Connectors",
+		Name:       "connector",
+		PluralName: "connectors",
 		Value:      "%var%.Connector",
 	},
 	{
-		Name:       "Connector name",
-		PluralName: "Connector names",
+		Name:       "connectorName",
+		PluralName: "connectorNames",
 		Value:      "%var%.ConnectorName",
 	},
 	{
-		Name:       "Component",
-		PluralName: "Components",
+		Name:       "component",
+		PluralName: "components",
 		Value:      "%var%.Component",
 	},
 	{
-		Name:       "Resource",
-		PluralName: "Resources",
+		Name:       "resource",
+		PluralName: "resources",
 		Value:      "%var%.Resource",
 	},
 	{
-		Name:       "Output",
-		PluralName: "Outputs",
+		Name:       "output",
+		PluralName: "outputs",
 		Value:      "%var%.Output",
 	},
 	{
-		Name:       "Extra infos",
-		PluralName: "Extra infos",
+		Name:       "extraInfos",
+		PluralName: "extraInfos",
 		Value:      "index %var%.ExtraInfos \"%infos_name%\"",
 	},
 }
@@ -196,7 +196,7 @@ func AddEnvVars(vars []VarResponse, tplConfigProvider config.TemplateConfigProvi
 	res := make([]VarResponse, 0, len(vars)+1)
 	res = append(res, vars...)
 	res = append(res, VarResponse{
-		Name:  "Environment variables",
+		Name:  "environmentVariables",
 		Value: envVars,
 	})
 
