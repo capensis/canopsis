@@ -491,18 +491,12 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	}
 
 	pipeline = append(pipeline, afterLimit...)
-	if len(q.sort) > 0 {
-		pipeline = append(pipeline, q.sort) // required in case of lookup with unwind/group
-	}
 
 	return pipeline, nil
 }
 
 func (q *MongoQueryBuilder) createPaginationAggregationPipeline(query pagination.Query) []bson.M {
 	beforeLimit, afterLimit := q.createAggregationPipeline()
-	if len(q.sort) > 0 {
-		afterLimit = append(afterLimit, q.sort) // required in case of lookup with unwind/group
-	}
 
 	return pagination.CreateAggregationPipeline(
 		query,
@@ -548,6 +542,10 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 		if !addedLookups[lookup.key] && !q.lookupsOnlyForAdditionalMatch[lookup.key] {
 			afterLimit = append(afterLimit, lookup.pipeline...)
 		}
+	}
+
+	if len(q.sort) > 0 {
+		afterLimit = append(afterLimit, q.sort) // required in case of lookup with unwind/group
 	}
 
 	addFields := bson.M{}
