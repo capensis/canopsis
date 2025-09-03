@@ -2,12 +2,12 @@
   <c-patterns-field
     v-field="form"
     :readonly="readonly"
-    :some-required="flapping"
     :alarm-attributes="alarmAttributes"
     :entity-attributes="entityAttributes"
     with-alarm
     with-entity
     both-counters
+    some-required
   />
 </template>
 
@@ -24,59 +24,51 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    flapping: {
-      type: Boolean,
-      default: false,
-    },
     readonly: {
       type: Boolean,
       default: false,
     },
   },
-  computed: {
-    intervalOptions() {
-      return {
-        intervalRanges: [QUICK_RANGES.custom],
-      };
-    },
 
-    alarmAttributes() {
-      return [
-        {
-          value: ALARM_PATTERN_FIELDS.creationDate,
-          options: this.intervalOptions,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.ackAt,
-          options: this.intervalOptions,
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastUpdateDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.resolved,
-          options: { disabled: true },
-        },
-        {
-          value: ALARM_PATTERN_FIELDS.activationDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+  setup() {
+    const intervalOptions = { intervalRanges: [QUICK_RANGES.custom] };
 
-    entityAttributes() {
-      return [
-        {
-          value: ENTITY_PATTERN_FIELDS.lastEventDate,
-          options: { disabled: true },
-        },
-      ];
-    },
+    const alarmAttributes = [
+      {
+        value: ALARM_PATTERN_FIELDS.creationDate,
+        options: intervalOptions,
+      },
+      {
+        value: ALARM_PATTERN_FIELDS.ackAt,
+        options: intervalOptions,
+      },
+      {
+        value: ALARM_PATTERN_FIELDS.lastUpdateDate,
+        options: { disabled: true },
+      },
+      {
+        value: ALARM_PATTERN_FIELDS.lastEventDate,
+        options: { disabled: true },
+      },
+      {
+        value: ALARM_PATTERN_FIELDS.resolved,
+        options: { disabled: true },
+      },
+      {
+        value: ALARM_PATTERN_FIELDS.activationDate,
+        options: { disabled: true },
+      },
+    ];
+
+    const entityAttributes = [{
+      value: ENTITY_PATTERN_FIELDS.lastEventDate,
+      options: { disabled: true },
+    }];
+
+    return {
+      alarmAttributes,
+      entityAttributes,
+    };
   },
 };
 </script>
