@@ -103,8 +103,8 @@ export const roleToForm = (role = {}) => ({
   description: role.description ?? '',
   defaultview: role.defaultview?._id,
   editable: role.editable ?? true,
-  permissions: role.permissions ?? {},
   ui_theme: role.ui_theme ?? '',
+  permissions: rolePermissionsToForm(role.permissions ?? []),
   auth_config: roleAuthConfigToForm(role.auth_config),
 });
 
@@ -124,11 +124,12 @@ export const roleToPermissionForm = (role = {}) => ({
  * Convert role form role permissions to role permissions object
  *
  * @param {RoleForm} [form = {}]
+ * @param {boolean} [isApi = false]
  * @return {PermissionsForm}
  */
-const permissionsFormToRolePermissions = (form = {}) => Object.entries(form.permissions ?? {})
+const permissionsFormToRolePermissions = (form = {}, isApi = false) => Object.entries(form ?? {})
   .reduce((acc, [id, actions]) => {
-    if (isApiPermission(id) !== isApiRole(form)) {
+    if (isApiPermission(id) !== isApi) {
       return acc;
     }
 
@@ -166,7 +167,7 @@ export const formToRole = (form = {}) => ({
   ...omit(form, ['editable']),
 
   defaultview: form.defaultview,
-  permissions: permissionsFormToRolePermissions(form.permissions),
+  permissions: permissionsFormToRolePermissions(form.permissions, isApiRole(form)),
   auth_config: authConfigFormToRolePermissions(form.auth_config),
 });
 
@@ -178,5 +179,5 @@ export const formToRole = (form = {}) => ({
  */
 export const formToRolePermissions = (form = {}) => ({
   _id: form._id,
-  permissions: permissionsFormToRolePermissions(form),
+  permissions: permissionsFormToRolePermissions(form.permissions, isApiRole(form)),
 });

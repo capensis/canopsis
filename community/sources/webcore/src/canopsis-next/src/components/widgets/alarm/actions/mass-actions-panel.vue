@@ -173,6 +173,11 @@ export default {
             title: this.$t('alarm.actions.titles.ackRemove'),
             method: this.showAckRemoveModal,
           },
+          {
+            type: ALARM_LIST_ACTIONS_TYPES.changeState,
+            title: this.$t('alarm.actions.titles.changeState'),
+            method: this.showCreateChangeStateEventModal,
+          },
         );
       }
 
@@ -381,6 +386,10 @@ export default {
 
     showCreateCommentEventModal() {
       this.showCreateCommentModalByAlarms(this.alarmsForActions);
+    },
+
+    showCreateChangeStateEventModal() {
+      this.showCreateChangeStateEventModalByAlarms(this.alarmsWithAck);
     },
 
     linkAction(link, type) {
