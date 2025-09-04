@@ -236,14 +236,17 @@ func (l *logger) startLockRefresher(ctx context.Context, lock libredis.Lock) cha
 }
 
 func (l *logger) Watch(ctx context.Context) error {
-	var lock libredis.Lock
+	var (
+		lock libredis.Lock
+		err  error
+	)
 
 	defer func() {
 		if lock == nil {
 			return
 		}
 
-		err := lock.Release(context.WithoutCancel(ctx))
+		err = lock.Release(context.WithoutCancel(ctx))
 		if err != nil && !errors.Is(err, redislock.ErrLockNotHeld) {
 			l.zLog.Err(err).Msg("failed to release lock")
 		}
@@ -258,11 +261,16 @@ func (l *logger) Watch(ctx context.Context) error {
 		default:
 		}
 
-		var err error
-
 		lock, err = l.obtainLock(ctx)
 		if err != nil {
-			return err
+			l.zLog.Warn().Err(err).Msgf("failed to obtain lock for action log watcher, waiting for next attempt")
+			select {
+			case <-ctx.Done():
+				return nil
+			case <-time.After(redisLockAcquireInterval):
+				l.zLog.Debug().Msg("action logger: retrying to obtain lock")
+				continue
+			}
 		}
 
 		exitChan := l.startLockRefresher(ctx, lock)
