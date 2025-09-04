@@ -52,7 +52,7 @@ require (
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
 	github.com/valyala/fastjson v1.6.4
-	go.mongodb.org/mongo-driver/v2 v2.2.1
+	go.mongodb.org/mongo-driver/v2 v2.3.0
 	go.uber.org/mock v0.5.1
 	golang.org/x/crypto v0.39.0
 	golang.org/x/oauth2 v0.30.0
