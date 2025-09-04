@@ -1400,6 +1400,17 @@ permission:
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
       ]
+  permission_models_remediationInstructionApprove:
+    <<: *permission
+    _id: models_remediationInstructionApprove
+    name: <Current()._id>
+    description: Instructions - instruction approve
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_instruction_approve": 1
   permission_models_remediationJob:
     <<: *permission_crud
     _id: models_remediationJob
@@ -3351,6 +3362,7 @@ role:
       "@permission_models_planningReason": 15
       "@permission_models_planningExceptions": 15
       "@permission_models_remediationInstruction": 15
+      "@permission_models_remediationInstructionApprove": 1
       "@permission_models_remediationJob": 15
       "@permission_models_remediationConfiguration": 15
       "@permission_models_exploitation_eventFilter": 15

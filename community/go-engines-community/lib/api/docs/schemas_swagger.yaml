@@ -241,6 +241,10 @@ definitions:
         type: array
       t:
         type: integer
+      tag_colors:
+        items:
+          $ref: '#/definitions/alarm.TagColor'
+        type: array
       tags:
         items:
           type: string
@@ -711,6 +715,13 @@ definitions:
       reversed:
         type: boolean
       type:
+        type: string
+    type: object
+  alarm.TagColor:
+    properties:
+      color:
+        type: string
+      value:
         type: string
     type: object
   alarmaction.AckRequest:
@@ -5440,6 +5451,10 @@ definitions:
         items:
           type: string
         type: array
+      tag_colors:
+        items:
+          $ref: '#/definitions/alarm.TagColor'
+        type: array
       tags:
         items:
           type: string
@@ -5522,6 +5537,10 @@ definitions:
         $ref: '#/definitions/common.AlarmStep'
       status:
         $ref: '#/definitions/common.AlarmStep'
+      tag_colors:
+        items:
+          $ref: '#/definitions/alarm.TagColor'
+        type: array
       tags:
         items:
           type: string
@@ -5983,6 +6002,8 @@ definitions:
       defaultview:
         $ref: '#/definitions/user.View'
       name:
+        type: string
+      type:
         type: string
     type: object
   user.UpdateRequest:
