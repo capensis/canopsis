@@ -30,9 +30,9 @@ const (
 	// IDColumnName uses "_id" because it's not possible to change the primary field name in MongoDB.
 	IDColumnName = "_id"
 
-	// MaxStringLenStr and MaxIdLenStr are strings to avoid conversion.
+	// MaxStringLenStr and MaxIDLenStr are strings to avoid conversion.
 	MaxStringLenStr = "255"
-	MaxIdLenStr     = "36" // uuid len
+	MaxIDLenStr     = "36" // uuid len
 
 	MaxStringLen = 255
 )
@@ -55,7 +55,7 @@ type BaseColumnConfig struct {
 	//   * `3` - type number
 	//   * `4` - type string_array
 	//   * `5` - type datetime
-	//	 * `6` - type timestamp
+	//   * `6` - type timestamp
 	Type int `bson:"type" json:"type" binding:"required,oneof=1 2 3 4 5 6"`
 	// Possible thousands separator values.
 	//   * `dot` - dot separator

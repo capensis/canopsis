@@ -1,5 +1,5 @@
 db.external_data_table.updateMany(
-    {},
+    {column_configs: null},
     [
         {
             $set: {
