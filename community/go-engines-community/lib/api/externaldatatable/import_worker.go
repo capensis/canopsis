@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -36,6 +37,7 @@ const (
 	maxRetries = 10
 
 	sqlColumnsForCsvColumn = 3
+	sqlUndefinedColumnCode = "42703"
 )
 
 type ImportWorker interface {
@@ -883,15 +885,22 @@ func (w *importWorker) previewMongo(ctx context.Context, job ImportJob) (map[str
 		return nil, errors.New("column config count mismatch")
 	}
 
+	errorInfo := make(map[string]ErrorInfo)
+
 	columnConfigs := make([]externaldata.ColumnConfig, 0, len(job.ColumnConfigs))
-	for i := range job.ColumnConfigs {
-		if job.ColumnConfigs[i].BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
+	for i, cfg := range job.ColumnConfigs {
+		if cfg.BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
 			columnConfigs = append(columnConfigs, job.ColumnConfigs[i])
+		} else {
+			// if configs are not changed, check if there was error info, if yes, keep it
+			if errInfo, ok := job.ErrorInfo[cfg.Name]; ok {
+				errorInfo[cfg.Name] = errInfo
+			}
 		}
 	}
 
 	if len(columnConfigs) == 0 {
-		return nil, nil
+		return errorInfo, nil
 	}
 
 	columnErrRows := make(map[string][]int, len(columnConfigs))
@@ -979,7 +988,6 @@ func (w *importWorker) previewMongo(ctx context.Context, job ImportJob) (map[str
 		}
 	}
 
-	errorInfo := make(map[string]ErrorInfo, len(columnErrRows))
 	for columnName := range columnErrRows {
 		if len(columnErrRows[columnName]) == 0 {
 			continue
@@ -1000,15 +1008,22 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 		return nil, errors.New("column config count mismatch")
 	}
 
+	errorInfo := make(map[string]ErrorInfo)
+
 	columnConfigs := make([]externaldata.ColumnConfig, 0, len(job.ColumnConfigs))
-	for i := range job.ColumnConfigs {
-		if job.ColumnConfigs[i].BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
+	for i, cfg := range job.ColumnConfigs {
+		if cfg.BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
 			columnConfigs = append(columnConfigs, job.ColumnConfigs[i])
+		} else {
+			// if configs are not changed, check if there was error info, if yes, keep it
+			if errInfo, ok := job.ErrorInfo[cfg.Name]; ok {
+				errorInfo[cfg.Name] = errInfo
+			}
 		}
 	}
 
 	if len(columnConfigs) == 0 {
-		return nil, nil
+		return errorInfo, nil
 	}
 
 	pgPool, err := w.pgPoolProvider.Get(ctx)
@@ -1041,6 +1056,13 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 		}
 
 		if _, err := pgPool.Exec(ctx, "ALTER TABLE "+tableName+" ALTER COLUMN "+pgx.Identifier{cfg.Name + "_transformed_value"}.Sanitize()+" TYPE "+columnType+" USING NULL"); err != nil {
+			var pgErr *pgconn.PgError
+			if errors.As(err, &pgErr) {
+				if pgErr.Code == sqlUndefinedColumnCode {
+					return nil, fmt.Errorf("no such column %q", cfg.Name)
+				}
+			}
+
 			return nil, fmt.Errorf("failed to alter column in temprorary table: %w", err)
 		}
 	}
@@ -1064,7 +1086,7 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 
 	defer rows.Close()
 
-	for idx := 0; rows.Next(); idx++ {
+	for rowIdx := 0; rows.Next(); rowIdx++ {
 		vals, err := rows.Values()
 		if err != nil {
 			return nil, err
@@ -1097,7 +1119,7 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 				setStmts = append(setStmts, pgx.Identifier{columnName + "_transform_error"}.Sanitize()+" = $"+strconv.Itoa(len(args)-1))
 				setStmts = append(setStmts, pgx.Identifier{columnName + "_transformed_value"}.Sanitize()+" = $"+strconv.Itoa(len(args)))
 
-				columnErrRows[columnName] = append(columnErrRows[columnName], i)
+				columnErrRows[columnName] = append(columnErrRows[columnName], rowIdx)
 				if !uniqueColumnErrMessages[columnName][errorMsg] {
 					uniqueColumnErrMessages[columnName][errorMsg] = true
 					columnErrMessages[columnName] = append(columnErrMessages[columnName], errorMsg)
@@ -1133,7 +1155,6 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 		}
 	}
 
-	errorInfo := make(map[string]ErrorInfo, len(columnErrRows))
 	for columnName := range columnErrRows {
 		if len(columnErrRows[columnName]) == 0 {
 			continue
@@ -1218,7 +1239,7 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 		return nil
 	case externaldata.TypePostgreSQL:
 		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + externaldata.MaxIdLenStr + ") PRIMARY KEY, "
+			externaldata.IDColumnName + " VARCHAR(" + externaldata.MaxIDLenStr + ") PRIMARY KEY, "
 		for i, field := range columns {
 			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + externaldata.MaxStringLenStr + ") "
 			if i != len(columns)-1 {

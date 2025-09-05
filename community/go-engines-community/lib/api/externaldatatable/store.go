@@ -70,8 +70,6 @@ func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider, dbE
 		defaultSortBy:         "name",
 		dbExportClient:        dbExportClient,
 		exportDecoder:         exportDecoder,
-
-		parser: NewParser(),
 	}
 }
 
@@ -85,8 +83,6 @@ type store struct {
 	defaultSortBy         string
 	dbExportClient        mongo.DbClient
 	exportDecoder         encoding.Decoder
-
-	parser Parser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -572,7 +568,7 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 		case externaldata.ColumnTypeString:
 			strVal, ok := rawVal.(string)
 			if !ok {
-				valErrMsgs[columnName] = "not a string."
+				valErrMsgs[columnName] = columnName + " is not a string."
 				continue
 			}
 
@@ -585,25 +581,25 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 		case externaldata.ColumnTypeNumber:
 			val, ok = rawVal.(float64)
 			if !ok {
-				valErrMsgs[columnName] = "not a number."
+				valErrMsgs[columnName] = columnName + " is not a number."
 				continue
 			}
 		case externaldata.ColumnTypeBoolean:
 			val, ok = rawVal.(bool)
 			if !ok {
-				valErrMsgs[columnName] = "not a boolean."
+				valErrMsgs[columnName] = columnName + " is not a boolean."
 				continue
 			}
 		case externaldata.ColumnTypeStringArray:
 			val, ok = utils.IsStringSlice(rawVal)
 			if !ok {
-				valErrMsgs[columnName] = "not a string array."
+				valErrMsgs[columnName] = columnName + " is not a string array."
 				continue
 			}
 		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 			val, ok = getIntValue(rawVal)
 			if !ok {
-				valErrMsgs[columnName] = "not a timestamp."
+				valErrMsgs[columnName] = columnName + " is not a timestamp."
 				continue
 			}
 		default:
@@ -667,7 +663,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		case externaldata.ColumnTypeString:
 			strVal, ok := rawVal.(string)
 			if !ok {
-				valErrMsgs[columnName] = "not a string."
+				valErrMsgs[columnName] = columnName + " is not a string."
 				continue
 			}
 
@@ -680,25 +676,25 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		case externaldata.ColumnTypeNumber:
 			val, ok = rawVal.(float64)
 			if !ok {
-				valErrMsgs[columnName] = "not a number."
+				valErrMsgs[columnName] = columnName + " is not a number."
 				continue
 			}
 		case externaldata.ColumnTypeBoolean:
 			val, ok = rawVal.(bool)
 			if !ok {
-				valErrMsgs[columnName] = "not a boolean."
+				valErrMsgs[columnName] = columnName + " is not a boolean."
 				continue
 			}
 		case externaldata.ColumnTypeStringArray:
 			val, ok = utils.IsStringSlice(rawVal)
 			if !ok {
-				valErrMsgs[columnName] = "not a string array."
+				valErrMsgs[columnName] = columnName + " is not a string array."
 				continue
 			}
 		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 			val, ok = getIntValue(rawVal)
 			if !ok {
-				valErrMsgs[columnName] = "not a timestamp."
+				valErrMsgs[columnName] = columnName + " is not a timestamp."
 				continue
 			}
 		default:
@@ -899,7 +895,7 @@ func (s *store) createPostgresTable(ctx context.Context, name string) error {
 	}
 
 	sql := "CREATE TABLE " + externaldata.GetPostgresTableName(name) +
-		" ( " + externaldata.IDColumnName + " VARCHAR(" + externaldata.MaxIdLenStr + ") PRIMARY KEY )"
+		" ( " + externaldata.IDColumnName + " VARCHAR(" + externaldata.MaxIDLenStr + ") PRIMARY KEY )"
 	_, err = pgPool.Exec(ctx, sql)
 	if err != nil {
 		pgErr := &pgconn.PgError{}
@@ -1235,9 +1231,11 @@ func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []ex
 			}
 
 			res[cfg.Name] = map[string]string{
-				"initial_value": initValue,
-				"error":         errorMessage,
+				"initial_value":   initValue,
+				"transform_error": errorMessage,
 			}
+
+			continue
 		}
 
 		var transformedValue any
