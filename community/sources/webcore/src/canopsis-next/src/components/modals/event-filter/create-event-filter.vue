@@ -5,7 +5,7 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <event-filter-form
+        <event-filter-form-with-test-variables
           v-model="form"
           :is-disabled-id-field="config.isDisabledIdField"
         />
@@ -59,7 +59,7 @@ import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
 
-import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
+import EventFilterFormWithTestVariables from '@/components/other/event-filter/form/event-filter-form-with-test-variables.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -70,7 +70,7 @@ export default {
     delay: VALIDATION_DELAY,
   },
   inject: ['$system'],
-  components: { EventFilterForm, ModalWrapper },
+  components: { EventFilterFormWithTestVariables, ModalWrapper },
   mixins: [
     modalInnerMixin,
     entitiesTemplateValidatorMixin,

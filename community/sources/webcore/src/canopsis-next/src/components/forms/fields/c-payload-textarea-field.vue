@@ -13,6 +13,7 @@
     :style="textareaStyle"
     :error="!!linesErrors.length"
     :autofocus="autofocus"
+    :wrap="wrap"
     class="c-payload-textarea-field"
     auto-grow
     @blur="handleBlur"
@@ -124,6 +125,10 @@ export default {
     autofocus: {
       type: Boolean,
       default: false,
+    },
+    wrap: {
+      type: String,
+      default: 'on',
     },
   },
   computed: {

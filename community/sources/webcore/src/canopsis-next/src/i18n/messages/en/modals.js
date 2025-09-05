@@ -794,6 +794,18 @@ export default {
         + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type table / collection name to confirm:',
     },
+    templateTestingData: {
+      title: 'Delete test data',
+      text: 'You are about to delete test data.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type test data name to confirm:',
+    },
+    templateTestingTest: {
+      title: 'Delete test',
+      text: 'You are about to delete test.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type test name to confirm:',
+    },
   },
   pbehaviorsCalendar: {
     title: 'Periodic behaviors',
@@ -1073,6 +1085,19 @@ export default {
     },
     duplicate: {
       title: 'Duplicate record',
+    },
+  },
+  createTemplateTestingData: {
+    create: {
+      title: 'Create template testing data',
+    },
+    edit: {
+      title: 'Edit template testing data',
+    },
+  },
+  createTemplateTestingTest: {
+    edit: {
+      title: 'Edit test',
     },
   },
 };
