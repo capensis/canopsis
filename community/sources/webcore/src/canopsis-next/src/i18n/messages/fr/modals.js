@@ -794,6 +794,18 @@ export default {
         + '<strong>Cette opération est irreversible.</strong>',
       phraseText: 'Veuillez saisir le nom de la Collection / Table pour confirmer:',
     },
+    templateTestingData: {
+      title: 'Supprimer les données de test',
+      text: 'Vous êtes sur le point de supprimer les données de test.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom des données de test pour confirmer :',
+    },
+    templateTestingTest: {
+      title: 'Supprimer le test',
+      text: 'Vous êtes sur le point de supprimer le test.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du test pour confirmer :',
+    },
   },
   pbehaviorsCalendar: {
     title: 'Comportements périodiques',
@@ -1073,6 +1085,19 @@ export default {
     },
     duplicate: {
       title: 'Dupliquer',
+    },
+  },
+  createTemplateTestingData: {
+    create: {
+      title: 'Créer des données de test de modèle',
+    },
+    edit: {
+      title: 'Modifier les données de test de modèle',
+    },
+  },
+  createTemplateTestingTest: {
+    edit: {
+      title: 'Modifier le test',
     },
   },
 };

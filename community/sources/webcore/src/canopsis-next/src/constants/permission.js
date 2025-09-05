@@ -212,6 +212,7 @@ export const USER_PERMISSIONS = {
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
+    templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`, // TODO: rename to _templateTesting
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -479,6 +480,7 @@ export const USER_PERMISSIONS = {
       launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
       resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.api}_external_data_table`,
+      templateData: `${USER_PERMISSIONS_PREFIXES.api}_template_data`,
 
       ...featuresService.get('constants.USER_PERMISSIONS.api.general'),
     },

@@ -1,0 +1,43 @@
+import { TEMPLATE_TESTING_DATA_TYPES, TEMPLATE_TESTING_TEST_TYPES, TEMPLATE_TESTING_TABS } from '@/constants';
+
+export default {
+  filterByRuleType: 'Filtrer par type de règle',
+  usePreFilledTemplate: 'Utiliser un modèle pré-rempli',
+  usePreFilledTemplateWarning: 'La valeur actuelle sera perdue',
+  headersHelpText: 'En-têtes pour la réponse HTTP',
+  noHeadersAdded: 'Aucun en-tête ajouté pour le moment',
+  formatJson: 'Formater JSON',
+  inputPlaceholder: 'Entrez vos données d\'entrée ici...',
+  outputPlaceholder: 'Les résultats du test apparaîtront ici...',
+  runTest: 'EXÉCUTER LE TEST',
+  notRun: 'Non exécuté',
+  running: 'En cours',
+  success: 'Succès',
+  error: 'Erreur',
+  testVariables: 'Variables de test',
+  testFailed: 'Le test a échoué',
+  testName: 'Nom du test',
+  testData: 'Données de test',
+  saveTest: 'Sauvegarder le test',
+  saveTestAsNew: 'Sauvegarder comme nouveau test',
+  errorsInInput: '{count} erreur dans l\'entrée | {count} erreurs dans l\'entrée',
+  tabs: {
+    [TEMPLATE_TESTING_TABS.data]: '@:templateTesting.testData',
+    [TEMPLATE_TESTING_TABS.tests]: 'Tests',
+  },
+  dataTypes: {
+    [TEMPLATE_TESTING_DATA_TYPES.event]: 'Événement',
+    [TEMPLATE_TESTING_DATA_TYPES.response]: 'Réponse',
+  },
+  testTypes: {
+    [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Filtre d\'événement',
+    [TEMPLATE_TESTING_TEST_TYPES.linkRule]: 'Règle de lien',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Scénario d\'action',
+    [TEMPLATE_TESTING_TEST_TYPES.widget]: 'Widget',
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Règle de déclaration de ticket',
+    [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: 'Information dynamique',
+    [TEMPLATE_TESTING_TEST_TYPES.instruction]: 'Instruction',
+    [TEMPLATE_TESTING_TEST_TYPES.job]: 'Travail',
+    [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: 'Règle de méta-alarme',
+  },
+};

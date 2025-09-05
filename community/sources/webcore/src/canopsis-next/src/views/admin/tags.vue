@@ -1,24 +1,7 @@
 <template>
-  <c-page
-    :creatable="hasCreateAnyTagAccess"
-    :create-tooltip="$t('modals.createTag.create.title')"
-    @refresh="fetchList"
-    @create="showCreateTagModal"
-  >
-    <tags-list
-      :tags="alarmTags"
-      :pending="alarmTagsPending"
-      :options.sync="options"
-      :total-items="alarmTagsMeta.total_count"
-      :updatable="hasUpdateAnyTagAccess"
-      :removable="hasDeleteAnyTagAccess"
-      :duplicable="hasCreateAnyTagAccess"
-      @edit="showEditTagModal"
-      @duplicate="showDuplicateTagModal"
-      @remove="showRemoveTagModal"
-      @remove-selected="showRemoveSelectedTagsModal"
-    />
-  </c-page>
+  <div style="width: 700px">
+    <template-testing-test-variables />
+  </div>
 </template>
 
 <script>
@@ -34,11 +17,11 @@ import { localQueryMixin } from '@/mixins/query/query';
 import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { permissionsTechnicalTagMixin } from '@/mixins/permissions/technical/tag';
 
-import TagsList from '@/components/other/tag/tags-list.vue';
+import TemplateTestingTestVariables from '@/components/other/template-testing/template-testing-test-variables.vue';
 
 export default {
   components: {
-    TagsList,
+    TemplateTestingTestVariables,
   },
   mixins: [
     authMixin,

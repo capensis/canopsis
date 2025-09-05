@@ -60,7 +60,6 @@ export default {
       ? t(`common.statusResolvedTypes.${statusValue.value}`)
       : t(`common.statusTypes.${statusValue.value}`)));
 
-
     return {
       statusValue,
       isNoEventsStatus,

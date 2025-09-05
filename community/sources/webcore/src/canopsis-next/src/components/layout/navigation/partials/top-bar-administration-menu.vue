@@ -169,6 +169,11 @@ export default {
           icon: 'add_alert',
           permission: USER_PERMISSIONS.technical.stateSetting,
         },
+        {
+          route: { name: ROUTES_NAMES.adminTemplateTesting },
+          icon: 'code',
+          permission: USER_PERMISSIONS.technical.templateTesting,
+        },
       ];
     },
 

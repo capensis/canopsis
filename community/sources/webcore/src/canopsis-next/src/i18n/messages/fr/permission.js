@@ -345,6 +345,7 @@ export default {
     [USER_PERMISSIONS.api.general.view]: 'Vues',
     [USER_PERMISSIONS.api.general.viewgroup]: 'Groupes de vues',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Modèles de widgets',
+    [USER_PERMISSIONS.api.general.templateData]: 'Données de modèle',
 
     /**
      * API Permissions Rules

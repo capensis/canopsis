@@ -1,0 +1,43 @@
+import { TEMPLATE_TESTING_DATA_TYPES, TEMPLATE_TESTING_TEST_TYPES, TEMPLATE_TESTING_TABS } from '@/constants';
+
+export default {
+  filterByRuleType: 'Filter by rule type',
+  usePreFilledTemplate: 'Use pre-filled template',
+  usePreFilledTemplateWarning: 'Current value will be lost',
+  headersHelpText: 'Headers for the HTTP response',
+  noHeadersAdded: 'No headers added yet',
+  formatJson: 'Format JSON',
+  inputPlaceholder: 'Enter your input data here...',
+  outputPlaceholder: 'Test results will appear here...',
+  runTest: 'RUN TEST',
+  notRun: 'Not run',
+  running: 'Running',
+  success: 'Success',
+  error: 'Error',
+  testVariables: 'Test variables',
+  testFailed: 'Test failed',
+  testName: 'Test name',
+  testData: 'Test data',
+  saveTest: 'Save test',
+  saveTestAsNew: 'Save as new test',
+  errorsInInput: '{count} error in input | {count} errors in input',
+  tabs: {
+    [TEMPLATE_TESTING_TABS.data]: '@:templateTesting.testData',
+    [TEMPLATE_TESTING_TABS.tests]: 'Tests',
+  },
+  dataTypes: {
+    [TEMPLATE_TESTING_DATA_TYPES.event]: 'Event',
+    [TEMPLATE_TESTING_DATA_TYPES.response]: 'Response',
+  },
+  testTypes: {
+    [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Event filter',
+    [TEMPLATE_TESTING_TEST_TYPES.linkRule]: 'Link rule',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Action scenario',
+    [TEMPLATE_TESTING_TEST_TYPES.widget]: 'Widget',
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Declare ticket rule',
+    [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: 'Dynamic info',
+    [TEMPLATE_TESTING_TEST_TYPES.instruction]: 'Instruction',
+    [TEMPLATE_TESTING_TEST_TYPES.job]: 'Job',
+    [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: 'Meta alarm rule',
+  },
+};
