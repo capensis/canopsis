@@ -1,0 +1,47 @@
+import { USER_PERMISSIONS } from './permission';
+
+export const TEMPLATE_TESTING_TABS = {
+  data: 'data',
+  tests: 'tests',
+};
+
+export const TEMPLATE_TESTING_DATA_TYPES = {
+  event: 0,
+  response: 1,
+};
+
+export const TEMPLATE_TESTING_TEST_TYPES = {
+  eventFilter: 0,
+  linkRule: 1,
+  scenario: 2,
+  widget: 3,
+  declareTicketRule: 4,
+  dynamicInfo: 5,
+  instruction: 6,
+  job: 7,
+  metaAlarmRule: 8,
+};
+
+export const TEMPLATE_TESTING_TESTS_TYPES_TO_PERMISSIONS = {
+  [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: USER_PERMISSIONS.technical.exploitation.eventFilter,
+  [TEMPLATE_TESTING_TEST_TYPES.linkRule]: USER_PERMISSIONS.technical.exploitation.linkRule,
+  [TEMPLATE_TESTING_TEST_TYPES.scenario]: USER_PERMISSIONS.technical.exploitation.scenario,
+  [TEMPLATE_TESTING_TEST_TYPES.widget]: USER_PERMISSIONS.technical.view,
+  [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: USER_PERMISSIONS.technical.exploitation.declareTicketRule,
+  [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: USER_PERMISSIONS.technical.exploitation.dynamicInfo,
+  [TEMPLATE_TESTING_TEST_TYPES.instruction]: USER_PERMISSIONS.technical.remediationInstruction,
+  [TEMPLATE_TESTING_TEST_TYPES.job]: USER_PERMISSIONS.technical.remediationJob,
+  [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: USER_PERMISSIONS.technical.exploitation.metaAlarmRule,
+};
+
+export const TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE = JSON.stringify({
+  connector: 'example_connector',
+  connector_name: 'example_connectorname',
+  source_type: 'resource',
+  event_type: 'check',
+  component: 'example_component',
+  resource: 'example_resource_1',
+  state: 1,
+  output: 'example alarm',
+  author: 'root',
+}, null, 2);

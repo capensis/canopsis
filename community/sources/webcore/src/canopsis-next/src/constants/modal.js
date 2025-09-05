@@ -127,4 +127,7 @@ export const MODALS = {
   createExternalDataTable: 'create-external-data-table',
   createExternalDataTableRecord: 'create-external-data-table-record',
   importExternalDataTableRecords: 'import-external-data-table-records',
+
+  createTemplateTestingData: 'create-template-testing-data',
+  createTemplateTestingTest: 'create-template-testing-test',
 };
