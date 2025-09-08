@@ -1038,7 +1038,7 @@ export default {
     alert: 'Vous êtes sur le point de supprimer les propriétés des infos d\'entité <strong>{name}</strong>.\n'
       + '<strong>L\'opération de suppression ne sera pas annulable.</strong>',
     text: 'Dans les endroits suivants, <strong>l\'alias</strong> sera changé en <strong>nom d\'infos d\'entité</strong>,'
-      + 'le <strong>type sélectionné ne sera pas modifié</strong>: '
+      + ' le <strong>type sélectionné ne sera pas modifié</strong>: '
       + '<ul><li>modèles</li><li>recherche avancée</li><li>infos ajoutées manuellement</li></ul>',
   },
   createTag: {

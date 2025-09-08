@@ -70,6 +70,7 @@ export const createBasicCRUDModule = ({ route, namespaced = true } = {}, module 
  * @param {Function} [options.metaPreparer = d => d?.meta] - Function to prepare meta information from the response.
  * @param {boolean} [options.withFetchingParams] - Flag to enable fetching with parameters.
  * @param {boolean} [options.withWithoutStore] - Flag to enable fetching without storing data.
+ * @param {string} [options.bulkRoute] - The base API route for the bulk entity.
  * @param {Object} [module = {}] - Additional module configuration.
  * @returns {Object} A Vuex module with state, getters, mutations, and actions for CRUD operations.
  */
@@ -80,6 +81,7 @@ export const createCRUDModule = ({
   metaPreparer = d => d?.meta,
   withFetchingParams,
   withWithoutStore,
+  bulkRoute,
 }, module = {}) => {
   const moduleState = {
     items: [],
@@ -147,6 +149,10 @@ export const createCRUDModule = ({
 
   if (withWithoutStore) {
     moduleActions.fetchListWithoutStore = (context, options) => request.get(route, options);
+  }
+
+  if (bulkRoute) {
+    moduleActions.bulkRemove = (context, { data }) => request.delete(bulkRoute, { data });
   }
 
   return merge({
