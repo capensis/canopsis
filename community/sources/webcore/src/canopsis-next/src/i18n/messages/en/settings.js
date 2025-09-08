@@ -47,6 +47,7 @@ export default {
   treeOfDependenciesSettings: 'Tree of dependencies settings',
   orderBy: 'Order by',
   periodicRefresh: 'Periodic refresh',
+  pausePeriodicRefreshOnExpandPanel: 'Pause periodic refresh when expand panel is open',
   defaultNumberOfElementsPerPage: 'Default number of elements/page',
   elementsPerPage: 'Elements per page',
   filterOnOpenResolved: 'Filter on Open/Resolved',
