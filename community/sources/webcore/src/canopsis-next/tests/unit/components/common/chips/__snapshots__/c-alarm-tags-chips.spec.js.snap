@@ -5,9 +5,9 @@ exports[`c-alarm-tags-chips Renders \`c-alarm-tags-chips\` with selectedTag and 
   active-item="tag3"
   inline-count="2"
   item-class="c-alarm-tags-chips__chip"
-  item-text="text"
-  item-value="text"
-  items="[object Object]"
+  item-text="value"
+  item-value="value"
+  items="[object Object],[object Object],[object Object]"
   row=""
 />
 `;

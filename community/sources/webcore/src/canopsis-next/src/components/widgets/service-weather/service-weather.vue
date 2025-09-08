@@ -137,7 +137,6 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesServiceMixin } from '@/mixins/entities/service';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { authMixin } from '@/mixins/auth';
-import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -155,7 +154,6 @@ export default {
     permissionsWidgetsServiceWeatherCategory,
     widgetPeriodicRefreshMixin,
     widgetFilterSelectMixin,
-    entitiesAlarmTagMixin,
     entitiesServiceMixin,
     widgetFetchQueryMixin,
     authMixin,
@@ -301,10 +299,6 @@ export default {
         params: this.getQuery(),
         widgetId: this.widget._id,
       });
-
-      if (!this.alarmTagsPending) {
-        this.fetchAlarmTagsList({ params: { paginate: false } });
-      }
     },
   },
 };
