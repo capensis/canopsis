@@ -2109,6 +2109,13 @@ definitions:
       value:
         type: string
     type: object
+  entityinfosproperty.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
+    type: object
   entityinfosproperty.CreateRequest:
     properties:
       _id:
