@@ -19,7 +19,6 @@ import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widge
 
 import { authMixin } from '@/mixins/auth';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
-import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesWidgetMixin } from '@/mixins/entities/view/widget';
 
 import AlarmsListTable from '@/components/widgets/alarm/partials/alarms-list-table.vue';
@@ -29,7 +28,6 @@ export default {
   mixins: [
     authMixin,
     entitiesAlarmMixin,
-    entitiesAlarmTagMixin,
     entitiesWidgetMixin,
   ],
   props: {
@@ -76,10 +74,6 @@ export default {
 
         if (this.widgetId) {
           requests.push(this.fetchWidgetWithoutStore({ id: this.widgetId }));
-        }
-
-        if (!this.alarmTagsPending) {
-          requests.push(this.fetchAlarmTagsList({ params: { paginate: false } }));
         }
 
         const [, widget] = await Promise.all(requests);
