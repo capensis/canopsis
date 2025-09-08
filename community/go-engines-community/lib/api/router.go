@@ -2464,7 +2464,7 @@ func RegisterRoutes(
 			maintenanceApi.Maintenance,
 		)
 
-		entityInfosPropertyAPI := entityinfosproperty.NewApi(entityinfosproperty.NewStore(primaryDbClient, authorProvider))
+		entityInfosPropertyAPI := entityinfosproperty.NewApi(entityinfosproperty.NewStore(primaryDbClient, authorProvider), logger)
 		entityInfosPropertyRouter := protected.Group("/entity-infos-properties")
 		{
 			entityInfosPropertyRouter.POST(
@@ -2493,6 +2493,15 @@ func RegisterRoutes(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionDelete, enforcer),
 				entityInfosPropertyAPI.Delete,
+			)
+		}
+		entityInfosPropertyBulkRouter := bulkRouter.Group("/entity-infos-properties")
+		{
+			entityInfosPropertyBulkRouter.DELETE(
+				"",
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionDelete, enforcer),
+				middleware.PreProcessBulk(apiConfigProvider, false),
+				entityInfosPropertyAPI.BulkDelete,
 			)
 		}
 	}

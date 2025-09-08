@@ -82,3 +82,7 @@ type FilteredQuery struct {
 	//   * `4` - type string_array
 	Type *int `json:"type" form:"type" binding:"omitempty,oneof=0 1 2 3 4"`
 }
+
+type BulkDeleteRequestItem struct {
+	ID string `json:"_id" binding:"required"`
+}
