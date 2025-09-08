@@ -46,6 +46,7 @@ export const useEntityInfoProperty = () => {
     createEntityInfoProperty: 'create',
     updateEntityInfoProperty: 'update',
     removeEntityInfoProperty: 'remove',
+    bulkRemoveEntityInfoProperty: 'bulkRemove',
     fetchEntityInfoPropertiesListWithoutStore: 'fetchListWithoutStore',
   });
 
