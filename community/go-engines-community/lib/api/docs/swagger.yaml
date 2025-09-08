@@ -2359,6 +2359,56 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/entity-infos-properties:
+    delete:
+      tags:
+        - entityinfosproperties
+      summary: Bulk delete entity infos properties
+      description: |
+        Bulk delete entity infos properties.
+
+        -  PERMISSIONS: `api_entity_infos_property:delete`
+      operationId: entityinfosproperties-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete entity infos properties
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/entityservices:
     put:
       tags:
@@ -5380,7 +5430,7 @@ paths:
       description: |
         Delete entity info property by id.
 
-        -  PERMISSIONS: `api_resolve_rule:delete`
+        -  PERMISSIONS: `api_entity_infos_property:delete`
       operationId: entityinfosproperties-delete-by-id
       parameters:
         - $ref: '#/components/parameters/id'
