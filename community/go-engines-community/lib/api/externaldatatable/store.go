@@ -572,8 +572,8 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 				continue
 			}
 
-			if len(strVal) > externaldata.MaxStringLen {
-				valErrMsgs[columnName] = "string length must be less than " + externaldata.MaxStringLenStr
+			if len(strVal) > MaxStringLen {
+				valErrMsgs[columnName] = "string length must be less than " + MaxStringLenStr
 				continue
 			}
 
@@ -667,8 +667,8 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 				continue
 			}
 
-			if len(strVal) > externaldata.MaxStringLen {
-				valErrMsgs[columnName] = "string length must be less than " + externaldata.MaxStringLenStr
+			if len(strVal) > MaxStringLen {
+				valErrMsgs[columnName] = "string length must be less than " + MaxStringLenStr
 				continue
 			}
 
@@ -895,7 +895,7 @@ func (s *store) createPostgresTable(ctx context.Context, name string) error {
 	}
 
 	sql := "CREATE TABLE " + externaldata.GetPostgresTableName(name) +
-		" ( " + externaldata.IDColumnName + " VARCHAR(" + externaldata.MaxIDLenStr + ") PRIMARY KEY )"
+		" ( " + externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY )"
 	_, err = pgPool.Exec(ctx, sql)
 	if err != nil {
 		pgErr := &pgconn.PgError{}
@@ -1204,7 +1204,7 @@ func (s *store) transformPostgresResToData(vals []any, columnConfigs []externald
 	return res, nil
 }
 
-func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []externaldata.ColumnConfig) (map[string]any, error) {
+func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []ColumnConfig) (map[string]any, error) {
 	res := make(map[string]any, len(vals))
 
 	id, ok := vals[0].(string)
