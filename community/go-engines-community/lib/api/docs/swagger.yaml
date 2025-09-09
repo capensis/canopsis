@@ -201,6 +201,10 @@ paths:
         -  PERMISSIONS: `api_alarm_read`
       operationId: alarm-find-alarm-display-names
       parameters:
+        - name: opened
+          in: query
+          schema:
+            type: boolean
         - in: query
           name: alarm_pattern
           schema:

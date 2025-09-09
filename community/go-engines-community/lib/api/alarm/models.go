@@ -526,13 +526,24 @@ type LinksRequest struct {
 
 type GetDisplayNamesRequest struct {
 	pagination.Query
-
-	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	Search string `form:"search" json:"search"`
-
+	Opened           *bool  `form:"opened" json:"opened"`
+	Sort             string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	Search           string `form:"search" json:"search"`
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
 	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
 	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+}
+
+func (r GetDisplayNamesRequest) GetOpenedFilter() int {
+	if r.Opened == nil {
+		return OpenedAndRecentResolved
+	}
+
+	if *r.Opened {
+		return OnlyOpened
+	}
+
+	return OnlyResolved
 }
 
 type DisplayNameData struct {
