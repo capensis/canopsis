@@ -223,6 +223,10 @@
         v-model="form.parameters.isHtmlEnabledOnTimeLine"
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
       />
+      <field-switcher
+        v-model="form.parameters.pausePeriodicRefreshOnExpandPanel"
+        :title="$t('settings.pausePeriodicRefreshOnExpandPanel')"
+      />
     </widget-settings-group>
     <export-csv-form
       v-model="form.parameters"
