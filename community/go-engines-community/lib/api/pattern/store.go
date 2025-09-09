@@ -83,7 +83,7 @@ func NewStore(
 			mongo.DynamicInfosRulesMongoCollection,
 			mongo.FlappingRuleMongoCollection,
 			mongo.KpiFilterMongoCollection,
-			mongo.DeclareTicketRuleMongoCollection,
+			mongo.DeclareTicketRuleCollection,
 			mongo.LinkRuleMongoCollection,
 			mongo.AlarmTagCollection,
 		},
@@ -415,7 +415,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 			return err
 		}
 
-		scenarioCollection := mongo.ScenarioMongoCollection
+		scenarioCollection := mongo.ScenarioCollection
 		update["$set"] = bson.M{
 			"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
 				common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
@@ -434,7 +434,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 			return err
 		}
 	case savedpattern.TypeAlarm:
-		scenarioCollection := mongo.ScenarioMongoCollection
+		scenarioCollection := mongo.ScenarioCollection
 		_, err := s.client.Collection(scenarioCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
 			bson.M{"$set": bson.M{
@@ -507,7 +507,7 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response, author 
 			return err
 		}
 
-		_, err = s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+		_, err = s.client.Collection(mongo.ScenarioCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_entity_pattern": pattern.ID},
 			bson.M{
 				"$set": bson.M{
@@ -525,7 +525,7 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response, author 
 			return err
 		}
 	case savedpattern.TypeAlarm:
-		_, err := s.client.Collection(mongo.ScenarioMongoCollection).UpdateMany(ctx,
+		_, err := s.client.Collection(mongo.ScenarioCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
 			bson.M{
 				"$set": bson.M{

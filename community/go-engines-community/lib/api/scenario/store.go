@@ -38,7 +38,7 @@ type store struct {
 func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
 	return &store{
 		dbClient:              db,
-		collection:            db.Collection(mongo.ScenarioMongoCollection),
+		collection:            db.Collection(mongo.ScenarioCollection),
 		transformer:           transformer,
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "author.name"},
@@ -269,11 +269,11 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionReq
 			Comment:    r[idx].Comment,
 			Parameters: r[idx].Parameters,
 			EntityPatternFields: transformEntityPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioMongoCollection),
+				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioCollection),
 			),
 			AlarmPatternFields: transformedAlarmPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
-				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioCollection),
+				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioCollection),
 			),
 			DropScenarioIfNotMatched: *r[idx].DropScenarioIfNotMatched,
 			EmitTrigger:              *r[idx].EmitTrigger,

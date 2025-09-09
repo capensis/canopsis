@@ -98,6 +98,8 @@ type Parameters struct {
 	Color string `json:"color,omitempty" bson:"color,omitempty"`
 	// Request is used in webhook action.
 	Request *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
+	// AuthToken is used in webhook action.
+	AuthToken *request.WebhookAuthToken `json:"auth_token,omitempty" bson:"auth_token,omitempty"`
 	// SkipForChild is used in webhook action.
 	SkipForChild *bool `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
 	// SkipForInstruction is used in webhook action.

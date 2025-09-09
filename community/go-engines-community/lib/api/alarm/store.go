@@ -106,7 +106,7 @@ func NewStore(
 		dbInstructionCollection:          dbClient.Collection(mongo.InstructionMongoCollection),
 		dbInstructionExecutionCollection: dbClient.Collection(mongo.InstructionExecutionMongoCollection),
 		dbEntityCollection:               dbClient.Collection(mongo.EntityMongoCollection),
-		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleMongoCollection),
+		dbDeclareTicketCollection:        dbClient.Collection(mongo.DeclareTicketRuleCollection),
 		dbUserCollection:                 dbClient.Collection(mongo.UserCollection),
 		authorProvider:                   authorProvider,
 
