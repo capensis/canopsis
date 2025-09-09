@@ -37,18 +37,14 @@ func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
 			Name: "test_coll_1",
 			ColumnConfigs: []externaldata.ColumnConfig{
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_1",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_1",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_2",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_2",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 			},
 		},
@@ -56,25 +52,19 @@ func TestSyncMongoCollections_GivenCollections_ShouldAdd(t *testing.T) {
 			Name: "test_coll_3",
 			ColumnConfigs: []externaldata.ColumnConfig{
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_3",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_3",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_4",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_4",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_5",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_5",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 			},
 		},
@@ -113,25 +103,19 @@ func TestSyncMongoCollections_GivenEmptyCollections_ShouldNotCreateExdata(t *tes
 			Name: "test_coll_2",
 			ColumnConfigs: []externaldata.ColumnConfig{
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_3",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_3",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_4",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_4",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 				{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
-						Name: "test_field_5",
-						Type: externaldata.ColumnTypeString,
-					},
-					Tag: &noTag,
+					Name: "test_field_5",
+					Type: externaldata.ColumnTypeString,
+					Tag:  &noTag,
 				},
 			},
 		},

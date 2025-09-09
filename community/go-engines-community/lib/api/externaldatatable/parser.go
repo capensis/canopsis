@@ -30,7 +30,7 @@ var errStringIsNotAValidDatetime = errors.New("string is not a valid datetime")
 var errStringIsNotAValidTimestamp = errors.New("string is not a valid timestamp")
 
 type Parser interface {
-	Parse(cfg externaldata.ColumnConfig, initialValue string) (any, error)
+	Parse(cfg ColumnConfig, initialValue string) (any, error)
 }
 
 type parser struct {
@@ -77,14 +77,14 @@ func NewParser() Parser {
 	}
 }
 
-func (p *parser) Parse(cfg externaldata.ColumnConfig, initialValue string) (any, error) {
+func (p *parser) Parse(cfg ColumnConfig, initialValue string) (any, error) {
 	var transformedValue any
 	var err error
 
 	switch cfg.Type {
 	case externaldata.ColumnTypeString:
-		if len(initialValue) > externaldata.MaxStringLen {
-			return nil, fmt.Errorf("string length must be less than %d", externaldata.MaxStringLen)
+		if len(initialValue) > MaxStringLen {
+			return nil, fmt.Errorf("string length must be less than %d", MaxStringLen)
 		}
 
 		transformedValue = initialValue
