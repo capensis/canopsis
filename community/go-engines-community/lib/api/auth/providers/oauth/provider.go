@@ -296,7 +296,8 @@ func (p *provider) Callback(c *gin.Context) {
 		return
 	}
 
-	oauth2Token, err := p.oauth2Config.Exchange(c, code, options...)
+	ctx := oidc.ClientContext(c, p.client)
+	oauth2Token, err := p.oauth2Config.Exchange(ctx, code, options...)
 	if err != nil {
 		panic(err)
 	}
@@ -305,7 +306,7 @@ func (p *provider) Callback(c *gin.Context) {
 	var userInfo map[string]any
 
 	if !p.config.OpenID {
-		userID, userInfo, err = p.getUserInfoOAuth2(c, oauth2Token)
+		userID, userInfo, err = p.getUserInfoOAuth2(ctx, oauth2Token)
 		if err != nil {
 			panic(fmt.Errorf("failed to get user info: %w", err))
 		}
@@ -328,7 +329,7 @@ func (p *provider) Callback(c *gin.Context) {
 			return
 		}
 
-		idToken, err := p.oidcVerifier.Verify(c, rawIDToken)
+		idToken, err := p.oidcVerifier.Verify(ctx, rawIDToken)
 		if err != nil {
 			p.logger.Err(fmt.Errorf("id_token is not valid: %w", err)).Str("provider", p.name).Str("id_token", rawIDToken).Msg("oauth2 callback error")
 			p.errorRedirect(c, redirectUrl, "id_token is not valid")
@@ -343,7 +344,7 @@ func (p *provider) Callback(c *gin.Context) {
 			return
 		}
 
-		userID, userInfo, err = p.getUserInfoOpenID(c, oauth2Token, idToken)
+		userID, userInfo, err = p.getUserInfoOpenID(ctx, oauth2Token, idToken)
 		if err != nil {
 			panic(fmt.Errorf("failed to get user info: %w", err))
 		}
@@ -356,7 +357,7 @@ func (p *provider) Callback(c *gin.Context) {
 		return
 	}
 
-	user, err := p.userProvider.FindByExternalSource(c, userID, p.source)
+	user, err := p.userProvider.FindByExternalSource(ctx, userID, p.source)
 	if err != nil {
 		panic(fmt.Errorf("failed to get user by external source: %w", err))
 	}
@@ -378,7 +379,7 @@ func (p *provider) Callback(c *gin.Context) {
 		panic(fmt.Errorf("reload enforcer error: %w", err))
 	}
 
-	maintenanceConf, err := p.maintenanceAdapter.GetConfig(c)
+	maintenanceConf, err := p.maintenanceAdapter.GetConfig(ctx)
 	if err != nil {
 		panic(fmt.Errorf("failed to get maintenance config: %w", err))
 	}
@@ -397,9 +398,9 @@ func (p *provider) Callback(c *gin.Context) {
 
 	var accessToken string
 	if p.config.ExpirationInterval != "" {
-		accessToken, err = p.tokenService.Create(c, *user, p.source)
+		accessToken, err = p.tokenService.Create(ctx, *user, p.source)
 	} else {
-		accessToken, err = p.tokenService.CreateWithExpiration(c, *user, p.source, oauth2Token.Expiry)
+		accessToken, err = p.tokenService.CreateWithExpiration(ctx, *user, p.source, oauth2Token.Expiry)
 	}
 
 	if err != nil {
@@ -510,8 +511,8 @@ func (p *provider) getAssocArrayAttribute(userInfo map[string]any, name string, 
 	return defaultValue
 }
 
-func (p *provider) getUserInfoOAuth2(c context.Context, token *oauth2.Token) (string, map[string]any, error) {
-	resp, err := p.oauth2Config.Client(c, token).Get(p.config.UserURL) //nolint:noctx
+func (p *provider) getUserInfoOAuth2(ctx context.Context, token *oauth2.Token) (string, map[string]any, error) {
+	resp, err := p.oauth2Config.Client(ctx, token).Get(p.config.UserURL) //nolint:noctx
 	if err != nil {
 		return "", nil, errors.New("failed to get user request")
 	}
@@ -547,7 +548,7 @@ func (p *provider) getUserInfoOAuth2(c context.Context, token *oauth2.Token) (st
 	return userID, userInfo, nil
 }
 
-func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idToken *oidc.IDToken) (string, map[string]any, error) {
+func (p *provider) getUserInfoOpenID(ctx context.Context, token *oauth2.Token, idToken *oidc.IDToken) (string, map[string]any, error) {
 	userInfo := make(map[string]any)
 	tokenClaims := make(map[string]any)
 	userInfoClaims := make(map[string]any)
@@ -570,7 +571,7 @@ func (p *provider) getUserInfoOpenID(c context.Context, token *oauth2.Token, idT
 		userInfo["token."+k] = v
 	}
 
-	userInfoResp, err := p.oidcProvider.UserInfo(c, oauth2.StaticTokenSource(token))
+	userInfoResp, err := p.oidcProvider.UserInfo(ctx, oauth2.StaticTokenSource(token))
 	if err != nil {
 		return "", userInfo, fmt.Errorf("failed to get userinfo: %w", err)
 	}
