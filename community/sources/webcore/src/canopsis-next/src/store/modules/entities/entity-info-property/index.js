@@ -8,6 +8,7 @@ import { createCRUDModule, DEFAULT_ENTITY_MODULE_TYPES } from '@/store/plugins/e
 
 export default createCRUDModule({
   route: API_ROUTES.entityInfosProperties,
+  bulkRoute: API_ROUTES.bulkEntityInfosProperties,
   withWithoutStore: true,
 }, {
   getters: {
