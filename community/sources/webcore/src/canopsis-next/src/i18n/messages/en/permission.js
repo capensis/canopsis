@@ -244,6 +244,7 @@ export default {
     [USER_PERMISSIONS.technical.planningType]: 'Planning type (Pbehavior)',
     [USER_PERMISSIONS.technical.remediationConfiguration]: 'Instructions - configurations tab',
     [USER_PERMISSIONS.technical.remediationInstruction]: 'Instructions - instructions tab',
+    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Instructions - approve',
     [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
     [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
