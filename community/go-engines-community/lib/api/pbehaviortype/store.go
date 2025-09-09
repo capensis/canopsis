@@ -378,7 +378,7 @@ func (s *store) isLinkedToException(ctx context.Context, id string) (bool, error
 
 // isLinkedToAction checks if there is action with linked type.
 func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
-	actionCollection := s.dbClient.Collection(mongo.ScenarioMongoCollection)
+	actionCollection := s.dbClient.Collection(mongo.ScenarioCollection)
 	res := actionCollection.FindOne(ctx, bson.M{
 		"actions": bson.M{
 			"$elemMatch": bson.M{
@@ -462,7 +462,7 @@ func getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes []int64) []bson.M {
 			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.ScenarioMongoCollection,
+			"from": mongo.ScenarioCollection,
 			"let":  bson.M{"type": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$actions.parameters.type", "$$type"}}}},

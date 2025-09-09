@@ -158,10 +158,10 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 
 	v.RegisterStructValidation(pbehaviortimespan.ValidateTimespansRequest, pbehaviortimespan.TimespansRequest{})
 
-	scenarioUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "Name")
+	scenarioUniqueNameValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioCollection, "Name")
 	scenarioExistReasonValidator := common.NewExistFieldValidator(client, mongo.PbehaviorReasonMongoCollection, "Reason")
 	scenarioExistTypeValidator := common.NewExistFieldValidator(client, mongo.PbehaviorTypeMongoCollection, "Type")
-	scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioMongoCollection, "ID")
+	scenarioExistIdValidator := common.NewUniqueFieldValidator(client, mongo.ScenarioCollection, "ID")
 
 	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
 		scenarioUniqueNameValidator.Validate(ctx, sl)

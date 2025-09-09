@@ -83,7 +83,7 @@ func NewActionLogger(
 		mongo.PatternMongoCollection:            ValueTypePattern,
 		mongo.PlaylistMongoCollection:           ValueTypePlayList,
 		mongo.RoleCollection:                    ValueTypeRole,
-		mongo.ScenarioMongoCollection:           ValueTypeScenario,
+		mongo.ScenarioCollection:                ValueTypeScenario,
 		mongo.UserCollection:                    ValueTypeUser,
 		mongo.StateSettingsMongoCollection:      ValueTypeStateSetting,
 		mongo.ViewMongoCollection:               ValueTypeView,
@@ -104,7 +104,7 @@ func NewActionLogger(
 		mongo.PbehaviorExceptionMongoCollection: ValueTypePbehaviorException,
 		mongo.ResolveRuleMongoCollection:        ValueTypeResolveRule,
 		mongo.WidgetTemplateMongoCollection:     ValueTypeWidgetTemplate,
-		mongo.DeclareTicketRuleMongoCollection:  ValueTypeDeclareTicketRule,
+		mongo.DeclareTicketRuleCollection:       ValueTypeDeclareTicketRule,
 		mongo.DynamicInfosRulesMongoCollection:  ValueTypeDynamicInfo,
 		mongo.JobMongoCollection:                ValueTypeJob,
 		mongo.JobConfigMongoCollection:          ValueTypeJobConfig,
@@ -116,6 +116,7 @@ func NewActionLogger(
 		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
 		mongo.ExternalDataTableCollection:       ValueTypeExternalData,
 		mongo.EntityInfosPropertyCollection:     ValueTypeEntityInfosProperty,
+		mongo.WebhookTokenRuleCollection:        ValueTypeWebhookTokenRule,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))

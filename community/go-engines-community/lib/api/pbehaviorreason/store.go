@@ -230,7 +230,7 @@ func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error
 
 func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
 	res := s.dbClient.
-		Collection(mongo.ScenarioMongoCollection).
+		Collection(mongo.ScenarioCollection).
 		FindOne(ctx, bson.M{
 			"actions": bson.M{
 				"$elemMatch": bson.M{
@@ -271,7 +271,7 @@ func getDeletablePipeline() []bson.M {
 			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.ScenarioMongoCollection,
+			"from": mongo.ScenarioCollection,
 			"let":  bson.M{"id": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$in": bson.A{"$$id", "$actions.parameters.reason"}}}},

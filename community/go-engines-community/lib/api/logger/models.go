@@ -50,6 +50,7 @@ const (
 	ValueTypeEventRecord         = "eventrecord"
 	ValueTypeExternalData        = "externaldata"
 	ValueTypeEntityInfosProperty = "entityinfosproperty"
+	ValueTypeWebhookTokenRule    = "webhooktokenrule"
 )
 
 type ActionLogEvent struct {

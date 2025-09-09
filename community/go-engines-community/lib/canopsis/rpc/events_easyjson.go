@@ -41,6 +41,8 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		switch key {
 		case "execution":
 			out.Execution = string(in.String())
+		case "token_execution":
+			out.TokenExecution = string(in.String())
 		case "healthcheck":
 			out.Healthcheck = bool(in.Bool())
 		default:
@@ -61,6 +63,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"execution\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Execution))
+	}
+	{
+		const prefix string = ",\"token_execution\":"
+		out.RawString(prefix)
+		out.String(string(in.TokenExecution))
 	}
 	{
 		const prefix string = ",\"healthcheck\":"

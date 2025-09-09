@@ -95,7 +95,7 @@ func NewWorkerPool(
 		alarmConfigProvider: alarmConfigProvider,
 
 		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
-		webhookHistoryCollection: dbClient.Collection(mongo.WebhookHistoryMongoCollection),
+		webhookHistoryCollection: dbClient.Collection(mongo.WebhookHistoryCollection),
 	}
 }
 
@@ -338,27 +338,31 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	stopOnFail := task.Action.Parameters.StopOnFail != nil && *task.Action.Parameters.StopOnFail
 	stopOnSuccess := task.Action.Parameters.StopOnSuccess != nil && *task.Action.Parameters.StopOnSuccess
 	multipleURLs := task.Action.Parameters.MultipleURLs != nil && *task.Action.Parameters.MultipleURLs
-	now := datetime.NewCpsTime()
+	now := datetime.NewMicroTime()
 	history := libwebhook.History{
-		ID:            utils.NewID(),
-		Alarms:        []string{task.Alarm.ID},
-		Scenario:      task.ScenarioID,
+		BaseHistory: libwebhook.BaseHistory{
+			ID:        utils.NewID(),
+			Status:    libwebhook.StatusCreated,
+			Request:   *task.Action.Parameters.Request,
+			CreatedAt: now,
+		},
+		Execution: task.ExecutionID,
+		Alarms:    []string{task.Alarm.ID},
+		Scenario:  task.ScenarioID,
+		Name:      types.RuleNameScenarioPrefix + task.ScenarioName,
+
 		Index:         int64(task.Step),
 		StopOnFail:    stopOnFail,
 		StopOnSuccess: stopOnSuccess,
 		MultipleURLs:  multipleURLs,
-		Execution:     task.ExecutionID,
-		Name:          types.RuleNameScenarioPrefix + task.ScenarioName,
 
 		SystemName:     task.Action.Parameters.TicketSystemName,
-		Status:         libwebhook.StatusCreated,
 		Comment:        task.Action.Comment,
-		Request:        *task.Action.Parameters.Request,
+		AuthToken:      task.Action.Parameters.AuthToken,
 		DeclareTicket:  task.Action.Parameters.DeclareTicket,
 		UserID:         additionalData.User,
 		Username:       additionalData.Author,
 		Initiator:      types.InitiatorSystem,
-		CreatedAt:      now,
 		EventInitiator: additionalData.Initiator,
 		EventOutput:    additionalData.Output,
 		Trigger:        additionalData.Trigger,
