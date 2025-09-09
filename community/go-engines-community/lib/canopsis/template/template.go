@@ -469,6 +469,10 @@ func addDefaultTplVarsToData(data any, defaultVars map[string]any) any {
 		return data
 	}
 
+	if data == nil {
+		return defaultVars
+	}
+
 	mapData, ok := libreflect.ToMap(data)
 	if !ok {
 		return data

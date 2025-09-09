@@ -15,16 +15,21 @@ var ErrResponseTooLong = errors.New("response too long")
 const buffChunk = 512
 
 type ResponseError struct {
+	statusCode int
 	failReason string
 	err        error
 }
 
-func NewResponseError(err error, failReason string) *ResponseError {
-	return &ResponseError{failReason: failReason, err: err}
+func NewResponseError(err error, statusCode int, failReason string) *ResponseError {
+	return &ResponseError{statusCode: statusCode, failReason: failReason, err: err}
 }
 
 func (e *ResponseError) Error() string {
 	return e.err.Error()
+}
+
+func (e *ResponseError) StatusCode() int {
+	return e.statusCode
 }
 
 func (e *ResponseError) FailReason() string {
@@ -35,7 +40,7 @@ func (e *ResponseError) Unwrap() error {
 	return e.err
 }
 
-func ReadResponse(response *http.Response, maxSize int64) ([]byte, error) {
+func ReadResponse(responseBody io.ReadCloser, maxSize int64) ([]byte, error) {
 	if maxSize <= 0 {
 		return nil, &ResponseError{
 			failReason: ErrResponseTooLong.Error(),
@@ -48,7 +53,7 @@ func ReadResponse(response *http.Response, maxSize int64) ([]byte, error) {
 		if len(b) == cap(b) {
 			b = append(b, 0)[:len(b)]
 		}
-		n, err := response.Body.Read(b[len(b):cap(b)])
+		n, err := responseBody.Read(b[len(b):cap(b)])
 		b = b[:len(b)+n]
 		if err != nil {
 			if errors.Is(err, io.EOF) {
@@ -96,13 +101,18 @@ func ValidateStatusCode(
 	reqUrl := request.URL.String()
 	errMsg := ""
 	if resErrMsgKey != "" {
-		body, err := ReadResponse(response, maxSize)
+		var r io.ReadCloser
+		var err error
+		r, response.Body, err = DrainBody(response.Body)
 		if err == nil {
-			parsed, err := fastjson.ParseBytes(body)
+			body, err := ReadResponse(r, maxSize)
 			if err == nil {
-				errFieldVal := parsed.GetStringBytes(strings.Split(resErrMsgKey, ".")...)
-				if len(errFieldVal) > 0 {
-					errMsg = string(errFieldVal)
+				parsed, err := fastjson.ParseBytes(body)
+				if err == nil {
+					errFieldVal := parsed.GetStringBytes(strings.Split(resErrMsgKey, ".")...)
+					if len(errFieldVal) > 0 {
+						errMsg = string(errFieldVal)
+					}
 				}
 			}
 		}
@@ -128,7 +138,7 @@ func ValidateStatusCode(
 
 // FlattenResponse reads response body to a new map[string]any with a flat hierarchy.
 func FlattenResponse(request *http.Request, response *http.Response, maxSize int64) (map[string]any, error) {
-	body, err := ReadResponse(response, maxSize)
+	body, err := ReadResponse(response.Body, maxSize)
 	if err != nil {
 		return nil, err
 	}

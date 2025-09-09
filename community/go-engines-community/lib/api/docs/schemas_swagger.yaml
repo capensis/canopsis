@@ -85,6 +85,9 @@ definitions:
     type: object
   action.Parameters:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
+        description: AuthToken is used in webhook action.
       author:
         type: string
       color:
@@ -4846,6 +4849,17 @@ definitions:
     - method
     - url
     type: object
+  request.WebhookAuthToken:
+    properties:
+      header:
+        type: string
+      payload_field:
+        type: string
+      query_string:
+        type: string
+      rule:
+        type: string
+    type: object
   request.WebhookDeclareTicket:
     properties:
       customFields:
@@ -5273,6 +5287,8 @@ definitions:
     type: object
   scenario.Parameters:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
       author:
         type: string
       declare_ticket:
