@@ -22,20 +22,17 @@ type API interface {
 }
 
 type api struct {
-	store       Store
-	enforcer    security.Enforcer
-	transformer *RequestTransformer
+	store    Store
+	enforcer security.Enforcer
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
-	transformer *RequestTransformer,
 ) API {
 	return &api{
-		store:       store,
-		enforcer:    enforcer,
-		transformer: transformer,
+		store:    store,
+		enforcer: enforcer,
 	}
 }
 
@@ -65,16 +62,6 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformer.Transform(c, &request.EditRequest)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
-	}
-
 	widget, err := a.store.Insert(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -102,18 +89,14 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformer.Transform(c, &request.EditRequest)
+	widget, err := a.store.Update(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
-	}
 
-	widget, err := a.store.Update(c, request)
-	if err != nil {
 		panic(err)
 	}
 
