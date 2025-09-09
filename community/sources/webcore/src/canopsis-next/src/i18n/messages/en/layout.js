@@ -11,7 +11,8 @@ export default {
       popups: {
         success: 'The groups was reordered',
         error: 'Several groups wasn\'t reordered',
-        periodicRefreshWasPaused: 'Periodic refresh was paused while you are editing the groups bar',
+        periodicRefreshWasPausedWhileEditingGroups: 'Periodic refresh was paused while you are editing the groups bar',
+        periodicRefreshWasPaused: 'Periodic refresh was paused',
         periodicRefreshWasResumed: 'Periodic refresh was resumed',
       },
     },

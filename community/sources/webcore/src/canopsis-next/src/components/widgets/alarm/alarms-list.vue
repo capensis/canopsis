@@ -168,7 +168,6 @@ import {
   widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
 } from '@/mixins/widget/handlebars/alarms-list-precompile-templates';
 import { entitiesAlarmMixin } from '@/mixins/entities/alarm';
-import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { entitiesAlarmDetailsMixin } from '@/mixins/entities/alarm/details';
 import { permissionsWidgetsAlarmsListCorrelation } from '@/mixins/permissions/widgets/alarms-list/correlation';
 import { permissionsWidgetsAlarmsListBookmark } from '@/mixins/permissions/widgets/alarms-list/bookmark';
@@ -210,7 +209,6 @@ export default {
     widgetAlarmsListPrecompileHandlebarsTemplatesMixin,
     entitiesWidgetMixin,
     entitiesAlarmMixin,
-    entitiesAlarmTagMixin,
     entitiesAlarmDetailsMixin,
     permissionsWidgetsAlarmsListCategory,
     permissionsWidgetsAlarmsListCorrelation,
@@ -423,10 +421,6 @@ export default {
         const params = this.getQuery();
 
         this.fetchAlarmsDetailsList({ widgetId: this.widget._id });
-
-        if (!this.alarmTagsPending) {
-          this.fetchAlarmTagsList({ params: { paginate: false } });
-        }
 
         if (!this.alarmsPending || !isEqual(params, this.alarmsFetchingParams)) {
           await this.fetchAlarmsList({
