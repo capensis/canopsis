@@ -123,11 +123,9 @@ func insertNewTables(
 					hasCol[f.Key] = true
 					columnTag := ColumnTagNoTag
 					columnConfigs = append(columnConfigs, ColumnConfig{
-						BaseColumnConfig: BaseColumnConfig{
-							Name: f.Key,
-							Type: columnType,
-						},
-						Tag: &columnTag,
+						Name: f.Key,
+						Type: columnType,
+						Tag:  &columnTag,
 					})
 				}
 			}
