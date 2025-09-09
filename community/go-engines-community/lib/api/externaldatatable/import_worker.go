@@ -284,7 +284,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 			}
 
 			r.ReuseRecord = true
-			var columnsConfig []externaldata.ColumnConfig
+			var columnsConfig []ColumnConfig
 
 			switch job.Type {
 			case externaldata.TypeMongoDB:
@@ -326,11 +326,14 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 				}
 			}
 		case JobTypePreview:
-			switch job.Type {
-			case externaldata.TypeMongoDB:
-				errorInfo, err = w.previewMongo(ctx, job)
-			case externaldata.TypePostgreSQL:
-				errorInfo, err = w.previewPostgres(ctx, job)
+			err = w.syncColumnConfigsOrder(job.PrevColumnConfigs, job.ColumnConfigs)
+			if err == nil {
+				switch job.Type {
+				case externaldata.TypeMongoDB:
+					errorInfo, err = w.previewMongo(ctx, job)
+				case externaldata.TypePostgreSQL:
+					errorInfo, err = w.previewPostgres(ctx, job)
+				}
 			}
 
 			if err != nil {
@@ -342,7 +345,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 					"$set": bson.M{
 						"status":      ImportStatusPreviewFailed,
 						"fail_reason": err.Error(),
-						// replace it with prev configs in order not to save invalid ones.
+						// should replace it with prev configs in order not to save invalid ones.
 						"column_configs": job.PrevColumnConfigs,
 					},
 					"$unset": bson.M{
@@ -352,15 +355,17 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 			} else if len(errorInfo) != 0 {
 				update = bson.M{
 					"$set": bson.M{
-						"status":      ImportStatusPreviewFailed,
-						"error_info":  errorInfo,
-						"fail_reason": "preview failed",
+						"status":         ImportStatusPreviewFailed,
+						"error_info":     errorInfo,
+						"fail_reason":    "preview failed",
+						"column_configs": job.ColumnConfigs, // should save aligned column configs
 					},
 				}
 			} else {
 				update = bson.M{
 					"$set": bson.M{
-						"status": ImportStatusPreviewSucceeded,
+						"status":         ImportStatusPreviewSucceeded,
+						"column_configs": job.ColumnConfigs, // should save aligned column configs
 					},
 					"$unset": bson.M{
 						"error_info":  "",
@@ -421,6 +426,60 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 	})
 
 	return g.Wait()
+}
+
+func (w *importWorker) syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
+	if len(oldConfigs) != len(newConfigs) {
+		return errors.New("column config count mismatch")
+	}
+
+	oldConfigsExistMap := make(map[string]bool, len(oldConfigs))
+	for _, c := range oldConfigs {
+		oldConfigsExistMap[c.Name] = true
+	}
+
+	newConfigsIndexMap := make(map[string]int, len(newConfigs))
+	for i, c := range newConfigs {
+		if !oldConfigsExistMap[c.Name] {
+			return fmt.Errorf("no such column %q", c.Name)
+		}
+
+		if _, ok := newConfigsIndexMap[c.Name]; ok {
+			return fmt.Errorf("duplicate column name %q", c.Name)
+		}
+
+		newConfigsIndexMap[c.Name] = i
+	}
+
+	for i := range oldConfigs {
+		j := newConfigsIndexMap[oldConfigs[i].Name] // existence is guaranteed by checks above
+		if i != j {
+			newConfigs[i], newConfigs[j] = newConfigs[j], newConfigs[i]
+
+			newConfigsIndexMap[newConfigs[j].Name] = j
+			newConfigsIndexMap[newConfigs[i].Name] = i
+		}
+	}
+
+	return nil
+}
+
+func (w *importWorker) filterColumnConfigs(job ImportJob) ([]ColumnConfig, map[string]ErrorInfo) {
+	errorInfo := make(map[string]ErrorInfo)
+
+	filteredColumnConfigs := make([]ColumnConfig, 0, len(job.ColumnConfigs))
+	for i, cfg := range job.ColumnConfigs {
+		if cfg.BaseColumnConfig != job.PrevColumnConfigs[i].BaseColumnConfig {
+			filteredColumnConfigs = append(filteredColumnConfigs, job.ColumnConfigs[i])
+		} else {
+			// if configs are not changed, check if there was error info, if yes, keep it
+			if errInfo, ok := job.ErrorInfo[cfg.Name]; ok {
+				errorInfo[cfg.Name] = errInfo
+			}
+		}
+	}
+
+	return filteredColumnConfigs, errorInfo
 }
 
 func (w *importWorker) GetJob(ctx context.Context, id string) (ImportJob, error) {
@@ -514,7 +573,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 
 			switch c.Type {
 			case externaldata.ColumnTypeString:
-				columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")"
+				columnType = "VARCHAR(" + MaxStringLenStr + ")"
 			case externaldata.ColumnTypeNumber:
 				columnType = "DOUBLE PRECISION"
 			case externaldata.ColumnTypeBoolean:
@@ -522,7 +581,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 				columnType = "BIGINT"
 			case externaldata.ColumnTypeStringArray:
-				columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")[]"
+				columnType = "VARCHAR(" + MaxStringLenStr + ")[]"
 			default:
 				return false, fmt.Errorf("unsupported column type %q", c.Type)
 			}
@@ -715,10 +774,10 @@ func (w *importWorker) DeleteOldJobs(ctx context.Context) {
 	}
 }
 
-func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) ([]externaldata.ColumnConfig, error) {
+func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.Reader) ([]ColumnConfig, error) {
 	tableName := job.getDBTableName()
 
-	var columns []externaldata.ColumnConfig
+	var columns []ColumnConfig
 	i := 0
 	docs := make([]any, 0, canopsis.DefaultBulkSize)
 	for {
@@ -737,10 +796,10 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 		}
 
 		if len(columns) == 0 {
-			columns = make([]externaldata.ColumnConfig, len(record))
+			columns = make([]ColumnConfig, len(record))
 			for idx, r := range record {
-				columns[idx] = externaldata.ColumnConfig{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
+				columns[idx] = ColumnConfig{
+					BaseColumnConfig: BaseColumnConfig{
 						Name: r,
 						Type: externaldata.ColumnTypeString,
 					},
@@ -762,8 +821,8 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 		doc := make(map[string]any, len(record)+1)
 		doc[externaldata.IDColumnName] = utils.NewID()
 		for j, c := range columns {
-			if utf8.RuneCountInString(record[j]) > externaldata.MaxStringLen {
-				return nil, fmt.Errorf("invalid record %d: string length must be less than "+externaldata.MaxStringLenStr, i)
+			if utf8.RuneCountInString(record[j]) > MaxStringLen {
+				return nil, fmt.Errorf("invalid record %d: string length must be less than "+MaxStringLenStr, i)
 			}
 
 			doc[c.Name] = Column{InitialValue: record[j], TransformedValue: record[j]}
@@ -790,13 +849,13 @@ func (w *importWorker) writeToMongo(ctx context.Context, job ImportJob, r *csv.R
 	return columns, nil
 }
 
-func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) ([]externaldata.ColumnConfig, error) {
+func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *csv.Reader) ([]ColumnConfig, error) {
 	pgPool, err := w.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 	}
 
-	var columnConfigs []externaldata.ColumnConfig
+	var columnConfigs []ColumnConfig
 	var columnsWithID []string
 
 	i := 0
@@ -820,10 +879,10 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 			columnsWithID = make([]string, len(record)*sqlColumnsForCsvColumn+1)
 			columnsWithID[0] = externaldata.IDColumnName
 
-			columnConfigs = make([]externaldata.ColumnConfig, len(record))
+			columnConfigs = make([]ColumnConfig, len(record))
 			for idx, r := range record {
-				columnConfigs[idx] = externaldata.ColumnConfig{
-					BaseColumnConfig: externaldata.BaseColumnConfig{
+				columnConfigs[idx] = ColumnConfig{
+					BaseColumnConfig: BaseColumnConfig{
 						Name: r,
 						Type: externaldata.ColumnTypeString,
 					},
@@ -849,8 +908,8 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 		row := make([]any, len(record)*sqlColumnsForCsvColumn+1)
 		row[0] = utils.NewID()
 		for j, v := range record {
-			if utf8.RuneCountInString(v) > externaldata.MaxStringLen {
-				return nil, fmt.Errorf("invalid record %d: string length must be less than "+externaldata.MaxStringLenStr, i)
+			if utf8.RuneCountInString(v) > MaxStringLen {
+				return nil, fmt.Errorf("invalid record %d: string length must be less than "+MaxStringLenStr, i)
 			}
 
 			row[sqlColumnsForCsvColumn*j+1] = v
@@ -880,25 +939,7 @@ func (w *importWorker) writeToPostgres(ctx context.Context, job ImportJob, r *cs
 }
 
 func (w *importWorker) previewMongo(ctx context.Context, job ImportJob) (map[string]ErrorInfo, error) {
-	prevColumnConfigs := job.PrevColumnConfigs
-	if len(prevColumnConfigs) != len(job.ColumnConfigs) {
-		return nil, errors.New("column config count mismatch")
-	}
-
-	errorInfo := make(map[string]ErrorInfo)
-
-	columnConfigs := make([]externaldata.ColumnConfig, 0, len(job.ColumnConfigs))
-	for i, cfg := range job.ColumnConfigs {
-		if cfg.BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
-			columnConfigs = append(columnConfigs, job.ColumnConfigs[i])
-		} else {
-			// if configs are not changed, check if there was error info, if yes, keep it
-			if errInfo, ok := job.ErrorInfo[cfg.Name]; ok {
-				errorInfo[cfg.Name] = errInfo
-			}
-		}
-	}
-
+	columnConfigs, errorInfo := w.filterColumnConfigs(job)
 	if len(columnConfigs) == 0 {
 		return errorInfo, nil
 	}
@@ -941,6 +982,8 @@ func (w *importWorker) previewMongo(ctx context.Context, job ImportJob) (map[str
 		for _, columnConfig := range columnConfigs {
 			columnName := columnConfig.Name
 
+			// keep this check despite having validation in syncColumnConfigsOrder func,
+			// db might unexpectedly don't have this column.
 			column, ok := row.Columns[columnName]
 			if !ok {
 				return nil, fmt.Errorf("no such column %q", columnName)
@@ -1003,25 +1046,7 @@ func (w *importWorker) previewMongo(ctx context.Context, job ImportJob) (map[str
 }
 
 func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[string]ErrorInfo, error) {
-	prevColumnConfigs := job.PrevColumnConfigs
-	if len(prevColumnConfigs) != len(job.ColumnConfigs) {
-		return nil, errors.New("column config count mismatch")
-	}
-
-	errorInfo := make(map[string]ErrorInfo)
-
-	columnConfigs := make([]externaldata.ColumnConfig, 0, len(job.ColumnConfigs))
-	for i, cfg := range job.ColumnConfigs {
-		if cfg.BaseColumnConfig != prevColumnConfigs[i].BaseColumnConfig {
-			columnConfigs = append(columnConfigs, job.ColumnConfigs[i])
-		} else {
-			// if configs are not changed, check if there was error info, if yes, keep it
-			if errInfo, ok := job.ErrorInfo[cfg.Name]; ok {
-				errorInfo[cfg.Name] = errInfo
-			}
-		}
-	}
-
+	columnConfigs, errorInfo := w.filterColumnConfigs(job)
 	if len(columnConfigs) == 0 {
 		return errorInfo, nil
 	}
@@ -1042,7 +1067,7 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 		var columnType string
 		switch cfg.Type {
 		case externaldata.ColumnTypeString:
-			columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")"
+			columnType = "VARCHAR(" + MaxStringLenStr + ")"
 		case externaldata.ColumnTypeNumber:
 			columnType = "DOUBLE PRECISION"
 		case externaldata.ColumnTypeBoolean:
@@ -1050,12 +1075,14 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
 			columnType = "BIGINT"
 		case externaldata.ColumnTypeStringArray:
-			columnType = "VARCHAR(" + externaldata.MaxStringLenStr + ")[]"
+			columnType = "VARCHAR(" + MaxStringLenStr + ")[]"
 		default:
 			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
 		}
 
 		if _, err := pgPool.Exec(ctx, "ALTER TABLE "+tableName+" ALTER COLUMN "+pgx.Identifier{cfg.Name + "_transformed_value"}.Sanitize()+" TYPE "+columnType+" USING NULL"); err != nil {
+			// keep this check despite having validation in syncColumnConfigsOrder func,
+			// db might unexpectedly don't have this column.
 			var pgErr *pgconn.PgError
 			if errors.As(err, &pgErr) {
 				if pgErr.Code == sqlUndefinedColumnCode {
@@ -1239,9 +1266,9 @@ func (w *importWorker) createTable(ctx context.Context, job ImportJob, columns [
 		return nil
 	case externaldata.TypePostgreSQL:
 		sql := "CREATE TABLE IF NOT EXISTS " + job.getDBTableName() + " ( " +
-			externaldata.IDColumnName + " VARCHAR(" + externaldata.MaxIDLenStr + ") PRIMARY KEY, "
+			externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY, "
 		for i, field := range columns {
-			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + externaldata.MaxStringLenStr + ") "
+			sql += pgx.Identifier{field}.Sanitize() + " VARCHAR(" + MaxStringLenStr + ") "
 			if i != len(columns)-1 {
 				sql += ","
 			}
