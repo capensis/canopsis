@@ -19,6 +19,7 @@ import (
 	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	libprometheus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics/prometheus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -41,6 +42,9 @@ type Options struct {
 	PeriodicalWaitTime     time.Duration
 	ExternalDataApiTimeout time.Duration
 	Workers                int
+
+	PrometheusExporterPort   int
+	EnablePrometheusExporter bool
 }
 
 type Services struct {
@@ -68,6 +72,9 @@ func ParseOptions() (Options, []string) {
 	flag.Duration("eventsStatsFlushInterval", 60*time.Second, "Deprecated: interval between saving statistics from redis to mongo")
 	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
 	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
+
+	flag.BoolVar(&opts.EnablePrometheusExporter, "enablePrometheusExporter", false, "Enable prometheus exporter")
+	flag.IntVar(&opts.PrometheusExporterPort, "prometheusExporterPort", libprometheus.DefaultExporterPort, "Prometheus exporter port")
 
 	flag.Parse()
 
@@ -150,6 +157,8 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 		logger,
 	)
 
+	prometheusMetrics := libprometheus.NewFifoMetrics()
+
 	mainMessageProcessor := NewMessageProcessor(
 		eventfilterService,
 		scheduler,
@@ -157,6 +166,7 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 		json.NewDecoder(),
 		logger,
 		techMetricsSender,
+		prometheusMetrics,
 		options.PrintEventOnError,
 	)
 
@@ -233,6 +243,12 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 	engine.AddRoutine(func(ctx context.Context) error {
 		return mainMessageProcessor.RefreshExclusiveProcessor(ctx, options.PeriodicalWaitTime, lockDuration)
 	})
+
+	if options.EnablePrometheusExporter {
+		engine.AddRoutine(func(ctx context.Context) error {
+			return libprometheus.RunPrometheusExporter(ctx, options.PrometheusExporterPort, logger, prometheusMetrics)
+		})
+	}
 
 	engine.AddConsumer(libengine.NewConcurrentConsumer(
 		canopsis.FIFOConsumerName,
