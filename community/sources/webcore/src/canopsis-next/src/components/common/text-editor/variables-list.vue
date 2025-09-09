@@ -32,7 +32,7 @@
             <v-layout class="gap-4" justify-space-between>
               <v-list-item-mask v-if="item[itemText]" :text="item[itemText]" :mask="search" />
               <span
-                v-if="showValue"
+                v-if="showValue && (!hideEmptyValue || !isUndefined(item[itemValue]))"
                 class="grey--text lighten-1"
               >
                 {{ item[itemValue] }}
@@ -67,6 +67,7 @@
         :item-value="itemValue"
         :z-index="zIndex + 1"
         :show-value="showValue"
+        :hide-empty-value="hideEmptyValue"
         :children-key="childrenKey"
         :return-object="returnObject"
         :clickable-parent="clickableParent"
@@ -76,7 +77,7 @@
   </v-list>
 </template>
 <script>
-import { uniq, uniqBy, isObject } from 'lodash';
+import { uniq, uniqBy, isObject, isUndefined } from 'lodash';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
@@ -123,6 +124,10 @@ export default {
       default: false,
     },
     showValue: {
+      type: Boolean,
+      default: false,
+    },
+    hideEmptyValue: {
       type: Boolean,
       default: false,
     },
@@ -307,6 +312,8 @@ export default {
       isActiveItem,
       selectVariable,
       selectSubVariable,
+
+      isUndefined,
     };
   },
 };

@@ -27,7 +27,7 @@ export const payloadFieldMixin = {
       selectionVariableStart: 0,
       selectionVariableEnd: 0,
       variableGroup: undefined,
-      operatorGroup: undefined,
+      operatorGroup: undefined, // TODO: remove operator group
       newVariableGroup: undefined,
       variablesShown: false,
       variablesMenuPosition: {
@@ -42,7 +42,7 @@ export const payloadFieldMixin = {
     },
 
     variablesMenuValue() {
-      return this.variableGroup?.[0] && this.operatorGroup?.[0];
+      return this.variableGroup?.[0];
     },
 
     valueVariables() {
@@ -63,12 +63,12 @@ export const payloadFieldMixin = {
     document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
   },
   methods: {
-    prepareVariable(variable, prefix) {
+    prepareVariable(variable, prefix) { // TODO: remove all preparing logic
       const value = `${prefix ?? ''}${variable.value}`;
 
       return {
         ...variable,
-        value: `{{ ${value} }}`,
+        value,
         variables: variable.variables
           ? this.prepareVariables(variable.variables, value)
           : variable.variables,

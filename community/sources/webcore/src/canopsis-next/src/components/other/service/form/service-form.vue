@@ -43,7 +43,7 @@
       v-field="form.output_template"
       :label="$t('service.outputTemplate')"
       :error-messages="errors.collect('output_template')"
-      :variables="outputVariables"
+      :variables="templateVars.output"
       name="output_template"
     />
     <c-enabled-field v-field="form.enabled" />
@@ -78,15 +78,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import {
-  ENTITY_PATTERN_FIELDS,
-  SERVICE_WEATHER_STATE_COUNTERS,
-  SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS,
-} from '@/constants';
-
-import { useI18n } from '@/hooks/i18n';
+import { ENTITY_PATTERN_FIELDS } from '@/constants';
 
 import ManageInfos from '@/components/widgets/context/manage-infos.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -112,20 +104,13 @@ export default {
       type: Function,
       default: data => data,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup() {
-    const { t } = useI18n();
-
-    const outputVariables = computed(() => {
-      const messages = t('serviceWeather.stateCounters');
-
-      return Object.values(SERVICE_WEATHER_STATE_COUNTERS).map(field => ({
-        text: messages[field],
-        value: SERVICE_WEATHER_TEMPLATE_COUNTERS_BY_STATE_COUNTERS[field],
-      }));
-    });
-
-    const entityAttributes = computed(() => [
+    const entityAttributes = [
       {
         value: ENTITY_PATTERN_FIELDS.lastEventDate,
         options: { disabled: true },
@@ -138,10 +123,9 @@ export default {
         value: ENTITY_PATTERN_FIELDS.componentInfos,
         options: { disabled: true },
       },
-    ]);
+    ];
 
     return {
-      outputVariables,
       entityAttributes,
     };
   },

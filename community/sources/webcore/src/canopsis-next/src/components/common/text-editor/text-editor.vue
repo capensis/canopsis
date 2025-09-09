@@ -11,7 +11,7 @@
       <div ref="textEditor" />
       <variables-menu
         v-if="hasVariables"
-        :items="preparedVariables"
+        :items="variables"
         :visible="variablesShown"
         :value="variablesMenuValue"
         :position-x="variablesMenuPosition.x"
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { isString, isEmpty, get } from 'lodash';
+import { isString, get } from 'lodash';
 import { Jodit } from 'jodit';
 
 import 'jodit/build/jodit.min.css';
@@ -43,9 +43,6 @@ import localStorageService from '@/services/local-storage';
 
 import { sanitizeHtml } from '@/helpers/html';
 import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
-import { objectToVariables } from '@/helpers/variables';
-
-import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
 
 import VariablesMenu from './variables-menu.vue';
 
@@ -82,7 +79,6 @@ Ajax.prototype.send = function send(...args) {
 
 export default {
   components: { VariablesMenu },
-  mixins: [entitiesTemplateVarsMixin],
   props: {
     value: {
       type: String,
@@ -159,32 +155,12 @@ export default {
       return sanitizeHtml(this.value, this.sanitizeOptions);
     },
 
-    hasTemplateVars() {
-      return !isEmpty(this.templateVars);
-    },
-
     hasError() {
       return this.errorMessages.length;
     },
 
-    defaultVariables() {
-      if (!this.withDefaultVariables || !this.hasTemplateVars) {
-        return [];
-      }
-
-      return objectToVariables({ env: this.templateVars });
-    },
-
-    preparedVariables() {
-      return this.prepareVariables(
-        this.variables
-          ? [...this.variables, ...this.defaultVariables]
-          : this.defaultVariables,
-      );
-    },
-
     hasVariables() {
-      return this.variables || (this.withDefaultVariables && this.hasTemplateVars);
+      return this.variables?.length;
     },
 
     variablesButton() {
@@ -337,7 +313,7 @@ export default {
     },
 
     selectVariableValueByCursor() {
-      const selection = this.$editor.selection.sel;
+      const selection = this.$editor.selection?.sel ?? {};
       const { anchorNode, anchorOffset, focusOffset } = selection;
 
       if (!anchorNode) {
@@ -400,9 +376,12 @@ export default {
 
     pasteVariable(variable) {
       this.selectVariableValueByCursor();
-
-      const selection = this.$editor.selection.sel;
+      const selection = this.$editor.selection?.sel ?? {};
       const { anchorNode } = selection;
+
+      if (!anchorNode) {
+        return;
+      }
 
       const { anchorOffset, focusOffset } = selection;
       const [selectionStart, selectionEnd] = [anchorOffset, focusOffset].sort();
@@ -412,10 +391,9 @@ export default {
       if (variableGroup) {
         const [oldVariable] = variableGroup;
         const oldValue = this.getVariableValueFromGroup(variableGroup);
-
-        this.$editor.selection.insertHTML(oldVariable.replace(oldValue, variable));
+        this.$editor.selection.insertHTML(oldVariable.replace(oldValue, variable.replace('{{ ', '').replace(' }}', '')));
       } else {
-        this.$editor.selection.insertHTML(`{{ ${variable} }}`);
+        this.$editor.selection.insertHTML(variable);
       }
 
       this.closeVariablesMenu();
