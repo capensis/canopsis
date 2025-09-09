@@ -655,8 +655,8 @@ func TestParseNumber(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			rawResult, err := p.Parse(externaldata.ColumnConfig{
-				BaseColumnConfig: externaldata.BaseColumnConfig{
+			rawResult, err := p.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
 					Type:               externaldata.ColumnTypeNumber,
 					ThousandsSeparator: tc.thousandsSeparator,
 					DecimalSeparator:   tc.decimalSeparator,
@@ -714,8 +714,8 @@ func FuzzParseNumber(f *testing.F) {
 	p := NewParser()
 
 	f.Fuzz(func(t *testing.T, input string, thousandsSeparator string, decimalSeparator string) {
-		rawResult, err := p.Parse(externaldata.ColumnConfig{
-			BaseColumnConfig: externaldata.BaseColumnConfig{
+		rawResult, err := p.Parse(ColumnConfig{
+			BaseColumnConfig: BaseColumnConfig{
 				Type:               externaldata.ColumnTypeNumber,
 				ThousandsSeparator: thousandsSeparator,
 				DecimalSeparator:   decimalSeparator,
@@ -990,8 +990,8 @@ func TestParseBool(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			rawResult, err := p.Parse(externaldata.ColumnConfig{
-				BaseColumnConfig: externaldata.BaseColumnConfig{
+			rawResult, err := p.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
 					Type: externaldata.ColumnTypeBoolean,
 				},
 			}, tc.input)
@@ -1045,8 +1045,8 @@ func FuzzParseBool(f *testing.F) {
 	p := NewParser()
 
 	f.Fuzz(func(t *testing.T, input string) {
-		rawResult, err := p.Parse(externaldata.ColumnConfig{
-			BaseColumnConfig: externaldata.BaseColumnConfig{
+		rawResult, err := p.Parse(ColumnConfig{
+			BaseColumnConfig: BaseColumnConfig{
 				Type: externaldata.ColumnTypeBoolean,
 			},
 		}, input)
@@ -1209,8 +1209,8 @@ func TestParseStringArray(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			raw, err := p.Parse(externaldata.ColumnConfig{
-				BaseColumnConfig: externaldata.BaseColumnConfig{
+			raw, err := p.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
 					Type:                 externaldata.ColumnTypeStringArray,
 					StringArrayType:      tc.arrayType,
 					StringArraySeparator: tc.separator,
@@ -1253,8 +1253,8 @@ func FuzzParseStringArray(f *testing.F) {
 	p := NewParser()
 
 	f.Fuzz(func(t *testing.T, input string, arrayType int, separator string) {
-		result, err := p.Parse(externaldata.ColumnConfig{
-			BaseColumnConfig: externaldata.BaseColumnConfig{
+		result, err := p.Parse(ColumnConfig{
+			BaseColumnConfig: BaseColumnConfig{
 				Type:                 externaldata.ColumnTypeStringArray,
 				StringArrayType:      arrayType,
 				StringArraySeparator: separator,
@@ -1419,8 +1419,8 @@ func TestParseDatetime(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			rawResult, err := p.Parse(externaldata.ColumnConfig{
-				BaseColumnConfig: externaldata.BaseColumnConfig{
+			rawResult, err := p.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
 					Type: externaldata.ColumnTypeDateTime,
 				},
 			}, tc.input)
@@ -1474,8 +1474,8 @@ func FuzzParseDatetime(f *testing.F) {
 	p := NewParser()
 
 	f.Fuzz(func(t *testing.T, input string) {
-		rawResult, err := p.Parse(externaldata.ColumnConfig{
-			BaseColumnConfig: externaldata.BaseColumnConfig{
+		rawResult, err := p.Parse(ColumnConfig{
+			BaseColumnConfig: BaseColumnConfig{
 				Type: externaldata.ColumnTypeDateTime,
 			},
 		}, input)
@@ -1584,8 +1584,8 @@ func TestParseTimestamp(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			rawResult, err := p.Parse(externaldata.ColumnConfig{
-				BaseColumnConfig: externaldata.BaseColumnConfig{
+			rawResult, err := p.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
 					Type: externaldata.ColumnTypeTimestamp,
 				},
 			}, tc.input)
@@ -1624,8 +1624,8 @@ func FuzzParseTimestamp(f *testing.F) {
 	p := NewParser()
 
 	f.Fuzz(func(t *testing.T, input string) {
-		rawResult, err := p.Parse(externaldata.ColumnConfig{
-			BaseColumnConfig: externaldata.BaseColumnConfig{
+		rawResult, err := p.Parse(ColumnConfig{
+			BaseColumnConfig: BaseColumnConfig{
 				Type: externaldata.ColumnTypeTimestamp,
 			},
 		}, input)
