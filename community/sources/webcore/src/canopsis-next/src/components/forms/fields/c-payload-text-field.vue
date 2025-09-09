@@ -5,7 +5,7 @@
     :value="value"
     :search-input="value"
     :label="label || $t('common.payload')"
-    :items="availableVariables"
+    :items="variables"
     :disabled="disabled"
     :return-object="false"
     :menu-props="menuProps"
@@ -22,20 +22,13 @@
     <template #append-outer="">
       <slot name="append-outer" />
     </template>
-    <template #item="{ item, attrs }">
-      <v-list-item
-        v-bind="{ ...attrs, value: item.value === variablesMenuValue }"
-        @click="pasteVariable(item.value)"
-      >
-        <v-list-item-content>{{ item.text }}</v-list-item-content>
-        <span class="ml-4 grey--text">{{ item.value }}</span>
-      </v-list-item>
-    </template>
     <template #list="">
       <variables-list
-        :items="availableVariables"
+        :value="variablesMenuValue"
+        :items="variables"
         children-key="variables"
         show-value
+        hide-empty-value
         clickable-parent
         @input="pasteVariable"
       />
