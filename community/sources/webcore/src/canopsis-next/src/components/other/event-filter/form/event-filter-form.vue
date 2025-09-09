@@ -56,20 +56,20 @@
         >
           <external-data-form
             v-field="form.external_data"
-            :variables="externalDataVariables"
+            :variables="templateVars.external_data"
             optionally
           />
         </c-collapse-panel>
         <event-filter-enrichment-form
           v-if="isEnrichmentType"
           v-field="form"
-          :template-variables="actionsDataVariables"
+          :template-variables="templateVars.config"
           :set-tags-items="setTagsItems"
         />
         <event-filter-change-entity-form
           v-else-if="isChangeEntityType"
           v-field="form.config"
-          :variables="actionsDataVariables"
+          :variables="templateVars.config"
         />
       </c-information-block>
     </template>
@@ -77,7 +77,7 @@
 </template>
 
 <script>
-import { EXTERNAL_DATA_DEFAULT_CONDITION_VALUES, EXTERNAL_DATA_PAYLOADS_VARIABLES } from '@/constants';
+import { computed } from 'vue';
 
 import {
   isEnrichmentEventFilterRuleType,
@@ -110,67 +110,30 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
     isDisabledIdField: {
       type: Boolean,
       default: false,
     },
   },
-  computed: {
-    isEnrichmentType() {
-      return isEnrichmentEventFilterRuleType(this.form.type);
-    },
+  setup(props) {
+    const isEnrichmentType = computed(() => isEnrichmentEventFilterRuleType(props.form.type));
 
-    isChangeEntityType() {
-      return isChangeEntityEventFilterRuleType(this.form.type);
-    },
+    const isChangeEntityType = computed(() => isChangeEntityEventFilterRuleType(props.form.type));
 
-    hasAdditionalOptions() {
-      return this.isEnrichmentType || this.isChangeEntityType;
-    },
+    const hasAdditionalOptions = computed(() => isEnrichmentType.value || isChangeEntityType.value);
 
-    regexpVariables() {
-      return [{
-        value: EXTERNAL_DATA_PAYLOADS_VARIABLES.regexp,
-        text: this.$t('common.regexp'),
-      }];
-    },
+    const setTagsItems = computed(() => getSetTagsItemsFromPattern(props.form.patterns?.event_pattern));
 
-    setTagsItems() {
-      return getSetTagsItemsFromPattern(this.form.patterns.event_pattern);
-    },
-
-    externalDataVariables() {
-      return [
-        ...EXTERNAL_DATA_DEFAULT_CONDITION_VALUES.map(({ value, text }) => ({
-          value,
-          text: this.$t(`externalData.conditionValues.${text}`),
-        })),
-        ...this.regexpVariables,
-      ];
-    },
-
-    referencesVariables() {
-      return this.form.external_data.length
-        ? this.form.external_data.map(({ reference }) => ({
-          value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData.replace('%reference%', reference),
-          text: `${this.$t('externalData.title')}: ${reference}`,
-          optional: true,
-          suffix: '.%field%',
-        }))
-        : [{
-          value: EXTERNAL_DATA_PAYLOADS_VARIABLES.externalData,
-          text: this.$t('externalData.title'),
-          optional: true,
-          suffix: '.%field%',
-        }];
-    },
-
-    actionsDataVariables() {
-      return [
-        ...this.externalDataVariables,
-        ...this.referencesVariables,
-      ];
-    },
+    return {
+      isEnrichmentType,
+      isChangeEntityType,
+      hasAdditionalOptions,
+      setTagsItems,
+    };
   },
 };
 </script>

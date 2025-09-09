@@ -1,31 +1,42 @@
 <template>
-  <v-layout class="gap-4" column>
-    <template-testing-test-variables-form :main-form="form" @update:mainForm="updateMainForm" />
-    <v-layout class="gap-2" justify-end>
-      <v-btn
-        color="secondary"
-        outlined
-        @click="saveAsNew"
-      >
-        {{ $t('templateTesting.saveTestAsNew') }}
-      </v-btn>
-      <v-btn
-        color="secondary"
-        @click="save"
-      >
-        {{ $t('templateTesting.saveTest') }}
-      </v-btn>
-      <v-btn
-        color="primary"
-        @click="runTest"
-      >
-        {{ $t('templateTesting.runTest') }}
-      </v-btn>
+  <v-form data-vv-scope="test-variables">
+    <v-layout class="gap-4" column>
+      <template-testing-test-variables-form :fields="fields" />
+      <c-alert :value="!isGeneralFormValid" type="error">
+        {{ $t('templateTesting.mainFormHasErrors') }}
+      </c-alert>
+      <v-layout class="gap-2" justify-end>
+        <v-btn
+          color="secondary"
+          outlined
+          @click="saveAsNew"
+        >
+          {{ $t('templateTesting.saveTestAsNew') }}
+        </v-btn>
+        <v-btn
+          color="secondary"
+          @click="save"
+        >
+          {{ $t('templateTesting.saveTest') }}
+        </v-btn>
+        <v-btn
+          color="primary"
+          @click="runTest"
+        >
+          {{ $t('templateTesting.runTest') }}
+        </v-btn>
+      </v-layout>
     </v-layout>
-  </v-layout>
+  </v-form>
 </template>
 
 <script>
+import { ref } from 'vue';
+
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
+import { useValidator } from '@/hooks/validator/validator';
+
 import TemplateTestingTestVariablesForm from './template-testing-test-variables-form.vue';
 
 export default {
@@ -37,21 +48,42 @@ export default {
     event: 'input',
   },
   props: {
-    form: {
-      type: Object,
-      default: () => ({}),
+    fields: {
+      type: Array,
+      default: () => [],
+    },
+    isNew: {
+      type: Boolean,
+      default: false,
+    },
+    type: {
+      type: Number,
+      default: TEMPLATE_TESTING_TEST_TYPES.eventFilter,
     },
   },
   setup(props, { emit }) {
-    const saveAsNew = () => {};
+    const isGeneralFormValid = ref(true);
+
+    const validator = useValidator();
+
+    const saveAsNew = async () => {
+      const isValid = await validator.validateAll('test-variables');
+
+      if (isValid) {
+        emit('saveAsNew');
+      }
+    };
     const save = () => {};
-    const runTest = () => {};
+    const runTest = async () => {
+      isGeneralFormValid.value = await validator.validateAll('general');
+    };
 
     const updateMainForm = (newMainForm) => {
       emit('input', newMainForm);
     };
 
     return {
+      isGeneralFormValid,
       saveAsNew,
       save,
       runTest,
