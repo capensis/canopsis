@@ -251,7 +251,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 	_, err = s.roleCollection.UpdateMany(ctx,
 		bson.M{"$or": []bson.M{
 			{"_id": bson.M{"$in": user.Roles}},
-			{"name": security.RoleAdmin},
+			{"_id": security.RoleAdmin},
 		}},
 		bson.M{
 			"$set": bson.M{
