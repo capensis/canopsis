@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 	"os"
 	"time"
@@ -146,8 +147,16 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 		switch v {
 		case libsecurity.AuthMethodCas:
 			casConfig := s.config.Security.Cas
+			tc := &tls.Config{
+				InsecureSkipVerify: casConfig.InsecureSkipVerify, //nolint:gosec
+			}
+			hc := &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: tc,
+				},
+			}
 			p := httpprovider.NewCasProvider(
-				http.DefaultClient,
+				hc,
 				casConfig,
 				s.newUserProvider(),
 				roleprovider.NewRoleProvider(client),
@@ -169,9 +178,18 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 			router.GET("/api/v4/saml/slo", p.SamlSloHandler())
 		case libsecurity.AuthMethodOAuth2:
 			for name, conf := range s.config.Security.OAuth2.Providers {
+				tc := &tls.Config{
+					InsecureSkipVerify: conf.InsecureSkipVerify, //nolint:gosec
+				}
+				hc := &http.Client{
+					Transport: &http.Transport{
+						TLSClientConfig: tc,
+					},
+				}
 				p := oauth.NewProvider(
 					ctx,
 					name,
+					hc,
 					roleprovider.NewRoleProvider(client),
 					conf,
 					sessionStore,
