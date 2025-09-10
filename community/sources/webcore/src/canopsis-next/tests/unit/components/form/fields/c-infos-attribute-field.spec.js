@@ -1,6 +1,8 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { createSelectInputStub } from '@unit/stubs/input';
 
+import { PATTERN_FIELD_TYPES } from '@/constants';
+
 import CInfosAttributeField from '@/components/forms/fields/c-infos-attribute-field.vue';
 
 const stubs = {
@@ -36,7 +38,7 @@ describe('c-infos-attribute-field', () => {
       dictionary: newDictionary,
       field: value.field,
       definedType: undefined,
-      fieldType: 'string',
+      fieldType: PATTERN_FIELD_TYPES.string,
     });
   });
 
@@ -60,7 +62,7 @@ describe('c-infos-attribute-field', () => {
     expect(wrapper).toEmitInput({
       dictionary: value.dictionary,
       field: newField,
-      fieldType: null,
+      fieldType: PATTERN_FIELD_TYPES.string,
     });
   });
 
