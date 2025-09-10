@@ -6457,6 +6457,8 @@ definitions:
         type: string
       inlineLinksCount:
         type: integer
+      isFilter:
+        type: boolean
       isHtml:
         type: boolean
       label:
