@@ -35,8 +35,6 @@ import { useModelField } from '@/hooks/form';
  * @param {string} options.isKey - The key used to identify each item uniquely.
  * @param {string} options.childrenKey - The key used for children checking.
  * @param {string} options.idParamsKey - The key used for query parameters when fetching selected items.
- * @param {number} [options.limit = PAGINATION_LIMIT] - The limit for pagination, determining how many items to
- * fetch per page.
  * @param {Function} options.fetchHandler - The asynchronous function used to fetch data from the server.
  * @param {boolean} options.addable - The flag for indicating possibility to add new item.
  * @param {boolean} options.multiple - The flag for indicating possibility to choose more than one item.
@@ -57,10 +55,10 @@ export const useLazySearch = ({
   idKey,
   idParamsKey,
   childrenKey = 'items',
-  limit = PAGINATION_LIMIT,
   fetchHandler,
   addable,
   multiple,
+  initialQuery = { page: 1, limit: PAGINATION_LIMIT, search: '' },
   delay = 100,
 }, emit) => {
   const pageCount = ref(1);
@@ -138,11 +136,7 @@ export const useLazySearch = ({
     updateQuery,
     updateQueryPage,
   } = usePendingWithLocalQuery({
-    initialQuery: {
-      page: 1,
-      limit: unref(limit),
-      search: '',
-    },
+    initialQuery: unref(initialQuery),
     fetchHandler: async (params) => {
       const { data, meta } = await unref(fetchHandler)({
         params,

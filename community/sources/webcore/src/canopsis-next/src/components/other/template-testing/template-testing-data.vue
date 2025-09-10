@@ -15,26 +15,19 @@
 <script>
 import { onMounted } from 'vue';
 
-import { MODALS, USER_PERMISSIONS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
-import { useModals } from '@/hooks/modals';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useTemplateData } from '@/hooks/store/modules/template-data';
 
+import { useTemplateDataModals } from './hooks/template-testing-data';
 import TemplateTestingDataList from './template-testing-data-list.vue';
 
 export default {
   components: { TemplateTestingDataList },
   setup() {
-    const { t } = useI18n();
-    const modals = useModals();
-    const {
-      fetchTemplateDataListWithoutStore,
-      updateTemplateData,
-      removeTemplateData,
-    } = useTemplateData();
+    const { fetchTemplateDataListWithoutStore } = useTemplateData();
 
     const {
       hasUpdateAccess: hasUpdateAnyTemplateDataAccess,
@@ -52,33 +45,10 @@ export default {
       fetchListHandler: fetchTemplateDataListWithoutStore,
     });
 
-    const showEditTemplateTestingDataModal = (templateTestingData = {}) => modals.show({
-      name: MODALS.createTemplateTestingData,
-      config: {
-        templateTestingData,
-        title: t('modals.createTemplateTestingData.edit.title'),
-        action: async (newTemplateTestingData) => {
-          await updateTemplateData({ id: templateTestingData._id, data: newTemplateTestingData });
-
-          return fetchList();
-        },
-      },
-    });
-
-    const showRemoveTemplateTestingDataModal = (templateTestingData = {}) => modals.show({
-      name: MODALS.confirmationPhrase,
-      config: {
-        phrase: templateTestingData.name,
-        title: t('modals.confirmationPhrase.templateTestingData.title'),
-        text: t('modals.confirmationPhrase.templateTestingData.text'),
-        phraseText: t('modals.confirmationPhrase.templateTestingData.phraseText'),
-        action: async () => {
-          await removeTemplateData({ id: templateTestingData._id });
-
-          return fetchList();
-        },
-      },
-    });
+    const {
+      showEditTemplateTestingDataModal,
+      showRemoveTemplateTestingDataModal,
+    } = useTemplateDataModals(fetchList);
 
     onMounted(fetchList);
 

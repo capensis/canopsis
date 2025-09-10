@@ -45,3 +45,16 @@ export const TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE = JSON.stringify({
   output: 'example alarm',
   author: 'root',
 }, null, 2);
+
+export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES = {
+  event: 'event',
+  response: 'response',
+  alarm: 'alarm',
+  user: 'user',
+  entity: 'entity',
+};
+
+export const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE = {
+  [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: TEMPLATE_TESTING_DATA_TYPES.event,
+  [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: TEMPLATE_TESTING_DATA_TYPES.response,
+};

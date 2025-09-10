@@ -1100,4 +1100,7 @@ export default {
       title: 'Modifier le test',
     },
   },
+  createTemplateData: {
+    title: 'Créer des données de modèle',
+  },
 };

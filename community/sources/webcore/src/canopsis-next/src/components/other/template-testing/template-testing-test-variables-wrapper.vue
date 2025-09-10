@@ -17,15 +17,18 @@
     </v-tab-item>
 
     <v-tab-item :disabled="disabledTestVariablesTab">
-      <template-testing-test-variables :fields="fields" :is-new="isNew" :type="type" />
+      <template-testing-test-variables
+        :form="form"
+        :fields="fields"
+        :is-new="isNew"
+        :type="type"
+      />
     </v-tab-item>
   </v-tabs>
 </template>
 
 <script>
 import { computed, onMounted, toRef } from 'vue';
-
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import TemplateTestingTestVariables from '@/components/other/template-testing/template-testing-test-variables.vue';
 
@@ -49,7 +52,7 @@ export default {
     },
     type: {
       type: Number,
-      default: TEMPLATE_TESTING_TEST_TYPES.eventFilter,
+      required: false,
     },
   },
   setup(props, { emit }) {

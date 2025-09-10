@@ -4,7 +4,10 @@
       name="test"
       required
     />
-    <template-testing-test-variables-test-data />
+    <template-testing-test-variables-test-data
+      v-field="form"
+      :type="type"
+    />
     <template-testing-test-variables-template-item
       v-for="field in fields"
       :key="field.key"
@@ -27,14 +30,22 @@ export default {
     TemplateTestingTestVariablesTestData,
     TemplateTestingTestVariablesTemplateItem,
   },
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
-      type: Object,
-      default: () => ({}),
+      type: Array,
+      default: () => [],
     },
     fields: {
       type: Array,
       default: () => [],
+    },
+    type: {
+      type: Number,
+      required: false,
     },
   },
 };

@@ -1,4 +1,9 @@
-import { TEMPLATE_TESTING_DATA_TYPES, TEMPLATE_TESTING_TEST_TYPES, TEMPLATE_TESTING_TABS } from '@/constants';
+import {
+  TEMPLATE_TESTING_DATA_TYPES,
+  TEMPLATE_TESTING_TEST_TYPES,
+  TEMPLATE_TESTING_TABS,
+  TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES,
+} from '@/constants';
 
 export default {
   filterByRuleType: 'Filter by rule type',
@@ -19,6 +24,7 @@ export default {
   testFailed: 'Test failed',
   testName: 'Test name',
   testData: 'Test data',
+  addData: 'Add data',
   saveTest: 'Save test',
   saveTestAsNew: 'Save as new test',
   errorsInInput: '{count} error in input | {count} errors in input',
@@ -129,5 +135,16 @@ export default {
     userId: 'User id',
     username: 'Username',
     environmentVariables: 'Env',
+  },
+  testDataLabels: {
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'Event',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm]: 'Alarm',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'User',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'Entity',
+  },
+  testDataResponseLabels: {
+    [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Response (External data - {index} API)',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Response (Action - {index} webhook)',
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Response (Webhook - {index})',
   },
 };
