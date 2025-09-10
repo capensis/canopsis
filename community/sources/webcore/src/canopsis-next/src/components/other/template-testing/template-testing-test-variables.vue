@@ -1,7 +1,11 @@
 <template>
   <v-form data-vv-scope="test-variables">
     <v-layout class="gap-4" column>
-      <template-testing-test-variables-form :fields="fields" />
+      <template-testing-test-variables-form
+        v-model="validationForm"
+        :fields="fields"
+        :type="type"
+      />
       <c-alert :value="!isGeneralFormValid" type="error">
         {{ $t('templateTesting.mainFormHasErrors') }}
       </c-alert>
@@ -20,6 +24,8 @@
           {{ $t('templateTesting.saveTest') }}
         </v-btn>
         <v-btn
+          :loading="running"
+          :disabled="running"
           color="primary"
           @click="runTest"
         >
@@ -31,11 +37,25 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
+import { formToService } from '@/helpers/entities/service/form';
+import { formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
+import { formToLinkRule } from '@/helpers/entities/link/form';
+import { formToScenario } from '@/helpers/entities/scenario/form';
+import { formToWidget } from '@/helpers/entities/widget/form';
+import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
+import { formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
+import { formToRemediationInstruction } from '@/helpers/entities/remediation/instruction/form';
+import { formToRemediationJob } from '@/helpers/entities/remediation/job/form';
+import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
+import { formToTemplateTestingTestValidateForm } from '@/helpers/entities/template-testing-test/form';
+
+import { usePendingHandler } from '@/hooks/query/pending';
 import { useValidator } from '@/hooks/validator/validator';
+import { useTemplateValidation } from '@/hooks/store/modules/template-validation';
 
 import TemplateTestingTestVariablesForm from './template-testing-test-variables-form.vue';
 
@@ -48,6 +68,10 @@ export default {
     event: 'input',
   },
   props: {
+    form: {
+      type: Object,
+      default: () => ({}),
+    },
     fields: {
       type: Array,
       default: () => [],
@@ -58,13 +82,55 @@ export default {
     },
     type: {
       type: Number,
-      default: TEMPLATE_TESTING_TEST_TYPES.eventFilter,
+      required: false,
     },
   },
   setup(props, { emit }) {
+    const validationForm = ref([]);
     const isGeneralFormValid = ref(true);
 
     const validator = useValidator();
+
+    const {
+      validateEntityServices,
+      validateEventFilters,
+      validateScenarios,
+      validateLinkRules,
+      validateWidgets,
+      validateDeclareTicketRules,
+      validateDynamicInfos,
+      validateInstructions,
+      validateJobs,
+      validateMetaAlarmRules,
+    } = useTemplateValidation();
+
+    watch(() => props.form, (newForm) => {
+      validationForm.value = formToTemplateTestingTestValidateForm(newForm, props.type);
+    }, { immediate: true });
+
+    const validateHandler = computed(() => ({
+      [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: validateEventFilters,
+      [TEMPLATE_TESTING_TEST_TYPES.linkRule]: validateLinkRules,
+      [TEMPLATE_TESTING_TEST_TYPES.scenario]: validateScenarios,
+      [TEMPLATE_TESTING_TEST_TYPES.widget]: validateWidgets,
+      [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: validateDeclareTicketRules,
+      [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: validateDynamicInfos,
+      [TEMPLATE_TESTING_TEST_TYPES.instruction]: validateInstructions,
+      [TEMPLATE_TESTING_TEST_TYPES.job]: validateJobs,
+      [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: validateMetaAlarmRules,
+    })[props.type] ?? validateEntityServices);
+
+    const formToRequest = computed(() => ({
+      [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: formToEventFilter,
+      [TEMPLATE_TESTING_TEST_TYPES.linkRule]: formToLinkRule,
+      [TEMPLATE_TESTING_TEST_TYPES.scenario]: formToScenario,
+      [TEMPLATE_TESTING_TEST_TYPES.widget]: formToWidget,
+      [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: formToDeclareTicketRule,
+      [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: formToDynamicInfo,
+      [TEMPLATE_TESTING_TEST_TYPES.instruction]: formToRemediationInstruction,
+      [TEMPLATE_TESTING_TEST_TYPES.job]: formToRemediationJob,
+      [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: formToMetaAlarmRule,
+    })[props.type] ?? formToService);
 
     const saveAsNew = async () => {
       const isValid = await validator.validateAll('test-variables');
@@ -73,10 +139,22 @@ export default {
         emit('saveAsNew');
       }
     };
-    const save = () => {};
-    const runTest = async () => {
+
+    const { pending: running, handler: runTest } = usePendingHandler(async () => {
       isGeneralFormValid.value = await validator.validateAll('general');
-    };
+
+      if (!isGeneralFormValid.value) {
+        return;
+      }
+
+      await validateHandler.value({
+        data: {
+          rule: formToRequest.value(props.form),
+        },
+      });
+    });
+
+    const save = () => {};
 
     const updateMainForm = (newMainForm) => {
       emit('input', newMainForm);
@@ -84,6 +162,8 @@ export default {
 
     return {
       isGeneralFormValid,
+      validationForm,
+      running,
       saveAsNew,
       save,
       runTest,

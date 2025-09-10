@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
     <c-alert
       v-if="!headers.length"
       type="info"

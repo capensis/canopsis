@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
     <c-name-field
       v-field="form.name"
       :label="$t('common.name')"
@@ -27,7 +27,7 @@
       :label="$t('common.value')"
       name="value"
       rows="11"
-      validate-on="button"
+      validate-on="blur"
     />
     <v-flex
       v-if="isEventType"
@@ -99,12 +99,19 @@ export default {
 
     const isEventType = computed(() => props.form.type === TEMPLATE_TESTING_DATA_TYPES.event);
 
+    /**
+     * Sets the pre-filled template data to the form body field and resets the JSON field
+     */
     const setPreFilledTemplate = () => {
       updateField('body', TEMPLATE_TESTING_DATA_EVENT_PRE_FILLED_TEMPLATE);
 
       nextTick(() => jsonFieldElement.value?.reset?.());
     };
 
+    /**
+     * Shows confirmation modal before setting pre-filled template if form has existing content,
+     * otherwise sets the template directly
+     */
     const showSetPreFilledTemplateModal = () => {
       if (!props.form.value?.trim?.()) {
         setPreFilledTemplate();
