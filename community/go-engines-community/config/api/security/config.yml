@@ -66,7 +66,13 @@ security:
 #        # response is taken from user_url response, use "user.your_id_field" for user's id path,
 #        # if open_id is set to true, those urls are ignored.
 #        user_id: user.your_id_field
-
+#        # insecure_skip_verify controls whether a client verifies the server's
+#        #	certificate chain and host name. If true, crypto/tls
+#        #	accepts any certificate presented by the server and any host name in that
+#        #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+#        #	attacks unless custom verification is used.
+#        insecure_skip_verify: false
+#
 #  ldap:
 #    inactivity_interval: 24h
 #    expiration_interval: 1M
@@ -105,22 +111,28 @@ security:
 #    validate_url: http://cas.local/serviceValidate
 #    # default_role defines role of new users which are created on successful CAS login.
 #    default_role: Visualisation
+#    # insecure_skip_verify controls whether a client verifies the server's
+#    #	certificate chain and host name. If true, crypto/tls
+#    #	accepts any certificate presented by the server and any host name in that
+#    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
+#    #	attacks unless custom verification is used.
+#    insecure_skip_verify: false
 #
 #  saml:
 #    inactivity_interval: 24h
 #    expiration_interval: 1M
 #    title: Connexion
 #    x509_cert: /certs/saml.cert
-#    x509_key:  /certs/saml.key
+#    x509_key: /certs/saml.key
 #    # sample with SimpleSamlPHP server
 #    idp_metadata_url: http://saml-server:8090/simplesaml/saml2/idp/metadata.php
 #    # other option with plain XML file
 #    # idp_metadata_xml: /path/to/xml
 #    idp_attributes_map:
-#       email: email
-#       name: uid
-#       firstname: uid
-#       lastname: uid
+#      email: email
+#      name: uid
+#      firstname: uid
+#      lastname: uid
 #    canopsis_saml_url: http://canopsis/api/v4/saml
 #    # default_role defines role of new users which are created on successful SAML login.
 #    default_role: Visualisation
