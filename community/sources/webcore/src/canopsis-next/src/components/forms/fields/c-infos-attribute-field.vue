@@ -152,8 +152,8 @@ export default {
      */
     const updateInfosField = (field) => {
       const fieldType = field === PATTERN_RULE_INFOS_FIELDS.value
-        ? itemsByValue.value[props.value.dictionary]?.definedType
-        : null;
+        ? itemsByValue.value[props.value.dictionary]?.definedType ?? PATTERN_FIELD_TYPES.string
+        : PATTERN_FIELD_TYPES.string;
 
       updateModel({
         ...props.value,
