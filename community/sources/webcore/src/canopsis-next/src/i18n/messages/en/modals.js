@@ -1100,4 +1100,7 @@ export default {
       title: 'Edit test',
     },
   },
+  createTemplateData: {
+    title: 'Create template data',
+  },
 };
