@@ -173,6 +173,7 @@ export default {
     inlineLinksCount: 'Inline links count',
     linksInRowCount: 'Count of links in row',
     linksInRowCountTooltip: 'This count of links always will be displayed in the one row includes more links (`...`) button',
+    filterOnClick: 'Filter on click',
   },
   liveReporting: {
     title: 'Live reporting',
