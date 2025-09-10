@@ -198,7 +198,7 @@ template:
                     <strong style="display:block;margin-bottom:8px">Infos Entité (Ressource)</strong>
                     <ul style="margin:0;padding:0;list-style:none;font-size:0.9em">
                       {{#each alarm.entity.infos}}
-                        <li style="padding-bottom:4px"><strong>{{this.description}}:</strong> {{this.value}}</li>
+                        <li style="padding-bottom:4px"><strong>{{this.name}}:</strong> {{this.value}}</li>
                       {{/each}}
                     </ul>
                   </td>
@@ -206,7 +206,7 @@ template:
                     <strong style="display:block;margin-bottom:8px">Infos Composant</strong>
                     <ul style="margin:0;padding:0;list-style:none;font-size:0.9em">
                       {{#each alarm.entity.component_infos}}
-                        <li style="padding-bottom:4px"><strong>{{this.description}}:</strong> {{this.value}}</li>
+                        <li style="padding-bottom:4px"><strong>{{this.value}}:</strong> {{this.value}}</li>
                       {{/each}}
                     </ul>
                   </td>
@@ -215,7 +215,9 @@ template:
                     {{#if alarm.v.infos}}
                       <ul style="margin:0;padding:0;list-style:none;font-size:0.9em">
                         {{#each alarm.v.infos}}
-                          <li style="padding-bottom:4px"><strong>{{@key}}:</strong> {{this}}</li>
+                          {{#each this}}
+                            <li style="padding-bottom:4px"><strong>{{@key}}:</strong> {{this}}</li>
+                          {{/each}}
                         {{/each}}
                       </ul>
                     {{else}}
