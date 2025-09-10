@@ -2,9 +2,11 @@ package entityinfodictionary
 
 import (
 	"context"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
@@ -36,14 +38,72 @@ func (s *store) FindKeys(ctx context.Context, r ListKeysRequest) (AggregationRes
 		pipeline = append(pipeline, bson.M{"$match": searchQuery})
 	}
 
-	// distinct
-	pipeline = append(pipeline, bson.M{"$group": bson.M{"_id": "$_id.k"}})
+	pipeline = append(pipeline, []bson.M{
+		{
+			"$unionWith": bson.M{
+				"coll": mongo.EntityInfosPropertyCollection,
+				"pipeline": []bson.M{
+					{
+						"$match": bson.M{
+							"name": bson.Regex{
+								Pattern: fmt.Sprintf(".*%s.*", r.Search),
+								Options: "i",
+							},
+						},
+					},
+					{
+						"$project": bson.M{
+							"_id.k":    "$name",
+							"proptype": "$type",
+						},
+					},
+				},
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id":      "$_id.k",
+				"type":     bson.M{"$max": "$type"},
+				"proptype": bson.M{"$max": "$proptype"},
+			},
+		},
+		{
+			"$set": bson.M{
+				"type": bson.M{
+					"$cond": bson.A{
+						bson.M{"$or": bson.A{
+							bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$proptype", ""}}, ""}},
+							bson.M{"$gt": bson.A{"$proptype", types.EntityInfoTypeStringArray}},
+							bson.M{"$lt": bson.A{"$proptype", types.EntityInfoTypeBoolean}},
+						}},
+						bson.M{
+							"$cond": bson.A{
+								bson.M{"$or": bson.A{
+									bson.M{"$eq": bson.A{bson.M{"$ifNull": bson.A{"$type", ""}}, ""}},
+									bson.M{"$gt": bson.A{"$type", types.EntityInfoTypeStringArray}},
+									bson.M{"$lt": bson.A{"$type", types.EntityInfoTypeBoolean}},
+								}},
+								types.EntityInfoTypeString,
+								"$type",
+							},
+						},
+						"$proptype",
+					},
+				},
+			},
+		},
+		{
+			"$project": bson.M{
+				"proptype": 0,
+			},
+		},
+	}...)
 
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
 		bson.M{"$sort": bson.D{{Key: "_id", Value: 1}}},
-		[]bson.M{{"$project": bson.M{"value": "$_id"}}},
+		[]bson.M{{"$project": bson.M{"value": "$_id", "type": "$type"}}},
 	))
 	if err != nil {
 		return res, err

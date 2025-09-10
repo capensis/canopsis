@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`view-periodic-refresh-btn Renders \`view-periodic-refresh-btn\` when paused by activeViewPeriodicRefreshPaused 1`] = `
+<v-tooltip-stub
+  closedelay="0"
+  contentclass=""
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="0"
+  openonclick="true"
+  openonfocus="true"
+  openonhover="true"
+  tag="span"
+  top="true"
+>
+  <span />
+</v-tooltip-stub>
+`;
+
+exports[`view-periodic-refresh-btn Renders \`view-periodic-refresh-btn\` with progress when enabled 1`] = `
+<v-tooltip-stub
+  closedelay="0"
+  contentclass=""
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="0"
+  openonclick="true"
+  openonfocus="true"
+  openonhover="true"
+  tag="span"
+  top="true"
+>
+  <span />
+</v-tooltip-stub>
+`;
+
+exports[`view-periodic-refresh-btn Renders \`view-periodic-refresh-btn\` with refresh icon when disabled 1`] = `
+<v-tooltip-stub
+  closedelay="0"
+  contentclass=""
+  maxwidth="auto"
+  nudgebottom="0"
+  nudgeleft="0"
+  nudgeright="0"
+  nudgetop="0"
+  nudgewidth="0"
+  opendelay="0"
+  openonclick="true"
+  openonfocus="true"
+  openonhover="true"
+  tag="span"
+  top="true"
+>
+  <span>
+    Refresh
+  </span>
+</v-tooltip-stub>
+`;
