@@ -29,6 +29,7 @@
         with-template
         with-html
         with-color-indicator
+        with-filter-on-click
         @update:template="updateWidgetColumnsTemplate"
       />
       <field-columns
@@ -41,6 +42,7 @@
         with-template
         with-html
         with-color-indicator
+        with-filter-on-click
         @update:template="updateWidgetGroupColumnsTemplate"
       />
       <field-columns
@@ -220,6 +222,10 @@
       <field-switcher
         v-model="form.parameters.isHtmlEnabledOnTimeLine"
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
+      />
+      <field-switcher
+        v-model="form.parameters.pausePeriodicRefreshOnExpandPanel"
+        :title="$t('settings.pausePeriodicRefreshOnExpandPanel')"
       />
     </widget-settings-group>
     <export-csv-form

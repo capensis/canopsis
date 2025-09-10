@@ -2,6 +2,7 @@ package fifo
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"time"
@@ -18,6 +19,7 @@ import (
 	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	libprometheus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics/prometheus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	libscheduler "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
@@ -28,6 +30,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/bsm/redislock"
 	"github.com/rs/zerolog"
 )
 
@@ -39,6 +42,9 @@ type Options struct {
 	PeriodicalWaitTime     time.Duration
 	ExternalDataApiTimeout time.Duration
 	Workers                int
+
+	PrometheusExporterPort   int
+	EnablePrometheusExporter bool
 }
 
 type Services struct {
@@ -67,16 +73,15 @@ func ParseOptions() (Options, []string) {
 	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
 	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
 
+	flag.BoolVar(&opts.EnablePrometheusExporter, "enablePrometheusExporter", false, "Enable prometheus exporter")
+	flag.IntVar(&opts.PrometheusExporterPort, "prometheusExporterPort", libprometheus.DefaultExporterPort, "Prometheus exporter port")
+
 	flag.Parse()
 
 	return opts, libflag.FindDeprecatedFlags("eventsStatsFlushInterval", "consumeQueue", "publishQueue")
 }
 
-func Default(
-	ctx context.Context,
-	options Options,
-	logger zerolog.Logger,
-) (libengine.Engine, Services) {
+func Default(ctx context.Context, options Options, logger zerolog.Logger) (libengine.Engine, Services) {
 	var m depmake.DependencyMaker
 	s := Services{}
 
@@ -152,8 +157,30 @@ func Default(
 		logger,
 	)
 
+	prometheusMetrics := libprometheus.NewFifoMetrics()
+
+	mainMessageProcessor := NewMessageProcessor(
+		eventfilterService,
+		scheduler,
+		metricsSender,
+		json.NewDecoder(),
+		logger,
+		techMetricsSender,
+		prometheusMetrics,
+		options.PrintEventOnError,
+	)
+
+	lockDuration := max(options.PeriodicalWaitTime, lockMinDuration) + lockBackoff*time.Duration(lockRetries)
+
 	engine := libengine.New(
-		func(ctx context.Context) error {
+		func(ctx context.Context) (err error) {
+			err = mainMessageProcessor.ObtainExclusive(ctx, redis.NewLockClient(engineLockRedisClient), lockDuration)
+			if err != nil {
+				if !errors.Is(err, redislock.ErrNotObtained) {
+					logger.Err(err).Msg("cannot obtain lock for engine initialization, exiting")
+				}
+				return err
+			}
 			runInfoPeriodicalWorker.Work(ctx)
 			queueMetricsPeriodicalWorker.Work(ctx)
 
@@ -179,7 +206,16 @@ func Default(
 				logger.Error().Err(err).Msg("failed to close amqp connection")
 			}
 
+			if err = mainMessageProcessor.ReleaseExclusive(ctx); err != nil && !errors.Is(err, redislock.ErrLockNotHeld) {
+				logger.Warn().Err(err).Msg("failed to release exclusive processor lock")
+			}
+
 			err = lockRedisClient.Close()
+			if err != nil {
+				logger.Error().Err(err).Msg("failed to close redis connection")
+			}
+
+			err = engineLockRedisClient.Close()
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close redis connection")
 			}
@@ -204,15 +240,14 @@ func Default(
 		return nil
 	})
 
-	mainMessageProcessor := &messageProcessor{
-		FeaturePrintEventOnError: options.PrintEventOnError,
+	engine.AddRoutine(func(ctx context.Context) error {
+		return mainMessageProcessor.RefreshExclusiveProcessor(ctx, options.PeriodicalWaitTime, lockDuration)
+	})
 
-		EventFilterService: eventfilterService,
-		TechMetricsSender:  techMetricsSender,
-		Scheduler:          scheduler,
-		MetricsSender:      metricsSender,
-		Decoder:            json.NewDecoder(),
-		Logger:             logger,
+	if options.EnablePrometheusExporter {
+		engine.AddRoutine(func(ctx context.Context) error {
+			return libprometheus.RunPrometheusExporter(ctx, options.PrometheusExporterPort, logger, prometheusMetrics)
+		})
 	}
 
 	engine.AddConsumer(libengine.NewConcurrentConsumer(

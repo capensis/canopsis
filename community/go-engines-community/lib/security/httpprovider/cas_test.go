@@ -35,7 +35,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParam_ShouldAuthUser(t *testing.T) {
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil) //nolint:noctx
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -121,7 +121,7 @@ func TestCasProvider_Auth_GivenInvalidTicketInQueryParam_ShouldReturnNil(t *test
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil) //nolint:noctx
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -184,7 +184,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndNoUserInStore_ShouldCreateNe
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil) //nolint:noctx
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -237,7 +237,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamAndUserInStore_ShouldNotUpdateU
 		DefaultRole: validRole,
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil) //nolint:noctx
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},
@@ -283,7 +283,7 @@ func TestCasProvider_Auth_GivenTicketByQueryParamWithNotFoundRole_ShouldReturnEr
 		DefaultRole: "not-found-role",
 	}
 	mockDoer := mock_http.NewMockDoer(ctrl)
-	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil)
+	casRequest, _ := http.NewRequest(http.MethodGet, "http://test-validate", nil) //nolint:noctx
 	casRequest.URL.RawQuery = url.Values{
 		"service": []string{service + "?service=" + url.QueryEscape(service)},
 		"ticket":  []string{ticket},

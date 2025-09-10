@@ -47,6 +47,7 @@ export default {
   treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
+  pausePeriodicRefreshOnExpandPanel: 'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
   elementsPerPage: 'Élements par page',
   filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
@@ -172,6 +173,7 @@ export default {
     inlineLinksCount: 'Nombre de liens en ligne',
     linksInRowCount: 'Nombre de liens dans la ligne',
     linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
+    filterOnClick: 'Filtrer au clic',
   },
   liveReporting: {
     title: 'Reportage en direct',
