@@ -3,7 +3,7 @@
 // isInt checks if a value is integer
 // toInt transforms value to integer
 
-if (db.widget_templates.countDocuments({title: "Default more infos", type: "alarm_quick_actions"}) === 0) {
+if (db.widget_templates.countDocuments({title: "Default more infos", type: "alarm_more_infos"}) === 0) {
     const now = Math.ceil((new Date()).getTime() / 1000);
     db.widget_templates.insertOne({
         _id: genID(),
