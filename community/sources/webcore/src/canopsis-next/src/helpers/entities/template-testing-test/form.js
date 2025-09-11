@@ -1,3 +1,5 @@
+import { differenceBy } from 'lodash';
+
 import {
   TEMPLATE_TESTING_TEST_TYPES,
   TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES,
@@ -6,8 +8,6 @@ import {
   EXTERNAL_DATA_TYPES,
   PATTERNS_FIELDS,
 } from '@/constants';
-
-import { uid } from '@/helpers/uid';
 
 /**
  * @typedef {Object} TemplateTestingTest
@@ -30,28 +30,35 @@ export const templateTestingTestToForm = (templateTestingTest = {}) => ({
   rule_name: templateTestingTest.rule_name ?? '',
 });
 
-export const getTemplateTestingTestValidateFormItem = (type, additionalParams = {}, index) => ({
+export const getTemplateTestingTestValidateFormItem = ({
   type,
-  additionalParams,
+  params = {},
+  required = false,
   index,
-  key: uid(),
+  key,
+}) => ({
+  type,
+  params,
+  index,
+  required,
+  key: key ?? type,
   value: '',
 });
 
 export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
   if (type === TEMPLATE_TESTING_TEST_TYPES.eventFilter) {
     return [
-      getTemplateTestingTestValidateFormItem(
-        TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
-        { [PATTERNS_FIELDS.event]: [[{ field: 'event_type', cond: { type: 'eq', value: 'check' } }]] },
-      ),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+        params: { [PATTERNS_FIELDS.event]: [[{ field: 'event_type', cond: { type: 'eq', value: 'check' } }]] },
+      }),
       ...form.external_data.reduce((acc, externalData, index) => {
         if (externalData.type === EXTERNAL_DATA_TYPES.api) {
-          acc.push(getTemplateTestingTestValidateFormItem(
-            TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-            {},
+          acc.push(getTemplateTestingTestValidateFormItem({
             index,
-          ));
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+            key: externalData.key,
+          }));
         }
 
         return acc;
@@ -61,15 +68,17 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.scenario) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+      }),
 
       ...form.actions.reduce((acc, action, index) => {
         if (action.type === ACTION_TYPES.webhook) {
-          acc.push(getTemplateTestingTestValidateFormItem(
-            TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-            {},
+          acc.push(getTemplateTestingTestValidateFormItem({
             index,
-          ));
+            key: action.key,
+            type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+          }));
         }
 
         return acc;
@@ -79,58 +88,89 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.linkRule) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user,
+      }),
 
       form.type === LINK_RULE_TYPES.alarm
-        ? getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm, { opened: true })
-        : getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity),
+        ? getTemplateTestingTestValidateFormItem({
+          type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+          params: { opened: true },
+        })
+        : getTemplateTestingTestValidateFormItem({
+          type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity,
+        }),
     ];
   }
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.widget) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+      }),
     ];
   }
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.declareTicketRule) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm, { opened: true }),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        params: { opened: true },
+      }),
 
-      ...form.webhooks.map((_, index) => (
-        getTemplateTestingTestValidateFormItem(
-          TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
-          {},
+      ...form.webhooks.map((webhook, index) => (
+        getTemplateTestingTestValidateFormItem({
           index,
-        )
+          key: webhook.key,
+          type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+        })
       )),
     ];
   }
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.dynamicInfo) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm, { opened: true }),
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        params: { opened: true },
+      }),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+      }),
     ];
   }
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.instruction) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm, { opened: true }),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        params: { opened: true },
+      }),
     ];
   }
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.job) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm, { opened: true }),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        params: { opened: true },
+      }),
     ];
   }
 
   if (type === TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule) {
     return [
-      getTemplateTestingTestValidateFormItem(TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm, { opened: true }),
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        params: { opened: true },
+      }),
     ];
   }
 
   return [];
 };
+
+export const getChangesForValidateForm = (form = [], oldForm = []) => ({
+  added: differenceBy(form, oldForm, 'key'),
+  removed: differenceBy(oldForm, form, 'key'),
+});

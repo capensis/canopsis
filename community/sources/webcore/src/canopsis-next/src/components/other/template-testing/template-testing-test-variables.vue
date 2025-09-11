@@ -51,7 +51,10 @@ import { formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
 import { formToRemediationInstruction } from '@/helpers/entities/remediation/instruction/form';
 import { formToRemediationJob } from '@/helpers/entities/remediation/job/form';
 import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
-import { formToTemplateTestingTestValidateForm } from '@/helpers/entities/template-testing-test/form';
+import {
+  formToTemplateTestingTestValidateForm,
+  getChangesForValidateForm,
+} from '@/helpers/entities/template-testing-test/form';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useValidator } from '@/hooks/validator/validator';
@@ -105,7 +108,15 @@ export default {
     } = useTemplateValidation();
 
     watch(() => props.form, (newForm) => {
-      validationForm.value = formToTemplateTestingTestValidateForm(newForm, props.type);
+      const newValidationForm = formToTemplateTestingTestValidateForm(newForm, props.type);
+
+      const { added, removed } = getChangesForValidateForm(newValidationForm, validationForm.value);
+
+      validationForm.value = validationForm.value
+        .filter(item => !removed.some(removedItem => removedItem.key === item.key));
+      validationForm.value.push(...added);
+
+      validationForm.value.forEach((_, index) => validationForm.value[index].index = newValidationForm[index]?.index);
     }, { immediate: true });
 
     const validateHandler = computed(() => ({
