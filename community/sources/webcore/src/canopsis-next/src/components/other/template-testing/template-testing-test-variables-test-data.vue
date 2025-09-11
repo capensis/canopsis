@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import { isUndefined } from 'lodash';
 import { computed } from 'vue';
 
 import {
@@ -60,8 +61,16 @@ export default {
     const { hasReadAccess: hasReadAccessForAnyUser } = useCRUDPermissions(USER_PERMISSIONS.user);
     const { updateFieldInArrayItem } = useArrayModelField(props, emit);
 
+    /**
+     * Gets the appropriate label for a test data item based on its type and index
+     * @param {Object} item - The test data item
+     * @param {string} item.type - The type of the test data item
+     * @param {number} [item.index] - Optional index for response-type items (0-based)
+     * @param {string} item.key - The unique key identifier for the item
+     * @returns {string} The translated label for the item
+     */
     const getLabel = (item) => {
-      if (!item.index) {
+      if (isUndefined(item.index)) {
         return t(`templateTesting.testDataLabels.${item.type}`);
       }
 
@@ -74,7 +83,9 @@ export default {
       bind: {
         value: item.value,
         label: getLabel(item),
-        params: item.additionalParams,
+        params: item.params,
+        name: item.key,
+        required: item.required,
         disabled: item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user && !hasReadAccessForAnyUser.value,
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE[item.type],
       },
