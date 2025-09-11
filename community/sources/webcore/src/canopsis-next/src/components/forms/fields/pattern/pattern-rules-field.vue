@@ -36,7 +36,12 @@
 </template>
 
 <script>
-import { patternRuleToForm, convertValueByOperator, getOperatorsByRule } from '@/helpers/entities/pattern/form';
+import {
+  patternRuleToForm,
+  convertValueByOperator,
+  convertValueByType,
+  getOperatorsByRule,
+} from '@/helpers/entities/pattern/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -143,6 +148,10 @@ export default {
         updatedRule.value = defaultValue;
       } else if (updatedRule.operator !== rule.operator) {
         updatedRule.value = convertValueByOperator(updatedRule.value, updatedRule.operator);
+      }
+
+      if (rule.fieldType !== updatedRule.fieldType) {
+        updatedRule.value = convertValueByType(newRule.value, updatedRule.fieldType);
       }
 
       if (updatedRule.value !== rule.value && operators?.length === 1) {
