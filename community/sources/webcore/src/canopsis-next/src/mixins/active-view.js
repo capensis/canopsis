@@ -9,9 +9,10 @@ export const activeViewMixin = {
   computed: {
     ...mapGetters({
       view: 'item',
-      pending: 'pending',
-      editing: 'editing',
-      editingProcess: 'editingProcess',
+      activeViewPending: 'pending',
+      activeViewEditing: 'editing',
+      activeViewEditingProcess: 'editingProcess',
+      activeViewPeriodicRefreshPaused: 'periodicRefreshPaused',
     }),
   },
   methods: {
@@ -21,6 +22,8 @@ export const activeViewMixin = {
       unregisterEditingOffHandler: 'unregisterEditingOffHandler',
       fetchActiveView: 'fetch',
       clearActiveView: 'clear',
+      resumePeriodicRefresh: 'resumePeriodicRefresh',
+      pausePeriodicRefresh: 'pausePeriodicRefresh',
     }),
   },
 };
