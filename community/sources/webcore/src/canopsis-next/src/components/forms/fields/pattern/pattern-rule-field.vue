@@ -401,6 +401,7 @@ export default {
 
       if (attribute.definedType) {
         newRule.fieldType = attribute.definedType;
+        newRule.value = convertValueByType(newRule.value, newRule.fieldType);
       }
 
       this.updateModel(newRule);
