@@ -173,7 +173,7 @@ if (db.widget_templates.countDocuments({title: "Default more infos", type: "alar
             "              <strong style=\"display:block;margin-bottom:8px\">Infos Composant</strong>\n" +
             "              <ul style=\"margin:0;padding:0;list-style:none;font-size:0.9em\">\n" +
             "                {{#each alarm.entity.component_infos}}\n" +
-            "                  <li style=\"padding-bottom:4px\"><strong>{{this.value}}:</strong> {{this.value}}</li>\n" +
+            "                  <li style=\"padding-bottom:4px\"><strong>{{this.name}}:</strong> {{this.value}}</li>\n" +
             "                {{/each}}\n" +
             "              </ul>\n" +
             "            </td>\n" +

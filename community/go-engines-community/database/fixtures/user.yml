@@ -206,7 +206,7 @@ template:
                     <strong style="display:block;margin-bottom:8px">Infos Composant</strong>
                     <ul style="margin:0;padding:0;list-style:none;font-size:0.9em">
                       {{#each alarm.entity.component_infos}}
-                        <li style="padding-bottom:4px"><strong>{{this.value}}:</strong> {{this.value}}</li>
+                        <li style="padding-bottom:4px"><strong>{{this.name}}:</strong> {{this.value}}</li>
                       {{/each}}
                     </ul>
                   </td>
