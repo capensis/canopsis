@@ -149,6 +149,7 @@ describe('pattern-rule-field', () => {
       attribute: ALARM_PATTERN_FIELDS.output,
       alias: false,
       fieldType: PATTERN_FIELD_TYPES.boolean,
+      value: false,
     });
   });
 
@@ -526,6 +527,133 @@ describe('pattern-rule-field', () => {
     });
 
     expect(wrapper.vm.notDefinedType).toBe(false);
+  });
+
+  test('updateAttribute sets alias to false when not provided', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+      },
+    });
+
+    const patternAttributeField = selectPatternAttributeField(wrapper);
+
+    patternAttributeField.triggerCustomEvent('input', {
+      value: ALARM_PATTERN_FIELDS.displayName,
+    });
+
+    expect(wrapper).toEmitInput({
+      ...emptyRule,
+      attribute: ALARM_PATTERN_FIELDS.displayName,
+      alias: false,
+    });
+  });
+
+  test('updateAttribute preserves existing alias value when undefined', () => {
+    const rule = {
+      ...emptyRule,
+      alias: true,
+    };
+    const wrapper = factory({
+      propsData: {
+        rule,
+      },
+    });
+
+    const patternAttributeField = selectPatternAttributeField(wrapper);
+
+    patternAttributeField.triggerCustomEvent('input', {
+      value: ALARM_PATTERN_FIELDS.displayName,
+    });
+
+    expect(wrapper).toEmitInput({
+      ...rule,
+      attribute: ALARM_PATTERN_FIELDS.displayName,
+      alias: false,
+    });
+  });
+
+  test('preparedItemDisabled calls itemDisabled function when provided', () => {
+    const itemDisabled = jest.fn().mockReturnValue(true);
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+        itemDisabled,
+      },
+    });
+
+    const testItem = { value: 'test-item' };
+    const result = wrapper.vm.preparedItemDisabled(testItem);
+
+    expect(itemDisabled).toHaveBeenCalledWith(emptyRule, testItem);
+    expect(result).toBe(true);
+  });
+
+  test('preparedItemDisabled returns undefined when itemDisabled not provided', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+      },
+    });
+
+    const testItem = { value: 'test-item' };
+    const result = wrapper.vm.preparedItemDisabled(testItem);
+
+    expect(result).toBeUndefined();
+  });
+
+  test('isAnyInfosRule computed returns true for infos type', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+        type: PATTERN_RULE_TYPES.infos,
+      },
+    });
+
+    expect(wrapper.vm.isAnyInfosRule).toBe(true);
+  });
+
+  test('isAnyInfosRule computed returns false for string type', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+        type: PATTERN_RULE_TYPES.string,
+      },
+    });
+
+    expect(wrapper.vm.isAnyInfosRule).toBe(false);
+  });
+
+  test('Infos attribute field is shown for infos rule type', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          attribute: ALARM_PATTERN_FIELDS.infos,
+        },
+        type: PATTERN_RULE_TYPES.infos,
+      },
+    });
+
+    const infosAttributeField = wrapper.find('c-infos-attribute-field-stub');
+    expect(infosAttributeField.exists()).toBe(true);
+    expect(wrapper.vm.isInfosRule).toBe(true);
+    expect(wrapper.vm.isAnyInfosRule).toBe(true);
+  });
+
+  test('Object dictionary field is shown for object rule type', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          attribute: ALARM_PATTERN_FIELDS.component,
+        },
+        type: PATTERN_RULE_TYPES.object,
+      },
+    });
+
+    expect(wrapper.vm.isObjectRule).toBe(true);
+    expect(wrapper.html()).toContain('rule.dictionary');
   });
 
   test('Renders `pattern-rule-field` with default props', () => {

@@ -29,7 +29,7 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               Custom label
             </label>
             <input
-              aria-activedescendant="list-item-66-0"
+              aria-activedescendant="list-item-116-0"
               autocomplete="off"
               disabled="disabled"
               type="text"
@@ -215,7 +215,7 @@ exports[`c-infos-attribute-field Renders \`c-pattern-infos-attribute-field\` wit
               Custom label
             </label>
             <input
-              aria-activedescendant="list-item-89-0"
+              aria-activedescendant="list-item-139-0"
               autocomplete="off"
               disabled="disabled"
               type="text"
