@@ -62,12 +62,11 @@
             xs1
           >
             <c-input-type-field
-              :value="rule.fieldType"
+              v-field="rule.fieldType"
               :label="$t('common.type')"
               :types="inputTypesWithDefinedType"
               :disabled="disabled"
               :name="name"
-              @input="updateType"
             />
           </v-flex>
           <v-flex
@@ -119,7 +118,6 @@ import {
 } from '@/constants';
 
 import {
-  convertValueByType,
   getFieldType,
   isDateRuleType,
   isDurationRuleType,
@@ -401,7 +399,6 @@ export default {
 
       if (attribute.definedType) {
         newRule.fieldType = attribute.definedType;
-        newRule.value = convertValueByType(newRule.value, newRule.fieldType);
       }
 
       this.updateModel(newRule);
@@ -417,15 +414,6 @@ export default {
 
     updateValue(value) {
       this.updateField('value', value);
-    },
-
-    updateType(type) {
-      this.updateModel({
-        ...this.rule,
-
-        fieldType: type,
-        value: convertValueByType(this.rule.value, type),
-      });
     },
   },
 };
