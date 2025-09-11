@@ -54,6 +54,8 @@ import { computed } from 'vue';
 
 import { PATTERN_RULE_INFOS_FIELDS, PATTERN_FIELD_TYPES } from '@/constants';
 
+import { convertValueByType } from '@/helpers/entities/pattern/form';
+
 import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form';
 
@@ -124,6 +126,15 @@ export default {
 
     const itemsByValue = computed(() => keyBy(props.items, 'value'));
 
+    const updateModelWithByChanges = (changes = {}) => updateModel({
+      ...props.value,
+
+      ...changes,
+      value: changes.fieldType !== props.value.fieldType
+        ? convertValueByType(props.value.value, changes.fieldType)
+        : props.value.value,
+    });
+
     /**
      * Updates `value.dictionary` and related type fields based on the provided infos.
      *
@@ -137,9 +148,7 @@ export default {
      * @param {string} [infos.definedType] Field defined type coming from the dictionary item
      * @returns {void}
      */
-    const updateInfosDictionary = (infos = {}) => updateModel({
-      ...props.value,
-
+    const updateInfosDictionary = (infos = {}) => updateModelWithByChanges({
       dictionary: infos?.value ?? infos,
       fieldType: infos?.definedType ?? PATTERN_FIELD_TYPES.string,
     });
@@ -150,17 +159,12 @@ export default {
      * @param {'name'|'value'} field Field key from `PATTERN_RULE_INFOS_FIELDS`
      * @returns {void}
      */
-    const updateInfosField = (field) => {
-      const fieldType = field === PATTERN_RULE_INFOS_FIELDS.value
+    const updateInfosField = field => updateModelWithByChanges({
+      field,
+      fieldType: field === PATTERN_RULE_INFOS_FIELDS.value
         ? itemsByValue.value[props.value.dictionary]?.definedType ?? PATTERN_FIELD_TYPES.string
-        : PATTERN_FIELD_TYPES.string;
-
-      updateModel({
-        ...props.value,
-        fieldType,
-        field,
-      });
-    };
+        : PATTERN_FIELD_TYPES.string,
+    });
 
     return {
       dictionaryName,
