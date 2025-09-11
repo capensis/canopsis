@@ -10,6 +10,7 @@
     v-else
     :content="tooltipContent"
     top
+    v-on="$listeners"
   >
     <template #activator="{ on }">
       <v-icon
@@ -59,7 +60,6 @@ export default {
     const tooltipContent = computed(() => (resolved.value && te(`common.statusResolvedTypes.${statusValue.value}`)
       ? t(`common.statusResolvedTypes.${statusValue.value}`)
       : t(`common.statusTypes.${statusValue.value}`)));
-
 
     return {
       statusValue,
