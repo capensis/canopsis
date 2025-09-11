@@ -11,6 +11,7 @@ import { uid } from '@/helpers/uid';
  * @property {string} value
  * @property {boolean} [label]
  * @property {boolean} [isHtml]
+ * @property {boolean} [isFilter]
  * @property {string} [template]
  * @property {string} [onlyIcon]
  * @property {number} [inlineLinkCount]
@@ -26,6 +27,7 @@ import { uid } from '@/helpers/uid';
  * @property {string} [field]
  * @property {string} [label]
  * @property {boolean} [isHtml]
+ * @property {boolean} [isFilter]
  * @property {string} [template]
  * @property {string} [onlyIcon]
  * @property {number} [inlineLinkCount]
