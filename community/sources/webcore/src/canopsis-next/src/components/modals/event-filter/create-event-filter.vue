@@ -1,43 +1,44 @@
 <template>
-  <v-form data-vv-scope="general" @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ title }}</span>
-      </template>
-      <template #text="">
-        <template-testing-test-variables-wrapper
-          v-field="form"
-          :is-new="isNew"
-          :type="type"
-        >
-          <template #default="{ templateVars }">
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <template-testing-test-variables-wrapper
+        v-field="form"
+        :is-new="isNew"
+        :type="type"
+      >
+        <template #default="{ templateVars }">
+          <v-form>
             <event-filter-form
               v-model="form"
               :template-vars="templateVars"
               :is-disabled-id-field="config.isDisabledIdField"
             />
-          </template>
-        </template-testing-test-variables-wrapper>
-      </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          :disabled="isDisabled"
-          :loading="submitting"
-          class="primary"
-          type="submit"
-        >
-          {{ $t('common.submit') }}
-        </v-btn>
-      </template>
-    </modal-wrapper>
-  </v-form>
+          </v-form>
+        </template>
+      </template-testing-test-variables-wrapper>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        :disabled="isDisabled"
+        :loading="submitting"
+        class="primary"
+        type="submit"
+        @click="submit"
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
@@ -97,15 +98,9 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        const isFormValid = await validator.validateAll('general');
+        await config.value.action?.(formToEventFilter(form.value, system.timezone));
 
-        if (isFormValid) {
-          if (config.value.action) {
-            await config.value.action(formToEventFilter(form.value, system.timezone));
-          }
-
-          close();
-        }
+        close();
       },
     });
 

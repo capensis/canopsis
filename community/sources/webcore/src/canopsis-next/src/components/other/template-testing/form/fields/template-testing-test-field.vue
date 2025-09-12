@@ -6,9 +6,9 @@
     :loading="wholePending"
     :name="name"
     :has-more="hasMoreItems"
+    :required="required"
     item-text="_id"
     item-value="name"
-    required
     @input="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
@@ -34,7 +34,11 @@ export default {
     },
     name: {
       type: String,
-      default: 'test',
+      default: 'name',
+    },
+    required: {
+      type: Boolean,
+      default: false,
     },
   },
   setup(props, { emit }) {

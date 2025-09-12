@@ -54,6 +54,10 @@ export default {
       type: Number,
       required: false,
     },
+    name: {
+      type: String,
+      default: 'testdata',
+    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -77,6 +81,8 @@ export default {
       return t(`templateTesting.testDataResponseLabels.${props.type}`, { index: item.index + 1 });
     };
 
+    const hasFilledSomeRequiredField = computed(() => props.form.some(item => item.someRequired && item.value));
+
     const fields = computed(() => props.form.map((item, index) => ({
       is: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS[item.type],
       key: item.key,
@@ -84,8 +90,8 @@ export default {
         value: item.value,
         label: getLabel(item),
         params: item.params,
-        name: item.key,
-        required: item.required,
+        name: `${props.name}.${item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response ? `responses.${index}` : item.type}`,
+        required: item.required || (item.someRequired && !hasFilledSomeRequiredField.value),
         disabled: item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user && !hasReadAccessForAnyUser.value,
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE[item.type],
       },
