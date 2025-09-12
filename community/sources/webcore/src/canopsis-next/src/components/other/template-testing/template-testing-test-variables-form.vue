@@ -1,15 +1,20 @@
 <template>
   <v-layout class="gap-3" column>
-    <template-testing-test-field
-      name="test"
-      required
-    />
-    <template-testing-test-variables-test-data
-      v-field="form"
-      :type="type"
-    />
+    <v-form data-vv-scope="test-name">
+      <template-testing-test-field
+        :value="''"
+        name="test.name"
+        required
+      />
+    </v-form>
+    <v-form data-vv-scope="test-data">
+      <template-testing-test-variables-test-data
+        v-field="form"
+        :type="type"
+      />
+    </v-form>
     <template-testing-test-variables-template-item
-      v-for="field in fields"
+      v-for="field in variablesFields"
       :key="field.key"
       :template="field.value"
       :title="$t(field.textKey)"
@@ -39,7 +44,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    fields: {
+    variablesFields: {
       type: Array,
       default: () => [],
     },

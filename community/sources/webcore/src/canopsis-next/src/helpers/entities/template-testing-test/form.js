@@ -34,6 +34,7 @@ export const getTemplateTestingTestValidateFormItem = ({
   type,
   params = {},
   required = false,
+  someRequired = false,
   index,
   key,
 }) => ({
@@ -41,6 +42,7 @@ export const getTemplateTestingTestValidateFormItem = ({
   params,
   index,
   required,
+  someRequired,
   key: key ?? type,
   value: '',
 });
@@ -50,12 +52,14 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+        required: true,
         params: { [PATTERNS_FIELDS.event]: [[{ field: 'event_type', cond: { type: 'eq', value: 'check' } }]] },
       }),
       ...form.external_data.reduce((acc, externalData, index) => {
         if (externalData.type === EXTERNAL_DATA_TYPES.api) {
           acc.push(getTemplateTestingTestValidateFormItem({
             index,
+            required: true,
             type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
             key: externalData.key,
           }));
@@ -70,12 +74,14 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+        required: true,
       }),
 
       ...form.actions.reduce((acc, action, index) => {
         if (action.type === ACTION_TYPES.webhook) {
           acc.push(getTemplateTestingTestValidateFormItem({
             index,
+            required: true,
             key: action.key,
             type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
           }));
@@ -95,10 +101,12 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
       form.type === LINK_RULE_TYPES.alarm
         ? getTemplateTestingTestValidateFormItem({
           type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+          required: true,
           params: { opened: true },
         })
         : getTemplateTestingTestValidateFormItem({
           type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity,
+          required: true,
         }),
     ];
   }
@@ -107,6 +115,7 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
       }),
     ];
   }
@@ -115,12 +124,14 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
         params: { opened: true },
       }),
 
       ...form.webhooks.map((webhook, index) => (
         getTemplateTestingTestValidateFormItem({
           index,
+          required: true,
           key: webhook.key,
           type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
         })
@@ -132,10 +143,12 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        someRequired: true,
         params: { opened: true },
       }),
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
+        someRequired: true,
       }),
     ];
   }
@@ -144,6 +157,7 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
         params: { opened: true },
       }),
     ];
@@ -153,6 +167,7 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
         params: { opened: true },
       }),
     ];
@@ -162,6 +177,7 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     return [
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm,
+        required: true,
         params: { opened: true },
       }),
     ];
@@ -174,3 +190,19 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
   added: differenceBy(form, oldForm, 'key'),
   removed: differenceBy(oldForm, form, 'key'),
 });
+
+export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
+  if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
+    if (!acc.responses) {
+      acc.responses = [];
+    }
+
+    acc.responses.push(item.value);
+
+    return acc;
+  }
+
+  acc[item.type] = item.value;
+
+  return acc;
+}, {});
