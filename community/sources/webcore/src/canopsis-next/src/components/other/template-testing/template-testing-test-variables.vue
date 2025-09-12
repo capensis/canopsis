@@ -1,45 +1,43 @@
 <template>
-  <v-form data-vv-scope="test-variables">
-    <v-layout class="gap-4" column>
-      <template-testing-test-variables-form
-        v-model="validationForm"
-        :fields="fields"
-        :type="type"
-      />
-      <c-alert :value="!isGeneralFormValid" type="error">
-        {{ $t('templateTesting.mainFormHasErrors') }}
-      </c-alert>
-      <v-layout class="gap-2" justify-end>
-        <v-btn
-          color="secondary"
-          outlined
-          @click="saveAsNew"
-        >
-          {{ $t('templateTesting.saveTestAsNew') }}
-        </v-btn>
-        <v-btn
-          color="secondary"
-          @click="save"
-        >
-          {{ $t('templateTesting.saveTest') }}
-        </v-btn>
-        <v-btn
-          :loading="running"
-          :disabled="running"
-          color="primary"
-          @click="runTest"
-        >
-          {{ $t('templateTesting.runTest') }}
-        </v-btn>
-      </v-layout>
+  <v-layout class="gap-4" column>
+    <template-testing-test-variables-form
+      v-model="validationForm"
+      :variables-fields="variablesFields"
+      :type="type"
+    />
+    <c-alert :value="!isGeneralFormValid" type="error">
+      {{ $t('templateTesting.mainFormHasErrors') }}
+    </c-alert>
+    <v-layout class="gap-2" justify-end>
+      <v-btn
+        color="secondary"
+        outlined
+        @click="saveAsNew"
+      >
+        {{ $t('templateTesting.saveTestAsNew') }}
+      </v-btn>
+      <v-btn
+        color="secondary"
+        @click="save"
+      >
+        {{ $t('templateTesting.saveTest') }}
+      </v-btn>
+      <v-btn
+        :loading="running"
+        :disabled="running"
+        color="primary"
+        @click="runTest"
+      >
+        {{ $t('templateTesting.runTest') }}
+      </v-btn>
     </v-layout>
-  </v-form>
+  </v-layout>
 </template>
 
 <script>
 import { computed, ref, watch } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+import { TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { formToService } from '@/helpers/entities/service/form';
 import { formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
@@ -54,28 +52,34 @@ import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
 import {
   formToTemplateTestingTestValidateForm,
   getChangesForValidateForm,
+  formToTemplateTestingTestValidate,
 } from '@/helpers/entities/template-testing-test/form';
 
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useValidator } from '@/hooks/validator/validator';
 import { useTemplateValidation } from '@/hooks/store/modules/template-validation';
+import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 import TemplateTestingTestVariablesForm from './template-testing-test-variables-form.vue';
 
 export default {
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: {
     TemplateTestingTestVariablesForm,
   },
   model: {
-    prop: 'form',
+    prop: 'generalForm',
     event: 'input',
   },
   props: {
-    form: {
+    generalForm: {
       type: Object,
       default: () => ({}),
     },
-    fields: {
+    variablesFields: {
       type: Array,
       default: () => [],
     },
@@ -93,6 +97,7 @@ export default {
     const isGeneralFormValid = ref(true);
 
     const validator = useValidator();
+    const { setFormErrors } = useValidationFormErrors(validationForm);
 
     const {
       validateEntityServices,
@@ -107,7 +112,7 @@ export default {
       validateMetaAlarmRules,
     } = useTemplateValidation();
 
-    watch(() => props.form, (newForm) => {
+    watch(() => props.generalForm, (newForm) => {
       const newValidationForm = formToTemplateTestingTestValidateForm(newForm, props.type);
 
       const { added, removed } = getChangesForValidateForm(newValidationForm, validationForm.value);
@@ -144,25 +149,35 @@ export default {
     })[props.type] ?? formToService);
 
     const saveAsNew = async () => {
-      const isValid = await validator.validateAll('test-variables');
+      const [isNameValid, isDataValid] = await Promise.all([
+        validator.validateAll('test-name'),
+        validator.validateAll('test-data'),
+      ]);
 
-      if (isValid) {
+      if (isNameValid && isDataValid) {
         emit('saveAsNew');
       }
     };
 
     const { pending: running, handler: runTest } = usePendingHandler(async () => {
-      isGeneralFormValid.value = await validator.validateAll('general');
+      const [isValid, isParentValid] = await Promise.all([validator.validateAll(), validator.validateAll('test-data')]);
 
-      if (!isGeneralFormValid.value) {
+      isGeneralFormValid.value = isParentValid;
+
+      if (!isValid || !isParentValid) {
         return;
       }
 
-      await validateHandler.value({
-        data: {
-          rule: formToRequest.value(props.form),
-        },
-      });
+      try {
+        await validateHandler.value({
+          data: {
+            rule: formToRequest.value(props.generalForm),
+            testdata: formToTemplateTestingTestValidate(validationForm.value),
+          },
+        });
+      } catch (err) {
+        setFormErrors(err);
+      }
     });
 
     const save = () => {};

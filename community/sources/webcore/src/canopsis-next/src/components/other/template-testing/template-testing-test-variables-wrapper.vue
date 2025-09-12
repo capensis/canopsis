@@ -18,8 +18,8 @@
 
     <v-tab-item :disabled="disabledTestVariablesTab">
       <template-testing-test-variables
-        :form="form"
-        :fields="fields"
+        :general-form="form"
+        :variables-fields="variablesFields"
         :is-new="isNew"
         :type="type"
       />
@@ -56,17 +56,17 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { items: fields } = useTestVariablesFields(props, emit);
+    const { items: variablesFields } = useTestVariablesFields(props, emit);
     const { templateVars, pending, fetchList } = useTemplateVarsList({
       type: toRef(props, 'type'),
     });
 
-    const disabledTestVariablesTab = computed(() => !fields.value.length);
+    const disabledTestVariablesTab = computed(() => !variablesFields.value.length);
 
     onMounted(fetchList);
 
     return {
-      fields,
+      variablesFields,
       templateVars,
       pending,
       disabledTestVariablesTab,
