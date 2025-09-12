@@ -145,13 +145,15 @@ func (p *checkProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Resul
 		}
 
 		if alarm.ID == "" {
-			var v types.Entity
-			err = p.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&v)
-			if err != nil {
-				return err
+			if !event.Healthcheck {
+				var v types.Entity
+				err = p.entityCollection.FindOne(ctx, bson.M{"_id": entity.ID}).Decode(&v)
+				if err != nil {
+					return err
+				}
+				entity = v
 			}
 
-			entity = v
 			result, err = p.createAlarm(ctx, entity, event)
 		} else {
 			result, err = p.updateAlarm(ctx, alarm, entity, event.Parameters)
