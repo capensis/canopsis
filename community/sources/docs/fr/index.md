@@ -29,6 +29,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| ---------- | --------- |
-    | **24.10.2**  | [:material-file-document:](notes-de-version/24.10.2.md)  | 01/08/2025 | |
+    | **24.10.3**  | [:material-file-document:](notes-de-version/24.10.3.md)  | 12/09/2025 | |
+    | 24.10.2      | [:material-file-document:](notes-de-version/24.10.2.md)  | 01/08/2025 | |
     | 24.10.1      | [:material-file-document:](notes-de-version/24.10.1.md)  | 17/03/2025 | Des changements importants sont présents dans cette version. Veuillez consulter la note de version pour plus de précisions |
     | 24.10.0      | [:material-file-document:](notes-de-version/24.10.0.md)  | 31/10/2024 | Cette version comporte un important [Guide de migration](notes-de-version/migration/migration-24.10.0.md) |
