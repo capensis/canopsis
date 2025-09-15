@@ -1,7 +1,7 @@
 import { isEqual, get, mapValues } from 'lodash';
 import { computed, ref, unref, watch } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+import { TEMPLATE_TESTING_TEST_TYPES, LINK_RULE_TYPES } from '@/constants';
 
 import { templateVarsToVariables } from '@/helpers/variables';
 import { convertRuleToTemplateTestingTestValidateForm } from '@/helpers/entities/template-testing-validate/form';
@@ -17,12 +17,14 @@ import { useModelField } from '@/hooks/form/model-field';
  * @param {Object} options - Configuration options
  * @param {import('vue').Ref<string>|string} [options.type] - The type of template testing
  *                                                            (eventFilter, linkRule, scenario, etc.)
+ * @param {import('vue').Ref<Object>|Object} [options.form] - The form object
+ *
  * @returns {Object} Hook return object
  * @returns {import('vue').Ref<Array>} returns.templateVars - Reactive array of template variables
  * @returns {import('vue').Ref<boolean>} returns.pending - Loading state indicator
  * @returns {Function} returns.fetchList - Function to fetch template variables list
  */
-export const useTemplateVarsList = ({ type } = {}) => {
+export const useTemplateVarsList = ({ type, form } = {}) => {
   const { t } = useI18n();
 
   const templateVars = ref({});
@@ -42,7 +44,11 @@ export const useTemplateVarsList = ({ type } = {}) => {
 
   const fetchHandler = computed(() => ({
     [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: fetchEventFiltersTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.linkRule]: fetchLinkRulesTemplateVarsWithoutStore,
+    [TEMPLATE_TESTING_TEST_TYPES.linkRule]: async () => {
+      const { alarm: alarmData, entity: entityData } = await fetchLinkRulesTemplateVarsWithoutStore();
+
+      return unref(form).type === LINK_RULE_TYPES.alarm ? alarmData : entityData;
+    },
     [TEMPLATE_TESTING_TEST_TYPES.scenario]: fetchScenariosTemplateVarsWithoutStore,
     [TEMPLATE_TESTING_TEST_TYPES.widget]: fetchWidgetsTemplateVarsWithoutStore,
     [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: fetchDeclareTicketRulesTemplateVarsWithoutStore,

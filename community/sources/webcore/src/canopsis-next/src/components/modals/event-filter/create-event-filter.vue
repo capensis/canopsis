@@ -5,8 +5,8 @@
     </template>
     <template #text="">
       <template-testing-test-variables-wrapper
-        v-field="form"
-        :is-new="isNew"
+        v-model="form"
+        :rule-id="ruleId"
         :type="type"
       >
         <template #default="{ templateVars }">
@@ -81,6 +81,8 @@ export default {
     },
   },
   setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
+
     const system = inject('$system');
 
     const { config, close } = useInnerModal(props);
@@ -89,8 +91,7 @@ export default {
 
     const form = ref(eventFilterToForm(config.value.rule, system.timezone));
 
-    const isNew = computed(() => !config.value.rule?._id);
-    const type = computed(() => TEMPLATE_TESTING_TEST_TYPES.eventFilter);
+    const ruleId = computed(() => config.value.rule?._id);
     const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
     const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(form.value.type));
     const isChangeEntity = computed(() => isChangeEntityEventFilterRuleType(form.value.type));
@@ -98,9 +99,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(formToEventFilter(form.value, system.timezone));
+        const data = await config.value.action?.(formToEventFilter(form.value, system.timezone));
 
         close();
+
+        return data;
       },
     });
 
@@ -111,7 +114,7 @@ export default {
     return {
       form,
       config,
-      isNew,
+      ruleId,
       type,
       title,
       isEnrichment,

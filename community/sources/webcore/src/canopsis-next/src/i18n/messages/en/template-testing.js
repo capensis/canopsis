@@ -27,7 +27,7 @@ export default {
   addData: 'Add data',
   saveTest: 'Save test',
   saveTestAsNew: 'Save as new test',
-  errorsInInput: '{count} error in input | {count} errors in input',
+  errorsInInput: 'Error in input',
   mainFormHasErrors: 'Please fix the errors in the General tab',
   isNewForm: 'If you save this test and the form won\'t be saved, this test will be deleted after closing the creation modal',
   tabs: {
