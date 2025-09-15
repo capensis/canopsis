@@ -5,48 +5,74 @@ import {
   TEMPLATE_TESTING_TEST_TYPES,
 } from '@/constants';
 
+/**
+ * @typedef {Object} TemplateTestingTestValidateFormItem
+ * @property {string} key
+ * @property {string} textKey
+ * @property {boolean} [textarea]
+ */
+
+/**
+ * @typedef {TemplateTestingTestValidateFormItem[]} TemplateTestingTestValidateForm
+ */
+
+export const convertExternalData = (externalData = []) => {
+  const result = [];
+
+  externalData.forEach((externalDataItem, index) => {
+    if (externalDataItem.type === EXTERNAL_DATA_TYPES.api) {
+      result.push({
+        key: `external_data.${index}.request.url`,
+        textKey: 'URL', // TODO: i18n
+        templateVarsKey: 'external_data',
+      }, {
+        key: `external_data.${index}.request.payload`,
+        textKey: 'PAYLOAD', // TODO: i18n
+        textarea: true,
+        templateVarsKey: 'external_data',
+      });
+
+      return;
+    }
+
+    externalDataItem.conditions.forEach((_, conditionIndex) => {
+      result.push({
+        key: `external_data.${index}.conditions.${conditionIndex}.value`,
+        textKey: 'CONDITION VALUE', // TODO: i18n
+        templateVarsKey: 'external_data',
+      });
+    });
+  });
+
+  return result;
+};
+
 export const convertEventFilter = (form = {}) => {
   const result = [];
   const isChangeEntity = form.type === EVENT_FILTER_TYPES.changeEntity;
   const isEnrichment = form.type === EVENT_FILTER_TYPES.enrichment;
 
   if (isChangeEntity || isEnrichment) {
-    form.external_data.forEach((externalData, index) => {
-      if (externalData.type === EXTERNAL_DATA_TYPES.api) {
-        result.push({
-          key: `external_data.${index}.request.url`,
-          textKey: 'URL',
-        }, {
-          key: `external_data.${index}.request.payload`,
-          textKey: 'PAYLOAD',
-          textarea: true,
-        });
-
-        return;
-      }
-
-      externalData.conditions.forEach((condition, conditionIndex) => {
-        result.push({
-          key: `external_data.${index}.conditions.${conditionIndex}.value`,
-          textKey: 'CONDITION VALUE',
-        });
-      });
-    });
+    result.push(...convertExternalData(form.external_data));
   }
 
   if (isChangeEntity) {
     result.push({
       key: 'config.resource',
       textKey: 'common.resource',
+      templateVarsKey: 'config',
     }, {
       key: 'config.component',
       textKey: 'common.component',
+      templateVarsKey: 'config',
     }, {
       key: 'config.connector',
       textKey: 'common.connector',
+      templateVarsKey: 'config',
     }, {
       key: 'config.connector_name',
       textKey: 'common.connectorName',
+      templateVarsKey: 'config',
     });
   }
 
@@ -64,7 +90,8 @@ export const convertEventFilter = (form = {}) => {
 
       result.push({
         key: `config.actions.${index}.value`,
-        textKey: 'ACTION KEY',
+        textKey: 'ACTION KEY', // TODO: use i18n
+        templateVarsKey: 'config',
       });
     });
   }
@@ -72,7 +99,25 @@ export const convertEventFilter = (form = {}) => {
   return result;
 };
 
-export const convertLinkRule = () => {};
+export const convertLinkRule = (form = {}, templateVars = {}) => {
+  const result = [];
+
+  form.links.forEach((link, index) => {
+    result.push({
+      key: `links.${index}.label`,
+      textKey: 'LABEL', // TODO: i18n
+      variables: templateVars.label,
+    }, {
+      key: `links.${index}.url`,
+      textKey: 'URL', // TODO: i18n
+      variables: templateVars.url,
+    });
+  });
+
+  result.push(...convertExternalData(form.external_data));
+
+  return result;
+};
 
 export const convertScenario = () => {};
 

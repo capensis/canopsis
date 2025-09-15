@@ -35,6 +35,8 @@
           v-if="textarea"
           v-field="template"
           :placeholder="$t('templateTesting.inputPlaceholder')"
+          :variables="variables"
+          :name="name"
           wrap="off"
           rows="2"
           class="template-item__input-editor"
@@ -43,6 +45,8 @@
           v-else
           v-field="template"
           :placeholder="$t('templateTesting.inputPlaceholder')"
+          :variables="variables"
+          :name="name"
           class="template-item__input-editor"
         />
       </v-flex>
@@ -60,6 +64,7 @@
 </template>
 
 <script>
+import { isUndefined } from 'lodash';
 import { ref, computed, watch } from 'vue';
 
 import { getStringLinesCount } from '@/helpers/string';
@@ -90,27 +95,43 @@ export default {
       type: Boolean,
       default: false,
     },
+    name: {
+      type: String,
+      default: '',
+    },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
+    result: {
+      type: Object,
+      default: () => ({}),
+    },
+    lastRunValue: {
+      type: String,
+      default: '',
+    },
   },
-  setup() {
-    const { t, tc } = useI18n();
+  setup(props) {
+    const { t } = useI18n();
 
     const isRunning = ref(false);
     const isJson = ref(false);
 
     const editorHeight = ref(MIN_EDITOR_LINES * EDITOR_LINE_HEIGHT);
 
-    const errorsCount = 4;
-
     const statusProps = computed(() => {
-      if (true) { // SUCCESS
+      const { err, is_valid: isValid } = props.result;
+
+      if (err) { // ERROR
         return {
-          headerClass: 'template-item__header--success',
-          chipColor: 'success',
-          chipText: t('templateTesting.success'),
+          headerClass: 'template-item__header--error',
+          chipColor: 'error',
+          chipText: t('templateTesting.errorsInInput'),
         };
       }
 
-      if (false) { // WARNING
+      if (props.lastRunValue !== props.template && !isUndefined(isValid)) { // WARNING
         return {
           headerClass: 'template-item__header--warning',
           chipColor: 'warning',
@@ -118,11 +139,11 @@ export default {
         };
       }
 
-      if (false) { // ERROR
+      if (isValid) { // SUCCESS
         return {
-          headerClass: 'template-item__header--error',
-          chipColor: 'error',
-          chipText: tc('templateTesting.errorsInInput', errorsCount, { count: errorsCount }),
+          headerClass: 'template-item__header--success',
+          chipColor: 'success',
+          chipText: t('templateTesting.success'),
         };
       }
 
@@ -132,22 +153,16 @@ export default {
       };
     });
 
-    const output = '{"test": 321, "asd": "asdasd", "arr": [1, 2, 3]}';
-
     const formattedOutput = computed(() => {
-      if (!output) {
-        return 'asdasdasdasdasdasd {} {{ .asdasd.asd }} []\ndslakdlsadk';
-      }
-
       if (isJson.value) {
         try {
-          return JSON.stringify(JSON.parse(output), null, 2);
+          return JSON.stringify(JSON.parse(props.result.result), null, 2);
         } catch {
-          return output;
+          return props.result.result;
         }
       }
 
-      return output;
+      return props.result.result;
     });
 
     watch(formattedOutput, (value) => {

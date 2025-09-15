@@ -52,7 +52,6 @@ import techMetricsModule from './tech-metrics';
 import widgetTemplateModule from './widget-template';
 import metaAlarmModule from './meta-alarm';
 import declareTicketRuleModule from './declare-ticket-rule';
-import templateValidatorModule from './template-validator';
 import LinkRuleRuleModule from './links-rule';
 import metricsSettingsModule from './metrics-settings';
 import aggregatedMetricsModule from './aggregated-metrics';
@@ -122,7 +121,6 @@ export default {
   widgetTemplate: widgetTemplateModule,
   metaAlarm: metaAlarmModule,
   declareTicketRule: declareTicketRuleModule,
-  templateValidator: templateValidatorModule,
   linkRule: LinkRuleRuleModule,
   metricsSettings: metricsSettingsModule,
   aggregatedMetrics: aggregatedMetricsModule,

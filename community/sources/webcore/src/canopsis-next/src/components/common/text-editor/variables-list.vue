@@ -230,13 +230,15 @@ export default {
      */
     const selectSubVariable = (item) => {
       /**
-       * We are replacing /\s*}}/ for correct parent prefix checking for payloads
+       * We are replacing /\s*}}/ for correct parent prefix checking for payloads.
+       * If parent value is not set, we are not adding parent prefix.
        * @example detect {{ .LastChild.Alarm.Value }} in {{ .LastChild.Alarm.Value.Infos.something.Value }}
        */
+      const hasParentValue = !!parentItem.value[props.itemValue];
       const parentValue = String(parentItem.value[props.itemValue]).replace(/\s*}}$/, '');
 
       const value = getValue(item);
-      const newValue = String(value).startsWith(parentValue)
+      const newValue = String(value).startsWith(parentValue) || !hasParentValue
         ? value
         : `${parentValue}.${value}`;
 

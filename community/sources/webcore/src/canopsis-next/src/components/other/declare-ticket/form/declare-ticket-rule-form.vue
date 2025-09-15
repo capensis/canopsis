@@ -58,6 +58,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {

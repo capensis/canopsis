@@ -21,9 +21,10 @@ export default {
   addData: 'Ajouter des données',
   saveTest: 'Sauvegarder le test',
   saveTestAsNew: 'Sauvegarder comme nouveau test',
-  errorsInInput: '{count} erreur dans l\'entrée | {count} erreurs dans l\'entrée',
+  errorsInInput: 'Erreur dans l\'entrée',
   mainFormHasErrors: 'Veuillez corriger les erreurs dans l\'onglet Général',
   isNewForm: 'Si vous sauvegardez ce test et que le formulaire ne sera pas sauvegardé, ce test sera supprimé après la fermeture de la modale de création',
+  isNewScenario: 'Si vous sauvegardez ce test et que le Scénario ne sera pas sauvegardé, ce test sera supprimé après la fermeture de la modale de Scénario',
   testVariablesDisabledTooltip: 'Le formulaire n\'a aucun champ de modèle',
   tabs: {
     [TEMPLATE_TESTING_TABS.data]: '@:templateTesting.testData',
