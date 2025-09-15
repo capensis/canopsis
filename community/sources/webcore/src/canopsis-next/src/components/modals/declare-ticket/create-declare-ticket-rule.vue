@@ -1,56 +1,65 @@
 <template>
-  <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        <span>{{ title }}</span>
-      </template>
-      <template #text="">
-        <declare-ticket-rule-form v-model="form" />
-      </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          :loading="checking"
-          color="orange"
-          dark
-          @click="validateTemplateVariables"
-        >
-          {{ $t('declareTicket.checkSyntax') }}
-        </v-btn>
-        <v-btn
-          :loading="submitting"
-          class="primary"
-          type="submit"
-        >
-          {{ $t('common.submit') }}
-        </v-btn>
-      </template>
-    </modal-wrapper>
-  </v-form>
+  <modal-wrapper close>
+    <template #title="">
+      <span>{{ title }}</span>
+    </template>
+    <template #text="">
+      <template-testing-test-variables-wrapper
+        v-field="form"
+        :is-new="isNew"
+        :type="type"
+      >
+        <template #default="{ templateVars }">
+          <v-form>
+            <declare-ticket-rule-form
+              v-model="form"
+              :template-vars="templateVars"
+            />
+          </v-form>
+        </template>
+      </template-testing-test-variables-wrapper>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        :disabled="isDisabled"
+        :loading="submitting"
+        class="primary"
+        type="submit"
+        @click="submit"
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed, ref } from 'vue';
+
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import {
   declareTicketRuleToForm,
   formToDeclareTicketRule,
   declareTicketRuleErrorsToForm,
-  declareTicketRuleTemplateVariablesErrorsToForm,
 } from '@/helpers/entities/declare-ticket/rule/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
+import { usePopups } from '@/hooks/popups';
 
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -60,90 +69,59 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { DeclareTicketRuleForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    entitiesTemplateValidatorMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: declareTicketRuleToForm(this.modal.config.declareTicketRule),
-      checking: false,
-    };
+  components: {
+    DeclareTicketRuleForm,
+    TemplateTestingTestVariablesWrapper,
+    ModalWrapper,
   },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.createDeclareTicketRule.create.title');
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  methods: {
-    async validateRequestTemplates(request) {
-      const [url, payload, ...headers] = await this.validateDeclareTicketRulesVariables({
-        data: [
-          { text: request.url },
-          { text: request.payload },
-          ...request.headers.map(({ value }) => ({ text: value })),
-        ],
-      });
+  setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
 
-      return {
-        url,
-        payload,
-        headers,
-      };
-    },
+    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const { setFormErrors } = useValidationFormErrors();
+    const popups = usePopups();
 
-    validateWebhooksTemplates(webhooks) {
-      return Promise.all(webhooks.map(async ({ request }) => ({
-        request: await this.validateRequestTemplates(request),
-      })));
-    },
+    const form = ref(declareTicketRuleToForm(config.value.declareTicketRule));
 
-    async validateFormTemplates(form) {
-      return {
-        webhooks: await this.validateWebhooksTemplates(form.webhooks),
-      };
-    },
+    const isNew = computed(() => !config.value.declareTicketRule?._id);
+    const title = computed(() => config.value.title ?? t('modals.createDeclareTicketRule.create.title'));
 
-    async validateTemplateVariables() {
-      this.checking = true;
-
-      try {
-        const errors = await this.validateFormTemplates(this.form);
-
-        const wasSet = this.setFormErrors(declareTicketRuleTemplateVariablesErrorsToForm(errors, this.form));
-
-        if (!wasSet) {
-          this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.checking = false;
-      }
-    },
-
-    async submit() {
-      const isFormValid = await this.$validator.validate();
-
-      if (isFormValid) {
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
         try {
-          if (this.config.action) {
-            await this.config.action(formToDeclareTicketRule(this.form));
-          }
+          await config.value.action?.(formToDeclareTicketRule(form.value));
 
-          this.$modals.hide();
+          close();
         } catch (err) {
           if (err.error) {
-            this.$popups.error({ text: err.error });
+            popups.error({ text: err.error });
           } else {
-            this.setFormErrors(declareTicketRuleErrorsToForm(err, this.form));
+            setFormErrors(declareTicketRuleErrorsToForm(err, form.value));
           }
         }
-      }
-    },
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    return {
+      form,
+      config,
+      isNew,
+      type,
+      title,
+      isDisabled,
+      submitting,
+      submit,
+    };
   },
 };
 </script>

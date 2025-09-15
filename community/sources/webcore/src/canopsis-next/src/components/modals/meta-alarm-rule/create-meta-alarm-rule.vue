@@ -1,63 +1,83 @@
 <template>
-  <v-form @submit.prevent="submit">
-    <modal-wrapper close>
-      <template #title="">
-        {{ title }}
-      </template>
-      <template #text="">
-        <meta-alarm-rule-form
-          v-model="form"
-          ref="formElement"
-          :active-step.sync="activeStep"
-          :disabled-id-field="config.isDisabledIdField"
-          :alarm-infos="alarmInfos"
-          :entity-infos="entityInfos"
-        />
-      </template>
-      <template #actions="">
-        <v-btn
-          depressed
-          text
-          @click="$modals.hide"
-        >
-          {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          v-if="isLastStep"
-          key="submit"
-          :disabled="isDisabled"
-          :loading="submitting"
-          class="primary"
-          type="submit"
-        >
-          {{ $t('common.submit') }}
-        </v-btn>
-        <v-btn
-          v-else
-          key="next"
-          :disabled="!isStepValid"
-          type="button"
-          class="primary"
-          @click="next"
-        >
-          {{ $t('common.next') }}
-        </v-btn>
-      </template>
-    </modal-wrapper>
-  </v-form>
+  <modal-wrapper close>
+    <template #title="">
+      {{ title }}
+    </template>
+    <template #text="">
+      <template-testing-test-variables-wrapper
+        v-field="form"
+        :is-new="isNew"
+        :type="type"
+      >
+        <template #default="{ templateVars }">
+          <v-form>
+            <meta-alarm-rule-form
+              v-model="form"
+              ref="formElement"
+              :active-step.sync="activeStep"
+              :disabled-id-field="config.isDisabledIdField"
+              :alarm-infos="alarmInfos"
+              :entity-infos="entityInfos"
+              :template-vars="templateVars"
+            />
+          </v-form>
+        </template>
+      </template-testing-test-variables-wrapper>
+    </template>
+    <template #actions="">
+      <v-btn
+        depressed
+        text
+        @click="$modals.hide"
+      >
+        {{ $t('common.cancel') }}
+      </v-btn>
+      <v-btn
+        v-if="isLastStep"
+        key="submit"
+        :disabled="isDisabled"
+        :loading="submitting"
+        class="primary"
+        type="submit"
+        @click="submit"
+      >
+        {{ $t('common.submit') }}
+      </v-btn>
+      <v-btn
+        v-else
+        key="next"
+        :disabled="!isStepValid"
+        type="button"
+        class="primary"
+        @click="next"
+      >
+        {{ $t('common.next') }}
+      </v-btn>
+    </template>
+  </modal-wrapper>
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY, META_ALARMS_FORM_STEPS } from '@/constants';
+import {
+  computed,
+  ref,
+  onMounted,
+  watch,
+  nextTick,
+} from 'vue';
+
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY, META_ALARMS_FORM_STEPS } from '@/constants';
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -69,87 +89,109 @@ export default {
   },
   components: {
     MetaAlarmRuleForm,
+    TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    entitiesInfosMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      activeStep: META_ALARMS_FORM_STEPS.general,
-      isStepValid: false,
-      form: metaAlarmRuleToForm(this.modal.config.rule),
-    };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.metaAlarmRule.create.title');
-    },
-
-    isLastStep() {
-      return this.activeStep === META_ALARMS_FORM_STEPS.parameters;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  mounted() {
-    this.fetchInfos();
+  setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule;
 
-    const handleValidationChanged = () => {
-      this.isStepValid = this.isCurrentStepValid();
-    };
+    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const { alarmInfos, entityInfos, fetchInfos } = useEntityInfos();
 
-    handleValidationChanged();
+    const activeStep = ref(META_ALARMS_FORM_STEPS.general);
+    const isStepValid = ref(false);
+    const formElement = ref(null);
+    const form = ref(metaAlarmRuleToForm(config.value.rule));
 
-    this.$watch(() => this.$refs.formElement.hasGeneralError, handleValidationChanged);
-    this.$watch(() => this.$refs.formElement.hasTypeError, handleValidationChanged);
-    this.$watch(() => this.$refs.formElement.hasParametersError, handleValidationChanged);
-  },
-  methods: {
-    isCurrentStepValid() {
-      const { hasGeneralError, hasTypeError, hasParametersError } = this.$refs.formElement ?? {};
+    const isNew = computed(() => !config.value.rule?._id);
+    const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
+    const isLastStep = computed(() => activeStep.value === META_ALARMS_FORM_STEPS.parameters);
+
+    const isCurrentStepValid = () => {
+      const { hasGeneralError, hasTypeError, hasParametersError } = formElement.value ?? {};
 
       return {
         [META_ALARMS_FORM_STEPS.general]: !hasGeneralError,
         [META_ALARMS_FORM_STEPS.type]: !hasTypeError,
         [META_ALARMS_FORM_STEPS.parameters]: !hasParametersError,
-      }[this.activeStep];
-    },
+      }[activeStep.value];
+    };
 
-    validateCurrentStepValid() {
+    const validateCurrentStepValid = () => {
       const {
         validateGeneralChildren,
         validateTypeChildren,
         validateParametersChildren,
-      } = this.$refs.formElement ?? {};
+      } = formElement.value ?? {};
 
       const func = {
         [META_ALARMS_FORM_STEPS.general]: validateGeneralChildren,
         [META_ALARMS_FORM_STEPS.type]: validateTypeChildren,
         [META_ALARMS_FORM_STEPS.parameters]: validateParametersChildren,
-      }[this.activeStep];
+      }[activeStep.value];
 
       return func?.();
-    },
+    };
 
-    async next() {
-      const isValid = await this.validateCurrentStepValid();
+    const next = async () => {
+      const isValid = await validateCurrentStepValid();
 
       if (isValid) {
-        this.activeStep += 1;
+        activeStep.value += 1;
       }
-    },
+    };
 
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action(formToMetaAlarmRule(form.value));
 
-      if (isFormValid) {
-        await this.config.action(formToMetaAlarmRule(this.form));
+        close();
+      },
+    });
 
-        this.$modals.hide();
-      }
-    },
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    onMounted(() => {
+      fetchInfos();
+
+      const handleValidationChanged = () => {
+        isStepValid.value = isCurrentStepValid();
+      };
+
+      handleValidationChanged();
+
+      nextTick(() => {
+        watch(() => formElement.value?.hasGeneralError, handleValidationChanged);
+        watch(() => formElement.value?.hasTypeError, handleValidationChanged);
+        watch(() => formElement.value?.hasParametersError, handleValidationChanged);
+      });
+    });
+
+    return {
+      form,
+      config,
+      isNew,
+      type,
+      title,
+      activeStep,
+      isStepValid,
+      isLastStep,
+      formElement,
+      alarmInfos,
+      entityInfos,
+      isDisabled,
+      submitting,
+      next,
+      submit,
+    };
   },
 };
 </script>

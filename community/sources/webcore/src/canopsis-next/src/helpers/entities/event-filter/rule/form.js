@@ -1,11 +1,4 @@
-import {
-  cloneDeep,
-  pick,
-  isEmpty,
-  omitBy,
-  omit,
-} from 'lodash';
-import flatten from 'flat';
+import { cloneDeep, pick, isEmpty, omit } from 'lodash';
 
 import {
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
@@ -25,11 +18,7 @@ import {
   formExdatesToExdates,
 } from '@/helpers/entities/pbehavior/form';
 import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
-import {
-  externalDataTemplateVariablesErrorsToForm,
-  externalDataToForm,
-  formToExternalData,
-} from '@/helpers/entities/shared/external-data/form';
+import { externalDataToForm, formToExternalData } from '@/helpers/entities/shared/external-data/form';
 
 /**
  * @typedef { 'enrichment' | 'drop' | 'break' | 'change_entity' } EventFilterType
@@ -307,26 +296,4 @@ export const eventFilterRuleConfigTemplateVariablesErrorsToForm = (errorsObject,
   }
 
   return errors;
-};
-
-/**
- * Convert template variables errors structure to form structure
- *
- * @param {Object} errorsObject
- * @param {EventFilterForm} form
- * @return {FlattenErrors}
- */
-export const eventFilterRuleTemplateVariablesErrorsToForm = (errorsObject, form) => {
-  const { external_data: externalData, config } = errorsObject;
-  const errors = {};
-
-  if (externalData) {
-    errors.external_data = externalDataTemplateVariablesErrorsToForm(externalData, form.external_data);
-  }
-
-  if (config) {
-    errors.config = eventFilterRuleConfigTemplateVariablesErrorsToForm(config, form.config);
-  }
-
-  return omitBy(flatten(errors), value => isEmpty(value));
 };

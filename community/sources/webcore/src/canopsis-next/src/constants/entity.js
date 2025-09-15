@@ -466,6 +466,7 @@ export const ENTITY_UNSORTABLE_FIELDS = [
   ENTITY_FIELDS.pbehaviorInfo,
 ];
 
+// TODO: remove it in the end of feature development
 export const ENTITY_PAYLOADS_VARIABLES = {
   entity: '.Entity',
   entities: '.Entities',

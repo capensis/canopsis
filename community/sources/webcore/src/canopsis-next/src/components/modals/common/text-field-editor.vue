@@ -12,6 +12,12 @@
           :error-messages="errors.collect(field.name)"
           autofocus
         />
+        <c-alert
+          v-if="config.alert"
+          type="warning"
+        >
+          {{ config.alert.text }}
+        </c-alert>
       </template>
       <template #actions="">
         <v-btn
@@ -36,13 +42,13 @@
 
 <script>
 import { omit } from 'lodash';
+import { ref, computed } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -52,46 +58,48 @@ export default {
     validator: 'new',
   },
   components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator({ field: 'text' }),
-    validationErrorsMixinCreator(),
-  ],
-  data() {
-    const field = this.modal.config.field ?? {};
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { modals, config, close } = useInnerModal(props);
+
+    const text = ref(config.value.field?.value ?? '');
+
+    const form = ref({ text: text.value });
+
+    const field = computed(() => config.value.field ?? { name: 'text', label: 'Text' });
+    const fieldProps = computed(() => omit(field.value, ['validationRules', 'value']));
+
+    const { submitting, isDisabled, submit } = useSubmittableForm({
+      form,
+      method: async () => {
+        if (config.value.action) {
+          await config.value.action(text.value);
+        }
+
+        modals.hide();
+      },
+    });
+
+    useFormConfirmableCloseModal({
+      form: text,
+      submit,
+      close,
+    });
 
     return {
-      text: field.value ?? '',
+      text,
+      field,
+      fieldProps,
+      submit,
+      submitting,
+      config,
+      isDisabled,
     };
-  },
-  computed: {
-    field() {
-      return this.config.field ?? { name: 'text', label: 'Text' };
-    },
-
-    fieldProps() {
-      return omit(this.field, ['validationRules', 'value']);
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action(this.text);
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          const { name } = this.field;
-
-          this.setFormErrors({ [name]: err[name] || err.error || err.message });
-        }
-      }
-    },
   },
 };
 </script>

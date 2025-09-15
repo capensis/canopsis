@@ -191,18 +191,22 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
   removed: differenceBy(oldForm, form, 'key'),
 });
 
-export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
-  if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
-    if (!acc.responses) {
-      acc.responses = [];
+export const formToTemplateTestingTestValidate = (form = [], type) => {
+  const responseKey = type === TEMPLATE_TESTING_TEST_TYPES.eventFilter ? 'external_data' : 'responses';
+
+  return form.reduce((acc, item) => {
+    if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
+      if (!acc[responseKey]) {
+        acc[responseKey] = {};
+      }
+
+      acc[responseKey][Object.keys(acc[responseKey]).length] = item.value;
+
+      return acc;
     }
 
-    acc.responses.push(item.value);
+    acc[item.type] = item.value;
 
     return acc;
-  }
-
-  acc[item.type] = item.value;
-
-  return acc;
-}, {});
+  }, {});
+};

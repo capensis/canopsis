@@ -1,4 +1,6 @@
-import { computed } from 'vue';
+import { computed, provide } from 'vue';
+
+import Observer from '@/services/observer';
 
 import { promisedTimeout } from '@/helpers/async';
 
@@ -39,12 +41,18 @@ export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
   const { validator, setFormErrors } = useValidationFormErrors(form);
   const { t } = useI18n();
 
+  const afterSubmitObserver = new Observer();
+
+  provide('$afterSubmitObserver', afterSubmitObserver);
+
   const submitHandler = async (...args) => {
     try {
       const isFormValid = await validator.validateAll();
 
       if (isFormValid) {
-        await method(...args);
+        const data = await method(...args);
+
+        await afterSubmitObserver.notify(data);
       }
     } catch (err) {
       const wasSet = setFormErrors(err);

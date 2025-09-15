@@ -286,11 +286,6 @@ export const API_ROUTES = {
   templateVars: '/api/v4/template-vars',
   templateData: '/api/v4/template-data',
   templateTests: '/api/v4/template-test',
-  templateValidator: {
-    declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
-    scenarios: '/api/v4/template-validator/scenarios',
-    eventFilterRules: '/api/v4/template-validator/event-filter-rules',
-  },
   templateVarsSpecific: {
     entityServices: '/api/v4/entityservice-template-vars',
     eventFilters: '/api/v4/eventfilter-template-vars',

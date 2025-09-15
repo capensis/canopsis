@@ -75,7 +75,9 @@ export default {
     },
 
     errorMessages() {
-      return this.errors.collect(this.name);
+      return this.errors.collect(this.name).map((message = '') => (
+        message.includes('|') ? message.split('|')[1] : message
+      ));
     },
 
     menuProps() {

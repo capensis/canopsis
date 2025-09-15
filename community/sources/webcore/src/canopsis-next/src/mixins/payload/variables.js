@@ -7,6 +7,7 @@ import {
   USER_PAYLOADS_VARIABLES,
 } from '@/constants';
 
+// TODO: remove it in the end of feature development
 export const payloadVariablesMixin = {
   props: {
     hasPrevious: {

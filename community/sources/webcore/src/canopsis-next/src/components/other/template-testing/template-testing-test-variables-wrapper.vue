@@ -12,7 +12,7 @@
       <span>{{ $t('templateTesting.testVariablesDisabledTooltip') }}</span>
     </v-tooltip>
 
-    <v-tab-item eager>
+    <v-tab-item class="pt-2" eager>
       <slot :template-vars="templateVars" />
     </v-tab-item>
 
@@ -20,7 +20,8 @@
       <template-testing-test-variables
         :general-form="form"
         :variables-fields="variablesFields"
-        :is-new="isNew"
+        :template-vars="templateVars"
+        :rule-id="ruleId"
         :type="type"
       />
     </v-tab-item>
@@ -46,9 +47,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    isNew: {
-      type: Boolean,
-      default: false,
+    ruleId: {
+      type: String,
+      required: false,
     },
     type: {
       type: Number,
@@ -56,10 +57,12 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { items: variablesFields } = useTestVariablesFields(props, emit);
     const { templateVars, pending, fetchList } = useTemplateVarsList({
       type: toRef(props, 'type'),
+      form: toRef(props, 'form'),
     });
+
+    const { items: variablesFields } = useTestVariablesFields(props, emit);
 
     const disabledTestVariablesTab = computed(() => !variablesFields.value.length);
 

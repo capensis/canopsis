@@ -98,6 +98,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {

@@ -172,13 +172,13 @@ export default {
     },
 
     payloadErrors() {
-      return this.errors.collect(this.name, null, false).reduce((acc, item) => {
-        if (item.msg.includes('|')) {
-          const [line, message] = item.msg.split('|');
+      return this.errors.collect(this.name).reduce((acc, fullMessage) => {
+        if (fullMessage.includes('|')) {
+          const [line, message] = fullMessage.split('|');
 
           acc.lines.push({ line, message });
         } else {
-          acc.inline.push(item.msg);
+          acc.inline.push(fullMessage);
         }
 
         return acc;

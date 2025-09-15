@@ -72,6 +72,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props) {
     const isWebhookActionExist = computed(() => props.form.actions.some(({ type }) => isWebhookActionType(type)));

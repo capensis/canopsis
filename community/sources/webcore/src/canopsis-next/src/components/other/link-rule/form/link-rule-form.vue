@@ -23,6 +23,7 @@
       <link-rule-general-form
         v-field="form"
         ref="general"
+        :template-vars="templateVars"
         class="mt-2"
       />
     </v-tab-item>
@@ -41,6 +42,7 @@
         v-field="form.links"
         ref="simple"
         :type="form.type"
+        :template-vars="templateVars"
         @input="resetLinksErrors"
       />
     </v-tab-item>
@@ -85,6 +87,10 @@ export default {
   },
   props: {
     form: {
+      type: Object,
+      default: () => ({}),
+    },
+    templateVars: {
       type: Object,
       default: () => ({}),
     },

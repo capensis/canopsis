@@ -9,6 +9,7 @@
     :required="required"
     item-text="_id"
     item-value="name"
+    autocomplete
     @input="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
@@ -17,6 +18,7 @@
 </template>
 
 <script>
+import { merge } from 'lodash';
 import { toRef } from 'vue';
 
 import { useLazySearch } from '@/hooks/form/lazy-search';
@@ -36,6 +38,10 @@ export default {
       type: String,
       default: 'name',
     },
+    ruleId: {
+      type: String,
+      required: false,
+    },
     required: {
       type: Boolean,
       default: false,
@@ -43,6 +49,10 @@ export default {
   },
   setup(props, { emit }) {
     const { fetchTemplateTestListWithoutStore } = useTemplateTest();
+
+    const fetchHandler = ({ params }) => fetchTemplateTestListWithoutStore({
+      params: merge(params, props.params, { rule: props.ruleId }),
+    });
 
     const {
       selectedItems,
@@ -55,11 +65,10 @@ export default {
       removeItemFromSelectedItemsByIndex,
       updateSearch,
     } = useLazySearch({
+      fetchHandler,
       value: toRef(props, 'value'),
-      fetchHandler: fetchTemplateTestListWithoutStore,
       idParamsKey: 'ids',
       idKey: '_id',
-      addable: true,
     }, emit);
 
     return {

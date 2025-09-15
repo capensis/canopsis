@@ -380,6 +380,10 @@ html {
   }
 }
 
+.v-menu__content {
+  max-height: 90vh;
+}
+
 *[aria-required="true"] label:before {
   content: '*';
   padding-right: 4px;
