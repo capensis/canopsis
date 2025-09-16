@@ -301,7 +301,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 				}
 
 				failReason = err.Error()
-				w.logger.Err(errors.New(failReason)).Str("job", job.ID).Msg("failed to import external data")
+				w.logger.Err(err).Str("job", job.ID).Msg("failed to import external data")
 
 				update = bson.M{
 					"$set": bson.M{
@@ -326,7 +326,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 				}
 			}
 		case JobTypePreview:
-			err = w.syncColumnConfigsOrder(job.PrevColumnConfigs, job.ColumnConfigs)
+			err = syncColumnConfigsOrder(job.PrevColumnConfigs, job.ColumnConfigs)
 			if err == nil {
 				switch job.Type {
 				case externaldata.TypeMongoDB:
@@ -428,36 +428,42 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 	return g.Wait()
 }
 
-func (w *importWorker) syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
+func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 	if len(oldConfigs) != len(newConfigs) {
 		return errors.New("column config count mismatch")
 	}
 
-	oldConfigsExistMap := make(map[string]bool, len(oldConfigs))
-	for _, c := range oldConfigs {
-		oldConfigsExistMap[c.Name] = true
-	}
-
+	uniqueNewConfigColumns := make(map[string]bool, len(newConfigs))
 	newConfigsIndexMap := make(map[string]int, len(newConfigs))
-	for i, c := range newConfigs {
-		if !oldConfigsExistMap[c.Name] {
-			return fmt.Errorf("no such column %q", c.Name)
-		}
-
-		if _, ok := newConfigsIndexMap[c.Name]; ok {
-			return fmt.Errorf("duplicate column name %q", c.Name)
-		}
-
-		newConfigsIndexMap[c.Name] = i
-	}
+	oldConfigsIndexMap := make(map[string]int, len(newConfigs))
 
 	for i := range oldConfigs {
-		j := newConfigsIndexMap[oldConfigs[i].Name] // existence is guaranteed by checks above
-		if i != j {
-			newConfigs[i], newConfigs[j] = newConfigs[j], newConfigs[i]
+		oldName := oldConfigs[i].Name
+		newName := newConfigs[i].Name
 
-			newConfigsIndexMap[newConfigs[j].Name] = j
-			newConfigsIndexMap[newConfigs[i].Name] = i
+		if !uniqueNewConfigColumns[newName] {
+			uniqueNewConfigColumns[newName] = true
+		} else {
+			return fmt.Errorf("duplicate column name %q", newName)
+		}
+
+		if oldName != newName {
+			oldConfigsIndexMap[oldName] = i
+			newConfigsIndexMap[newName] = i
+		}
+	}
+
+	for newName, newIdx := range newConfigsIndexMap {
+		oldIdx, ok := oldConfigsIndexMap[newName]
+		if !ok {
+			return fmt.Errorf("no such column %q", newName)
+		}
+
+		if newIdx != oldIdx {
+			newConfigs[oldIdx], newConfigs[newIdx] = newConfigs[newIdx], newConfigs[oldIdx]
+
+			newConfigsIndexMap[newConfigs[newIdx].Name] = newIdx
+			newConfigsIndexMap[newConfigs[oldIdx].Name] = oldIdx
 		}
 	}
 

@@ -96,7 +96,7 @@ type BaseColumnConfig struct {
 	//   * `4` - type string_array
 	//   * `5` - type datetime
 	//   * `6` - type timestamp
-	Type int `bson:"type" json:"type" binding:"required,oneof=1 2 3 4 5 6"`
+	Type int `bson:"type" json:"type" binding:"required,min=1,max=6"`
 	// Possible thousands separator values.
 	//   * `dot` - dot separator
 	//   * `comma` - comma separator
