@@ -39,6 +39,8 @@ const (
 	sqlColumnsForCsvColumn = 3
 	sqlUndefinedColumnCode = "42703"
 
+	priorityColumnName = "priority"
+
 	previewFailedMsg = "preview failed"
 )
 
@@ -440,6 +442,8 @@ func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 	uniqueNewConfigColumns := make(map[string]bool, len(newConfigs))
 	newConfigsIndexMap := make(map[string]int, len(newConfigs))
 	oldConfigsIndexMap := make(map[string]int, len(newConfigs))
+	priorityNameExists := false
+	regexpColumnName := ""
 
 	for i := range oldConfigs {
 		oldName := oldConfigs[i].Name
@@ -454,6 +458,18 @@ func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 		if oldName != newName {
 			oldConfigsIndexMap[oldName] = i
 			newConfigsIndexMap[newName] = i
+		}
+
+		if oldName == priorityColumnName {
+			priorityNameExists = true
+		}
+
+		if newConfigs[i].IsRegexp() {
+			regexpColumnName = newName
+		}
+
+		if priorityNameExists && regexpColumnName != "" {
+			return fmt.Errorf("column %q is regexp, but priority column already exists", regexpColumnName)
 		}
 	}
 
@@ -548,9 +564,27 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 
 	switch table.Type {
 	case externaldata.TypeMongoDB:
+		addPriorityColumn := false
+
 		project := bson.M{}
 		for _, c := range job.ColumnConfigs {
 			project[c.Name] = "$" + c.Name + ".transformed_value"
+
+			if c.IsRegexp() {
+				addPriorityColumn = true
+			}
+		}
+
+		if addPriorityColumn {
+			project[priorityColumnName] = bson.M{
+				"$sum": bson.M{
+					"$map": bson.M{
+						"input": bson.M{"$objectToArray": "$$ROOT"},
+						"as":    "f",
+						"in":    "$$f.v.priority",
+					},
+				},
+			}
 		}
 
 		cursor, err := w.dbClient.Collection(job.getDBTableName()).Aggregate(ctx, []bson.M{
@@ -585,12 +619,17 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			existedCols[c.Name] = true
 		}
 
+		var priorityColumns []string
+
 		for _, c := range job.ColumnConfigs {
 			var columnType string
 
 			switch c.Type {
 			case externaldata.ColumnTypeString:
 				columnType = "VARCHAR(" + MaxStringLenStr + ")"
+			case externaldata.ColumnTypeRegexp:
+				columnType = "VARCHAR(" + MaxStringLenStr + ")"
+				priorityColumns = append(priorityColumns, pgx.Identifier{c.Name + "_priority"}.Sanitize())
 			case externaldata.ColumnTypeNumber:
 				columnType = "DOUBLE PRECISION"
 			case externaldata.ColumnTypeBoolean:
@@ -622,9 +661,24 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 			delete(existedCols, c.Name)
 		}
 
-		for c := range existedCols {
+		if len(priorityColumns) > 0 {
 			sql := "ALTER TABLE " + table.GetDBName() +
-				" DROP COLUMN " + pgx.Identifier{c}.Sanitize()
+				" ADD COLUMN IF NOT EXISTS " + pgx.Identifier{priorityColumnName}.Sanitize() + " INT"
+			_, err = pgPool.Exec(ctx, sql)
+			if err != nil {
+				return false, fmt.Errorf("failed to add priority column: %w", err)
+			}
+		} else {
+			sql := "ALTER TABLE " + table.GetDBName() +
+				" DROP COLUMN IF EXISTS " + pgx.Identifier{priorityColumnName}.Sanitize()
+			_, err = pgPool.Exec(ctx, sql)
+			if err != nil {
+				return false, fmt.Errorf("failed to drop priority column: %w", err)
+			}
+		}
+
+		for c := range existedCols {
+			sql := "ALTER TABLE " + table.GetDBName() + " DROP COLUMN " + pgx.Identifier{c}.Sanitize()
 			_, err = pgPool.Exec(ctx, sql)
 			if err != nil {
 				return false, fmt.Errorf("failed to alter postgres table: %w", err)
@@ -638,6 +692,11 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 		for j, col := range job.ColumnConfigs {
 			sanColsWithID[j+1] = pgx.Identifier{col.Name}.Sanitize()
 			sanTransformedColsWithID[j+1] = pgx.Identifier{col.Name + "_transformed_value"}.Sanitize()
+		}
+
+		if len(priorityColumns) > 0 {
+			sanColsWithID = append(sanColsWithID, priorityColumnName)
+			sanTransformedColsWithID = append(sanTransformedColsWithID, strings.Join(priorityColumns, " + "))
 		}
 
 		_, err = pgPool.Exec(ctx, "INSERT INTO "+table.GetDBName()+"("+strings.Join(sanColsWithID, ",")+
@@ -1019,8 +1078,16 @@ func (w *importWorker) previewMongo(ctx context.Context, job ImportJob) (map[str
 					columnErrMessages[columnName] = append(columnErrMessages[columnName], errorMsg)
 				}
 			} else {
-				set[columnName+".transformed_value"] = transformedValue
-				unset[columnName+".transform_error"] = ""
+				switch val := transformedValue.(type) {
+				case parsedRegexp:
+					set[columnName+".transformed_value"] = val.regexp
+					set[columnName+".priority"] = val.score
+					unset[columnName+".transform_error"] = ""
+				default:
+					set[columnName+".transformed_value"] = val
+					unset[columnName+".priority"] = ""
+					unset[columnName+".transform_error"] = ""
+				}
 			}
 		}
 
@@ -1083,7 +1150,7 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 
 		var columnType string
 		switch cfg.Type {
-		case externaldata.ColumnTypeString:
+		case externaldata.ColumnTypeString, externaldata.ColumnTypeRegexp:
 			columnType = "VARCHAR(" + MaxStringLenStr + ")"
 		case externaldata.ColumnTypeNumber:
 			columnType = "DOUBLE PRECISION"
@@ -1095,6 +1162,18 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 			columnType = "VARCHAR(" + MaxStringLenStr + ")[]"
 		default:
 			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
+		}
+
+		if cfg.Type == externaldata.ColumnTypeRegexp {
+			_, err = pgPool.Exec(ctx, "ALTER TABLE "+tableName+" ADD COLUMN IF NOT EXISTS "+pgx.Identifier{cfg.Name + "_priority"}.Sanitize()+" INT")
+			if err != nil {
+				return nil, fmt.Errorf("failed to add priority column: %w", err)
+			}
+		} else {
+			_, err = pgPool.Exec(ctx, "ALTER TABLE "+tableName+" DROP COLUMN IF EXISTS "+pgx.Identifier{cfg.Name + "_priority"}.Sanitize())
+			if err != nil {
+				return nil, fmt.Errorf("failed to drop priority column: %w", err)
+			}
 		}
 
 		if _, err := pgPool.Exec(ctx, "ALTER TABLE "+tableName+" ALTER COLUMN "+pgx.Identifier{cfg.Name + "_transformed_value"}.Sanitize()+" TYPE "+columnType+" USING NULL"); err != nil {
@@ -1169,10 +1248,19 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 					columnErrMessages[columnName] = append(columnErrMessages[columnName], errorMsg)
 				}
 			} else {
-				args = append(args, transformedValue, nil)
+				switch val := transformedValue.(type) {
+				case parsedRegexp:
+					args = append(args, val.regexp, val.score, nil)
 
-				setStmts = append(setStmts, pgx.Identifier{columnName + "_transformed_value"}.Sanitize()+" = $"+strconv.Itoa(len(args)-1))
-				setStmts = append(setStmts, pgx.Identifier{columnName + "_transform_error"}.Sanitize()+" = $"+strconv.Itoa(len(args)))
+					setStmts = append(setStmts, pgx.Identifier{columnName + "_transformed_value"}.Sanitize()+" = $"+strconv.Itoa(len(args)-2))
+					setStmts = append(setStmts, pgx.Identifier{columnName + "_priority"}.Sanitize()+" = $"+strconv.Itoa(len(args)-1))
+					setStmts = append(setStmts, pgx.Identifier{columnName + "_transform_error"}.Sanitize()+" = $"+strconv.Itoa(len(args)))
+				default:
+					args = append(args, transformedValue, nil)
+
+					setStmts = append(setStmts, pgx.Identifier{columnName + "_transformed_value"}.Sanitize()+" = $"+strconv.Itoa(len(args)-1))
+					setStmts = append(setStmts, pgx.Identifier{columnName + "_transform_error"}.Sanitize()+" = $"+strconv.Itoa(len(args)))
+				}
 			}
 		}
 
@@ -1185,7 +1273,7 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 			" WHERE " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " = $" + strconv.Itoa(len(args))
 		batch.Queue(updateSQL, args...)
 
-		if batch.Len() == canopsis.DefaultBulkSize {
+		if batch.Len() >= canopsis.DefaultBulkSize {
 			if err := pgPool.SendBatch(ctx, batch); err != nil {
 				return nil, fmt.Errorf("failed to update preview rows: %w", err)
 			}

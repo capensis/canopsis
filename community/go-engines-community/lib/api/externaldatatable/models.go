@@ -87,6 +87,10 @@ type ColumnConfig struct {
 	Tag              *int `bson:"tag,omitempty" json:"tag,omitempty" binding:"omitempty,oneof=0 1 2"`
 }
 
+func (c *ColumnConfig) IsRegexp() bool {
+	return c.Type == externaldata.ColumnTypeRegexp
+}
+
 type BaseColumnConfig struct {
 	Name string `bson:"name" json:"name" binding:"required"`
 	// Possible type values.
@@ -96,7 +100,8 @@ type BaseColumnConfig struct {
 	//   * `4` - type string_array
 	//   * `5` - type datetime
 	//   * `6` - type timestamp
-	Type int `bson:"type" json:"type" binding:"required,min=1,max=6"`
+	//   * `7` - type regexp
+	Type int `bson:"type" json:"type" binding:"required,min=1,max=7"`
 	// Possible thousands separator values.
 	//   * `dot` - dot separator
 	//   * `comma` - comma separator
@@ -147,9 +152,18 @@ func (t *Table) getPostgresTableIdentifier() pgx.Identifier {
 }
 
 func (t *Table) getColumns() []string {
+	addPriorityColumn := false
+
 	columns := make([]string, len(t.ColumnConfigs))
 	for i := range t.ColumnConfigs {
 		columns[i] = t.ColumnConfigs[i].Name
+		if t.ColumnConfigs[i].Type == externaldata.ColumnTypeRegexp {
+			addPriorityColumn = true
+		}
+	}
+
+	if addPriorityColumn {
+		columns = append(columns, priorityColumnName)
 	}
 
 	return columns

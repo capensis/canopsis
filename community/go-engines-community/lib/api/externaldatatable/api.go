@@ -394,9 +394,9 @@ func (a *api) Export(c *gin.Context) {
 	columns := t.getColumns()
 
 	if len(r.SearchBy) > 0 || len(r.Fields) > 0 {
-		hasCol := make(map[string]bool, len(t.ColumnConfigs))
-		for _, v := range t.ColumnConfigs {
-			hasCol[v.Name] = true
+		hasCol := make(map[string]bool, len(columns))
+		for _, column := range columns {
+			hasCol[column] = true
 		}
 
 		valErrMsgs := make(map[string]string)
