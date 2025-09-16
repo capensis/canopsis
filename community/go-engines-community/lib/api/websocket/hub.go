@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"reflect"
+	"runtime"
 	"strings"
 	"sync"
 	"time"
@@ -430,6 +432,9 @@ func (h *hub) join(ctx context.Context, connId, room string, data any) bool {
 	if onJoin != nil {
 		err := onJoin(h.hubCtx, connId, userID, id, data) //nolint:contextcheck
 		if err != nil {
+			onJoinName := runtime.FuncForPC(reflect.ValueOf(onJoin).Pointer()).Name()
+			h.logger.Err(err).Str("room", room).Str("user", userID).Str("id", id).Str("onJoin", onJoinName).
+				Interface("data", data).Msg("Websocket responds with 500")
 			err = conn.WriteJSON(WMessage{
 				Type:  WMessageFail,
 				Room:  room,
