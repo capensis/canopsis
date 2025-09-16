@@ -110,23 +110,7 @@ func (p *parser) Parse(cfg ColumnConfig, initialValue string) (any, error) {
 }
 
 func (p *parser) parseNumber(stringNumber, thousandsSeparator, decimalSeparator string) (float64, error) {
-	if stringNumber == "" {
-		return 0, errStringIsNotAValidNumber
-	}
-
-	isNegative := false
-	if strings.HasPrefix(stringNumber, "-") {
-		isNegative = true
-		stringNumber = stringNumber[1:]
-
-		// edge case if input stringNumber = "-"
-		if len(stringNumber) == 0 {
-			return 0, errStringIsNotAValidNumber
-		}
-	}
-
-	// edge case if input stringNumber = "-0"
-	if isNegative && stringNumber == "0" {
+	if stringNumber == "" || stringNumber == "-" || stringNumber == "-0" {
 		return 0, errStringIsNotAValidNumber
 	}
 
@@ -138,18 +122,6 @@ func (p *parser) parseNumber(stringNumber, thousandsSeparator, decimalSeparator 
 	decimalSeparator, ok = p.decimalSeparators[decimalSeparator]
 	if !ok {
 		return 0, fmt.Errorf("decimal separator must be one of %q, %q or empty", SeparatorDot, SeparatorComma)
-	}
-
-	if len(stringNumber) > 1 && stringNumber[0] == '0' {
-		if decimalSeparator != SeparatorNone {
-			if !strings.HasPrefix(stringNumber, "0"+decimalSeparator) {
-				return 0, errStringIsNotAValidNumber
-			}
-		} else {
-			if !strings.HasPrefix(stringNumber, "0.") {
-				return 0, errStringIsNotAValidNumber
-			}
-		}
 	}
 
 	var escapedThousandsSeparator, escapedDecimalSeparator string
@@ -166,7 +138,7 @@ func (p *parser) parseNumber(stringNumber, thousandsSeparator, decimalSeparator 
 	}
 
 	if thousandsSeparator == "" {
-		numberRegexp, err := regexp.Compile(`^(0|[1-9]\d*)(` + escapedDecimalSeparator + `\d+)?$`)
+		numberRegexp, err := regexp.Compile(`^-?(0|[1-9]\d*)(` + escapedDecimalSeparator + `\d+)?$`)
 		if err != nil {
 			return 0, fmt.Errorf("failed to compile regexp: %w", err)
 		}
@@ -174,12 +146,8 @@ func (p *parser) parseNumber(stringNumber, thousandsSeparator, decimalSeparator 
 		if !numberRegexp.MatchString(stringNumber) {
 			return 0, errStringIsNotAValidNumber
 		}
-
-		if decimalSeparator != SeparatorNone && decimalSeparator != SeparatorDot {
-			stringNumber = strings.ReplaceAll(stringNumber, decimalSeparator, SeparatorDot)
-		}
 	} else {
-		numberRegexp, err := regexp.Compile(`^(0|[1-9]\d*|\d{1,3}(` + escapedThousandsSeparator + `\d{3})+)(` + escapedDecimalSeparator + `\d+)?$`)
+		numberRegexp, err := regexp.Compile(`^-?(0|[1-9]\d*|[1-9]\d{0,2}(` + escapedThousandsSeparator + `\d{3})+)(` + escapedDecimalSeparator + `\d+)?$`)
 		if err != nil {
 			return 0, fmt.Errorf("failed to compile regexp: %w", err)
 		}
@@ -189,18 +157,15 @@ func (p *parser) parseNumber(stringNumber, thousandsSeparator, decimalSeparator 
 		}
 
 		stringNumber = strings.ReplaceAll(stringNumber, thousandsSeparator, "")
-		if decimalSeparator != SeparatorNone && decimalSeparator != SeparatorDot {
-			stringNumber = strings.ReplaceAll(stringNumber, decimalSeparator, SeparatorDot)
-		}
+	}
+
+	if decimalSeparator != SeparatorNone && decimalSeparator != SeparatorDot {
+		stringNumber = strings.ReplaceAll(stringNumber, decimalSeparator, SeparatorDot)
 	}
 
 	number, err := strconv.ParseFloat(stringNumber, 64)
 	if err != nil {
 		return 0, fmt.Errorf("failed to parse number: %w", err)
-	}
-
-	if isNegative {
-		number = -number
 	}
 
 	return number, nil
