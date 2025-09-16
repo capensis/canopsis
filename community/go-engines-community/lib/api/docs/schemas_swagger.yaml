@@ -1524,6 +1524,11 @@ definitions:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
+      entity_infos_log:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
       event_filter_failure:
         properties:
           delete_after:

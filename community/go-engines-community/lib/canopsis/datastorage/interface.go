@@ -62,6 +62,9 @@ type Config struct {
 	EventRecords struct {
 		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"event_records" json:"event_records"`
+	EntityInfosLog struct {
+		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"entity_infos_log" json:"entity_infos_log"`
 }
 
 type HistoryWithCount struct {
