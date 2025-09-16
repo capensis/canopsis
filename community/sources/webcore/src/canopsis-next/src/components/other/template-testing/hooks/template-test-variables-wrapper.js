@@ -96,18 +96,20 @@ export const useTemplateVarsList = ({ type, form } = {}) => {
  *
  * @param {Object} [props={}] - Component props containing form data
  * @param {Object} props.form - Form object containing test variables data
- * @param {import('vue').Ref<string>|string} props.type - The type of template testing
+ * @param {import('vue').Ref<string>|string} type - The type of template testing
  * @param {Function} emit - Vue emit function for component communication
  * @returns {Object} Hook return object
  * @returns {import('vue').Ref<Array>} returns.items - Reactive array of test variable field items with update handlers
  */
-export const useTestVariablesFields = (props = {}, emit) => {
+export const useTestVariablesFields = (props = {}, type, emit) => {
   const items = ref([]);
 
   const { updateField } = useModelField(props, emit);
 
+  const isEmptyItems = computed(() => !items.value.length);
+
   watch(() => props.form, (newForm) => {
-    const newItems = convertRuleToTemplateTestingTestValidateForm(newForm, unref(props.type));
+    const newItems = convertRuleToTemplateTestingTestValidateForm(newForm, unref(type));
 
     if (isEqual(items.value, newItems)) {
       return;
@@ -122,5 +124,6 @@ export const useTestVariablesFields = (props = {}, emit) => {
 
   return {
     items,
+    isEmptyItems,
   };
 };

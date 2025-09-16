@@ -1,42 +1,36 @@
 <template>
-  <v-tabs fixed-tabs>
-    <v-tab>{{ $t('common.general') }}</v-tab>
-    <v-tooltip :disabled="!disabledTestVariablesTab" top>
-      <template #activator="{ on }">
-        <span class="test-variables-tab__wrapper" v-on="on">
-          <v-tab :disabled="disabledTestVariablesTab">
-            {{ $tc('templateTesting.testVariables') }}
-          </v-tab>
-        </span>
-      </template>
-      <span>{{ $t('templateTesting.testVariablesDisabledTooltip') }}</span>
-    </v-tooltip>
+  <div class="position-relative">
+    <c-progress-overlay :pending="pending" />
+    <v-tabs fixed-tabs>
+      <v-tab>{{ $t('common.general') }}</v-tab>
+      <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
 
-    <v-tab-item class="pt-2" eager>
-      <slot :template-vars="templateVars" />
-    </v-tab-item>
+      <v-tab-item class="pt-2" eager>
+        <slot :template-vars="templateVars" />
+      </v-tab-item>
 
-    <v-tab-item :disabled="disabledTestVariablesTab">
-      <template-testing-test-variables
-        :general-form="form"
-        :variables-fields="variablesFields"
-        :template-vars="templateVars"
-        :rule-id="ruleId"
-        :type="type"
-      />
-    </v-tab-item>
-  </v-tabs>
+      <v-tab-item :disabled="isEmptyVariablesFields">
+        <template-testing-test-variables
+          :general-form="form"
+          :variables-fields="variablesFields"
+          :template-vars="templateVars"
+          :rule-id="ruleId"
+          :type="type"
+        />
+      </v-tab-item>
+    </v-tabs>
+  </div>
 </template>
 
 <script>
-import { computed, onMounted, toRef } from 'vue';
-
-import TemplateTestingTestVariables from '@/components/other/template-testing/template-testing-test-variables.vue';
+import { onMounted, toRef } from 'vue';
 
 import { useTemplateVarsList, useTestVariablesFields } from './hooks/template-test-variables-wrapper';
+import TemplateTestingTestVariables from './template-testing-test-variables.vue';
+import TemplateTestingTestVariablesTab from './template-testing-test-variables-tab.vue';
 
 export default {
-  components: { TemplateTestingTestVariables },
+  components: { TemplateTestingTestVariables, TemplateTestingTestVariablesTab },
   inheritAttrs: false,
   model: {
     prop: 'form',
@@ -62,9 +56,10 @@ export default {
       form: toRef(props, 'form'),
     });
 
-    const { items: variablesFields } = useTestVariablesFields(props, emit);
-
-    const disabledTestVariablesTab = computed(() => !variablesFields.value.length);
+    const {
+      items: variablesFields,
+      isEmptyItems: isEmptyVariablesFields,
+    } = useTestVariablesFields(props, toRef(props, 'type'), emit);
 
     onMounted(fetchList);
 
@@ -72,17 +67,8 @@ export default {
       variablesFields,
       templateVars,
       pending,
-      disabledTestVariablesTab,
+      isEmptyVariablesFields,
     };
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.test-variables-tab__wrapper {
-  display: flex;
-  flex: 1 1 auto;
-  width: 100%;
-  max-width: 360px;
-}
-</style>

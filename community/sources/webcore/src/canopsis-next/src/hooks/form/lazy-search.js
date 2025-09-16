@@ -5,6 +5,8 @@ import {
   isString,
   isNumber,
   isUndefined,
+  isEmpty,
+  isObject,
   debounce,
   uniqBy,
 } from 'lodash';
@@ -38,6 +40,9 @@ import { useModelField } from '@/hooks/form';
  * @param {Function} options.fetchHandler - The asynchronous function used to fetch data from the server.
  * @param {boolean} options.addable - The flag for indicating possibility to add new item.
  * @param {boolean} options.multiple - The flag for indicating possibility to choose more than one item.
+ * @param {boolean} options.returnObject - The flag for indicating possibility to return object instead of id.
+ * @param {boolean} options.attachValue - The flag for indicating possibility to attach the value to the items.
+ * @param {Object} options.initialQuery - The initial query object.
  * @param {number} options.delay - The delay number value for debouncing.
  * @param {Function} emit - The emit function for Vue events, used to update the model.
  * @returns {Object} An object containing methods and properties for managing search and selection:
@@ -58,6 +63,8 @@ export const useLazySearch = ({
   fetchHandler,
   addable,
   multiple,
+  returnObject,
+  attachValue,
   initialQuery = { page: 1, limit: PAGINATION_LIMIT, search: '' },
   delay = 100,
 }, emit) => {
@@ -80,7 +87,7 @@ export const useLazySearch = ({
   const arrayValue = computed(() => {
     const unwrappedValue = unref(value);
 
-    if (!unwrappedValue && !isNumber(unwrappedValue)) {
+    if ((!unwrappedValue || isEmpty(unwrappedValue)) && !isNumber(unwrappedValue)) {
       return [];
     }
 
@@ -89,6 +96,41 @@ export const useLazySearch = ({
     }
 
     return [unwrappedValue];
+  });
+
+  /**
+     * MAIN FETCH LOGIC
+     */
+  const {
+    pending,
+    query,
+    fetchHandlerWithQuery: fetchItems,
+    updateQuery,
+    updateQueryPage,
+  } = usePendingWithLocalQuery({
+    initialQuery: unref(initialQuery),
+    fetchHandler: async (params) => {
+      const unwrappedIdKey = unref(idKey);
+
+      const { data, meta } = await unref(fetchHandler)({
+        params,
+      });
+
+      pageCount.value = meta.page_count;
+
+      let newItemsByValue = {};
+
+      if (attachValue && unref(returnObject)) {
+        newItemsByValue = keyBy(arrayValue.value, unwrappedIdKey);
+      }
+
+      itemsByValue.value = {
+        ...newItemsByValue,
+        ...(params.page !== 1 ? itemsByValue.value : {}),
+        ...keyBy(data, unwrappedIdKey),
+        ...pick(itemsByValue.value, arrayValue.value),
+      };
+    },
   });
 
   /**
@@ -122,35 +164,14 @@ export const useLazySearch = ({
     const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
 
     selectedItems.value = arrayValue.value.map(item => (
-      dataById[item[unwrappedIdKey] ?? item] ?? ({ [unwrappedIdKey]: item, noData: true })
+      dataById[item[unwrappedIdKey] ?? item]
+        ?? isObject(item) ? item : ({ [unwrappedIdKey]: item, noData: true })
     ));
+
+    if (attachValue && unref(returnObject)) {
+      fetchItems();
+    }
   }, true);
-
-  /**
-   * MAIN FETCH LOGIC
-   */
-  const {
-    pending,
-    query,
-    fetchHandlerWithQuery: fetchItems,
-    updateQuery,
-    updateQueryPage,
-  } = usePendingWithLocalQuery({
-    initialQuery: unref(initialQuery),
-    fetchHandler: async (params) => {
-      const { data, meta } = await unref(fetchHandler)({
-        params,
-      });
-
-      pageCount.value = meta.page_count;
-
-      itemsByValue.value = {
-        ...(params.page !== 1 ? itemsByValue.value : {}),
-        ...keyBy(data, unref(idKey)),
-        ...pick(itemsByValue.value, arrayValue.value),
-      };
-    },
-  });
 
   /**
    * Update search field in query with page updating
@@ -190,12 +211,19 @@ export const useLazySearch = ({
   const fetchMoreItems = () => updateQueryPage(query.value.page + 1);
 
   /**
+   * Emits an event to notify parent components about changes to the selected items.
+   */
+  const emitUpdateSelectedItems = () => emit('update:selected-items', selectedItems.value);
+
+  /**
    * Function to update the selected items and emit changes.
    * @param {Array} newSelectedItems - The new list of selected items.
    */
   const changeSelectedItems = (newSelectedItems) => {
     if (!newSelectedItems) {
       selectedItems.value = [];
+      emitUpdateSelectedItems();
+
       updateModel('');
 
       return;
@@ -218,7 +246,17 @@ export const useLazySearch = ({
         ? preparedNewSelectedItems
         : preparedNewSelectedItems.filter(item => !isString(item))
     ).map(item => (isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item } : item)), unwrappedIdKey);
+    emitUpdateSelectedItems();
 
+    if (returnObject) {
+      updateModel(
+        unwrappedMultiple
+          ? selectedItems.value
+          : selectedItems.value[0],
+      );
+
+      return;
+    }
     updateModel(
       unwrappedMultiple
         ? mapIds(selectedItems.value, unwrappedIdKey)

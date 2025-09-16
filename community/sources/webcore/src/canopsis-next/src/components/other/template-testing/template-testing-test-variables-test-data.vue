@@ -62,7 +62,7 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const { hasReadAccess: hasReadAccessForAnyUser } = useCRUDPermissions(USER_PERMISSIONS.user);
+    const { hasReadAccess: hasReadAccessForAnyUser } = useCRUDPermissions(USER_PERMISSIONS.technical.user);
     const { updateFieldInArrayItem } = useArrayModelField(props, emit);
 
     /**
