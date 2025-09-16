@@ -65,7 +65,11 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 	switch r.Type {
 	case eventfilter.RuleTypeChangeEntity:
 		if len(r.EventPattern) == 0 {
-			sl.ReportError(r.EventPattern, "EventPattern", "EventPattern", "required_or", "EntityPattern")
+			sl.ReportError(r.EventPattern, "EventPattern", "EventPattern", "required", "")
+		}
+
+		if len(r.EntityPattern) > 0 {
+			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "must_be_empty", "")
 		}
 	default:
 		if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" && len(r.EventPattern) == 0 {

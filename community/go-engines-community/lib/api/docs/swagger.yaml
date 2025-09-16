@@ -14046,6 +14046,14 @@ paths:
         - $ref: '#/components/parameters/search'
         - $ref: '#/components/parameters/sort'
         - $ref: '#/components/parameters/sort_by'
+        - name: ids[]
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - name: rule
           in: query
           description: rule id

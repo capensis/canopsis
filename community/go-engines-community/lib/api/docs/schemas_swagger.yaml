@@ -2861,10 +2861,10 @@ definitions:
         properties:
           event:
             type: string
-          external_data:
+          responses:
             additionalProperties:
               type: string
-            description: TestData.ExternalData keys correspond with Rule.ExternalData
+            description: TestData.Responses keys correspond with Rule.ExternalData
               keys
             type: object
           test:

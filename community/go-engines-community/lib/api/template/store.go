@@ -283,6 +283,10 @@ func (s *store) FindTest(ctx context.Context, r ListTestRequest, userID string) 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"type": r.Type}})
 	}
 
+	if len(r.IDs) > 0 {
+		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.IDs}}})
+	}
+
 	if r.Rule != "" {
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"rule._id": r.Rule}})
 	}

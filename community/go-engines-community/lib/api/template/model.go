@@ -139,8 +139,9 @@ type ListTestRequest struct {
 	//   * `6` - Instruction
 	//   * `7` - Job
 	//   * `8` - Meta-alarm rule
-	Type *int   `form:"type"`
-	Rule string `form:"rule"`
+	Type *int     `form:"type"`
+	Rule string   `form:"rule"`
+	IDs  []string `form:"ids[]"`
 }
 
 type TestResponse struct {
