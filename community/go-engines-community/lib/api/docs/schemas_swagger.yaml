@@ -2985,6 +2985,7 @@ definitions:
             * `4` - type string_array
             * `5` - type datetime
             * `6` - type timestamp
+            * `7` - type regexp
         enum:
         - 1
         - 2
@@ -2992,6 +2993,7 @@ definitions:
         - 4
         - 5
         - 6
+        - 7
         type: integer
     required:
     - name
