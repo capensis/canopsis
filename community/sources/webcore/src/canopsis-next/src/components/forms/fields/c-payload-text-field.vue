@@ -4,7 +4,7 @@
     ref="field"
     :value="value"
     :search-input="value"
-    :label="label || $t('common.payload')"
+    :label="label ?? $t('common.payload')"
     :items="variables"
     :disabled="disabled"
     :return-object="false"
@@ -74,6 +74,10 @@ export default {
       };
     },
 
+    hasValidationRules() {
+      return Object.values(this.rules).some(rule => !!rule);
+    },
+
     errorMessages() {
       return this.errors.collect(this.name).map((message = '') => (
         message.includes('|') ? message.split('|')[1] : message
@@ -96,7 +100,13 @@ export default {
 
       if (this.errorMessages?.length) {
         this.$nextTick(() => {
-          this.$validator.validate(this.name);
+          if (this.hasValidationRules) {
+            this.$validator.validate(this.name);
+
+            return;
+          }
+
+          this.errors.remove(this.name);
         });
       }
     },

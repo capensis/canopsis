@@ -34,7 +34,6 @@
         <c-payload-textarea-field
           v-if="textarea"
           v-field="template"
-          :placeholder="$t('templateTesting.inputPlaceholder')"
           :variables="variables"
           :name="name"
           wrap="off"
@@ -44,9 +43,9 @@
         <c-payload-text-field
           v-else
           v-field="template"
-          :placeholder="$t('templateTesting.inputPlaceholder')"
           :variables="variables"
           :name="name"
+          label=""
           class="template-item__input-editor"
         />
       </v-flex>
@@ -123,19 +122,19 @@ export default {
     const statusProps = computed(() => {
       const { err, is_valid: isValid } = props.result;
 
-      if (err) { // ERROR
-        return {
-          headerClass: 'template-item__header--error',
-          chipColor: 'error',
-          chipText: t('templateTesting.errorsInInput'),
-        };
-      }
-
       if (props.lastRunValue !== props.template && !isUndefined(isValid)) { // WARNING
         return {
           headerClass: 'template-item__header--warning',
           chipColor: 'warning',
           chipText: t('templateTesting.notRun'),
+        };
+      }
+
+      if (err) { // ERROR
+        return {
+          headerClass: 'template-item__header--error',
+          chipColor: 'error',
+          chipText: t('templateTesting.errorsInInput'),
         };
       }
 

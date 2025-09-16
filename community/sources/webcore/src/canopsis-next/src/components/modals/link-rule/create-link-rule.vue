@@ -4,20 +4,10 @@
       <span>{{ title }}</span>
     </template>
     <template #text="">
-      <template-testing-test-variables-wrapper
-        v-field="form"
-        :is-new="isNew"
-        :type="type"
-      >
-        <template #default="{ templateVars }">
-          <v-form>
-            <link-rule-form
-              v-model="form"
-              :template-vars="templateVars"
-            />
-          </v-form>
-        </template>
-      </template-testing-test-variables-wrapper>
+      <link-rule-form
+        v-model="form"
+        :rule-id="config.linkRule?._id"
+      />
     </template>
     <template #actions="">
       <v-btn
@@ -53,7 +43,6 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 
 import LinkRuleForm from '@/components/other/link-rule/form/link-rule-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -65,7 +54,6 @@ export default {
   },
   components: {
     LinkRuleForm,
-    TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
   props: {

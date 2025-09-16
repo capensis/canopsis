@@ -2,13 +2,15 @@
   <v-layout class="gap-4" column>
     <template-testing-test-variables-form
       v-model="validationForm"
-      :selected-test.sync="selectedTest"
+      :selected-test="selectedTest"
       :variables-fields="variablesFields"
       :type="type"
       :rule-id="ruleId"
       :test-result="testResult"
       :last-run-variables="lastRunVariables"
       :template-vars="templateVars"
+      @input="validationFormInput"
+      @update:selected-test="updateSelectedTest"
     />
     <c-alert :value="!isGeneralFormValid" type="error">
       {{ $t('templateTesting.mainFormHasErrors') }}
@@ -42,11 +44,19 @@
 </template>
 
 <script>
-import { get, mapValues } from 'lodash';
-import { computed, ref, watch } from 'vue';
+import { get, mapValues, isEmpty } from 'lodash';
+import {
+  computed,
+  ref,
+  watch,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
 import { MODALS, TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
+import { uid } from '@/helpers/uid';
 import { formToService } from '@/helpers/entities/service/form';
 import { formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
 import { formToLinkRule } from '@/helpers/entities/link/form';
@@ -61,13 +71,15 @@ import {
   formToTemplateTestingTestValidateForm,
   getChangesForValidateForm,
   formToTemplateTestingTestValidate,
+  templateTestingTestValidateToForm,
 } from '@/helpers/entities/template-testing-test/form';
 
 import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
 import { useModals } from '@/hooks/modals';
 import { usePendingHandler } from '@/hooks/query/pending';
 import { useValidator } from '@/hooks/validator/validator';
-// import { useTemplateTest } from '@/hooks/store/modules/template-test';
+import { useTemplateTest } from '@/hooks/store/modules/template-test';
 import { useTemplateValidation } from '@/hooks/store/modules/template-validation';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
@@ -106,10 +118,10 @@ export default {
   },
   setup(props) {
     const { t } = useI18n();
-    // const afterSubmitObserver = inject('$afterSubmitObserver');
-    // let templateTestRequestData = {};
-
-    const selectedTest = ref('');
+    const afterSubmitObserver = inject('$afterSubmitObserver');
+    let templateTestRequestData = {};
+    const popups = usePopups();
+    const selectedTest = ref({});
     const validationForm = ref([]);
     const testResult = ref({});
     const lastRunVariables = ref({});
@@ -118,7 +130,7 @@ export default {
     const validator = useValidator();
     const { setFormErrors } = useValidationFormErrors(validationForm);
 
-    // const { createTemplateTest } = useTemplateTest();
+    const { createTemplateTest, updateTemplateTest } = useTemplateTest();
 
     const {
       validateEntityServices,
@@ -171,6 +183,25 @@ export default {
 
     const modals = useModals();
 
+    const save = async () => {
+      const data = {
+        ...selectedTest.value,
+        data: formToTemplateTestingTestValidate(validationForm.value),
+      };
+
+      if (props.ruleId) {
+        await updateTemplateTest({ data, id: selectedTest.value._id });
+
+        popups.success({ text: t('templateTesting.testSaved') });
+
+        return;
+      }
+
+      templateTestRequestData = data;
+
+      popups.success({ text: t('templateTesting.testWillSaveAfterFormSaving') });
+    };
+
     const saveAsNew = async () => {
       const isValid = await validator.validateAll('test-data');
 
@@ -189,24 +220,33 @@ export default {
           },
         },
         action: async (newTestName) => {
-          selectedTest.value = newTestName;
-
-          /* const data = {
-            data: formToTemplateTestingTestValidate(validationForm.value, props.type),
+          const data = {
+            data: formToTemplateTestingTestValidate(validationForm.value),
             description: '',
             name: newTestName,
-            rule: props.ruleId,
             type: props.type,
-          }; */
+          };
 
           if (props.ruleId) {
-            // templateTestRequestData = await afterSubmitObserver.notify();
+            data.rule = props.ruleId;
+
+            const newTest = await createTemplateTest({ data });
+
+            popups.success({ text: t('templateTesting.testSaved') });
+
+            selectedTest.value = newTest;
+
+            return;
           }
-          /*           await createTemplateTest({
-            data: {
-              data: formToTemplateTestingTestValidate(validationForm.value, props.type),
-            },
-          }); */
+
+          templateTestRequestData = data;
+
+          selectedTest.value = {
+            ...data,
+            _id: uid('test'),
+          };
+
+          popups.success({ text: t('templateTesting.testWillSaveAfterFormSaving') });
         },
       };
 
@@ -239,7 +279,7 @@ export default {
         testResult.value = await validateHandler.value({
           data: {
             rule: formToRequest.value(props.generalForm),
-            testdata: formToTemplateTestingTestValidate(validationForm.value, props.type),
+            testdata: formToTemplateTestingTestValidate(validationForm.value),
           },
         });
 
@@ -261,16 +301,61 @@ export default {
           return acc;
         }, {});
       } catch (err) {
-        setFormErrors(err, 'test-data');
+        const { mainFormErrors, testDataErrors } = Object.entries(err).reduce((acc, [key, value]) => {
+          if (key.startsWith('rule.')) {
+            acc.mainFormErrors[key.replace('rule.', '')] = value;
+          } else {
+            acc.testDataErrors[key] = value;
+          }
+
+          return acc;
+        }, { mainFormErrors: {}, testDataErrors: {} });
+
+        if (!isEmpty(mainFormErrors)) {
+          isGeneralFormValid.value = false;
+        }
+
+        setFormErrors(mainFormErrors);
+        setFormErrors(testDataErrors, 'test-data');
       }
     });
 
-    const save = () => {};
+    const validationFormInput = () => {
+      lastRunVariables.value = mapValues(lastRunVariables.value, () => Symbol('lastRunVariables'));
+    };
 
-    watch(validationForm, () => lastRunVariables.value = mapValues(lastRunVariables.value, () => Symbol('lastRunVariables')));
+    const afterSubmit = async (rule) => {
+      if (rule) {
+        templateTestRequestData.rule = rule._id;
+      }
 
-    /* onMounted(() => afterSubmitObserver.register(console.log));
-    onBeforeUnmount(() => afterSubmitObserver.unregister(console.log)); */
+      await createTemplateTest({ data: templateTestRequestData });
+
+      popups.success({ text: t('templateTesting.testSaved') });
+    };
+
+    const updateSelectedTest = (newSelectedTest) => {
+      selectedTest.value = newSelectedTest;
+
+      if (templateTestRequestData) {
+        templateTestRequestData = null;
+      }
+
+      validationForm.value = templateTestingTestValidateToForm(validationForm.value, newSelectedTest.data);
+    };
+
+    onMounted(() => {
+      if (props.ruleId) {
+        return;
+      }
+
+      afterSubmitObserver.register(afterSubmit);
+    });
+
+    /**
+     * Unregister the afterSubmit observer after a timeout to avoid race condition
+     */
+    onBeforeUnmount(() => setTimeout(() => afterSubmitObserver.unregister(afterSubmit), 0));
 
     return {
       selectedTest,
@@ -282,6 +367,8 @@ export default {
       saveAsNew,
       save,
       runTest,
+      validationFormInput,
+      updateSelectedTest,
     };
   },
 };

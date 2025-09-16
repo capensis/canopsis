@@ -7,8 +7,9 @@
     :name="name"
     :has-more="hasMoreItems"
     :required="required"
-    item-text="_id"
-    item-value="name"
+    :return-object="returnObject"
+    item-text="name"
+    item-value="_id"
     autocomplete
     @input="changeSelectedItems"
     @fetch="fetchItems"
@@ -31,8 +32,8 @@ export default {
   },
   props: {
     value: {
-      type: String,
-      default: '',
+      type: Object,
+      default: () => ({}),
     },
     name: {
       type: String,
@@ -43,6 +44,10 @@ export default {
       required: false,
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    returnObject: {
       type: Boolean,
       default: false,
     },
@@ -67,8 +72,10 @@ export default {
     } = useLazySearch({
       fetchHandler,
       value: toRef(props, 'value'),
+      returnObject: toRef(props, 'returnObject'),
       idParamsKey: 'ids',
       idKey: '_id',
+      attachValue: true,
     }, emit);
 
     return {

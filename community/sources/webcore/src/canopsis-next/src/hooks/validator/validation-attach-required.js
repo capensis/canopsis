@@ -27,13 +27,15 @@ export const useValidationAttachRequired = (name) => {
     }
   };
   const validateRequiredRule = () => validator?.validate?.(name);
+  const resetRequiredRule = () => validator?.reset?.({ name });
   const detachRequiredRule = () => validator?.detach?.(name);
 
   return {
     validator,
     attachRequiredRule,
-    detachRequiredRule,
     validateRequiredRule,
+    resetRequiredRule,
+    detachRequiredRule,
   };
 };
 
