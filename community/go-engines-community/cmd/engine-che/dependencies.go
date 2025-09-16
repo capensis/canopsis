@@ -44,8 +44,8 @@ func NewEngine(ctx context.Context, opts che.Options, logger zerolog.Logger) eng
 	pgPoolProvider := postgres.NewPoolProvider(cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout())
 	metricsConfigProvider := config.NewMetricsConfigProvider(cfg, logger)
 	metricsSender := metrics.NewTimescaleDBSender(pgPoolProvider, metricsConfigProvider, logger)
-	e := che.NewEngine(ctx, opts, primaryDbClient, secondaryDbClient, noTimeoutClient, cfg, metricsSender, metrics.NewNullMetaUpdater(),
-		externaldata.NewGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
+	e := che.NewEngine(ctx, opts, primaryDbClient, secondaryDbClient, noTimeoutClient, cfg, metricsSender,
+		metrics.NewNullMetaUpdater(), externaldata.NewGetterContainer(), config.NewTimezoneConfigProvider(cfg, logger),
 		config.NewTemplateConfigProvider(cfg, logger), eventFilterEventCounter, eventFilterFailureService, logger)
 	e.AddDeferFunc(func(ctx context.Context) {
 		err := primaryDbClient.Disconnect(ctx)

@@ -7,33 +7,28 @@ import (
 	"reflect"
 	"sort"
 	"strconv"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 )
 
 type actionProcessor struct {
-	configProvider    config.AlarmConfigProvider
-	failureService    FailureService
-	templateExecutor  template.Executor
-	techMetricsSender techmetrics.Sender
+	configProvider   config.AlarmConfigProvider
+	failureService   FailureService
+	templateExecutor template.Executor
 }
 
 func NewActionProcessor(
 	configProvider config.AlarmConfigProvider,
 	failureService FailureService,
 	templateExecutor template.Executor,
-	sender techmetrics.Sender,
 ) ActionProcessor {
 	return &actionProcessor{
-		configProvider:    configProvider,
-		failureService:    failureService,
-		templateExecutor:  templateExecutor,
-		techMetricsSender: sender,
+		configProvider:   configProvider,
+		failureService:   failureService,
+		templateExecutor: templateExecutor,
 	}
 }
 
@@ -44,7 +39,7 @@ func (p *actionProcessor) Process(
 	event *types.Event,
 	regexMatch RegexMatch,
 	externalData map[string]any,
-) (bool, error) {
+) (map[string]UpdatedValue, error) {
 	const (
 		TagsNameVar  = "name"
 		TagsValueVar = "value"
@@ -55,51 +50,58 @@ func (p *actionProcessor) Process(
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return false, err
+
+			return nil, err
 		}
 
-		return false, nil
+		return nil, nil
 	case ActionSetFieldFromTemplate:
 		value, err := p.actionExecuteParsedTemplate(action, ruleID, "field", event, regexMatch, externalData)
 		if err != nil {
-			return false, err
+			return nil, err
 		}
 
 		err = event.SetField(action.Name, value)
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot set %q field: %s", action.Index, action.Name, err.Error())
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return false, err
+			return nil, err
 		}
 
-		return false, nil
+		return nil, nil
 	case ActionSetEntityInfo:
 		if !types.IsInfoValueValid(action.Value) {
 			failReason := fmt.Sprintf("action %d cannot set %q entity info: invalid type of %v", action.Index,
 				action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return false, types.ErrInvalidInfoType
+
+			return nil, types.ErrInvalidInfoType
 		}
 
-		entityUpdated := p.setEntityInfo(event.Entity, action.Value, action.Name, action.Description)
+		if !p.setEntityInfo(event.Entity, action.Value, action.Name, action.Description) {
+			return nil, nil
+		}
 
-		return entityUpdated, nil
+		return map[string]UpdatedValue{action.Name: {RuleID: ruleID, Value: action.Value}}, nil
 	case ActionSetEntityInfoFromTemplate:
 		value, err := p.actionExecuteParsedTemplate(action, ruleID, "entity info", event, regexMatch, externalData)
 		if err != nil {
-			return false, err
+			return nil, err
 		}
 
-		entityUpdated := p.setEntityInfo(event.Entity, value, action.Name, action.Description)
+		if !p.setEntityInfo(event.Entity, value, action.Name, action.Description) {
+			return nil, nil
+		}
 
-		return entityUpdated, nil
+		return map[string]UpdatedValue{action.Name: {RuleID: ruleID, Value: value}}, nil
 	case ActionCopy:
 		strValue, ok := action.Value.(string)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot copy to %q field: value %v must be path to field",
 				action.Index, action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return false, ErrShouldBeAString
+
+			return nil, ErrShouldBeAString
 		}
 
 		t := Template{
@@ -107,7 +109,6 @@ func (p *actionProcessor) Process(
 			RegexMatch:   regexMatch,
 			ExternalData: externalData,
 		}
-
 		value, err := utils.GetField(
 			t,
 			strValue,
@@ -116,7 +117,8 @@ func (p *actionProcessor) Process(
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
 				action.Name, err.Error())
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
-			return false, err
+
+			return nil, err
 		}
 
 		err = event.SetField(action.Name, value)
@@ -124,17 +126,19 @@ func (p *actionProcessor) Process(
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q: %s", action.Index, strValue,
 				action.Name, err.Error())
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
-			return false, err
+
+			return nil, err
 		}
 
-		return false, nil
+		return nil, nil
 	case ActionCopyToEntityInfo:
 		strValue, ok := action.Value.(string)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot copy to %q entity info: value %v must be path to field",
 				action.Index, action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
-			return false, ErrShouldBeAString
+
+			return nil, ErrShouldBeAString
 		}
 
 		t := Template{
@@ -142,7 +146,6 @@ func (p *actionProcessor) Process(
 			RegexMatch:   regexMatch,
 			ExternalData: externalData,
 		}
-
 		value, err := utils.GetField(
 			t,
 			strValue,
@@ -151,19 +154,23 @@ func (p *actionProcessor) Process(
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: %s", action.Index,
 				strValue, action.Name, err.Error())
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
-			return false, err
+
+			return nil, err
 		}
 
 		if !types.IsInfoValueValid(value) {
 			failReason := fmt.Sprintf("action %d cannot copy from %q to %q entity info: invalid type of %v",
 				action.Index, strValue, action.Name, value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
-			return false, types.ErrInvalidInfoType
+
+			return nil, types.ErrInvalidInfoType
 		}
 
-		entityUpdated := p.setEntityInfo(event.Entity, value, action.Name, action.Description)
+		if !p.setEntityInfo(event.Entity, value, action.Name, action.Description) {
+			return nil, nil
+		}
 
-		return entityUpdated, nil
+		return map[string]UpdatedValue{action.Name: {RuleID: ruleID, Value: value}}, nil
 	case ActionSetTags:
 		strValue, ok := action.Value.(string)
 		if !ok {
@@ -171,35 +178,38 @@ func (p *actionProcessor) Process(
 				action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
 
-			return false, ErrShouldBeAString
+			return nil, ErrShouldBeAString
 		}
+
 		t := Template{
 			Event:        event,
 			RegexMatch:   regexMatch,
 			ExternalData: externalData,
 		}
-
 		value, err := utils.GetField(t, strValue)
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot read source field to set tags in %q: %s", action.Index, action.Name, err)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
-			return false, err
+
+			return nil, err
 		}
+
 		if regexMatch.MatchedRegexp == nil {
-			return false, nil
+			return nil, nil
 		}
+
 		fieldValue, ok := value.(string)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot assert field's type as string to set tags in %q: %s",
 				action.Index, action.Name, err)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
 
-			return false, ErrShouldBeAString
+			return nil, ErrShouldBeAString
 		}
 
 		matches := utils.FindAllStringSubmatchMapWithRegexExpression(regexMatch.MatchedRegexp, fieldValue)
 		if len(matches) == 0 {
-			return false, nil
+			return nil, nil
 		}
 
 		tags := make(map[string]string, len(matches))
@@ -212,19 +222,19 @@ func (p *actionProcessor) Process(
 		}
 
 		if len(tags) == 0 {
-			return false, nil
+			return nil, nil
 		}
 
 		err = event.SetField(action.Name, tags)
 		if err != nil {
-			return false, err
+			return nil, err
 		}
 
-		return false, nil
+		return nil, nil
 	case ActionSetTagsFromTemplate:
 		value, err := p.actionExecuteParsedTemplate(action, ruleID, "tags", event, regexMatch, externalData)
 		if err != nil {
-			return false, err
+			return nil, err
 		}
 
 		var tags map[string]string
@@ -238,8 +248,9 @@ func (p *actionProcessor) Process(
 					tags[tagName] = tagValue
 				}
 			}
+
 			if len(tags) == 0 {
-				return false, nil
+				return nil, nil
 			}
 		} else {
 			tags = map[string]string{
@@ -249,10 +260,10 @@ func (p *actionProcessor) Process(
 
 		err = event.SetField("Tags", tags)
 		if err != nil {
-			return false, err
+			return nil, err
 		}
 
-		return false, nil
+		return nil, nil
 	case ActionSetEntityInfoFromDictionary:
 		strValue, ok := action.Value.(string)
 		if !ok {
@@ -260,46 +271,55 @@ func (p *actionProcessor) Process(
 				action.Name, action.Value)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, nil)
 
-			return false, ErrShouldBeAString
+			return nil, ErrShouldBeAString
 		}
+
 		t := Template{
 			Event:        event,
 			RegexMatch:   regexMatch,
 			ExternalData: externalData,
 		}
-
 		value, err := utils.GetField(t, strValue)
 		if err != nil {
 			if errors.Is(err, utils.ErrFieldNotExist) {
-				return false, nil
+				return nil, nil
 			}
+
 			failReason := fmt.Sprintf("action %d cannot read source field to set entity info in %q: %s",
 				action.Index, action.Name, err)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
-			return false, err
+
+			return nil, err
 		}
+
 		dict, ok := value.(map[string]any)
 		if !ok {
 			failReason := fmt.Sprintf("action %d cannot assert field's type as map to set entity info in %q",
 				action.Index, action.Name)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
 
-			return false, errors.New("value should be a map")
+			return nil, errors.New("value should be a map")
 		}
-		entityUpdated, err := p.setInfosFromDict(event.Entity, dict, action.Description)
+
+		updatedValues, ok, err := p.setInfosFromDict(event.Entity, dict, ruleID, action.Description)
 		if err != nil {
 			failReason := fmt.Sprintf("action %d cannot set entity info in %q: %s", action.Index, action.Name, err)
 			p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
 
-			return false, err
+			return nil, err
 		}
-		return entityUpdated, nil
+
+		if !ok {
+			return nil, nil
+		}
+
+		return updatedValues, nil
 	}
 
 	failReason := fmt.Sprintf("action %d has invalid type %q", action.Index, action.Type)
 	p.failureService.Add(ruleID, FailureTypeOther, failReason, event)
 
-	return false, fmt.Errorf("action type = %s is invalid", action.Type)
+	return nil, fmt.Errorf("action type = %s is invalid", action.Type)
 }
 
 func (p *actionProcessor) actionExecuteParsedTemplate(action ParsedAction, ruleID, target string, event *types.Event, regexMatch RegexMatch, externalData map[string]any) (string, error) {
@@ -354,22 +374,24 @@ func (p *actionProcessor) setEntityInfo(entity *types.Entity, value any, name, d
 		Value:       value,
 	}
 
-	p.techMetricsSender.SendCheEntityInfo(time.Now(), name)
-
 	return true
 }
 
-func (p *actionProcessor) setInfosFromDict(entity *types.Entity, dict map[string]any, description string) (bool, error) {
+func (p *actionProcessor) setInfosFromDict(entity *types.Entity, dict map[string]any, ruleID, description string) (map[string]UpdatedValue, bool, error) {
+	updatedValues := make(map[string]UpdatedValue)
 	updated := false
 	for name, value := range dict {
 		if !types.IsInfoValueValid(value) {
-			return false, fmt.Errorf("value %v for %q is invalid", value, name)
+			return nil, false, fmt.Errorf("value %v for %q is invalid", value, name)
 		}
-		if valueUpdated := p.setEntityInfo(entity, value, name, description); valueUpdated {
+
+		if p.setEntityInfo(entity, value, name, description) {
 			updated = true
+			updatedValues[name] = UpdatedValue{RuleID: ruleID, Value: value}
 		}
 	}
-	return updated, nil
+
+	return updatedValues, updated, nil
 }
 
 var ErrShouldBeAString = errors.New("value should be a string")

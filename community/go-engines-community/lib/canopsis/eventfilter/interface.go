@@ -16,12 +16,23 @@ const (
 )
 
 type ActionProcessor interface {
-	Process(ctx context.Context, ruleID string, action ParsedAction, event *types.Event, regexMatch RegexMatch, externalData map[string]interface{}) (bool, error)
+	Process(ctx context.Context, ruleID string, action ParsedAction, event *types.Event, regexMatch RegexMatch, externalData map[string]interface{}) (map[string]UpdatedValue, error)
+}
+
+type UpdatedValue struct {
+	RuleID string
+	Value  any
 }
 
 type RuleApplicator interface {
 	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
-	Apply(context.Context, ParsedRule, *types.Event, RegexMatch) (outcome string, isEntityUpdated bool, externalRequestCount map[string]int64, err error)
+	Apply(context.Context, ParsedRule, *types.Event, RegexMatch) (RuleResult, error)
+}
+
+type RuleResult struct {
+	Outcome              string
+	UpdatedEntityInfos   map[string]UpdatedValue
+	ExternalRequestCount map[string]int64
 }
 
 type RuleAdapter interface {
@@ -30,7 +41,7 @@ type RuleAdapter interface {
 }
 
 type Service interface {
-	ProcessEvent(context.Context, *types.Event) (bool, int64, map[string]int64, error)
+	ProcessEvent(context.Context, *types.Event) (map[string]UpdatedValue, int64, map[string]int64, error)
 	LoadRules(context.Context, []string) error
 }
 
