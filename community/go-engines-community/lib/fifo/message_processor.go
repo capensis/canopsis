@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics/prometheus"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/scheduler"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -37,6 +38,8 @@ type messageProcessor struct {
 
 	TechMetricsSender techmetrics.Sender
 
+	prometheusMetrics *prometheus.Metrics
+
 	FeaturePrintEventOnError bool
 	// redis lock used to ensure that only one instance of the message processor is running at a time
 	rl redis.Lock
@@ -49,6 +52,7 @@ func NewMessageProcessor(
 	decoder encoding.Decoder,
 	logger zerolog.Logger,
 	techMetricsSender techmetrics.Sender,
+	prometheusMetrics *prometheus.Metrics,
 	featurePrintEvenotOnError bool,
 ) *messageProcessor {
 	return &messageProcessor{
@@ -58,6 +62,7 @@ func NewMessageProcessor(
 		Decoder:                  decoder,
 		Logger:                   logger,
 		TechMetricsSender:        techMetricsSender,
+		prometheusMetrics:        prometheusMetrics,
 		FeaturePrintEventOnError: featurePrintEvenotOnError,
 	}
 }
@@ -103,6 +108,10 @@ func (p *messageProcessor) Process(parentCtx context.Context, d amqp.Delivery) (
 	event.Format()
 	event.ReceivedTimestamp = datetime.NewMicroTime()
 	p.MetricsSender.SendMessageRate(time.Now(), event.EventType, event.ConnectorName)
+
+	if p.prometheusMetrics != nil {
+		p.prometheusMetrics.CounterVectorInc(prometheus.EventsRateCounter, event.EventType)
+	}
 
 	err = event.InjectExtraInfos(msg)
 	if err != nil {
