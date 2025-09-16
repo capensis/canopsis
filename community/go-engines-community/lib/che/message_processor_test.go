@@ -253,7 +253,7 @@ func benchmarkMessageProcessorWithConfig(
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), zerolog.Nop())
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeChangeEntity, eventfilter.NewChangeEntityApplicator(externaldata.NewGetterContainer(), failureService, tplExecutor))
-	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), eventfilter.NewActionProcessor(alarmConfigProvider, failureService, tplExecutor, techMetricsSender), failureService))
+	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), eventfilter.NewActionProcessor(alarmConfigProvider, failureService, tplExecutor), failureService))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeBreak, eventfilter.NewBreakApplicator())
 	ruleService := eventfilter.NewRuleService(eventfilter.NewRuleAdapter(dbClient), ruleApplicatorContainer, eventCounter, failureService, tplExecutor, zerolog.Nop())
