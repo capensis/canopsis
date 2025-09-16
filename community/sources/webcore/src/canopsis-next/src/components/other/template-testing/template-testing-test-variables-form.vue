@@ -5,6 +5,7 @@
         :value="selectedTest"
         :rule-id="preparedRuleId"
         name="test.name"
+        return-object
         required
         @input="updateSelectedTest"
       />
@@ -25,7 +26,7 @@
           :key="field.key"
           :name="field.key"
           :template="field.value"
-          :title="$t(field.textKey)"
+          :title="$t(field.textKey, field.textArgs)"
           :textarea="field.textarea"
           :result="testResult[field.key]"
           :variables="templateVars[field.templateVarsKey]"
@@ -60,8 +61,8 @@ export default {
       default: () => [],
     },
     selectedTest: {
-      type: String,
-      default: '',
+      type: Object,
+      default: () => ({}),
     },
     templateVars: {
       type: Object,

@@ -1,74 +1,109 @@
 <template>
-  <v-tabs
-    slider-color="primary"
-    centered
-  >
-    <v-tab :class="{ 'error--text': hasGeneralError }">
-      {{ $t('common.general') }}
-    </v-tab>
-    <v-tab
-      :class="{ 'error--text': hasSimpleError || errors.has('links') }"
-      :disabled="sourceCodeWasChanged"
+  <div class="position-relative">
+    <c-progress-overlay :pending="templateVarsPending" />
+    <v-tabs
+      slider-color="primary"
+      fixed-tabs
     >
-      {{ $t('linkRule.simpleMode') }}
-    </v-tab>
-    <v-tab :class="{ 'error--text': hasAdvancedError || errors.has('links') }">
-      {{ $t('linkRule.advancedMode') }}
-    </v-tab>
+      <v-tab :class="{ 'error--text': hasGeneralError }">
+        {{ $t('common.general') }}
+      </v-tab>
+      <v-tab
+        :class="{ 'error--text': hasSimpleError || errors.has('links') }"
+        :disabled="sourceCodeWasChanged"
+      >
+        {{ $t('linkRule.simpleMode') }}
+      </v-tab>
+      <v-tab :class="{ 'error--text': hasAdvancedError || errors.has('links') }">
+        {{ $t('linkRule.advancedMode') }}
+      </v-tab>
+      <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
 
-    <v-tab-item
-      class="mt-3"
-      eager
-    >
-      <link-rule-general-form
-        v-field="form"
-        ref="general"
-        :template-vars="templateVars"
-        class="mt-2"
-      />
-    </v-tab-item>
-    <v-tab-item
-      class="mt-3"
-      eager
-    >
-      <c-alert
-        :value="errors.has('links')"
-        transition="fade-transition"
-        type="error"
+      <v-tab-item
+        class="mt-3"
+        eager
       >
-        {{ $t('linkRule.linksEmptyError') }}
-      </c-alert>
-      <link-rule-simple-form
-        v-field="form.links"
-        ref="simple"
-        :type="form.type"
-        :template-vars="templateVars"
-        @input="resetLinksErrors"
-      />
-    </v-tab-item>
-    <v-tab-item
-      class="mt-3"
-      eager
-    >
-      <c-alert
-        :value="errors.has('links')"
-        transition="fade-transition"
-        type="error"
+        <link-rule-general-form
+          v-field="form"
+          ref="generalElement"
+          :template-vars="templateVars"
+          class="mt-2"
+        />
+      </v-tab-item>
+      <v-tab-item
+        class="mt-3"
+        eager
       >
-        {{ $t('linkRule.linksEmptyError') }}
-      </c-alert>
-      <link-rule-advanced-form
-        v-field="form.source_code"
-        ref="advanced"
-        :type="form.type"
-        @input="resetLinksErrors"
-      />
-    </v-tab-item>
-  </v-tabs>
+        <c-alert
+          :value="errors.has('links')"
+          transition="fade-transition"
+          type="error"
+        >
+          {{ $t('linkRule.linksEmptyError') }}
+        </c-alert>
+        <link-rule-simple-form
+          v-field="form.links"
+          ref="simpleElement"
+          :type="form.type"
+          :template-vars="templateVars"
+          @input="resetRequiredRule"
+        />
+      </v-tab-item>
+      <v-tab-item
+        class="mt-3"
+        eager
+      >
+        <c-alert
+          :value="errors.has('links')"
+          transition="fade-transition"
+          type="error"
+        >
+          {{ $t('linkRule.linksEmptyError') }}
+        </c-alert>
+        <link-rule-advanced-form
+          v-field="form.source_code"
+          ref="advancedElement"
+          :type="form.type"
+          @input="resetRequiredRule"
+        />
+      </v-tab-item>
+
+      <v-tab-item :disabled="isEmptyVariablesFields">
+        <template-testing-test-variables
+          :general-form="form"
+          :variables-fields="variablesFields"
+          :template-vars="templateVars"
+          :rule-id="ruleId"
+          :type="type"
+        />
+      </v-tab-item>
+    </v-tabs>
+  </div>
 </template>
 
 <script>
+import {
+  computed,
+  ref,
+  toRef,
+  watch,
+  onBeforeUnmount,
+  onMounted,
+} from 'vue';
+
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
 import { isDefaultSourceCode } from '@/helpers/entities/link/form';
+
+import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
+
+import {
+  useTemplateVarsList,
+  useTestVariablesFields,
+} from '@/components/other/template-testing/hooks/template-test-variables-wrapper';
+
+import TemplateTestingTestVariables from '@/components/other/template-testing/template-testing-test-variables.vue';
+import TemplateTestingTestVariablesTab from '@/components/other/template-testing/template-testing-test-variables-tab.vue';
 
 import LinkRuleGeneralForm from './link-rule-general-form.vue';
 import LinkRuleSimpleForm from './link-rule-simple-form.vue';
@@ -77,6 +112,9 @@ import LinkRuleAdvancedForm from './link-rule-advanced-form.vue';
 export default {
   inject: ['$validator'],
   components: {
+    TemplateTestingTestVariables,
+    TemplateTestingTestVariablesTab,
+
     LinkRuleGeneralForm,
     LinkRuleSimpleForm,
     LinkRuleAdvancedForm,
@@ -90,58 +128,83 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    templateVars: {
-      type: Object,
-      default: () => ({}),
+    ruleId: {
+      type: String,
+      required: false,
     },
   },
-  data() {
+  setup(props, { emit }) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.linkRule;
+
+    const hasGeneralError = ref(false);
+    const hasSimpleError = ref(false);
+    const hasAdvancedError = ref(false);
+
+    const generalElement = ref(null);
+    const simpleElement = ref(null);
+    const advancedElement = ref(null);
+
+    const {
+      attachRequiredRule,
+      detachRequiredRule,
+      resetRequiredRule,
+    } = useValidationAttachRequired('links');
+
+    const {
+      templateVars,
+      pending: templateVarsPending,
+      fetchList: fetchTemplateVarsList,
+    } = useTemplateVarsList({
+      type,
+      form: toRef(props, 'form'),
+    });
+
+    const {
+      items: variablesFields,
+      isEmptyItems: isEmptyVariablesFields,
+    } = useTestVariablesFields(props, type, emit);
+
+    const sourceCodeWasChanged = computed(() => !isDefaultSourceCode(props.form.source_code));
+
+    /**
+     * Getter function for validation rule that checks if links are required.
+     * Returns true if there are links in the form or if source code was modified from default.
+     *
+     * @returns {boolean} True if links field should be considered valid (has links or custom source code)
+     */
+    const requiredRuleGetter = () => !!props.form.links.length || !isDefaultSourceCode(props.form.source_code);
+
+    watch(() => generalElement.value?.hasAnyError, value => hasGeneralError.value = value);
+    watch(() => simpleElement.value?.hasAnyError, value => hasSimpleError.value = value);
+    watch(() => advancedElement.value?.hasAnyError, value => hasAdvancedError.value = value);
+
+    onMounted(() => {
+      attachRequiredRule(requiredRuleGetter);
+      fetchTemplateVarsList();
+    });
+    onBeforeUnmount(detachRequiredRule);
+
     return {
-      hasGeneralError: false,
-      hasSimpleError: false,
-      hasAdvancedError: false,
+      type,
+
+      hasGeneralError,
+      hasSimpleError,
+      hasAdvancedError,
+
+      generalElement,
+      simpleElement,
+      advancedElement,
+
+      variablesFields,
+      isEmptyVariablesFields,
+
+      templateVars,
+      templateVarsPending,
+
+      sourceCodeWasChanged,
+
+      resetRequiredRule,
     };
-  },
-  computed: {
-    sourceCodeWasChanged() {
-      return !isDefaultSourceCode(this.form.source_code);
-    },
-  },
-  mounted() {
-    this.$watch(() => this.$refs.general.hasAnyError, (value) => {
-      this.hasGeneralError = value;
-    });
-
-    this.$watch(() => this.$refs.simple.hasAnyError, (value) => {
-      this.hasSimpleError = value;
-    });
-
-    this.$watch(() => this.$refs.advanced.hasAnyError, (value) => {
-      this.hasAdvancedError = value;
-    });
-
-    this.attachRequiredLinksRules();
-  },
-  beforeDestroy() {
-    this.detachLinksRules();
-  },
-  methods: {
-    resetLinksErrors() {
-      this.$validator.reset({ name: 'links' });
-    },
-
-    attachRequiredLinksRules() {
-      this.$validator.attach({
-        name: 'links',
-        rules: 'required:true',
-        getter: () => !!this.form.links.length || !isDefaultSourceCode(this.form.source_code),
-        vm: this,
-      });
-    },
-
-    detachLinksRules() {
-      this.$validator.detach('links');
-    },
   },
 };
 </script>
