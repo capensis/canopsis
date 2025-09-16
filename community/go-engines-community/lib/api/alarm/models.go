@@ -64,6 +64,7 @@ type ListRequest struct {
 	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
 	WithLinks          bool `form:"with_links" json:"with_links"`
 	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
+	WithTagColors      bool `form:"with_tag_colors" json:"with_tag_colors"`
 	QueryLog           bool `form:"query_log" json:"query_log"`
 }
 
@@ -265,12 +266,13 @@ type ExportResponse struct {
 }
 
 type Alarm struct {
-	ID     string                            `bson:"_id" json:"_id"`
-	Time   datetime.CpsTime                  `bson:"t" json:"t" swaggertype:"integer"`
-	Entity entity.Entity                     `bson:"entity" json:"entity"`
-	Value  AlarmValue                        `bson:"v" json:"v"`
-	Tags   []string                          `bson:"tags" json:"tags"`
-	Infos  map[string]map[string]interface{} `bson:"infos" json:"infos"`
+	ID        string                            `bson:"_id" json:"_id"`
+	Time      datetime.CpsTime                  `bson:"t" json:"t" swaggertype:"integer"`
+	Entity    entity.Entity                     `bson:"entity" json:"entity"`
+	Value     AlarmValue                        `bson:"v" json:"v"`
+	Tags      []string                          `bson:"tags" json:"tags"`
+	TagColors []TagColor                        `bson:"tag_colors" json:"tag_colors,omitempty"`
+	Infos     map[string]map[string]interface{} `bson:"infos" json:"infos"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
 
@@ -370,6 +372,11 @@ type Pbehavior struct {
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
 
 	LastComment *pbehaviorcomment.Response `bson:"last_comment" json:"last_comment"`
+}
+
+type TagColor struct {
+	Value string `bson:"value" json:"value"`
+	Color string `bson:"color" json:"color"`
 }
 
 type Instruction struct {
