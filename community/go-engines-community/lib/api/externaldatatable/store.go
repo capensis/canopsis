@@ -32,6 +32,8 @@ const (
 	mongoErrCodeNamespaceExists = 48
 
 	limitLinkedRules = 11
+
+	maxStringLengthErrMsg = "string length must be less than " + MaxStringLenStr
 )
 
 var linkedCollections = []string{
@@ -573,7 +575,7 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 			}
 
 			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = "string length must be less than " + MaxStringLenStr
+				valErrMsgs[columnName] = maxStringLengthErrMsg
 				continue
 			}
 
@@ -668,7 +670,7 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 			}
 
 			if len(strVal) > MaxStringLen {
-				valErrMsgs[columnName] = "string length must be less than " + MaxStringLenStr
+				valErrMsgs[columnName] = maxStringLengthErrMsg
 				continue
 			}
 
