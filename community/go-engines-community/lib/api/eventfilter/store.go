@@ -495,7 +495,7 @@ func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r comm
 func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.Template, map[int]template.ResponseTestData, error) {
 	var tplData eventfilter.Template
 	eventDataID := r.TestData.Event
-	exdataTestDataIDs := r.TestData.ExternalData
+	exdataTestDataIDs := r.TestData.Responses
 	if r.TestData.Test != "" {
 		test := template.TestModel{}
 		err := s.dbTplTestCollection.
@@ -534,7 +534,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 	var exdataTestData map[int]template.ResponseTestData
 	if len(exdataTestDataIDs) > 0 {
 		if len(exdataTestDataIDs) > len(r.Rule.ExternalData) {
-			return tplData, nil, common.NewValidationError("testdata.external_data."+strconv.Itoa(len(r.Rule.ExternalData)), "ExternalData is redundant.")
+			return tplData, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(len(r.Rule.ExternalData)), "Response is redundant.")
 		}
 
 		exdataTestData, err = template.GetResponseData(ctx, s.dbTplDataCollection, exdataTestDataIDs)
@@ -543,7 +543,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 		}
 
 		if len(exdataTestData) == 0 {
-			return tplData, nil, common.NewValidationError("testdata.external_data", "ExternalData doesn't exist.")
+			return tplData, nil, common.NewValidationError("testdata.responses", "Response doesn't exist.")
 		}
 	}
 
@@ -653,7 +653,7 @@ func (s *store) validateExdataTpls(
 			}
 
 			if _, ok := exdataTestData[i]; ok {
-				return nil, nil, common.NewValidationError("testdata."+prefix, "ExternalData is redundant.")
+				return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is redundant.")
 			}
 		case externaldata.RefTypeAPI:
 			if d.Request != nil {
@@ -671,7 +671,7 @@ func (s *store) validateExdataTpls(
 			if td, ok := exdataTestData[i]; ok {
 				externalData[d.Reference] = td.Body
 			} else {
-				return nil, nil, common.NewValidationError("testdata."+prefix, "ExternalData is missing.")
+				return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is missing.")
 			}
 		}
 	}

@@ -139,8 +139,8 @@ type TemplateRequest struct {
 	TestData struct {
 		Test  string `json:"test"`
 		Event string `json:"event"`
-		// TestData.ExternalData keys correspond with Rule.ExternalData keys
-		ExternalData map[int]string `json:"external_data"`
+		// TestData.Responses keys correspond with Rule.ExternalData keys
+		Responses map[int]string `json:"responses"`
 	} `json:"testdata"`
 }
 
