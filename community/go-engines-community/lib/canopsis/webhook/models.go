@@ -57,10 +57,10 @@ type History struct {
 
 type TokenHistory struct {
 	BaseHistory        `bson:",inline"`
-	Rule               string                    `bson:"rule,omitempty" json:"rule,omitempty"`
+	Rule               string                    `bson:"rule" json:"rule"`
 	ResponseField      string                    `bson:"response_field,omitempty" json:"response_field,omitempty"`
 	Template           string                    `bson:"template,omitempty" json:"template,omitempty"`
-	ExpirationDuration datetime.DurationWithUnit `bson:"expiration_duration,omitempty" json:"expiration_duration,omitempty"`
+	ExpirationDuration datetime.DurationWithUnit `bson:"expiration_duration" json:"expiration_duration"`
 	Token              string                    `bson:"token,omitempty" json:"token,omitempty"`
 	ExpiredAt          datetime.MicroTime        `bson:"expired_at,omitempty" json:"expired_at,omitempty"`
 }
