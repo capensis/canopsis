@@ -31,6 +31,7 @@
       <v-tab-item eager>
         <scenario-actions-form
           v-field="form.actions"
+          :template-vars="templateVars"
           class="mt-2"
           name="actions"
         />

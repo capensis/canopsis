@@ -158,13 +158,15 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
 
   let firstWebhook = true;
 
-  form.actions?.forEach?.((action, index) => {
-    result.push({
-      key: `actions.${index}.parameters.author`,
-      textKey: 'templateTesting.actionAuthor',
-      textArgs: { number: index + 1 },
-      templateVarsKey: 'author',
-    });
+  form.actions.forEach((action, index) => {
+    if (!action.parameters[action.type]?.forward_author) {
+      result.push({
+        key: `actions.${index}.parameters.author`,
+        textKey: 'templateTesting.actionAuthor',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'author',
+      });
+    }
 
     if (action.type === ACTION_TYPES.webhook) {
       const webhookTemplateVarsKey = firstWebhook ? 'first_webhook' : 'webhook';
@@ -194,7 +196,7 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
 
       if (declareTicket.ticket_id.template) {
         result.push({
-          key: `actions.${index}.parameters.webhook.declare_ticket.ticket_id`,
+          key: `actions.${index}.parameters.webhook.declare_ticket.ticket_id.value`,
           textKey: 'templateTesting.ticketId',
           textArgs: { number: index + 1 },
           templateVarsKey: 'ticket',
@@ -203,7 +205,7 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
 
       if (declareTicket.ticket_url.template) {
         result.push({
-          key: `actions.${index}.parameters.webhook.declare_ticket.ticket_url`,
+          key: `actions.${index}.parameters.webhook.declare_ticket.ticket_url.value`,
           textKey: 'templateTesting.ticketUrl',
           textArgs: { number: index + 1 },
           templateVarsKey: 'ticket',
@@ -217,13 +219,15 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
       return;
     }
 
-    result.push({
-      key: `actions.${index}.parameters.output`,
-      textKey: 'templateTesting.noteOutput',
-      textArgs: { number: index + 1 },
-      textarea: true,
-      templateVarsKey: 'output',
-    });
+    if ([ACTION_TYPES.pbehavior, ACTION_TYPES.pbehaviorRemove, ACTION_TYPES.assocticket].includes(action.type)) {
+      result.push({
+        key: `actions.${index}.parameters.output`,
+        textKey: 'templateTesting.noteOutput',
+        textArgs: { number: index + 1 },
+        textarea: true,
+        templateVarsKey: 'output',
+      });
+    }
   });
 
   result.push(...convertExternalDataToTemplateTestingTestValidateForm(form.external_data));

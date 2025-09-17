@@ -8,18 +8,18 @@
     />
 
     <template-testing-test-type-field
-      v-field="form.rule_type"
+      :value="form.type"
       :label="$t('common.ruleType')"
       :disabled="!isNew"
-      name="rule_type"
+      name="type"
       required
     />
 
     <c-name-field
-      v-field="form.rule_name"
+      :value="form.rule?.name"
       :label="$t('common.ruleName')"
       :disabled="!isNew"
-      name="rule_name"
+      name="rule"
       required
     />
 

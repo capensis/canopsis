@@ -13,6 +13,8 @@
 </template>
 
 <script>
+import { onMounted } from 'vue';
+
 import { MODALS } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
@@ -50,7 +52,10 @@ export default {
         templateTestingTest,
         title: t('modals.createTemplateTestingTest.edit.title'),
         action: async (newTemplateTestingTest) => {
-          await updateTemplateTest({ id: templateTestingTest._id, data: newTemplateTestingTest });
+          await updateTemplateTest({
+            id: templateTestingTest._id,
+            data: newTemplateTestingTest,
+          });
 
           return fetchList();
         },
@@ -71,6 +76,8 @@ export default {
         },
       },
     });
+
+    onMounted(fetchList);
 
     return {
       items,

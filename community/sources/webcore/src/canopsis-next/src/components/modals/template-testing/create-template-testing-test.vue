@@ -34,7 +34,7 @@ import { computed, ref } from 'vue';
 
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
-import { templateTestingTestToForm } from '@/helpers/entities/template-testing-test/form';
+import { formToTemplateTestingTest, templateTestingTestToForm } from '@/helpers/entities/template-testing-test/form';
 
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
@@ -68,7 +68,7 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(form.value);
+        await config.value.action?.(formToTemplateTestingTest(form.value));
 
         close();
       },
@@ -84,6 +84,7 @@ export default {
       isDisabled,
       submitting,
 
+      config,
       isNew,
 
       submit,

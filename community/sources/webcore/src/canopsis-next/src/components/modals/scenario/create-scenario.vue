@@ -5,7 +5,7 @@
     </template>
     <template #text="">
       <template-testing-test-variables-wrapper
-        v-field="form"
+        v-model="form"
         :is-new="isNew"
         :type="type"
       >

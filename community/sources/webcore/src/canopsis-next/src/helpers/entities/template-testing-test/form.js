@@ -1,4 +1,4 @@
-import { differenceBy } from 'lodash';
+import { differenceBy, mapValues, isArray } from 'lodash';
 
 import {
   TEMPLATE_TESTING_TEST_TYPES,
@@ -24,11 +24,37 @@ import {
  */
 
 /**
+ * @typedef {Object|Array} TemplateTestingDataInput
+ * @property {string} [_id] - Unique identifier of the data item
+ * @property {string} [name] - Name of the data item
+ * @property {*} [*] - Any other properties that may contain nested objects or arrays
+ */
+
+/**
+ * @typedef {Object|Array|string} TemplateTestingDataForm
+ * Object with nested objects converted to their IDs, arrays processed recursively, or string IDs
+ */
+
+/**
  * @typedef {Object} TemplateTestingTest
- * @property {string} name
- * @property {string} description
- * @property {number} rule_type
- * @property {string} rule_name
+ * @property {string} name - Name of the template testing test
+ * @property {string} description - Description of the template testing test
+ * @property {TemplateTestingTestType} type - Type of the template testing test
+ * @property {string} rule - ID of the rule
+ * @property {TemplateTestingDataInput} data - Additional data for the template testing test
+ * @property {TemplateTestingTestValidate} [validate] - Validation data for the test
+ */
+
+/**
+ * @typedef {Object} TemplateTestingTestForm
+ * @property {string} name - Name of the template testing test
+ * @property {string} description - Description of the template testing test
+ * @property {TemplateTestingTestType} type - Type of the template testing test
+ * @property {Object} rule - Rule object containing rule configuration
+ * @property {string} [rule._id] - ID of the rule
+ * @property {string} [rule.name] - Name of the rule
+ * @property {TemplateTestingDataForm} data - Additional data for the template testing test
+ * @property {TemplateTestingTestValidate} [validate] - Validation data for the test
  */
 
 /**
@@ -82,16 +108,66 @@ import {
  */
 
 /**
+ * Converts template testing data by extracting IDs from nested objects
+ *
+ * @param {TemplateTestingDataInput} [templateTestingData={}] - The template testing data to convert
+ * @returns {TemplateTestingDataForm} Processed data with objects converted to IDs
+ *
+ * @example
+ * // Convert object with nested objects to form format
+ * const data = {
+ *   rule: { _id: 'rule-123', name: 'My Rule' },
+ *   user: { _id: 'user-456', name: 'John Doe' },
+ *   tags: [
+ *     { _id: 'tag-1', name: 'Tag 1' },
+ *     { _id: 'tag-2', name: 'Tag 2' }
+ *   ]
+ * };
+ *
+ * const formData = templateTestingDataToForm(data);
+ * // Result: {
+ * //   rule: 'rule-123',
+ * //   user: 'user-456',
+ * //   tags: ['tag-1', 'tag-2']
+ * // }
+ */
+export const templateTestingDataToForm = (templateTestingData = {}) => (
+  /**
+   * We need to use code block {} to avoid eslint error
+   */
+  mapValues(templateTestingData, (dataItem) => {
+    if (isArray(dataItem)) {
+      return dataItem.map(item => item?._id || item);
+    }
+
+    return dataItem?._id;
+  })
+);
+
+/**
  * Convert template testing test object to form
  *
- * @param {TemplateTestingTest} templateTestingTest
- * @returns {TemplateTestingTest}
+ * @param {TemplateTestingTest} [templateTestingTest={}] - The template testing test object
+ * @returns {TemplateTestingTestForm} Form object with rule as object instead of ID
  */
 export const templateTestingTestToForm = (templateTestingTest = {}) => ({
   name: templateTestingTest.name ?? '',
   description: templateTestingTest.description ?? '',
-  rule_type: templateTestingTest.rule_type ?? TEMPLATE_TESTING_TEST_TYPES.scenario,
-  rule_name: templateTestingTest.rule_name ?? '',
+  type: templateTestingTest.type ?? TEMPLATE_TESTING_TEST_TYPES.scenario,
+  rule: templateTestingTest.rule ?? { name: '' },
+  data: templateTestingDataToForm(templateTestingTest.data),
+});
+
+/**
+ * Converts a template testing test form object to a template testing test object
+ *
+ * @param {TemplateTestingTestForm} [form={}] - The form object containing template testing test data
+ * @returns {TemplateTestingTest} Template testing test object with rule converted to IDrmWithoutRule);
+ */
+export const formToTemplateTestingTest = (form = {}) => ({
+  ...form,
+
+  rule: form.rule?._id,
 });
 
 /**
