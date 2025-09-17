@@ -4,7 +4,7 @@ export default {
   withAuth: 'Avez-vous besoin de champs d\'authentification ?',
   key: 'Clé',
   declareTicket: 'Déclarer un ticket',
-  workflow: 'Comportement si cette action ne correspond pas :',
+  workflow: 'Comportement si le pattern ne matche pas :',
   workflowInCaseOfSuccess: 'Comportement en cas de succès',
   workflowInCaseOfFailure: 'Comportement en cas d\'échec',
   caseFailure: 'En cas d\'échec',
