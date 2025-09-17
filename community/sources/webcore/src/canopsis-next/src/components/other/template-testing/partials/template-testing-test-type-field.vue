@@ -6,6 +6,7 @@
     :name="name"
     :clearable="clearable"
     :required="required"
+    :disabled="disabled"
   />
 </template>
 
@@ -36,6 +37,10 @@ export default {
       default: 'type',
     },
     required: {
+      type: Boolean,
+      default: false,
+    },
+    disabled: {
       type: Boolean,
       default: false,
     },

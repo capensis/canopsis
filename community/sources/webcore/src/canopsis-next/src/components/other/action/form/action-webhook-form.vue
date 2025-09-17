@@ -3,17 +3,20 @@
     <request-form
       v-field="webhook.request"
       :name="`${name}.request`"
-      :headers-variables="payloadVariables"
-      :payload-variables="payloadVariables"
-      :url-variables="payloadVariables"
+      :url-variables="templateVars[webhookTemplateVarsKey]"
+      :headers-variables="templateVars[webhookTemplateVarsKey]"
+      :payload-variables="templateVars[webhookTemplateVarsKey]"
     />
-    <declare-ticket-rule-ticket-mapping-field v-field="webhook" with-ticket-system-name />
+    <declare-ticket-rule-ticket-mapping-field
+      v-field="webhook"
+      :template-vars="templateVars.ticket"
+      with-ticket-system-name
+    />
   </v-layout>
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
+import { computed } from 'vue';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
 import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
@@ -21,10 +24,6 @@ import DeclareTicketRuleTicketMappingField from '@/components/other/declare-tick
 export default {
   inject: ['$validator'],
   components: { DeclareTicketRuleTicketMappingField, RequestForm },
-  mixins: [
-    formMixin,
-    payloadVariablesMixin,
-  ],
   model: {
     prop: 'webhook',
     event: 'input',
@@ -38,21 +37,21 @@ export default {
       type: String,
       required: true,
     },
-  },
-  computed: {
-    payloadVariables() {
-      const variables = [
-        ...this.alarmPayloadVariables,
-      ];
-
-      if (this.hasPrevious) {
-        variables.push(...this.payloadVariablesFromPreviousStep);
-      }
-
-      variables.push(...this.additionalDataVariables);
-
-      return variables;
+    hasPreviousWebhook: {
+      type: Boolean,
+      default: false,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  setup(props) {
+    const webhookTemplateVarsKey = computed(() => (props.hasPreviousWebhook ? 'webhook' : 'first_webhook'));
+
+    return {
+      webhookTemplateVarsKey,
+    };
   },
 };
 </script>

@@ -38,9 +38,10 @@
     />
     <c-patterns-field
       v-field="form.patterns"
-      with-entity
+      :some-required="!isChangeEntityType"
+      :required="isChangeEntityType"
+      :with-entity="!isChangeEntityType"
       with-event
-      some-required
       entity-counters-type
     />
     <template v-if="hasAdditionalOptions">
