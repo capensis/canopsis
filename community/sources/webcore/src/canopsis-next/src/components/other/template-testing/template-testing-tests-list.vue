@@ -18,8 +18,8 @@
         />
       </div>
     </template>
-    <template #rule_type="{ item }">
-      <span>{{ $tc(`templateTesting.testTypes.${item.rule_type}`) }}</span>
+    <template #type="{ item }">
+      <span>{{ $tc(`templateTesting.testTypes.${item.type}`) }}</span>
     </template>
     <template #actions="{ item }">
       <c-action-btn
@@ -81,11 +81,11 @@ export default {
       },
       {
         text: t('common.ruleType'),
-        value: 'rule_type',
+        value: 'type',
       },
       {
         text: t('common.ruleName'),
-        value: 'rule_name',
+        value: 'rule.name',
       },
       {
         text: t('common.description'),

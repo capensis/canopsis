@@ -17,7 +17,7 @@
           v-field="action.emit_trigger"
           :label="$t('common.emitTrigger')"
         />
-        <action-author-field v-model="parameters" />
+        <action-author-field v-model="parameters" :variables="templateVars.author" />
       </v-flex>
       <v-flex
         v-if="isWebhookActionType"
@@ -69,6 +69,7 @@
           :name="`${name}.parameters`"
           :type="action.type"
           :has-previous-webhook="hasPreviousWebhook"
+          :template-vars="templateVars"
           class="mt-4"
         />
       </v-tab-item>
@@ -130,6 +131,10 @@ export default {
     hasPreviousWebhook: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
