@@ -203,6 +203,10 @@ func (p *rpcMessageProcessor) sendEventToAction(
 		return
 	}
 
+	if !event.Parameters.IsLastWebhook {
+		return
+	}
+
 	body, err := p.Encoder.Encode(rpc.AxeResultEvent{
 		Alarm:           &alarm,
 		AlarmChangeType: alarmChange.Type,
