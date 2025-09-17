@@ -98,6 +98,9 @@ definitions:
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
+      multiple_urls:
+        description: MultipleURLs is used in webhook action.
+        type: boolean
       name:
         description: Name is used in pbehavior action.
         maxLength: 255
@@ -131,6 +134,12 @@ definitions:
             * `2` - Major
             * `3` - Critical
         type: integer
+      stop_on_fail:
+        description: StopOnFail is used in webhook action.
+        type: boolean
+      stop_on_success:
+        description: StopOnSuccess is used in webhook action.
+        type: boolean
       ticket:
         description: Ticket is used in assocticket action.
         maxLength: 255
@@ -5284,6 +5293,8 @@ definitions:
         description: Snooze and Pbehavior
       forward_author:
         type: boolean
+      multiple_urls:
+        type: boolean
       name:
         description: Pbehavior
         type: string
@@ -5305,6 +5316,10 @@ definitions:
       state:
         description: ChangeState
         type: integer
+      stop_on_fail:
+        type: boolean
+      stop_on_success:
+        type: boolean
       ticket:
         description: AssocTicket
         type: string
