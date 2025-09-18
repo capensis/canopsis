@@ -1,44 +1,43 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
-      <span>{{ title }}</span>
-    </template>
-    <template #text="">
-      <template-testing-test-variables-wrapper
-        v-field="form"
-        :is-new="isNew"
-        :type="type"
-      >
-        <template #default="{ templateVars }">
-          <v-form>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <template-testing-test-variables-wrapper
+          v-field="form"
+          :is-new="isNew"
+          :type="type"
+        >
+          <template #default="{ templateVars }">
             <dynamic-info-form
               v-model="form"
               :is-disabled-id-field="isDisabledIdField"
               :template-vars="templateVars"
             />
-          </v-form>
-        </template>
-      </template-testing-test-variables-wrapper>
-    </template>
-    <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="$modals.hide"
-      >
-        {{ $t('common.cancel') }}
-      </v-btn>
-      <v-btn
-        :disabled="isDisabled"
-        :loading="submitting"
-        class="primary"
-        type="submit"
-        @click="submit"
-      >
-        {{ $t('common.submit') }}
-      </v-btn>
-    </template>
-  </modal-wrapper>
+          </template>
+        </template-testing-test-variables-wrapper>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>

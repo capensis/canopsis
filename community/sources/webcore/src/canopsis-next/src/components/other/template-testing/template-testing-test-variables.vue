@@ -325,13 +325,20 @@ export default {
     };
 
     const afterSubmit = async (rule) => {
+      /**
+       * Capture the translation string before the component is destroyed
+       * vue-i18n provides a proxy object that is destroyed when the component is destroyed
+       * so we need to capture the translation string before the component is destroyed
+       */
+      const testSavedMessage = t('templateTesting.testSaved');
+
       if (rule) {
         templateTestRequestData.rule = rule._id;
       }
 
       await createTemplateTest({ data: templateTestRequestData });
 
-      popups.success({ text: t('templateTesting.testSaved') });
+      popups.success({ text: testSavedMessage });
     };
 
     const updateSelectedTest = (newSelectedTest) => {
