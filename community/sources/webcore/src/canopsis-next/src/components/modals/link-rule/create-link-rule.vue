@@ -1,33 +1,34 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
-      <span>{{ title }}</span>
-    </template>
-    <template #text="">
-      <link-rule-form
-        v-model="form"
-        :rule-id="config.linkRule?._id"
-      />
-    </template>
-    <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="$modals.hide"
-      >
-        {{ $t('common.cancel') }}
-      </v-btn>
-      <v-btn
-        :disabled="isDisabled"
-        :loading="submitting"
-        class="primary"
-        type="submit"
-        @click="submit"
-      >
-        {{ $t('common.submit') }}
-      </v-btn>
-    </template>
-  </modal-wrapper>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <link-rule-form
+          v-model="form"
+          :rule-id="config.linkRule?._id"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -76,9 +77,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(formToLinkRule(form.value));
+        const linkRule = await config.value.action?.(formToLinkRule(form.value));
 
         close();
+
+        return linkRule;
       },
     });
 

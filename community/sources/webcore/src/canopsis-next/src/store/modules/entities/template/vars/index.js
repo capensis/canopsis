@@ -67,7 +67,7 @@ export default {
     },
 
     fetchDeclareTicketRulesVarsWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.templateVarsSpecific.declareTicketRules, { params });
+      return request.get(API_ROUTES.templateVarsSpecificCat.declareTicketRules, { params });
     },
 
     fetchDynamicInfosVarsWithoutStore(context, { params } = {}) {

@@ -26,7 +26,7 @@ export default {
     },
 
     validateDeclareTicketRules(context, { data }) {
-      return request.post(API_ROUTES.templateValidation.declareTicketRules, data);
+      return request.post(API_ROUTES.templateValidationCat.declareTicketRules, data);
     },
 
     validateDynamicInfos(context, { data }) {

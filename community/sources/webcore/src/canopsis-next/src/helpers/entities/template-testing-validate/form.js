@@ -310,63 +310,56 @@ export const convertWidgetToTemplateTestingTestValidateForm = (form = {}) => {
 export const convertDeclareTicketRuleToTemplateTestingTestValidateForm = (form = {}) => {
   const result = [];
 
-  if (form.webhooks) {
-    form.webhooks.forEach((webhook, index) => {
-      if (webhook.request) {
-        if (webhook.request.url) {
-          result.push({
-            key: `webhooks.${index}.request.url`,
-            textKey: 'templateTesting.webhookUrl',
-            textArgs: { number: index + 1 },
-            templateVarsKey: 'webhook',
-          });
-        }
+  form.webhooks.forEach((webhook, index) => {
+    const templateVarsKey = !index ? 'first_webhook' : 'webhook';
 
-        if (webhook.request.payload) {
-          result.push({
-            key: `webhooks.${index}.request.payload`,
-            textKey: 'templateTesting.webhookPayload',
-            textArgs: { number: index + 1 },
-            textarea: true,
-            templateVarsKey: 'webhook',
-          });
-        }
+    result.push({
+      templateVarsKey,
 
-        if (webhook.request.headers) {
-          Object.keys(webhook.request.headers).forEach((headerKey) => {
-            result.push({
-              key: `webhooks.${index}.request.headers.${headerKey}`,
-              textKey: 'templateTesting.webhookHeader',
-              textArgs: { number: index + 1, header: headerKey },
-              templateVarsKey: 'webhook',
-            });
-          });
-        }
-      }
+      key: `webhooks.${index}.request.url`,
+      textKey: 'templateTesting.webhookUrl',
+      textArgs: { number: index + 1 },
+    }, {
+      templateVarsKey,
 
-      if (webhook.declare_ticket && webhook.declare_ticket.enabled) {
-        if (webhook.declare_ticket.ticket_id) {
-          result.push({
-            key: `webhooks.${index}.declare_ticket.ticket_id`,
-            textKey: 'templateTesting.ticketId',
-            textArgs: { number: index + 1 },
-            templateVarsKey: 'ticket',
-          });
-        }
-
-        if (webhook.declare_ticket.ticket_url) {
-          result.push({
-            key: `webhooks.${index}.declare_ticket.ticket_url`,
-            textKey: 'templateTesting.ticketUrl',
-            textArgs: { number: index + 1 },
-            templateVarsKey: 'ticket',
-          });
-        }
-      }
+      key: `webhooks.${index}.request.payload`,
+      textKey: 'templateTesting.webhookPayload',
+      textArgs: { number: index + 1 },
+      textarea: true,
     });
-  }
 
-  result.push(...convertExternalDataToTemplateTestingTestValidateForm(form.external_data));
+    Object.keys(webhook.request.headers).forEach((headerKey) => {
+      result.push({
+        templateVarsKey,
+
+        key: `webhooks.${index}.request.headers.${headerKey}`,
+        textKey: 'templateTesting.webhookHeader',
+        textArgs: { number: index + 1, header: headerKey },
+      });
+    });
+
+    if (!webhook.declare_ticket.enabled) {
+      return;
+    }
+
+    if (webhook.declare_ticket.ticket_id.template) {
+      result.push({
+        key: `webhooks.${index}.declare_ticket.ticket_id.value`,
+        textKey: 'templateTesting.ticketId',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'ticket',
+      });
+    }
+
+    if (webhook.declare_ticket.ticket_url.template) {
+      result.push({
+        key: `webhooks.${index}.declare_ticket.ticket_url.value`,
+        textKey: 'templateTesting.ticketUrl',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'ticket',
+      });
+    }
+  });
 
   return result;
 };
