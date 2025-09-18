@@ -1,7 +1,7 @@
 <template>
   <v-tabs
     slider-color="primary"
-    centered
+    fixed-tabs
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
@@ -11,10 +11,13 @@
     </v-tab>
     <v-tab>{{ $t('common.testQuery') }}</v-tab>
 
+    <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
+
     <v-tab-item eager>
       <declare-ticket-rule-general-form
         v-field="form"
         ref="general"
+        :template-vars="templateVars"
         class="mt-2"
       />
     </v-tab-item>
@@ -38,17 +41,45 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
+    <v-tab-item :disabled="isEmptyVariablesFields">
+      <template-testing-test-variables
+        :general-form="form"
+        :variables-fields="variablesFields"
+        :template-vars="templateVars"
+        :rule-id="ruleId"
+        :type="type"
+      />
+    </v-tab-item>
   </v-tabs>
 </template>
 
 <script>
+import { ref, toRef, watch, onMounted } from 'vue';
+
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
+import {
+  useTemplateVarsList,
+  useTestVariablesFields,
+} from '@/components/other/template-testing/hooks/template-test-variables-wrapper';
+
+import TemplateTestingTestVariables from '@/components/other/template-testing/template-testing-test-variables.vue';
+import TemplateTestingTestVariablesTab from '@/components/other/template-testing/template-testing-test-variables-tab.vue';
+
 import DeclareTicketRuleTestQuery from '../partials/declare-ticket-rule-test-query.vue';
 
 import DeclareTicketRuleGeneralForm from './declare-ticket-rule-general-form.vue';
 import DeclareTicketRulePatternsForm from './declare-ticket-rule-patterns-form.vue';
 
 export default {
-  components: { DeclareTicketRuleTestQuery, DeclareTicketRulePatternsForm, DeclareTicketRuleGeneralForm },
+  components: {
+    TemplateTestingTestVariables,
+    TemplateTestingTestVariablesTab,
+
+    DeclareTicketRuleTestQuery,
+    DeclareTicketRulePatternsForm,
+    DeclareTicketRuleGeneralForm,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -58,25 +89,56 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    templateVars: {
-      type: Object,
-      default: () => ({}),
+    ruleId: {
+      type: String,
+      required: false,
     },
   },
-  data() {
-    return {
-      hasGeneralError: false,
-      hasPatternsError: false,
-    };
-  },
-  mounted() {
-    this.$watch(() => this.$refs.general.hasAnyError, (value) => {
-      this.hasGeneralError = value;
+  setup(props, { emit }) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
+
+    const hasGeneralError = ref(false);
+    const hasPatternsError = ref(false);
+
+    const general = ref(null);
+    const patterns = ref(null);
+
+    const {
+      templateVars,
+      pending: templateVarsPending,
+      fetchList: fetchTemplateVarsList,
+    } = useTemplateVarsList({
+      type,
+      form: toRef(props, 'form'),
     });
 
-    this.$watch(() => this.$refs.patterns.hasAnyError, (value) => {
-      this.hasPatternsError = value;
+    const {
+      items: variablesFields,
+      isEmptyItems: isEmptyVariablesFields,
+    } = useTestVariablesFields(props, type, emit);
+
+    watch(() => general.value?.hasAnyError, value => hasGeneralError.value = value);
+    watch(() => patterns.value?.hasAnyError, value => hasPatternsError.value = value);
+
+    onMounted(() => {
+      fetchTemplateVarsList();
     });
+
+    return {
+      type,
+
+      hasGeneralError,
+      hasPatternsError,
+
+      general,
+      patterns,
+
+      variablesFields,
+      isEmptyVariablesFields,
+
+      templateVars,
+      templateVarsPending,
+    };
   },
 };
 </script>
