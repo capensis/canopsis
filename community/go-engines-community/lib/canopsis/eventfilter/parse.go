@@ -13,6 +13,7 @@ import (
 
 type ParsedRule struct {
 	ID           string
+	Description  string
 	Type         string
 	Config       ParsedRuleConfig
 	ExternalData []externaldata.ParsedRefParameters
@@ -73,8 +74,9 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 	parsedExternalData := externaldata.ParseRefParameters(rule.ExternalData, tplExecutor)
 
 	return ParsedRule{
-		ID:   rule.ID,
-		Type: rule.Type,
+		ID:          rule.ID,
+		Description: rule.Description,
+		Type:        rule.Type,
 		Config: ParsedRuleConfig{
 			Resource:      tplExecutor.Parse(rule.Config.Resource),
 			Component:     tplExecutor.Parse(rule.Config.Component),
@@ -98,7 +100,7 @@ func ParseRule(rule Rule, tplExecutor libtemplate.Executor) ParsedRule {
 }
 
 func ExecuteParsedTemplate(
-	ruleID string,
+	ruleID, ruleDesc string,
 	tplName string,
 	parsedTpl libtemplate.ParsedTemplate,
 	tplData any,
@@ -108,7 +110,7 @@ func ExecuteParsedTemplate(
 ) (string, error) {
 	if parsedTpl.Err != nil {
 		failReason := fmt.Sprintf("invalid template %q: %s", tplName, parsedTpl.Err)
-		failureService.Add(ruleID, FailureTypeInvalidTemplate, failReason, nil)
+		failureService.Add(ruleID, ruleDesc, FailureTypeInvalidTemplate, failReason, nil)
 		return "", parsedTpl.Err
 	}
 
@@ -116,7 +118,7 @@ func ExecuteParsedTemplate(
 		res, err := templateExecutor.ExecuteByTpl(parsedTpl.Tpl, tplData)
 		if err != nil {
 			failReason := fmt.Sprintf("cannot execute template %q for event: %s", tplName, err)
-			failureService.Add(ruleID, FailureTypeInvalidTemplate, failReason, event)
+			failureService.Add(ruleID, ruleDesc, FailureTypeInvalidTemplate, failReason, event)
 			return "", err
 		}
 

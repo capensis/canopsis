@@ -116,6 +116,8 @@ func NewActionLogger(
 		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
 		mongo.ExternalDataTableCollection:       ValueTypeExternalData,
 		mongo.EntityInfosPropertyCollection:     ValueTypeEntityInfosProperty,
+
+		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))
