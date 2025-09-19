@@ -104,6 +104,9 @@ var alarmVars = []tplVar{
 		PluralName: "lastCommentMessages",
 		Value:      "%var%.Value.LastComment.Message",
 	},
+}
+
+var alarmTplVars = []tplVar{
 	{
 		Name:       "infos",
 		PluralName: "infos",
@@ -122,6 +125,22 @@ var entityVars = []tplVar{
 		PluralName: "types",
 		Value:      "%var%.Type",
 	},
+}
+
+var entityCopyVars = []tplVar{
+	{
+		Name:       "infos",
+		PluralName: "infos",
+		Value:      "%var%.Infos.%infos_name%.Value",
+	},
+	{
+		Name:       "componentInfos",
+		PluralName: "componentInfos",
+		Value:      "%var%.ComponentInfos.%infos_name%.Value",
+	},
+}
+
+var entityTplVars = []tplVar{
 	{
 		Name:       "infos",
 		PluralName: "infos",
@@ -160,6 +179,17 @@ var eventVars = []tplVar{
 		PluralName: "outputs",
 		Value:      "%var%.Output",
 	},
+}
+
+var eventCopyVars = []tplVar{
+	{
+		Name:       "extraInfos",
+		PluralName: "extraInfos",
+		Value:      "%var%.ExtraInfos.%infos_name%",
+	},
+}
+
+var eventTplVars = []tplVar{
 	{
 		Name:       "extraInfos",
 		PluralName: "extraInfos",
@@ -231,58 +261,119 @@ func GetEnvVars(tplConfigProvider config.TemplateConfigProvider) []VarResponse {
 }
 
 func GetAlarmVars(prefixVar, suffixVar, alarmVar string, pluralName bool) []VarResponse {
-	res := make([]VarResponse, len(alarmVars))
-	for i, v := range alarmVars {
-		name := ""
-		if pluralName {
-			name = v.PluralName
-		} else {
-			name = v.Name
-		}
+	res := make([]VarResponse, 0, len(alarmVars)+len(alarmTplVars))
+	f := func(vars []tplVar) {
+		for _, v := range vars {
+			name := ""
+			if pluralName {
+				name = v.PluralName
+			} else {
+				name = v.Name
+			}
 
-		res[i] = VarResponse{
-			Name:  name,
-			Value: prefixVar + strings.Replace(v.Value, "%var%", alarmVar, 1) + suffixVar,
+			res = append(res, VarResponse{
+				Name:  name,
+				Value: prefixVar + strings.Replace(v.Value, "%var%", alarmVar, 1) + suffixVar,
+			})
 		}
 	}
+
+	f(alarmVars)
+	f(alarmTplVars)
 
 	return res
 }
 
 func GetEntityVars(prefixVar, suffixVar, entityVar string, pluralName bool) []VarResponse {
-	res := make([]VarResponse, len(entityVars))
-	for i, v := range entityVars {
-		name := ""
-		if pluralName {
-			name = v.PluralName
-		} else {
-			name = v.Name
-		}
+	res := make([]VarResponse, 0, len(entityVars)+len(entityTplVars))
+	f := func(vars []tplVar) {
+		for _, v := range vars {
+			name := ""
+			if pluralName {
+				name = v.PluralName
+			} else {
+				name = v.Name
+			}
 
+			res = append(res, VarResponse{
+				Name:  name,
+				Value: prefixVar + strings.Replace(v.Value, "%var%", entityVar, 1) + suffixVar,
+			})
+		}
+	}
+
+	f(entityVars)
+	f(entityTplVars)
+
+	return res
+}
+
+func GetEventVars(prefixVar, suffixVar, eventVar string, pluralName bool) []VarResponse {
+	res := make([]VarResponse, 0, len(eventVars)+len(eventTplVars))
+	f := func(vars []tplVar) {
+		for _, v := range vars {
+			name := ""
+			if pluralName {
+				name = v.PluralName
+			} else {
+				name = v.Name
+			}
+
+			res = append(res, VarResponse{
+				Name:  name,
+				Value: prefixVar + strings.Replace(v.Value, "%var%", eventVar, 1) + suffixVar,
+			})
+		}
+	}
+
+	f(eventVars)
+	f(eventTplVars)
+
+	return res
+}
+
+func GetAlarmCopyVars(alarmVar string) []VarResponse {
+	res := make([]VarResponse, len(alarmVars))
+	for i, v := range alarmVars {
 		res[i] = VarResponse{
-			Name:  name,
-			Value: prefixVar + strings.Replace(v.Value, "%var%", entityVar, 1) + suffixVar,
+			Name:  v.Name,
+			Value: strings.Replace(v.Value, "%var%", alarmVar, 1),
 		}
 	}
 
 	return res
 }
 
-func GetEventVars(prefixVar, suffixVar, eventVar string, pluralName bool) []VarResponse {
-	res := make([]VarResponse, len(eventVars))
-	for i, v := range eventVars {
-		name := ""
-		if pluralName {
-			name = v.PluralName
-		} else {
-			name = v.Name
-		}
-
-		res[i] = VarResponse{
-			Name:  name,
-			Value: prefixVar + strings.Replace(v.Value, "%var%", eventVar, 1) + suffixVar,
+func GetEntityCopyVars(entityVar string) []VarResponse {
+	res := make([]VarResponse, 0, len(entityVars)+len(entityCopyVars))
+	f := func(vars []tplVar) {
+		for _, v := range vars {
+			res = append(res, VarResponse{
+				Name:  v.Name,
+				Value: strings.Replace(v.Value, "%var%", entityVar, 1),
+			})
 		}
 	}
+
+	f(entityVars)
+	f(entityCopyVars)
+
+	return res
+}
+
+func GetEventCopyVars(eventVar string) []VarResponse {
+	res := make([]VarResponse, 0, len(eventVars)+len(eventCopyVars))
+	f := func(vars []tplVar) {
+		for _, v := range vars {
+			res = append(res, VarResponse{
+				Name:  v.Name,
+				Value: strings.Replace(v.Value, "%var%", eventVar, 1),
+			})
+		}
+	}
+
+	f(eventVars)
+	f(eventCopyVars)
 
 	return res
 }
