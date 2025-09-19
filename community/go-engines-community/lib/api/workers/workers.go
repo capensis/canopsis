@@ -58,6 +58,12 @@ type Runner struct {
 }
 
 func (r *Runner) Run(ctx context.Context) error {
+	// check if queue exists because Consume method doesn't return appropriate error
+	_, err := r.amqpConsumer.QueueInspect(r.queue)
+	if err != nil {
+		return err
+	}
+
 	ch, err := r.amqpConsumer.Consume(r.queue, "", false, false, false, false, nil)
 	if err != nil {
 		return fmt.Errorf("failed to consume jobs: %w", err)

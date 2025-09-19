@@ -116,8 +116,11 @@ func NewActionLogger(
 		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
 		mongo.ExternalDataTableCollection:       ValueTypeExternalData,
 		mongo.EntityInfosPropertyCollection:     ValueTypeEntityInfosProperty,
-		mongo.TemplateTestDataCollection:        ValueTypeTplTestData,
-		mongo.TemplateTestCollection:            ValueTypeTplTest,
+
+		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
+
+		mongo.TemplateTestDataCollection: ValueTypeTplTestData,
+		mongo.TemplateTestCollection:     ValueTypeTplTest,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))

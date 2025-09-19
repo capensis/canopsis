@@ -25,6 +25,7 @@ import (
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -56,6 +57,7 @@ type store struct {
 	dbTplTestCollection     mongo.DbCollection
 	transformer             common.PatternFieldsTransformer
 	authorProvider          author.Provider
+	notificationStore       usernotification.Store
 	tplValidator            validator.Validator
 	tplExecutor             libtemplate.Executor
 	tplConfigProvider       config.TemplateConfigProvider
@@ -72,6 +74,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
 	transformer common.PatternFieldsTransformer,
+	notificationStore usernotification.Store,
 	tplValidator validator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
@@ -97,6 +100,7 @@ func NewStore(
 		dbTplTestCollection:     dbClient.Collection(mongo.TemplateTestCollection),
 		transformer:             transformer,
 		authorProvider:          authorProvider,
+		notificationStore:       notificationStore,
 		tplValidator:            tplValidator,
 		tplConfigProvider:       tplConfigProvider,
 		tplExecutor:             tplExecutor,
@@ -184,9 +188,18 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
+	andCond := make([]bson.M, 0)
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
+		andCond = append(andCond, filter)
+	}
+
+	if query.OnlyUnreadFailure {
+		andCond = append(andCond, bson.M{"unread_failures_count": bson.M{"$gt": 0}})
+	}
+
+	if len(andCond) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": andCond}})
 	}
 
 	sort := common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
@@ -321,8 +334,16 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 
 		return err
 	})
+	if err != nil || deleted == 0 {
+		return false, err
+	}
 
-	return deleted > 0, err
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error) {
@@ -389,11 +410,22 @@ func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
 		_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": id, "unread": true}, bson.M{"$unset": bson.M{
 			"unread": "",
 		}})
+		if err != nil {
+			return err
+		}
 
-		return err
+		return nil
 	})
+	if err != nil || !ruleExists {
+		return false, err
+	}
 
-	return ruleExists, err
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {

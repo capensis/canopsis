@@ -22,6 +22,7 @@ func (f *Flags) ParseArgs() {
 	flag.DurationVar(&f.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.DurationVar(&f.IntegrationPeriodicalWaitTime, "integrationPeriodicalWaitTime", 5*time.Second, "Duration to periodically check results of engines' tasks")
 	flag.DurationVar(&f.EntityCategoryMetaPeriodicalWaitTime, "entityCategoryMetaPeriodicalWaitTime", time.Minute, "Duration to wait between two run of periodical process to update entity category meta")
+	flag.DurationVar(&f.InstructionRateNotificationPeriodicalWaitTime, "instructionRateNotificationPeriodicalWaitTime", time.Hour, "Duration to check instructions and create rate notifications")
 	flag.DurationVar(&f.StateSettingRecomputeDelay, "stateSettingRecomputeDelay", time.Second, "Minimum duration to wait before send recompute event for services and components")
 	flag.BoolVar(&f.EnableSameServiceNames, "enableSameServiceNames", false, "Enable same service names, services have unique names by default")
 	flag.DurationVar(&f.ExternalDataAPITimeout, "externalDataAPITimeout", 30*time.Second, "External API HTTP Request Timeout.")
@@ -38,9 +39,10 @@ type Flags struct {
 	SecureSession bool
 	EnableDocs    bool
 
-	PeriodicalWaitTime                   time.Duration
-	IntegrationPeriodicalWaitTime        time.Duration
-	EntityCategoryMetaPeriodicalWaitTime time.Duration
+	PeriodicalWaitTime                            time.Duration
+	IntegrationPeriodicalWaitTime                 time.Duration
+	EntityCategoryMetaPeriodicalWaitTime          time.Duration
+	InstructionRateNotificationPeriodicalWaitTime time.Duration
 
 	StateSettingRecomputeDelay time.Duration
 
