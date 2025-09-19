@@ -49,7 +49,7 @@ export default {
   instructionJobPayload: 'Charge utile de travail d\'instruction - {number}',
   operationDescription: 'Description de l\'opération - Étape {step}, Opération {operation}',
   jobPayload: 'Charge utile de travail',
-  jobQueryValue: 'Valeur de requête de travail - {field}',
+  jobQueryValue: 'Valeur de requête de travail - {number}',
   metaAlarmOutputTemplate: 'Modèle de sortie de méta-alarme',
   metaAlarmComponentTemplate: 'Modèle de composant de méta-alarme',
   metaAlarmResourceTemplate: 'Modèle de ressource de méta-alarme',

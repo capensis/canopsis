@@ -46,20 +46,18 @@
 import { computed, ref } from 'vue';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import {
-  formToRemediationInstruction,
+  formToRemediationInstructionRequest,
   remediationInstructionErrorsToForm,
-  remediationInstructionToForm,
+  remediationInstructionToFullForm,
 } from '@/helpers/entities/remediation/instruction/form';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
-import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 import { useAuth } from '@/hooks/auth';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
@@ -91,20 +89,9 @@ export default {
 
     const { config, close } = useInnerModal(props);
     const { t } = useI18n();
-    const { setFormErrors } = useValidationFormErrors();
     const { currentUser } = useAuth();
 
-    const form = ref({
-      ...remediationInstructionToForm(config.value.remediationInstruction),
-      patterns: {
-        ...filterPatternsToForm(
-          config.value.remediationInstruction,
-          [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-        ),
-        active_on_pbh: config.value.remediationInstruction?.active_on_pbh ?? [],
-        disabled_on_pbh: config.value.remediationInstruction?.disabled_on_pbh ?? [],
-      },
-    });
+    const form = ref(remediationInstructionToFullForm(config.value.remediationInstruction));
 
     const title = computed(() => config.value.title || t('modals.createRemediationInstruction.create.title'));
     const disabled = computed(() => config.value.disabled);
@@ -124,19 +111,13 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        try {
-          await config.value.action?.({
-            ...formToRemediationInstruction(form.value),
-            ...formFilterToPatterns(form.value.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
-            active_on_pbh: form.value.patterns.active_on_pbh,
-            disabled_on_pbh: form.value.patterns.disabled_on_pbh,
-          });
+        const data = await config.value.action?.(formToRemediationInstructionRequest(form.value));
 
-          close();
-        } catch (err) {
-          setFormErrors(remediationInstructionErrorsToForm(err, form.value));
-        }
+        close();
+
+        return data;
       },
+      errorsToValidation: err => remediationInstructionErrorsToForm(err, form.value),
     });
 
     useFormConfirmableCloseModal({ form, submit, close });

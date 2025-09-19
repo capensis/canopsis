@@ -39,8 +39,8 @@
           v-field="form.payload"
           :label="$t('common.payload')"
           :help-text="$t('remediation.job.payloadHelp')"
+          :variables="templateVars.payload"
           name="payload"
-          variables
         />
         <c-action-btn
           :tooltip="$t('remediation.job.deletePayload')"
@@ -57,6 +57,7 @@
       :title="$t('remediation.job.query')"
       :text-label="$t('common.field')"
       :value-label="$t('common.value')"
+      :variables="templateVars.payload"
       name="query"
       text-required
     />
@@ -92,6 +93,10 @@ export default {
     withQuery: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {

@@ -1,6 +1,7 @@
 import { isUndefined, omit, pick, cloneDeep } from 'lodash';
 
 import {
+  PATTERNS_FIELDS,
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,
   REMEDIATION_INSTRUCTION_STATUSES,
   REMEDIATION_INSTRUCTION_TYPES,
@@ -11,6 +12,7 @@ import {
 import { uuid } from '@/helpers/uuid';
 import { durationToForm } from '@/helpers/date/duration';
 import { flattenErrorMap } from '@/helpers/entities/shared/form';
+import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 /**
  * @typedef {
@@ -126,6 +128,21 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
  * @property {string} [user]
  * @property {string} [role]
  * @property {string} comment
+ */
+
+/**
+ * @typedef {RemediationInstruction} RemediationInstructionFull
+ * @property {string[]} [active_on_pbh] - Array of pbehavior IDs when the instruction should be active
+ * @property {string[]} [disabled_on_pbh] - Array of pbehavior IDs when the instruction should be disabled
+ */
+
+/**
+ * @typedef {RemediationInstructionForm} RemediationInstructionFullForm
+ * @property {FilterPatternsForm & { active_on_pbh: string[], disabled_on_pbh: string[] }} patterns - Pattern form data
+ * @property {PatternGroupsForm} [patterns.alarm_pattern] - Alarm pattern form data
+ * @property {PatternGroupsForm} [patterns.entity_pattern] - Entity pattern form data
+ * @property {string[]} patterns.active_on_pbh - Array of pbehavior IDs when the instruction should be active
+ * @property {string[]} patterns.disabled_on_pbh - Array of pbehavior IDs when the instruction should be disabled
  */
 
 /**
@@ -309,6 +326,22 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => {
 };
 
 /**
+ * Convert a remediation instruction object to a complete form object including patterns
+ *
+ * @param {RemediationInstructionFull} [remediationInstruction={}] - The remediation instruction object
+ * @returns {RemediationInstructionFullForm} Complete form object with patterns
+ */
+export const remediationInstructionToFullForm = (remediationInstruction = {}) => ({
+  ...remediationInstructionToForm(remediationInstruction),
+  patterns: {
+    ...filterPatternsToForm(remediationInstruction, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+
+    active_on_pbh: remediationInstruction?.active_on_pbh ?? [],
+    disabled_on_pbh: remediationInstruction?.disabled_on_pbh ?? [],
+  },
+});
+
+/**
  * Convert a remediation instruction step operations form array to a API compatible operation array
  *
  * @param {RemediationInstructionJobForm[]} jobs
@@ -416,4 +449,18 @@ export const remediationInstructionErrorsToForm = (errors, form) => flattenError
   }
 
   return errorMessages;
+});
+
+/**
+ * Convert a remediation instruction form object to an API request compatible object
+ *
+ * @param {RemediationInstructionFullForm} [form={}] - The form object containing the full remediation instruction data
+ * @returns {RemediationInstructionFullForm} API-compatible remediation instruction object with patterns
+ */
+export const formToRemediationInstructionRequest = (form = {}) => ({
+  ...formToRemediationInstruction(form),
+  ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+
+  active_on_pbh: form.patterns?.active_on_pbh,
+  disabled_on_pbh: form.patterns?.disabled_on_pbh,
 });

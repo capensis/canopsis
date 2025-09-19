@@ -28,6 +28,7 @@
           :template="field.value"
           :title="$t(field.textKey, field.textArgs)"
           :textarea="field.textarea"
+          :json="field.json"
           :result="testResult[field.key]"
           :variables="templateVars[field.templateVarsKey]"
           :last-run-value="lastRunVariables[field.key]"

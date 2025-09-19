@@ -1,50 +1,49 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
-      <span>{{ title }}</span>
-    </template>
-    <template #text="">
-      <template-testing-test-variables-wrapper
-        v-field="form"
-        :is-new="isNew"
-        :type="type"
-      >
-        <template #default="{ templateVars }">
-          <v-form>
+  <v-form>
+    <modal-wrapper close>
+      <template #title="">
+        <span>{{ title }}</span>
+      </template>
+      <template #text="">
+        <template-testing-test-variables-wrapper
+          v-model="form"
+          :is-new="isNew"
+          :type="type"
+        >
+          <template #default="{ templateVars }">
             <remediation-job-form
               v-model="form"
               :with-payload="withPayload"
               :with-query="withQuery"
               :template-vars="templateVars"
             />
-          </v-form>
-        </template>
-      </template-testing-test-variables-wrapper>
-    </template>
-    <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="$modals.hide"
-      >
-        {{ $t('common.cancel') }}
-      </v-btn>
-      <v-btn
-        :disabled="isDisabled"
-        :loading="submitting"
-        class="primary"
-        type="submit"
-        @click="submit"
-      >
-        {{ $t('common.submit') }}
-      </v-btn>
-    </template>
-  </modal-wrapper>
+          </template>
+        </template-testing-test-variables-wrapper>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
+          type="submit"
+          @click="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-import { createNamespacedHelpers } from 'vuex';
+import { computed, ref, watch } from 'vue';
 
 import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
@@ -60,8 +59,6 @@ import RemediationJobForm from '@/components/other/remediation/jobs/form/remedia
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
-
-const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
 
 export default {
   name: MODALS.createRemediationJob,
@@ -92,20 +89,28 @@ export default {
     const isNew = computed(() => !config.value.remediationJob?._id);
     const title = computed(() => config.value.title ?? t('modals.createRemediationJob.create.title'));
 
+    const remediationJobConfigTypes = computed(() => store.getters['info/remediationJobConfigTypes']);
+    const remediationJobConfigType = computed(() => remediationJobConfigTypes.value.find(
+      ({ name }) => name === form.value.config.type,
+    ));
+
+    const withPayload = computed(() => remediationJobConfigType.value?.with_body);
+    const withQuery = computed(() => remediationJobConfigType.value?.with_query);
+
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        // Calculate remediationJobConfigType from store
-        const remediationJobConfigTypes = store.getters['info/remediationJobConfigTypes'];
-        const remediationJobConfigType = remediationJobConfigTypes.find(({ name }) => name === form.value.config.type);
-
-        await config.value.action?.(formToRemediationJob(form.value, remediationJobConfigType));
+        const data = await config.value.action?.(formToRemediationJob(form.value));
 
         close();
+
+        return data;
       },
     });
 
     useFormConfirmableCloseModal({ form, submit, close });
+
+    watch(remediationJobConfigType, newConfigType => form.value.configType = newConfigType, { immediate: true });
 
     return {
       form,
@@ -116,22 +121,9 @@ export default {
       isDisabled,
       submitting,
       submit,
+      withPayload,
+      withQuery,
     };
-  },
-  computed: {
-    ...mapInfoGetters(['remediationJobConfigTypes']),
-
-    remediationJobConfigType() {
-      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.config.type);
-    },
-
-    withPayload() {
-      return this.remediationJobConfigType?.with_body;
-    },
-
-    withQuery() {
-      return this.remediationJobConfigType?.with_query;
-    },
   },
 };
 </script>
