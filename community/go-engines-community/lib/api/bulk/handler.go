@@ -14,6 +14,14 @@ import (
 
 var ErrUnauthorized = errors.New("unauthorized")
 
+type BadRequestError struct {
+	Err error
+}
+
+func (v BadRequestError) Error() string {
+	return v.Err.Error()
+}
+
 func Handler[T any](
 	c *gin.Context,
 	f func(T) (string, error),
@@ -68,6 +76,12 @@ func Handler[T any](
 			valErr := common.ValidationError{}
 			if errors.As(err, &valErr) {
 				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&arena, valErr, request)))
+				continue
+			}
+
+			badRequestError := BadRequestError{}
+			if errors.As(err, &badRequestError) {
+				response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
 				continue
 			}
 
@@ -163,6 +177,12 @@ func HandlerWithGrouping[T any](
 				valErr := common.ValidationError{}
 				if errors.As(err, &valErr) {
 					response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, common.NewValidationErrorFastJsonValue(&arena, valErr, req)))
+					continue
+				}
+
+				badRequestError := BadRequestError{}
+				if errors.As(err, &badRequestError) {
+					response.SetArrayItem(idx, GetResponseItem(&arena, "", http.StatusBadRequest, rawObject, arena.NewString(err.Error())))
 					continue
 				}
 

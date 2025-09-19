@@ -3,7 +3,7 @@
     ref="tabs"
     :key="vTabsKey"
     :value="$route.fullPath"
-    :class="{ hidden: tabs.length < 2 && !editing, 'tabs-editing': editing }"
+    :class="{ hidden: tabs.length < 2 && !activeViewEditing, 'tabs-editing': activeViewEditing }"
     :hide-slider="changed"
     class="view-tabs"
     background-color="secondary lighten-2"
@@ -12,7 +12,7 @@
     <c-draggable-list-field
       v-if="tabs.length"
       :value="tabs"
-      :disabled="!editing"
+      :disabled="!activeViewEditing"
       class="d-flex"
       drag-class="draggable-item--dragging"
       chosen-class="draggable-item--chosen"
@@ -28,7 +28,7 @@
         ripple
       >
         <span>{{ title }}</span>
-        <template v-if="updatable && editing">
+        <template v-if="updatable && activeViewEditing">
           <v-btn
             :disabled="changed"
             class="ml-2"
@@ -143,7 +143,7 @@ export default {
     },
   },
   watch: {
-    editing() {
+    activeViewEditing() {
       this.$nextTick(this.callTabsOnResizeMethod);
     },
 
