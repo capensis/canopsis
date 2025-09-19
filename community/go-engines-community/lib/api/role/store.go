@@ -32,25 +32,27 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		dbClient:               dbClient,
-		dbCollection:           dbClient.Collection(mongo.RoleCollection),
-		dbPermissionCollection: dbClient.Collection(mongo.PermissionCollection),
-		dbUserCollection:       dbClient.Collection(mongo.UserCollection),
-		dbTemplateCollection:   dbClient.Collection(mongo.RoleTemplateCollection),
-		defaultSearchByFields:  []string{"_id", "name", "description"},
-		defaultSortBy:          "name",
-		authorProvider:         authorProvider,
+		dbClient:                 dbClient,
+		dbCollection:             dbClient.Collection(mongo.RoleCollection),
+		dbPermissionCollection:   dbClient.Collection(mongo.PermissionCollection),
+		dbUserCollection:         dbClient.Collection(mongo.UserCollection),
+		dbTemplateCollection:     dbClient.Collection(mongo.RoleTemplateCollection),
+		dbNotificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
+		defaultSearchByFields:    []string{"_id", "name", "description"},
+		defaultSortBy:            "name",
+		authorProvider:           authorProvider,
 	}
 }
 
 type store struct {
-	dbClient               mongo.DbClient
-	dbCollection           mongo.DbCollection
-	dbPermissionCollection mongo.DbCollection
-	dbUserCollection       mongo.DbCollection
-	dbTemplateCollection   mongo.DbCollection
-	defaultSearchByFields  []string
-	defaultSortBy          string
+	dbClient                 mongo.DbClient
+	dbCollection             mongo.DbCollection
+	dbPermissionCollection   mongo.DbCollection
+	dbUserCollection         mongo.DbCollection
+	dbTemplateCollection     mongo.DbCollection
+	dbNotificationCollection mongo.DbCollection
+	defaultSearchByFields    []string
+	defaultSortBy            string
 
 	authorProvider author.Provider
 }
@@ -94,7 +96,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
 			if r.WithFlags {
-				isNotAdmin := res.Data[i].Name != security.RoleAdmin
+				isNotAdmin := res.Data[i].ID != security.RoleAdmin
 				res.Data[i].Editable = &isNotAdmin
 				res.Data[i].Deletable = &isNotAdmin
 			}
@@ -192,7 +194,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 			return err
 		}
 
-		if oldRole.Name == security.RoleAdmin {
+		if oldRole.ID == security.RoleAdmin {
 			return common.NewValidationError("name", "Admin cannot be updated.")
 		}
 
@@ -242,7 +244,7 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 			return err
 		}
 
-		if oldRole.Name == security.RoleAdmin {
+		if oldRole.ID == security.RoleAdmin {
 			return common.NewValidationError("_id", "Admin cannot be updated.")
 		}
 
@@ -267,19 +269,15 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	if id == security.RoleAdmin {
+		return false, ErrDeleteAdminRole
+	}
+
 	var deleted int64
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": id, "name": security.RoleAdmin}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
-		}
 
-		if err == nil {
-			return ErrDeleteAdminRole
-		}
-
-		err = s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
+		err := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
 		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return cmp.Or(err, ErrLinkedToUser)
 		}
@@ -291,10 +289,26 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+
 		return err
 	})
+	if err != nil {
+		return false, err
+	}
 
-	return deleted > 0, err
+	_, err = s.dbNotificationCollection.DeleteMany(ctx, bson.M{
+		"roles": bson.A{id},
+	})
+	if err != nil {
+		return false, err
+	}
+
+	_, err = s.dbNotificationCollection.UpdateMany(ctx, bson.M{"roles": id}, bson.M{"$pull": bson.M{"roles": id}})
+	if err != nil {
+		return false, err
+	}
+
+	return deleted > 0, nil
 }
 
 func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
