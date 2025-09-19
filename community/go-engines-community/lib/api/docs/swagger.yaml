@@ -6807,6 +6807,23 @@ paths:
               schema:
                 type: string
                 format: binary
+  /eventfilter-copy-vars:
+    get:
+      tags:
+        - eventfilters
+      summary: Get available copy variables for event filter rules
+      description: |
+        Get available copy variables for event filter rules.
+        
+        -  PERMISSIONS: `api_eventfilter:read`
+      operationId: eventfilter-copy-vars
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/eventfilter.CopyVarsResponse'
   /eventfilter-template-vars:
     get:
       tags:
