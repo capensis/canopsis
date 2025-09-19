@@ -12,6 +12,7 @@ import {
  * @property {string} textKey
  * @property {Object} [textArgs]
  * @property {boolean} [textarea]
+ * @property {boolean} [json]
  * @property {string} [templateVarsKey]
  */
 
@@ -417,22 +418,22 @@ export const convertInstructionToTemplateTestingTestValidateForm = (form = {}) =
 export const convertJobToTemplateTestingTestValidateForm = (form = {}) => {
   const result = [];
 
-  if (form.payload) {
+  if (form.payload && form.configType?.with_body) {
     result.push({
       key: 'payload',
       textKey: 'templateTesting.jobPayload',
-      textarea: true,
-      templateVarsKey: 'job',
+      json: true,
+      templateVarsKey: 'payload',
     });
   }
 
-  if (form.query) {
-    Object.keys(form.query).forEach((queryKey) => {
+  if (form.configType?.with_query) {
+    form.query.forEach((_, index) => {
       result.push({
-        key: `query.${queryKey}`,
+        key: `query.${index}.value`,
         textKey: 'templateTesting.jobQueryValue',
-        textArgs: { field: queryKey },
-        templateVarsKey: 'job',
+        textArgs: { number: index + 1 },
+        templateVarsKey: 'payload',
       });
     });
   }

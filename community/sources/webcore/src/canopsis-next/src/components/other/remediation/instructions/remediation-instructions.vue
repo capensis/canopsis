@@ -105,7 +105,7 @@ export default {
           remediationInstruction: omit(remediationInstruction, ['_id']),
           title: this.$t('modals.createRemediationInstruction.duplicate.title'),
           action: async (instruction) => {
-            await this.createRemediationInstruction({ data: instruction });
+            const newRemediationInstruction = await this.createRemediationInstruction({ data: instruction });
 
             this.$popups.success({
               text: this.$t('modals.createRemediationInstruction.duplicate.popups.success', {
@@ -114,6 +114,8 @@ export default {
             });
 
             await this.fetchList();
+
+            return newRemediationInstruction;
           },
         },
       });

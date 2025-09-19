@@ -64,7 +64,7 @@ import { formToScenario } from '@/helpers/entities/scenario/form';
 import { formToWidget } from '@/helpers/entities/widget/form';
 import { formToDeclareTicketRule } from '@/helpers/entities/declare-ticket/rule/form';
 import { formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
-import { formToRemediationInstruction } from '@/helpers/entities/remediation/instruction/form';
+import { formToRemediationInstructionRequest } from '@/helpers/entities/remediation/instruction/form';
 import { formToRemediationJob } from '@/helpers/entities/remediation/job/form';
 import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
 import {
@@ -176,7 +176,7 @@ export default {
       [TEMPLATE_TESTING_TEST_TYPES.widget]: formToWidget,
       [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: formToDeclareTicketRule,
       [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: formToDynamicInfo,
-      [TEMPLATE_TESTING_TEST_TYPES.instruction]: formToRemediationInstruction,
+      [TEMPLATE_TESTING_TEST_TYPES.instruction]: formToRemediationInstructionRequest,
       [TEMPLATE_TESTING_TEST_TYPES.job]: formToRemediationJob,
       [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: formToMetaAlarmRule,
     })[props.type] ?? formToService);

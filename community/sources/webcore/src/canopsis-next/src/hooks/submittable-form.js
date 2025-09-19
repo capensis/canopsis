@@ -20,6 +20,7 @@ import { usePopups } from './popups';
  * @param {Object} options - Configuration options for the submittable form.
  * @param {Object} options.form - The form data object that will be validated.
  * @param {Function} options.method - The submission method to be called if the form is valid.
+ * @param {Function} [options.errorsToValidation = v => v] - The function to convert errors to validation errors.
  * @param {boolean} [options.withTimeout = false] - The property for timeout enabling.
  * @returns {Object} An object containing methods and properties to manage the form submission.
  * @example
@@ -36,7 +37,7 @@ import { usePopups } from './popups';
  *   </form>
  * </template>
  */
-export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
+export const useSubmittableForm = ({ form, method, errorsToValidation = v => v, withTimeout = true }) => {
   const popups = usePopups();
   const { validator, setFormErrors } = useValidationFormErrors(form);
   const { t } = useI18n();
@@ -55,7 +56,7 @@ export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
         await afterSubmitObserver.notify(data);
       }
     } catch (err) {
-      const wasSet = setFormErrors(err);
+      const wasSet = setFormErrors(errorsToValidation(err));
 
       if (!wasSet) {
         console.error(err);

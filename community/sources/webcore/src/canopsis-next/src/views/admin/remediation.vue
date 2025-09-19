@@ -187,7 +187,7 @@ export default {
         name: MODALS.createRemediationInstruction,
         config: {
           action: async (instruction) => {
-            await this.createRemediationInstruction({ data: instruction });
+            const newRemediationInstruction = await this.createRemediationInstruction({ data: instruction });
 
             this.$popups.success({
               text: this.$t('modals.createRemediationInstruction.create.popups.success', {
@@ -196,6 +196,8 @@ export default {
             });
 
             await this.fetchInstructionsList();
+
+            return newRemediationInstruction;
           },
         },
       });
@@ -225,7 +227,7 @@ export default {
         name: MODALS.createRemediationJob,
         config: {
           action: async (remediationJob) => {
-            await this.createRemediationJob({ data: remediationJob });
+            const newRemediationJob = await this.createRemediationJob({ data: remediationJob });
 
             this.$popups.success({
               text: this.$t('modals.createRemediationJob.create.popups.success', {
@@ -234,6 +236,8 @@ export default {
             });
 
             await this.fetchJobsList();
+
+            return newRemediationJob;
           },
         },
       });

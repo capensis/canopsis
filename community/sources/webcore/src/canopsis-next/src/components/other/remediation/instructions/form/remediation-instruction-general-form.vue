@@ -20,6 +20,7 @@
     <c-name-field
       v-field="form.name"
       :disabled="disabledCommon"
+      required
       autofocus
     />
     <v-text-field
