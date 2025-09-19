@@ -205,6 +205,8 @@ export const payloadFieldMixin = {
         this.hideVariablesMenu();
         this.resetVariableSelection();
       }, VUETIFY_ANIMATION_DELAY);
+
+      this.$emit('blur');
     },
   },
 };

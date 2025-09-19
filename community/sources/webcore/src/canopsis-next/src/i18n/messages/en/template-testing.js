@@ -54,7 +54,7 @@ export default {
   instructionJobPayload: 'Instruction job payload - {number}',
   operationDescription: 'Operation description - Step {step}, Operation {operation}',
   jobPayload: 'Job payload',
-  jobQueryValue: 'Job query value - {field}',
+  jobQueryValue: 'Job query value - {number}',
   metaAlarmOutputTemplate: 'Meta alarm output template',
   metaAlarmComponentTemplate: 'Meta alarm component template',
   metaAlarmResourceTemplate: 'Meta alarm resource template',
