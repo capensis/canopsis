@@ -39,7 +39,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.Resource.Text != "" {
-		resource, err := ExecuteParsedTemplate(rule.ID, "Resource", rule.Config.Resource,
+		resource, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Resource", rule.Config.Resource,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
@@ -49,7 +49,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.Component.Text != "" {
-		component, err := ExecuteParsedTemplate(rule.ID, "Component", rule.Config.Component,
+		component, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Component", rule.Config.Component,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
@@ -59,7 +59,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.Connector.Text != "" {
-		connector, err := ExecuteParsedTemplate(rule.ID, "Connector", rule.Config.Connector,
+		connector, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Connector", rule.Config.Connector,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
@@ -69,7 +69,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.ConnectorName.Text != "" {
-		connectorName, err := ExecuteParsedTemplate(rule.ID, "ConnectorName", rule.Config.ConnectorName,
+		connectorName, err := ExecuteParsedTemplate(rule.ID, rule.Description, "ConnectorName", rule.Config.ConnectorName,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return RuleResult{Outcome: OutcomeDrop}, err
