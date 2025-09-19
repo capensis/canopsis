@@ -1,6 +1,6 @@
 <template>
   <v-list-item class="text-subtitle-1">
-    <v-list-item-avatar v-if="!hideIcon">
+    <v-list-item-avatar v-if="!hideIcon && !multiline">
       <v-icon>{{ icon }}</v-icon>
     </v-list-item-avatar>
     <v-list-item-content>
@@ -30,6 +30,10 @@ export default {
       default: '',
     },
     hideIcon: {
+      type: Boolean,
+      default: false,
+    },
+    multiline: {
       type: Boolean,
       default: false,
     },

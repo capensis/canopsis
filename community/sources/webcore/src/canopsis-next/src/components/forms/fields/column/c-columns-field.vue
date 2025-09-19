@@ -20,6 +20,7 @@
           :with-simple-template="withSimpleTemplate"
           :without-infos-attributes="withoutInfosAttributes"
           :without-custom-label="withoutCustomLabel"
+          :with-filter-on-click="withFilterOnClick"
           :items="items"
           :variables="variables"
           :excluded-columns="excludedColumns"
@@ -111,6 +112,10 @@ export default {
       required: false,
     },
     withoutInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withFilterOnClick: {
       type: Boolean,
       default: false,
     },
