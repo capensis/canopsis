@@ -1,53 +1,45 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
-      {{ title }}
-    </template>
-    <template #text="">
-      <template-testing-test-variables-wrapper
-        v-field="form"
-        :is-new="isNew"
-        :type="type"
-      >
-        <template #default="{ templateVars }">
-          <v-form>
-            <remediation-instruction-approval-alert
-              v-if="hasApproval && isChangesByCurrentUser"
-              :user-name="alertUserName"
-              :comment="alertComment"
-              :dismissed="isChangesDismissed"
-              class="mb-3"
-            />
-            <remediation-instruction-form
-              v-model="form"
-              :disabled="disabled"
-              :is-new="isNew"
-              :required-approve="requiredInstructionApprove"
-              :template-vars="templateVars"
-            />
-          </v-form>
-        </template>
-      </template-testing-test-variables-wrapper>
-    </template>
-    <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="$modals.hide"
-      >
-        {{ $t('common.cancel') }}
-      </v-btn>
-      <v-btn
-        :disabled="isDisabled"
-        :loading="submitting"
-        class="primary"
-        type="submit"
-        @click="submit"
-      >
-        {{ $t('common.submit') }}
-      </v-btn>
-    </template>
-  </modal-wrapper>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        {{ title }}
+      </template>
+      <template #text="">
+        <remediation-instruction-approval-alert
+          v-if="hasApproval && isChangesByCurrentUser"
+          :user-name="alertUserName"
+          :comment="alertComment"
+          :dismissed="isChangesDismissed"
+          class="mb-3"
+        />
+        <remediation-instruction-form
+          v-model="form"
+          :disabled="disabled"
+          :is-new="isNew"
+          :required-approve="requiredInstructionApprove"
+          :rule-id="config.remediationInstruction?._id"
+        />
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
+          type="submit"
+          @click="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -72,7 +64,6 @@ import { useAuth } from '@/hooks/auth';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -88,7 +79,6 @@ export default {
     ModalWrapper,
     RemediationInstructionForm,
     RemediationInstructionApprovalAlert,
-    TemplateTestingTestVariablesWrapper,
   },
   props: {
     modal: {

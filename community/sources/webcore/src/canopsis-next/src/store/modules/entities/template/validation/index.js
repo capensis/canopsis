@@ -30,15 +30,15 @@ export default {
     },
 
     validateDynamicInfos(context, { data }) {
-      return request.post(API_ROUTES.templateValidation.dynamicInfos, data);
+      return request.post(API_ROUTES.templateValidationCat.dynamicInfos, data);
     },
 
     validateInstructions(context, { data }) {
-      return request.post(API_ROUTES.templateValidation.instructions, data);
+      return request.post(API_ROUTES.templateValidationCat.instructions, data);
     },
 
     validateJobs(context, { data }) {
-      return request.post(API_ROUTES.templateValidation.jobs, data);
+      return request.post(API_ROUTES.templateValidationCat.jobs, data);
     },
 
     validateMetaAlarmRules(context, { data }) {

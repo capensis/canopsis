@@ -71,15 +71,15 @@ export default {
     },
 
     fetchDynamicInfosVarsWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.templateVarsSpecific.dynamicInfos, { params });
+      return request.get(API_ROUTES.templateVarsSpecificCat.dynamicInfos, { params });
     },
 
     fetchInstructionsVarsWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.templateVarsSpecific.instructions, { params });
+      return request.get(API_ROUTES.templateVarsSpecificCat.instructions, { params });
     },
 
     fetchJobsVarsWithoutStore(context, { params } = {}) {
-      return request.get(API_ROUTES.templateVarsSpecific.jobs, { params });
+      return request.get(API_ROUTES.templateVarsSpecificCat.jobs, { params });
     },
 
     fetchMetaAlarmRulesVarsWithoutStore(context, { params } = {}) {
