@@ -95,7 +95,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 			}
 
-			s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
+			s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
 			continue
 		}
 
