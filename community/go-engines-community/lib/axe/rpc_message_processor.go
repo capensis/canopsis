@@ -37,37 +37,6 @@ func (p *rpcMessageProcessor) Process(ctx context.Context, d amqp.Delivery) ([]b
 	}
 
 	alarm := event.Alarm
-
-	if alarm.IsResolved() {
-		switch event.EventType {
-		case types.EventTypeAutoWebhookStarted:
-			/*do nothing*/
-		case types.EventTypeAutoWebhookCompleted,
-			types.EventTypeAutoWebhookFailed:
-			body, err := p.Encoder.Encode(rpc.AxeResultEvent{
-				Alarm: alarm,
-			})
-			if err != nil {
-				p.logError(err, "RPC Message Processor: failed to encode rpc call to engine-action", msg)
-				return nil, nil
-			}
-
-			err = p.ActionRpc.Call(ctx, engine.RPCMessage{
-				CorrelationID: d.CorrelationId,
-				Body:          body,
-			})
-			if err != nil {
-				p.logError(err, "RPC Message Processor: failed to send rpc call to engine-action", msg)
-			}
-
-			return nil, nil
-		default:
-			p.logError(err, "RPC Message Processor: cannot update resolved alarm", msg)
-
-			return p.getErrRpcEvent(errors.New("cannot update resolved alarm"), alarm), nil
-		}
-	}
-
 	ok, resEvent, err := p.processPbehaviorEvent(ctx, event, d)
 	if ok || err != nil {
 		return resEvent, err
@@ -200,6 +169,10 @@ func (p *rpcMessageProcessor) sendEventToAction(
 	case types.EventTypeAutoWebhookCompleted,
 		types.EventTypeAutoWebhookFailed:
 	default:
+		return
+	}
+
+	if !event.Parameters.IsLastWebhook {
 		return
 	}
 

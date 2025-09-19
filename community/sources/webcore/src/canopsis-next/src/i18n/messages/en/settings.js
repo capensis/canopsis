@@ -47,6 +47,7 @@ export default {
   treeOfDependenciesSettings: 'Tree of dependencies settings',
   orderBy: 'Order by',
   periodicRefresh: 'Periodic refresh',
+  pausePeriodicRefreshOnExpandPanel: 'Pause periodic refresh when expand panel is open',
   defaultNumberOfElementsPerPage: 'Default number of elements/page',
   elementsPerPage: 'Elements per page',
   filterOnOpenResolved: 'Filter on Open/Resolved',
@@ -172,6 +173,7 @@ export default {
     inlineLinksCount: 'Inline links count',
     linksInRowCount: 'Count of links in row',
     linksInRowCountTooltip: 'This count of links always will be displayed in the one row includes more links (`...`) button',
+    filterOnClick: 'Filter on click',
   },
   liveReporting: {
     title: 'Live reporting',
