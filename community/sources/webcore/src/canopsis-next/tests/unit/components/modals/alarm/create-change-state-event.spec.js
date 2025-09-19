@@ -15,7 +15,7 @@ import CreateChangeStateEvent from '@/components/modals/alarm/create-change-stat
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'c-change-state-field': true,
-  'alarms-list-general-table': true,
+  'alarm-general-table': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -23,7 +23,7 @@ const stubs = {
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'c-change-state-field': true,
-  'alarms-list-general-table': true,
+  'alarm-general-table': true,
 };
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');

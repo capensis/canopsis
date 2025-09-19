@@ -201,7 +201,7 @@ services:
     ports:
       - "8082:8082"
     healthcheck:
-      test: /usr/bin/wget -q -O /dev/null http://localhost:8082/api/v4/app-info
+      test: /usr/bin/wget -q -O /dev/null http://localhost:8082/api/v4/template-vars
       interval: 30s
       timeout: 30s
       retries: 3
@@ -212,6 +212,4 @@ services:
     profiles:
       - prometheus
     image: ${DOCKER_REPOSITORY}community/prometheus-exporter:${CANOPSIS_IMAGE_TAG}
-    environment:
-      - CPS_MONGO_URL=mongodb://cpsmongo:canopsis@mongodb/canopsis?replicaSet=rs0&readPreference=secondary
     #command: /prometheus-exporter -port 9180 # uncomment to change port value
