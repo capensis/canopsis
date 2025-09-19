@@ -378,7 +378,7 @@ func (p *actionProcessor) setEntityInfo(entity *types.Entity, value any, name, d
 }
 
 func (p *actionProcessor) setInfosFromDict(entity *types.Entity, dict map[string]any, ruleID, description string) (map[string]UpdatedValue, bool, error) {
-	updatedValues := make(map[string]UpdatedValue)
+	updatedValues := make(map[string]UpdatedValue, len(dict))
 	updated := false
 	for name, value := range dict {
 		if !types.IsInfoValueValid(value) {
