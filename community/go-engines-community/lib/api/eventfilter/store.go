@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -37,6 +38,7 @@ type store struct {
 	dbExdataTableCollection mongo.DbCollection
 	transformer             common.PatternFieldsTransformer
 	authorProvider          author.Provider
+	notificationStore       usernotification.Store
 	defaultSearchByFields   []string
 	defaultSortBy           string
 }
@@ -45,6 +47,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
 	transformer common.PatternFieldsTransformer,
+	notificationStore usernotification.Store,
 ) Store {
 	return &store{
 		dbClient:                dbClient,
@@ -53,6 +56,7 @@ func NewStore(
 		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
 		transformer:             transformer,
 		authorProvider:          authorProvider,
+		notificationStore:       notificationStore,
 		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
 		defaultSortBy:           "created",
 	}
@@ -132,9 +136,18 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
+	andCond := make([]bson.M, 0)
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
+		andCond = append(andCond, filter)
+	}
+
+	if query.OnlyUnreadFailure {
+		andCond = append(andCond, bson.M{"unread_failures_count": bson.M{"$gt": 0}})
+	}
+
+	if len(andCond) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": andCond}})
 	}
 
 	sort := common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
@@ -259,10 +272,22 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-		return err
-	})
+		if err != nil {
+			return err
+		}
 
-	return deleted > 0, err
+		return nil
+	})
+	if err != nil || deleted == 0 {
+		return false, err
+	}
+
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error) {
@@ -329,11 +354,22 @@ func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
 		_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": id, "unread": true}, bson.M{"$unset": bson.M{
 			"unread": "",
 		}})
+		if err != nil {
+			return err
+		}
 
-		return err
+		return nil
 	})
+	if err != nil || !ruleExists {
+		return false, err
+	}
 
-	return ruleExists, err
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (eventfilter.Rule, error) {
