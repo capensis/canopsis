@@ -79,7 +79,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 	}
 
 	if rule.Config.Upstream.Text != "" {
-		upstream, err := ExecuteParsedTemplate(rule.ID, "Upstream", rule.Config.Upstream,
+		upstream, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Upstream", rule.Config.Upstream,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
 			return OutcomeDrop, false, nil, err
