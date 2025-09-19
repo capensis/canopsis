@@ -87,28 +87,31 @@ type BasicConfig struct {
 }
 
 type LdapConfig struct {
-	InactivityInterval string            `yaml:"inactivity_interval"`
-	ExpirationInterval string            `yaml:"expiration_interval"`
-	Url                string            `yaml:"url"`
-	AdminUsername      string            `yaml:"admin_dn"`
-	AdminPassword      string            `yaml:"admin_passwd"`
-	BaseDN             string            `yaml:"user_dn"`
-	Attributes         map[string]string `yaml:"attrs"`
-	UsernameAttr       string            `yaml:"username_attr"`
-	Filter             string            `yaml:"ufilter"`
-	DefaultRole        string            `yaml:"default_role"`
-	InsecureSkipVerify bool              `yaml:"insecure_skip_verify"`
-	MinTLSVersion      string            `yaml:"min_tls_ver"`
-	MaxTLSVersion      string            `yaml:"max_tls_ver"`
+	InactivityInterval    string            `yaml:"inactivity_interval"`
+	ExpirationInterval    string            `yaml:"expiration_interval"`
+	Url                   string            `yaml:"url"`
+	AdminUsername         string            `yaml:"admin_dn"`
+	AdminPassword         string            `yaml:"admin_passwd"`
+	BaseDN                string            `yaml:"user_dn"`
+	Attributes            map[string]string `yaml:"attrs"`
+	UsernameAttr          string            `yaml:"username_attr"`
+	Filter                string            `yaml:"ufilter"`
+	DefaultRole           string            `yaml:"default_role"`
+	InsecureSkipVerify    bool              `yaml:"insecure_skip_verify"`
+	InsecureVerifyAnyCert bool              `yaml:"insecure_verify_any_cert"`
+	MinTLSVersion         string            `yaml:"min_tls_ver"`
+	MaxTLSVersion         string            `yaml:"max_tls_ver"`
 }
 
 type CasConfig struct {
-	InactivityInterval string `yaml:"inactivity_interval"`
-	ExpirationInterval string `yaml:"expiration_interval"`
-	Title              string `yaml:"title"`
-	LoginUrl           string `yaml:"login_url"`
-	ValidateUrl        string `yaml:"validate_url"`
-	DefaultRole        string `yaml:"default_role"`
+	InactivityInterval    string `yaml:"inactivity_interval"`
+	ExpirationInterval    string `yaml:"expiration_interval"`
+	Title                 string `yaml:"title"`
+	LoginUrl              string `yaml:"login_url"`
+	ValidateUrl           string `yaml:"validate_url"`
+	DefaultRole           string `yaml:"default_role"`
+	InsecureSkipVerify    bool   `yaml:"insecure_skip_verify"`
+	InsecureVerifyAnyCert bool   `yaml:"insecure_verify_any_cert"`
 }
 
 type SamlConfig struct {
@@ -123,6 +126,7 @@ type SamlConfig struct {
 	CanopsisSamlUrl         string            `yaml:"canopsis_saml_url"`
 	DefaultRole             string            `yaml:"default_role"`
 	InsecureSkipVerify      bool              `yaml:"insecure_skip_verify"`
+	InsecureVerifyAnyCert   bool              `yaml:"insecure_verify_any_cert"`
 	CanopsisSSOBinding      string            `yaml:"canopsis_sso_binding"`
 	CanopsisACSBinding      string            `yaml:"canopsis_acs_binding"`
 	SignAuthRequest         bool              `yaml:"sign_auth_request"`
@@ -138,22 +142,24 @@ type OAuth2Config struct {
 }
 
 type OAuth2ProviderConfig struct {
-	InactivityInterval string            `yaml:"inactivity_interval"`
-	ExpirationInterval string            `yaml:"expiration_interval"`
-	Issuer             string            `yaml:"issuer"`
-	ClientID           string            `yaml:"client_id"`
-	ClientSecret       string            `yaml:"client_secret"`
-	RedirectURL        string            `yaml:"redirect_url"`
-	DefaultRole        string            `yaml:"default_role"`
-	AllowExtraRoles    bool              `yaml:"allow_extra_roles"`
-	AuthURL            string            `yaml:"auth_url"`
-	TokenURL           string            `yaml:"token_url"`
-	UserURL            string            `yaml:"user_url"`
-	UserID             string            `yaml:"user_id"`
-	Scopes             []string          `yaml:"scopes"`
-	AttributesMap      map[string]string `yaml:"attributes_map"`
-	OpenID             bool              `yaml:"open_id"`
-	PKCE               bool              `yaml:"pkce"`
+	InactivityInterval    string            `yaml:"inactivity_interval"`
+	ExpirationInterval    string            `yaml:"expiration_interval"`
+	Issuer                string            `yaml:"issuer"`
+	ClientID              string            `yaml:"client_id"`
+	ClientSecret          string            `yaml:"client_secret"`
+	RedirectURL           string            `yaml:"redirect_url"`
+	DefaultRole           string            `yaml:"default_role"`
+	AllowExtraRoles       bool              `yaml:"allow_extra_roles"`
+	AuthURL               string            `yaml:"auth_url"`
+	TokenURL              string            `yaml:"token_url"`
+	UserURL               string            `yaml:"user_url"`
+	UserID                string            `yaml:"user_id"`
+	Scopes                []string          `yaml:"scopes"`
+	AttributesMap         map[string]string `yaml:"attributes_map"`
+	OpenID                bool              `yaml:"open_id"`
+	PKCE                  bool              `yaml:"pkce"`
+	InsecureSkipVerify    bool              `yaml:"insecure_skip_verify"`
+	InsecureVerifyAnyCert bool              `yaml:"insecure_verify_any_cert"`
 }
 
 // LoadConfig creates Config by config file.
