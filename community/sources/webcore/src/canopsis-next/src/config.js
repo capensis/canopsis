@@ -292,9 +292,6 @@ export const API_ROUTES = {
     scenarios: '/api/v4/scenario-template-vars',
     linkRules: '/api/v4/link-rule-template-vars',
     widgets: '/api/v4/widget-template-vars',
-    dynamicInfos: '/api/v4/dynamic-infos-template-vars',
-    instructions: '/api/v4/instruction-template-vars',
-    jobs: '/api/v4/job-template-vars',
     metaAlarmRules: '/api/v4/metaalarmrule-template-vars',
   },
   templateValidation: {
@@ -303,9 +300,6 @@ export const API_ROUTES = {
     scenarios: '/api/v4/scenario-template-validate',
     linkRules: '/api/v4/link-rule-template-validate',
     widgets: '/api/v4/widget-template-validate',
-    dynamicInfos: '/api/v4/dynamic-infos-template-validate',
-    instructions: '/api/v4/instruction-template-validate',
-    jobs: '/api/v4/job-template-validate',
     metaAlarmRules: '/api/v4/metaalarmrule-template-validate',
   },
   linkRule: '/api/v4/link-rules',
@@ -425,9 +419,15 @@ export const API_ROUTES = {
   },
   templateVarsSpecificCat: {
     declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-vars',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-vars',
+    instructions: '/api/v4/cat/instruction-template-vars',
+    jobs: '/api/v4/cat/job-template-vars',
   },
   templateValidationCat: {
     declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-validate',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-validate',
+    instructions: '/api/v4/cat/instruction-template-validate',
+    jobs: '/api/v4/cat/job-template-validate',
   },
 };
 
