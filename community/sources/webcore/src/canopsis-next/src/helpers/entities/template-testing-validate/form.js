@@ -373,20 +373,14 @@ export const convertDeclareTicketRuleToTemplateTestingTestValidateForm = (form =
 export const convertDynamicInfoToTemplateTestingTestValidateForm = (form = {}) => {
   const result = [];
 
-  if (form.infos) {
-    form.infos.forEach((info, index) => {
-      if (info.value) {
-        result.push({
-          key: `infos.${index}.value`,
-          textKey: 'templateTesting.dynamicInfoValue',
-          textArgs: { number: index + 1, name: info.name || `Info ${index + 1}` },
-          templateVarsKey: 'dynamicInfo',
-        });
-      }
+  form.infos.forEach((info, index) => {
+    result.push({
+      key: `infos.${index}.value`,
+      textKey: 'templateTesting.dynamicInfoValue',
+      textArgs: { number: index + 1, name: info.name },
+      templateVarsKey: 'value',
     });
-  }
-
-  result.push(...convertExternalDataToTemplateTestingTestValidateForm(form.external_data));
+  });
 
   return result;
 };
@@ -400,59 +394,16 @@ export const convertDynamicInfoToTemplateTestingTestValidateForm = (form = {}) =
 export const convertInstructionToTemplateTestingTestValidateForm = (form = {}) => {
   const result = [];
 
-  if (form.steps) {
-    form.steps.forEach((step, stepIndex) => {
-      if (step.operations) {
-        step.operations.forEach((operation, opIndex) => {
-          if (operation.type === 'webhook' && operation.request) {
-            if (operation.request.url) {
-              result.push({
-                key: `steps.${stepIndex}.operations.${opIndex}.request.url`,
-                textKey: 'templateTesting.instructionWebhookUrl',
-                textArgs: { step: stepIndex + 1, operation: opIndex + 1 },
-                templateVarsKey: 'instruction',
-              });
-            }
-
-            if (operation.request.payload) {
-              result.push({
-                key: `steps.${stepIndex}.operations.${opIndex}.request.payload`,
-                textKey: 'templateTesting.instructionWebhookPayload',
-                textArgs: { step: stepIndex + 1, operation: opIndex + 1 },
-                textarea: true,
-                templateVarsKey: 'instruction',
-              });
-            }
-
-            if (operation.request.headers) {
-              Object.keys(operation.request.headers).forEach((headerKey) => {
-                result.push({
-                  key: `steps.${stepIndex}.operations.${opIndex}.request.headers.${headerKey}`,
-                  textKey: 'templateTesting.instructionWebhookHeader',
-                  textArgs: { step: stepIndex + 1, operation: opIndex + 1, header: headerKey },
-                  templateVarsKey: 'instruction',
-                });
-              });
-            }
-          }
-        });
-      }
+  form.steps.forEach((step, stepIndex) => {
+    step.operations.forEach((_, operationIndex) => {
+      result.push({
+        key: `steps.${stepIndex}.operations.${operationIndex}.description`,
+        textKey: 'templateTesting.operationDescription',
+        textArgs: { step: stepIndex + 1, operation: operationIndex + 1 },
+        templateVarsKey: 'operation',
+      });
     });
-  }
-
-  if (form.jobs) {
-    form.jobs.forEach((job, index) => {
-      if (job.payload) {
-        result.push({
-          key: `jobs.${index}.payload`,
-          textKey: 'templateTesting.instructionJobPayload',
-          textArgs: { number: index + 1 },
-          textarea: true,
-          templateVarsKey: 'instruction',
-        });
-      }
-    });
-  }
+  });
 
   return result;
 };
