@@ -116,6 +116,8 @@ func NewActionLogger(
 		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
 		mongo.ExternalDataTableCollection:       ValueTypeExternalData,
 		mongo.EntityInfosPropertyCollection:     ValueTypeEntityInfosProperty,
+
+		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))
@@ -273,11 +275,16 @@ func (l *logger) Watch(ctx context.Context) (err error) {
 		default:
 		}
 
-		var err error
-
 		lock, err = l.obtainLock(ctx)
 		if err != nil {
-			return err
+			l.zLog.Warn().Err(err).Msgf("failed to obtain lock for action log watcher, waiting for next attempt")
+			select {
+			case <-ctx.Done():
+				return nil
+			case <-time.After(redisLockAcquireInterval):
+				l.zLog.Debug().Msg("action logger: retrying to obtain lock")
+				continue
+			}
 		}
 
 		exitChan := l.startLockRefresher(ctx, lock)

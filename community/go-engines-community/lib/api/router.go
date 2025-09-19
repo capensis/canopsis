@@ -85,6 +85,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -139,6 +140,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	notifStore usernotification.Store,
 	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
@@ -478,7 +480,7 @@ func RegisterRoutes(
 
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
-			eventfilter.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
+			eventfilter.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), notifStore),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
 		)
@@ -1535,18 +1537,20 @@ func RegisterRoutes(
 			)
 		}
 
-		notificationRouter := protected.Group("/notification")
+		notificationAPI := notification.NewApi(notification.NewStore(primaryDbClient, authorProvider))
+		protected.GET("/notifications", notificationAPI.List)
+		notifSettingsRouter := protected.Group("/notification-settings")
 		{
-			notificationApi := notification.NewApi(notification.NewStore(primaryDbClient))
-			notificationRouter.PUT(
+			notifSettingsRouter.PUT(
 				"",
 				middleware.Authorize(apisecurity.PermNotification, model.PermissionCan, enforcer),
-				notificationApi.Update,
+				middleware.SetAuthor(),
+				notificationAPI.UpdateSettings,
 			)
-			notificationRouter.GET(
+			notifSettingsRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.PermNotification, model.PermissionCan, enforcer),
-				notificationApi.Get,
+				notificationAPI.GetSettings,
 			)
 		}
 

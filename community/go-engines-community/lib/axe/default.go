@@ -121,6 +121,7 @@ func NewEngine(
 	alarmStatusService := alarmstatus.NewService(dbClient, flappingrule.NewAdapter(dbClient), alarmConfigProvider, logger)
 
 	actionRpcClient := libengine.NewRPCClientWithoutReply(
+		"",
 		canopsis.ActionAxeRPCClientQueueName,
 		amqpChannel,
 	)
@@ -169,6 +170,7 @@ func NewEngine(
 
 	pbhRpcClient := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
+		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		canopsis.AxePbehaviorRPCClientQueueName,
 		cfg.Global.PrefetchCount,
@@ -194,6 +196,7 @@ func NewEngine(
 	)
 	pbhRpcClientForIdleRules := libengine.NewRPCClient(
 		canopsis.AxeRPCConsumerName,
+		"",
 		canopsis.PBehaviorRPCQueueServerName,
 		"",
 		cfg.Global.PrefetchCount,

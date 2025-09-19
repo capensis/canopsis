@@ -1,6 +1,6 @@
 import { omit } from 'lodash';
 
-import { ALARM_STATES, ACTION_TYPES, PATTERNS_FIELDS } from '@/constants';
+import { ALARM_STATES, ACTION_TYPES, PATTERNS_FIELDS, WORKFLOW_TYPES } from '@/constants';
 
 import { uid } from '@/helpers/uid';
 import { durationToForm } from '@/helpers/date/duration';
@@ -78,6 +78,8 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @property {boolean} [empty_response]
  * @property {boolean} skip_for_child
  * @property {boolean} skip_for_instruction
+ * @property {boolean} [stop_on_fail]
+ * @property {boolean} [stop_on_success]
  * @property {string} [author]
  * @property {string} [ticket_system_name]
  */
@@ -86,6 +88,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
  * @typedef {ActionWebhookParameters} ActionWebhookFormParameters
  * @property {RequestForm} request
  * @property {DeclareTicketRuleWebhookDeclareTicketForm} declare_ticket
+ * @property {boolean} [multiple_urls]
  */
 
 /**
@@ -189,8 +192,11 @@ const webhookActionParametersToForm = (parameters = {}) => ({
   ...defaultActionForwardAuthorToForm(parameters),
   declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
   request: requestToForm(parameters.request),
+  multiple_urls: parameters.multiple_urls ?? false,
   skip_for_child: parameters.skip_for_child ?? false,
   skip_for_instruction: parameters.skip_for_instruction ?? false,
+  stop_on_fail: parameters.stop_on_fail ?? WORKFLOW_TYPES.stop,
+  stop_on_success: parameters.stop_on_success ?? WORKFLOW_TYPES.stop,
   ticket_system_name: parameters.ticket_system_name ?? '',
 });
 
@@ -326,9 +332,12 @@ export const actionToForm = (action = {}, timezone = getLocalTimezone()) => ({
 export const formToWebhookActionParameters = (parameters = {}) => ({
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
   request: formToRequest(parameters.request),
+  multiple_urls: parameters.multiple_urls ?? false,
   empty_response: parameters.empty_response,
   skip_for_child: parameters.skip_for_child,
   skip_for_instruction: parameters.skip_for_instruction,
+  stop_on_fail: parameters.stop_on_fail,
+  stop_on_success: parameters.stop_on_success,
   ticket_system_name: parameters.ticket_system_name,
 });
 
