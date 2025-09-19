@@ -1043,6 +1043,8 @@ definitions:
         type: boolean
       max_matched_items:
         type: integer
+      notification_display_count:
+        type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
       remediation:
@@ -3821,7 +3823,7 @@ definitions:
       time:
         type: integer
     type: object
-  notification.InstructionNotification:
+  notification.InstructionNotificationSettings:
     properties:
       rate:
         type: boolean
@@ -3831,10 +3833,30 @@ definitions:
     - rate
     - rate_frequency
     type: object
-  notification.Notification:
+  notification.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      comment:
+        type: string
+      rule:
+        $ref: '#/definitions/usernotification.Rule'
+      time:
+        type: integer
+      type:
+        type: integer
+    type: object
+  notification.SettingsResponse:
     properties:
       instruction:
-        $ref: '#/definitions/notification.InstructionNotification'
+        $ref: '#/definitions/notification.InstructionNotificationSettings'
+    type: object
+  notification.UpdateSettingsRequest:
+    properties:
+      instruction:
+        $ref: '#/definitions/notification.InstructionNotificationSettings'
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
@@ -6236,6 +6258,13 @@ definitions:
       _id:
         type: string
       title:
+        type: string
+    type: object
+  usernotification.Rule:
+    properties:
+      _id:
+        type: string
+      name:
         type: string
     type: object
   userpreferences.EditRequest:
