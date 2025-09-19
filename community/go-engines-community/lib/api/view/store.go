@@ -908,7 +908,7 @@ func (s *store) createPermissions(ctx context.Context, userID string, views map[
 	_, err = s.roleCollection.UpdateMany(ctx,
 		bson.M{"$or": []bson.M{
 			{"_id": bson.M{"$in": user.Roles}},
-			{"name": security.RoleAdmin},
+			{"_id": security.RoleAdmin},
 		}},
 		bson.M{"$set": setRole},
 	)
