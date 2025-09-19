@@ -1986,11 +1986,11 @@ func TestActionProcessor(t *testing.T) {
 		EnableArraySortingInEntityInfos: true,
 	}).AnyTimes()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
-	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
+	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
 	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			res, resultErr := processor.Process(t.Context(), ruleID, dataset.action, &dataset.event,
+			res, resultErr := processor.Process(t.Context(), ruleID, "", dataset.action, &dataset.event,
 				dataset.regexMatches, dataset.externalData)
 			if diff := pretty.Compare(dataset.expectedEvent, dataset.event); diff != "" {
 				t.Fatalf("unexpected event (-want +got):\n%s", diff)
