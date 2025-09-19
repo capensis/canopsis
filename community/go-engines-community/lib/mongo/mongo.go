@@ -99,6 +99,8 @@ type DbClient interface {
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error)
 	RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
 	RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
+	BulkWrite(ctx context.Context, writes []mongo.ClientBulkWrite,
+		opts ...options.Lister[options.ClientBulkWriteOptions]) (*mongo.ClientBulkWriteResult, error)
 }
 
 type dbClient struct {
@@ -516,6 +518,19 @@ func (c *dbClient) RunCommand(ctx context.Context, runCommand any, opts ...optio
 
 func (c *dbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper {
 	return c.Database.Client().Database("admin").RunCommand(ctx, runCommand, opts...)
+}
+
+func (c *dbClient) BulkWrite(ctx context.Context, writes []mongo.ClientBulkWrite,
+	opts ...options.Lister[options.ClientBulkWriteOptions]) (*mongo.ClientBulkWriteResult, error) {
+	var res *mongo.ClientBulkWriteResult
+	var err error
+	retry(ctx, c.RetryCount, c.MinRetryTimeout, func(ctx context.Context) error {
+		res, err = c.Client.BulkWrite(ctx, writes, opts...)
+
+		return err
+	})
+
+	return res, err
 }
 
 func isMongoReplicaSetEnabled(ctx context.Context, clientOptions *options.ClientOptions) (bool, error) {
