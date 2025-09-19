@@ -32,25 +32,27 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		dbClient:               dbClient,
-		dbCollection:           dbClient.Collection(mongo.RoleCollection),
-		dbPermissionCollection: dbClient.Collection(mongo.PermissionCollection),
-		dbUserCollection:       dbClient.Collection(mongo.UserCollection),
-		dbTemplateCollection:   dbClient.Collection(mongo.RoleTemplateCollection),
-		defaultSearchByFields:  []string{"_id", "name", "description"},
-		defaultSortBy:          "name",
-		authorProvider:         authorProvider,
+		dbClient:                 dbClient,
+		dbCollection:             dbClient.Collection(mongo.RoleCollection),
+		dbPermissionCollection:   dbClient.Collection(mongo.PermissionCollection),
+		dbUserCollection:         dbClient.Collection(mongo.UserCollection),
+		dbTemplateCollection:     dbClient.Collection(mongo.RoleTemplateCollection),
+		dbNotificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
+		defaultSearchByFields:    []string{"_id", "name", "description"},
+		defaultSortBy:            "name",
+		authorProvider:           authorProvider,
 	}
 }
 
 type store struct {
-	dbClient               mongo.DbClient
-	dbCollection           mongo.DbCollection
-	dbPermissionCollection mongo.DbCollection
-	dbUserCollection       mongo.DbCollection
-	dbTemplateCollection   mongo.DbCollection
-	defaultSearchByFields  []string
-	defaultSortBy          string
+	dbClient                 mongo.DbClient
+	dbCollection             mongo.DbCollection
+	dbPermissionCollection   mongo.DbCollection
+	dbUserCollection         mongo.DbCollection
+	dbTemplateCollection     mongo.DbCollection
+	dbNotificationCollection mongo.DbCollection
+	defaultSearchByFields    []string
+	defaultSortBy            string
 
 	authorProvider author.Provider
 }
@@ -287,10 +289,26 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+
 		return err
 	})
+	if err != nil {
+		return false, err
+	}
 
-	return deleted > 0, err
+	_, err = s.dbNotificationCollection.DeleteMany(ctx, bson.M{
+		"roles": bson.A{id},
+	})
+	if err != nil {
+		return false, err
+	}
+
+	_, err = s.dbNotificationCollection.UpdateMany(ctx, bson.M{"roles": id}, bson.M{"$pull": bson.M{"roles": id}})
+	if err != nil {
+		return false, err
+	}
+
+	return deleted > 0, nil
 }
 
 func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
