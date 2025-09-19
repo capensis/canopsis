@@ -149,3 +149,7 @@ type TemplateVarsResponse struct {
 	ExternalData []template.VarResponse `json:"external_data"`
 	Config       []template.VarResponse `json:"config"`
 }
+
+type CopyVarsResponse struct {
+	Config []template.VarResponse `json:"config"`
+}

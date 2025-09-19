@@ -2643,6 +2643,13 @@ definitions:
     - description
     - type
     type: object
+  eventfilter.CopyVarsResponse:
+    properties:
+      config:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+    type: object
   eventfilter.CreateRequest:
     properties:
       _id:

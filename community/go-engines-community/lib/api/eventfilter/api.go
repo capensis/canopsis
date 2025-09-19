@@ -22,6 +22,7 @@ type API interface {
 	DBExport(c *gin.Context)
 	ValidateTemplates(c *gin.Context)
 	GetTemplateVars(c *gin.Context)
+	GetCopyVars(c *gin.Context)
 }
 
 type api struct {
@@ -291,4 +292,10 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 // @Success 200 {array} TemplateVarsResponse
 func (a *api) GetTemplateVars(c *gin.Context) {
 	c.JSON(http.StatusOK, a.store.GetTemplateVars())
+}
+
+// GetCopyVars
+// @Success 200 {array} CopyVarsResponse
+func (a *api) GetCopyVars(c *gin.Context) {
+	c.JSON(http.StatusOK, a.store.GetCopyVars())
 }

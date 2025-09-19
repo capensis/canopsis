@@ -45,6 +45,7 @@ type Store interface {
 	ReadFailures(ctx context.Context, id string) (bool, error)
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
 	GetTemplateVars() TemplateVarsResponse
+	GetCopyVars() CopyVarsResponse
 }
 
 type store struct {
@@ -68,6 +69,7 @@ type store struct {
 	defaultSortBy           string
 	exdataTplVars           []template.VarResponse
 	configTplVars           []template.VarResponse
+	configCopyVars          []template.VarResponse
 }
 
 func NewStore(
@@ -89,6 +91,11 @@ func NewStore(
 	configTplVars := make([]template.VarResponse, 0, len(exdataTplVars)+1)
 	configTplVars = append(configTplVars, exdataTplVars...)
 	configTplVars = append(configTplVars, template.VarResponse{Name: "externalData", Value: "{{ .ExternalData.%reference% }}"})
+	configCopyVars := template.GetEventCopyVars("Event")
+	configCopyVars = append(configCopyVars,
+		template.VarResponse{Name: "regexpMatch", Value: "RegexMatch.%field%.%name%"},
+		template.VarResponse{Name: "externalData", Value: "ExternalData.%reference%"},
+	)
 
 	return &store{
 		dbClient:                dbClient,
@@ -111,6 +118,7 @@ func NewStore(
 		defaultSortBy:           "created",
 		exdataTplVars:           exdataTplVars,
 		configTplVars:           configTplVars,
+		configCopyVars:          configCopyVars,
 	}
 }
 
@@ -464,6 +472,12 @@ func (s *store) GetTemplateVars() TemplateVarsResponse {
 	return TemplateVarsResponse{
 		ExternalData: template.AddEnvVars(s.exdataTplVars, s.tplConfigProvider),
 		Config:       template.AddEnvVars(s.configTplVars, s.tplConfigProvider),
+	}
+}
+
+func (s *store) GetCopyVars() CopyVarsResponse {
+	return CopyVarsResponse{
+		Config: s.configCopyVars,
 	}
 }
 

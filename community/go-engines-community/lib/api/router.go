@@ -536,6 +536,10 @@ func RegisterRoutes(
 			"/eventfilter-template-vars",
 			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
 			eventFilterApi.GetTemplateVars)
+		protected.GET(
+			"/eventfilter-copy-vars",
+			middleware.Authorize(apisecurity.ObjEventFilterRule, model.PermissionRead, enforcer),
+			eventFilterApi.GetCopyVars)
 
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
