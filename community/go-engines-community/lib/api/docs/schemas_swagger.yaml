@@ -98,6 +98,9 @@ definitions:
         description: Duration is used in snooze and pbehavior actions.
       forward_author:
         type: boolean
+      multiple_urls:
+        description: MultipleURLs is used in webhook action.
+        type: boolean
       name:
         description: Name is used in pbehavior action.
         maxLength: 255
@@ -131,6 +134,12 @@ definitions:
             * `2` - Major
             * `3` - Critical
         type: integer
+      stop_on_fail:
+        description: StopOnFail is used in webhook action.
+        type: boolean
+      stop_on_success:
+        description: StopOnSuccess is used in webhook action.
+        type: boolean
       ticket:
         description: Ticket is used in assocticket action.
         maxLength: 255
@@ -1040,6 +1049,8 @@ definitions:
       maintenance:
         type: boolean
       max_matched_items:
+        type: integer
+      notification_display_count:
         type: integer
       popup_timeout:
         $ref: '#/definitions/appinfo.PopupTimeout'
@@ -4009,7 +4020,7 @@ definitions:
       time:
         type: integer
     type: object
-  notification.InstructionNotification:
+  notification.InstructionNotificationSettings:
     properties:
       rate:
         type: boolean
@@ -4019,10 +4030,30 @@ definitions:
     - rate
     - rate_frequency
     type: object
-  notification.Notification:
+  notification.Response:
+    properties:
+      _id:
+        type: string
+      author:
+        $ref: '#/definitions/author.Author'
+      comment:
+        type: string
+      rule:
+        $ref: '#/definitions/usernotification.Rule'
+      time:
+        type: integer
+      type:
+        type: integer
+    type: object
+  notification.SettingsResponse:
     properties:
       instruction:
-        $ref: '#/definitions/notification.InstructionNotification'
+        $ref: '#/definitions/notification.InstructionNotificationSettings'
+    type: object
+  notification.UpdateSettingsRequest:
+    properties:
+      instruction:
+        $ref: '#/definitions/notification.InstructionNotificationSettings'
     type: object
   pattern.BulkDeleteRequestItem:
     properties:
@@ -5481,6 +5512,8 @@ definitions:
         description: Snooze and Pbehavior
       forward_author:
         type: boolean
+      multiple_urls:
+        type: boolean
       name:
         description: Pbehavior
         type: string
@@ -5502,6 +5535,10 @@ definitions:
       state:
         description: ChangeState
         type: integer
+      stop_on_fail:
+        type: boolean
+      stop_on_success:
+        type: boolean
       ticket:
         description: AssocTicket
         type: string
@@ -6637,6 +6674,13 @@ definitions:
       _id:
         type: string
       title:
+        type: string
+    type: object
+  usernotification.Rule:
+    properties:
+      _id:
+        type: string
+      name:
         type: string
     type: object
   userpreferences.EditRequest:
