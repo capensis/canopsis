@@ -24,7 +24,6 @@ const (
 	BroadcastMessageCollection        = "broadcast_message"
 	BroadcastMessageReadCollection    = "broadcast_message_read"
 	AssociativeTableCollection        = "default_associativetable"
-	NotificationMongoCollection       = "notification"
 
 	ViewMongoCollection           = "views"
 	ViewTabMongoCollection        = "viewtabs"
@@ -107,4 +106,7 @@ const (
 	ExternalDataImportWorkerCollection = "external_data_import_worker"
 
 	EntityInfosPropertyCollection = "entity_infos_property"
+
+	UserNotificationSettingsCollection = "user_notification_settings"
+	UserNotificationCollection         = "user_notification"
 )
