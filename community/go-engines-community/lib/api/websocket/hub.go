@@ -288,7 +288,7 @@ func (h *hub) SendRoomByUser(userID string, room string, b any) int {
 }
 
 func (h *hub) SendToConn(connID string, room string, msg any) {
-	closedConns := h.sendToRoom(room, WMessage{
+	_, closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageSuccess,
 		Room: room,
 		Msg:  msg,
@@ -299,7 +299,7 @@ func (h *hub) SendToConn(connID string, room string, msg any) {
 }
 
 func (h *hub) SendToUser(userID string, room string, msg any) {
-	closedConns := h.sendToRoom(room, WMessage{
+	_, closedConns := h.sendToRoom(room, WMessage{
 		Type: WMessageSuccess,
 		Room: room,
 		Msg:  msg,
