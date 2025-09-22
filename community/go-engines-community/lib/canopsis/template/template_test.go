@@ -940,6 +940,172 @@ func TestAddEnvVarsToData(t *testing.T) {
 	f(1, 1)
 }
 
+func TestContainsVariable(t *testing.T) {
+	tests := []struct {
+		name     string
+		template string
+		expected bool
+	}{
+		{
+			name:     "given simple Event field access, should return true",
+			template: "{{ .Event.Component }}",
+			expected: true,
+		},
+		{
+			name:     "given template with only non-Event variables, should return false",
+			template: "{{ .Alarm.Value.State }}",
+			expected: false,
+		},
+		{
+			name:     "given nested Event field access, should return true",
+			template: "{{ .Event.ExtraInfos.manager }}",
+			expected: true,
+		},
+		{
+			name:     "given index function with Event, should return true",
+			template: `{{ index .Event.ExtraInfos "manager" }}`,
+			expected: true,
+		},
+		{
+			name:     "given template with multiple variables including Event, should return true",
+			template: "Alarm: {{ .Alarm.Value.State }}; Event: {{ .Event.Component }}",
+			expected: true,
+		},
+		{
+			name:     "given template with multiple variables excluding Event, should return false",
+			template: "Alarm: {{ .Alarm.Value.State }}; Entity: {{ .Entity.Name }}",
+			expected: false,
+		},
+		{
+			name: "given complex template with Event field, should return true",
+			template: `Alarm field: {{ .Alarm.Value.State.Value }};
+	       Entity field: {{ (index .Entity.Infos "customer").Value }};
+	       Event field: {{ index .Event.ExtraInfos "manager" }}`,
+			expected: true,
+		},
+		{
+			name:     "given if block with Event condition, should return true",
+			template: "{{ if .Event.Component }}Component: {{ .Event.Component }}{{ end }}",
+			expected: true,
+		},
+		{
+			name:     "given if-else block with Event in else branch, should return true",
+			template: "{{ if .Alarm.ID }}Alarm{{ else }}Event: {{ .Event.Component }}{{ end }}",
+			expected: true,
+		},
+		{
+			name:     "given range over Event field, should return true",
+			template: "{{ range $key, $value := .Event.ExtraInfos }}{{ $key }}: {{ $value }}{{ end }}",
+			expected: true,
+		},
+		{
+			name:     "given with block using Event, should return true",
+			template: "{{ with .Event.ExtraInfos }}{{ . }}{{ end }}",
+			expected: true,
+		},
+		{
+			name:     "given function call with Event parameter, should return true",
+			template: `{{ len .Event.Component }}`,
+			expected: true,
+		},
+		{
+			name:     "given index function with Event as key source, should return true",
+			template: `{{ index .Entity.Infos .Event.Component }}`,
+			expected: true,
+		},
+		{
+			name:     "given piped operation with Event, should return true",
+			template: "{{ .Event.Output | printf \"%s\" }}",
+			expected: true,
+		},
+		{
+			name:     "given empty template, should return false",
+			template: "",
+			expected: false,
+		},
+		{
+			name:     "given static text only, should return false",
+			template: "This is static text without variables",
+			expected: false,
+		},
+		{
+			name:     "given Event in comment block, should return false",
+			template: "{{/* This is a comment with .Event */}}{{ .Alarm.ID }}",
+			expected: false,
+		},
+		{
+			name:     "given EventType variable, should return false",
+			template: "{{ .EventType }}",
+			expected: false,
+		},
+		{
+			name:     "given Event as substring in field name, should return false",
+			template: "{{ .SomeEvent.Field }}",
+			expected: false,
+		},
+		{
+			name:     "given deeply nested Event access, should return true",
+			template: "{{ .Event.ExtraInfos.nested.deep.field }}",
+			expected: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tpl := ParsedTemplate{Text: tt.template}
+
+			result := tpl.ContainsField("Event")
+			if result != tt.expected {
+				t.Errorf("ContainsVariable() = %v, expected %v for template: %q", result, tt.expected, tt.template)
+			}
+		})
+	}
+}
+
+func BenchmarkContainsVariableRegex(b *testing.B) {
+	tpl := ParsedTemplate{
+		Text: `Alarm field: {{ .Alarm.Value.State.Value }};
+	       Entity field: {{ (index .Entity.Infos "customer").Value }};
+	       Event field: {{ index .Event.ExtraInfos "manager" }}`,
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = tpl.ContainsField("Event")
+	}
+}
+
+func BenchmarkContainsVariableRegexSimple(b *testing.B) {
+	tpl := ParsedTemplate{
+		Text: "{{ .Event.Component }}",
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = tpl.ContainsField("Event")
+	}
+}
+
+func BenchmarkContainsVariableRegexComplex(b *testing.B) {
+	tpl := ParsedTemplate{
+		Text: `{{ if and .Event.Component (gt .Event.State 0) }}
+				{{ range .Event.ExtraInfos }}
+					{{ if .Event.Output }}{{ .Event.Output | printf "%s" }}{{ end }}
+				{{ end }}
+			{{ else }}
+				{{ .Alarm.Value.Output }}
+			{{ end }}`,
+	}
+
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = tpl.ContainsField("Event")
+	}
+}
+
 func executeTemplate(tmpl *template.Template, payload interface{},
 ) (string, error) {
 	var b bytes.Buffer

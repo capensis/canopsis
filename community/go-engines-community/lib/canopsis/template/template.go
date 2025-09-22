@@ -33,6 +33,17 @@ type ParsedTemplate struct {
 	Err  error
 }
 
+func (p *ParsedTemplate) ContainsField(v string) bool {
+	if p.Text == "" {
+		return false
+	}
+
+	// remove comments from the template text.
+	cleanTemplate := regexp.MustCompile(`\{\{/\*.*?\*/}}`).ReplaceAllString(p.Text, "")
+
+	return regexp.MustCompile(`\{\{[^}]*\.` + regexp.QuoteMeta(v) + `(\b|\.|[\s\}\)\|]|$)[^{]*\}\}`).MatchString(cleanTemplate)
+}
+
 type Executor interface {
 	Execute(tplStr string, data any) (string, error)
 	Parse(text string) ParsedTemplate
