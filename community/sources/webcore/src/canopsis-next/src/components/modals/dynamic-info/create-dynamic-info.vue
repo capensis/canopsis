@@ -6,15 +6,16 @@
       </template>
       <template #text="">
         <template-testing-test-variables-wrapper
-          v-field="form"
+          v-model="form"
           :is-new="isNew"
           :type="type"
         >
-          <template #default="{ templateVars }">
+          <template #default="{ templateVars, copyVars }">
             <dynamic-info-form
               v-model="form"
               :is-disabled-id-field="isDisabledIdField"
               :template-vars="templateVars"
+              :copy-vars="copyVars"
             />
           </template>
         </template-testing-test-variables-wrapper>
@@ -89,9 +90,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action?.(formToDynamicInfo(form.value));
+        const data = await config.value.action?.(formToDynamicInfo(form.value));
 
         close();
+
+        return data;
       },
     });
 

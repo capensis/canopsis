@@ -58,10 +58,9 @@ import { ref, toRef, watch, onMounted } from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
-import {
-  useTemplateVarsList,
-  useTestVariablesFields,
-} from '@/components/other/template-testing/hooks/template-test-variables-wrapper';
+import { useTemplateVarsList } from '@/hooks/vars/template';
+
+import { useTestVariablesFields } from '@/components/other/template-testing/hooks/template-test-variables-wrapper';
 
 import TemplateTestingTestVariables from '@/components/other/template-testing/template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from '@/components/other/template-testing/template-testing-test-variables-tab.vue';
@@ -104,7 +103,7 @@ export default {
     const patterns = ref(null);
 
     const {
-      templateVars,
+      vars: templateVars,
       pending: templateVarsPending,
       fetchList: fetchTemplateVarsList,
     } = useTemplateVarsList({

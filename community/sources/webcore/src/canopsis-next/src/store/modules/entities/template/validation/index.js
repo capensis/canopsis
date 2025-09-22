@@ -42,7 +42,7 @@ export default {
     },
 
     validateMetaAlarmRules(context, { data }) {
-      return request.post(API_ROUTES.templateValidation.metaAlarmRules, data);
+      return request.post(API_ROUTES.templateValidationCat.metaAlarmRules, data);
     },
   },
 };

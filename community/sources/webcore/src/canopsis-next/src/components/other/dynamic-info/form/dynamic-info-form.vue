@@ -56,6 +56,8 @@
         <dynamic-info-infos-form
           v-field="form.infos"
           ref="infosForm"
+          :variables="templateVars.value"
+          :copy-variables="copyVars.value"
           class="pa-4"
         />
       </v-stepper-content>
@@ -99,6 +101,10 @@ export default {
       default: false,
     },
     templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
+    copyVars: {
       type: Object,
       default: () => ({}),
     },

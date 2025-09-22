@@ -65,6 +65,7 @@ import eventsRecordModule from './events-record';
 import dbExportModule from './db-export';
 import externalDataTableModule from './external-data-table';
 import templateModule from './template';
+import copyModule from './copy';
 
 export default {
   alarm: alarmModule,
@@ -134,4 +135,5 @@ export default {
   dbExport: dbExportModule,
   externalDataTable: externalDataTableModule,
   template: templateModule,
+  copy: copyModule,
 };

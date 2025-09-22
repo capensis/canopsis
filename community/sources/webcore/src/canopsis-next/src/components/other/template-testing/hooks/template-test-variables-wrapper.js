@@ -1,95 +1,10 @@
-import { isEqual, get, mapValues } from 'lodash';
+import { get } from 'lodash';
 import { computed, ref, unref, watch } from 'vue';
 
-import { TEMPLATE_TESTING_TEST_TYPES, LINK_RULE_TYPES } from '@/constants';
-
-import { templateVarsToVariables } from '@/helpers/variables';
+import { isOmitEqual } from '@/helpers/collection';
 import { convertRuleToTemplateTestingTestValidateForm } from '@/helpers/entities/template-testing-validate/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useTemplateVars } from '@/hooks/store/modules/template-vars';
-import { usePendingHandler } from '@/hooks/query/pending';
 import { useModelField } from '@/hooks/form/model-field';
-
-/**
- * Hook for managing template variables list based on test type
- *
- * @param {Object} options - Configuration options
- * @param {import('vue').Ref<string>|string} [options.type] - The type of template testing
- *                                                            (eventFilter, linkRule, scenario, etc.)
- * @param {import('vue').Ref<Object>|Object} [options.form] - The form object
- *
- * @returns {Object} Hook return object
- * @returns {import('vue').Ref<Array>} returns.templateVars - Reactive array of template variables
- * @returns {import('vue').Ref<boolean>} returns.pending - Loading state indicator
- * @returns {Function} returns.fetchList - Function to fetch template variables list
- */
-export const useTemplateVarsList = ({ type, form } = {}) => {
-  const { t } = useI18n();
-
-  const templateVars = ref({});
-
-  const {
-    fetchEntityServicesTemplateVarsWithoutStore,
-    fetchEventFiltersTemplateVarsWithoutStore,
-    fetchLinkRulesTemplateVarsWithoutStore,
-    fetchScenariosTemplateVarsWithoutStore,
-    fetchWidgetsTemplateVarsWithoutStore,
-    fetchDeclareTicketRulesTemplateVarsWithoutStore,
-    fetchDynamicInfosTemplateVarsWithoutStore,
-    fetchInstructionsTemplateVarsWithoutStore,
-    fetchJobsTemplateVarsWithoutStore,
-    fetchMetaAlarmRulesTemplateVarsWithoutStore,
-  } = useTemplateVars();
-
-  const fetchHandler = computed(() => ({
-    [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: fetchEventFiltersTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.linkRule]: async () => {
-      const { alarm: alarmData, entity: entityData } = await fetchLinkRulesTemplateVarsWithoutStore();
-
-      return unref(form).type === LINK_RULE_TYPES.alarm ? alarmData : entityData;
-    },
-    [TEMPLATE_TESTING_TEST_TYPES.scenario]: fetchScenariosTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.widget]: fetchWidgetsTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: fetchDeclareTicketRulesTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.dynamicInfo]: fetchDynamicInfosTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.instruction]: fetchInstructionsTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.job]: fetchJobsTemplateVarsWithoutStore,
-    [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: fetchMetaAlarmRulesTemplateVarsWithoutStore,
-  }[unref(type)] ?? fetchEntityServicesTemplateVarsWithoutStore));
-
-  const addTranslationToTemplateVars = (items = []) => items.map((item) => {
-    const result = {
-      ...item,
-      text: t(`templateTesting.templateVars.${item.text}`),
-    };
-
-    if (item.variables?.length) {
-      result.variables = addTranslationToTemplateVars(item.variables);
-    }
-
-    return result;
-  });
-
-  const {
-    pending,
-    handler: fetchList,
-  } = usePendingHandler(async () => {
-    if (!fetchHandler.value) {
-      return;
-    }
-
-    const data = await fetchHandler.value();
-
-    templateVars.value = mapValues(templateVarsToVariables(data), addTranslationToTemplateVars);
-  });
-
-  return {
-    templateVars,
-    pending,
-    fetchList,
-  };
-};
 
 /**
  * Hook for managing test variables fields with form integration
@@ -111,15 +26,19 @@ export const useTestVariablesFields = (props = {}, type, emit) => {
   watch(() => props.form, (newForm) => {
     const newItems = convertRuleToTemplateTestingTestValidateForm(newForm, unref(type));
 
-    if (isEqual(items.value, newItems)) {
+    if (isOmitEqual(items.value, newItems, ['value', 'updateField'])) {
       return;
     }
 
-    items.value = newItems.map(newItem => ({
-      ...newItem,
-      value: get(newForm, newItem.key),
-      updateField: value => updateField(newItem.key, value),
-    }));
+    items.value = newItems.map((newItem) => {
+      const key = newItem.formKey ?? newItem.key;
+
+      return {
+        ...newItem,
+        value: get(newForm, key),
+        updateField: value => updateField(key, value),
+      };
+    });
   }, { immediate: true });
 
   return {

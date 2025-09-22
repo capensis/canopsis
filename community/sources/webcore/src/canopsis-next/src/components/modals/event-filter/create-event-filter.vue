@@ -10,10 +10,11 @@
           :rule-id="ruleId"
           :type="type"
         >
-          <template #default="{ templateVars }">
+          <template #default="{ templateVars, copyVars }">
             <event-filter-form
               v-model="form"
               :template-vars="templateVars"
+              :copy-vars="copyVars"
               :is-disabled-id-field="config.isDisabledIdField"
             />
           </template>

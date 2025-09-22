@@ -40,11 +40,10 @@ import { ENTITY_TYPES, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { serviceToForm, formToService } from '@/helpers/entities/service/form';
 
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useInnerModal } from '@/hooks/modals';
-
-import { useTemplateVarsList } from '@/components/other/template-testing/hooks/template-test-variables-wrapper';
+import { useTemplateVarsList } from '@/hooks/vars/template';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import ServiceForm from '@/components/other/service/form/service-form.vue';
 
@@ -76,7 +75,7 @@ export default {
       },
     });
 
-    const { templateVars, pending, fetchList } = useTemplateVarsList({
+    const { vars: templateVars, pending, fetchList } = useTemplateVarsList({
       type: ENTITY_TYPES.service,
     });
 
