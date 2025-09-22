@@ -4,11 +4,14 @@ import {
   EXTERNAL_DATA_TYPES,
   TEMPLATE_TESTING_TEST_TYPES,
   ACTION_TYPES,
+  META_ALARMS_RULE_TYPES,
+  DYNAMIC_INFO_INFORMATION_TYPES,
 } from '@/constants';
 
 /**
  * @typedef {Object} TemplateTestingTestValidateFormItem
  * @property {string} key
+ * @property {string} [formKey]
  * @property {string} textKey
  * @property {Object} [textArgs]
  * @property {boolean} [textarea]
@@ -375,6 +378,10 @@ export const convertDynamicInfoToTemplateTestingTestValidateForm = (form = {}) =
   const result = [];
 
   form.infos.forEach((info, index) => {
+    if (info.type !== DYNAMIC_INFO_INFORMATION_TYPES.setToInfoFromTemplate) {
+      return;
+    }
+
     result.push({
       key: `infos.${index}.value`,
       textKey: 'templateTesting.dynamicInfoValue',
@@ -428,9 +435,10 @@ export const convertJobToTemplateTestingTestValidateForm = (form = {}) => {
   }
 
   if (form.configType?.with_query) {
-    form.query.forEach((_, index) => {
+    form.query.forEach((query, index) => {
       result.push({
-        key: `query.${index}.value`,
+        key: `query.${query.text}`,
+        formKey: `query.${index}.value`,
         textKey: 'templateTesting.jobQueryValue',
         textArgs: { number: index + 1 },
         templateVarsKey: 'payload',
@@ -448,33 +456,28 @@ export const convertJobToTemplateTestingTestValidateForm = (form = {}) => {
  * @returns {TemplateTestingTestValidateForm} Array of validation form items for meta alarm rule
  */
 export const convertMetaAlarmRuleToTemplateTestingTestValidateForm = (form = {}) => {
-  const result = [];
+  const result = [{
+    key: 'output_template',
+    textKey: 'templateTesting.metaAlarmOutputTemplate',
+    textarea: true,
+    templateVarsKey: 'output',
+  }];
 
-  if (form.output_template) {
+  if ([
+    META_ALARMS_RULE_TYPES.timebased,
+    META_ALARMS_RULE_TYPES.attribute,
+    META_ALARMS_RULE_TYPES.complex,
+    META_ALARMS_RULE_TYPES.valuegroup,
+  ].includes(form.type)) {
     result.push({
-      key: 'output_template',
-      textKey: 'templateTesting.metaAlarmOutputTemplate',
-      textarea: true,
-      templateVarsKey: 'metaAlarm',
+      key: 'config.component_template',
+      textKey: 'templateTesting.metaAlarmComponentTemplate',
+      templateVarsKey: 'entity',
+    }, {
+      key: 'config.resourceTemplate',
+      textKey: 'templateTesting.metaAlarmResourceTemplate',
+      templateVarsKey: 'entity',
     });
-  }
-
-  if (form.config) {
-    if (form.config.component_template) {
-      result.push({
-        key: 'config.component_template',
-        textKey: 'templateTesting.metaAlarmComponentTemplate',
-        templateVarsKey: 'metaAlarm',
-      });
-    }
-
-    if (form.config.resource_template) {
-      result.push({
-        key: 'config.resource_template',
-        textKey: 'templateTesting.metaAlarmResourceTemplate',
-        templateVarsKey: 'metaAlarm',
-      });
-    }
   }
 
   return result;

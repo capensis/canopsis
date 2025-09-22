@@ -70,14 +70,16 @@
               />
               <v-combobox
                 v-else-if="isStringCopyValueType"
-                v-field="form.value"
                 v-validate="'required'"
                 key="value"
+                :value="form.value"
                 :label="$t('common.value')"
                 :error-messages="errors.collect(valueFieldName)"
-                :items="copyValueVariables"
+                :items="copyVariables"
                 :name="valueFieldName"
                 class="ml-2"
+                return-object
+                @input="updateCopyValue"
               />
               <event-filter-enrichment-action-form-select-tags-value
                 v-else-if="isSelectValueType"
@@ -103,18 +105,18 @@
 </template>
 
 <script>
-import {
-  ACTION_COPY_PAYLOAD_VARIABLES,
-  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
-  EVENT_FILTER_EVENT_EXTRA_PREFIX,
-} from '@/constants';
+import { computed } from 'vue';
+
+import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_EVENT_EXTRA_PREFIX } from '@/constants';
 
 import {
   eventFilterDictionaryActionValueToForm,
   formToEventFilterDictionaryActionValue,
 } from '@/helpers/entities/event-filter/rule/form';
 
-import { formMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useModelField } from '@/hooks/form/model-field';
+import { useValidator } from '@/hooks/validator/validator';
 
 import EventFilterEnrichmentActionFormTypeInfo from './event-filter-enrichment-action-form-type-info.vue';
 import EventFilterEnrichmentActionFormSelectTagsValue from './event-filter-enrichment-action-form-select-tags-value.vue';
@@ -125,7 +127,6 @@ export default {
     EventFilterEnrichmentActionFormTypeInfo,
     EventFilterEnrichmentActionFormSelectTagsValue,
   },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -139,6 +140,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    copyVariables: {
+      type: Array,
+      default: () => [],
+    },
     name: {
       type: String,
       default: 'action',
@@ -148,74 +153,87 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    eventExtraPrefix() {
-      return EVENT_FILTER_EVENT_EXTRA_PREFIX;
-    },
-    nameFieldName() {
-      return `${this.name}.name`;
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
+    const validator = useValidator();
+    const { updateField, updateModel } = useModelField(props, emit);
 
-    valueFieldName() {
-      return `${this.name}.value`;
-    },
+    const eventExtraPrefix = EVENT_FILTER_EVENT_EXTRA_PREFIX;
 
-    eventFilterActionTypes() {
-      return Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
-        value,
+    const nameFieldName = computed(() => `${props.name}.name`);
+    const valueFieldName = computed(() => `${props.name}.value`);
 
-        text: this.$t(`eventFilter.actionsTypes.${value}.text`),
-      }));
-    },
+    const eventFilterActionTypes = computed(() => Object.values(EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES).map(value => ({
+      value,
+      text: t(`eventFilter.actionsTypes.${value}.text`),
+    })));
 
-    copyValueVariables() {
-      return Object.values(ACTION_COPY_PAYLOAD_VARIABLES);
-    },
+    const isStringCopyValueType = computed(() => [
+      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
+      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
+    ].includes(props.form.type));
 
-    isStringCopyValueType() {
-      return [
-        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy,
-        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo,
-      ].includes(this.form.type);
-    },
+    const isStringTemplateValueType = computed(() => [
+      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
+      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
+      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,
+    ].includes(props.form.type));
 
-    isStringTemplateValueType() {
-      return [
-        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate,
-        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate,
-        EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate,
-      ].includes(this.form.type);
-    },
+    const isStringDictionaryValueType = computed(() => (
+      EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === props.form.type
+    ));
 
-    isStringDictionaryValueType() {
-      return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary === this.form.type;
-    },
+    const isSelectValueType = computed(() => EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === props.form.type);
 
-    isSelectValueType() {
-      return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === this.form.type;
-    },
-  },
-  methods: {
-    changeActionType(type) {
+    /**
+     * Changes the action type and handles value transformation for dictionary actions
+     *
+     * @param {string} type - The new action type from EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES
+     */
+    const changeActionType = (type) => {
       const newForm = {
-        ...this.form,
-
+        ...props.form,
         type,
       };
 
-      if (this.form.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
-        newForm.value = formToEventFilterDictionaryActionValue(this.form.value);
+      if (props.form.type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
+        newForm.value = formToEventFilterDictionaryActionValue(props.form.value);
       } else if (type === EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary) {
-        newForm.value = eventFilterDictionaryActionValueToForm(this.form.value);
+        newForm.value = eventFilterDictionaryActionValueToForm(props.form.value);
       }
 
-      this.updateModel(newForm);
-      this.errors.clear();
-    },
+      updateModel(newForm);
 
-    remove() {
-      this.$emit('remove', this.form);
-    },
+      validator.errors.clear();
+    };
+
+    /**
+     * Updates the copy value field by calling updateField with 'value' key
+     *
+     * @param {Object} [params={}] - Parameters object
+     * @param {string} [params.value=''] - The value to set for the copy field
+     */
+    const updateCopyValue = ({ value = '' } = {}) => updateField('value', value);
+
+    /**
+     * Emits remove event to parent component to remove this action form
+     */
+    const remove = () => emit('remove', props.form);
+
+    return {
+      eventExtraPrefix,
+
+      nameFieldName,
+      valueFieldName,
+      eventFilterActionTypes,
+      isStringCopyValueType,
+      isStringTemplateValueType,
+      isStringDictionaryValueType,
+      isSelectValueType,
+      changeActionType,
+      updateCopyValue,
+      remove,
+    };
   },
 };
 </script>

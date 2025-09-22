@@ -65,6 +65,7 @@
           v-if="isEnrichmentType"
           v-field="form"
           :template-variables="templateVars.config"
+          :copy-variables="copyVars.config"
           :set-tags-items="setTagsItems"
         />
         <event-filter-change-entity-form
@@ -112,6 +113,10 @@ export default {
       default: () => ({}),
     },
     templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
+    copyVars: {
       type: Object,
       default: () => ({}),
     },

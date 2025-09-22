@@ -44,7 +44,7 @@
         <meta-alarm-rule-general-form
           v-field="form"
           :disabled-id-field="disabledIdField"
-          :variables="outputTemplateVariables"
+          :variables="templateVars.output"
           class="pa-4"
         />
       </v-stepper-content>
@@ -56,7 +56,7 @@
         <div class="pa-4">
           <meta-alarm-rule-type-form
             v-field="form"
-            :variables="templateVariables"
+            :variables="templateVars.entity"
           />
         </div>
       </v-stepper-content>
@@ -70,10 +70,7 @@
           class="pa-4"
         >
           <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
-          <meta-alarm-rule-parameters-form
-            v-field="form"
-            :variables="variables"
-          />
+          <meta-alarm-rule-parameters-form v-field="form" :variables="variables" />
         </c-information-block>
       </v-stepper-content>
     </v-stepper-items>
@@ -132,12 +129,39 @@ export default {
       type: Array,
       default: () => [],
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, { expose }) {
     const { tc } = useI18n();
 
+    const generalStepElement = ref(null);
+    const typeStepElement = ref(null);
+    const parametersStepElement = ref(null);
+
+    const {
+      hasChildrenError: hasGeneralError,
+      validateChildren: validateGeneralChildren,
+    } = useValidationElementChildren(generalStepElement);
+
+    const {
+      hasChildrenError: hasTypeError,
+      validateChildren: validateTypeChildren,
+    } = useValidationElementChildren(typeStepElement);
+
+    const {
+      hasChildrenError: hasParametersError,
+      validateChildren: validateParametersChildren,
+    } = useValidationElementChildren(parametersStepElement);
+
     const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: toRef(props, 'entityInfos') });
     const { variables: alarmPayloadVariables } = useAlarmServerVariables({ infos: toRef(props, 'alarmInfos') });
+
+    /**
+     * TODO: replace it to templateVars in the future
+     */
     const variables = computed(() => [
       {
         value: ENTITY_PAYLOADS_VARIABLES.entity,
@@ -151,48 +175,6 @@ export default {
       },
     ]);
 
-    const templateVariables = computed(() => [
-      {
-        value: `.LastChild${ENTITY_PAYLOADS_VARIABLES.entity}`,
-        variables: entityPayloadVariables.value,
-      },
-      {
-        value: `.LastChild${ALARM_PAYLOADS_VARIABLES.alarm}`,
-        variables: alarmPayloadVariables.value,
-      },
-      {
-        value: '.Rule.ID',
-      },
-      {
-        value: '.Rule.Name',
-      },
-    ]);
-
-    const outputTemplateVariables = computed(() => [
-      ...templateVariables.value,
-      {
-        value: '.Count',
-      },
-    ]);
-
-    const generalStepElement = ref(null);
-    const {
-      hasChildrenError: hasGeneralError,
-      validateChildren: validateGeneralChildren,
-    } = useValidationElementChildren(generalStepElement);
-
-    const typeStepElement = ref(null);
-    const {
-      hasChildrenError: hasTypeError,
-      validateChildren: validateTypeChildren,
-    } = useValidationElementChildren(typeStepElement);
-
-    const parametersStepElement = ref(null);
-    const {
-      hasChildrenError: hasParametersError,
-      validateChildren: validateParametersChildren,
-    } = useValidationElementChildren(parametersStepElement);
-
     expose({
       hasGeneralError,
       hasTypeError,
@@ -203,16 +185,17 @@ export default {
     });
 
     return {
-      generalStepElement,
-      hasGeneralError,
-      parametersStepElement,
-      hasParametersError,
-      typeStepElement,
-      hasTypeError,
-      variables,
-      templateVariables,
-      outputTemplateVariables,
       META_ALARMS_FORM_STEPS,
+
+      generalStepElement,
+      typeStepElement,
+      parametersStepElement,
+
+      hasGeneralError,
+      hasParametersError,
+      hasTypeError,
+
+      variables,
     };
   },
 };

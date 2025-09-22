@@ -30,6 +30,7 @@ export default {
   stop: 'Stop',
   options: 'Options',
   type: 'Type',
+  actionType: 'Action type',
   quitEditing: 'Quit editing',
   enabled: 'Enabled',
   disabled: 'Disabled',
