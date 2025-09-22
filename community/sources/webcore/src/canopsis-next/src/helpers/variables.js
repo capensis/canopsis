@@ -37,10 +37,10 @@ export const objectToVariables = (obj = {}) => Object.entries(obj).map(([text, v
 ));
 
 /**
- * Processes template variable children into a hierarchical structure
- * Recursively converts array-based template variables into nested variable objects
+ * Processes variable children into a hierarchical structure
+ * Recursively converts array-based variables into nested variable objects
  *
- * @param {Array<{name: string, value: string|Array}>} [children=[]] - Array of template variable children
+ * @param {Array<{name: string, value: string|Array}>} [children=[]] - Array of variable children
  * @returns {Array<{text: string, value?: string, variables?: Array}>} Array of processed variable objects where:
  *   - text: The name property from the input child
  *   - value: Present only for non-array values, contains the original value
@@ -54,7 +54,7 @@ export const objectToVariables = (obj = {}) => Object.entries(obj).map(([text, v
  *     { name: 'language', value: 'en' }
  *   ]}
  * ];
- * templateVarsChildrenToVariablesProcess(children);
+ * varsChildrenToVariablesProcess(children);
  * // Returns:
  * // [
  * //   { text: 'user', value: 'John' },
@@ -67,17 +67,17 @@ export const objectToVariables = (obj = {}) => Object.entries(obj).map(([text, v
  * //   }
  * // ]
  */
-export const templateVarsChildrenToVariablesProcess = (children = []) => children.map(({ name, value }) => (
+export const varsChildrenToVariablesProcess = (children = []) => children.map(({ name, value }) => (
   Array.isArray(value)
-    ? { text: name, variables: templateVarsChildrenToVariablesProcess(value) }
+    ? { text: name, variables: varsChildrenToVariablesProcess(value) }
     : { text: name, value }
 ));
 
 /**
- * Converts template variables object into a hierarchical variables structure
+ * Converts variables object into a hierarchical variables structure
  * Maps each template variable group through the children processing function
  *
- * @param {Object} [templateVars={}] - Object containing template variable groups
+ * @param {Object} [templateVars={}] - Object containing variable groups
  * @returns {Object} Object with the same keys as input, where each value is processed
  *                   through templateVarsChildrenToVariablesProcess
  *
@@ -91,7 +91,7 @@ export const templateVarsChildrenToVariablesProcess = (children = []) => childre
  *     { name: 'version', value: '1.0.0' }
  *   ]
  * };
- * templateVarsToVariables(templateVars);
+ * varsToVariables(templateVars);
  * // Returns:
  * // {
  * //   user: [
@@ -103,6 +103,6 @@ export const templateVarsChildrenToVariablesProcess = (children = []) => childre
  * //   ]
  * // }
  */
-export const templateVarsToVariables = (templateVars = {}) => (
-  mapValues(templateVars, templateVarsChildrenToVariablesProcess)
+export const varsToVariables = (templateVars = {}) => (
+  mapValues(templateVars, varsChildrenToVariablesProcess)
 );

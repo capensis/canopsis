@@ -117,10 +117,13 @@ export default {
     },
   },
   setup(props) {
-    const { t } = useI18n();
     const afterSubmitObserver = inject('$afterSubmitObserver');
+
     let templateTestRequestData = {};
+
+    const { t } = useI18n();
     const popups = usePopups();
+
     const selectedTest = ref({});
     const validationForm = ref([]);
     const testResult = ref({});
@@ -296,7 +299,9 @@ export default {
         });
 
         lastRunVariables.value = props.variablesFields.reduce((acc, field) => {
-          acc[field.key] = get(props.generalForm, field.key);
+          const key = field.formKey ?? field.key;
+
+          acc[key] = get(props.generalForm, key);
 
           return acc;
         }, {});

@@ -6,7 +6,7 @@
       <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
 
       <v-tab-item class="pt-2" eager>
-        <slot :template-vars="templateVars" />
+        <slot :template-vars="templateVars" :copy-vars="copyVars" />
       </v-tab-item>
 
       <v-tab-item :disabled="isEmptyVariablesFields">
@@ -23,9 +23,12 @@
 </template>
 
 <script>
-import { onMounted, toRef } from 'vue';
+import { computed, onMounted, toRef } from 'vue';
 
-import { useTemplateVarsList, useTestVariablesFields } from './hooks/template-test-variables-wrapper';
+import { useCopyVarsList } from '@/hooks/vars/copy';
+import { useTemplateVarsList } from '@/hooks/vars/template';
+
+import { useTestVariablesFields } from './hooks/template-test-variables-wrapper';
 import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from './template-testing-test-variables-tab.vue';
 
@@ -51,7 +54,19 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { templateVars, pending, fetchList } = useTemplateVarsList({
+    const {
+      vars: copyVars,
+      pending: copyVarsPending,
+      fetchList: fetchCopyVarsList,
+    } = useCopyVarsList({
+      type: toRef(props, 'type'),
+    });
+
+    const {
+      vars: templateVars,
+      pending: templateVarsPending,
+      fetchList: fetchTemplateVarsList,
+    } = useTemplateVarsList({
       type: toRef(props, 'type'),
       form: toRef(props, 'form'),
     });
@@ -61,12 +76,19 @@ export default {
       isEmptyItems: isEmptyVariablesFields,
     } = useTestVariablesFields(props, toRef(props, 'type'), emit);
 
-    onMounted(fetchList);
+    const pending = computed(() => templateVarsPending.value || copyVarsPending.value);
+
+    onMounted(() => {
+      fetchCopyVarsList();
+      fetchTemplateVarsList();
+    });
 
     return {
-      variablesFields,
+      copyVars,
       templateVars,
       pending,
+
+      variablesFields,
       isEmptyVariablesFields,
     };
   },

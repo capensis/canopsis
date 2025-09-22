@@ -30,6 +30,7 @@ export default {
   stop: 'Fin',
   options: 'Options',
   type: 'Type',
+  actionType: 'Type d\'action',
   quitEditing: 'Quitter le mode édition',
   enabled: 'Activé(e)',
   disabled: 'Désactivé(e)',

@@ -292,7 +292,6 @@ export const API_ROUTES = {
     scenarios: '/api/v4/scenario-template-vars',
     linkRules: '/api/v4/link-rule-template-vars',
     widgets: '/api/v4/widget-template-vars',
-    metaAlarmRules: '/api/v4/metaalarmrule-template-vars',
   },
   templateValidation: {
     entityServices: '/api/v4/entityservice-template-validate',
@@ -300,7 +299,9 @@ export const API_ROUTES = {
     scenarios: '/api/v4/scenario-template-validate',
     linkRules: '/api/v4/link-rule-template-validate',
     widgets: '/api/v4/widget-template-validate',
-    metaAlarmRules: '/api/v4/metaalarmrule-template-validate',
+  },
+  copyVars: {
+    eventFilters: '/api/v4/eventfilter-copy-vars',
   },
   linkRule: '/api/v4/link-rules',
   bulkLinkRule: '/api/v4/bulk/link-rules',
@@ -422,12 +423,17 @@ export const API_ROUTES = {
     dynamicInfos: '/api/v4/cat/dynamic-infos-template-vars',
     instructions: '/api/v4/cat/instruction-template-vars',
     jobs: '/api/v4/cat/job-template-vars',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-vars',
   },
   templateValidationCat: {
     declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-validate',
     dynamicInfos: '/api/v4/cat/dynamic-infos-template-validate',
     instructions: '/api/v4/cat/instruction-template-validate',
     jobs: '/api/v4/cat/job-template-validate',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-validate',
+  },
+  copyVarsCat: {
+    dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',
   },
 };
 

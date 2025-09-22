@@ -1,16 +1,16 @@
 <template>
-  <modal-wrapper close>
-    <template #title="">
-      {{ title }}
-    </template>
-    <template #text="">
-      <template-testing-test-variables-wrapper
-        v-field="form"
-        :is-new="isNew"
-        :type="type"
-      >
-        <template #default="{ templateVars }">
-          <v-form>
+  <v-form @submit.prevent="submit">
+    <modal-wrapper close>
+      <template #title="">
+        {{ title }}
+      </template>
+      <template #text="">
+        <template-testing-test-variables-wrapper
+          v-field="form"
+          :is-new="isNew"
+          :type="type"
+        >
+          <template #default="{ templateVars }">
             <meta-alarm-rule-form
               v-model="form"
               ref="formElement"
@@ -20,41 +20,40 @@
               :entity-infos="entityInfos"
               :template-vars="templateVars"
             />
-          </v-form>
-        </template>
-      </template-testing-test-variables-wrapper>
-    </template>
-    <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="$modals.hide"
-      >
-        {{ $t('common.cancel') }}
-      </v-btn>
-      <v-btn
-        v-if="isLastStep"
-        key="submit"
-        :disabled="isDisabled"
-        :loading="submitting"
-        class="primary"
-        type="submit"
-        @click="submit"
-      >
-        {{ $t('common.submit') }}
-      </v-btn>
-      <v-btn
-        v-else
-        key="next"
-        :disabled="!isStepValid"
-        type="button"
-        class="primary"
-        @click="next"
-      >
-        {{ $t('common.next') }}
-      </v-btn>
-    </template>
-  </modal-wrapper>
+          </template>
+        </template-testing-test-variables-wrapper>
+      </template>
+      <template #actions="">
+        <v-btn
+          depressed
+          text
+          @click="$modals.hide"
+        >
+          {{ $t('common.cancel') }}
+        </v-btn>
+        <v-btn
+          v-if="isLastStep"
+          key="submit"
+          :disabled="isDisabled"
+          :loading="submitting"
+          class="primary"
+          type="submit"
+        >
+          {{ $t('common.submit') }}
+        </v-btn>
+        <v-btn
+          v-else
+          key="next"
+          :disabled="!isStepValid"
+          type="button"
+          class="primary"
+          @click="next"
+        >
+          {{ $t('common.next') }}
+        </v-btn>
+      </template>
+    </modal-wrapper>
+  </v-form>
 </template>
 
 <script>
@@ -151,9 +150,11 @@ export default {
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
       method: async () => {
-        await config.value.action(formToMetaAlarmRule(form.value));
+        const data = await config.value.action(formToMetaAlarmRule(form.value));
 
         close();
+
+        return data;
       },
     });
 

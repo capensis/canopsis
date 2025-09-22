@@ -31,7 +31,7 @@
           :json="field.json"
           :result="testResult[field.key]"
           :variables="templateVars[field.templateVarsKey]"
-          :last-run-value="lastRunVariables[field.key]"
+          :last-run-value="lastRunVariables[field.formKey ?? field.key]"
           @input="field.updateField"
         />
       </v-layout>
