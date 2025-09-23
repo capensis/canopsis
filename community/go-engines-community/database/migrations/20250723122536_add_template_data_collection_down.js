@@ -6,6 +6,7 @@ db.permission.deleteMany({
     _id: {
         $in: [
             "api_template_data",
+            "models_templateTesting",
         ]
     }
 });
@@ -13,5 +14,6 @@ db.permission.deleteMany({
 db.role.updateMany({}, {
     $unset: {
         "permissions.api_template_data": "",
+        "permissions.models_templateTesting": "",
     }
 });
