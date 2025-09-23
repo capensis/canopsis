@@ -212,7 +212,7 @@ export const USER_PERMISSIONS = {
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
-    templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_userview`, // TODO: rename to _templateTesting
+    templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
