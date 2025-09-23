@@ -6,6 +6,9 @@
       :url-variables="templateVars[webhookTemplateVarsKey]"
       :headers-variables="templateVars[webhookTemplateVarsKey]"
       :payload-variables="templateVars[webhookTemplateVarsKey]"
+      :multiple="webhook.multiple_urls"
+      with-multiple-urls
+      @update:multiple="updateMultiple"
     />
     <declare-ticket-rule-ticket-mapping-field
       v-field="webhook"
@@ -18,11 +21,12 @@
 <script>
 import { computed } from 'vue';
 
+import { useModelField } from '@/hooks/form/model-field';
+
 import RequestForm from '@/components/forms/request/request-form.vue';
 import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { DeclareTicketRuleTicketMappingField, RequestForm },
   model: {
     prop: 'webhook',
@@ -46,11 +50,21 @@ export default {
       default: () => ({}),
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
+
     const webhookTemplateVarsKey = computed(() => (props.hasPreviousWebhook ? 'webhook' : 'first_webhook'));
+
+    /**
+     * Updates the multiple_urls field in the webhook form
+     *
+     * @param {boolean} multiple - Whether multiple URLs are enabled for the webhook
+     */
+    const updateMultiple = multiple => updateField('multiple_urls', multiple);
 
     return {
       webhookTemplateVarsKey,
+      updateMultiple,
     };
   },
 };

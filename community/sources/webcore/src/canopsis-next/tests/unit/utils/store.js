@@ -710,18 +710,24 @@ export const createActiveViewModule = () => {
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
   const toggleEditing = jest.fn();
+  const resumePeriodicRefresh = jest.fn();
+  const pausePeriodicRefresh = jest.fn();
   const editing = jest.fn().mockReturnValue(false);
+  const periodicRefreshPaused = jest.fn().mockReturnValue(false);
 
   const activeViewModule = {
     name: 'activeView',
     getters: {
       editing,
+      periodicRefreshPaused,
     },
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
       toggleEditing,
       fetch: fetchActiveView,
+      resumePeriodicRefresh,
+      pausePeriodicRefresh,
     },
   };
 
@@ -731,6 +737,9 @@ export const createActiveViewModule = () => {
     fetchActiveView.mockClear();
     registerEditingOffHandler.mockClear();
     unregisterEditingOffHandler.mockClear();
+    resumePeriodicRefresh.mockClear();
+    pausePeriodicRefresh.mockClear();
+    periodicRefreshPaused.mockClear();
   });
 
   return {
@@ -739,6 +748,9 @@ export const createActiveViewModule = () => {
     unregisterEditingOffHandler,
     fetchActiveView,
     toggleEditing,
+    resumePeriodicRefresh,
+    pausePeriodicRefresh,
+    periodicRefreshPaused,
     activeViewModule,
   };
 };

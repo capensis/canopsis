@@ -50,7 +50,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c, query, c.MustGet(auth.UserKey).(string))
+	users, err := a.store.Find(c, query, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
 	if err != nil {
 		panic(err)
 	}
@@ -90,8 +90,13 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Insert(c, request)
+	user, err := a.store.Insert(c, request, c.MustGet(auth.RolesKey).([]string))
 	if err != nil {
+		if errors.Is(err, ErrNotAdminCreateAdmin) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			return
+		}
+
 		panic(err)
 	}
 
@@ -118,12 +123,17 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(c, request, c.MustGet(auth.UserKey).(string))
+	user, err := a.store.Update(c, request, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
+			return
+		}
+
+		if errors.Is(err, ErrNotAdminUpdateAdmin) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
@@ -153,12 +163,17 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Patch(c, request, c.MustGet(auth.UserKey).(string))
+	user, err := a.store.Patch(c, request, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
+			return
+		}
+
+		if errors.Is(err, ErrNotAdminUpdateAdmin) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
@@ -177,12 +192,17 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
+	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
+			return
+		}
+
+		if errors.Is(err, ErrNotAdminDeleteAdmin) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
@@ -203,9 +223,15 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	userIDs := make([]string, 0)
+	requestRoles := c.MustGet(auth.RolesKey).([]string)
+
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
-		user, err := a.store.Insert(c, request)
+		user, err := a.store.Insert(c, request, requestRoles)
 		if err != nil {
+			if errors.Is(err, ErrNotAdminCreateAdmin) {
+				return "", bulk.BadRequestError{Err: err}
+			}
+
 			return "", err
 		}
 
@@ -220,9 +246,15 @@ func (a *api) BulkCreate(c *gin.Context) {
 func (a *api) BulkUpdate(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
 	userIDs := make([]string, 0)
+	requestRoles := c.MustGet(auth.RolesKey).([]string)
+
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		user, err := a.store.Update(c, UpdateRequest(request), userID)
+		user, err := a.store.Update(c, UpdateRequest(request), userID, requestRoles)
 		if err != nil || user == nil {
+			if errors.Is(err, ErrNotAdminUpdateAdmin) {
+				return "", bulk.BadRequestError{Err: err}
+			}
+
 			return "", err
 		}
 
@@ -237,10 +269,15 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
+	roles := c.MustGet(auth.RolesKey).([]string)
 	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userID)
+		ok, err := a.store.Delete(c, request.ID, userID, roles)
 		if err != nil || !ok {
+			if errors.Is(err, ErrNotAdminDeleteAdmin) {
+				return "", bulk.BadRequestError{Err: err}
+			}
+
 			return "", err
 		}
 
@@ -256,9 +293,15 @@ func (a *api) BulkDelete(c *gin.Context) {
 func (a *api) BulkPatch(c *gin.Context) {
 	userID := c.MustGet(auth.UserKey).(string)
 	userIDs := make([]string, 0)
+	requestRoles := c.MustGet(auth.RolesKey).([]string)
+
 	bulk.Handler(c, func(request BulkPatchRequestItem) (string, error) {
-		user, err := a.store.Patch(c, PatchRequest(request), userID)
+		user, err := a.store.Patch(c, PatchRequest(request), userID, requestRoles)
 		if err != nil || user == nil {
+			if errors.Is(err, ErrNotAdminUpdateAdmin) {
+				return "", bulk.BadRequestError{Err: err}
+			}
+
 			return "", err
 		}
 
