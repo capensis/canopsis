@@ -1700,6 +1700,15 @@ permission:
     api_permissions:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+  permission_models_templateTesting:
+    <<: *permission
+    _id: models_templateTesting
+    name: <Current()._id>
+    description: Models template testing
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -3396,6 +3405,7 @@ role:
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
+      "@permission_models_templateTesting": 1
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15

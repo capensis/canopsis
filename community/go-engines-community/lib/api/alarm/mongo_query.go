@@ -213,6 +213,10 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesReque
 		}
 	}
 
+	if len(r.IDs) != 0 {
+		match["_id"] = bson.M{"$in": r.IDs}
+	}
+
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 
 	sortDir := 1

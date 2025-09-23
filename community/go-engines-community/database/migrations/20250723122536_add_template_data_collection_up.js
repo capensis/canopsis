@@ -16,3 +16,17 @@ if (!db.permission.findOne({_id: "api_template_data"})) {
         }
     });
 }
+
+if (!db.permission.findOne({_id: "models_templateTesting"})) {
+    db.permission.insertOne({
+        _id: "models_templateTesting",
+        name: "models_templateTesting",
+        description: "Models template testing",
+        groups: ["technical", "technical_admin", "technical_admin_general"],
+    });
+    db.role.updateOne({name: "admin"}, {
+        $set: {
+            "permissions.models_templateTesting": 1
+        }
+    });
+}
