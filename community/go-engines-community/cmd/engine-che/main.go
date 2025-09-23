@@ -19,7 +19,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(opts.ModeDebug)
+	logger := log.NewLogger(opts.Options)
 	trace := debug.Start(logger)
 
 	if opts.FeatureEventProcessing {
