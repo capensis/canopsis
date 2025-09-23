@@ -10,6 +10,7 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	libsectls "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	"github.com/go-ldap/ldap/v3"
 )
 
@@ -30,6 +31,10 @@ func (baseDialer) DialURL(config security.LdapConfig) (ldap.Client, error) {
 	tc := &tls.Config{
 		InsecureSkipVerify: config.InsecureSkipVerify, //nolint:gosec
 	}
+	if !config.InsecureVerifyAnyCert {
+		tc.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tc)
+	}
+
 	tc.MinVersion = strToTlsVersion(config.MinTLSVersion)
 	tc.MaxVersion = strToTlsVersion(config.MaxTLSVersion)
 
