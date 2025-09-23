@@ -30,7 +30,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(flags.Debug)
+	logger := log.NewLogger(flags.Options)
 	// Graceful shutdown.
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()

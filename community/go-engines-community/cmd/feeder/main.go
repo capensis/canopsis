@@ -154,7 +154,7 @@ func NewFeeder(logger zerolog.Logger) (*Feeder, error) {
 func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
-	logger := log.NewLogger(false)
+	logger := log.NewLogger(log.Options{})
 
 	feeder, err := NewFeeder(logger)
 	if err != nil {
