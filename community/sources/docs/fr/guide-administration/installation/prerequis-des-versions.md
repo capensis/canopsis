@@ -18,7 +18,7 @@ Pour rappel, SELinux n'est pas supporté.
 
 ## Prérequis composants Canopsis
 
-Composant   | Version (Pour Canopsis 24.04)         |
+Composant   | Version (Pour Canopsis 24.10)         |
 ------------|------------------|
 MongoDB     | 7.0              |
 Nginx       | 1.20 (uniquement pour l'installation via paquets RPM) |
