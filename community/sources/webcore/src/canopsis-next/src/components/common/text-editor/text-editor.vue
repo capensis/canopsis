@@ -130,10 +130,6 @@ export default {
       type: Object,
       required: false,
     },
-    withDefaultVariables: {
-      type: Boolean,
-      default: false,
-    },
     autofocus: {
       type: Boolean,
       default: false,
@@ -282,23 +278,6 @@ export default {
     this.destroyJodit();
   },
   methods: {
-    prepareVariable(variable, parentVariable) {
-      const preparedVariable = {
-        ...variable,
-        value: parentVariable ? `${parentVariable.value}.${variable.value}` : variable.value,
-      };
-
-      if (preparedVariable.variables) {
-        preparedVariable.variables = this.prepareVariables(preparedVariable.variables, preparedVariable);
-      }
-
-      return preparedVariable;
-    },
-
-    prepareVariables(variables, parentVariable) {
-      return variables.map(variable => this.prepareVariable(variable, parentVariable));
-    },
-
     createJodit() {
       this.$editor = new Jodit(this.$refs.textEditor, this.editorConfig);
       this.$editor.setEditorValue(this.sanitizedValue);

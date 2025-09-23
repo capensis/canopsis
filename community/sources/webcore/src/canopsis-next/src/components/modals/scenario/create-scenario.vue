@@ -7,7 +7,7 @@
       <template #text="">
         <template-testing-test-variables-wrapper
           v-model="form"
-          :is-new="isNew"
+          :rule-id="scenarioId"
           :type="type"
         >
           <template #default="{ templateVars }">
@@ -52,7 +52,7 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 
 import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -83,7 +83,7 @@ export default {
 
     const form = ref(scenarioToForm(config.value.scenario, system.timezone));
 
-    const isNew = computed(() => !config.value.scenario?._id);
+    const scenarioId = computed(() => config.value.scenario?._id);
     const title = computed(() => config.value.title ?? t('modals.createScenario.create.title'));
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
@@ -102,7 +102,7 @@ export default {
     return {
       form,
       config,
-      isNew,
+      scenarioId,
       type,
       title,
       isDisabled,

@@ -52,8 +52,16 @@ import {
   useTemplateTestRunner,
   useTemplateTestAfterSubmit,
 } from './hooks/template-testing-test-variables';
-import TemplateTestingTestVariablesForm from './template-testing-test-variables-form.vue';
+import TemplateTestingTestVariablesForm from './form/template-testing-test-variables-form.vue';
 
+/**
+ * Template Testing Test Variables Component
+ *
+ * Component for managing template testing with test variables, validation,
+ * and execution. Provides UI for running tests, saving tests, and viewing results.
+ *
+ * @vue/component
+ */
 export default {
   inject: ['$validator', '$afterSubmitObserver'],
   components: {
@@ -88,7 +96,6 @@ export default {
   setup(props) {
     const isGeneralFormValid = ref(true);
 
-    // Use validation form hook
     const {
       validationForm,
       selectedTest,
@@ -100,7 +107,6 @@ export default {
       setLastRunVariables,
     } = useTemplateTestingValidationForm(props);
 
-    // Use test actions hook
     const {
       save: saveAction,
       saveAsNew: saveAsNewAction,
@@ -108,13 +114,11 @@ export default {
       clearTemplateTestRequestData,
     } = useTemplateTestActions(props);
 
-    // Use test runner hook
     const {
       testResult,
       createRunTestHandler,
     } = useTemplateTestRunner(props);
 
-    // Create run test handler with callbacks
     const { running, runTest } = createRunTestHandler(
       getValidationFormData,
       setFormErrors,
@@ -122,26 +126,31 @@ export default {
       setLastRunVariables,
     );
 
-    // Use after submit hook
-    const { setupAfterSubmitObserver } = useTemplateTestAfterSubmit({
-      getTemplateTestRequestData,
-    }, props);
-
-    // Setup after submit observer
-    setupAfterSubmitObserver();
-
-    // Create wrapped save methods
+    /**
+     * Saves the current selected test
+     */
     const save = () => saveAction(selectedTest.value, getValidationFormData);
 
+    /**
+     * Saves the current test data as a new test with user-provided name
+     */
     const saveAsNew = () => saveAsNewAction(
       getValidationFormData,
       (newTest) => { selectedTest.value = newTest; },
     );
 
+    /**
+     * Handles validation form input changes and resets last run variables
+     */
     const validationFormInput = () => {
       resetLastRunVariables();
     };
 
+    /**
+     * Updates the selected test and clears pending request data if exists
+     *
+     * @param {Object} newSelectedTest - The new selected test object
+     */
     const updateSelectedTest = (newSelectedTest) => {
       updateSelectedTestHook(newSelectedTest);
 
@@ -149,6 +158,12 @@ export default {
         clearTemplateTestRequestData();
       }
     };
+
+    const { setupAfterSubmitObserver } = useTemplateTestAfterSubmit({
+      getTemplateTestRequestData,
+    }, props);
+
+    setupAfterSubmitObserver();
 
     return {
       selectedTest,

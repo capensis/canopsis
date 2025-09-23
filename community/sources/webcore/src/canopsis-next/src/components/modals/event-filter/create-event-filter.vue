@@ -59,7 +59,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 

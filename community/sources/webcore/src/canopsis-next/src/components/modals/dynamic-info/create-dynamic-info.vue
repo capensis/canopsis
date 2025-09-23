@@ -7,7 +7,7 @@
       <template #text="">
         <template-testing-test-variables-wrapper
           v-model="form"
-          :is-new="isNew"
+          :rule-id="dynamicInfoId"
           :type="type"
         >
           <template #default="{ templateVars, copyVars }">
@@ -54,7 +54,7 @@ import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 import { useI18n } from '@/hooks/i18n';
 
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -83,7 +83,7 @@ export default {
 
     const form = ref(dynamicInfoToForm(config.value.dynamicInfo));
 
-    const isNew = computed(() => !config.value.dynamicInfo?._id);
+    const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
     const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
     const isDisabledIdField = computed(() => config.value.isDisabledIdField);
 
@@ -103,7 +103,7 @@ export default {
     return {
       form,
       config,
-      isNew,
+      dynamicInfoId,
       type,
       title,
       isDisabledIdField,

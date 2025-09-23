@@ -41,7 +41,7 @@ import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
-import TemplateTestingTestTypeField from './partials/template-testing-test-type-field.vue';
+import TemplateTestingTestTypeField from '../form/fields/template-testing-test-type-field.vue';
 
 export default {
   components: { TemplateTestingTestTypeField },

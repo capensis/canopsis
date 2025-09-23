@@ -7,7 +7,7 @@
       <template #text="">
         <template-testing-test-variables-wrapper
           v-model="form"
-          :is-new="isNew"
+          :rule-id="remediationJobId"
           :type="type"
         >
           <template #default="{ templateVars }">
@@ -56,7 +56,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useStore } from '@/hooks/store';
 
 import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
-import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/template-testing-test-variables-wrapper.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -86,7 +86,7 @@ export default {
 
     const form = ref(remediationJobToForm(config.value.remediationJob));
 
-    const isNew = computed(() => !config.value.remediationJob?._id);
+    const remediationJobId = computed(() => config.value.remediationJob?._id);
     const title = computed(() => config.value.title ?? t('modals.createRemediationJob.create.title'));
 
     const remediationJobConfigTypes = computed(() => store.getters['info/remediationJobConfigTypes']);
@@ -115,7 +115,7 @@ export default {
     return {
       form,
       config,
-      isNew,
+      remediationJobId,
       type,
       title,
       isDisabled,

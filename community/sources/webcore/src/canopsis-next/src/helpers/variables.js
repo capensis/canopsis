@@ -1,10 +1,24 @@
 import { isPlainObject, mapValues } from 'lodash';
 
 /**
+ * Wraps a variable name in handlebars template syntax
+ *
+ * @param {string} value - The variable name to wrap in template syntax
+ * @returns {string} The variable name wrapped in double curly braces (handlebars format)
+ *
+ * @example
+ * variableTemplatePreparer('user.name');
+ * // Returns: '{{ user.name }}'
+ */
+export const variableTemplatePreparer = value => `{{ ${value} }}`;
+
+/**
  * Converts an object into an array of variable objects with text and value properties
  * Recursively processes nested objects to create a hierarchical structure
  *
  * @param {Object} [obj={}] - The input object to convert
+ * @param {Function} [valuePreparer=variableTemplatePreparer] - A function to prepare the value before
+ *                                                              adding to the variable
  * @returns {Array<{text: string, value: string, variables?: Array}>} Array of variable objects where:
  *   - text: The property name from the input object
  *   - value: Same as the text property
@@ -32,9 +46,23 @@ import { isPlainObject, mapValues } from 'lodash';
  * //   }
  * // ]
  */
-export const objectToVariables = (obj = {}) => Object.entries(obj).map(([text, value]) => (
-  isPlainObject(value) ? { text, value: text, variables: objectToVariables(value) } : { text, value: text }
-));
+export const objectToVariables = (
+  obj = {},
+  valuePreparer = variableTemplatePreparer,
+) => Object.entries(obj).map(([text, value]) => {
+  const preparedValue = valuePreparer ? valuePreparer(text) : text;
+
+  return isPlainObject(value)
+    ? {
+      text,
+      value: preparedValue,
+      variables: objectToVariables(value, childValue => valuePreparer(`${text}.${childValue}`)),
+    }
+    : {
+      text,
+      value: preparedValue,
+    };
+});
 
 /**
  * Processes variable children into a hierarchical structure

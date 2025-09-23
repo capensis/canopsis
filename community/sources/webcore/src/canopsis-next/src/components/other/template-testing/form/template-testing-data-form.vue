@@ -69,7 +69,7 @@ import { useModelField } from '@/hooks/form/model-field';
 
 import RequestHeadersField from '@/components/forms/request/fields/request-headers-field.vue';
 
-import TemplateTestingDataTypeField from '../partials/template-testing-data-type-field.vue';
+import TemplateTestingDataTypeField from './fields/template-testing-data-type-field.vue';
 
 export default {
   components: {

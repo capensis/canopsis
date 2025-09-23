@@ -37,10 +37,6 @@ export const payloadFieldMixin = {
     };
   },
   computed: {
-    availableVariables() {
-      return this.prepareVariables(this.variables);
-    },
-
     variablesMenuValue() {
       return this.variableGroup?.[0];
     },
@@ -63,48 +59,6 @@ export const payloadFieldMixin = {
     document.removeEventListener('selectionchange', this.debouncedOnSelectionChange);
   },
   methods: {
-    prepareVariable(variable, prefix) { // TODO: remove all preparing logic
-      const value = `${prefix ?? ''}${variable.value}`;
-
-      return {
-        ...variable,
-        value,
-        variables: variable.variables
-          ? this.prepareVariables(variable.variables, value)
-          : variable.variables,
-      };
-    },
-
-    prepareVariableWithEnumerable(variable) {
-      return variable.variables.map(subVariable => ({
-        ...this.prepareVariable(subVariable, variable),
-        value: (this.variableGroup || this.newVariableGroup) && this.operatorGroup
-          ? `{{ ${subVariable.value} }}`
-          : `{{ range ${variable.value} }}{{ ${subVariable.value} }}{{ end }}`,
-      }));
-    },
-
-    prepareVariableWithOptionally(variable) {
-      return {
-        ...variable,
-        value: `{{ if ${variable.value} }}{{ ${variable.value}${variable.suffix ? variable.suffix : ''} }}{{ end }}`,
-      };
-    },
-
-    prepareVariables(variables, prefix) {
-      return variables.reduce((acc, variable) => {
-        if (variable.enumerable) {
-          acc.push(...this.prepareVariableWithEnumerable(variable));
-        } else if (variable.optional) {
-          acc.push(this.prepareVariableWithOptionally(variable));
-        } else {
-          acc.push(this.prepareVariable(variable, prefix));
-        }
-
-        return acc;
-      }, []);
-    },
-
     setVariableSelection(start, end) {
       this.selectionVariableStart = start;
       this.selectionVariableEnd = end;

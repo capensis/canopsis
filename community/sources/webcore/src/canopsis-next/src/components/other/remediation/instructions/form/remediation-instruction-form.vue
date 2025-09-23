@@ -55,10 +55,12 @@ import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
-import { useTestVariablesFields } from '@/components/other/template-testing/hooks/template-test-variables-wrapper';
+import {
+  useTestVariablesFields,
+} from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
 
-import TemplateTestingTestVariables from '@/components/other/template-testing/template-testing-test-variables.vue';
-import TemplateTestingTestVariablesTab from '@/components/other/template-testing/template-testing-test-variables-tab.vue';
+import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
+import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
 
 import RemediationInstructionGeneralForm from './remediation-instruction-general-form.vue';
 import RemediationInstructionPatternsForm from './remediation-instruction-patterns-form.vue';

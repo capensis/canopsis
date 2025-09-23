@@ -30,7 +30,7 @@ import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import { useTestVariablesFields } from './hooks/template-test-variables-wrapper';
 import TemplateTestingTestVariables from './template-testing-test-variables.vue';
-import TemplateTestingTestVariablesTab from './template-testing-test-variables-tab.vue';
+import TemplateTestingTestVariablesTab from './partials/template-testing-test-variables-tab.vue';
 
 export default {
   components: { TemplateTestingTestVariables, TemplateTestingTestVariablesTab },
