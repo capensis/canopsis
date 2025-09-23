@@ -1,4 +1,5 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
+import { createMockedStoreModules, createTemplateVarsModule } from '@unit/utils/store';
 
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
 
@@ -6,6 +7,8 @@ const stubs = {
   'declare-ticket-rule-general-form': true,
   'declare-ticket-rule-patterns-form': true,
   'declare-ticket-rule-test-query': true,
+  'template-testing-test-variables-tab': true,
+  'template-testing-test-variables': true,
 };
 
 const selectTabItems = wrapper => wrapper.findAll('.v-tab');
@@ -15,6 +18,9 @@ const selectDeclareTicketRulePatternsForm = wrapper => wrapper.find('declare-tic
 const selectDeclareTicketRuleTestQuery = wrapper => wrapper.find('declare-ticket-rule-test-query-stub');
 
 describe('declare-ticket-rule-form', () => {
+  const { templateVarsModule } = createTemplateVarsModule();
+  const store = createMockedStoreModules([templateVarsModule]);
+
   const form = {
     enabled: true,
     name: 'name',
@@ -22,10 +28,11 @@ describe('declare-ticket-rule-form', () => {
     patterns: {
       alarm_patterns: {},
     },
+    webhooks: [],
   };
 
-  const factory = generateShallowRenderer(DeclareTicketRuleForm, { stubs });
-  const snapshotFactory = generateRenderer(DeclareTicketRuleForm, { stubs });
+  const factory = generateShallowRenderer(DeclareTicketRuleForm, { stubs, store });
+  const snapshotFactory = generateRenderer(DeclareTicketRuleForm, { stubs, store });
 
   test('Form fields changed after trigger input event on general form', () => {
     const wrapper = factory({
@@ -75,7 +82,9 @@ describe('declare-ticket-rule-form', () => {
   });
 
   test('Renders `declare-ticket-rule-form` with default props', async () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {},
+    });
 
     await selectTestQueryTab(wrapper).trigger('click');
 
@@ -95,7 +104,13 @@ describe('declare-ticket-rule-form', () => {
   });
 
   test('Renders `declare-ticket-rule-form` with errors', async () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      propsData: {
+        form: {
+          webhooks: [],
+        },
+      },
+    });
 
     await selectTestQueryTab(wrapper).trigger('click');
 
