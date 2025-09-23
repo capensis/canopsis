@@ -19,7 +19,9 @@ import (
 const helpFlag = "-h"
 
 func main() {
+	var logOpts log.Options
 	var version bool
+	log.BindCmdFlags(&logOpts)
 	flag.BoolVar(&version, "version", false, "Show the version information")
 	flag.Parse()
 
@@ -30,7 +32,7 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	logger := log.NewLogger(false)
+	logger := log.NewLogger(logOpts)
 
 	err := execCmd(ctx, logger)
 	if err != nil {
