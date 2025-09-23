@@ -30,7 +30,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(ctx, flags.Debug)
+	logger := log.NewLogger(ctx, flags.Options)
 
 	mongoClient, err := mongo.NewClient(ctx, 0, 0, logger)
 	if err != nil {
