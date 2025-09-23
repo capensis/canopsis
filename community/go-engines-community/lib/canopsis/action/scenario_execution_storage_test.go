@@ -124,7 +124,7 @@ func TestRedisScenarioExecutionStorage_GetAbandoned_GivenExecutionWithMaxRetries
 func createTestStorage() action.ScenarioExecutionStorage {
 	ctx := context.Background()
 
-	session, err := redislib.NewSession(ctx, redislib.ActionScenarioStorage, log.NewLogger(true), 0, 0)
+	session, err := redislib.NewSession(ctx, redislib.ActionScenarioStorage, log.NewLogger(log.Options{Debug: true}), 0, 0)
 	if err != nil {
 		panic(err)
 	}
