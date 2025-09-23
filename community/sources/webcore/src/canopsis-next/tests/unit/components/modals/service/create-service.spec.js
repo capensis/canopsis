@@ -5,6 +5,7 @@ import { mockConsole, mockModals, mockPopups } from '@unit/utils/mock-hooks';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
+import { createMockedStoreModules, createTemplateVarsModule } from '@unit/utils/store';
 
 import ClickOutside from '@/services/click-outside';
 
@@ -34,12 +35,16 @@ describe('create-service', () => {
   const $popups = mockPopups();
   const consoleMock = mockConsole();
 
+  const { templateVarsModule } = createTemplateVarsModule();
+  const store = createMockedStoreModules([templateVarsModule]);
+
   const defaultServiceForm = serviceToForm();
   const defaultService = formToService(defaultServiceForm);
 
   const factory = generateShallowRenderer(CreateService, {
     stubs,
     attachTo: document.body,
+    store,
     mocks: { $modals, $popups },
     parentComponent: {
       provide: {
@@ -49,6 +54,7 @@ describe('create-service', () => {
   });
   const snapshotFactory = generateRenderer(CreateService, {
     stubs: snapshotStubs,
+    store,
     mocks: { $modals, $popups },
     parentComponent: {
       provide: {
