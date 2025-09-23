@@ -1,4 +1,9 @@
-import { TEMPLATE_TESTING_DATA_TYPES, TEMPLATE_TESTING_TEST_TYPES, TEMPLATE_TESTING_TABS } from '@/constants';
+import {
+  TEMPLATE_TESTING_DATA_TYPES,
+  TEMPLATE_TESTING_TEST_TYPES,
+  TEMPLATE_TESTING_TABS,
+  TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES,
+} from '@/constants';
 
 export default {
   filterByRuleType: 'Filtrer par type de règle',
@@ -23,7 +28,6 @@ export default {
   errorsInInput: 'Erreur dans l\'entrée',
   mainFormHasErrors: 'Veuillez corriger les erreurs dans l\'onglet Général',
   isNewForm: 'Si vous sauvegardez ce test et que le formulaire ne sera pas sauvegardé, ce test sera supprimé après la fermeture de la modale de création',
-  isNewScenario: 'Si vous sauvegardez ce test et que le Scénario ne sera pas sauvegardé, ce test sera supprimé après la fermeture de la modale de Scénario',
   testSaved: 'Test de modèle sauvegardé',
   testWillSaveAfterFormSaving: 'Le test de modèle sera sauvegardé après la sauvegarde du formulaire',
   requestUrl: 'URL de requête - {number}',
@@ -160,5 +164,16 @@ export default {
     userID: 'ID utilisateur',
     username: 'Nom d\'utilisateur',
     environmentVariables: 'Env',
+  },
+  testDataLabels: {
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'Événement',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm]: 'Alarme',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'Utilisateur',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'Entité',
+  },
+  testDataResponseLabels: {
+    [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Réponse (Données externes - {index} API)',
+    [TEMPLATE_TESTING_TEST_TYPES.scenario]: 'Réponse (Action - {index} webhook)',
+    [TEMPLATE_TESTING_TEST_TYPES.declareTicketRule]: 'Réponse (Webhook - {index})',
   },
 };

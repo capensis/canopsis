@@ -314,7 +314,7 @@ export const convertWidgetToTemplateTestingTestValidateForm = (form = {}) => {
 export const convertDeclareTicketRuleToTemplateTestingTestValidateForm = (form = {}) => {
   const result = [];
 
-  form.webhooks.forEach((webhook, index) => {
+  form.webhooks?.forEach?.((webhook, index) => {
     const templateVarsKey = !index ? 'first_webhook' : 'webhook';
 
     result.push({

@@ -77,9 +77,7 @@ export default {
     const { submitting, isDisabled, submit } = useSubmittableForm({
       form,
       method: async () => {
-        if (config.value.action) {
-          await config.value.action(text.value);
-        }
+        await config.value?.action?.(text.value);
 
         modals.hide();
       },

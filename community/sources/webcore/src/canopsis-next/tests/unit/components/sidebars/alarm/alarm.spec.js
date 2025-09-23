@@ -2,7 +2,7 @@ import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModules, createTemplateVarsModule } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockSidebar } from '@unit/utils/mock-hooks';
@@ -184,6 +184,8 @@ describe('alarm', () => {
     infosModule,
   } = createSettingsMocks();
 
+  const { templateVarsModule } = createTemplateVarsModule();
+
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
@@ -219,6 +221,7 @@ describe('alarm', () => {
     widgetTemplateModule,
     serviceModule,
     infosModule,
+    templateVarsModule,
   ]);
 
   const timestamp = 1386435600000;
@@ -629,6 +632,7 @@ describe('alarm', () => {
         widgetTemplateModule,
         serviceModule,
         infosModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {
@@ -677,6 +681,7 @@ describe('alarm', () => {
         widgetTemplateModule,
         serviceModule,
         infosModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {
@@ -1601,6 +1606,7 @@ describe('alarm', () => {
         widgetTemplateModule,
         infosModule,
         serviceModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {

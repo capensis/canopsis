@@ -652,9 +652,8 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     optionalinfosattributes="true"
     templates=""
     type="alarm"
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     withinstructions="true"
-    withsimpletemplate="true"
+    withtemplate="true"
   />
   <charts-form-stub
     charts=""
@@ -1310,9 +1309,8 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     optionalinfosattributes="true"
     templates=""
     type="alarm"
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     withinstructions="true"
-    withsimpletemplate="true"
+    withtemplate="true"
   />
   <charts-form-stub
     charts=""
@@ -1964,9 +1962,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     optionalinfosattributes="true"
     templates=""
     type="alarm"
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     withinstructions="true"
-    withsimpletemplate="true"
+    withtemplate="true"
   />
   <charts-form-stub
     charts=""
@@ -2619,9 +2616,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     optionalinfosattributes="true"
     templates=""
     type="alarm"
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
     withinstructions="true"
-    withsimpletemplate="true"
+    withtemplate="true"
   />
   <charts-form-stub
     charts=""

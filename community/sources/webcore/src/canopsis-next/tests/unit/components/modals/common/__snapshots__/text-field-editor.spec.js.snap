@@ -59,6 +59,7 @@ exports[`text-field-editor Renders \`text-field-editor\` with all parameters 1`]
           </div>
         </div>
       </div>
+      <!---->
     </div>
     <div
       class="actions"
@@ -145,6 +146,7 @@ exports[`text-field-editor Renders \`text-field-editor\` with empty modal 1`] = 
           </div>
         </div>
       </div>
+      <!---->
     </div>
     <div
       class="actions"
