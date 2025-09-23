@@ -22,7 +22,7 @@ import { useModals } from '@/hooks/modals';
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
 import { useTemplateTest } from '@/hooks/store/modules/template-test';
 
-import TemplateTestingTestsList from './template-testing-tests-list.vue';
+import TemplateTestingTestsList from './partials/template-testing-tests-list.vue';
 
 export default {
   components: { TemplateTestingTestsList },

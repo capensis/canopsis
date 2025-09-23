@@ -29,7 +29,7 @@ import { useI18n } from '@/hooks/i18n';
 import { useCRUDPermissions } from '@/hooks/auth';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 
-import TemplateTestingTestDataField from './form/fields/template-testing-data-field.vue';
+import TemplateTestingTestDataField from '../../form/fields/template-testing-data-field.vue';
 
 const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS = {
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'template-testing-test-data-field',

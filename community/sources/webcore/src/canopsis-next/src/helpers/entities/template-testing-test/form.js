@@ -393,7 +393,7 @@ export const templateTestingTestValidateToForm = (originalForm = [], validate = 
       };
     }
 
-    const entityValue = validate[item.type] ?? item.value;
+    const entityValue = validate[item.type]?._id ?? validate[item.type] ?? item.value;
 
     return {
       ...item,

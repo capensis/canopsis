@@ -1,37 +1,34 @@
 <template>
   <c-lazy-search-field
-    v-field="value"
+    :value="selectedItem"
+    :items="items"
     :label="$t('entity.fields.alarmDisplayName')"
-    :loading="pending"
-    :items="alarms"
-    :name="name"
-    :has-more="hasMoreAlarms"
+    :disabled="disabled"
     :required="required"
+    :loading="wholePending"
+    :has-more="hasMoreItems"
+    :name="name"
     :item-text="itemText"
     :item-value="itemValue"
-    :disabled="disabled"
     :no-data-text="$t('alarm.noAlarmFound')"
     clearable
     autocomplete
     with-type
-    @fetch="fetchAlarms"
-    @fetch:more="fetchMoreAlarms"
+    @input="changeSelectedItems"
+    @fetch="fetchItems"
+    @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
   />
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { merge } from 'lodash';
+import { toRef, watch } from 'vue';
 
-import { prepareDataForItemsById } from '@/helpers/search/lazy-search';
-
-import { formArrayMixin } from '@/mixins/form';
-
-const { mapActions: mapAlarmActions } = createNamespacedHelpers('alarm');
+import { useLazySearch } from '@/hooks/form/lazy-search';
+import { useAlarmStoreModule } from '@/hooks/store/modules/alarm';
 
 export default {
-  inject: ['$validator'],
-  mixins: [formArrayMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -70,76 +67,47 @@ export default {
       default: () => {},
     },
   },
-  data() {
+  setup(props, { emit }) {
+    const { useActions } = useAlarmStoreModule();
+
+    const { fetchDisplayNamesWithoutStore } = useActions({
+      fetchDisplayNamesWithoutStore: 'fetchDisplayNamesWithoutStore',
+    });
+
+    const fetchHandler = ({ params }) => fetchDisplayNamesWithoutStore({
+      params: merge(params, props.params),
+    });
+
+    const {
+      selectedItem,
+      items,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
+    } = useLazySearch({
+      fetchHandler,
+      value: toRef(props, 'value'),
+      idKey: props.itemValue,
+      idParamsKey: 'ids',
+    }, emit);
+
+    watch(() => props.params, () => {
+      fetchItems();
+    }, { deep: true });
+
     return {
-      alarmsById: {},
-      pending: false,
-      pageCount: 1,
-
-      query: {
-        page: 1,
-        search: null,
-      },
+      selectedItem,
+      items,
+      wholePending,
+      hasMoreItems,
+      fetchItems,
+      fetchMoreItems,
+      changeSelectedItems,
+      updateSearch,
     };
-  },
-  computed: {
-    alarms() {
-      return Object.values(this.alarmsById);
-    },
-
-    hasMoreAlarms() {
-      return this.pageCount > this.query.page;
-    },
-  },
-  watch: {
-    params() {
-      this.query.page = 1;
-
-      this.fetchAlarms();
-    },
-  },
-  methods: {
-    ...mapAlarmActions({ fetchAlarmsDisplayNamesWithoutStore: 'fetchDisplayNamesWithoutStore' }),
-
-    getQuery() {
-      return {
-        limit: this.limit,
-        page: this.query.page,
-        search: this.query.search,
-        ...this.params,
-      };
-    },
-
-    async fetchAlarms() {
-      try {
-        this.pending = true;
-
-        const { data, meta } = await this.fetchAlarmsDisplayNamesWithoutStore({
-          params: this.getQuery(),
-        });
-
-        this.pageCount = meta.page_count;
-
-        this.alarmsById = prepareDataForItemsById(this.query.page !== 1 ? this.alarmsById : {}, this.value, data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.pending = false;
-      }
-    },
-
-    fetchMoreAlarms() {
-      this.query.page += 1;
-
-      this.fetchAlarms();
-    },
-
-    updateSearch(search) {
-      this.query.search = search;
-      this.query.page = 1;
-
-      this.fetchAlarms();
-    },
   },
 };
 </script>

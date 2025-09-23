@@ -41,7 +41,17 @@ import { useValidationFormErrors } from '@/hooks/validator/validation-form-error
  * Hook for managing template testing validation form
  *
  * @param {Object} props - Component props
+ * @param {Object} props.generalForm - The general form data
+ * @param {string} props.type - The type of template testing
  * @returns {Object} Validation form state and methods
+ * @returns {import('vue').Ref<Array>} returns.validationForm - Reactive validation form array
+ * @returns {import('vue').Ref<Object>} returns.selectedTest - Reactive selected test object
+ * @returns {import('vue').Ref<Object>} returns.lastRunVariables - Reactive last run variables object
+ * @returns {Function} returns.setFormErrors - Function to set form validation errors
+ * @returns {Function} returns.getValidationFormData - Function to get validation form data
+ * @returns {Function} returns.updateSelectedTest - Function to update selected test
+ * @returns {Function} returns.resetLastRunVariables - Function to reset last run variables
+ * @returns {Function} returns.setLastRunVariables - Function to set last run variables
  */
 export const useTemplateTestingValidationForm = (props) => {
   const validationForm = ref([]);
@@ -70,19 +80,40 @@ export const useTemplateTestingValidationForm = (props) => {
     });
   }, { immediate: true });
 
+  /**
+   * Gets the validation form data in the proper format for API requests
+   *
+   * @returns {Object} The formatted validation form data
+   */
   const getValidationFormData = () => formToTemplateTestingTestValidate(validationForm.value);
 
+  /**
+   * Updates the selected test and syncs the validation form with test data
+   *
+   * @param {Object} newSelectedTest - The new selected test object
+   * @param {Object} newSelectedTest.data - The test data
+   */
   const updateSelectedTest = (newSelectedTest) => {
     selectedTest.value = newSelectedTest;
+
     validationForm.value = templateTestingTestValidateToForm(validationForm.value, newSelectedTest.data);
   };
 
+  /**
+   * Resets last run variables by replacing all values with unique symbols
+   * This forces Vue reactivity to detect changes when the same values are set again
+   */
   const resetLastRunVariables = () => {
     lastRunVariables.value = Object.fromEntries(
       Object.keys(lastRunVariables.value).map(key => [key, Symbol('lastRunVariables')]),
     );
   };
 
+  /**
+   * Sets the last run variables to the provided values
+   *
+   * @param {Object} variables - The variables object to set
+   */
   const setLastRunVariables = (variables) => {
     lastRunVariables.value = { ...variables };
   };
@@ -103,7 +134,15 @@ export const useTemplateTestingValidationForm = (props) => {
  * Hook for managing template test save actions
  *
  * @param {Object} props - Component props
+ * @param {string} props.ruleId - The rule ID if editing an existing rule
+ * @param {string} props.type - The type of template testing
  * @returns {Object} Test actions state and methods
+ * @returns {import('vue').Ref<Object|null>} returns.templateTestRequestData - Reactive template test request data
+ * @returns {Function} returns.save - Function to save a test
+ * @returns {Function} returns.saveAsNew - Function to save a test as new
+ * @returns {Function} returns.getTemplateTestRequestData - Function to get template test request data
+ * @returns {Function} returns.createTemplateTestFromRequestData - Function to create template test from request data
+ * @returns {Function} returns.clearTemplateTestRequestData - Function to clear template test request data
  */
 export const useTemplateTestActions = (props) => {
   const templateTestRequestData = ref(null);
@@ -115,6 +154,14 @@ export const useTemplateTestActions = (props) => {
 
   const { createTemplateTest, updateTemplateTest } = useTemplateTest();
 
+  /**
+   * Saves a template test either by updating existing or preparing for later creation
+   *
+   * @param {Object} selectedTest - The selected test object
+   * @param {string} selectedTest._id - The test ID
+   * @param {Function} getValidationFormData - Function to get validation form data
+   * @returns {Promise<void>}
+   */
   const save = async (selectedTest, getValidationFormData) => {
     const data = {
       ...selectedTest,
@@ -122,6 +169,8 @@ export const useTemplateTestActions = (props) => {
     };
 
     if (props.ruleId) {
+      data.rule = props.ruleId;
+
       await updateTemplateTest({ data, id: selectedTest._id });
 
       popups.success({ text: t('templateTesting.testSaved') });
@@ -134,6 +183,13 @@ export const useTemplateTestActions = (props) => {
     popups.success({ text: t('templateTesting.testWillSaveAfterFormSaving') });
   };
 
+  /**
+   * Saves a template test as a new test with a custom name
+   *
+   * @param {Function} getValidationFormData - Function to get validation form data
+   * @param {Function} [onTestCreated] - Optional callback when test is created
+   * @returns {Promise<void>}
+   */
   const saveAsNew = async (getValidationFormData, onTestCreated) => {
     const isValid = await validator.validateAll('test-data');
 
@@ -198,8 +254,18 @@ export const useTemplateTestActions = (props) => {
     });
   };
 
+  /**
+   * Gets the current template test request data
+   *
+   * @returns {Object|null} The template test request data or null
+   */
   const getTemplateTestRequestData = () => templateTestRequestData.value;
 
+  /**
+   * Creates a template test from stored request data and clears it
+   *
+   * @returns {Promise<Object|null>} The created test or null if no request data
+   */
   const createTemplateTestFromRequestData = async () => {
     if (!templateTestRequestData.value) {
       return null;
@@ -211,6 +277,9 @@ export const useTemplateTestActions = (props) => {
     return newTest;
   };
 
+  /**
+   * Clears the template test request data
+   */
   const clearTemplateTestRequestData = () => {
     templateTestRequestData.value = null;
   };
@@ -229,7 +298,12 @@ export const useTemplateTestActions = (props) => {
  * Hook for managing template test execution
  *
  * @param {Object} props - Component props
+ * @param {string} props.type - The type of template testing
+ * @param {Object} props.generalForm - The general form data
+ * @param {Array} props.variablesFields - Array of variable fields
  * @returns {Object} Test runner state and methods
+ * @returns {import('vue').Ref<Object>} returns.testResult - Reactive test result object
+ * @returns {Function} returns.createRunTestHandler - Function to create a test run handler
  */
 export const useTemplateTestRunner = (props) => {
   const testResult = ref({});
@@ -273,6 +347,17 @@ export const useTemplateTestRunner = (props) => {
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: formToMetaAlarmRule,
   })[props.type] ?? formToService);
 
+  /**
+   * Creates a test run handler with validation and error handling
+   *
+   * @param {Function} getValidationFormData - Function to get validation form data
+   * @param {Function} setFormErrors - Function to set form validation errors
+   * @param {Function} [onValidationStateChange] - Optional callback for validation state changes
+   * @param {Function} [onLastRunVariablesChange] - Optional callback for last run variables changes
+   * @returns {Object} Test run handler object
+   * @returns {import('vue').Ref<boolean>} returns.running - Reactive running state
+   * @returns {Function} returns.runTest - Function to run the test
+   */
   const createRunTestHandler = (
     getValidationFormData,
     setFormErrors,
@@ -362,7 +447,10 @@ export const useTemplateTestRunner = (props) => {
  * @param {Object} params - Parameters
  * @param {Function} params.getTemplateTestRequestData - Function to get template test request data
  * @param {Object} props - Component props
+ * @param {string} props.ruleId - The rule ID if editing an existing rule
  * @returns {Object} After submit methods
+ * @returns {Function} returns.createAfterSubmitHandler - Function to create after submit handler
+ * @returns {Function} returns.setupAfterSubmitObserver - Function to setup after submit observer
  */
 export const useTemplateTestAfterSubmit = ({ getTemplateTestRequestData }, props) => {
   const afterSubmitObserver = inject('$afterSubmitObserver');
@@ -372,7 +460,19 @@ export const useTemplateTestAfterSubmit = ({ getTemplateTestRequestData }, props
 
   const { createTemplateTest } = useTemplateTest();
 
+  /**
+   * Creates an after submit handler function
+   *
+   * @returns {Function} The after submit handler function
+   */
   const createAfterSubmitHandler = () => {
+    /**
+     * Handles post-submission logic for creating template tests
+     *
+     * @param {Object} [rule] - The rule object if available
+     * @param {string} [rule._id] - The rule ID
+     * @returns {Promise<void>}
+     */
     const afterSubmit = async (rule) => {
       /**
        * Capture the translation string before the component is destroyed
@@ -399,6 +499,11 @@ export const useTemplateTestAfterSubmit = ({ getTemplateTestRequestData }, props
     return afterSubmit;
   };
 
+  /**
+   * Sets up the after submit observer with proper lifecycle management
+   *
+   * @returns {Function} The after submit handler function
+   */
   const setupAfterSubmitObserver = () => {
     const afterSubmit = createAfterSubmitHandler();
 

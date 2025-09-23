@@ -42,9 +42,9 @@
 <script>
 import { computed } from 'vue';
 
-import TemplateTestingTestField from './form/fields/template-testing-test-field.vue';
-import TemplateTestingTestVariablesTestData from './template-testing-test-variables-test-data.vue';
-import TemplateTestingTestVariablesTemplateItem from './template-testing-test-variables-template-item.vue';
+import TemplateTestingTestField from '../../form/fields/template-testing-test-field.vue';
+import TemplateTestingTestVariablesTestData from '../partials/template-testing-test-variables-test-data.vue';
+import TemplateTestingTestVariablesTemplateItem from '../partials/template-testing-test-variables-template-item.vue';
 
 export default {
   components: {

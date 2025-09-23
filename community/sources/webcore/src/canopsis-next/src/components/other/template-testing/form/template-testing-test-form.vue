@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import TemplateTestingTestTypeField from '../partials/template-testing-test-type-field.vue';
+import TemplateTestingTestTypeField from './fields/template-testing-test-type-field.vue';
 
 export default {
   components: {
