@@ -1051,6 +1051,7 @@ export const ALARM_UNSORTABLE_FIELDS = [
   ALARM_FIELDS.tags,
 ];
 
+// TODO: remove it in the end of the feature development
 export const ALARM_PAYLOADS_VARIABLES = {
   alarm: '.Alarm',
   alarms: '.Alarms',

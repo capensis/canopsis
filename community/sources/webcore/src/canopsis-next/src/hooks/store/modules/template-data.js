@@ -1,7 +1,7 @@
 import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * Hook to use the Template Data Store Module.
+ * Hook to use the template data store module.
  *
  * @returns {Object} An object containing getters and actions for the template data.
  */

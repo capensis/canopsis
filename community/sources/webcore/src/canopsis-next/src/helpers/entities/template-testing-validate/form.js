@@ -149,8 +149,6 @@ export const convertLinkRuleToTemplateTestingTestValidateForm = (form = {}) => {
   return result;
 };
 
-// TODO: check all forms bellow
-
 /**
  * Converts scenario form to template testing validation form items
  *

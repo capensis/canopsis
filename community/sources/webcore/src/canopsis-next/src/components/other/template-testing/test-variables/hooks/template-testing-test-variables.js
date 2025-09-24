@@ -60,7 +60,6 @@ export const useTemplateTestingValidationForm = (props) => {
 
   const { setFormErrors } = useValidationFormErrors(validationForm);
 
-  // Watch for changes in general form and update validation form accordingly
   watch(() => props.generalForm, (newForm) => {
     const newValidationForm = formToTemplateTestingTestValidateForm(newForm, props.type);
 
@@ -449,8 +448,18 @@ export const useTemplateTestRunner = (props) => {
  * @param {Object} props - Component props
  * @param {string} props.ruleId - The rule ID if editing an existing rule
  * @returns {Object} After submit methods
- * @returns {Function} returns.createAfterSubmitHandler - Function to create after submit handler
  * @returns {Function} returns.setupAfterSubmitObserver - Function to setup after submit observer
+ */
+/**
+ * Hook for handling post-submission logic when creating template tests
+ * Manages the afterSubmit observer registration and handles test creation after form submission
+ *
+ * @param {Object} config - Configuration object
+ * @param {Function} config.getTemplateTestRequestData - Function that returns template test request data
+ * @param {Object} props - Component props
+ * @param {string} [props.ruleId] - Optional rule ID that determines if observer should be registered
+ * @returns {Object} An object containing the afterSubmitObserver
+ * @property {Object} afterSubmitObserver - The observer instance for post-submission handling
  */
 export const useTemplateTestAfterSubmit = ({ getTemplateTestRequestData }, props) => {
   const afterSubmitObserver = inject('$afterSubmitObserver');
@@ -461,70 +470,49 @@ export const useTemplateTestAfterSubmit = ({ getTemplateTestRequestData }, props
   const { createTemplateTest } = useTemplateTest();
 
   /**
-   * Creates an after submit handler function
+   * Handles post-submission logic for creating template tests
    *
-   * @returns {Function} The after submit handler function
+   * @param {Object} [rule] - The rule object if available
+   * @param {string} [rule._id] - The rule ID
+   * @returns {Promise<void>}
    */
-  const createAfterSubmitHandler = () => {
+  const afterSubmit = async (rule) => {
     /**
-     * Handles post-submission logic for creating template tests
-     *
-     * @param {Object} [rule] - The rule object if available
-     * @param {string} [rule._id] - The rule ID
-     * @returns {Promise<void>}
+     * Capture the translation string before the component is destroyed
+     * vue-i18n provides a proxy object that is destroyed when the component is destroyed
+     * so we need to capture the translation string before the component is destroyed
      */
-    const afterSubmit = async (rule) => {
-      /**
-       * Capture the translation string before the component is destroyed
-       * vue-i18n provides a proxy object that is destroyed when the component is destroyed
-       * so we need to capture the translation string before the component is destroyed
-       */
-      const testSavedMessage = t('templateTesting.testSaved');
+    const testSavedMessage = t('templateTesting.testSaved');
 
-      const templateTestRequestData = getTemplateTestRequestData();
+    const templateTestRequestData = getTemplateTestRequestData();
 
-      if (!templateTestRequestData) {
-        return;
-      }
+    if (!templateTestRequestData) {
+      return;
+    }
 
-      if (rule) {
-        templateTestRequestData.rule = rule._id;
-      }
+    if (rule) {
+      templateTestRequestData.rule = rule._id;
+    }
 
-      await createTemplateTest({ data: templateTestRequestData });
+    await createTemplateTest({ data: templateTestRequestData });
 
-      popups.success({ text: testSavedMessage });
-    };
-
-    return afterSubmit;
+    popups.success({ text: testSavedMessage });
   };
+
+  onMounted(() => {
+    if (props.ruleId) {
+      return;
+    }
+
+    afterSubmitObserver.register(afterSubmit);
+  });
 
   /**
-   * Sets up the after submit observer with proper lifecycle management
-   *
-   * @returns {Function} The after submit handler function
+   * Unregister the afterSubmit observer after a timeout to avoid race condition
    */
-  const setupAfterSubmitObserver = () => {
-    const afterSubmit = createAfterSubmitHandler();
-
-    onMounted(() => {
-      if (props.ruleId) {
-        return;
-      }
-
-      afterSubmitObserver.register(afterSubmit);
-    });
-
-    /**
-     * Unregister the afterSubmit observer after a timeout to avoid race condition
-     */
-    onBeforeUnmount(() => setTimeout(() => afterSubmitObserver.unregister(afterSubmit), 0));
-
-    return afterSubmit;
-  };
+  onBeforeUnmount(() => setTimeout(() => afterSubmitObserver.unregister(afterSubmit), 0));
 
   return {
-    createAfterSubmitHandler,
-    setupAfterSubmitObserver,
+    afterSubmitObserver,
   };
 };

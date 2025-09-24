@@ -1,7 +1,7 @@
 import { useStoreModuleHooks } from '@/hooks/store';
 
 /**
- * Hook to use the Template Test Store Module.
+ * Hook to use the template test store module.
  *
  * @returns {Object} An object containing getters and actions for the template test.
  */

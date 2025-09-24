@@ -46,7 +46,6 @@ export const useConfirmableForm = ({
   const modals = useModals();
   const confirmationModalId = uid('modal');
 
-  // Store original form value when cloning is enabled
   const originalForm = ref(cloning && form ? cloneDeep(unref(form)) : null);
 
   /**

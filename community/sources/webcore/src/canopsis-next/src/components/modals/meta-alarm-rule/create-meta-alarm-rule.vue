@@ -113,6 +113,10 @@ export default {
     const title = computed(() => config.value.title ?? t('modals.metaAlarmRule.create.title'));
     const isLastStep = computed(() => activeStep.value === META_ALARMS_FORM_STEPS.parameters);
 
+    /**
+     * Checks if the current step is valid based on error states
+     * @returns {boolean} True if the current step has no errors, false otherwise
+     */
     const isCurrentStepValid = () => {
       const { hasGeneralError, hasTypeError, hasParametersError } = formElement.value ?? {};
 
@@ -123,6 +127,11 @@ export default {
       }[activeStep.value];
     };
 
+    /**
+     * Validates the current step by calling the appropriate validation function
+     *
+     * @returns {Promise<boolean>|boolean|undefined} The validation result for the current step
+     */
     const validateCurrentStepValid = () => {
       const {
         validateGeneralChildren,
@@ -139,12 +148,22 @@ export default {
       return func?.();
     };
 
+    /**
+     * Moves to the next step if the current step validation passes
+     */
     const next = async () => {
       const isValid = await validateCurrentStepValid();
 
       if (isValid) {
         activeStep.value += 1;
       }
+    };
+
+    /**
+     * Updates the step validation state by checking if the current step is valid
+     */
+    const handleValidationChanged = () => {
+      isStepValid.value = isCurrentStepValid();
     };
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
@@ -162,10 +181,6 @@ export default {
 
     onMounted(() => {
       fetchInfos();
-
-      const handleValidationChanged = () => {
-        isStepValid.value = isCurrentStepValid();
-      };
 
       handleValidationChanged();
 

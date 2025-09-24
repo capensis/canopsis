@@ -14,6 +14,11 @@ export const useValidationAttachRequired = (name) => {
   const validator = useValidator();
   const instance = useComponentInstance();
 
+  /**
+   * Attaches a required validation rule to the field if it doesn't already exist
+   *
+   * @param {Function} getter - Function that returns the field's current value for validation
+   */
   const attachRequiredRule = (getter) => {
     const oldField = validator?.fields?.find?.({ name });
 
@@ -26,8 +31,22 @@ export const useValidationAttachRequired = (name) => {
       });
     }
   };
+
+  /**
+   * Validates the required rule for the field
+   *
+   * @returns {Promise|undefined} Promise resolving to validation result, or undefined if validator not available
+   */
   const validateRequiredRule = () => validator?.validate?.(name);
+
+  /**
+   * Resets the validation state for the field
+   */
   const resetRequiredRule = () => validator?.reset?.({ name });
+
+  /**
+   * Detaches the validation rule from the field
+   */
   const detachRequiredRule = () => validator?.detach?.(name);
 
   return {

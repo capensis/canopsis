@@ -31,6 +31,9 @@ import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import TemplateTestingTestDataField from '../../form/fields/template-testing-data-field.vue';
 
+/**
+ * We don't need this constant in another partials, because it's used only here
+ */
 const TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_COPONENTS = {
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'template-testing-test-data-field',
   [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'template-testing-test-data-field',
@@ -67,6 +70,7 @@ export default {
 
     /**
      * Gets the appropriate label for a test data item based on its type and index
+     *
      * @param {Object} item - The test data item
      * @param {string} item.type - The type of the test data item
      * @param {number} [item.index] - Optional index for response-type items (0-based)
