@@ -95,8 +95,6 @@ type BaseFilterRequest struct {
 	OnlyParents bool              `form:"correlation" json:"correlation"`
 	Category    string            `form:"category" json:"category"`
 
-	// Tag is deprecated, please use tags[] parameter
-	Tag  string   `form:"tag" json:"tag"`
 	Tags []string `form:"tags[]" json:"tags"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`

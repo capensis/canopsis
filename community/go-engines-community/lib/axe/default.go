@@ -23,7 +23,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
-	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -77,13 +76,9 @@ func ParseOptions() (Options, []string) {
 	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
 	flag.IntVar(&opts.RpcWorkers, "rpcWorkers", canopsis.DefaultRpcWorkers, "Amount of workers to process rpc event flow.")
 
-	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
-	flag.Bool("withRemediation", false, "Deprecated: Start remediation instructions")
-	flag.String("publishQueue", "", "Deprecated: Publish event to this queue")
-
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags("workers", "withRemediation", "publishQueue")
+	return opts, nil
 }
 
 func NewEngine(
