@@ -51,9 +51,17 @@ import {
   useTemplateTestActions,
   useTemplateTestRunner,
   useTemplateTestAfterSubmit,
-} from './hooks/template-testing-test-variables';
-import TemplateTestingTestVariablesForm from './form/template-testing-test-variables-form.vue';
+} from './test-variables/hooks/template-testing-test-variables';
+import TemplateTestingTestVariablesForm from './test-variables/form/template-testing-test-variables-form.vue';
 
+/**
+ * Template Testing Test Variables Component
+ *
+ * Component for managing template testing with test variables, validation,
+ * and execution. Provides UI for running tests, saving tests, and viewing results.
+ *
+ * @vue/component
+ */
 export default {
   inject: ['$validator', '$afterSubmitObserver'],
   components: {
@@ -64,18 +72,34 @@ export default {
     event: 'input',
   },
   props: {
+    /**
+     * The general form data containing template configuration
+     * @type {Object}
+     */
     generalForm: {
       type: Object,
       default: () => ({}),
     },
+    /**
+     * Array of variable fields for the template
+     * @type {Array}
+     */
     variablesFields: {
       type: Array,
       default: () => [],
     },
+    /**
+     * Template variables object
+     * @type {Object}
+     */
     templateVars: {
       type: Object,
       default: () => ({}),
     },
+    /**
+     * Rule ID for existing rules (optional)
+     * @type {string}
+     */
     ruleId: {
       type: String,
       required: false,
@@ -85,6 +109,17 @@ export default {
       required: false,
     },
   },
+  /**
+   * Vue Composition API setup function
+   *
+   * @param {Object} props - Component props
+   * @param {Object} props.generalForm - The general form data
+   * @param {Array} props.variablesFields - Array of variable fields
+   * @param {Object} props.templateVars - Template variables object
+   * @param {string} props.ruleId - Rule ID for existing rules
+   * @param {number} props.type - Type of template testing
+   * @returns {Object} Setup return object with reactive data and methods
+   */
   setup(props) {
     const isGeneralFormValid = ref(true);
 
@@ -111,12 +146,15 @@ export default {
       createRunTestHandler,
     } = useTemplateTestRunner(props);
 
+    // Create run test handler with callbacks
     const { running, runTest } = createRunTestHandler(
       getValidationFormData,
       setFormErrors,
       (isValid) => { isGeneralFormValid.value = isValid; },
       setLastRunVariables,
     );
+
+    useTemplateTestAfterSubmit({ getTemplateTestRequestData }, props);
 
     /**
      * Saves the current selected test
@@ -150,12 +188,6 @@ export default {
         clearTemplateTestRequestData();
       }
     };
-
-    const { setupAfterSubmitObserver } = useTemplateTestAfterSubmit({
-      getTemplateTestRequestData,
-    }, props);
-
-    setupAfterSubmitObserver();
 
     return {
       selectedTest,

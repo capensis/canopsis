@@ -75,14 +75,16 @@
 import { isUndefined } from 'lodash';
 import { ref, computed, watch } from 'vue';
 
+import {
+  TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
+  TEMPLATE_TESTING_TEST_VARIABLES_MIN_EDITOR_LINES,
+} from '@/constants';
+
 import { getStringLinesCount } from '@/helpers/string';
 
 import { useI18n } from '@/hooks/i18n';
 
 import SimpleCodeEditor from '@/components/common/code-editor/simple-code-editor.vue';
-
-const EDITOR_LINE_HEIGHT = 19;
-const MIN_EDITOR_LINES = 2;
 
 export default {
   components: { SimpleCodeEditor },
@@ -130,7 +132,9 @@ export default {
     const isRunning = ref(false);
     const isJson = ref(false);
 
-    const editorHeight = ref(MIN_EDITOR_LINES * EDITOR_LINE_HEIGHT);
+    const editorHeight = ref(
+      TEMPLATE_TESTING_TEST_VARIABLES_MIN_EDITOR_LINES * TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT,
+    );
 
     const statusProps = computed(() => {
       const { err, is_valid: isValid } = props.result;
@@ -178,7 +182,7 @@ export default {
     });
 
     watch(formattedOutput, (value) => {
-      editorHeight.value = getStringLinesCount(value) * EDITOR_LINE_HEIGHT;
+      editorHeight.value = getStringLinesCount(value) * TEMPLATE_TESTING_TEST_VARIABLES_EDITOR_LINE_HEIGHT;
     });
 
     return {

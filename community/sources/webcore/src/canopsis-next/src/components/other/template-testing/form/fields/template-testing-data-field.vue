@@ -94,6 +94,7 @@ export default {
       value: toRef(props, 'value'),
       idParamsKey: 'ids',
       idKey: '_id',
+      attachValue: true,
     }, emit);
 
     const { showCreateTemplateTestingDataModal } = useTemplateDataModals(fetchItems);

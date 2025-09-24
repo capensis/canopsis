@@ -184,6 +184,7 @@ export default {
         USER_PERMISSIONS.technical.kpi,
         USER_PERMISSIONS.technical.maintenance,
         USER_PERMISSIONS.technical.eventsRecord,
+        USER_PERMISSIONS.technical.templateTesting,
       ];
     },
   },
