@@ -253,6 +253,7 @@ export default {
     [USER_PERMISSIONS.technical.techmetrics]: 'Bilan de santé - métriques des moteurs',
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Paramètres - modèles de widgets',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Paramètres - import / export',
+    [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
 
     /**
      * Technical Admin Access
