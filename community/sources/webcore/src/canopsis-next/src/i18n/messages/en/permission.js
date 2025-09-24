@@ -253,6 +253,7 @@ export default {
     [USER_PERMISSIONS.technical.techmetrics]: 'Healthcheck - engines\' metrics',
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Parameters - widget templates',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Parameters - import / export',
+    [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
 
     /**
      * Technical Admin Access
