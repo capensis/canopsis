@@ -11,6 +11,7 @@
     :item-text="itemText"
     :item-value="itemValue"
     :no-data-text="$t('alarm.noAlarmFound')"
+    return-object
     clearable
     autocomplete
     with-type
@@ -92,6 +93,7 @@ export default {
       value: toRef(props, 'value'),
       idKey: props.itemValue,
       idParamsKey: 'ids',
+      attachValue: true,
     }, emit);
 
     watch(() => props.params, () => {

@@ -15,6 +15,7 @@ import {
   ref,
   unref,
   watch,
+  set,
   onMounted,
 } from 'vue';
 
@@ -118,14 +119,7 @@ export const useLazySearch = ({
 
       pageCount.value = meta.page_count;
 
-      let newItemsByValue = {};
-
-      if (attachValue && unref(returnObject)) {
-        newItemsByValue = keyBy(arrayValue.value, unwrappedIdKey);
-      }
-
       itemsByValue.value = {
-        ...newItemsByValue,
         ...(params.page !== 1 ? itemsByValue.value : {}),
         ...keyBy(data, unwrappedIdKey),
         ...pick(itemsByValue.value, arrayValue.value),
@@ -165,11 +159,17 @@ export const useLazySearch = ({
 
     selectedItems.value = arrayValue.value.map(item => (
       dataById[item[unwrappedIdKey] ?? item]
-        ?? isObject(item) ? item : ({ [unwrappedIdKey]: item, noData: true })
+        ?? (isObject(item) ? item : ({ [unwrappedIdKey]: item, noData: true }))
     ));
 
-    if (attachValue && unref(returnObject)) {
-      fetchItems();
+    if (attachValue) {
+      selectedItems.value.forEach((item) => {
+        const id = item[unwrappedIdKey];
+
+        if (id && !itemsByValue.value[id]) {
+          set(itemsByValue.value, id, item);
+        }
+      });
     }
   }, true);
 
@@ -211,18 +211,12 @@ export const useLazySearch = ({
   const fetchMoreItems = () => updateQueryPage(query.value.page + 1);
 
   /**
-   * Emits an event to notify parent components about changes to the selected items.
-   */
-  const emitUpdateSelectedItems = () => emit('update:selected-items', selectedItems.value);
-
-  /**
    * Function to update the selected items and emit changes.
    * @param {Array} newSelectedItems - The new list of selected items.
    */
   const changeSelectedItems = (newSelectedItems) => {
     if (!newSelectedItems) {
       selectedItems.value = [];
-      emitUpdateSelectedItems();
 
       updateModel('');
 
@@ -246,7 +240,6 @@ export const useLazySearch = ({
         ? preparedNewSelectedItems
         : preparedNewSelectedItems.filter(item => !isString(item))
     ).map(item => (isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item } : item)), unwrappedIdKey);
-    emitUpdateSelectedItems();
 
     if (returnObject) {
       updateModel(
@@ -257,6 +250,7 @@ export const useLazySearch = ({
 
       return;
     }
+
     updateModel(
       unwrappedMultiple
         ? mapIds(selectedItems.value, unwrappedIdKey)
