@@ -27,7 +27,6 @@ export const payloadFieldMixin = {
       selectionVariableStart: 0,
       selectionVariableEnd: 0,
       variableGroup: undefined,
-      operatorGroup: undefined, // TODO: remove operator group
       newVariableGroup: undefined,
       variablesShown: false,
       variablesMenuPosition: {

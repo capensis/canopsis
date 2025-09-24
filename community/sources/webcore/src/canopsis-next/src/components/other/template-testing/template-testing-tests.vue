@@ -46,6 +46,13 @@ export default {
       fetchListHandler: fetchTemplateTestListWithoutStore,
     });
 
+    /**
+     * Shows the edit template testing test modal with the provided test data
+     *
+     * @param {Object} [templateTestingTest={}] - The template testing test object to edit
+     * @param {string} templateTestingTest._id - The ID of the template testing test
+     * @param {string} templateTestingTest.name - The name of the template testing test
+     */
     const showEditTemplateTestingTestModal = (templateTestingTest = {}) => modals.show({
       name: MODALS.createTemplateTestingTest,
       config: {
@@ -62,6 +69,13 @@ export default {
       },
     });
 
+    /**
+     * Shows the confirmation modal for removing a template testing test
+     *
+     * @param {Object} [templateTestingTest={}] - The template testing test object to remove
+     * @param {string} templateTestingTest._id - The ID of the template testing test
+     * @param {string} templateTestingTest.name - The name of the template testing test used as confirmation phrase
+     */
     const showRemoveTemplateTestingTestModal = (templateTestingTest = {}) => modals.show({
       name: MODALS.confirmationPhrase,
       config: {

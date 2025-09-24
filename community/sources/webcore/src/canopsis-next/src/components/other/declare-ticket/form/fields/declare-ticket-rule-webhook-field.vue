@@ -88,9 +88,10 @@ export default {
     const requestFormName = computed(() => `${props.name}.request`);
     const webhookTemplateVarsKey = computed(() => (props.hasPrevious ? 'webhook' : 'first_webhook'));
 
-    const removeWebhook = () => {
-      emit('remove');
-    };
+    /**
+     * Removes the webhook by emitting a remove event
+     */
+    const removeWebhook = () => emit('remove');
 
     const { confirmAction } = useConfirmableForm({
       method: removeWebhook,

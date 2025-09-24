@@ -1,7 +1,7 @@
 <template>
   <c-page
-    :creatable="hasCreateAccess"
     :create-tooltip="$t('modals.createTemplateData.title')"
+    :creatable="creatable"
     @refresh="refresh"
     @create="showCreateTemplateTestingDataModal"
   >
@@ -33,9 +33,7 @@
 <script>
 import { ref, computed } from 'vue';
 
-import { USER_PERMISSIONS, TEMPLATE_TESTING_TABS } from '@/constants';
-
-import { useCRUDPermissions } from '@/hooks/auth';
+import { TEMPLATE_TESTING_TABS } from '@/constants';
 
 import { useTemplateDataModals } from '@/components/other/template-testing/hooks/template-testing-data';
 
@@ -51,15 +49,9 @@ export default {
     const templateTestingDataElement = ref(null);
     const templateTestingTestsElement = ref(null);
 
-    const {
-      hasCreateAccess: hasCreateAnyTemplateDataAccess,
-    } = useCRUDPermissions(USER_PERMISSIONS.technical.templateTesting);
-
     const activeTab = ref(TEMPLATE_TESTING_TABS.data);
 
-    const hasCreateAccess = computed(() => ({
-      [TEMPLATE_TESTING_TABS.data]: hasCreateAnyTemplateDataAccess.value,
-    }[activeTab.value]));
+    const creatable = computed(() => ({ [TEMPLATE_TESTING_TABS.data]: true }[activeTab.value]));
 
     /**
      * Refreshes the currently active tab's data by calling the appropriate fetchList method
@@ -72,13 +64,13 @@ export default {
     const { showCreateTemplateTestingDataModal } = useTemplateDataModals(refresh);
 
     return {
-      hasCreateAccess,
-
       templateTestingDataElement,
       templateTestingTestsElement,
 
       TEMPLATE_TESTING_TABS,
       activeTab,
+
+      creatable,
 
       refresh,
       showCreateTemplateTestingDataModal,

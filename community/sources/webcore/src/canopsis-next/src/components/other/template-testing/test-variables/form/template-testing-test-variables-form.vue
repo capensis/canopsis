@@ -93,6 +93,10 @@ export default {
   setup(props, { emit }) {
     const preparedRuleId = computed(() => props.ruleId ?? 'fake-id');
 
+    /**
+     * Updates the selected test by emitting the new selected test value
+     * @param {Object} newSelectedTest - The new selected test object
+     */
     const updateSelectedTest = newSelectedTest => emit('update:selected-test', newSelectedTest);
 
     return {
