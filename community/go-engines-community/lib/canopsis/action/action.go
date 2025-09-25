@@ -22,6 +22,9 @@ type Scenario struct {
 	Delay                *datetime.DurationWithUnit `bson:"delay" json:"delay"`
 	Created              datetime.CpsTime           `bson:"created,omitempty" json:"created,omitempty"`
 	Updated              datetime.CpsTime           `bson:"updated,omitempty" json:"updated,omitempty"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 func (s Scenario) IsTriggered(triggers []string) string {
@@ -101,4 +104,10 @@ type Parameters struct {
 	SkipForInstruction *bool `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
 	// DeclareTicket is used in webhook action.
 	DeclareTicket *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket,omitempty"`
+	// StopOnFail is used in webhook action.
+	StopOnFail *bool `json:"stop_on_fail,omitempty" bson:"stop_on_fail,omitempty"`
+	// StopOnSuccess is used in webhook action.
+	StopOnSuccess *bool `json:"stop_on_success,omitempty" bson:"stop_on_success,omitempty"`
+	// MultipleURLs is used in webhook action.
+	MultipleURLs *bool `json:"multiple_urls,omitempty" bson:"multiple_urls,omitempty"`
 }

@@ -1,6 +1,6 @@
 <template>
   <div :style="widgetWrapperStyles">
-    <template v-if="widget.title || editing">
+    <template v-if="widget.title || activeViewEditing">
       <v-card-title class="widget-title pa-2">
         <v-layout
           justify-space-between
@@ -144,7 +144,7 @@ export default {
       const widgetComponentsMap = { ...COMPONENTS_BY_WIDGET_TYPES };
       let widgetSpecificsProp = {};
 
-      if (this.isKioskScreenMode) {
+      if (this.activeViewIsKioskScreenMode) {
         widgetSpecificsProp = {
           ...this.widget.parameters.kiosk,
         };

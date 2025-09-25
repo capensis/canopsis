@@ -39,5 +39,6 @@ type Request struct {
 	//   * `declare_ticket_rule` - export declare_ticket_rule collection
 	//   * `link_rule` - export link_rule collection
 	//   * `map` - export map collection
+	//   * `entity_infos_property` - export entity_infos_property collection
 	Exports []string `json:"export"`
 }

@@ -9,11 +9,12 @@ export const activeViewMixin = {
   computed: {
     ...mapGetters({
       view: 'item',
-      pending: 'pending',
-      editing: 'editing',
-      screenMode: 'screenMode',
-      isKioskScreenMode: 'isKioskScreenMode',
-      editingProcess: 'editingProcess',
+      activeViewPending: 'pending',
+      activeViewScreenMode: 'screenMode',
+      activeViewEditing: 'editing',
+      activeViewEditingProcess: 'editingProcess',
+      activeViewPeriodicRefreshPaused: 'periodicRefreshPaused',
+      activeViewIsKioskScreenMode: 'isKioskScreenMode',
     }),
   },
   methods: {
@@ -23,6 +24,8 @@ export const activeViewMixin = {
       unregisterEditingOffHandler: 'unregisterEditingOffHandler',
       fetchActiveView: 'fetch',
       clearActiveView: 'clear',
+      resumePeriodicRefresh: 'resumePeriodicRefresh',
+      pausePeriodicRefresh: 'pausePeriodicRefresh',
       setActiveViewScreenMode: 'setScreenMode',
     }),
   },
