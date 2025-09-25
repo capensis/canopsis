@@ -3,7 +3,6 @@
 exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
 <div
   class="text-editor"
-  withdefaultvariables="true"
 >
   <label
     aria-hidden="true"
