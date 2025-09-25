@@ -33,6 +33,10 @@ type FatalWorkerError struct {
 	err error
 }
 
+func NewFatalWorkerError(err error) error {
+	return FatalWorkerError{err: err}
+}
+
 func (e FatalWorkerError) Error() string {
 	return e.err.Error()
 }
