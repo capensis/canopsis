@@ -70,7 +70,7 @@
           class="pa-4"
         >
           <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
-          <meta-alarm-rule-parameters-form v-field="form" :variables="templateVars.corel" />
+          <meta-alarm-rule-parameters-form v-field="form" :template-vars="templateVars" />
         </c-information-block>
       </v-stepper-content>
     </v-stepper-items>
