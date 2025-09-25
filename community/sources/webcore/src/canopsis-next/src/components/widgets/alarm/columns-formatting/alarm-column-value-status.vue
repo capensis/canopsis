@@ -10,6 +10,7 @@
     v-else
     :content="tooltipContent"
     top
+    v-on="$listeners"
   >
     <template #activator="{ on }">
       <v-icon

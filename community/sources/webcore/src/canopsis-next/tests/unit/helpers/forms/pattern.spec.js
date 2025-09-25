@@ -932,7 +932,7 @@ describe('pattern form converters', () => {
       unit: TIME_UNITS.hour,
     };
     const customToDuration = {
-      value: 12,
+      value: 23, // Use a value that doesn't match predefined ranges
       unit: TIME_UNITS.day,
     };
     const patternRule = {
@@ -976,7 +976,7 @@ describe('pattern form converters', () => {
 
   it('should be converted to form and back to pattern with `relative time` condition and both custom durations for `inRangePeriod` operator', () => {
     const customFromDuration = {
-      value: 14,
+      value: 17, // Use a specific value that doesn't match predefined ranges
       unit: TIME_UNITS.minute,
     };
     const customToDuration = {
