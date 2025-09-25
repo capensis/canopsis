@@ -12,7 +12,7 @@
       </v-flex>
       <v-flex v-if="isFullscreen">
         <view-screen-mode-btn
-          :value="screenMode"
+          :value="activeViewScreenMode"
           top
           @input="changeScreenMode"
         />
@@ -40,7 +40,7 @@
           :tab="activeTab"
         />
         <view-screen-mode-btn
-          :value="screenMode"
+          :value="activeViewScreenMode"
           left
           small
           @input="changeScreenMode"
@@ -145,7 +145,7 @@ export default {
     const { createViewTab } = useView();
     const {
       view,
-      screenMode,
+      activeViewScreenMode,
       fetchActiveView,
       toggleEditing,
       setActiveViewScreenMode,
@@ -176,7 +176,7 @@ export default {
           isFullscreen.value = value;
 
           if (!value) {
-            setActiveViewScreenMode(FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[screenMode.value]);
+            setActiveViewScreenMode(FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[activeViewScreenMode.value]);
           }
         },
       });
@@ -269,7 +269,7 @@ export default {
     return {
       isFullscreen,
       view,
-      screenMode,
+      activeViewScreenMode,
       changeScreenMode,
       showCreateWidgetModal,
       showCreateTabModal,

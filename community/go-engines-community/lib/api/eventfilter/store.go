@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -35,7 +36,9 @@ type store struct {
 	dbCollection            mongo.DbCollection
 	dbFailureCollection     mongo.DbCollection
 	dbExdataTableCollection mongo.DbCollection
+	transformer             common.PatternFieldsTransformer
 	authorProvider          author.Provider
+	notificationStore       usernotification.Store
 	defaultSearchByFields   []string
 	defaultSortBy           string
 }
@@ -43,13 +46,17 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
+	notificationStore usernotification.Store,
 ) Store {
 	return &store{
 		dbClient:                dbClient,
 		dbCollection:            dbClient.Collection(mongo.EventFilterRuleCollection),
 		dbFailureCollection:     dbClient.Collection(mongo.EventFilterFailureCollection),
 		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
+		transformer:             transformer,
 		authorProvider:          authorProvider,
+		notificationStore:       notificationStore,
 		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
 		defaultSortBy:           "created",
 	}
@@ -71,9 +78,16 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	model.Updated = &now
 
 	var response *Response
+
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.dbCollection.InsertOne(ctx, model)
+
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityPatternFieldsRequest, &model)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			return err
 		}
@@ -122,9 +136,18 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
+	andCond := make([]bson.M, 0)
 	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
-		pipeline = append(pipeline, bson.M{"$match": filter})
+		andCond = append(andCond, filter)
+	}
+
+	if query.OnlyUnreadFailure {
+		andCond = append(andCond, bson.M{"unread_failures_count": bson.M{"$gt": 0}})
+	}
+
+	if len(andCond) > 0 {
+		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": andCond}})
 	}
 
 	sort := common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
@@ -168,7 +191,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	model.Created = nil
 	model.Updated = &updated
 
-	update := bson.M{"$set": model}
+	update := make(bson.M)
 	unset := bson.M{
 		"events_count":          "",
 		"unread_failures_count": "",
@@ -190,7 +213,15 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	var response *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.dbCollection.UpdateOne(
+
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityPatternFieldsRequest, &model)
+		if err != nil {
+			return err
+		}
+
+		update["$set"] = model
+
+		_, err = s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": model.ID},
 			update,
@@ -241,10 +272,22 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
-		return err
-	})
+		if err != nil {
+			return err
+		}
 
-	return deleted > 0, err
+		return nil
+	})
+	if err != nil || deleted == 0 {
+		return false, err
+	}
+
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error) {
@@ -311,11 +354,22 @@ func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
 		_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": id, "unread": true}, bson.M{"$unset": bson.M{
 			"unread": "",
 		}})
+		if err != nil {
+			return err
+		}
 
-		return err
+		return nil
 	})
+	if err != nil || !ruleExists {
+		return false, err
+	}
 
-	return ruleExists, err
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (eventfilter.Rule, error) {
@@ -331,22 +385,21 @@ func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (
 	}
 
 	return eventfilter.Rule{
-		Author:              r.Author,
-		Description:         r.Description,
-		Type:                r.Type,
-		Priority:            r.Priority,
-		Enabled:             r.Enabled,
-		Config:              r.Config,
-		ExternalData:        externalData,
-		EventPattern:        r.EventPattern,
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModel(),
-		RRule:               r.RRule,
-		Start:               r.Start,
-		Stop:                r.Stop,
-		ResolvedStart:       r.Start,
-		ResolvedStop:        r.Stop,
-		Exdates:             exdates,
-		Exceptions:          r.Exceptions,
+		Author:        r.Author,
+		Description:   r.Description,
+		Type:          r.Type,
+		Priority:      r.Priority,
+		Enabled:       r.Enabled,
+		Config:        r.Config,
+		ExternalData:  externalData,
+		EventPattern:  r.EventPattern,
+		RRule:         r.RRule,
+		Start:         r.Start,
+		Stop:          r.Stop,
+		ResolvedStart: r.Start,
+		ResolvedStop:  r.Stop,
+		Exdates:       exdates,
+		Exceptions:    r.Exceptions,
 	}, nil
 }
 
@@ -362,4 +415,16 @@ func (s *store) getResponseLookups() []bson.M {
 	})
 
 	return pipeline
+}
+
+func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r common.EntityPatternFieldsRequest, model *eventfilter.Rule) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+	if err != nil {
+		return err
+	}
+
+	model.Aliases = transformedEntityPatternRequest.Aliases
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModel()
+
+	return nil
 }

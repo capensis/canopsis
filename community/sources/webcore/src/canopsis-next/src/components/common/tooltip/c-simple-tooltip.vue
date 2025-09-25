@@ -71,7 +71,7 @@ export default {
       required: false,
     },
   },
-  setup(props) {
+  setup(props, { listeners }) {
     let dimensions = {};
     let isActive = false;
     let activatorElement = null;
@@ -193,6 +193,7 @@ export default {
       props.disabled
         ? {}
         : {
+          ...listeners,
           mouseenter: onMouseEnter,
           mouseleave: onMouseLeave,
         }
