@@ -5,8 +5,8 @@
   >
     <template #activator="{ on }">
       <v-btn
-        :input-value="editing"
-        :loading="editingProcess"
+        :input-value="activeViewEditing"
+        :loading="activeViewEditingProcess"
         class="view-editing-btn__button"
         fab
         dark

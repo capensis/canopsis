@@ -22,7 +22,7 @@ type Authorizer interface {
 	// AddRoom adds room with permissions.
 	AddRoom(room string, perms []string) error
 	AddGroup(group string, perms []string, check GroupCheckExists) error
-	GetGroupIds(group string) []string
+	GetGroupIDs(group string) []string
 	RemoveGroupRoom(group, id string) error
 }
 
@@ -105,7 +105,7 @@ func (a *authorizer) AddGroup(group string, perms []string, check GroupCheckExis
 	return nil
 }
 
-func (a *authorizer) GetGroupIds(group string) []string {
+func (a *authorizer) GetGroupIDs(group string) []string {
 	a.mx.RLock()
 	defer a.mx.RUnlock()
 
