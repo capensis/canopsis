@@ -174,9 +174,10 @@ export default {
           }
 
           isFullscreen.value = value;
+          const newMode = FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[activeViewScreenMode.value];
 
-          if (!value) {
-            setActiveViewScreenMode(FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[activeViewScreenMode.value]);
+          if (!value && newMode) {
+            setActiveViewScreenMode(newMode);
           }
         },
       });
