@@ -29,6 +29,8 @@ export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
 
 export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
 
+export const LOCAL_STORAGE_WARNING_POPUP_KEY = 'warningPopup';
+
 export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
 
 export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
