@@ -11,6 +11,7 @@ import (
 	"time"
 
 	libwebsocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	mock_websocket "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/websocket"
 	"github.com/gorilla/websocket"
 	"github.com/rs/zerolog"
@@ -34,7 +35,8 @@ func TestHub_Send_GivenNotJoinedToRoomConnection_ShouldNotSendMessageToConnectio
 	mockUpgrader := mock_websocket.NewMockUpgrader(ctrl)
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().ReadJSON(gomock.Any()).DoAndReturn(func(msg *libwebsocket.RMessage) error {
@@ -73,7 +75,8 @@ func TestHub_Send_GivenJoinedToRoomConnection_ShouldSendMessageToConnection(t *t
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	readTime := 0
@@ -126,7 +129,8 @@ func TestHub_Send_GivenLeftRoomConnection_ShouldNotSendMessageToConnection(t *te
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	readTime := 0
@@ -183,7 +187,8 @@ func TestHub_Send_GivenDisconnectedConnection_ShouldNotSendMessageToConnection(t
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	readTime := 0
@@ -242,7 +247,8 @@ func TestHub_Send_GivenErrOnWriteMessage_ShouldCloseConnection(t *testing.T) {
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	readTime := 0
@@ -293,7 +299,8 @@ func TestHub_Send_GivenErrOnWriteError_ShouldCloseConnection(t *testing.T) {
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any(), gomock.Any()).Return(false, nil)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().ReadJSON(gomock.Any()).Do(func(msg *libwebsocket.RMessage) {
@@ -335,7 +342,8 @@ func TestHub_Connect_GivenUnauthUser_ShouldNotJoinToRoom(t *testing.T) {
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Eq(""), gomock.Eq(room)).Return(false, nil)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	readTime := 0
@@ -386,7 +394,8 @@ func TestHub_Connect_GivenInvalidRMessage_ShouldSendError(t *testing.T) {
 	mockUpgrader.EXPECT().Upgrade(gomock.Any(), gomock.Any(), gomock.Any()).Return(mockConnection, nil)
 	mockAuthorizer := mock_websocket.NewMockAuthorizer(ctrl)
 	mockAuthorizer.EXPECT().Authorize(gomock.Any(), gomock.Any(), gomock.Any()).Return(true, nil)
-	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, zerolog.Nop())
+	confProvider := config.NewApiConfigProvider(config.CanopsisConf{API: config.SectionApi{WebsocketPingInterval: "1h"}}, zerolog.Nop())
+	hub := libwebsocket.NewHub(ctx, mockUpgrader, mockAuthorizer, time.Hour, confProvider, zerolog.Nop())
 	mockConnection.EXPECT().SetReadDeadline(gomock.Any()).AnyTimes()
 	mockConnection.EXPECT().SetPongHandler(gomock.Any()).AnyTimes()
 	readTime := 0

@@ -44,6 +44,7 @@
       :disabled="onlyUserPrefs || idpFieldsMap['roles']"
       :label="$tc('common.role', 2)"
       :is-disabled-items="isDisabledRoleItem"
+      name="roles"
       required
       multiple
       chips
@@ -76,7 +77,7 @@
     </v-layout>
     <c-enabled-field
       v-field="form.enable"
-      :disabled="onlyUserPrefs"
+      :disabled="onlyUserPrefs || isSelf"
     />
     <view-selector v-field="form.defaultview" />
   </v-layout>
@@ -89,6 +90,7 @@ import { AUTH_SOURCES_WITH_PASSWORD_CHANGING, GROUPS_NAVIGATION_TYPES } from '@/
 
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
+import { useAuth } from '@/hooks/auth';
 
 import ViewSelector from '@/components/forms/fields/view-selector.vue';
 
@@ -122,6 +124,7 @@ export default {
   setup(props) {
     const { t } = useI18n();
     const popups = usePopups();
+    const { currentUser } = useAuth();
 
     const hasPassword = computed(() => (
       Object.values(AUTH_SOURCES_WITH_PASSWORD_CHANGING).includes(props.user?.source ?? '')
@@ -138,6 +141,8 @@ export default {
       return acc;
     }, {}));
 
+    const isSelf = computed(() => props.user._id === currentUser.value._id);
+
     const isDisabledRoleItem = item => (props.user?.idp_roles ?? []).includes(item._id);
     const showCopyAuthKeySuccessPopup = () => popups.success({ text: t('success.authKeyCopied') });
     const showCopyAuthKeyErrorPopup = () => popups.error({ text: t('errors.default') });
@@ -146,6 +151,7 @@ export default {
       hasPassword,
       groupsNavigationItems,
       idpFieldsMap,
+      isSelf,
 
       isDisabledRoleItem,
       showCopyAuthKeySuccessPopup,
