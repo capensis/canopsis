@@ -441,16 +441,6 @@ export const useTemplateTestRunner = (props) => {
 };
 
 /**
- * Hook for managing after submit observer logic
- *
- * @param {Object} params - Parameters
- * @param {Function} params.getTemplateTestRequestData - Function to get template test request data
- * @param {Object} props - Component props
- * @param {string} props.ruleId - The rule ID if editing an existing rule
- * @returns {Object} After submit methods
- * @returns {Function} returns.setupAfterSubmitObserver - Function to setup after submit observer
- */
-/**
  * Hook for handling post-submission logic when creating template tests
  * Manages the afterSubmit observer registration and handles test creation after form submission
  *
