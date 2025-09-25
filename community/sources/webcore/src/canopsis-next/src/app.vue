@@ -24,7 +24,7 @@
 <script>
 import { isEmpty } from 'lodash';
 
-import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY, LOCAL_STORAGE_WARNING_POPUP_KEY } from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
@@ -119,7 +119,7 @@ export default {
   },
   methods: {
     showLocalStorageWarningPopupMessage() {
-      const text = localStorageService.pop('warningPopup');
+      const text = localStorageService.pop(LOCAL_STORAGE_WARNING_POPUP_KEY);
 
       if (text) {
         this.$popups.warning({ text, autoClose: false });
@@ -164,7 +164,7 @@ export default {
         const statusCode = +message;
 
         if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
-          localStorageService.set('warningPopup', this.$t('warnings.authTokenExpired'));
+          localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, this.$t('warnings.authTokenExpired'));
           this.logout();
 
           return;
