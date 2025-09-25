@@ -18,7 +18,7 @@ exports[`c-alarm-tag-field Renders \`c-alarm-tag-field\` with custom props 1`] =
   multiple="true"
   name="customName"
   return-object=""
-  value="Tag 1"
+  value="[object Object]"
 />
 `;
 

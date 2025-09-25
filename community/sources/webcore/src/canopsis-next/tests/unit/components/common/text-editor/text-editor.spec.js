@@ -399,7 +399,6 @@ describe('text-editor', () => {
         config: {},
         errorMessages: ['Error'],
         maxFileSize: 1,
-        withDefaultVariables: true,
       },
       store,
     });

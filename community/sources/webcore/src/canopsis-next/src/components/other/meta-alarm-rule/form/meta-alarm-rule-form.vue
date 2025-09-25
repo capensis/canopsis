@@ -70,7 +70,7 @@
           class="pa-4"
         >
           <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
-          <meta-alarm-rule-parameters-form v-field="form" :variables="variables" />
+          <meta-alarm-rule-parameters-form v-field="form" :variables="templateVars.corel" />
         </c-information-block>
       </v-stepper-content>
     </v-stepper-items>
@@ -78,19 +78,11 @@
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { ref } from 'vue';
 
-import {
-  ALARM_PAYLOADS_VARIABLES,
-  ENTITY_PAYLOADS_VARIABLES,
-  META_ALARMS_FORM_STEPS,
-  META_ALARMS_RULE_TYPES,
-} from '@/constants';
+import { META_ALARMS_FORM_STEPS, META_ALARMS_RULE_TYPES } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
-import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-variables';
-import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
 
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
@@ -135,8 +127,6 @@ export default {
     },
   },
   setup(props, { expose }) {
-    const { tc } = useI18n();
-
     const generalStepElement = ref(null);
     const typeStepElement = ref(null);
     const parametersStepElement = ref(null);
@@ -155,25 +145,6 @@ export default {
       hasChildrenError: hasParametersError,
       validateChildren: validateParametersChildren,
     } = useValidationElementChildren(parametersStepElement);
-
-    const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: toRef(props, 'entityInfos') });
-    const { variables: alarmPayloadVariables } = useAlarmServerVariables({ infos: toRef(props, 'alarmInfos') });
-
-    /**
-     * TODO: replace it to templateVars in the future
-     */
-    const variables = computed(() => [
-      {
-        value: ENTITY_PAYLOADS_VARIABLES.entity,
-        text: tc('common.entity'),
-        variables: entityPayloadVariables.value,
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.alarm,
-        text: tc('common.alarm'),
-        variables: alarmPayloadVariables.value,
-      },
-    ]);
 
     expose({
       hasGeneralError,
@@ -194,8 +165,6 @@ export default {
       hasGeneralError,
       hasParametersError,
       hasTypeError,
-
-      variables,
     };
   },
 };
