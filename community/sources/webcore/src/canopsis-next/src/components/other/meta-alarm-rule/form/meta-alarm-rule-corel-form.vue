@@ -52,10 +52,11 @@
         />
       </template>
     </c-payload-text-field>
-    <c-payload-text-field
+    <v-text-field
       v-field="config.corel_parent"
+      v-validate="'required'"
       :label="$t('metaAlarmRule.corelParent')"
-      :variables="variables"
+      :error-messages="errors.collect('corelParent')"
       name="corelParent"
       required
     >
@@ -67,11 +68,12 @@
           left
         />
       </template>
-    </c-payload-text-field>
-    <c-payload-text-field
+    </v-text-field>
+    <v-text-field
       v-field="config.corel_child"
+      v-validate="'required'"
       :label="$t('metaAlarmRule.corelChild')"
-      :variables="variables"
+      :error-messages="errors.collect('corelChild')"
       name="corelChild"
       required
     >
@@ -83,7 +85,7 @@
           left
         />
       </template>
-    </c-payload-text-field>
+    </v-text-field>
   </v-layout>
 </template>
 

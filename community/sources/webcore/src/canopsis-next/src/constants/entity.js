@@ -466,24 +466,6 @@ export const ENTITY_UNSORTABLE_FIELDS = [
   ENTITY_FIELDS.pbehaviorInfo,
 ];
 
-// TODO: remove it in the end of feature development
-export const ENTITY_PAYLOADS_VARIABLES = {
-  entity: '.Entity',
-  entities: '.Entities',
-  id: '.ID',
-  name: '.Name',
-  type: '.Type',
-  infos: '.Infos',
-  infosName: '.Infos.%name%',
-  connector: '.Connector',
-  component: '.Component',
-  connectorName: '.ConnectorName',
-  resource: '.Resource',
-  impactLevel: '.ImpactLevel',
-  category: '.Category',
-  infosValue: '(index .Infos "%infos_name%").Value',
-};
-
 export const SERVICE_WEATHER_DEFAULT_EM_HEIGHT = 4;
 
 export const ENTITY_EXPORT_FILE_NAME_PREFIX = 'entity';
