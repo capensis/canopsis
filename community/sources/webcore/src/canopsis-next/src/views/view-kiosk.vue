@@ -19,6 +19,9 @@ import { activeViewMixin } from '@/mixins/active-view';
 
 import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
 
+/**
+ * TODO: rewrite this periodic refresh functionality in the future
+ */
 export default {
   provide() {
     return {

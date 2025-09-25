@@ -1,7 +1,6 @@
 package eventfilter
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -27,20 +26,17 @@ type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
 	logger        zerolog.Logger
-	transformer   common.PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
 	logger zerolog.Logger,
-	transformer common.PatternFieldsTransformer,
 ) API {
 	return &api{
 		store:         store,
 		mongoExporter: mongoExporter,
 		logger:        logger,
-		transformer:   transformer,
 	}
 }
 
@@ -54,18 +50,6 @@ func (a *api) Create(c *gin.Context) {
 	if err = c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
-	}
-
-	err = a.transformEditRequest(c, &request.EditRequest)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
-		panic(err)
 	}
 
 	eventfilter, err := a.store.Insert(c, request)
@@ -139,18 +123,15 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request.EditRequest)
+	eventfilter, err := a.store.Update(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
 			return
 		}
-		panic(err)
-	}
 
-	eventfilter, err := a.store.Update(c, request)
-	if err != nil {
 		panic(err)
 	}
 
@@ -180,11 +161,6 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		eventfilter, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
@@ -198,11 +174,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		eventfilter, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || eventfilter == nil {
 			return "", err
@@ -286,11 +257,4 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.EventFilterRuleCollection, b)
-}
-
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
-	return err
 }

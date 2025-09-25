@@ -34,11 +34,12 @@ export const useActiveView = () => {
 
   const getters = useGetters({
     view: 'item',
-    pending: 'pending',
-    editing: 'editing',
-    screenMode: 'screenMode',
-    isKioskScreenMode: 'isKioskScreenMode',
-    editingProcess: 'editingProcess',
+    activeViewPending: 'pending',
+    activeViewScreenMode: 'screenMode',
+    activeViewEditing: 'editing',
+    activeViewEditingProcess: 'editingProcess',
+    activeViewPeriodicRefreshPaused: 'periodicRefreshPaused',
+    activeViewIsKioskScreenMode: 'isKioskScreenMode',
   });
 
   const actions = useActions({
@@ -47,6 +48,8 @@ export const useActiveView = () => {
     unregisterEditingOffHandler: 'unregisterEditingOffHandler',
     fetchActiveView: 'fetch',
     clearActiveView: 'clear',
+    resumePeriodicRefresh: 'resumePeriodicRefresh',
+    pausePeriodicRefresh: 'pausePeriodicRefresh',
     setActiveViewScreenMode: 'setScreenMode',
   });
 

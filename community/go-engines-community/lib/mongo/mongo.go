@@ -74,7 +74,7 @@ type DbCollection interface {
 	Indexes() mongo.IndexView
 	InsertOne(ctx context.Context, document interface{},
 		opts ...options.Lister[options.InsertOneOptions]) (interface{}, error)
-	InsertMany(ctx context.Context, documents []interface{},
+	InsertMany(ctx context.Context, documents interface{},
 		opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error)
 	ReplaceOne(ctx context.Context, filter interface{},
 		replacement interface{}, opts ...options.Lister[options.ReplaceOptions]) (*mongo.UpdateResult, error)
@@ -99,6 +99,8 @@ type DbClient interface {
 	ListCollectionNames(ctx context.Context, filter interface{}, opts ...options.Lister[options.ListCollectionsOptions]) ([]string, error)
 	RunCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
 	RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper
+	BulkWrite(ctx context.Context, writes []mongo.ClientBulkWrite,
+		opts ...options.Lister[options.ClientBulkWriteOptions]) (*mongo.ClientBulkWriteResult, error)
 }
 
 type dbClient struct {
@@ -305,7 +307,7 @@ func (c *dbCollection) InsertOne(ctx context.Context, document interface{},
 	return res.InsertedID, nil
 }
 
-func (c *dbCollection) InsertMany(ctx context.Context, documents []interface{},
+func (c *dbCollection) InsertMany(ctx context.Context, documents interface{},
 	opts ...options.Lister[options.InsertManyOptions]) ([]interface{}, error) {
 	var res *mongo.InsertManyResult
 	var err error
@@ -516,6 +518,19 @@ func (c *dbClient) RunCommand(ctx context.Context, runCommand any, opts ...optio
 
 func (c *dbClient) RunAdminCommand(ctx context.Context, runCommand any, opts ...options.Lister[options.RunCmdOptions]) SingleResultHelper {
 	return c.Database.Client().Database("admin").RunCommand(ctx, runCommand, opts...)
+}
+
+func (c *dbClient) BulkWrite(ctx context.Context, writes []mongo.ClientBulkWrite,
+	opts ...options.Lister[options.ClientBulkWriteOptions]) (*mongo.ClientBulkWriteResult, error) {
+	var res *mongo.ClientBulkWriteResult
+	var err error
+	retry(ctx, c.RetryCount, c.MinRetryTimeout, func(ctx context.Context) error {
+		res, err = c.Client.BulkWrite(ctx, writes, opts...)
+
+		return err
+	})
+
+	return res, err
 }
 
 func isMongoReplicaSetEnabled(ctx context.Context, clientOptions *options.ClientOptions) (bool, error) {

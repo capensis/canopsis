@@ -9,6 +9,7 @@
       :with-template="withTemplate"
       :with-html="withHtml"
       :with-color-indicator="withColorIndicator"
+      :with-filter-on-click="withFilterOnClick"
       :items="items"
       :excluded-columns="excludedColumns"
       @update:template="updateTemplate"
@@ -59,6 +60,10 @@ export default {
       default: false,
     },
     withColorIndicator: {
+      type: Boolean,
+      default: false,
+    },
+    withFilterOnClick: {
       type: Boolean,
       default: false,
     },
