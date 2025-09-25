@@ -122,12 +122,10 @@ export default {
         return acc;
       }, []);
 
-      if (assignedInstructions?.length) {
-        tooltips.push(
-          withoutAnyExecution.value
-            ? t('alarm.tooltips.withoutAnyExecution')
-            : tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length),
-        );
+      if (withoutAnyExecution.value) {
+        tooltips.push(t('alarm.tooltips.withoutAnyExecution'));
+      } else if (assignedInstructions?.length) {
+        tooltips.push(tc('alarm.tooltips.hasManualInstruction', assignedInstructions.length));
       }
 
       return `<span class="pre-wrap">${tooltips.join('\n')}</span>`;
