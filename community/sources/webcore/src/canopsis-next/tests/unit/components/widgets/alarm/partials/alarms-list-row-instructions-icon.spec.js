@@ -475,4 +475,30 @@ describe('alarms-list-row-instructions-icon', () => {
 
     expect(wrapper).toMatchSnapshot();
   });
+
+  it('Renders `alarms-list-row-instructions-icon` with all auto instructions successful', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoSuccessful,
+          successful_auto_instructions: ['Instruction 1', 'Instruction 2'],
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  it('Renders `alarms-list-row-instructions-icon` with auto instruction running', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        alarm: {
+          instruction_execution_icon: INSTRUCTION_EXECUTION_ICONS.autoInProgress,
+          running_auto_instructions: ['Instruction 1', 'Instruction 2'],
+        },
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
 });

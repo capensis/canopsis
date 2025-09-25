@@ -1,5 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with all auto instructions successful 1`] = `
+<c-simple-tooltip-stub
+  content="<span class=\\"pre-wrap\\">Automatic instructions <strong>Instruction 1, Instruction 2</strong> is successful</span>"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate instruction-icon material-icons theme--light instruction-icon--completed"
+    style="font-size: 22px;"
+  >
+    assignment
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with auto instruction running 1`] = `
+<c-simple-tooltip-stub
+  content="<span class=\\"pre-wrap\\">Automatic instructions <strong>Instruction 1, Instruction 2</strong> in progress</span>"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate instruction-icon material-icons theme--light blinking instruction-icon--dotted"
+    style="font-size: 22px;"
+  >
+    assignment
+  </i>
+</c-simple-tooltip-stub>
+`;
+
 exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with default props 1`] = `
 <c-simple-tooltip-stub
   content="<span class=\\"pre-wrap\\"></span>"
