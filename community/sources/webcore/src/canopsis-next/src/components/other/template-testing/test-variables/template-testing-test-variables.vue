@@ -151,11 +151,9 @@ export default {
       }
     };
 
-    const { setupAfterSubmitObserver } = useTemplateTestAfterSubmit({
+    useTemplateTestAfterSubmit({
       getTemplateTestRequestData,
     }, props);
-
-    setupAfterSubmitObserver();
 
     return {
       selectedTest,

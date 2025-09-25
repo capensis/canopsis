@@ -143,6 +143,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with custom props
             </span>
             <meta-alarm-rule-parameters-form-stub
               form="[object Object]"
+              templatevars="[object Object]"
             />
           </c-information-block-stub>
         </div>
@@ -284,6 +285,7 @@ exports[`meta-alarm-rule-form Renders \`meta-alarm-rule-form\` with default prop
             </span>
             <meta-alarm-rule-parameters-form-stub
               form="[object Object]"
+              templatevars="[object Object]"
             />
           </c-information-block-stub>
         </div>
