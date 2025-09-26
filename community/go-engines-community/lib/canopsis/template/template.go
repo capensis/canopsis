@@ -38,10 +38,10 @@ func (p *ParsedTemplate) ContainsField(v string) bool {
 		return false
 	}
 
-	// remove comments from the template text.
-	cleanTemplate := regexp.MustCompile(`\{\{/\*.*?\*/}}`).ReplaceAllString(p.Text, "")
+	// remove comments from the template text, non-greedy
+	cleanTemplate := regexp.MustCompile(`\{\{\s*/\*.*?\*/\s*}}`).ReplaceAllString(p.Text, "")
 
-	return regexp.MustCompile(`\{\{[^}]*\.` + regexp.QuoteMeta(v) + `(\b|\.|[\s\}\)\|]|$)[^{]*\}\}`).MatchString(cleanTemplate)
+	return regexp.MustCompile(`\{\{[^}]*\.` + regexp.QuoteMeta(v) + `(\.|[\s\}\)\|])`).MatchString(cleanTemplate)
 }
 
 type Executor interface {
