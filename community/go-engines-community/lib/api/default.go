@@ -18,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
@@ -35,6 +34,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -209,9 +209,9 @@ func Default(
 	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
 		canopsis.JsonContentType, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, canopsis.ApiConnector, logger)
 
-	entityCleanerTaskChan := make(chan entity.CleanTask)
-	disabledEntityCleaner := entity.NewDisabledCleaner(
-		lockRedisSession,
+	entityCleanerTaskChan := make(chan libentity.CleanTask)
+	disabledEntityCleaner := libentity.NewCleaner(
+		libredis.NewLockClient(lockRedisSession),
 		datastorage.NewAdapter(primaryDbClient),
 		services.DataStorageConfigProvider,
 		metricsEntityMetaUpdater,
