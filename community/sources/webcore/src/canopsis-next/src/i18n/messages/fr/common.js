@@ -315,6 +315,7 @@ export default {
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
+  calculated: 'Calculé',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',

@@ -90,6 +90,11 @@ export default {
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray]: {
       text: '@:common.variableTypes.array',
     },
+    [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp]: {
+      text: '@:common.regexp',
+      tooltip: 'New column Priority will be added after these steps:<br>1. To all values ^ is added at the beginning and $ at the end (except for the .*)<br>2. Each value is scored<br><br><table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="border: 1px solid currentColor;" class="pa-2">Value type</th><th style="border: 1px solid currentColor;" class="pa-2">Score</th></tr></thead><tbody><tr><td style="border: 1px solid currentColor;" class="pa-2">Empty OR .* OR .+</td><td style="border: 1px solid currentColor;" class="pa-2">0</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Contains * OR general regex</td><td style="border: 1px solid currentColor;" class="pa-2">1</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">With single ^ OR $</td><td style="border: 1px solid currentColor;" class="pa-2">2</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Exact value (starts with ^ and ends with $)</td><td style="border: 1px solid currentColor;" class="pa-2">3</td></tr></tbody></table><br>3. Column Priority is added with summarized priority (all regexp columns priority is summed up)',
+      disabledMessage: 'Table already has field Priority',
+    },
   },
   selectDataType: 'Select data type',
   tableColumnDataTypesAdditionalChips: {

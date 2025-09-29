@@ -91,6 +91,7 @@ export const EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES = {
   stringArray: 4,
   datetime: 5,
   timestamp: 6,
+  regexp: 7,
 };
 
 export const EXTERNAL_DATA_TABLE_COLUMN_NUMBER_DATA_TYPE_DECIMAL_SEPARATOR = {
@@ -120,3 +121,5 @@ export const EXTERNAL_DATA_TABLE_IMPORT_PREVIEW_STATUSES = {
   completed: 4,
   failed: 5,
 };
+
+export const EXTERNAL_DATA_TABLE_PRIORITY_COLUMN = 'priority';

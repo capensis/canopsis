@@ -315,6 +315,7 @@ export default {
   false: 'False',
   customField: 'Custom field|Custom fields',
   last: 'Last',
+  calculated: 'Calculated',
   variableTypes: {
     string: 'String',
     number: 'Number',
