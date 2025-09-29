@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="gap-2" column>
+  <v-layout :class="{ 'mt-2': chips.length > 1 }" class="gap-2" column>
     <v-flex v-for="chip in chips" :key="chip.key">
       <c-select-chip
         v-bind="chip.bind"
@@ -93,22 +93,31 @@ export default {
       }),
     ]);
 
-    const chips = computed(() => [
-      {
-        key: 'decimal_separator',
-        selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectDecimalSeparator'),
-        selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.decimalSeparator'),
-        bind: { value: props.value.decimal_separator, items: decimalSeparators.value, clearable: true },
-        on: { input: separator => updateField('decimal_separator', separator) },
-      },
-      {
-        key: 'thousands_separator',
-        selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectThousandsSeparator'),
-        selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.thousandsSeparator'),
-        bind: { value: props.value.thousands_separator, items: thousandsSeparators.value, clearable: true },
-        on: { input: separator => updateField('thousands_separator', separator) },
-      },
-    ]);
+    const chips = computed(() => {
+      const result = [];
+
+      if (!props.disabled || (props.disabled && props.value.decimal_separator)) {
+        result.push({
+          key: 'decimal_separator',
+          selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectDecimalSeparator'),
+          selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.decimalSeparator'),
+          bind: { value: props.value.decimal_separator, items: decimalSeparators.value, clearable: true },
+          on: { input: separator => updateField('decimal_separator', separator) },
+        });
+      }
+
+      if (!props.disabled || (props.disabled && props.value.thousands_separator)) {
+        result.push({
+          key: 'thousands_separator',
+          selectionEmpty: t('externalData.tableColumnDataTypesAdditionalChips.number.selectThousandsSeparator'),
+          selectionPrefix: t('externalData.tableColumnDataTypesAdditionalChips.number.thousandsSeparator'),
+          bind: { value: props.value.thousands_separator, items: thousandsSeparators.value, clearable: true },
+          on: { input: separator => updateField('thousands_separator', separator) },
+        });
+      }
+
+      return result;
+    });
 
     return {
       chips,

@@ -72,13 +72,13 @@ export const EXTERNAL_DATA_TABLES_TYPES = {
 };
 
 export const EXTERNAL_DATA_TABLE_COLUMN_TAGS = {
-  noType: 0,
+  noTag: 0,
   filter: 1,
   context: 2,
 };
 
 export const EXTERNAL_DATA_TABLE_COLUMN_TYPES_COLORS = {
-  [EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType]: 'grey darken-1',
+  [EXTERNAL_DATA_TABLE_COLUMN_TAGS.noTag]: 'grey darken-1',
   [EXTERNAL_DATA_TABLE_COLUMN_TAGS.filter]: 'warning',
   [EXTERNAL_DATA_TABLE_COLUMN_TAGS.context]: 'success',
 };
