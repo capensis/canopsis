@@ -64,7 +64,7 @@ export default {
   tableRemovedFromConfig: 'Table is removed from configuration file, but still used in the following items.\n<strong>Move table back to configuration file or delete all items that use it</strong>\n{rules}',
   tableEmptyColumns: 'Please choose at least 1 column in the settings',
   tableColumnTypes: {
-    [EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType]: 'No type',
+    [EXTERNAL_DATA_TABLE_COLUMN_TAGS.noTag]: 'No tag',
     [EXTERNAL_DATA_TABLE_COLUMN_TAGS.filter]: 'Filter',
     [EXTERNAL_DATA_TABLE_COLUMN_TAGS.context]: 'Context',
   },
