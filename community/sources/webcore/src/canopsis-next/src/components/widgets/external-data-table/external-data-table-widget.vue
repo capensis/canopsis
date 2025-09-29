@@ -114,7 +114,6 @@ export default {
       showRemoveSelectedExternalDataTableRecordsModal,
     } = useExternalDataTableRecordsList({
       externalDataTable,
-      fetchExternalDataTable: fetchItem,
       initialQuery,
     });
 
@@ -194,9 +193,7 @@ export default {
       handler: fetchItemWithRecords,
     });
 
-    onMounted(() => {
-      fetchItemWithRecords();
-    });
+    onMounted(fetchItemWithRecords);
 
     return {
       externalDataTable,
