@@ -361,7 +361,7 @@ export default {
       columnsSettings: toRef(props, 'columnsSettings'),
       cellsContentBehavior: toRef(props, 'cellsContentBehavior'),
       draggableClass: DRAGGABLE_CLASS,
-    });
+    }, emit);
 
     return {
       tableElement,
