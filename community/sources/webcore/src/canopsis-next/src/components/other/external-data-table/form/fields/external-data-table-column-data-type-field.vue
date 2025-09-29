@@ -1,5 +1,5 @@
 <template>
-  <v-layout class="gap-2" column>
+  <v-layout column>
     <v-flex>
       <c-select-chip
         v-field="value.type"

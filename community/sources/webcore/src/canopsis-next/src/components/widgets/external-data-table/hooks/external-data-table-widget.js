@@ -52,7 +52,7 @@ export const useExternalDataTableWidgetTable = ({
 
       return pick({
         ...wholeColumns,
-        _id: EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
+        _id: EXTERNAL_DATA_TABLE_COLUMN_TAGS.noTag,
       }, map(unref(widget).parameters.widgetColumns, 'value'));
     },
 

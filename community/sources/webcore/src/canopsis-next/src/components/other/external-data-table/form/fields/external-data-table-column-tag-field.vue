@@ -27,7 +27,7 @@ export default {
   props: {
     value: {
       type: Number,
-      default: EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
+      default: EXTERNAL_DATA_TABLE_COLUMN_TAGS.noTag,
     },
     disabled: {
       type: Boolean,

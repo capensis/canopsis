@@ -14,7 +14,7 @@ import {
  */
 
 /**
- * @typedef {0 | 1 | 2} ExternalDataTableColumnTypes
+ * @typedef {0 | 1 | 2} ExternalDataTableColumnTags
  */
 
 /**
@@ -23,7 +23,7 @@ import {
  * @property {string} name
  * @property {string} description
  * @property {string[]} [columns]
- * @property {ExternalDataTableColumnTypes[]} [column_types]
+ * @property {ExternalDataTableColumnTags[]} [column_tags]
  */
 
 /**
@@ -48,7 +48,7 @@ export const externalDataTableToForm = (externalDataTable = {}) => ({
   type: externalDataTable.type ?? EXTERNAL_DATA_TABLES_TYPES.mongo,
   name: externalDataTable.name ?? '',
   description: externalDataTable.description ?? '',
-  column_types: externalDataTable.column_types ?? [],
+  column_tags: externalDataTable.column_tags ?? [],
 });
 
 /**
@@ -113,7 +113,7 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
       name,
       rows: [],
       messages: [],
-      tag: columnConfig.tag ?? EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
+      tag: columnConfig.tag ?? EXTERNAL_DATA_TABLE_COLUMN_TAGS.noTag,
       type: isImport ? null : columnConfig.type,
       decimal_separator: columnConfig.decimal_separator ?? null,
       thousands_separator: columnConfig.thousands_separator ?? null,

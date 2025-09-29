@@ -245,7 +245,7 @@ const DRAGGABLE_CLASS = 'external-data-table-records__draggable-column';
 
 const EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS = {
   [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime]: convertDateToString,
-  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: convertDateToString,
+  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: value => convertDateToString(Number(value)),
 };
 
 export default {
@@ -381,7 +381,7 @@ export default {
         if (column.messages?.length) {
           acc.push({
             name: column.name,
-            message: `${column.rows.slice(0, 5)?.join(', ')}${column.rows.length > 5 ? t('externalData.andMore') : ''}`,
+            message: `${column.rows.slice(0, 5)?.join(', ')}${column.rows.length > 5 ? ` ${t('externalData.andMore')}` : ''}`,
           });
         }
 
@@ -394,7 +394,7 @@ export default {
         value: column.name,
         text: column.name,
         class: DRAGGABLE_CLASS,
-        sortable: true,
+        sortable: false,
         errors: column.messages,
       }));
 
