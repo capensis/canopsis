@@ -39,4 +39,5 @@ export * from './advanced-search';
 export * from './sanitize';
 export * from './events-record';
 export * from './role';
+export * from './notification';
 export * from './theme';

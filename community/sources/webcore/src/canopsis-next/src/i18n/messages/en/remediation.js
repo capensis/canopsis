@@ -10,10 +10,12 @@ export default {
     configurations: 'Configurations',
     jobs: 'Jobs',
     statistics: 'Remediation statistics',
+    instructionStats: 'Instruction rating',
   },
 
   instruction: {
     name: 'Instruction name',
+    manualInstructionsProgress: 'Manual instructions progress',
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
     addOperation: 'Add operation',
@@ -65,11 +67,12 @@ export default {
   },
 
   instructionExecute: {
+    cancelInstruction: 'Cancel instruction',
+    pauseInstruction: 'Pause instruction',
     timeToComplete: '{duration} to complete',
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
-    closeConfirmationText: 'Would you like to resume this instruction later?',
     queueNumber: '{number} {name} jobs are in the queue',
     runJobs: 'Run jobs',
     popups: {
@@ -77,7 +80,9 @@ export default {
       failed: '{instructionName} has been failed. Please escalate this problem further',
       connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
       wasAborted: '{instructionName} has been aborted',
-      wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
+      wasPaused: '{instructionName} instruction paused.',
+      wasFinished: '{instructionName} instruction finished.',
+      wasFailed: '{instructionName} instruction failed.',
       wasRemovedOrDisabled: 'The {instructionName} instruction was removed or disabled.',
     },
     jobs: {
