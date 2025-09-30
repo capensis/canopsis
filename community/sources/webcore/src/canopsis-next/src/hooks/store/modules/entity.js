@@ -7,6 +7,7 @@ export const useEntity = () => {
 
   const actions = useActions({
     fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore',
+    fetchEntityInfosLogsListWithoutStore: 'fetchEntityInfosLogsListWithoutStore',
   }); // TODO: add another actions and getters
 
   return {

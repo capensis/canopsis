@@ -96,4 +96,8 @@ export default {
     titleHelp: 'All recordings older than the defined time period will be deleted',
     deleteAfter: 'Delete events recordings after',
   },
+  entityInfosLog: {
+    title: 'Event filter: entity enrichment logs',
+    deleteAfter: 'Delete event filter logs older than',
+  },
 };
