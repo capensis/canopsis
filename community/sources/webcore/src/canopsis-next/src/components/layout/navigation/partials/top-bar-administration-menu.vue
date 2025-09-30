@@ -120,6 +120,11 @@ export default {
           permission: USER_PERMISSIONS.technical.eventsRecord,
         },
         {
+          route: { name: ROUTES_NAMES.adminExternalAuthTokens },
+          icon: 'security',
+          permission: USER_PERMISSIONS.technical.externalAuthTokens,
+        },
+        {
           route: { name: ROUTES_NAMES.adminParameters },
           icon: 'settings',
           permission: USER_PERMISSIONS.technical.parameters,
