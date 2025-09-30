@@ -129,6 +129,7 @@ export default {
     entityGantt: 'Diagramme de Gantt',
     ticketsDeclared: 'Tickets déclarés',
     remediation: 'Remédiation',
+    entityEnrichments: 'Enrichissements d\'entité',
   },
   moreInfos: {
     defineATemplate: 'Pour définir le template de cette fenêtre, rendez-vous dans les paramètres du bac à alarmes.',
