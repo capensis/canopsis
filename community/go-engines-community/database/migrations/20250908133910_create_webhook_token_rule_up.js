@@ -16,7 +16,7 @@ if (!db.permission.findOne({_id: "api_webhook_token_rule"})) {
     });
     db.role.updateOne({name: "admin"}, {
         $set: {
-            "permissions.api_external_api_webhook_token_ruledata_table": 15
+            "permissions.api_webhook_token_rule": 15
         }
     });
 }
