@@ -1,12 +1,9 @@
 <template>
   <div class="view-fab-btns fab ma-2">
-    <v-layout>
-      <v-flex class="mr-3">
-        <view-scroll-top-btn />
-      </v-flex>
-      <v-flex class="mr-3">
-        <view-periodic-refresh-btn />
-      </v-flex>
+    <v-layout class="gap-3">
+      <view-scroll-top-btn />
+      <view-executions-btn />
+      <view-periodic-refresh-btn />
       <c-speed-dial
         direction="top"
         transition="slide-y-reverse-transition"
@@ -87,6 +84,7 @@ import ViewEditingBtn from './view-editing-btn.vue';
 import ViewScrollTopBtn from './view-scroll-top-btn.vue';
 import ViewFullscreenBtn from './view-fullscreen-btn.vue';
 import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
+import ViewExecutionsBtn from './view-executions-btn.vue';
 
 export default {
   components: {
@@ -95,6 +93,7 @@ export default {
     ViewScrollTopBtn,
     ViewFullscreenBtn,
     ViewPeriodicRefreshBtn,
+    ViewExecutionsBtn,
   },
   mixins: [
     activeViewMixin,
