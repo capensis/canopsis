@@ -66,6 +66,7 @@ import availabilityModule from './availability';
 import eventsRecordModule from './events-record';
 import dbExportModule from './db-export';
 import externalDataTableModule from './external-data-table';
+import webhookTokenRuleModule from './webhook-token-rule';
 
 export default {
   alarm: alarmModule,
@@ -136,4 +137,5 @@ export default {
   eventsRecord: eventsRecordModule,
   dbExport: dbExportModule,
   externalDataTable: externalDataTableModule,
+  webhookTokenRule: webhookTokenRuleModule,
 };
