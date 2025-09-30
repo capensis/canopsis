@@ -63,6 +63,7 @@
       v-field="form.auth"
       :name="`${name}.auth`"
       :disabled="disabled"
+      :required="requiredAuth"
     />
     <c-information-block
       :title="$tc('common.header', 2)"
@@ -90,8 +91,6 @@
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-
 import RequestAuthField from './fields/request-auth-field.vue';
 import RequestHeadersField from './fields/request-headers-field.vue';
 import RequestUrlField from './fields/request-url-field.vue';
@@ -99,7 +98,6 @@ import RequestUrlField from './fields/request-url-field.vue';
 export default {
   inject: ['$validator'],
   components: { RequestUrlField, RequestHeadersField, RequestAuthField },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -138,6 +136,10 @@ export default {
       default: false,
     },
     withMultipleUrls: {
+      type: Boolean,
+      default: false,
+    },
+    requiredAuth: {
       type: Boolean,
       default: false,
     },

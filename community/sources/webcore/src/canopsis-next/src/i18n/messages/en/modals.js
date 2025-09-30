@@ -1075,4 +1075,12 @@ export default {
       title: 'Duplicate record',
     },
   },
+  createExternalAuthToken: {
+    create: {
+      title: 'Create external auth token',
+    },
+    edit: {
+      title: 'Edit external auth token',
+    },
+  },
 };

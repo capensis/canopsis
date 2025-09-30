@@ -448,3 +448,8 @@ export const ImportExternalDataTableRecords = () => ({
   component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/import-external-data-table-records.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateExternalAuthToken = () => ({
+  component: import(/* webpackChunkName: "ExternalAuthToken" */ './external-auth-token/create-external-auth-token.vue'),
+  loading: LoaderOverlay,
+});
