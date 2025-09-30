@@ -406,6 +406,7 @@ export const API_ROUTES = {
     event: '/api/v4/cat/event-records/events',
     bulkEvent: '/api/v4/cat/event-records/events/bulk',
   },
+  entityInfosLog: '/api/v4/cat/entity-infos-log',
 };
 
 export const COLORS = {

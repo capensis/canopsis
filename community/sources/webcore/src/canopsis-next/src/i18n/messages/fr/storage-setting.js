@@ -96,4 +96,8 @@ export default {
     titleHelp: 'Tous les enregistrements plus anciens que la période définie seront supprimés',
     deleteAfter: 'Supprimer les enregistrements d\'événements après',
   },
+  entityInfosLog: {
+    title: 'Filtre d\'événements : journaux d\'enrichissement d\'entité',
+    deleteAfter: 'Supprimer les journaux de filtre d\'événements antérieurs à',
+  },
 };

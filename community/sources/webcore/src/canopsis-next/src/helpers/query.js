@@ -1,4 +1,6 @@
 import { convertSortToRequest } from '@/helpers/entities/shared/query';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToEndOfDayTimestamp, convertDateToStartOfDayTimestamp } from '@/helpers/date/date';
 
 /**
  * Converts query parameters into a request object.
@@ -15,6 +17,7 @@ export const convertQueryToRequest = ({
   page,
   search,
   itemsPerPage,
+  interval,
   sortBy = [],
   sortDesc = [],
 }) => {
@@ -27,6 +30,18 @@ export const convertQueryToRequest = ({
 
   if (search) {
     query.search = search;
+  }
+
+  if (interval?.from) {
+    query.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
+      interval.from,
+    ));
+  }
+
+  if (interval?.to) {
+    query.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
+      interval.to,
+    ));
   }
 
   return query;

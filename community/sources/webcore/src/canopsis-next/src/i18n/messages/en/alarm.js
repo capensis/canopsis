@@ -129,6 +129,7 @@ export default {
     entityGantt: 'Gantt chart',
     ticketsDeclared: 'Tickets declared',
     remediation: 'Remediation',
+    entityEnrichments: 'Entity enrichments',
   },
   moreInfos: {
     defineATemplate: 'To define a template for this window, go to the alarms list settings',
