@@ -77,6 +77,8 @@ const (
 	ObjExternalDataTable = "api_external_data_table"
 
 	ObjEntityInfosProperty = "api_entity_infos_property"
+
+	ObjCommentTemplate = "api_comment_template"
 )
 
 // PermCheck defines the permission check configuration where Obj is an object and Act is an action

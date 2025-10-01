@@ -947,6 +947,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_comment_template:
+    <<: *permission_crud
+    _id: api_comment_template
+    name: <Current()._id>
+    description: Comment template
+    groups:
+      - "@group_api"
+      - "@group_api_general"
 
   # api -> rules
   permission_api_dynamicinfos:
@@ -1692,6 +1700,17 @@ permission:
     api_permissions:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+  permission_models_commentTemplate:
+    <<: *permission_crud
+    _id: models_commentTemplate
+    name: <Current()._id>
+    description: Comment template
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_comment_template": 0
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -3398,6 +3417,7 @@ role:
       "@permission_models_notification_common": 1
       "@permission_models_eventsRecord": 1
       "@permission_models_privateView": 1
+      "@permission_models_commentTemplate": 15
       "@permission_availability_interval": 1
       "@permission_availability_filter": 1
       "@permission_availability_userFilter": 1
@@ -3555,6 +3575,7 @@ role:
       "@permission_api_techmetrics_settings": 15
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+      "@permission_api_comment_template": 15
       # Views permissions
       "@permission_view_open_alarms_general": 7
       "@permission_view_open_alarms_actions": 1

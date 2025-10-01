@@ -108,4 +108,6 @@ const (
 
 	UserNotificationSettingsCollection = "user_notification_settings"
 	UserNotificationCollection         = "user_notification"
+
+	CommentTemplateMongoCollection = "comment_template"
 )

@@ -62,6 +62,7 @@ func getExactAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
 func stepUpdateQueryWithInPbhInterval(stepType, msg string, params rpc.AxeParameters) bson.M {
 	newStep := NewAlarmStep(stepType, params, false)
 	newStep.Message = msg
+	newStep.StructuredMessage = params.StructuredMessage
 
 	return stepUpdateQueryWithInPbhIntervalByStep(newStep)
 }

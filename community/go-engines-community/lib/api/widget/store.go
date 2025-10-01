@@ -34,27 +34,29 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, enforcer security.Enforcer, transformer common.PatternFieldsTransformer) Store {
 	return &store{
-		client:                   dbClient,
-		collection:               dbClient.Collection(mongo.WidgetMongoCollection),
-		tabCollection:            dbClient.Collection(mongo.ViewTabMongoCollection),
-		filterCollection:         dbClient.Collection(mongo.WidgetFiltersMongoCollection),
-		userPrefCollection:       dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		widgetTemplateCollection: dbClient.Collection(mongo.WidgetTemplateMongoCollection),
-		authorProvider:           authorProvider,
-		transformer:              transformer,
-		enforcer:                 enforcer,
+		client:                    dbClient,
+		collection:                dbClient.Collection(mongo.WidgetMongoCollection),
+		tabCollection:             dbClient.Collection(mongo.ViewTabMongoCollection),
+		filterCollection:          dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+		userPrefCollection:        dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		widgetTemplateCollection:  dbClient.Collection(mongo.WidgetTemplateMongoCollection),
+		commentTemplateCollection: dbClient.Collection(mongo.CommentTemplateMongoCollection),
+		authorProvider:            authorProvider,
+		transformer:               transformer,
+		enforcer:                  enforcer,
 	}
 }
 
 type store struct {
-	client                   mongo.DbClient
-	collection               mongo.DbCollection
-	tabCollection            mongo.DbCollection
-	filterCollection         mongo.DbCollection
-	userPrefCollection       mongo.DbCollection
-	widgetTemplateCollection mongo.DbCollection
-	authorProvider           author.Provider
-	transformer              common.PatternFieldsTransformer
+	client                    mongo.DbClient
+	collection                mongo.DbCollection
+	tabCollection             mongo.DbCollection
+	filterCollection          mongo.DbCollection
+	userPrefCollection        mongo.DbCollection
+	widgetTemplateCollection  mongo.DbCollection
+	commentTemplateCollection mongo.DbCollection
+	authorProvider            author.Provider
+	transformer               common.PatternFieldsTransformer
 
 	enforcer security.Enforcer
 }
@@ -205,6 +207,23 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
+		errMsgs := make(map[string]string)
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					errMsgs["parameters.comment_templates."+strconv.Itoa(i)] = "Comment template doesn't exist."
+					continue
+				}
+
+				return err
+			}
+		}
+
+		if len(errMsgs) > 0 {
+			return common.NewValidationErrors(errMsgs)
+		}
+
 		filters := make([]view.WidgetFilter, len(r.Filters))
 		for i, filterRequest := range r.Filters {
 			doc := view.WidgetFilter{
@@ -271,6 +290,23 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		errMsgs := make(map[string]string)
+		for i := range r.Parameters.CommentTemplates {
+			err := s.commentTemplateCollection.FindOne(ctx, bson.M{"_id": r.Parameters.CommentTemplates[i]}).Err()
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					errMsgs["parameters.comment_templates."+strconv.Itoa(i)] = "Comment template doesn't exist."
+					continue
+				}
+
+				return err
+			}
+		}
+
+		if len(errMsgs) > 0 {
+			return common.NewValidationErrors(errMsgs)
+		}
 
 		filters := make(map[string]view.WidgetFilter, len(r.Filters))
 		for i, filterRequest := range r.Filters {
