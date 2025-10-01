@@ -98,6 +98,7 @@
       ],
       "alphabetical": false
     }],
+    "vue/valid-v-slot": ["error", { "allowModifiers": true }],
     "vuejs-accessibility/label-has-for": "off",
     "vuejs-accessibility/click-events-have-key-events": "off",
     "vuejs-accessibility/form-control-has-label": "off",
@@ -160,6 +161,7 @@
     }],
     "no-unused-expressions": "off",
     "no-restricted-syntax": ["off"],
+    "vue/no-v-for-template-key-on-root": "off",
     "no-restricted-imports": ["error", {
       "patterns": [
         {
