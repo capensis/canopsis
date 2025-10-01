@@ -5,9 +5,11 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/account"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmaction"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/appinfo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entitybasic"
@@ -320,4 +322,7 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 
 	appInfoValidator := appinfo.NewValidator(client)
 	v.RegisterStructValidationCtx(appInfoValidator.ValidateRequest, appinfo.UserInterfaceConf{})
+
+	v.RegisterStructValidation(commenttemplate.ValidateEditRequest, commenttemplate.EditRequest{})
+	v.RegisterStructValidation(alarmaction.ValidateCommentRequest, alarmaction.CommentRequest{})
 }

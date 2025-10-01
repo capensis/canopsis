@@ -109,6 +109,8 @@ type Parameters struct {
 	Table string `bson:"table,omitempty" json:"table,omitempty"`
 
 	RemainParameters map[string]any `bson:",inline" json:"-"`
+
+	CommentTemplates []string `bson:"comment_templates,omitempty" json:"comment_templates,omitempty"`
 }
 
 func (p Parameters) MarshalJSON() ([]byte, error) {

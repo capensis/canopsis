@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/commenttemplate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/datastorage"
@@ -1917,6 +1918,41 @@ func RegisterRoutes(
 			)
 		}
 
+		commentTemplateAPI := commenttemplate.NewApi(
+			commenttemplate.NewStore(primaryDbClient, authorProvider),
+			logger,
+		)
+		commentTemplatesRouter := protected.Group("/comment-templates")
+		{
+			commentTemplatesRouter.POST(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionCreate, enforcer),
+				middleware.SetAuthor(),
+				commentTemplateAPI.Create,
+			)
+			commentTemplatesRouter.GET(
+				"",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer),
+				commentTemplateAPI.List,
+			)
+			commentTemplatesRouter.GET(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionRead, enforcer),
+				commentTemplateAPI.Get,
+			)
+			commentTemplatesRouter.PUT(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionUpdate, enforcer),
+				middleware.SetAuthor(),
+				commentTemplateAPI.Update,
+			)
+			commentTemplatesRouter.DELETE(
+				"/:id",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer),
+				commentTemplateAPI.Delete,
+			)
+		}
+
 		bulkRouter := protected.Group("/bulk")
 		{
 			patternRouter := bulkRouter.Group("/patterns")
@@ -2211,6 +2247,13 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				middleware.PreProcessBulk(apiConfigProvider, false),
 				externalDataTableAPI.BulkDeleteData,
+			)
+
+			bulkRouter.DELETE(
+				"/comment-templates",
+				middleware.Authorize(apisecurity.ObjCommentTemplate, model.PermissionDelete, enforcer),
+				middleware.PreProcessBulk(apiConfigProvider, false),
+				commentTemplateAPI.BulkDelete,
 			)
 		}
 

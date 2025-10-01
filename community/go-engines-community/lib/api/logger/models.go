@@ -52,6 +52,7 @@ const (
 	ValueTypeEntityInfosProperty = "entityinfosproperty"
 
 	ValueTypeUserNotificationSetting = "usernotificationsetting"
+	ValueTypeCommentTemplate         = "commenttemplate"
 )
 
 type ActionLogEvent struct {
