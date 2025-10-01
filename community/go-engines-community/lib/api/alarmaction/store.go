@@ -75,7 +75,7 @@ func (s *store) Ack(ctx context.Context, id string, r AckRequest, userID, userna
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeAck, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeAck, alarm.Entity, r.Comment, nil, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -103,7 +103,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userID, use
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeAckremove, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeAckremove, alarm.Entity, r.Comment, nil, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -127,7 +127,7 @@ func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userID, 
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeSnooze, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeSnooze, alarm.Entity, r.Comment, nil, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -147,7 +147,7 @@ func (s *store) Cancel(ctx context.Context, id string, r Request, userID, userna
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeCancel, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeCancel, alarm.Entity, r.Comment, nil, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -166,7 +166,7 @@ func (s *store) Uncancel(ctx context.Context, id string, r Request, userID, user
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeUncancel, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeUncancel, alarm.Entity, r.Comment, nil, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -193,7 +193,7 @@ func (s *store) AssocTicket(ctx context.Context, id string, r AssocTicketRequest
 		TicketSystemName: r.SystemName,
 		TicketData:       r.Data,
 	}
-	event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, ticketInfo.GetStepMessage(), username, userID)
+	event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, ticketInfo.GetStepMessage(), nil, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -222,7 +222,12 @@ func (s *store) Comment(ctx context.Context, id string, r CommentRequest, userID
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeComment, alarm.Entity, r.Comment, username, userID)
+	structuredMessage := make([]types.StructuredMessage, len(r.StructuredComment))
+	for i := range r.StructuredComment {
+		structuredMessage[i] = types.StructuredMessage(r.StructuredComment[i])
+	}
+
+	event, err := s.genEvent(types.EventTypeComment, alarm.Entity, r.Comment, structuredMessage, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -241,7 +246,7 @@ func (s *store) ChangeState(ctx context.Context, id string, r ChangeStateRequest
 		return false, err
 	}
 
-	event, err := s.genEvent(types.EventTypeChangestate, alarm.Entity, r.Comment, username, userID)
+	event, err := s.genEvent(types.EventTypeChangestate, alarm.Entity, r.Comment, nil, username, userID)
 	if err != nil {
 		return false, err
 	}
@@ -294,6 +299,7 @@ func (s *store) genEvent(
 	eventType string,
 	entity types.Entity,
 	output string,
+	structuredMessage []types.StructuredMessage,
 	username, userID string,
 ) (types.Event, error) {
 	event, err := s.eventGenerator.Generate(entity)
@@ -303,7 +309,13 @@ func (s *store) genEvent(
 
 	event.EventType = eventType
 	event.Timestamp = datetime.NewCpsTime()
-	event.Output = output
+
+	if len(structuredMessage) > 0 {
+		event.StructuredMessage = structuredMessage
+	} else {
+		event.Output = output
+	}
+
 	event.Author = username
 	event.UserID = userID
 	event.Initiator = types.InitiatorUser
@@ -381,7 +393,7 @@ func (s *store) ackResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event, err := s.genEvent(types.EventTypeAck, alarm.Entity, output, username, userID)
+		event, err := s.genEvent(types.EventTypeAck, alarm.Entity, output, nil, username, userID)
 		if err != nil {
 			return err
 		}
@@ -442,7 +454,7 @@ func (s *store) ticketResources(
 			return fmt.Errorf("cannot decode alarm: %w", err)
 		}
 
-		event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, output, username, userID)
+		event, err := s.genEvent(types.EventTypeAssocTicket, alarm.Entity, output, nil, username, userID)
 		if err != nil {
 			return err
 		}
