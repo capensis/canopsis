@@ -980,7 +980,7 @@ describe('pattern form converters', () => {
       unit: TIME_UNITS.minute,
     };
     const customToDuration = {
-      value: 7,
+      value: 4, // Use a specific value that doesn't match predefined ranges
       unit: TIME_UNITS.minute,
     };
     const patternRule = {
