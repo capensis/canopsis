@@ -41,3 +41,4 @@ export * from './events-record';
 export * from './role';
 export * from './notification';
 export * from './theme';
+export * from './view';
