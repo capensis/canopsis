@@ -7,15 +7,19 @@
     :name="name"
     :has-more="hasMoreItems"
     :required="required"
+    :clearable="clearable"
+    :menu-props="menuProps"
+    :clear-on-empty-search="false"
     item-text="name"
     item-value="_id"
     return-object
+    autocomplete
     @input="changeSelectedItems"
     @fetch="fetchItems"
     @fetch:more="fetchMoreItems"
     @update:search="updateSearch"
   >
-    <template #no-data>
+    <template v-if="hasAccessToTemplateTesting" #no-data>
       <v-layout justify-center>
         <v-btn
           color="primary"
@@ -36,6 +40,9 @@
 import { merge } from 'lodash';
 import { toRef } from 'vue';
 
+import { USER_PERMISSIONS } from '@/constants';
+
+import { useCanPermission } from '@/hooks/auth';
 import { useLazySearch } from '@/hooks/form/lazy-search';
 import { useTemplateData } from '@/hooks/store/modules/template-data';
 
@@ -71,8 +78,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    clearable: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
+    const menuProps = { closeOnContentClick: true };
+
+    const hasAccessToTemplateTesting = useCanPermission(USER_PERMISSIONS.technical.templateTesting);
+
     const { fetchTemplateDataListWithoutStore } = useTemplateData();
 
     const fetchHandler = ({ params }) => fetchTemplateDataListWithoutStore({
@@ -97,9 +112,14 @@ export default {
       attachValue: true,
     }, emit);
 
-    const { showCreateTemplateTestingDataModal } = useTemplateDataModals(fetchItems);
+    const { showCreateTemplateTestingDataModal } = useTemplateDataModals({
+      refresh: fetchItems,
+      type: toRef(props, 'type'),
+    });
 
     return {
+      menuProps,
+      hasAccessToTemplateTesting,
       selectedItems,
       items,
       wholePending,

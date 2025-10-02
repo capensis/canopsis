@@ -37,7 +37,7 @@ import { usePopups } from './popups';
  *   </form>
  * </template>
  */
-export const useSubmittableForm = ({ form, method, errorsToValidation = v => v, withTimeout = true }) => {
+export const useSubmittableForm = ({ form, method, scope = null, errorsToValidation = v => v, withTimeout = true }) => {
   const popups = usePopups();
   const { validator, setFormErrors } = useValidationFormErrors(form);
   const { t } = useI18n();
@@ -81,7 +81,21 @@ export const useSubmittableForm = ({ form, method, errorsToValidation = v => v, 
       : submitHandler,
   );
 
-  const isDisabled = computed(() => submitting.value || validator.errors?.any?.());
+  /**
+   * We write custom any errors flag instead of errors.any
+   * because we need to keep logic with filtering nullable scope
+   */
+  const hasAnyErrors = computed(() => !!validator.errors.items.filter(item => (
+    item?.scope === scope && validator.errors.vmId === item?.vmId
+  )).length);
+
+  const isDisabled = computed(() => {
+    if (!validator?.errors) {
+      return submitting.value;
+    }
+
+    return submitting.value || hasAnyErrors.value;
+  });
 
   return {
     submitting,

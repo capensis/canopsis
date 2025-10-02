@@ -30,6 +30,12 @@ export default {
   isNewForm: 'Si vous sauvegardez ce test et que le formulaire ne sera pas sauvegardé, ce test sera supprimé après la fermeture de la modale de création',
   testSaved: 'Test de modèle sauvegardé',
   testWillSaveAfterFormSaving: 'Le test de modèle sera sauvegardé après la sauvegarde du formulaire',
+  saveCurrentTest: {
+    title: 'Sauvegarder le test actuel ?',
+    text: 'Toutes les modifications non sauvegardées seront perdues pour le test actuel',
+    actionText: 'Sauvegarder et ouvrir un autre test',
+    secondActionText: 'Ouvrir sans sauvegarder',
+  },
   requestUrl: 'URL de requête - {number}',
   requestPayload: 'Charge utile de requête - {number}',
   conditionValue: 'Valeur de condition',

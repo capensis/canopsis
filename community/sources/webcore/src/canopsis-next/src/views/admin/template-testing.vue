@@ -61,7 +61,9 @@ export default {
       [TEMPLATE_TESTING_TABS.tests]: templateTestingTestsElement.value?.fetchList,
     }[activeTab.value]?.());
 
-    const { showCreateTemplateTestingDataModal } = useTemplateDataModals(refresh);
+    const { showCreateTemplateTestingDataModal } = useTemplateDataModals({
+      refresh,
+    });
 
     return {
       templateTestingDataElement,

@@ -7,13 +7,14 @@ import { useTemplateData } from '@/hooks/store/modules/template-data';
 /**
  * Hook for managing template testing data modals
  *
+ * @param {number} type - The type of template testing data
  * @param {Function} [refresh] - Optional callback function to refresh data after modal actions
  * @returns {Object} Object containing modal functions
  * @returns {Function} returns.showCreateTemplateTestingDataModal - Function to show create template data modal
  * @returns {Function} returns.showEditTemplateTestingDataModal - Function to show edit template data modal
  * @returns {Function} returns.showRemoveTemplateTestingDataModal - Function to show remove template data modal
  */
-export const useTemplateDataModals = (refresh) => {
+export const useTemplateDataModals = ({ type, refresh }) => {
   const { t } = useI18n();
   const modals = useModals();
   const {
@@ -28,6 +29,7 @@ export const useTemplateDataModals = (refresh) => {
   const showCreateTemplateTestingDataModal = () => modals.show({
     name: MODALS.createTemplateTestingData,
     config: {
+      templateTestingData: { type },
       title: t('modals.createTemplateData.title'),
       action: async (newTemplateTestingData) => {
         await createTemplateData({ data: newTemplateTestingData });

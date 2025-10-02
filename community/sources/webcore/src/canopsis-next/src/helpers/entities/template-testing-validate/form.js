@@ -50,9 +50,10 @@ export const convertExternalDataToTemplateTestingTestValidateForm = (externalDat
       return;
     }
 
-    externalDataItem.conditions.forEach((_, conditionIndex) => {
+    externalDataItem.conditions.forEach((condition, conditionIndex) => {
       result.push({
         key: `external_data.${index}.conditions.${conditionIndex}.value`,
+        resultKey: `external_data.${index}.${condition.type}.${condition.attribute}`,
         textKey: 'templateTesting.conditionValue',
         templateVarsKey: 'external_data',
       });
@@ -61,6 +62,31 @@ export const convertExternalDataToTemplateTestingTestValidateForm = (externalDat
 
   return result;
 };
+
+/**
+ * Converts headers array to template testing test validate form structure
+ *
+ * @param {Object} [options={}] - Options object with headers, prefix, resultPrefix and templateVarsKey
+ * @param {Array} [headers=[]] - Array of header objects with text property
+ * @param {string} [prefix=''] - Prefix string for form field keys
+ * @param {string} [resultPrefix=''] - Prefix string for result keys
+ * @param {string} [templateVarsKey=''] - Template variables key for validation
+ * @returns {Array} Array of form validation objects with keys, result keys, text keys and template vars
+ */
+export const convertHeadersToTemplateTestingTestValidateForm = ({
+  headers = {},
+  prefix = '',
+  resultPrefix = prefix,
+  templateVarsKey = '',
+}) => (
+  headers.map((header, index) => ({
+    key: `${prefix}.headers.${index}.value`,
+    resultKey: `${resultPrefix}.headers.${header.text}`,
+    textKey: 'templateTesting.webhookHeader',
+    textArgs: { number: index + 1, header: header.text },
+    templateVarsKey,
+  }))
+);
 
 /**
  * Converts event filter form to template testing validation form items
@@ -163,7 +189,7 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
   form.actions.forEach((action, index) => {
     if (!action.parameters[action.type]?.forward_author) {
       result.push({
-        key: `actions.${index}.parameters.author`,
+        key: `actions.${index}.parameters.${action.type}.author`,
         textKey: 'templateTesting.actionAuthor',
         textArgs: { number: index + 1 },
         templateVarsKey: 'author',
@@ -176,25 +202,29 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
 
       result.push({
         key: `actions.${index}.parameters.webhook.request.url`,
+        resultKey: `actions.${index}.parameters.request.url`,
         textKey: 'templateTesting.webhookUrl',
         textArgs: { number: index + 1 },
         templateVarsKey: webhookTemplateVarsKey,
       }, {
         key: `actions.${index}.parameters.webhook.request.payload`,
+        resultKey: `actions.${index}.parameters.request.payload`,
         textKey: 'templateTesting.webhookPayload',
         textArgs: { number: index + 1 },
         textarea: true,
         templateVarsKey: webhookTemplateVarsKey,
       });
 
-      Object.keys(request.headers).forEach((headerKey) => {
-        result.push({
-          key: `actions.${index}.parameters.webhook.request.headers.${headerKey}`,
-          textKey: 'templateTesting.webhookHeader',
-          textArgs: { number: index + 1, header: headerKey },
-          templateVarsKey: webhookTemplateVarsKey,
-        });
-      });
+      result.push(
+        ...convertHeadersToTemplateTestingTestValidateForm(
+          {
+            headers: request.headers,
+            prefix: `actions.${index}.parameters.webhook.request`,
+            resultPrefix: `actions.${index}.parameters.request`,
+            templateVarsKey: webhookTemplateVarsKey,
+          },
+        ),
+      );
 
       if (declareTicket.ticket_id.template) {
         result.push({
@@ -221,7 +251,7 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
       return;
     }
 
-    if ([ACTION_TYPES.pbehavior, ACTION_TYPES.pbehaviorRemove, ACTION_TYPES.assocticket].includes(action.type)) {
+    if (![ACTION_TYPES.pbehavior, ACTION_TYPES.pbehaviorRemove, ACTION_TYPES.assocticket].includes(action.type)) {
       result.push({
         key: `actions.${index}.parameters.output`,
         textKey: 'templateTesting.noteOutput',
@@ -330,15 +360,15 @@ export const convertDeclareTicketRuleToTemplateTestingTestValidateForm = (form =
       textarea: true,
     });
 
-    Object.keys(webhook.request.headers).forEach((headerKey) => {
-      result.push({
-        templateVarsKey,
-
-        key: `webhooks.${index}.request.headers.${headerKey}`,
-        textKey: 'templateTesting.webhookHeader',
-        textArgs: { number: index + 1, header: headerKey },
-      });
-    });
+    result.push(
+      ...convertHeadersToTemplateTestingTestValidateForm(
+        {
+          headers: webhook.request.headers,
+          prefix: `webhooks.${index}.request`,
+          templateVarsKey,
+        },
+      ),
+    );
 
     if (!webhook.declare_ticket.enabled) {
       return;
