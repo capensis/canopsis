@@ -7,9 +7,10 @@
       required
     />
 
-    <v-textarea
+    <c-description-field
       v-field="form.description"
       :label="$t('common.description')"
+      :max-length="500"
       name="description"
     />
 
@@ -72,6 +73,7 @@ import RequestHeadersField from '@/components/forms/request/fields/request-heade
 import TemplateTestingDataTypeField from './fields/template-testing-data-type-field.vue';
 
 export default {
+  inject: ['$validator'],
   components: {
     RequestHeadersField,
     TemplateTestingDataTypeField,
@@ -113,7 +115,9 @@ export default {
      * otherwise sets the template directly
      */
     const showSetPreFilledTemplateModal = () => {
-      if (!props.form.value?.trim?.()) {
+      const bodyToCompare = props.form.body?.trim?.();
+
+      if (!bodyToCompare || bodyToCompare === '{}') {
         setPreFilledTemplate();
 
         return;

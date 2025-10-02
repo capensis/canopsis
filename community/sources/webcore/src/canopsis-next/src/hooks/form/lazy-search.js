@@ -134,15 +134,16 @@ export const useLazySearch = ({
     pending: valuesPending,
     handler: initializeSelectedItems,
   } = usePendingHandler(async () => {
+    if (!arrayValue.value.length && selectedItems.value.length) {
+      selectedItems.value = [];
+      return;
+    }
+
     const selectedItemsFromItemsByValue = arrayValue.value.map(item => itemsByValue.value[item]).filter(Boolean);
 
     if (selectedItemsFromItemsByValue.length === arrayValue.value.length) {
       selectedItems.value = selectedItemsFromItemsByValue;
 
-      return;
-    }
-
-    if (!arrayValue.value.length) {
       return;
     }
 

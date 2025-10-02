@@ -21,7 +21,18 @@
           color="error"
           @click="cancel"
         >
-          {{ $t('common.no') }}
+          {{ config.cancelText || $t('common.no') }}
+        </v-btn>
+        <v-btn
+          v-if="config.secondAction"
+          :loading="submittingSecondAction"
+          :disabled="isDisabledSecondAction"
+          class="ml-2"
+          color="primary"
+          outlined
+          @click.prevent="submitSecondAction"
+        >
+          {{ config.secondActionText }}
         </v-btn>
         <v-btn
           :loading="submitting"
@@ -30,7 +41,7 @@
           color="primary"
           @click.prevent="submit"
         >
-          {{ $t('common.yes') }}
+          {{ config.actionText || $t('common.yes') }}
         </v-btn>
       </v-layout>
     </template>
@@ -38,10 +49,13 @@
 </template>
 
 <script>
+import { ref, computed, onBeforeUnmount } from 'vue';
+
 import { MODALS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -51,40 +65,70 @@ import ModalWrapper from '../modal-wrapper.vue';
 export default {
   name: MODALS.confirmation,
   components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      submitted: false,
-      cancelled: false,
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    // Reactive data
+    const submitted = ref(false);
+    const cancelled = ref(false);
+
+    // Composables
+    const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
+
+    // Computed properties
+    const title = computed(() => config.value.title ?? t('common.confirmation'));
+
+    // Methods
+    const cancel = () => {
+      cancelled.value = true;
+      close();
     };
-  },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('common.confirmation');
-    },
-  },
-  beforeDestroy() {
-    if (!this.submitted && this.config.cancel) {
-      this.config.cancel(this.cancelled);
-    }
-  },
-  methods: {
-    cancel() {
-      this.cancelled = true;
 
-      this.$modals.hide();
-    },
-    async submit() {
-      if (this.config.action) {
-        await this.config.action();
+    const { submit, submitting, isDisabled } = useSubmittableForm({
+      method: async () => {
+        await config.value.action?.();
+
+        submitted.value = true;
+        close();
+      },
+    });
+
+    const {
+      submit: submitSecondAction,
+      submitting: submittingSecondAction,
+      isDisabled: isDisabledSecondAction,
+    } = useSubmittableForm({
+      method: async () => {
+        await config.value.secondAction?.();
+
+        submitted.value = true;
+        close();
+      },
+    });
+
+    // Lifecycle
+    onBeforeUnmount(() => {
+      if (!submitted.value) {
+        config.value.cancel?.(cancelled.value);
       }
+    });
 
-      this.submitted = true;
-      this.$modals.hide();
-    },
+    return {
+      config,
+      submitting,
+      isDisabled,
+      title,
+      cancel,
+      submit,
+      submitSecondAction,
+      submittingSecondAction,
+      isDisabledSecondAction,
+    };
   },
 };
 </script>

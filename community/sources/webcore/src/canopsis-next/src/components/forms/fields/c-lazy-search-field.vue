@@ -16,7 +16,7 @@
     :chips="isMultiple"
     :disabled="disabled"
     :required="required"
-    :menu-props="menuProps"
+    :menu-props="preparedMenuProps"
     :clearable="clearable"
     :autocomplete="autocomplete"
     :combobox="!autocomplete"
@@ -181,6 +181,10 @@ export default {
       type: Number,
       default: 300,
     },
+    menuProps: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, { emit }) {
     const internalSearch = ref(props.search);
@@ -190,7 +194,7 @@ export default {
     const validator = useValidator();
 
     const isMultiple = computed(() => isArray(props.value));
-    const menuProps = computed(() => ({ contentClass: 'c-lazy-search-field__list', eager: true }));
+    const preparedMenuProps = computed(() => ({ ...props.menuProps, contentClass: 'c-lazy-search-field__list', eager: true }));
 
     /**
      * Set the internal search value.
@@ -307,7 +311,7 @@ export default {
 
       internalSearch,
       isFocused,
-      menuProps,
+      preparedMenuProps,
 
       isMultiple,
 
