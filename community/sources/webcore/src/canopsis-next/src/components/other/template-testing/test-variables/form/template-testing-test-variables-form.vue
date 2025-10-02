@@ -29,7 +29,7 @@
           :title="$t(field.textKey, field.textArgs)"
           :textarea="field.textarea"
           :json="field.json"
-          :result="testResult[field.key]"
+          :result="testResult[field.resultKey ?? field.key]"
           :variables="templateVars[field.templateVarsKey]"
           :last-run-value="lastRunVariables[field.formKey ?? field.key]"
           @input="field.updateField"

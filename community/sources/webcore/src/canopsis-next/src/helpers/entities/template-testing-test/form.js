@@ -389,7 +389,7 @@ export const templateTestingTestValidateToForm = (originalForm = [], validate = 
 
       return {
         ...item,
-        value: response?.value ?? '',
+        value: response?._id ?? '',
       };
     }
 

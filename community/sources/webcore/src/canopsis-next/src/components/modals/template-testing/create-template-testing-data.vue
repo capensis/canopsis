@@ -80,7 +80,7 @@ export default {
 
     const title = computed(() => config.value.title || t('modals.createTemplateTestingData.create.title'));
 
-    const isNew = computed(() => !config.value.templateTestingData);
+    const isNew = computed(() => !config.value.templateTestingData?._id);
 
     return {
       form,

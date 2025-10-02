@@ -23,9 +23,10 @@
       required
     />
 
-    <v-textarea
+    <c-description-field
       v-field="form.description"
       :label="$t('common.description')"
+      :max-length="500"
       name="description"
     />
   </v-layout>

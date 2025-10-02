@@ -40,7 +40,7 @@ export default {
     const {
       showEditTemplateTestingDataModal,
       showRemoveTemplateTestingDataModal,
-    } = useTemplateDataModals(fetchList);
+    } = useTemplateDataModals({ refresh: fetchList });
 
     onMounted(fetchList);
 

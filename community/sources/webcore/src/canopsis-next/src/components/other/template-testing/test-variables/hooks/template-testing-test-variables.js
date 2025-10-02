@@ -58,6 +58,9 @@ export const useTemplateTestingValidationForm = (props) => {
   const selectedTest = ref({});
   const lastRunVariables = ref({});
 
+  const { t } = useI18n();
+  const modals = useModals();
+
   const { setFormErrors } = useValidationFormErrors(validationForm);
 
   watch(() => props.generalForm, (newForm) => {
@@ -87,15 +90,64 @@ export const useTemplateTestingValidationForm = (props) => {
   const getValidationFormData = () => formToTemplateTestingTestValidate(validationForm.value);
 
   /**
+   * Sets the selected test data
+   *
+   * @param {Object} newSelectedTest - The new selected test object to set
+   */
+  const setSelectedTest = newSelectedTest => selectedTest.value = newSelectedTest;
+
+  /**
+   * Resets the selected test to a shallow copy of the current selected test
+   * This preserves the current test data while creating a new object reference
+   */
+  const resetSelectedTest = () => setSelectedTest({ ...(selectedTest.value || {}) });
+
+  /**
+   * Applies a new selected test and updates the validation form with the test data
+   *
+   * @param {Object} newSelectedTest - The new selected test object
+   * @param {Object} newSelectedTest.data - The test data to be used for validation form
+   */
+  const applyNewSelectedTest = (newSelectedTest) => {
+    setSelectedTest(newSelectedTest);
+
+    validationForm.value = templateTestingTestValidateToForm(validationForm.value, newSelectedTest.data);
+  };
+
+  /**
    * Updates the selected test and syncs the validation form with test data
    *
    * @param {Object} newSelectedTest - The new selected test object
    * @param {Object} newSelectedTest.data - The test data
    */
   const updateSelectedTest = (newSelectedTest) => {
-    selectedTest.value = newSelectedTest;
+    if (!newSelectedTest) {
+      setSelectedTest({});
 
-    validationForm.value = templateTestingTestValidateToForm(validationForm.value, newSelectedTest.data);
+      return;
+    }
+
+    const isEmptyValidationForm = validationForm.value.every(item => !item.value);
+
+    if (isEmptyValidationForm) {
+      applyNewSelectedTest(newSelectedTest);
+
+      return;
+    }
+
+    modals.show({
+      name: MODALS.confirmation,
+      config: {
+        title: t('templateTesting.saveCurrentTest.title'),
+        text: t('templateTesting.saveCurrentTest.text'),
+        action: () => { },
+        actionText: t('templateTesting.saveCurrentTest.actionText'),
+        secondAction: () => applyNewSelectedTest(newSelectedTest),
+        secondActionText: t('templateTesting.saveCurrentTest.secondActionText'),
+        cancel: resetSelectedTest,
+        cancelText: t('common.cancel'),
+      },
+    });
   };
 
   /**
@@ -166,6 +218,15 @@ export const useTemplateTestActions = (props) => {
       ...selectedTest,
       data: getValidationFormData(),
     };
+
+    const [isNameValid, isDataValid] = await Promise.all([
+      validator.validateAll('test-name'),
+      validator.validateAll('test-data'),
+    ]);
+
+    if (!isNameValid || !isDataValid) {
+      return;
+    }
 
     if (props.ruleId) {
       data.rule = props.ruleId;

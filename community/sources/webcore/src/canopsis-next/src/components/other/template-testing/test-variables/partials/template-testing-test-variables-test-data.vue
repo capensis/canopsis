@@ -98,6 +98,7 @@ export default {
         required: item.required || (item.someRequired && !hasFilledSomeRequiredField.value),
         disabled: item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user && !hasReadAccessForAnyUser.value,
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES_TO_DATA_TYPE[item.type],
+        clearable: true,
       },
       on: {
         input: value => updateFieldInArrayItem(index, 'value', value),
