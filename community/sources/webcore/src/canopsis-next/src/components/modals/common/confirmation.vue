@@ -18,21 +18,11 @@
         justify-center
       >
         <v-btn
+          :outlined="config.cancelOutlined"
           color="error"
           @click="cancel"
         >
           {{ config.cancelText || $t('common.no') }}
-        </v-btn>
-        <v-btn
-          v-if="config.secondAction"
-          :loading="submittingSecondAction"
-          :disabled="isDisabledSecondAction"
-          class="ml-2"
-          color="primary"
-          outlined
-          @click.prevent="submitSecondAction"
-        >
-          {{ config.secondActionText }}
         </v-btn>
         <v-btn
           :loading="submitting"
@@ -59,9 +49,6 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
-/**
- * Confirmation modal
- */
 export default {
   name: MODALS.confirmation,
   components: { ModalWrapper },
@@ -72,18 +59,14 @@ export default {
     },
   },
   setup(props) {
-    // Reactive data
     const submitted = ref(false);
     const cancelled = ref(false);
 
-    // Composables
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
-    // Computed properties
     const title = computed(() => config.value.title ?? t('common.confirmation'));
 
-    // Methods
     const cancel = () => {
       cancelled.value = true;
       close();
@@ -98,20 +81,6 @@ export default {
       },
     });
 
-    const {
-      submit: submitSecondAction,
-      submitting: submittingSecondAction,
-      isDisabled: isDisabledSecondAction,
-    } = useSubmittableForm({
-      method: async () => {
-        await config.value.secondAction?.();
-
-        submitted.value = true;
-        close();
-      },
-    });
-
-    // Lifecycle
     onBeforeUnmount(() => {
       if (!submitted.value) {
         config.value.cancel?.(cancelled.value);
@@ -125,9 +94,6 @@ export default {
       title,
       cancel,
       submit,
-      submitSecondAction,
-      submittingSecondAction,
-      isDisabledSecondAction,
     };
   },
 };
