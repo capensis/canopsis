@@ -1,4 +1,4 @@
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, isEqual } from 'lodash';
 import {
   computed,
   inject,
@@ -54,6 +54,7 @@ import { useValidationFormErrors } from '@/hooks/validator/validation-form-error
  * @returns {Function} returns.setLastRunVariables - Function to set last run variables
  */
 export const useTemplateTestingValidationForm = (props) => {
+  const originalValidationForm = ref([]);
   const validationForm = ref([]);
   const selectedTest = ref({});
   const lastRunVariables = ref({});
@@ -111,7 +112,8 @@ export const useTemplateTestingValidationForm = (props) => {
   const applyNewSelectedTest = (newSelectedTest) => {
     setSelectedTest(newSelectedTest);
 
-    validationForm.value = templateTestingTestValidateToForm(validationForm.value, newSelectedTest.data);
+    originalValidationForm.value = templateTestingTestValidateToForm(validationForm.value, newSelectedTest.data);
+    validationForm.value = originalValidationForm.value;
   };
 
   /**
@@ -128,8 +130,9 @@ export const useTemplateTestingValidationForm = (props) => {
     }
 
     const isEmptyValidationForm = validationForm.value.every(item => !item.value);
+    const isEqualValidationForms = isEqual(originalValidationForm.value, validationForm.value);
 
-    if (isEmptyValidationForm) {
+    if (isEmptyValidationForm || isEqualValidationForms) {
       applyNewSelectedTest(newSelectedTest);
 
       return;
@@ -138,14 +141,12 @@ export const useTemplateTestingValidationForm = (props) => {
     modals.show({
       name: MODALS.confirmation,
       config: {
-        title: t('templateTesting.saveCurrentTest.title'),
-        text: t('templateTesting.saveCurrentTest.text'),
-        action: () => { },
-        actionText: t('templateTesting.saveCurrentTest.actionText'),
-        secondAction: () => applyNewSelectedTest(newSelectedTest),
-        secondActionText: t('templateTesting.saveCurrentTest.secondActionText'),
+        text: t('templateTesting.lostCurrentTest.text'),
+        action: () => applyNewSelectedTest(newSelectedTest),
+        actionText: t('templateTesting.lostCurrentTest.actionText'),
         cancel: resetSelectedTest,
-        cancelText: t('common.cancel'),
+        cancelText: t('templateTesting.lostCurrentTest.cancelText'),
+        cancelOutlined: true,
       },
     });
   };

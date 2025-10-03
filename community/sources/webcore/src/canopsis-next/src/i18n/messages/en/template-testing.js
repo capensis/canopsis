@@ -31,11 +31,10 @@ export default {
   isNewForm: 'If you save this test and the form won\'t be saved, this test will be deleted after closing the creation modal',
   testSaved: 'Template test saved',
   testWillSaveAfterFormSaving: 'Template test will save after form saving',
-  saveCurrentTest: {
-    title: 'Save current test ?',
-    text: 'All unsaved changes for will be lost for current test',
-    actionText: 'Save and open another test',
-    secondActionText: 'Open without saving',
+  lostCurrentTest: {
+    text: 'All unsaved changes will be lost for the current test',
+    actionText: 'Apply new test data',
+    cancelText: 'Keep previous test data',
   },
   requestUrl: 'Request URL - {number}',
   requestPayload: 'Request payload - {number}',
