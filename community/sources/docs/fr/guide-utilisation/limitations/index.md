@@ -46,3 +46,48 @@ L'unicité d'une alarme est établie par la concaténation des champs `<connecto
 Cette chaîne sert actuellement de clé de routage (ou *routing key*) pour acheminer les évènements vers Canopsis, dans le cadre de notre utilisation de RabbitMQ. Le protocole AMQP qui lui est associé impose néanmoins une longueur maximale de 256 caractères à cette chaîne (cf. Section 4.9 de la [spécification AMQP](https://www.rabbitmq.com/resources/specs/amqp0-9-1.pdf)). Canopsis ne pouvant pas contourner cette limite du protocole, une exception `ShortStringTooLong` sera générée lorsque cette limite est dépassée.
 
 Vous devez donc veiller à ce que l'ensemble `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]` ne dépasse jamais 256 caractères, sans quoi les évènements, traitements et alarmes associés ne pourront être traités par Canopsis.
+
+Bien sûr ! Voici une version complète du paragraphe que tu peux mettre à jour dans la doc Canopsis, avec la commande `jq` incluse :
+
+---
+
+## Limitation des caractères spéciaux dans l’URL MongoDB
+
+Lors de la configuration de l’URL de connexion MongoDB, certains caractères spéciaux (comme `@`, `:`, `/`, `%`, `+`) ne peuvent pas être utilisés directement dans le mot de passe.
+
+Ils doivent être encodés au format *percent-encoding* (URL encoding), faute de quoi l’authentification échouera.
+
+### Exemple
+
+Le mot de passe :
+
+```
+monMot+de/p@ss:word
+```
+
+Peut être encodé directement depuis le shell avec la commande suivante :
+
+```bash
+printf '%s' 'monMot+de/p@ss:word' | jq -Rr @uri
+```
+
+Résultat :
+
+```
+monMot%2Bde%2Fp%40ss%3Aword
+```
+### Tableau de conversion courants
+
+| Caractère | Encodage |
+| --------- | -------- |
+| `@`       | `%40`    |
+| `:`       | `%3A`    |
+| `/`       | `%2F`    |
+| `%`       | `%25`    |
+| `+`       | `%2B`    |
+| `#`       | `%23`    |
+| `?`       | `%3F`    |
+| `=`       | `%3D`    |
+| `&`       | `%26`    |
+
+Pour plus d’informations, vous pouvez consulter la documentation officielle de MongoDB sur l’[URL Encoding](https://www.mongodb.com/docs/manual/reference/connection-string/#std-label-connections-connection-string).
