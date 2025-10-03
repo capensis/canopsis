@@ -303,7 +303,41 @@ Vis-à-vis du changement de licence de Redis, Canopsis a décidé de migrer de R
 
 === "Helm"
 
-    Vous n'avez rien de particulier à prévoir, les configurations de référence livrées par Canopsis embarquent ce changement naturellement.
+    Répérer le statefulset Redis
+
+    ```sh
+    kubectl get statefulset | grep redis
+    ```
+
+    L’exécution de cette commande renverra quelque chose comme
+
+    ```sh
+    canopsis-redis-master       1/1     11m
+    ```
+
+    Suppression du statefulset Redis
+
+    ```sh
+    kubectl delete statefulset canopsis-redis-master
+    ```
+
+    Repérer le volume associé à Redis
+
+    ```sh
+    kubectl get pvc | grep redis
+    ```
+
+    Cette commande devrait vous renvoyer un résultat similaire à
+
+    ```sh
+    redis-data-canopsis-redis-master-0   Bound    pvc-14880a70-3af6-409a-9ed5-90f3b195177d   8Gi        RWO            standard       <unset>                 106s
+    ```
+
+    Suppression du volume
+
+    ```sh
+    kubectl delete pvc redis-data-canopsis-redis-master-0
+    ```
 
 
 ### Mise à jour de Nginx
