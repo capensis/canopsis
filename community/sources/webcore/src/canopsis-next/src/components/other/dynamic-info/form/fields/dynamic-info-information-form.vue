@@ -13,6 +13,7 @@
       v-if="isDefaultType"
       v-field="form.value"
       :label="$t('common.value')"
+      :types="mixedFieldTypes"
       name="value"
       required
     />
@@ -44,7 +45,7 @@
 <script>
 import { computed } from 'vue';
 
-import { DYNAMIC_INFO_INFORMATION_TYPES } from '@/constants';
+import { DYNAMIC_INFO_INFORMATION_TYPES, PATTERN_FIELD_TYPES } from '@/constants';
 
 import { useValidator } from '@/hooks/validator/validator';
 import { useModelField } from '@/hooks/form/model-field';
@@ -85,6 +86,13 @@ export default {
   setup(props, { emit }) {
     const validator = useValidator();
 
+    const mixedFieldTypes = [
+      { value: PATTERN_FIELD_TYPES.string },
+      { value: PATTERN_FIELD_TYPES.number },
+      { value: PATTERN_FIELD_TYPES.boolean },
+      { value: PATTERN_FIELD_TYPES.stringArray },
+    ];
+
     const { updateModel } = useModelField(props, emit);
 
     const nameRules = computed(() => ({
@@ -114,6 +122,8 @@ export default {
     };
 
     return {
+      mixedFieldTypes,
+
       nameRules,
       isDefaultType,
       isTemplateType,
