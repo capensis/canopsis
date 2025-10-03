@@ -23,6 +23,7 @@ import VSelect from './components/v-select/v-select.vue';
 import VListGroup from './components/v-list/v-list-group.vue';
 import VListItemMask from './components/v-list/v-list-item-mask.vue';
 import VTabs from './components/v-tabs/v-tabs.vue';
+import VTextarea from './components/v-textarea/v-textarea.vue';
 
 import './styles/vuetify.scss';
 
@@ -49,6 +50,7 @@ export const createVuetify = (Vue, options) => {
       VCombobox,
       VAutocomplete,
       VTabs,
+      VTextarea,
     },
 
     directives: {

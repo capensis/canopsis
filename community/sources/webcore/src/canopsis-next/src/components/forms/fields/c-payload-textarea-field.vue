@@ -85,6 +85,8 @@
 <script>
 import { keyBy } from 'lodash';
 
+import { getStringLinesCount } from '@/helpers/string';
+
 import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 
 import VariablesMenu from '@/components/common/text-editor/variables-menu.vue';
@@ -224,6 +226,23 @@ export default {
         maxWidth: `calc(100% - ${this.lineHeightPixel})`,
       };
     },
+  },
+  mounted() {
+    setTimeout(() => {
+      const { input } = this.$refs.field?.$refs ?? {};
+
+      if (!input) {
+        return;
+      }
+
+      const computedStyle = window.getComputedStyle(input);
+      const lineHeight = parseFloat(computedStyle.lineHeight);
+      const linesCount = getStringLinesCount(this.value);
+      const height = Math.ceil(lineHeight * linesCount);
+      const minHeight = parseInt(this.rows, 10) * parseFloat(this.rowHeight);
+
+      input.style.height = `${Math.max(height, minHeight)}px`;
+    }, 1000);
   },
 };
 </script>
