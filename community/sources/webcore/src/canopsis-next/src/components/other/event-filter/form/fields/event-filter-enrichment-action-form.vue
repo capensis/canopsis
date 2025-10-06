@@ -94,6 +94,7 @@
                 key="value"
                 :label="$t('common.value')"
                 :name="valueFieldName"
+                :types="mixedFieldTypes"
                 class="ml-2"
               />
             </v-flex>
@@ -107,7 +108,11 @@
 <script>
 import { computed } from 'vue';
 
-import { EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES, EVENT_FILTER_EVENT_EXTRA_PREFIX } from '@/constants';
+import {
+  EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
+  EVENT_FILTER_EVENT_EXTRA_PREFIX,
+  PATTERN_FIELD_TYPES,
+} from '@/constants';
 
 import {
   eventFilterDictionaryActionValueToForm,
@@ -159,6 +164,12 @@ export default {
     const { updateField, updateModel } = useModelField(props, emit);
 
     const eventExtraPrefix = EVENT_FILTER_EVENT_EXTRA_PREFIX;
+    const mixedFieldTypes = [
+      { value: PATTERN_FIELD_TYPES.string },
+      { value: PATTERN_FIELD_TYPES.number },
+      { value: PATTERN_FIELD_TYPES.boolean },
+      { value: PATTERN_FIELD_TYPES.stringArray },
+    ];
 
     const nameFieldName = computed(() => `${props.name}.name`);
     const valueFieldName = computed(() => `${props.name}.value`);
@@ -222,6 +233,7 @@ export default {
 
     return {
       eventExtraPrefix,
+      mixedFieldTypes,
 
       nameFieldName,
       valueFieldName,
