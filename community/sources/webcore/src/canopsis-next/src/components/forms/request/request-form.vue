@@ -59,11 +59,19 @@
       :disabled="disabled"
       hide-details
     />
+    <request-auth-with-token-field
+      v-if="withAuthToken"
+      v-field="form.auth"
+      :auth-token="authToken"
+      :name="`${name}.auth`"
+      :disabled="disabled"
+      @update:auth-token="updateAuthToken"
+    />
     <request-auth-field
+      v-else
       v-field="form.auth"
       :name="`${name}.auth`"
       :disabled="disabled"
-      :required="requiredAuth"
     />
     <c-information-block
       :title="$tc('common.header', 2)"
@@ -91,13 +99,19 @@
 </template>
 
 <script>
-import RequestAuthField from './fields/request-auth-field.vue';
-import RequestHeadersField from './fields/request-headers-field.vue';
 import RequestUrlField from './fields/request-url-field.vue';
+import RequestHeadersField from './fields/request-headers-field.vue';
+import RequestAuthField from './fields/request-auth-field.vue';
+import RequestAuthWithTokenField from './fields/request-auth-with-token-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { RequestUrlField, RequestHeadersField, RequestAuthField },
+  components: {
+    RequestUrlField,
+    RequestHeadersField,
+    RequestAuthField,
+    RequestAuthWithTokenField,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -106,6 +120,14 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    authToken: {
+      type: Object,
+      default: () => ({}),
     },
     name: {
       type: String,
@@ -131,15 +153,11 @@ export default {
       type: Array,
       default: () => [],
     },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
     withMultipleUrls: {
       type: Boolean,
       default: false,
     },
-    requiredAuth: {
+    withAuthToken: {
       type: Boolean,
       default: false,
     },
@@ -147,9 +165,11 @@ export default {
 
   setup(props, { emit }) {
     const updateMultiple = multiple => emit('update:multiple', multiple);
+    const updateAuthToken = authToken => emit('update:auth-token', authToken);
 
     return {
       updateMultiple,
+      updateAuthToken,
     };
   },
 };

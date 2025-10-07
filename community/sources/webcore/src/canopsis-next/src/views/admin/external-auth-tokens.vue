@@ -68,7 +68,7 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: fetchWebhookTokenRulesListWithoutStore,
+      fetchListHandler: params => fetchWebhookTokenRulesListWithoutStore({ params: { ...params, with_flags: true } }),
     });
 
     /**
@@ -101,12 +101,16 @@ export default {
       });
     };
 
-    const showRemoveExternalAuthTokenModal = (id) => {
+    const showRemoveExternalAuthTokenModal = (externalAuthToken) => {
       modals.show({
-        name: MODALS.confirmation,
+        name: MODALS.confirmationPhrase,
         config: {
+          title: t('modals.confirmationPhrase.deleteExternalAuthToken.title'),
+          text: t('modals.confirmationPhrase.deleteExternalAuthToken.text'),
+          phraseText: t('modals.confirmationPhrase.deleteExternalAuthToken.phraseText'),
+          phrase: externalAuthToken.name,
           action: () => callActionWithPopup(
-            () => removeWebhookTokenRule({ id }),
+            () => removeWebhookTokenRule({ id: externalAuthToken._id }),
             fetchList,
           ),
         },
