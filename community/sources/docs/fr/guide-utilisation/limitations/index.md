@@ -47,8 +47,6 @@ Cette chaîne sert actuellement de clé de routage (ou *routing key*) pour achem
 
 Vous devez donc veiller à ce que l'ensemble `<connector>.<connector_name>.<event_type>.<source_type>.<component>[.<resource>]` ne dépasse jamais 256 caractères, sans quoi les évènements, traitements et alarmes associés ne pourront être traités par Canopsis.
 
-Bien sûr ! Voici une version complète du paragraphe que tu peux mettre à jour dans la doc Canopsis, avec la commande `jq` incluse :
-
 ---
 
 ## Limitation des caractères spéciaux dans l’URL MongoDB
