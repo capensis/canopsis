@@ -391,6 +391,20 @@ html {
   }
 }
 
+.full-width {
+  width: 100%;
+}
+
+.sticky-bottom-buttons {
+  position: sticky;
+  bottom: 10px;
+  pointer-events: none;
+
+  button {
+    pointer-events: all;
+  }
+}
+
 *[aria-required="true"] label:before {
   content: '*';
   padding-right: 4px;

@@ -13,15 +13,9 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       <div
         class="text-subtitle-1 font-weight-bold"
       >
-      Webhooks data storage
+      Webhooks
       </div>
-      <c-help-icon-stub
-        color="info"
-        icon-class="ml-2"
-        max-width="300"
-        text="All webhook requests history is kept in logs"
-        top=""
-      />
+      <!---->
     </div>
     <div
       class="layout mt-2"
@@ -35,9 +29,11 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       </span>
     </div>
     <c-enabled-duration-field-stub
-      help-text="All webhook requests history older than the defined time period will be deleted"
-      label="Clear webhooks logs after"
+      hide-value-on-false=""
+      label="Delete webhooks requests history"
       name="webhook.delete_after"
+      suffix="After"
+      switcher=""
       value="[object Object]"
     />
     <c-enabled-field-stub
@@ -48,8 +44,8 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       <c-help-icon-stub
         color="info"
         icon-class="ml-2"
-        text="When enabled, all credentials and auth data is written in logs in open way (not recommended). 
-When disabled, all passwords, tokens and auth data is hidden and written as *** in logs."
+        text="Affects how passwords, tokens and auth data are written in logs. 
+<ul><li>enabled: in open way (not recommended)</li><li>disabled: hidden with ***</li></ul>"
         top=""
       />
     </c-enabled-field-stub>
@@ -70,21 +66,17 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       <div
         class="text-subtitle-1 font-weight-bold"
       >
-      Webhooks data storage
+      Webhooks
       </div>
-      <c-help-icon-stub
-        color="info"
-        icon-class="ml-2"
-        max-width="300"
-        text="All webhook requests history is kept in logs"
-        top=""
-      />
+      <!---->
     </div>
     <!---->
     <c-enabled-duration-field-stub
-      help-text="All webhook requests history older than the defined time period will be deleted"
-      label="Clear webhooks logs after"
+      hide-value-on-false=""
+      label="Delete webhooks requests history"
       name="webhook.delete_after"
+      suffix="After"
+      switcher=""
       value="[object Object]"
     />
     <c-enabled-field-stub
@@ -94,8 +86,8 @@ exports[`storage-settings-webhook-form Renders \`storage-settings-webhook-form\`
       <c-help-icon-stub
         color="info"
         icon-class="ml-2"
-        text="When enabled, all credentials and auth data is written in logs in open way (not recommended). 
-When disabled, all passwords, tokens and auth data is hidden and written as *** in logs."
+        text="Affects how passwords, tokens and auth data are written in logs. 
+<ul><li>enabled: in open way (not recommended)</li><li>disabled: hidden with ***</li></ul>"
         top=""
       />
     </c-enabled-field-stub>
