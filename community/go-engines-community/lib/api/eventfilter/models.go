@@ -6,6 +6,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/exdate"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -67,22 +68,22 @@ type Exception struct {
 }
 
 type CreateRequest struct {
-	EditRequest `bson:",inline"`
-	ID          string `bson:"_id" json:"_id" binding:"id"`
+	EditRequest
+	ID string `json:"_id" binding:"id"`
 }
 
 type UpdateRequest struct {
-	EditRequest `bson:",inline"`
-	ID          string `bson:"-" json:"-"`
+	EditRequest
+	ID string `json:"-"`
 }
 
 type BulkUpdateRequestItem struct {
-	EditRequest `bson:",inline"`
-	ID          string `bson:"_id" json:"_id" binding:"required"`
+	EditRequest
+	ID string `json:"_id" binding:"required"`
 }
 
 type BulkDeleteRequestItem struct {
-	ID string `bson:"_id" json:"_id" binding:"required"`
+	ID string `json:"_id" binding:"required"`
 }
 
 type FilteredQuery struct {
@@ -129,4 +130,26 @@ func (r *AggregationFailureResult) GetData() interface{} {
 
 func (r *AggregationFailureResult) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type TemplateRequest struct {
+	Rule struct {
+		EditRequest
+		ID string `json:"_id" binding:"id"`
+	} `json:"rule"`
+	TestData struct {
+		Test  string `json:"test"`
+		Event string `json:"event"`
+		// TestData.Responses keys correspond with Rule.ExternalData keys
+		Responses map[int]string `json:"responses"`
+	} `json:"testdata"`
+}
+
+type TemplateVarsResponse struct {
+	ExternalData []template.VarResponse `json:"external_data"`
+	Config       []template.VarResponse `json:"config"`
+}
+
+type CopyVarsResponse struct {
+	Config []template.VarResponse `json:"config"`
 }

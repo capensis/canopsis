@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
@@ -73,4 +74,29 @@ type CategoriesRequest struct {
 
 type CategoryResponse struct {
 	Categories []string `json:"categories"`
+}
+
+type TemplateRequest struct {
+	Author string `json:"author" swaggerignore:"true"`
+	Rule   struct {
+		EditRequest
+		ID string `json:"_id" binding:"id"`
+	} `json:"rule"`
+	TestData struct {
+		Test   string `json:"test"`
+		Alarm  string `json:"alarm"`
+		Entity string `json:"entity"`
+		User   string `json:"user"`
+	} `json:"testdata"`
+}
+
+type TemplateVarsResponse struct {
+	Alarm  TemplateVarsResponseItem `json:"alarm"`
+	Entity TemplateVarsResponseItem `json:"entity"`
+}
+
+type TemplateVarsResponseItem struct {
+	URL          []template.VarResponse `json:"url"`
+	Label        []template.VarResponse `json:"label"`
+	ExternalData []template.VarResponse `json:"external_data"`
 }
