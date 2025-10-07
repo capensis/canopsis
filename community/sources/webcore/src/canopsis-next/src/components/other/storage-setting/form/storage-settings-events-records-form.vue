@@ -1,9 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.eventsRecords.title')"
-    :help-text="$t('storageSetting.eventsRecords.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.eventsRecords.title')">
     <template
       v-if="history"
       #subtitle=""
@@ -13,7 +9,10 @@
     <c-enabled-duration-field
       v-field="form.delete_after"
       :label="$t('storageSetting.eventsRecords.deleteAfter')"
-      :name="errorsDeleteAfterFieldName"
+      :suffix="$t('storageSetting.olderThan')"
+      name="eventsRecords.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -36,11 +35,6 @@ export default {
     history: {
       type: Number,
       required: false,
-    },
-  },
-  computed: {
-    errorsDeleteAfterFieldName() {
-      return 'eventsRecords.delete_after';
     },
   },
 };

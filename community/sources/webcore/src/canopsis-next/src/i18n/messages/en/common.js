@@ -318,6 +318,8 @@ export default {
   inProgress: 'In progress',
   last: 'Last',
   seeDetails: 'See details',
+  settings: 'Settings',
+  after: 'After',
   variableTypes: {
     string: 'String',
     number: 'Number',

@@ -15,9 +15,7 @@
           />
         </v-alert>
         <div class="my-3">
-          <p class="mb-2">
-            {{ config.phraseText }}
-          </p>
+          <p v-html="sanitizedPhraseText" class="mb-2" />
           <pre class="black--text grey lighten-2 d-inline pa-1">{{ originalPhrase }}</pre>
         </div>
         <v-text-field
@@ -25,6 +23,11 @@
           :label="$t('modals.confirmationPhrase.phrase')"
           class="mt-2"
           autofocus
+        />
+        <component
+          v-if="config.additionalForm?.component"
+          :is="config.additionalForm.component"
+          v-model="additionalForm"
         />
       </template>
       <template #actions="">
@@ -48,10 +51,14 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { ref, computed } from 'vue';
 
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { modalInnerMixin } from '@/mixins/modal/inner';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
+
+import { sanitizeHtml } from '@/helpers/html';
+
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -60,35 +67,49 @@ import ModalWrapper from '../modal-wrapper.vue';
  */
 export default {
   name: MODALS.confirmationPhrase,
+  $_veeValidate: {
+    validator: 'new',
+    delay: VALIDATION_DELAY,
+  },
   components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-  ],
-  data() {
-    return {
-      phrase: '',
-    };
-  },
-  computed: {
-    originalPhrase() {
-      return this.config.phrase;
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
+  },
+  setup(props) {
+    const { config, close } = useInnerModal(props);
 
-    phrasesEqual() {
-      return this.phrase === this.originalPhrase;
-    },
-  },
-  methods: {
-    async submit() {
-      if (this.phrasesEqual) {
-        if (this.config.action) {
-          await this.config.action();
+    const phrase = ref('');
+    const additionalForm = ref(config.value.additionalForm?.form);
+
+    const originalPhrase = computed(() => config.value.phrase);
+    const phrasesEqual = computed(() => phrase.value === originalPhrase.value);
+    const sanitizedPhraseText = computed(() => sanitizeHtml(config.value.phraseText || ''));
+
+    const { submitting, isDisabled, submit } = useSubmittableForm({
+      form: { phrase },
+      method: async () => {
+        if (phrasesEqual.value) {
+          await config.value.action?.(additionalForm.value);
+
+          close();
         }
+      },
+    });
 
-        this.$modals.hide();
-      }
-    },
+    return {
+      phrase,
+      additionalForm,
+      config,
+      originalPhrase,
+      phrasesEqual,
+      sanitizedPhraseText,
+      submitting,
+      isDisabled,
+      submit,
+    };
   },
 };
 </script>

@@ -1,10 +1,6 @@
 <template>
   <v-layout column>
-    <c-information-block
-      :title="$t('storageSetting.webhook.title')"
-      :help-text="$t('storageSetting.webhook.titleHelp')"
-      help-icon-color="info"
-    >
+    <c-information-block :title="$t('storageSetting.webhook.title')">
       <template
         v-if="history"
         #subtitle=""
@@ -14,12 +10,14 @@
       <c-enabled-duration-field
         v-field="form.delete_after"
         :label="$t('storageSetting.webhook.deleteAfter')"
-        :help-text="$t('storageSetting.webhook.deleteAfterHelpText')"
-        :name="webhookDeleteAfterFieldName"
+        :suffix="$t('common.after')"
+        name="webhook.delete_after"
+        switcher
+        hide-value-on-false
       />
       <c-enabled-field
         v-field="form.log_credentials"
-        :name="webhookLogCredentialsFieldName"
+        name="webhook.log_credentials"
       >
         <template #label="">
           {{ $t('storageSetting.webhook.logCredentials') }}
@@ -52,15 +50,6 @@ export default {
     history: {
       type: Number,
       required: false,
-    },
-  },
-  computed: {
-    webhookDeleteAfterFieldName() {
-      return 'webhook.delete_after';
-    },
-
-    webhookLogCredentialsFieldName() {
-      return 'webhook.log_credentials';
     },
   },
 };

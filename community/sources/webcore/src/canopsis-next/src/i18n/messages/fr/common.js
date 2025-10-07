@@ -318,6 +318,8 @@ export default {
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
   inProgress: 'En cours',
+  settings: 'Paramètres',
+  after: 'Après',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
