@@ -117,6 +117,8 @@ func NewActionLogger(
 		mongo.ExternalDataTableCollection:        ValueTypeExternalData,
 		mongo.EntityInfosPropertyCollection:      ValueTypeEntityInfosProperty,
 		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
+		mongo.TemplateTestDataCollection:         ValueTypeTplTestData,
+		mongo.TemplateTestCollection:             ValueTypeTplTest,
 		mongo.WebhookTokenRuleCollection:         ValueTypeWebhookTokenRule,
 	}
 

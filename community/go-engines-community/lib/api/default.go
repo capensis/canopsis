@@ -28,6 +28,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
+	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -102,6 +103,7 @@ func Default(
 	pgPoolProvider postgres.PoolProvider,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
+	tplTestTypePermMapping map[int][]any,
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, Services, error) {
@@ -316,6 +318,27 @@ func Default(
 	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpChannel, websocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
+	if tplTestTypePermMapping == nil {
+		tplTestTypePermMapping = make(map[int][]any)
+	}
+
+	tplTestTypePermMapping[libcommtemplate.TypeTestEventFilterRule] = []any{
+		apisecurity.ObjEventFilterRule,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestLinkRule] = []any{
+		apisecurity.ObjLinkRule,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestActionScenario] = []any{
+		apisecurity.ObjAction,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestWidget] = []any{
+		apisecurity.ObjView,
+		securitymodel.PermissionCreate,
+	}
+
 	// Create api.
 	api := New(
 		fmt.Sprintf(":%d", flags.Port),
@@ -391,7 +414,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(primaryDbClient, security.GetConfig())
+		RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer)
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -429,7 +452,9 @@ func Default(
 			securityConfig,
 			exdataImportWorker,
 			services.NotificationStore,
+			services.ExternalDataContainer,
 			workersRunner,
+			tplTestTypePermMapping,
 			logger,
 		)
 	})

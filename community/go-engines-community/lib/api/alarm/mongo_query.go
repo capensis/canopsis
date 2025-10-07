@@ -193,6 +193,7 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now, "")
 
+	q.handleOpened(r.GetOpenedFilter())
 	err := q.handlePatterns(FilterRequest{
 		BaseFilterRequest: BaseFilterRequest{
 			AlarmPattern:     r.AlarmPattern,
@@ -204,13 +205,16 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesReque
 		return nil, err
 	}
 
-	match := bson.M{"v.resolved": nil}
-
+	match := bson.M{}
 	if r.Search != "" {
 		match["v.display_name"] = bson.Regex{
 			Pattern: ".*" + regexp.QuoteMeta(r.Search) + ".*",
 			Options: "i",
 		}
+	}
+
+	if len(r.IDs) != 0 {
+		match["_id"] = bson.M{"$in": r.IDs}
 	}
 
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})

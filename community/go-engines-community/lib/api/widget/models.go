@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -65,4 +66,19 @@ type Response struct {
 	Filters []widgetfilter.Response `bson:"filters" json:"filters"`
 
 	IsPrivate bool `bson:"is_private" json:"is_private"`
+}
+
+type TemplateRequest struct {
+	Rule struct {
+		ID      string              `json:"_id"`
+		Columns []view.WidgetColumn `json:"columns" binding:"dive"`
+	} `json:"rule"`
+	TestData struct {
+		Test  string `json:"test"`
+		Alarm string `json:"alarm"`
+	} `json:"testdata"`
+}
+
+type TemplateVarsResponse struct {
+	Column []template.VarResponse `json:"column"`
 }

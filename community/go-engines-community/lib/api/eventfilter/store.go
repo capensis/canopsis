@@ -4,14 +4,26 @@ import (
 	"cmp"
 	"context"
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
+	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,6 +33,8 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+const tplValErrNoEntity = "Undefined key or field \".Event.Entity"
+
 type Store interface {
 	Insert(ctx context.Context, request CreateRequest) (*Response, error)
 	GetByID(ctx context.Context, id string) (*Response, error)
@@ -29,6 +43,9 @@ type Store interface {
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	FindFailures(ctx context.Context, id string, r FailureRequest) (*AggregationFailureResult, error)
 	ReadFailures(ctx context.Context, id string) (bool, error)
+	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
+	GetTemplateVars() TemplateVarsResponse
+	GetCopyVars() CopyVarsResponse
 }
 
 type store struct {
@@ -36,11 +53,23 @@ type store struct {
 	dbCollection            mongo.DbCollection
 	dbFailureCollection     mongo.DbCollection
 	dbExdataTableCollection mongo.DbCollection
+	dbEntityCollection      mongo.DbCollection
+	dbTplDataCollection     mongo.DbCollection
+	dbTplTestCollection     mongo.DbCollection
 	transformer             common.PatternFieldsTransformer
 	authorProvider          author.Provider
 	notificationStore       usernotification.Store
+	tplValidator            validator.Validator
+	tplExecutor             libtemplate.Executor
+	tplConfigProvider       config.TemplateConfigProvider
+	externalDataContainer   *externaldata.GetterContainer
+	encoder                 encoding.Encoder
+	decoder                 encoding.Decoder
 	defaultSearchByFields   []string
 	defaultSortBy           string
+	exdataTplVars           []template.VarResponse
+	configTplVars           []template.VarResponse
+	configCopyVars          []template.VarResponse
 }
 
 func NewStore(
@@ -48,17 +77,48 @@ func NewStore(
 	authorProvider author.Provider,
 	transformer common.PatternFieldsTransformer,
 	notificationStore usernotification.Store,
+	tplValidator validator.Validator,
+	tplExecutor libtemplate.Executor,
+	tplConfigProvider config.TemplateConfigProvider,
+	externalDataContainer *externaldata.GetterContainer,
+	encoder encoding.Encoder,
+	decoder encoding.Decoder,
 ) Store {
+	exdataTplVars := template.GetEventVars("{{ ", " }}", ".Event", false)
+	exdataTplVars = append(exdataTplVars,
+		template.VarResponse{Name: "regexpMatch", Value: "{{ .RegexMatch.%field%.%name% }}"},
+	)
+	configTplVars := make([]template.VarResponse, 0, len(exdataTplVars)+1)
+	configTplVars = append(configTplVars, exdataTplVars...)
+	configTplVars = append(configTplVars, template.VarResponse{Name: "externalData", Value: "{{ .ExternalData.%reference% }}"})
+	configCopyVars := template.GetEventCopyVars("Event")
+	configCopyVars = append(configCopyVars,
+		template.VarResponse{Name: "regexpMatch", Value: "RegexMatch.%field%.%name%"},
+		template.VarResponse{Name: "externalData", Value: "ExternalData.%reference%"},
+	)
+
 	return &store{
 		dbClient:                dbClient,
 		dbCollection:            dbClient.Collection(mongo.EventFilterRuleCollection),
 		dbFailureCollection:     dbClient.Collection(mongo.EventFilterFailureCollection),
 		dbExdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
+		dbEntityCollection:      dbClient.Collection(mongo.EntityMongoCollection),
+		dbTplDataCollection:     dbClient.Collection(mongo.TemplateTestDataCollection),
+		dbTplTestCollection:     dbClient.Collection(mongo.TemplateTestCollection),
 		transformer:             transformer,
 		authorProvider:          authorProvider,
 		notificationStore:       notificationStore,
+		tplValidator:            tplValidator,
+		tplConfigProvider:       tplConfigProvider,
+		tplExecutor:             tplExecutor,
+		externalDataContainer:   externalDataContainer,
+		encoder:                 encoder,
+		decoder:                 decoder,
 		defaultSearchByFields:   []string{"_id", "author.name", "description", "type"},
 		defaultSortBy:           "created",
+		exdataTplVars:           exdataTplVars,
+		configTplVars:           configTplVars,
+		configCopyVars:          configCopyVars,
 	}
 }
 
@@ -235,6 +295,13 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
+		_, err = s.dbTplTestCollection.UpdateMany(ctx, bson.M{"rule._id": model.ID, "type": template.TypeTestEventFilterRule}, bson.M{
+			"$set": bson.M{"rule.name": model.Description},
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetByID(ctx, model.ID)
 		return err
 	})
@@ -265,18 +332,15 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
-		// required to get the author in action log listener.
-		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
-		if err != nil || res.MatchedCount == 0 {
-			return err
-		}
-
-		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+		_, err = logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestEventFilterRule}, userID,
+			s.dbTplTestCollection)
 		if err != nil {
 			return err
 		}
 
-		return nil
+		deleted, err = logger.DeleteOne(ctx, id, userID, s.dbCollection)
+
+		return err
 	})
 	if err != nil || deleted == 0 {
 		return false, err
@@ -372,6 +436,51 @@ func (s *store) ReadFailures(ctx context.Context, id string) (bool, error) {
 	return true, nil
 }
 
+func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {
+	switch r.Rule.Type {
+	case eventfilter.RuleTypeEnrichment, eventfilter.RuleTypeChangeEntity:
+	default:
+		return nil, nil
+	}
+
+	var err error
+	r.Rule.EntityPatternFieldsRequest, err = s.transformer.TransformEntityPatternFieldsRequest(ctx, r.Rule.EntityPatternFieldsRequest)
+	if err != nil {
+		return nil, err
+	}
+
+	tplData, exdataTestData, err := s.getTplData(ctx, r)
+	if err != nil {
+		return nil, err
+	}
+
+	response := make(map[string]template.ValidateResponse)
+	response, tplData.ExternalData, err = s.validateExdataTpls(ctx, r, response, tplData, exdataTestData)
+	if err != nil {
+		return nil, err
+	}
+
+	response, err = s.validateConfigTpls(r, response, tplData)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func (s *store) GetTemplateVars() TemplateVarsResponse {
+	return TemplateVarsResponse{
+		ExternalData: template.AddEnvVars(s.exdataTplVars, s.tplConfigProvider),
+		Config:       template.AddEnvVars(s.configTplVars, s.tplConfigProvider),
+	}
+}
+
+func (s *store) GetCopyVars() CopyVarsResponse {
+	return CopyVarsResponse{
+		Config: s.configCopyVars,
+	}
+}
+
 func (s *store) transformRequestToDocument(ctx context.Context, r EditRequest) (eventfilter.Rule, error) {
 	exdates := make([]types.Exdate, len(r.Exdates))
 	for i := range r.Exdates {
@@ -427,4 +536,297 @@ func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r comm
 	model.EntityPatternFields = transformedEntityPatternRequest.ToModel()
 
 	return nil
+}
+
+func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.Template, map[int]template.ResponseTestData, error) {
+	var tplData eventfilter.Template
+	eventDataID := r.TestData.Event
+	exdataTestDataIDs := r.TestData.Responses
+	if r.TestData.Test != "" {
+		test := template.TestModel{}
+		err := s.dbTplTestCollection.
+			FindOne(ctx, bson.M{"_id": r.TestData.Test, "type": template.TypeTestEventFilterRule, "rule._id": r.Rule.ID}).
+			Decode(&test)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return tplData, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+			}
+
+			return tplData, nil, err
+		}
+
+		if eventDataID == "" {
+			eventDataID = test.Data.Event
+		}
+
+		if exdataTestDataIDs == nil {
+			exdataTestDataIDs = test.Data.Responses
+		}
+	}
+
+	if eventDataID == "" {
+		return tplData, nil, common.NewValidationError("testdata.event", "Event is missing.")
+	}
+
+	event, err := template.GetEventData(ctx, s.dbTplDataCollection, eventDataID, s.encoder, s.decoder)
+	if err != nil {
+		return tplData, nil, err
+	}
+
+	if event == nil {
+		return tplData, nil, common.NewValidationError("testdata.event", "Event doesn't exist.")
+	}
+
+	var exdataTestData map[int]template.ResponseTestData
+	if len(exdataTestDataIDs) > 0 {
+		if len(exdataTestDataIDs) > len(r.Rule.ExternalData) {
+			return tplData, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(len(r.Rule.ExternalData)), "Response is redundant.")
+		}
+
+		exdataTestData, err = template.GetResponseData(ctx, s.dbTplDataCollection, exdataTestDataIDs)
+		if err != nil {
+			return tplData, nil, err
+		}
+
+		if len(exdataTestData) == 0 {
+			return tplData, nil, common.NewValidationError("testdata.responses", "Response doesn't exist.")
+		}
+	}
+
+	var entity types.Entity
+	entityID := event.GetEID()
+	if entityID != "" {
+		err = s.dbEntityCollection.FindOne(ctx, bson.M{"_id": entityID, "soft_deleted": nil}).Decode(&entity)
+		// ignore missing Entity in case only Event is used in templates
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return tplData, nil, err
+		}
+	}
+
+	var matched bool
+	var eventRegexMatches match.EventRegexMatches
+	var entityRegexMatches match.EntityRegexMatches
+	if len(r.Rule.EventPattern) > 0 {
+		matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(r.Rule.EventPattern, event)
+		if err != nil {
+			return tplData, nil, common.NewValidationError("rule.event_pattern", "EventPattern is invalid event pattern.")
+		}
+
+		if !matched {
+			return tplData, nil, common.NewValidationError("testdata.event", "Event is not matched to event pattern.")
+		}
+	}
+
+	var entityPattern pattern.Entity
+	if len(r.Rule.CorporatePattern.EntityPattern) > 0 {
+		entityPattern = r.Rule.CorporatePattern.EntityPattern
+	} else {
+		entityPattern = r.Rule.EntityPattern
+	}
+
+	if len(entityPattern) > 0 {
+		if entity.ID == "" {
+			return tplData, nil, common.NewValidationError("testdata.event", "Corresponding entity doesn't exist.")
+		}
+
+		matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(entityPattern, &entity)
+		if err != nil {
+			return tplData, nil, common.NewValidationError("rule.entity_pattern", "EntityPattern is invalid entity pattern.")
+		}
+
+		if !matched {
+			return tplData, nil, common.NewValidationError("testdata.event", "Corresponding entity is not matched to entity pattern.")
+		}
+	}
+
+	tplData = eventfilter.Template{
+		Event: event,
+		RegexMatch: eventfilter.RegexMatch{
+			EventRegexMatches: eventRegexMatches,
+			Entity:            entityRegexMatches,
+		},
+	}
+	if entity.ID != "" {
+		tplData.Event.Entity = &entity
+	}
+
+	return tplData, exdataTestData, nil
+}
+
+func (s *store) validateExdataTpls(
+	ctx context.Context,
+	r TemplateRequest,
+	response map[string]template.ValidateResponse,
+	tplData eventfilter.Template,
+	exdataTestData map[int]template.ResponseTestData,
+) (map[string]template.ValidateResponse, map[string]any, error) {
+	externalData := make(map[string]any, len(r.Rule.ExternalData))
+	var err error
+	for i, d := range r.Rule.ExternalData {
+		prefix := "external_data." + strconv.Itoa(i)
+		switch d.Type {
+		case externaldata.RefTypeTable:
+			isValid := true
+			for k, v := range d.Regexp {
+				vr, err := s.validateTpl(v, tplData)
+				if err != nil {
+					return nil, nil, err
+				}
+
+				response[prefix+".regexp."+k] = vr
+				if !vr.IsValid {
+					isValid = false
+				}
+			}
+
+			for k, v := range d.Select {
+				vr, err := s.validateTpl(v, tplData)
+				if err != nil {
+					return nil, nil, err
+				}
+
+				response[prefix+".select."+k] = vr
+				if !vr.IsValid {
+					isValid = false
+				}
+			}
+
+			if isValid {
+				externalData[d.Reference], err = s.processTableExdata(ctx, d, tplData, "rule."+prefix)
+				if err != nil {
+					return nil, nil, err
+				}
+			}
+
+			if _, ok := exdataTestData[i]; ok {
+				return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is redundant.")
+			}
+		case externaldata.RefTypeAPI:
+			if d.Request != nil {
+				response[prefix+".request.url"], err = s.validateTpl(d.Request.URL, tplData)
+				if err != nil {
+					return nil, nil, err
+				}
+
+				response[prefix+".request.payload"], err = s.validateTpl(d.Request.Payload, tplData)
+				if err != nil {
+					return nil, nil, err
+				}
+			}
+
+			if td, ok := exdataTestData[i]; ok {
+				externalData[d.Reference] = td.Body
+			} else {
+				return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is missing.")
+			}
+		}
+	}
+
+	return response, externalData, nil
+}
+
+func (s *store) validateConfigTpls(
+	r TemplateRequest,
+	response map[string]template.ValidateResponse,
+	tplData eventfilter.Template,
+) (map[string]template.ValidateResponse, error) {
+	var err error
+	switch r.Rule.Type {
+	case eventfilter.RuleTypeEnrichment:
+		for i, action := range r.Rule.Config.Actions {
+			switch action.Type {
+			case eventfilter.ActionSetFieldFromTemplate,
+				eventfilter.ActionSetEntityInfoFromTemplate,
+				eventfilter.ActionSetTagsFromTemplate:
+				val, ok := action.Value.(string)
+				if !ok {
+					return nil, common.NewValidationError("rule.config.actions."+strconv.Itoa(i)+".value", "Value must be string.")
+				}
+
+				response["config.actions."+strconv.Itoa(i)+".value"], err = s.validateTpl(val, tplData)
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
+	case eventfilter.RuleTypeChangeEntity:
+		if r.Rule.Config.Resource != "" {
+			response["config.resource"], err = s.validateTpl(r.Rule.Config.Resource, tplData)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if r.Rule.Config.Component != "" {
+			response["config.component"], err = s.validateTpl(r.Rule.Config.Component, tplData)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if r.Rule.Config.Connector != "" {
+			response["config.connector"], err = s.validateTpl(r.Rule.Config.Connector, tplData)
+			if err != nil {
+				return nil, err
+			}
+		}
+
+		if r.Rule.Config.ConnectorName != "" {
+			response["config.connector_name"], err = s.validateTpl(r.Rule.Config.ConnectorName, tplData)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return response, nil
+}
+
+func (s *store) processTableExdata(
+	ctx context.Context,
+	d externaldata.RefParameters,
+	tplData eventfilter.Template,
+	field string,
+) (any, error) {
+	getter, ok := s.externalDataContainer.Get(d.Type)
+	if !ok {
+		return nil, fmt.Errorf("cannot find external data getter by type %q", d.Type)
+	}
+
+	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{d}, s.dbExdataTableCollection)
+	if err != nil {
+		return nil, err
+	}
+
+	parsedParams := externaldata.ParseRefParameters(params, s.tplExecutor)
+	if len(parsedParams) == 0 {
+		return nil, errors.New("expected not empty array")
+	}
+
+	res, err := getter.Get(ctx, parsedParams[0], tplData)
+	if err != nil {
+		getterTplErr := &externaldata.GetterTplError{}
+		getterErr := &externaldata.GetterError{}
+		if errors.As(err, &getterTplErr) || errors.As(err, &getterErr) {
+			return nil, common.NewValidationError(field, err.Error())
+		}
+
+		return nil, err
+	}
+
+	return res, nil
+}
+
+func (s *store) validateTpl(str string, data eventfilter.Template) (template.ValidateResponse, error) {
+	response, err := template.Validate(s.tplValidator, str, data)
+	if err != nil {
+		return response, err
+	}
+
+	// if only Event is provided but Entity is used in templates
+	if response.Err != nil && strings.Contains(response.Err.Message, tplValErrNoEntity) && data.Event.Entity == nil {
+		return response, common.NewValidationError("testdata.event", "Corresponding entity doesn't exist.")
+	}
+
+	return response, nil
 }

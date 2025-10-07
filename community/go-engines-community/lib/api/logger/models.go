@@ -51,6 +51,8 @@ const (
 	ValueTypeExternalData            = "externaldata"
 	ValueTypeEntityInfosProperty     = "entityinfosproperty"
 	ValueTypeUserNotificationSetting = "usernotificationsetting"
+	ValueTypeTplTestData             = "tpltestdata"
+	ValueTypeTplTest                 = "tpltest"
 	ValueTypeWebhookTokenRule        = "webhooktokenrule"
 )
 

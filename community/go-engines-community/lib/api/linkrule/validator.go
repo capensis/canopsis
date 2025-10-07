@@ -49,3 +49,17 @@ func ValidateEditRequest(sl validator.StructLevel) {
 
 	apiexternaldata.ValidateRefParameters(sl, r.ExternalData, []string{externaldata.RefTypeTable})
 }
+
+func ValidateTemplateRequest(sl validator.StructLevel) {
+	var r = sl.Current().Interface().(TemplateRequest)
+	switch r.Rule.Type {
+	case liblink.TypeAlarm:
+		if r.TestData.Entity != "" {
+			sl.ReportError(r.TestData.Entity, "TestData.Entity", "Entity", "must_be_empty", "")
+		}
+	case liblink.TypeEntity:
+		if r.TestData.Alarm != "" {
+			sl.ReportError(r.TestData.Alarm, "TestData.Alarm", "Alarm", "must_be_empty", "")
+		}
+	}
+}

@@ -556,7 +556,7 @@ func (e *redisBasedManager) processTriggers(ctx context.Context, task ExecuteSce
 	additionalData := task.AdditionalData
 	for trigger, scenarios := range scenariosByTrigger {
 		additionalData.Trigger = trigger
-		additionalData.AlarmChangeType = trigger
+		additionalData.AlarmChangeType = trigger //nolint:staticcheck
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, task.Alarm, task.Entity, additionalData, task.FifoAckEvent,
 				task.Start, task.IsMetaAlarmUpdated, task.IsInstructionMatched)
@@ -609,7 +609,7 @@ func (e *redisBasedManager) processEmittedTrigger(
 
 	for trigger, scenarios := range scenariosByTrigger {
 		additionalData.Trigger = trigger
-		additionalData.AlarmChangeType = trigger
+		additionalData.AlarmChangeType = trigger //nolint:staticcheck
 		for _, scenario := range scenarios {
 			e.startExecution(ctx, scenario, prevTaskRes.Alarm, prevScenarioExecution.Entity, additionalData,
 				prevScenarioExecution.FifoAckEvent, time.Unix(prevScenarioExecution.StartEventProcessing, 0),
@@ -625,7 +625,7 @@ func (e *redisBasedManager) startExecution(
 	scenario Scenario,
 	alarm types.Alarm,
 	entity types.Entity,
-	data AdditionalData,
+	data types.AdditionalData,
 	fifoAckEvent types.Event,
 	start time.Time,
 	isMetaAlarmUpdated bool,

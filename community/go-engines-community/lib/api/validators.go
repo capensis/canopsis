@@ -32,6 +32,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/scenario"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/user"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewgroup"
@@ -51,7 +52,7 @@ import (
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
 
-func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
+func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config, enforcer libsecurity.Enforcer) {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
 		return
@@ -240,12 +241,8 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 
 	eventfilterValidator := eventfilter.NewValidator(client)
 	eventfilterExistIdValidator := common.NewUniqueFieldValidator(client, mongo.EventFilterRuleCollection, "ID")
-	v.RegisterStructValidationCtx(eventfilterValidator.ValidateUpdateRequest, eventfilter.UpdateRequest{})
-	v.RegisterStructValidationCtx(eventfilterValidator.ValidateBulkUpdateRequestItem, eventfilter.BulkUpdateRequestItem{})
-	v.RegisterStructValidationCtx(func(ctx context.Context, sl validator.StructLevel) {
-		eventfilterValidator.ValidateCreateRequest(ctx, sl)
-		eventfilterExistIdValidator.Validate(ctx, sl)
-	}, eventfilter.CreateRequest{})
+	v.RegisterStructValidationCtx(eventfilterValidator.ValidateEditRequest, eventfilter.EditRequest{})
+	v.RegisterStructValidationCtx(eventfilterExistIdValidator.Validate, eventfilter.CreateRequest{})
 
 	broadcastmessageValidator := broadcastmessage.NewValidator(client)
 	v.RegisterStructValidationCtx(broadcastmessageValidator.Validate, broadcastmessage.CreateRequest{})
@@ -311,6 +308,7 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 		linkrule.ValidateEditRequest(sl)
 		linkRuleUniqueNameValidator.Validate(ctx, sl)
 	}, linkrule.EditRequest{})
+	v.RegisterStructValidation(linkrule.ValidateTemplateRequest, linkrule.TemplateRequest{})
 
 	v.RegisterStructValidation(alarmtag.ValidateCreateRequest, alarmtag.CreateRequest{})
 	v.RegisterStructValidation(alarmtag.ValidateUpdateRequest, alarmtag.UpdateRequest{})
@@ -320,4 +318,8 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config) {
 
 	appInfoValidator := appinfo.NewValidator(client)
 	v.RegisterStructValidationCtx(appInfoValidator.ValidateRequest, appinfo.UserInterfaceConf{})
+
+	tplValidator := template.NewValidator(enforcer)
+	v.RegisterStructValidation(tplValidator.ValidateEditDataRequest, template.EditDataRequest{})
+	v.RegisterStructValidation(tplValidator.ValidateEditTestRequest, template.EditTestRequest{})
 }

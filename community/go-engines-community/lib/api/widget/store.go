@@ -3,13 +3,19 @@ package widget
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -30,9 +36,18 @@ type Store interface {
 	Copy(ctx context.Context, widgetID string, r CreateRequest) (*Response, error)
 	CopyForTab(ctx context.Context, tabID, newTabID, author string, isPrivate bool) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
+	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
+	GetTemplateVars() TemplateVarsResponse
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, enforcer security.Enforcer, transformer common.PatternFieldsTransformer) Store {
+func NewStore(
+	dbClient mongo.DbClient,
+	authorProvider author.Provider,
+	enforcer security.Enforcer,
+	transformer common.PatternFieldsTransformer,
+	tplValidator validator.Validator,
+	tplConfigProvider config.TemplateConfigProvider,
+) Store {
 	return &store{
 		client:                   dbClient,
 		collection:               dbClient.Collection(mongo.WidgetMongoCollection),
@@ -40,9 +55,23 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, enforcer 
 		filterCollection:         dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		userPrefCollection:       dbClient.Collection(mongo.UserPreferencesMongoCollection),
 		widgetTemplateCollection: dbClient.Collection(mongo.WidgetTemplateMongoCollection),
+		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
+		tplTestCollection:        dbClient.Collection(mongo.TemplateTestCollection),
 		authorProvider:           authorProvider,
 		transformer:              transformer,
 		enforcer:                 enforcer,
+		tplValidator:             tplValidator,
+		tplConfigProvider:        tplConfigProvider,
+		tplVars: []template.VarResponse{
+			{
+				Name:  "alarm",
+				Value: template.GetAlarmVars("{{ ", " }}", ".Alarm", false),
+			},
+			{
+				Name:  "entity",
+				Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
+			},
+		},
 	}
 }
 
@@ -53,10 +82,14 @@ type store struct {
 	filterCollection         mongo.DbCollection
 	userPrefCollection       mongo.DbCollection
 	widgetTemplateCollection mongo.DbCollection
+	alarmCollection          mongo.DbCollection
+	tplTestCollection        mongo.DbCollection
 	authorProvider           author.Provider
 	transformer              common.PatternFieldsTransformer
-
-	enforcer security.Enforcer
+	enforcer                 security.Enforcer
+	tplValidator             validator.Validator
+	tplConfigProvider        config.TemplateConfigProvider
+	tplVars                  []template.VarResponse
 }
 
 func (s *store) FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error) {
@@ -373,7 +406,15 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 
+		_, err = s.tplTestCollection.UpdateMany(ctx, bson.M{"rule._id": widget.ID, "type": template.TypeTestWidget}, bson.M{
+			"$set": bson.M{"rule.name": widget.Title},
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetOneBy(ctx, widget.ID)
+
 		return err
 	})
 
@@ -406,7 +447,14 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			return err
 		}
 
+		_, err = logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestWidget}, userID,
+			s.tplTestCollection)
+		if err != nil {
+			return err
+		}
+
 		res = true
+
 		return nil
 	})
 
@@ -477,6 +525,135 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string, 
 	return nil
 }
 
+func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error) {
+	ids := make([]string, len(items))
+	for i, item := range items {
+		ids[i] = item.ID
+	}
+
+	res := false
+	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
+		res = false
+		widgets := make([]view.Widget, 0, len(items))
+		cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return err
+		}
+
+		err = cursor.All(ctx, &widgets)
+		if err != nil || len(widgets) != len(items) {
+			return err
+		}
+
+		tabId := ""
+		for _, w := range widgets {
+			if tabId == "" {
+				tabId = w.Tab
+			} else if tabId != w.Tab {
+				return ValidationError{error: errors.New("widgets are related to different view tabs")}
+			}
+		}
+
+		count, err := s.collection.CountDocuments(ctx, bson.M{"tab": tabId})
+		if err != nil {
+			return err
+		}
+		if count != int64(len(items)) {
+			return ValidationError{error: errors.New("widgets are missing")}
+		}
+
+		writeModels := make([]mongodriver.WriteModel, len(widgets))
+		for i, item := range items {
+			writeModels[i] = mongodriver.NewUpdateOneModel().
+				SetFilter(bson.M{"_id": item.ID}).
+				SetUpdate(bson.M{"$set": bson.M{"grid_parameters": item.GridParameters}})
+		}
+
+		writeRes, err := s.collection.BulkWrite(ctx, writeModels)
+		if err != nil {
+			return err
+		}
+
+		res = writeRes.MatchedCount > 0
+		return nil
+	})
+
+	return res, err
+}
+
+func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {
+	var alarm types.AlarmWithEntity
+	var err error
+	if r.TestData.Test != "" {
+		alarm, err = template.GetAlarmDataFromTest(ctx, s.tplTestCollection, r.TestData.Test, template.TypeTestWidget, r.Rule.ID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if r.TestData.Alarm == "" {
+		if alarm.Alarm.ID == "" {
+			return nil, common.NewValidationError("testdata.alarm", "Alarm is missing.")
+		}
+	} else if r.TestData.Alarm != alarm.Alarm.ID { // keep snapshot from the test
+		alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	response := make(map[string]template.ValidateResponse)
+	for i, column := range r.Rule.Columns {
+		if column.Template != "" {
+			response["columns."+strconv.Itoa(i)+".template"], err = template.Validate(s.tplValidator, column.Template, alarm)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return response, nil
+}
+
+func (s *store) GetTemplateVars() TemplateVarsResponse {
+	return TemplateVarsResponse{
+		Column: template.AddEnvVars(s.tplVars, s.tplConfigProvider),
+	}
+}
+
+func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisecurity.ViewTabPrivacySettings, error) {
+	var tabInfo apisecurity.ViewTabPrivacySettings
+
+	err := s.tabCollection.FindOne(ctx, bson.M{"_id": tabID}).Decode(&tabInfo)
+	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
+		return tabInfo, common.NewValidationError("tab", "Tab doesn't exist.")
+	}
+
+	return tabInfo, err
+}
+
+func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) error {
+	_, err := s.userPrefCollection.DeleteMany(ctx, bson.M{
+		"widget": widgetID,
+	})
+
+	return err
+}
+
+func (s *store) deleteFilters(ctx context.Context, widgetID, userID string) error {
+	// required to get the author in action log listener.
+	_, err := s.filterCollection.UpdateMany(ctx, bson.M{"widget": widgetID}, bson.M{"$set": bson.M{"author": userID}})
+	if err != nil {
+		return err
+	}
+
+	_, err = s.filterCollection.DeleteMany(ctx, bson.M{
+		"widget": widgetID,
+	})
+
+	return err
+}
+
 func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	newWidget := view.Widget{
@@ -539,105 +716,6 @@ func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r Cre
 	}
 
 	return s.GetOneBy(ctx, newWidget.ID)
-}
-
-func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error) {
-	ids := make([]string, len(items))
-	for i, item := range items {
-		ids[i] = item.ID
-	}
-
-	res := false
-	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
-		res = false
-		widgets := make([]view.Widget, 0, len(items))
-		cursor, err := s.collection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}})
-		if err != nil {
-			return err
-		}
-
-		err = cursor.All(ctx, &widgets)
-		if err != nil || len(widgets) != len(items) {
-			return err
-		}
-
-		tabId := ""
-		for _, w := range widgets {
-			if tabId == "" {
-				tabId = w.Tab
-			} else if tabId != w.Tab {
-				return ValidationError{error: errors.New("widgets are related to different view tabs")}
-			}
-		}
-
-		count, err := s.collection.CountDocuments(ctx, bson.M{"tab": tabId})
-		if err != nil {
-			return err
-		}
-		if count != int64(len(items)) {
-			return ValidationError{error: errors.New("widgets are missing")}
-		}
-
-		writeModels := make([]mongodriver.WriteModel, len(widgets))
-		for i, item := range items {
-			writeModels[i] = mongodriver.NewUpdateOneModel().
-				SetFilter(bson.M{"_id": item.ID}).
-				SetUpdate(bson.M{"$set": bson.M{"grid_parameters": item.GridParameters}})
-		}
-
-		writeRes, err := s.collection.BulkWrite(ctx, writeModels)
-		if err != nil {
-			return err
-		}
-
-		res = writeRes.MatchedCount > 0
-		return nil
-	})
-
-	return res, err
-}
-
-func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisecurity.ViewTabPrivacySettings, error) {
-	var tabInfo apisecurity.ViewTabPrivacySettings
-
-	err := s.tabCollection.FindOne(ctx, bson.M{"_id": tabID}).Decode(&tabInfo)
-	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return tabInfo, common.NewValidationError("tab", "Tab doesn't exist.")
-	}
-
-	return tabInfo, err
-}
-
-func (s *store) deleteUserPreferences(ctx context.Context, widgetID string) error {
-	_, err := s.userPrefCollection.DeleteMany(ctx, bson.M{
-		"widget": widgetID,
-	})
-
-	return err
-}
-
-func (s *store) deleteFilters(ctx context.Context, widgetID, userID string) error {
-	// required to get the author in action log listener.
-	_, err := s.filterCollection.UpdateMany(ctx, bson.M{"widget": widgetID}, bson.M{"$set": bson.M{"author": userID}})
-	if err != nil {
-		return err
-	}
-
-	_, err = s.filterCollection.DeleteMany(ctx, bson.M{
-		"widget": widgetID,
-	})
-
-	return err
-}
-
-func transformEditRequestToModel(r EditRequest) view.Widget {
-	return view.Widget{
-		Title:          r.Title,
-		Type:           r.Type,
-		GridParameters: r.GridParameters,
-		Parameters:     r.Parameters,
-		Author:         r.Author,
-	}
 }
 
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r FilterRequest, i int, model *view.WidgetFilter) error {
@@ -745,4 +823,50 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 	}
 
 	return nil
+}
+
+func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithEntity, error) {
+	cursor, err := s.alarmCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": alarmID}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{
+			"alarm": "$$ROOT",
+		}}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
+	})
+	if err != nil {
+		return types.AlarmWithEntity{}, fmt.Errorf("cannot find alarm: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	if !cursor.Next(ctx) {
+		return types.AlarmWithEntity{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+	}
+
+	var alarm types.AlarmWithEntity
+	err = cursor.Decode(&alarm)
+	if err != nil {
+		return types.AlarmWithEntity{}, fmt.Errorf("cannot decode alarm: %w", err)
+	}
+
+	if err = cursor.Err(); err != nil {
+		return types.AlarmWithEntity{}, fmt.Errorf("cannot find alarm: %w", err)
+	}
+
+	return alarm, nil
+}
+
+func transformEditRequestToModel(r EditRequest) view.Widget {
+	return view.Widget{
+		Title:          r.Title,
+		Type:           r.Type,
+		GridParameters: r.GridParameters,
+		Parameters:     r.Parameters,
+		Author:         r.Author,
+	}
 }

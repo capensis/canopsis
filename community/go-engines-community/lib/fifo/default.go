@@ -129,7 +129,7 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 	notifStore := usernotification.NewStore(s.DbClient, amqpChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient, notifStore,
-		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilterRule, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(s.DbClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
