@@ -136,7 +136,7 @@ En plus de la mise à jour de TimescaleDB lui-même, le système de gestion de b
 Deux étapes sont à suivre :
 
 1. Mise à jour de PostgreSQL de 13 vers 15
-2. Mise à jour de TimescaleDB 14.2 à 2.15.1
+2. Mise à jour de TimescaleDB 2.14.2 à 2.15.1
 
 
 === "Docker Compose"
