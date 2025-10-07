@@ -37,6 +37,19 @@ type RefParameters struct {
 	Request *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
 }
 
+// TemplateRefParameters is a model with all required RefParameters fields for template validation requests.
+type TemplateRefParameters struct {
+	Reference string                      `json:"reference" binding:"required"`
+	Type      string                      `json:"type" binding:"required"`
+	Table     string                      `json:"table"`
+	Select    map[string]string           `json:"select"`
+	Regexp    map[string]string           `json:"regexp"`
+	SortBy    string                      `json:"sort_by"`
+	Sort      string                      `json:"sort" binding:"oneoforempty=asc desc"`
+	Optional  bool                        `json:"optional"`
+	Request   *request.TemplateParameters `json:"request"`
+}
+
 type ParsedRefParameters struct {
 	Reference string
 	Type      string

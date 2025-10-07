@@ -4,7 +4,6 @@ import (
 	"cmp"
 	"context"
 	"errors"
-	"fmt"
 	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -35,6 +34,7 @@ type store struct {
 	dupErrorRegexp        *regexp.Regexp
 
 	linkedCollections []libmongo.DbCollection
+	dupErrorParser    *common.DuplicateErrorParser
 }
 
 func NewStore(
@@ -67,6 +67,11 @@ func NewStore(
 			dbClient.Collection(libmongo.MetaAlarmRulesMongoCollection),
 			dbClient.Collection(libmongo.ScenarioMongoCollection),
 		},
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":   "ID already exists.",
+			"name":  "Name already exists.",
+			"alias": "Alias already exists.",
+		}),
 	}
 }
 
@@ -85,7 +90,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -180,7 +185,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -275,22 +280,4 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	})
 
 	return deleted > 0, err
-}
-
-func (s *store) parseDupError(err error) error {
-	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		switch matchedStr {
-		case "name":
-			return common.NewValidationError("name", "Name already exists.")
-		case "alias":
-			return common.NewValidationError("alias", "Alias already exists.")
-		default:
-			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
-		}
-	}
-
-	return fmt.Errorf("can't parse duplication error: %w", err)
 }

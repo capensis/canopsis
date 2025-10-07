@@ -14,6 +14,7 @@ import (
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const PermissionGroupPlaylist = "commonviews_playlist"
@@ -36,6 +37,10 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -48,6 +53,7 @@ type store struct {
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dupErrorParser        *common.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -134,6 +140,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		response = nil
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 
@@ -173,6 +183,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			bson.M{"$set": model},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 

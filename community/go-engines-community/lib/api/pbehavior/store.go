@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"regexp"
 	"sort"
 	"time"
 
@@ -54,8 +53,7 @@ type Store interface {
 }
 
 type store struct {
-	dbClient mongo.DbClient
-
+	dbClient           mongo.DbClient
 	dbCollection       mongo.DbCollection
 	entityDbCollection mongo.DbCollection
 
@@ -63,14 +61,13 @@ type store struct {
 	entityTypeResolver     pbehavior.EntityTypeResolver
 	pbhTypeComputer        pbehavior.TypeComputer
 	timezoneConfigProvider config.TimezoneConfigProvider
-	defaultSortBy          string
 
+	defaultSortBy                 string
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
 
-	transformer common.PatternFieldsTransformer
-
-	dupErrorRegexp *regexp.Regexp
+	transformer    common.PatternFieldsTransformer
+	dupErrorParser *common.DuplicateErrorParser
 }
 
 func NewStore(
@@ -93,7 +90,10 @@ func NewStore(
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
-		dupErrorRegexp:                regexp.MustCompile(`{ ([^:]+)`),
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -132,7 +132,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -403,7 +403,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -553,7 +553,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -739,7 +739,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -900,7 +900,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 		).Decode(&findDoc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -1110,24 +1110,6 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 	}
 
 	return nil
-}
-
-func (s *store) parseDupError(err error) error {
-	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		switch matchedStr {
-		case "name":
-			return common.NewValidationError("name", "Name already exists.")
-		case "_id":
-			return common.NewValidationError("_id", "ID already exists.")
-		default:
-			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
-		}
-	}
-
-	return fmt.Errorf("can't parse duplication error: %w", err)
 }
 
 func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {

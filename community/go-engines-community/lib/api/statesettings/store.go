@@ -36,6 +36,7 @@ type store struct {
 	authorProvider           author.Provider
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 	defaultSearchByFields    []string
+	dupErrorParser           *common.DuplicateErrorParser
 }
 
 func NewStore(
@@ -50,6 +51,10 @@ func NewStore(
 		authorProvider:           authorProvider,
 		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
 		defaultSearchByFields:    []string{"_id", "title"},
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":   "ID already exists.",
+			"title": "Title already exists.",
+		}),
 	}
 }
 
@@ -126,7 +131,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return common.NewValidationError("title", "Title already exists.")
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
@@ -189,7 +194,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		).Decode(&oldVersion)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return common.NewValidationError("title", "Title already exists.")
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			if errors.Is(err, mongodriver.ErrNoDocuments) {

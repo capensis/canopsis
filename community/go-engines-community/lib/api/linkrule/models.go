@@ -79,7 +79,7 @@ type CategoryResponse struct {
 type TemplateRequest struct {
 	Author string `json:"author" swaggerignore:"true"`
 	Rule   struct {
-		EditRequest
+		TemplateRuleRequest
 		ID string `json:"_id" binding:"id"`
 	} `json:"rule"`
 	TestData struct {
@@ -88,6 +88,18 @@ type TemplateRequest struct {
 		Entity string `json:"entity"`
 		User   string `json:"user"`
 	} `json:"testdata"`
+}
+
+type TemplateRuleRequest struct {
+	Type         string                               `json:"type" binding:"required,oneof=alarm entity"`
+	SourceCode   string                               `json:"source_code"`
+	Links        []TemplateRequestLink                `json:"links" binding:"dive"`
+	ExternalData []externaldata.TemplateRefParameters `json:"external_data" binding:"dive"`
+}
+
+type TemplateRequestLink struct {
+	Label string `json:"label" binding:"required"`
+	URL   string `json:"url" binding:"required"`
 }
 
 type TemplateVarsResponse struct {

@@ -10,11 +10,17 @@ type WebhookDeclareTicket struct {
 	EmptyResponse  bool              `bson:"empty_response" json:"empty_response"`
 	IsRegexp       bool              `bson:"is_regexp" json:"is_regexp"`
 	TicketID       string            `bson:"ticket_id,omitempty" json:"ticket_id"`
-	TicketIDTpl    string            `bson:"ticket_id_tpl,omitempty" json:"ticket_id_tpl"`
+	TicketIDTpl    string            `bson:"ticket_id_tpl,omitempty" json:"ticket_id_tpl" binding:"template"`
 	TicketURL      string            `bson:"ticket_url,omitempty" json:"ticket_url"`
-	TicketURLTpl   string            `bson:"ticket_url_tpl,omitempty" json:"ticket_url_tpl"`
+	TicketURLTpl   string            `bson:"ticket_url_tpl,omitempty" json:"ticket_url_tpl" binding:"template"`
 	TicketURLTitle string            `bson:"ticket_url_title,omitempty" json:"ticket_url_title"`
 	CustomFields   map[string]string `bson:",inline"`
+}
+
+// TemplateWebhookDeclareTicket is a model with all required WebhookDeclareTicket fields for template validation requests.
+type TemplateWebhookDeclareTicket struct {
+	TicketIDTpl  string `json:"ticket_id_tpl"`
+	TicketURLTpl string `json:"ticket_url_tpl"`
 }
 
 func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {

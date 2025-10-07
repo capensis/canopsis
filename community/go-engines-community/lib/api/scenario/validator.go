@@ -6,17 +6,28 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
 )
 
-func ValidateActionRequest(sl validator.StructLevel) {
+type Validator struct {
+	templateExecutor template.Executor
+}
+
+func NewValidator(templateExecutor template.Executor) *Validator {
+	return &Validator{
+		templateExecutor: templateExecutor,
+	}
+}
+
+func (v *Validator) ValidateActionRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(ActionRequest)
 
 	if r.Type != "" {
-		validateActionParametersRequest(sl, r.Type, r.Parameters)
+		v.validateActionParametersRequest(sl, r.Type, r.Parameters)
 	}
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
@@ -39,7 +50,7 @@ func ValidateActionRequest(sl validator.StructLevel) {
 	}
 }
 
-func validateActionParametersRequest(sl validator.StructLevel, t string, params action.Parameters) {
+func (v *Validator) validateActionParametersRequest(sl validator.StructLevel, t string, params action.Parameters) {
 	switch t {
 	case types.ActionTypeAssocTicket:
 		if params.Ticket == "" {
@@ -124,6 +135,15 @@ func validateActionParametersRequest(sl validator.StructLevel, t string, params 
 	case types.ActionTypeWebhook:
 		if params.Request == nil {
 			sl.ReportError(params.Request, "Parameters.Request", "Request", "required", "")
+		} else {
+			for k, header := range params.Request.Headers {
+				if header != "" {
+					parsedValue := v.templateExecutor.Parse(header)
+					if parsedValue.Err != nil {
+						sl.ReportError(header, "Parameters.Request.Headers."+k, k, "template", "")
+					}
+				}
+			}
 		}
 	}
 }
