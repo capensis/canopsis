@@ -35,6 +35,8 @@ type store struct {
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
+
+	dupErrorParser *common.DuplicateErrorParser
 }
 
 // NewStore instantiates pbehavior type store.
@@ -45,6 +47,11 @@ func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description", "type"},
 		defaultSortBy:         "name",
+
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -169,6 +176,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 		_, err = s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 
@@ -249,6 +260,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 				"hidden": doc.Hidden,
 			}})
 			if err != nil {
+				if mongodriver.IsDuplicateKeyError(err) {
+					return s.dupErrorParser.ParseDuplicateError(err)
+				}
+
 				return err
 			}
 
@@ -263,6 +278,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 			result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
 			if err != nil || result.MatchedCount == 0 {
+				if mongodriver.IsDuplicateKeyError(err) {
+					return s.dupErrorParser.ParseDuplicateError(err)
+				}
+
 				return err
 			}
 		}
