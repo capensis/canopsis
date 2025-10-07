@@ -62,9 +62,9 @@ func NewStore(
 		collectionNamesByType: map[int]string{
 			TypeTestEventFilterRule:   mongo.EventFilterRuleCollection,
 			TypeTestLinkRule:          mongo.LinkRuleMongoCollection,
-			TypeTestActionScenario:    mongo.ScenarioMongoCollection,
+			TypeTestActionScenario:    mongo.ScenarioCollection,
 			TypeTestWidget:            mongo.WidgetMongoCollection,
-			TypeTestDeclareTicketRule: mongo.DeclareTicketRuleMongoCollection,
+			TypeTestDeclareTicketRule: mongo.DeclareTicketRuleCollection,
 			TypeTestDynamicInfosRule:  mongo.DynamicInfosRulesMongoCollection,
 			TypeTestInstruction:       mongo.InstructionMongoCollection,
 			TypeTestJob:               mongo.JobMongoCollection,
