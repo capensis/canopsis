@@ -11,14 +11,13 @@
     <request-form
       v-field="form.request"
       name="request"
-      required-auth
     />
     <c-information-block :title="$t('common.token')">
       <v-layout class="gap-2">
         <v-flex xs6>
           <c-enabled-field
             v-field="form.allow_variables"
-            :label="$t('common.allowVariables')"
+            :label="$t('externalAuthToken.allowVariables')"
           />
         </v-flex>
         <v-flex xs6>

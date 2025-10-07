@@ -9,14 +9,13 @@
         :help-text="$t('common.request.urlHelp')"
         :name="requestFormName"
         :disabled="disabled"
-        :url-variables="payloadVariables"
+        :url-variables="variables"
       />
     </template>
-    <request-form
-      v-field="form.request"
+    <request-with-token-form
+      v-field="form"
       :name="requestFormName"
-      :headers-variables="payloadVariables"
-      :payload-variables="payloadVariables"
+      :variables="variables"
       hide-url
     />
     <declare-ticket-rule-ticket-mapping-field
@@ -38,24 +37,17 @@
 </template>
 
 <script>
-import { confirmableFormMixinCreator } from '@/mixins/confirmable-form';
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
+import { computed, toRef } from 'vue';
 
-import RequestForm from '@/components/forms/request/request-form.vue';
+import { useConfirmableForm } from '@/hooks/confirmable-form';
+
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
 
 import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
-  components: { RequestUrlField, DeclareTicketRuleTicketMappingField, RequestForm },
-  mixins: [
-    payloadVariablesMixin,
-    confirmableFormMixinCreator({
-      field: 'form',
-      method: 'removeWebhook',
-      cloning: true,
-    }),
-  ],
+  components: { RequestUrlField, DeclareTicketRuleTicketMappingField, RequestWithTokenForm },
   model: {
     prop: 'form',
     event: 'input',
@@ -81,16 +73,24 @@ export default {
       type: Number,
       required: false,
     },
-  },
-  computed: {
-    requestFormName() {
-      return `${this.name}.request`;
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
-  methods: {
-    removeWebhook() {
-      this.$emit('remove');
-    },
+  setup(props, { emit }) {
+    const requestFormName = computed(() => `${props.name}.request`);
+
+    const { confirmAction: removeWebhook } = useConfirmableForm({
+      form: toRef(props, 'form'),
+      action: () => emit('remove'),
+      cloning: true,
+    });
+
+    return {
+      requestFormName,
+      removeWebhook,
+    };
   },
 };
 </script>

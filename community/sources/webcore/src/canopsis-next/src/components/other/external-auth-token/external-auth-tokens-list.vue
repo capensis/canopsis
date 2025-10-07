@@ -28,12 +28,12 @@
           />
           <c-action-btn
             type="delete"
-            @click="$emit('remove', item._id)"
+            @click="$emit('remove', item)"
           />
         </v-layout>
       </template>
       <template #expand="{ item }">
-        <external-data-table-records-list-expand-panel :record="item" />
+        <external-auth-tokens-list-expand-panel :external-auth-token="item" />
       </template>
     </c-advanced-data-table>
   </div>
@@ -44,10 +44,11 @@ import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
+import ExternalAuthTokensListExpandPanel from './partials/external-auth-tokens-list-expand-panel.vue';
+
 export default {
-  model: {
-    prop: 'columns',
-    event: 'input',
+  components: {
+    ExternalAuthTokensListExpandPanel,
   },
   props: {
     tokens: {
