@@ -2,6 +2,8 @@ import flatten from 'flat';
 
 import {
   formToRequest,
+  formToRequestAuthToken,
+  requestAuthTokenToForm,
   requestTemplateVariablesErrorsToForm,
   requestToForm,
 } from '@/helpers/entities/shared/request/form';
@@ -25,6 +27,7 @@ import { uid } from '@/helpers/uid';
 /**
  * @typedef {Object} DeclareTicketRuleWebhook
  * @property {Request} request
+ * @property {RequestAuthToken} auth_token
  * @property {?DeclareTicketRuleWebhookDeclareTicket} declare_ticket
  * @property {boolean} stop_on_fail
  */
@@ -66,6 +69,7 @@ import { uid } from '@/helpers/uid';
  * @typedef {DeclareTicketRuleWebhook} DeclareTicketRuleWebhookForm
  * @property {DeclareTicketRuleWebhookDeclareTicketForm} declare_ticket
  * @property {RequestForm} request
+ * @property {RequestAuthTokenForm} auth_token
  */
 
 /**
@@ -122,7 +126,8 @@ export const declareTicketRuleWebhookDeclareTicketToForm = (declareTicket) => {
 export const declareTicketRuleWebhookToForm = (webhook = {}) => ({
   key: uid(),
   declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(webhook.declare_ticket),
-  request: requestToForm(webhook.request),
+  request: requestToForm(webhook.request, webhook.auth_token),
+  auth_token: requestAuthTokenToForm(webhook.auth_token),
   stop_on_fail: webhook.stop_on_fail ?? false,
 });
 
@@ -202,6 +207,7 @@ export const formToDeclareTicketRuleWebhook = webhook => ({
   ...webhook,
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(webhook.declare_ticket),
   request: formToRequest(webhook.request),
+  auth_token: formToRequestAuthToken(webhook.auth_token, webhook.request.auth.type),
 });
 
 /**

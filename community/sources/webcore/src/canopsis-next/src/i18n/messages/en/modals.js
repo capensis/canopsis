@@ -794,6 +794,12 @@ export default {
         + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type table / collection name to confirm:',
     },
+    deleteExternalAuthToken: {
+      title: 'Delete auth token',
+      text: '<span class="font-weight-regular">You are about to delete the token.</span>\n'
+        + '<strong>Deletion operation won’t be cancellable.</strong>',
+      phraseText: 'Please type the token name to confirm:',
+    },
   },
   pbehaviorsCalendar: {
     title: 'Periodic behaviors',
