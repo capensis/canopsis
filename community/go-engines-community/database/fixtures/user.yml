@@ -1053,6 +1053,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_rules"
+  permission_api_template_data:
+    <<: *permission_crud
+    _id: api_template_data
+    name: <Current()._id>
+    description: Template data
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
   permission_api_webhook_token_rule:
     <<: *permission_crud
     _id: api_webhook_token_rule
@@ -1700,6 +1708,15 @@ permission:
     api_permissions:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+  permission_models_templateTesting:
+    <<: *permission
+    _id: models_templateTesting
+    name: <Current()._id>
+    description: Models template testing
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -3396,6 +3413,7 @@ role:
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
+      "@permission_models_templateTesting": 1
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
@@ -3547,6 +3565,7 @@ role:
       "@permission_api_snmprule": 15
       "@permission_api_snmpmib": 15
       "@permission_api_external_data_table": 15
+      "@permission_api_template_data": 15
       "@permission_api_webhook_token_rule": 15
       "@permission_api_corporate_pattern": 1
       "@permission_api_map": 15

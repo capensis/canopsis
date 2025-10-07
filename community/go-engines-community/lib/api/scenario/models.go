@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -52,9 +53,9 @@ type Trigger struct {
 	//   * `snooze` - Alarm has been snoozed
 	//   * `unsnooze` - Alarm has been unsnoozed
 	//   * `pbhenter` - Alarm enters a periodic behavior
+	//   * `pbhleave` - Alarm leaves a periodic behavior
 	//   * `activate` - Alarm has been activated
 	//   * `resolve` - Alarm has been resolved
-	//   * `pbhleave` - Alarm leaves a periodic behavior
 	//   * `instructionfail` - Manual instruction has failed
 	//   * `autoinstructionfail` - Auto instruction has failed
 	//   * `instructionjobfail` - Manual or auto instruction's job is failed
@@ -92,6 +93,18 @@ func (t *Trigger) UnmarshalBSONValue(valueType byte, b []byte) error {
 	t.Threshold = threshold
 
 	return nil
+}
+
+func (t *Trigger) String() string {
+	if t == nil {
+		return ""
+	}
+
+	if t.Type == string(types.AlarmChangeEventsCount) {
+		return t.Type + strconv.Itoa(t.Threshold)
+	}
+
+	return t.Type
 }
 
 type CreateRequest struct {
@@ -198,4 +211,25 @@ func (r AggregationResult) GetTotal() int64 {
 // GetData implementation PaginatedData interface
 func (r AggregationResult) GetData() interface{} {
 	return r.Data
+}
+
+type TemplateRequest struct {
+	Rule struct {
+		EditRequest
+		ID string `json:"_id" binding:"id"`
+	} `json:"rule"`
+	TestData struct {
+		Test  string `json:"test"`
+		Event string `json:"event"`
+		// TestData.Responses keys correspond with Rule.Actions keys
+		Responses map[int]string `json:"responses"`
+	} `json:"testdata"`
+}
+
+type TemplateVarsResponse struct {
+	Output       []template.VarResponse `json:"output"`
+	Author       []template.VarResponse `json:"author"`
+	FirstWebhook []template.VarResponse `json:"first_webhook"`
+	Webhook      []template.VarResponse `json:"webhook"`
+	Ticket       []template.VarResponse `json:"ticket"`
 }
