@@ -3,27 +3,33 @@ package widget
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widgetfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/filemask"
 	"github.com/go-playground/validator/v10"
 )
+
+const WidgetExportColumnsParam = "widgetExportColumns"
 
 type Validator interface {
 	ValidateEditRequest(sl validator.StructLevel)
 	ValidateFilterRequest(sl validator.StructLevel)
 }
 
-func NewValidator() Validator {
+func NewValidator(templateExecutor template.Executor) Validator {
 	return &baseValidator{
-		filterValidator: widgetfilter.NewValidator(),
+		filterValidator:  widgetfilter.NewValidator(),
+		templateExecutor: templateExecutor,
 	}
 }
 
 type baseValidator struct {
-	filterValidator *widgetfilter.Validator
+	filterValidator  *widgetfilter.Validator
+	templateExecutor template.Executor
 }
 
 func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
@@ -38,6 +44,34 @@ func (v *baseValidator) ValidateEditRequest(sl validator.StructLevel) {
 		validateExternalDataParametersRequest(sl, r.Parameters)
 	}
 	validateTemplateParametersRequest(sl, r)
+
+	if exportColumnsRaw, ok := r.Parameters.RemainParameters[WidgetExportColumnsParam]; ok {
+		if exportColumns, ok := exportColumnsRaw.([]any); ok {
+			for idx, columnRaw := range exportColumns {
+				column, ok := columnRaw.(map[string]any)
+				if !ok {
+					continue
+				}
+
+				tplRaw, ok := column["template"]
+				if !ok {
+					continue
+				}
+
+				tpl, ok := tplRaw.(string)
+				if !ok {
+					continue
+				}
+
+				if tpl != "" {
+					parsedValue := v.templateExecutor.Parse(tpl)
+					if parsedValue.Err != nil {
+						sl.ReportError(tpl, "Parameters."+WidgetExportColumnsParam+"."+strconv.Itoa(idx)+".template", "template", "template", "")
+					}
+				}
+			}
+		}
+	}
 }
 
 func (v *baseValidator) ValidateFilterRequest(sl validator.StructLevel) {

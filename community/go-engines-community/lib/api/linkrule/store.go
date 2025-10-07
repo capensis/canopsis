@@ -19,6 +19,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -64,6 +65,7 @@ type store struct {
 	entityTplVars         []template.VarResponse
 	alarmExdataTplVars    []template.VarResponse
 	entityExdataTplVars   []template.VarResponse
+	dupErrorParser        *common.DuplicateErrorParser
 }
 
 func NewStore(
@@ -152,6 +154,10 @@ func NewStore(
 				Value: template.GetEntityVars("{{ ", " }}", "", false),
 			},
 		},
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -178,6 +184,10 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 
 		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 
@@ -279,6 +289,10 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			bson.M{"$set": model},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 
@@ -405,7 +419,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 
 	for i, l := range r.Rule.Links {
 		prefix := "links." + strconv.Itoa(i)
-		response[prefix+".url"], err = template.Validate(s.tplValidator, l.Url, data)
+		response[prefix+".url"], err = template.Validate(s.tplValidator, l.URL, data)
 		if err != nil {
 			return nil, err
 		}
@@ -779,7 +793,7 @@ func (s *store) validateExdataTpls(
 
 func (s *store) processTableExdata(
 	ctx context.Context,
-	d externaldata.RefParameters,
+	d externaldata.TemplateRefParameters,
 	tplData any,
 	field string,
 ) (map[string]any, error) {
@@ -788,7 +802,25 @@ func (s *store) processTableExdata(
 		return nil, fmt.Errorf("cannot find external data getter by type %q", d.Type)
 	}
 
-	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{d}, s.exdataTableCollection)
+	refParam := externaldata.RefParameters{
+		Reference: d.Reference,
+		Type:      d.Type,
+		Table:     d.Table,
+		Select:    d.Select,
+		Regexp:    d.Regexp,
+		SortBy:    d.SortBy,
+		Sort:      d.Sort,
+		Optional:  d.Optional,
+	}
+	if d.Request != nil {
+		refParam.Request = &request.Parameters{
+			URL:     d.Request.URL,
+			Payload: d.Request.Payload,
+			Headers: d.Request.Headers,
+		}
+	}
+
+	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{refParam}, s.exdataTableCollection)
 	if err != nil {
 		return nil, err
 	}

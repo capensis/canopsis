@@ -1,0 +1,15 @@
+db.action_scenario.createIndex({name: 1}, {name: "name_1", unique: true});
+db.link_rule.createIndex({name: 1}, {name: "name_1", unique: true});
+db.pbehavior_reason.createIndex({name: 1}, {name: "name_1", unique: true});
+db.pbehavior_type.createIndex({name: 1}, {name: "name_1", unique: true});
+db.pbehavior_exception.createIndex({name: 1}, {name: "name_1", unique: true});
+db.entity_category.dropIndex("name_1");
+db.entity_category.createIndex({name: 1}, {name: "name_1", unique: true});
+db.view_playlist.createIndex({name: 1}, {name: "name_1", unique: true});
+db.idle_rule.createIndex({name: 1}, {name: "name_1", unique: true});
+db.resolve_rule.createIndex({name: 1}, {name: "name_1", unique: true});
+db.flapping_rule.createIndex({name: 1}, {name: "name_1", unique: true});
+db.declare_ticket_rule.createIndex({name: 1}, {name: "name_1", unique: true});
+db.job.createIndex({name: 1}, {name: "name_1", unique: true});
+db.job_config.createIndex({name: 1}, {name: "name_1", unique: true});
+db.kpi_filter.createIndex({name: 1}, {name: "name_1", unique: true});

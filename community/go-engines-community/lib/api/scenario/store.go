@@ -59,6 +59,8 @@ type store struct {
 	whTplVars             []template.VarResponse
 	firstWhTplVars        []template.VarResponse
 	ticketTplVars         []template.VarResponse
+
+	dupErrorParser *common.DuplicateErrorParser
 }
 
 func NewStore(
@@ -136,6 +138,10 @@ func NewStore(
 		firstWhTplVars:        firstWhTplVars,
 		whTplVars:             whTplVars,
 		ticketTplVars:         ticketTplVars,
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -218,6 +224,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 
@@ -255,6 +265,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 
 		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 
@@ -614,7 +628,7 @@ func (s *store) validateActionTpls(
 }
 
 func (s *store) validateAuthorTpl(
-	a ActionRequest,
+	a TemplateActionRequest,
 	event types.Event,
 	additionalData types.AdditionalData,
 	tplData any,

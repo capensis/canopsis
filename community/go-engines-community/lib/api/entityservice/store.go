@@ -61,8 +61,8 @@ type store struct {
 	tplValidator              validator.Validator
 	tplConfigProvider         config.TemplateConfigProvider
 	logger                    zerolog.Logger
-
-	tplVars []template.VarResponse
+	tplVars                   []template.VarResponse
+	dupErrorParser            *common.DuplicateErrorParser
 }
 
 func NewStore(
@@ -103,6 +103,9 @@ func NewStore(
 			{Name: "numberOfAlarmsUnderPbehavior", Value: "{{ .UnderPbehavior }}"},
 			{Name: "numberOfAcknowledgedAlarmsUnderPbehavior", Value: "{{ .AcknowledgedUnderPbh }}"},
 		},
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id": "ID already exists.",
+		}),
 	}
 }
 
@@ -375,6 +378,10 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 
 		_, err = s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 

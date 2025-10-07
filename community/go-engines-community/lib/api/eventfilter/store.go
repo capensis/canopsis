@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -70,6 +71,7 @@ type store struct {
 	exdataTplVars           []template.VarResponse
 	configTplVars           []template.VarResponse
 	configCopyVars          []template.VarResponse
+	dupErrorParser          *common.DuplicateErrorParser
 }
 
 func NewStore(
@@ -119,6 +121,9 @@ func NewStore(
 		exdataTplVars:           exdataTplVars,
 		configTplVars:           configTplVars,
 		configCopyVars:          configCopyVars,
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id": "ID already exists.",
+		}),
 	}
 }
 
@@ -149,6 +154,10 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 
 		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.ParseDuplicateError(err)
+			}
+
 			return err
 		}
 
@@ -784,7 +793,7 @@ func (s *store) validateConfigTpls(
 
 func (s *store) processTableExdata(
 	ctx context.Context,
-	d externaldata.RefParameters,
+	d externaldata.TemplateRefParameters,
 	tplData eventfilter.Template,
 	field string,
 ) (any, error) {
@@ -793,7 +802,25 @@ func (s *store) processTableExdata(
 		return nil, fmt.Errorf("cannot find external data getter by type %q", d.Type)
 	}
 
-	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{d}, s.dbExdataTableCollection)
+	refParam := externaldata.RefParameters{
+		Reference: d.Reference,
+		Type:      d.Type,
+		Table:     d.Table,
+		Select:    d.Select,
+		Regexp:    d.Regexp,
+		SortBy:    d.SortBy,
+		Sort:      d.Sort,
+		Optional:  d.Optional,
+	}
+	if d.Request != nil {
+		refParam.Request = &request.Parameters{
+			URL:     d.Request.URL,
+			Payload: d.Request.Payload,
+			Headers: d.Request.Headers,
+		}
+	}
+
+	params, err := apiexternaldata.TransformRefParameters(ctx, []externaldata.RefParameters{refParam}, s.dbExdataTableCollection)
 	if err != nil {
 		return nil, err
 	}

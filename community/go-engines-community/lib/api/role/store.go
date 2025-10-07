@@ -41,6 +41,10 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		defaultSearchByFields:    []string{"_id", "name", "description"},
 		defaultSortBy:            "name",
 		authorProvider:           authorProvider,
+		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -55,6 +59,7 @@ type store struct {
 	defaultSortBy            string
 
 	authorProvider author.Provider
+	dupErrorParser *common.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -163,7 +168,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		})
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return common.NewValidationError("name", "Name already exists.")
+				return s.dupErrorParser.ParseDuplicateError(err)
 			}
 
 			return err
