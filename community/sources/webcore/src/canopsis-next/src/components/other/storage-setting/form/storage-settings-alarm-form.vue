@@ -1,9 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.alarm.title')"
-    :help-text="$t('storageSetting.alarm.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$tc('common.alarm', 2)">
     <template
       v-if="history"
       #subtitle=""
@@ -17,12 +13,18 @@
     <c-enabled-duration-field
       v-field="form.archive_after"
       :label="$t('storageSetting.alarm.archiveAfter')"
-      :name="alarmArchiveAfterFieldName"
+      :suffix="$t('common.after')"
+      name="alarm.archive_after"
+      switcher
+      hide-value-on-false
     />
     <c-enabled-duration-field
       v-field="form.delete_after"
       :label="$t('storageSetting.alarm.deleteAfter')"
-      :name="alarmDeleteAfterFieldName"
+      :suffix="$t('common.after')"
+      name="alarm.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -45,23 +47,6 @@ export default {
     history: {
       type: Object,
       required: false,
-    },
-  },
-  computed: {
-    alarmArchiveAfterFieldName() {
-      return 'alarm.archive_after';
-    },
-
-    alarmDeleteAfterFieldName() {
-      return 'alarm.delete_after';
-    },
-  },
-  watch: {
-    form() {
-      this.$validator.validateAll([
-        this.alarmArchiveAfterFieldName,
-        this.alarmDeleteAfterFieldName,
-      ]);
     },
   },
 };

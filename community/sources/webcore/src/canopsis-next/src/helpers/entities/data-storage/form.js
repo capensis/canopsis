@@ -1,6 +1,6 @@
 import { TIME_UNITS } from '@/constants';
 
-import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/duration';
+import { durationWithEnabledToForm } from '@/helpers/date/duration';
 
 /**
  * @typedef {Object} DataStorageJunitConfig
@@ -22,7 +22,7 @@ import { durationToForm, durationWithEnabledToForm } from '@/helpers/date/durati
 
 /**
  * @typedef {Object} DataStorageUnlinkedEntityConfig
- * @property {DurationWithEnabled} archive_before
+ * @property {DurationWithEnabled} archive_after
  */
 
 /**
@@ -169,9 +169,9 @@ export const dataStoragePbehaviorSettingsToForm = (pbehaviorConfig = {}) => ({
  * @return {DataStorageUnlinkedEntityConfig}
  */
 export const dataStorageEntityUnlinkedSettingsToForm = (unlinkedEntityConfig = {}) => ({
-  archive_before: unlinkedEntityConfig.archive_before
-    ? durationToForm(unlinkedEntityConfig.archive_before)
-    : { value: 60, unit: TIME_UNITS.day },
+  archive_after: unlinkedEntityConfig.archive_after
+    ? durationWithEnabledToForm(unlinkedEntityConfig.archive_after)
+    : { value: 1, unit: TIME_UNITS.year, enabled: false },
 });
 
 /**

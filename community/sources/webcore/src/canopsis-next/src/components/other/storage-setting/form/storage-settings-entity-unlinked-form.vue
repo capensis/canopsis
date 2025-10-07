@@ -1,9 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.entityUnlinked.title')"
-    :help-text="$t('storageSetting.entityUnlinked.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.entityUnlinked.title')">
     <template
       v-if="history"
       #subtitle=""
@@ -15,43 +11,29 @@
         hide-deleted
       />
     </template>
-    <v-layout align-center>
-      <v-flex xs5>
-        <span class="v-label text--secondary">{{ $t('storageSetting.entityUnlinked.archiveBefore') }}</span>
-      </v-flex>
-      <v-flex xs4>
-        <c-duration-field
-          v-field="form.archive_before"
-          :units-label="$t('common.unit')"
-          :units="timeUnits"
-          :name="alarmArchiveAfterFieldName"
-        />
-      </v-flex>
-    </v-layout>
-    <v-flex>
-      <v-btn
-        :disabled="hasChildrenError"
-        class="ma-0 mb-4"
-        color="primary"
-        @click="$emit('archive')"
-      >
-        {{ $t('storageSetting.entityUnlinked.archiveUnlinked') }}
-      </v-btn>
-    </v-flex>
+    <c-enabled-duration-field
+      v-field="form.archive_after"
+      :label="$t('storageSetting.entityUnlinked.archiveAfter')"
+      :suffix="$t('storageSetting.receivedFor')"
+      name="entity_unlinked.archive_before"
+      switcher
+      hide-value-on-false
+    />
   </c-information-block>
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { AVAILABLE_TIME_UNITS } from '@/constants';
 
-import { validationChildrenMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
 
 import StorageSettingsHistoryMessage from '../partials/storage-settings-history-message.vue';
 
 export default {
   inject: ['$validator'],
   components: { StorageSettingsHistoryMessage },
-  mixins: [validationChildrenMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -66,22 +48,22 @@ export default {
       required: false,
     },
   },
-  computed: {
-    timeUnits() {
-      return [
-        AVAILABLE_TIME_UNITS.day,
-        AVAILABLE_TIME_UNITS.week,
-        AVAILABLE_TIME_UNITS.month,
-        AVAILABLE_TIME_UNITS.year,
-      ].map(({ value, text }) => ({
-        value,
-        text: this.$tc(text, this.form.archive_before.value),
-      }));
-    },
+  setup(props) {
+    const { tc } = useI18n();
 
-    alarmArchiveAfterFieldName() {
-      return 'entity_unlinked.archive_before';
-    },
+    const timeUnits = computed(() => [
+      AVAILABLE_TIME_UNITS.day,
+      AVAILABLE_TIME_UNITS.week,
+      AVAILABLE_TIME_UNITS.month,
+      AVAILABLE_TIME_UNITS.year,
+    ].map(({ value, text }) => ({
+      value,
+      text: tc(text, props.form.archive_before.value),
+    })));
+
+    return {
+      timeUnits,
+    };
   },
 };
 </script>
