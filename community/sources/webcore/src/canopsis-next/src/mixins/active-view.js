@@ -10,9 +10,11 @@ export const activeViewMixin = {
     ...mapGetters({
       view: 'item',
       activeViewPending: 'pending',
+      activeViewScreenMode: 'screenMode',
       activeViewEditing: 'editing',
       activeViewEditingProcess: 'editingProcess',
       activeViewPeriodicRefreshPaused: 'periodicRefreshPaused',
+      activeViewIsKioskScreenMode: 'isKioskScreenMode',
     }),
   },
   methods: {
@@ -24,6 +26,7 @@ export const activeViewMixin = {
       clearActiveView: 'clear',
       resumePeriodicRefresh: 'resumePeriodicRefresh',
       pausePeriodicRefresh: 'pausePeriodicRefresh',
+      setActiveViewScreenMode: 'setScreenMode',
     }),
   },
 };

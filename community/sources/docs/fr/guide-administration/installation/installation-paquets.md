@@ -544,6 +544,11 @@ Cliquez sur l'un des onglets « Community » ou « Pro » suivants, en fonctio
 
 ## Initialisation de Canopsis
 
+!!! Warning
+    Si votre mot de passe MongoDB contient des caractères spéciaux (par exemple `@`, `+`, `/`, `%`), vous devez les encoder avant de les utiliser dans l’URL de connexion.
+    
+    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../../guide-utilisation/limitations/#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
+
 Le fichier de configuration est `/opt/canopsis/etc/go-engines-vars.conf`, qui
 est normalement dans l'état suivant :
 
