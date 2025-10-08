@@ -357,13 +357,13 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
  * @param {TemplateTestingTestValidateFormItem[]} [form] - Array of form items
  * @returns {TemplateTestingTestValidate} The validate object with entity values and responses
  */
-export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
+export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item, index) => {
   if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
     if (!acc.responses) {
       acc.responses = {};
     }
 
-    acc.responses[Object.keys(acc.responses).length] = item.value;
+    acc.responses[index] = item.value;
 
     return acc;
   }
