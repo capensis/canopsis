@@ -62,13 +62,13 @@ type generator struct {
 
 type AlarmWithData struct {
 	types.Alarm  `bson:",inline"`
-	Entity       types.Entity              `bson:"entity"`
-	ExternalData map[string]map[string]any `bson:"-"`
+	Entity       types.Entity   `bson:"entity"`
+	ExternalData map[string]any `bson:"-"`
 }
 
 type EntityWithData struct {
 	types.Entity `bson:",inline"`
-	ExternalData map[string]map[string]any `bson:"-"`
+	ExternalData map[string]any `bson:"-"`
 }
 
 type entityWithAlarm struct {
@@ -568,7 +568,7 @@ func (g *generator) addExternalDataToAlarms(
 
 	var err error
 	for i, item := range data {
-		data[i].ExternalData = make(map[string]map[string]any, len(externalData))
+		data[i].ExternalData = make(map[string]any, len(externalData))
 		for _, params := range externalData {
 			data[i].ExternalData[params.Reference], err = g.processExternalData(ctx, params, item)
 			if err != nil {
@@ -591,7 +591,7 @@ func (g *generator) addExternalDataToEntities(
 
 	var err error
 	for i, item := range data {
-		data[i].ExternalData = make(map[string]map[string]any, len(externalData))
+		data[i].ExternalData = make(map[string]any, len(externalData))
 		for _, params := range externalData {
 			data[i].ExternalData[params.Reference], err = g.processExternalData(ctx, params, item)
 			if err != nil {
@@ -607,7 +607,7 @@ func (g *generator) processExternalData(
 	ctx context.Context,
 	params externaldata.ParsedRefParameters,
 	data any,
-) (map[string]any, error) {
+) (any, error) {
 	getter, ok := g.externalDataContainer.Get(params.Type)
 	if !ok {
 		return nil, fmt.Errorf("cannot find external data getter by type %q", params.Type)

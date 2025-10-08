@@ -22,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -564,9 +565,19 @@ func (s *store) validateActionTpls(
 
 			iStr := strconv.Itoa(i)
 			if td, ok := whTestData[i]; ok {
-				whResponse = td.Body
+				b, err := s.encoder.Encode(td.Body)
+				if err != nil {
+					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not a JSON.")
+				}
+
+				flatten, _, err := http.FlattenJSON(b)
+				if err != nil {
+					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not JSON.")
+				}
+
 				whHeader = td.Headers
-				for k, v := range whResponse {
+				for k, v := range flatten {
+					whResponse[k] = v
 					whResponseMap[iStr+"."+k] = v
 				}
 			} else {

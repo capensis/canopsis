@@ -69,6 +69,7 @@ func NewStore(
 			TypeTestInstruction:       mongo.InstructionMongoCollection,
 			TypeTestJob:               mongo.JobMongoCollection,
 			TypeTestMetaAlarmRule:     mongo.MetaAlarmRulesMongoCollection,
+			TypeTestWebhookTokenRule:  mongo.WebhookTokenRuleCollection,
 		},
 	}
 }
@@ -377,6 +378,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		Updated:     &now,
 	}
 	model.Data.Event = r.Data.Event
+	model.Data.Response = r.Data.Response
 	model.Data.Responses = r.Data.Responses
 	model.Data.User = r.Data.User
 	ruleCollectionName, ok := s.collectionNamesByType[*r.Type]
@@ -452,6 +454,7 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		Updated:     &now,
 	}
 	model.Data.Event = r.Data.Event
+	model.Data.Response = r.Data.Response
 	model.Data.Responses = r.Data.Responses
 	model.Data.User = r.Data.User
 	var res TestResponse
@@ -565,6 +568,18 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 		}
 	}
 
+	if r.Data.Response != "" {
+		err := s.testDataCollection.FindOne(ctx, bson.M{"_id": r.Data.Response, "type": TypeTestDataResponse},
+			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return nil, nil, common.NewValidationError("data.response", "Response doesn't exist.")
+			}
+
+			return nil, nil, err
+		}
+	}
+
 	if len(r.Data.Responses) > 0 {
 		ids := make([]string, 0, len(r.Data.Responses))
 		for _, id := range r.Data.Responses {
@@ -645,6 +660,7 @@ func (s *store) testDataIsUsed(ctx context.Context, id string) (bool, error) {
 		{"$unwind": bson.M{"path": "$responses", "preserveNullAndEmptyArrays": true}},
 		{"$match": bson.M{"$or": []bson.M{
 			{"data.event": id},
+			{"data.response": id},
 			{"responses.v": id},
 		}}},
 		{"$limit": 1},
@@ -687,6 +703,16 @@ func (s *store) getTestNestedObjectsPipeline() []bson.M {
 			},
 		}},
 		{"$unwind": bson.M{"path": "$data.event", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.TemplateTestDataCollection,
+			"localField":   "data.response",
+			"foreignField": "_id",
+			"as":           "data.response",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"type": TypeTestDataResponse}},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$data.response", "preserveNullAndEmptyArrays": true}},
 		{"$addFields": bson.M{
 			"doc":       "$$ROOT",
 			"responses": bson.M{"$objectToArray": "$data.responses"},
