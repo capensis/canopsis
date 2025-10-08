@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// FindDeprecatedFlags should be used for deprecated flags at least for one release.
 func FindDeprecatedFlags(flags ...string) []string {
 	var deprecatedFlags []string
 	if len(flags) == 0 {

@@ -9698,6 +9698,49 @@ paths:
             application/octet-stream:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /all-pbehavior-patterns:
+    put:
+      tags:
+        - pbehaviors
+      summary: Execute all pbehavior patterns
+      description: |
+        Execute all pbehavior patterns.
+
+        -  PERMISSIONS: `api_pbehavior_patterns:update`
+      operationId: pbehaviors-exec-patterns
+      responses:
+        204:
+          description: OK
+  /pbehavior-patterns:
+    put:
+      tags:
+        - pbehaviors
+      summary: Execute pbehavior pattern
+      description: |
+        Execute pbehavior pattern.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-exec-pattern
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.ExecPatternRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /pbehavior-reasons:
     get:
       tags:
