@@ -59,6 +59,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    onlyCredentials: {
+      type: Boolean,
+      default: false,
+    },
     name: {
       type: String,
       default: 'auth',
@@ -71,14 +75,27 @@ export default {
   setup(props, { emit }) {
     const { t } = useI18n();
 
-    const types = computed(() => Object.values(REQUEST_AUTH_TYPES).map(type => ({
-      value: type,
-      label: t(`request.authTypes.${type}`),
-    })));
+    const types = computed(() => Object.values(REQUEST_AUTH_TYPES).reduce((acc, type) => {
+      if (props.onlyCredentials && type === REQUEST_AUTH_TYPES.token) {
+        return acc;
+      }
+
+      acc.push({
+        value: type,
+        label: t(`request.authTypes.${type}`),
+      });
+
+      return acc;
+    }, []));
 
     const isCredentialsType = computed(() => props.value.type === REQUEST_AUTH_TYPES.credentials);
     const isTokenType = computed(() => props.value.type === REQUEST_AUTH_TYPES.token);
 
+    /**
+     * Updates the authentication token value and emits the change to parent component
+     *
+     * @param {Object} authToken - The authentication token object to update
+     */
     const updateAuthToken = authToken => emit('update:auth-token', authToken);
 
     return {

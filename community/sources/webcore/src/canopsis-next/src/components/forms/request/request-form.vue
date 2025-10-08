@@ -1,5 +1,5 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
     <request-url-field
       v-if="!hideUrl"
       v-field="form"
@@ -59,20 +59,16 @@
       :disabled="disabled"
       hide-details
     />
-    <request-auth-with-token-field
-      v-if="withAuthToken"
-      v-field="form.auth"
-      :auth-token="authToken"
-      :name="`${name}.auth`"
-      :disabled="disabled"
-      @update:auth-token="updateAuthToken"
-    />
-    <request-auth-field
-      v-else
-      v-field="form.auth"
-      :name="`${name}.auth`"
-      :disabled="disabled"
-    />
+    <c-information-block :title="$t('user.auth')" class="mb-2 mt-2">
+      <request-auth-with-token-field
+        v-field="form.auth"
+        :auth-token="authToken"
+        :name="`${name}.auth`"
+        :disabled="disabled"
+        :only-credentials="!withAuthToken"
+        @update:auth-token="updateAuthToken"
+      />
+    </c-information-block>
     <c-information-block
       :title="$tc('common.header', 2)"
       :help-text="$t('common.request.headersHelpText')"
@@ -101,7 +97,6 @@
 <script>
 import RequestUrlField from './fields/request-url-field.vue';
 import RequestHeadersField from './fields/request-headers-field.vue';
-import RequestAuthField from './fields/request-auth-field.vue';
 import RequestAuthWithTokenField from './fields/request-auth-with-token-field.vue';
 
 export default {
@@ -109,7 +104,6 @@ export default {
   components: {
     RequestUrlField,
     RequestHeadersField,
-    RequestAuthField,
     RequestAuthWithTokenField,
   },
   model: {
