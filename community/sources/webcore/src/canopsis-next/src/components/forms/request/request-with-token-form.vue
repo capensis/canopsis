@@ -4,10 +4,12 @@
     v-bind="$attrs"
     :name="name"
     :auth-token="form.auth_token"
+    :multiple="form.multiple_urls"
     :headers-variables="variables"
     :payload-variables="variables"
     with-auth-token
     @update:auth-token="updateAuthToken"
+    @update:multiple="updateMultiple"
   />
 </template>
 
@@ -41,9 +43,11 @@ export default {
     const { updateField } = useModelField(props, emit);
 
     const updateAuthToken = authToken => updateField('auth_token', authToken);
+    const updateMultiple = multiple => updateField('multiple_urls', multiple);
 
     return {
       updateAuthToken,
+      updateMultiple,
     };
   },
 };

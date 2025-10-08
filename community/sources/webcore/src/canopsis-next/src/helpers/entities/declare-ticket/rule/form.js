@@ -207,7 +207,7 @@ export const formToDeclareTicketRuleWebhook = webhook => ({
   ...webhook,
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(webhook.declare_ticket),
   request: formToRequest(webhook.request),
-  auth_token: formToRequestAuthToken(webhook.auth_token, webhook.request.auth.type),
+  auth_token: formToRequestAuthToken(webhook.auth_token, webhook.request.auth?.type),
 });
 
 /**

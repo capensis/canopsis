@@ -8,7 +8,7 @@ import { getLocalTimezone } from '@/helpers/date/date';
 import { objectToTextPairs, textPairsToObject } from '@/helpers/text-pairs';
 
 import { formToPbehavior, pbehaviorToForm, pbehaviorToRequest } from '../pbehavior/form';
-import { requestToForm, formToRequest } from '../shared/request/form';
+import { requestToForm, formToRequest, requestAuthTokenToForm, formToRequestAuthToken } from '../shared/request/form';
 import {
   declareTicketRuleWebhookDeclareTicketToForm,
   formToDeclareTicketRuleWebhookDeclareTicket,
@@ -73,6 +73,7 @@ import { filterPatternsToForm, formFilterToPatterns } from '../filter/form';
 /**
  * @typedef {Object} ActionWebhookParameters
  * @property {Request} request
+ * @property {RequestAuthToken} auth_token
  * @property {?DeclareTicketRuleWebhookDeclareTicket} [declare_ticket]
  * @property {boolean} [forward_author]
  * @property {boolean} [empty_response]
@@ -191,7 +192,8 @@ const defaultActionParametersToForm = (parameters = {}) => ({
 const webhookActionParametersToForm = (parameters = {}) => ({
   ...defaultActionForwardAuthorToForm(parameters),
   declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
-  request: requestToForm(parameters.request),
+  request: requestToForm(parameters.request, parameters.auth_token),
+  auth_token: requestAuthTokenToForm(parameters.auth_token),
   multiple_urls: parameters.multiple_urls ?? false,
   skip_for_child: parameters.skip_for_child ?? false,
   skip_for_instruction: parameters.skip_for_instruction ?? false,
@@ -332,6 +334,7 @@ export const actionToForm = (action = {}, timezone = getLocalTimezone()) => ({
 export const formToWebhookActionParameters = (parameters = {}) => ({
   declare_ticket: formToDeclareTicketRuleWebhookDeclareTicket(parameters.declare_ticket),
   request: formToRequest(parameters.request),
+  auth_token: formToRequestAuthToken(parameters.auth_token, parameters.request.auth?.type),
   multiple_urls: parameters.multiple_urls ?? false,
   empty_response: parameters.empty_response,
   skip_for_child: parameters.skip_for_child,
