@@ -1,15 +1,25 @@
 <template>
   <td>
-    <v-checkbox
+    <v-tooltip
       v-for="(checkbox, index) in checkboxes"
-      v-bind="checkbox.bind"
       :key="index"
-      :disabled="disabled || !role.editable"
-      class="ma-0 pa-0"
-      color="primary"
-      hide-details
-      v-on="checkbox.on"
-    />
+      :disabled="!checkbox.tooltip"
+      top
+    >
+      <template #activator="{ on, attrs }">
+        <span v-bind="attrs" v-on="on">
+          <v-checkbox
+            v-bind="checkbox.bind"
+            :disabled="disabled || !role.editable || checkbox.disabled"
+            class="ma-0 pa-0"
+            color="primary"
+            hide-details
+            v-on="checkbox.on"
+          />
+        </span>
+      </template>
+      <span>{{ checkbox.tooltip }}</span>
+    </v-tooltip>
   </td>
 </template>
 
@@ -19,6 +29,8 @@ import { computed } from 'vue';
 import { CRUD_ACTIONS } from '@/constants';
 
 import { getPermissionCheckboxProps } from '@/helpers/entities/permissions/list';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -36,16 +48,24 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const checkboxes = computed(() => props.permission.actions.map(action => ({
-      bind: {
-        label: action !== CRUD_ACTIONS.can ? action : undefined,
+    const { t } = useI18n();
 
-        ...getPermissionCheckboxProps(props.role, props.permission, action),
-      },
-      on: {
-        change: value => emit('input', value, props.role, props.permission, action),
-      },
-    })));
+    const checkboxes = computed(() => props.permission.actions.map((action) => {
+      const checkboxProps = getPermissionCheckboxProps(props.role, props.permission, action);
+
+      return {
+        bind: {
+          label: action !== CRUD_ACTIONS.can ? action : undefined,
+          inputValue: checkboxProps.inputValue,
+          indeterminate: checkboxProps.indeterminate,
+        },
+        disabled: checkboxProps.disabled,
+        tooltip: checkboxProps.tooltipKey ? t(checkboxProps.tooltipKey) : undefined,
+        on: {
+          change: value => emit('input', value, props.role, props.permission, action),
+        },
+      };
+    }));
 
     return {
       checkboxes,

@@ -1129,6 +1129,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_planning"
+  permission_api_pbehavior_patterns:
+    <<: *permission
+    _id: api_pbehavior_patterns
+    name: <Current()._id>
+    description: Check PBehavior patterns
+    groups:
+      - "@group_api"
+      - "@group_api_planning"
 
   # UI permissions
   .api_permissions_entity_pattern: &api_permissions_entity_pattern {
@@ -3509,6 +3517,7 @@ role:
       "@permission_api_pbehaviortype": 15
       "@permission_api_pbehaviorreason": 15
       "@permission_api_pbehaviorexception": 15
+      "@permission_api_pbehavior_patterns": 1
       "@permission_api_event": 1
       "@permission_api_healthcheck": 1
       "@permission_api_message_rate_stats_read": 1
