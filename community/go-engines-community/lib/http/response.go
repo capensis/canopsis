@@ -137,26 +137,45 @@ func ValidateStatusCode(
 }
 
 // FlattenResponse reads response body to a new map[string]any with a flat hierarchy.
-func FlattenResponse(request *http.Request, response *http.Response, maxSize int64) (map[string]any, error) {
+func FlattenResponse(request *http.Request, response *http.Response, maxSize int64) (flattenRes map[string]any, basicRes any, _ error) {
 	body, err := ReadResponse(response.Body, maxSize)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	v, err := fastjson.ParseBytes(body)
+	res, basicRes, err := FlattenJSON(body)
 	if err != nil {
 		failReason := ""
 		if request != nil {
 			failReason = "response of " + request.Method + " " + request.URL.String() + " is not valid JSON"
 		}
 
-		return nil, &ResponseError{
+		return nil, nil, &ResponseError{
 			failReason: failReason,
 			err:        err,
 		}
 	}
 
-	return flatten(v, ""), nil
+	return res, basicRes, nil
+}
+
+func FlattenJSON(b []byte) (flattenRes map[string]any, basicRes any, _ error) {
+	parsed, err := fastjson.ParseBytes(b)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	initKey := ""
+	res := flatten(parsed, initKey)
+	if len(res) == 1 {
+		for k, v := range res {
+			if k == initKey {
+				return nil, v, nil
+			}
+		}
+	}
+
+	return res, nil, nil
 }
 
 func flatten(in *fastjson.Value, prevKey string) map[string]any {
