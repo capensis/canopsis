@@ -6234,9 +6234,7 @@ definitions:
       _id:
         type: string
       body:
-        additionalProperties:
-          type: any
-        type: object
+        type: any
       created:
         type: integer
       description:
@@ -6255,9 +6253,7 @@ definitions:
   template.EditDataRequest:
     properties:
       body:
-        additionalProperties:
-          type: any
-        type: object
+        type: any
       description:
         maxLength: 500
         type: string
@@ -6292,6 +6288,8 @@ definitions:
             type: string
           event:
             type: string
+          response:
+            type: string
           responses:
             additionalProperties:
               type: string
@@ -6319,6 +6317,7 @@ definitions:
             * `6` - Instruction
             * `7` - Job
             * `8` - Meta-alarm rule
+            * `9` - Webhook token rule
         type: integer
     required:
     - data
@@ -6339,6 +6338,13 @@ definitions:
           entity:
             $ref: '#/definitions/entity.RefResponse'
           event:
+            properties:
+              _id:
+                type: string
+              name:
+                type: string
+            type: object
+          response:
             properties:
               _id:
                 type: string
