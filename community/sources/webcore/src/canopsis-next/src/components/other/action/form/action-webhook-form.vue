@@ -1,14 +1,12 @@
 <template>
   <v-layout column>
-    <request-form
-      v-field="webhook.request"
+    <request-with-token-form
+      v-field="webhook"
       :name="`${name}.request`"
       :headers-variables="payloadVariables"
       :payload-variables="payloadVariables"
       :url-variables="payloadVariables"
-      :multiple="webhook.multiple_urls"
       with-multiple-urls
-      @update:multiple="updateMultiple"
     />
     <declare-ticket-rule-ticket-mapping-field v-field="webhook" with-ticket-system-name />
     <v-layout justify-end>
@@ -33,12 +31,12 @@ import { formMixin, validationErrorsMixinCreator } from '@/mixins/form';
 import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
 import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
-import RequestForm from '@/components/forms/request/request-form.vue';
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { DeclareTicketRuleTicketMappingField, RequestForm },
+  components: { DeclareTicketRuleTicketMappingField, RequestWithTokenForm },
   mixins: [
     formMixin,
     payloadVariablesMixin,
@@ -130,10 +128,6 @@ export default {
       } finally {
         this.checking = false;
       }
-    },
-
-    updateMultiple(multiple) {
-      this.updateField('multiple_urls', multiple);
     },
   },
 };
