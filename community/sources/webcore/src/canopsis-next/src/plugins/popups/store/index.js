@@ -39,11 +39,12 @@ export default {
       id = uid('popup'),
       type,
       text,
+      context,
       autoClose = state.defaultCloseTimeByType[type],
     } = {}) {
       commit(types.ADD, {
         popup: {
-          id, type, text, autoClose,
+          id, type, text, context, autoClose,
         },
       });
     },

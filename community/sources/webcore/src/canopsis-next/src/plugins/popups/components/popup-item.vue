@@ -19,13 +19,25 @@
     </div>
     <c-compiled-template
       :template="text"
+      :context="context"
+      :template-props="context"
       class="pre-line"
     />
   </v-alert>
 </template>
 
 <script>
+import {
+  ref,
+  computed,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
+
 import { VUETIFY_ANIMATION_DELAY, POPUP_TICK_DELAY } from '@/config';
+
+import { usePopups } from '@/hooks/popups';
 
 /**
  * Popup component
@@ -33,6 +45,7 @@ import { VUETIFY_ANIMATION_DELAY, POPUP_TICK_DELAY } from '@/config';
  * @prop {String} [id] - Id of the popup
  * @prop {String} [type] - Type of the popup (info, error, ...)
  * @prop {String} [text] - Text displayed in the popup
+ * @prop {Object} [context] - Context object for template compilation
  * @prop {Number,Boolean} [autoClose] - Auto close delay
  */
 export default {
@@ -49,88 +62,113 @@ export default {
       type: String,
       default: '',
     },
+    context: {
+      type: Object,
+      default: () => ({}),
+    },
     autoClose: {
       type: [Number, Boolean],
       required: true,
     },
   },
-  data() {
-    return {
-      animationTimeout: null,
-      closeInterval: null,
-      closeValue: this.autoClose,
-      isPaused: false,
-      visible: false,
+  setup(props) {
+    const animationTimeout = ref(null);
+    const closeInterval = ref(null);
+    const closeValue = ref(props.autoClose);
+    const isPaused = ref(false);
+    const visible = ref(false);
+
+    const popups = usePopups();
+
+    /**
+     * Decrements the auto-close countdown timer by POPUP_TICK_DELAY milliseconds.
+     */
+    const progressTick = () => {
+      if (closeValue.value <= 0) {
+        visible.value = false;
+      } else {
+        closeValue.value -= POPUP_TICK_DELAY;
+      }
     };
-  },
-  computed: {
-    progressLineStyle() {
-      return { animationDuration: `${this.autoClose / 1000}s` };
-    },
-    progressLineClass() {
-      return {
-        'progress-line--active': this.visible,
-        'progress-line--paused': this.isPaused,
-      };
-    },
-    alertListeners() {
-      if (this.autoClose) {
+
+    /**
+     * Starts or resumes the auto-close countdown timer for the popup.
+     */
+    const playProgress = () => {
+      closeInterval.value = setInterval(progressTick, POPUP_TICK_DELAY);
+      isPaused.value = false;
+    };
+
+    /**
+     * Completely stops the auto-close timer and resets the countdown to its original value.
+     */
+    const stopProgress = () => {
+      clearInterval(closeInterval.value);
+      closeInterval.value = undefined;
+      closeValue.value = props.autoClose;
+    };
+
+    /**
+     * Temporarily pauses the auto-close countdown timer without resetting the value.
+     */
+    const pauseProgress = () => {
+      clearInterval(closeInterval.value);
+      isPaused.value = true;
+    };
+
+    /**
+     * Initiates the popup removal process with a delay to allow exit animations.
+     */
+    const removeWithTimeout = () => {
+      stopProgress();
+      animationTimeout.value = setTimeout(() => popups.remove({ id: props.id }), VUETIFY_ANIMATION_DELAY);
+    };
+
+    const progressLineStyle = computed(() => ({
+      animationDuration: `${props.autoClose / 1000}s`,
+    }));
+
+    const progressLineClass = computed(() => ({
+      'progress-line--active': visible.value,
+      'progress-line--paused': isPaused.value,
+    }));
+
+    const alertListeners = computed(() => {
+      if (props.autoClose) {
         return {
-          mouseover: this.pauseProgress,
-          mouseout: this.playProgress,
+          mouseover: pauseProgress,
+          mouseout: playProgress,
         };
       }
 
       return {};
-    },
-  },
-  watch: {
-    visible(value) {
+    });
+
+    watch(visible, (value) => {
       if (!value) {
-        this.removeWithTimeout();
+        removeWithTimeout();
       }
-    },
-  },
-  mounted() {
-    this.visible = true;
+    });
 
-    if (this.autoClose) {
-      this.playProgress();
-    }
-  },
-  beforeDestroy() {
-    clearInterval(this.closeInterval);
-    clearTimeout(this.animationTimeout);
-  },
-  methods: {
-    playProgress() {
-      this.closeInterval = setInterval(this.progressTick, POPUP_TICK_DELAY);
-      this.isPaused = false;
-    },
+    onMounted(() => {
+      visible.value = true;
 
-    stopProgress() {
-      clearInterval(this.closeInterval);
-      this.closeInterval = undefined;
-      this.closeValue = this.autoClose;
-    },
-
-    pauseProgress() {
-      clearInterval(this.closeInterval);
-      this.isPaused = true;
-    },
-
-    progressTick() {
-      if (this.closeValue <= 0) {
-        this.visible = false;
-      } else {
-        this.closeValue -= POPUP_TICK_DELAY;
+      if (props.autoClose) {
+        playProgress();
       }
-    },
+    });
 
-    removeWithTimeout() {
-      this.stopProgress();
-      this.animationTimeout = setTimeout(() => this.$popups.remove({ id: this.id }), VUETIFY_ANIMATION_DELAY);
-    },
+    onBeforeUnmount(() => {
+      clearInterval(closeInterval.value);
+      clearTimeout(animationTimeout.value);
+    });
+
+    return {
+      visible,
+      progressLineStyle,
+      progressLineClass,
+      alertListeners,
+    };
   },
 };
 </script>

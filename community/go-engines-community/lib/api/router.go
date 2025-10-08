@@ -92,6 +92,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -115,6 +116,7 @@ func RegisterRoutes(
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
 	amqpChannel amqp.Channel,
+	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
@@ -524,14 +526,19 @@ func RegisterRoutes(
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
 				primaryDbClient,
+				secondaryDbClient,
+				lockRedisSession,
 				pbhEntityTypeResolver,
 				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
 				timezoneConfigProvider,
 				authorProvider,
 				common.NewPatternFieldsTransformer(primaryDbClient),
+				websocketHub,
+				userInterfaceConfig,
 			),
 			dbexport.NewExporter(primaryDbClient),
 			pbhComputeChan,
+			workers.NewJobPublisher(jobKeyPbhPatterns, workersRunner),
 			logger,
 		)
 		pbehaviorRouter := protected.Group("/pbehaviors")
@@ -573,9 +580,20 @@ func RegisterRoutes(
 				pbehaviorApi.Delete)
 		}
 		protected.POST(
-			"pbehaviors-db-export",
+			"/pbehaviors-db-export",
 			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
-			pbehaviorApi.DBExport)
+			pbehaviorApi.DBExport,
+		)
+		protected.PUT(
+			"/pbehavior-patterns",
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
+			pbehaviorApi.ExecPattern,
+		)
+		protected.PUT(
+			"/all-pbehavior-patterns",
+			middleware.Authorize(apisecurity.PermPbhPatterns, model.PermissionCan, enforcer),
+			pbehaviorApi.ExecAllPatterns,
+		)
 
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
@@ -1620,7 +1638,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
+		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
 			userInterfaceConfig, enforcer, logger)
 		patternRouter := protected.Group("/patterns")
 		{

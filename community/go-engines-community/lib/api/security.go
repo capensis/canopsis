@@ -119,9 +119,6 @@ func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 			res = append(res, httpprovider.NewBearerProvider(s.GetTokenProviders()))
 		case libsecurity.AuthMethodApiKey:
 			res = append(res, httpprovider.NewApikeyProvider(s.newUserProvider()))
-		case libsecurity.AuthMethodLdap:
-			ldapProvider := s.newLdapAuthProvider()
-			res = append(res, httpprovider.NewQueryBasicProvider(ldapProvider))
 		}
 	}
 
@@ -270,8 +267,6 @@ func (s *security) newBaseAuthProvider() libsecurity.Provider {
 	return provider.NewBaseProvider(
 		s.newUserProvider(),
 		s.GetPasswordEncoder(),
-		// todo deprecated encoder
-		password.NewSha1Encoder(),
 	)
 }
 
