@@ -9,19 +9,21 @@
         :help-text="$t('common.request.urlHelp')"
         :name="requestFormName"
         :disabled="disabled"
-        :url-variables="variables"
+        :url-variables="templateVars[webhookTemplateVarsKey]"
       />
     </template>
     <request-with-token-form
       v-field="form"
       :name="requestFormName"
-      :variables="variables"
+      :headers-variables="templateVars[webhookTemplateVarsKey]"
+      :payload-variables="templateVars[webhookTemplateVarsKey]"
       hide-url
     />
     <declare-ticket-rule-ticket-mapping-field
       v-field="form"
       :name="`${name}.declare_ticket`"
       :is-declare-ticket-exist="isDeclareTicketExist"
+      :variables="templateVars.ticket"
       class="mb-2"
       hide-empty-response
       ticket-id-required
@@ -73,13 +75,18 @@ export default {
       type: Number,
       required: false,
     },
-    variables: {
-      type: Array,
-      default: () => [],
+    hasPrevious: {
+      type: Boolean,
+      default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   setup(props, { emit }) {
     const requestFormName = computed(() => `${props.name}.request`);
+    const webhookTemplateVarsKey = computed(() => (props.hasPrevious ? 'webhook' : 'first_webhook'));
 
     const { confirmAction: removeWebhook } = useConfirmableForm({
       form: toRef(props, 'form'),
@@ -89,6 +96,8 @@ export default {
 
     return {
       requestFormName,
+      webhookTemplateVarsKey,
+
       removeWebhook,
     };
   },

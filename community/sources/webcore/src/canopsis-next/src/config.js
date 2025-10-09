@@ -286,10 +286,24 @@ export const API_ROUTES = {
   techMetrics: '/api/v4/tech-metrics-export',
   techMetricsSettings: '/api/v4/tech-metrics-settings',
   templateVars: '/api/v4/template-vars',
-  templateValidator: {
-    declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
-    scenarios: '/api/v4/template-validator/scenarios',
-    eventFilterRules: '/api/v4/template-validator/event-filter-rules',
+  templateData: '/api/v4/template-data',
+  templateTests: '/api/v4/template-test',
+  templateVarsSpecific: {
+    entityServices: '/api/v4/entityservice-template-vars',
+    eventFilters: '/api/v4/eventfilter-template-vars',
+    scenarios: '/api/v4/scenario-template-vars',
+    linkRules: '/api/v4/link-rule-template-vars',
+    widgets: '/api/v4/widget-template-vars',
+  },
+  templateValidation: {
+    entityServices: '/api/v4/entityservice-template-validate',
+    eventFilters: '/api/v4/eventfilter-template-validate',
+    scenarios: '/api/v4/scenario-template-validate',
+    linkRules: '/api/v4/link-rule-template-validate',
+    widgets: '/api/v4/widget-template-validate',
+  },
+  copyVars: {
+    eventFilters: '/api/v4/eventfilter-copy-vars',
   },
   linkRule: '/api/v4/link-rules',
   bulkLinkRule: '/api/v4/bulk/link-rules',
@@ -406,6 +420,25 @@ export const API_ROUTES = {
     current: '/api/v4/cat/event-records-current',
     event: '/api/v4/cat/event-records/events',
     bulkEvent: '/api/v4/cat/event-records/events/bulk',
+  },
+  templateVarsSpecificCat: {
+    declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-vars',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-vars',
+    instructions: '/api/v4/cat/instruction-template-vars',
+    jobs: '/api/v4/cat/job-template-vars',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-vars',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-vars',
+  },
+  templateValidationCat: {
+    declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-validate',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-validate',
+    instructions: '/api/v4/cat/instruction-template-validate',
+    jobs: '/api/v4/cat/job-template-validate',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-validate',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-validate',
+  },
+  copyVarsCat: {
+    dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',
   },
 };
 

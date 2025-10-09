@@ -30,7 +30,6 @@ export default {
   eventsFilteredSinceLastUpdate: 'Events filtered since last update',
   errorsSinceLastUpdate: 'Errors since last update',
   markAsRead: 'Mark as read',
-  filterByType: 'Filter by type',
   copyEventToClipboard: 'Copy event to clipboard',
   event: 'Event',
   eventCopied: 'Event copied to clipboard',

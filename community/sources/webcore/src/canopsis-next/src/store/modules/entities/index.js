@@ -51,9 +51,7 @@ import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
 import widgetTemplateModule from './widget-template';
 import metaAlarmModule from './meta-alarm';
-import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
-import templateValidatorModule from './template-validator';
 import LinkRuleRuleModule from './links-rule';
 import metricsSettingsModule from './metrics-settings';
 import aggregatedMetricsModule from './aggregated-metrics';
@@ -66,6 +64,8 @@ import availabilityModule from './availability';
 import eventsRecordModule from './events-record';
 import dbExportModule from './db-export';
 import externalDataTableModule from './external-data-table';
+import templateModule from './template';
+import copyModule from './copy';
 import webhookTokenRuleModule from './webhook-token-rule';
 
 export default {
@@ -122,9 +122,7 @@ export default {
   techMetrics: techMetricsModule,
   widgetTemplate: widgetTemplateModule,
   metaAlarm: metaAlarmModule,
-  templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
-  templateValidator: templateValidatorModule,
   linkRule: LinkRuleRuleModule,
   metricsSettings: metricsSettingsModule,
   aggregatedMetrics: aggregatedMetricsModule,
@@ -137,5 +135,7 @@ export default {
   eventsRecord: eventsRecordModule,
   dbExport: dbExportModule,
   externalDataTable: externalDataTableModule,
+  template: templateModule,
+  copy: copyModule,
   webhookTokenRule: webhookTokenRuleModule,
 };

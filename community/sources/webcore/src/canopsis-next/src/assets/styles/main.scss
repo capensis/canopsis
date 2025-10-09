@@ -154,6 +154,10 @@ html {
   }
 }
 
+.v-tab.v-tab--disabled {
+  opacity: .5;
+}
+
 .c-nowrap {
   white-space: nowrap;
 }
@@ -374,6 +378,10 @@ html {
       display: block;
     }
   }
+}
+
+.v-menu__content {
+  max-height: 90vh;
 }
 
 *[aria-required="true"] label:before {

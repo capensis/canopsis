@@ -65,21 +65,10 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    isNew: {
-      type: Boolean,
-      default: false,
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
-    fromConfig: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  setup() {
-    const nameRegex = /^[a-z_][\w_]*$/i;
-
-    return {
-      nameRegex,
-    };
   },
 };
 </script>

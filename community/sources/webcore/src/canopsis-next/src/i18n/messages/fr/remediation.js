@@ -90,7 +90,6 @@ export default {
       skip: 'Ignorer la tâche',
       await: 'Attendre',
       failedReason: 'Raison de l\'échec',
-      output: 'Retour',
       instructionFailed: 'Échec de d\'une consigne',
       instructionComplete: 'Exécution des consignes terminée',
       stopped: 'Arrêté',

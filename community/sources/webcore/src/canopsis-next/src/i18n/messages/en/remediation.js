@@ -90,7 +90,6 @@ export default {
       skip: 'Skip job',
       await: 'Await',
       failedReason: 'Failed reason',
-      output: 'Output',
       instructionFailed: 'Instruction failed',
       instructionComplete: 'Instruction complete',
       stopped: 'Stopped',

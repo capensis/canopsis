@@ -1051,35 +1051,6 @@ export const ALARM_UNSORTABLE_FIELDS = [
   ALARM_FIELDS.tags,
 ];
 
-export const ALARM_PAYLOADS_VARIABLES = {
-  alarm: '.Alarm',
-  alarms: '.Alarms',
-  id: '.ID',
-  displayName: '.Value.DisplayName',
-  connector: '.Value.Connector',
-  component: '.Value.Component',
-  connectorName: '.Value.ConnectorName',
-  resource: '.Value.Resource',
-  infos: '.Value.Infos',
-  infosName: '.Value.Infos.%name%',
-  initialOutput: '.Value.InitialOutput',
-  tags: '.Value.Tags',
-  stateMessage: '.Value.State.Message',
-  stateValue: '.Value.State.Value',
-  statusValue: '.Value.Status.Value',
-  ticketAuthor: '.Value.Ticket.Author',
-  ticketValue: '.Value.Ticket.Ticket',
-  ticketMessage: '.Value.Ticket.Message',
-  ackAuthor: '.Value.ACK.Author',
-  ackMessage: '.Value.ACK.Message',
-  lastCommentAuthor: '.Value.LastComment.Author',
-  lastCommentMessage: '.Value.LastComment.Message',
-  infosValue: '(index (index .Alarm.Value.Infos "%rule_id%") "%infos_name%")',
-
-  entityName: '.Entity.Name',
-  entityInfosValue: '(index .Entity.Infos "%infos_name%").Value',
-};
-
 export const ACK_MODAL_ACTIONS_TYPES = {
   ack: 0,
   ackAndAssociateTicket: 1,
