@@ -2,7 +2,7 @@
   <c-lazy-search-field
     :value="selectedItem"
     :items="items"
-    :label="$t('entity.fields.alarmDisplayName')"
+    :label="$t('alarm.alarmDisplayName')"
     :disabled="disabled"
     :required="required"
     :loading="wholePending"
