@@ -38,7 +38,7 @@
 
 <script>
 import { merge } from 'lodash';
-import { toRef } from 'vue';
+import { watch, toRef } from 'vue';
 
 import { USER_PERMISSIONS } from '@/constants';
 
@@ -116,6 +116,8 @@ export default {
       refresh: fetchItems,
       type: toRef(props, 'type'),
     });
+
+    watch(() => props.params, fetchItems);
 
     return {
       menuProps,

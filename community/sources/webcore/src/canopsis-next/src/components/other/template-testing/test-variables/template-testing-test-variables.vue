@@ -17,6 +17,7 @@
     </c-alert>
     <v-layout class="gap-2" justify-end>
       <v-btn
+        :disabled="isDisabledSaveAsNewButton"
         class="template-testing-test-variables__secondary-btn"
         color="secondary"
         outlined
@@ -24,13 +25,20 @@
       >
         {{ $t('templateTesting.saveTestAsNew') }}
       </v-btn>
-      <v-btn
-        :disabled="!selectedTest"
-        color="secondary"
-        @click="save"
-      >
-        {{ $t('templateTesting.saveTest') }}
-      </v-btn>
+      <v-tooltip :disabled="!saveButtonTooltip" top>
+        <template #activator="{ on }">
+          <span v-on="on">
+            <v-btn
+              :disabled="isDisabledSaveButton"
+              color="secondary"
+              @click="save"
+            >
+              {{ $t('templateTesting.saveTest') }}
+            </v-btn>
+          </span>
+        </template>
+        <span>{{ saveButtonTooltip }}</span>
+      </v-tooltip>
       <v-btn
         :loading="running"
         :disabled="running"
@@ -44,7 +52,9 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 import {
   useTemplateTestingValidationForm,
@@ -84,14 +94,23 @@ export default {
       type: Number,
       required: false,
     },
+    active: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props) {
+    const { t } = useI18n();
+
     const isGeneralFormValid = ref(true);
 
     const {
       validationForm,
       selectedTest,
       lastRunVariables,
+      hasSelectedTest,
+      isEmptyValidationForm,
+      isEqualValidationForm,
       setFormErrors,
       getValidationFormData,
       updateSelectedTest: updateSelectedTestHook,
@@ -117,6 +136,20 @@ export default {
       (isValid) => { isGeneralFormValid.value = isValid; },
       setLastRunVariables,
     );
+
+    const isDisabledSaveAsNewButton = computed(() => isEmptyValidationForm.value);
+
+    const isDisabledSaveButton = computed(() => (
+      !hasSelectedTest.value
+      || isEmptyValidationForm.value
+      || isEqualValidationForm.value
+    ));
+
+    const saveButtonTooltip = computed(() => (
+      hasSelectedTest.value && isEqualValidationForm.value
+        ? t('templateTesting.testSaved')
+        : ''
+    ));
 
     /**
      * Saves the current selected test
@@ -159,6 +192,9 @@ export default {
       selectedTest,
       isGeneralFormValid,
       validationForm,
+      isDisabledSaveAsNewButton,
+      isDisabledSaveButton,
+      saveButtonTooltip,
       testResult,
       lastRunVariables,
       running,

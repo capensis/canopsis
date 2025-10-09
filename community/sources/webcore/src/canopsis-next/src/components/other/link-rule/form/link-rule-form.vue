@@ -2,6 +2,7 @@
   <div class="position-relative">
     <c-progress-overlay :pending="templateVarsPending" />
     <v-tabs
+      v-model="activeTab"
       slider-color="primary"
       fixed-tabs
     >
@@ -17,7 +18,7 @@
       <v-tab :class="{ 'error--text': hasAdvancedError || errors.has('links') }">
         {{ $t('linkRule.advancedMode') }}
       </v-tab>
-      <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
+      <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
       <v-tab-item
         class="mt-3"
@@ -68,13 +69,14 @@
         />
       </v-tab-item>
 
-      <v-tab-item :disabled="isEmptyVariablesFields">
+      <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
         <template-testing-test-variables
           :general-form="form"
           :variables-fields="variablesFields"
           :template-vars="templateVars"
           :rule-id="ruleId"
           :type="type"
+          :active="isActiveTestingTab"
         />
       </v-tab-item>
     </v-tabs>
@@ -99,7 +101,7 @@ import { useTemplateVarsList } from '@/hooks/vars/template';
 import { useValidationAttachRequired } from '@/hooks/validator/validation-attach-required';
 
 import {
-  useTestVariablesFields,
+  useTestVariablesTabData,
 } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
 
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
@@ -134,6 +136,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const activeTab = ref(0);
+
     const type = TEMPLATE_TESTING_TEST_TYPES.linkRule;
 
     const hasGeneralError = ref(false);
@@ -143,6 +147,8 @@ export default {
     const generalElement = ref(null);
     const simpleElement = ref(null);
     const advancedElement = ref(null);
+
+    const isActiveTestingTab = computed(() => activeTab.value === 3);
 
     const {
       attachRequiredRule,
@@ -160,9 +166,11 @@ export default {
     });
 
     const {
+      hasAccess,
+
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesFields(props, type, emit);
+    } = useTestVariablesTabData(props, type, emit);
 
     const sourceCodeWasChanged = computed(() => !isDefaultSourceCode(props.form.source_code));
 
@@ -185,6 +193,9 @@ export default {
     onBeforeUnmount(detachRequiredRule);
 
     return {
+      activeTab,
+      isActiveTestingTab,
+
       type,
 
       hasGeneralError,
@@ -195,6 +206,7 @@ export default {
       simpleElement,
       advancedElement,
 
+      hasAccess,
       variablesFields,
       isEmptyVariablesFields,
 

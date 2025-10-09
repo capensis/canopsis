@@ -9,6 +9,8 @@ import {
   PATTERNS_FIELDS,
 } from '@/constants';
 
+import { formGroupsToPatternRules } from '@/helpers/entities/pattern/form';
+
 /**
  * @typedef {0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 } TemplateTestingTestType
  * Template testing test type values:
@@ -206,7 +208,7 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
       getTemplateTestingTestValidateFormItem({
         type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event,
         required: true,
-        params: { [PATTERNS_FIELDS.event]: [[{ field: 'event_type', cond: { type: 'eq', value: 'check' } }]] },
+        params: { [PATTERNS_FIELDS.event]: formGroupsToPatternRules(form.patterns[PATTERNS_FIELDS.event]?.groups) },
       }),
       ...form.external_data.reduce((acc, externalData, index) => {
         if (externalData.type === EXTERNAL_DATA_TYPES.api) {
@@ -357,13 +359,13 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
  * @param {TemplateTestingTestValidateFormItem[]} [form] - Array of form items
  * @returns {TemplateTestingTestValidate} The validate object with entity values and responses
  */
-export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item, index) => {
+export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
   if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
     if (!acc.responses) {
       acc.responses = {};
     }
 
-    acc.responses[index] = item.value;
+    acc.responses[item.index] = item.value;
 
     return acc;
   }

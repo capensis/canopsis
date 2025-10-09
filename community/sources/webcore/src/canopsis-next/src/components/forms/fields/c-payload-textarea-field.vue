@@ -44,6 +44,7 @@
             v-for="(line, index) in lines"
             :key="index"
             :style="lineStyle"
+            :class="{ 'c-payload-textarea-field__line--error': line.error }"
             class="c-payload-textarea-field__line"
           >
             <span
@@ -74,7 +75,7 @@
               </template>
               <span>{{ line.error.message }}</span>
             </v-tooltip>
-            <span>{{ line.text }}</span>
+            <span class="c-payload-textarea-field__line-text" contenteditable="true">{{ line.text }}</span>
           </span>
         </span>
       </div>
@@ -277,6 +278,24 @@ $iconBarWidth: 18px;
     text-align: start;
     overflow-wrap: break-word;
     color: transparent;
+  }
+
+  &__line {
+    &-text {
+      margin-left: -18px;
+    }
+
+    &--error {
+      background: var(--v-error-base);
+
+      .theme--light & {
+        color: var(--v-text-light-primary, rgba(0, 0, 0, 0.87));
+      }
+
+      .theme--dark & {
+        color: var(--v-text-dark-primary, #FFFFFF);
+      }
+    }
   }
 
   &__fake-line {
