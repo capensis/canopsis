@@ -30,7 +30,7 @@
           class="top-bar-administration-menu-link"
         />
         <v-divider
-          v-if="index &lt; administrationGroupedLinks.length - 1"
+          v-if="index < administrationGroupedLinks.length - 1"
           :key="`${group.title}-divider`"
         />
       </template>

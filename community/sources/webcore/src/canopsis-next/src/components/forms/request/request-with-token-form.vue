@@ -21,7 +21,7 @@ import RequestForm from '@/components/forms/request/request-form.vue';
 
 export default {
   components: { RequestForm },
-  inheritAttrs: false, // TODO: check it
+  inheritAttrs: false,
   model: {
     prop: 'form',
     event: 'input',
