@@ -48,12 +48,6 @@ export default {
 
   tableField: 'Collection / Table',
 
-  andMore: 'et plus...',
-  linkedRules: {
-    widgets: '<strong>Widgets</strong> qui utilisent ce tableau<br><ul>{rules}</ul>',
-    eventFilters: '<strong>Filtres d\'événements</strong>\n<ul>{rules}</ul>',
-    links: '<strong>Links</strong>\n<ul>{rules}</ul>',
-  },
   tableCanBeDeletedInConfig: 'La table ne peut être supprimée que dans le fichier de configuration',
   tableCanBeDeletedAfter: 'La table pourra être supprimée après la suppression de\n{rules}',
   tableRemovedFromConfig: 'La table est supprimée du fichier de configuration, mais elle reste utilisée dans les éléments suivants.\n<strong>Replacer la table dans le fichier de configuration ou supprimer tous les éléments qui l\'utilisent</strong>\n{rules}',
