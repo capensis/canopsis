@@ -10,6 +10,7 @@ import {
 } from '@/constants';
 
 import { uuid } from '@/helpers/uuid';
+import { getLetterByIndex } from '@/helpers/string';
 import { durationToForm } from '@/helpers/date/duration';
 import { flattenErrorMap } from '@/helpers/entities/shared/form';
 import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/filter/form';
@@ -464,3 +465,12 @@ export const formToRemediationInstructionRequest = (form = {}) => ({
   active_on_pbh: form.patterns?.active_on_pbh,
   disabled_on_pbh: form.patterns?.disabled_on_pbh,
 });
+
+/**
+ * Generate an operation number string based on step number and operation index.
+ *
+ * @param {number|string} stepNumber - The step number to prefix (e.g., 1, 2, 3).
+ * @param {number} index - The zero-based index of the operation (e.g., 0 for 'A', 1 for 'B').
+ * @returns {string} The operation number in the format '<stepNumber><letter>' (e.g., '1A', '2B').
+ */
+export const getOperationNumber = (stepNumber, index) => `${stepNumber}${getLetterByIndex(index)}`;

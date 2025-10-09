@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
-	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -62,12 +61,9 @@ func ParseOptions() (Options, []string) {
 	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
 	flag.IntVar(&opts.RpcWorkers, "rpcWorkers", canopsis.DefaultRpcWorkers, "Amount of workers to process rpc event flow.")
 
-	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
-	flag.Bool("withWebhook", false, "Deprecated: handle webhook actions")
-
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags("workers", "withWebhook")
+	return opts, nil
 }
 
 // NewEngineAction returns the default Action engine with default connections.
