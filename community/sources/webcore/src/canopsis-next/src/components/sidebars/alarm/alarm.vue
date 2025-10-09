@@ -29,6 +29,7 @@
         with-template
         with-html
         with-color-indicator
+        with-filter-on-click
         @update:template="updateWidgetColumnsTemplate"
       />
       <field-columns
@@ -41,6 +42,7 @@
         with-template
         with-html
         with-color-indicator
+        with-filter-on-click
         @update:template="updateWidgetGroupColumnsTemplate"
       />
       <field-columns
@@ -171,8 +173,31 @@
         :templates="alarmExportToPdfWidgetTemplates"
         addable
         removable
-        @input="updateExportPdf"
+        @input="updateExportPdfTemplate"
       />
+      <widget-settings-group :title="$t('settings.quickActions.title')">
+        <field-quick-alarm-actions
+          v-model="form.parameters.quickActions"
+          :template="form.parameters.quickActionsTemplate"
+          :templates="alarmQuickActionsWidgetTemplates"
+          :templates-pending="widgetTemplatesPending"
+          @update:template="updateQuickActionsTemplate"
+        />
+      </widget-settings-group>
+      <widget-settings-group :title="$t('settings.quickMassActions.title')">
+        <field-switcher
+          v-model="form.parameters.hideMassActions"
+          :title="$t('settings.quickMassActions.hideSwitcher')"
+        />
+        <field-quick-alarm-actions
+          v-model="form.parameters.quickMassActions"
+          :template="form.parameters.quickMassActionsTemplate"
+          :templates="alarmMassQuickActionsWidgetTemplates"
+          :templates-pending="widgetTemplatesPending"
+          massive
+          @update:template="updateQuickMassActionsTemplate"
+        />
+      </widget-settings-group>
     </widget-settings-group>
 
     <widget-settings-group :title="$t('settings.expandPanel.title')">
@@ -185,7 +210,7 @@
           :templates="alarmMoreInfosWidgetTemplates"
           addable
           removable
-          @input="updateMoreInfo"
+          @input="updateMoreInfoTemplate"
         />
         <field-grid-range-size
           v-model="form.parameters.expandGridRangeSize"
@@ -197,6 +222,10 @@
       <field-switcher
         v-model="form.parameters.isHtmlEnabledOnTimeLine"
         :title="$t('settings.isHtmlEnabledOnTimeLine')"
+      />
+      <field-switcher
+        v-model="form.parameters.pausePeriodicRefreshOnExpandPanel"
+        :title="$t('settings.pausePeriodicRefreshOnExpandPanel')"
       />
     </widget-settings-group>
     <export-csv-form
@@ -254,6 +283,7 @@ import FieldFastActionOutput from './form/fields/fast-action-output.vue';
 import FieldOpenedResolvedFilter from './form/fields/opened-resolved-filter.vue';
 import FieldInfoPopup from './form/fields/info-popup.vue';
 import FieldResizeColumnBehavior from './form/fields/resize-column-behavior.vue';
+import FieldQuickAlarmActions from './form/fields/quick-alarm-actions.vue';
 import FastPbehaviorForm from './form/fast-pbehavior-form.vue';
 
 /**
@@ -284,6 +314,7 @@ export default {
     ExportCsvForm,
     ChartsForm,
     FieldResizeColumnBehavior,
+    FieldQuickAlarmActions,
   },
   mixins: [
     payloadVariablesMixin,
@@ -325,35 +356,40 @@ export default {
     this.fetchInfos();
   },
   methods: {
-    updateWidgetColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'widgetColumnsTemplate', template);
-      this.$set(this.form.parameters, 'widgetColumns', columns);
-    },
+    updateTemplate(field, template, value) {
+      this.$set(this.form.parameters, `${field}Template`, template);
 
-    updateWidgetGroupColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'widgetGroupColumnsTemplate', template);
-      this.$set(this.form.parameters, 'widgetGroupColumns', columns);
-    },
-
-    updateServiceDependenciesColumnsTemplate(template, columns) {
-      this.$set(this.form.parameters, 'serviceDependenciesColumnsTemplate', template);
-      this.$set(this.form.parameters, 'serviceDependenciesColumns', columns);
-    },
-
-    updateMoreInfo(content, template) {
-      this.$set(this.form.parameters, 'moreInfoTemplate', content);
-
-      if (template && template !== this.form.parameters.moreInfoTemplateTemplate) {
-        this.$set(this.form.parameters, 'moreInfoTemplateTemplate', template);
+      if (template && template !== this.form.parameters[field]) {
+        this.$set(this.form.parameters, field, value);
       }
     },
 
-    updateExportPdf(content, template) {
-      this.$set(this.form.parameters, 'exportPdfTemplate', content);
+    updateMoreInfoTemplate(value, template) {
+      this.updateTemplate('moreInfoTemplate', template, value);
+    },
 
-      if (template && template !== this.form.parameters.exportPdfTemplateTemplate) {
-        this.$set(this.form.parameters, 'exportPdfTemplateTemplate', template);
-      }
+    updateExportPdfTemplate(value, template) {
+      this.updateTemplate('exportPdfTemplate', template, value);
+    },
+
+    updateWidgetColumnsTemplate(template, value) {
+      this.updateTemplate('widgetColumns', template, value);
+    },
+
+    updateWidgetGroupColumnsTemplate(template, value) {
+      this.updateTemplate('widgetGroupColumns', template, value);
+    },
+
+    updateServiceDependenciesColumnsTemplate(template, value) {
+      this.updateTemplate('serviceDependenciesColumns', template, value);
+    },
+
+    updateQuickActionsTemplate(template, value) {
+      this.updateTemplate('quickActions', template, value);
+    },
+
+    updateQuickMassActionsTemplate(template, value) {
+      this.updateTemplate('quickMassActions', template, value);
     },
   },
 };

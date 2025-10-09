@@ -248,12 +248,14 @@ export default {
   sharedTokens: 'Jetons partagés',
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
+  seeDetails: 'Voir les détails',
   more: 'plus',
   all: 'Tous',
   attribute: 'Attribut',
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
   failed: 'Échoué',
+  finished: 'Terminé',
   close: 'Fermer',
   alarmId: 'Identifiant de l\'alarme',
   entityId: 'ID d\'entité',
@@ -314,6 +316,8 @@ export default {
   true: 'Vrai',
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
+  last: 'Dernier',
+  inProgress: 'En cours',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -418,6 +422,10 @@ export default {
     [ALARM_STATUSES.cancelled]: 'Annulée',
     [ALARM_STATUSES.noEvents]: 'Pas d\'événements',
   },
+  statusResolvedTypes: {
+    [ALARM_STATUSES.closed]: 'Fermée et résolue',
+    [ALARM_STATUSES.cancelled]: 'Annulée et résolue',
+  },
   operators: {
     [PATTERN_OPERATORS.equal]: 'Égal',
     [PATTERN_OPERATORS.contains]: 'Contient',
@@ -473,6 +481,11 @@ export default {
     [PATTERN_OPERATORS.ruleIs]: 'La règle est',
 
     [PATTERN_OPERATORS.regexp]: 'Expression régulière',
+
+    [PATTERN_OPERATORS.within]: 'Au cours des',
+    [PATTERN_OPERATORS.olderThan]: 'Plus ancien que',
+    [PATTERN_OPERATORS.inRangeDates]: 'Dans l\'intervalle (dates)',
+    [PATTERN_OPERATORS.inRangePeriod]: 'Dans l\'intervalle (période)',
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {

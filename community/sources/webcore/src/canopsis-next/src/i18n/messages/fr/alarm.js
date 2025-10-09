@@ -25,6 +25,7 @@ export default {
   filterByBookmark: 'Filtrer par signet',
   runTest: 'Exécuter le test',
   tagFilter: 'Filtre de balises',
+  alarmDisplayName: 'Nom d\'affichage de l\'alarme',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
     addBookmarkSuccess: 'Le signet a été ajouté',
@@ -55,6 +56,8 @@ export default {
       exportPdf: 'Exporter l\'alarme au format PDF',
       addBookmark: 'Ajouter un signet',
       removeBookmark: 'Supprimer le signet',
+      executeInstruction: 'Exécuter l\'instruction',
+      links: 'Liens',
     },
     iconsTitles: {
       ack: 'Acquittée',
@@ -229,6 +232,8 @@ export default {
     canceledInitiator: 'Initiateur annulé',
     changeState: 'Changement et verrouillage de la criticité',
     closeDelay: 'Délai de fermeture',
+    maxState: 'Criticité maximale',
+    initialState: 'Criticité initiale',
   },
   instructionsFilter: {
     filter: 'Filtre de consigne',
