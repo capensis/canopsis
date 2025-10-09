@@ -7,6 +7,7 @@ export const REMEDIATION_TABS = {
   configurations: 'configurations',
   jobs: 'jobs',
   statistics: 'statistics',
+  instructionStats: 'instructionStats',
 };
 
 export const REMEDIATION_INSTRUCTION_TYPES = {

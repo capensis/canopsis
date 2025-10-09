@@ -158,15 +158,6 @@ export default {
   },
 
   /**
-   * Notifications
-   */
-  [USER_PERMISSIONS.technical.notification.instructionStats]: {
-    title: 'Évaluation des consignes',
-    message: 'Affiche les statistiques sur l\'exécution des consignes. Les utilisateurs peuvent les évaluer en fonction de leur efficacité.',
-
-  },
-
-  /**
    * Profile
    */
   [USER_PERMISSIONS.technical.profile.theme]: {
