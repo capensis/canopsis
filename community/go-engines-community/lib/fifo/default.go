@@ -17,7 +17,6 @@ import (
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
-	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	libprometheus "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics/prometheus"
@@ -71,17 +70,12 @@ func ParseOptions() (Options, []string) {
 	flag.DurationVar(&opts.ExternalDataApiTimeout, "externalDataApiTimeout", 30*time.Second, "External API HTTP Request Timeout.")
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
 	flag.IntVar(&opts.Workers, "workers", canopsis.DefaultEventWorkers, "Amount of workers to process fifo_ack events flow")
-
-	flag.Duration("eventsStatsFlushInterval", 60*time.Second, "Deprecated: interval between saving statistics from redis to mongo")
-	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
-	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
-
 	flag.BoolVar(&opts.EnablePrometheusExporter, "enablePrometheusExporter", false, "Enable prometheus exporter")
 	flag.IntVar(&opts.PrometheusExporterPort, "prometheusExporterPort", libprometheus.DefaultExporterPort, "Prometheus exporter port")
 
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags("eventsStatsFlushInterval", "consumeQueue", "publishQueue")
+	return opts, nil
 }
 
 func Default(ctx context.Context, options Options, logger zerolog.Logger) (libengine.Engine, Services) {
