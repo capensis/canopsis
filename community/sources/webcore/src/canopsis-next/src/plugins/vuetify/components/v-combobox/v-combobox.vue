@@ -1,7 +1,6 @@
 <script>
 import VCombobox from 'vuetify/lib/components/VCombobox';
 import VSelectList from 'vuetify/lib/components/VSelect/VSelectList';
-import { consoleError } from 'vuetify/lib/util/console';
 
 import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
@@ -57,10 +56,6 @@ export default {
             input: this.selectItem,
           },
         });
-      }
-
-      if (this.$slots['no-data'] || this.$slots['prepend-item'] || this.$slots['append-item']) {
-        consoleError('assert: staticList should not be called if slots are used');
       }
 
       return this.$createElement(VSelectList, this.listData);

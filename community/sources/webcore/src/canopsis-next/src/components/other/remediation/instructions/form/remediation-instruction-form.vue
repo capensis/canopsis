@@ -1,5 +1,6 @@
 <template>
   <v-tabs
+    v-model="activeTab"
     slider-color="primary"
     fixed-tabs
   >
@@ -10,7 +11,7 @@
       {{ $tc('common.pattern', 2) }}
     </v-tab>
 
-    <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
+    <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
     <v-tab-item eager>
       <remediation-instruction-general-form
@@ -30,13 +31,14 @@
         class="mt-3"
       />
     </v-tab-item>
-    <v-tab-item :disabled="isEmptyVariablesFields">
+    <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
       <template-testing-test-variables
         :general-form="form"
         :variables-fields="variablesFields"
         :template-vars="templateVars"
         :rule-id="ruleId"
         :type="type"
+        :active="isActiveTestingTab"
       />
     </v-tab-item>
   </v-tabs>
@@ -44,6 +46,7 @@
 
 <script>
 import {
+  computed,
   ref,
   toRef,
   watch,
@@ -56,7 +59,7 @@ import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import {
-  useTestVariablesFields,
+  useTestVariablesTabData,
 } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
 
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
@@ -105,6 +108,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const activeTab = ref(0);
+
     const hasGeneralError = ref(false);
     const hasPatternsError = ref(false);
 
@@ -113,15 +118,19 @@ export default {
 
     const type = ref(TEMPLATE_TESTING_TEST_TYPES.instruction);
 
+    const isActiveTestingTab = computed(() => activeTab.value === 2);
+
     const { vars: templateVars, fetchList } = useTemplateVarsList({
       type,
       form: toRef(props, 'form'),
     });
 
     const {
+      hasAccess,
+
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesFields(props, type, emit);
+    } = useTestVariablesTabData(props, type, emit);
 
     let unwatchGeneralTabErrors = null;
     let unwatchPatternsTabErrors = null;
@@ -149,13 +158,19 @@ export default {
     onBeforeUnmount(unwatchTabsErrors);
 
     return {
+      activeTab,
+      isActiveTestingTab,
+
       generalElement,
       patternsElement,
       hasGeneralError,
       hasPatternsError,
+
+      hasAccess,
       variablesFields,
-      templateVars,
       isEmptyVariablesFields,
+
+      templateVars,
       type,
     };
   },

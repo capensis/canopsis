@@ -1,13 +1,16 @@
 import { get } from 'lodash';
 import { computed, ref, unref, watch } from 'vue';
 
+import { USER_PERMISSIONS } from '@/constants';
+
 import { isOmitEqual } from '@/helpers/collection';
 import { convertRuleToTemplateTestingTestValidateForm } from '@/helpers/entities/template-testing-validate/form';
 
+import { useCanPermission } from '@/hooks/auth';
 import { useModelField } from '@/hooks/form/model-field';
 
 /**
- * Hook for managing test variables fields with form integration
+ * Hook for managing test variables fields with form integration and access permission check
  *
  * @param {Object} [props={}] - Component props containing form data
  * @param {Object} props.form - Form object containing test variables data
@@ -15,11 +18,16 @@ import { useModelField } from '@/hooks/form/model-field';
  * @param {Function} emit - Vue emit function for component communication
  * @returns {Object} Hook return object
  * @returns {import('vue').Ref<Array>} returns.items - Reactive array of test variable field items with update handlers
+ * @returns {import('vue').Ref<boolean>} returns.isEmptyItems - Reactive boolean indicating if the items array is empty
+ * @returns {import('vue').Ref<boolean>} returns.hasAccess - Reactive boolean indicating if the user
+ *                                                           has access to the template testing test variables
  */
-export const useTestVariablesFields = (props = {}, type, emit) => {
+export const useTestVariablesTabData = (props = {}, type, emit) => {
   const items = ref([]);
 
   const { updateField } = useModelField(props, emit);
+
+  const { hasAccess } = useCanPermission(USER_PERMISSIONS.technical.templateTesting);
 
   const isEmptyItems = computed(() => !items.value.length);
 
@@ -31,7 +39,7 @@ export const useTestVariablesFields = (props = {}, type, emit) => {
     }
 
     items.value = newItems.map((newItem) => {
-      const key = newItem.formKey ?? newItem.key;
+      const { key } = newItem;
 
       return {
         ...newItem,
@@ -44,5 +52,6 @@ export const useTestVariablesFields = (props = {}, type, emit) => {
   return {
     items,
     isEmptyItems,
+    hasAccess,
   };
 };

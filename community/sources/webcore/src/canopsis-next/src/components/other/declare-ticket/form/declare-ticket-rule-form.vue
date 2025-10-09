@@ -1,5 +1,6 @@
 <template>
   <v-tabs
+    v-model="activeTab"
     slider-color="primary"
     fixed-tabs
   >
@@ -11,7 +12,7 @@
     </v-tab>
     <v-tab>{{ $t('common.testQuery') }}</v-tab>
 
-    <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
+    <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
     <v-tab-item eager>
       <declare-ticket-rule-general-form
@@ -41,27 +42,34 @@
         </v-flex>
       </v-layout>
     </v-tab-item>
-    <v-tab-item :disabled="isEmptyVariablesFields">
+    <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
       <template-testing-test-variables
         :general-form="form"
         :variables-fields="variablesFields"
         :template-vars="templateVars"
         :rule-id="ruleId"
         :type="type"
+        :active="isActiveTestingTab"
       />
     </v-tab-item>
   </v-tabs>
 </template>
 
 <script>
-import { ref, toRef, watch, onMounted } from 'vue';
+import {
+  computed,
+  ref,
+  toRef,
+  watch,
+  onMounted,
+} from 'vue';
 
 import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
 
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
 import {
-  useTestVariablesFields,
+  useTestVariablesTabData,
 } from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
 
 import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
@@ -96,6 +104,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const activeTab = ref(0);
+
     const type = TEMPLATE_TESTING_TEST_TYPES.declareTicketRule;
 
     const hasGeneralError = ref(false);
@@ -103,6 +113,8 @@ export default {
 
     const general = ref(null);
     const patterns = ref(null);
+
+    const isActiveTestingTab = computed(() => activeTab.value === 3);
 
     const {
       vars: templateVars,
@@ -114,9 +126,11 @@ export default {
     });
 
     const {
+      hasAccess,
+
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesFields(props, type, emit);
+    } = useTestVariablesTabData(props, type, emit);
 
     watch(() => general.value?.hasAnyError, value => hasGeneralError.value = value);
     watch(() => patterns.value?.hasAnyError, value => hasPatternsError.value = value);
@@ -126,6 +140,9 @@ export default {
     });
 
     return {
+      activeTab,
+      isActiveTestingTab,
+
       type,
 
       hasGeneralError,
@@ -134,6 +151,7 @@ export default {
       general,
       patterns,
 
+      hasAccess,
       variablesFields,
       isEmptyVariablesFields,
 

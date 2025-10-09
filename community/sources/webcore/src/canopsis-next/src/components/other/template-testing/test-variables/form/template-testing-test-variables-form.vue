@@ -24,14 +24,14 @@
         <template-testing-test-variables-template-item
           v-for="field in variablesFields"
           :key="field.key"
-          :name="field.key"
+          :name="field.resultKey ?? field.key"
           :template="field.value"
           :title="$t(field.textKey, field.textArgs)"
           :textarea="field.textarea"
           :json="field.json"
           :result="testResult[field.resultKey ?? field.key]"
           :variables="templateVars[field.templateVarsKey]"
-          :last-run-value="lastRunVariables[field.formKey ?? field.key]"
+          :last-run-value="lastRunVariables[field.key]"
           @input="field.updateField"
         />
       </v-layout>

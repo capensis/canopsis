@@ -11,7 +11,7 @@ import {
 /**
  * @typedef {Object} TemplateTestingTestValidateFormItem
  * @property {string} key
- * @property {string} [formKey]
+ * @property {string} [resultKey]
  * @property {string} textKey
  * @property {Object} [textArgs]
  * @property {boolean} [textarea]
@@ -253,7 +253,8 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
 
     if (![ACTION_TYPES.pbehavior, ACTION_TYPES.pbehaviorRemove, ACTION_TYPES.assocticket].includes(action.type)) {
       result.push({
-        key: `actions.${index}.parameters.output`,
+        key: `actions.${index}.parameters.${action.type}.output`,
+        resultKey: `actions.${index}.parameters.output`,
         textKey: 'templateTesting.noteOutput',
         textArgs: { number: index + 1 },
         textarea: true,
@@ -465,8 +466,8 @@ export const convertJobToTemplateTestingTestValidateForm = (form = {}) => {
   if (form.configType?.with_query) {
     form.query.forEach((query, index) => {
       result.push({
-        key: `query.${query.text}`,
-        formKey: `query.${index}.value`,
+        key: `query.${index}.value`,
+        resultKey: `query.${query.text}`,
         textKey: 'templateTesting.jobQueryValue',
         textArgs: { number: index + 1 },
         templateVarsKey: 'payload',
