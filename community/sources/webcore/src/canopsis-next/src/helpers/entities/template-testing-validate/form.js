@@ -519,11 +519,11 @@ export const convertMetaAlarmRuleToTemplateTestingTestValidateForm = (form = {})
  * @returns {TemplateTestingTestValidateForm} Array of validation form items for external auth token rule
  */
 export const convertExternalAuthTokenRuleToTemplateTestingTestValidateForm = (form = {}) => (
-  form.template
+  form.allow_variables
     ? [{
       key: 'template',
       textKey: 'common.token',
-      templateVarsKey: 'token',
+      templateVarsKey: 'template',
     }]
     : []
 );
@@ -546,6 +546,7 @@ export const convertRuleToTemplateTestingTestValidateForm = (form = {}, type) =>
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: convertInstructionToTemplateTestingTestValidateForm,
     [TEMPLATE_TESTING_TEST_TYPES.job]: convertJobToTemplateTestingTestValidateForm,
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: convertMetaAlarmRuleToTemplateTestingTestValidateForm,
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: convertExternalAuthTokenRuleToTemplateTestingTestValidateForm,
   }[type];
 
   return converter ? converter(form) : [];

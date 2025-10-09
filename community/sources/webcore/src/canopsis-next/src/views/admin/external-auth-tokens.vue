@@ -58,7 +58,7 @@ export default {
       fetchWebhookTokenRulesListWithoutStore,
     } = useWebhookTokenRule();
 
-    const { callActionWithPopup } = useCallActionWithPopup();
+    const { callActionWithPopup } = useCallActionWithPopup(true);
 
     const {
       data: tokens,
