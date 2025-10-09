@@ -13,6 +13,7 @@ export const entitiesRemediationInstructionStatsMixin = {
   methods: {
     ...mapActions({
       fetchRemediationInstructionStatsList: 'fetchList',
+      fetchRemediationInstructionStatsListWithPreviousParams: 'fetchListWithPreviousParams',
       fetchRemediationInstructionStatsSummaryWithoutStore: 'fetchSummaryWithoutStore',
       fetchRemediationInstructionStatsCommentsListWithoutStore: 'fetchCommentsWithoutStore',
       fetchRemediationInstructionStatsChangesListWithoutStore: 'fetchChangesWithoutStore',

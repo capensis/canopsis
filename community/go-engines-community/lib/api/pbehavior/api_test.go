@@ -88,8 +88,8 @@ func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
 		}
 	}()
 	authorProvider := author.NewProvider(&config.BaseApiConfigProvider{})
-	store := pbehavior.NewStore(dbClient, nil, nil, nil, authorProvider, nil)
-	api := pbehavior.NewApi(store, nil, ch, zerolog.Nop())
+	store := pbehavior.NewStore(dbClient, nil, nil, nil, nil, nil, authorProvider, nil, nil, nil)
+	api := pbehavior.NewApi(store, nil, ch, nil, zerolog.Nop())
 	reqBodies := make([]io.ReadCloser, b.N)
 	now := time.Now().Unix()
 	tomorrow := time.Now().AddDate(0, 0, 1).Unix()

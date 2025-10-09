@@ -46,7 +46,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
-    'service-entities-list', 'v-icon', 'v-row', 'v-chip',
+    'service-entities-list', 'v-icon', 'v-row', 'v-chip', 'c-remediation-instruction-execution-see-details',
   ]),
   allowedAttributes: {
     '*': [
@@ -74,6 +74,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
       'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
     'v-chip': ['color', 'text-color'],
+    'c-remediation-instruction-execution-see-details': [':execution'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
@@ -152,6 +153,9 @@ export const SOCKET_ROOMS = {
   alarmDetails: 'alarm-details',
   icons: 'icons',
   testscenario: 'testscenario',
+  notifications: 'notifications',
+  executions: 'executions',
+  simplifiedManualExecutions: 'simplified-manual-executions',
 };
 
 export const API_ROUTES = {
@@ -271,7 +275,8 @@ export const API_ROUTES = {
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
   dataStorage: '/api/v4/data-storage',
-  notification: '/api/v4/notification',
+  notificationSettings: '/api/v4/notification-settings',
+  notifications: '/api/v4/notifications',
   idleRules: '/api/v4/idle-rules',
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
@@ -359,8 +364,10 @@ export const API_ROUTES = {
     executions: '/api/v4/cat/executions',
     jobExecutions: '/api/v4/cat/job-executions',
     alarmExecutions: '/api/v4/cat/alarm-executions',
-    pausedExecutions: '/api/v4/cat/account/paused-executions',
+    pausedExecutions: '/api/v4/cat/account/executions',
     instructionComments: '/api/v4/cat/instruction-comments',
+    executionStatuses: '/api/v4/cat/execution-statuses',
+    readExecution: '/api/v4/cat/executions',
   },
   junit: {
     directory: '/api/v4/cat/junit/directory',

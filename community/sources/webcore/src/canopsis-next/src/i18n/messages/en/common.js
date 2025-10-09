@@ -260,6 +260,7 @@ export default {
   timeTaken: 'Time taken',
   enginesMetrics: 'Engines` metrics',
   failed: 'Failed',
+  finished: 'Finished',
   close: 'Close',
   alarmId: 'Alarm ID',
   entityId: 'Entity ID',
@@ -320,7 +321,9 @@ export default {
   true: 'True',
   false: 'False',
   customField: 'Custom field|Custom fields',
+  inProgress: 'In progress',
   last: 'Last',
+  seeDetails: 'See details',
   token: 'Token',
   variableTypes: {
     string: 'String',

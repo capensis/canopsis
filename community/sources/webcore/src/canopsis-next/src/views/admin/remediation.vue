@@ -49,6 +49,16 @@
                 </v-card-text>
               </v-tab-item>
             </template>
+            <template v-if="hasReadAnyRemediationInstructionStatsAccess">
+              <v-tab :href="`#${$constants.REMEDIATION_TABS.instructionStats}`">
+                {{ $t('remediation.tabs.instructionStats') }}
+              </v-tab>
+              <v-tab-item :value="$constants.REMEDIATION_TABS.instructionStats">
+                <v-card-text>
+                  <remediation-instruction-stats />
+                </v-card-text>
+              </v-tab-item>
+            </template>
           </v-tabs>
         </v-card>
       </v-flex>
@@ -69,6 +79,7 @@ import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediati
 import { entitiesRemediationConfigurationMixin } from '@/mixins/entities/remediation/configuration';
 import { entitiesRemediationJobMixin } from '@/mixins/entities/remediation/job';
 import { entitiesRemediationStatisticMixin } from '@/mixins/entities/remediation/statistic';
+import { entitiesRemediationInstructionStatsMixin } from '@/mixins/entities/remediation/instruction-stats';
 import {
   permissionsTechnicalRemediationInstructionMixin,
 } from '@/mixins/permissions/technical/remediation-instruction';
@@ -77,11 +88,15 @@ import {
 } from '@/mixins/permissions/technical/remediation-configuration';
 import { permissionsTechnicalRemediationJobMixin } from '@/mixins/permissions/technical/remediation-job';
 import { permissionsTechnicalRemediationStatisticMixin } from '@/mixins/permissions/technical/remediation-statistic';
+import {
+  permissionsTechnicalRemediationInstructionStatsMixin,
+} from '@/mixins/permissions/technical/remediation-instruction-stats';
 
 import RemediationStatistics from '@/components/other/remediation/statistics/remediation-statistics.vue';
 import RemediationJobs from '@/components/other/remediation/jobs/remediation-jobs.vue';
 import RemediationConfigurations from '@/components/other/remediation/configurations/remediation-configurations.vue';
 import RemediationInstructions from '@/components/other/remediation/instructions/remediation-instructions.vue';
+import RemediationInstructionStats from '@/components/other/remediation/instruction-stats/remediation-instruction-stats.vue';
 
 export default {
   components: {
@@ -89,16 +104,19 @@ export default {
     RemediationConfigurations,
     RemediationJobs,
     RemediationStatistics,
+    RemediationInstructionStats,
   },
   mixins: [
     entitiesRemediationInstructionMixin,
     entitiesRemediationConfigurationMixin,
     entitiesRemediationJobMixin,
     entitiesRemediationStatisticMixin,
+    entitiesRemediationInstructionStatsMixin,
     permissionsTechnicalRemediationInstructionMixin,
     permissionsTechnicalRemediationConfigurationMixin,
     permissionsTechnicalRemediationJobMixin,
     permissionsTechnicalRemediationStatisticMixin,
+    permissionsTechnicalRemediationInstructionStatsMixin,
   ],
   data() {
     return {
@@ -148,6 +166,9 @@ export default {
           break;
         case REMEDIATION_TABS.statistics:
           this.fetchStatisticsList();
+          break;
+        case REMEDIATION_TABS.instructionStats:
+          this.fetchRemediationInstructionStatsListWithPreviousParams();
           break;
       }
     },

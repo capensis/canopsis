@@ -260,6 +260,7 @@ export default {
   timeTaken: 'Temps passé',
   enginesMetrics: 'Métriques des moteurs',
   failed: 'Échoué',
+  finished: 'Terminé',
   close: 'Fermer',
   alarmId: 'Identifiant de l\'alarme',
   entityId: 'ID d\'entité',
@@ -320,7 +321,9 @@ export default {
   true: 'Vrai',
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
+  inProgress: 'En cours',
   last: 'Dernier',
+  seeDetails: 'Voir les détails',
   token: 'Jeton',
   variableTypes: {
     string: 'Chaîne de caractères',
