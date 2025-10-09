@@ -62,10 +62,18 @@ export const useTemplateTestingValidationForm = (props) => {
   const { t } = useI18n();
   const modals = useModals();
 
+  const hasSelectedTest = computed(() => !isEmpty(selectedTest.value));
+  const isEmptyValidationForm = computed(() => validationForm.value.every(item => !item.value));
+  const isEqualValidationForm = computed(() => isEqual(originalValidationForm.value, validationForm.value));
+
   const { setFormErrors } = useValidationFormErrors(validationForm);
 
-  watch(() => props.generalForm, (newForm) => {
-    const newValidationForm = formToTemplateTestingTestValidateForm(newForm, props.type);
+  watch(() => props.active, (newActive) => {
+    if (!newActive) {
+      return;
+    }
+
+    const newValidationForm = formToTemplateTestingTestValidateForm(props.generalForm, props.type);
 
     const { added, removed } = getChangesForValidateForm(newValidationForm, validationForm.value);
 
@@ -78,6 +86,7 @@ export const useTemplateTestingValidationForm = (props) => {
         validationForm.value[index] = {
           ...validationForm.value[index],
           index: newValidationForm[index].index,
+          params: newValidationForm[index].params,
         };
       }
     });
@@ -129,10 +138,7 @@ export const useTemplateTestingValidationForm = (props) => {
       return;
     }
 
-    const isEmptyValidationForm = validationForm.value.every(item => !item.value);
-    const isEqualValidationForms = isEqual(originalValidationForm.value, validationForm.value);
-
-    if (isEmptyValidationForm || isEqualValidationForms) {
+    if (isEmptyValidationForm.value || isEqualValidationForm.value) {
       applyNewSelectedTest(newSelectedTest);
 
       return;
@@ -174,6 +180,11 @@ export const useTemplateTestingValidationForm = (props) => {
     validationForm,
     selectedTest,
     lastRunVariables,
+
+    hasSelectedTest,
+    isEmptyValidationForm,
+    isEqualValidationForm,
+
     setFormErrors,
     getValidationFormData,
     updateSelectedTest,
@@ -463,7 +474,7 @@ export const useTemplateTestRunner = (props) => {
         });
 
         const newLastRunVariables = props.variablesFields.reduce((acc, field) => {
-          const key = field.formKey ?? field.key;
+          const { key } = field;
 
           acc[key] = get(props.generalForm, key);
 

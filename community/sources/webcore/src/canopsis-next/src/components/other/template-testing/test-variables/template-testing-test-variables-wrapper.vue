@@ -1,21 +1,22 @@
 <template>
   <div class="position-relative">
     <c-progress-overlay :pending="pending" />
-    <v-tabs fixed-tabs>
+    <v-tabs v-model="activeTab" fixed-tabs>
       <v-tab>{{ $t('common.general') }}</v-tab>
-      <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
+      <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
       <v-tab-item class="pt-2" eager>
         <slot :template-vars="templateVars" :copy-vars="copyVars" />
       </v-tab-item>
 
-      <v-tab-item :disabled="isEmptyVariablesFields">
+      <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
         <template-testing-test-variables
           :general-form="form"
           :variables-fields="variablesFields"
           :template-vars="templateVars"
           :rule-id="ruleId"
           :type="type"
+          :active="isActiveTestingTab"
         />
       </v-tab-item>
     </v-tabs>
@@ -23,12 +24,12 @@
 </template>
 
 <script>
-import { computed, onMounted, toRef } from 'vue';
+import { computed, ref, toRef, onMounted } from 'vue';
 
 import { useCopyVarsList } from '@/hooks/vars/copy';
 import { useTemplateVarsList } from '@/hooks/vars/template';
 
-import { useTestVariablesFields } from './hooks/template-test-variables-wrapper';
+import { useTestVariablesTabData } from './hooks/template-test-variables-wrapper';
 import TemplateTestingTestVariables from './template-testing-test-variables.vue';
 import TemplateTestingTestVariablesTab from './partials/template-testing-test-variables-tab.vue';
 
@@ -54,6 +55,10 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const activeTab = ref(0);
+
+    const isActiveTestingTab = computed(() => activeTab.value === 1);
+
     const {
       vars: copyVars,
       pending: copyVarsPending,
@@ -72,9 +77,11 @@ export default {
     });
 
     const {
+      hasAccess,
+
       items: variablesFields,
       isEmptyItems: isEmptyVariablesFields,
-    } = useTestVariablesFields(props, toRef(props, 'type'), emit);
+    } = useTestVariablesTabData(props, toRef(props, 'type'), emit);
 
     const pending = computed(() => templateVarsPending.value || copyVarsPending.value);
 
@@ -84,9 +91,13 @@ export default {
     });
 
     return {
+      activeTab,
+      isActiveTestingTab,
+
       copyVars,
       templateVars,
       pending,
+      hasAccess,
 
       variablesFields,
       isEmptyVariablesFields,

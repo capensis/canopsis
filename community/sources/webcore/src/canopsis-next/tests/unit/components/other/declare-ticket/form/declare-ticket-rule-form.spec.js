@@ -1,5 +1,7 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createTemplateVarsModule } from '@unit/utils/store';
+import { createMockedStoreModules, createAuthModule, createTemplateVarsModule } from '@unit/utils/store';
+
+import { USER_PERMISSIONS } from '@/constants';
 
 import DeclareTicketRuleForm from '@/components/other/declare-ticket/form/declare-ticket-rule-form.vue';
 
@@ -18,8 +20,9 @@ const selectDeclareTicketRulePatternsForm = wrapper => wrapper.find('declare-tic
 const selectDeclareTicketRuleTestQuery = wrapper => wrapper.find('declare-ticket-rule-test-query-stub');
 
 describe('declare-ticket-rule-form', () => {
+  const { authModule, currentUserPermissionsById } = createAuthModule();
   const { templateVarsModule } = createTemplateVarsModule();
-  const store = createMockedStoreModules([templateVarsModule]);
+  const store = createMockedStoreModules([authModule, templateVarsModule]);
 
   const form = {
     enabled: true,
@@ -117,6 +120,23 @@ describe('declare-ticket-rule-form', () => {
     await wrapper.setData({
       hasGeneralError: true,
       hasPatternsError: true,
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `declare-ticket-rule-form` with template testing tab access', async () => {
+    currentUserPermissionsById.mockReturnValueOnce({
+      [USER_PERMISSIONS.technical.templateTesting]: { actions: [] },
+    });
+
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([authModule, templateVarsModule]),
+      propsData: {
+        form: {
+          webhooks: [],
+        },
+      },
     });
 
     expect(wrapper).toMatchSnapshot();
