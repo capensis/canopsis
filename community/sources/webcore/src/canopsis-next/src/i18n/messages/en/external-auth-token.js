@@ -5,4 +5,5 @@ export default {
   lastUpdateDate: 'Last update date',
   allowVariables: 'Allow variables in the Token',
   tokenExpirationHelpText: 'API Response field in JSON format where “Token” is taken from',
+  tokenCanNotBeDeleted: 'Token can not be deleted, it is used in:\n{rules}',
 };

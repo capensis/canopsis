@@ -499,3 +499,7 @@ export const DENSE_TYPES = {
   medium: 1,
   small: 2,
 };
+
+export const LINKED_RULES_TYPES = ['widget', 'eventfilter', 'linkrule', 'scenario', 'declareticketrule'];
+
+export const LINKED_RULES_COUNT = 5;

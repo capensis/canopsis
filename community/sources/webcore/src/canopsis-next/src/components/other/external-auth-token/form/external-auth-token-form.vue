@@ -10,6 +10,9 @@
     <c-description-field v-field="form.description" />
     <request-form
       v-field="form.request"
+      :url-variables="templateVars.request"
+      :headers-variables="templateVars.request"
+      :payload-variables="templateVars.request"
       name="request"
     />
     <c-information-block :title="$t('common.token')">
@@ -21,12 +24,31 @@
           />
         </v-flex>
         <v-flex xs6>
-          <v-text-field
+          <c-payload-text-field
+            v-if="form.allow_variables"
             v-field="form.template"
             v-validate="'required'"
             :label="$t('common.token')"
-            :error-messages="errors.collect('token')"
-            name="token"
+            :variables="templateVars.template"
+            :error-messages="errors.collect('response_field')"
+            name="response_field"
+          >
+            <template #append="">
+              <c-help-icon
+                :text="$t('externalAuthToken.tokenExpirationHelpText')"
+                icon="help"
+                color="grey darken-1"
+                top
+              />
+            </template>
+          </c-payload-text-field>
+          <v-text-field
+            v-else
+            v-field="form.response_field"
+            v-validate="'required'"
+            :label="$t('common.token')"
+            :error-messages="errors.collect('response_field')"
+            name="response_field"
           >
             <template #append="">
               <c-help-icon

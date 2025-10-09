@@ -1,4 +1,4 @@
-import { differenceBy, mapValues, isArray } from 'lodash';
+import { differenceBy, mapValues, isArray, isNil } from 'lodash';
 
 import {
   TEMPLATE_TESTING_TEST_TYPES,
@@ -338,6 +338,15 @@ export const formToTemplateTestingTestValidateForm = (form = {}, type) => {
     ];
   }
 
+  if (type === TEMPLATE_TESTING_TEST_TYPES.externalAuthToken) {
+    return [
+      getTemplateTestingTestValidateFormItem({
+        type: TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response,
+        required: true,
+      }),
+    ];
+  }
+
   return [];
 };
 
@@ -361,6 +370,12 @@ export const getChangesForValidateForm = (form = [], oldForm = []) => ({
  */
 export const formToTemplateTestingTestValidate = (form = []) => form.reduce((acc, item) => {
   if (item.type === TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response) {
+    if (isNil(item.index)) {
+      acc.response = item.value;
+
+      return acc;
+    }
+
     if (!acc.responses) {
       acc.responses = {};
     }

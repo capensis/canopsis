@@ -3,7 +3,7 @@
     <c-advanced-data-table
       :loading="pending"
       :options="options"
-      :items="tokens"
+      :items="preparedTokens"
       :headers="headers"
       :total-items="totalItems"
       expand
@@ -23,10 +23,14 @@
       <template #actions="{ item }">
         <v-layout>
           <c-action-btn
+            v-if="editable"
             type="edit"
             @click="$emit('edit', item)"
           />
           <c-action-btn
+            v-if="deletable"
+            :disabled-button="!!item.deleteTooltip"
+            :tooltip="item.deleteTooltip"
             type="delete"
             @click="$emit('remove', item)"
           />
@@ -43,6 +47,7 @@
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
+import { useLinkedRulesTooltips } from '@/hooks/table/linked-rules-tooltips';
 
 import ExternalAuthTokensListExpandPanel from './partials/external-auth-tokens-list-expand-panel.vue';
 
@@ -67,9 +72,18 @@ export default {
       type: Number,
       required: false,
     },
+    editable: {
+      type: Boolean,
+      default: false,
+    },
+    deletable: {
+      type: Boolean,
+      default: false,
+    },
   },
-  setup() {
+  setup(props) {
     const { t } = useI18n();
+    const { getLinkedRulesMessage } = useLinkedRulesTooltips();
 
     const headers = computed(() => [
       {
@@ -104,8 +118,22 @@ export default {
       },
     ]);
 
+    const preparedTokens = computed(() => props.tokens.map((token) => {
+      const linkedRulesTooltip = getLinkedRulesMessage(token.linked_rules);
+
+      const deleteTooltip = t('externalAuthToken.tokenCanNotBeDeleted', { rules: linkedRulesTooltip });
+
+      return {
+        ...token,
+
+        linkedRulesTooltip,
+        deleteTooltip: deleteTooltip ? `<span class="pre-wrap">${deleteTooltip}</span>` : '',
+      };
+    }));
+
     return {
       headers,
+      preparedTokens,
     };
   },
 };

@@ -175,6 +175,7 @@ export default {
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.alarm]: 'Alarm',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.user]: 'User',
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.entity]: 'Entity',
+    [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.response]: 'Response',
   },
   testDataResponseLabels: {
     [TEMPLATE_TESTING_TEST_TYPES.eventFilter]: 'Response (External data - {index} API)',
