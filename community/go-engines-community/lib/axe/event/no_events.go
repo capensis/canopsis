@@ -189,6 +189,8 @@ func (p *noEventsProcessor) createAlarm(ctx context.Context, entity types.Entity
 	statusStep := NewAlarmStep(types.AlarmStepStatusIncrease, params, false)
 	statusStep.Value = types.AlarmStatusNoEvents
 	alarm.Value.State = &stateStep
+	alarm.Value.MaxState = stateStep.Value
+	alarm.Value.InitialState = stateStep.Value
 	err = alarm.Value.Steps.Add(stateStep)
 	if err != nil {
 		return result, fmt.Errorf("cannot add alarm steps: %w", err)
@@ -292,6 +294,9 @@ func (p *noEventsProcessor) updateAlarm(ctx context.Context, alarm types.Alarm, 
 		if newState < previousState {
 			alarmChange.Type = types.AlarmChangeTypeStateDecrease
 			stateStep.Type = types.AlarmStepStateDecrease
+		} else if alarm.Value.MaxState < newState {
+			alarm.Value.MaxState = newState
+			set["v.max_state"] = newState
 		}
 
 		alarm.Value.State = &stateStep

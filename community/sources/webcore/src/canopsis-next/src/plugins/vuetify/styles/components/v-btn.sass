@@ -8,3 +8,17 @@
 
 .v-btn-toggle .v-btn.v-btn
   min-width: auto
+
+.v-btn.v-btn--disabled
+  &.theme--dark
+    color: var(--v-button-dark-disabled, rgba(255, 255, 255, 0.45)) !important
+
+  &.theme--light
+    color: var(--v-button-dark-disabled, rgba(0, 0, 0, 0.45)) !important
+
+  &.v-btn--has-bg
+    &.theme--dark
+      background-color: var(--v-button-dark-focused, rgba(255, 255, 255, 0.1)) !important
+
+    &.theme--light
+      background-color: var(--v-button-light-focused, rgba(0, 0, 0, 0.1)) !important

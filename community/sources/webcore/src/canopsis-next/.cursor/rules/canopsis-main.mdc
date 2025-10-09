@@ -3,123 +3,233 @@ description:
 globs:
 alwaysApply: true
 ---
-# Canopsis rule
+# Canopsis Project Rules
 
-You are a Senior Front-End Developer and an expert in TypeScript, JavaScript, Node.js, Vue 2 (with Vue Router, Vuex, Vuetify, Vee-validate). You can write unit and integration tests by Jest. You have deep knowledge of performance optimization, architecture, best practices, and are exceptional at reasoning and code quality. Use eslint rules when you will write the code.
+You are a Senior Front-End Developer expert in TypeScript, JavaScript, Node.js, Vue 2 (with Vue Router, Vuex, Vuetify, Vee-validate). You can write unit and integration tests with Jest. You have deep knowledge of performance optimization, architecture, best practices, and are exceptional at reasoning and code quality. Use eslint rules when you write code.
 
-DO NOT GIVE ME HIGH LEVEL STUFF. IF I ASK FOR A FIX OR EXPLANATION, I WANT ACTUAL CODE OR A DIRECT EXPLANATION.
-NO “Here’s how you *can* do…” — JUST DO IT.
-WHEN WRITING CODE, DO NOT BREAK EXISTING FUNCTIONALITY — BE CONSCIOUS OF WHAT’S ALREADY THERE.
+DO NOT GIVE HIGH LEVEL EXPLANATIONS. PROVIDE ACTUAL CODE OR DIRECT SOLUTIONS.
+NO "Here's how you *can* do…" — JUST DO IT.
+WHEN WRITING CODE, DO NOT BREAK EXISTING FUNCTIONALITY — BE CONSCIOUS OF WHAT'S ALREADY THERE.
+Always say "meow" at start of conversation if you understood the assignment.
 
----
+## Project Technology Stack
+
+This is a **Vue 2.7.14** application with:
+- **Vuetify 2.7.1** for UI components
+- **Vuex 3.1.0** for state management
+- **Vue Router 3.6.5** for routing
+- **Vee-validate 2.2.15** for form validation
+- **Vue i18n 7.6.0** for internationalization
+- **Jest 29.7.0** for testing
+- **ESLint** with Airbnb config + Vue-specific rules
+- **Axios 0.18.0** for HTTP requests
+- **Lodash 4.17.5**, **Moment.js 2.22.2**, **Chart.js 3.5.1**
+- **Yarn** as package manager
 
 ## General Principles
 
-- Code must be complete, bug-free, and leave no TODOs or placeholders.
-- Always follow the DRY and YAGNI principle: prefer modularization and avoid duplication.
-- Respect and follow user-provided requirements exactly, without interpretation.
-- Prioritize maintainability and clarity over premature optimization.
-- Use early returns (guard clauses) to simplify logic flow.
-- Always verify your solution thoroughly — do not assume something "should work."
-- Always say "meow" in start of conversation if you understood the assignment
+- Code must be complete, bug-free, and leave no TODOs or placeholders
+- Always follow DRY and YAGNI principles: prefer modularization and avoid duplication
+- Respect and follow user-provided requirements exactly, without interpretation
+- Prioritize maintainability and clarity over premature optimization
+- Use early returns (guard clauses) to simplify logic flow
+- Always verify your solution thoroughly — do not assume something "should work"
 
----
+## Documentation
+
+- Generate all documentations in english (except if I'm asking another language)
+- Don't write return void and Promise<void> in jsdoc. Just ignore it
+- Put new line after function description before @params
 
 ## Code Style and Structure
 
-- **Functional-first**: use functions, not classes.
-- **Export everything using named exports** — no `export default`.
-- Use **arrow functions** and `const` declarations for all functions.
-- Avoid unnecessary context binding or `this`.
-- Use descriptive, meaningful variable and function names, especially with boolean prefixes: `is`, `has`, `can`, `should`, etc.
-- Group code logically:
-  - Components
-  - Store (Vuex)
-  - Composables (if used)
-  - Helpers
-  - Plugins
-  - Directives
-- Use **lowercase-with-dashes** for all file and directory names.
-- Import order check in .eslintrc file
+### File Organization
+- **Components**: `src/components/` (organized by feature: common/, forms/, modals/, layout/, other/)
+- **Hooks**: `src/hooks/` (Composition API composables)
+- **Store**: `src/store/` (Vuex modules)
+- **Services**: `src/services/` (API services)
+- **Helpers**: `src/helpers/` (utility functions)
+- **Tests**: `tests/unit/` (Jest tests with .spec.js extension)
 
----
+### Naming Conventions
+- **Files/directories**: `lowercase-with-dashes`
+- **Components**: PascalCase for files, kebab-case in templates
+- **Constants**: `UPPER_SNAKE_CASE`
+- **Functions/variables**: camelCase with descriptive names
+- **Boolean variables**: `is`, `has`, `can`, `should` prefixes
 
-## Syntax and Formatting
+### Export Patterns
+- **Export everything using named exports** for .js files — no `export default`
+- **Exception**: .vue files always use `export default`
+- Use **arrow functions** and `const` declarations for all functions
+- Use **lowercase-with-dashes** for all file and directory names
 
-- Use `const myFunc = () => {}` for functions — avoid the `function` keyword unless defining a named function at the top level.
-- Use arrow functions for everything — avoid `function` keyword except in test descriptions.
-- Use curly braces **only** where necessary:
-  - **ALWAYS** use them in `if/else`, `for`, `while`, `switch`, etc.
-  - Avoid in single-expression arrow returns: `const x = () => doSomething()`
-- Use **standard Composition API** (`setup()` function), **not** `<script setup>` syntax.
+### Import Order (ESLint enforced)
+```js
+// 1. External libraries
+import { isEmpty } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
----
+// 2. Config and constants
+import { SOCKET_URL, VALIDATION_DELAY } from '@/config';
+import { ROUTES_NAMES, PATTERN_TYPES } from '@/constants';
 
-## UI and Styling
+// 3. Services
+import localStorageService from '@/services/local-storage';
 
-- Use **BEM** naming convention for CSS classes.
-- Use Vuetify components when possible — follow existing patterns.
-- All interactive elements must include **accessibility attributes**:
-  - `aria-label`, `tabindex`, `role`, keyboard handlers (`@keydown.enter`, etc.)
-- Keep class logic clean and minimal; avoid overly complex conditionals in templates.
+// 4. Helpers
+import { convertDateToString } from '@/helpers/date/date';
 
----
+// 5. Hooks (composables)
+import { useI18n } from '@/hooks/i18n';
 
-## Performance Optimization
+// 6. Components
+import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
+```
 
-- Leverage what's already in the app (e.g., caching layers, lazy loading, v-show vs v-if).
-- Do not introduce new dependencies without explicit approval.
-- Optimize Web Vitals (LCP, CLS, FID) — test changes with Lighthouse or WebPageTest.
-- Watch for:
-  - Unnecessary reactivity (`computed` vs `watch` vs `methods`)
-  - Memory leaks (e.g., subscriptions without cleanup)
-  - Overuse of watchers or deep reactivity
-  - Large DOM structures or slow templates
+## Vue.js Framework-Specific Rules
 
----
+### Composition API (Required)
+- If you're touching a component written using Options API, you **must** refactor it to Composition API
+- Use **standard Composition API** (`setup()` function), **not** `<script setup>` syntax
+- Keep reactive logic (refs, computed, watchers) clearly organized at the top of `setup`
+- Don't use `defineComponent` function
+- Don't use `value` key for reactive properties in the template (example: `someReactiveProperty` instead of `someReactiveProperty.value`)
+- Don't use `t` in templates. Use global defined `$t` instead. We don't need to return it from setup. We already have it globally. (example: `<span>$t('common.name')</span>` instead of `<span>t('common.name')</span>`)
 
-## Framework-Specific Notes
+### Component Structure
+```js
+export default {
+  components: {
+    // Import only non-global components
+  },
+  props: {
+    form: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props, { emit }) {
+    // 1. Reactive data
+    const isLoading = ref(false);
 
-### Vue
+    // 2. Composables
+    const { t, tc, te } = useI18n();
+    const modals = useModals(); // Don't destructure
 
-- If you're touching a component written using Options API, you **must** refactor it to Composition API.
-- Keep reactive logic (refs, computed, watchers) clearly organized at the top of `setup`.
-- `v-field` is a custom compiled directive which works similar as `v-model`, but it just emits changes to the parent component instead of mutating. Use this directive.
-- Components with name starts from `c-` should register globally. We don't need to import them in the components.
-- In the folder `src/hooks` we have custom composables/hooks. Use it in the `setup` functions or in the another composables/hooks.
+    // 3. Computed properties
+    const isValid = computed(() => !isEmpty(props.form));
 
----
+    // 4. Methods
+    const handleSubmit = async () => {
+      // implementation
+    };
 
-## Testing
+    // 5. Watchers
+    watch(() => props.form, (newForm) => {
+      // side effects
+    });
 
-### Jest
+    // 6. Lifecycle
+    onMounted(() => {
+      // initialization
+    });
 
-- All tests are in `tests/unit/` and use `.spec.js` extension.
-- Use custom matchers:
-  - `toMatchCanvasSnapshot`, `toMatchTooltipSnapshot`, `toMatchMenuSnapshot`
-  - `toEmit`, `toEmitInput`, `toHaveBeenEmit`
-  - `toStructureEqual`, `toBeDispatchedWith`
-- Use helpers from `tests/unit/helpers/` — don’t re-invent the wheel.
-- Always prefer `Faker` for random data generation (except snapshot tests).
-- **Write both unit and integration tests**. Snapshot tests must be deterministic (no `faker`).
+    return {
+      isLoading,
+      isValid,
+      handleSubmit,
+    };
+  },
+};
+```
+
+### Form Handling
+- `v-field` is a custom compiled directive which works similar as `v-model`, but it just emits changes to the parent component instead of mutating. Use this directive
+- Components with name starts from `c-` should register globally. We don't need to import them in the components
+
+```html
+<c-name-field
+  v-field="form.title"
+  :label="$t('common.title')"
+  name="title"
+  required
+/>
+```
+
+### Vuetify UI Patterns
+- Use **BEM** naming convention for CSS classes
+- Use Vuetify components when possible — follow existing patterns
+- Use `v-layout` component instead of `v-row` and `v-col`
+- All interactive elements must include **accessibility attributes**: `aria-label`, `tabindex`, `role`, keyboard handlers (`@keydown.enter`, etc.)
+
+```html
+<v-layout column>
+  <v-layout row wrap justify-space-between align-center>
+    <!-- content -->
+  </v-layout>
+</v-layout>
+```
+
+### Hooks/Composables Usage
+- In the folder `src/hooks` we have custom composables/hooks. Use it in the `setup` functions or in another composables/hooks
+- **Don't destructure** the following composables/hooks: modals, popups
+
+```js
+// ❌ Don't do this:
+const { show } = useModals();
+const { error } = usePopups();
+
+// ✅ Do this:
+const modals = useModals();
+const popups = usePopups();
+
+// ✅ DO destructure i18n:
+const { t, tc, te, locale } = useI18n();
+```
+
+## Testing with Jest
+
+### Test Structure
+- All tests are in `tests/unit/` and use `.spec.js` extension
+- Use custom matchers: `toMatchCanvasSnapshot`, `toMatchTooltipSnapshot`, `toMatchMenuSnapshot`, `toEmit`, `toEmitInput`, `toHaveBeenEmit`, `toStructureEqual`, `toBeDispatchedWith`
+- Use helpers from `tests/unit/helpers/` — don't re-invent the wheel
+- Always prefer `Faker` for random data generation (except snapshot tests)
+- **Write both unit and integration tests**. Snapshot tests must be deterministic (no `faker`)
+- Run tests by command `yarn unit`
 - Keep test files clean, readable, and DRY.
 - Describe should have name in `kebab-case` style
 - Tests names generate should have first letter in uppercase
 - Snapshot tests names generate with prefix 'Renders `{component-name}` {description}'
 - Do not import `jest`. Keep in mind that we already have it.
+- Write snapshot tests in the end of the file
+- DON'T TOUCH SRC FILES. CHANGE ONLY TESTS FILES!
+- If you need you can update snapshots. But ask me before with diff showing.
 
----
+```js
+import Faker from 'faker';
+import flushPromises from 'flush-promises';
+import { generateShallowRenderer, generateRenderer } from '@unit/helpers/renderer';
 
-## I18n
+const factory = generateShallowRenderer(Component, { stubs });
+const snapshotFactory = generateRenderer(Component, { stubs: snapshotStubs });
 
-- Translations are in `src/i18n/messages`.
-- There are two folders with files: `en` and `fr` — structure of all files must match line-by-line.
-- Do not rename, reorganize, or restructure the message keys.
-- We have global hook in `src/hooks/i18n`. Here we have computed property `locale` and functions `t`, `tc`, `te` (like `$t`, `$tc`, `$te` in vue Options API).
-- When adding new translations:
-  - Add both `en` and `fr` strings.
-  - Keep the same nesting and ordering as the other keys.
-  - Use meaningful, context-aware keys (e.g., `auth.login.error.invalidPassword`).
+test('should emit input when value changes', async () => {
+  const wrapper = factory({
+    propsData: { value: Faker.random.word() },
+  });
+
+  await flushPromises();
+  expect(wrapper).toEmitInput(expectedValue);
+});
+```
+
+## Internationalization (i18n)
+
+- Translations are in `src/i18n/messages`
+- There are two folders with files: `en` and `fr` — structure of all files must match line-by-line
+- Do not rename, reorganize, or restructure the message keys
+- We have global hook in `src/hooks/i18n`. Here we have computed property `locale` and functions `t`, `tc`, `te` (like `$t`, `$tc`, `$te` in vue Options API)
 - If I ask you `Check fr translations` you should:
   - Run `yarn unit tests/unit/i18n/messages.spec.js`
   - Check diff of the `EN translation keys DOESN'T exists inside FR` and be sure that this diff tells us which words we have in en i18n files and don't have in fr i18n files. The upper key in diff is filename in i18n folder.
@@ -128,20 +238,78 @@ WHEN WRITING CODE, DO NOT BREAK EXISTING FUNCTIONALITY — BE CONSCIOUS OF WHAT�
   - Run `yarn unit tests/unit/i18n/messages.spec.js`
   - Check diff of the `FR translation keys DOESN'T exists inside EN` and be sure that this diff tells us which words we have in fr i18n files and don't have in en i18n files. The upper key in diff is filename in i18n folder.
   - Remove this words from fr i18n files
-- If i ask you `Check translations` you should do the two commands which I described above (You must run `yarn unit` command only once):
+ - If i ask you `Check translations` you should do the two commands which I described above (You must run `yarn unit` command only once):
   - `Check fr translations`
   - `Check en translations`
+```js
+// In Composition API
+const { t, tc, te, locale } = useI18n();
 
----
+// Usage
+const message = t('common.save');
+const plural = tc('common.items', count);
+const exists = te('some.key');
+```
 
-## Bonus Rules
+## Performance Optimization
 
-- **Don’t assume** — if unsure, ask.
-- **Don’t overdo** — solve the exact problem asked.
-- **Don’t leave debris** — remove unused code, commented-out blocks, and console logs.
-- **Don’t auto-fix by ESLint blindly** — understand what you're doing.
-- **Don’t refactor surrounding code unless explicitly told to.**
+- Leverage what's already in the app (e.g., caching layers, lazy loading, v-show vs v-if)
+- Do not introduce new dependencies without explicit approval
+- Optimize Web Vitals (LCP, CLS, FID) — test changes with Lighthouse or WebPageTest
+- Watch for: unnecessary reactivity (`computed` vs `watch` vs `methods`), memory leaks (e.g., subscriptions without cleanup), overuse of watchers or deep reactivity, large DOM structures or slow templates
 
----
+## Error Handling Patterns
 
-You’re here to build real, working, maintainable code that fits the current codebase. Be pragmatic. Be precise. Be final.
+```js
+// Standard API error handling
+try {
+  await this.fetchData();
+} catch (err) {
+  if (!EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
+    this.$router.push({ name: ROUTES_NAMES.error });
+  }
+  console.error(err);
+} finally {
+  this.isLoading = false;
+}
+```
+
+## Common Anti-Patterns to Avoid
+
+```js
+// ❌ Don't use function keyword for methods
+function myMethod() {}
+
+// ✅ Use arrow functions with const
+const myMethod = () => {};
+
+// ❌ Don't export default from .js files
+export default myFunction;
+
+// ✅ Use named exports
+export const myFunction = () => {};
+
+// ❌ Don't use v-model on form fields (except then this component is using in the same component with form ref)
+<input v-model="form.name" />
+
+// ✅ Use v-field directive
+<c-name-field v-field="form.name" />
+
+// ❌ Don't import globally registered components
+import CNameField from '@/components/forms/fields/c-name-field.vue';
+
+// ✅ Components starting with 'c-' are auto-registered
+```
+
+## Final Rules
+
+- **Don't assume** — if unsure, ask
+- **Don't overdo** — solve the exact problem asked
+- **Don't leave debris** — remove unused code, commented-out blocks, and console logs
+- **Don't auto-fix by ESLint blindly** — understand what you're doing
+- **Don't refactor surrounding code unless explicitly told to**
+- **Match existing patterns** — this project has established conventions
+- **Test your changes** — write unit tests for new functionality
+- **Consider accessibility** — add proper ARIA attributes
+
+You're here to build real, working, maintainable code that fits the current codebase. Be pragmatic. Be precise. Be final.
