@@ -38,6 +38,8 @@ const (
 
 	sqlColumnsForCsvColumn = 3
 	sqlUndefinedColumnCode = "42703"
+
+	previewFailedMsg = "preview failed"
 )
 
 type ImportWorker interface {
@@ -203,7 +205,9 @@ func (w *importWorker) CreatePreviewJob(ctx context.Context, id string, req Prev
 				},
 			},
 		},
-		options.FindOneAndUpdate().SetReturnDocument(options.After),
+		options.FindOneAndUpdate().
+			SetReturnDocument(options.After).
+			SetProjection(bson.M{"fail_reason": 0, "error_info": 0}),
 	).Decode(&job)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -357,7 +361,7 @@ func (w *importWorker) ProcessJob(ctx context.Context, id string) (resErr error)
 					"$set": bson.M{
 						"status":         ImportStatusPreviewFailed,
 						"error_info":     errorInfo,
-						"fail_reason":    "preview failed",
+						"fail_reason":    previewFailedMsg,
 						"column_configs": job.ColumnConfigs, // should save aligned column configs
 					},
 				}
@@ -471,7 +475,14 @@ func syncColumnConfigsOrder(oldConfigs, newConfigs []ColumnConfig) error {
 }
 
 func (w *importWorker) filterColumnConfigs(job ImportJob) ([]ColumnConfig, map[string]ErrorInfo) {
-	errorInfo := make(map[string]ErrorInfo)
+	// if a fail reason is not equal to previewFailedMsg, it means that it wasn't due to a column type validation error.
+	// the error was on db level during inserts, updates or column type transforms.
+	// we don't know which column was responsible for this, so we need to redo the preview again for all columns.
+	if job.FailReason != "" && job.FailReason != previewFailedMsg {
+		return job.ColumnConfigs, map[string]ErrorInfo{}
+	}
+
+	errorInfo := map[string]ErrorInfo{}
 
 	filteredColumnConfigs := make([]ColumnConfig, 0, len(job.ColumnConfigs))
 	for i, cfg := range job.ColumnConfigs {
@@ -1165,8 +1176,12 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 			}
 		}
 
+		// A hack to avoid the "(SQLSTATE 42804)" error when column types have been changed.
+		// Adding a comment forces the driver to execute the query without using a prepared statement cache.
+		comment := "/*" + strconv.Itoa(int(time.Now().UnixMicro())) + "*/"
+
 		args = append(args, id)
-		updateSQL := "UPDATE " + tableName + " SET " + strings.Join(setStmts, ", ") +
+		updateSQL := comment + "UPDATE " + tableName + " SET " + strings.Join(setStmts, ", ") +
 			" WHERE " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " = $" + strconv.Itoa(len(args))
 		batch.Queue(updateSQL, args...)
 
