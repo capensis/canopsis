@@ -141,6 +141,9 @@ export default {
   [USER_PERMISSIONS.technical.templateTesting]: {
     title: 'Test de modèle',
   },
+  [USER_PERMISSIONS.technical.externalAuthTokens]: {
+    title: 'Jetons d\'authentification externes',
+  },
 
   /**
    * Grouped admin

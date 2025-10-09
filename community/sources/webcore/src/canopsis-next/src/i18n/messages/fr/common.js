@@ -321,6 +321,7 @@ export default {
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
+  token: 'Jeton',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
@@ -604,5 +605,16 @@ export default {
       csv: 'fichier CSV',
     },
     fileSizeMb: 'Taille du fichier (MB)',
+  },
+
+  linkedRulesTooltip: {
+    andMore: 'et plus...',
+    linkedRules: {
+      widget: '<strong>Widgets</strong> qui utilisent cet élément<br><ul>{rules}</ul>',
+      eventfilter: '<strong>Filtres d\'événements</strong>\n<ul>{rules}</ul>',
+      linkrule: '<strong>Liens</strong>\n<ul>{rules}</ul>',
+      scenario: '<strong>Scénarios</strong>\n<ul>{rules}</ul>',
+      declareticketrule: '<strong>Règles de déclaration de tickets</strong>\n<ul>{rules}</ul>',
+    },
   },
 };

@@ -2,10 +2,10 @@
 
 exports[`c-duration-field Renders \`c-duration-field\` with custom props 1`] = `
 <div
-  class="layout"
+  class="layout gap-2"
 >
   <div
-    class="flex pr-3 xs7"
+    class="flex xs7"
   >
     <c-number-field-stub
       disabled="true"
@@ -122,10 +122,10 @@ exports[`c-duration-field Renders \`c-duration-field\` with custom props 2`] = `
 
 exports[`c-duration-field Renders \`c-duration-field\` with default props 1`] = `
 <div
-  class="layout"
+  class="layout gap-2"
 >
   <div
-    class="flex pr-3 xs7"
+    class="flex xs7"
   >
     <c-number-field-stub
       label="Duration"
@@ -217,10 +217,10 @@ exports[`c-duration-field Renders \`c-duration-field\` with default props 2`] = 
 
 exports[`c-duration-field Renders \`c-duration-field\` with duration value as string 1`] = `
 <div
-  class="layout"
+  class="layout gap-2"
 >
   <div
-    class="flex pr-3 xs7"
+    class="flex xs7"
   >
     <c-number-field-stub
       label="Duration"
@@ -310,10 +310,10 @@ exports[`c-duration-field Renders \`c-duration-field\` with duration value as st
 
 exports[`c-duration-field Renders \`c-duration-field\` with duration value as undefined 1`] = `
 <div
-  class="layout"
+  class="layout gap-2"
 >
   <div
-    class="flex pr-3 xs7"
+    class="flex xs7"
   >
     <c-number-field-stub
       label="Duration"
@@ -402,11 +402,11 @@ exports[`c-duration-field Renders \`c-duration-field\` with duration value as un
 
 exports[`c-duration-field Renders \`c-duration-field\` with errors 1`] = `
 <div
-  class="layout"
+  class="layout gap-2"
   value="[object Object]"
 >
   <div
-    class="flex pr-3 xs7"
+    class="flex xs7"
   >
     <c-number-field-stub
       label="Duration"
@@ -498,10 +498,10 @@ exports[`c-duration-field Renders \`c-duration-field\` with errors 2`] = `undefi
 
 exports[`c-duration-field Renders \`c-duration-field\` with long time list 1`] = `
 <div
-  class="layout"
+  class="layout gap-2"
 >
   <div
-    class="flex pr-3 xs7"
+    class="flex xs7"
   >
     <c-number-field-stub
       label="Duration"
@@ -593,10 +593,10 @@ exports[`c-duration-field Renders \`c-duration-field\` with long time list 2`] =
 
 exports[`c-duration-field Renders \`c-duration-field\` with value is greater than the minimum 1`] = `
 <div
-  class="layout"
+  class="layout gap-2"
 >
   <div
-    class="flex pr-3 xs7"
+    class="flex xs7"
   >
     <c-number-field-stub
       label="Duration"
