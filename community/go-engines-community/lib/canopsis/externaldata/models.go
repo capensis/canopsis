@@ -46,7 +46,7 @@ type Table struct {
 	ID                string           `bson:"_id,omitempty"`
 	Type              int              `bson:"type"`
 	Name              string           `bson:"name"`
-	Description       string           `bson:"description,omitempty"`
+	Description       string           `bson:"description"`
 	ColumnConfigs     []ColumnConfig   `bson:"column_configs,omitempty"`
 	FromConfig        bool             `bson:"from_config,omitempty"`
 	RemovedFromConfig bool             `bson:"removed_from_config,omitempty"`
