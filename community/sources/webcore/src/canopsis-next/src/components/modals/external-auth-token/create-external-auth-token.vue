@@ -79,6 +79,7 @@ export default {
 
     const form = ref(externalAuthTokenToForm(config.value.externalAuthToken));
 
+    const title = computed(() => config.value.title || t('modals.createExternalAuthToken.create.title'));
     const ruleId = computed(() => config.value.externalAuthToken?._id);
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
@@ -93,8 +94,6 @@ export default {
     });
 
     useFormConfirmableCloseModal({ form, submit, close });
-
-    const title = computed(() => config.value.title || t('modals.createExternalAuthToken.create.title'));
 
     return {
       type,

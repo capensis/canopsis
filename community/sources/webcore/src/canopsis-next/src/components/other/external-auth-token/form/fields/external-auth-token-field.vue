@@ -63,6 +63,7 @@ export default {
       idKey: '_id',
       idParamsKey: 'ids',
       fetchHandler: fetchWebhookTokenRulesListWithoutStore,
+      attachValue: true,
     }, emit);
 
     return {
