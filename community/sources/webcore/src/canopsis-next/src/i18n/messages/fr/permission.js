@@ -247,6 +247,7 @@ export default {
     [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Consignes - approuver',
     [USER_PERMISSIONS.technical.remediationJob]: 'Consignes - onglet tâches',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
+    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
     [USER_PERMISSIONS.technical.stateSetting]: 'Paramètres de calcul d\'état/sévérité',
     [USER_PERMISSIONS.technical.storageSettings]: 'Paramètres de stockage',
     [USER_PERMISSIONS.technical.tag]: 'Gestion des tags',
@@ -282,7 +283,6 @@ export default {
      * Technical Admin Notification
      */
     [USER_PERMISSIONS.technical.notification.common]: 'Paramètres - paramètres de notification',
-    [USER_PERMISSIONS.technical.notification.instructionStats]: 'Statistiques des consignes',
 
     /**
      * Technical Admin Views and widgets
@@ -380,5 +380,10 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorException]: 'Dates d\'exceptions de comportements périodiques',
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'Raisons de comportements périodiques',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'Types de comportements périodiques',
+  },
+
+  conditionalTooltips: {
+    approveInstructions: 'Activé car ce rôle a les permissions d\'approuver les consignes',
+    executeManualInstructions: 'Activé car ce rôle a les permissions d\'exécuter des consignes manuelles',
   },
 };

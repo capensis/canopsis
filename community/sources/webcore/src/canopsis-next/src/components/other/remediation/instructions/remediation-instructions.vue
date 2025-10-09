@@ -4,7 +4,7 @@
       :remediation-instructions="remediationInstructions"
       :pending="remediationInstructionsPending"
       :total-items="remediationInstructionsMeta.total_count"
-      :options.sync="options"
+      :options="options"
       :updatable="hasUpdateAnyRemediationInstructionAccess"
       :removable="hasDeleteAnyRemediationInstructionAccess"
       :duplicable="hasCreateAnyRemediationInstructionAccess"
@@ -13,126 +13,78 @@
       @remove="showRemoveRemediationInstructionModal"
       @approve="showApproveRemediationInstructionModal"
       @edit="showEditRemediationInstructionModal"
+      @update:options="updateOptions"
     />
   </v-card-text>
 </template>
 
 <script>
-import { omit } from 'lodash';
+import { onMounted } from 'vue';
 
-import { MODALS } from '@/constants';
+import { USER_PERMISSIONS } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
-import { localQueryMixin } from '@/mixins/query/query';
-import { entitiesRemediationInstructionMixin } from '@/mixins/entities/remediation/instruction';
-import {
-  permissionsTechnicalRemediationInstructionMixin,
-} from '@/mixins/permissions/technical/remediation-instruction';
+import { useFetchListWithOptions } from '@/hooks/query/shared';
+import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useCRUDPermissions } from '@/hooks/auth';
 
+import { useRemediationInstructionsActions } from './hooks/remediation-instructions';
 import RemediationInstructionsList from './remediation-instructions-list.vue';
 
 export default {
   components: { RemediationInstructionsList },
-  mixins: [
-    authMixin,
-    localQueryMixin,
-    entitiesRemediationInstructionMixin,
-    permissionsTechnicalRemediationInstructionMixin,
-  ],
-  mounted() {
-    this.fetchList();
-  },
-  methods: {
-    fetchList() {
-      const params = this.getQuery();
-      params.with_flags = true;
-      params.with_month_executions = true;
+  setup() {
+    const {
+      remediationInstructions,
+      remediationInstructionsMeta,
+      remediationInstructionsPending,
+      fetchRemediationInstructionsList,
+    } = useRemdeitionInstruction();
 
-      return this.fetchRemediationInstructionsList({ params });
-    },
-
-    showEditRemediationInstructionModal(remediationInstruction) {
-      const wasRequestedByAnotherUser = !!remediationInstruction.approval
-        && !(remediationInstruction.approval.requested_by?._id === this.currentUser._id);
-
-      this.$modals.show({
-        name: MODALS.createRemediationInstruction,
-        config: {
-          remediationInstruction,
-          disabled: wasRequestedByAnotherUser,
-          title: this.$t('modals.createRemediationInstruction.edit.title'),
-          action: async (instruction) => {
-            await this.updateRemediationInstruction({ id: remediationInstruction._id, data: instruction });
-
-            this.$popups.success({
-              text: this.$t('modals.createRemediationInstruction.edit.popups.success', {
-                instructionName: instruction.name,
-              }),
-            });
-
-            await this.fetchList();
-          },
+    const {
+      options,
+      updateOptions,
+      handler: fetchList,
+    } = useFetchListWithOptions({
+      fetchListHandler: ({ params }) => fetchRemediationInstructionsList({
+        params: {
+          ...params,
+          with_flags: true,
+          with_month_executions: true,
         },
-      });
-    },
+      }),
+    });
 
-    showApproveRemediationInstructionModal(remediationInstruction) {
-      this.$modals.show({
-        name: MODALS.remediationInstructionApproval,
-        config: {
-          remediationInstructionId: remediationInstruction._id,
-          afterSubmit: this.fetchList,
-        },
-      });
-    },
+    const {
+      hasCreateAccess: hasCreateAnyRemediationInstructionAccess,
+      hasUpdateAccess: hasUpdateAnyRemediationInstructionAccess,
+      hasDeleteAccess: hasDeleteAnyRemediationInstructionAccess,
+    } = useCRUDPermissions(USER_PERMISSIONS.technical.remediationInstruction);
 
-    showRemoveRemediationInstructionModal(remediationInstruction) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await this.removeRemediationInstruction({ id: remediationInstruction._id });
-            await this.fetchList();
-          },
-        },
-      });
-    },
+    const {
+      showDuplicateRemediationInstructionModal,
+      showEditRemediationInstructionModal,
+      showApproveRemediationInstructionModal,
+      showRemoveRemediationInstructionModal,
+      showRemoveSelectedRemediationInstructionModal,
+    } = useRemediationInstructionsActions(fetchList);
 
-    showDuplicateRemediationInstructionModal(remediationInstruction) {
-      this.$modals.show({
-        name: MODALS.createRemediationInstruction,
-        config: {
-          remediationInstruction: omit(remediationInstruction, ['_id']),
-          title: this.$t('modals.createRemediationInstruction.duplicate.title'),
-          action: async (instruction) => {
-            const newRemediationInstruction = await this.createRemediationInstruction({ data: instruction });
+    onMounted(fetchList);
 
-            this.$popups.success({
-              text: this.$t('modals.createRemediationInstruction.duplicate.popups.success', {
-                instructionName: remediationInstruction.name,
-              }),
-            });
-
-            await this.fetchList();
-
-            return newRemediationInstruction;
-          },
-        },
-      });
-    },
-
-    showRemoveSelectedRemediationInstructionModal(selected) {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          action: async () => {
-            await Promise.all(selected.map(({ _id: id }) => this.removeRemediationInstruction({ id })));
-
-            await this.fetchList();
-          },
-        },
-      });
-    },
+    return {
+      remediationInstructions,
+      remediationInstructionsMeta,
+      remediationInstructionsPending,
+      options,
+      updateOptions,
+      hasCreateAnyRemediationInstructionAccess,
+      hasUpdateAnyRemediationInstructionAccess,
+      hasDeleteAnyRemediationInstructionAccess,
+      showDuplicateRemediationInstructionModal,
+      showEditRemediationInstructionModal,
+      showApproveRemediationInstructionModal,
+      showRemoveRemediationInstructionModal,
+      showRemoveSelectedRemediationInstructionModal,
+    };
   },
 };
 </script>
