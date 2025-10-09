@@ -8,6 +8,7 @@ import { requestToForm, formToRequest } from '@/helpers/entities/shared/request/
  * @property {string} [name] - The name of the external auth token
  * @property {string} [description] - The description of the external auth token
  * @property {string} [template] - The template for the external auth token
+ * @property {string} [response_field] - The response field for the external auth token
  * @property {Duration} [expiration_duration] - The expiration duration
  * @property {Request} [request] - The request configuration object
  */
@@ -17,6 +18,8 @@ import { requestToForm, formToRequest } from '@/helpers/entities/shared/request/
  * @property {string} name - The name field for the form
  * @property {string} description - The description field for the form
  * @property {string} template - The template field for the form
+ * @property {string} response_field - The response field for the form
+ * @property {boolean} allow_variables - The allow variables field for the form
  * @property {Duration} expiration_duration - The formatted expiration duration for the form
  * @property {RequestForm} request - The formatted request configuration for the form
  */
@@ -32,6 +35,8 @@ export const externalAuthTokenToForm = (externalAuthToken = {}) => {
     name: externalAuthToken.name ?? '',
     description: externalAuthToken.description ?? '',
     template: externalAuthToken.template ?? '',
+    response_field: externalAuthToken.response_field ?? '',
+    allow_variables: !!externalAuthToken.template,
     expiration_duration: durationToForm(externalAuthToken.expiration_duration),
     request: requestToForm(externalAuthToken.request ?? {}),
   };
@@ -50,8 +55,22 @@ export const externalAuthTokenToForm = (externalAuthToken = {}) => {
  * @param {ExternalAuthTokenForm} [form={}] - The form data object
  * @returns {ExternalAuthToken} The external auth token entity
  */
-export const formToExternalAuthToken = (form = {}) => ({
-  ...form,
+export const formToExternalAuthToken = ({
+  template,
+  allow_variables: allowVariables,
+  response_field: responseField,
+  ...form
+} = {}) => {
+  const result = {
+    ...form,
+    request: formToRequest(form.request),
+  };
 
-  request: formToRequest(form.request),
-});
+  if (allowVariables) {
+    result.template = template;
+  } else {
+    result.response_field = responseField;
+  }
+
+  return result;
+};
