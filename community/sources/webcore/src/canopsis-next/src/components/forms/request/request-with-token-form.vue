@@ -5,8 +5,9 @@
     :name="name"
     :auth-token="form.auth_token"
     :multiple="form.multiple_urls"
-    :headers-variables="variables"
-    :payload-variables="variables"
+    :headers-variables="headersVariables"
+    :payload-variables="payloadVariables"
+    :url-variables="urlVariables"
     with-auth-token
     @update:auth-token="updateAuthToken"
     @update:multiple="updateMultiple"
@@ -33,6 +34,18 @@ export default {
     name: {
       type: String,
       default: 'request',
+    },
+    urlVariables: {
+      type: Array,
+      default: () => [],
+    },
+    headersVariables: {
+      type: Array,
+      default: () => [],
+    },
+    payloadVariables: {
+      type: Array,
+      default: () => [],
     },
     variables: {
       type: Array,

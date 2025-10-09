@@ -28,44 +28,6 @@ export const EXTERNAL_DATA_PAYLOADS_VARIABLES = {
   regexp: '.RegexMatch.%field%.%name%',
 };
 
-export const ACTION_COPY_PAYLOAD_VARIABLES = {
-  connector: 'Event.Connector',
-  connectorName: 'Event.ConnectorName',
-  component: 'Event.Component',
-  resource: 'Event.Resource',
-  output: 'Event.Output',
-  extraInfos: 'Event.ExtraInfos.',
-  regexMatch: 'RegexMatch.',
-  externalData: 'ExternalData.',
-};
-
-export const EXTERNAL_DATA_DEFAULT_CONDITION_VALUES = [
-  {
-    text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.component,
-    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.component,
-  },
-  {
-    text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connector,
-    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.connector,
-  },
-  {
-    text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.connectorName,
-    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.connectorName,
-  },
-  {
-    text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.resource,
-    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.resource,
-  },
-  {
-    text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.output,
-    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.output,
-  },
-  {
-    text: EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS.extraInfos,
-    value: EXTERNAL_DATA_PAYLOADS_VARIABLES.extraInfos,
-  },
-];
-
 export const EXTERNAL_DATA_TABLES_TYPES = {
   mongo: 0,
   postgres: 1,

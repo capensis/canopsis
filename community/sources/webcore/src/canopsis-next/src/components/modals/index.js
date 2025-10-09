@@ -453,3 +453,13 @@ export const CreateExternalAuthToken = () => ({
   component: import(/* webpackChunkName: "ExternalAuthToken" */ './external-auth-token/create-external-auth-token.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateTemplateTestingData = () => ({
+  component: import(/* webpackChunkName: "TemplateTesting" */ './template-testing/create-template-testing-data.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTemplateTestingTest = () => ({
+  component: import(/* webpackChunkName: "TemplateTesting" */ './template-testing/create-template-testing-test.vue'),
+  loading: LoaderOverlay,
+});

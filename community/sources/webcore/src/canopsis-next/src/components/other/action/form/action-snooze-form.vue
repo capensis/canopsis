@@ -1,6 +1,6 @@
 <template>
   <div>
-    <action-note-form v-field="value" />
+    <action-note-form v-field="value" :template-vars="templateVars" />
     <c-duration-field
       v-field="value.duration"
       :name="`${name}.duration`"
@@ -26,6 +26,10 @@ export default {
     name: {
       type: String,
       required: 'parameters',
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
 };
