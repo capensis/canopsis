@@ -6,6 +6,9 @@
       :headers-variables="payloadVariables"
       :payload-variables="payloadVariables"
       :url-variables="payloadVariables"
+      :multiple="webhook.multiple_urls"
+      with-multiple-urls
+      @update:multiple="updateMultiple"
     />
     <declare-ticket-rule-ticket-mapping-field v-field="webhook" with-ticket-system-name />
     <v-layout justify-end>
@@ -127,6 +130,10 @@ export default {
       } finally {
         this.checking = false;
       }
+    },
+
+    updateMultiple(multiple) {
+      this.updateField('multiple_urls', multiple);
     },
   },
 };

@@ -34,6 +34,7 @@
     "default-param-last": "off",
     "no-restricted-exports": "off",
     "prefer-regex-literals": ["error", { "disallowRedundantWrapping": true }],
+    "vue/valid-next-tick": "off",
     "vue/multi-word-component-names": "off",
     "vue/no-use-computed-property-like-method": "off",
     "vue/component-definition-name-casing": "off",
@@ -97,6 +98,7 @@
       ],
       "alphabetical": false
     }],
+    "vue/valid-v-slot": ["error", { "allowModifiers": true }],
     "vuejs-accessibility/label-has-for": "off",
     "vuejs-accessibility/click-events-have-key-events": "off",
     "vuejs-accessibility/form-control-has-label": "off",
@@ -159,6 +161,7 @@
     }],
     "no-unused-expressions": "off",
     "no-restricted-syntax": ["off"],
+    "vue/no-v-for-template-key-on-root": "off",
     "no-restricted-imports": ["error", {
       "patterns": [
         {

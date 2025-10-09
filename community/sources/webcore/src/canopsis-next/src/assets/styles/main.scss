@@ -291,6 +291,29 @@ html {
   overflow: visible !important;
 }
 
+.remove-card-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  margin: 0 !important;
+}
+
+.text-ucfirst {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
+.color--inherit {
+  color: inherit !important;
+}
+
+.color--current-color {
+  color: currentColor !important;
+}
+
 .table {
   &__grid  > .v-data-table__wrapper > table {
     & > tbody > tr > td,
@@ -384,5 +407,39 @@ html {
   }
   .col-gap-#{$i}, .gap-#{$i} {
     column-gap: $i * 4px;
+  }
+}
+
+.state {
+  $states: ok, minor, major, critical;
+
+  @each $state in $states {
+    &-#{$state} {
+      &, & *:not(svg, g, path) {
+        color: var(--v-state-#{$state}-text-base);
+      }
+    }
+  }
+
+  &-pause {
+    background-color: var(--v-state-pause-base);
+
+    &, & *:not(svg, g, path) {
+      color: white;
+    }
+  }
+}
+
+.impact-state {
+  $impactStates: (0: white, 1: black, 2: black, 3: black, 4: white);
+
+  @each $state, $color in $impactStates {
+    &-#{$state} {
+      background-color: var(--v-impact-state-#{$state}-base);
+
+      &, & *:not(svg, g, path) {
+        color: $color;
+      }
+    }
   }
 }

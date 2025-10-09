@@ -15,7 +15,7 @@ describe('c-alarm-tags-chips', () => {
   ];
   const selectedTags = [tags[2].value];
   const alarm = {
-    tags: [tags[0].value],
+    tag_colors: tags,
   };
   const alarmTagModule = {
     name: 'alarmTag',

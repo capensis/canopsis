@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"crypto/tls"
 	"net/http"
 	"os"
 	"time"
@@ -21,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/sharetoken"
+	libsectls "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/token"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tokenprovider"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
@@ -117,9 +119,6 @@ func (s *security) GetHttpAuthProviders() []libsecurity.HttpProvider {
 			res = append(res, httpprovider.NewBearerProvider(s.GetTokenProviders()))
 		case libsecurity.AuthMethodApiKey:
 			res = append(res, httpprovider.NewApikeyProvider(s.newUserProvider()))
-		case libsecurity.AuthMethodLdap:
-			ldapProvider := s.newLdapAuthProvider()
-			res = append(res, httpprovider.NewQueryBasicProvider(ldapProvider))
 		}
 	}
 
@@ -146,8 +145,20 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 		switch v {
 		case libsecurity.AuthMethodCas:
 			casConfig := s.config.Security.Cas
+			tc := &tls.Config{
+				InsecureSkipVerify: casConfig.InsecureSkipVerify, //nolint:gosec
+			}
+			if !casConfig.InsecureVerifyAnyCert {
+				tc.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tc)
+			}
+
+			hc := &http.Client{
+				Transport: &http.Transport{
+					TLSClientConfig: tc,
+				},
+			}
 			p := httpprovider.NewCasProvider(
-				http.DefaultClient,
+				hc,
 				casConfig,
 				s.newUserProvider(),
 				roleprovider.NewRoleProvider(client),
@@ -169,9 +180,22 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 			router.GET("/api/v4/saml/slo", p.SamlSloHandler())
 		case libsecurity.AuthMethodOAuth2:
 			for name, conf := range s.config.Security.OAuth2.Providers {
+				tc := &tls.Config{
+					InsecureSkipVerify: conf.InsecureSkipVerify, //nolint:gosec
+				}
+				if !conf.InsecureVerifyAnyCert {
+					tc.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tc)
+				}
+
+				hc := &http.Client{
+					Transport: &http.Transport{
+						TLSClientConfig: tc,
+					},
+				}
 				p := oauth.NewProvider(
 					ctx,
 					name,
+					hc,
 					roleprovider.NewRoleProvider(client),
 					conf,
 					sessionStore,
@@ -243,8 +267,6 @@ func (s *security) newBaseAuthProvider() libsecurity.Provider {
 	return provider.NewBaseProvider(
 		s.newUserProvider(),
 		s.GetPasswordEncoder(),
-		// todo deprecated encoder
-		password.NewSha1Encoder(),
 	)
 }
 

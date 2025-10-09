@@ -6,7 +6,7 @@
     >
       <span class="text-subtitle-1 mr-5">{{ $t('remediation.instructionExecute.jobs.title') }}</span>
       <v-btn
-        v-if="!isJobsFinished"
+        v-if="!isInstructionExecutionFinished"
         :loading="executed"
         class="primary ma-0"
         @click="$emit('run:jobs')"
@@ -16,7 +16,7 @@
           arrow_right
         </v-icon>
       </v-btn>
-      <template v-if="isJobsFinished">
+      <template v-else>
         <v-icon :color="statusIcon.color">
           {{ statusIcon.name }}
         </v-icon>
@@ -28,7 +28,10 @@
 </template>
 
 <script>
-import { isJobExecutionSucceeded, isJobFinished } from '@/helpers/entities/remediation/job/form';
+import {
+  isInstructionExecutionCompleted,
+  isInstructionExecutionFinished,
+} from '@/helpers/entities/remediation/instruction-execution/form';
 
 import RemediationInstructionExecuteJobsTable from './remediation-instruction-assigned-jobs-table.vue';
 
@@ -39,6 +42,10 @@ export default {
       type: Array,
       required: true,
     },
+    instructionExecution: {
+      type: Object,
+      default: () => ({}),
+    },
     executed: {
       type: Boolean,
       default: false,
@@ -46,7 +53,7 @@ export default {
   },
   computed: {
     statusIcon() {
-      if (this.isJobsSucceeded) {
+      if (this.isInstructionExecutionSucceeded) {
         return {
           name: 'check_circle',
           color: 'primary',
@@ -61,12 +68,12 @@ export default {
       };
     },
 
-    isJobsFinished() {
-      return this.jobs.every(isJobFinished);
+    isInstructionExecutionFinished() {
+      return isInstructionExecutionFinished(this.instructionExecution);
     },
 
-    isJobsSucceeded() {
-      return this.jobs.every(isJobExecutionSucceeded);
+    isInstructionExecutionSucceeded() {
+      return isInstructionExecutionCompleted(this.instructionExecution);
     },
   },
 };

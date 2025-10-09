@@ -25,6 +25,7 @@ export default {
   filterByBookmark: 'Filter by bookmark',
   runTest: 'Run test',
   tagFilter: 'Tag filter',
+  alarmDisplayName: 'Alarm display name',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
@@ -55,6 +56,8 @@ export default {
       exportPdf: 'Export alarm to PDF file',
       addBookmark: 'Add bookmark',
       removeBookmark: 'Remove bookmark',
+      executeInstruction: 'Execute instruction',
+      links: 'Links',
     },
     iconsTitles: {
       ack: 'Ack',
@@ -229,6 +232,8 @@ export default {
     canceledInitiator: 'Canceled initiator',
     changeState: 'Change state',
     closeDelay: 'Close delay',
+    maxState: 'Max severity',
+    initialState: 'Initial severity',
   },
   instructionsFilter: {
     filter: 'Instruction filter',

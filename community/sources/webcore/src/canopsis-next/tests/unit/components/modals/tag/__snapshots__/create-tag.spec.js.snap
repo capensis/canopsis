@@ -21,6 +21,7 @@ exports[`create-tag Renders \`create-tag\` with empty modal 1`] = `
     >
       <tag-form-stub
         form="[object Object]"
+        isnew="true"
         maxtagnamelength="20"
       />
     </div>
@@ -73,6 +74,7 @@ exports[`create-tag Renders \`create-tag\` with tag 1`] = `
     >
       <tag-form-stub
         form="[object Object]"
+        isnew="true"
         maxtagnamelength="20"
       />
     </div>
