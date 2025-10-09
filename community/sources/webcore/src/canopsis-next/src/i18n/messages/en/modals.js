@@ -800,6 +800,18 @@ export default {
         + '<strong>Deletion operation won’t be cancellable.</strong>',
       phraseText: 'Please type the token name to confirm:',
     },
+    templateTestingData: {
+      title: 'Delete test data',
+      text: 'You are about to delete test data.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type test data name to confirm:',
+    },
+    templateTestingTest: {
+      title: 'Delete test',
+      text: 'You are about to delete test.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type test name to confirm:',
+    },
   },
   pbehaviorsCalendar: {
     title: 'Periodic behaviors',
@@ -1088,5 +1100,21 @@ export default {
     edit: {
       title: 'Edit external auth token',
     },
+  },
+  createTemplateTestingData: {
+    create: {
+      title: 'Create template testing data',
+    },
+    edit: {
+      title: 'Edit template testing data',
+    },
+  },
+  createTemplateTestingTest: {
+    edit: {
+      title: 'Edit test',
+    },
+  },
+  createTemplateData: {
+    title: 'Create template data',
   },
 };

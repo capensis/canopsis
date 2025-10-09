@@ -5,7 +5,15 @@
         {{ title }}
       </template>
       <template #text="">
-        <external-auth-token-form v-model="form" />
+        <template-testing-test-variables-wrapper
+          v-model="form"
+          :rule-id="ruleId"
+          :type="type"
+        >
+          <template #default="{ templateVars }">
+            <external-auth-token-form v-model="form" :template-vars="templateVars" />
+          </template>
+        </template-testing-test-variables-wrapper>
       </template>
       <template #actions="">
         <v-btn
@@ -32,7 +40,7 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { externalAuthTokenToForm, formToExternalAuthToken } from '@/helpers/entities/external-auth-token/form';
 
@@ -42,6 +50,7 @@ import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import ExternalAuthTokenForm from '@/components/other/external-auth-token/form/external-auth-token-form.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -53,6 +62,7 @@ export default {
   },
   components: {
     ExternalAuthTokenForm,
+    TemplateTestingTestVariablesWrapper,
     ModalWrapper,
   },
   props: {
@@ -62,10 +72,14 @@ export default {
     },
   },
   setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.externalAuthToken;
+
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
     const form = ref(externalAuthTokenToForm(config.value.externalAuthToken));
+
+    const ruleId = computed(() => config.value.externalAuthToken?._id);
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
@@ -83,10 +97,13 @@ export default {
     const title = computed(() => config.value.title || t('modals.createExternalAuthToken.create.title'));
 
     return {
+      type,
+
       config,
 
       form,
 
+      ruleId,
       isDisabled,
       submitting,
 

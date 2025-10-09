@@ -3,46 +3,29 @@
     <request-with-token-form
       v-field="webhook"
       :name="`${name}.request`"
-      :headers-variables="payloadVariables"
-      :payload-variables="payloadVariables"
-      :url-variables="payloadVariables"
+      :url-variables="templateVars[webhookTemplateVarsKey]"
+      :headers-variables="templateVars[webhookTemplateVarsKey]"
+      :payload-variables="templateVars[webhookTemplateVarsKey]"
       with-multiple-urls
     />
-    <declare-ticket-rule-ticket-mapping-field v-field="webhook" with-ticket-system-name />
-    <v-layout justify-end>
-      <v-btn
-        :loading="checking"
-        color="orange"
-        dark
-        @click="validateTemplateVariables"
-      >
-        {{ $t('declareTicket.checkSyntax') }}
-      </v-btn>
-    </v-layout>
+    <declare-ticket-rule-ticket-mapping-field
+      v-field="webhook"
+      :template-vars="templateVars.ticket"
+      with-ticket-system-name
+    />
   </v-layout>
 </template>
 
 <script>
-import flatten from 'flat';
+import { computed } from 'vue';
 
-import { requestTemplateVariablesErrorsToForm } from '@/helpers/entities/shared/request/form';
-
-import { formMixin, validationErrorsMixinCreator } from '@/mixins/form';
-import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
+import { useModelField } from '@/hooks/form/model-field';
 
 import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import DeclareTicketRuleTicketMappingField from '@/components/other/declare-ticket/form/fields/declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
-  inject: ['$validator'],
   components: { DeclareTicketRuleTicketMappingField, RequestWithTokenForm },
-  mixins: [
-    formMixin,
-    payloadVariablesMixin,
-    entitiesTemplateValidatorMixin,
-    validationErrorsMixinCreator(),
-  ],
   model: {
     prop: 'webhook',
     event: 'input',
@@ -56,79 +39,31 @@ export default {
       type: String,
       required: true,
     },
+    hasPreviousWebhook: {
+      type: Boolean,
+      default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
-  data() {
+  setup(props, { emit }) {
+    const { updateField } = useModelField(props, emit);
+
+    const webhookTemplateVarsKey = computed(() => (props.hasPreviousWebhook ? 'webhook' : 'first_webhook'));
+
+    /**
+     * Updates the multiple_urls field in the webhook form
+     *
+     * @param {boolean} multiple - Whether multiple URLs are enabled for the webhook
+     */
+    const updateMultiple = multiple => updateField('multiple_urls', multiple);
+
     return {
-      checking: false,
+      webhookTemplateVarsKey,
+      updateMultiple,
     };
-  },
-  computed: {
-    payloadVariables() {
-      const variables = [
-        ...this.alarmPayloadVariables,
-      ];
-
-      if (this.hasPrevious) {
-        variables.push(...this.payloadVariablesFromPreviousStep);
-      }
-
-      variables.push(...this.additionalDataVariables);
-
-      return variables;
-    },
-  },
-  methods: {
-    async validateRequestTemplates(request) {
-      const [url, payload, ...headers] = await this.validateScenariosVariables({
-        data: [
-          { text: request.url },
-          { text: request.payload },
-          ...request.headers.map(({ value }) => ({ text: value })),
-        ],
-      });
-
-      return {
-        url,
-        payload,
-        headers,
-      };
-    },
-
-    async validateFormTemplates(webhook) {
-      return {
-        request: await this.validateRequestTemplates(webhook.request),
-      };
-    },
-
-    scenarioRequestErrorsToForm({ request }) {
-      const flattenErrors = flatten({
-        request: requestTemplateVariablesErrorsToForm(request, this.webhook.request),
-      });
-
-      return Object.entries(flattenErrors).reduce((acc, [key, value]) => {
-        acc[`${this.name}.${key}`] = value;
-
-        return acc;
-      }, {});
-    },
-
-    async validateTemplateVariables() {
-      this.checking = true;
-
-      try {
-        const errors = await this.validateFormTemplates(this.webhook);
-
-        const wasSet = this.setFormErrors(this.scenarioRequestErrorsToForm(errors));
-
-        if (!wasSet) {
-          this.$popups.success({ text: this.$t('declareTicket.syntaxIsValid') });
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.checking = false;
-      }
-    },
   },
 };
 </script>

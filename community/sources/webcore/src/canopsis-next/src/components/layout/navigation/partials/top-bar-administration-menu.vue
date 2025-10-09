@@ -174,6 +174,11 @@ export default {
           icon: 'add_alert',
           permission: USER_PERMISSIONS.technical.stateSetting,
         },
+        {
+          route: { name: ROUTES_NAMES.adminTemplateTesting },
+          icon: 'code',
+          permission: USER_PERMISSIONS.technical.templateTesting,
+        },
       ];
     },
 
@@ -184,6 +189,7 @@ export default {
         USER_PERMISSIONS.technical.kpi,
         USER_PERMISSIONS.technical.maintenance,
         USER_PERMISSIONS.technical.eventsRecord,
+        USER_PERMISSIONS.technical.templateTesting,
       ];
     },
   },

@@ -40,4 +40,5 @@ export * from './sanitize';
 export * from './events-record';
 export * from './role';
 export * from './theme';
+export * from './template-testing';
 export * from './request';

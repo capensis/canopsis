@@ -13,6 +13,7 @@
     :style="textareaStyle"
     :error="!!linesErrors.length"
     :autofocus="autofocus"
+    :wrap="wrap"
     class="c-payload-textarea-field"
     auto-grow
     @blur="handleBlur"
@@ -25,7 +26,7 @@
       <div class="c-payload-textarea-field__append">
         <variables-menu
           v-if="variables"
-          :items="availableVariables"
+          :items="variables"
           :visible="variablesShown"
           :value="variablesMenuValue"
           :position-x="variablesMenuPosition.x"
@@ -43,6 +44,7 @@
             v-for="(line, index) in lines"
             :key="index"
             :style="lineStyle"
+            :class="{ 'c-payload-textarea-field__line--error': line.error }"
             class="c-payload-textarea-field__line"
           >
             <span
@@ -73,7 +75,7 @@
               </template>
               <span>{{ line.error.message }}</span>
             </v-tooltip>
-            <span>{{ line.text }}</span>
+            <span class="c-payload-textarea-field__line-text" contenteditable="true">{{ line.text }}</span>
           </span>
         </span>
       </div>
@@ -83,6 +85,8 @@
 
 <script>
 import { keyBy } from 'lodash';
+
+import { getStringLinesCount } from '@/helpers/string';
 
 import { payloadFieldMixin } from '@/mixins/payload/payload-field';
 
@@ -124,6 +128,10 @@ export default {
     autofocus: {
       type: Boolean,
       default: false,
+    },
+    wrap: {
+      type: String,
+      default: 'on',
     },
   },
   computed: {
@@ -167,13 +175,13 @@ export default {
     },
 
     payloadErrors() {
-      return this.errors.collect(this.name, null, false).reduce((acc, item) => {
-        if (item.msg.includes('|')) {
-          const [line, message] = item.msg.split('|');
+      return this.errors.collect(this.name).reduce((acc, fullMessage) => {
+        if (fullMessage.includes('|')) {
+          const [line, message] = fullMessage.split('|');
 
           acc.lines.push({ line, message });
         } else {
-          acc.inline.push(item.msg);
+          acc.inline.push(fullMessage);
         }
 
         return acc;
@@ -220,6 +228,23 @@ export default {
       };
     },
   },
+  mounted() {
+    setTimeout(() => {
+      const { input } = this.$refs.field?.$refs ?? {};
+
+      if (!input) {
+        return;
+      }
+
+      const computedStyle = window.getComputedStyle(input);
+      const lineHeight = parseFloat(computedStyle.lineHeight);
+      const linesCount = getStringLinesCount(this.value);
+      const height = Math.ceil(lineHeight * linesCount);
+      const minHeight = parseInt(this.rows, 10) * parseFloat(this.rowHeight);
+
+      input.style.height = `${Math.max(height, minHeight)}px`;
+    }, 1000);
+  },
 };
 </script>
 
@@ -253,6 +278,24 @@ $iconBarWidth: 18px;
     text-align: start;
     overflow-wrap: break-word;
     color: transparent;
+  }
+
+  &__line {
+    &-text {
+      margin-left: -18px;
+    }
+
+    &--error {
+      background: var(--v-error-base);
+
+      .theme--light & {
+        color: var(--v-text-light-primary, rgba(0, 0, 0, 0.87));
+      }
+
+      .theme--dark & {
+        color: var(--v-text-dark-primary, #FFFFFF);
+      }
+    }
   }
 
   &__fake-line {

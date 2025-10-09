@@ -5,6 +5,8 @@ import {
   isString,
   isNumber,
   isUndefined,
+  isEmpty,
+  isObject,
   debounce,
   uniqBy,
 } from 'lodash';
@@ -13,6 +15,7 @@ import {
   ref,
   unref,
   watch,
+  set,
   onMounted,
 } from 'vue';
 
@@ -35,11 +38,12 @@ import { useModelField } from '@/hooks/form';
  * @param {string} options.isKey - The key used to identify each item uniquely.
  * @param {string} options.childrenKey - The key used for children checking.
  * @param {string} options.idParamsKey - The key used for query parameters when fetching selected items.
- * @param {number} [options.limit = PAGINATION_LIMIT] - The limit for pagination, determining how many items to
- * fetch per page.
  * @param {Function} options.fetchHandler - The asynchronous function used to fetch data from the server.
  * @param {boolean} options.addable - The flag for indicating possibility to add new item.
  * @param {boolean} options.multiple - The flag for indicating possibility to choose more than one item.
+ * @param {boolean} options.returnObject - The flag for indicating possibility to return object instead of id.
+ * @param {boolean} options.attachValue - The flag for indicating possibility to attach the value to the items.
+ * @param {Object} options.initialQuery - The initial query object.
  * @param {number} options.delay - The delay number value for debouncing.
  * @param {Function} emit - The emit function for Vue events, used to update the model.
  * @returns {Object} An object containing methods and properties for managing search and selection:
@@ -57,10 +61,12 @@ export const useLazySearch = ({
   idKey,
   idParamsKey,
   childrenKey = 'items',
-  limit = PAGINATION_LIMIT,
   fetchHandler,
   addable,
   multiple,
+  returnObject,
+  attachValue,
+  initialQuery = { page: 1, limit: PAGINATION_LIMIT, search: '' },
   delay = 100,
 }, emit) => {
   const pageCount = ref(1);
@@ -82,7 +88,7 @@ export const useLazySearch = ({
   const arrayValue = computed(() => {
     const unwrappedValue = unref(value);
 
-    if (!unwrappedValue && !isNumber(unwrappedValue)) {
+    if ((!unwrappedValue || isEmpty(unwrappedValue)) && !isNumber(unwrappedValue)) {
       return [];
     }
 
@@ -94,21 +100,50 @@ export const useLazySearch = ({
   });
 
   /**
+     * MAIN FETCH LOGIC
+     */
+  const {
+    pending,
+    query,
+    fetchHandlerWithQuery: fetchItems,
+    updateQuery,
+    updateQueryPage,
+  } = usePendingWithLocalQuery({
+    initialQuery: unref(initialQuery),
+    fetchHandler: async (params) => {
+      const unwrappedIdKey = unref(idKey);
+
+      const { data, meta } = await unref(fetchHandler)({
+        params,
+      });
+
+      pageCount.value = meta.page_count;
+
+      itemsByValue.value = {
+        ...(params.page !== 1 ? itemsByValue.value : {}),
+        ...keyBy(data, unwrappedIdKey),
+        ...pick(itemsByValue.value, arrayValue.value),
+      };
+    },
+  });
+
+  /**
    * FETCH VALUE ITEMS
    */
   const {
     pending: valuesPending,
     handler: initializeSelectedItems,
   } = usePendingHandler(async () => {
+    if (!arrayValue.value.length && selectedItems.value.length) {
+      selectedItems.value = [];
+      return;
+    }
+
     const selectedItemsFromItemsByValue = arrayValue.value.map(item => itemsByValue.value[item]).filter(Boolean);
 
     if (selectedItemsFromItemsByValue.length === arrayValue.value.length) {
       selectedItems.value = selectedItemsFromItemsByValue;
 
-      return;
-    }
-
-    if (!arrayValue.value.length) {
       return;
     }
 
@@ -124,39 +159,20 @@ export const useLazySearch = ({
     const dataById = deepKeyBy(data, unwrappedIdKey, unwrappedChildrenKey);
 
     selectedItems.value = arrayValue.value.map(item => (
-      dataById[item[unwrappedIdKey] ?? item] ?? ({ [unwrappedIdKey]: item, noData: true })
+      dataById[item[unwrappedIdKey] ?? item]
+        ?? (isObject(item) ? item : ({ [unwrappedIdKey]: item, noData: true }))
     ));
-  }, true);
 
-  /**
-   * MAIN FETCH LOGIC
-   */
-  const {
-    pending,
-    query,
-    fetchHandlerWithQuery: fetchItems,
-    updateQuery,
-    updateQueryPage,
-  } = usePendingWithLocalQuery({
-    initialQuery: {
-      page: 1,
-      limit: unref(limit),
-      search: '',
-    },
-    fetchHandler: async (params) => {
-      const { data, meta } = await unref(fetchHandler)({
-        params,
+    if (attachValue) {
+      selectedItems.value.forEach((item) => {
+        const id = item[unwrappedIdKey];
+
+        if (id && !itemsByValue.value[id]) {
+          set(itemsByValue.value, id, item);
+        }
       });
-
-      pageCount.value = meta.page_count;
-
-      itemsByValue.value = {
-        ...(params.page !== 1 ? itemsByValue.value : {}),
-        ...keyBy(data, unref(idKey)),
-        ...pick(itemsByValue.value, arrayValue.value),
-      };
-    },
-  });
+    }
+  }, true);
 
   /**
    * Update search field in query with page updating
@@ -202,6 +218,7 @@ export const useLazySearch = ({
   const changeSelectedItems = (newSelectedItems) => {
     if (!newSelectedItems) {
       selectedItems.value = [];
+
       updateModel('');
 
       return;
@@ -224,6 +241,16 @@ export const useLazySearch = ({
         ? preparedNewSelectedItems
         : preparedNewSelectedItems.filter(item => !isString(item))
     ).map(item => (isUndefined(item[unwrappedIdKey]) ? { [unwrappedIdKey]: item } : item)), unwrappedIdKey);
+
+    if (returnObject) {
+      updateModel(
+        unwrappedMultiple
+          ? selectedItems.value
+          : selectedItems.value[0],
+      );
+
+      return;
+    }
 
     updateModel(
       unwrappedMultiple

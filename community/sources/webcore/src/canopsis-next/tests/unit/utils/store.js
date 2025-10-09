@@ -540,6 +540,60 @@ export const createViewModule = () => {
   };
 };
 
+export const createTemplateVarsModule = () => {
+  const fetchEntityServicesVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchEventFiltersVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchLinkRulesVarsWithoutStore = jest.fn().mockResolvedValue({ alarm: [], entity: [] });
+  const fetchScenariosVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchWidgetsVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchDeclareTicketRulesVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchDynamicInfosVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchInstructionsVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchJobsVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchMetaAlarmRulesVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchList = jest.fn();
+  const items = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+
+  const templateVarsModule = {
+    name: 'template/vars',
+    getters: {
+      items,
+      pending,
+    },
+    actions: {
+      fetchList,
+      fetchEntityServicesVarsWithoutStore,
+      fetchEventFiltersVarsWithoutStore,
+      fetchLinkRulesVarsWithoutStore,
+      fetchScenariosVarsWithoutStore,
+      fetchWidgetsVarsWithoutStore,
+      fetchDeclareTicketRulesVarsWithoutStore,
+      fetchDynamicInfosVarsWithoutStore,
+      fetchInstructionsVarsWithoutStore,
+      fetchJobsVarsWithoutStore,
+      fetchMetaAlarmRulesVarsWithoutStore,
+    },
+  };
+
+  return {
+    templateVarsModule,
+    fetchEntityServicesVarsWithoutStore,
+    fetchEventFiltersVarsWithoutStore,
+    fetchLinkRulesVarsWithoutStore,
+    fetchScenariosVarsWithoutStore,
+    fetchWidgetsVarsWithoutStore,
+    fetchDeclareTicketRulesVarsWithoutStore,
+    fetchDynamicInfosVarsWithoutStore,
+    fetchInstructionsVarsWithoutStore,
+    fetchJobsVarsWithoutStore,
+    fetchMetaAlarmRulesVarsWithoutStore,
+    fetchList,
+    items,
+    pending,
+  };
+};
+
 export const createServiceModule = () => {
   const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
     data: [],
