@@ -3,13 +3,13 @@
     <c-progress-overlay :pending="pending" />
     <v-tabs v-model="activeTab" fixed-tabs>
       <v-tab>{{ $t('common.general') }}</v-tab>
-      <template-testing-test-variables-tab :disabled="isEmptyVariablesFields" />
+      <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
 
       <v-tab-item class="pt-2" eager>
         <slot :template-vars="templateVars" :copy-vars="copyVars" />
       </v-tab-item>
 
-      <v-tab-item :disabled="isEmptyVariablesFields">
+      <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
         <template-testing-test-variables
           :general-form="form"
           :variables-fields="variablesFields"

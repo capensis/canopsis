@@ -208,7 +208,7 @@ export const USER_PERMISSIONS = {
     storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
-    externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_shareToken`, // TODO: rename to _externalAuthTokens
+    externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_widgetTemplate`, // TODO: rename to _externalAuthTokens
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
     exploitation: {
