@@ -17,13 +17,6 @@ type Parameters struct {
 	RetryDelay *datetime.DurationWithUnit `bson:"retry_delay,omitempty" json:"retry_delay"`
 }
 
-// TemplateParameters is a model with all required Parameters fields for template validation requests.
-type TemplateParameters struct {
-	URL     string            `json:"url" binding:"required"`
-	Payload string            `json:"payload"`
-	Headers map[string]string `json:"headers"`
-}
-
 type BasicAuth struct {
 	Username string `bson:"username" json:"username"`
 	Password string `bson:"password" json:"password"`

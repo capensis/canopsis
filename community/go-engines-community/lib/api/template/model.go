@@ -206,3 +206,29 @@ func (r *AggregationTestResult) GetData() interface{} {
 func (r *AggregationTestResult) GetTotal() int64 {
 	return r.TotalCount
 }
+
+// TemplateRefParameters is a model with all required RefParameters fields for template validation requests.
+type TemplateRefParameters struct {
+	Reference string              `json:"reference" binding:"required"`
+	Type      string              `json:"type" binding:"required"`
+	Table     string              `json:"table"`
+	Select    map[string]string   `json:"select"`
+	Regexp    map[string]string   `json:"regexp"`
+	SortBy    string              `json:"sort_by"`
+	Sort      string              `json:"sort" binding:"oneoforempty=asc desc"`
+	Optional  bool                `json:"optional"`
+	Request   *TemplateParameters `json:"request"`
+}
+
+// TemplateParameters is a model with all required Parameters fields for template validation requests.
+type TemplateParameters struct {
+	URL     string            `json:"url" binding:"required"`
+	Payload string            `json:"payload"`
+	Headers map[string]string `json:"headers"`
+}
+
+// TemplateWebhookDeclareTicket is a model with all required WebhookDeclareTicket fields for template validation requests.
+type TemplateWebhookDeclareTicket struct {
+	TicketIDTpl  string `json:"ticket_id_tpl"`
+	TicketURLTpl string `json:"ticket_url_tpl"`
+}

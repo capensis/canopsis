@@ -91,10 +91,10 @@ type TemplateRequest struct {
 }
 
 type TemplateRuleRequest struct {
-	Type         string                               `json:"type" binding:"required,oneof=alarm entity"`
-	SourceCode   string                               `json:"source_code"`
-	Links        []TemplateRequestLink                `json:"links" binding:"dive"`
-	ExternalData []externaldata.TemplateRefParameters `json:"external_data" binding:"dive"`
+	Type         string                           `json:"type" binding:"required,oneof=alarm entity"`
+	SourceCode   string                           `json:"source_code"`
+	Links        []TemplateRequestLink            `json:"links" binding:"dive"`
+	ExternalData []template.TemplateRefParameters `json:"external_data" binding:"dive"`
 }
 
 type TemplateRequestLink struct {

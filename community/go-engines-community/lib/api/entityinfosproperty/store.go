@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -34,7 +35,7 @@ type store struct {
 	dupErrorRegexp        *regexp.Regexp
 
 	linkedCollections []libmongo.DbCollection
-	dupErrorParser    *common.DuplicateErrorParser
+	dupErrorParser    validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -67,8 +68,7 @@ func NewStore(
 			dbClient.Collection(libmongo.MetaAlarmRulesMongoCollection),
 			dbClient.Collection(libmongo.ScenarioMongoCollection),
 		},
-		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
-			"_id":   "ID already exists.",
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
 			"name":  "Name already exists.",
 			"alias": "Alias already exists.",
 		}),
@@ -90,7 +90,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -185,7 +185,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err

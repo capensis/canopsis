@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -67,7 +68,7 @@ type store struct {
 	entitiesDefaultSortBy         string
 
 	transformer    common.PatternFieldsTransformer
-	dupErrorParser *common.DuplicateErrorParser
+	dupErrorParser validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -90,7 +91,7 @@ func NewStore(
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
-		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
 			"_id":  "ID already exists.",
 			"name": "Name already exists.",
 		}),
@@ -132,7 +133,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -403,7 +404,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -553,7 +554,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -739,7 +740,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -900,7 +901,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 		).Decode(&findDoc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
