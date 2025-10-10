@@ -9,7 +9,14 @@
       :class="item.flexClass || 'xs12'"
       class="mt-1"
     >
+      <scenario-info-item-multiline
+        v-if="item.multiline"
+        :icon="item.icon"
+        :label="item.label"
+        :value="item.value"
+      />
       <scenario-info-item
+        v-else
         :icon="item.icon"
         :label="item.label"
         :value="item.value"
@@ -31,10 +38,15 @@ import { ACTION_TYPES } from '@/constants';
 import { convertDurationToString } from '@/helpers/date/duration';
 
 import ScenarioInfoItem from './scenario-info-item.vue';
+import ScenarioInfoItemMultiline from './scenario-info-item-multiline.vue';
 import ScenarioActionCardCompiledTemplate from './scenario-action-card-compiled-template.vue';
 
 export default {
-  components: { ScenarioInfoItem, ScenarioActionCardCompiledTemplate },
+  components: {
+    ScenarioInfoItem,
+    ScenarioInfoItemMultiline,
+    ScenarioActionCardCompiledTemplate,
+  },
   props: {
     action: {
       type: Object,
@@ -68,8 +80,32 @@ export default {
       const items = getItems();
 
       const dropScenarioItemField = this.action.drop_scenario_if_not_matched
-        ? { icon: 'stop', label: this.$t('common.stop') }
-        : { icon: 'trending_flat', label: this.$t('scenario.remainingAction') };
+        ? { icon: 'stop', label: this.$t('scenario.actionDidNotMatch'), value: this.$t('common.stop'), multiline: true }
+        : { icon: 'trending_flat', label: this.$t('scenario.actionDidNotMatch'), value: this.$t('scenario.remainingAction'), multiline: true };
+
+      const workflowFields = [{ ...dropScenarioItemField, flexClass: 'xs6' }];
+
+      if (this.action.type === ACTION_TYPES.webhook) {
+        const { parameters = {} } = this.action;
+        const { stop_on_fail: stopOnFail, stop_on_success: stopOnSuccess } = parameters;
+
+        workflowFields.push(
+          {
+            icon: stopOnFail ? 'stop' : 'trending_flat',
+            value: stopOnFail ? this.$t('common.stop') : this.$t('scenario.remainingStep'),
+            label: this.$t('scenario.caseFailure'),
+            flexClass: 'offset-xs6 xs6',
+            multiline: true,
+          },
+          {
+            icon: stopOnSuccess ? 'stop' : 'trending_flat',
+            value: stopOnSuccess ? this.$t('common.stop') : this.$t('scenario.remainingStep'),
+            label: this.$t('scenario.caseSuccess'),
+            flexClass: 'offset-xs6 xs6',
+            multiline: true,
+          },
+        );
+      }
 
       items.push(
         {
@@ -85,10 +121,7 @@ export default {
           label: this.$t('common.emitTrigger'),
           flexClass: 'xs6',
         },
-        {
-          ...dropScenarioItemField,
-          flexClass: 'xs6',
-        },
+        ...workflowFields,
       );
 
       return items;
@@ -278,6 +311,14 @@ export default {
           flexClass: 'xs6',
         },
       ];
+
+      if (parameters.multiple_urls) {
+        result.push({
+          icon: 'link',
+          label: this.$t('scenario.allowMultipleUrls'),
+          flexClass: 'offset-xs6 xs6',
+        });
+      }
 
       if (request.auth) {
         result.push(
