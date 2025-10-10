@@ -21,6 +21,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { EXPAND_DEFAULT_MAX_LETTERS } from '@/config';
 
 export default {
@@ -34,27 +36,31 @@ export default {
       default: '',
     },
   },
-  computed: {
-    preparedText() {
-      return String(this.text);
-    },
+  setup(props, { emit, listeners }) {
+    const preparedText = computed(() => String(props.text));
 
-    isShort() {
-      return this.preparedText.length <= this.maxLetters;
-    },
+    const isShort = computed(() => preparedText.value.length <= props.maxLetters);
 
-    shortenedText() {
-      if (this.isShort) {
-        return this.preparedText;
+    const shortenedText = computed(() => {
+      if (isShort.value) {
+        return preparedText.value;
       }
 
-      return this.preparedText.substring(0, this.maxLetters);
-    },
-  },
-  methods: {
-    textClicked() {
-      this.$emit('textClicked');
-    },
+      return preparedText.value.substring(0, props.maxLetters);
+    });
+
+    const textClicked = () => {
+      emit('textClicked');
+
+      listeners.click?.();
+    };
+
+    return {
+      preparedText,
+      isShort,
+      shortenedText,
+      textClicked,
+    };
   },
 };
 </script>
