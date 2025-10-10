@@ -81,7 +81,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request ListRequestWi
 	})
 
 	loader := fixtures.NewLoader(dbClient, []string{fixturesPath},
-		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), zerolog.Nop())
+		fixtures.NewParser(fixtures.NewFaker(password.NewBcryptEncoder())), zerolog.Nop())
 	err = loader.Load(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
