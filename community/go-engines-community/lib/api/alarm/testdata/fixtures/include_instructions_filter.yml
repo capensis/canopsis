@@ -14,7 +14,7 @@ instruction:
             type: eq
             value: <{test-resource-<RangeIndex()>/test-component}>
     created: <NowUnix()>
-    last_modified: <NowUnix()>
+    updated: <NowUnix()>
     steps:
       - _id: <UUID()>
         name: <LoremIpsumWord()>

@@ -32,7 +32,7 @@
     <view-tabs
       :tabs.sync="tabs"
       :changed="isTabsChanged"
-      :editing="editing"
+      :editing="activeViewEditing"
       :updatable="updatable"
     >
       <template #default="props">
