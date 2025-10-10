@@ -1,7 +1,7 @@
 <template>
   <v-layout
     justify-space-between
-    align-center
+    align-start
   >
     <v-flex
       class="pr-2"
@@ -47,6 +47,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { REQUEST_METHODS } from '@/constants';
 
 export default {
@@ -85,18 +87,17 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    availableMethods() {
-      return Object.values(REQUEST_METHODS);
-    },
 
-    methodFieldName() {
-      return `${this.name}.method`;
-    },
+  setup(props) {
+    const availableMethods = Object.values(REQUEST_METHODS);
+    const methodFieldName = computed(() => `${props.name}.method`);
+    const urlFieldName = computed(() => `${props.name}.url`);
 
-    urlFieldName() {
-      return `${this.name}.url`;
-    },
+    return {
+      availableMethods,
+      methodFieldName,
+      urlFieldName,
+    };
   },
 };
 </script>

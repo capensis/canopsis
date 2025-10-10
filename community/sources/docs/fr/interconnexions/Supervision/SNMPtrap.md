@@ -170,10 +170,12 @@ Pour installer cette commande sous EL (RHEL/Rocky Linux/AlmaLinux/…) :
 ```
 
 Pour le test, nous allons nous appuyer sur la MIB Nagios
-[NAGIOS-NOTIFY-MIB][notify_mib] et sa dépendance [nagios-root][root_mib].
+`NAGIOS-NOTIFY-MIB` et sa dépendance `NAGIOS-ROOT-MIB`.
 
-[notify_mib]: https://github.com/monitoring-plugins/nagios-mib/raw/master/MIB/NAGIOS-NOTIFY-MIB
-[root_mib]: https://github.com/nagios-plugins/nagios-mib/raw/master/src-mib/nagios-root.mib
+Les deux fichiers sont à récupérer dans le
+[dépôt GitHub nagios-plugins/nagios-mib][gh-nagios-mib].
+
+[gh-nagios-mib]: https://github.com/nagios-plugins/nagios-mib/tree/master/MIB
 
 Les deux fichiers récupérés doivent être placés dans le répertoire des MIB
 SNMP : `/usr/share/snmp/mibs`.
@@ -234,5 +236,5 @@ traitement grâce à des MIB ;
 possédez pas les MIB peuvent être traités avec du code personnalisé.
 
 Se référer à la documentation sur les
-[règles SNMP](../../guide-utilisation/menu-exploitation/regles-snmp.md
+[règles SNMP](../../guide-utilisation/menu-exploitation/regles-snmp.md)
 qui détaille ces parties de la mise en œuvre.
