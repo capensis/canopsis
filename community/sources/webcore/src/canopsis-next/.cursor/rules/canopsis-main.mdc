@@ -35,6 +35,12 @@ This is a **Vue 2.7.14** application with:
 - Use early returns (guard clauses) to simplify logic flow
 - Always verify your solution thoroughly — do not assume something "should work"
 
+## Documentation
+
+- Generate all documentations in english (except if I'm asking another language)
+- Don't write return void and Promise<void> in jsdoc. Just ignore it
+- Put new line after function description before @params
+
 ## Code Style and Structure
 
 ### File Organization
@@ -88,6 +94,8 @@ import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 - Use **standard Composition API** (`setup()` function), **not** `<script setup>` syntax
 - Keep reactive logic (refs, computed, watchers) clearly organized at the top of `setup`
 - Don't use `defineComponent` function
+- Don't use `value` key for reactive properties in the template (example: `someReactiveProperty` instead of `someReactiveProperty.value`)
+- Don't use `t` in templates. Use global defined `$t` instead. We don't need to return it from setup. We already have it globally. (example: `<span>$t('common.name')</span>` instead of `<span>t('common.name')</span>`)
 
 ### Component Structure
 ```js
@@ -195,6 +203,8 @@ const { t, tc, te, locale } = useI18n();
 - Snapshot tests names generate with prefix 'Renders `{component-name}` {description}'
 - Do not import `jest`. Keep in mind that we already have it.
 - Write snapshot tests in the end of the file
+- DON'T TOUCH SRC FILES. CHANGE ONLY TESTS FILES!
+- If you need you can update snapshots. But ask me before with diff showing.
 
 ```js
 import Faker from 'faker';

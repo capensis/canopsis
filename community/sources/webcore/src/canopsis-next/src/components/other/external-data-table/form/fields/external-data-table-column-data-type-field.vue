@@ -23,7 +23,7 @@
         :disabled="disabled"
       />
       <external-data-table-column-data-type-field-string-array-menu
-        v-if="isStringArray"
+        v-if="isStringArray && !disabled"
         v-field="value"
         :table-separator="tableSeparator"
         :disabled="disabled"
@@ -32,7 +32,7 @@
           <c-chip
             :color="stringArrayChip.color"
             :text-color="stringArrayChip.textColor"
-            class="px-2"
+            class="mt-2 px-2"
             outlined
             v-on="on"
           >
