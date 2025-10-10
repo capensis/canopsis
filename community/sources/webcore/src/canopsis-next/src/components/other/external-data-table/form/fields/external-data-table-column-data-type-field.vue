@@ -23,7 +23,7 @@
         :disabled="disabled"
       />
       <external-data-table-column-data-type-field-string-array-menu
-        v-if="isStringArray"
+        v-if="isStringArray && !disabled"
         v-field="value"
         :table-separator="tableSeparator"
         :disabled="disabled"
