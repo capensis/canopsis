@@ -32,7 +32,7 @@
           <c-chip
             :color="stringArrayChip.color"
             :text-color="stringArrayChip.textColor"
-            class="px-2"
+            class="mt-2 px-2"
             outlined
             v-on="on"
           >
