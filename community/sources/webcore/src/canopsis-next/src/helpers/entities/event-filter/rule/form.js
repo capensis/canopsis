@@ -111,7 +111,7 @@ import {
  * @returns {string}
  */
 export const eventFilterDictionaryActionValueToForm = (eventFilterActionValue = '') => (
-  eventFilterActionValue.replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '')
+  String(eventFilterActionValue || '').replace(EVENT_FILTER_EVENT_EXTRA_PREFIX, '')
 );
 
 /**

@@ -6,6 +6,7 @@ node_modules
 /benchmarks/__metrics__
 /benchmarks/__reports__
 /__diff_output__
+.yarn
 
 # testing data
 /tests/e2e/reports/
