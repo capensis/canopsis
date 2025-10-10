@@ -5,6 +5,7 @@
         <v-data-table
           :headers="headers"
           :items="items"
+          hide-default-footer
         >
           <template #item.date="{ item }">
             {{ item.date | date }}
@@ -22,21 +23,24 @@ import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
-    record: {
+    token: {
       type: Object,
       default: () => ({}),
     },
   },
-  setup() {
+  setup(props) {
     const { t } = useI18n();
 
     const headers = computed(() => [
-      { text: t('common.requestDate'), value: 'date' },
-      { text: t('common.output'), value: 'output' },
+      { text: t('common.requestDate'), value: 'failed', width: 200, sortable: false },
+      { text: t('common.output'), value: 'failed_reason', sortable: false },
     ]);
+
+    const items = computed(() => [props.token]);
 
     return {
       headers,
+      items,
     };
   },
 };

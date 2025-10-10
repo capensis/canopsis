@@ -325,6 +325,7 @@ export default {
   last: 'Dernier',
   seeDetails: 'Voir les détails',
   token: 'Jeton',
+  requestDate: 'Date de la demande',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
