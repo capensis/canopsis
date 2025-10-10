@@ -2847,7 +2847,7 @@ definitions:
             type: array
           external_data:
             items:
-              $ref: '#/definitions/externaldata.TemplateRefParameters'
+              $ref: '#/definitions/template.TemplateRefParameters'
             type: array
           type:
             enum:
@@ -3052,34 +3052,6 @@ definitions:
         description: |-
           are used in db external data
           Table contains id of external table
-        type: string
-      type:
-        type: string
-    required:
-    - reference
-    - type
-    type: object
-  externaldata.TemplateRefParameters:
-    properties:
-      optional:
-        type: boolean
-      reference:
-        type: string
-      regexp:
-        additionalProperties:
-          type: string
-        type: object
-      request:
-        $ref: '#/definitions/request.TemplateParameters'
-      select:
-        additionalProperties:
-          type: string
-        type: object
-      sort:
-        type: string
-      sort_by:
-        type: string
-      table:
         type: string
       type:
         type: string
@@ -3951,7 +3923,7 @@ definitions:
             type: string
           external_data:
             items:
-              $ref: '#/definitions/externaldata.TemplateRefParameters'
+              $ref: '#/definitions/template.TemplateRefParameters'
             type: array
           links:
             items:
@@ -5097,26 +5069,6 @@ definitions:
     - method
     - url
     type: object
-  request.TemplateParameters:
-    properties:
-      headers:
-        additionalProperties:
-          type: string
-        type: object
-      payload:
-        type: string
-      url:
-        type: string
-    required:
-    - url
-    type: object
-  request.TemplateWebhookDeclareTicket:
-    properties:
-      ticket_id_tpl:
-        type: string
-      ticket_url_tpl:
-        type: string
-    type: object
   request.WebhookDeclareTicket:
     properties:
       customFields:
@@ -5637,13 +5589,13 @@ definitions:
       author:
         type: string
       declare_ticket:
-        $ref: '#/definitions/request.TemplateWebhookDeclareTicket'
+        $ref: '#/definitions/template.TemplateWebhookDeclareTicket'
       forward_author:
         type: boolean
       output:
         type: string
       request:
-        $ref: '#/definitions/request.TemplateParameters'
+        $ref: '#/definitions/template.TemplateParameters'
     type: object
   scenario.TemplateActionRequest:
     properties:
@@ -6352,6 +6304,54 @@ definitions:
     - name
     - rule
     - type
+    type: object
+  template.TemplateParameters:
+    properties:
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      payload:
+        type: string
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  template.TemplateRefParameters:
+    properties:
+      optional:
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      request:
+        $ref: '#/definitions/template.TemplateParameters'
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      table:
+        type: string
+      type:
+        type: string
+    required:
+    - reference
+    - type
+    type: object
+  template.TemplateWebhookDeclareTicket:
+    properties:
+      ticket_id_tpl:
+        type: string
+      ticket_url_tpl:
+        type: string
     type: object
   template.TestResponse:
     properties:

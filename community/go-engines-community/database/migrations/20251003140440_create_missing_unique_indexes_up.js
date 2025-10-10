@@ -1,15 +1,41 @@
-db.action_scenario.createIndex({name: 1}, {name: "name_1", unique: true});
-db.link_rule.createIndex({name: 1}, {name: "name_1", unique: true});
-db.pbehavior_reason.createIndex({name: 1}, {name: "name_1", unique: true});
-db.pbehavior_type.createIndex({name: 1}, {name: "name_1", unique: true});
-db.pbehavior_exception.createIndex({name: 1}, {name: "name_1", unique: true});
+resolveDuplicatesAndCreateIndex("action_scenario");
+resolveDuplicatesAndCreateIndex("link_rule");
+resolveDuplicatesAndCreateIndex("pbehavior_reason");
+resolveDuplicatesAndCreateIndex("pbehavior_type");
+resolveDuplicatesAndCreateIndex("pbehavior_exception");
 db.entity_category.dropIndex("name_1");
-db.entity_category.createIndex({name: 1}, {name: "name_1", unique: true});
-db.view_playlist.createIndex({name: 1}, {name: "name_1", unique: true});
-db.idle_rule.createIndex({name: 1}, {name: "name_1", unique: true});
-db.resolve_rule.createIndex({name: 1}, {name: "name_1", unique: true});
-db.flapping_rule.createIndex({name: 1}, {name: "name_1", unique: true});
-db.declare_ticket_rule.createIndex({name: 1}, {name: "name_1", unique: true});
-db.job.createIndex({name: 1}, {name: "name_1", unique: true});
-db.job_config.createIndex({name: 1}, {name: "name_1", unique: true});
-db.kpi_filter.createIndex({name: 1}, {name: "name_1", unique: true});
+resolveDuplicatesAndCreateIndex("entity_category");
+resolveDuplicatesAndCreateIndex("view_playlist");
+resolveDuplicatesAndCreateIndex("idle_rule");
+resolveDuplicatesAndCreateIndex("resolve_rule");
+resolveDuplicatesAndCreateIndex("flapping_rule");
+resolveDuplicatesAndCreateIndex("declare_ticket_rule");
+resolveDuplicatesAndCreateIndex("job");
+resolveDuplicatesAndCreateIndex("job_config");
+resolveDuplicatesAndCreateIndex("kpi_filter");
+
+function resolveDuplicatesAndCreateIndex(collectionName) {
+    var collection = db.getCollection(collectionName);
+
+    try {
+        collection.createIndex({name: 1}, {name: "name_1", unique: true});
+    } catch (e) {
+        let index = 0;
+
+        collection.aggregate([
+            {$group: {_id: "$name", docs: {$push: {_id: "$_id", name: "$name"}}}},
+            {$match: {$expr: {$gt: [{$size: "$docs"}, 1]}}},
+            {$unwind: "$docs"},
+            {$replaceRoot: {newRoot: "$docs"}},
+        ]).forEach(function(doc) {
+            collection.updateOne(
+                {_id: doc._id},
+                {$set: {name: doc.name + "_" + (index + 1)}}
+            );
+
+            index++;
+        });
+
+        collection.createIndex({name: 1}, {name: "name_1", unique: true});
+    }
+}

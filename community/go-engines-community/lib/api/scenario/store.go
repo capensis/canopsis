@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -60,7 +61,7 @@ type store struct {
 	firstWhTplVars        []template.VarResponse
 	ticketTplVars         []template.VarResponse
 
-	dupErrorParser *common.DuplicateErrorParser
+	dupErrorParser validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -138,7 +139,7 @@ func NewStore(
 		firstWhTplVars:        firstWhTplVars,
 		whTplVars:             whTplVars,
 		ticketTplVars:         ticketTplVars,
-		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
 			"_id":  "ID already exists.",
 			"name": "Name already exists.",
 		}),
@@ -225,7 +226,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -266,7 +267,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil || res.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
