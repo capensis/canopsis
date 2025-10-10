@@ -237,11 +237,11 @@ type TemplateActionRequest struct {
 }
 
 type TemplateActionParameters struct {
-	Output        string                                `json:"output"`
-	Author        string                                `json:"author"`
-	ForwardAuthor *bool                                 `json:"forward_author"`
-	Request       *request.TemplateParameters           `json:"request"`
-	DeclareTicket *request.TemplateWebhookDeclareTicket `json:"declare_ticket"`
+	Output        string                                 `json:"output"`
+	Author        string                                 `json:"author"`
+	ForwardAuthor *bool                                  `json:"forward_author"`
+	Request       *template.TemplateParameters           `json:"request"`
+	DeclareTicket *template.TemplateWebhookDeclareTicket `json:"declare_ticket"`
 }
 
 type TemplateVarsResponse struct {

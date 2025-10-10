@@ -17,12 +17,6 @@ type WebhookDeclareTicket struct {
 	CustomFields   map[string]string `bson:",inline"`
 }
 
-// TemplateWebhookDeclareTicket is a model with all required WebhookDeclareTicket fields for template validation requests.
-type TemplateWebhookDeclareTicket struct {
-	TicketIDTpl  string `json:"ticket_id_tpl"`
-	TicketURLTpl string `json:"ticket_url_tpl"`
-}
-
 func (t *WebhookDeclareTicket) UnmarshalJSON(b []byte) error {
 	m := make(map[string]any)
 	err := json.Unmarshal(b, &m)

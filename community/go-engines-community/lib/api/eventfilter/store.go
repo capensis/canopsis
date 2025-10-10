@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -71,7 +72,7 @@ type store struct {
 	exdataTplVars           []template.VarResponse
 	configTplVars           []template.VarResponse
 	configCopyVars          []template.VarResponse
-	dupErrorParser          *common.DuplicateErrorParser
+	dupErrorParser          validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -121,7 +122,7 @@ func NewStore(
 		exdataTplVars:           exdataTplVars,
 		configTplVars:           configTplVars,
 		configCopyVars:          configCopyVars,
-		dupErrorParser: common.NewDuplicateErrorParser(map[string]string{
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
 			"_id": "ID already exists.",
 		}),
 	}
@@ -155,7 +156,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.ParseDuplicateError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -793,7 +794,7 @@ func (s *store) validateConfigTpls(
 
 func (s *store) processTableExdata(
 	ctx context.Context,
-	d externaldata.TemplateRefParameters,
+	d template.TemplateRefParameters,
 	tplData eventfilter.Template,
 	field string,
 ) (any, error) {

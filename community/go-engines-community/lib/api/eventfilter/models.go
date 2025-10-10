@@ -146,9 +146,9 @@ type TemplateRequest struct {
 }
 
 type TemplateRuleRequest struct {
-	Type         string                               `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
-	Config       TemplateRuleConfigRequest            `json:"config"`
-	ExternalData []externaldata.TemplateRefParameters `json:"external_data" binding:"dive"`
+	Type         string                           `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Config       TemplateRuleConfigRequest        `json:"config"`
+	ExternalData []template.TemplateRefParameters `json:"external_data" binding:"dive"`
 
 	common.EntityPatternFieldsRequest
 	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`

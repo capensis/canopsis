@@ -213,32 +213,3 @@ func (v *existFieldValidator) Validate(ctx context.Context, sl validator.StructL
 func ValidateInfoValue(fl validator.FieldLevel) bool {
 	return types.IsInfoValueValid(fl.Field().Interface())
 }
-
-type DuplicateErrorParser struct {
-	dupErrorRegexp *regexp.Regexp
-	fields         map[string]string
-}
-
-func NewDuplicateErrorParser(fields map[string]string) *DuplicateErrorParser {
-	return &DuplicateErrorParser{
-		dupErrorRegexp: regexp.MustCompile(`{ ([^:]+)`),
-		fields:         fields,
-	}
-}
-
-func (p *DuplicateErrorParser) ParseDuplicateError(err error) error {
-	match := p.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		for k, v := range p.fields {
-			if matchedStr == k {
-				return NewValidationError(k, v)
-			}
-		}
-
-		return NewValidationError(matchedStr, matchedStr+" already exists.")
-	}
-
-	return fmt.Errorf("can't parse duplication error: %w", err)
-}
