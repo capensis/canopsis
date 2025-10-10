@@ -93,6 +93,7 @@
                 key="value"
                 :label="$t('common.value')"
                 :name="valueFieldName"
+                :types="fieldTypes"
                 class="ml-2"
               />
             </v-flex>
