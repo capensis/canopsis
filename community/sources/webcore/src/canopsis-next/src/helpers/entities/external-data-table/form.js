@@ -18,11 +18,26 @@ import {
  */
 
 /**
+ * @typedef {Object} ExternalDataTableBaseColumnConfig
+ * @property {string} name
+ * @property {string} tag
+ * @property {string} type
+ */
+
+/**
  * @typedef {Object} ExternalDataTable
  * @property {ExternalDataTableTypes} type
  * @property {string} name
  * @property {string} description
  * @property {string[]} [columns]
+ * @property {ExternalDataTableBaseColumnConfig[]} [column_configs]
+ */
+
+/**
+ * @typedef {Object} ExternalDataTableForm
+ * @property {ExternalDataTableTypes} type
+ * @property {string} name
+ * @property {string} description
  * @property {ExternalDataTableColumnTags[]} [column_tags]
  */
 
@@ -42,13 +57,13 @@ import {
  * Converts an ExternalDataTable object to a form representation.
  *
  * @param {ExternalDataTable} [externalDataTable = {}] - The external data table object to convert.
- * @returns {ExternalDataTable}
+ * @returns {ExternalDataTableForm}
  */
 export const externalDataTableToForm = (externalDataTable = {}) => ({
   type: externalDataTable.type ?? EXTERNAL_DATA_TABLES_TYPES.mongo,
   name: externalDataTable.name ?? '',
   description: externalDataTable.description ?? '',
-  column_tags: externalDataTable.column_tags ?? [],
+  column_tags: (externalDataTable.column_configs ?? []).map(columnConfig => columnConfig.tag),
 });
 
 /**
