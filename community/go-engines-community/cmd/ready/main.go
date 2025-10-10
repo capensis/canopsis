@@ -21,9 +21,11 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
+	var logOpts log.Options
 	var retries int
 	var flagTimeout time.Duration
 	var withPostgres, withTechPostgres bool
+	log.BindCmdFlags(&logOpts)
 	flag.IntVar(&retries, "retries", 10, "number of retries per check. if 0, infinite number of retries")
 	flag.DurationVar(&flagTimeout, "timeout", time.Second*60, "timeout after given duration. never timeout if 0s")
 	flag.BoolVar(&withPostgres, "withPostgres", false, "check postgres")
@@ -36,7 +38,7 @@ func main() {
 		defer cancel()
 	}
 
-	logger := log.NewLogger(ctx, false)
+	logger := log.NewLogger(ctx, logOpts)
 
 	retryDelay := time.Second
 	err := ready.CheckAll(ctx, retryDelay, retries, withPostgres, withTechPostgres, logger)
