@@ -325,6 +325,7 @@ export default {
   last: 'Last',
   seeDetails: 'See details',
   token: 'Token',
+  requestDate: 'Request date',
   variableTypes: {
     string: 'String',
     number: 'Number',

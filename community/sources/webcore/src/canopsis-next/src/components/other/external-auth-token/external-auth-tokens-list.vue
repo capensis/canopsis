@@ -6,6 +6,7 @@
       :items="preparedTokens"
       :headers="headers"
       :total-items="totalItems"
+      :is-expandable-item="isExpandableItem"
       expand
       search
       advanced-pagination
@@ -15,7 +16,13 @@
         {{ item.expiration_duration | duration }}
       </template>
       <template #last_used="{ item }">
-        {{ item.last_used | date }}
+        <span v-if="item.failed" class="error--text">
+          {{ item.fail_reason }}
+          <v-icon class="ml-2" color="error">warning</v-icon>
+        </span>
+        <span v-else>
+          {{ item.last_used | date }}
+        </span>
       </template>
       <template #updated="{ item }">
         {{ item.updated | date }}
@@ -37,7 +44,7 @@
         </v-layout>
       </template>
       <template #expand="{ item }">
-        <external-auth-tokens-list-expand-panel :external-auth-token="item" />
+        <external-auth-tokens-list-expand-panel :token="item" />
       </template>
     </c-advanced-data-table>
   </div>
@@ -131,9 +138,12 @@ export default {
       };
     }));
 
+    const isExpandableItem = item => item?.failed;
+
     return {
       headers,
       preparedTokens,
+      isExpandableItem,
     };
   },
 };
