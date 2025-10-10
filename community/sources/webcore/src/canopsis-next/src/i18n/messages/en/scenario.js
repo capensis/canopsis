@@ -4,8 +4,14 @@ export default {
   withAuth: 'Do you need auth fields?',
   key: 'Key',
   declareTicket: 'Declare ticket',
-  workflow: 'Workflow if this action didn’t match:',
+  workflow: 'Workflow if this action didn\'t match:',
+  workflowInCaseOfSuccess: 'Workflow in case of success',
+  workflowInCaseOfFailure: 'Workflow in case of failure',
+  caseFailure: 'In case of failure',
+  caseSuccess: 'In case of success',
+  actionDidNotMatch: 'Action didn\'t match',
   remainingAction: 'Continue with remaining actions',
+  remainingStep: 'Continue with remaining steps',
   addAction: 'Add action',
   emptyActions: 'No actions added yet',
   output: 'Output Action Format',
@@ -47,4 +53,6 @@ export default {
   tooltips: {
     pbehaviorActionsNamePrefix: 'Name is going to be `{{prefix}} {{entity_id}} {{start}}-{{stop}}`',
   },
+  allowMultipleUrls: 'Allow multiple URLs',
+  allowMultipleUrlsTooltip: 'If turned on, URL field can contain multiple URLs, it will be parsed and request will be sent to all of them.\nComma should be used as delimiter.\nFor example, URL could contain: {{ range $link := .Alarm.Value.Infos }}{{ if (eq $link.type "webhook") }}{{ $link.webhookURL }},{{ end }}{{ end }}',
 };

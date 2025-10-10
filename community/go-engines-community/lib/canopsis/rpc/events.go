@@ -48,7 +48,8 @@ type AxeParameters struct {
 	WebhookFailReason string `json:"webhook_fail_reason,omitempty"`
 	WebhookError      *Error `json:"webhook_error,omitempty"`
 	EmitTrigger       bool   `json:"emit_trigger,omitempty"`
-	RuleExecution     string `bson:"rule_execution,omitempty"`
+	RuleExecution     string `json:"rule_execution,omitempty"`
+	IsLastWebhook     bool   `json:"is_last_webhook,omitempty"`
 	// Snooze and Pbehavior
 	Duration *datetime.DurationWithUnit `json:"duration,omitempty"`
 	// Pbehavior enter
@@ -201,6 +202,18 @@ type RemediationEvent struct {
 type RemediationJobEvent struct {
 	JobExecutionID string `json:"job_execution_id"`
 	Step           int    `json:"step"`
+}
+
+type ApiRemediationResultEvent struct {
+	EventType   string `json:"event_type"`
+	JobExecID   string `json:"job_exec_id"`
+	ExecutionID string `json:"exec_id"`
+	UserID      string `json:"user_id"`
+}
+
+type ApiNotificationEvent struct {
+	Users []string `json:"users,omitempty"`
+	Roles []string `json:"roles,omitempty"`
 }
 
 type Error struct {
