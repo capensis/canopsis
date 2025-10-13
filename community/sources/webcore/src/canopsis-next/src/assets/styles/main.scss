@@ -287,6 +287,21 @@ html {
   overflow: visible !important;
 }
 
+.remove-card-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  margin: 0 !important;
+}
+
+.text-ucfirst {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
 .color--inherit {
   color: inherit !important;
 }

@@ -1,8 +1,5 @@
 <template>
-  <modal-wrapper
-    :close="closeModal"
-    minimize
-  >
+  <modal-wrapper close>
     <template #title="">
       <span>{{ config.assignedInstruction.name }}</span>
     </template>
@@ -20,26 +17,18 @@
         <remediation-instruction-simple-execute
           v-else
           :executed="executed"
+          :instruction-execution="instructionExecution"
           :jobs="jobs"
           @run:jobs="runJobs"
         />
       </v-fade-transition>
-    </template>
-    <template #actions="">
-      <v-btn
-        depressed
-        text
-        @click="closeModal"
-      >
-        {{ $t('common.close') }}
-      </v-btn>
     </template>
   </modal-wrapper>
 </template>
 
 <script>
 import { SOCKET_ROOMS } from '@/config';
-import { MODALS, REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
+import { MODALS } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
@@ -109,11 +98,15 @@ export default {
   },
   methods: {
     async fetchInstruction() {
-      this.pending = true;
+      try {
+        this.pending = true;
 
-      this.instruction = await this.fetchRemediationInstructionWithoutStore({ id: this.instructionId });
-
-      this.pending = false;
+        this.instruction = await this.fetchRemediationInstructionWithoutStore({ id: this.instructionId });
+      } catch (err) {
+        console.warn(err);
+      } finally {
+        this.pending = false;
+      }
     },
 
     async runJobs() {
@@ -122,7 +115,9 @@ export default {
       this.joinToSocketRoom();
     },
 
-    setJobs(jobs) {
+    async setJobs(jobs) {
+      await this.fetchInstructionExecution();
+
       this.instructionExecution.jobs = jobs;
     },
 
@@ -180,21 +175,15 @@ export default {
      * @return {Promise<void>}
      */
     async fetchInstructionExecution() {
-      const { execution } = this.config.assignedInstruction;
-
       try {
-        if (execution) {
-          if (execution.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused) {
-            this.instructionExecution = await this.resumeRemediationInstructionExecution({
-              id: this.instructionExecutionId,
-            });
-          } else {
-            this.instructionExecution = await this.fetchRemediationInstructionExecutionWithoutStore({
-              id: this.instructionExecutionId,
-            });
-          }
+        if (this.instructionExecutionId) {
+          this.instructionExecution = await this.fetchRemediationInstructionExecutionWithoutStore({
+            id: this.instructionExecutionId,
+          });
 
-          this.executed = true;
+          if (!this.executed) {
+            this.executed = true;
+          }
         }
       } catch (err) {
         console.error(err);
@@ -226,7 +215,6 @@ export default {
         }
       } catch (err) {
         console.error(err);
-
         this.$popups.error({ text: err.error || this.$t('errors.default') });
 
         this.closeModal();

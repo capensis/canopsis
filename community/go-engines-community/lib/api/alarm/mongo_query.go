@@ -261,6 +261,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		return nil, err
 	}
 	q.handleDependencies(r.WithDependencies)
+	q.handleTagColors(r.WithTagColors)
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -297,6 +298,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	q.clear(now, userID)
 	q.handleOpened(opened)
 	q.handleDependencies(true)
+	q.handleTagColors(true)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 
 	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
@@ -351,6 +353,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		return nil, err
 	}
 	q.handleDependencies(true)
+	q.handleTagColors(true)
 
 	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
@@ -367,6 +370,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	q.clear(now, userID)
 	q.handleOpened(opened)
 	q.handleDependencies(true)
+	q.handleTagColors(true)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"v.parents": parentId}})
 	q.lookups = append(q.lookups, lookupWithKey{key: "parents", pipeline: []bson.M{
 		{"$graphLookup": bson.M{
@@ -510,8 +514,13 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	q.handleDependencies(r.WithDependencies)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
-	pipeline := append(beforeLimit, q.sort)
+	pipeline := beforeLimit
+	if len(q.sort) > 0 {
+		pipeline = append(pipeline, q.sort)
+	}
+
 	pipeline = append(pipeline, afterLimit...)
+
 	return pipeline, nil
 }
 
@@ -562,6 +571,10 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 		if !addedLookups[lookup.key] && !q.lookupsOnlyForAdditionalMatch[lookup.key] {
 			afterLimit = append(afterLimit, lookup.pipeline...)
 		}
+	}
+
+	if len(q.sort) > 0 {
+		afterLimit = append(afterLimit, q.sort) // required in case of lookup with unwind/group
 	}
 
 	addFields := bson.M{}
@@ -935,9 +948,6 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 func (q *MongoQueryBuilder) addTagsFilter(r FilterRequest, match *[]bson.M) {
 	if len(r.Tags) != 0 {
 		*match = append(*match, bson.M{"tags": bson.M{"$in": r.Tags}})
-	} else if r.Tag != "" {
-		// @todo: backward compatibility, tag parameter is deprecated, should be removed in 25.04.
-		*match = append(*match, bson.M{"tags": r.Tag})
 	}
 }
 
@@ -1306,6 +1316,14 @@ func (q *MongoQueryBuilder) entityFieldToDbField(f string) (string, bool) {
 	}
 
 	return "", false
+}
+
+func (q *MongoQueryBuilder) handleTagColors(withTagColors bool) {
+	if !withTagColors {
+		return
+	}
+
+	q.lookups = append(q.lookups, lookupWithKey{key: "tag_colors", pipeline: GetTagColorsLookup()})
 }
 
 func getEntityLookup() []bson.M {
@@ -1683,4 +1701,36 @@ func getOnlyParentsSearchPipeline(
 	}...)
 
 	return pipeline
+}
+
+func GetTagColorsLookup() []bson.M {
+	return []bson.M{
+		{"$addFields": bson.M{
+			"doc": "$$ROOT",
+		}},
+		{"$unwind": bson.M{"path": "$tags", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmTagCollection,
+			"localField":   "tags",
+			"foreignField": "value",
+			"as":           "tag_colors",
+		}},
+		{"$unwind": bson.M{"path": "$tag_colors", "preserveNullAndEmptyArrays": true}},
+		{"$group": bson.M{
+			"_id": "$_id",
+			"doc": bson.M{"$first": "$doc"},
+			"tag_colors": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if": "$tags",
+				"then": bson.M{
+					"value": "$tags",
+					"color": "$tag_colors.color",
+				},
+				"else": "$$REMOVE",
+			}}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$doc",
+			bson.M{"tag_colors": "$tag_colors"},
+		}}}},
+	}
 }
