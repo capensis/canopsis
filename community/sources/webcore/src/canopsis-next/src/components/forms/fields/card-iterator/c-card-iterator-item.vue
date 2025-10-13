@@ -26,7 +26,7 @@
         :icon="small ? 'close' : 'delete'"
         :small="small"
         :icon-small="small"
-        class="c-card-iterator-item__remove-btn"
+        :class="{ 'remove-card-btn': small }"
         type="delete"
         @click="$emit('remove')"
       />
@@ -106,13 +106,6 @@ export default {
     &--offset {
       margin-left: var(--actions-max-width);
     }
-  }
-
-  &--small .c-card-iterator-item__remove-btn {
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    margin: 0 !important;
   }
 }
 </style>
