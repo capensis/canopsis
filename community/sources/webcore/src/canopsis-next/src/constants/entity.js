@@ -325,6 +325,8 @@ export const ENTITY_INFOS_FIELDS = [
   ENTITY_FIELDS.componentInfos,
 ];
 
+export const INFOS_COLUMN_PREFIX = 'entity.infos';
+
 const {
   ack,
   category,
