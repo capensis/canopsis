@@ -52,7 +52,7 @@ const ExploitationEntityInfosProperties = () => import(/* webpackChunkName: "Ent
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
-const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
+const Notifications = () => import(/* webpackChunkName: "Notifications" */ '@/views/notification/notifications.vue');
 
 Vue.use(Router);
 
@@ -452,15 +452,13 @@ const routes = [
     },
   },
   {
-    path: ROUTES.notificationInstructionStats,
-    name: ROUTES_NAMES.notificationInstructionStats,
-    component: NotificationInstructionStats,
+    path: ROUTES.notifications,
+    name: ROUTES_NAMES.notifications,
+    component: Notifications,
     meta: {
       requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.notification.instructionStats,
-      },
     },
+    props: route => ({ tabId: route.params.tabId, activeId: route.query.id }),
   },
   {
     path: ROUTES.error,

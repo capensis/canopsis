@@ -17,7 +17,7 @@ require (
 	github.com/alecthomas/participle v0.7.1
 	github.com/apognu/gocal v0.9.1
 	github.com/beevik/etree v1.6.0
-	github.com/brianvoe/gofakeit/v7 v7.5.1
+	github.com/brianvoe/gofakeit/v7 v7.6.0
 	github.com/bsm/redislock v0.9.4
 	github.com/casbin/casbin/v2 v2.122.0
 	github.com/chenyahui/gin-cache v1.10.0
@@ -37,7 +37,7 @@ require (
 	github.com/gorilla/securecookie v1.1.2
 	github.com/gorilla/sessions v1.4.0
 	github.com/gorilla/websocket v1.5.3
-	github.com/jackc/pgx/v5 v5.7.5
+	github.com/jackc/pgx/v5 v5.7.6
 	github.com/json-iterator/go v1.1.12
 	github.com/kylelemons/godebug v1.1.0
 	github.com/mailru/easyjson v0.9.0
@@ -45,7 +45,7 @@ require (
 	github.com/prometheus/client_golang v1.23.2
 	github.com/prometheus/procfs v0.17.0
 	github.com/rabbitmq/amqp091-go v1.10.0
-	github.com/redis/go-redis/v9 v9.13.0
+	github.com/redis/go-redis/v9 v9.14.0
 	github.com/rs/zerolog v1.34.0
 	github.com/russellhaering/gosaml2 v0.10.0
 	github.com/russellhaering/goxmldsig v1.5.0
@@ -54,7 +54,7 @@ require (
 	github.com/valyala/fastjson v1.6.4
 	go.mongodb.org/mongo-driver/v2 v2.3.0
 	go.uber.org/mock v0.6.0
-	golang.org/x/crypto v0.41.0
+	golang.org/x/crypto v0.42.0
 	golang.org/x/oauth2 v0.31.0
 	golang.org/x/sync v0.17.0
 	golang.org/x/text v0.29.0
@@ -128,7 +128,7 @@ require (
 	go.yaml.in/yaml/v2 v2.4.2 // indirect
 	golang.org/x/arch v0.21.0 // indirect
 	golang.org/x/mod v0.28.0 // indirect
-	golang.org/x/net v0.43.0 // indirect
+	golang.org/x/net v0.44.0 // indirect
 	golang.org/x/sys v0.36.0 // indirect
 	golang.org/x/tools v0.36.0 // indirect
 	google.golang.org/protobuf v1.36.8 // indirect
