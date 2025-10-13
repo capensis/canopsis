@@ -563,7 +563,6 @@ export const useAdvancedSearchAttributes = ({
   const {
     entityInfoPropertiesWithAlias,
     entityInfoPropertyPending,
-    fetchEntityInfoPropertiesList,
   } = useEntityInfoProperty();
 
   const { attributesMap: alarmAttributesMap } = useAdvancedSearchAlarmAttributes({ infosItems: alarmInfosItems });
@@ -641,8 +640,6 @@ export const useAdvancedSearchAttributes = ({
 
     return result;
   });
-
-  onMounted(fetchEntityInfoPropertiesList);
 
   return {
     pending: wholePending,
