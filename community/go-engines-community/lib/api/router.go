@@ -93,6 +93,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -116,6 +117,7 @@ func RegisterRoutes(
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
 	amqpChannel amqp.Channel,
+	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
@@ -304,8 +306,8 @@ func RegisterRoutes(
 			)
 		}
 
-		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider,
-			tplExecutor, json.NewDecoder(), logger)
+		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, common.NewPatternFieldsTransformer(primaryDbClient),
+			timezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpChannel, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger), logger)
@@ -440,7 +442,7 @@ func RegisterRoutes(
 			exportConfigurationAPI.Export,
 		)
 
-		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, authorProvider, json.NewDecoder())
+		entityStore := entity.NewStore(primaryDbClient, dbExportClient, timezoneConfigProvider, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), json.NewDecoder())
 		entityAPI := entity.NewApi(
 			entityStore,
 			exportTaskExecutor,
@@ -544,14 +546,19 @@ func RegisterRoutes(
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
 				primaryDbClient,
+				secondaryDbClient,
+				lockRedisSession,
 				pbhEntityTypeResolver,
 				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
 				timezoneConfigProvider,
 				authorProvider,
 				common.NewPatternFieldsTransformer(primaryDbClient),
+				websocketHub,
+				userInterfaceConfig,
 			),
 			dbexport.NewExporter(primaryDbClient),
 			pbhComputeChan,
+			workers.NewJobPublisher(jobKeyPbhPatterns, workersRunner),
 			logger,
 		)
 		pbehaviorRouter := protected.Group("/pbehaviors")
@@ -593,9 +600,20 @@ func RegisterRoutes(
 				pbehaviorApi.Delete)
 		}
 		protected.POST(
-			"pbehaviors-db-export",
+			"/pbehaviors-db-export",
 			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
-			pbehaviorApi.DBExport)
+			pbehaviorApi.DBExport,
+		)
+		protected.PUT(
+			"/pbehavior-patterns",
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
+			pbehaviorApi.ExecPattern,
+		)
+		protected.PUT(
+			"/all-pbehavior-patterns",
+			middleware.Authorize(apisecurity.PermPbhPatterns, model.PermissionCan, enforcer),
+			pbehaviorApi.ExecAllPatterns,
+		)
 
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
@@ -1544,7 +1562,7 @@ func RegisterRoutes(
 
 		stateSettingsRouter := protected.Group("/state-settings")
 		{
-			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(primaryDbClient, stateSettingsUpdatesChan, authorProvider))
+			stateSettingsApi := statesettings.NewApi(statesettings.NewStore(primaryDbClient, stateSettingsUpdatesChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)))
 			stateSettingsRouter.POST(
 				"",
 				middleware.Authorize(apisecurity.ObjStateSettings, model.PermissionCreate, enforcer),
@@ -1668,7 +1686,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
+		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
 			userInterfaceConfig, enforcer, logger)
 		patternRouter := protected.Group("/patterns")
 		{
@@ -2573,35 +2591,44 @@ func RegisterRoutes(
 			maintenanceApi.Maintenance,
 		)
 
-		entityInfosPropertyAPI := entityinfosproperty.NewApi(entityinfosproperty.NewStore(primaryDbClient, authorProvider))
+		entityInfosPropertyAPI := entityinfosproperty.NewApi(entityinfosproperty.NewStore(primaryDbClient, authorProvider), logger)
 		entityInfosPropertyRouter := protected.Group("/entity-infos-properties")
 		{
 			entityInfosPropertyRouter.POST(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionCreate, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionCreate, enforcer),
 				middleware.SetAuthor(),
 				entityInfosPropertyAPI.Create,
 			)
 			entityInfosPropertyRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer),
 				entityInfosPropertyAPI.List,
 			)
 			entityInfosPropertyRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionRead, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer),
 				entityInfosPropertyAPI.Get,
 			)
 			entityInfosPropertyRouter.PUT(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionUpdate, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				entityInfosPropertyAPI.Update,
 			)
 			entityInfosPropertyRouter.DELETE(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfosProperty, model.PermissionDelete, enforcer),
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionDelete, enforcer),
 				entityInfosPropertyAPI.Delete,
+			)
+		}
+		entityInfosPropertyBulkRouter := bulkRouter.Group("/entity-infos-properties")
+		{
+			entityInfosPropertyBulkRouter.DELETE(
+				"",
+				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionDelete, enforcer),
+				middleware.PreProcessBulk(apiConfigProvider, false),
+				entityInfosPropertyAPI.BulkDelete,
 			)
 		}
 	}

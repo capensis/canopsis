@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"github.com/kylelemons/godebug/pretty"
@@ -157,6 +158,68 @@ func getEntityToMongoQueryDataSets() map[string]entityDataSet {
 				}},
 			}},
 		},
+		"given infos timestamp condition with absolute time": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.infos.timestamp_info.value": bson.M{
+						"$gt": datetime.NewCpsTime(1609459200),
+						"$lt": datetime.NewCpsTime(1640995200),
+					}},
+				}},
+			}},
+		},
+		"given component infos timestamp condition with absolute time": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			mongoQueryResult: bson.M{"$or": []bson.M{
+				{"$and": []bson.M{
+					{"entity.component_infos.timestamp_info.value": bson.M{
+						"$gt": datetime.NewCpsTime(1609459200),
+						"$lt": datetime.NewCpsTime(1640995200),
+					}},
+				}},
+			}},
+		},
+		"given invalid timestamp condition type for infos": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "not a timestamp"),
+					},
+				},
+			},
+			mongoQueryErr: pattern.ErrUnsupportedConditionType,
+		},
+		"given invalid timestamp condition type for component infos": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "not a timestamp"),
+					},
+				},
+			},
+			mongoQueryErr: pattern.ErrUnsupportedConditionType,
+		},
 	}
 }
 
@@ -239,6 +302,144 @@ func getEntityToSqlDataSets() map[string]entityDataSet {
 				},
 			},
 			sqlResult: `((jsonb_typeof(component_infos->'info_name') = 'number' AND (CASE WHEN jsonb_typeof(component_infos->'info_name') = 'number' THEN (component_infos->'info_name')::numeric END) = 3))`,
+		},
+		"given infos timestamp condition with absolute time": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(infos->'timestamp_info') = 'number' AND (infos->'timestamp_info')::bigint > 1609459200 AND (infos->'timestamp_info')::bigint < 1640995200))`,
+		},
+		"given infos timestamp condition with relative time within condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(infos->'timestamp_info') = 'number' AND (infos->'timestamp_info')::bigint > EXTRACT(EPOCH FROM (NOW() - INTERVAL '3600 seconds'))::bigint))`,
+		},
+		"given infos timestamp condition with relative time older than condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(0, datetime.DurationUnitSecond), datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(infos->'timestamp_info') = 'number' AND (infos->'timestamp_info')::bigint < EXTRACT(EPOCH FROM (NOW() - INTERVAL '3600 seconds'))::bigint))`,
+		},
+		"given infos timestamp condition with relative time interval condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond), datetime.NewDurationWithUnit(1800, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(infos->'timestamp_info') = 'number' AND (infos->'timestamp_info')::bigint > EXTRACT(EPOCH FROM (NOW() - INTERVAL '3600 seconds'))::bigint AND (infos->'timestamp_info')::bigint < EXTRACT(EPOCH FROM (NOW() - INTERVAL '1800 seconds'))::bigint))`,
+		},
+		"given invalid timestamp condition type for infos sql": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "not a timestamp"),
+					},
+				},
+			},
+			sqlErr: pattern.ErrUnsupportedConditionType,
+		},
+		"given component_infos timestamp condition with absolute time": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(component_infos->'timestamp_info') = 'number' AND (component_infos->'timestamp_info')::bigint > 1609459200 AND (component_infos->'timestamp_info')::bigint < 1640995200))`,
+		},
+		"given component_infos timestamp condition with relative time within condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(component_infos->'timestamp_info') = 'number' AND (component_infos->'timestamp_info')::bigint > EXTRACT(EPOCH FROM (NOW() - INTERVAL '3600 seconds'))::bigint))`,
+		},
+		"given component_infos timestamp condition with relative time older than condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(0, datetime.DurationUnitSecond), datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(component_infos->'timestamp_info') = 'number' AND (component_infos->'timestamp_info')::bigint < EXTRACT(EPOCH FROM (NOW() - INTERVAL '3600 seconds'))::bigint))`,
+		},
+		"given component_infos timestamp condition with relative time interval condition": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond), datetime.NewDurationWithUnit(1800, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			sqlResult: `((jsonb_typeof(component_infos->'timestamp_info') = 'number' AND (component_infos->'timestamp_info')::bigint > EXTRACT(EPOCH FROM (NOW() - INTERVAL '3600 seconds'))::bigint AND (component_infos->'timestamp_info')::bigint < EXTRACT(EPOCH FROM (NOW() - INTERVAL '1800 seconds'))::bigint))`,
+		},
+		"given invalid timestamp condition type for component_infos sql": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewStringCondition(pattern.ConditionEqual, "not a timestamp"),
+					},
+				},
+			},
+			sqlErr: pattern.ErrUnsupportedConditionType,
 		},
 	}
 }

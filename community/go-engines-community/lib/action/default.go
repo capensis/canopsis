@@ -14,11 +14,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
-	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -26,8 +26,8 @@ import (
 )
 
 type Options struct {
+	log.Options
 	Version                  bool
-	ModeDebug                bool
 	FifoAckQueue             string
 	FifoAckExchange          string
 	FeaturePrintEventOnError bool
@@ -48,8 +48,8 @@ type DependencyMaker struct {
 func ParseOptions() (Options, []string) {
 	opts := Options{}
 
+	log.BindCmdFlags(&opts.Options)
 	flag.BoolVar(&opts.Version, "version", false, "Show the version information")
-	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.DefaultExchangeName, "Publish FIFO Ack event to this exchange.")
 	flag.StringVar(&opts.FifoAckQueue, "fifoAckQueue", canopsis.FIFOAckQueueName, "Publish FIFO Ack event to this queue.")
@@ -61,12 +61,9 @@ func ParseOptions() (Options, []string) {
 	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
 	flag.IntVar(&opts.RpcWorkers, "rpcWorkers", canopsis.DefaultRpcWorkers, "Amount of workers to process rpc event flow.")
 
-	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
-	flag.Bool("withWebhook", false, "Deprecated: handle webhook actions")
-
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags("workers", "withWebhook")
+	return opts, nil
 }
 
 // NewEngineAction returns the default Action engine with default connections.
