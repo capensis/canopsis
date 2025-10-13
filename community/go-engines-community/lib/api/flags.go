@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 const (
@@ -13,10 +14,10 @@ const (
 )
 
 func (f *Flags) ParseArgs() {
+	log.BindCmdFlags(&f.Options)
 	flag.BoolVar(&f.Version, "version", false, "Show the version information")
 	flag.Int64Var(&f.Port, "port", defaultPort, "Server port")
 	flag.StringVar(&f.ConfigDir, "c", defaultConfigDir, "Configuration files directory")
-	flag.BoolVar(&f.Debug, "d", false, "debug")
 	flag.BoolVar(&f.SecureSession, "secure", false, "Secure session")
 	flag.BoolVar(&f.EnableDocs, "docs", false, "Set to enable Swagger docs")
 	flag.DurationVar(&f.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
@@ -32,10 +33,11 @@ func (f *Flags) ParseArgs() {
 }
 
 type Flags struct {
+	log.Options
+
 	Version       bool
 	Port          int64
 	ConfigDir     string
-	Debug         bool
 	SecureSession bool
 	EnableDocs    bool
 

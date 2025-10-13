@@ -86,46 +86,58 @@ export const isInstructionExecutionManual = icon => [
  * @param {number} status
  * @returns {boolean}
  */
-export const isInstructionExecutionCompleted = ({
-  status,
-}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed;
+export const isInstructionExecutionCompleted = (execution = {}) => (
+  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.completed
+);
 
 /**
  * Check instruction execution status is failed
  *
- * @param {number} status
+ * @param {RemediationInstructionExecution} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionFailed = ({
-  status,
-} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed;
+export const isInstructionExecutionFailed = (execution = {}) => (
+  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.failed
+);
 
 /**
  * Check instruction execution status is aborted
  *
- * @param {number} status
+ * @param {RemediationInstructionExecution} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionAborted = ({
-  status,
-} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted;
+export const isInstructionExecutionAborted = (execution = {}) => (
+  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.aborted
+);
 
 /**
  * Check instruction execution status is paused
  *
- * @param {number} status
+ * @param {RemediationInstructionExecution} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionPaused = ({
-  status,
-} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused;
+export const isInstructionExecutionPaused = (execution = {}) => (
+  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.paused
+);
 
 /**
  * Check instruction execution status is running
  *
- * @param {number} status
+ * @param {RemediationInstructionExecution} execution
  * @returns {boolean}
  */
-export const isInstructionExecutionRunning = ({
-  status,
-} = {}) => status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running;
+export const isInstructionExecutionRunning = (execution = {}) => (
+  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running
+);
+
+/**
+ * Check instruction execution status is finished
+ *
+ * @param {RemediationInstructionExecution} execution
+ * @returns {boolean}
+ */
+export const isInstructionExecutionFinished = execution => (
+  isInstructionExecutionCompleted(execution)
+  || isInstructionExecutionFailed(execution)
+  || isInstructionExecutionAborted(execution)
+);

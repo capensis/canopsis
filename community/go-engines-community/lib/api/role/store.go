@@ -70,11 +70,13 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	beforeLimit = append(beforeLimit, getNestedObjectsPipeline()...)
-
-	afterLimit := s.authorProvider.Pipeline()
-
 	if r.Permission != "" {
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
+	}
+
+	afterLimit := s.authorProvider.Pipeline()
+	if r.WithFlags {
+		afterLimit = append(afterLimit, getFlagsPipeline()...)
 	}
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -100,11 +102,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
-			if r.WithFlags {
-				isNotAdmin := res.Data[i].ID != security.RoleAdmin
-				res.Data[i].Editable = &isNotAdmin
-				res.Data[i].Deletable = &isNotAdmin
-			}
 		}
 	}
 
@@ -409,6 +406,28 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func getFlagsPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.UserCollection,
+			"localField":   "_id",
+			"foreignField": "roles",
+			"as":           "user",
+			"pipeline": []bson.M{
+				{"$limit": 1},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$user", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"editable": bson.M{"$ne": bson.A{"$name", security.RoleAdmin}},
+			"deletable": bson.M{"$and": []bson.M{
+				{"$ne": bson.A{"$name", security.RoleAdmin}},
+				{"$eq": bson.A{"", bson.M{"$ifNull": bson.A{"$user._id", ""}}}},
+			}},
+		}},
 	}
 }
 
