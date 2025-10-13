@@ -36,12 +36,15 @@ type store struct {
 	authorProvider           author.Provider
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 	defaultSearchByFields    []string
+
+	transformer common.PatternFieldsTransformer
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 ) Store {
 	return &store{
 		dbClient:                 dbClient,
@@ -50,6 +53,7 @@ func NewStore(
 		authorProvider:           authorProvider,
 		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
 		defaultSearchByFields:    []string{"_id", "title"},
+		transformer:              transformer,
 	}
 }
 
@@ -123,7 +127,12 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		_, err := s.dbCollection.InsertOne(ctx, r)
+		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
 				return common.NewValidationError("title", "Title already exists.")
@@ -173,6 +182,11 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
+		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		if err != nil {
+			return err
+		}
+
 		unset := make(bson.M)
 		switch r.Method {
 		case statesetting.MethodDependencies:
@@ -181,7 +195,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			unset["state_thresholds"] = 1
 		}
 
-		err := s.dbCollection.FindOneAndUpdate(
+		err = s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": r.ID},
 			bson.M{"$set": r, "$unset": unset},
@@ -299,6 +313,51 @@ func (s *store) updateNotify(ctx context.Context) error {
 	)
 
 	return err
+}
+
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *StateSetting) error {
+	uniqueAliasesMap := make(map[string]bool)
+	uniqueAliases := make([]string, 0)
+
+	if r.EntityPattern != nil {
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: *r.EntityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		model.EntityPattern = &transformedEntityPatternRequest.EntityPattern
+
+		for _, alias := range transformedEntityPatternRequest.Aliases {
+			if !uniqueAliasesMap[alias] {
+				uniqueAliasesMap[alias] = true
+				uniqueAliases = append(uniqueAliases, alias)
+			}
+		}
+	}
+
+	if r.InheritedEntityPattern != nil {
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: *r.InheritedEntityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		model.InheritedEntityPattern = &transformedEntityPatternRequest.EntityPattern
+
+		for _, alias := range transformedEntityPatternRequest.Aliases {
+			if !uniqueAliasesMap[alias] {
+				uniqueAliasesMap[alias] = true
+				uniqueAliases = append(uniqueAliases, alias)
+			}
+		}
+	}
+
+	model.Aliases = uniqueAliases
+
+	return nil
 }
 
 func addEditableAndDeletableFields() bson.M {

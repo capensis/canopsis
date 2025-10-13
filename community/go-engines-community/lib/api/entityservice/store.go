@@ -558,7 +558,7 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 }
 
 func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {
-	return entity.NewMongoQueryBuilder(s.dbClient, s.authorProvider)
+	return entity.NewMongoQueryBuilder(s.dbClient, s.authorProvider, s.transformer)
 }
 
 func (s *store) findUser(ctx context.Context, id string) (link.User, error) {

@@ -26,6 +26,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
@@ -73,6 +74,7 @@ const (
 	jobKeyExport        = "export"
 	jobKeyImport        = "import"
 	jobKeyExtDataImport = "extdataimport"
+	jobKeyPbhPatterns   = "pbhpatterns"
 )
 
 //go:embed swaggerui/*
@@ -243,6 +245,7 @@ func Default(
 			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
+			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
 		),
 		workers.NewJobPublisher(jobKeyImport, workersRunner),
@@ -271,8 +274,8 @@ func Default(
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
-	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, services.TimezoneConfigProvider,
-		authorProvider, tplExecutor, json.NewDecoder(), logger)
+	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, common.NewPatternFieldsTransformer(primaryDbClient),
+		services.TimezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
 	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
@@ -311,6 +314,13 @@ func Default(
 		logger)
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
+	})
+	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
+		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
+		services.TimezoneConfigProvider, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
+		websocketHub, services.UserInterfaceConfigProvider)
+	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
+		return apiPbhStore.ExecPatternsAndUpdate(ctx)
 	})
 
 	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpChannel, json.NewEncoder(),
@@ -427,6 +437,7 @@ func Default(
 			dbExportClient,
 			pgPoolProvider,
 			amqpChannel,
+			lockRedisSession,
 			services.ApiConfigProvider,
 			services.TimezoneConfigProvider,
 			services.TemplateConfigProvider,
@@ -628,6 +639,10 @@ func registerWebsocketRooms(websocketHub websocket.Hub) error {
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := websocketHub.RegisterRoom(websocket.RoomPbhPatterns, apisecurity.PermPbhPatterns, securitymodel.PermissionCan); err != nil {
 		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 
