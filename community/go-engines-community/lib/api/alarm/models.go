@@ -95,8 +95,6 @@ type BaseFilterRequest struct {
 	OnlyParents bool              `form:"correlation" json:"correlation"`
 	Category    string            `form:"category" json:"category"`
 
-	// Tag is deprecated, please use tags[] parameter
-	Tag  string   `form:"tag" json:"tag"`
 	Tags []string `form:"tags[]" json:"tags"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
@@ -558,4 +556,9 @@ func (r *GetDisplayNamesResponse) GetData() any {
 
 func (r *GetDisplayNamesResponse) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type RefResponse struct {
+	ID          string `bson:"_id" json:"_id"`
+	DisplayName string `bson:"display_name" json:"display_name"`
 }

@@ -581,10 +581,6 @@ permission_group:
     _id: technical_exploitation
     name: <Current()._id>
     position: <Index()>
-  group_technical_notification:
-    _id: technical_notification
-    name: <Current()._id>
-    position: <Index()>
   group_technical_profile:
     _id: technical_profile
     name: <Current()._id>
@@ -1133,6 +1129,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_planning"
+  permission_api_pbehavior_patterns:
+    <<: *permission
+    _id: api_pbehavior_patterns
+    name: <Current()._id>
+    description: Check PBehavior patterns
+    groups:
+      - "@group_api"
+      - "@group_api_planning"
 
   # UI permissions
   .api_permissions_entity_pattern: &api_permissions_entity_pattern {
@@ -1461,6 +1465,18 @@ permission:
     api_permissions:
       "@permission_api_instruction": 4
       "@permission_api_metrics": 1
+  permission_models_instructionStats:
+    <<: *permission_crud
+    _id: models_instructionStats
+    name: <Current()._id>
+    description: Instructions - instructions stats tab
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions_bitmask:
+      4:
+        "@permission_api_instruction": 4
   permission_models_kpi:
     <<: *permission
     _id: models_kpi
@@ -1588,9 +1604,9 @@ permission:
     api_permissions:
       "@permission_api_viewgroup": 3
       "@permission_api_view": 3
-  permission_models_notification:
+  permission_models_notification_common:
     <<: *permission
-    _id: models_notification
+    _id: models_notification_common
     name: <Current()._id>
     description: Parameters - notification settings
     groups:
@@ -1904,19 +1920,6 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_external_data_table": 0
-
-  # technical -> notification
-  permission_models_notification_instructionStats:
-    <<: *permission_crud
-    _id: models_notification_instructionStats
-    name: <Current()._id>
-    description: Instructions statistics
-    groups:
-      - "@group_technical"
-      - "@group_technical_notification"
-    api_permissions_bitmask:
-      4:
-        "@permission_api_instruction": 4
 
   # technical -> profile
   permission_models_profile_corporatePattern:
@@ -3388,7 +3391,7 @@ role:
       "@permission_models_kpiFilters": 15
       "@permission_models_kpiRatingSettings": 15
       "@permission_models_kpiCollectionSettings": 15
-      "@permission_models_notification_instructionStats": 15
+      "@permission_models_instructionStats": 15
       "@permission_models_profile_corporatePattern": 15
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
@@ -3400,7 +3403,7 @@ role:
       "@permission_models_storageSettings": 15
       "@permission_models_icon": 15
       "@permission_models_view_import_export": 1
-      "@permission_models_notification": 1
+      "@permission_models_notification_common": 1
       "@permission_models_eventsRecord": 1
       "@permission_models_privateView": 1
       "@permission_availability_interval": 1
@@ -3514,6 +3517,7 @@ role:
       "@permission_api_pbehaviortype": 15
       "@permission_api_pbehaviorreason": 15
       "@permission_api_pbehaviorexception": 15
+      "@permission_api_pbehavior_patterns": 1
       "@permission_api_event": 1
       "@permission_api_healthcheck": 1
       "@permission_api_message_rate_stats_read": 1

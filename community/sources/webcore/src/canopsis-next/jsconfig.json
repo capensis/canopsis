@@ -5,5 +5,9 @@
       "@/*": ["./src/*"],
       "@unit/*": ["./tests/unit/*"]
     }
-  }
+  },
+  "exclude": [
+    "node_modules",
+    "public"
+  ]
 }
