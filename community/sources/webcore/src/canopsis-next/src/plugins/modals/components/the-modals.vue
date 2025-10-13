@@ -23,7 +23,11 @@ export default {
   },
   watch: {
     $route: {
-      handler() {
+      handler(newValue, prevValue) {
+        if (newValue.path === prevValue.path) {
+          return;
+        }
+
         if (this.modals && this.modals.length) {
           this.modals.forEach(modal => !modal.minimized && this.$modals.hide({ id: modal.id }));
         }

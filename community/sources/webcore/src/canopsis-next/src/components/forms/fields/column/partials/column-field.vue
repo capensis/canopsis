@@ -59,6 +59,7 @@
         :with-color-indicator="withColorIndicator"
         :with-instructions="withInstructions"
         :with-simple-template="withSimpleTemplate"
+        :with-filter-on-click="withFilterOnClick"
         :optional-infos-attributes="optionalInfosAttributes"
         :without-infos-attributes="withoutInfosAttributes"
         :variables="variables"
@@ -142,6 +143,10 @@ export default {
       default: false,
     },
     withoutCustomLabel: {
+      type: Boolean,
+      default: false,
+    },
+    withFilterOnClick: {
       type: Boolean,
       default: false,
     },

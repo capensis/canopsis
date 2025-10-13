@@ -12,9 +12,10 @@
     :component-data="componentData"
     :move="itemMove"
     :draggable="draggable"
+    :class="classes"
     @change="updateOrdering"
-    @start="$emit('start', $event)"
-    @end="$emit('end', $event)"
+    @start="startDragging"
+    @end="endDragging"
   >
     <slot />
     <template #footer="">
@@ -24,17 +25,17 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
 import Draggable from 'vuedraggable';
 
 import { VUETIFY_ANIMATION_DELAY } from '@/config';
 
 import { dragDropChangePositionHandler } from '@/helpers/dragdrop';
 
-import { formMixin } from '@/mixins/form';
+import { useModelField } from '@/hooks/form';
 
 export default {
   components: { Draggable },
-  mixins: [formMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -89,10 +90,66 @@ export default {
       default: '>*',
     },
   },
-  methods: {
-    updateOrdering(event) {
-      this.updateModel(dragDropChangePositionHandler(this.value, event));
-    },
+  setup(props, { emit }) {
+    const { updateModel } = useModelField(props, emit);
+
+    /**
+     * Tracks whether a drag operation is currently active.
+     */
+    const isDragging = ref(false);
+
+    /**
+     * Classes applied to the root draggable element depending on state.
+     */
+    const classes = computed(() => ({
+      'c-draggable-list-field--dragging': isDragging.value,
+    }));
+
+    /**
+     * Handles drag start: set dragging state and re-emit the event.
+     *
+     * @param {Object} event - Drag start event payload from vuedraggable/Sortable.
+     * @returns {void}
+     */
+    const startDragging = (event) => {
+      isDragging.value = true;
+      emit('start', event);
+    };
+
+    /**
+     * Handles drag end: reset dragging state and re-emit the event.
+     *
+     * @param {Object} event - Drag end event payload from vuedraggable/Sortable.
+     * @returns {void}
+     */
+    const endDragging = (event) => {
+      isDragging.value = false;
+      emit('end', event);
+    };
+
+    /**
+     * Processes list reordering and emits updated model value.
+     *
+     * @param {Object} event - vuedraggable change event (may include moved/added/removed).
+     * @returns {void}
+     */
+    const updateOrdering = event => updateModel(dragDropChangePositionHandler(props.value, event));
+
+    return {
+      classes,
+      startDragging,
+      endDragging,
+      updateOrdering,
+    };
   },
 };
 </script>
+
+<style lang="scss">
+.c-draggable-list-field--dragging {
+  // We need to put it to avoid problem with `dragend` event on text-editon field with content
+  .text-editor {
+    pointer-events: none;
+  }
+}
+</style>
