@@ -92,11 +92,21 @@ export const INSTRUCTION_EXECUTION_ICONS = {
 
 export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES = [
   TRIGGERS_TYPES.create,
-  TRIGGERS_TYPES.statedec,
   TRIGGERS_TYPES.stateinc,
+  TRIGGERS_TYPES.statedec,
   TRIGGERS_TYPES.changestate,
   TRIGGERS_TYPES.unsnooze,
   TRIGGERS_TYPES.activate,
+  TRIGGERS_TYPES.pbhenter,
+  TRIGGERS_TYPES.pbhleave,
+  TRIGGERS_TYPES.eventscount,
+];
+
+export const REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES = [
+  TRIGGERS_TYPES.stateinc,
+  TRIGGERS_TYPES.statedec,
+  TRIGGERS_TYPES.changestate,
+  TRIGGERS_TYPES.unsnooze,
   TRIGGERS_TYPES.pbhenter,
   TRIGGERS_TYPES.pbhleave,
   TRIGGERS_TYPES.eventscount,

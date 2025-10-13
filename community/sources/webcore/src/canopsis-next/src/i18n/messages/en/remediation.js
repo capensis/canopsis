@@ -46,8 +46,11 @@ export default {
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
       [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatic',
     },
+    enabledRepeatTrigger: 'Repeat execution on trigger',
+    repeatTriggers: 'Repeat triggers',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
+      enabledRepeatTriggerTooltip: 'Repeat on trigger in case if previous execution\nfailed (result - alarm state not OK)',
     },
     table: {
       rating: 'Rating',
