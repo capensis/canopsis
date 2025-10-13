@@ -96,6 +96,7 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 /**
  * @typedef {Object} RemediationInstructionAuto
  * @property {RemediationInstructionAutoTrigger[]} triggers
+ * @property {RemediationInstructionAutoTrigger[]} repeat_triggers
  * @property {number} [priority]
  * @property {RemediationInstructionJob[]} [jobs]
  */
@@ -117,6 +118,7 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {RemediationInstruction} RemediationInstructionForm
+ * @property {boolean} enabled_repeat_triggers
  * @property {RemediationInstructionStepForm[]} steps
  * @property {RemediationInstructionJobForm[]} jobs
  * @property {RemediationInstructionApprovalForm} approval
@@ -300,10 +302,15 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => {
     steps: remediationInstructionStepsToForm(remediationInstruction.steps),
     approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
     jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
+    enabled_repeat_triggers: !!remediationInstruction.repeat_triggers?.length,
   };
 
   if (remediationInstruction.triggers) {
     form.triggers = [...remediationInstruction.triggers];
+  }
+
+  if (remediationInstruction.repeat_triggers) {
+    form.repeat_triggers = [...remediationInstruction.repeat_triggers];
   }
 
   return form;
@@ -375,7 +382,14 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
  */
 export const formToRemediationInstruction = (form) => {
   const {
-    steps, jobs, priority, triggers, ...instruction
+    steps,
+    jobs,
+    priority,
+    triggers,
+    enabled_repeat_triggers: enabledRepeatTriggers,
+    repeat_triggers: repeatTriggers,
+
+    ...instruction
   } = form;
 
   if (isInstructionTypeManual(form?.type)) {
@@ -386,6 +400,7 @@ export const formToRemediationInstruction = (form) => {
     if (isInstructionTypeAuto(form?.type)) {
       instruction.priority = priority;
       instruction.triggers = triggers;
+      instruction.repeat_triggers = enabledRepeatTriggers ? repeatTriggers : [];
     }
   }
 
