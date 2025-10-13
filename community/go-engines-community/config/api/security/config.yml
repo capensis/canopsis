@@ -41,6 +41,9 @@ security:
 #        # PKCE is an extension to the Authorization Code flow to prevent CSRF and authorization code injection attacks,
 #        # some oauth2 provider might not support it, set it to false if it's your case.
 #        pkce: true
+#        # auth_style determines how client_id and client_secret are sent to the server.
+#        # please choose from: 0 - autodetect by the api(default), 1 - in urlencoded params, 2 - in headers.
+#        auth_style: 0
 #        # default role for user.
 #        default_role: admin
 #        # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.
@@ -66,7 +69,20 @@ security:
 #        # response is taken from user_url response, use "user.your_id_field" for user's id path,
 #        # if open_id is set to true, those urls are ignored.
 #        user_id: user.your_id_field
-
+#        # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
+#        #   the server's certificate chain and host name.
+#        #   Cases:
+#        #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
+#        #       - Accepts only self-signed certificates.
+#        #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
+#        #       - Accepts any certificate presented by the server and any host name in that certificate.
+#        #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
+#        #       - Invalid config
+#        #
+#        #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
+#        insecure_skip_verify: false
+#        insecure_verify_any_cert: false
+#
 #  ldap:
 #    inactivity_interval: 24h
 #    expiration_interval: 1M
@@ -85,12 +101,19 @@ security:
 #      lastname: sn
 #    # default_role defines role of new users which are created on successful LDAP login.
 #    default_role: Visualisation
-#    # insecure_skip_verify controls whether a client verifies the server's
-#    #	certificate chain and host name. If true, crypto/tls
-#    #	accepts any certificate presented by the server and any host name in that
-#    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
-#    #	attacks unless custom verification is used.
+#    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
+#    #   the server's certificate chain and host name.
+#    #   Cases:
+#    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
+#    #       - Accepts only self-signed certificates.
+#    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
+#    #       - Accepts any certificate presented by the server and any host name in that certificate.
+#    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
+#    #       - Invalid config
+#    #
+#    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
 #    insecure_skip_verify: false
+#    insecure_verify_any_cert: false
 #    min_tls_ver: tls12
 #    max_tls_ver: tls13
 #
@@ -105,33 +128,53 @@ security:
 #    validate_url: http://cas.local/serviceValidate
 #    # default_role defines role of new users which are created on successful CAS login.
 #    default_role: Visualisation
+#    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
+#    #   the server's certificate chain and host name.
+#    #   Cases:
+#    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
+#    #       - Accepts only self-signed certificates.
+#    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
+#    #       - Accepts any certificate presented by the server and any host name in that certificate.
+#    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
+#    #       - Invalid config
+#    #
+#    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
+#    insecure_skip_verify: false
+#    insecure_verify_any_cert: false
 #
 #  saml:
 #    inactivity_interval: 24h
 #    expiration_interval: 1M
 #    title: Connexion
 #    x509_cert: /certs/saml.cert
-#    x509_key:  /certs/saml.key
+#    x509_key: /certs/saml.key
 #    # sample with SimpleSamlPHP server
 #    idp_metadata_url: http://saml-server:8090/simplesaml/saml2/idp/metadata.php
 #    # other option with plain XML file
 #    # idp_metadata_xml: /path/to/xml
 #    idp_attributes_map:
-#       email: email
-#       name: uid
-#       firstname: uid
-#       lastname: uid
+#      email: email
+#      name: uid
+#      firstname: uid
+#      lastname: uid
 #    canopsis_saml_url: http://canopsis/api/v4/saml
 #    # default_role defines role of new users which are created on successful SAML login.
 #    default_role: Visualisation
 #    # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.
 #    allow_extra_roles: false
-#    # insecure_skip_verify controls whether a client verifies the server's
-#    #	certificate chain and host name. If true, crypto/tls
-#    #	accepts any certificate presented by the server and any host name in that
-#    #	certificate. In this mode, TLS is susceptible to machine-in-the-middle
-#    #	attacks unless custom verification is used.
+#    # insecure_skip_verify and insecure_verify_any_cert control whether a client verifies
+#    #   the server's certificate chain and host name.
+#    #   Cases:
+#    #     1. insecure_skip_verify = true, insecure_verify_any_cert = false
+#    #       - Accepts only self-signed certificates.
+#    #     2. insecure_skip_verify = true, insecure_verify_any_cert = true
+#    #       - Accepts any certificate presented by the server and any host name in that certificate.
+#    #     3. insecure_skip_verify = false, insecure_verify_any_cert = true
+#    #       - Invalid config
+#    #
+#    #   WARNING: Both modes make TLS susceptible to machine-in-the-middle attacks.
 #    insecure_skip_verify: false
+#    insecure_verify_any_cert: false
 #    canopsis_sso_binding: redirect
 #    canopsis_acs_binding: redirect
 #    sign_auth_request: false

@@ -52,10 +52,6 @@ export const ADMIN_PAGES_RULES = {
   eventsRecord: { edition: CANOPSIS_EDITION.pro },
 };
 
-export const NOTIFICATIONS_PAGES_RULES = {
-  instructionStats: { edition: CANOPSIS_EDITION.pro },
-};
-
 export const USER_PERMISSIONS_PREFIXES = {
   technical: {
     admin: 'models',
@@ -191,9 +187,11 @@ export const USER_PERMISSIONS = {
     planningReason: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningReason`,
     planningExceptions: `${USER_PERMISSIONS_PREFIXES.technical.admin}_planningExceptions`,
     remediationInstruction: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstruction`,
+    remediationInstructionApprove: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationInstructionApprove`,
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
+    remediationinstructionStats: `${USER_PERMISSIONS_PREFIXES.technical.admin}_instructionStats`, // TODO: rename it to admin
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
@@ -226,8 +224,7 @@ export const USER_PERMISSIONS = {
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`,
     },
     notification: {
-      common: USER_PERMISSIONS_PREFIXES.technical.notification,
-      instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
+      common: `${USER_PERMISSIONS_PREFIXES.technical.notification}_common`,
     },
     profile: {
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
@@ -627,11 +624,59 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
-  /**
-   * Notifications pages
-   */
-  [USER_PERMISSIONS.technical.notification.instructionStats]: NOTIFICATIONS_PAGES_RULES.instructionStats,
 };
+
+/**
+ * Map of permissions that enable other permissions conditionally
+ * Key: Permission ID that triggers the condition
+ * Value: Array of objects with dependent permission ID and i18n tooltip key
+ *
+ * @example
+ * // To add a new conditional permission:
+ * [USER_PERMISSIONS.some.triggerPermission]: [
+ *   {
+ *     dependentPermission: USER_PERMISSIONS.some.dependentPermission,
+ *     tooltipKey: 'permission.conditionalTooltips.someTooltipKey',
+ *   },
+ *   // Multiple dependencies can be added for one trigger permission
+ * ],
+ */
+export const CONDITIONAL_PERMISSIONS_MAP = {
+  [USER_PERMISSIONS.technical.remediationInstructionApprove]: [
+    {
+      dependentPermission: USER_PERMISSIONS.technical.remediationInstruction,
+      tooltipKey: 'permission.conditionalTooltips.approveInstructions',
+    },
+  ],
+  [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: [
+    {
+      dependentPermission: USER_PERMISSIONS.technical.remediationinstructionStats,
+      tooltipKey: 'permission.conditionalTooltips.executeManualInstructions',
+    },
+  ],
+};
+
+/**
+ * Inverse map for efficient lookup of conditional dependencies
+ * Key: Dependent permission ID
+ * Value: Array of objects with trigger permission and tooltip key
+ *
+ * This is automatically generated from CONDITIONAL_PERMISSIONS_MAP for O(1) lookup performance
+ */
+export const INVERSE_CONDITIONAL_PERMISSIONS_MAP = Object.entries(CONDITIONAL_PERMISSIONS_MAP)
+  .reduce((acc, [triggerPermission, dependencies]) => {
+    dependencies.forEach(({ dependentPermission, tooltipKey }) => {
+      if (!acc[dependentPermission]) {
+        acc[dependentPermission] = [];
+      }
+      acc[dependentPermission].push({
+        triggerPermission,
+        tooltipKey,
+      });
+    });
+
+    return acc;
+  }, {});
 
 export const DOCUMENTATION_LINKS = {
   /**
@@ -673,9 +718,4 @@ export const DOCUMENTATION_LINKS = {
    */
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-utilisation/menu-administration/planification/',
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
-
-  /**
-   * Notifications
-   */
-  // [USER_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
 };
