@@ -48,6 +48,7 @@ func NewStore(
 		widgetCollection:       dbClient.Collection(mongo.WidgetMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
+		notificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
 
 		passwordEncoder: passwordEncoder,
 		websocketStore:  websocketStore,
@@ -70,6 +71,7 @@ type store struct {
 	widgetCollection       mongo.DbCollection
 	widgetFilterCollection mongo.DbCollection
 	shareTokenCollection   mongo.DbCollection
+	notificationCollection mongo.DbCollection
 
 	passwordEncoder password.Encoder
 	websocketStore  websocket.Store
@@ -462,6 +464,11 @@ func (s *store) Delete(ctx context.Context, id, userID string, requestRoles []st
 		return false, err
 	}
 
+	err = s.deleteNotifications(ctx, id)
+	if err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
@@ -534,6 +541,14 @@ func (s *store) deleteShareTokens(ctx context.Context, id string) error {
 	return err
 }
 
+func (s *store) deleteNotifications(ctx context.Context, id string) error {
+	_, err := s.notificationCollection.DeleteMany(ctx, bson.M{
+		"user": id,
+	})
+
+	return err
+}
+
 func (s *store) checkLastAdmin(ctx context.Context) (bool, string, error) {
 	cursor, err := s.userCollection.Aggregate(ctx, []bson.M{
 		{"$match": bson.M{"enable": true, "roles": security.RoleAdmin}},
@@ -581,7 +596,11 @@ func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.
 
 func getRolePipeline() []bson.M {
 	return []bson.M{
-		{"$unwind": bson.M{"path": "$roles", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{
+			"path":                       "$roles",
+			"preserveNullAndEmptyArrays": true,
+			"includeArrayIndex":          "role_index",
+		}},
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
 			"localField":   "roles",
