@@ -416,7 +416,7 @@ func TestCheckServices(t *testing.T) {
 		},
 	}
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(t.Context(), true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(t.Context(), log.Options{Debug: true}))
 
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
@@ -527,7 +527,7 @@ func BenchmarkRecomputeServicesRemoveAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
 	for i := 0; i < b.N; i++ {
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
 	}
@@ -591,7 +591,7 @@ func BenchmarkRecomputeServicesAddAll(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
 	for i := 0; i < b.N; i++ {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)
@@ -672,7 +672,7 @@ func BenchmarkRecomputeServicesMixed(b *testing.B) {
 	commRegister := mock_mongo.NewMockCommandsRegister(ctrl)
 	commRegister.EXPECT().RegisterUpdate(gomock.Any(), gomock.Any()).AnyTimes()
 
-	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, true))
+	manager := contextgraph.NewManager(adapter, dbClient, storage, assigner, log.NewLogger(ctx, log.Options{Debug: true}))
 	for i := 0; i < b.N; i++ {
 		call = 0
 		_, _ = manager.RecomputeService(ctx, "serv-1", commRegister)

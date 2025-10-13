@@ -19,6 +19,9 @@ export const AVAILABLE_SORTED_TIME_UNITS = [
 ];
 
 export const DEFAULT_DURATION_FORMAT = 'D __ H _ m _ s _';
+
+export const LONG_DURATION_FORMAT = 'D __ H __ m __ s __';
+
 export const PATTERN_DURATION_FORMAT = 'D __ H _ m _ s _ S _';
 
 export const AVAILABLE_TIME_UNITS = {

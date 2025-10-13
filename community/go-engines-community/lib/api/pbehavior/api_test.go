@@ -35,15 +35,15 @@ func init() {
 }
 
 func BenchmarkBulkConnectorEdit_Given100CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 100)
 }
 
 func BenchmarkBulkConnectorEdit_Given500CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 500)
 }
 
 func BenchmarkBulkConnectorEdit_Given1000CreateItems(b *testing.B) {
-	benchmarkBulkConnectorEdit_givenNCreateItems(b, 150)
+	benchmarkBulkConnectorEdit_givenNCreateItems(b, 1000)
 }
 
 func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
@@ -61,7 +61,7 @@ func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
 
 	ctx := b.Context()
 	loader := fixtures.NewLoader(dbClient, []string{"./testdata/fixtures/bulk_connector_edit.yml"},
-		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), zerolog.Nop())
+		fixtures.NewParser(fixtures.NewFaker(password.NewBcryptEncoder())), zerolog.Nop())
 	err = loader.Load(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -88,7 +88,7 @@ func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
 		}
 	}()
 	authorProvider := author.NewProvider(&config.BaseApiConfigProvider{})
-	store := pbehavior.NewStore(dbClient, nil, nil, nil, authorProvider)
+	store := pbehavior.NewStore(dbClient, nil, nil, nil, nil, nil, authorProvider, nil, nil, nil)
 	api := pbehavior.NewApi(store, nil, ch, nil, zerolog.Nop())
 	reqBodies := make([]io.ReadCloser, b.N)
 	now := time.Now().Unix()

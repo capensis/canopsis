@@ -1,19 +1,16 @@
 <template>
   <c-alarm-actions-chips
-    :items="tags"
+    :items="entity.tag_colors"
     :inline-count="inlineCount"
     item-class="c-entity-tags-chips__chip"
-    item-text="text"
-    item-value="text"
+    item-text="value"
+    item-value="value"
     row
   />
 </template>
 
 <script>
-import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
-
 export default {
-  mixins: [entitiesAlarmTagMixin],
   props: {
     entity: {
       type: Object,
@@ -22,14 +19,6 @@ export default {
     inlineCount: {
       type: [Number, String],
       default: 2,
-    },
-  },
-  computed: {
-    tags() {
-      return (this.entity.tags ?? []).map(tag => ({
-        text: tag,
-        color: this.getTagColor(tag),
-      }));
     },
   },
 };
