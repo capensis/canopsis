@@ -947,6 +947,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_entity_info_property:
+    <<: *permission_crud
+    _id: api_entity_info_property
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_api"
+      - "@group_api_general"
 
   # api -> rules
   permission_api_dynamicinfos:
@@ -1134,6 +1142,14 @@ permission:
     _id: api_pbehaviorexception
     name: <Current()._id>
     description: PBehavior exceptions
+    groups:
+      - "@group_api"
+      - "@group_api_planning"
+  permission_api_pbehavior_patterns:
+    <<: *permission
+    _id: api_pbehavior_patterns
+    name: <Current()._id>
+    description: Check PBehavior patterns
     groups:
       - "@group_api"
       - "@group_api_planning"
@@ -1929,6 +1945,16 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_external_data_table": 0
+  permission_models_exploitation_entity_info_property:
+    <<: *permission_crud
+    _id: models_exploitation_entityInfoProperty
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_entity_info_property": 0
 
   # technical -> profile
   permission_models_profile_corporatePattern:
@@ -3508,6 +3534,7 @@ role:
       "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       "@permission_models_maintenance": 1
+      "@permission_models_exploitation_entity_info_property": 15
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -3527,6 +3554,7 @@ role:
       "@permission_api_pbehaviortype": 15
       "@permission_api_pbehaviorreason": 15
       "@permission_api_pbehaviorexception": 15
+      "@permission_api_pbehavior_patterns": 1
       "@permission_api_event": 1
       "@permission_api_healthcheck": 1
       "@permission_api_message_rate_stats_read": 1
@@ -3574,6 +3602,7 @@ role:
       "@permission_api_techmetrics_settings": 15
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+      "@permission_api_entity_info_property": 15
       # Views permissions
       "@permission_view_open_alarms_general": 7
       "@permission_view_open_alarms_actions": 1

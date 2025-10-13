@@ -2368,6 +2368,56 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+  /bulk/entity-infos-properties:
+    delete:
+      tags:
+        - entityinfosproperties
+      summary: Bulk delete entity infos properties
+      description: |
+        Bulk delete entity infos properties.
+
+        -  PERMISSIONS: `api_entity_infos_property:delete`
+      operationId: entityinfosproperties-bulk-delete
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.BulkDeleteRequestItem'
+            examples:
+              delete:
+                summary: Delete
+                description: Delete entity infos properties
+                value: [
+                  {
+                    "_id": "27e7f6ae-2ba0-4c7d-be4b-3e55e9c6e101"
+                  }
+                ]
+        required: true
+      responses:
+        207:
+          description: Multi-Status
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    allOf:
+                      - $ref: '#/components/schemas/BulkResponseItem'
+                      - type: object
+                        properties:
+                          item:
+                            $ref: 'schemas_swagger.yaml#/definitions/entityinfosproperty.BulkDeleteRequestItem'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
   /bulk/entityservices:
     put:
       tags:
@@ -5389,7 +5439,7 @@ paths:
       description: |
         Delete entity info property by id.
 
-        -  PERMISSIONS: `api_resolve_rule:delete`
+        -  PERMISSIONS: `api_entity_infos_property:delete`
       operationId: entityinfosproperties-delete-by-id
       parameters:
         - $ref: '#/components/parameters/id'
@@ -9889,6 +9939,49 @@ paths:
           description: Not Found
           content:
             application/octet-stream:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /all-pbehavior-patterns:
+    put:
+      tags:
+        - pbehaviors
+      summary: Execute all pbehavior patterns
+      description: |
+        Execute all pbehavior patterns.
+
+        -  PERMISSIONS: `api_pbehavior_patterns:update`
+      operationId: pbehaviors-exec-patterns
+      responses:
+        204:
+          description: OK
+  /pbehavior-patterns:
+    put:
+      tags:
+        - pbehaviors
+      summary: Execute pbehavior pattern
+      description: |
+        Execute pbehavior pattern.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-exec-pattern
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.ExecPatternRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /pbehavior-reasons:

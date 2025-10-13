@@ -46,6 +46,9 @@ type StateSetting struct {
 
 	// JUnit state setting only field
 	JUnitThresholds *JUnitThresholds `json:"junit_thresholds,omitempty" bson:"junit_thresholds,omitempty"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type StateThresholds struct {

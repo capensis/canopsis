@@ -35,6 +35,7 @@ export const useRemediationInstructionExecution = () => {
 
   return useActions({
     fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
+    fetchExecutionsStatusesWithoutStore: 'fetchStatusesListWithoutStore',
     fetchRemediationInstructionExecutionWithoutStore: 'fetchItemWithoutStore',
     createRemediationInstructionExecution: 'create',
     cancelRemediationInstructionExecution: 'cancel',
@@ -44,5 +45,6 @@ export const useRemediationInstructionExecution = () => {
     previousOperationRemediationInstructionExecution: 'previousOperation',
     resumeRemediationInstructionExecution: 'resume',
     fetchAlarmRemediationInstructionExecutionsWithoutStore: 'fetchAlarmExecutionsWithoutStore',
+    readRemediationInstructionExecution: 'read',
   });
 };
