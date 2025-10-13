@@ -1,7 +1,6 @@
 package pbehavior
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -10,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -30,29 +30,30 @@ type API interface {
 	BulkConnectorDelete(c *gin.Context)
 	BulkConnectorEdit(c *gin.Context)
 	DBExport(c *gin.Context)
+	ExecPattern(c *gin.Context)
+	ExecAllPatterns(c *gin.Context)
 }
 
 type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
 	computeChan   chan<- rpc.PbehaviorRecomputeEvent
+	jobPublisher  workers.JobPublisher
 	logger        zerolog.Logger
-
-	transformer common.PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
-	transformer common.PatternFieldsTransformer,
+	jobPublisher workers.JobPublisher,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:         store,
 		mongoExporter: mongoExporter,
 		computeChan:   computeChan,
-		transformer:   transformer,
+		jobPublisher:  jobPublisher,
 		logger:        logger,
 	}
 }
@@ -196,16 +197,6 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request.EditRequest)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
-	}
-
 	pbh, err := a.store.Insert(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
@@ -213,6 +204,7 @@ func (a *api) Create(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
 			return
 		}
+
 		panic(err)
 	}
 
@@ -235,16 +227,6 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request.EditRequest)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
-	}
-
 	pbh, recomputeInherited, err := a.store.Update(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
@@ -252,6 +234,7 @@ func (a *api) Update(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
 			return
 		}
+
 		panic(err)
 	}
 
@@ -277,23 +260,6 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	if request.CorporateEntityPattern != nil {
-		r, err := a.transformer.TransformEntityPatternFieldsRequest(c, common.EntityPatternFieldsRequest{
-			CorporateEntityPattern: *request.CorporateEntityPattern,
-		})
-		if err != nil {
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-				return
-			}
-			panic(err)
-		}
-		if r.CorporatePattern.ID != "" {
-			request.CorporatePattern = &r.CorporatePattern
-		}
-	}
-
 	pbh, recomputeInherited, err := a.store.UpdateByPatch(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -301,6 +267,7 @@ func (a *api) Patch(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+
 		panic(err)
 	}
 	if pbh == nil {
@@ -359,11 +326,6 @@ func (a *api) BulkCreate(c *gin.Context) {
 	recomputeInherited := false
 
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		pbh, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
@@ -389,11 +351,6 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	recomputeInherited := false
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		err := a.transformEditRequest(c, &request.EditRequest)
-		if err != nil {
-			return "", err
-		}
-
 		pbh, curRecomputeInherited, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || pbh == nil {
 			return "", err
@@ -670,16 +627,40 @@ func (a *api) DBExport(c *gin.Context) {
 	dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
 }
 
-func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {
-	a.computeChan <- event
-}
+// ExecPattern
+// @Param body body ExecPatternRequest true "body"
+// @Success 200 {object} pattern.CountResponse
+func (a *api) ExecPattern(c *gin.Context) {
+	request := ExecPatternRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
+		return
 	}
 
-	return nil
+	res, err := a.store.ExecPatternAndUpdate(c, request.ID, request.EntityPattern)
+	if err != nil {
+		panic(err)
+	}
+
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) ExecAllPatterns(c *gin.Context) {
+	err := a.jobPublisher.Publish(c, "")
+	if err != nil {
+		panic(err)
+	}
+
+	c.Status(http.StatusNoContent)
+}
+
+func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {
+	a.computeChan <- event
 }

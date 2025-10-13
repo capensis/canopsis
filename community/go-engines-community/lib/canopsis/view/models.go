@@ -186,6 +186,9 @@ type WidgetFilter struct {
 	savedpattern.WeatherServicePatternFields `bson:",inline"`
 
 	IsUserPreference bool `bson:"is_user_preference"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type WidgetTemplate struct {
@@ -209,4 +212,5 @@ type WidgetColumn struct {
 	Template         string `bson:"template,omitempty" json:"template,omitempty"`
 	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
 	LinksInRowCount  int64  `bson:"linksInRowCount,omitempty" json:"linksInRowCount,omitempty"`
+	IsFilter         bool   `bson:"isFilter,omitempty" json:"isFilter,omitempty"`
 }

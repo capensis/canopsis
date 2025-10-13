@@ -4,6 +4,7 @@
       <state-criticity-field
         v-field="value.state"
         :state-values="availableStateValues"
+        mandatory
       />
     </v-layout>
     <v-layout class="mt-4">

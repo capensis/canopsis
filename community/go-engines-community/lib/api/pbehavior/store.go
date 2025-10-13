@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
 	"regexp"
 	"sort"
 	"time"
@@ -13,6 +14,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -22,17 +25,24 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/kylelemons/godebug/pretty"
+	"github.com/redis/go-redis/v9"
 	librrule "github.com/teambition/rrule-go"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"golang.org/x/sync/errgroup"
 )
 
 const (
 	nextEventMaxMonths = 1
+
+	lockValue          = 1
+	lockTickInterval   = 30 * time.Second
+	lockExpirationTime = lockTickInterval + 10*time.Second
 )
 
 type Store interface {
@@ -51,45 +61,66 @@ type Store interface {
 	EntityDelete(ctx context.Context, r BulkEntityDeleteRequestItem) (string, error)
 	ConnectorCreate(ctx context.Context, r BulkConnectorCreateRequestItem) (*Response, error)
 	ConnectorDelete(ctx context.Context, r BulkConnectorDeleteRequestItem) (string, error)
+	ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error)
+	ExecPatternsAndUpdate(ctx context.Context) error
 }
 
 type store struct {
-	dbClient mongo.DbClient
+	dbClient     mongo.DbClient
+	readDbClient mongo.DbClient
+	redisClient  redis.Cmdable
 
 	dbCollection       mongo.DbCollection
 	entityDbCollection mongo.DbCollection
 
-	authorProvider         author.Provider
-	entityTypeResolver     pbehavior.EntityTypeResolver
-	pbhTypeComputer        pbehavior.TypeComputer
-	timezoneConfigProvider config.TimezoneConfigProvider
-	defaultSortBy          string
+	authorProvider              author.Provider
+	entityTypeResolver          pbehavior.EntityTypeResolver
+	pbhTypeComputer             pbehavior.TypeComputer
+	timezoneConfigProvider      config.TimezoneConfigProvider
+	websocketHub                websocket.Hub
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider
+	defaultSortBy               string
 
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
 
+	transformer common.PatternFieldsTransformer
+
 	dupErrorRegexp *regexp.Regexp
+
+	workers int
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	readDbClient mongo.DbClient,
+	redisClient redis.Cmdable,
 	entityTypeResolver pbehavior.EntityTypeResolver,
 	pbhTypeComputer pbehavior.TypeComputer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
+	websocketHub websocket.Hub,
+	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 ) Store {
 	return &store{
 		dbClient:                      dbClient,
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entityDbCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		readDbClient:                  readDbClient,
+		redisClient:                   redisClient,
 		entityTypeResolver:            entityTypeResolver,
 		pbhTypeComputer:               pbhTypeComputer,
 		timezoneConfigProvider:        timezoneConfigProvider,
 		authorProvider:                authorProvider,
+		transformer:                   transformer,
+		websocketHub:                  websocketHub,
+		userInterfaceConfigProvider:   userInterfaceConfigProvider,
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
 		dupErrorRegexp:                regexp.MustCompile(`{ ([^:]+)`),
+		workers:                       10,
 	}
 }
 
@@ -115,10 +146,28 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	doc.Updated = &now
 	doc.Comments = make([]pbehavior.Comment, 0)
 	doc.RRuleEnd = rruleEnd
+	if r.ExecPattern {
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return nil, err
+		}
+
+		_, doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
+		if err != nil {
+			return nil, err
+		}
+
+		doc.PatternExecAt = &now
+	}
 
 	var pbh *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return err
+		}
 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
@@ -349,7 +398,21 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		doc.RRuleEnd = rruleEnd
 	}
 
-	update := bson.M{"$set": doc}
+	if r.ExecPattern {
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return nil, false, err
+		}
+
+		_, doc.PatternMs, err = s.execPattern(ctx, doc.EntityPattern)
+		if err != nil {
+			return nil, false, err
+		}
+
+		doc.PatternExecAt = &now
+	}
+
+	update := make(bson.M)
 	if len(unset) > 0 {
 		update["$unset"] = unset
 	}
@@ -383,6 +446,13 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 				return valErr
 			}
 		}
+
+		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		if err != nil {
+			return err
+		}
+
+		update["$set"] = doc
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
@@ -459,26 +529,13 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 	if r.Color != nil {
 		set["color"] = *r.Color
 	}
-	if r.CorporatePattern != nil {
-		set["entity_pattern"] = r.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
-		set["corporate_entity_pattern"] = r.CorporatePattern.ID
-		set["corporate_entity_pattern_title"] = r.CorporatePattern.Title
-	} else if r.EntityPattern != nil {
-		set["entity_pattern"] = r.EntityPattern
-		unset["corporate_entity_pattern"] = ""
-		unset["corporate_entity_pattern_title"] = ""
-	}
+
 	if r.Inherited != nil {
 		set["inherited"] = *r.Inherited
 	}
 
 	if rruleUpdated {
 		unset["rrule_cstart"] = ""
-	}
-
-	update := bson.M{"$set": set}
-	if len(unset) > 0 {
-		update["$unset"] = unset
 	}
 
 	var pbh *Response
@@ -517,6 +574,34 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 					return valErr
 				}
 			}
+		}
+
+		corpPattern := ""
+		if r.CorporateEntityPattern != nil {
+			corpPattern = *r.CorporateEntityPattern
+		}
+
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			CorporateEntityPattern: corpPattern,
+			EntityPattern:          r.EntityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		if r.CorporateEntityPattern != nil {
+			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
+			set["corporate_entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.ID
+			set["corporate_entity_pattern_title"] = transformedEntityPatternRequest.CorporatePattern.Title
+		} else if r.EntityPattern != nil {
+			set["entity_pattern"] = transformedEntityPatternRequest.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
+			unset["corporate_entity_pattern"] = ""
+			unset["corporate_entity_pattern_title"] = ""
+		}
+
+		update := bson.M{"$set": set}
+		if len(unset) > 0 {
+			update["$unset"] = unset
 		}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
@@ -930,6 +1015,185 @@ func (s *store) ConnectorDelete(ctx context.Context, r BulkConnectorDeleteReques
 	return id, err
 }
 
+func (s *store) ExecPatternAndUpdate(ctx context.Context, id string, pattern pattern.Entity) (*apipattern.CountResponse, error) {
+	conf := s.userInterfaceConfigProvider.Get()
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+	defer cancel()
+	updateStats := false
+	if id != "" {
+		pbh, err := s.GetOneBy(ctx, id)
+		if err != nil || pbh == nil {
+			return nil, err
+		}
+
+		updateStats = reflect.DeepEqual(pbh.EntityPattern, pattern)
+	}
+
+	count, ms, err := s.execPattern(ctx, pattern)
+	if err != nil {
+		return nil, err
+	}
+
+	if updateStats {
+		now := datetime.NewCpsTime()
+		_, err = s.dbCollection.UpdateOne(ctx,
+			bson.M{
+				"_id": id,
+				"$or": []bson.M{
+					{"pattern_exec_at": nil},
+					{"pattern_exec_at": bson.M{"$lt": now}},
+				},
+			},
+			bson.M{"$set": bson.M{
+				"pattern_ms":      ms,
+				"pattern_exec_at": now,
+			}},
+		)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	res := apipattern.CountResponse{
+		Count:     count,
+		OverLimit: count > int64(conf.MaxMatchedItems),
+		Millisecs: ms,
+	}
+
+	return &res, nil
+}
+
+func (s *store) ExecPatternsAndUpdate(ctx context.Context) (resErr error) {
+	res := s.redisClient.SetNX(ctx, libredis.ApiPbhPatternCountLockKey, lockValue, lockExpirationTime)
+	if err := res.Err(); err != nil {
+		return err
+	}
+
+	if !res.Val() {
+		return nil
+	}
+
+	defer func() {
+		err := s.redisClient.Del(ctx, libredis.ApiPbhPatternCountLockKey).Err()
+		if err != nil && resErr == nil {
+			resErr = err
+		}
+	}()
+
+	g, gCtx := errgroup.WithContext(ctx)
+	ch := make(chan pbehavior.PBehavior)
+	g.Go(func() error {
+		defer close(ch)
+		cursor, err := s.readDbClient.Collection(mongo.PbehaviorMongoCollection).
+			Find(gCtx, bson.M{}, options.Find().SetProjection(bson.M{"entity_pattern": 1}))
+		if err != nil {
+			return err
+		}
+
+		defer cursor.Close(gCtx)
+		for cursor.Next(gCtx) {
+			pbh := pbehavior.PBehavior{}
+			err = cursor.Decode(&pbh)
+			if err != nil {
+				return err
+			}
+
+			select {
+			case <-gCtx.Done():
+			case ch <- pbh:
+			}
+		}
+
+		if err = cursor.Err(); err != nil {
+			return err
+		}
+
+		return nil
+	})
+	now := datetime.NewCpsTime()
+	done := make(chan struct{})
+	defer close(done)
+	for i := 0; i < s.workers; i++ {
+		g.Go(func() error {
+			for {
+				select {
+				case <-gCtx.Done():
+					return nil
+				case pbh, ok := <-ch:
+					if !ok {
+						select {
+						case <-gCtx.Done():
+						case done <- struct{}{}:
+						}
+
+						return nil
+					}
+
+					conf := s.userInterfaceConfigProvider.Get()
+					execCtx, cancel := context.WithTimeout(gCtx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
+					_, ms, err := s.execPattern(execCtx, pbh.EntityPattern)
+					if err != nil {
+						cancel()
+
+						return err
+					}
+
+					cancel()
+					_, err = s.dbCollection.UpdateOne(gCtx,
+						bson.M{
+							"_id": pbh.ID,
+							"$or": []bson.M{
+								{"pattern_exec_at": nil},
+								{"pattern_exec_at": bson.M{"$lt": now}},
+							},
+						},
+						bson.M{"$set": bson.M{
+							"pattern_ms":      ms,
+							"pattern_exec_at": now,
+						}},
+					)
+					if err != nil {
+						return err
+					}
+				}
+			}
+		})
+	}
+
+	g.Go(func() error {
+		ticker := time.NewTicker(lockTickInterval)
+		defer ticker.Stop()
+		doneCount := 0
+		for {
+			select {
+			case <-done:
+				doneCount++
+				if doneCount == s.workers {
+					return nil
+				}
+			case <-gCtx.Done():
+				return nil
+			case <-ticker.C:
+				err := s.redisClient.SetEx(gCtx, libredis.ApiCleanEntitiesLockKey, lockValue, lockExpirationTime).Err()
+				if err != nil {
+					return err
+				}
+			}
+		}
+	})
+
+	err := g.Wait()
+	if err != nil {
+		s.websocketHub.Send(websocket.RoomPbhPatterns, map[string]bool{"ok": false})
+
+		return err
+	}
+
+	s.websocketHub.Send(websocket.RoomPbhPatterns, map[string]bool{"ok": true})
+
+	return nil
+}
+
 func (s *store) getMatchedPbhIDs(ctx context.Context, entity libtypes.Entity) ([]string, error) {
 	cursor, err := s.dbCollection.Find(ctx, bson.M{})
 	if err != nil {
@@ -985,8 +1249,6 @@ func (s *store) transformRequestToDocument(r EditRequest) pbehavior.PBehavior {
 		Exceptions: r.Exceptions,
 		Color:      r.Color,
 		Inherited:  r.Inherited,
-
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection)),
 	}
 }
 
@@ -1101,6 +1363,41 @@ func (s *store) parseDupError(err error) error {
 	return fmt.Errorf("can't parse duplication error: %w", err)
 }
 
+func (s *store) execPattern(ctx context.Context, entityPattern pattern.Entity) (int64, int64, error) {
+	q, err := db.EntityPatternToMongoQuery(entityPattern, "")
+	if err != nil {
+		return 0, 0, err
+	}
+
+	pipeline := []bson.M{
+		{"$match": q},
+		{"$count": "total_count"},
+	}
+	collection := s.readDbClient.Collection(mongo.EntityMongoCollection)
+	start := time.Now()
+	cursor, err := collection.Aggregate(ctx, pipeline)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	defer cursor.Close(ctx)
+	res := struct {
+		Count int64 `bson:"total_count"`
+	}{}
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&res)
+		if err != nil {
+			return 0, 0, err
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return 0, 0, err
+	}
+
+	return res.Count, max(time.Since(start).Milliseconds(), 1), nil
+}
+
 func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 	return func(i, j int) bool {
 		if response[i].From.Before(response[j].From) {
@@ -1129,4 +1426,18 @@ func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 
 		return response[i].Title < response[j].Title
 	}
+}
+
+func (s *store) transformPatternRequestToModel(ctx context.Context, r common.EntityPatternFieldsRequest, model *pbehavior.PBehavior) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+	if err != nil {
+		return err
+	}
+
+	model.Aliases = transformedEntityPatternRequest.Aliases
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection),
+	)
+
+	return nil
 }
