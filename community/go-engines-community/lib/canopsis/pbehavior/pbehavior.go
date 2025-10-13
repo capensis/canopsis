@@ -78,4 +78,7 @@ type PBehavior struct {
 
 	// Aliases is used to ease find by entity info property api.
 	Aliases []string `bson:"aliases" json:"-"`
+
+	PatternMs     int64             `bson:"pattern_ms,omitempty"`
+	PatternExecAt *datetime.CpsTime `bson:"pattern_exec_at,omitempty"`
 }
