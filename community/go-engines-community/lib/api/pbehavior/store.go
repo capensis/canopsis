@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"regexp"
 	"sort"
 	"time"
 
@@ -14,8 +13,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -67,8 +66,9 @@ type Store interface {
 }
 
 type store struct {
-	dbClient           mongo.DbClientreadDbClient mongo.DbClient
-	redisClient  redis.Cmdable
+	dbClient           mongo.DbClient
+	readDbClient       mongo.DbClient
+	redisClient        redis.Cmdable
 	dbCollection       mongo.DbCollection
 	entityDbCollection mongo.DbCollection
 
@@ -77,8 +77,9 @@ type store struct {
 	pbhTypeComputer        pbehavior.TypeComputer
 	timezoneConfigProvider config.TimezoneConfigProvider
 
-websocketHub                websocket.Hub
-	userInterfaceConfigProvider config.UserInterfaceConfigProvider	defaultSortBy                 string
+	websocketHub                  websocket.Hub
+	userInterfaceConfigProvider   config.UserInterfaceConfigProvider
+	defaultSortBy                 string
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
 
@@ -120,7 +121,7 @@ func NewStore(
 			"_id":  "ID already exists.",
 			"name": "Name already exists.",
 		}),
-		workers:                       10,
+		workers: 10,
 	}
 }
 
