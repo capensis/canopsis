@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
+  alias: 'Alias',
   namePrefix: 'Préfixe du nom',
   description: 'Description',
   author: 'Auteur',
@@ -324,13 +325,17 @@ export default {
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
   inProgress: 'En cours',
+  defined: 'Défini',
+  bulkDelete: 'Supprimer la sélection',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
     boolean: 'Booléen',
     null: 'Nul',
     array: 'Tableau',
+    stringArray: 'Tableau de chaînes',
     object: 'Object',
+    timestamp: 'Horodatage',
   },
   mixedField: {
     types: {
@@ -339,6 +344,7 @@ export default {
       [PATTERN_FIELD_TYPES.boolean]: '@:common.variableTypes.boolean',
       [PATTERN_FIELD_TYPES.null]: '@:common.variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:common.variableTypes.array',
+      [PATTERN_FIELD_TYPES.timestamp]: '@:common.variableTypes.timestamp',
     },
   },
   saveChanges: 'Sauvegarder',

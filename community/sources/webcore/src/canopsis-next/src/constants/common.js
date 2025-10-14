@@ -35,6 +35,8 @@ export const ROUTES_NAMES = {
   exploitationLinkRules: 'exploitation-link-rules',
   exploitationExternalDataTables: 'exploitation-external-data-tables',
   notifications: 'notifications',
+  exploitationEntityInfosProperties: 'exploitation-entity-infos-properties',
+  notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
 };
@@ -76,6 +78,8 @@ export const ROUTES = {
   exploitationLinkRules: '/exploitation/link-rules',
   exploitationExternalDataTables: '/exploitation/external-data-tables',
   notifications: '/notifications/:tabId',
+  exploitationEntityInfosProperties: '/exploitation/entity-infos-properties',
+  notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
   profileThemes: '/themes',
 };
@@ -497,3 +501,7 @@ export const DENSE_TYPES = {
   medium: 1,
   small: 2,
 };
+
+export const INFOS_NAME_VARIABLE = '%infos_name%';
+
+export const INFOS_VARIABLE_PREFIX = '(index ';

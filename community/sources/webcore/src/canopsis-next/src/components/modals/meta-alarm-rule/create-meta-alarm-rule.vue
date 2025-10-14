@@ -69,11 +69,12 @@ import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY, META_ALARMS_FORM
 
 import { formToMetaAlarmRule, metaAlarmRuleToForm } from '@/helpers/entities/meta-alarm/rule/form';
 
+import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useI18n } from '@/hooks/i18n';
 import { useEntityInfos } from '@/hooks/store/modules/entity-infos';
+import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
 import MetaAlarmRuleForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
@@ -177,6 +178,7 @@ export default {
       },
     });
 
+    useEntityInfoPropertyFetching();
     useFormConfirmableCloseModal({ form, submit, close });
 
     onMounted(() => {

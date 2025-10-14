@@ -223,6 +223,7 @@ export const USER_PERMISSIONS = {
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`,
+      entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_entityInfoProperty`,
     },
     notification: {
       common: `${USER_PERMISSIONS_PREFIXES.technical.notification}_common`,
@@ -440,6 +441,7 @@ export const USER_PERMISSIONS = {
       entitycategory: `${USER_PERMISSIONS_PREFIXES.api}_entitycategory`,
       entitycomment: `${USER_PERMISSIONS_PREFIXES.api}_entitycomment`,
       entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
+      entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.api}_entity_info_property`,
       event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
       view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
       viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
