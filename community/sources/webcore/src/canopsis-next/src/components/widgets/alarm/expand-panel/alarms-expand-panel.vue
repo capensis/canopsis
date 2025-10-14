@@ -411,12 +411,14 @@ export default {
 
     search: {
       immediate: true,
-      handler(search) {
-        this.query = {
-          ...this.query,
+      handler(search, prevSearch = '') {
+        if (search !== prevSearch) {
+          this.query = {
+            ...this.query,
 
-          search,
-        };
+            search,
+          };
+        }
       },
     },
   },
