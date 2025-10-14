@@ -1013,6 +1013,10 @@ export default {
     title: 'Quitter le mode maintenance',
     text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
   },
+  confirmationMarkAsRead: {
+    title: 'Marquer comme lu',
+    text: 'Êtes-vous sûr de vouloir marquer ce message de diffusion comme lu et le masquer ?',
+  },
   confirmationCreateNewTicketForAlarm: {
     title: 'Confirmer la création de tickets',
     text: 'Au moins un ticket existe déjà pour cette alarme.\nVoulez-vous en créer un nouveau ?',
