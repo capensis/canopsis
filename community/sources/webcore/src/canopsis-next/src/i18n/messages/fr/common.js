@@ -244,7 +244,6 @@ export default {
   cycleDependency: 'Dépendance au cycle',
   checkPattern: 'Vérification du modèle',
   checkFilter: 'Vérifier le filtre',
-  itemFound: '{count} élément trouvé | {count} éléments trouvés',
   canonicalType: 'Type canonique',
   map: 'Cartographie | Cartographies',
   instructions: 'Consignes',

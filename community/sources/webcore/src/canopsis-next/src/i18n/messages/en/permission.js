@@ -382,6 +382,7 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorException]: 'PBehavior exceptions',
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'PBehavior reasons',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'PBehavior types',
+    [USER_PERMISSIONS.api.planning.pbehaviorPatterns]: 'Pbehavior patterns',
   },
 
   conditionalTooltips: {
