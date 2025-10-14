@@ -4,11 +4,13 @@ db.permission.deleteMany({
     _id: {
         $in: [
             "api_webhook_token_rule",
+            "modals_externalAuthTokens",
         ]
     }
 });
 db.role.updateMany({}, {
     $unset: {
         "permissions.api_webhook_token_rule": "",
+        "permissions.modals_externalAuthTokens": "",
     }
 });

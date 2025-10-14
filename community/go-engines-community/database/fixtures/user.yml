@@ -1717,6 +1717,15 @@ permission:
       - "@group_technical"
       - "@group_technical_admin"
       - "@group_technical_admin_general"
+  permission_modals_externalAuthTokens:
+    <<: *permission_crud
+    _id: modals_externalAuthTokens
+    name: <Current()._id>
+    description: Webhook token rule
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -3414,6 +3423,7 @@ role:
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
       "@permission_models_templateTesting": 1
+      "@permission_modals_externalAuthTokens": 15
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
