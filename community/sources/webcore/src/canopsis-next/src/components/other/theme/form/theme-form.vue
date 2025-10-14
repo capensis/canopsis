@@ -22,27 +22,22 @@
         <theme-color-picker-field
           v-field="form.colors.main.accent"
           :label="$t('theme.main.accent')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.error"
           :label="$t('theme.main.error')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.info"
           :label="$t('theme.main.info')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.success"
           :label="$t('theme.main.success')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.warning"
           :label="$t('theme.main.warning')"
-          :help-text="$t('theme.main.secondaryHelpText')"
         />
         <theme-color-picker-field
           v-field="form.colors.main.background"
