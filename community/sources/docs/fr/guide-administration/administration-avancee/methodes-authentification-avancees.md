@@ -349,7 +349,7 @@ Définition des paramètres :
 | Attribut       |                    Description                               |            Valeur             |
 | -------------- | ------------------------------------------------------------ | ------------------------------ |
 | `open_id`    | Définit si le provider est de type open_id ou non        |   true / false  |
-| `auth_style` | Permet de définir comment le `client_id` et le `client_secret` doivent être envoyer au serveur. | `0`: Comportement par défaut (autodetect), `1`: dans un paramètre (urlencoded), `2:` Dans l'entête de la requête (headers) |
+| `auth_style` | Permet de définir comment le `client_id` et le `client_secret` doivent être envoyés au serveur. | `0`: Comportement par défaut (autodetect), `1`: dans un paramètre (urlencoded), `2:` Dans l'entête de la requête (headers) |
 | `issuer` | Doit être définie dans le cas où le champ `open_id` est à `true`. Permet de vérifier l'identité du provider; elle est fournie par votre provider            | URL                  |
 | `auth_url`  | Adresse d'authentification. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider  | URL |
 | `token_url`  | Adresse de gestion de token. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider | URL |
