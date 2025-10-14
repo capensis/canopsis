@@ -7,10 +7,17 @@
       <span>{{ title }}</span>
     </template>
     <template
-      v-if="config.text"
+      v-if="sanitizedText || sanitizedAlertText"
       #text=""
     >
-      <span class="text-subtitle-1 pre-wrap">{{ config.text }}</span>
+      <v-alert
+        v-if="sanitizedAlertText"
+        class="mb-2 pre-line"
+        type="warning"
+      >
+        <span v-html="sanitizedAlertText" />
+      </v-alert>
+      <span v-html="sanitizedText" class="text-subtitle-1 pre-wrap" />
     </template>
     <template #actions="">
       <v-layout
@@ -26,7 +33,7 @@
         </v-btn>
         <v-btn
           :loading="submitting"
-          :disabled="isDisabled"
+          :disabled="submitting"
           class="ml-2"
           color="primary"
           @click.prevent="submit"
@@ -42,6 +49,8 @@
 import { ref, computed, onBeforeUnmount } from 'vue';
 
 import { MODALS } from '@/constants';
+
+import { sanitizeHtml } from '@/helpers/html';
 
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
@@ -59,13 +68,16 @@ export default {
     },
   },
   setup(props) {
-    const submitted = ref(false);
-    const cancelled = ref(false);
-
     const { t } = useI18n();
     const { config, close } = useInnerModal(props);
 
+    const submitted = ref(false);
+    const cancelled = ref(false);
+
     const title = computed(() => config.value.title ?? t('common.confirmation'));
+
+    const sanitizedText = computed(() => (config.value.text ? sanitizeHtml(config.value.text) : ''));
+    const sanitizedAlertText = computed(() => (config.value.alert ? sanitizeHtml(config.value.alert) : ''));
 
     const cancel = () => {
       cancelled.value = true;
@@ -82,16 +94,20 @@ export default {
     });
 
     onBeforeUnmount(() => {
-      if (!submitted.value) {
-        config.value.cancel?.(cancelled.value);
+      if (!submitted.value && config.value.cancel) {
+        config.value.cancel(cancelled.value);
       }
     });
 
     return {
       config,
+
       submitting,
       isDisabled,
       title,
+      sanitizedText,
+      sanitizedAlertText,
+
       cancel,
       submit,
     };

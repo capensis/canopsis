@@ -458,3 +458,8 @@ export const CreateTemplateTestingTest = () => ({
   component: import(/* webpackChunkName: "TemplateTesting" */ './template-testing/create-template-testing-test.vue'),
   loading: LoaderOverlay,
 });
+
+export const CreateEntityInfoProperty = () => ({
+  component: import(/* webpackChunkName: "EntityInfoProperty" */ './entity-info-property/create-entity-info-property.vue'),
+  loading: LoaderOverlay,
+});

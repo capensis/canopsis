@@ -24,7 +24,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -52,10 +52,10 @@ import {
   isEnrichmentEventFilterRuleType,
 } from '@/helpers/entities/event-filter/rule/entity';
 
+import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useI18n } from '@/hooks/i18n';
 import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';

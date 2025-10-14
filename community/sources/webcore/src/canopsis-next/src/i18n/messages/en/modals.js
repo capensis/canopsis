@@ -49,6 +49,22 @@ export default {
       title: 'Edit an information',
     },
   },
+  createEntityInfoProperty: {
+    create: {
+      title: 'Add entity infos properties',
+      success: 'Entity info property created successfully',
+    },
+    edit: {
+      title: 'Edit entity infos properties',
+      success: 'Entity info property updated successfully',
+    },
+    duplicate: {
+      title: 'Duplicate entity infos properties',
+    },
+    remove: {
+      success: 'Entity info property removed successfully',
+    },
+  },
   view: {
     create: {
       title: 'Create a view',
@@ -1028,6 +1044,14 @@ export default {
   confirmationCreateNewTicketForAlarms: {
     title: 'Confirm create tickets',
     text: 'Some alarms already have tickets created.\nDo you want to create new tickets for them?',
+  },
+  confirmationRemoveEntityInfoProperty: {
+    title: 'Delete entity info property',
+    alert: '<span class="text-body-1">You are about to delete properties of entity infos <strong>{name}</strong>.</span>\n'
+      + '<strong>Deletion operation won’t be cancellable.</strong>',
+    text: 'In the following places <strong>alias</strong> will be change to <strong>entity infos name</strong>,'
+      + ' selected <strong>type will not be changed</strong>: '
+      + '<ul><li>patterns</li><li>advanced search</li><li>manually added infos</li></ul>',
   },
   createTag: {
     create: {
