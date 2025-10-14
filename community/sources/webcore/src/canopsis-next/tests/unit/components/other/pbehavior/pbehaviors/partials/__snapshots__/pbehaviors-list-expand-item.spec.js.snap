@@ -97,6 +97,8 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
                 >
                   <pbehavior-patterns-form-stub
                     form="[object Object]"
+                    pbehaviorcountertype="true"
+                    pbehaviorid="pbehavior-id"
                     readonly="true"
                   />
                 </div>
@@ -215,6 +217,8 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
                 >
                   <pbehavior-patterns-form-stub
                     form="[object Object]"
+                    pbehaviorcountertype="true"
+                    pbehaviorid="pbehavior-id"
                     readonly="true"
                   />
                 </div>
@@ -329,6 +333,8 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
                 >
                   <pbehavior-patterns-form-stub
                     form="[object Object]"
+                    pbehaviorcountertype="true"
+                    pbehaviorid="pbehavior-id"
                     readonly="true"
                   />
                 </div>
@@ -443,6 +449,8 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
                 >
                   <pbehavior-patterns-form-stub
                     form="[object Object]"
+                    pbehaviorcountertype="true"
+                    pbehaviorid="pbehavior-id"
                     readonly="true"
                   />
                 </div>
@@ -564,6 +572,8 @@ exports[`pbehaviors-list-expand-item Renders \`pbehaviors-list-expand-item\` wit
                 >
                   <pbehavior-patterns-form-stub
                     form="[object Object]"
+                    pbehaviorcountertype="true"
+                    pbehaviorid="pbehavior-id"
                     readonly="true"
                   />
                 </div>
