@@ -26,6 +26,10 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+const (
+	entityTplVarsIndex = 1
+)
+
 type Store interface {
 	FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error)
 	FindViewIdByTab(ctx context.Context, tabId string) (string, error)
@@ -37,7 +41,7 @@ type Store interface {
 	CopyForTab(ctx context.Context, tabID, newTabID, author string, isPrivate bool) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
-	GetTemplateVars() TemplateVarsResponse
+	GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error)
 }
 
 func NewStore(
@@ -49,19 +53,20 @@ func NewStore(
 	tplConfigProvider config.TemplateConfigProvider,
 ) Store {
 	return &store{
-		client:                   dbClient,
-		collection:               dbClient.Collection(mongo.WidgetMongoCollection),
-		tabCollection:            dbClient.Collection(mongo.ViewTabMongoCollection),
-		filterCollection:         dbClient.Collection(mongo.WidgetFiltersMongoCollection),
-		userPrefCollection:       dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		widgetTemplateCollection: dbClient.Collection(mongo.WidgetTemplateMongoCollection),
-		alarmCollection:          dbClient.Collection(mongo.AlarmMongoCollection),
-		tplTestCollection:        dbClient.Collection(mongo.TemplateTestCollection),
-		authorProvider:           authorProvider,
-		transformer:              transformer,
-		enforcer:                 enforcer,
-		tplValidator:             tplValidator,
-		tplConfigProvider:        tplConfigProvider,
+		client:                    dbClient,
+		collection:                dbClient.Collection(mongo.WidgetMongoCollection),
+		tabCollection:             dbClient.Collection(mongo.ViewTabMongoCollection),
+		filterCollection:          dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+		userPrefCollection:        dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		widgetTemplateCollection:  dbClient.Collection(mongo.WidgetTemplateMongoCollection),
+		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
+		tplTestCollection:         dbClient.Collection(mongo.TemplateTestCollection),
+		entityInfosPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		authorProvider:            authorProvider,
+		transformer:               transformer,
+		enforcer:                  enforcer,
+		tplValidator:              tplValidator,
+		tplConfigProvider:         tplConfigProvider,
 		tplVars: []template.VarResponse{
 			{
 				Name:  "alarm",
@@ -76,20 +81,21 @@ func NewStore(
 }
 
 type store struct {
-	client                   mongo.DbClient
-	collection               mongo.DbCollection
-	tabCollection            mongo.DbCollection
-	filterCollection         mongo.DbCollection
-	userPrefCollection       mongo.DbCollection
-	widgetTemplateCollection mongo.DbCollection
-	alarmCollection          mongo.DbCollection
-	tplTestCollection        mongo.DbCollection
-	authorProvider           author.Provider
-	transformer              common.PatternFieldsTransformer
-	enforcer                 security.Enforcer
-	tplValidator             validator.Validator
-	tplConfigProvider        config.TemplateConfigProvider
-	tplVars                  []template.VarResponse
+	client                    mongo.DbClient
+	collection                mongo.DbCollection
+	tabCollection             mongo.DbCollection
+	filterCollection          mongo.DbCollection
+	userPrefCollection        mongo.DbCollection
+	widgetTemplateCollection  mongo.DbCollection
+	alarmCollection           mongo.DbCollection
+	tplTestCollection         mongo.DbCollection
+	entityInfosPropCollection mongo.DbCollection
+	authorProvider            author.Provider
+	transformer               common.PatternFieldsTransformer
+	enforcer                  security.Enforcer
+	tplValidator              validator.Validator
+	tplConfigProvider         config.TemplateConfigProvider
+	tplVars                   []template.VarResponse
 }
 
 func (s *store) FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error) {
@@ -615,10 +621,29 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 	return response, nil
 }
 
-func (s *store) GetTemplateVars() TemplateVarsResponse {
-	return TemplateVarsResponse{
-		Column: template.AddEnvVars(s.tplVars, s.tplConfigProvider),
+func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error) {
+	columnTplVars := template.AddEnvVars(s.tplVars, s.tplConfigProvider)
+
+	cursor, err := s.entityInfosPropCollection.Find(ctx, bson.M{"alias": bson.M{"$ne": nil}})
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to find aliases: %w", err)
 	}
+
+	var aliases []template.AliasInfo
+
+	err = cursor.All(ctx, &aliases)
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to decode aliases: %w", err)
+	}
+
+	err = template.AddAliasesVars(columnTplVars, aliases, entityTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to columnTplVars: %w", err)
+	}
+
+	return TemplateVarsResponse{
+		Column: columnTplVars,
+	}, nil
 }
 
 func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisecurity.ViewTabPrivacySettings, error) {
