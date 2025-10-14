@@ -230,7 +230,7 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
       if (declareTicket.ticket_id.template) {
         result.push({
           key: `actions.${index}.parameters.webhook.declare_ticket.ticket_id.value`,
-          resultKey: `actions.${index}.parameters.declare_ticket.ticket_id`,
+          resultKey: `actions.${index}.parameters.declare_ticket.ticket_id_tpl`,
           textKey: 'templateTesting.ticketId',
           textArgs: { number: index + 1 },
           templateVarsKey: 'ticket',
@@ -240,7 +240,7 @@ export const convertScenarioToTemplateTestingTestValidateForm = (form = {}) => {
       if (declareTicket.ticket_url.template) {
         result.push({
           key: `actions.${index}.parameters.webhook.declare_ticket.ticket_url.value`,
-          resultKey: `actions.${index}.parameters.declare_ticket.ticket_url`,
+          resultKey: `actions.${index}.parameters.declare_ticket.ticket_url_tpl`,
           textKey: 'templateTesting.ticketUrl',
           textArgs: { number: index + 1 },
           templateVarsKey: 'ticket',
