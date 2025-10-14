@@ -57,7 +57,9 @@ export default {
     },
 
     [types.FETCH_ITEM_COMPLETED]: (state, { widgetId, id }) => {
-      Vue.set(state.widgets[widgetId][id], 'pending', false);
+      if (state.widgets[widgetId]?.[id]) {
+        Vue.set(state.widgets[widgetId][id], 'pending', false);
+      }
     },
 
     [types.FETCH_LIST]: (state, { widgetId }) => {
@@ -124,13 +126,13 @@ export default {
      * @returns {Promise<void>}
      */
     async fetchList({ dispatch, commit, getters }, { widgetId }) {
+      const queries = getters.getQueries(widgetId);
+
+      if (!queries.length) {
+        return;
+      }
+
       try {
-        const queries = getters.getQueries(widgetId);
-
-        if (!queries.length) {
-          return;
-        }
-
         commit(types.FETCH_LIST, { widgetId });
 
         await dispatch('entities/create', {
