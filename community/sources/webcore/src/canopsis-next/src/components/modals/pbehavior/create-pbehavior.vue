@@ -9,6 +9,8 @@
           v-model="form"
           :no-pattern="noPattern"
           :with-inherited="withInherited"
+          :pbehavior-id="pbehaviorId"
+          pbehavior-counter-type
         />
       </template>
       <template #actions="">
@@ -77,6 +79,10 @@ export default {
 
     withInherited() {
       return !!this.config.withInherited;
+    },
+
+    pbehaviorId() {
+      return this.config.pbehavior?._id;
     },
   },
   methods: {
