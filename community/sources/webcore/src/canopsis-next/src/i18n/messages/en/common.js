@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Toggle view edition mode',
   toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',
+  alias: 'Alias',
   namePrefix: 'Name prefix',
   description: 'Description',
   author: 'Author',
@@ -324,13 +325,17 @@ export default {
   inProgress: 'In progress',
   last: 'Last',
   seeDetails: 'See details',
+  defined: 'Defined',
+  bulkDelete: 'Remove selected',
   variableTypes: {
     string: 'String',
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
     array: 'Array',
+    stringArray: 'Array of strings',
     object: 'Object',
+    timestamp: 'Timestamp',
   },
   mixedField: {
     types: {
@@ -339,6 +344,7 @@ export default {
       [PATTERN_FIELD_TYPES.boolean]: '@:common.variableTypes.boolean',
       [PATTERN_FIELD_TYPES.null]: '@:common.variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:common.variableTypes.array',
+      [PATTERN_FIELD_TYPES.timestamp]: '@:common.variableTypes.timestamp',
     },
   },
   saveChanges: 'Save changes',

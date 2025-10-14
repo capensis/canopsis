@@ -2,7 +2,7 @@ import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules, createTemplateVarsModule } from '@unit/utils/store';
+import { createMockedStoreModules, createTemplateVarsModule, createEntityInfoPropertyModule } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockSidebar } from '@unit/utils/mock-hooks';
@@ -185,6 +185,7 @@ describe('alarm', () => {
   } = createSettingsMocks();
 
   const { templateVarsModule } = createTemplateVarsModule();
+  const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
 
   const widget = {
     ...generateDefaultAlarmListWidget(),
@@ -219,6 +220,7 @@ describe('alarm', () => {
     authModule,
     userPreferenceModule,
     widgetTemplateModule,
+    entityInfoPropertyModule,
     serviceModule,
     infosModule,
     templateVarsModule,
@@ -631,6 +633,7 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
+        entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
         {
@@ -680,6 +683,7 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
+        entityInfoPropertyModule,
         infosModule,
         templateVarsModule,
         {
@@ -1605,6 +1609,7 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         infosModule,
+        entityInfoPropertyModule,
         serviceModule,
         templateVarsModule,
         {
