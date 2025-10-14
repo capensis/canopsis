@@ -62,6 +62,8 @@ type BulkDeleteRequestItem struct {
 type VarResponse struct {
 	Name  string `json:"name"`
 	Value any    `json:"value"`
+
+	Alias bool `json:"alias,omitempty"`
 }
 
 type DataResponse struct {
@@ -231,4 +233,9 @@ type TemplateParameters struct {
 type TemplateWebhookDeclareTicket struct {
 	TicketIDTpl  string `json:"ticket_id_tpl"`
 	TicketURLTpl string `json:"ticket_url_tpl"`
+}
+
+type AliasInfo struct {
+	Name  string `bson:"name"`
+	Alias string `bson:"alias"`
 }

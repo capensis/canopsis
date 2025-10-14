@@ -3,6 +3,7 @@ package template
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -231,6 +232,25 @@ func AddEnvVars(vars []VarResponse, tplConfigProvider config.TemplateConfigProvi
 	})
 
 	return res
+}
+
+func AddAliasesVars(vars []VarResponse, aliases []AliasInfo, index int, prefix, suffix string) error {
+	if len(vars) <= index {
+		return fmt.Errorf("vars length should be at least %d, got %d", index+1, len(entityTplVars))
+	}
+
+	entVars, ok := vars[index].Value.([]VarResponse)
+	if !ok {
+		return fmt.Errorf("vars[%d].Value has unexpected type: %T", index, entVars)
+	}
+
+	for idx := range aliases {
+		entVars = append(entVars, VarResponse{Name: aliases[idx].Alias, Alias: true, Value: prefix + aliases[idx].Name + suffix})
+	}
+
+	vars[index].Value = entVars
+
+	return nil
 }
 
 func GetEnvVars(tplConfigProvider config.TemplateConfigProvider) []VarResponse {

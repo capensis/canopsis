@@ -33,6 +33,13 @@ import (
 
 const defaultCategoriesLimit = 100
 
+const (
+	entityTplVarsIndex        = 0
+	alarmTplVarsIndex         = 1
+	alarmExtDataTplVarsIndex  = 1
+	entityExtDataTplVarsIndex = 0
+)
+
 type Store interface {
 	Insert(ctx context.Context, r EditRequest) (*Response, error)
 	GetByID(ctx context.Context, id string) (*Response, error)
@@ -41,24 +48,25 @@ type Store interface {
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	GetCategories(ctx context.Context, r CategoriesRequest) (*CategoryResponse, error)
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
-	GetTemplateVars() TemplateVarsResponse
+	GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error)
 }
 
 type store struct {
-	client                mongo.DbClient
-	collection            mongo.DbCollection
-	exdataTableCollection mongo.DbCollection
-	alarmCollection       mongo.DbCollection
-	entityCollection      mongo.DbCollection
-	userCollection        mongo.DbCollection
-	tplTestCollection     mongo.DbCollection
-	authorProvider        author.Provider
-	transformer           common.PatternFieldsTransformer
-	tplValidator          validator.Validator
-	tplExecutor           libtemplate.Executor
-	tplConfigProvider     config.TemplateConfigProvider
-	externalDataContainer *externaldata.GetterContainer
-	enforcer              security.Enforcer
+	client                    mongo.DbClient
+	collection                mongo.DbCollection
+	exdataTableCollection     mongo.DbCollection
+	alarmCollection           mongo.DbCollection
+	entityCollection          mongo.DbCollection
+	userCollection            mongo.DbCollection
+	tplTestCollection         mongo.DbCollection
+	entityInfosPropCollection mongo.DbCollection
+	authorProvider            author.Provider
+	transformer               common.PatternFieldsTransformer
+	tplValidator              validator.Validator
+	tplExecutor               libtemplate.Executor
+	tplConfigProvider         config.TemplateConfigProvider
+	externalDataContainer     *externaldata.GetterContainer
+	enforcer                  security.Enforcer
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -90,20 +98,21 @@ func NewStore(
 	}
 
 	return &store{
-		client:                dbClient,
-		collection:            dbClient.Collection(mongo.LinkRuleMongoCollection),
-		exdataTableCollection: dbClient.Collection(mongo.ExternalDataTableCollection),
-		alarmCollection:       dbClient.Collection(mongo.AlarmMongoCollection),
-		entityCollection:      dbClient.Collection(mongo.EntityMongoCollection),
-		userCollection:        dbClient.Collection(mongo.UserCollection),
-		tplTestCollection:     dbClient.Collection(mongo.TemplateTestCollection),
-		authorProvider:        authorProvider,
-		transformer:           transformer,
-		tplValidator:          tplValidator,
-		tplExecutor:           tplExecutor,
-		tplConfigProvider:     tplConfigProvider,
-		externalDataContainer: externalDataContainer,
-		enforcer:              enforcer,
+		client:                    dbClient,
+		collection:                dbClient.Collection(mongo.LinkRuleMongoCollection),
+		exdataTableCollection:     dbClient.Collection(mongo.ExternalDataTableCollection),
+		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
+		entityCollection:          dbClient.Collection(mongo.EntityMongoCollection),
+		userCollection:            dbClient.Collection(mongo.UserCollection),
+		tplTestCollection:         dbClient.Collection(mongo.TemplateTestCollection),
+		entityInfosPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		authorProvider:            authorProvider,
+		transformer:               transformer,
+		tplValidator:              tplValidator,
+		tplExecutor:               tplExecutor,
+		tplConfigProvider:         tplConfigProvider,
+		externalDataContainer:     externalDataContainer,
+		enforcer:                  enforcer,
 
 		defaultSearchByFields: []string{"_id", "author.name", "name"},
 		defaultSortBy:         "created",
@@ -433,18 +442,50 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 	return response, nil
 }
 
-func (s *store) GetTemplateVars() TemplateVarsResponse {
+func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error) {
 	alarmTplVars := template.AddEnvVars(s.alarmTplVars, s.tplConfigProvider)
 	entityTplVars := template.AddEnvVars(s.entityTplVars, s.tplConfigProvider)
+	alarmExtDataTplVars := template.AddEnvVars(s.alarmExdataTplVars, s.tplConfigProvider)
+	entityExtDataTplVars := template.AddEnvVars(s.entityExdataTplVars, s.tplConfigProvider)
+
+	cursor, err := s.entityInfosPropCollection.Find(ctx, bson.M{"alias": bson.M{"$ne": nil}})
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to find aliases: %w", err)
+	}
+
+	var aliases []template.AliasInfo
+
+	err = cursor.All(ctx, &aliases)
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to decode aliases: %w", err)
+	}
+
+	err = template.AddAliasesVars(entityTplVars, aliases, entityTplVarsIndex, "{{ range .Entities }}{{ (index .Infos \"", "\").Value }}{{ end }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to entityTplVars: %w", err)
+	}
+	err = template.AddAliasesVars(alarmTplVars, aliases, alarmTplVarsIndex, "{{ range .Alarms }}{{ (index .Entity.Infos \"", "\").Value }}{{ end }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to alarmTplVars: %w", err)
+	}
+	err = template.AddAliasesVars(alarmExtDataTplVars, aliases, alarmExtDataTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to alarmExtDataTplVars: %w", err)
+	}
+	err = template.AddAliasesVars(entityExtDataTplVars, aliases, entityExtDataTplVarsIndex, "{{ (index .Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to entityExtDataTplVars: %w", err)
+	}
+
 	res := TemplateVarsResponse{}
 	res.Alarm.URL = alarmTplVars
 	res.Alarm.Label = alarmTplVars
-	res.Alarm.ExternalData = template.AddEnvVars(s.alarmExdataTplVars, s.tplConfigProvider)
+	res.Alarm.ExternalData = alarmExtDataTplVars
 	res.Entity.URL = entityTplVars
 	res.Entity.Label = entityTplVars
-	res.Entity.ExternalData = template.AddEnvVars(s.entityExdataTplVars, s.tplConfigProvider)
+	res.Entity.ExternalData = entityExtDataTplVars
 
-	return res
+	return res, nil
 }
 
 func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (link.Rule, error) {
