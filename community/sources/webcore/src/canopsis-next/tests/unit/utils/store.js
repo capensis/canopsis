@@ -1588,3 +1588,23 @@ export const createEntityInfoPropertyModule = () => {
     removeEntityInfoProperty,
   };
 };
+
+export const createPbehaviorPatternsModule = () => {
+  const runAlarmFiltering = jest.fn().mockResolvedValue();
+
+  const pbehaviorPatternsModule = {
+    name: 'pbehaviorPatterns',
+    actions: {
+      runAlarmFiltering,
+    },
+  };
+
+  afterEach(() => {
+    runAlarmFiltering.mockClear();
+  });
+
+  return {
+    runAlarmFiltering,
+    pbehaviorPatternsModule,
+  };
+};
