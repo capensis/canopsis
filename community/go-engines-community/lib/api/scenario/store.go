@@ -353,16 +353,9 @@ func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, erro
 	firstWebhookTplVars := template.AddEnvVars(s.firstWhTplVars, s.tplConfigProvider)
 	webhookTplVars := template.AddEnvVars(s.whTplVars, s.tplConfigProvider)
 
-	cursor, err := s.entityInfosPropCollection.Find(ctx, bson.M{"alias": bson.M{"$ne": nil}})
+	aliases, err := template.GetAliases(ctx, s.entityInfosPropCollection)
 	if err != nil {
-		return TemplateVarsResponse{}, fmt.Errorf("failed to find aliases: %w", err)
-	}
-
-	var aliases []template.AliasInfo
-
-	err = cursor.All(ctx, &aliases)
-	if err != nil {
-		return TemplateVarsResponse{}, fmt.Errorf("failed to decode aliases: %w", err)
+		return TemplateVarsResponse{}, fmt.Errorf("failed to get aliases: %w", err)
 	}
 
 	err = template.AddAliasesVars(outputTplVars, aliases, authorTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
