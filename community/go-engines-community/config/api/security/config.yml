@@ -41,6 +41,9 @@ security:
 #        # PKCE is an extension to the Authorization Code flow to prevent CSRF and authorization code injection attacks,
 #        # some oauth2 provider might not support it, set it to false if it's your case.
 #        pkce: true
+#        # auth_style determines how client_id and client_secret are sent to the server.
+#        # please choose from: 0 - autodetect by the api(default), 1 - in urlencoded params, 2 - in headers.
+#        auth_style: 0
 #        # default role for user.
 #        default_role: admin
 #        # allow_extra_roles if set to true allow modifying user roles via user API, e.g. adding more roles.
