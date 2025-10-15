@@ -24,6 +24,7 @@ const (
 	ColumnTypeStringArray
 	ColumnTypeDateTime
 	ColumnTypeTimestamp
+	ColumnTypeRegexp
 )
 
 const (

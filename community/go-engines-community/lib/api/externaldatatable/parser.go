@@ -4,11 +4,13 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"regexp/syntax"
 	"strconv"
 	"strings"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/valyala/fastjson"
 )
 
@@ -102,6 +104,8 @@ func (p *parser) Parse(cfg ColumnConfig, initialValue string) (any, error) {
 		transformedValue, err = p.parseDatetime(initialValue, p.validDatetimeFormat)
 	case externaldata.ColumnTypeTimestamp:
 		transformedValue, err = p.parseTimestamp(initialValue)
+	case externaldata.ColumnTypeRegexp:
+		transformedValue, err = p.parseRegexp(initialValue)
 	default:
 		return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
 	}
@@ -270,4 +274,93 @@ func (p *parser) parseTimestamp(stringTimestamp string) (int64, error) {
 	}
 
 	return timestamp, nil
+}
+
+type parsedRegexp struct {
+	regexp string
+	score  int
+}
+
+type walkResult struct {
+	containsWildcards bool
+	isLiteralString   bool
+	hasAnchors        bool
+}
+
+func (p *parser) parseRegexp(regexpStr string) (parsedRegexp, error) {
+	if regexpStr == "" || regexpStr == ".*" || regexpStr == ".+" {
+		return parsedRegexp{regexp: regexpStr, score: 0}, nil
+	}
+
+	if regexpStr == "^" || regexpStr == "$" {
+		return parsedRegexp{regexp: regexpStr, score: 2}, nil
+	}
+
+	if regexpStr == "^$" {
+		return parsedRegexp{regexp: regexpStr, score: 3}, nil
+	}
+
+	parsedTree, err := syntax.Parse(regexpStr, syntax.Perl)
+	if err != nil {
+		_, err := utils.NewRegexExpression(regexpStr)
+		if err != nil {
+			return parsedRegexp{}, err
+		}
+
+		return parsedRegexp{regexp: regexpStr, score: 2}, err
+	}
+
+	hasBeginAnchor := len(parsedTree.Sub) > 0 && parsedTree.Sub[0].Op == syntax.OpBeginText
+	hasEndAnchor := len(parsedTree.Sub) > 0 && parsedTree.Sub[len(parsedTree.Sub)-1].Op == syntax.OpEndText
+
+	result := walkResult{}
+	p.walkRegexpAST(parsedTree, &result)
+
+	if !hasBeginAnchor && !hasEndAnchor {
+		if parsedTree.Op == syntax.OpAlternate {
+			if !result.hasAnchors {
+				regexpStr = "^(" + regexpStr + ")$"
+			} else {
+				hasBeginAnchor = true // Basically, it doesn't matter begin or end is set to true. One of them should be set to true.
+			}
+		} else {
+			regexpStr = "^" + regexpStr + "$"
+		}
+	}
+
+	if result.containsWildcards {
+		return parsedRegexp{regexp: regexpStr, score: 1}, nil
+	}
+
+	if hasBeginAnchor == hasEndAnchor && result.isLiteralString {
+		return parsedRegexp{regexp: regexpStr, score: 3}, nil
+	}
+
+	return parsedRegexp{regexp: regexpStr, score: 2}, nil
+}
+
+func (p *parser) walkRegexpAST(re *syntax.Regexp, analysis *walkResult) {
+	switch re.Op {
+	case syntax.OpStar:
+		if len(re.Sub) == 1 && re.Sub[0].Op == syntax.OpAnyCharNotNL {
+			analysis.containsWildcards = true
+		}
+	case syntax.OpPlus:
+		if len(re.Sub) == 1 && re.Sub[0].Op == syntax.OpAnyCharNotNL {
+			analysis.containsWildcards = true
+		}
+	case syntax.OpConcat, syntax.OpAlternate:
+		for _, sub := range re.Sub {
+			p.walkRegexpAST(sub, analysis)
+		}
+	case syntax.OpCapture:
+		if len(re.Sub) > 0 {
+			p.walkRegexpAST(re.Sub[0], analysis)
+		}
+	case syntax.OpBeginText, syntax.OpEndText:
+		analysis.hasAnchors = true
+	case syntax.OpLiteral:
+		analysis.isLiteralString = true
+	default:
+	}
 }
