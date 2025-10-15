@@ -7,6 +7,7 @@ import {
   externalDataTableColumnConfigsToForm,
   formToExternalDataTableColumnConfigs,
   formToExternalDataTableColumnTags,
+  addPriorityColumnForRegexpTypes,
 } from '@/helpers/entities/external-data-table/form';
 
 import { useFetchListWithoutStoreWithOptions } from '@/hooks/query/shared';
@@ -33,6 +34,7 @@ const useExternalDataTableImportForm = () => {
   const validator = useValidator();
 
   const form = ref({});
+  const originalForm = ref({});
   const needPreview = ref(true);
 
   /**
@@ -58,9 +60,14 @@ const useExternalDataTableImportForm = () => {
    * Sets the form data.
    *
    * @param {Object} newForm - New form data to set
+   * @param {boolean} onlyForm - Flag whether to set only form
    */
-  const setForm = (newForm) => {
+  const setForm = (newForm, onlyForm = false) => {
     form.value = newForm;
+
+    if (!onlyForm) {
+      originalForm.value = newForm;
+    }
   };
 
   /**
@@ -68,7 +75,7 @@ const useExternalDataTableImportForm = () => {
    * Resets both form field messages and validator errors.
    */
   const clearErrors = () => {
-    setForm(mapValues(form.value, value => ({ ...value, messages: [], rows: [] })));
+    setForm(mapValues(form.value, value => ({ ...value, messages: [], rows: [] })), true);
     validator.errors.clear();
   };
 
@@ -76,6 +83,7 @@ const useExternalDataTableImportForm = () => {
     validator,
 
     form,
+    originalForm,
     needPreview,
 
     hasErrors,
@@ -237,7 +245,7 @@ const useExternalDataTableImportPreview = ({
   const updatePreview = async () => {
     clearErrors();
 
-    const newForm = mapValues(form.value, value => ({ ...value }));
+    let newForm = mapValues(form.value, value => ({ ...value }));
 
     try {
       const { error_info: errorInfo = {} } = await pollPreview();
@@ -250,6 +258,8 @@ const useExternalDataTableImportPreview = ({
       console.error(err);
     } finally {
       await fetchList();
+
+      newForm = addPriorityColumnForRegexpTypes(newForm);
 
       setForm(newForm);
 
@@ -313,6 +323,7 @@ export const useExternalDataTableImportFile = ({ config }) => {
   const {
     validator,
     form,
+    originalForm,
     needPreview,
     hasErrors,
     toggleOnNeedPreview,
@@ -384,6 +395,7 @@ export const useExternalDataTableImportFile = ({ config }) => {
     separator,
     activeImportFileId,
     form,
+    originalForm,
     needPreview,
 
     // Computed

@@ -17,6 +17,7 @@
         <import-preview-section
           v-if="activeImportFileId"
           v-model="form"
+          :original-form="originalForm"
           :records="records"
           :pending="pending"
           :options="options"
@@ -100,6 +101,7 @@ export default {
       separator,
       activeImportFileId,
       form,
+      originalForm,
       needPreview,
       hasErrors,
       records,
@@ -161,6 +163,7 @@ export default {
       separator,
       activeImportFileId,
       form,
+      originalForm,
       submit,
       isDisabled,
       submitting,
