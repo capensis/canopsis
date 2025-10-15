@@ -448,16 +448,9 @@ func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, erro
 	alarmExtDataTplVars := template.AddEnvVars(s.alarmExdataTplVars, s.tplConfigProvider)
 	entityExtDataTplVars := template.AddEnvVars(s.entityExdataTplVars, s.tplConfigProvider)
 
-	cursor, err := s.entityInfosPropCollection.Find(ctx, bson.M{"alias": bson.M{"$ne": nil}})
+	aliases, err := template.GetAliases(ctx, s.entityInfosPropCollection)
 	if err != nil {
-		return TemplateVarsResponse{}, fmt.Errorf("failed to find aliases: %w", err)
-	}
-
-	var aliases []template.AliasInfo
-
-	err = cursor.All(ctx, &aliases)
-	if err != nil {
-		return TemplateVarsResponse{}, fmt.Errorf("failed to decode aliases: %w", err)
+		return TemplateVarsResponse{}, fmt.Errorf("failed to get aliases: %w", err)
 	}
 
 	err = template.AddAliasesVars(entityTplVars, aliases, entityTplVarsIndex, "{{ range .Entities }}{{ (index .Infos \"", "\").Value }}{{ end }}")
