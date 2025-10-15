@@ -23,7 +23,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters/calculator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
-	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flappingrule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlealarm"
@@ -36,6 +35,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/depmake"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -44,9 +44,9 @@ import (
 )
 
 type Options struct {
+	log.Options
 	Version                          bool
 	FeaturePrintEventOnError         bool
-	ModeDebug                        bool
 	FifoAckExchange                  string
 	PeriodicalWaitTime               time.Duration
 	TagsPeriodicalWaitTime           time.Duration
@@ -62,7 +62,7 @@ type Options struct {
 func ParseOptions() (Options, []string) {
 	opts := Options{}
 
-	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
+	log.BindCmdFlags(&opts.Options)
 	flag.BoolVar(&opts.FeaturePrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
 	flag.StringVar(&opts.FifoAckExchange, "fifoAckExchange", canopsis.DefaultExchangeName, "Publish FIFO Ack event to this exchange.")
@@ -76,13 +76,9 @@ func ParseOptions() (Options, []string) {
 	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
 	flag.IntVar(&opts.RpcWorkers, "rpcWorkers", canopsis.DefaultRpcWorkers, "Amount of workers to process rpc event flow.")
 
-	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
-	flag.Bool("withRemediation", false, "Deprecated: Start remediation instructions")
-	flag.String("publishQueue", "", "Deprecated: Publish event to this queue")
-
 	flag.Parse()
 
-	return opts, libflag.FindDeprecatedFlags("workers", "withRemediation", "publishQueue")
+	return opts, nil
 }
 
 func NewEngine(

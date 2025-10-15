@@ -86,8 +86,9 @@ func NewProvider(
 			ClientSecret: config.ClientSecret,
 			RedirectURL:  config.RedirectURL,
 			Endpoint: oauth2.Endpoint{
-				AuthURL:  config.AuthURL,
-				TokenURL: config.TokenURL,
+				AuthURL:   config.AuthURL,
+				TokenURL:  config.TokenURL,
+				AuthStyle: config.AuthStyle,
 			},
 			Scopes: config.Scopes,
 		},
@@ -127,6 +128,7 @@ func (p *provider) loadOpenIDMetadata(ctx context.Context) error {
 
 	p.oidcVerifier = p.oidcProvider.Verifier(&oidc.Config{ClientID: p.config.ClientID})
 	p.oauth2Config.Endpoint = p.oidcProvider.Endpoint()
+	p.oauth2Config.Endpoint.AuthStyle = p.config.AuthStyle
 	p.oidcProviderValidUntil = time.Now().Add(auth.DefaultMetaValidDuration)
 
 	return nil

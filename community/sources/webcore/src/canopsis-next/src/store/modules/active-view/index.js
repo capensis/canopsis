@@ -1,3 +1,5 @@
+import { VIEW_SCREEN_MODES } from '@/constants';
+
 import activeWidgetsModule from './active-widgets';
 
 export const types = {
@@ -15,6 +17,8 @@ export const types = {
   PAUSE_PERIODIC_REFRESH: 'PAUSE_PERIODIC_REFRESH',
 
   CLEAR: 'CLEAR',
+
+  SET_SCREEN_MODE: 'SET_SCREEN_MODE',
 };
 
 export default {
@@ -25,6 +29,7 @@ export default {
     pending: false,
     editing: false,
     editingProcess: false,
+    screenMode: VIEW_SCREEN_MODES.default,
     editingOffHandlers: [],
     periodicRefreshPaused: false,
   },
@@ -32,6 +37,8 @@ export default {
     editing: state => state.editing,
     editingProcess: state => state.editingProcess,
     pending: state => state.pending,
+    screenMode: state => state.screenMode,
+    isKioskScreenMode: state => [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(state.screenMode),
     item: (state, getters, rootState, rootGetters) => rootGetters['view/getViewById'](state.id),
     periodicRefreshPaused: state => state.periodicRefreshPaused,
   },
@@ -79,8 +86,13 @@ export default {
       state.id = null;
       state.pending = false;
       state.editing = false;
+      state.screenMode = VIEW_SCREEN_MODES.default;
       state.editingOffHandlers = [];
       state.periodicRefreshPaused = false;
+    },
+
+    [types.SET_SCREEN_MODE]: (state, screenMode) => {
+      state.screenMode = screenMode;
     },
   },
   actions: {
@@ -137,6 +149,14 @@ export default {
     clear({ commit, dispatch }) {
       commit(types.CLEAR);
       dispatch('activeWidgets/clear');
+    },
+
+    setScreenMode({ commit, getters }, screenMode) {
+      if (getters.screenMode === screenMode) {
+        return;
+      }
+
+      commit(types.SET_SCREEN_MODE, screenMode);
     },
   },
 };

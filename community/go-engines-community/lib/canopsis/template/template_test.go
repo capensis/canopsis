@@ -1030,7 +1030,17 @@ func TestContainsVariable(t *testing.T) {
 		},
 		{
 			name:     "given Event in comment block, should return false",
-			template: "{{/* This is a comment with .Event */}}{{ .Alarm.ID }}",
+			template: "{{/* This is a comment with {{ .Event.ExtraInfos }} */}}{{ .Alarm.ID }}",
+			expected: false,
+		},
+		{
+			name:     "given Event in comment block with left spaces, should return false",
+			template: "{{   /* This is a comment with {{ .Event.ExtraInfos }} */}}{{ .Alarm.ID }}",
+			expected: false,
+		},
+		{
+			name:     "given Event in comment block with right spaces, should return false",
+			template: "{{/* This is a comment with {{ .Event.ExtraInfos }} */    }}{{ .Alarm.ID }}",
 			expected: false,
 		},
 		{
@@ -1046,6 +1056,11 @@ func TestContainsVariable(t *testing.T) {
 		{
 			name:     "given deeply nested Event access, should return true",
 			template: "{{ .Event.ExtraInfos.nested.deep.field }}",
+			expected: true,
+		},
+		{
+			name:     "given simple Event field access after another template, should return true",
+			template: "{{ .Alarm.Value.State }} test message {{ .Event.Component }}",
 			expected: true,
 		},
 	}
@@ -1071,7 +1086,7 @@ func BenchmarkContainsVariableRegex(b *testing.B) {
 
 	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = tpl.ContainsField("Event")
 	}
 }
@@ -1083,7 +1098,7 @@ func BenchmarkContainsVariableRegexSimple(b *testing.B) {
 
 	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = tpl.ContainsField("Event")
 	}
 }
@@ -1101,7 +1116,7 @@ func BenchmarkContainsVariableRegexComplex(b *testing.B) {
 
 	b.ResetTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		_ = tpl.ContainsField("Event")
 	}
 }

@@ -562,9 +562,6 @@ definitions:
         type: string
       separator:
         type: string
-      tag:
-        description: Tag is deprecated, please use tags[] parameter
-        type: string
       tags:
         items:
           type: string
@@ -2153,6 +2150,13 @@ definitions:
         type: integer
       value:
         type: string
+    type: object
+  entityinfosproperty.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
     type: object
   entityinfosproperty.CreateRequest:
     properties:
@@ -4079,36 +4083,29 @@ definitions:
       value:
         type: object
     type: object
-  pattern.Count:
-    properties:
-      count:
-        type: integer
-      over_limit:
-        type: boolean
-    type: object
   pattern.CountAlarmsResponse:
     properties:
       alarm_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       all:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       entities:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       entity_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.CountEntitiesResponse:
     properties:
       alarm_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       all:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       entity_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.CountRequest:
     properties:
@@ -4130,6 +4127,15 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  pattern.CountResponse:
+    properties:
+      count:
+        type: integer
+      ms:
+        type: integer
+      over_limit:
+        type: boolean
     type: object
   pattern.EditRequest:
     properties:
@@ -4390,6 +4396,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
@@ -4454,6 +4462,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
@@ -4477,6 +4487,19 @@ definitions:
     - reason
     - tstart
     - type
+    type: object
+  pbehavior.ExecPatternRequest:
+    properties:
+      _id:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    required:
+    - entity_pattern
     type: object
   pbehavior.PatchRequest:
     properties:
@@ -4588,6 +4611,10 @@ definitions:
         type: string
       origin:
         type: string
+      pattern_exec_at:
+        type: integer
+      pattern_ms:
+        type: integer
       reason:
         $ref: '#/definitions/pbehaviorreason.Response'
       rrule:
@@ -4653,6 +4680,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
