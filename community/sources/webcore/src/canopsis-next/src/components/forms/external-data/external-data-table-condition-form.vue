@@ -23,6 +23,8 @@
         :name="conditionFieldName"
         :error-messages="errors.collect(conditionFieldName)"
         :disabled="disabled"
+        item-text="name"
+        item-value="name"
       />
     </v-flex>
     <v-flex
