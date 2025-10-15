@@ -1640,3 +1640,220 @@ func FuzzParseTimestamp(f *testing.F) {
 		}
 	})
 }
+
+func TestParseRegexp(t *testing.T) {
+	testCases := []struct {
+		name           string
+		input          string
+		expectedRegexp string
+		expectedScore  int
+		expectedError  string
+	}{
+		{
+			name:           "given empty string should be score 0",
+			input:          "",
+			expectedRegexp: "",
+			expectedScore:  0,
+		},
+		{
+			name:           "given dot star should be score 0",
+			input:          ".*",
+			expectedRegexp: ".*",
+			expectedScore:  0,
+		},
+		{
+			name:           "given dot plus should be score 0",
+			input:          ".+",
+			expectedRegexp: ".+",
+			expectedScore:  0,
+		},
+		{
+			name:           "given pattern with dot star should be score 1 with anchors added",
+			input:          ".*test",
+			expectedRegexp: "^.*test$",
+			expectedScore:  1,
+		},
+		{
+			name:           "given pattern with dot plus should be score 1 with anchors added",
+			input:          "test.+",
+			expectedRegexp: "^test.+$",
+			expectedScore:  1,
+		},
+		{
+			name:           "given pattern with both dot star and dot plus should be score 1 with anchors added",
+			input:          ".*test.+",
+			expectedRegexp: "^.*test.+$",
+			expectedScore:  1,
+		},
+		{
+			name:           "given fully anchored pattern should be score 3",
+			input:          "^test$",
+			expectedRegexp: "^test$",
+			expectedScore:  3,
+		},
+		{
+			name:           "given complex fully anchored pattern should be score 2",
+			input:          "^[a-z]+\\d{2,4}$",
+			expectedRegexp: "^[a-z]+\\d{2,4}$",
+			expectedScore:  2,
+		},
+		{
+			name:           "given simple pattern should be score 3 with anchors added",
+			input:          "test",
+			expectedRegexp: "^test$",
+			expectedScore:  3,
+		},
+		{
+			name:           "given pattern with character classes should be score 2 with anchors added",
+			input:          "[a-z]+",
+			expectedRegexp: "^[a-z]+$",
+			expectedScore:  2,
+		},
+		{
+			name:           "given pattern with quantifiers should be score 2 with anchors added",
+			input:          "\\d{2,4}",
+			expectedRegexp: "^\\d{2,4}$",
+			expectedScore:  2,
+		},
+		{
+			name:           "given pattern starting with anchor should be score 2",
+			input:          "^test",
+			expectedRegexp: "^test",
+			expectedScore:  2,
+		},
+		{
+			name:           "given pattern ending with anchor should be score 2",
+			input:          "test$",
+			expectedRegexp: "test$",
+			expectedScore:  2,
+		},
+		{
+			name:           "given pattern with wildcard starting with anchor should be score 1",
+			input:          "^.*test",
+			expectedRegexp: "^.*test",
+			expectedScore:  1,
+		},
+		{
+			name:           "given pattern with wildcard ending with anchor should be score 1",
+			input:          "test.*$",
+			expectedRegexp: "test.*$",
+			expectedScore:  1,
+		},
+		{
+			name:           "given pattern with anchor in middle should be score 3 with anchors added",
+			input:          "te^st",
+			expectedRegexp: "^te^st$",
+			expectedScore:  3,
+		},
+		{
+			name:           "given pattern with dollar in middle should be score 3 with anchors added",
+			input:          "te$st",
+			expectedRegexp: "^te$st$",
+			expectedScore:  3,
+		},
+		{
+			name:          "given invalid regex should return error",
+			input:         "[unclosed",
+			expectedError: "unable to parse regex: error parsing regexp: unterminated [] set in `[unclosed`",
+		},
+		{
+			name:          "given invalid regex with unmatched parentheses should return error",
+			input:         "test(",
+			expectedError: "unable to parse regex: error parsing regexp: missing closing ) in `test(`",
+		},
+		{
+			name:           "given pattern with nested wildcards in group should be score 1 with anchors added",
+			input:          "(abc|.*def)",
+			expectedRegexp: "^(abc|.*def)$",
+			expectedScore:  1,
+		},
+		{
+			name:           "given pattern with nested plus wildcard in group should be score 1 with anchors added",
+			input:          "(start|end.+)",
+			expectedRegexp: "^(start|end.+)$",
+			expectedScore:  1,
+		},
+		{
+			name:           "given begin text only",
+			input:          "^",
+			expectedRegexp: "^",
+			expectedScore:  2,
+		},
+		{
+			name:           "given end text only",
+			input:          "$",
+			expectedRegexp: "$",
+			expectedScore:  2,
+		},
+		{
+			name:           "given begin and end text only",
+			input:          "^$",
+			expectedRegexp: "^$",
+			expectedScore:  3,
+		},
+		{
+			name:           "given concat regexp anchors shouldn't be added",
+			input:          "(?:(^ABC)|(XYZ$))",
+			expectedRegexp: "(?:(^ABC)|(XYZ$))",
+			expectedScore:  2,
+		},
+		{
+			name:           "given literals concat regexp anchors should be added",
+			input:          "abc|def",
+			expectedRegexp: "^(abc|def)$",
+			expectedScore:  3,
+		},
+		{
+			name:           "given wildcards concat regexp anchors should be added",
+			input:          ".*abc|.*def",
+			expectedRegexp: "^(.*abc|.*def)$",
+			expectedScore:  1,
+		},
+		{
+			name:           "given regexp2 kind of regexp should be ok",
+			input:          "(?!resource_CPU).*",
+			expectedRegexp: "(?!resource_CPU).*",
+			expectedScore:  2,
+		},
+	}
+
+	p := NewParser()
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			rawResult, err := p.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
+					Type: externaldata.ColumnTypeRegexp,
+				},
+			}, tc.input)
+
+			if tc.expectedError != "" {
+				if err == nil {
+					t.Error("expected error but got none")
+				} else if err.Error() != tc.expectedError {
+					t.Errorf("expected error %q but got %q", tc.expectedError, err.Error())
+				}
+				return
+			}
+
+			if err != nil {
+				t.Errorf("unexpected error: %v", err)
+				return
+			}
+
+			result, ok := rawResult.(parsedRegexp)
+			if !ok {
+				t.Error("result is not a parsedRegexp")
+				return
+			}
+
+			if result.regexp != tc.expectedRegexp {
+				t.Errorf("expected regexp %q, got %q", tc.expectedRegexp, result.regexp)
+			}
+
+			if result.score != tc.expectedScore {
+				t.Errorf("expected score %d, got %d", tc.expectedScore, result.score)
+			}
+		})
+	}
+}

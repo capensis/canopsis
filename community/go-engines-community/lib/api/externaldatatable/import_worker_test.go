@@ -175,6 +175,30 @@ func TestSyncColumnConfigsOrder(t *testing.T) {
 				{BaseColumnConfig: BaseColumnConfig{Name: "col6", Type: externaldata.ColumnTypeStringArray}},
 			},
 		},
+		{
+			name: "given configs where priority column already regexp but new column contain regexp type, expect error",
+			oldConfigs: []ColumnConfig{
+				{BaseColumnConfig: BaseColumnConfig{Name: "priority", Type: externaldata.ColumnTypeString}},
+				{BaseColumnConfig: BaseColumnConfig{Name: "regexp", Type: externaldata.ColumnTypeNumber}},
+			},
+			newConfigs: []ColumnConfig{
+				{BaseColumnConfig: BaseColumnConfig{Name: "priority", Type: externaldata.ColumnTypeString}},
+				{BaseColumnConfig: BaseColumnConfig{Name: "regexp", Type: externaldata.ColumnTypeRegexp}},
+			},
+			expectedErrorMessage: "column \"regexp\" is regexp, but priority column already exists",
+		},
+		{
+			name: "given configs where priority column already regexp but new column contain regexp type, expect error, alternate order",
+			oldConfigs: []ColumnConfig{
+				{BaseColumnConfig: BaseColumnConfig{Name: "regexp", Type: externaldata.ColumnTypeNumber}},
+				{BaseColumnConfig: BaseColumnConfig{Name: "priority", Type: externaldata.ColumnTypeString}},
+			},
+			newConfigs: []ColumnConfig{
+				{BaseColumnConfig: BaseColumnConfig{Name: "regexp", Type: externaldata.ColumnTypeRegexp}},
+				{BaseColumnConfig: BaseColumnConfig{Name: "priority", Type: externaldata.ColumnTypeString}},
+			},
+			expectedErrorMessage: "column \"regexp\" is regexp, but priority column already exists",
+		},
 	}
 
 	for _, tc := range testCases {
