@@ -212,7 +212,7 @@ export const alarmVariablesMixin = {
       return items.map((item) => {
         const result = {
           ...item,
-          text: this.$t(`templateTesting.templateVars.${item.text}`),
+          text: item.alias ? item.text : this.$t(`templateTesting.templateVars.${item.text}`),
         };
 
         if (item.variables?.length) {

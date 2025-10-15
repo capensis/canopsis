@@ -95,10 +95,10 @@ export const objectToVariables = (
  * //   }
  * // ]
  */
-export const varsChildrenToVariablesProcess = (children = []) => children.map(({ name, value }) => (
+export const varsChildrenToVariablesProcess = (children = []) => children.map(({ alias, name, value }) => (
   Array.isArray(value)
-    ? { text: name, variables: varsChildrenToVariablesProcess(value) }
-    : { text: name, value }
+    ? { alias, text: name, variables: varsChildrenToVariablesProcess(value) }
+    : { alias, text: name, value }
 ));
 
 /**
