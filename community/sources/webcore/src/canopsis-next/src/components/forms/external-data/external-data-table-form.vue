@@ -24,6 +24,8 @@
           :name="sortByFieldName"
           :error-messages="errors.collect(sortByFieldName)"
           :disabled="disabled"
+          item-text="name"
+          item-value="name"
         />
       </v-flex>
       <v-flex
@@ -70,7 +72,6 @@ import { computed, ref } from 'vue';
 
 import { SORT_ORDERS } from '@/constants';
 
-import { mapIds } from '@/helpers/array';
 import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
 
 import { useModelField } from '@/hooks/form/model-field';
@@ -148,14 +149,7 @@ export default {
      * @param {string} tables[0].column_configs[].type - Column data type
      * @param {string} tables[0].column_configs[].name - Column name identifier
      */
-    const updateSelectedItems = ([table = {}] = []) => {
-      /**
-       * Filter to string columns only to avoid compatibility issues with other data types in the form
-       */
-      const stringColumns = table?.column_configs ?? [];
-
-      columns.value = mapIds(stringColumns, 'name');
-    };
+    const updateSelectedItems = ([table = {}] = []) => columns.value = table?.column_configs ?? [];
 
     return {
       columns,

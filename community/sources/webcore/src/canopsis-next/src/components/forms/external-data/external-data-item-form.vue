@@ -60,11 +60,13 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
-import { formMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
 
@@ -73,7 +75,6 @@ import ExternalDataTableForm from './external-data-table-form.vue';
 export default {
   inject: ['$validator'],
   components: { RequestForm, ExternalDataTableForm },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -104,26 +105,28 @@ export default {
       default: false,
     },
   },
-  computed: {
-    availableTypes() {
-      return this.types.length
-        ? this.types
+  setup(props, { emit }) {
+    const { t } = useI18n();
+
+    const availableTypes = computed(() => (
+      props.types.length
+        ? props.types
         : Object.values(EXTERNAL_DATA_TYPES)
-          .map(type => ({ text: this.$t(`externalData.types.${type}`), value: type }));
-    },
+          .map(type => ({ text: t(`externalData.types.${type}`), value: type }))
+    ));
 
-    isTableType() {
-      return isTableExternalDataType(this.form.type);
-    },
+    const isTableType = computed(() => isTableExternalDataType(props.form.type));
 
-    referenceFieldName() {
-      return `${this.name}.reference`;
-    },
-  },
-  methods: {
-    remove() {
-      this.$emit('remove', this.form);
-    },
+    const referenceFieldName = computed(() => `${props.name}.reference`);
+
+    const remove = () => emit('remove', props.form);
+
+    return {
+      availableTypes,
+      isTableType,
+      referenceFieldName,
+      remove,
+    };
   },
 };
 </script>
