@@ -76,7 +76,9 @@ const (
 
 	ObjExternalDataTable = "api_external_data_table"
 
-	ObjEntityInfosProperty = "api_entity_infos_property"
+	ObjEntityInfoProperty = "api_entity_info_property"
+
+	PermPbhPatterns = "api_pbehavior_patterns"
 
 	ObjTemplateData = "api_template_data"
 )
