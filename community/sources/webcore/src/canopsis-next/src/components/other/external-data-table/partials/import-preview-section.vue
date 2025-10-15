@@ -3,6 +3,7 @@
     <span class="text-subtitle-2">{{ $t('common.preview') }}</span>
     <external-data-table-records-list
       v-field="form"
+      :original-columns="originalForm"
       :records="records"
       :pending="pending"
       :options="options"
@@ -34,6 +35,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    originalForm: {
+      type: Object,
+      required: false,
     },
     records: {
       type: Array,

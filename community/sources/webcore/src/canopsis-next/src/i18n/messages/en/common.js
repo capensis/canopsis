@@ -318,6 +318,7 @@ export default {
   inProgress: 'In progress',
   last: 'Last',
   seeDetails: 'See details',
+  calculated: 'Calculated',
   variableTypes: {
     string: 'String',
     number: 'Number',
