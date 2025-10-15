@@ -68,7 +68,7 @@
 <script>
 import { computed, ref } from 'vue';
 
-import { SORT_ORDERS, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
+import { SORT_ORDERS } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
@@ -152,8 +152,7 @@ export default {
       /**
        * Filter to string columns only to avoid compatibility issues with other data types in the form
        */
-      const stringColumns = (table?.column_configs ?? [])
-        .filter(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string);
+      const stringColumns = table?.column_configs ?? [];
 
       columns.value = mapIds(stringColumns, 'name');
     };
