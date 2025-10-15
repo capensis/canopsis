@@ -281,9 +281,9 @@ html {
 }
 
 *[aria-required="true"] label:before {
-  content: '*';
-  padding-right: 4px;
-  color: var(--v-error-base);
+  content: '*' !important;
+  padding-right: 4px !important;
+  color: var(--v-error-base) !important;
 }
 
 @for $i from 0 through 16 {
