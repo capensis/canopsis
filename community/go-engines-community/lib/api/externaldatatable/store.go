@@ -72,6 +72,8 @@ func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider, dbE
 		defaultSortBy:         "name",
 		dbExportClient:        dbExportClient,
 		exportDecoder:         exportDecoder,
+
+		parser: NewParser(),
 	}
 }
 
@@ -85,6 +87,8 @@ type store struct {
 	defaultSortBy         string
 	dbExportClient        mongo.DbClient
 	exportDecoder         encoding.Decoder
+
+	parser Parser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -431,9 +435,19 @@ func (s *store) FindPreviewData(ctx context.Context, job ImportJob, r ListPrevie
 }
 
 func (s *store) FindData(ctx context.Context, tableName string, tableType int, columnConfigs []externaldata.ColumnConfig, r ListDataRequest) (res *AggregationDataResult, err error) {
+	addPriorityColumn := false
+
 	columns := make([]string, len(columnConfigs))
 	for idx, cfg := range columnConfigs {
 		columns[idx] = cfg.Name
+
+		if cfg.Type == externaldata.ColumnTypeRegexp {
+			addPriorityColumn = true
+		}
+	}
+
+	if addPriorityColumn {
+		columns = append(columns, priorityColumnName)
 	}
 
 	valErrMsgs := make(map[string]string)
@@ -467,7 +481,7 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 	case externaldata.TypeMongoDB:
 		res, err = s.findDataFromMongo(ctx, tableName, searchBy, r)
 	case externaldata.TypePostgreSQL:
-		res, err = s.findDataFromPostgres(ctx, tableName, searchBy, r, columnConfigs)
+		res, err = s.findDataFromPostgres(ctx, tableName, searchBy, r, columnConfigs, addPriorityColumn)
 	default:
 		err = fmt.Errorf("unknown external data type %d", tableType)
 	}
@@ -553,6 +567,9 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 	row := make([]any, len(columnsWithID))
 	row[0] = doc[externaldata.IDColumnName]
 
+	addPriorityColumn := false
+	priority := 0
+
 	valErrMsgs := make(map[string]string)
 	for i, cfg := range table.ColumnConfigs {
 		columnName := cfg.Name
@@ -604,6 +621,32 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 				valErrMsgs[columnName] = columnName + " is not a timestamp."
 				continue
 			}
+		case externaldata.ColumnTypeRegexp:
+			strVal, ok := rawVal.(string)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a string."
+				continue
+			}
+
+			transformedVal, err := s.parser.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
+					Type: externaldata.ColumnTypeRegexp,
+				},
+			}, strVal)
+			if err != nil {
+				valErrMsgs[columnName] = err.Error()
+				continue
+			}
+
+			switch v := transformedVal.(type) {
+			case parsedRegexp:
+				priority += v.score
+				val = v.regexp
+			default:
+				return nil, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
+			}
+
+			addPriorityColumn = true
 		default:
 			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
 		}
@@ -616,6 +659,10 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 		return nil, common.NewValidationErrors(valErrMsgs)
 	}
 
+	if addPriorityColumn {
+		doc[priorityColumnName] = priority
+	}
+
 	switch table.Type {
 	case externaldata.TypeMongoDB:
 		_, err = s.dbClient.Collection(table.getDBTableName()).InsertOne(ctx, doc)
@@ -625,6 +672,11 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any
 		pgPool, err := s.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
+		}
+
+		if addPriorityColumn {
+			columnsWithID = append(columnsWithID, priorityColumnName)
+			row = append(row, priority)
 		}
 
 		_, err = pgPool.CopyFrom(ctx, table.getPostgresTableIdentifier(), columnsWithID, pgx.CopyFromRows([][]any{row}))
@@ -649,6 +701,9 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 	queryArgs := make([]any, len(table.ColumnConfigs)+1)
 
 	valErrMsgs := make(map[string]string)
+
+	addPriorityColumn := false
+	priority := 0
 
 	for i, cfg := range table.ColumnConfigs {
 		columnName := cfg.Name
@@ -699,6 +754,32 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 				valErrMsgs[columnName] = columnName + " is not a timestamp."
 				continue
 			}
+		case externaldata.ColumnTypeRegexp:
+			strVal, ok := rawVal.(string)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a string."
+				continue
+			}
+
+			transformedVal, err := s.parser.Parse(ColumnConfig{
+				BaseColumnConfig: BaseColumnConfig{
+					Type: externaldata.ColumnTypeRegexp,
+				},
+			}, strVal)
+			if err != nil {
+				valErrMsgs[columnName] = err.Error()
+				continue
+			}
+
+			switch v := transformedVal.(type) {
+			case parsedRegexp:
+				priority += v.score
+				val = v.regexp
+			default:
+				return nil, fmt.Errorf("unexpected transformed value is not regexp: %T", v)
+			}
+
+			addPriorityColumn = true
 		default:
 			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
 		}
@@ -716,8 +797,10 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 		return nil, common.NewValidationErrors(valErrMsgs)
 	}
 
-	queryArgs[len(queryArgs)-1] = id
-	querySql += " WHERE " + externaldata.IDColumnName + " = $" + strconv.Itoa(len(queryArgs))
+	if addPriorityColumn {
+		doc[priorityColumnName] = priority
+	}
+
 	switch table.Type {
 	case externaldata.TypeMongoDB:
 		updateRes, err := s.dbClient.Collection(table.getDBTableName()).UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": doc})
@@ -730,7 +813,15 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
-		execRes, err := pgPool.Exec(ctx, querySql, queryArgs...)
+		queryArgs[len(queryArgs)-1] = id
+		whereSql := " WHERE " + externaldata.IDColumnName + " = $" + strconv.Itoa(len(queryArgs))
+
+		if addPriorityColumn {
+			queryArgs = append(queryArgs, priority)
+			querySql += ", " + pgx.Identifier{priorityColumnName}.Sanitize() + " = $" + strconv.Itoa(len(queryArgs))
+		}
+
+		execRes, err := pgPool.Exec(ctx, querySql+whereSql, queryArgs...)
 		if err != nil || execRes.RowsAffected() == 0 {
 			return nil, err
 		}
@@ -929,10 +1020,28 @@ func (s *store) deletePostgresTable(ctx context.Context, name string) error {
 func (s *store) findPreviewDataFromMongo(ctx context.Context, job ImportJob, request ListPreviewRequest) (*AggregationDataResult, error) {
 	project := bson.M{}
 
+	addPriorityColumn := false
+
 	for _, cfg := range job.ColumnConfigs {
 		name := "$" + cfg.Name
 		project[cfg.Name] = bson.M{
 			"$ifNull": bson.A{name + ".transformed_value", name},
+		}
+
+		if cfg.IsRegexp() {
+			addPriorityColumn = true
+		}
+	}
+
+	if addPriorityColumn {
+		project[priorityColumnName] = bson.M{
+			"$sum": bson.M{
+				"$map": bson.M{
+					"input": bson.M{"$objectToArray": "$$ROOT"},
+					"as":    "f",
+					"in":    "$$f.v.priority",
+				},
+			},
 		}
 	}
 
@@ -1008,6 +1117,8 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	columnsWithID := make([]string, len(job.ColumnConfigs)*sqlColumnsForCsvColumn+1)
 	columnsWithID[0] = externaldata.IDColumnName
 
+	var priorityColumns []string
+
 	sql := "SELECT " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + ", "
 	for i, cfg := range job.ColumnConfigs {
 		initialName := cfg.Name + "_initial_value"
@@ -1024,6 +1135,14 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 		if i < len(job.ColumnConfigs)-1 {
 			sql += ", "
 		}
+
+		if cfg.IsRegexp() {
+			priorityColumns = append(priorityColumns, pgx.Identifier{cfg.Name + "_priority"}.Sanitize())
+		}
+	}
+
+	if len(priorityColumns) > 0 {
+		sql += ", " + strings.Join(priorityColumns, " + ")
 	}
 
 	tableName := job.getDBTableName()
@@ -1070,7 +1189,7 @@ func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, 
 	return result, nil
 }
 
-func (s *store) findDataFromPostgres(ctx context.Context, tableName string, columns []string, r ListDataRequest, columnConfigs []externaldata.ColumnConfig) (*AggregationDataResult, error) {
+func (s *store) findDataFromPostgres(ctx context.Context, tableName string, columns []string, r ListDataRequest, columnConfigs []externaldata.ColumnConfig, addPriorityColumn bool) (*AggregationDataResult, error) {
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get postgres pool: %w", err)
@@ -1107,6 +1226,10 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableName string, colu
 	columnsWithID := make([]string, len(columns)+1)
 	columnsWithID[0] = externaldata.IDColumnName
 	copy(columnsWithID[1:], columns)
+	if addPriorityColumn {
+		columnsWithID = append(columnsWithID, priorityColumnName)
+	}
+
 	sql := "SELECT "
 	for i, col := range columnsWithID {
 		sql += pgx.Identifier{col}.Sanitize()
@@ -1167,6 +1290,8 @@ func (s *store) transformPostgresResToData(vals []any, columnConfigs []externald
 
 	res[externaldata.IDColumnName] = id
 
+	addPriorityColumn := false
+
 	for i, cfg := range columnConfigs {
 		var value any
 
@@ -1176,6 +1301,13 @@ func (s *store) transformPostgresResToData(vals []any, columnConfigs []externald
 			if !ok {
 				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string", cfg.Name)
 			}
+		case externaldata.ColumnTypeRegexp:
+			value, ok = vals[i+1].(string)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string", cfg.Name)
+			}
+
+			addPriorityColumn = true
 		case externaldata.ColumnTypeNumber:
 			value, ok = vals[i+1].(float64)
 			if !ok {
@@ -1203,6 +1335,10 @@ func (s *store) transformPostgresResToData(vals []any, columnConfigs []externald
 		res[cfg.Name] = value
 	}
 
+	if addPriorityColumn {
+		res[priorityColumnName] = vals[len(vals)-1]
+	}
+
 	return res, nil
 }
 
@@ -1215,6 +1351,8 @@ func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []Co
 	}
 
 	res[externaldata.IDColumnName] = id
+
+	addPriorityColumn := false
 
 	for i, cfg := range columnConfigs {
 		initValue, ok := vals[i*sqlColumnsForCsvColumn+1].(string)
@@ -1248,6 +1386,13 @@ func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []Co
 			if !ok {
 				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string", cfg.Name)
 			}
+		case externaldata.ColumnTypeRegexp:
+			transformedValue, ok = vals[i*sqlColumnsForCsvColumn+2].(string)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string", cfg.Name)
+			}
+
+			addPriorityColumn = true
 		case externaldata.ColumnTypeNumber:
 			transformedValue, ok = vals[i*sqlColumnsForCsvColumn+2].(float64)
 			if !ok {
@@ -1273,6 +1418,10 @@ func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []Co
 		}
 
 		res[cfg.Name] = transformedValue
+	}
+
+	if addPriorityColumn {
+		res[priorityColumnName] = vals[len(vals)-1]
 	}
 
 	return res, nil
