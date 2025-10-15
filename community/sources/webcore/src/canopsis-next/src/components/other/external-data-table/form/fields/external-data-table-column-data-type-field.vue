@@ -104,6 +104,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    disabledTypes: {
+      type: Array,
+      default: () => [],
+    },
   },
   setup(props) {
     const { t, te } = useI18n();
@@ -119,6 +123,11 @@ export default {
 
       if (te(`${key}.tooltip`)) {
         item.tooltip = t(`${key}.tooltip`);
+      }
+
+      if (props.disabledTypes.includes(type)) {
+        item.disabled = true;
+        item.disabledMessage = t(`${key}.disabledMessage`);
       }
 
       return item;

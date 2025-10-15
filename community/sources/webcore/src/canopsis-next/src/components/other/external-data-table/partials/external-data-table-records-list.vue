@@ -111,11 +111,17 @@
           <td v-if="selectable" />
           <td v-if="expandable" />
           <td v-for="header in sortedHeaders" :key="header.value">
-            <v-layout v-if="header.value !== '_id' && header.value !== 'actions'" class="py-1 gap-2" column>
+            <v-layout v-if="header.value === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN">
+              <span class="font-italic font-weight-bold grey--text">
+                {{ $t('common.calculated') }}
+              </span>
+            </v-layout>
+            <v-layout v-else-if="header.value !== '_id' && header.value !== 'actions'" class="py-1 gap-2" column>
               <external-data-table-column-data-type-field
                 v-field="columns[header.value]"
                 :table-separator="separator"
                 :disabled="disabledTypes"
+                :disabled-types="disabledTypesForTypeField"
               />
               <v-flex>
                 <external-data-table-column-tag-field
@@ -228,7 +234,7 @@
 import { isEmpty } from 'lodash';
 import { computed, ref, toRef } from 'vue';
 
-import { DENSE_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
+import { DENSE_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, EXTERNAL_DATA_TABLE_PRIORITY_COLUMN } from '@/constants';
 
 import { convertDateToString } from '@/helpers/date/date';
 
@@ -266,6 +272,10 @@ export default {
     columns: {
       type: Object,
       default: () => ({}),
+    },
+    originalColumns: {
+      type: Object,
+      required: false,
     },
     options: {
       type: Object,
@@ -361,9 +371,11 @@ export default {
       selector: 'table > thead tr',
     });
 
+    const columnsForTableDisplaying = computed(() => props.originalColumns || props.columns);
+
     const preparedRecords = computed(() => props.records.map(record => (
       Object.entries(record).reduce((acc, [key, value]) => {
-        const filter = EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[props.columns?.[key]?.type];
+        const filter = EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[columnsForTableDisplaying.value?.[key]?.type];
 
         acc[key] = filter ? filter(value) : value;
 
@@ -390,7 +402,7 @@ export default {
     ));
 
     const headers = computed(() => {
-      const result = Object.values(props.columns).map((column = {}) => ({
+      const result = Object.values(columnsForTableDisplaying.value).map((column = {}) => ({
         value: column.name,
         text: column.name,
         class: DRAGGABLE_CLASS,
@@ -412,6 +424,13 @@ export default {
 
     const isSmallDense = computed(() => props.dense === DENSE_TYPES.small);
     const isMediumDense = computed(() => props.dense === DENSE_TYPES.medium);
+
+    const disabledTypesForTypeField = computed(() => {
+      const hasRegexpField = Object.values(props.columns)
+        .some(({ type }) => type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
+
+      return hasRegexpField ? [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp] : [];
+    });
 
     const updatePage = page => emit('update:options', { ...props.options, page });
 
@@ -440,12 +459,15 @@ export default {
     return {
       tableElement,
 
+      EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+
       preparedRecords,
       isEmptyColumns,
       errorsMessages,
       headers,
       isSmallDense,
       isMediumDense,
+      disabledTypesForTypeField,
 
       updatePage,
 

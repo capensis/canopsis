@@ -47,6 +47,8 @@
 <script>
 import { computed, onMounted } from 'vue';
 
+import { EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, EXTERNAL_DATA_TABLE_PRIORITY_COLUMN } from '@/constants';
+
 import { setSeveralFields } from '@/helpers/immutable';
 import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
 
@@ -99,7 +101,15 @@ export default {
     const { updateModel } = useModelField(props, emit);
     const { pending, columns, fetchColumns } = useExternalDataTableColumns();
 
-    const preparedColumns = computed(() => columns.value.map(column => ({ text: column.name, value: column.name })));
+    const preparedColumns = computed(() => columns.value.reduce((acc, column) => {
+      acc.push({ text: column.name, value: column.name });
+
+      if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp) {
+        acc.push({ text: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN, value: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN });
+      }
+
+      return acc;
+    }, []));
 
     const updateTable = async (tableId) => {
       await fetchColumns(tableId);

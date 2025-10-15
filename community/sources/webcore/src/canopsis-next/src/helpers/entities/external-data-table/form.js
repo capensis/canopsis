@@ -7,6 +7,7 @@ import {
   CSV_SEPARATORS_TO_SYMBOLS,
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS,
   EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR,
+  EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
 } from '@/constants';
 
 /**
@@ -136,6 +137,12 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
       string_array_separator: columnConfig.string_array_separator ?? null,
     };
 
+    if (columnConfig.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp) {
+      acc[EXTERNAL_DATA_TABLE_PRIORITY_COLUMN] = {
+        name: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+      };
+    }
+
     return acc;
   }, {})
 );
@@ -146,13 +153,19 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
  * @param {Object<string, ExternalDataTableColumnConfig>} form
  * @returns {ExternalDataTableColumnConfig[]}
  */
-export const formToExternalDataTableColumnConfigs = (form = {}) => (
-  Object.values(form).map(columnConfig => ({
+export const formToExternalDataTableColumnConfigs = (form = {}) => Object.values(form).reduce((acc, columnConfig) => {
+  if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
+    return acc;
+  }
+
+  acc.push({
     ...omit(columnConfig, ['rows', 'messages']),
 
     type: columnConfig.type ?? EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string,
-  }))
-);
+  });
+
+  return acc;
+}, []);
 
 /**
  * Converts a form representation of external data table columns to a tags representation.
@@ -160,9 +173,15 @@ export const formToExternalDataTableColumnConfigs = (form = {}) => (
  * @param {Object<string, ExternalDataTableColumnConfig>} form
  * @returns {number[]}
  */
-export const formToExternalDataTableColumnTags = (form = {}) => (
-  Object.values(form).map(columnConfig => columnConfig.tag)
-);
+export const formToExternalDataTableColumnTags = (form = {}) => Object.values(form).reduce((acc, columnConfig) => {
+  if (columnConfig.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN) {
+    return acc;
+  }
+
+  acc.push(columnConfig.tag);
+
+  return acc;
+}, []);
 
 /**
  * Checks if a separator is a predefined standard separator
@@ -210,3 +229,23 @@ export const getDefaultSeparator = (value, tableSeparator) => {
 
   return currentSeparator;
 };
+
+/**
+ * Adds priority column to form when regexp columns are detected.
+ *
+ * @param {Object<string, ExternalDataTableColumnConfig>} form - The form object to process
+ * @returns {Object<string, ExternalDataTableColumnConfig>} Form with priority column added if needed
+ */
+export const addPriorityColumnForRegexpTypes = form => (
+  Object.entries(form).reduce((acc, [name, value]) => {
+    acc[name] = value;
+
+    if (value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp) {
+      acc[EXTERNAL_DATA_TABLE_PRIORITY_COLUMN] = {
+        name: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+      };
+    }
+
+    return acc;
+  }, {})
+);
