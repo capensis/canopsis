@@ -1,17 +1,13 @@
 <template>
   <v-layout column>
-    <v-combobox
+    <c-meta-alarm-field
       v-field="form.metaAlarm"
-      v-validate="'required'"
-      :items="metaAlarms"
       :label="$t('modals.linkToMetaAlarm.fields.metaAlarm')"
-      :error-messages="errors.collect('manualMetaAlarm')"
-      :loading="pending"
-      item-value="_id"
-      item-text="name"
+      :autocomplete="false"
       name="manualMetaAlarm"
-      return-object
+      required
       blur-on-create
+      addable
     >
       <template #no-data="">
         <v-list-item>
@@ -20,8 +16,8 @@
           </v-list-item-content>
         </v-list-item>
       </template>
-    </v-combobox>
-    <v-text-field
+    </c-meta-alarm-field>
+    <c-name-field
       v-field="form.comment"
       :label="$t('common.note')"
     />
@@ -33,12 +29,7 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
-
-const { mapActions } = createNamespacedHelpers('metaAlarm');
-
 export default {
-  inject: ['$validator'],
   model: {
     prop: 'form',
     event: 'input',
@@ -47,29 +38,6 @@ export default {
     form: {
       type: Object,
       required: true,
-    },
-  },
-  data() {
-    return {
-      pending: false,
-      metaAlarms: [],
-    };
-  },
-  mounted() {
-    this.fetchMetaAlarms();
-  },
-  methods: {
-    ...mapActions({
-      fetchMetaAlarmsListWithoutStore: 'fetchListWithoutStore',
-    }),
-
-    async fetchMetaAlarms() {
-      this.pending = true;
-
-      const alarms = await this.fetchMetaAlarmsListWithoutStore();
-
-      this.metaAlarms = alarms ?? [];
-      this.pending = false;
     },
   },
 };

@@ -32,14 +32,17 @@
 </template>
 
 <script>
+import { ref, computed } from 'vue';
+
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { mapIds } from '@/helpers/array';
 import { isAlarmStateNotOk } from '@/helpers/entities/alarm/form';
+import { metaAlarmLinkToForm, formToMetaAlarmLinkRequest } from '@/helpers/entities/meta-alarm/link/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
 
 import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
 import LinkMetaAlarmForm from '@/components/widgets/alarm/forms/link-meta-alarm-form.vue';
@@ -60,47 +63,48 @@ export default {
     LinkMetaAlarmForm,
     ModalWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: {
-        metaAlarm: null,
-        comment: '',
-        auto_resolve: false,
-      },
+  props: {
+    modal: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
+  setup(props) {
+    const form = ref(metaAlarmLinkToForm());
+
+    const { config, close } = useInnerModal(props);
+
+    const alarms = computed(() => config.value.items?.filter(isAlarmStateNotOk) ?? []);
+
+    const submitMethod = async () => {
+      const data = {
+        ...formToMetaAlarmLinkRequest(form.value),
+        alarms: mapIds(alarms.value),
+      };
+
+      await config.value?.action?.(data);
+
+      close();
     };
-  },
-  computed: {
-    alarms() {
-      return this.config.items?.filter(isAlarmStateNotOk) ?? [];
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
 
-      if (isFormValid) {
-        const data = {
-          comment: this.form.comment,
-          auto_resolve: this.form.auto_resolve,
-          alarms: mapIds(this.alarms),
-        };
+    const { submit, submitting, isDisabled } = useSubmittableForm({
+      form,
+      method: submitMethod,
+    });
 
-        if (this.form.metaAlarm?._id) {
-          data.id = this.form.metaAlarm?._id;
-        } else {
-          data.name = this.form.metaAlarm;
-        }
+    useFormConfirmableCloseModal({
+      form,
+      submit: submitMethod,
+      close,
+    });
 
-        await this.config?.action?.(data);
-
-        this.$modals.hide();
-      }
-    },
+    return {
+      form,
+      alarms,
+      submit,
+      submitting,
+      isDisabled,
+    };
   },
 };
 </script>

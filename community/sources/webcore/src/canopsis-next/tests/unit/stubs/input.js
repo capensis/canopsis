@@ -1,4 +1,4 @@
-import { isObject } from 'lodash';
+import { isObject, isFunction } from 'lodash';
 
 export const createInputStub = className => ({
   props: ['value'],
@@ -27,7 +27,7 @@ export const createSelectInputStub = className => ({
     value: [Object, Array, String, Number],
     items: Array,
     itemValue: {
-      type: String,
+      type: [String, Function],
       default: 'value',
     },
   },
@@ -37,8 +37,8 @@ export const createSelectInputStub = className => ({
     },
   },
   methods: {
-    getValue({ [this.itemValue]: value }) {
-      return value;
+    getValue(item) {
+      return isFunction(this.itemValue) ? this.itemValue(item) : item[this.itemValue];
     },
   },
   template: `

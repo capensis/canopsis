@@ -8,7 +8,7 @@
     :items="items"
     :name="name"
     :item-text="getItemText"
-    :item-value="itemValue"
+    :item-value="getItemValue"
     :item-disabled="itemDisabled"
     :multiple="isMultiple"
     :deletable-chips="isMultiple"
@@ -16,7 +16,7 @@
     :chips="isMultiple"
     :disabled="disabled"
     :required="required"
-    :menu-props="menuProps"
+    :menu-props="preparedMenuProps"
     :clearable="clearable"
     :autocomplete="autocomplete"
     :combobox="!autocomplete"
@@ -49,7 +49,7 @@
           <v-list-item-content>
             <v-list-item-mask :text="getItemText(item)" :mask="internalSearch" />
           </v-list-item-content>
-          <span class="ml-4 grey--text">{{ item.type }}</span>
+          <span v-if="withType" class="ml-4 grey--text">{{ item.type }}</span>
         </v-list-item>
       </slot>
     </template>
@@ -126,7 +126,7 @@ export default {
       default: '_id',
     },
     itemValue: {
-      type: String,
+      type: [String, Function],
       default: '_id',
     },
     noDataText: {
@@ -165,6 +165,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    withType: {
+      type: Boolean,
+      default: false,
+    },
     items: {
       type: Array,
       default: () => [],
@@ -177,6 +181,10 @@ export default {
       type: Number,
       default: 300,
     },
+    menuProps: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, { emit }) {
     const internalSearch = ref(props.search);
@@ -186,7 +194,7 @@ export default {
     const validator = useValidator();
 
     const isMultiple = computed(() => isArray(props.value));
-    const menuProps = computed(() => ({ contentClass: 'c-lazy-search-field__list', eager: true }));
+    const preparedMenuProps = computed(() => ({ ...props.menuProps, contentClass: 'c-lazy-search-field__list', eager: true }));
 
     /**
      * Set the internal search value.
@@ -209,6 +217,20 @@ export default {
     const debouncedEmitUpdateSearch = debounce(emitUpdateSearch, props.throttle);
 
     /**
+     * Get the value of an item based on the provided item.
+     *
+     * @param {any} item - The item to get the value from.
+     * @returns {any} The value of the item.
+     */
+    const getItemValue = (item) => {
+      if (isString(item)) {
+        return item;
+      }
+
+      return isFunction(props.itemValue) ? props.itemValue(item) : get(item, props.itemValue);
+    };
+
+    /**
      * Get the text of an item based on the provided item.
      *
      * @param {any} item - The item to get the text from.
@@ -219,7 +241,9 @@ export default {
         return item;
       }
 
-      return isFunction(props.itemText) ? props.itemText(item) : get(item, props.itemText);
+      const text = isFunction(props.itemText) ? props.itemText(item) : get(item, props.itemText);
+
+      return text ?? getItemValue(item);
     };
 
     /**
@@ -287,10 +311,11 @@ export default {
 
       internalSearch,
       isFocused,
-      menuProps,
+      preparedMenuProps,
 
       isMultiple,
 
+      getItemValue,
       getItemText,
       updateSearch,
       onFocus,
@@ -312,7 +337,7 @@ export default {
     right: 0;
     bottom: 0;
     left: 0;
-    height: 200px;
+    height: 30px;
   }
 
   .v-select__selections {
