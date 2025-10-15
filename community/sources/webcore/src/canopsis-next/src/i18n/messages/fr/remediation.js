@@ -41,6 +41,9 @@ export default {
     executeInstruction: 'Exécuter la consigne "{instructionName}"',
     resumeInstruction: 'Reprendre la consigne "{instructionName}"',
     inProgressInstruction: '{instructionName} en cours...',
+    retryEnabled: 'Réessayer pour les exécutions infructueuses',
+    retryEnabledTooltip: 'Lorsque le résultat de l\'exécution - L\'état de l\'alarme n\'est pas OK',
+    retryCount: 'Nombre de tentatives',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manuel simplifié',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manuel',

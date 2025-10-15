@@ -97,6 +97,7 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
  * @typedef {Object} RemediationInstructionAuto
  * @property {RemediationInstructionAutoTrigger[]} triggers
  * @property {number} [priority]
+ * @property {number} [retry_count]
  * @property {RemediationInstructionJob[]} [jobs]
  */
 
@@ -117,6 +118,7 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 
 /**
  * @typedef {RemediationInstruction} RemediationInstructionForm
+ * @property {boolean} retry_enabled
  * @property {RemediationInstructionStepForm[]} steps
  * @property {RemediationInstructionJobForm[]} jobs
  * @property {RemediationInstructionApprovalForm} approval
@@ -297,6 +299,8 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => {
     alarm_pattern: remediationInstruction.alarm_pattern,
     entity_pattern: remediationInstruction.entity_pattern,
     description: remediationInstruction.description || '',
+    retry_enabled: !!remediationInstruction.retry_count,
+    retry_count: remediationInstruction.retry_count || 1,
     steps: remediationInstructionStepsToForm(remediationInstruction.steps),
     approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
     jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
@@ -375,7 +379,13 @@ const formApprovalToRemediationInstructionApproval = (approval) => {
  */
 export const formToRemediationInstruction = (form) => {
   const {
-    steps, jobs, priority, triggers, ...instruction
+    steps,
+    jobs,
+    priority,
+    triggers,
+    retry_enabled: retryEnabled,
+    retry_count: retryCount,
+    ...instruction
   } = form;
 
   if (isInstructionTypeManual(form?.type)) {
@@ -389,8 +399,13 @@ export const formToRemediationInstruction = (form) => {
     }
   }
 
+  if (retryEnabled) {
+    instruction.retry_count = retryCount;
+  }
+
   return {
     ...instruction,
+
     alarm_pattern: form.alarm_pattern,
     entity_pattern: form.entity_pattern,
     approval: formApprovalToRemediationInstructionApproval(form.approval),

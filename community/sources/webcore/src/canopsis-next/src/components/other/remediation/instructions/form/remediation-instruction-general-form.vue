@@ -20,6 +20,7 @@
     <c-name-field
       v-field="form.name"
       :disabled="disabledCommon"
+      required
       autofocus
     />
     <v-text-field
@@ -56,6 +57,34 @@
         />
       </v-flex>
     </v-layout>
+    <v-layout class="gap-3">
+      <c-enabled-field
+        :value="form.retry_enabled"
+        :label="$t('remediation.instruction.retryEnabled')"
+        class="pb-1"
+        @input="updateRetryEnabled"
+      >
+        <template #append>
+          <c-help-icon
+            :text="$t('remediation.instruction.retryEnabledTooltip')"
+            icon="help"
+            color="grey darken-1"
+            top
+          />
+        </template>
+      </c-enabled-field>
+      <v-fade-transition>
+        <c-number-field
+          v-if="form.retry_enabled"
+          v-field="form.retry_count"
+          :label="$t('remediation.instruction.retryCount')"
+          :min="1"
+          :max="100"
+          name="retry_count"
+          required
+        />
+      </v-fade-transition>
+    </v-layout>
     <c-triggers-field
       v-if="isAutoType"
       v-field="form.triggers"
@@ -81,9 +110,13 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES } from '@/constants';
 
 import { isInstructionTypeAuto, isInstructionTypeSimpleManual } from '@/helpers/entities/remediation/instruction/form';
+
+import { useModelField } from '@/hooks/form/model-field';
 
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
@@ -122,18 +155,38 @@ export default {
       default: false,
     },
   },
-  computed: {
-    isAutoType() {
-      return isInstructionTypeAuto(this.form?.type);
-    },
+  setup(props, { emit }) {
+    const availableTriggers = REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
 
-    isManualSimplified() {
-      return isInstructionTypeSimpleManual(this.form?.type);
-    },
+    const { updateModel } = useModelField(props, emit);
 
-    availableTriggers() {
-      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
-    },
+    const isAutoType = computed(() => isInstructionTypeAuto(props.form?.type));
+    const isManualSimplified = computed(() => isInstructionTypeSimpleManual(props.form?.type));
+
+    /**
+     * Updates the retry enabled field and sets initial retry count when enabled
+     *
+     * @param {boolean} value - The new retry enabled state
+     */
+    const updateRetryEnabled = (value) => {
+      const newForm = { ...props.form, retry_enabled: value };
+
+      if (value) {
+        newForm.retry_count = 1;
+      }
+
+      updateModel(newForm);
+    };
+
+    return {
+      availableTriggers,
+
+      isAutoType,
+      isManualSimplified,
+
+      updateRetryEnabled,
+    };
   },
+
 };
 </script>
