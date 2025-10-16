@@ -25,6 +25,7 @@ export default {
   filterByBookmark: 'Filtrer par signet',
   runTest: 'Exécuter le test',
   tagFilter: 'Filtre de balises',
+  alarmDisplayName: 'Nom d\'affichage de l\'alarme',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
     addBookmarkSuccess: 'Le signet a été ajouté',

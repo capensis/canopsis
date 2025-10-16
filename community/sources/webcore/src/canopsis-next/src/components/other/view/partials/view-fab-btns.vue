@@ -1,15 +1,23 @@
 <template>
-  <div class="view-fab-btns fab ma-2">
-    <v-layout>
-      <v-flex class="mr-3">
-        <view-scroll-top-btn />
-      </v-flex>
-      <v-flex class="mr-3">
-        <view-periodic-refresh-btn />
-      </v-flex>
+  <div
+    :class="{ 'view-fab-btns__fullscreen': isFullscreen }"
+    class="view-fab-btns fab ma-2"
+  >
+    <v-layout class="gap-3">
+      <view-scroll-top-btn />
+      <view-executions-btn />
+      <view-periodic-refresh-btn />
+      <view-screen-mode-btn
+        v-if="isFullscreen"
+        :value="activeViewScreenMode"
+        top
+        @input="changeScreenMode"
+      />
       <c-speed-dial
+        v-else
         direction="top"
         transition="slide-y-reverse-transition"
+        eager
       >
         <template #activator="{ bind }">
           <v-btn
@@ -27,11 +35,11 @@
           :view="view"
           :tab="activeTab"
         />
-        <view-fullscreen-btn
-          :value="fullscreen"
-          :toggle-full-screen="toggleFullScreen"
-          left-tooltip
+        <view-screen-mode-btn
+          :value="activeViewScreenMode"
+          left
           small
+          @input="changeScreenMode"
         />
         <view-editing-btn v-if="updatable" />
         <v-tooltip left>
@@ -76,31 +84,39 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
-import { activeViewMixin } from '@/mixins/active-view';
-import { viewRouterMixin } from '@/mixins/view/router';
-import { entitiesViewTabMixin } from '@/mixins/entities/view/tab';
+import {
+  MODALS,
+  KEYS_TO_VIEW_SCREEN_MODES,
+  VIEW_SCREEN_MODES,
+  FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES,
+} from '@/constants';
+
+import { useActiveView } from '@/hooks/store/modules/active-view';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
+import { useFullscreen } from '@/hooks/fullscreen';
+import { useView } from '@/hooks/store/modules/view';
+import { useViewRouter } from '@/hooks/view/router';
 
 import ViewShareLinkBtn from './view-share-link-btn.vue';
 import ViewEditingBtn from './view-editing-btn.vue';
 import ViewScrollTopBtn from './view-scroll-top-btn.vue';
-import ViewFullscreenBtn from './view-fullscreen-btn.vue';
+import ViewScreenModeBtn from './view-screen-mode-btn.vue';
 import ViewPeriodicRefreshBtn from './view-periodic-refresh-btn.vue';
+import ViewExecutionsBtn from './view-executions-btn.vue';
 
 export default {
   components: {
     ViewShareLinkBtn,
     ViewEditingBtn,
     ViewScrollTopBtn,
-    ViewFullscreenBtn,
+    ViewScreenModeBtn,
     ViewPeriodicRefreshBtn,
+    ViewExecutionsBtn,
   },
-  mixins: [
-    activeViewMixin,
-    viewRouterMixin,
-    entitiesViewTabMixin,
-  ],
   props: {
     activeTab: {
       type: Object,
@@ -115,34 +131,38 @@ export default {
       default: false,
     },
   },
-  data() {
-    return {
-      opened: false,
-      fullscreen: false,
-    };
-  },
-  created() {
-    document.addEventListener('keydown', this.keyDownListener);
-  },
-  beforeDestroy() {
-    this.$fullscreen.exit();
-    document.removeEventListener('keydown', this.keyDownListener);
-  },
-  methods: {
-    toggleFullScreen() {
-      if (!this.activeTab) {
-        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
+  setup(props) {
+    const isFullscreen = ref(false);
+
+    const { t } = useI18n();
+    const modals = useModals();
+    const popups = usePopups();
+    const fullscreen = useFullscreen();
+    const { route, redirectToFirstTab } = useViewRouter();
+
+    const { createViewTab } = useView();
+    const {
+      view,
+      activeViewScreenMode,
+      fetchActiveView,
+      toggleEditing,
+      setActiveViewScreenMode,
+    } = useActiveView();
+
+    const enterFullscreen = () => {
+      if (!props.activeTab) {
+        popups.warning({ text: t('view.errors.emptyTabs') });
         return;
       }
 
       const element = document.querySelector('[data-app]');
-      const viewElement = document.getElementById(`view-tab-${this.activeTab._id}`);
+      const viewElement = document.getElementById(`view-tab-${props.activeTab._id}`);
 
       if (!element) {
         return;
       }
 
-      this.$fullscreen.toggle(element, {
+      fullscreen.request(element, {
         fullscreenClass: 'full-screen',
         callback: (value) => {
           if (value) {
@@ -151,61 +171,108 @@ export default {
             viewElement.classList.remove('view-fullscreen');
           }
 
-          this.fullscreen = value;
+          isFullscreen.value = value;
+          const newMode = FULLSCREEN_MODES_TO_DEFAULT_SCREEN_MODES[activeViewScreenMode.value];
+
+          if (!value && newMode) {
+            setActiveViewScreenMode(newMode);
+          }
         },
       });
-    },
+    };
 
-    keyDownListener(event) {
-      if (event.key === 'e' && event.ctrlKey && this.updatable) {
-        this.toggleEditing();
-        event.preventDefault();
-      } else if (event.key === 'Enter' && event.altKey) {
-        this.toggleFullScreen();
-        event.preventDefault();
+    const exitFullscreen = () => fullscreen.exit();
+
+    const changeScreenMode = (newMode) => {
+      setActiveViewScreenMode(newMode);
+
+      switch (newMode) {
+        case VIEW_SCREEN_MODES.fullscreen:
+        case VIEW_SCREEN_MODES.kioskFullscreen:
+          enterFullscreen();
+          return;
+
+        default:
+          exitFullscreen();
       }
-    },
+    };
 
-    showCreateWidgetModal() {
-      if (!this.activeTab) {
-        this.$popups.warning({ text: this.$t('view.errors.emptyTabs') });
+    const keyDownListener = (event) => {
+      if (event.key === 'e' && event.ctrlKey && props.updatable) {
+        toggleEditing();
+        event.preventDefault();
         return;
       }
 
-      this.$modals.show({
+      /**
+       * Check if Alt (Windows/Linux) or Command (Mac) + Shift + number keys are pressed
+       */
+      if ((event.altKey || event.metaKey) && event.shiftKey) {
+        const newMode = KEYS_TO_VIEW_SCREEN_MODES[event.code];
+
+        if (newMode) {
+          changeScreenMode(newMode);
+          event.preventDefault();
+        }
+      }
+    };
+
+    const showCreateWidgetModal = () => {
+      if (!props.activeTab) {
+        popups.warning({ text: t('view.errors.emptyTabs') });
+        return;
+      }
+
+      modals.show({
         name: MODALS.createWidget,
         config: {
-          tab: this.activeTab,
+          tab: props.activeTab,
         },
       });
-    },
+    };
 
-    showCreateTabModal() {
-      this.$modals.show({
+    const showCreateTabModal = () => {
+      modals.show({
         name: MODALS.textFieldEditor,
         config: {
-          title: this.$t('modals.viewTab.create.title'),
+          title: t('modals.viewTab.create.title'),
           field: {
             name: 'text',
-            label: this.$t('modals.viewTab.fields.title'),
+            label: t('modals.viewTab.fields.title'),
             validationRules: 'required',
           },
           action: async (title) => {
             const data = {
-              view: this.view._id,
+              view: view.value._id,
               title,
             };
 
-            await this.createViewTab({ data });
-            await this.fetchActiveView();
+            await createViewTab({ data });
+            await fetchActiveView();
 
-            if (!this.$route.query.tabId) {
-              await this.redirectToFirstTab();
+            if (!route.query.tabId) {
+              await redirectToFirstTab();
             }
           },
         },
       });
-    },
+    };
+
+    onMounted(() => document.addEventListener('keydown', keyDownListener));
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('keydown', keyDownListener);
+      exitFullscreen();
+    });
+
+    return {
+      isFullscreen,
+      view,
+      activeViewScreenMode,
+      changeScreenMode,
+      showCreateWidgetModal,
+      showCreateTabModal,
+    };
   },
 };
 </script>
@@ -230,6 +297,10 @@ export default {
       border-color: #979797 !important;
       background-color: #979797 !important;
     }
+  }
+
+  &__fullscreen {
+    z-index: 8;
   }
 }
 

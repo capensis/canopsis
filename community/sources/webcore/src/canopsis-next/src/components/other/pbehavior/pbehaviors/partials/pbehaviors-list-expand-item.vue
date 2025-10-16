@@ -27,6 +27,8 @@
               <v-card-text>
                 <pbehavior-patterns-form
                   :form="patterns"
+                  :pbehavior-id="pbehavior._id"
+                  pbehavior-counter-type
                   readonly
                 />
               </v-card-text>

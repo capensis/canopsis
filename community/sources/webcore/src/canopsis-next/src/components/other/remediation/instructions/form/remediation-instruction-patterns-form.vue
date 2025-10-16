@@ -7,6 +7,7 @@
       with-alarm
       with-entity
       both-counters
+      some-required
     />
     <c-collapse-panel
       :title="$t('remediation.pattern.tabs.pbehaviorTypes.title')"
