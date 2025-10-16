@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
-import { CANOPSIS_EDITION, EXPORT_STATUSES } from '@/constants';
+import { CANOPSIS_EDITION, EXPORT_STATUSES, VIEW_SCREEN_MODES } from '@/constants';
 
 import request from '@/services/request';
 
@@ -656,21 +656,27 @@ export const createActiveViewModule = () => {
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
   const toggleEditing = jest.fn();
+  const setScreenMode = jest.fn();
+  const editing = jest.fn().mockReturnValue(false);
+  const screenMode = jest.fn().mockReturnValue(VIEW_SCREEN_MODES.default);
+  const isKioskScreenMode = jest.fn().mockReturnValue(false);
   const resumePeriodicRefresh = jest.fn();
   const pausePeriodicRefresh = jest.fn();
-  const editing = jest.fn().mockReturnValue(false);
   const periodicRefreshPaused = jest.fn().mockReturnValue(false);
 
   const activeViewModule = {
     name: 'activeView',
     getters: {
       editing,
+      screenMode,
+      isKioskScreenMode,
       periodicRefreshPaused,
     },
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
       toggleEditing,
+      setScreenMode,
       fetch: fetchActiveView,
       resumePeriodicRefresh,
       pausePeriodicRefresh,
@@ -1454,5 +1460,25 @@ export const createRemediationInstructionModule = () => {
   return {
     remediationInstructionModule,
     fetchRemediationInstructionsListWithoutStore,
+  };
+};
+
+export const createPbehaviorPatternsModule = () => {
+  const runAlarmFiltering = jest.fn().mockResolvedValue();
+
+  const pbehaviorPatternsModule = {
+    name: 'pbehaviorPatterns',
+    actions: {
+      runAlarmFiltering,
+    },
+  };
+
+  afterEach(() => {
+    runAlarmFiltering.mockClear();
+  });
+
+  return {
+    runAlarmFiltering,
+    pbehaviorPatternsModule,
   };
 };
