@@ -6,6 +6,7 @@ import pbehaviorReasonsModule from './pbehavior-reasons';
 import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
+import pbehaviorPatternsModule from './pbehavior-patterns';
 import remediationInstructionModule from './remediation-instruction';
 import remediationInstructionExecutionModule from './remediation-instruction-execution';
 import remediationConfigurationModule from './remediation-configuration';
@@ -35,6 +36,7 @@ import stateSettingModule from './state-setting';
 import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
 import notificationSettingsModule from './notification-settings';
+import notificationModule from './notification';
 import idleRulesModule from './idle-rules';
 import flappingRulesModule from './flapping-rules';
 import resolveRulesModule from './resolve-rules';
@@ -76,6 +78,7 @@ export default {
   pbehaviorTimespan: pbehaviorTimespanModule,
   pbehaviorExceptions: pbehaviorExceptionsModule,
   pbehaviorTypes: pbehaviorTypesModule,
+  pbehaviorPatterns: pbehaviorPatternsModule,
   userPreference: userPreferenceModule,
   view: viewModule,
   role: roleModule,
@@ -105,6 +108,7 @@ export default {
   associativeTable: associativeTableModule,
   dataStorage: dataStorageModule,
   notificationSettings: notificationSettingsModule,
+  notification: notificationModule,
   idleRules: idleRulesModule,
   flappingRules: flappingRulesModule,
   resolveRules: resolveRulesModule,
