@@ -2522,7 +2522,14 @@ definitions:
   entityservice.TemplateRequest:
     properties:
       rule:
-        $ref: '#/definitions/entityservice.CreateRequest'
+        $ref: '#/definitions/entityservice.TemplateRuleRequest'
+    type: object
+  entityservice.TemplateRuleRequest:
+    properties:
+      output_template:
+        type: string
+    required:
+    - output_template
     type: object
   entityservice.TemplateVarsResponse:
     properties:
@@ -2827,14 +2834,9 @@ definitions:
           _id:
             type: string
           config:
-            $ref: '#/definitions/eventfilter.RuleConfig'
+            $ref: '#/definitions/eventfilter.TemplateRuleConfigRequest'
           corporate_entity_pattern:
             type: string
-          description:
-            maxLength: 255
-            type: string
-          enabled:
-            type: boolean
           entity_pattern:
             items:
               items:
@@ -2847,27 +2849,10 @@ definitions:
                 $ref: '#/definitions/pattern.FieldCondition'
               type: array
             type: array
-          exceptions:
-            items:
-              type: string
-            type: array
-          exdates:
-            items:
-              $ref: '#/definitions/exdate.Request'
-            type: array
           external_data:
             items:
-              $ref: '#/definitions/externaldata.RefParameters'
+              $ref: '#/definitions/template.TemplateRefParameters'
             type: array
-          priority:
-            minimum: 0
-            type: integer
-          rrule:
-            type: string
-          start:
-            type: integer
-          stop:
-            type: integer
           type:
             enum:
             - break
@@ -2876,7 +2861,6 @@ definitions:
             - change_entity
             type: string
         required:
-        - description
         - type
         type: object
       testdata:
@@ -2892,6 +2876,21 @@ definitions:
           test:
             type: string
         type: object
+    type: object
+  eventfilter.TemplateRuleConfigRequest:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/eventfilter.Action'
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      resource:
+        type: string
     type: object
   eventfilter.TemplateVarsResponse:
     properties:
@@ -3926,35 +3925,14 @@ definitions:
         properties:
           _id:
             type: string
-          alarm_pattern:
-            items:
-              items:
-                $ref: '#/definitions/pattern.FieldCondition'
-              type: array
-            type: array
-          corporate_alarm_pattern:
-            type: string
-          corporate_entity_pattern:
-            type: string
-          enabled:
-            type: boolean
-          entity_pattern:
-            items:
-              items:
-                $ref: '#/definitions/pattern.FieldCondition'
-              type: array
-            type: array
           external_data:
             items:
-              $ref: '#/definitions/externaldata.RefParameters'
+              $ref: '#/definitions/template.TemplateRefParameters'
             type: array
           links:
             items:
-              $ref: '#/definitions/link.Parameters'
+              $ref: '#/definitions/linkrule.TemplateRequestLink'
             type: array
-          name:
-            maxLength: 255
-            type: string
           source_code:
             type: string
           type:
@@ -3963,8 +3941,6 @@ definitions:
             - entity
             type: string
         required:
-        - enabled
-        - name
         - type
         type: object
       testdata:
@@ -3978,6 +3954,16 @@ definitions:
           user:
             type: string
         type: object
+    type: object
+  linkrule.TemplateRequestLink:
+    properties:
+      label:
+        type: string
+      url:
+        type: string
+    required:
+    - label
+    - url
     type: object
   linkrule.TemplateVarsResponse:
     properties:
@@ -5627,6 +5613,28 @@ definitions:
       updated:
         type: integer
     type: object
+  scenario.TemplateActionParameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/template.TemplateWebhookDeclareTicket'
+      forward_author:
+        type: boolean
+      output:
+        type: string
+      request:
+        $ref: '#/definitions/template.TemplateParameters'
+    type: object
+  scenario.TemplateActionRequest:
+    properties:
+      parameters:
+        $ref: '#/definitions/scenario.TemplateActionParameters'
+      type:
+        type: string
+    required:
+    - type
+    type: object
   scenario.TemplateRequest:
     properties:
       rule:
@@ -5635,29 +5643,16 @@ definitions:
             type: string
           actions:
             items:
-              $ref: '#/definitions/scenario.ActionRequest'
+              $ref: '#/definitions/scenario.TemplateActionRequest'
             type: array
-          delay:
-            $ref: '#/definitions/datetime.DurationWithUnit'
-          disable_during_periods:
-            items:
-              type: string
-            type: array
-          enabled:
-            type: boolean
           name:
-            maxLength: 255
             type: string
-          priority:
-            minimum: 0
-            type: integer
           triggers:
             items:
               $ref: '#/definitions/scenario.Trigger'
             type: array
         required:
         - actions
-        - enabled
         - name
         - triggers
         type: object
@@ -6338,6 +6333,54 @@ definitions:
     - name
     - rule
     - type
+    type: object
+  template.TemplateParameters:
+    properties:
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      payload:
+        type: string
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  template.TemplateRefParameters:
+    properties:
+      optional:
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      request:
+        $ref: '#/definitions/template.TemplateParameters'
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      table:
+        type: string
+      type:
+        type: string
+    required:
+    - reference
+    - type
+    type: object
+  template.TemplateWebhookDeclareTicket:
+    properties:
+      ticket_id_tpl:
+        type: string
+      ticket_url_tpl:
+        type: string
     type: object
   template.TestResponse:
     properties:

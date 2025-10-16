@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	libaction "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/action"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -29,6 +30,15 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+const (
+	outputTplVarsIndex             = 1
+	authorTplVarsIndex             = 1
+	firstWebhookTplVarsIndex       = 1
+	firstWebhookConseqTplVarsIndex = 9
+	webhookTplVarsIndex            = 1
+	webhookConseqTplVarsIndex      = 9
+)
+
 type Store interface {
 	Insert(ctx context.Context, r CreateRequest) (*Scenario, error)
 	Find(ctx context.Context, q FilteredQuery) (*AggregationResult, error)
@@ -36,29 +46,32 @@ type Store interface {
 	Update(ctx context.Context, r UpdateRequest) (*Scenario, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
 	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
-	GetTemplateVars() TemplateVarsResponse
+	GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error)
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	collection            mongo.DbCollection
-	alarmCollection       mongo.DbCollection
-	tplDataCollection     mongo.DbCollection
-	tplTestCollection     mongo.DbCollection
-	transformer           common.PatternFieldsTransformer
-	authorProvider        author.Provider
-	tplValidator          validator.Validator
-	tplExecutor           libtemplate.Executor
-	tplConfigProvider     config.TemplateConfigProvider
-	encoder               encoding.Encoder
-	decoder               encoding.Decoder
-	defaultSearchByFields []string
-	defaultSortBy         string
-	outputTplVars         []template.VarResponse
-	authorTplVars         []template.VarResponse
-	whTplVars             []template.VarResponse
-	firstWhTplVars        []template.VarResponse
-	ticketTplVars         []template.VarResponse
+	dbClient                  mongo.DbClient
+	collection                mongo.DbCollection
+	alarmCollection           mongo.DbCollection
+	tplDataCollection         mongo.DbCollection
+	tplTestCollection         mongo.DbCollection
+	entityInfosPropCollection mongo.DbCollection
+	transformer               common.PatternFieldsTransformer
+	authorProvider            author.Provider
+	tplValidator              validator.Validator
+	tplExecutor               libtemplate.Executor
+	tplConfigProvider         config.TemplateConfigProvider
+	encoder                   encoding.Encoder
+	decoder                   encoding.Decoder
+	defaultSearchByFields     []string
+	defaultSortBy             string
+	outputTplVars             []template.VarResponse
+	authorTplVars             []template.VarResponse
+	whTplVars                 []template.VarResponse
+	firstWhTplVars            []template.VarResponse
+	ticketTplVars             []template.VarResponse
+
+	dupErrorParser validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -117,25 +130,30 @@ func NewStore(
 	)
 
 	return &store{
-		dbClient:              db,
-		collection:            db.Collection(mongo.ScenarioMongoCollection),
-		alarmCollection:       db.Collection(mongo.AlarmMongoCollection),
-		tplDataCollection:     db.Collection(mongo.TemplateTestDataCollection),
-		tplTestCollection:     db.Collection(mongo.TemplateTestCollection),
-		transformer:           transformer,
-		authorProvider:        authorProvider,
-		tplValidator:          tplValidator,
-		tplExecutor:           tplExecutor,
-		tplConfigProvider:     tplConfigProvider,
-		encoder:               encoder,
-		decoder:               decoder,
-		defaultSearchByFields: []string{"_id", "name", "author.name"},
-		defaultSortBy:         "created",
-		outputTplVars:         outputTplVars,
-		authorTplVars:         authorTplVars,
-		firstWhTplVars:        firstWhTplVars,
-		whTplVars:             whTplVars,
-		ticketTplVars:         ticketTplVars,
+		dbClient:                  db,
+		collection:                db.Collection(mongo.ScenarioMongoCollection),
+		alarmCollection:           db.Collection(mongo.AlarmMongoCollection),
+		tplDataCollection:         db.Collection(mongo.TemplateTestDataCollection),
+		tplTestCollection:         db.Collection(mongo.TemplateTestCollection),
+		entityInfosPropCollection: db.Collection(mongo.EntityInfosPropertyCollection),
+		transformer:               transformer,
+		authorProvider:            authorProvider,
+		tplValidator:              tplValidator,
+		tplExecutor:               tplExecutor,
+		tplConfigProvider:         tplConfigProvider,
+		encoder:                   encoder,
+		decoder:                   decoder,
+		defaultSearchByFields:     []string{"_id", "name", "author.name"},
+		defaultSortBy:             "created",
+		outputTplVars:             outputTplVars,
+		authorTplVars:             authorTplVars,
+		firstWhTplVars:            firstWhTplVars,
+		whTplVars:                 whTplVars,
+		ticketTplVars:             ticketTplVars,
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -218,6 +236,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -255,6 +277,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 
 		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -321,14 +347,49 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 	return s.validateActionTpls(r, *event, *alarm, additionalData, whTestData)
 }
 
-func (s *store) GetTemplateVars() TemplateVarsResponse {
-	return TemplateVarsResponse{
-		Output:       template.AddEnvVars(s.outputTplVars, s.tplConfigProvider),
-		Author:       template.AddEnvVars(s.authorTplVars, s.tplConfigProvider),
-		FirstWebhook: template.AddEnvVars(s.firstWhTplVars, s.tplConfigProvider),
-		Webhook:      template.AddEnvVars(s.whTplVars, s.tplConfigProvider),
-		Ticket:       template.AddEnvVars(s.ticketTplVars, s.tplConfigProvider),
+func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error) {
+	outputTplVars := template.AddEnvVars(s.outputTplVars, s.tplConfigProvider)
+	authorTplVars := template.AddEnvVars(s.authorTplVars, s.tplConfigProvider)
+	firstWebhookTplVars := template.AddEnvVars(s.firstWhTplVars, s.tplConfigProvider)
+	webhookTplVars := template.AddEnvVars(s.whTplVars, s.tplConfigProvider)
+
+	aliases, err := template.GetAliases(ctx, s.entityInfosPropCollection)
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to get aliases: %w", err)
 	}
+
+	err = template.AddAliasesVars(outputTplVars, aliases, authorTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to outputTplVars: %w", err)
+	}
+	err = template.AddAliasesVars(authorTplVars, aliases, authorTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to authorTplVars: %w", err)
+	}
+	err = template.AddAliasesVars(firstWebhookTplVars, aliases, authorTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to firstWebhookTplVars: %w", err)
+	}
+	err = template.AddAliasesVars(firstWebhookTplVars, aliases, firstWebhookConseqTplVarsIndex, "{{ range .Children }}{{ (index .Entity.Infos \"", "\").Value }}{{ end }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to firstWebhookTplVars consequenceAlarmEntities: %w", err)
+	}
+	err = template.AddAliasesVars(webhookTplVars, aliases, authorTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to webhookTplVars: %w", err)
+	}
+	err = template.AddAliasesVars(webhookTplVars, aliases, webhookConseqTplVarsIndex, "{{ range .Children }}{{ (index .Entity.Infos \"", "\").Value }}{{ end }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to webhookTplVars consequenceAlarmEntities: %w", err)
+	}
+
+	return TemplateVarsResponse{
+		Output:       outputTplVars,
+		Author:       authorTplVars,
+		FirstWebhook: firstWebhookTplVars,
+		Webhook:      webhookTplVars,
+		Ticket:       template.AddEnvVars(s.ticketTplVars, s.tplConfigProvider),
+	}, nil
 }
 
 func (s *store) getSort(r FilteredQuery) bson.M {
@@ -614,7 +675,7 @@ func (s *store) validateActionTpls(
 }
 
 func (s *store) validateAuthorTpl(
-	a ActionRequest,
+	a TemplateActionRequest,
 	event types.Event,
 	additionalData types.AdditionalData,
 	tplData any,

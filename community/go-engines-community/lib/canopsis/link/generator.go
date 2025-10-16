@@ -297,12 +297,12 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		pr.UrlTpls = make([]*template.Template, len(rule.Links))
 		pr.LabelTpls = make([]*template.Template, len(rule.Links))
 		for i, link := range rule.Links {
-			if link.Url == "" {
+			if link.URL == "" {
 				g.logger.Error().Str("rule", rule.ID).Msg("empty url template in link rule")
 				break
 			}
 
-			parsedUrl := g.tplExecutor.Parse(link.Url)
+			parsedUrl := g.tplExecutor.Parse(link.URL)
 			err = parsedUrl.Err
 			if err != nil {
 				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid url template in link rule")

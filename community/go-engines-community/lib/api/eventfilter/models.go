@@ -134,7 +134,7 @@ func (r *AggregationFailureResult) GetTotal() int64 {
 
 type TemplateRequest struct {
 	Rule struct {
-		EditRequest
+		TemplateRuleRequest
 		ID string `json:"_id" binding:"id"`
 	} `json:"rule"`
 	TestData struct {
@@ -143,6 +143,23 @@ type TemplateRequest struct {
 		// TestData.Responses keys correspond with Rule.ExternalData keys
 		Responses map[int]string `json:"responses"`
 	} `json:"testdata"`
+}
+
+type TemplateRuleRequest struct {
+	Type         string                           `json:"type" binding:"required,oneof=break drop enrichment change_entity"`
+	Config       TemplateRuleConfigRequest        `json:"config"`
+	ExternalData []template.TemplateRefParameters `json:"external_data" binding:"dive"`
+
+	common.EntityPatternFieldsRequest
+	EventPattern pattern.Event `json:"event_pattern" binding:"event_pattern"`
+}
+
+type TemplateRuleConfigRequest struct {
+	Resource      string               `json:"resource"`
+	Component     string               `json:"component"`
+	Connector     string               `json:"connector"`
+	ConnectorName string               `json:"connector_name"`
+	Actions       []eventfilter.Action `json:"actions,omitempty" binding:"dive,required_if=Type enrichment"`
 }
 
 type TemplateVarsResponse struct {

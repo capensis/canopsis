@@ -226,7 +226,12 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 // GetTemplateVars
 // @Success 200 {array} TemplateVarsResponse
 func (a *api) GetTemplateVars(c *gin.Context) {
-	c.JSON(http.StatusOK, a.store.GetTemplateVars())
+	vars, err := a.store.GetTemplateVars(c)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, vars)
 }
 
 func (a *api) checkAccess(ctx context.Context, ids []string, userID, perm string) (bool, error) {
