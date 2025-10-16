@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
@@ -61,8 +62,8 @@ type store struct {
 	tplValidator              validator.Validator
 	tplConfigProvider         config.TemplateConfigProvider
 	logger                    zerolog.Logger
-
-	tplVars []template.VarResponse
+	tplVars                   []template.VarResponse
+	dupErrorParser            validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -103,6 +104,9 @@ func NewStore(
 			{Name: "numberOfAlarmsUnderPbehavior", Value: "{{ .UnderPbehavior }}"},
 			{Name: "numberOfAcknowledgedAlarmsUnderPbehavior", Value: "{{ .AcknowledgedUnderPbh }}"},
 		},
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id": "ID already exists.",
+		}),
 	}
 }
 
@@ -375,6 +379,10 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 
 		_, err = s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
