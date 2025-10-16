@@ -1,12 +1,21 @@
 import { keyBy } from 'lodash';
 
-import { API_ROUTES, DEFAULT_LOCALE, VUETIFY_ANIMATION_DELAY, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import {
+  API_ROUTES,
+  DEFAULT_LOCALE,
+  VUETIFY_ANIMATION_DELAY,
+  LOCAL_STORAGE_ACCESS_TOKEN_KEY,
+  LOCAL_STORAGE_WARNING_POPUP_KEY,
+} from '@/config';
 import { EXCLUDED_SERVER_ERROR_STATUSES } from '@/constants';
 
 import request from '@/services/request';
 import localStorageService from '@/services/local-storage';
 
+import i18n from '@/i18n';
+
 import { viewPermissionsGroupedPermissions } from '@/helpers/permission';
+import { isUserHasOnlyApiRole } from '@/helpers/entities/user/entity';
 
 const types = {
   LOGIN: 'LOGIN',
@@ -85,7 +94,9 @@ export default {
 
     async fetchCurrentUser({ commit, dispatch, state }) {
       if (!state.isLoggedIn) {
-        return commit(types.LOGOUT);
+        commit(types.LOGOUT);
+
+        return;
       }
 
       try {
@@ -93,13 +104,21 @@ export default {
 
         const currentUser = await request.get(API_ROUTES.currentUser, { fullResponse: true });
 
+        if (isUserHasOnlyApiRole(currentUser)) {
+          localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, i18n.t('warnings.userDoesNotHaveUiRole'));
+
+          dispatch('logout');
+
+          return;
+        }
+
         if (currentUser.ui_language) {
           dispatch('i18n/setPersonalLocale', currentUser.ui_language, { root: true });
         } else {
           dispatch('i18n/setDefaultLocale', DEFAULT_LOCALE, { root: true });
         }
 
-        return commit(types.FETCH_USER_COMPLETED, currentUser);
+        commit(types.FETCH_USER_COMPLETED, currentUser);
       } catch (err) {
         if (EXCLUDED_SERVER_ERROR_STATUSES.includes(err.status)) {
           dispatch('logout');
