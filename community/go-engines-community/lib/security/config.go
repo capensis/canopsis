@@ -8,6 +8,7 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"golang.org/x/oauth2"
 	"gopkg.in/yaml.v3"
 )
 
@@ -160,6 +161,7 @@ type OAuth2ProviderConfig struct {
 	PKCE                  bool              `yaml:"pkce"`
 	InsecureSkipVerify    bool              `yaml:"insecure_skip_verify"`
 	InsecureVerifyAnyCert bool              `yaml:"insecure_verify_any_cert"`
+	AuthStyle             oauth2.AuthStyle  `yaml:"auth_style"`
 }
 
 // LoadConfig creates Config by config file.
@@ -230,6 +232,12 @@ func validateOAuth2Config(config OAuth2ProviderConfig) error {
 
 	if config.ClientSecret == "" {
 		return errors.New("client_secret shouldn't be empty")
+	}
+
+	switch config.AuthStyle {
+	case oauth2.AuthStyleAutoDetect, oauth2.AuthStyleInParams, oauth2.AuthStyleInHeader:
+	default:
+		return fmt.Errorf("auth style should be one of: %d, %d, %d", oauth2.AuthStyleAutoDetect, oauth2.AuthStyleInParams, oauth2.AuthStyleInHeader)
 	}
 
 	return nil

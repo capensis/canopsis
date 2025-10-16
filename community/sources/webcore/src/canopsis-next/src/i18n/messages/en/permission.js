@@ -247,6 +247,7 @@ export default {
     [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Instructions - approve',
     [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
     [USER_PERMISSIONS.technical.storageSettings]: 'Storage settings',
     [USER_PERMISSIONS.technical.tag]: 'Tags management',
@@ -278,10 +279,9 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'External data',
 
     /**
-     * Technical Admin Notification
-     */
+    * Technical Admin Notification
+    */
     [USER_PERMISSIONS.technical.notification.common]: 'Parameters - notification settings ',
-    [USER_PERMISSIONS.technical.notification.instructionStats]: 'Instructions stats',
 
     /**
      * Technical Admin Views and widgets
@@ -378,5 +378,11 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorException]: 'PBehavior exceptions',
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'PBehavior reasons',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'PBehavior types',
+    [USER_PERMISSIONS.api.planning.pbehaviorPatterns]: 'Pbehavior patterns',
+  },
+
+  conditionalTooltips: {
+    approveInstructions: 'Enabled because this role has permissions to approve instructions',
+    executeManualInstructions: 'Enabled because this role has permissions to execute manual instructions',
   },
 };
