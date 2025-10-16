@@ -152,7 +152,7 @@ describe('link-to-meta-alarm', () => {
     await flushPromises(true);
 
     expect(action).toHaveBeenCalledWith({
-      name: newData.metaAlarm,
+      name: newData.metaAlarm._id,
       alarms: [alarm._id],
 
       ...omit(newData, ['metaAlarm']),
