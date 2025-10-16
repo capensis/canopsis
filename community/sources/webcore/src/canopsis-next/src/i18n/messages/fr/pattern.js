@@ -14,8 +14,10 @@ export default {
   alarmsCount: '{alarmsCount} alarmes trouvées',
   entitiesCount: '{entitiesCount} entités trouvées',
   alarmsEntitiesCount: '{alarmsCount} alarmes et {entitiesCount} entités trouvées',
+  searchTime: 'Temps de recherche : <strong>{duration}</strong>',
   patternAlarms: 'Alarmes de modèle',
   patternEntities: 'Entités de modèle',
+  itemFound: 'Trouvé: <strong>{count} élément</strong> | Trouvé: <strong>{count} éléments</strong>',
   types: {
     [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
     [PATTERN_TYPES.entity]: 'Modèle d\'entité',
