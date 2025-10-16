@@ -158,10 +158,8 @@ func FlattenJSON(b []byte) (flattenRes map[string]any, basicRes any, _ error) {
 	initKey := ""
 	res := flatten(parsed, initKey)
 	if len(res) == 1 {
-		for k, v := range res {
-			if k == initKey {
-				return nil, v, nil
-			}
+		if v, ok := res[initKey]; ok {
+			return nil, v, nil
 		}
 	}
 
