@@ -504,6 +504,7 @@ export const USER_PERMISSIONS = {
       pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
+      pbehaviorPatterns: `${USER_PERMISSIONS_PREFIXES.api}_pbehavior_patterns`,
     },
   },
 };
