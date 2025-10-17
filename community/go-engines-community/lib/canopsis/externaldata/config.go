@@ -74,20 +74,18 @@ func insertNewTables(
 			return 0, 0, fmt.Errorf("failed to read collection %q: %w", collName, err)
 		}
 
-		var columns []string
-		var columnTypes []int
+		var columnConfigs []ColumnConfig
 		var hasCol map[string]bool
 		invalidFields := make([]string, 0)
-		nonStrFields := make([]string, 0)
+		unsupportedTypeFields := make([]string, 0)
 		for cursor.Next(ctx) {
 			var collDoc bson.D
 			if err := cursor.Decode(&collDoc); err != nil {
 				return 0, 0, fmt.Errorf("failed to decode doc: %w", err)
 			}
 
-			if columns == nil {
-				columns = make([]string, 0, len(collDoc)-1)
-				columnTypes = make([]int, 0, len(collDoc)-1)
+			if columnConfigs == nil {
+				columnConfigs = make([]ColumnConfig, 0, len(collDoc)-1)
 				hasCol = make(map[string]bool, len(collDoc)-1)
 			}
 
@@ -101,15 +99,34 @@ func insertNewTables(
 					continue
 				}
 
-				if _, ok := f.Value.(string); !ok {
-					nonStrFields = append(nonStrFields, f.Key)
-					continue
-				}
-
 				if !hasCol[f.Key] {
+					columnType := ColumnTypeUnknown
+
+					switch val := f.Value.(type) {
+					case bool:
+						columnType = ColumnTypeBoolean
+					case string:
+						columnType = ColumnTypeString
+					case float64, int64, int32:
+						columnType = ColumnTypeNumber
+					case bson.A:
+						_, ok := utils.IsStringSlice(val)
+						if ok {
+							columnType = ColumnTypeStringArray
+						}
+					}
+
+					if columnType == ColumnTypeUnknown {
+						unsupportedTypeFields = append(unsupportedTypeFields, f.Key)
+					}
+
 					hasCol[f.Key] = true
-					columns = append(columns, f.Key)
-					columnTypes = append(columnTypes, ColumnTypeNoType)
+					columnTag := ColumnTagNoTag
+					columnConfigs = append(columnConfigs, ColumnConfig{
+						Name: f.Key,
+						Type: columnType,
+						Tag:  &columnTag,
+					})
 				}
 			}
 		}
@@ -128,27 +145,26 @@ func insertNewTables(
 			continue
 		}
 
-		if len(nonStrFields) > 0 {
+		if len(unsupportedTypeFields) > 0 {
 			errCount++
-			logger.Error().Str("collection_name", collName).Strs("fields", nonStrFields).Msg("MongoDB collection contains non string fields")
+			logger.Error().Str("collection_name", collName).Strs("fields", unsupportedTypeFields).Msg("MongoDB collection contains not supported field types")
 			continue
 		}
 
-		if len(columnTypes) == 0 {
+		if len(columnConfigs) == 0 {
 			errCount++
 			logger.Error().Str("collection_name", collName).Msg("MongoDB collection does not exist or empty")
 			continue
 		}
 
 		docs = append(docs, Table{
-			ID:          utils.NewID(),
-			Type:        TypeMongoDB,
-			Name:        collName,
-			Columns:     columns,
-			ColumnTypes: columnTypes,
-			FromConfig:  true,
-			Created:     now,
-			Updated:     now,
+			ID:            utils.NewID(),
+			Type:          TypeMongoDB,
+			Name:          collName,
+			ColumnConfigs: columnConfigs,
+			FromConfig:    true,
+			Created:       now,
+			Updated:       now,
 		})
 	}
 
