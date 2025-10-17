@@ -413,6 +413,7 @@ export const pbehaviorToRequest = (pbehavior) => {
 
   result.type = getIdFromEntity(pbehavior.type);
   result.reason = getIdFromEntity(pbehavior.reason);
+  result.exec_pattern = true;
 
   if (pbehavior.exdates) {
     result.exdates = exdatesToRequest(pbehavior.exdates);

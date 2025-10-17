@@ -2,11 +2,13 @@ package eventfilter
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
@@ -14,11 +16,15 @@ import (
 )
 
 type Validator struct {
-	dbClient mongo.DbClient
+	dbClient         mongo.DbClient
+	templateExecutor template.Executor
 }
 
-func NewValidator(client mongo.DbClient) *Validator {
-	return &Validator{dbClient: client}
+func NewValidator(client mongo.DbClient, templateExecutor template.Executor) *Validator {
+	return &Validator{
+		dbClient:         client,
+		templateExecutor: templateExecutor,
+	}
 }
 
 func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {
@@ -34,6 +40,26 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 	case eventfilter.RuleTypeEnrichment:
 		if len(r.Config.Actions) == 0 {
 			sl.ReportError(r.Config.Actions, "actions", "Actions", "required", "")
+		}
+
+		for i, action := range r.Config.Actions {
+			switch action.Type {
+			case eventfilter.ActionSetFieldFromTemplate,
+				eventfilter.ActionSetEntityInfoFromTemplate,
+				eventfilter.ActionSetTagsFromTemplate:
+				strVal, ok := action.Value.(string)
+				if !ok {
+					sl.ReportError(action.Value, "Config.Actions."+strconv.Itoa(i)+".Value", "Value", "must_be_string", "")
+					continue
+				}
+
+				if strVal != "" {
+					parsedValue := v.templateExecutor.Parse(strVal)
+					if parsedValue.Err != nil {
+						sl.ReportError(strVal, "Config.Actions."+strconv.Itoa(i)+".Value", "Value", "template", "")
+					}
+				}
+			}
 		}
 
 		validOutcome := []string{
@@ -107,7 +133,40 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		sl.ReportError(r.Exceptions, "Exceptions", "Exceptions", "not_exist", "")
 	}
 
-	apiexternaldata.ValidateRefParameters(sl, r.ExternalData, []string{externaldata.RefTypeAPI, externaldata.RefTypeTable})
+	apiexternaldata.ValidateRefParameters(sl, v.templateExecutor, r.ExternalData, []string{externaldata.RefTypeAPI, externaldata.RefTypeTable})
+}
+
+func (v *Validator) ValidateTemplateRuleRequest(sl validator.StructLevel) {
+	r := sl.Current().Interface().(TemplateRuleRequest)
+	switch r.Type {
+	case eventfilter.RuleTypeChangeEntity:
+		if r.Config.Component == "" &&
+			r.Config.Resource == "" &&
+			r.Config.Connector == "" &&
+			r.Config.ConnectorName == "" {
+			sl.ReportError(r.Config, "config", "Config", "required", "")
+		}
+	case eventfilter.RuleTypeEnrichment:
+		if len(r.Config.Actions) == 0 {
+			sl.ReportError(r.Config.Actions, "actions", "Actions", "required", "")
+		}
+	}
+
+	switch r.Type {
+	case eventfilter.RuleTypeChangeEntity:
+		if len(r.EventPattern) == 0 {
+			sl.ReportError(r.EventPattern, "EventPattern", "EventPattern", "required", "")
+		}
+
+		if len(r.EntityPattern) > 0 {
+			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "must_be_empty", "")
+		}
+	default:
+		if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" && len(r.EventPattern) == 0 {
+			sl.ReportError(r.EventPattern, "EventPattern", "EventPattern", "required_or", "EntityPattern")
+			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required_or", "EventPattern")
+		}
+	}
 }
 
 func (v *Validator) checkRrule(r string) bool {

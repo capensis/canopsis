@@ -1,6 +1,6 @@
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 
-import CAlarmActionChip from '@/components/common/chips/c-alarm-action-chip.vue';
+import CChip from '@/components/common/chips/c-chip.vue';
 
 const stubs = {
   'v-icon': {
@@ -10,9 +10,9 @@ const stubs = {
 
 const selectCloseIcon = wrapper => wrapper.find('.v-icon');
 
-describe('c-alarm-action-chip', () => {
-  const factory = generateShallowRenderer(CAlarmActionChip, { stubs });
-  const snapshotFactory = generateRenderer(CAlarmActionChip);
+describe('c-chip', () => {
+  const factory = generateShallowRenderer(CChip, { stubs });
+  const snapshotFactory = generateRenderer(CChip);
 
   test('Renders `c-alarm-tag-chip` with default props', () => {
     const wrapper = factory({

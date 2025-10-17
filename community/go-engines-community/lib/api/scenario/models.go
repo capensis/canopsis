@@ -215,7 +215,7 @@ func (r AggregationResult) GetData() interface{} {
 
 type TemplateRequest struct {
 	Rule struct {
-		EditRequest
+		TemplateRuleRequest
 		ID string `json:"_id" binding:"id"`
 	} `json:"rule"`
 	TestData struct {
@@ -224,6 +224,25 @@ type TemplateRequest struct {
 		// TestData.Responses keys correspond with Rule.Actions keys
 		Responses map[int]string `json:"responses"`
 	} `json:"testdata"`
+}
+
+type TemplateRuleRequest struct {
+	Name     string                  `json:"name" binding:"required"`
+	Triggers []Trigger               `json:"triggers" binding:"required,notblank,dive"`
+	Actions  []TemplateActionRequest `json:"actions" binding:"required,notblank,dive"`
+}
+
+type TemplateActionRequest struct {
+	Type       string                   `json:"type" binding:"required"`
+	Parameters TemplateActionParameters `json:"parameters"`
+}
+
+type TemplateActionParameters struct {
+	Output        string                                 `json:"output"`
+	Author        string                                 `json:"author"`
+	ForwardAuthor *bool                                  `json:"forward_author"`
+	Request       *template.TemplateParameters           `json:"request"`
+	DeclareTicket *template.TemplateWebhookDeclareTicket `json:"declare_ticket"`
 }
 
 type TemplateVarsResponse struct {
