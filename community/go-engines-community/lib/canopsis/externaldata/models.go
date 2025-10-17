@@ -11,16 +11,24 @@ const (
 )
 
 const (
-	ColumnTypeNoType = iota
-	ColumnTypeFilter
-	ColumnTypeContext
+	ColumnTagNoTag = iota
+	ColumnTagFilter
+	ColumnTagContext
 )
 
 const (
-	// IDColumnName uses "_id" because it's not possible to change primary field name in MongoDB.
-	IDColumnName             = "_id"
-	PostgresDefaultColumnLen = 255
-	PostgresIDColumnLen      = 36 // uuid len
+	ColumnTypeUnknown = iota
+	ColumnTypeString
+	ColumnTypeBoolean
+	ColumnTypeNumber
+	ColumnTypeStringArray
+	ColumnTypeDateTime
+	ColumnTypeTimestamp
+)
+
+const (
+	// IDColumnName uses "_id" because it's not possible to change the primary field name in MongoDB.
+	IDColumnName = "_id"
 )
 
 const (
@@ -28,14 +36,18 @@ const (
 	postgresSchema = "externaldata"
 )
 
+type ColumnConfig struct {
+	Name string `bson:"name" json:"name"`
+	Type int    `bson:"type" json:"type"`
+	Tag  *int   `bson:"tag,omitempty" json:"tag,omitempty"`
+}
+
 type Table struct {
 	ID                string           `bson:"_id,omitempty"`
 	Type              int              `bson:"type"`
 	Name              string           `bson:"name"`
-	Description       string           `bson:"description,omitempty"`
-	Columns           []string         `bson:"columns,omitempty"`
-	ColumnTypes       []int            `bson:"column_types,omitempty"`
-	ColumnLengths     []int            `bson:"column_lengths,omitempty"`
+	Description       string           `bson:"description"`
+	ColumnConfigs     []ColumnConfig   `bson:"column_configs,omitempty"`
 	FromConfig        bool             `bson:"from_config,omitempty"`
 	RemovedFromConfig bool             `bson:"removed_from_config,omitempty"`
 	Author            string           `bson:"author,omitempty"`
