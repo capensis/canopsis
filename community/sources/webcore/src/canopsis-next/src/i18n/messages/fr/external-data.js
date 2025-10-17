@@ -3,7 +3,9 @@ import {
   EXTERNAL_DATA_CONDITION_TYPES,
   EXTERNAL_DATA_DEFAULT_CONDITION_FIELDS,
   EXTERNAL_DATA_TABLES_TYPES,
-  EXTERNAL_DATA_TABLE_COLUMN_TYPES,
+  EXTERNAL_DATA_TABLE_COLUMN_TAGS,
+  EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES,
+  EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES,
 } from '@/constants';
 
 export default {
@@ -48,6 +50,11 @@ export default {
 
   tableField: 'Collection / Table',
 
+  updatePreview: 'Mettre à jour l\'aperçu',
+  loadingPreview: 'Chargement de l\'aperçu',
+  selectDataType: 'Sélectionner le type de données',
+  fieldsHasError: '{count} champ contient des erreurs|{count} champs contiennent des erreurs',
+
   andMore: 'et plus...',
   linkedRules: {
     widgets: '<strong>Widgets</strong> qui utilisent ce tableau<br><ul>{rules}</ul>',
@@ -59,8 +66,57 @@ export default {
   tableRemovedFromConfig: 'La table est supprimée du fichier de configuration, mais elle reste utilisée dans les éléments suivants.\n<strong>Replacer la table dans le fichier de configuration ou supprimer tous les éléments qui l\'utilisent</strong>\n{rules}',
   tableEmptyColumns: 'Veuillez choisir au moins 1 colonne dans les paramètres',
   tableColumnTypes: {
-    [EXTERNAL_DATA_TABLE_COLUMN_TYPES.noType]: 'Aucun type',
-    [EXTERNAL_DATA_TABLE_COLUMN_TYPES.filter]: 'Filtre',
-    [EXTERNAL_DATA_TABLE_COLUMN_TYPES.context]: 'Contexte',
+    [EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType]: 'Aucun type',
+    [EXTERNAL_DATA_TABLE_COLUMN_TAGS.filter]: 'Filtre',
+    [EXTERNAL_DATA_TABLE_COLUMN_TAGS.context]: 'Contexte',
+  },
+  tableColumnDataTypes: {
+    [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string]: {
+      text: '@:common.variableTypes.string',
+    },
+    [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.number]: {
+      text: '@:common.variableTypes.number',
+      tooltip: 'Les valeurs dans le champ doivent contenir uniquement :<br>• nombres<br>• virgules<br>• points<br>• signes moins<br>• espace',
+    },
+    [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.boolean]: {
+      text: '@:common.variableTypes.boolean',
+      tooltip: 'Les valeurs dans le champ doivent contenir l\'une des valeurs suivantes (insensible à la casse) :<br>• yes / no<br>• y / n<br>• oui / non<br>• true / false<br>• 1 / 0<br><br>Toutes ces valeurs seront converties en true / false',
+    },
+    [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: {
+      text: '@:common.timestamp',
+    },
+    [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime]: {
+      text: 'Date/heure',
+      tooltip: 'Les valeurs dans le champ doivent être dans l\'un des formats suivants :<br>• 1990-12-31T00:00:00.000Z<br>• 1990-12-31T00:00:00:00:00<br>• 1990-12-31T00:00:00Z<br>• 1990-12-31T00:00:00+00:00',
+    },
+    [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.stringArray]: {
+      text: '@:common.variableTypes.array',
+    },
+  },
+  tableColumnDataTypesAdditionalChips: {
+    number: {
+      selectDecimalSeparator: 'Sélectionner le séparateur décimal',
+      selectThousandsSeparator: 'Sélectionner le séparateur de milliers',
+      decimalSeparator: 'Séparateur décimal',
+      thousandsSeparator: 'Séparateur de milliers',
+      decimalSeparatorDisabled: 'Est déjà utilisé comme séparateur de milliers',
+      thousandsSeparatorDisabled: 'Est déjà utilisé comme séparateur décimal',
+      separatorDisabledByTableSeparator: 'Est déjà utilisé comme séparateur de table',
+    },
+    stringArray: {
+      separator: 'Séparateur',
+      selectSeparator: 'Sélectionner le séparateur',
+      types: {
+        [EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.json]: {
+          text: 'JSON',
+          description: '[v1, v2, v3]',
+        },
+        [EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_TYPES.custom]: {
+          text: 'Analyser avec un séparateur',
+          description: 'v1,v2,v3',
+        },
+      },
+    },
+    forbiddenSeparator: 'Ce séparateur ne peut pas être utilisé car il entre en conflit avec le séparateur de table',
   },
 };
