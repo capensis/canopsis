@@ -5,8 +5,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"math"
 	"strconv"
 	"strings"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -30,6 +32,8 @@ const (
 	mongoErrCodeNamespaceExists = 48
 
 	limitLinkedRules = 11
+
+	maxStringLengthErrMsg = "string length must be less than " + MaxStringLenStr
 )
 
 var linkedCollections = []string{
@@ -39,15 +43,16 @@ var linkedCollections = []string{
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest) (*AggregationResult, error)
-	FindOne(ctx context.Context, id string) (Response, error)
-	Create(ctx context.Context, r EditRequest) (Response, error)
-	Update(ctx context.Context, r UpdateRequest) (Response, error)
+	FindOne(ctx context.Context, id string) (Table, error)
+	Create(ctx context.Context, r EditRequest) (Table, error)
+	Update(ctx context.Context, r UpdateRequest) (Table, error)
 	Delete(ctx context.Context, id, author string) (bool, error)
-	FindData(ctx context.Context, tableName string, tableType int, columns []string, r ListDataRequest) (*AggregationDataResult, error)
+	FindData(ctx context.Context, tableName string, tableType int, columnConfigs []externaldata.ColumnConfig, r ListDataRequest) (*AggregationDataResult, error)
+	FindPreviewData(ctx context.Context, job ImportJob, r ListPreviewRequest) (*AggregationDataResult, error)
 	FindOneData(ctx context.Context, tableID, id string) (map[string]any, error)
-	CreateData(ctx context.Context, tableID string, r map[string]string) (map[string]string, error)
-	UpdateData(ctx context.Context, tableID, id string, r map[string]string) (map[string]string, error)
-	DeleteData(ctx context.Context, table Response, id string) (bool, error)
+	CreateData(ctx context.Context, tableID string, r map[string]any) (map[string]any, error)
+	UpdateData(ctx context.Context, tableID, id string, r map[string]any) (map[string]any, error)
+	DeleteData(ctx context.Context, table Table, id string) (bool, error)
 	Export(ctx context.Context, t export.Task) (export.DataCursor, error)
 }
 
@@ -202,8 +207,9 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	return &result, nil
 }
 
-func (s *store) FindOne(ctx context.Context, id string) (Response, error) {
-	response := Response{}
+func (s *store) FindOne(ctx context.Context, id string) (Table, error) {
+	response := Table{}
+
 	err := s.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&response)
 	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
 		return response, fmt.Errorf("failed to get external data table: %w", err)
@@ -212,9 +218,9 @@ func (s *store) FindOne(ctx context.Context, id string) (Response, error) {
 	return response, nil
 }
 
-func (s *store) Create(ctx context.Context, r EditRequest) (Response, error) {
+func (s *store) Create(ctx context.Context, r EditRequest) (Table, error) {
 	if r.Type == nil {
-		return Response{}, errors.New("type is required")
+		return Table{}, errors.New("type is required")
 	}
 
 	var err error
@@ -228,14 +234,14 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Response, error) {
 	}
 
 	if err != nil {
-		return Response{}, err
+		return Table{}, err
 	}
 
 	id := utils.NewID()
-	response := Response{}
+	response := Table{}
 	now := datetime.NewCpsTime()
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		response = Response{}
+		response = Table{}
 		_, err = s.dbCollection.InsertOne(ctx, externaldata.Table{
 			ID:          id,
 			Type:        *r.Type,
@@ -257,8 +263,8 @@ func (s *store) Create(ctx context.Context, r EditRequest) (Response, error) {
 	return response, err
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest) (Response, error) {
-	res := Response{}
+func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
+	res := Table{}
 	if r.Type == nil {
 		return res, errors.New("type is required")
 	}
@@ -272,8 +278,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Response, error) {
 		return res, common.NewValidationError("type", "Type cannot be changed.")
 	}
 
-	if len(oldTable.ColumnTypes) != len(r.ColumnTypes) {
-		return res, common.NewValidationError("column_types", "ColumnTypes must contain "+strconv.Itoa(len(oldTable.Columns))+" items.")
+	if len(oldTable.ColumnConfigs) != len(r.ColumnTags) {
+		return res, common.NewValidationError("column_tags", "ColumnTags must contain "+strconv.Itoa(len(oldTable.ColumnConfigs))+" items.")
+	}
+
+	updatedColumnConfigs := make([]externaldata.ColumnConfig, 0, len(oldTable.ColumnConfigs))
+	for i, cfg := range oldTable.ColumnConfigs {
+		cfg.Tag = &r.ColumnTags[i]
+		updatedColumnConfigs = append(updatedColumnConfigs, cfg)
 	}
 
 	if oldTable.Name != r.Name {
@@ -317,15 +329,15 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Response, error) {
 
 	now := datetime.NewCpsTime()
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		res = Response{}
+		res = Table{}
 
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": externaldata.Table{
-			Type:        *r.Type,
-			Name:        r.Name,
-			Description: r.Description,
-			ColumnTypes: r.ColumnTypes,
-			Author:      r.Author,
-			Updated:     now,
+			Type:          *r.Type,
+			Name:          r.Name,
+			Description:   r.Description,
+			ColumnConfigs: updatedColumnConfigs,
+			Author:        r.Author,
+			Updated:       now,
 		}})
 		if err != nil {
 			return fmt.Errorf("failed to update external data table: %w", err)
@@ -405,7 +417,25 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 	return err == nil, err
 }
 
-func (s *store) FindData(ctx context.Context, tableName string, tableType int, columns []string, r ListDataRequest) (res *AggregationDataResult, err error) {
+func (s *store) FindPreviewData(ctx context.Context, job ImportJob, r ListPreviewRequest) (res *AggregationDataResult, err error) {
+	switch job.Type {
+	case externaldata.TypeMongoDB:
+		res, err = s.findPreviewDataFromMongo(ctx, job, r)
+	case externaldata.TypePostgreSQL:
+		res, err = s.findPreviewDataFromPostgres(ctx, job, r)
+	default:
+		err = fmt.Errorf("unknown external data type %d", job.Type)
+	}
+
+	return res, err
+}
+
+func (s *store) FindData(ctx context.Context, tableName string, tableType int, columnConfigs []externaldata.ColumnConfig, r ListDataRequest) (res *AggregationDataResult, err error) {
+	columns := make([]string, len(columnConfigs))
+	for idx, cfg := range columnConfigs {
+		columns[idx] = cfg.Name
+	}
+
 	valErrMsgs := make(map[string]string)
 	if len(r.SearchBy) > 0 || r.SortBy != "" {
 		hasCol := make(map[string]bool, len(columns))
@@ -437,7 +467,7 @@ func (s *store) FindData(ctx context.Context, tableName string, tableType int, c
 	case externaldata.TypeMongoDB:
 		res, err = s.findDataFromMongo(ctx, tableName, searchBy, r)
 	case externaldata.TypePostgreSQL:
-		res, err = s.findDataFromPostgres(ctx, tableName, searchBy, r)
+		res, err = s.findDataFromPostgres(ctx, tableName, searchBy, r, columnConfigs)
 	default:
 		err = fmt.Errorf("unknown external data type %d", tableType)
 	}
@@ -466,10 +496,12 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
 		}
 
+		columns := table.getColumns()
+
 		sql := "SELECT "
-		columnsWithID := make([]string, len(table.Columns)+1)
+		columnsWithID := make([]string, len(columns)+1)
 		columnsWithID[0] = externaldata.IDColumnName
-		copy(columnsWithID[1:], table.Columns)
+		copy(columnsWithID[1:], columns)
 		for i, col := range columnsWithID {
 			sql += pgx.Identifier{col}.Sanitize()
 			if i < len(columnsWithID)-1 {
@@ -490,7 +522,7 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 				return nil, err
 			}
 
-			res, err = s.transformPostgresResToData(vals, columnsWithID)
+			res, err = s.transformPostgresResToData(vals, table.ColumnConfigs)
 			if err != nil {
 				return nil, err
 			}
@@ -506,42 +538,78 @@ func (s *store) FindOneData(ctx context.Context, tableID, id string) (map[string
 	}
 }
 
-func (s *store) CreateData(ctx context.Context, tableID string, r map[string]string) (map[string]string, error) {
+func (s *store) CreateData(ctx context.Context, tableID string, r map[string]any) (map[string]any, error) {
 	table, err := s.FindOne(ctx, tableID)
 	if err != nil || table.ID == "" {
 		return nil, err
 	}
 
-	columnsWithID := make([]string, len(table.Columns)+1)
+	columnsWithID := make([]string, len(table.ColumnConfigs)+1)
 	columnsWithID[0] = externaldata.IDColumnName
-	copy(columnsWithID[1:], table.Columns)
-	doc := make(map[string]string, len(columnsWithID))
-	row := make([]any, len(columnsWithID))
+
+	doc := make(map[string]any, len(table.ColumnConfigs))
 	doc[externaldata.IDColumnName] = utils.NewID()
+
+	row := make([]any, len(columnsWithID))
 	row[0] = doc[externaldata.IDColumnName]
-	var ok bool
-	var newColLens []int
-	updatedLengths := make(map[string]int)
+
 	valErrMsgs := make(map[string]string)
-	for i, col := range table.Columns {
-		doc[col], ok = r[col]
+	for i, cfg := range table.ColumnConfigs {
+		columnName := cfg.Name
+		columnsWithID[i+1] = columnName
+
+		rawVal, ok := r[columnName]
 		if !ok {
-			valErrMsgs[col] = col + " is missing."
+			valErrMsgs[columnName] = columnName + " is missing."
 			continue
 		}
 
-		row[i+1] = doc[col]
-		if len(table.ColumnLengths) > 0 {
-			if len(doc[col]) > table.ColumnLengths[i] {
-				updatedLengths[col] = len(doc[col])
-				if newColLens == nil {
-					newColLens = make([]int, len(table.ColumnLengths))
-					copy(newColLens, table.ColumnLengths)
-				}
+		var val any
 
-				newColLens[i] = updatedLengths[col]
+		switch cfg.Type {
+		case externaldata.ColumnTypeString:
+			strVal, ok := rawVal.(string)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a string."
+				continue
 			}
+
+			if len(strVal) > MaxStringLen {
+				valErrMsgs[columnName] = maxStringLengthErrMsg
+				continue
+			}
+
+			val = strVal
+		case externaldata.ColumnTypeNumber:
+			val, ok = rawVal.(float64)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a number."
+				continue
+			}
+		case externaldata.ColumnTypeBoolean:
+			val, ok = rawVal.(bool)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a boolean."
+				continue
+			}
+		case externaldata.ColumnTypeStringArray:
+			val, ok = utils.IsStringSlice(rawVal)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a string array."
+				continue
+			}
+		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+			val, ok = getIntValue(rawVal)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a timestamp."
+				continue
+			}
+		default:
+			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
 		}
+
+		doc[columnName] = val
+		row[i+1] = val
 	}
 
 	if len(valErrMsgs) > 0 {
@@ -554,11 +622,6 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 
 		return doc, err
 	case externaldata.TypePostgreSQL:
-		err = s.alterPostgresColumns(ctx, table.getDBTableName(), updatedLengths)
-		if err != nil {
-			return nil, err
-		}
-
 		pgPool, err := s.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
@@ -569,50 +632,83 @@ func (s *store) CreateData(ctx context.Context, tableID string, r map[string]str
 			return nil, err
 		}
 
-		err = s.updateColumnLengths(ctx, table, newColLens)
-
 		return doc, err
 	default:
 		return nil, fmt.Errorf("unknown external data type %d", table.Type)
 	}
 }
 
-func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string]string) (map[string]string, error) {
+func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string]any) (map[string]any, error) {
 	table, err := s.FindOne(ctx, tableID)
 	if err != nil || table.ID == "" {
 		return nil, err
 	}
 
-	doc := make(map[string]string, len(table.Columns)+1)
+	doc := make(map[string]any, len(table.ColumnConfigs)+1)
 	querySql := "UPDATE " + table.getDBTableName() + " SET "
-	queryArgs := make([]any, len(table.Columns)+1)
-	var ok bool
-	var newColLens []int
-	updatedLengths := make(map[string]int)
+	queryArgs := make([]any, len(table.ColumnConfigs)+1)
+
 	valErrMsgs := make(map[string]string)
-	for i, col := range table.Columns {
-		doc[col], ok = r[col]
+
+	for i, cfg := range table.ColumnConfigs {
+		columnName := cfg.Name
+
+		rawVal, ok := r[columnName]
 		if !ok {
-			valErrMsgs[col] = col + " is missing."
+			valErrMsgs[columnName] = columnName + " is missing."
 			continue
 		}
 
-		queryArgs[i] = doc[col]
-		querySql += pgx.Identifier{col}.Sanitize() + " = $" + strconv.Itoa(i+1)
-		if i < len(table.Columns)-1 {
-			querySql += ", "
+		var val any
+
+		switch cfg.Type {
+		case externaldata.ColumnTypeString:
+			strVal, ok := rawVal.(string)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a string."
+				continue
+			}
+
+			if len(strVal) > MaxStringLen {
+				valErrMsgs[columnName] = maxStringLengthErrMsg
+				continue
+			}
+
+			val = strVal
+		case externaldata.ColumnTypeNumber:
+			val, ok = rawVal.(float64)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a number."
+				continue
+			}
+		case externaldata.ColumnTypeBoolean:
+			val, ok = rawVal.(bool)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a boolean."
+				continue
+			}
+		case externaldata.ColumnTypeStringArray:
+			val, ok = utils.IsStringSlice(rawVal)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a string array."
+				continue
+			}
+		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+			val, ok = getIntValue(rawVal)
+			if !ok {
+				valErrMsgs[columnName] = columnName + " is not a timestamp."
+				continue
+			}
+		default:
+			return nil, fmt.Errorf("unexpected column type: %d", cfg.Type)
 		}
 
-		if len(table.ColumnLengths) > 0 {
-			if len(doc[col]) > table.ColumnLengths[i] {
-				updatedLengths[col] = len(doc[col])
-				if newColLens == nil {
-					newColLens = make([]int, len(table.ColumnLengths))
-					copy(newColLens, table.ColumnLengths)
-				}
+		doc[columnName] = val
 
-				newColLens[i] = updatedLengths[col]
-			}
+		queryArgs[i] = val
+		querySql += pgx.Identifier{columnName}.Sanitize() + " = $" + strconv.Itoa(i+1)
+		if i < len(table.ColumnConfigs)-1 {
+			querySql += ", "
 		}
 	}
 
@@ -629,11 +725,6 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 			return nil, err
 		}
 	case externaldata.TypePostgreSQL:
-		err = s.alterPostgresColumns(ctx, table.getDBTableName(), updatedLengths)
-		if err != nil {
-			return nil, err
-		}
-
 		pgPool, err := s.pgPoolProvider.Get(ctx)
 		if err != nil {
 			return nil, fmt.Errorf("failed to get postgres pool: %w", err)
@@ -648,12 +739,11 @@ func (s *store) UpdateData(ctx context.Context, tableID, id string, r map[string
 	}
 
 	doc[externaldata.IDColumnName] = id
-	err = s.updateColumnLengths(ctx, table, newColLens)
 
 	return doc, err
 }
 
-func (s *store) DeleteData(ctx context.Context, table Response, id string) (bool, error) {
+func (s *store) DeleteData(ctx context.Context, table Table, id string) (bool, error) {
 	switch table.Type {
 	case externaldata.TypeMongoDB:
 		deleted, err := s.dbClient.Collection(table.getDBTableName()).DeleteOne(ctx, bson.M{"_id": id})
@@ -693,9 +783,11 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		return nil, fmt.Errorf("table not found id=%q", r.ID)
 	}
 
+	columns := table.getColumns()
+
 	searchBy := r.SearchBy
 	if len(searchBy) == 0 {
-		searchBy = table.Columns
+		searchBy = columns
 	}
 
 	var selectColumns []string
@@ -705,7 +797,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			selectColumns[i] = f.Name
 		}
 	} else {
-		selectColumns = table.Columns
+		selectColumns = columns
 	}
 
 	switch table.Type {
@@ -801,7 +893,7 @@ func (s *store) createPostgresTable(ctx context.Context, name string) error {
 	}
 
 	sql := "CREATE TABLE " + externaldata.GetPostgresTableName(name) +
-		" ( " + externaldata.IDColumnName + " VARCHAR(" + strconv.Itoa(externaldata.PostgresIDColumnLen) + ") PRIMARY KEY )"
+		" ( " + externaldata.IDColumnName + " VARCHAR(" + MaxIDLenStr + ") PRIMARY KEY )"
 	_, err = pgPool.Exec(ctx, sql)
 	if err != nil {
 		pgErr := &pgconn.PgError{}
@@ -830,36 +922,40 @@ func (s *store) deletePostgresTable(ctx context.Context, name string) error {
 	return nil
 }
 
-func (s *store) alterPostgresColumns(ctx context.Context, name string, columnLengths map[string]int) error {
-	if len(columnLengths) == 0 {
-		return nil
-	}
+func (s *store) findPreviewDataFromMongo(ctx context.Context, job ImportJob, request ListPreviewRequest) (*AggregationDataResult, error) {
+	project := bson.M{}
 
-	pgPool, err := s.pgPoolProvider.Get(ctx)
-	if err != nil {
-		return fmt.Errorf("failed to get postgres pool: %w", err)
-	}
-
-	for col, l := range columnLengths {
-		sql := "ALTER TABLE " + name +
-			" ALTER COLUMN " + pgx.Identifier{col}.Sanitize() + " TYPE VARCHAR(" + strconv.Itoa(l) + ")"
-		_, err = pgPool.Exec(ctx, sql)
-		if err != nil {
-			return fmt.Errorf("failed to alter postgres table: %w", err)
+	for _, cfg := range job.ColumnConfigs {
+		name := "$" + cfg.Name
+		project[cfg.Name] = bson.M{
+			"$ifNull": bson.A{name + ".transformed_value", name},
 		}
 	}
 
-	return nil
-}
-
-func (s *store) updateColumnLengths(ctx context.Context, table Response, columnLengths []int) error {
-	if len(columnLengths) == 0 {
-		return nil
+	cursor, err := s.dbClient.Collection(job.getDBTableName()).Aggregate(ctx, pagination.CreateAggregationPipeline(
+		request.Query,
+		[]bson.M{},
+		bson.M{"$sort": bson.M{externaldata.IDColumnName: 1}},
+		[]bson.M{{"$project": project}},
+	))
+	if err != nil {
+		return nil, err
 	}
 
-	_, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": table.ID}, bson.M{"$set": bson.M{"column_lengths": columnLengths}})
+	defer cursor.Close(ctx)
+	var result AggregationDataResult
+	if cursor.Next(ctx) {
+		err = cursor.Decode(&result)
+		if err != nil {
+			return nil, err
+		}
+	}
 
-	return err
+	if err = cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
 }
 
 func (s *store) findDataFromMongo(ctx context.Context, collectionName string, columns []string, request ListDataRequest) (*AggregationDataResult, error) {
@@ -894,7 +990,83 @@ func (s *store) findDataFromMongo(ctx context.Context, collectionName string, co
 	return &result, nil
 }
 
-func (s *store) findDataFromPostgres(ctx context.Context, tableName string, columns []string, r ListDataRequest) (*AggregationDataResult, error) {
+func (s *store) findPreviewDataFromPostgres(ctx context.Context, job ImportJob, r ListPreviewRequest) (*AggregationDataResult, error) {
+	pgPool, err := s.pgPoolProvider.Get(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get postgres pool: %w", err)
+	}
+
+	limitStmt := ""
+	if r.Paginate {
+		limitStmt = "OFFSET " + strconv.FormatInt(r.Limit*(r.Page-1), 10) + " LIMIT " + strconv.FormatInt(r.Limit, 10)
+	}
+
+	columnsWithID := make([]string, len(job.ColumnConfigs)*sqlColumnsForCsvColumn+1)
+	columnsWithID[0] = externaldata.IDColumnName
+
+	sql := "SELECT " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + ", "
+	for i, cfg := range job.ColumnConfigs {
+		initialName := cfg.Name + "_initial_value"
+		transformedName := cfg.Name + "_transformed_value"
+		errorsName := cfg.Name + "_transform_error"
+
+		columnsWithID[i*sqlColumnsForCsvColumn+1] = initialName
+		columnsWithID[i*sqlColumnsForCsvColumn+2] = transformedName
+		columnsWithID[i*sqlColumnsForCsvColumn+3] = errorsName
+
+		sql += pgx.Identifier{initialName}.Sanitize() + ", " +
+			pgx.Identifier{transformedName}.Sanitize() + ", " +
+			pgx.Identifier{errorsName}.Sanitize()
+		if i < len(job.ColumnConfigs)-1 {
+			sql += ", "
+		}
+	}
+
+	tableName := job.getDBTableName()
+
+	// A hack to avoid the "cached plan must not change result type (SQLSTATE 0A000)" error when column types have been changed.
+	// Adding a comment forces Postgres to execute the query without using a cached plan.
+	comment := "/*" + strconv.Itoa(int(time.Now().UnixMicro())) + "*/"
+
+	sql += " FROM " + tableName + " " + "ORDER BY " + pgx.Identifier{externaldata.IDColumnName}.Sanitize() + " " + limitStmt + comment
+	countSql := "SELECT count(*) FROM " + tableName
+	result := &AggregationDataResult{
+		Data: make([]map[string]any, 0, r.Limit),
+	}
+
+	rows, err := pgPool.Query(ctx, sql)
+	if err != nil {
+		return result, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		vals, err := rows.Values()
+		if err != nil {
+			return result, err
+		}
+
+		row, err := s.transformPostgresPreviewResToData(vals, job.ColumnConfigs)
+		if err != nil {
+			return result, err
+		}
+
+		result.Data = append(result.Data, row)
+	}
+
+	if err = rows.Err(); err != nil {
+		return result, err
+	}
+
+	err = pgPool.QueryRow(ctx, countSql).Scan(&result.TotalCount)
+	if err != nil {
+		return result, err
+	}
+
+	return result, nil
+}
+
+func (s *store) findDataFromPostgres(ctx context.Context, tableName string, columns []string, r ListDataRequest, columnConfigs []externaldata.ColumnConfig) (*AggregationDataResult, error) {
 	pgPool, err := s.pgPoolProvider.Get(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get postgres pool: %w", err)
@@ -939,7 +1111,11 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableName string, colu
 		}
 	}
 
-	sql += " FROM " + tableName + " " + whereStmt + " " + orderStmt + " " + limitStmt
+	// A hack to avoid the "cached plan must not change result type (SQLSTATE 0A000)" error when column types have been changed.
+	// Adding a comment forces Postgres to execute the query without using a cached plan.
+	comment := "/*" + strconv.Itoa(int(time.Now().UnixMicro())) + "*/"
+
+	sql += " FROM " + tableName + " " + whereStmt + " " + orderStmt + " " + limitStmt + comment
 	countSql := "SELECT count(*) FROM " + tableName + " " + whereStmt
 	result := &AggregationDataResult{
 		Data: make([]map[string]any, 0, r.Limit),
@@ -957,7 +1133,7 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableName string, colu
 			return result, err
 		}
 
-		row, err := s.transformPostgresResToData(vals, columnsWithID)
+		row, err := s.transformPostgresResToData(vals, columnConfigs)
 		if err != nil {
 			return result, err
 		}
@@ -977,14 +1153,122 @@ func (s *store) findDataFromPostgres(ctx context.Context, tableName string, colu
 	return result, nil
 }
 
-func (s *store) transformPostgresResToData(vals []any, columns []string) (map[string]any, error) {
+func (s *store) transformPostgresResToData(vals []any, columnConfigs []externaldata.ColumnConfig) (map[string]any, error) {
 	res := make(map[string]any, len(vals))
-	var ok bool
-	for i, val := range vals {
-		res[columns[i]], ok = val.(string)
-		if !ok {
-			return res, fmt.Errorf("%q column doesn't contain string", columns[i])
+
+	id, ok := vals[0].(string)
+	if !ok {
+		return res, fmt.Errorf("%q column doesn't contain string", externaldata.IDColumnName)
+	}
+
+	res[externaldata.IDColumnName] = id
+
+	for i, cfg := range columnConfigs {
+		var value any
+
+		switch cfg.Type {
+		case externaldata.ColumnTypeString:
+			value, ok = vals[i+1].(string)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string", cfg.Name)
+			}
+		case externaldata.ColumnTypeNumber:
+			value, ok = vals[i+1].(float64)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a number", cfg.Name)
+			}
+		case externaldata.ColumnTypeBoolean:
+			value, ok = vals[i+1].(bool)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a boolean", cfg.Name)
+			}
+		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+			value, ok = vals[i+1].(int64)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain an int", cfg.Name)
+			}
+		case externaldata.ColumnTypeStringArray:
+			value, ok = utils.IsStringSlice(vals[i+1])
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string array", cfg.Name)
+			}
+		default:
+			return nil, fmt.Errorf("unsupported column type %q", cfg.Type)
 		}
+
+		res[cfg.Name] = value
+	}
+
+	return res, nil
+}
+
+func (s *store) transformPostgresPreviewResToData(vals []any, columnConfigs []ColumnConfig) (map[string]any, error) {
+	res := make(map[string]any, len(vals))
+
+	id, ok := vals[0].(string)
+	if !ok {
+		return res, fmt.Errorf("%q column doesn't contain string", externaldata.IDColumnName)
+	}
+
+	res[externaldata.IDColumnName] = id
+
+	for i, cfg := range columnConfigs {
+		initValue, ok := vals[i*sqlColumnsForCsvColumn+1].(string)
+		if !ok {
+			return nil, fmt.Errorf("initial value for %q column doesn't contain a string", cfg.Name)
+		}
+
+		if vals[i*sqlColumnsForCsvColumn+2] == nil {
+			if vals[i*sqlColumnsForCsvColumn+3] == nil {
+				return nil, fmt.Errorf("error for %q column is nil", cfg.Name)
+			}
+
+			errorMessage, ok := vals[i*sqlColumnsForCsvColumn+3].(string)
+			if !ok {
+				return nil, fmt.Errorf("error for %q column doesn't contain a string", cfg.Name)
+			}
+
+			res[cfg.Name] = map[string]string{
+				"initial_value":   initValue,
+				"transform_error": errorMessage,
+			}
+
+			continue
+		}
+
+		var transformedValue any
+
+		switch cfg.Type {
+		case externaldata.ColumnTypeString:
+			transformedValue, ok = vals[i*sqlColumnsForCsvColumn+2].(string)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string", cfg.Name)
+			}
+		case externaldata.ColumnTypeNumber:
+			transformedValue, ok = vals[i*sqlColumnsForCsvColumn+2].(float64)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a number", cfg.Name)
+			}
+		case externaldata.ColumnTypeBoolean:
+			transformedValue, ok = vals[i*sqlColumnsForCsvColumn+2].(bool)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a boolean", cfg.Name)
+			}
+		case externaldata.ColumnTypeDateTime, externaldata.ColumnTypeTimestamp:
+			transformedValue, ok = vals[i*sqlColumnsForCsvColumn+2].(int64)
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain an int", cfg.Name)
+			}
+		case externaldata.ColumnTypeStringArray:
+			transformedValue, ok = utils.IsStringSlice(vals[i*sqlColumnsForCsvColumn+2])
+			if !ok {
+				return nil, fmt.Errorf("transformed value for %q column doesn't contain a string array", cfg.Name)
+			}
+		default:
+			return nil, fmt.Errorf("unsupported column type %q", cfg.Type)
+		}
+
+		res[cfg.Name] = transformedValue
 	}
 
 	return res, nil
@@ -1052,29 +1336,31 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 			continue
 		}
 
-		if len(t.Columns) == 0 {
+		if len(t.ColumnConfigs) == 0 {
 			valErrMsgs["external_data."+strconv.Itoa(i)+".table"] = "Table is empty."
 			continue
 		}
 
-		hasCol := make(map[string]bool, len(t.Columns))
-		for _, c := range t.Columns {
-			hasCol[c] = true
+		columns := make([]string, len(t.ColumnConfigs))
+		hasCol := make(map[string]bool, len(t.ColumnConfigs))
+		for i, c := range t.ColumnConfigs {
+			hasCol[c.Name] = true
+			columns[i] = c.Name
 		}
 
 		if params.SortBy != "" && !hasCol[params.SortBy] {
-			valErrMsgs["external_data."+strconv.Itoa(i)+".sort_by"] = "SortBy must be one of [" + strings.Join(t.Columns, " ") + "]."
+			valErrMsgs["external_data."+strconv.Itoa(i)+".sort_by"] = "SortBy must be one of [" + strings.Join(columns, " ") + "]."
 		}
 
 		for f := range params.Select {
 			if !hasCol[f] {
-				valErrMsgs["external_data."+strconv.Itoa(i)+".select."+f] = f + " must be one of [" + strings.Join(t.Columns, " ") + "]."
+				valErrMsgs["external_data."+strconv.Itoa(i)+".select."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
 			}
 		}
 
 		for f := range params.Regexp {
 			if !hasCol[f] {
-				valErrMsgs["external_data."+strconv.Itoa(i)+".regexp."+f] = f + " must be one of [" + strings.Join(t.Columns, " ") + "]."
+				valErrMsgs["external_data."+strconv.Itoa(i)+".regexp."+f] = f + " must be one of [" + strings.Join(columns, " ") + "]."
 			}
 		}
 
@@ -1084,7 +1370,7 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 
 		params.TableName = t.GetDBName()
 		params.TableType = &t.Type
-		params.TableColumns = t.Columns
+		params.TableColumns = columns
 		res[i] = params
 	}
 
@@ -1152,4 +1438,33 @@ func isTableLinked(ctx context.Context, id string, dbWidgetCollection mongo.DbCo
 	}
 
 	return false, nil
+}
+
+func getIntValue(v interface{}) (int64, bool) {
+	switch i := v.(type) {
+	case int:
+		return int64(i), true
+	case int32:
+		return int64(i), true
+	case int64:
+		return i, true
+	case uint:
+		return int64(i), true
+	case uint32:
+		return int64(i), true
+	case uint64:
+		return int64(i), true
+	case float32:
+		a, b := math.Modf(float64(i))
+		if b == 0 {
+			return int64(a), true
+		}
+	case float64:
+		a, b := math.Modf(i)
+		if b == 0 {
+			return int64(a), true
+		}
+	}
+
+	return 0, false
 }
