@@ -84,6 +84,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
@@ -91,6 +92,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/userprovider"
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 )
 
@@ -113,7 +115,8 @@ func RegisterRoutes(
 	secondaryDbClient mongo.DbClient,
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
-	amqpChannel amqp.Channel,
+	amqpPublisher amqp.Channel,
+	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	templateConfigProvider config.TemplateConfigProvider,
@@ -123,7 +126,6 @@ func RegisterRoutes(
 	entityCleanerTaskChan chan<- entity.CleanTask,
 	exportTaskExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
-	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
@@ -138,6 +140,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	notifStore usernotification.Store,
 	workersRunner *workers.Runner,
 	logger zerolog.Logger,
 ) {
@@ -299,7 +302,7 @@ func RegisterRoutes(
 		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider,
 			tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), logger)
-		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpChannel, canopsis.DefaultExchangeName,
+		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger), logger)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -477,7 +480,7 @@ func RegisterRoutes(
 
 		// event-filter API
 		eventFilterApi := eventfilter.NewApi(
-			eventfilter.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)),
+			eventfilter.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), notifStore),
 			dbexport.NewExporter(primaryDbClient),
 			logger,
 		)
@@ -522,14 +525,19 @@ func RegisterRoutes(
 		pbehaviorApi := pbehavior.NewApi(
 			pbehavior.NewStore(
 				primaryDbClient,
+				secondaryDbClient,
+				lockRedisSession,
 				pbhEntityTypeResolver,
 				libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
 				timezoneConfigProvider,
 				authorProvider,
 				common.NewPatternFieldsTransformer(primaryDbClient),
+				websocketHub,
+				userInterfaceConfig,
 			),
 			dbexport.NewExporter(primaryDbClient),
 			pbhComputeChan,
+			workers.NewJobPublisher(jobKeyPbhPatterns, amqpPublisher),
 			logger,
 		)
 		pbehaviorRouter := protected.Group("/pbehaviors")
@@ -571,9 +579,20 @@ func RegisterRoutes(
 				pbehaviorApi.Delete)
 		}
 		protected.POST(
-			"pbehaviors-db-export",
+			"/pbehaviors-db-export",
 			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionRead, enforcer),
-			pbehaviorApi.DBExport)
+			pbehaviorApi.DBExport,
+		)
+		protected.PUT(
+			"/pbehavior-patterns",
+			middleware.Authorize(apisecurity.ObjPbehavior, model.PermissionUpdate, enforcer),
+			pbehaviorApi.ExecPattern,
+		)
+		protected.PUT(
+			"/all-pbehavior-patterns",
+			middleware.Authorize(apisecurity.PermPbhPatterns, model.PermissionCan, enforcer),
+			pbehaviorApi.ExecAllPatterns,
+		)
 
 		pbehaviorCommentRouter := protected.Group("/pbehavior-comments")
 		{
@@ -870,7 +889,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(publisher, logger)
+		eventApi := event.NewApi(amqpPublisher, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
@@ -1471,7 +1490,7 @@ func RegisterRoutes(
 			scenarioAPI.DBExport)
 
 		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(primaryDbClient),
-			workers.NewJobPublisher(jobKeyImport, workersRunner), conf.File.ImportMaxSize, logger)
+			workers.NewJobPublisher(jobKeyImport, amqpPublisher), conf.File.ImportMaxSize, logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
@@ -1520,18 +1539,20 @@ func RegisterRoutes(
 			)
 		}
 
-		notificationRouter := protected.Group("/notification")
+		notificationAPI := notification.NewApi(notification.NewStore(primaryDbClient, authorProvider))
+		protected.GET("/notifications", notificationAPI.List)
+		notifSettingsRouter := protected.Group("/notification-settings")
 		{
-			notificationApi := notification.NewApi(notification.NewStore(primaryDbClient))
-			notificationRouter.PUT(
+			notifSettingsRouter.PUT(
 				"",
 				middleware.Authorize(apisecurity.PermNotification, model.PermissionCan, enforcer),
-				notificationApi.Update,
+				middleware.SetAuthor(),
+				notificationAPI.UpdateSettings,
 			)
-			notificationRouter.GET(
+			notifSettingsRouter.GET(
 				"",
 				middleware.Authorize(apisecurity.PermNotification, model.PermissionCan, enforcer),
-				notificationApi.Get,
+				notificationAPI.GetSettings,
 			)
 		}
 
@@ -1609,7 +1630,7 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
+		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
 			userInterfaceConfig, enforcer, logger)
 		patternRouter := protected.Group("/patterns")
 		{
@@ -1874,6 +1895,11 @@ func RegisterRoutes(
 				"/:table",
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				externalDataTableAPI.Import,
+			)
+			externalDataImportRouter.PUT(
+				"/:id/preview",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.Preview,
 			)
 			externalDataImportRouter.GET(
 				"/:id/status",

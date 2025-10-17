@@ -21,6 +21,7 @@ import {
   SORT_ORDERS,
   TIME_UNITS,
   WIDGET_TYPES,
+  DEFAULT_ALARM_MORE_INFO_TEMPLATE,
 } from '@/constants';
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 
@@ -176,6 +177,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
+ * @property {boolean} pausePeriodicRefreshOnExpandPanel
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} isVirtualScrollEnabled
  * @property {boolean} isCorrelationEnabled
@@ -301,7 +303,7 @@ export const widgetSortToForm = (sort = {}) => ({
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   sort: widgetSortToForm(alarmListParameters.sort),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
-  moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
+  moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   moreInfoTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.moreInfoTemplateTemplate),
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
@@ -361,7 +363,7 @@ export const alarmListChartToForm = (chart = {}) => {
 export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   infoPopups: infoPopupsToForm(parameters.infoPopups),
-  moreInfoTemplate: parameters.moreInfoTemplate ?? '',
+  moreInfoTemplate: parameters.moreInfoTemplate ?? DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
@@ -370,6 +372,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
+  pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
