@@ -23,6 +23,7 @@
       <div :style="{ width: errorsOffsetPixel }" />
     </template>
     <template #append="">
+      <slot name="append" />
       <div class="c-payload-textarea-field__append">
         <variables-menu
           v-if="variables"
@@ -254,6 +255,10 @@ $iconBarWidth: 18px;
 .c-payload-textarea-field {
   .v-input__append-inner {
     pointer-events: none;
+
+    .v-icon {
+      pointer-events: all;
+    }
   }
 
   .v-input__prepend-inner {

@@ -461,7 +461,6 @@ export const convertJobToTemplateTestingTestValidateForm = (form = {}) => {
     result.push({
       key: 'payload',
       textKey: 'templateTesting.jobPayload',
-      json: true,
       templateVarsKey: 'payload',
     });
   }
