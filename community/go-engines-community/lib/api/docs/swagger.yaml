@@ -848,6 +848,11 @@ paths:
           description: count connected services depends_count and impacts_count
           schema:
             type: boolean
+        - name: with_tag_colors
+          in: query
+          description: retrieve tag colors
+          schema:
+            type: boolean
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/search'
@@ -6109,6 +6114,11 @@ paths:
         - $ref: '#/components/parameters/page'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/search'
+        - name: only_unread_failure
+          in: query
+          required: false
+          schema:
+            type: boolean
       responses:
         200:
           description: OK
@@ -7076,7 +7086,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                          $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         400:
           description: Bad Request
           content:
@@ -7114,7 +7124,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         400:
           description: Bad Request
           content:
@@ -7139,7 +7149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         404:
           description: Not Found
           content:
@@ -7180,7 +7190,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         400:
           description: Bad Request
           content:
@@ -8702,14 +8712,14 @@ paths:
                 summary: Enable
                 description: Enable maintenance
                 value: {
-                  "enable": true,
+                  "enabled": true,
                   "message": "test maintenance"
                 }
               disable:
                 summary: Disable
                 description: Disable maintenance
                 value: {
-                  "enable": false
+                  "enabled": false
                 }
         required: true
       responses:
@@ -8776,7 +8786,7 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-  /notification:
+  /notification-settings:
     get:
       tags:
         - notification
@@ -8785,6 +8795,56 @@ paths:
         Get notification settings.
         
         -  PERMISSIONS: `api_notification`
+      operationId: notification-settings-get
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/notification.SettingsResponse'
+    put:
+      tags:
+        - notification
+      summary: Update notification settings
+      description: |
+        Update notification settings.
+        
+        -  PERMISSIONS: `api_notification`
+      operationId: notification-settings-update
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/notification.UpdateSettingsRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/notification.SettingsResponse'
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /notifications:
+    get:
+      tags:
+        - notification
+      summary: Get notifications
+      description: |
+        Get notifications.
       operationId: notification-get
       parameters:
         - $ref: '#/components/parameters/page'
@@ -8802,42 +8862,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/notification.Notification'
-    put:
-      tags:
-        - notification
-      summary: Update notification settings
-      description: |
-        Update notification settings.
-        
-        -  PERMISSIONS: `api_notification`
-      operationId: notification-update
-      requestBody:
-        description: body
-        content:
-          application/json:
-            schema:
-              $ref: 'schemas_swagger.yaml#/definitions/notification.Notification'
-        required: true
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/notification.Notification'
-        400:
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ValidationErrorResponse'
-        404:
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+                          $ref: 'schemas_swagger.yaml#/definitions/notification.Response'
   /open-alarms:
     get:
       tags:
@@ -9652,6 +9677,49 @@ paths:
           description: Not Found
           content:
             application/octet-stream:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /all-pbehavior-patterns:
+    put:
+      tags:
+        - pbehaviors
+      summary: Execute all pbehavior patterns
+      description: |
+        Execute all pbehavior patterns.
+
+        -  PERMISSIONS: `api_pbehavior_patterns:update`
+      operationId: pbehaviors-exec-patterns
+      responses:
+        204:
+          description: OK
+  /pbehavior-patterns:
+    put:
+      tags:
+        - pbehaviors
+      summary: Execute pbehavior pattern
+      description: |
+        Execute pbehavior pattern.
+
+        -  PERMISSIONS: `api_pbehavior:update`
+      operationId: pbehaviors-exec-pattern
+      requestBody:
+        description: body
+        content:
+          application/json:
+            schema:
+              $ref: 'schemas_swagger.yaml#/definitions/pbehavior.ExecPatternRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/pattern.CountResponse'
+        404:
+          description: Not Found
+          content:
+            application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /pbehavior-reasons:
@@ -14634,6 +14702,11 @@ paths:
           in: query
           schema:
             type: boolean
+        - name: with_tag_colors
+          in: query
+          description: retrieve tag colors
+          schema:
+            type: boolean
         - in: query
           name: entity_pattern
           schema:
@@ -14692,6 +14765,11 @@ paths:
         - name: with_declare_tickets
           in: query
           description: show assigned declare ticket rules
+          schema:
+            type: boolean
+        - name: with_tag_colors
+          in: query
+          description: retrieve tag colors
           schema:
             type: boolean
       responses:

@@ -21,18 +21,20 @@ func NewAutoWebhookCompleteProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &autoWebhookCompleteProcessor{
-		alarmCollection:        client.Collection(mongo.AlarmMongoCollection),
-		metaAlarmPostProcessor: metaAlarmPostProcessor,
-		metricsSender:          metricsSender,
-		logger:                 logger,
+		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
+		resolvedAlarmCollection: client.Collection(mongo.ResolvedAlarmMongoCollection),
+		metaAlarmPostProcessor:  metaAlarmPostProcessor,
+		metricsSender:           metricsSender,
+		logger:                  logger,
 	}
 }
 
 type autoWebhookCompleteProcessor struct {
-	alarmCollection        mongo.DbCollection
-	metaAlarmPostProcessor MetaAlarmPostProcessor
-	metricsSender          metrics.Sender
-	logger                 zerolog.Logger
+	alarmCollection         mongo.DbCollection
+	resolvedAlarmCollection mongo.DbCollection
+	metaAlarmPostProcessor  MetaAlarmPostProcessor
+	metricsSender           metrics.Sender
+	logger                  zerolog.Logger
 }
 
 func (p *autoWebhookCompleteProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -41,7 +43,11 @@ func (p *autoWebhookCompleteProcessor) Process(ctx context.Context, event rpc.Ax
 		return result, nil
 	}
 
-	match := getOpenAlarmMatchWithStepsLimit(event)
+	match := getExactAlarmMatchWithStepsLimit(event)
+	if match == nil {
+		return result, nil
+	}
+
 	match["v.steps"] = bson.M{"$not": bson.M{"$elemMatch": bson.M{
 		"exec": event.Parameters.Execution,
 		"_t":   bson.M{"$in": bson.A{types.AlarmStepWebhookComplete, types.AlarmStepWebhookFail}},
@@ -83,6 +89,13 @@ func (p *autoWebhookCompleteProcessor) Process(ctx context.Context, event rpc.Ax
 		}
 
 		return result, err
+	}
+
+	if alarm.IsResolved() {
+		_, err = p.resolvedAlarmCollection.UpdateOne(ctx, match, update)
+		if err != nil {
+			return result, err
+		}
 	}
 
 	result.Forward = true

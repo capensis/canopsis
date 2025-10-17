@@ -33,7 +33,7 @@ export const ROUTES_NAMES = {
   exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
   exploitationLinkRules: 'exploitation-link-rules',
   exploitationExternalDataTables: 'exploitation-external-data-tables',
-  notificationInstructionStats: 'notification-instruction-stats',
+  notifications: 'notifications',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
 };
@@ -73,7 +73,7 @@ export const ROUTES = {
   exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
   exploitationLinkRules: '/exploitation/link-rules',
   exploitationExternalDataTables: '/exploitation/external-data-tables',
-  notificationInstructionStats: '/notification/instruction-stats',
+  notifications: '/notifications/:tabId',
   profilePatterns: '/filters',
   profileThemes: '/themes',
 };
@@ -480,6 +480,13 @@ export const CSV_SEPARATORS = {
   semicolon: 'semicolon',
   tab: 'tab',
   space: 'space',
+};
+
+export const CSV_SEPARATORS_TO_SYMBOLS = {
+  [CSV_SEPARATORS.comma]: ',',
+  [CSV_SEPARATORS.semicolon]: ';',
+  [CSV_SEPARATORS.tab]: '\t',
+  [CSV_SEPARATORS.space]: ' ',
 };
 
 export const VIEW_PERIODIC_REFRESH_KEY = '$periodicRefresh';
