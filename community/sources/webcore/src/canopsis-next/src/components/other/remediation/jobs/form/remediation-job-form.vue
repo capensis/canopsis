@@ -35,18 +35,25 @@
         {{ $t('remediation.job.addPayload') }}
       </v-btn>
       <template v-else>
-        <c-json-field
+        <c-payload-textarea-field
           v-field="form.payload"
           :label="$t('common.payload')"
-          :help-text="$t('remediation.job.payloadHelp')"
           :variables="templateVars.payload"
           name="payload"
-        />
+        >
+          <template #append="">
+            <c-help-icon
+              :text="$t('remediation.job.payloadHelp')"
+              icon="help"
+              left
+            />
+          </template>
+        </c-payload-textarea-field>
         <c-action-btn
           :tooltip="$t('remediation.job.deletePayload')"
           icon="delete"
           color="error"
-          bottom
+          left
           @click="removePayload"
         />
       </template>
