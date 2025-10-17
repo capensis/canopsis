@@ -20,7 +20,11 @@
           :hide-details="hideDetails"
           readonly
           @click:append="clear"
-        />
+        >
+          <template #append-outer="">
+            <slot name="append-outer" />
+          </template>
+        </v-text-field>
       </div>
     </template>
     <date-time-picker

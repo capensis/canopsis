@@ -5,3 +5,13 @@ export const BROADCAST_MESSAGES_STATUSES = {
   pending: 1,
   expired: 2,
 };
+
+export const BROADCAST_MESSAGE_VIEWS = {
+  login: 'login',
+  exploitation: 'exploitation',
+  administration: 'administration',
+  notifications: 'notifications',
+  profile: 'profile',
+  allViews: 'all-views',
+  allPlaylists: 'all-playlists',
+};
