@@ -1,3 +1,14 @@
+import { omit } from 'lodash';
+
+import {
+  EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES,
+  EXTERNAL_DATA_TABLE_COLUMN_TAGS,
+  EXTERNAL_DATA_TABLES_TYPES,
+  CSV_SEPARATORS_TO_SYMBOLS,
+  EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS,
+  EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR,
+} from '@/constants';
+
 /**
  * @typedef {0 | 1} ExternalDataTableTypes
  */
@@ -6,8 +17,6 @@
  * @typedef {0 | 1 | 2} ExternalDataTableColumnTypes
  */
 
-import { EXTERNAL_DATA_TABLE_COLUMN_TYPES, EXTERNAL_DATA_TABLES_TYPES } from '@/constants';
-
 /**
  * @typedef {Object} ExternalDataTable
  * @property {ExternalDataTableTypes} type
@@ -15,6 +24,18 @@ import { EXTERNAL_DATA_TABLE_COLUMN_TYPES, EXTERNAL_DATA_TABLES_TYPES } from '@/
  * @property {string} description
  * @property {string[]} [columns]
  * @property {ExternalDataTableColumnTypes[]} [column_types]
+ */
+
+/**
+ * @typedef {Object} ExternalDataTableColumnConfig
+ * @property {string} name
+ * @property {string} type
+ * @property {string} [decimal_separator]
+ * @property {string} [thousands_separator]
+ * @property {string} [string_array_type]
+ * @property {string} [string_array_separator]
+ * @property {number[]} [rows]
+ * @property {string[]} [messages]
  */
 
 /**
@@ -33,14 +54,144 @@ export const externalDataTableToForm = (externalDataTable = {}) => ({
 /**
  * Converts an array of columns and their corresponding types into an object mapping each column to its type.
  *
- * @param {Array} [columns=[]] - An array of column names.
- * @param {Array} [columnTypes=[]] - An array of column types corresponding to each column.
- * @returns {Object} An object where each key is a column name and its value is the column type.
+ * @param {Array<ExternalDataTableColumnConfig>} [columnsConfigs=[]] - An array of column configs.
+ * @param {boolean} [isImport=false] - Whether the conversion is for import mode. When true,
+ *                                     preserves the original type, when false sets type to null.
+ * @returns {Object<string, ExternalDataTableColumnConfig>} An object where each key is a column name
+ *                                                          and its value is the column config with all
+ *                                                          formatting properties.
+ * @example
+ * // Basic usage with string and number columns
+ * const columnsConfigs = [
+ *   { name: 'user_name', type: 'string' },
+ *   { name: 'age', type: 'number', decimal_separator: '.', thousands_separator: ',' },
+ *   { name: 'tags', type: 'string_array', string_array_separator: '|', string_array_type: 'set' }
+ * ];
+ *
+ * // For import mode (preserves types)
+ * const importForm = externalDataTableColumnConfigsToForm(columnsConfigs, true);
+ * // Result:
+ * // {
+ * //   user_name: {
+ * //     name: 'user_name',
+ * //     type: 'string',
+ * //     tag: 'no-type',
+ * //     decimal_separator: null,
+ * //     thousands_separator: null,
+ * //     string_array_type: null,
+ * //     string_array_separator: null
+ * //   },
+ * //   age: {
+ * //     name: 'age',
+ * //     type: 'number',
+ * //     tag: 'no-type',
+ * //     decimal_separator: '.',
+ * //     thousands_separator: ',',
+ * //     string_array_type: null,
+ * //     string_array_separator: null
+ * //   },
+ * //   tags: {
+ * //     name: 'tags',
+ * //     type: 'string_array',
+ * //     tag: 'no-type',
+ * //     decimal_separator: null,
+ * //     thousands_separator: null,
+ * //     string_array_type: 'set',
+ * //     string_array_separator: '|'
+ * //   }
+ * // }
+ *
+ * // For edit mode (resets types to null)
+ * const editForm = externalDataTableColumnConfigsToForm(columnsConfigs, false);
+ * // Same structure but all type properties will be null
  */
-export const externalDataTableColumnsToForm = (columns = [], columnTypes = []) => (
-  (columns ?? []).reduce((acc, column, index) => {
-    acc[column] = columnTypes[index] ?? EXTERNAL_DATA_TABLE_COLUMN_TYPES.noType;
+export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImport = false) => (
+  (columnsConfigs ?? []).reduce((acc, columnConfig) => {
+    const name = columnConfig.name ?? '';
+
+    acc[name] = {
+      name,
+      rows: [],
+      messages: [],
+      tag: columnConfig.tag ?? EXTERNAL_DATA_TABLE_COLUMN_TAGS.noType,
+      type: isImport ? null : columnConfig.type,
+      decimal_separator: columnConfig.decimal_separator ?? null,
+      thousands_separator: columnConfig.thousands_separator ?? null,
+      string_array_type: columnConfig.string_array_type ?? null,
+      string_array_separator: columnConfig.string_array_separator ?? null,
+    };
 
     return acc;
   }, {})
 );
+
+/**
+ * Converts a form representation of external data table columns to a config representation.
+ *
+ * @param {Object<string, ExternalDataTableColumnConfig>} form
+ * @returns {ExternalDataTableColumnConfig[]}
+ */
+export const formToExternalDataTableColumnConfigs = (form = {}) => (
+  Object.values(form).map(columnConfig => ({
+    ...omit(columnConfig, ['rows', 'messages']),
+
+    type: columnConfig.type ?? EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.string,
+  }))
+);
+
+/**
+ * Converts a form representation of external data table columns to a tags representation.
+ *
+ * @param {Object<string, ExternalDataTableColumnConfig>} form
+ * @returns {number[]}
+ */
+export const formToExternalDataTableColumnTags = (form = {}) => (
+  Object.values(form).map(columnConfig => columnConfig.tag)
+);
+
+/**
+ * Checks if a separator is a predefined standard separator
+ * @param {string} separator - The separator to check
+ * @returns {boolean} True if the separator is predefined, false otherwise
+ */
+const isStandardSeparator = separator => Object.values(EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS)
+  .includes(separator);
+
+/**
+ * Gets the fallback separator when no separator is defined
+ * Avoids using the same separator as the table's CSV separator
+ * @param {string} tableSeparator - The table's CSV separator
+ * @returns {string} A safe fallback separator
+ */
+const getFallbackSeparator = (tableSeparator) => {
+  const tableSymbol = CSV_SEPARATORS_TO_SYMBOLS[tableSeparator];
+  const { comma, semicolon } = EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_SEPARATORS;
+
+  return tableSymbol !== comma ? comma : semicolon;
+};
+
+/**
+ * Gets the default separator value based on the current value and table separator
+ *
+ * Logic:
+ * 1. If value has a custom separator (not in predefined list) → return 'custom'
+ * 2. If value has no separator → return a safe fallback separator
+ * 3. If value has a standard separator → return it as-is
+ *
+ * @param {Object} value - The current column data type value
+ * @param {string} tableSeparator - The table's CSV separator
+ * @returns {string} The default separator value or 'custom' if custom separator is needed
+ */
+export const getDefaultSeparator = (value, tableSeparator) => {
+  const { string_array_separator: currentSeparator } = value;
+
+  if (currentSeparator && !isStandardSeparator(currentSeparator)) {
+    return EXTERNAL_DATA_TABLE_COLUMN_STRING_ARRAY_DATA_TYPE_CUSTOM_SEPARATOR;
+  }
+
+  if (!currentSeparator) {
+    return getFallbackSeparator(tableSeparator);
+  }
+
+  return currentSeparator;
+};
