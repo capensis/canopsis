@@ -57,10 +57,10 @@ func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
 }
 
 type Parameters struct {
-	Output string `json:"output,omitempty" bson:"output,omitempty" binding:"max=1000"`
+	Output string `json:"output,omitempty" bson:"output,omitempty" binding:"max=1000,template"`
 
 	ForwardAuthor *bool  `json:"forward_author,omitempty" bson:"forward_author,omitempty"`
-	Author        string `json:"author,omitempty" bson:"author,omitempty"`
+	Author        string `json:"author,omitempty" bson:"author,omitempty" binding:"template"`
 
 	// State is used in changestate action.
 	//   * `0` - Info

@@ -8,13 +8,13 @@
     />
 
     <v-text-field
-      v-for="column in externalDataTable.columns"
+      v-for="column in externalDataTable.column_configs"
       v-validate="'required'"
-      v-field="form[column]"
-      :key="column"
-      :label="column"
-      :name="column"
-      :error-messages="errors.collect(column)"
+      v-field="form[column.name]"
+      :key="column.name"
+      :label="column.name"
+      :name="column.name"
+      :error-messages="errors.collect(column.name)"
     />
   </v-layout>
 </template>

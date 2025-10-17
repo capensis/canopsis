@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -36,8 +37,8 @@ type store struct {
 	authorProvider           author.Provider
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 	defaultSearchByFields    []string
-
-	transformer common.PatternFieldsTransformer
+	dupErrorParser           validation.DuplicateErrorParser
+	transformer              common.PatternFieldsTransformer
 }
 
 func NewStore(
@@ -53,7 +54,10 @@ func NewStore(
 		authorProvider:           authorProvider,
 		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
 		defaultSearchByFields:    []string{"_id", "title"},
-		transformer:              transformer,
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"title": "Title already exists.",
+		}),
+		transformer: transformer,
 	}
 }
 
@@ -135,7 +139,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err = s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return common.NewValidationError("title", "Title already exists.")
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -203,7 +207,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		).Decode(&oldVersion)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return common.NewValidationError("title", "Title already exists.")
+				return s.dupErrorParser.Parse(err)
 			}
 
 			if errors.Is(err, mongodriver.ErrNoDocuments) {

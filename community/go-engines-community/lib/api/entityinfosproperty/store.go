@@ -4,12 +4,12 @@ import (
 	"cmp"
 	"context"
 	"errors"
-	"fmt"
 	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -35,6 +35,7 @@ type store struct {
 	dupErrorRegexp        *regexp.Regexp
 
 	linkedCollections []libmongo.DbCollection
+	dupErrorParser    validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -67,6 +68,10 @@ func NewStore(
 			dbClient.Collection(libmongo.MetaAlarmRulesMongoCollection),
 			dbClient.Collection(libmongo.ScenarioCollection),
 		},
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"name":  "Name already exists.",
+			"alias": "Alias already exists.",
+		}),
 	}
 }
 
@@ -85,7 +90,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -185,7 +190,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -308,22 +313,4 @@ func (s *store) removeAliasFromLinkedCollections(ctx context.Context, id, oldAli
 	}
 
 	return nil
-}
-
-func (s *store) parseDupError(err error) error {
-	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		switch matchedStr {
-		case "name":
-			return common.NewValidationError("name", "Name already exists.")
-		case "alias":
-			return common.NewValidationError("alias", "Alias already exists.")
-		default:
-			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
-		}
-	}
-
-	return fmt.Errorf("can't parse duplication error: %w", err)
 }
