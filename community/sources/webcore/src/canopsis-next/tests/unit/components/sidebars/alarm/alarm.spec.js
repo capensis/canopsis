@@ -201,6 +201,7 @@ describe('alarm', () => {
     'v.state.val',
     'v.status.val',
   ];
+  widget.parameters.moreInfoTemplate = '';
 
   const sidebar = {
     name: SIDE_BARS.alarmSettings,

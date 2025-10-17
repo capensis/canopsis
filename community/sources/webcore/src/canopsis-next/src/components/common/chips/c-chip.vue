@@ -4,11 +4,11 @@
     :color="color"
     :text-color="textColor"
     :outlined="outlined"
-    class="c-alarm-action-chip"
+    class="c-chip"
     small
     @click="$emit('click', $event)"
   >
-    <span class="c-alarm-action-chip__text">
+    <span class="c-chip__text">
       <slot />
     </span>
     <v-icon
@@ -23,6 +23,8 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
 export default {
   props: {
     color: {
@@ -46,19 +48,21 @@ export default {
       default: 'white',
     },
   },
-  computed: {
-    chipClass() {
-      return {
-        'c-alarm-action-chip--closable': this.closable,
-        'c-alarm-action-chip--small': this.small,
-      };
-    },
+  setup(props) {
+    const chipClass = computed(() => ({
+      'c-chip--closable': props.closable,
+      'c-chip--small': props.small,
+    }));
+
+    return {
+      chipClass,
+    };
   },
 };
 </script>
 
 <style lang="scss">
-.c-alarm-action-chip.v-chip {
+.c-chip.v-chip {
   border-radius: 5px;
   font-size: 12px;
   min-height: 24px;
