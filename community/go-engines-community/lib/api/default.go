@@ -161,7 +161,7 @@ func Default(
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpChannel, err := amqpConn.Channel()
+	amqpPublisher, err := amqpConn.Channel()
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
@@ -210,7 +210,7 @@ func Default(
 	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
-	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
+	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpPublisher, json.NewEncoder(),
 		canopsis.JsonContentType, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, canopsis.ApiConnector, logger)
 
 	entityCleanerTaskChan := make(chan entity.CleanTask)
@@ -229,26 +229,26 @@ func Default(
 	}
 
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	workersRunner := workers.NewRunner(amqpChannel, amqpChannel, logger)
+	workersRunner := workers.NewRunner(amqpConn, logger)
 	// Create csv exporter.
-	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, workersRunner),
+	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
 		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 	workersRunner.AddJobExecutor(jobKeyExport, func(ctx context.Context, id string) error {
 		return services.ExportTaskExecutor.ExecuteTask(ctx, id)
 	})
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
-		contextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+		contextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 		contextgraph.NewMongoStatusReporter(primaryDbClient),
 		importcontextgraph.NewWorker(
 			primaryDbClient,
-			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
 			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
 		),
-		workers.NewJobPublisher(jobKeyImport, workersRunner),
+		workers.NewJobPublisher(jobKeyImport, amqpPublisher),
 		logger,
 	)
 	workersRunner.AddJobExecutor(jobKeyImport, func(ctx context.Context, _ string) error {
@@ -310,7 +310,7 @@ func Default(
 	)
 
 	exdataImportWorker := apiexternaldata.NewImportWorker(primaryDbClient, pgPoolProvider,
-		filepath.Join(cfg.File.Dir, canopsis.SubDirExDataImport), workers.NewJobPublisher(jobKeyExtDataImport, workersRunner),
+		filepath.Join(cfg.File.Dir, canopsis.SubDirExDataImport), workers.NewJobPublisher(jobKeyExtDataImport, amqpPublisher),
 		logger)
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
@@ -323,9 +323,9 @@ func Default(
 		return apiPbhStore.ExecPatternsAndUpdate(ctx)
 	})
 
-	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpChannel, json.NewEncoder(),
+	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpChannel, websocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, websocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
 
 	if tplTestTypePermMapping == nil {
@@ -436,7 +436,7 @@ func Default(
 			secondaryDbClient,
 			dbExportClient,
 			pgPoolProvider,
-			amqpChannel,
+			amqpPublisher,
 			lockRedisSession,
 			services.ApiConfigProvider,
 			services.TimezoneConfigProvider,
@@ -447,7 +447,6 @@ func Default(
 			entityCleanerTaskChan,
 			services.ExportTaskExecutor,
 			techMetricsTaskExecutor,
-			amqpChannel,
 			services.UserInterfaceConfigProvider,
 			websocketHub,
 			websocketStore,
@@ -527,9 +526,9 @@ func Default(
 	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
 		services.Enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
 	})
-	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
+	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpPublisher, logger))
 
-	stateSettingsListener := statesetting.NewListener(primaryDbClient, amqpChannel, canopsis.ApiConnector,
+	stateSettingsListener := statesetting.NewListener(primaryDbClient, amqpPublisher, canopsis.ApiConnector,
 		flags.IntegrationPeriodicalWaitTime, flags.StateSettingRecomputeDelay, json.NewEncoder(), logger)
 	api.AddWorker("state_settings_listener", func(ctx context.Context) {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
