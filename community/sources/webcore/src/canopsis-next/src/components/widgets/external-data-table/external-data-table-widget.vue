@@ -6,7 +6,7 @@
       :external-data-table="externalDataTable"
       :records="records"
       :pending="recordsPending"
-      :has-structure="!!externalDataTable.columns?.length"
+      :has-structure="!!externalDataTable.column_configs?.length"
       :options="options"
       :total-items="meta.total_count"
       :downloading="downloading"
@@ -21,6 +21,7 @@
       selectable
       exportable
       expandable
+      disabled-types
       @export="exportRecords"
       @import="showImportExternalDataTablesModal"
       @add="showCreateExternalDataTableRecordModal"
@@ -113,7 +114,6 @@ export default {
       showRemoveSelectedExternalDataTableRecordsModal,
     } = useExternalDataTableRecordsList({
       externalDataTable,
-      fetchExternalDataTable: fetchItem,
       initialQuery,
     });
 
@@ -193,9 +193,7 @@ export default {
       handler: fetchItemWithRecords,
     });
 
-    onMounted(() => {
-      fetchItemWithRecords();
-    });
+    onMounted(fetchItemWithRecords);
 
     return {
       externalDataTable,

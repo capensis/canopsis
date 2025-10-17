@@ -40,6 +40,8 @@
       <pbehavior-patterns-form
         v-field="form.patterns"
         ref="patterns"
+        :pbehavior-id="pbehaviorId"
+        :pbehavior-counter-type="pbehaviorCounterType"
       />
     </v-tab-item>
   </v-tabs>
@@ -60,6 +62,10 @@ export default {
     event: 'input',
   },
   props: {
+    pbehaviorId: {
+      type: String,
+      required: false,
+    },
     form: {
       type: Object,
       required: true,
@@ -95,6 +101,10 @@ export default {
     nameTooltip: {
       type: String,
       required: false,
+    },
+    pbehaviorCounterType: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
