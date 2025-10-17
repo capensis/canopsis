@@ -40,15 +40,6 @@
           rows="2"
           class="template-item__input-editor"
         />
-        <c-json-field
-          v-else-if="json"
-          v-field="template"
-          :variables="variables"
-          :name="name"
-          wrap="off"
-          rows="2"
-          class="template-item__input-editor"
-        />
         <c-payload-text-field
           v-else
           v-field="template"
@@ -102,10 +93,6 @@ export default {
       default: '',
     },
     textarea: {
-      type: Boolean,
-      default: false,
-    },
-    json: {
       type: Boolean,
       default: false,
     },
