@@ -1896,6 +1896,11 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				externalDataTableAPI.Import,
 			)
+			externalDataImportRouter.PUT(
+				"/:id/preview",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.Preview,
+			)
 			externalDataImportRouter.GET(
 				"/:id/status",
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
