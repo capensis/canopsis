@@ -1,4 +1,4 @@
-import { DEFAULT_BROADCAST_MESSAGE_COLOR } from '@/constants';
+import { DEFAULT_BROADCAST_MESSAGE_COLOR, BROADCAST_MESSAGE_VIEWS } from '@/constants';
 
 import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/date';
 
@@ -8,10 +8,11 @@ import { convertDateToDateObject, convertDateToTimestamp } from '@/helpers/date/
  * @property {string} color
  * @property {number} start
  * @property {number} end
+ * @property {string[]} views
  */
 
 /**
- * @typedef {Object} BroadcastForm
+ * @typedef {Broadcast} BroadcastForm
  * @property {Date} start
  * @property {Date} end
  */
@@ -27,6 +28,7 @@ export const messageToForm = (broadcastMessage = {}) => ({
   color: broadcastMessage.color || DEFAULT_BROADCAST_MESSAGE_COLOR,
   start: convertDateToDateObject(broadcastMessage.start),
   end: convertDateToDateObject(broadcastMessage.end),
+  views: [...(broadcastMessage.views || Object.values(BROADCAST_MESSAGE_VIEWS))],
 });
 
 /**
