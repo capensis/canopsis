@@ -151,7 +151,7 @@ func (s *store) FindEntities(ctx context.Context, id string, r EntitiesListReque
 			return nil, err
 		}
 
-		statusesByAlarm, err := s.alarmStore.GetInstructionExecutionStatuses(ctx, alarmIds, assignedInstructionsMap)
+		statusesByAlarm, err := s.alarmStore.GetInstructionExecutionStatuses(ctx, alarmIds, assignedInstructionsMap, nil)
 		if err != nil {
 			return nil, err
 		}
