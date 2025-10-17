@@ -7086,7 +7086,7 @@ paths:
                       data:
                         type: array
                         items:
-                          $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                          $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         400:
           description: Bad Request
           content:
@@ -7124,7 +7124,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         400:
           description: Bad Request
           content:
@@ -7149,7 +7149,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         404:
           description: Not Found
           content:
@@ -7190,7 +7190,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Response'
+                $ref: 'schemas_swagger.yaml#/definitions/externaldatatable.Table'
         400:
           description: Bad Request
           content:
