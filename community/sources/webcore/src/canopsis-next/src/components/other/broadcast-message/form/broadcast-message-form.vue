@@ -17,9 +17,10 @@
       />
     </v-tab-item>
     <v-tab-item eager>
-      <broadcast-message-pages-form
+      <broadcast-message-views-form
         v-field="form.views"
         ref="pagesElement"
+        :tree-items="treeItems"
       />
     </v-tab-item>
   </v-tabs>
@@ -31,13 +32,13 @@ import { ref } from 'vue';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
 import BroadcastMessageGeneralForm from './broadcast-message-general-form.vue';
-import BroadcastMessagePagesForm from './broadcast-message-pages-form.vue';
+import BroadcastMessageViewsForm from './broadcast-message-views-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
     BroadcastMessageGeneralForm,
-    BroadcastMessagePagesForm,
+    BroadcastMessageViewsForm,
   },
   model: {
     prop: 'form',
@@ -47,6 +48,10 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    treeItems: {
+      type: Array,
+      default: () => [],
     },
   },
   setup() {
