@@ -1,6 +1,7 @@
 <template>
   <v-layout
     :class="classes"
+    class="c-alarm-state-chip"
     align-center
   >
     <c-alarm-chip

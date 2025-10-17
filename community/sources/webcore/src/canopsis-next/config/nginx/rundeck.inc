@@ -2,7 +2,8 @@ location /rundeck/ {
         set $upstream {{ RUNDECK_GRAILS_URL }} ;
         proxy_pass $upstream$request_uri;
         proxy_set_header X-Forwarded-Host $host;
-	proxy_redirect {{ NGINX_URL }} $scheme://$host;
+        proxy_set_header X-Forwarded-Port $server_port;
+        proxy_redirect {{ NGINX_URL }} $scheme://$host;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
         proxy_set_header User-Agent $http_user_agent;
