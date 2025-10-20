@@ -46,7 +46,7 @@
           @click="showConfirmationMarkAsRead(activeMessage)"
         >
           <v-icon small>
-            visibility_off
+            close
           </v-icon>
         </v-btn>
       </template>
