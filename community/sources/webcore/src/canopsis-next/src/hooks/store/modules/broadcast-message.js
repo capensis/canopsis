@@ -39,6 +39,8 @@ export const useBroadcastMessages = () => {
     updateBroadcastMessage: 'update',
     removeBroadcastMessage: 'remove',
     fetchBroadcastMessagesListWithoutStore: 'fetchListWithoutStore',
+    fetchBroadcastMessagesListWithPreviousParams: 'fetchListWithPreviousParams',
+    fetchActiveBroadcastMessagesListWithoutStore: 'fetchActiveListWithoutStore',
   });
 
   return {

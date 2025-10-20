@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, watch, onMounted } from 'vue';
 
 import { MODALS, BROADCAST_MESSAGE_VIEWS } from '@/constants';
 
@@ -87,20 +87,14 @@ export default {
         return [];
       }
 
-      return groups.value.map((group) => {
-        const groupId = `${BROADCAST_MESSAGE_VIEWS.allViews}_${group._id}`;
-
-        const child = {
-          value: groupId,
-          name: group.title || group.name,
-          children: (group.views || []).map(view => ({
-            value: `${groupId}_${view._id}`,
-            name: view.title || view.name,
-          })),
-        };
-
-        return child;
-      });
+      return groups.value.map((group = {}) => ({
+        value: group._id,
+        name: group.title || group.name,
+        children: (group.views || []).map(view => ({
+          value: view._id,
+          name: view.title || view.name,
+        })),
+      }));
     });
 
     const playlistsTree = computed(() => {
@@ -109,7 +103,7 @@ export default {
       }
 
       return playlistItems.value.map(playlist => ({
-        value: `${BROADCAST_MESSAGE_VIEWS.allPlaylists}_${playlist._id}`,
+        value: playlist.name,
         name: playlist.name,
       }));
     });
@@ -158,6 +152,10 @@ export default {
 
     useFormConfirmableCloseModal({ form, submit, close });
 
+    watch(treeItems, (newTreeItems) => {
+      form.value.views = prepareMessageViews(form.value.views, newTreeItems);
+    });
+
     onMounted(async () => {
       try {
         await Promise.all([
@@ -166,8 +164,6 @@ export default {
         ]);
       } catch (err) {
         console.error(err);
-      } finally {
-        form.value.views = prepareMessageViews(form.value.views, treeItems.value);
       }
     });
 
