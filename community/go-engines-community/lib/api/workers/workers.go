@@ -27,44 +27,41 @@ type Job struct {
 	Type string `json:"type"`
 }
 
-func NewRunner(
-	amqpConsumer, amqpPublisher libamqp.Channel,
-	logger zerolog.Logger,
-) *Runner {
+func NewRunner(amqpConn libamqp.Connection, logger zerolog.Logger) *Runner {
 	return &Runner{
-		amqpConsumer:  amqpConsumer,
-		amqpPublisher: amqpPublisher,
-		exchange:      canopsis.DefaultExchangeName,
-		queue:         canopsis.ApiWorkersQueueName,
-		encoder:       json.NewEncoder(),
-		decoder:       json.NewDecoder(),
-		contentType:   canopsis.JsonContentType,
-		workers:       10,
-		jobExecutors:  make(map[string]JobExecutor),
-		logger:        logger,
+		amqpConn:     amqpConn,
+		queue:        canopsis.ApiWorkersQueueName,
+		decoder:      json.NewDecoder(),
+		workers:      10,
+		jobExecutors: make(map[string]JobExecutor),
+		logger:       logger,
 	}
 }
 
 type Runner struct {
-	amqpConsumer, amqpPublisher libamqp.Channel
-	exchange, queue             string
-	encoder                     encoding.Encoder
-	decoder                     encoding.Decoder
-	contentType                 string
-	workers                     int
-	jobExecutorsMx              sync.RWMutex
-	jobExecutors                map[string]JobExecutor
-	logger                      zerolog.Logger
+	amqpConn       libamqp.Connection
+	queue          string
+	decoder        encoding.Decoder
+	workers        int
+	jobExecutorsMx sync.RWMutex
+	jobExecutors   map[string]JobExecutor
+	logger         zerolog.Logger
 }
 
 func (r *Runner) Run(ctx context.Context) error {
+	amqpConsumer, err := r.amqpConn.Channel()
+	if err != nil {
+		return fmt.Errorf("cannot create rmq channel: %w", err)
+	}
+
+	defer amqpConsumer.Close()
 	// check if queue exists because Consume method doesn't return appropriate error
-	_, err := r.amqpConsumer.QueueInspect(r.queue)
+	_, err = amqpConsumer.QueueInspect(r.queue)
 	if err != nil {
 		return err
 	}
 
-	ch, err := r.amqpConsumer.Consume(r.queue, "", false, false, false, false, nil)
+	ch, err := amqpConsumer.Consume(r.queue, "", false, false, false, false, nil)
 	if err != nil {
 		return fmt.Errorf("failed to consume jobs: %w", err)
 	}
@@ -102,7 +99,7 @@ func (r *Runner) Run(ctx context.Context) error {
 					if err != nil {
 						r.logger.Err(err).Str("type", job.Type).Str("id", job.ID).Msg("failed to execute job")
 						if mongo.IsConnectionError(err) {
-							err = r.amqpConsumer.Nack(msg.DeliveryTag, false, true)
+							err = amqpConsumer.Nack(msg.DeliveryTag, false, true)
 							if err != nil {
 								r.logger.Err(err).Msg("failed to negatively acknowledge message")
 							}
@@ -111,7 +108,7 @@ func (r *Runner) Run(ctx context.Context) error {
 						}
 					}
 
-					err = r.amqpConsumer.Ack(msg.DeliveryTag, false)
+					err = amqpConsumer.Ack(msg.DeliveryTag, false)
 					if err != nil {
 						r.logger.Err(err).Msg("failed to acknowledge message")
 					}
@@ -123,7 +120,37 @@ func (r *Runner) Run(ctx context.Context) error {
 	return g.Wait()
 }
 
-func (r *Runner) Publish(ctx context.Context, job Job) error {
+func (r *Runner) AddJobExecutor(t string, e JobExecutor) {
+	r.jobExecutorsMx.Lock()
+	defer r.jobExecutorsMx.Unlock()
+	if _, ok := r.jobExecutors[t]; ok {
+		panic("duplicate job executor")
+	}
+
+	r.jobExecutors[t] = e
+}
+
+func NewJobPublisher(t string, amqpPublisher libamqp.Channel) JobPublisher {
+	return &jobPublisher{
+		jobType:       t,
+		amqpPublisher: amqpPublisher,
+		exchange:      canopsis.DefaultExchangeName,
+		queue:         canopsis.ApiWorkersQueueName,
+		encoder:       json.NewEncoder(),
+		contentType:   canopsis.JsonContentType,
+	}
+}
+
+type jobPublisher struct {
+	jobType         string
+	amqpPublisher   libamqp.Channel
+	exchange, queue string
+	encoder         encoding.Encoder
+	contentType     string
+}
+
+func (r *jobPublisher) Publish(ctx context.Context, id string) error {
+	job := Job{ID: id, Type: r.jobType}
 	b, err := r.encoder.Encode(job)
 	if err != nil {
 		return fmt.Errorf("failed to encode job: %w", err)
@@ -139,30 +166,4 @@ func (r *Runner) Publish(ctx context.Context, job Job) error {
 	}
 
 	return nil
-}
-
-func (r *Runner) AddJobExecutor(t string, e JobExecutor) {
-	r.jobExecutorsMx.Lock()
-	defer r.jobExecutorsMx.Unlock()
-	if _, ok := r.jobExecutors[t]; ok {
-		panic("duplicate job executor")
-	}
-
-	r.jobExecutors[t] = e
-}
-
-func NewJobPublisher(t string, r *Runner) JobPublisher {
-	return &jobPublisher{
-		jobType: t,
-		runner:  r,
-	}
-}
-
-type jobPublisher struct {
-	jobType string
-	runner  *Runner
-}
-
-func (j *jobPublisher) Publish(ctx context.Context, id string) error {
-	return j.runner.Publish(ctx, Job{ID: id, Type: j.jobType})
 }

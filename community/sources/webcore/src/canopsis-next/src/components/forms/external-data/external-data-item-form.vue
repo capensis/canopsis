@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { computed, inject, onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
@@ -77,6 +77,7 @@ import RequestForm from '@/components/forms/request/request-form.vue';
 import ExternalDataTableForm from './external-data-table-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: { RequestForm, ExternalDataTableForm },
   model: {
     prop: 'form',
@@ -115,8 +116,7 @@ export default {
   setup(props, { emit }) {
     // Composables
     const { t } = useI18n();
-    const { errors } = useValidator();
-    const $validator = inject('$validator');
+    const validator = useValidator();
 
     // Computed properties
     const availableTypes = computed(() => (
@@ -126,27 +126,17 @@ export default {
           .map(type => ({ text: t(`externalData.types.${type}`), value: type }))
     ));
 
-    const isTableType = computed(() => (
-      isTableExternalDataType(props.form.type)
-    ));
-
-    const referenceFieldName = computed(() => (
-      `${props.name}.reference`
-    ));
-
-    const errorMessages = computed(() => (
-      errors.collect(props.serverErrorName)
-    ));
+    const isTableType = computed(() => isTableExternalDataType(props.form.type));
+    const referenceFieldName = computed(() => `${props.name}.reference`);
+    const errorMessages = computed(() => validator.errors.collect(props.serverErrorName));
 
     // Methods
-    const remove = () => {
-      emit('remove', props.form);
-    };
+    const remove = () => emit('remove', props.form);
 
     // Lifecycle
     onMounted(() => {
       if (props.serverErrorName) {
-        $validator.attach({ name: props.serverErrorName });
+        validator.attach({ name: props.serverErrorName });
       }
     });
 
@@ -154,9 +144,9 @@ export default {
       availableTypes,
       isTableType,
       referenceFieldName,
+
       errorMessages,
       remove,
-      errors,
     };
   },
 };

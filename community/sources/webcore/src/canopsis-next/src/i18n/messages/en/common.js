@@ -324,6 +324,7 @@ export default {
   inProgress: 'In progress',
   last: 'Last',
   seeDetails: 'See details',
+  calculated: 'Calculated',
   defined: 'Defined',
   bulkDelete: 'Remove selected',
   variableTypes: {

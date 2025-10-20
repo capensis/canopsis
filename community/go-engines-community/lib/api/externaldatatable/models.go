@@ -14,6 +14,21 @@ const (
 	ImportStatusRunning
 	ImportStatusSucceeded
 	ImportStatusFailed
+	ImportStatusPreviewSucceeded
+	ImportStatusPreviewFailed
+)
+
+const (
+	JobTypeImport = iota
+	JobTypePreview
+)
+
+const (
+	// MaxStringLenStr and MaxIDLenStr are strings to avoid conversion.
+	MaxStringLenStr = "255"
+	MaxIDLenStr     = "36" // uuid len
+
+	MaxStringLen = 255
 )
 
 const tmpTablePrefix = "tmp_"
@@ -33,12 +48,16 @@ type EditRequest struct {
 
 type UpdateRequest struct {
 	EditRequest
-	ID          string `json:"-"`
-	ColumnTypes []int  `json:"column_types" binding:"required,dive,oneof=0 1 2"`
+	ID         string `json:"-"`
+	ColumnTags []int  `json:"column_tags" binding:"required,dive,oneof=0 1 2"`
 }
 
 type ImportCompleteRequest struct {
-	ColumnTypes []int `json:"column_types" binding:"required,dive,oneof=0 1 2"`
+	ColumnTags []int `json:"column_tags" binding:"required,dive,oneof=0 1 2"`
+}
+
+type ListPreviewRequest struct {
+	pagination.Query
 }
 
 type ListDataRequest struct {
@@ -63,18 +82,52 @@ type ExportRequest struct {
 	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
-type Response struct {
-	ID                string           `bson:"_id" json:"_id"`
-	Type              int              `bson:"type" json:"type"`
-	Name              string           `bson:"name" json:"name"`
-	Description       string           `bson:"description" json:"description"`
-	Columns           []string         `bson:"columns" json:"columns"`
-	ColumnTypes       []int            `bson:"column_types" json:"column_types"`
-	ColumnLengths     []int            `bson:"column_lengths" json:"-"`
-	FromConfig        bool             `bson:"from_config" json:"from_config"`
-	RemovedFromConfig bool             `bson:"removed_from_config" json:"removed_from_config"`
-	Created           datetime.CpsTime `bson:"created" json:"created" swaggertype:"integer"`
-	Updated           datetime.CpsTime `bson:"updated" json:"updated" swaggertype:"integer"`
+type ColumnConfig struct {
+	BaseColumnConfig `bson:",inline"`
+	Tag              *int `bson:"tag,omitempty" json:"tag,omitempty" binding:"omitempty,oneof=0 1 2"`
+}
+
+func (c *ColumnConfig) IsRegexp() bool {
+	return c.Type == externaldata.ColumnTypeRegexp
+}
+
+type BaseColumnConfig struct {
+	Name string `bson:"name" json:"name" binding:"required"`
+	// Possible type values.
+	//   * `1` - type string
+	//   * `2` - type boolean
+	//   * `3` - type number
+	//   * `4` - type string_array
+	//   * `5` - type datetime
+	//   * `6` - type timestamp
+	//   * `7` - type regexp
+	Type int `bson:"type" json:"type" binding:"required,min=1,max=7"`
+	// Possible thousands separator values.
+	//   * `dot` - dot separator
+	//   * `comma` - comma separator
+	//   * `space` - space separator
+	ThousandsSeparator string `bson:"thousands_separator,omitempty" json:"thousands_separator,omitempty" binding:"oneoforempty=dot comma space"`
+	// Possible decimal separator values.
+	//   * `dot` - dot separator
+	//   * `comma` - comma separator
+	DecimalSeparator string `bson:"decimal_separator,omitempty" json:"decimal_separator,omitempty" binding:"oneoforempty=dot comma"`
+	// Possible string array types.
+	//   * `1` - json array
+	//   * `2` - custom separator array
+	StringArrayType      int    `bson:"string_array_type,omitempty" json:"string_array_type,omitempty" binding:"required_if=Type 4,omitempty,oneof=1 2"`
+	StringArraySeparator string `bson:"string_array_separator,omitempty" json:"string_array_separator,omitempty" binding:"required_if=StringArrayType 2"`
+}
+
+type Table struct {
+	ID                string                      `bson:"_id" json:"_id"`
+	Type              int                         `bson:"type" json:"type"`
+	Name              string                      `bson:"name" json:"name"`
+	Description       string                      `bson:"description" json:"description"`
+	ColumnConfigs     []externaldata.ColumnConfig `bson:"column_configs" json:"column_configs"`
+	FromConfig        bool                        `bson:"from_config" json:"from_config"`
+	RemovedFromConfig bool                        `bson:"removed_from_config" json:"removed_from_config"`
+	Created           datetime.CpsTime            `bson:"created" json:"created" swaggertype:"integer"`
+	Updated           datetime.CpsTime            `bson:"updated" json:"updated" swaggertype:"integer"`
 
 	LinkedRules map[string][]struct {
 		ID   string `bson:"_id" json:"_id"`
@@ -82,25 +135,43 @@ type Response struct {
 	} `bson:"linked_rules,omitempty" json:"linked_rules,omitempty"`
 }
 
-func (r *Response) getDBTableName() string {
-	if r.Type == externaldata.TypeMongoDB {
-		return externaldata.GetMongoCollectionName(r.Name, r.FromConfig)
+func (t *Table) getDBTableName() string {
+	if t.Type == externaldata.TypeMongoDB {
+		return externaldata.GetMongoCollectionName(t.Name, t.FromConfig)
 	}
 
-	return externaldata.GetPostgresTableName(r.Name)
+	return externaldata.GetPostgresTableName(t.Name)
 }
 
-func (r *Response) getPostgresTableIdentifier() pgx.Identifier {
-	if r.FromConfig {
-		return pgx.Identifier{r.Name}
+func (t *Table) getPostgresTableIdentifier() pgx.Identifier {
+	if t.FromConfig {
+		return pgx.Identifier{t.Name}
 	}
 
-	return externaldata.GetPostgresTableIdentifier(r.Name)
+	return externaldata.GetPostgresTableIdentifier(t.Name)
+}
+
+func (t *Table) getColumns() []string {
+	addPriorityColumn := false
+
+	columns := make([]string, len(t.ColumnConfigs))
+	for i := range t.ColumnConfigs {
+		columns[i] = t.ColumnConfigs[i].Name
+		if t.ColumnConfigs[i].Type == externaldata.ColumnTypeRegexp {
+			addPriorityColumn = true
+		}
+	}
+
+	if addPriorityColumn {
+		columns = append(columns, priorityColumnName)
+	}
+
+	return columns
 }
 
 type AggregationResult struct {
-	Data       []Response `bson:"data" json:"data"`
-	TotalCount int64      `bson:"total_count" json:"total_count"`
+	Data       []Table `bson:"data" json:"data"`
+	TotalCount int64   `bson:"total_count" json:"total_count"`
 }
 
 func (r *AggregationResult) GetData() interface{} {
@@ -132,11 +203,17 @@ type ImportJob struct {
 	ExternalDataTable string            `bson:"exdt" json:"-"`
 	Separator         rune              `bson:"separator" json:"-"`
 	Filepath          string            `bson:"filepath" json:"-"`
-	Columns           []string          `bson:"columns" json:"columns"`
-	ColumnLengths     []int             `bson:"column_lengths" json:"-"`
 	Created           datetime.CpsTime  `bson:"created" json:"-"`
 	LastPing          *datetime.CpsTime `bson:"last_ping" json:"-"`
 	Retries           int64             `bson:"retries" json:"-"`
+	JobType           int               `bson:"job_type" json:"-"`
+
+	ColumnConfigs     []ColumnConfig `bson:"column_configs,omitempty" json:"column_configs,omitempty"`
+	PrevColumnConfigs []ColumnConfig `bson:"prev_column_configs,omitempty" json:"-"`
+
+	ErrorInfo map[string]ErrorInfo `bson:"error_info,omitempty" json:"error_info,omitempty"`
+
+	FailReason string `bson:"fail_reason,omitempty" json:"fail_reason,omitempty"`
 }
 
 func (j *ImportJob) getDBTableName() string {
@@ -157,7 +234,7 @@ type RefResponse struct {
 	Type      string `json:"type" bson:"type"`
 
 	// are used in db external data
-	Table    Response          `json:"table,omitempty" bson:"table,omitempty"`
+	Table    Table             `json:"table,omitempty" bson:"table,omitempty"`
 	Select   map[string]string `json:"select,omitempty" bson:"select,omitempty"`
 	Regexp   map[string]string `json:"regexp,omitempty" bson:"regexp,omitempty"`
 	SortBy   string            `json:"sort_by,omitempty" bson:"sort_by,omitempty"`
@@ -166,4 +243,13 @@ type RefResponse struct {
 
 	// are used in api external data
 	Request *request.Parameters `bson:"request,omitempty" json:"request,omitempty"`
+}
+
+type PreviewRequest struct {
+	ColumnConfigs []ColumnConfig `json:"column_configs" binding:"required,dive"`
+}
+
+type ErrorInfo struct {
+	Rows     []int    `json:"rows,omitempty"`
+	Messages []string `json:"messages,omitempty"`
 }
