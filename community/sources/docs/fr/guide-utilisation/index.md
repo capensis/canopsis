@@ -46,3 +46,4 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Paramètres de calcul d'état/sévérité](menu-administration/parametres-de-calculd-etat-sévérité.md)
   * [Paramètres de stockage](menu-administration/parametres-de-stockage.md)
   * [Planification](menu-administration/planification.md) 
+  * [Tests de Modèles](menu-administration/tests-de-modeles.md) 
