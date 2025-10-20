@@ -1,6 +1,6 @@
-# Tests de Modèles
+# Studio Templates
 
-La fonctionnalité "Tests de Modèles" vous permet de vérifier le rendu de vos [modèles (templates Go)](../templates-go/index.md) avant d'enregistrer une règle ou un widget.  
+Le studio templates vous permet de vérifier le rendu de vos [modèles (templates Go)](../templates-go/index.md) avant d'enregistrer une règle ou un widget.  
 Plutôt que de tester vos modifications directement en production, vous pouvez :
 
 * Créer un jeu de test : associez un nom et sélectionnez des données de test (événement, entité, réponse webhook, etc.).
@@ -23,13 +23,13 @@ Les **règles d'exploitation** suivantes sont éligibles aux tests de variables 
 
 ## Données de test
 
-Les Tests de Modèles reposent sur des **données de test** qui simulent les entrées réelles.  
+Le studio repose sur des **données de test** qui simulent les entrées réelles.  
 Deux types de données sont actuellement disponibles :
 
 1. **Événement**  
 2. **Réponse d'API**  
 
-Ces données sont ensuite sélectionnables depuis l’onglet **Tests de variables** des règles et widgets compatibles.  
+Ces données sont ensuite sélectionnables depuis l’onglet **Studio Templates** des règles et widgets compatibles.  
 
 ### Evénements et Réponses
 
@@ -53,12 +53,12 @@ Cet onglet vous permet d'agir sur les tests qui ont été créés dans les modul
 * Supprimer le test
 
 !!! informations "Information"
-    Les tests en eux-mêmes doivent être créés directement depuis l'onglet "Test de variables" de chaque module compatible.
+    Les tests en eux-mêmes doivent être créés directement depuis l'onglet "Studio Templates" de chaque module compatible.
 
 
-## L'onglet "Test variables" des modules compatibles
+## L'onglet "Studio Templates" des modules compatibles
 
-Dans les règles éligibles, un nouvel onglet "Test variables" est présent.  
+Dans les règles éligibles, un nouvel onglet "Studio Templates" est présent.  
 Il est actif dès lors qu'un [template](../templates-go/index.md) est présent.  
 
 La fonctionnalité permet de 
