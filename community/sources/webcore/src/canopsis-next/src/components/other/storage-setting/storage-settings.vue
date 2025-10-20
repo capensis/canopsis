@@ -224,6 +224,8 @@ export default {
       method: () => modals.show({
         name: MODALS.confirmationPhrase,
         config: {
+          ...t('modals.confirmationPhrase.updateStorageSettings'),
+
           action: async () => {
             try {
               await updateDataStorageSettings({ data: form.value });

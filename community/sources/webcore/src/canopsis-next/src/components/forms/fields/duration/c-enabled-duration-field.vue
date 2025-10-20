@@ -42,7 +42,7 @@
         />
       </v-flex>
     </v-fade-transition>
-    <v-flex xs9>
+    <v-flex v-if="errors.has(name)" xs9>
       <v-messages
         :value="errors.collect(name)"
         color="error"
