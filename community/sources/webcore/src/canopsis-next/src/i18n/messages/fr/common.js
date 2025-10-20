@@ -324,6 +324,7 @@ export default {
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
   inProgress: 'En cours',
+  calculated: 'Calculé',
   defined: 'Défini',
   bulkDelete: 'Supprimer la sélection',
   variableTypes: {

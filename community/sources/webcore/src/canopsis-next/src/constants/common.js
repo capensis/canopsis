@@ -488,6 +488,13 @@ export const CSV_SEPARATORS = {
   space: 'space',
 };
 
+export const CSV_SEPARATORS_TO_SYMBOLS = {
+  [CSV_SEPARATORS.comma]: ',',
+  [CSV_SEPARATORS.semicolon]: ';',
+  [CSV_SEPARATORS.tab]: '\t',
+  [CSV_SEPARATORS.space]: ' ',
+};
+
 export const VIEW_PERIODIC_REFRESH_KEY = '$periodicRefresh';
 export const WIDGET_PERIODIC_REFRESH_KEY = '$periodicRefresh';
 

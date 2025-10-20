@@ -3,12 +3,12 @@ import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import CAlarmActionsChips from '@/components/common/chips/c-alarm-actions-chips.vue';
 
 const stubs = {
-  'c-alarm-action-chip': {
-    template: '<span v-on="$listeners" class="c-alarm-action-chip"></span>',
+  'c-chip': {
+    template: '<span v-on="$listeners" class="c-chip"></span>',
   },
 };
 
-const selectChip = wrapper => wrapper.find('.c-alarm-action-chip');
+const selectChip = wrapper => wrapper.find('.c-chip');
 
 describe('c-alarm-actions-chips', () => {
   const factory = generateShallowRenderer(CAlarmActionsChips, { stubs });
