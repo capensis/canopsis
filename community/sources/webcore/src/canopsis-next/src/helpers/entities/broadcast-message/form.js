@@ -87,19 +87,18 @@ export const formToMessage = (form = {}, treeViews = []) => ({
  *
  * @param {Object} viewsMap
  * @param {Object[]} views
- * @param {boolean} isChildren
  * @return {string[]}
  */
-export const getViewsWithChildren = (viewsMap = {}, treeViews = [], isChildren = false) => {
+export const getViewsWithChildren = (viewsMap = {}, treeViews = []) => {
   const result = [];
 
   for (const { value, children } of treeViews) {
-    if (viewsMap[value] || isChildren) {
-      if (children) {
-        result.push(...getViewsWithChildren(viewsMap, children, true));
-      } else {
-        result.push(value);
-      }
+    if (viewsMap[value]) {
+      result.push(value);
+    }
+
+    if (children) {
+      result.push(...getViewsWithChildren(viewsMap, children));
     }
   }
 

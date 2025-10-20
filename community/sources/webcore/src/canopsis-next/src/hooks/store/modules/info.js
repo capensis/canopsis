@@ -142,6 +142,7 @@ export const useInfo = () => {
   const actions = useActions({
     fetchAppInfo: 'fetchAppInfo',
     updateUserInterface: 'updateUserInterface',
+    updateMaintenanceMode: 'updateMaintenanceMode',
   });
 
   /**
