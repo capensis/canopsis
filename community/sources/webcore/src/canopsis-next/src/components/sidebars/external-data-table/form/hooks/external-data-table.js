@@ -19,7 +19,7 @@ export const useExternalDataTableColumns = () => {
   const { pending, handler: fetchColumns } = usePendingHandler(async (id) => {
     const externalDataTable = await fetchExternalDataTableWithoutStore({ id });
 
-    columns.value = externalDataTable?.columns ?? [];
+    columns.value = externalDataTable?.column_configs ?? [];
   });
 
   return {

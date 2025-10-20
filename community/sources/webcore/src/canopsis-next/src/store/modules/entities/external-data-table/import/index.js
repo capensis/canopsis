@@ -21,6 +21,10 @@ export default {
       return request.get(`${API_ROUTES.externalDataImport}/${id}/status`);
     },
 
+    preview(context, { id, data } = {}) {
+      return request.put(`${API_ROUTES.externalDataImport}/${id}/preview`, data);
+    },
+
     complete(context, { id, data } = {}) {
       return request.put(`${API_ROUTES.externalDataImport}/${id}/complete`, data);
     },

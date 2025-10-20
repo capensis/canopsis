@@ -81,7 +81,7 @@ function parseField(value) {
       if (isPoint) {
         if (isBracket) {
           path.push(value.slice(startPos, index));
-        } else {
+        } else if (startPos < index) {
           path.push(JSON.stringify(value.slice(startPos, index)));
         }
 
