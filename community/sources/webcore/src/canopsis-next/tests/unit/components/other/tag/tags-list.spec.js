@@ -22,7 +22,7 @@ const stubs = {
   'c-expand-btn': true,
   'c-action-btn': true,
   'c-table-pagination': true,
-  'c-alarm-action-chip': true,
+  'c-chip': true,
   'tags-list-expand-panel': true,
 };
 

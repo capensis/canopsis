@@ -88,6 +88,7 @@ export const INSTRUCTION_EXECUTION_ICONS = {
   manualSuccessfulWithInProgress: 13,
   autoSuccessfulWithManualAvailable: 14,
   manualSuccessfulWithManualAvailable: 15,
+  withoutAnyExecution: 16,
 };
 
 export const REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES = [

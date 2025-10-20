@@ -237,7 +237,6 @@ export default {
   cycleDependency: 'Dépendance au cycle',
   checkPattern: 'Vérification du modèle',
   checkFilter: 'Vérifier le filtre',
-  itemFound: '{count} élément trouvé | {count} éléments trouvés',
   canonicalType: 'Type canonique',
   map: 'Cartographie | Cartographies',
   instructions: 'Consignes',
@@ -318,6 +317,7 @@ export default {
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
   inProgress: 'En cours',
+  calculated: 'Calculé',
   settings: 'Paramètres',
   after: 'Après',
   variableTypes: {
