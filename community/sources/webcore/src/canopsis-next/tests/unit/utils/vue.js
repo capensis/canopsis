@@ -23,6 +23,7 @@ import SetSeveralPlugin from '@/plugins/set-several';
 import i18n from '@/i18n';
 
 import { convertDateToString, convertDateToTimezoneDateString } from '@/helpers/date/date';
+import { convertDurationToString } from '@/helpers/date/duration';
 import { stringifyJsonFilter } from '@/helpers/json';
 import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
 
@@ -51,6 +52,7 @@ Vue.use(SetSeveralPlugin);
 Vue.filter('get', get);
 Vue.filter('date', convertDateToString);
 Vue.filter('timezone', convertDateToTimezoneDateString);
+Vue.filter('duration', convertDurationToString);
 Vue.filter('json', stringifyJsonFilter);
 
 const vuetify = createVuetify(Vue, {

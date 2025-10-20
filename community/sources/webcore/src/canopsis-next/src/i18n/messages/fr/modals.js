@@ -811,6 +811,10 @@ export default {
       title: 'Comportements périodiques - {name}',
     },
   },
+  confirmationRunAlarmFiltering: {
+    title: 'Lancer le filtrage d\'alarmes ?',
+    text: 'Cette procédure va impacter les <strong>performances</strong> de Canopsis',
+  },
   createAlarmPattern: {
     create: {
       title: 'Créer un filtre d\'alarme',
