@@ -18,7 +18,7 @@ export default {
   running: 'Running',
   success: 'Success',
   error: 'Error',
-  testVariables: 'Test variables',
+  testVariables: 'Templates Studio',
   testVariablesDisabledTooltip: 'The form doesn\'t have any template fields',
   testFailed: 'Test failed',
   testName: 'Test name',

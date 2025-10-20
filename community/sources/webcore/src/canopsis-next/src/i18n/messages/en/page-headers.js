@@ -142,7 +142,7 @@ export default {
     message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
   },
   [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Template testing',
+    title: 'Templates Studio',
   },
 
   /**
