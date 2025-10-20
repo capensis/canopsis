@@ -143,7 +143,7 @@ export default {
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
   },
   [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Test de modèle',
+    title: 'Studio Templates',
   },
 
   /**
