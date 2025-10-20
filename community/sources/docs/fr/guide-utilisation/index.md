@@ -20,6 +20,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Données externes](menu-exploitation/donnees-externes.md)
   * [Filtres d'événements](menu-exploitation/filtres-evenements.md)
   * [Générateur de liens](menu-exploitation/generateur-liens.md)
+  * [Informations d'entité](menu-exploitation/informations-entite.md)
   * [Informations dynamiques](menu-exploitation/informations-dynamiques.md)
   * [Règles SNMP](menu-exploitation/regles-snmp.md)
   * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
