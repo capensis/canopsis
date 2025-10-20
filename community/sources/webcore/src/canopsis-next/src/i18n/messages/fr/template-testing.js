@@ -18,7 +18,7 @@ export default {
   running: 'En cours',
   success: 'Succès',
   error: 'Erreur',
-  testVariables: 'Variables de test',
+  testVariables: 'Studio Templates',
   testFailed: 'Le test a échoué',
   testName: 'Nom du test',
   testData: 'Données de test',
