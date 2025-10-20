@@ -119,6 +119,20 @@ Une fois créée, votre consigne sera affichée dans la liste des consignes.
 | Automatique      | L'exécution de la remédiation est déclenchée par un [trigger](#declenchement-dune-consigne-et-activation-dune-alarme). Le pilote ne peut que constater le résultat de la remédiation |
 | Manuel simplifié | L'exécution de la remédiation est à l'initiative du pilote à partir d'un bac à alarmes. Ces remédiations sont uniquement une succession de jobs, sans opération manuelle à exécuter |
 
+### Résultat de l'exécution d'une consigne
+
+Lorsque vous définissez une consigne de remédiation, vous devez spécifier un **Délai d'attente après exécution de la consoigne**.  
+Il s'agit du délai à partir duquel Canopsis considérera que l'exécution de la consigne a permis de résoudre une alarme ou au contraire ne l'a pas permis.  
+
+Passé ce délai, Canopsis regarde l'état de l'alarme.  
+
+* Si l'alarme est résolue alors la remédiation a permis de résoudre l'alarme et le trigger **"L'alarme est en état OK après toutes les consignes automatiques/autoinstructionresultok"** est déclenché.  
+* Sinon si l'alarme n'est pas résolue alors la remédiation n'a pas permis de résoudre l'alarme et le trigger **"L'alarme n'est en état OK après toutes les consignes automatiques/autoinstructionresultfail"** est déclenché.  
+
+Dans le second cas, il est possible de définir une politique de retry.
+
+![delai_retry_consigne](./img/delai_retry_consigne.png)
+
 ### Déclenchement d'une consigne et activation d'une alarme
 
 L'option [ActivateAlarmAfterAutoRemediation](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
