@@ -33,7 +33,7 @@ export default {
       required: true,
     },
     history: {
-      type: Number,
+      type: [Number, Object],
       required: false,
     },
   },

@@ -18,6 +18,7 @@
       <c-enabled-field
         v-field="form.log_credentials"
         name="webhook.log_credentials"
+        class="pb-2"
       >
         <template #label="">
           {{ $t('storageSetting.webhook.logCredentials') }}
