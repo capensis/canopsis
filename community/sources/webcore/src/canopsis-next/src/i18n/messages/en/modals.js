@@ -802,7 +802,7 @@ export default {
     },
   },
   confirmationRunAlarmFiltering: {
-    title: 'Run alarm filtering ?',
+    title: 'Evaluate all patterns ?',
     text: 'This procedure will impact <strong>performance</strong> of Canopsis',
   },
   createAlarmPattern: {
