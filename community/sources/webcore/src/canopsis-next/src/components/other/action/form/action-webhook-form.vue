@@ -12,7 +12,7 @@
     />
     <declare-ticket-rule-ticket-mapping-field
       v-field="webhook"
-      :template-vars="templateVars.ticket"
+      :variables="templateVars.ticket"
       with-ticket-system-name
     />
   </v-layout>
@@ -41,7 +41,7 @@ export default {
       type: String,
       required: true,
     },
-    hasPreviousWebhook: {
+    hasPrevious: {
       type: Boolean,
       default: false,
     },
@@ -53,7 +53,7 @@ export default {
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
 
-    const webhookTemplateVarsKey = computed(() => (props.hasPreviousWebhook ? 'webhook' : 'first_webhook'));
+    const webhookTemplateVarsKey = computed(() => (props.hasPrevious ? 'webhook' : 'first_webhook'));
 
     /**
      * Updates the multiple_urls field in the webhook form

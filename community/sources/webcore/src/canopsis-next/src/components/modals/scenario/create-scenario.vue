@@ -111,6 +111,7 @@ export default {
       isDisabled,
       submitting,
       submit,
+      close,
     };
   },
 };
