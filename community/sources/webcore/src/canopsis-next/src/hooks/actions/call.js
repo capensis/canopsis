@@ -14,10 +14,13 @@ export const useCallActionWithPopup = (throwOnError = false) => {
   const popups = usePopups();
 
   const callActionWithPopup = async (action, afterAction) => {
+    const successText = t('success.default');
+    const errorText = t('errors.default');
+
     try {
       await action();
 
-      popups.success({ text: t('success.default') });
+      popups.success({ text: successText });
 
       return afterAction?.();
     } catch (err) {
@@ -27,7 +30,7 @@ export const useCallActionWithPopup = (throwOnError = false) => {
         throw err;
       }
 
-      return popups.error({ text: t('errors.default') });
+      return popups.error({ text: errorText });
     }
   };
 

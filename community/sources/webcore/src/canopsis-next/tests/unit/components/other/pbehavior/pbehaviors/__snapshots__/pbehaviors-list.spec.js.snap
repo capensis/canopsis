@@ -11,7 +11,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      />
+    </div>
+    <div
+      class="layout gap-3 justify-end align-center"
+    >
+      <!---->
+      <pbehaviors-list-alarm-filtering-btn-stub
+        class="ma-0"
       />
     </div>
     <div
@@ -33,56 +41,62 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
     >
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <table>
         <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
           <col
             class=""
           />
@@ -494,6 +508,56 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </div>
             </th>
             <th
+              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_ms"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Alarm filtering time
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_exec_at"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Last filtering date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
@@ -560,7 +624,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
           >
             <th
               class="column"
-              colspan="18"
+              colspan="20"
             >
               <div
                 aria-valuemax="100"
@@ -697,6 +761,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
         0
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -889,6 +963,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-1 theme--light primary--text"
@@ -1071,6 +1155,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
         2
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -1263,6 +1357,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-3 theme--light primary--text"
@@ -1445,6 +1549,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
         4
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -1637,6 +1751,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-5 theme--light primary--text"
@@ -1819,6 +1943,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
         6
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -2011,6 +2145,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-7 theme--light primary--text"
@@ -2193,6 +2337,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
         8
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -2381,6 +2535,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               class="text-start"
             >
         9
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -2488,20 +2652,24 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
       />
     </div>
     <div
-      class="layout justify-end"
+      class="layout gap-3 justify-end align-center"
     >
       <div
         class="flex xs3"
       >
         <c-timezone-field-stub
+          hide-details=""
           server=""
           value="Europe/Paris"
         />
       </div>
+      <pbehaviors-list-alarm-filtering-btn-stub
+        class="ma-0"
+      />
     </div>
     <div
       class="flex xs12"
@@ -2522,56 +2690,62 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
     >
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="18"
+        colspan="20"
         tag="td"
       />
       <table>
         <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
           <col
             class=""
           />
@@ -2983,6 +3157,56 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
               </div>
             </th>
             <th
+              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_ms"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Alarm filtering time
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_exec_at"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Last filtering date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
               aria-label="Icon: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
@@ -3049,7 +3273,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
           >
             <th
               class="column"
-              colspan="18"
+              colspan="20"
             >
               <div
                 aria-valuemax="100"
@@ -3190,6 +3414,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-0 theme--light primary--text"
@@ -3378,6 +3612,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-1 theme--light primary--text"
@@ -3560,6 +3804,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
               class="text-start"
             >
         2
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -3752,6 +4006,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-3 theme--light primary--text"
@@ -3934,6 +4198,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
               class="text-start"
             >
         4
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -4126,6 +4400,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-5 theme--light primary--text"
@@ -4308,6 +4592,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
               class="text-start"
             >
         6
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -4500,6 +4794,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-7 theme--light primary--text"
@@ -4682,6 +4986,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
               class="text-start"
             >
         8
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -4874,6 +5188,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-9 theme--light primary--text"
@@ -4977,7 +5301,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      />
+    </div>
+    <div
+      class="layout gap-3 justify-end align-center"
+    >
+      <!---->
+      <pbehaviors-list-alarm-filtering-btn-stub
+        class="ma-0"
       />
     </div>
     <div
@@ -4999,6 +5331,12 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
     >
       <table>
         <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
           <col
             class=""
           />
@@ -5378,6 +5716,56 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 >
                   Alarms count
                 </span>
+              </div>
+            </th>
+            <th
+              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_ms"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Alarm filtering time
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_exec_at"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Last filtering date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
               </div>
             </th>
             <th
@@ -5446,7 +5834,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
             class="v-data-table__empty-wrapper"
           >
             <td
-              colspan="17"
+              colspan="19"
             >
               No data available
             </td>
@@ -5470,7 +5858,15 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
       class="flex xs4"
     >
       <c-advanced-search-stub
-        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        fields="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      />
+    </div>
+    <div
+      class="layout gap-3 justify-end align-center"
+    >
+      <!---->
+      <pbehaviors-list-alarm-filtering-btn-stub
+        class="ma-0"
       />
     </div>
     <div
@@ -5492,56 +5888,62 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
     >
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <transition-group-stub
         class="v-data-table__expanded__col"
-        colspan="17"
+        colspan="19"
         tag="td"
       />
       <table>
         <colgroup>
+          <col
+            class=""
+          />
+          <col
+            class=""
+          />
           <col
             class=""
           />
@@ -5921,6 +6323,56 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 >
                   Alarms count
                 </span>
+              </div>
+            </th>
+            <th
+              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_ms"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Alarm filtering time
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
+              </div>
+            </th>
+            <th
+              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-sort="none"
+              class="text-start sortable"
+              data-value="pattern_exec_at"
+              role="columnheader"
+              scope="col"
+            >
+              <div
+                class="layout align-center"
+              >
+                <span
+                  class=""
+                >
+                  Last filtering date
+                </span>
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate v-data-table-header__icon material-icons theme--light"
+                  style="font-size: 18px;"
+                >
+                  arrow_upward
+                </i>
               </div>
             </th>
             <th
@@ -6070,6 +6522,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-0 theme--light primary--text"
@@ -6234,6 +6696,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-1 theme--light primary--text"
@@ -6392,6 +6864,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
         2
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -6560,6 +7042,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-3 theme--light primary--text"
@@ -6718,6 +7210,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
         4
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -6886,6 +7388,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-5 theme--light primary--text"
@@ -7044,6 +7556,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
         6
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -7212,6 +7734,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
             <td
               class="text-start"
             >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
+            </td>
+            <td
+              class="text-start"
+            >
               <i
                 aria-hidden="true"
                 class="v-icon notranslate type type-icon-name-7 theme--light primary--text"
@@ -7370,6 +7902,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
         8
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
@@ -7534,6 +8076,16 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               class="text-start"
             >
         9
+            </td>
+            <td
+              class="text-start"
+            >
+    41 mins 40 secs
+            </td>
+            <td
+              class="text-start"
+            >
+    04/03/2021 13:44:48
             </td>
             <td
               class="text-start"
