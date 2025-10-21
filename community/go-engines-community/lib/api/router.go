@@ -115,7 +115,7 @@ func RegisterRoutes(
 	secondaryDbClient mongo.DbClient,
 	dbExportClient mongo.DbClient,
 	pgPoolProvider postgres.PoolProvider,
-	amqpChannel amqp.Channel,
+	amqpPublisher amqp.Channel,
 	lockRedisSession redis.Cmdable,
 	apiConfigProvider config.ApiConfigProvider,
 	timezoneConfigProvider config.TimezoneConfigProvider,
@@ -126,7 +126,6 @@ func RegisterRoutes(
 	entityCleanerTaskChan chan<- entity.CleanTask,
 	exportTaskExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
-	publisher amqp.Publisher,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
 	websocketHub websocket.Hub,
 	websocketStore websocket.Store,
@@ -303,7 +302,7 @@ func RegisterRoutes(
 		alarmStore := alarm.NewStore(secondaryDbClient, dbExportClient, linkGenerator, timezoneConfigProvider, authorProvider,
 			tplExecutor, json.NewDecoder(), logger)
 		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), logger)
-		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpChannel, canopsis.DefaultExchangeName,
+		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger), logger)
 		alarmRouter := protected.Group("/alarms")
 		{
@@ -538,7 +537,7 @@ func RegisterRoutes(
 			),
 			dbexport.NewExporter(primaryDbClient),
 			pbhComputeChan,
-			workers.NewJobPublisher(jobKeyPbhPatterns, workersRunner),
+			workers.NewJobPublisher(jobKeyPbhPatterns, amqpPublisher),
 			logger,
 		)
 		pbehaviorRouter := protected.Group("/pbehaviors")
@@ -890,7 +889,7 @@ func RegisterRoutes(
 			)
 		}
 
-		eventApi := event.NewApi(publisher, logger)
+		eventApi := event.NewApi(amqpPublisher, logger)
 		eventRouter := protected.Group("/event")
 		{
 			eventRouter.POST(
@@ -1491,7 +1490,7 @@ func RegisterRoutes(
 			scenarioAPI.DBExport)
 
 		contextGraphAPI := contextgraph.NewApi(conf, contextgraph.NewMongoStatusReporter(primaryDbClient),
-			workers.NewJobPublisher(jobKeyImport, workersRunner), conf.File.ImportMaxSize, logger)
+			workers.NewJobPublisher(jobKeyImport, amqpPublisher), conf.File.ImportMaxSize, logger)
 		protected.PUT(
 			"contextgraph-import",
 			middleware.Authorize(apisecurity.ObjContextGraph, model.PermissionCreate, enforcer),
@@ -1896,6 +1895,11 @@ func RegisterRoutes(
 				"/:table",
 				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
 				externalDataTableAPI.Import,
+			)
+			externalDataImportRouter.PUT(
+				"/:id/preview",
+				middleware.Authorize(apisecurity.ObjExternalDataTable, model.PermissionUpdate, enforcer),
+				externalDataTableAPI.Preview,
 			)
 			externalDataImportRouter.GET(
 				"/:id/status",

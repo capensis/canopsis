@@ -6,6 +6,7 @@ import pbehaviorReasonsModule from './pbehavior-reasons';
 import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
+import pbehaviorPatternsModule from './pbehavior-patterns';
 import remediationInstructionModule from './remediation-instruction';
 import remediationInstructionExecutionModule from './remediation-instruction-execution';
 import remediationConfigurationModule from './remediation-configuration';
@@ -78,6 +79,7 @@ export default {
   pbehaviorTimespan: pbehaviorTimespanModule,
   pbehaviorExceptions: pbehaviorExceptionsModule,
   pbehaviorTypes: pbehaviorTypesModule,
+  pbehaviorPatterns: pbehaviorPatternsModule,
   userPreference: userPreferenceModule,
   view: viewModule,
   role: roleModule,

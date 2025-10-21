@@ -243,7 +243,6 @@ export default {
   cycleDependency: 'Cycle dependency',
   checkPattern: 'Check pattern',
   checkFilter: 'Check filter',
-  itemFound: '{count} item found | {count} items found',
   canonicalType: 'Canonical type',
   map: 'Map | Maps',
   instructions: 'Instructions',
@@ -324,6 +323,7 @@ export default {
   inProgress: 'In progress',
   last: 'Last',
   seeDetails: 'See details',
+  calculated: 'Calculated',
   token: 'Token',
   requestDate: 'Request date',
   variableTypes: {

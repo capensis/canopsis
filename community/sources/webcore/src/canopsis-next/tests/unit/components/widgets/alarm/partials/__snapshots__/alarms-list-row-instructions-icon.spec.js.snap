@@ -15,21 +15,6 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 </c-simple-tooltip-stub>
 `;
 
-exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with auto instruction failed 1`] = `
-<c-simple-tooltip-stub
-  content="<span class=\\"pre-wrap\\">Automatic instructions <strong>Instruction 1, Instruction 2</strong> is failed</span>"
-  top=""
->
-  <i
-    aria-hidden="true"
-    class="v-icon notranslate instruction-icon material-icons theme--light instruction-icon--failed"
-    style="font-size: 22px;"
-  >
-    assignment
-  </i>
-</c-simple-tooltip-stub>
-`;
-
 exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with auto instruction running 1`] = `
 <c-simple-tooltip-stub
   content="<span class=\\"pre-wrap\\">Automatic instructions <strong>Instruction 1, Instruction 2</strong> in progress</span>"
@@ -37,7 +22,7 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 >
   <i
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon material-icons theme--light instruction-icon--failed"
+    class="v-icon notranslate instruction-icon material-icons theme--light blinking instruction-icon--dotted"
     style="font-size: 22px;"
   >
     assignment
@@ -45,14 +30,14 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 </c-simple-tooltip-stub>
 `;
 
-exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with manual instruction failed 1`] = `
+exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with default props 1`] = `
 <c-simple-tooltip-stub
-  content="<span class=\\"pre-wrap\\">Manual instructions <strong>Instruction 1, Instruction 2</strong> is failed</span>"
+  content="<span class=\\"pre-wrap\\"></span>"
   top=""
 >
   <span
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon theme--light instruction-icon--failed"
+    class="v-icon notranslate instruction-icon theme--light"
     style="font-size: 22px; height: 22px; width: 22px;"
   >
     <svg
@@ -70,9 +55,24 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 </c-simple-tooltip-stub>
 `;
 
-exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with manual instruction running 1`] = `
+exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with failed instruction 1`] = `
 <c-simple-tooltip-stub
-  content="<span class=\\"pre-wrap\\">Manual instructions <strong>Instruction 1, Instruction 2</strong> in progress</span>"
+  content="<span class=\\"pre-wrap\\">Automatic instruction <strong>instruction</strong> is failed</span>"
+  top=""
+>
+  <i
+    aria-hidden="true"
+    class="v-icon notranslate instruction-icon material-icons theme--light instruction-icon--failed"
+    style="font-size: 22px;"
+  >
+    assignment
+  </i>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with running manual instruction 1`] = `
+<c-simple-tooltip-stub
+  content="<span class=\\"pre-wrap\\">Manual instruction <strong>instruction</strong> in progress</span>"
   top=""
 >
   <span
@@ -95,14 +95,14 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
 </c-simple-tooltip-stub>
 `;
 
-exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` without instruction 1`] = `
+exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with successful instruction 1`] = `
 <c-simple-tooltip-stub
-  content="<span class=\\"pre-wrap\\"></span>"
+  content="<span class=\\"pre-wrap\\">Manual instruction <strong>instruction</strong> is successful</span>"
   top=""
 >
   <span
     aria-hidden="true"
-    class="v-icon notranslate instruction-icon theme--light"
+    class="v-icon notranslate instruction-icon theme--light instruction-icon--completed"
     style="font-size: 22px; height: 22px; width: 22px;"
   >
     <svg
@@ -113,6 +113,34 @@ exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instruction
     >
       <path
         d="M12 1C13.3 1 14.4003 1.84 14.8203 3H19C20.1 3 21 3.9 21 5V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9.17969C9.59969 1.84 10.7 1 12 1ZM12.25 6C11.835 6 11.5 6.335 11.5 6.75V11.5H11V8C11 7.585 10.665 7.25 10.25 7.25C9.835 7.25 9.5 7.585 9.5 8V13.9551C9.5 13.9551 7.36473 12.7296 7.34473 12.7246C7.25482 12.6747 7.15477 12.6445 7.04492 12.6445C6.89505 12.6445 6.76033 12.6952 6.65039 12.79C6.63039 12.8 6 13.415 6 13.415L9.9248 17.4053C10.2997 17.7852 10.8098 17.9999 11.3496 18H15C16.1 18 17 17.1 17 16V8.75C17 8.335 16.665 8 16.25 8C15.835 8 15.5 8.335 15.5 8.75V11.5H15V7.25C15 6.835 14.665 6.5 14.25 6.5C13.835 6.5 13.5 6.835 13.5 7.25V11.5H13V6.75C13 6.335 12.665 6 12.25 6ZM12 3C11.45 3 11 3.45 11 4C11 4.55 11.45 5 12 5C12.55 5 13 4.55 13 4C13 3.45 12.55 3 12 3Z"
+        fill="currentColor"
+      />
+    </svg>
+  </span>
+</c-simple-tooltip-stub>
+`;
+
+exports[`alarms-list-row-instructions-icon Renders \`alarms-list-row-instructions-icon\` with withoutAnyExecution state 1`] = `
+<c-simple-tooltip-stub
+  content="<span class=\\"pre-wrap\\">Manual instruction wasn't executed</span>"
+  top=""
+>
+  <span
+    aria-hidden="true"
+    class="v-icon notranslate instruction-icon theme--light instruction-icon--warning"
+    style="font-size: 22px; height: 22px; width: 22px;"
+  >
+    <svg
+      class="v-icon__component theme--light"
+      fill="none"
+      height="24"
+      style="font-size: 22px; height: 22px; width: 22px;"
+      viewBox="0 0 24 24"
+      width="24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 1C13.3 1 14.4003 1.84 14.8203 3H19C20.1 3 21 3.9 21 5V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H9.17969C9.59969 1.84 10.7 1 12 1ZM12.0654 17.2666C11.7384 17.2667 11.4899 17.3516 11.3203 17.5205C11.1568 17.6894 11.0752 17.8965 11.0752 18.1416C11.0752 18.3759 11.1567 18.5781 11.3203 18.7471C11.4899 18.9158 11.7385 18.9999 12.0654 19C12.3863 19 12.6321 18.9157 12.8018 18.7471C12.9775 18.5781 13.0654 18.3759 13.0654 18.1416C13.0654 17.8964 12.9775 17.6894 12.8018 17.5205C12.6321 17.3517 12.3865 17.2666 12.0654 17.2666ZM10.2002 7L11.2568 15.542H12.7744L13.7998 7H10.2002ZM12 3C11.45 3 11 3.45 11 4C11 4.55 11.45 5 12 5C12.55 5 13 4.55 13 4C13 3.45 12.55 3 12 3Z"
         fill="currentColor"
       />
     </svg>

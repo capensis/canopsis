@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`pbehaviors-list-alarm-filtering-btn Renders \`pbehaviors-list-alarm-filtering-btn\` with default state 1`] = `
+<button
+  class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+  type="button"
+>
+  <span
+    class="v-btn__content"
+  >
+    <!---->
+  Run alarm filtering
+
+  </span>
+</button>
+`;
