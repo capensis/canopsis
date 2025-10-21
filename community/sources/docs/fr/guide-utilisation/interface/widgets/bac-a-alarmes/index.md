@@ -25,6 +25,18 @@ Au clic sur le chevron d'une alarme (tout à gauche), la chronologie de l'alarme
 
 Tous les changements opérés sur une alarme sont indiqués dans cette chronologie.
 
+### Lien unique d'alarme
+
+Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
+Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
+
+* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
+* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
+
+L'identifiant d'un widget est disponible pour copie dans le mode **édition**.  
+![Copier l'identifiant du widget](./img/copier-identifiant-widget.png)
+
+
 ### Filtrage des alarmes
 
 Tout l'entête du widget est prévu pour filtrer les alarmes à afficher dans la liste.
@@ -99,15 +111,8 @@ Pour chaque alarme, des actions sont disponibles.
 
 Pour le détail de chacune des actions, voir la [liste des actions](actions.md) du Bac à alarmes.
 
-!!! info "Information"
-    Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
-    Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
-    
-    * `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
-    * `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
-    
-    L'identifiant d'un widget est disponible pour copie dans le mode **édition**.  
-    ![Copier l'identifiant du widget](./img/copier-identifiant-widget.png)
+
+
 
 ## Paramètres du widget
 
@@ -301,6 +306,14 @@ Lorsque cette option est activée, les entêtes de colonnes restent affichées e
 #### Modèle pour l'export PDF
 
 Vous pouvez personnaliser le PDF qui sera généré lors de l'export d'une alarme.  
+
+#### Actions rapides
+
+Les actions présentées dans la colonnes "actions" peuvent être sélectionnées et ordonnées.
+
+#### Actions massives rapides
+
+Les actions de masse présentées dans l'entête peuvent être sélectionnées et ordonnées.
 
 ### Agrandir le panneau
 
