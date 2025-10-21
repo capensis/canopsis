@@ -119,10 +119,29 @@ Lorsqu'une alarme est créée, nous souhaitons déclencher une notification sur 
 Lorsqu'une notification est envoyée au service Gotify, celui-ci répond en reprennant les différents attributs transmis ainsi qu'un `id` de notification.  
 Nous créons donc cette réponse :
 
-![Test modèle de réponse Gotify](./img/test-modeles-reponse-gotify.png)
+![studio-template-reponse-gotify](./img/studio-template-reponse-gotify.png)
 
-![Test modèle de réponse Gotify résultat](./img/test-modeles-reponse-gotify-resultat.png)
+```json
+{
+  "id": 47,
+  "appid": 1,
+  "message": "Hello: ![](https://gotify.net/img/logo.png)",
+  "title": "Une notification",
+  "priority": 5,
+  "extras": {
+    "client::display": {
+      "contentType": "text/markdown"
+    }
+  },
+  "date": "2025-10-21T08:44:09.414089231Z"
+}
+```
+
+Puis nous créons le webhook documenté sur [cet exemple](../../templates-go/templates-go-casdusage/#9-notification-sur-le-service-gotify).
+
+Enfin, nous exécutons le test en ayant sélectionné un modèle d'événement ainsi que le modèle de réponse gotify précédemment créé.  
+Le studio monntre alors les résultats des valeurs de variables pour chaque bloc.
 
 
-
+![studio-template-gotify-resultat](./img/studio-template-gotify-resultat.png)
 
