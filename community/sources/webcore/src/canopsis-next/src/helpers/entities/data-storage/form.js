@@ -66,13 +66,13 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
  * @property {DataStorageAlarmConfig} alarm
- * @property {DataStorageUnlinkedEntityConfig} [entity_unlinked]
+ * @property {DataStorageUnlinkedEntityConfig} [entity]
  * @property {DataStoragePbehaviorConfig} pbehavior
  * @property {DataStorageHealthCheckConfig} health_check
  * @property {DataStorageWebhookConfig} webhook
  * @property {DataStorageMetricsConfig} metrics
  * @property {DataStorageMetricsConfig} perf_data_metrics
- * @property {DataStorageEventFilterFailureConfig} errors
+ * @property {DataStorageEventFilterFailureConfig} event_filter_failure
  * @property {DataStorageAlarmExternalTagConfig} alarm_external_tag
  * @property {DataStorageEventsRecordsConfig} event_records
  */
@@ -269,13 +269,13 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   junit: dataStorageJunitSettingsToForm(dataStorage.junit),
   remediation: dataStorageRemediationSettingsToForm(dataStorage.remediation),
   alarm: dataStorageAlarmSettingsToForm(dataStorage.alarm),
-  entity_unlinked: dataStorageEntityUnlinkedSettingsToForm(dataStorage.entity_unlinked),
+  entity: dataStorageEntityUnlinkedSettingsToForm(dataStorage.entity),
   pbehavior: dataStoragePbehaviorSettingsToForm(dataStorage.pbehavior),
   health_check: dataStorageHealthCheckSettingsToForm(dataStorage.health_check),
   webhook: dataStorageWebhookSettingsToForm(dataStorage.webhook),
   metrics: dataStorageMetricsToForm(dataStorage.metrics),
   perf_data_metrics: dataStoragePerfDataMetricsToForm(dataStorage.perf_data_metrics),
-  event_filter_failure: dataStorageEventFilterFailureToForm(dataStorage.errors),
+  event_filter_failure: dataStorageEventFilterFailureToForm(dataStorage.event_filter_failure),
   alarm_external_tag: dataStorageAlarmExternalTagToForm(dataStorage.alarm_external_tag),
   event_records: dataStorageEventsRecordsToForm(dataStorage.event_records),
 });

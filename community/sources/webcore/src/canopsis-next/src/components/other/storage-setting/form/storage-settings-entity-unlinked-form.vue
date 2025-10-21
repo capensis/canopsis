@@ -15,7 +15,7 @@
       v-field="form.archive_after"
       :label="$t('storageSetting.entityUnlinked.archiveAfter')"
       :suffix="$t('storageSetting.receivedFor')"
-      name="entity_unlinked.archive_before"
+      name="entity.archive_before"
       switcher
       hide-value-on-false
     />
