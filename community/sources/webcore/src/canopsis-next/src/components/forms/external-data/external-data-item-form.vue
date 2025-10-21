@@ -54,8 +54,8 @@
           :payload-variables="variables"
           :url-variables="variables"
         />
-        <c-alert v-if="errorMessages.length" type="error">
-          {{ errorMessages.join('\n') }}
+        <c-alert v-if="serverErrorMessages.length" type="error">
+          {{ serverErrorMessages.join('\n') }}
         </c-alert>
       </v-layout>
     </v-card-text>
@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import { computed, inject, onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
@@ -113,12 +113,9 @@ export default {
     },
   },
   setup(props, { emit }) {
-    // Composables
     const { t } = useI18n();
-    const { errors } = useValidator();
-    const $validator = inject('$validator');
+    const validator = useValidator();
 
-    // Computed properties
     const availableTypes = computed(() => (
       props.types.length
         ? props.types
@@ -134,19 +131,15 @@ export default {
       `${props.name}.reference`
     ));
 
-    const errorMessages = computed(() => (
-      errors.collect(props.serverErrorName)
+    const serverErrorMessages = computed(() => (
+      validator.errors.collect(props.serverErrorName)
     ));
 
-    // Methods
-    const remove = () => {
-      emit('remove', props.form);
-    };
+    const remove = () => emit('remove', props.form);
 
-    // Lifecycle
     onMounted(() => {
       if (props.serverErrorName) {
-        $validator.attach({ name: props.serverErrorName });
+        validator.attach({ name: props.serverErrorName });
       }
     });
 
@@ -154,9 +147,8 @@ export default {
       availableTypes,
       isTableType,
       referenceFieldName,
-      errorMessages,
+      serverErrorMessages,
       remove,
-      errors,
     };
   },
 };

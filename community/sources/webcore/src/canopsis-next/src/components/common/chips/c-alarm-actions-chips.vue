@@ -6,7 +6,7 @@
     wrap
     align-center
   >
-    <c-alarm-action-chip
+    <c-chip
       v-for="item in inlineItems"
       :key="item[itemValue]"
       :class="itemClass"
@@ -24,7 +24,7 @@
       >
         <span>{{ item[itemText] }}</span>
       </slot>
-    </c-alarm-action-chip>
+    </c-chip>
     <v-menu
       v-if="dropDownItems.length"
       key="more"
@@ -55,7 +55,7 @@
             class="c-alarm-actions-chips__more"
             wrap
           >
-            <c-alarm-action-chip
+            <c-chip
               v-for="item in dropDownItems"
               :key="item[itemValue]"
               :class="itemClass"
@@ -73,7 +73,7 @@
               >
                 <span>{{ item[itemText] }}</span>
               </slot>
-            </c-alarm-action-chip>
+            </c-chip>
           </v-layout>
         </v-card-text>
       </v-card>

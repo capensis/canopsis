@@ -7,10 +7,10 @@
       <span>{{ title }}</span>
     </template>
     <template
-      v-if="config.text"
+      v-if="sanitizedText"
       #text=""
     >
-      <span class="text-subtitle-1 pre-wrap">{{ config.text }}</span>
+      <span v-html="sanitizedText" class="text-subtitle-1 pre-wrap" />
     </template>
     <template #actions="">
       <v-layout
@@ -43,6 +43,8 @@ import { ref, computed, onBeforeUnmount } from 'vue';
 
 import { MODALS } from '@/constants';
 
+import { sanitizeHtml } from '@/helpers/html';
+
 import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
@@ -66,6 +68,7 @@ export default {
     const { config, close } = useInnerModal(props);
 
     const title = computed(() => config.value.title ?? t('common.confirmation'));
+    const sanitizedText = computed(() => (config.value.text ? sanitizeHtml(config.value.text) : ''));
 
     const cancel = () => {
       cancelled.value = true;
@@ -92,6 +95,7 @@ export default {
       submitting,
       isDisabled,
       title,
+      sanitizedText,
       cancel,
       submit,
     };

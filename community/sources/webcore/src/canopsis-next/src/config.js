@@ -156,6 +156,7 @@ export const SOCKET_ROOMS = {
   notifications: 'notifications',
   executions: 'executions',
   simplifiedManualExecutions: 'simplified-manual-executions',
+  pbehaviorPatterns: 'pbehavior-patterns',
 };
 
 export const API_ROUTES = {
@@ -255,6 +256,8 @@ export const API_ROUTES = {
     reasons: '/api/v4/pbehavior-reasons',
     calendar: '/api/v4/pbehavior-calendar',
     bulkEntityPbehaviors: '/api/v4/bulk/entity-pbehaviors',
+    patterns: '/api/v4/pbehavior-patterns',
+    allPatterns: '/api/v4/all-pbehavior-patterns',
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
