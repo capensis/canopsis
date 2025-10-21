@@ -43,6 +43,7 @@
               :name="valueFieldName"
               :error-messages="errors.collect(valueFieldName)"
               :prefix="eventExtraPrefix"
+              data-vv-validate-on="blur"
               clearable
             />
           </v-layout>
@@ -92,6 +93,7 @@
                 key="value"
                 :label="$t('common.value')"
                 :name="valueFieldName"
+                :types="fieldTypes"
                 class="ml-2"
               />
             </v-flex>
@@ -107,6 +109,7 @@ import {
   ACTION_COPY_PAYLOAD_VARIABLES,
   EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES,
   EVENT_FILTER_EVENT_EXTRA_PREFIX,
+  PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import {
@@ -193,6 +196,15 @@ export default {
 
     isSelectValueType() {
       return EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags === this.form.type;
+    },
+
+    fieldTypes() {
+      return [
+        { value: PATTERN_FIELD_TYPES.string },
+        { value: PATTERN_FIELD_TYPES.number },
+        { value: PATTERN_FIELD_TYPES.boolean },
+        { value: PATTERN_FIELD_TYPES.stringArray },
+      ];
     },
   },
   methods: {
