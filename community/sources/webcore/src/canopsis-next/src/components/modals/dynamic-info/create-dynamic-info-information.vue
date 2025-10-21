@@ -17,6 +17,7 @@
           <c-mixed-field
             v-model="form.value"
             :label="$t('common.value')"
+            :types="fieldTypes"
             name="value"
             required
           />
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, VALIDATION_DELAY, PATTERN_FIELD_TYPES } from '@/constants';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -93,6 +94,15 @@ export default {
           initialValue: this.initialName,
         },
       };
+    },
+
+    fieldTypes() {
+      return [
+        { value: PATTERN_FIELD_TYPES.string },
+        { value: PATTERN_FIELD_TYPES.number },
+        { value: PATTERN_FIELD_TYPES.boolean },
+        { value: PATTERN_FIELD_TYPES.stringArray },
+      ];
     },
   },
   methods: {
