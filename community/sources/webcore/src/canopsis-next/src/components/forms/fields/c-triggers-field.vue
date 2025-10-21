@@ -16,20 +16,31 @@
   >
     <template #selection="{ item, index }">
       <v-tooltip
-        :disabled="!item.deprecated"
+        :disabled="!item.deprecated || errors.has(getChipName(index))"
         top
       >
         <template #activator="{ on }">
           <v-chip
+            v-validate=""
             :class="getSelectedClass(item)"
-            :close="item.deprecated"
+            :close="errors.has(getChipName(index)) || item.deprecated"
+            :name="`${name}.${index}.type`"
+            :color="errors.has(getChipName(index)) ? 'error' : ''"
             v-on="on"
             @click:close="removeItemFromArray(index)"
           >
             {{ getSelectedText(item) }}
           </v-chip>
         </template>
-        <span>{{ $t('common.deprecatedTrigger') }}</span>
+        <span>
+          {{
+            errors.has(getChipName(index))
+              ? errors.collect(getChipName(index))
+              : item.deprecated
+                ? $t('common.deprecatedTrigger')
+                : ''
+          }}
+        </span>
       </v-tooltip>
     </template>
     <template #item="{ item, attrs, on, parent }">
@@ -81,8 +92,9 @@ import {
   computed,
   ref,
   watch,
-  onBeforeUnmount,
   set,
+  nextTick,
+  onBeforeUnmount,
 } from 'vue';
 import { find } from 'lodash';
 
@@ -187,6 +199,14 @@ export default {
       }));
 
     /**
+     * Get name property for chip field
+     *
+     * @param {number} index
+     * @return {string}
+     */
+    const getChipName = index => `${props.name}.${index}.type`;
+
+    /**
      * Get name property for additional value field
      *
      * @param {string} type
@@ -215,7 +235,7 @@ export default {
      * @return {VueI18n.TranslateResult|*}
      */
     const getSelectedText = ({ type, text, [additionalValuesKeysByTriggers[type]]: additionalValue } = {}) => {
-      const messageKey = `common.triggers.${type}.selectedText`;
+      const messageKey = `${props.translationKeyPrefix}.${type}.selectedText`;
 
       return te(messageKey)
         ? t(messageKey, { additionalValue })
@@ -251,7 +271,11 @@ export default {
      *
      * @param {Trigger[]} value
      */
-    const changeValue = (value = []) => updateModel(value.map(({ type }) => preparedTriggersByTypes.value[type]));
+    const changeValue = (value = []) => {
+      updateModel(value.map(({ type }) => preparedTriggersByTypes.value[type]));
+
+      nextTick(() => validator.validate(props.name));
+    };
 
     /**
      * Change additional value handler
@@ -342,6 +366,7 @@ export default {
       preparedTriggers,
       errorMessages,
       additionalValuesComponentsByTypes,
+      getChipName,
       getAdditionalValueFieldName,
       getSelectedClass,
       getSelectedText,
