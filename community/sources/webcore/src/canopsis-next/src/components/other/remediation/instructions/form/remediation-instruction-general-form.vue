@@ -59,7 +59,7 @@
     <template v-if="isAutoType">
       <c-triggers-field
         v-field="form.triggers"
-        :types="availableRepeatTriggers"
+        :types="availableTriggers"
         with-additional-values
       />
       <v-layout>
@@ -81,7 +81,7 @@
         <c-triggers-field
           v-if="form.enabled_repeat_triggers"
           v-field="form.repeat_triggers"
-          :types="availableTriggers"
+          :types="availableRepeatTriggers"
           :label="$t('remediation.instruction.repeatTriggers')"
           name="repeat_triggers"
           translation-key-prefix="common.repeatTriggers"
