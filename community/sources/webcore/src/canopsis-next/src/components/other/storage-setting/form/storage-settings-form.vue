@@ -5,7 +5,7 @@
       :history="history.alarm"
     />
     <storage-settings-entity-unlinked-form
-      v-field="form.entity_unlinked"
+      v-field="form.entity"
       :history="history.entity_unlinked"
       @archive="$emit('archive:unlinked')"
     />

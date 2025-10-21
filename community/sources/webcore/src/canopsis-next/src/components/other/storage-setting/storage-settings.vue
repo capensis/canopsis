@@ -135,7 +135,7 @@ export default {
     const fetchHistory = async () => {
       const { history: newHistory } = await fetchDataStorageSettingsWithoutStore();
 
-      history.value = newHistory;
+      history.value = newHistory || {};
     };
 
     /**
@@ -198,7 +198,7 @@ export default {
     /**
      * Resets the form to its original state from data storage settings
      */
-    const resetForm = () => {
+    const resetForm = async () => {
       form.value = dataStorageSettingsToForm(dataStorageSettings.config);
 
       /**
@@ -228,9 +228,11 @@ export default {
 
           action: async () => {
             try {
-              await updateDataStorageSettings({ data: form.value });
+              dataStorageSettings = await updateDataStorageSettings({ data: form.value });
 
               popups.success({ text: t('success.default') });
+
+              resetForm();
             } catch (err) {
               setFormErrors(err);
             }
