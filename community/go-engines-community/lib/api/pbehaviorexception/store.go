@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
@@ -48,19 +49,23 @@ func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneCon
 		defaultSortBy:         "created",
 
 		timezoneConfigProvider: timezoneConfigProvider,
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
 type store struct {
-	dbClient              mongo.DbClient
-	dbCollection          mongo.DbCollection
-	pbehaviorDbCollection mongo.DbCollection
-	typeDbCollection      mongo.DbCollection
-	defaultSearchByFields []string
-	defaultSortBy         string
-
+	dbClient               mongo.DbClient
+	dbCollection           mongo.DbCollection
+	pbehaviorDbCollection  mongo.DbCollection
+	typeDbCollection       mongo.DbCollection
+	defaultSearchByFields  []string
+	defaultSortBy          string
 	timezoneConfigProvider config.TimezoneConfigProvider
 	authorProvider         author.Provider
+	dupErrorParser         validation.DuplicateErrorParser
 }
 
 func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
@@ -80,6 +85,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -172,6 +181,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
 		if err != nil || result.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 

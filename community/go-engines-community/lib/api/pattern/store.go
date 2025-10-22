@@ -591,7 +591,14 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.EntityPattern) > 0 {
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "entity")
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: r.EntityPattern,
+		})
+		if err != nil {
+			return res, err
+		}
+
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "entity")
 		if err != nil {
 			return res, err
 		}
@@ -610,7 +617,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 			)
 		}
 
-		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(r.EntityPattern, "")
+		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -719,7 +726,14 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	entitiesPipeline := make([]bson.M, 0)
 	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount CountResponse
 	if len(r.EntityPattern) > 0 {
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "")
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: r.EntityPattern,
+		})
+		if err != nil {
+			return res, err
+		}
+
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}

@@ -6,11 +6,11 @@ import (
 )
 
 type Parameters struct {
-	URL        string                     `bson:"url" json:"url" binding:"required"`
+	URL        string                     `bson:"url" json:"url" binding:"required,template"`
 	Method     string                     `bson:"method" json:"method" binding:"required,oneof=GET HEAD POST PUT PATCH DELETE CONNECT OPTIONS TRACE"`
 	Auth       *BasicAuth                 `bson:"auth,omitempty" json:"auth"`
 	Headers    map[string]string          `bson:"headers,omitempty" json:"headers"`
-	Payload    string                     `bson:"payload,omitempty" json:"payload"`
+	Payload    string                     `bson:"payload,omitempty" json:"payload" binding:"template"`
 	SkipVerify bool                       `bson:"skip_verify" json:"skip_verify"`
 	Timeout    *datetime.DurationWithUnit `bson:"timeout,omitempty" json:"timeout"`
 	RetryCount int64                      `bson:"retry_count,omitempty" json:"retry_count"`
