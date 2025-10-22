@@ -133,6 +133,18 @@ Dans le second cas, il est possible de définir une politique de retry.
 
 ![delai_retry_consigne](./img/delai_retry_consigne.png)
 
+Par ailleurs, lorsque le résultat de l'exécution d'une remédiation n'est pas concluant (l'alarme n'est en état OK après toutes les consignes automatiques), la remédiation peut être déclenchée à nouveau en fonction d'un trigger :
+
+* Criticité de l'alarme augmentée
+* Criticité de l'alarme diminuée
+* Criticité de l'alarme changée par l'action "Changer et verouiller la criticité"
+* Alarme sortie de veille
+* Comportement périodique démarré
+* Comportement périodique terminé
+* L'alarme a reçu un nouvel événement de type "check"
+
+
+
 ### Déclenchement d'une consigne et activation d'une alarme
 
 L'option [ActivateAlarmAfterAutoRemediation](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
