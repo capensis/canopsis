@@ -10,14 +10,16 @@ import { PAYLOADS_INFO_VARIABLES } from '@/constants';
 export const useInfosServerVariables = (infos = []) => {
   const subVariables = Object.values(PAYLOADS_INFO_VARIABLES).map(value => ({ value }));
 
-  const variables = computed(() => {
-    const fields = ['.%name%', ...unref(infos).map(({ value }) => `.${value}`)];
+  const variables = computed(() => [
+    { value: '.%name%', variables: subVariables },
 
-    return fields.map(value => ({
-      value,
+    ...unref(infos).map(({ value, ...rest }) => ({
+      ...rest,
+
+      value: `.${value}`,
       variables: subVariables,
-    }));
-  });
+    })),
+  ]);
 
   return {
     variables,

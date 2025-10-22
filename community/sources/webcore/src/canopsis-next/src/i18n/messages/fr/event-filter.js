@@ -30,7 +30,6 @@ export default {
   eventsFilteredSinceLastUpdate: 'Evénements filtrés depuis la dernière mise à jour',
   errorsSinceLastUpdate: 'Erreurs depuis la dernière mise à jour',
   markAsRead: 'Marquer comme lu',
-  filterByType: 'Filtrer par type',
   copyEventToClipboard: 'Copier l\'événement dans le presse papier',
   event: 'Evénement',
   eventCopied: 'Evénement copié dans le presse papier',

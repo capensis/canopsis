@@ -77,7 +77,7 @@ export default {
 
         const field = findField(el, vnode.context);
 
-        if (validatorOptions.delay) {
+        if (field && validatorOptions.delay) {
           field.delay = validatorOptions.delay;
         }
 

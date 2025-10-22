@@ -31,6 +31,8 @@
       <v-tab-item eager>
         <scenario-actions-form
           v-field="form.actions"
+          ref="parametersFormElement"
+          :template-vars="templateVars"
           class="mt-2"
           name="actions"
         />
@@ -69,6 +71,10 @@ export default {
   },
   props: {
     form: {
+      type: Object,
+      default: () => ({}),
+    },
+    templateVars: {
       type: Object,
       default: () => ({}),
     },

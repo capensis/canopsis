@@ -24,6 +24,7 @@ export default {
     [PATTERN_TYPES.pbehavior]: 'Modèle de comportements périodiques',
     [PATTERN_TYPES.serviceWeather]: 'Modèle de météo des services',
   },
+  notDefinedType: 'Le type sélectionné diffère du type défini dans les informations d\'entité',
   errors: {
     ruleRequired: 'Veuillez ajouter au moins une règle',
     groupRequired: 'Veuillez ajouter au moins un groupe',
