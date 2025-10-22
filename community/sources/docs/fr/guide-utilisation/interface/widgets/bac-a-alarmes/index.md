@@ -156,9 +156,15 @@ Les paramètres qui sont décrits dans ce paragraphe concernent les éléments s
 Afin d'**ajouter une colonne**, cliquez sur le bouton :material-plus:.
 Il vous reste alors à sélectionner la colonne souhaitée dans la liste.
 
-!!! tip "Astuce"
-    Vous pouvez modifier le label de la colonne en activant l'option "Etiquette personnalisée".
-    Cela est très utile lorsque vous utilisez des informations enrichies.
+Chaque colonne peut être configurée plus finement en fonction de son type :
+
+| Option                      | Utilisation                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| **Étiquette personnalisée** | Définit un alias à afficher pour la colonne.                                                |
+| **Modèle personnalisé**     | Personnalise le contenu affiché dans la colonne à l'aide d'un template Handlebars.          |
+| **Interprétation HTML**     | Permet d'afficher le HTML contenu dans la colonne (au lieu de le montrer comme texte brut). |
+| **Indicateur de couleur**   | Ajoute un fond coloré en fonction de la sévérité ou de la priorité de l'alarme.             |
+| **Filtre au clic**          | Déclenche une recherche basée sur le contenu de la colonne lorsqu'on clique dessus.         |
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
