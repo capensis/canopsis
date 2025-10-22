@@ -5,7 +5,10 @@ import {
   DECLARE_TICKET_PAYLOAD_ADDITIONAL_DATA_VARIABLES,
   DECLARE_TICKET_PAYLOAD_PREVIOUS_STEP_VARIABLES,
   USER_PAYLOADS_VARIABLES,
+  ALARM_PAYLOAD_VARIABLES_PREFIXES,
 } from '@/constants';
+
+import { payloadEntityAliasesMixin } from './payload-entity-aliases';
 
 export const payloadVariablesMixin = {
   props: {
@@ -14,6 +17,7 @@ export const payloadVariablesMixin = {
       default: false,
     },
   },
+  mixins: [payloadEntityAliasesMixin],
   computed: {
     alarmPayloadSubVariables() {
       return [
@@ -73,6 +77,7 @@ export const payloadVariablesMixin = {
           value: ALARM_PAYLOADS_VARIABLES.entityInfosValue,
           text: this.$t('common.infos'),
         },
+        ...this.alarmAliasesVariables,
       ];
     },
 
@@ -117,17 +122,19 @@ export const payloadVariablesMixin = {
     },
 
     alarmPayloadVariables() {
-      return this.alarmPayloadSubVariables.map(
+      const variables = this.alarmPayloadSubVariables.map(
         variable => ({
           ...variable,
           value: [
-            ALARM_PAYLOADS_VARIABLES.entityInfosValue,
-            ALARM_PAYLOADS_VARIABLES.entityName,
-          ].includes(variable.value)
+            ALARM_PAYLOAD_VARIABLES_PREFIXES.entity,
+            ALARM_PAYLOAD_VARIABLES_PREFIXES.entityInfos,
+          ].some(prefix => variable.value.startsWith(prefix))
             ? variable.value
             : `${ALARM_PAYLOADS_VARIABLES.alarm}${variable.value}`,
         }),
       );
+
+      return variables;
     },
 
     payloadVariablesFromPreviousStep() {
@@ -186,6 +193,7 @@ export const payloadVariablesMixin = {
           value: ENTITY_PAYLOADS_VARIABLES.infosValue,
           text: this.$t('common.infos'),
         },
+        ...this.entityAliasesVariables,
       ];
     },
 
