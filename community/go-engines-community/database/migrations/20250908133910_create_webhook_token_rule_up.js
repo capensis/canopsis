@@ -21,17 +21,17 @@ if (!db.permission.findOne({_id: "api_webhook_token_rule"})) {
     });
 }
 
-if (!db.permission.findOne({_id: "modals_externalAuthTokens"})) {
+if (!db.permission.findOne({_id: "models_externalAuthTokens"})) {
     db.permission.insertOne({
-        _id: "modals_externalAuthTokens",
-        name: "modals_externalAuthTokens",
+        _id: "models_externalAuthTokens",
+        name: "models_externalAuthTokens",
         type: "CRUD",
         description: "Webhook token rule",
         groups: ["technical", "technical_admin", "technical_admin_general"]
     });
     db.role.updateOne({name: "admin"}, {
         $set: {
-            "permissions.modals_externalAuthTokens": 15
+            "permissions.models_externalAuthTokens": 15
         }
     });
 }
