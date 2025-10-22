@@ -41,6 +41,195 @@ template:
     { value: v.state.val },
     { value: v.status.val }
   ]
+  - &widget_alarm_more_infos |
+      {{!--
+        TEMPLATE "PLUS D'INFOS"
+        --------------------------------------------------------------------------
+        - L'objet racine du template est `alarm`.
+        - Les boucles `{{#each}}` utilisent `{{this.propriete}}` pour accéder aux données.
+        - Le style est 100% en ligne et les icônes au format Material Design.
+      --}}
+      <div style="font-family:Arial, sans-serif;color:#2c3e50;line-height:1.5">
+
+        {{!-- CARD 1: IDENTITÉ DE L'ALARME --}}
+        <table width="100%" style="background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:16px">
+          <tbody><tr>
+            <td>
+              <h2 style="margin:0 0 8px 0;font-size:1.4em;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                {{state alarm.v.state.val}}
+                <span>{{alarm.v.display_name}}</span>
+                {{#if alarm.is_meta_alarm}}
+                  <span style="display:inline-flex;align-items:center;gap:6px;background-color:#e8eaf6;color:#3f51b5;border:1px solid #c5cae9;padding:4px 10px;border-radius:16px;font-size:0.9em;font-weight:500;line-height:1">
+                    <i class="v-icon notranslate material-icons theme--light" style="font-size:16px">hub</i>
+                    Méta Alarme
+                  </span>
+                {{/if}}
+              </h2>
+              <div style="font-size:0.9em">
+                <strong>Sévérité Max Atteinte :</strong> {{state alarm.v.max_state}}
+                <span style="color:#757575;margin-left:12px">(Initialement : {{state alarm.v.initial_state}})</span>
+              </div>
+            </td>
+          </tr>
+        </tbody></table>
+
+        {{!-- CARD 2: CONTEXTE ET DONNÉES CLÉS --}}
+        <table width="100%" style="background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:16px">
+          <tbody><tr>
+            <td>
+              <h3 style="margin:0 0 12px 0;font-size:1.2em">Contexte</h3>
+              <p style="margin:0 0 4px 0"><strong>Message Actuel :</strong> {{{alarm.v.output}}}</p>
+              <p style="margin:0 0 16px 0;color:#5a6d80;font-size:0.9em"><strong>Message Initial :</strong> {{{alarm.v.initial_output}}}</p>
+              <hr style="border:none;border-top:1px solid #e0e0e0;margin:16px 0">
+              <table width="100%">
+                <tbody><tr>
+                  <td width="50%" style="vertical-align:top;padding-right:10px">
+                    <ul style="margin:0;padding:0;list-style:none">
+                      <li style="padding-bottom:4px"><strong>Source :</strong> {{alarm.v.connector_name}}</li>
+                      <li style="padding-bottom:4px"><strong>Composant :</strong> {{alarm.v.component}}</li>
+                      <li><strong>Ressource :</strong> {{alarm.v.resource}}</li>
+                    </ul>
+                  </td>
+                  <td width="50%" style="vertical-align:top;padding-left:10px">
+                    <ul style="margin:0;padding:0;list-style:none">
+                      <li style="padding-bottom:4px"><strong>Début :</strong> {{timestamp alarm.v.creation_date format="long"}}</li>
+                      {{#if alarm.v.ticket}}
+                        <li><strong>Ticket : </strong><a target="_blank" href="{{alarm.v.ticket.ticket_url}}">{{alarm.v.ticket.ticket}}</a></li>
+                      {{/if}}
+                    </ul>
+                  </td>
+                </tr>
+              </tbody></table>
+              <div style="margin-top:20px">
+                {{#copy alarm.v.display_name}}
+                  <a style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;background-color:#f0f0f0;border:1px solid #ddd;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.9em;color:#2c3e50">
+                    <i class="v-icon notranslate material-icons theme--light" style="font-size:16px">content_copy</i>
+                    Copier ID
+                  </a>
+                {{/copy}}
+                <span style="display:inline-block;width:8px"></span>
+                {{#copy (concat alarm.v.component "/" alarm.v.resource)}}
+                  <a style="text-decoration:none;display:inline-flex;align-items:center;gap:6px;background-color:#f0f0f0;border:1px solid #ddd;padding:5px 10px;border-radius:6px;cursor:pointer;font-size:0.9em;color:#2c3e50">
+                    <i class="v-icon notranslate material-icons theme--light" style="font-size:16px">content_copy</i>
+                    Copier C/R
+                  </a>
+                {{/copy}}
+              </div>
+            </td>
+          </tr>
+        </tbody></table>
+
+        {{!-- CARD 3: STATISTIQUES --}}
+        <table width="100%" style="background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:16px">
+          <tbody><tr>
+            <td>
+              <h3 style="margin:0 0 12px 0;font-size:1.2em">Statistiques</h3>
+              <table width="100%" style="text-align:center;border-spacing:12px 0;margin-left:-12px">
+                <tbody><tr>
+                  <td width="33.3%" style="background-color:#f9f9f9;padding:12px;border-radius:6px">
+                    <div style="font-size:1.5em;font-weight:bold;color:#1976d2">{{duration alarm.v.duration}}</div>
+                    <div style="font-size:0.9em;color:#5a6d80">Durée Totale</div>
+                  </td>
+                  <td width="33.3%" style="background-color:#f9f9f9;padding:12px;border-radius:6px">
+                    <div style="font-size:1.5em;font-weight:bold;color:#1976d2">{{alarm.v.events_count}}</div>
+                    <div style="font-size:0.9em;color:#5a6d80">Événements</div>
+                  </td>
+                  <td width="33.3%" style="background-color:#f9f9f9;padding:12px;border-radius:6px">
+                    <div style="font-size:1.5em;font-weight:bold;color:#1976d2">{{alarm.v.total_state_changes}}</div>
+                    <div style="font-size:0.9em;color:#5a6d80">Changements d'État</div>
+                  </td>
+                </tr>
+              </tbody></table>
+            </td>
+          </tr>
+        </tbody></table>
+
+        {{!-- CARD 4: SUIVI OPÉRATIONNEL --}}
+        <table width="100%" style="background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px;margin-bottom:16px">
+          <tbody><tr>
+            <td>
+              <h3 style="margin:0 0 12px 0;font-size:1.2em">Suivi Opérationnel</h3>
+              {{#if alarm.pbehavior}}
+                <div style="background-color:#e3f2fd;color:#1565c0;padding:12px;border-radius:6px;margin-bottom:15px;display:flex;align-items:center;gap:12px">
+                  <i class="v-icon notranslate material-icons theme--light" style="font-size:24px;color:#1565c0">pause_circle_outline</i>
+                  <div>
+                    <strong style="display:block">Comportement périodique actif</strong>
+                    {{alarm.pbehavior.name}} ({{alarm.pbehavior.type.name}})
+                  </div>
+                </div>
+              {{/if}}
+
+              {{#if alarm.v.comments}}
+                <h4 style="margin:16px 0 8px 0">Commentaires</h4>
+                {{#each alarm.v.comments}}
+                  <div style="border-bottom:1px solid #f0f0f0;padding:10px 0;display:flex;align-items:flex-start;gap:12px">
+                    <i class="v-icon notranslate material-icons theme--light" style="font-size:20px;color:#757575;margin-top:3px">comment</i>
+                    <div>
+                      <strong style="color:#2c3e50">{{this.a}}</strong>
+                      <span style="color:#5a6d80;font-size:0.85em">(le {{timestamp this.t}})</span>
+                      <p style="margin:4px 0 0 0;font-style:italic">"{{this.m}}"</p>
+                    </div>
+                  </div>
+                {{/each}}
+              {{/if}}
+
+              {{#if alarm.v.tickets}}
+                <h4 style="margin:16px 0 8px 0">Historique des tickets</h4>
+                <ul style="margin:0;padding-left:20px;list-style-type:disc">
+                  {{#each alarm.v.tickets}}
+                    <li style="padding-bottom:4px">
+                      <a target="_blank" href="{{this.ticket_url}}">{{this.ticket}}</a> - créé par {{this.a}}
+                    </li>
+                  {{/each}}
+                </ul>
+              {{/if}}
+            </td>
+          </tr>
+        </tbody></table>
+
+        {{!-- CARD 5: INFORMATIONS D'ENRICHISSEMENT --}}
+        <table width="100%" style="background-color:#ffffff;border:1px solid #e0e0e0;border-radius:8px">
+          <tbody><tr>
+            <td>
+              <h3 style="margin:0 0 12px 0;font-size:1.2em">Informations d'Enrichissement</h3>
+              <table width="100%">
+                <tbody><tr style="vertical-align:top">
+                  <td width="33.3%" style="padding-right:10px">
+                    <strong style="display:block;margin-bottom:8px">Infos Entité (Ressource)</strong>
+                    <ul style="margin:0;padding:0;list-style:none;font-size:0.9em">
+                      {{#each alarm.entity.infos}}
+                        <li style="padding-bottom:4px"><strong>{{this.name}}:</strong> {{this.value}}</li>
+                      {{/each}}
+                    </ul>
+                  </td>
+                  <td width="33.3%" style="padding-left:10px;border-left:1px solid #e0e0e0">
+                    <strong style="display:block;margin-bottom:8px">Infos Composant</strong>
+                    <ul style="margin:0;padding:0;list-style:none;font-size:0.9em">
+                      {{#each alarm.entity.component_infos}}
+                        <li style="padding-bottom:4px"><strong>{{this.name}}:</strong> {{this.value}}</li>
+                      {{/each}}
+                    </ul>
+                  </td>
+                  <td width="33.3%" style="padding-left:10px;border-left:1px solid #e0e0e0">
+                    <strong style="display:block;margin-bottom:8px">Infos Alarme (Dynamiques)</strong>
+                    {{#if alarm.v.infos}}
+                      <ul style="margin:0;padding:0;list-style:none;font-size:0.9em">
+                        {{#each alarm.v.infos}}
+                          {{#each this}}
+                            <li style="padding-bottom:4px"><strong>{{@key}}:</strong> {{this}}</li>
+                          {{/each}}
+                        {{/each}}
+                      </ul>
+                    {{else}}
+                      <p style="margin:0;font-size:0.9em;color:#757575;font-style:italic">Aucune info dynamique.</p>
+                    {{/if}}
+                  </td>
+                </tr>
+              </tbody></table>
+            </td>
+          </tr>
+        </tbody></table>
+      </div>
   - &widget_entity_columns [
     { value: name },
     { value: type }
@@ -165,6 +354,11 @@ widget_templates:
       - ack
       - fastAck
       - cancel
+  tpl_alarm_more_infos:
+    <<: *widget_tpl
+    title: Default more infos
+    type: alarm_more_infos
+    content: *widget_alarm_more_infos
   tpl_entity_columns:
     <<: *widget_tpl
     title: Default columns
@@ -203,12 +397,14 @@ widgets:
       widgetColumnsTemplate: "@tpl_alarm_columns"
       widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_alarm_columns
+      moreInfoTemplateTemplate: "@tpl_alarm_more_infos"
+      moreInfoTemplateTemplateTitle: Default more infos
+      moreInfoTemplate: *widget_alarm_more_infos
       sort:
         order: ASC
       itemsPerPage: 10
       infoPopups: [ ]
       opened: true
-      moreInfoTemplate:
       periodic_refresh:
         value: 1
         unit: m
@@ -242,12 +438,14 @@ widgets:
       widgetColumnsTemplate: "@tpl_alarm_columns"
       widgetColumnsTemplateTitle: Default columns
       widgetColumns: *widget_alarm_columns
+      moreInfoTemplateTemplate: "@tpl_alarm_more_infos"
+      moreInfoTemplateTemplateTitle: Default more infos
+      moreInfoTemplate: *widget_alarm_more_infos
       sort:
         order: ASC
       itemsPerPage: 10
       infoPopups: [ ]
       opened: false
-      moreInfoTemplate:
       periodic_refresh:
         value: 1
         unit: m
@@ -947,6 +1145,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_entity_info_property:
+    <<: *permission_crud
+    _id: api_entity_info_property
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_api"
+      - "@group_api_general"
 
   # api -> rules
   permission_api_dynamicinfos:
@@ -1050,6 +1256,14 @@ permission:
     _id: api_external_data_table
     name: <Current()._id>
     description: External data
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_template_data:
+    <<: *permission_crud
+    _id: api_template_data
+    name: <Current()._id>
+    description: Template data
     groups:
       - "@group_api"
       - "@group_api_rules"
@@ -1700,6 +1914,15 @@ permission:
     api_permissions:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+  permission_models_templateTesting:
+    <<: *permission
+    _id: models_templateTesting
+    name: <Current()._id>
+    description: Models template testing
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -1920,6 +2143,16 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_external_data_table": 0
+  permission_models_exploitation_entity_info_property:
+    <<: *permission_crud
+    _id: models_exploitation_entityInfoProperty
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_entity_info_property": 0
 
   # technical -> profile
   permission_models_profile_corporatePattern:
@@ -3396,6 +3629,7 @@ role:
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
+      "@permission_models_templateTesting": 1
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
@@ -3498,6 +3732,7 @@ role:
       "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       "@permission_models_maintenance": 1
+      "@permission_models_exploitation_entity_info_property": 15
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -3548,6 +3783,7 @@ role:
       "@permission_api_snmprule": 15
       "@permission_api_snmpmib": 15
       "@permission_api_external_data_table": 15
+      "@permission_api_template_data": 15
       "@permission_api_corporate_pattern": 1
       "@permission_api_map": 15
       "@permission_api_share_token": 15
@@ -3564,6 +3800,7 @@ role:
       "@permission_api_techmetrics_settings": 15
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+      "@permission_api_entity_info_property": 15
       # Views permissions
       "@permission_view_open_alarms_general": 7
       "@permission_view_open_alarms_actions": 1

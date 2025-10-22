@@ -21,6 +21,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with empty modal 1`] = `
     >
       <pbehavior-form-stub
         form="[object Object]"
+        pbehaviorcountertype="true"
       />
     </div>
     <div
@@ -73,6 +74,7 @@ exports[`create-pbehavior Renders \`create-pbehavior\` with pbehavior 1`] = `
       <pbehavior-form-stub
         form="[object Object]"
         nopattern="true"
+        pbehaviorcountertype="true"
       />
     </div>
     <div

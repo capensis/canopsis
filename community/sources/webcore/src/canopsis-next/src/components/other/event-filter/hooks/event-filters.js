@@ -37,9 +37,12 @@ export const useEventFilterActions = (refresh = () => {}) => {
       name: MODALS.createEventFilter,
       config: {
         action: async (data) => {
-          await createEventFilter({ data });
+          const newEventFilter = await createEventFilter({ data });
+
           popups.success({ text: t('modals.createEventFilter.create.success') });
           refresh();
+
+          return newEventFilter;
         },
       },
     });
@@ -57,9 +60,12 @@ export const useEventFilterActions = (refresh = () => {}) => {
         title: t('modals.createEventFilter.duplicate.title'),
         rule: omit(rule, ['_id']),
         action: async (data) => {
-          await createEventFilter({ data });
+          const newEventFilter = await createEventFilter({ data });
+
           popups.success({ text: t('modals.createEventFilter.duplicate.success') });
           refresh();
+
+          return newEventFilter;
         },
       },
     });

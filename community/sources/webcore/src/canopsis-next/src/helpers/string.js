@@ -40,3 +40,11 @@ export const convertNumberToRoundedPercentString = (value, precision = 3) => {
 
   return `${roundedValue}%`;
 };
+
+/**
+ * Get string lines count
+ *
+ * @param {string} str
+ * @return {number}
+ */
+export const getStringLinesCount = (str = '') => str.split(/\r\n|\r|\n/).length;

@@ -326,6 +326,22 @@ export default {
       title: 'Dupliquer un rôle',
     },
   },
+  createEntityInfoProperty: {
+    create: {
+      title: 'Ajouter des propriétés d\'infos d\'entité',
+      success: 'Propriété d\'info d\'entité créée avec succès',
+    },
+    edit: {
+      title: 'Modifier des propriétés d\'infos d\'entité',
+      success: 'Propriété d\'info d\'entité mise à jour avec succès',
+    },
+    duplicate: {
+      title: 'Dupliquer des propriétés d\'infos d\'entité',
+    },
+    remove: {
+      success: 'Propriété d\'info d\'entité supprimée avec succès',
+    },
+  },
   createEventFilter: {
     create: {
       title: 'Créer une règle',
@@ -794,12 +810,28 @@ export default {
         + '<strong>Cette opération est irreversible.</strong>',
       phraseText: 'Veuillez saisir le nom de la Collection / Table pour confirmer:',
     },
+    templateTestingData: {
+      title: 'Supprimer les données de test',
+      text: 'Vous êtes sur le point de supprimer les données de test.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom des données de test pour confirmer :',
+    },
+    templateTestingTest: {
+      title: 'Supprimer le test',
+      text: 'Vous êtes sur le point de supprimer le test.\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du test pour confirmer :',
+    },
   },
   pbehaviorsCalendar: {
     title: 'Comportements périodiques',
     entity: {
       title: 'Comportements périodiques - {name}',
     },
+  },
+  confirmationRunAlarmFiltering: {
+    title: 'Lancer le filtrage d\'alarmes ?',
+    text: 'Cette procédure va impacter les <strong>performances</strong> de Canopsis',
   },
   createAlarmPattern: {
     create: {
@@ -1017,6 +1049,14 @@ export default {
     title: 'Confirmer la création de tickets',
     text: 'Des tickets existent déjà pour certaines alarmes.\nVoulez-vous en créer de nouveaux pour celles-ci ?',
   },
+  confirmationRemoveEntityInfoProperty: {
+    title: 'Supprimer la propriété d\'info d\'entité',
+    alert: 'Vous êtes sur le point de supprimer les propriétés des infos d\'entité <strong>{name}</strong>.\n'
+      + '<strong>L\'opération de suppression ne sera pas annulable.</strong>',
+    text: 'Dans les endroits suivants, <strong>l\'alias</strong> sera changé en <strong>nom d\'infos d\'entité</strong>,'
+      + ' le <strong>type sélectionné ne sera pas modifié</strong>: '
+      + '<ul><li>modèles</li><li>recherche avancée</li><li>infos ajoutées manuellement</li></ul>',
+  },
   createTag: {
     create: {
       title: 'Créer un tag',
@@ -1074,5 +1114,21 @@ export default {
     duplicate: {
       title: 'Dupliquer',
     },
+  },
+  createTemplateTestingData: {
+    create: {
+      title: 'Créer des données de test de modèle',
+    },
+    edit: {
+      title: 'Modifier les données de test de modèle',
+    },
+  },
+  createTemplateTestingTest: {
+    edit: {
+      title: 'Modifier le test',
+    },
+  },
+  createTemplateData: {
+    title: 'Créer des données de modèle',
   },
 };

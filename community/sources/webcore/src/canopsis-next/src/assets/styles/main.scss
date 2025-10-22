@@ -154,6 +154,10 @@ html {
   }
 }
 
+.v-tab.v-tab--disabled {
+  opacity: .5;
+}
+
 .c-nowrap {
   white-space: nowrap;
 }
@@ -388,6 +392,18 @@ html {
       text-overflow: ellipsis;
       display: block;
     }
+  }
+}
+
+.v-menu__content {
+  max-height: 90vh;
+}
+
+.top-bar-menu__content {
+  max-height: 95vh;
+
+  .v-avatar {
+    border-radius: unset;
   }
 }
 

@@ -67,6 +67,10 @@ export default {
     title: 'Données externes',
   },
 
+  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
+    title: 'Informations d\'entité',
+  },
+
   /**
    * Admin access
    */
@@ -137,6 +141,9 @@ export default {
   [USER_PERMISSIONS.technical.eventsRecord]: {
     title: 'Enregistrements d\'événements',
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
+  },
+  [USER_PERMISSIONS.technical.templateTesting]: {
+    title: 'Studio Templates',
   },
 
   /**

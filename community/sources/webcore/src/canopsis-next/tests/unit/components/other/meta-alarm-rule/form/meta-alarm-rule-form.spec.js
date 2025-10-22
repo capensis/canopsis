@@ -2,6 +2,7 @@ import Faker from 'faker';
 
 import { generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { randomArrayItem } from '@unit/utils/array';
+import { createMockedStoreModules, createEntityInfoPropertyModule } from '@unit/utils/store';
 
 import { META_ALARMS_FORM_STEPS, META_ALARMS_RULE_TYPES } from '@/constants';
 
@@ -22,6 +23,10 @@ const selectMetaAlarmRuleTypeForm = wrapper => wrapper.find('meta-alarm-rule-typ
 describe('meta-alarm-rule-form', () => {
   const form = metaAlarmRuleToForm();
 
+  const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+
+  const store = createMockedStoreModules([entityInfoPropertyModule]);
+
   const factory = generateShallowRenderer(MetaAlarmRuleForm, { stubs });
   const snapshotFactory = generateRenderer(MetaAlarmRuleForm, { stubs });
 
@@ -30,6 +35,7 @@ describe('meta-alarm-rule-form', () => {
       propsData: {
         form,
       },
+      store,
     });
 
     const newFields = {
@@ -51,6 +57,7 @@ describe('meta-alarm-rule-form', () => {
       propsData: {
         form,
       },
+      store,
     });
 
     const data = {
@@ -64,7 +71,9 @@ describe('meta-alarm-rule-form', () => {
   });
 
   test('Renders `meta-alarm-rule-form` with default props', () => {
-    const wrapper = snapshotFactory();
+    const wrapper = snapshotFactory({
+      store,
+    });
 
     expect(wrapper).toMatchSnapshot();
   });
@@ -78,6 +87,7 @@ describe('meta-alarm-rule-form', () => {
         alarmInfos: [{ value: 'alarm-infos' }],
         entityInfos: [{ value: 'alarm-infos' }],
       },
+      store,
     });
 
     expect(wrapper).toMatchSnapshot();

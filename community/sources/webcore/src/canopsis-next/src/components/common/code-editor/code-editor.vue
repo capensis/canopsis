@@ -23,6 +23,7 @@ import initEditor from 'monaco-mermaid';
 import iPlasticTheme from 'monaco-themes/themes/iPlastic.json';
 
 import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
+import 'monaco-editor/esm/vs/language/json/monaco.contribution';
 
 import { promisedWait } from '@/helpers/async';
 
@@ -77,6 +78,12 @@ export default {
     errorMarkers(errorMarkers) {
       if (this.$editor) {
         this.$monaco.editor.setModelMarkers(this.$editor.getModel(), 'test', errorMarkers);
+      }
+    },
+
+    language(language) {
+      if (this.$editor) {
+        this.$monaco.editor.setModelLanguage(this.$editor.getModel(), language);
       }
     },
   },
