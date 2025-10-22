@@ -36,6 +36,7 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
+    after="[object Object]"
     hide-value-on-false=""
     label="Delete resolved alarms data"
     name="alarm.delete_after"
@@ -70,6 +71,7 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
+    after="[object Object]"
     hide-value-on-false=""
     label="Delete resolved alarms data"
     name="alarm.delete_after"

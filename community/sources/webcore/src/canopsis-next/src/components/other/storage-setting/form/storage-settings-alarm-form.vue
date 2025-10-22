@@ -22,14 +22,20 @@
       v-field="form.delete_after"
       :label="$t('storageSetting.alarm.deleteAfter')"
       :suffix="$t('common.after')"
+      :after="form.archive_after"
       name="alarm.delete_after"
       switcher
       hide-value-on-false
+      @input="validateDeleteAfter"
     />
   </c-information-block>
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
+import { useValidator } from '@/hooks/validator/validator';
+
 import StorageSettingsHistoryMessage from '../partials/storage-settings-history-message.vue';
 
 export default {
@@ -48,6 +54,15 @@ export default {
       type: Object,
       required: false,
     },
+  },
+  setup() {
+    const validator = useValidator();
+
+    const validateDeleteAfter = () => nextTick(() => validator.validate('alarm.delete_after'));
+
+    return {
+      validateDeleteAfter,
+    };
   },
 };
 </script>
