@@ -43,6 +43,7 @@
               :name="valueFieldName"
               :error-messages="errors.collect(valueFieldName)"
               :prefix="eventExtraPrefix"
+              data-vv-validate-on="blur"
               clearable
             />
           </v-layout>
@@ -94,7 +95,7 @@
                 key="value"
                 :label="$t('common.value')"
                 :name="valueFieldName"
-                :types="mixedFieldTypes"
+                :types="fieldTypes"
                 class="ml-2"
               />
             </v-flex>
