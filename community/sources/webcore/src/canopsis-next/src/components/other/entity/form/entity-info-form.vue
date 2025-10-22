@@ -18,20 +18,19 @@
     <c-mixed-field
       v-field="form.value"
       :label="$t('common.value')"
-      :types="inputTypes"
+      :types="fieldTypes"
       required
     />
   </v-layout>
 </template>
 
 <script>
-import { PATTERN_FIELD_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { formMixin } from '@/mixins/form';
+import { PATTERN_FIELD_TYPES } from '@/constants';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -50,37 +49,33 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    infosNames() {
-      return this.infos.map(({ name }) => name);
-    },
+  setup(props) {
+    const infosNames = computed(() => props.infos.map(({ name }) => name));
 
-    descriptionRules() {
-      return {
-        required: true,
-      };
-    },
+    const descriptionRules = computed(() => ({
+      required: true,
+    }));
 
-    nameRules() {
-      return {
-        required: true,
-        unique: {
-          values: this.infosNames,
-          initialValue: this.entityInfo?.name,
-        },
-      };
-    },
+    const nameRules = computed(() => ({
+      required: true,
+      unique: {
+        values: infosNames.value,
+        initialValue: props.entityInfo?.name,
+      },
+    }));
 
-    inputTypes() {
-      return [
-        { value: PATTERN_FIELD_TYPES.string },
-        { value: PATTERN_FIELD_TYPES.number },
-        { value: PATTERN_FIELD_TYPES.boolean },
-        { value: PATTERN_FIELD_TYPES.null },
-        { value: PATTERN_FIELD_TYPES.stringArray },
-        { value: PATTERN_FIELD_TYPES.timestamp },
-      ];
-    },
+    const fieldTypes = computed(() => [
+      { value: PATTERN_FIELD_TYPES.string },
+      { value: PATTERN_FIELD_TYPES.number },
+      { value: PATTERN_FIELD_TYPES.boolean },
+      { value: PATTERN_FIELD_TYPES.stringArray },
+    ]);
+
+    return {
+      descriptionRules,
+      nameRules,
+      fieldTypes,
+    };
   },
 };
 </script>
