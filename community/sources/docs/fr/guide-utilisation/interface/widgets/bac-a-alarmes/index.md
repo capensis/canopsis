@@ -151,18 +151,15 @@ Les paramètres qui sont décrits dans ce paragraphe concernent les éléments s
 Afin d'**ajouter une colonne**, cliquez sur le bouton :material-plus:.
 Il vous reste alors à sélectionner la colonne souhaitée dans la liste.
 
-Lors de la création d'une colonne, il est possible de définir des paramètres
+Chaque colonne peut être configurée plus finement en fonction de son type :
 
-!!! tip "Information" 
-    Certains type de colonne ne prennent pas tout les paramètres.
-
-| Option                  | Utilisation                                                                            |
-|-------------------------|----------------------------------------------------------------------------------------|
-| Etiquette personnalisée | Permet de définir un nom visible pour la colonne.                                      |
-| Modèle personnalisé     | Permet de définir le contenu qui sera affiché dans la colonne.                         |
-| Est-ce du HTML ?        | Si le champs contient du code HTML et que cette option est activé alors il sera rendu. |
-| Indicateur de couleurs  | Ajoute un fond coloré en fonction de la sévérité ou de la priorité de l'alarme.        |
-| Filtre au clic          | Permet en cliquant sur une valeur de la colonne de rajouter le filtre à la recherche.  |
+| Option                      | Utilisation                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| **Étiquette personnalisée** | Définit un alias à afficher pour la colonne.                                                |
+| **Modèle personnalisé**     | Personnalise le contenu affiché dans la colonne à l'aide d'un template Handlebars.          |
+| **Interprétation HTML**     | Permet d'afficher le HTML contenu dans la colonne (au lieu de le montrer comme texte brut). |
+| **Indicateur de couleur**   | Ajoute un fond coloré en fonction de la sévérité ou de la priorité de l'alarme.             |
+| **Filtre au clic**          | Déclenche une recherche basée sur le contenu de la colonne lorsqu'on clique dessus.         |
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
