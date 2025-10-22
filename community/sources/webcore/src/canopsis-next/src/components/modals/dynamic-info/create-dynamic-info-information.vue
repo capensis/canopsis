@@ -5,23 +5,13 @@
         <span>{{ $t('modals.createDynamicInfoInformation.create.title') }}</span>
       </template>
       <template #text="">
-        <div>
-          <v-text-field
-            v-model="form.name"
-            v-validate="nameRules"
-            :label="$t('common.name')"
-            :error-messages="errors.collect('name')"
-            name="name"
-            autofocus
-          />
-          <c-mixed-field
-            v-model="form.value"
-            :label="$t('common.value')"
-            :types="fieldTypes"
-            name="value"
-            required
-          />
-        </div>
+        <dynamic-info-information-form
+          v-model="form"
+          :existing-names="existingNames"
+          :initial-name="initialName"
+          :variables="variables"
+          :copy-variables="copyVariables"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -33,6 +23,7 @@
         </v-btn>
         <v-btn
           :disabled="isDisabled"
+          :loading="submitting"
           class="primary"
           type="submit"
         >
@@ -44,11 +35,17 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY, PATTERN_FIELD_TYPES } from '@/constants';
+import { computed, ref } from 'vue';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { MODALS, VALIDATION_DELAY } from '@/constants';
+
+import { dynamicInfoInformationToForm } from '@/helpers/entities/dynamic-info/information/form';
+
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+
+import DynamicInfoInformationForm from '@/components/other/dynamic-info/form/fields/dynamic-info-information-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -61,62 +58,52 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    const { info = {} } = this.modal.config;
+  components: {
+    DynamicInfoInformationForm,
+    ModalWrapper,
+  },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const { config, close } = useInnerModal(props);
+
+    const { info = {} } = config.value;
+
+    const form = ref(dynamicInfoInformationToForm(info));
+
+    const initialName = computed(() => config.value.info && config.value.info.name);
+    const existingNames = computed(() => config.value.existingNames);
+    const variables = computed(() => config.value.variables);
+    const copyVariables = computed(() => config.value.copyVariables);
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        const data = await config.value.action?.(form.value);
+
+        close();
+
+        return data;
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
 
     return {
-      form: {
-        name: info.name ?? '',
-        value: info.value ?? '',
-      },
+      form,
+
+      existingNames,
+      initialName,
+      variables,
+      copyVariables,
+      isDisabled,
+      submitting,
+      submit,
     };
-  },
-  computed: {
-    initialName() {
-      return this.config.info && this.config.info.name;
-    },
-
-    existingNames() {
-      return this.config.existingNames;
-    },
-
-    nameRules() {
-      return {
-        required: true,
-        unique: {
-          values: this.existingNames,
-          initialValue: this.initialName,
-        },
-      };
-    },
-
-    fieldTypes() {
-      return [
-        { value: PATTERN_FIELD_TYPES.string },
-        { value: PATTERN_FIELD_TYPES.number },
-        { value: PATTERN_FIELD_TYPES.boolean },
-        { value: PATTERN_FIELD_TYPES.stringArray },
-      ];
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(this.form);
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>
