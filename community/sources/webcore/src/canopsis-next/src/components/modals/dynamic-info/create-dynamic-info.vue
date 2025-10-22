@@ -5,10 +5,20 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <dynamic-info-form
+        <template-testing-test-variables-wrapper
           v-model="form"
-          :is-disabled-id-field="isDisabledIdField"
-        />
+          :rule-id="dynamicInfoId"
+          :type="type"
+        >
+          <template #default="{ templateVars, copyVars }">
+            <dynamic-info-form
+              v-model="form"
+              :is-disabled-id-field="isDisabledIdField"
+              :template-vars="templateVars"
+              :copy-vars="copyVars"
+            />
+          </template>
+        </template-testing-test-variables-wrapper>
       </template>
       <template #actions="">
         <v-btn
@@ -32,15 +42,19 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed, ref } from 'vue';
+
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { dynamicInfoToForm, formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
 
 import DynamicInfoForm from '@/components/other/dynamic-info/form/dynamic-info-form.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -50,38 +64,53 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  components: { DynamicInfoForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+  components: {
+    DynamicInfoForm,
+    TemplateTestingTestVariablesWrapper,
+    ModalWrapper,
+  },
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.dynamicInfo;
+
+    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+
+    const form = ref(dynamicInfoToForm(config.value.dynamicInfo));
+
+    const dynamicInfoId = computed(() => config.value.dynamicInfo?._id);
+    const title = computed(() => config.value.title || t('modals.createDynamicInfo.create.title'));
+    const isDisabledIdField = computed(() => config.value.isDisabledIdField);
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        const data = await config.value.action?.(formToDynamicInfo(form.value));
+
+        close();
+
+        return data;
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
     return {
-      form: dynamicInfoToForm(this.modal.config.dynamicInfo),
+      form,
+      config,
+      dynamicInfoId,
+      type,
+      title,
+      isDisabledIdField,
+      isDisabled,
+      submitting,
+      submit,
     };
-  },
-  computed: {
-    title() {
-      return this.config.title || this.$t('modals.createDynamicInfo.create.title');
-    },
-
-    isDisabledIdField() {
-      return this.config.isDisabledIdField;
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToDynamicInfo(this.form));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

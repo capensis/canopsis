@@ -110,7 +110,7 @@ describe('c-json-field', () => {
     const textarea = wrapper.find('.v-textarea textarea');
 
     expect(textarea.element.value).toBe(defaultValue);
-    expect(popupErrorFn).toBeCalledWith({ text: 'Something went wrong...' });
+    expect(consoleErrorSpy).toHaveBeenCalled();
 
     consoleErrorSpy.mockClear();
   });

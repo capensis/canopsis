@@ -6,12 +6,9 @@ import { createCRUDModule } from '@/store/plugins/entities';
 
 export default createCRUDModule({
   route: API_ROUTES.declareTicket.rules,
+  bulkRoute: API_ROUTES.declareTicket.bulkRules,
 }, {
   actions: {
-    bulkRemove(context, { data }) {
-      return request.delete(API_ROUTES.declareTicket.bulkRules, { data });
-    },
-
     createTestDeclareTicketExecution(context, { data }) {
       return request.post(API_ROUTES.declareTicket.testExecution, data);
     },

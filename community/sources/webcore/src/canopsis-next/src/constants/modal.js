@@ -105,6 +105,7 @@ export const MODALS = {
   createService: 'create-service',
   entityDependenciesList: 'entity-dependencies-list',
   entitiesRootCauseDiagram: 'entities-root-cause-diagram',
+  createEntityInfoProperty: 'create-entity-info-property',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
@@ -127,4 +128,7 @@ export const MODALS = {
   createExternalDataTable: 'create-external-data-table',
   createExternalDataTableRecord: 'create-external-data-table-record',
   importExternalDataTableRecords: 'import-external-data-table-records',
+
+  createTemplateTestingData: 'create-template-testing-data',
+  createTemplateTestingTest: 'create-template-testing-test',
 };

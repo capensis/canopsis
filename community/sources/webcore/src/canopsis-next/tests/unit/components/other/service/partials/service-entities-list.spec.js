@@ -180,7 +180,7 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAckRemove);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.textFieldEditor,
         config: {
@@ -200,7 +200,7 @@ describe('service-entities-list', () => {
 
     await config.action({ comment });
 
-    expect(bulkCreateAlarmAckremoveEvent).toBeCalledWith(
+    expect(bulkCreateAlarmAckremoveEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -230,7 +230,7 @@ describe('service-entities-list', () => {
 
     await flushPromises();
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createAssociateTicketEvent,
         config: {
@@ -248,7 +248,7 @@ describe('service-entities-list', () => {
 
     await config.action(event);
 
-    expect(bulkCreateAlarmAssocticketEvent).toBeCalledWith(
+    expect(bulkCreateAlarmAssocticketEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -285,7 +285,7 @@ describe('service-entities-list', () => {
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityValidate);
     await flushPromises();
 
-    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
+    expect(bulkCreateAlarmAckEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -295,7 +295,7 @@ describe('service-entities-list', () => {
       },
     );
 
-    expect(bulkCreateAlarmChangestateEvent).toBeCalledWith(
+    expect(bulkCreateAlarmChangestateEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -334,7 +334,7 @@ describe('service-entities-list', () => {
 
     await flushPromises();
 
-    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
+    expect(bulkCreateAlarmAckEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -344,7 +344,7 @@ describe('service-entities-list', () => {
       },
     );
 
-    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
+    expect(bulkCreateAlarmCancelEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -374,7 +374,7 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPause);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createServicePauseEvent,
         config: {
@@ -397,7 +397,7 @@ describe('service-entities-list', () => {
 
     await config.action({ comment, reason });
 
-    expect(createEntityPbehaviors).toBeCalledWith(
+    expect(createEntityPbehaviors).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -414,6 +414,7 @@ describe('service-entities-list', () => {
           tstart: nowTimestamp / 1000,
           tstop: null,
           type: undefined,
+          exec_pattern: true,
         }],
       },
     );
@@ -438,7 +439,7 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityPlay);
 
-    expect(removeEntityPbehaviors).toBeCalledWith(
+    expect(removeEntityPbehaviors).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -467,7 +468,7 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityCancel);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.textFieldEditor,
         config: {
@@ -483,7 +484,7 @@ describe('service-entities-list', () => {
 
     await config.action(comment);
 
-    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
+    expect(bulkCreateAlarmCancelEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{ _id: entity.alarm_id, comment }],
@@ -507,7 +508,7 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityComment);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createCommentEvent,
         config: {
@@ -522,7 +523,7 @@ describe('service-entities-list', () => {
 
     await config.action({ comment });
 
-    expect(bulkCreateAlarmCommentEvent).toBeCalledWith(
+    expect(bulkCreateAlarmCommentEvent).toHaveBeenCalledWith(
       expect.any(Object),
       {
         data: [{ _id: entity.alarm_id, comment }],
@@ -573,7 +574,7 @@ describe('service-entities-list', () => {
 
     expect(fetchAssignedDeclareTicketsWithoutStore).toBeCalled();
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.createDeclareTicketEvent,
         config: {
@@ -592,7 +593,7 @@ describe('service-entities-list', () => {
     $modals.show.mockReset();
     await config.action(events);
 
-    expect($modals.show).toBeCalledWith(
+    expect($modals.show).toHaveBeenCalledWith(
       {
         name: MODALS.executeDeclareTickets,
         config: {
@@ -620,7 +621,7 @@ describe('service-entities-list', () => {
 
     await applyEntitiesAction(wrapper, WEATHER_ACTIONS_TYPES.entityAck);
 
-    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
+    expect(bulkCreateAlarmAckEvent).toHaveBeenCalledWith(
       expect.any(Object),
       { data: [] },
     );

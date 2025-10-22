@@ -14,16 +14,20 @@ export const DEFAULT_ENTITY_MODULE_TYPES = {
  * @param {Object} options - Configuration options for the CRUD module.
  * @param {string} options.route - The base API route for the entity.
  * @param {boolean} [options.namespaced = true] - Namespaced flag.
+ * @param {boolean} [options.withWithoutStore = false] - Flag to include fetchListWithoutStore action.
  * @param {Object} [module = {}] - Additional module configuration.
  * @returns {Object} An object containing CRUD actions.
  * @property {Function} create - Action to create an entity.
  * @property {Function} update - Action to update an entity by ID.
  * @property {Function} remove - Action to remove an entity by ID.
+ * @property {Function} [fetchListWithoutStore] - Action to fetch list without storing (if enabled).
  */
-export const createBasicCRUDModule = ({ route, namespaced = true } = {}, module = {}) => merge({
-  namespaced,
-
-  actions: {
+export const createBasicCRUDModule = ({
+  route,
+  namespaced = true,
+  withWithoutStore = false,
+} = {}, module = {}) => {
+  const moduleActions = {
     /**
      * Create entity by data
      *
@@ -57,8 +61,17 @@ export const createBasicCRUDModule = ({ route, namespaced = true } = {}, module 
     remove(context, { id } = {}) {
       return request.delete(`${route}/${encodeURIComponent(id)}`);
     },
-  },
-}, module);
+  };
+
+  if (withWithoutStore) {
+    moduleActions.fetchListWithoutStore = (context, { params } = {}) => request.get(route, { params });
+  }
+
+  return merge({
+    namespaced,
+    actions: moduleActions,
+  }, module);
+};
 
 /**
  * Creates a Vuex module for CRUD operations with additional features.
@@ -70,6 +83,7 @@ export const createBasicCRUDModule = ({ route, namespaced = true } = {}, module 
  * @param {Function} [options.metaPreparer = d => d?.meta] - Function to prepare meta information from the response.
  * @param {boolean} [options.withFetchingParams] - Flag to enable fetching with parameters.
  * @param {boolean} [options.withWithoutStore] - Flag to enable fetching without storing data.
+ * @param {string} [options.bulkRoute] - The base API route for the bulk entity.
  * @param {Object} [module = {}] - Additional module configuration.
  * @returns {Object} A Vuex module with state, getters, mutations, and actions for CRUD operations.
  */
@@ -80,6 +94,7 @@ export const createCRUDModule = ({
   metaPreparer = d => d?.meta,
   withFetchingParams,
   withWithoutStore,
+  bulkRoute,
 }, module = {}) => {
   const moduleState = {
     items: [],
@@ -147,6 +162,10 @@ export const createCRUDModule = ({
 
   if (withWithoutStore) {
     moduleActions.fetchListWithoutStore = (context, options) => request.get(route, options);
+  }
+
+  if (bulkRoute) {
+    moduleActions.bulkRemove = (context, { data }) => request.delete(bulkRoute, { data });
   }
 
   return merge({

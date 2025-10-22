@@ -9,6 +9,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/redis/go-redis/v9"
 )
@@ -21,7 +22,7 @@ type DelayedScenario struct {
 	Paused        bool             `json:"paused"`
 	TimeLeft      time.Duration    `json:"time_left"`
 
-	AdditionalData AdditionalData `json:"additional_data"`
+	AdditionalData types.AdditionalData `json:"additional_data"`
 }
 
 type DelayedScenarioStorage interface {

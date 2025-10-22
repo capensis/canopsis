@@ -254,6 +254,7 @@ export default {
     [USER_PERMISSIONS.technical.techmetrics]: 'Healthcheck - engines\' metrics',
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Parameters - widget templates',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Parameters - import / export',
+    [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
 
     /**
      * Technical Admin Access
@@ -277,6 +278,7 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
     [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'External data',
+    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Entity infos',
 
     /**
     * Technical Admin Notification
@@ -318,6 +320,7 @@ export default {
     [USER_PERMISSIONS.api.general.entitycategory]: 'Entity categories',
     [USER_PERMISSIONS.api.general.entitycomment]: 'Entity comments',
     [USER_PERMISSIONS.api.general.entityservice]: 'Entity services',
+    [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Entity infos properties',
     [USER_PERMISSIONS.api.general.event]: 'Events',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Export configurations',
     [USER_PERMISSIONS.api.general.files]: 'Files',
@@ -345,6 +348,7 @@ export default {
     [USER_PERMISSIONS.api.general.view]: 'Views',
     [USER_PERMISSIONS.api.general.viewgroup]: 'View groups',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Widget templates',
+    [USER_PERMISSIONS.api.general.templateData]: 'Template data',
 
     /**
      * API Permissions Rules
@@ -378,6 +382,7 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorException]: 'PBehavior exceptions',
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'PBehavior reasons',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'PBehavior types',
+    [USER_PERMISSIONS.api.planning.pbehaviorPatterns]: 'Pbehavior patterns',
   },
 
   conditionalTooltips: {

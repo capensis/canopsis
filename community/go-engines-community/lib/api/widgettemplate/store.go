@@ -31,8 +31,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		widgetCollection: dbClient.Collection(mongo.WidgetMongoCollection),
 		authorProvider:   authorProvider,
 
-		widgetParameters: view.GetWidgetTemplateParameters(),
-
+		widgetParameters:      view.GetWidgetTemplateParameters(),
 		defaultSearchByFields: []string{"_id", "title", "type", "author.name"},
 		defaultSortBy:         "created",
 	}
@@ -44,8 +43,7 @@ type store struct {
 	widgetCollection mongo.DbCollection
 	authorProvider   author.Provider
 
-	widgetParameters map[string]map[string][]string
-
+	widgetParameters      map[string]map[string][]string
 	defaultSearchByFields []string
 	defaultSortBy         string
 }

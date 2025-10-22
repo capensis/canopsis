@@ -6,6 +6,7 @@ import pbehaviorReasonsModule from './pbehavior-reasons';
 import pbehaviorTimespanModule from './pbehavior-timespan';
 import pbehaviorExceptionsModule from './pbehavior-exceptions';
 import pbehaviorTypesModule from './pbehavior-types';
+import pbehaviorPatternsModule from './pbehavior-patterns';
 import remediationInstructionModule from './remediation-instruction';
 import remediationInstructionExecutionModule from './remediation-instruction-execution';
 import remediationConfigurationModule from './remediation-configuration';
@@ -21,6 +22,7 @@ import permissionModule from './permission';
 import eventFilterModule from './event-filter';
 import infoModule from './info';
 import infosModule from './infos';
+import entityInfoPropertyModule from './entity-info-property';
 import snmpRuleModule from './snmp/rule';
 import snmpMibModule from './snmp/mib';
 import dynamicInfoModule from './dynamic-info';
@@ -52,9 +54,7 @@ import shareTokenModule from './share-token';
 import techMetricsModule from './tech-metrics';
 import widgetTemplateModule from './widget-template';
 import metaAlarmModule from './meta-alarm';
-import templateVarsModule from './template-vars';
 import declareTicketRuleModule from './declare-ticket-rule';
-import templateValidatorModule from './template-validator';
 import LinkRuleRuleModule from './links-rule';
 import metricsSettingsModule from './metrics-settings';
 import aggregatedMetricsModule from './aggregated-metrics';
@@ -67,6 +67,8 @@ import availabilityModule from './availability';
 import eventsRecordModule from './events-record';
 import dbExportModule from './db-export';
 import externalDataTableModule from './external-data-table';
+import templateModule from './template';
+import copyModule from './copy';
 
 export default {
   alarm: alarmModule,
@@ -77,6 +79,7 @@ export default {
   pbehaviorTimespan: pbehaviorTimespanModule,
   pbehaviorExceptions: pbehaviorExceptionsModule,
   pbehaviorTypes: pbehaviorTypesModule,
+  pbehaviorPatterns: pbehaviorPatternsModule,
   userPreference: userPreferenceModule,
   view: viewModule,
   role: roleModule,
@@ -85,6 +88,7 @@ export default {
   eventFilter: eventFilterModule,
   info: infoModule,
   infos: infosModule,
+  entityInfoProperty: entityInfoPropertyModule,
   snmpRule: snmpRuleModule,
   snmpMib: snmpMibModule,
   dynamicInfo: dynamicInfoModule,
@@ -123,9 +127,7 @@ export default {
   techMetrics: techMetricsModule,
   widgetTemplate: widgetTemplateModule,
   metaAlarm: metaAlarmModule,
-  templateVars: templateVarsModule,
   declareTicketRule: declareTicketRuleModule,
-  templateValidator: templateValidatorModule,
   linkRule: LinkRuleRuleModule,
   metricsSettings: metricsSettingsModule,
   aggregatedMetrics: aggregatedMetricsModule,
@@ -138,4 +140,6 @@ export default {
   eventsRecord: eventsRecordModule,
   dbExport: dbExportModule,
   externalDataTable: externalDataTableModule,
+  template: templateModule,
+  copy: copyModule,
 };

@@ -20,6 +20,7 @@
     <c-name-field
       v-field="form.name"
       :disabled="disabledCommon"
+      required
       autofocus
     />
     <v-text-field
@@ -70,6 +71,7 @@
       v-else
       v-field="form.steps"
       :disabled="disabled"
+      :template-vars="templateVars"
     />
     <remediation-instruction-approval-form
       v-if="!disabledCommon"
@@ -120,6 +122,10 @@ export default {
     requiredApprove: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {

@@ -29,6 +29,7 @@
         :index="index"
         :operation-number="getOperationNumber(index)"
         :disabled="disabled"
+        :template-vars="templateVars"
         class="py-1"
         @remove="removeOperation(index)"
       />
@@ -80,6 +81,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {

@@ -27,7 +27,7 @@ func MatchAlarmPattern(p pattern.Alarm, alarm *types.Alarm) (bool, error) {
 			if infoName := pattern.GetAlarmInfoName(f); infoName != "" {
 				infoVal, infoExists := alarm.GetInfoVal(infoName)
 
-				matched, err = v.MatchInfoCondition(infoVal, infoExists)
+				matched, err = v.MatchAlarmInfoCondition(infoVal, infoExists)
 				if err != nil {
 					return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
 				}

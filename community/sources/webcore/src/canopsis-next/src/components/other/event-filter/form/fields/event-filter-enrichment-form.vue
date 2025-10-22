@@ -7,6 +7,7 @@
       <event-filter-enrichment-actions-form
         v-field="form.config.actions"
         :variables="templateVariables"
+        :copy-variables="copyVariables"
         :name="name"
         :set-tags-items="setTagsItems"
       />
@@ -62,6 +63,10 @@ export default {
       default: 'config.actions',
     },
     templateVariables: {
+      type: Array,
+      default: () => [],
+    },
+    copyVariables: {
       type: Array,
       default: () => [],
     },
