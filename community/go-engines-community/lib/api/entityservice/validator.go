@@ -24,7 +24,9 @@ type basicValidator struct {
 }
 
 func NewValidator(client mongo.DbClient) Validator {
-	return &basicValidator{dbClient: client}
+	return &basicValidator{
+		dbClient: client,
+	}
 }
 
 func (v *basicValidator) ValidateEditRequest(ctx context.Context, sl validator.StructLevel) {

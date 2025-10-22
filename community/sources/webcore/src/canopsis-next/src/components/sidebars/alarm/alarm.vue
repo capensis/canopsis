@@ -233,10 +233,10 @@
       :type="$constants.ENTITIES_TYPES.alarm"
       :templates="alarmColumnsWidgetTemplates"
       :templates-pending="widgetTemplatesPending"
-      :variables="columnsVariables"
+      :variables="templateVars.column"
       datetime-format
       with-instructions
-      with-simple-template
+      with-template
       optional-infos-attributes
     />
     <charts-form v-model="form.parameters.charts" />
@@ -244,20 +244,20 @@
 </template>
 
 <script>
-import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS, ALARM_PAYLOADS_VARIABLES } from '@/constants';
+import { SIDE_BARS, ALARM_UNSORTABLE_FIELDS, ALARM_FIELDS_TO_LABELS_KEYS } from '@/constants';
 
 import { formToWidgetColumns } from '@/helpers/entities/widget/column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '@/helpers/entities/widget/list';
 
 import { widgetSettingsMixin } from '@/mixins/widget/settings';
 import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 import { alarmVariablesMixin } from '@/mixins/widget/variables';
 import { widgetTemplatesMixin } from '@/mixins/widget/templates';
 import { permissionsWidgetsAlarmsListFilters } from '@/mixins/permissions/widgets/alarms-list/filters';
 import {
   permissionsWidgetsAlarmsListRemediationInstructionsFilters,
 } from '@/mixins/permissions/widgets/alarms-list/remediation-instructions-filters';
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html';
 
@@ -317,9 +317,9 @@ export default {
     FieldQuickAlarmActions,
   },
   mixins: [
-    payloadVariablesMixin,
     widgetSettingsMixin,
     entitiesInfosMixin,
+    entitiesEntityInfoPropertyMixin,
     alarmVariablesMixin,
     widgetTemplatesMixin,
     permissionsWidgetsAlarmsListFilters,
@@ -341,19 +341,11 @@ export default {
     defaultExportPdfTemplateValue() {
       return ALARM_EXPORT_PDF_TEMPLATE;
     },
-
-    columnsVariables() {
-      return [
-        ...this.alarmPayloadVariables,
-        {
-          value: ALARM_PAYLOADS_VARIABLES.infosValue,
-          text: this.$t('alarm.fields.alarmInfos'),
-        },
-      ];
-    },
   },
   mounted() {
     this.fetchInfos();
+    this.fetchTemplateVars();
+    this.fetchAllEntityInfoPropertiesList();
   },
   methods: {
     updateTemplate(field, template, value) {
