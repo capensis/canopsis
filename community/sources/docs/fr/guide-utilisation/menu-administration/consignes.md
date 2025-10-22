@@ -143,8 +143,6 @@ Par ailleurs, lorsque le résultat de l'exécution d'une remédiation n'est pas 
 * Comportement périodique terminé
 * L'alarme a reçu un nouvel événement de type "check"
 
-
-
 ### Déclenchement d'une consigne et activation d'une alarme
 
 L'option [ActivateAlarmAfterAutoRemediation](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsisalarm) permet de décaler l'activation de l'alarme une fois la remédiation automatique terminée.
