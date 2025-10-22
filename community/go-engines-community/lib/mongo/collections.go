@@ -108,4 +108,7 @@ const (
 
 	UserNotificationSettingsCollection = "user_notification_settings"
 	UserNotificationCollection         = "user_notification"
+
+	TemplateTestDataCollection = "template_data"
+	TemplateTestCollection     = "template_test"
 )

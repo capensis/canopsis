@@ -50,6 +50,8 @@ type MongoQueryBuilder struct {
 	computedFields                   bson.M
 	// excludedFields is used to remove redundant data from result
 	excludedFields []string
+
+	transformer common.PatternFieldsTransformer
 }
 
 type lookupWithKey struct {
@@ -57,7 +59,7 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection: client.Collection(mongo.WidgetFiltersMongoCollection),
 		authorProvider:   authorProvider,
@@ -66,6 +68,8 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider)
 			"_id", "name", "type",
 		},
 		defaultSortBy: "_id",
+
+		transformer: transformer,
 	}
 }
 
@@ -101,7 +105,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handleEntityPattern(r.ListRequest)
+	err = q.handleEntityPattern(ctx, r.ListRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -346,7 +350,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 	return nil
 }
 
-func (q *MongoQueryBuilder) handleEntityPattern(r ListRequest) error {
+func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListRequest) error {
 	if r.EntityPattern == "" {
 		return nil
 	}
@@ -357,7 +361,14 @@ func (q *MongoQueryBuilder) handleEntityPattern(r ListRequest) error {
 		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 	}
 
-	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
+	transformedEntityPattern, err := q.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		EntityPattern: entityPattern,
+	})
+	if err != nil {
+		return err
+	}
+
+	entityPatternQuery, err := db.EntityPatternToMongoQuery(transformedEntityPattern.EntityPattern, "")
 	if err != nil {
 		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 	}
