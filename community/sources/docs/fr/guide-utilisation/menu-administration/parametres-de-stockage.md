@@ -137,24 +137,22 @@ Passé le délai configuré, ces données sont automatiquement supprimées pour 
 
 ## Métriques externes
 
-Les métriques externes issues des événements ([perf_data]((guide-developpement/structures/#detail-par-type-devenement)) sont stockées dans la table TimescaleDB `perf_data`.  
+Les métriques externes issues des événements ([perf_data](../../../guide-developpement/structures/#detail-par-type-devenement)) sont stockées dans la table TimescaleDB `perf_data`.  
 Elles sont conservées pendant la durée définie.  
 Au-delà de ce délai, elles sont automatiquement supprimées, y compris leurs éventuels agrégats.
 
 ## Filtres d'événements
 
-Lorsque des filtres d'événements génèrent des [erreurs](guide-utilisation/menu-exploitation/filtres-evenements/#gestion-des-erreurs), celles-ci sont stockées dans la collection `eventfilter_failure`.  
+Lorsque des filtres d'événements génèrent des [erreurs](../../menu-exploitation/filtres-evenements/#gestion-des-erreurs), celles-ci sont stockées dans la collection `eventfilter_failure`.  
 Ces messages d'erreur sont conservés pendant la durée configurée.
 Une fois ce délai atteint, ils sont automatiquement supprimés.
 
 ## Tags externes
 
-Les [tags](guide-utilisation/menu-administration/gestion-des-tags/#tags-presents-dans-les-evenements) créés à partir d'événements peuvent être supprimés passé un délai.
-
-Les [tags](guide-utilisation/menu-administration/gestion-des-tags/#tags-presents-dans-les-evenements) créés à partir d'événements sont conservés dans la collection `alarm_tag`.  
+Les [tags](../gestion-des-tags/#tags-presents-dans-les-evenements) créés à partir d'événements sont conservés dans la collection `alarm_tag`.  
 Si leur last_event_date est plus ancien que le délai configuré, ces tags sont supprimés, et leurs couleurs associées sont également nettoyées de la collection `alarm_tag_color`.
 
 ## Enregistrements d'événements 
 
-Les [enregistrements d'événements](guide-utilisation/menu-administration/enregistrements-d-evenements/) permettent de rejouer ou analyser a posteriori certains flux d'événements.  
+Les [enregistrements d'événements](../enregistrements-d-evenements/) permettent de rejouer ou analyser a posteriori certains flux d'événements.  
 Ils sont conservés jusqu'à ce que la durée configurée soit atteinte, puis ils sont automatiquement supprimés de la collection `event_records`.  
