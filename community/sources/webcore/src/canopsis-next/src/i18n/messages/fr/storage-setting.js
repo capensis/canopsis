@@ -11,10 +11,10 @@ export default {
     deleteAfterHelpText: '(XMLs, captures d\'écran, vidéos)',
   },
   remediation: {
-    title: 'Instructions',
-    deleteAfter: 'Supprimer la chronologie des instructions',
-    deleteStatsAfter: 'Supprimer les statistiques d\'instructions',
-    deleteModStatsAfter: 'Supprimer le résumé des instructions',
+    title: 'Consignes',
+    deleteAfter: 'Supprimer la chronologie des consignes',
+    deleteStatsAfter: 'Supprimer les statistiques de consignes',
+    deleteModStatsAfter: 'Supprimer le résumé des consignes',
   },
   entity: {
     title: 'Stockage des données d\'entités',
@@ -38,32 +38,32 @@ export default {
     cleanArchive: 'Nettoyer l\'archive',
   },
   pbehavior: {
-    title: 'PBehavior',
+    title: 'Comportements périodiques',
     deleteAfter: 'Supprimer les PBehavior inactifs',
-    deleteAfterHelpText: 'Les PBehaviors inactifs seront supprimés après la période définie depuis le dernier événement',
+    deleteAfterHelpText: 'Les comportements périodiques inactifs seront supprimés après la période définie depuis le dernier événement',
   },
   healthCheck: {
-    title: 'Vérification de santé',
+    title: 'Bilan de santé',
     deleteAfter: 'Supprimer le flux entrant FIFO',
   },
   webhook: {
     title: 'Webhooks',
     deleteAfter: 'Supprimer l\'historique des requêtes webhooks',
-    logCredentials: 'Ouvrir les données d\'authentification dans les logs',
-    logCredentialsHelpText: 'Affecte la façon dont les mots de passe, tokens et données d\'authentification sont écrits dans les logs. \n'
-      + '<ul><li>activé : de manière ouverte (non recommandé)</li>'
-      + '<li>désactivé : masqué avec ***</li></ul>',
+    logCredentials: 'Afficher les données d\'authentification dans les logs',
+    logCredentialsHelpText: 'Affecte la façon dont les mots de passe, tokens et données d\'authentification apparaissent dans les logs. \n'
+      + '<ul><li>activé : affichés en clair (non recommandé)</li>'
+      + '<li>désactivé : masqués avec ***</li></ul>',
   },
   metrics: {
-    title: 'Métriques internes',
+    title: 'Métriques internes (KPI, performances moteurs)',
     deleteAfter: 'Supprimer les métriques',
   },
   perfDataMetrics: {
-    title: 'Métriques externes',
+    title: 'Métriques externes (perf_data transmises par événement)',
     deleteAfter: 'Supprimer les métriques',
   },
   eventFilterFailure: {
-    title: 'Messages d\'erreur du filtre d\'événements',
+    title: 'Messages d\'erreur des filtres d\'événements',
     deleteAfter: 'Supprimer les messages d\'erreur',
     deleteAfterHelpText: 'Toutes les erreurs seront toujours disponibles dans les logs',
   },
