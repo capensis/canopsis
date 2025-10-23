@@ -9,7 +9,7 @@ export default {
   alarmFilteringTime: 'Temps de filtrage des patterns',
   lastFilteringDate: 'Date de la dernière évaluation des patterns',
   runAlarmFiltering: 'Évaluer tous les patterns',
-  alarmFilteringInProgress: 'Évaluation des patterns en cours',
+  alarmFilteringInProgress: 'Évaluation en cours',
   alarmFilteringError: 'Erreur d\'évaluation des patterns',
   massRemove: 'Supprimer les comportements périodiques',
   massEnable: 'Activer les comportements périodiques',
