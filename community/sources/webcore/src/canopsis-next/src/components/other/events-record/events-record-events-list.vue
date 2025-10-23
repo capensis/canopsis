@@ -48,18 +48,27 @@
       {{ item.timestamp | date }}
     </template>
     <template #actions="{ item }">
-      <c-action-btn
-        :tooltip="$tc('eventsRecord.resendEvents', 1)"
-        :disabled="resendingDisabled || resending"
-        icon="play_arrow"
-        color="blue darken-3"
-        @click="startResending([item._id])"
-      />
-      <events-record-download-btn :events-record-id="eventsRecordId" :event-id="item._id" icon />
-      <c-action-btn
-        type="delete"
-        @click="remove(item)"
-      />
+      <v-layout align-center>
+        <c-action-btn
+          :tooltip="$tc('eventsRecord.resendEvents', 1)"
+          :disabled="resendingDisabled || resending"
+          icon="play_arrow"
+          color="blue darken-3"
+          @click="startResending([item._id])"
+        />
+        <c-copy-btn
+          :value="item | json"
+          :tooltip="$t('eventsRecord.copyEvent')"
+          bottom
+          @success="showCopySuccessPopup"
+          @error="showCopyErrorPopup"
+        />
+        <events-record-download-btn :events-record-id="eventsRecordId" :event-id="item._id" icon />
+        <c-action-btn
+          type="delete"
+          @click="remove(item)"
+        />
+      </v-layout>
     </template>
     <template #expand="{ item }">
       <events-record-events-list-expand-panel :event="item" />
@@ -71,6 +80,7 @@
 import { computed } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
+import { usePopups } from '@/hooks/popups';
 
 import EventsRecordEventsListExpandPanel from './partials/events-record-events-list-expand-panel.vue';
 import EventsRecordDownloadBtn from './partials/events-record-download-btn.vue';
@@ -116,6 +126,7 @@ export default {
   },
   setup(props, { emit }) {
     const { t } = useI18n();
+    const popups = usePopups();
 
     const headers = computed(() => [
       {
@@ -177,6 +188,12 @@ export default {
      */
     const updateOptions = options => emit('update:options', options);
 
+    /**
+     * COPY
+     */
+    const showCopySuccessPopup = () => popups.success({ text: t('eventsRecord.eventCopied') });
+    const showCopyErrorPopup = () => popups.error({ text: t('errors.default') });
+
     return {
       headers,
 
@@ -187,6 +204,9 @@ export default {
       removeSelected,
 
       updateOptions,
+
+      showCopySuccessPopup,
+      showCopyErrorPopup,
     };
   },
 };
@@ -207,7 +227,7 @@ export default {
       }
 
       &:last-child {
-        width: 170px !important;
+        width: 220px !important;
       }
     }
   }

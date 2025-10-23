@@ -5,7 +5,7 @@ import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TYPES } from '@/constants'
 import { uid } from '@/helpers/uid';
 import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
-import { formToRequest, requestTemplateVariablesErrorsToForm, requestToForm } from '../request/form';
+import { formToRequest, requestToForm } from '../request/form';
 
 /**
  * @typedef {'mongo' | 'api'} ExternalDataType
@@ -199,34 +199,6 @@ export const externalDataConditionsTemplateVariablesErrorsToForm = (errorsArray,
     const condition = conditions[index];
 
     acc[condition.key] = externalDataConditionTemplateVariablesErrorsToForm(errors);
-
-    return acc;
-  }, {});
-
-/**
- * Convert template variables errors structure to form structure
- *
- * @param {Object} errorsObject
- * @param {ExternalDataForm} form
- * @return {FlattenErrors}
- */
-export const externalDataTemplateVariablesErrorsToForm = (errorsObject, form) => errorsObject
-  .reduce((acc, { request, conditions }, index) => {
-    const externalDataItem = form[index];
-    const externalDataItemErrors = {};
-
-    if (request) {
-      externalDataItemErrors.request = requestTemplateVariablesErrorsToForm(request, externalDataItem.request);
-    }
-
-    if (conditions) {
-      externalDataItemErrors.conditions = externalDataConditionsTemplateVariablesErrorsToForm(
-        conditions,
-        externalDataItem.conditions,
-      );
-    }
-
-    acc[externalDataItem.key] = externalDataItemErrors;
 
     return acc;
   }, {});

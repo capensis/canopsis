@@ -50,6 +50,7 @@ const (
 	FieldTypeInt         = "int"
 	FieldTypeBool        = "bool"
 	FieldTypeStringArray = "string_array"
+	FieldTypeTimestamp   = "timestamp"
 )
 
 const tagLabelSeparator = ":"
@@ -1170,6 +1171,36 @@ func (c *Condition) StringArrayToSqlJson(field, key string) (string, error) {
 	}
 }
 
+func (c *Condition) TimeToSqlJson(field, key string) (string, error) {
+	checkType := fmt.Sprintf("jsonb_typeof(%s->%s) = 'number'", field, sqlQuoteString(key))
+	operand := fmt.Sprintf("(%s->%s)::bigint", field, sqlQuoteString(key))
+	cast := fmt.Sprintf("%s AND %s", checkType, operand)
+
+	switch c.Type {
+	case ConditionTimeRelative:
+		if c.valueDuration == nil && c.valueDurationTo == nil {
+			return "", ErrWrongConditionValue
+		}
+		var conditions []string
+		if c.valueDuration != nil {
+			conditions = append(conditions, fmt.Sprintf("%s > EXTRACT(EPOCH FROM (NOW() - INTERVAL '%d seconds'))::bigint", operand, *c.valueDuration))
+		}
+		if c.valueDurationTo != nil {
+			conditions = append(conditions, fmt.Sprintf("%s < EXTRACT(EPOCH FROM (NOW() - INTERVAL '%d seconds'))::bigint", operand, *c.valueDurationTo))
+		}
+
+		return fmt.Sprintf("(%s AND %s)", checkType, strings.Join(conditions, " AND ")), nil
+	case ConditionTimeAbsolute:
+		if c.valueTimeIntervalFrom == nil || c.valueTimeIntervalTo == nil {
+			return "", ErrWrongConditionValue
+		}
+
+		return fmt.Sprintf("(%s > %d AND %s < %d)", cast, *c.valueTimeIntervalFrom, operand, *c.valueTimeIntervalTo), nil
+	default:
+		return "", ErrUnsupportedConditionType
+	}
+}
+
 func (c *Condition) UnmarshalJSON(b []byte) error {
 	type Alias Condition
 	v := Alias{}
@@ -1322,8 +1353,32 @@ func (c *FieldCondition) ValidateInfoCondition() bool {
 	return err == nil
 }
 
-// MatchInfoCondition is a helper function to match FieldCondition when it's used to match various infos fields.
-func (c *FieldCondition) MatchInfoCondition(infoVal any, infoExists bool) (bool, error) {
+// ValidateEntityInfoCondition is a helper function to validate FieldCondition when it's used to match various infos fields.
+func (c *FieldCondition) ValidateEntityInfoCondition() bool {
+	var err error
+
+	switch c.FieldType {
+	case FieldTypeString:
+		_, err = c.Condition.MatchString("")
+	case FieldTypeInt:
+		_, err = c.Condition.MatchInt(0)
+	case FieldTypeBool:
+		_, err = c.Condition.MatchBool(false)
+	case FieldTypeStringArray:
+		_, err = c.Condition.MatchStringArray([]string{})
+	case FieldTypeTimestamp:
+		_, err = c.Condition.MatchTime(time.Time{}, time.Now())
+	case "":
+		_, err = c.Condition.MatchRef(nil)
+	default:
+		return false
+	}
+
+	return err == nil
+}
+
+// MatchAlarmInfoCondition is a helper function to match FieldCondition when it's used to match various alarm infos fields.
+func (c *FieldCondition) MatchAlarmInfoCondition(infoVal any, infoExists bool) (bool, error) {
 	var matched bool
 	var err error
 
@@ -1350,6 +1405,48 @@ func (c *FieldCondition) MatchInfoCondition(infoVal any, infoExists bool) (bool,
 			var a []string
 			if a, err = GetStringArrayValue(infoVal); err == nil {
 				matched, err = c.Condition.MatchStringArray(a)
+			}
+		default:
+			return false, fmt.Errorf("invalid field type for %q field: %s", c.Field, c.FieldType)
+		}
+	}
+
+	return matched, err
+}
+
+// MatchEntityInfoCondition is a helper function to match FieldCondition when it's used to match various entity infos fields.
+func (c *FieldCondition) MatchEntityInfoCondition(infoVal any, infoExists bool) (bool, error) {
+	var matched bool
+	var err error
+
+	if c.FieldType == "" {
+		matched, err = c.Condition.MatchRef(infoVal)
+	} else if infoExists {
+		switch c.FieldType {
+		case FieldTypeString:
+			var s string
+			if s, err = GetStringValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchString(s)
+			}
+		case FieldTypeInt:
+			var i int64
+			if i, err = GetIntValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchInt(i)
+			}
+		case FieldTypeBool:
+			var b bool
+			if b, err = GetBoolValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchBool(b)
+			}
+		case FieldTypeStringArray:
+			var a []string
+			if a, err = GetStringArrayValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchStringArray(a)
+			}
+		case FieldTypeTimestamp:
+			var t time.Time
+			if t, err = GetTimeValue(infoVal); err == nil {
+				matched, err = c.Condition.MatchTime(t, time.Now())
 			}
 		default:
 			return false, fmt.Errorf("invalid field type for %q field: %s", c.Field, c.FieldType)
@@ -1433,6 +1530,15 @@ func GetStringArrayValue(v interface{}) ([]string, error) {
 	}
 
 	return strArr, nil
+}
+
+func GetTimeValue(v interface{}) (time.Time, error) {
+	intVal, err := GetIntValue(v)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return time.Unix(intVal, 0), nil
 }
 
 func getTimeIntervalValue(v interface{}) (int64, int64, error) {

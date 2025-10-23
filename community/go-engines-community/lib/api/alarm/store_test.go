@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -93,7 +94,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request ListRequestWi
 	})
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	s := NewStore(dbClient, dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+	s := NewStore(dbClient, dbClient, nil, common.NewPatternFieldsTransformer(dbClient), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
 		authorProvider, nil, json.NewDecoder(), zerolog.Nop())
 
 	b.ResetTimer()

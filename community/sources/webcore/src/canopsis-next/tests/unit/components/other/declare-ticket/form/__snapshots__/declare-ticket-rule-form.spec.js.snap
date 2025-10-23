@@ -2,7 +2,7 @@
 
 exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with custom props 1`] = `
 <div
-  class="v-tabs v-tabs--centered theme--light"
+  class="v-tabs v-tabs--fixed-tabs theme--light"
 >
   <div
     class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
@@ -53,6 +53,8 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
         >
           Test query
         </div>
+        <!---->
+        <!---->
       </div>
     </div>
     <div
@@ -73,12 +75,12 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
         name=""
       >
         <div
-          class="v-window-item"
-          style="display: none;"
+          class="v-window-item v-window-item--active"
         >
           <declare-ticket-rule-general-form-stub
             class="mt-2"
             form="[object Object]"
+            templatevars="[object Object]"
           />
         </div>
       </transition-stub>
@@ -107,7 +109,7 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with cust
 
 exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with default props 1`] = `
 <div
-  class="v-tabs v-tabs--centered theme--light"
+  class="v-tabs v-tabs--fixed-tabs theme--light"
 >
   <div
     class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
@@ -158,6 +160,8 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
         >
           Test query
         </div>
+        <!---->
+        <!---->
       </div>
     </div>
     <div
@@ -178,12 +182,12 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
         name=""
       >
         <div
-          class="v-window-item"
-          style="display: none;"
+          class="v-window-item v-window-item--active"
         >
           <declare-ticket-rule-general-form-stub
             class="mt-2"
             form="[object Object]"
+            templatevars="[object Object]"
           />
         </div>
       </transition-stub>
@@ -212,7 +216,7 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with defa
 
 exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with errors 1`] = `
 <div
-  class="v-tabs v-tabs--centered theme--light"
+  class="v-tabs v-tabs--fixed-tabs theme--light"
 >
   <div
     class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
@@ -263,6 +267,8 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
         >
           Test query
         </div>
+        <!---->
+        <!---->
       </div>
     </div>
     <div
@@ -289,6 +295,7 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
           <declare-ticket-rule-general-form-stub
             class="mt-2"
             form="[object Object]"
+            templatevars="[object Object]"
           />
         </div>
       </transition-stub>
@@ -324,6 +331,119 @@ exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with erro
             </div>
           </div>
         </div>
+      </transition-stub>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`declare-ticket-rule-form Renders \`declare-ticket-rule-form\` with template testing tab access 1`] = `
+<div
+  class="v-tabs v-tabs--fixed-tabs theme--light"
+>
+  <div
+    class="v-item-group theme--light v-slide-group v-tabs-bar v-tabs-bar--is-mobile primary--text"
+    role="tablist"
+  >
+    <div
+      class="v-slide-group__prev v-slide-group__prev--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+    <div
+      class="v-slide-group__wrapper"
+    >
+      <div
+        class="v-slide-group__content v-tabs-bar__content"
+      >
+        <div
+          class="v-tabs-slider-wrapper"
+          style="transition: none;"
+        >
+          <div
+            class="v-tabs-slider primary"
+          />
+        </div>
+        <div
+          aria-selected="true"
+          class="v-tab v-tab--active"
+          role="tab"
+          tabindex="0"
+        >
+    General
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+    Pattern
+        </div>
+        <div
+          aria-selected="false"
+          class="v-tab"
+          role="tab"
+          tabindex="0"
+        >
+          Test query
+        </div>
+        <template-testing-test-variables-tab-stub
+          disabled="true"
+        />
+      </div>
+    </div>
+    <div
+      class="v-slide-group__next v-slide-group__next--disabled"
+    >
+      <transition-stub
+        name="fade-transition"
+      />
+    </div>
+  </div>
+  <div
+    class="v-window v-item-group theme--light v-tabs-items"
+  >
+    <div
+      class="v-window__container"
+    >
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item v-window-item--active"
+        >
+          <declare-ticket-rule-general-form-stub
+            class="mt-2"
+            form="[object Object]"
+            templatevars="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <div
+          class="v-window-item"
+          style="display: none;"
+        >
+          <declare-ticket-rule-patterns-form-stub
+            class="mt-2"
+            form="[object Object]"
+          />
+        </div>
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <!---->
+      </transition-stub>
+      <transition-stub
+        name=""
+      >
+        <!---->
       </transition-stub>
     </div>
   </div>

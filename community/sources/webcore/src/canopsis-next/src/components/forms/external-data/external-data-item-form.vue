@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout column>
+      <v-layout class="gap-2" column>
         <v-layout align-center>
           <v-text-field
             v-field="form.reference"
@@ -54,19 +54,23 @@
           :payload-variables="variables"
           :url-variables="variables"
         />
+        <c-alert v-if="errorMessages.length" type="error">
+          {{ errorMessages.join('\n') }}
+        </c-alert>
       </v-layout>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
 import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
 
@@ -88,6 +92,10 @@ export default {
       type: String,
       required: true,
     },
+    serverErrorName: {
+      type: String,
+      default: '',
+    },
     disabled: {
       type: Boolean,
       default: false,
@@ -106,8 +114,11 @@ export default {
     },
   },
   setup(props, { emit }) {
+    // Composables
     const { t } = useI18n();
+    const validator = useValidator();
 
+    // Computed properties
     const availableTypes = computed(() => (
       props.types.length
         ? props.types
@@ -116,15 +127,25 @@ export default {
     ));
 
     const isTableType = computed(() => isTableExternalDataType(props.form.type));
-
     const referenceFieldName = computed(() => `${props.name}.reference`);
+    const errorMessages = computed(() => validator.errors.collect(props.serverErrorName));
 
+    // Methods
     const remove = () => emit('remove', props.form);
+
+    // Lifecycle
+    onMounted(() => {
+      if (props.serverErrorName) {
+        validator.attach({ name: props.serverErrorName });
+      }
+    });
 
     return {
       availableTypes,
       isTableType,
       referenceFieldName,
+
+      errorMessages,
       remove,
     };
   },
