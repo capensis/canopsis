@@ -10,7 +10,6 @@
     :max-file-size="maxFileSize"
     :variables="variables"
     :dark="$system.dark"
-    :with-default-variables="withDefaultVariables"
     :autofocus="autofocus"
   />
 </template>
@@ -81,10 +80,6 @@ export default {
     variables: {
       type: Array,
       required: false,
-    },
-    withDefaultVariables: {
-      type: Boolean,
-      default: false,
     },
     autofocus: {
       type: Boolean,
