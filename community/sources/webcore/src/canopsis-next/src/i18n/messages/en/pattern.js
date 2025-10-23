@@ -24,6 +24,7 @@ export default {
     [PATTERN_TYPES.pbehavior]: 'Pbehavior pattern',
     [PATTERN_TYPES.serviceWeather]: 'Service weather pattern',
   },
+  notDefinedType: 'Selected type differs from the type set in Entity infos',
   errors: {
     ruleRequired: 'Please add at least one rule',
     groupRequired: 'Please add at least one group',

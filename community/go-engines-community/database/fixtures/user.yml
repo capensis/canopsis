@@ -1145,6 +1145,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_general"
+  permission_api_entity_info_property:
+    <<: *permission_crud
+    _id: api_entity_info_property
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_api"
+      - "@group_api_general"
 
   # api -> rules
   permission_api_dynamicinfos:
@@ -1248,6 +1256,14 @@ permission:
     _id: api_external_data_table
     name: <Current()._id>
     description: External data
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
+  permission_api_template_data:
+    <<: *permission_crud
+    _id: api_template_data
+    name: <Current()._id>
+    description: Template data
     groups:
       - "@group_api"
       - "@group_api_rules"
@@ -1898,6 +1914,15 @@ permission:
     api_permissions:
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+  permission_models_templateTesting:
+    <<: *permission
+    _id: models_templateTesting
+    name: <Current()._id>
+    description: Models template testing
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -2118,6 +2143,16 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_external_data_table": 0
+  permission_models_exploitation_entity_info_property:
+    <<: *permission_crud
+    _id: models_exploitation_entityInfoProperty
+    name: <Current()._id>
+    description: Entity info properties
+    groups:
+      - "@group_technical"
+      - "@group_technical_exploitation"
+    api_permissions:
+      "@permission_api_entity_info_property": 0
 
   # technical -> profile
   permission_models_profile_corporatePattern:
@@ -3594,6 +3629,7 @@ role:
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
+      "@permission_models_templateTesting": 1
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
@@ -3696,6 +3732,7 @@ role:
       "@permission_numbers_filter": 1
       "@permission_numbers_userFilter": 1
       "@permission_models_maintenance": 1
+      "@permission_models_exploitation_entity_info_property": 15
       # API permissions
       "@permission_api_alarm_read": 1
       "@permission_api_alarm_update": 1
@@ -3746,6 +3783,7 @@ role:
       "@permission_api_snmprule": 15
       "@permission_api_snmpmib": 15
       "@permission_api_external_data_table": 15
+      "@permission_api_template_data": 15
       "@permission_api_corporate_pattern": 1
       "@permission_api_map": 15
       "@permission_api_share_token": 15
@@ -3762,6 +3800,7 @@ role:
       "@permission_api_techmetrics_settings": 15
       "@permission_api_launch_event_recording": 1
       "@permission_api_resend_events": 1
+      "@permission_api_entity_info_property": 15
       # Views permissions
       "@permission_view_open_alarms_general": 7
       "@permission_view_open_alarms_actions": 1

@@ -8,6 +8,7 @@ import {
   isEmpty,
   isObject,
   debounce,
+  uniq,
   uniqBy,
 } from 'lodash';
 import {
@@ -71,6 +72,7 @@ export const useLazySearch = ({
 }, emit) => {
   const pageCount = ref(1);
   const itemsByValue = ref({});
+  const itemsValues = ref([]);
   const selectedItems = ref([]);
 
   const { updateModel } = useModelField({}, emit);
@@ -79,7 +81,7 @@ export const useLazySearch = ({
    * Computed property to get the list of items from the itemsByValue map.
    * @type {ComputedRef<Array>}
    */
-  const items = computed(() => Object.values(itemsByValue.value));
+  const items = computed(() => itemsValues.value.map(itemValue => itemsByValue.value[itemValue]));
 
   /**
    * Computed property to convert the value into an array format.
@@ -97,34 +99,6 @@ export const useLazySearch = ({
     }
 
     return [unwrappedValue];
-  });
-
-  /**
-     * MAIN FETCH LOGIC
-     */
-  const {
-    pending,
-    query,
-    fetchHandlerWithQuery: fetchItems,
-    updateQuery,
-    updateQueryPage,
-  } = usePendingWithLocalQuery({
-    initialQuery: unref(initialQuery),
-    fetchHandler: async (params) => {
-      const unwrappedIdKey = unref(idKey);
-
-      const { data, meta } = await unref(fetchHandler)({
-        params,
-      });
-
-      pageCount.value = meta.page_count;
-
-      itemsByValue.value = {
-        ...(params.page !== 1 ? itemsByValue.value : {}),
-        ...keyBy(data, unwrappedIdKey),
-        ...pick(itemsByValue.value, arrayValue.value),
-      };
-    },
   });
 
   /**
@@ -173,6 +147,42 @@ export const useLazySearch = ({
       });
     }
   }, true);
+
+  /**
+     * MAIN FETCH LOGIC
+     */
+  const {
+    pending,
+    query,
+    fetchHandlerWithQuery: fetchItems,
+    updateQuery,
+    updateQueryPage,
+  } = usePendingWithLocalQuery({
+    initialQuery: unref(initialQuery),
+    fetchHandler: async (params) => {
+      const unwrappedIdKey = unref(idKey);
+
+      const { data, meta } = await unref(fetchHandler)({
+        params,
+      });
+
+      pageCount.value = meta.page_count;
+
+      /**
+      * We need to use it for saving order of items
+      */
+      itemsValues.value = uniq([
+        ...(params.page && params.page !== 1 ? itemsValues.value : []),
+        ...data.map(item => item[unwrappedIdKey]),
+      ]);
+
+      itemsByValue.value = {
+        ...(params.page && params.page !== 1 ? itemsByValue.value : {}),
+        ...keyBy(data, unwrappedIdKey),
+        ...pick(itemsByValue.value, arrayValue.value),
+      };
+    },
+  });
 
   /**
    * Update search field in query with page updating

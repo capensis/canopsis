@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ title }}</span>
+        {{ title }}
       </template>
       <template #text="">
         <link-rule-form
@@ -12,9 +12,10 @@
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -38,10 +39,11 @@ import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constan
 
 import { linkRuleToForm, formToLinkRule } from '@/helpers/entities/link/form';
 
+import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useI18n } from '@/hooks/i18n';
+import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
 import LinkRuleForm from '@/components/other/link-rule/form/link-rule-form.vue';
 
@@ -66,13 +68,10 @@ export default {
   setup(props) {
     const type = TEMPLATE_TESTING_TEST_TYPES.linkRule;
 
-    const { config, close } = useInnerModal(props);
     const { t } = useI18n();
+    const { config, close } = useInnerModal(props);
 
     const form = ref(linkRuleToForm(config.value.linkRule));
-
-    const isNew = computed(() => !config.value.linkRule?._id);
-    const title = computed(() => config.value.title ?? t('modals.createLinkRule.create.title'));
 
     const { submit, isDisabled, submitting } = useSubmittableForm({
       form,
@@ -86,16 +85,24 @@ export default {
     });
 
     useFormConfirmableCloseModal({ form, submit, close });
+    useEntityInfoPropertyFetching();
+
+    const title = computed(() => config.value.title ?? t('modals.createLinkRule.create.title'));
 
     return {
-      form,
-      config,
-      isNew,
       type,
-      title,
+
+      config,
+
+      form,
+
       isDisabled,
       submitting,
+
+      title,
+
       submit,
+      close,
     };
   },
 };

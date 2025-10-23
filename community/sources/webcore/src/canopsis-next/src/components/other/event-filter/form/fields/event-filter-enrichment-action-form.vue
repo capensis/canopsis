@@ -43,6 +43,7 @@
               :name="valueFieldName"
               :error-messages="errors.collect(valueFieldName)"
               :prefix="eventExtraPrefix"
+              data-vv-validate-on="blur"
               clearable
             />
           </v-layout>
@@ -94,7 +95,7 @@
                 key="value"
                 :label="$t('common.value')"
                 :name="valueFieldName"
-                :types="mixedFieldTypes"
+                :types="fieldTypes"
                 class="ml-2"
               />
             </v-flex>
@@ -221,10 +222,10 @@ export default {
     /**
      * Updates the copy value field by calling updateField with 'value' key
      *
-     * @param {Object} [params={}] - Parameters object
+     * @param {Object|string} [params={}] - Parameters object or string
      * @param {string} [params.value=''] - The value to set for the copy field
      */
-    const updateCopyValue = ({ value = '' } = {}) => updateField('value', value);
+    const updateCopyValue = newValue => updateField('value', newValue?.value || newValue);
 
     /**
      * Emits remove event to parent component to remove this action form

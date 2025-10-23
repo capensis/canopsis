@@ -278,6 +278,7 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scénarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
     [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'Données externes',
+    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Informations d\'entité',
 
     /**
      * Technical Admin Notification
@@ -319,6 +320,7 @@ export default {
     [USER_PERMISSIONS.api.general.entitycategory]: 'Catégories d\'entités',
     [USER_PERMISSIONS.api.general.entitycomment]: 'Commentaires d\'entités',
     [USER_PERMISSIONS.api.general.entityservice]: 'Entités de type Service',
+    [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Propriétés d\'informations des entités',
     [USER_PERMISSIONS.api.general.event]: 'Événements',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Exporter les configurations',
     [USER_PERMISSIONS.api.general.files]: 'Fichiers',
