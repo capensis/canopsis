@@ -29,6 +29,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
+	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -104,6 +105,7 @@ func Default(
 	pgPoolProvider postgres.PoolProvider,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
+	tplTestTypePermMapping map[int][]any,
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, Services, error) {
@@ -243,6 +245,7 @@ func Default(
 			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
+			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
 		),
 		workers.NewJobPublisher(jobKeyImport, amqpPublisher),
@@ -271,8 +274,8 @@ func Default(
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
-	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, services.TimezoneConfigProvider,
-		authorProvider, tplExecutor, json.NewDecoder(), logger)
+	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, common.NewPatternFieldsTransformer(primaryDbClient),
+		services.TimezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
 	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
@@ -324,6 +327,27 @@ func Default(
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, websocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
+
+	if tplTestTypePermMapping == nil {
+		tplTestTypePermMapping = make(map[int][]any)
+	}
+
+	tplTestTypePermMapping[libcommtemplate.TypeTestEventFilterRule] = []any{
+		apisecurity.ObjEventFilterRule,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestLinkRule] = []any{
+		apisecurity.ObjLinkRule,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestActionScenario] = []any{
+		apisecurity.ObjAction,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestWidget] = []any{
+		apisecurity.ObjView,
+		securitymodel.PermissionCreate,
+	}
 
 	// Create api.
 	api := New(
@@ -400,7 +424,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(primaryDbClient, security.GetConfig())
+		RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -438,7 +462,9 @@ func Default(
 			securityConfig,
 			exdataImportWorker,
 			services.NotificationStore,
+			services.ExternalDataContainer,
 			workersRunner,
+			tplTestTypePermMapping,
 			logger,
 		)
 	})

@@ -3,7 +3,7 @@ import { COLORS } from '@/config';
 // eslint-disable-next-line import/no-webpack-loader-syntax
 import engineeringIcon from '!!svg-inline-loader?modules!@/assets/images/engineering.svg';
 
-import { WIDGET_COLUMNS_GROUPS } from './common';
+import { WIDGET_COLUMNS_GROUPS, INFOS_NAME_VARIABLE } from './common';
 import { PBEHAVIOR_TYPE_TYPES } from './pbehavior';
 
 export const ENTITY_FIELDS = {
@@ -325,6 +325,8 @@ export const ENTITY_INFOS_FIELDS = [
   ENTITY_FIELDS.componentInfos,
 ];
 
+export const INFOS_COLUMN_PREFIX = 'entity.infos';
+
 const {
   ack,
   category,
@@ -480,7 +482,7 @@ export const ENTITY_PAYLOADS_VARIABLES = {
   resource: '.Resource',
   impactLevel: '.ImpactLevel',
   category: '.Category',
-  infosValue: '(index .Infos "%infos_name%").Value',
+  infosValue: `(index .Infos "${INFOS_NAME_VARIABLE}").Value`,
 };
 
 export const SERVICE_WEATHER_DEFAULT_EM_HEIGHT = 4;

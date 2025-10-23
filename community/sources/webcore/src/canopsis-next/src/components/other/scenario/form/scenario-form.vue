@@ -15,6 +15,7 @@
     <c-enabled-field v-field="form.enabled" />
     <c-triggers-field
       :value="form.triggers"
+      with-additional-values
       @input="updateField('triggers', $event)"
     />
     <c-disable-during-periods-field v-field="form.disable_during_periods" />
@@ -31,6 +32,8 @@
       <v-tab-item eager>
         <scenario-actions-form
           v-field="form.actions"
+          ref="parametersFormElement"
+          :template-vars="templateVars"
           class="mt-2"
           name="actions"
         />
@@ -69,6 +72,10 @@ export default {
   },
   props: {
     form: {
+      type: Object,
+      default: () => ({}),
+    },
+    templateVars: {
       type: Object,
       default: () => ({}),
     },

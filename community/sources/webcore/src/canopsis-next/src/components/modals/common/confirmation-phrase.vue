@@ -5,15 +5,15 @@
         <span>{{ config.title }}</span>
       </template>
       <template #text="">
-        <v-alert
+        <c-alert
           color="warning"
           icon="info"
         >
           <span
             v-html="config.text"
-            class="pre-line"
+            class="pre-line text-body-2"
           />
-        </v-alert>
+        </c-alert>
         <div class="my-3">
           <p v-html="sanitizedPhraseText" class="mb-2" />
           <pre class="black--text grey lighten-2 d-inline pa-1">{{ originalPhrase }}</pre>

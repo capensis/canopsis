@@ -53,12 +53,12 @@ describe('confirmation', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith();
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith();
+    expect($modals.hide).toHaveBeenCalled();
 
     wrapper.destroy();
 
-    expect(cancel).not.toBeCalled();
+    expect(cancel).not.toHaveBeenCalled();
   });
 
   test('Hidden action called after trigger submit button without action', async () => {
@@ -82,11 +82,11 @@ describe('confirmation', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalled();
 
     wrapper.destroy();
 
-    expect(cancel).not.toBeCalled();
+    expect(cancel).not.toHaveBeenCalled();
   });
 
   test('Cancel action called after trigger cancel button', () => {
@@ -106,11 +106,11 @@ describe('confirmation', () => {
 
     selectCancelButton(wrapper).triggerCustomEvent('click', new Event('click'));
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalled();
 
     wrapper.destroy();
 
-    expect(cancel).toBeCalledWith(true);
+    expect(cancel).toHaveBeenCalledWith(true);
   });
 
   test('Cancel action called after destroy', () => {
@@ -130,7 +130,7 @@ describe('confirmation', () => {
 
     wrapper.destroy();
 
-    expect(cancel).toBeCalledWith(false);
+    expect(cancel).toHaveBeenCalledWith(false);
   });
 
   test('Renders `confirmation` with empty modal', () => {

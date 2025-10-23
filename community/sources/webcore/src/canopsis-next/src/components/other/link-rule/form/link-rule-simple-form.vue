@@ -2,6 +2,7 @@
   <link-rule-links-form
     v-field="links"
     :type="type"
+    :template-vars="templateVars"
   />
 </template>
 
@@ -28,6 +29,10 @@ export default {
     type: {
       type: String,
       default: LINK_RULE_TYPES.alarm,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
 };

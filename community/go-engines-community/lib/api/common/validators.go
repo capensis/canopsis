@@ -11,6 +11,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -145,67 +146,23 @@ func ValidateTableName(fl validator.FieldLevel) bool {
 	return IsTableName(fl.Field().String())
 }
 
+func ValidateTemplate(templateExecutor template.Executor) validator.Func {
+	return func(fl validator.FieldLevel) bool {
+		v := fl.Field().String()
+		if v == "" {
+			return true
+		}
+
+		return templateExecutor.Parse(v).Err == nil
+	}
+}
+
 func IsTableName(s string) bool {
 	return tableNameRegex.MatchString(s) && len(s) <= tableNameMaxLen
 }
 
 type FieldValidator interface {
 	Validate(ctx context.Context, sl validator.StructLevel)
-}
-
-func NewUniqueFieldValidator(
-	db mongo.DbClient,
-	collection string,
-	field string,
-) FieldValidator {
-	return &uniqueFieldValidator{
-		dbClient:     db,
-		dbCollection: db.Collection(collection),
-		field:        field,
-	}
-}
-
-type uniqueFieldValidator struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
-	field        string
-}
-
-func (v *uniqueFieldValidator) Validate(ctx context.Context, sl validator.StructLevel) {
-	idField := sl.Current().FieldByNameFunc(func(name string) bool {
-		return strings.ToLower(name) == "id"
-	})
-	id := ""
-	if idField.IsValid() {
-		var ok bool
-		id, ok = idField.Interface().(string)
-		if !ok {
-			panic("request field id is not string")
-		}
-	}
-	field := sl.Current().FieldByName(v.field)
-	if !field.IsValid() {
-		panic("request does not have field " + v.field)
-	}
-	if field.IsZero() {
-		return
-	}
-	fieldType, ok := sl.Current().Type().FieldByName(v.field)
-	if !ok {
-		panic("request does not have field " + v.field)
-	}
-	val := field.Interface()
-	var found struct {
-		ID string `bson:"_id"`
-	}
-	err := v.dbCollection.FindOne(ctx, bson.M{fieldType.Tag.Get("json"): val}).Decode(&found)
-	if err == nil {
-		if found.ID != id || strings.ToLower(v.field) == "id" {
-			sl.ReportError(val, v.field, v.field, "unique", "")
-		}
-	} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
-		panic(err)
-	}
 }
 
 func NewExistFieldValidator(
