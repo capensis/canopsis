@@ -3123,14 +3123,8 @@ definitions:
             * `5` - type datetime
             * `6` - type timestamp
             * `7` - type regexp
-        enum:
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
-        - 7
+        maximum: 7
+        minimum: 1
         type: integer
     required:
     - name
@@ -6524,6 +6518,8 @@ definitions:
     type: object
   template.VarResponse:
     properties:
+      alias:
+        type: boolean
       name:
         type: string
       value:
