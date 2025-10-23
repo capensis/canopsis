@@ -9,7 +9,7 @@ export default {
   alarmFilteringTime: 'Pattern filtering time',
   lastFilteringDate: 'Last pattern evaluation date',
   runAlarmFiltering: 'Evaluate all patterns',
-  alarmFilteringInProgress: 'Pattern evaluation in progress',
+  alarmFilteringInProgress: 'Evaluation in progress',
   alarmFilteringError: 'Pattern evaluation error',
   massRemove: 'Remove pbehaviors',
   massEnable: 'Enable pbehaviors',
