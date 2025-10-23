@@ -75,6 +75,7 @@ Définition des paramètres :
 | `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 | `max_tls_ver` (optionnel) | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 | `min_tls_ver` (optionnel) | La version minimale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 

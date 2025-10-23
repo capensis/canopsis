@@ -44,3 +44,4 @@ export * from './theme';
 export * from './view';
 export * from './template-testing';
 export * from './request';
+export * from './entity-info-property';

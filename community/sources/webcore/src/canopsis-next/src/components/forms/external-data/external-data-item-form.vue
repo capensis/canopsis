@@ -77,6 +77,7 @@ import RequestForm from '@/components/forms/request/request-form.vue';
 import ExternalDataTableForm from './external-data-table-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: { RequestForm, ExternalDataTableForm },
   model: {
     prop: 'form',
@@ -123,17 +124,9 @@ export default {
           .map(type => ({ text: t(`externalData.types.${type}`), value: type }))
     ));
 
-    const isTableType = computed(() => (
-      isTableExternalDataType(props.form.type)
-    ));
-
-    const referenceFieldName = computed(() => (
-      `${props.name}.reference`
-    ));
-
-    const serverErrorMessages = computed(() => (
-      validator.errors.collect(props.serverErrorName)
-    ));
+    const isTableType = computed(() => isTableExternalDataType(props.form.type));
+    const referenceFieldName = computed(() => `${props.name}.reference`);
+    const serverErrorMessages = computed(() => validator.errors.collect(props.serverErrorName));
 
     const remove = () => emit('remove', props.form);
 
@@ -148,6 +141,7 @@ export default {
       isTableType,
       referenceFieldName,
       serverErrorMessages,
+
       remove,
     };
   },

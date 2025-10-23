@@ -36,6 +36,8 @@ export const ROUTES_NAMES = {
   exploitationLinkRules: 'exploitation-link-rules',
   exploitationExternalDataTables: 'exploitation-external-data-tables',
   notifications: 'notifications',
+  exploitationEntityInfosProperties: 'exploitation-entity-infos-properties',
+  notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
 };
@@ -78,6 +80,8 @@ export const ROUTES = {
   exploitationLinkRules: '/exploitation/link-rules',
   exploitationExternalDataTables: '/exploitation/external-data-tables',
   notifications: '/notifications/:tabId',
+  exploitationEntityInfosProperties: '/exploitation/entity-infos-properties',
+  notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
   profileThemes: '/themes',
 };
@@ -510,3 +514,7 @@ export const DENSE_TYPES = {
 export const LINKED_RULES_TYPES = ['widget', 'eventfilter', 'linkrule', 'scenario', 'declareticketrule'];
 
 export const LINKED_RULES_COUNT = 5;
+
+export const INFOS_NAME_VARIABLE = '%infos_name%';
+
+export const INFOS_VARIABLE_PREFIX = '(index ';

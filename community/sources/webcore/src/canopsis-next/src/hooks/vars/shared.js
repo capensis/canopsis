@@ -23,7 +23,8 @@ export const useVarsPrepare = (prefix) => {
   const addTranslationToTemplateVars = (items = []) => items.map((item) => {
     const result = {
       ...item,
-      text: t(`${prefix}.${item.text}`),
+
+      text: item.alias ? item.text : t(`${prefix}.${item.text}`),
     };
 
     if (item.variables?.length) {

@@ -74,8 +74,8 @@ type store struct {
 	dbDeclareTicketCollection        mongo.DbCollection
 	dbUserCollection                 mongo.DbCollection
 	authorProvider                   author.Provider
-
-	linkGenerator link.Generator
+	linkGenerator                    link.Generator
+	transformer                      common.PatternFieldsTransformer
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
@@ -92,6 +92,7 @@ func NewStore(
 	dbClient,
 	dbExportClient mongo.DbClient,
 	linkGenerator link.Generator,
+	transformer common.PatternFieldsTransformer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
 	tplExecutor template.Executor,
@@ -111,6 +112,8 @@ func NewStore(
 		authorProvider:                   authorProvider,
 
 		linkGenerator: linkGenerator,
+
+		transformer: transformer,
 
 		timezoneConfigProvider: timezoneConfigProvider,
 
@@ -132,7 +135,7 @@ func NewStore(
 func (s *store) GetDisplayNames(ctx context.Context, r GetDisplayNamesRequest) (*GetDisplayNamesResponse, error) {
 	now := datetime.NewCpsTime()
 
-	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetDisplayNamesPipeline(r, now)
+	pipeline, err := s.getQueryBuilder(s.mainDbCollection.Name()).CreateGetDisplayNamesPipeline(ctx, r, now)
 	if err != nil {
 		return nil, err
 	}
@@ -1438,7 +1441,7 @@ func (s *store) fillLinks(ctx context.Context, result *AggregationResult, userID
 }
 
 func (s *store) getQueryBuilder(collectionName string) *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.dbClient, s.authorProvider, collectionName)
+	return NewMongoQueryBuilder(s.dbClient, s.authorProvider, s.transformer, collectionName)
 }
 
 func (s *store) fillAssignedDeclareTickets(ctx context.Context, result *AggregationResult) error {

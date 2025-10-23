@@ -67,6 +67,10 @@ export default {
     title: 'Données externes',
   },
 
+  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
+    title: 'Informations d\'entité',
+  },
+
   /**
    * Admin access
    */
@@ -139,7 +143,7 @@ export default {
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
   },
   [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Test de modèle',
+    title: 'Studio Templates',
   },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'Jetons d\'authentification externes',

@@ -15,6 +15,7 @@
     <c-enabled-field v-field="form.enabled" />
     <c-triggers-field
       :value="form.triggers"
+      with-additional-values
       @input="updateField('triggers', $event)"
     />
     <c-disable-during-periods-field v-field="form.disable_during_periods" />
