@@ -26,7 +26,7 @@ La durée et l'unité sont configurables dans l'interface.
 | [**Healthcheck**](#healthcheck) | Supprimer le flux FIFO entrant | Définit une rétention sur la table TimescaleDB `message_rate_hourly` pour supprimer les lignes trop anciennes. |
 | [**Webhooks**](#webhooks) | Supprimer l'historique des webhooks | Supprime les enregistrements trop anciens de la collection `webhook_history`. |
 |  | Afficher les données d'authentification | Si désactivé, masque dans les logs tous les champs sensibles (tokens, mots de passe) en les remplaçant par `***`. |
-| [**Métriques internes**](#metriques-internes) | Supprimer les métriques | Définit une rétention sur les tables TimescaleDB utilisées pour les métriques internes (KPI, performances moteurs). |
+| [**Métriques internes**](#metriques-internes) | Supprimer les métriques | Définit une rétention sur les tables TimescaleDB utilisées pour les métriques internes (KPI). |
 | [**Métriques externes**](#metriques-externes) | Supprimer les métriques | Définit une rétention sur la table TimescaleDB `perf_data` (et ses agrégats associés) pour supprimer automatiquement les données trop anciennes. |
 | [**Messages d'erreur des filtres d'événements**](#filtres-devenements) | Supprimer les messages d'erreur | Supprime les enregistrements anciens de la collection `eventfilter_failure`. |
 | [**Tags externes des alarmes**](#tags-externes) | Supprimer les tags externes | Supprime les tags de la collection `alarm_tag` dont `last_event_date` est trop ancien, puis efface les couleurs associées dans `alarm_tag_color`. |
@@ -76,22 +76,37 @@ TimeToKeepResolvedAlarms = "720h"
 
 ## Entités
 
-Les entités désactivées peuvent être :
+Les entités peuvent être régulées par une politique de stockage afin de limiter leur accumulation dans la base de données.  
+Deux cas sont possibles :
 
-* archivées : déplacées dans une collection de données dédiée
-* supprimées : supprimées définitivement de la collection d'archives
+* Entités désactivées : elles peuvent être archivées puis supprimées définitivement.
+* Entités non liées : celles qui ne reçoivent plus d'événements peuvent également être archivées puis supprimées après le délai configuré.
 
 ### Archiver les entités désactivées
 
-!!! Attention 
-    Une option permet également l'archivage ou la suppression des impacts et dépendances de ces entités.  
-    Pour les **connecteurs**, tous les composants et ressources dépendants sont archivés ou supprimés.  
-    Pour les **composants**, toutes les ressources dépendantes sont archivées ou supprimées.
+Une entité désactivée peut être déplacée vers une collection d'archives.  
+Il est ensuite possible de la supprimer définitivement depuis cette archive.
 
-!!! Note
-    Cette opération n'est pas éligible à l'ordonnancement général et ne peut s'effectuer qu'à la demande 
+!!! warning "Attention"
+    Une option permet également d'archiver ou de supprimer automatiquement les impacts et dépendances :
+    
+    * pour les connecteurs, tous les composants et ressources dépendants sont archivés ou supprimés,
+    * pour les composants, toutes les ressources dépendantes sont archivées ou supprimées.
+
+!!! note
+    Cette opération n'est pas soumise à l'ordonnancement hebdomadaire : elle ne peut être exécutée qu'à la demande de l'administrateur.
 
 ### Archiver les entités non liées
+
+Les entités qui n'ont reçu aucun événement depuis un certain délai, ou dont last_event_date est null, sont considérées comme abandonnées.  
+Elles peuvent alors être déplacées de la collection default_entities vers la collection archived_entities.
+
+Cette opération peut être effectuée :
+
+* à la demande (via le bouton présent dans l'en-tête de la page),
+* ou de manière planifiée selon la politique de stockage configurée.
+
+Dans les deux cas, il est nécessaire de définir le délai à partir duquel l'entité est considérée comme non liée.
 
 ## Consignes
 
@@ -132,8 +147,32 @@ Il est également possible de choisir si les données d'authentification (tokens
 
 ## Métriques internes
 
-Les métriques internes générées par Canopsis (KPI, performances des moteurs, temps de traitement, etc.) sont conservées dans des tables TimescaleDB spécifiques.  
-Passé le délai configuré, ces données sont automatiquement supprimées pour éviter une croissance trop importante de la base de données.
+Les métriques internes générées par Canopsis (KPI) sont conservées dans des tables TimescaleDB spécifiques.  
+Passé le délai configuré, ces données sont automatiquement supprimées pour éviter une croissance trop importante de la base de données.  
+
+Les tables TimescaleDB concernées sont :
+
+* `total_alarm_number`
+* `non_displayed_alarm_number`
+* `pbh_alarm_number`
+* `instruction_alarm_number`
+* `ticket_alarm_number`
+* `correlation_alarm_number`
+* `ack_alarm_number`
+* `cancel_ack_alarm_number`
+* `ack_duration`
+* `resolve_duration`
+* `user_activity`
+* `user_sessions`
+* `ticket_number`
+* `sli_duration`
+* `manual_instruction_assigned_alarms`
+* `manual_instruction_executed_alarms`
+* `instruction_assigned_instructions`
+* `instruction_executed_instructions`
+* `not_acked_in_hour_alarms`
+* `not_acked_in_four_hours_alarms`
+* `not_acked_in_day_alarms`
 
 ## Métriques externes
 
