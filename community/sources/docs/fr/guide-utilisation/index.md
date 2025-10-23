@@ -41,6 +41,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Consignes](menu-administration/consignes.md)
   * [Enregistrements d'événements](menu-administration/enregistrements-d-evenements.md)
   * [Gestion des tags](menu-administration/gestion-des-tags.md)
+  * [Jetons d'authentification externe](menu-administration/jetons-authentification-externe.md)
   * [KPI](menu-administration/kpi.md)
   * [Mode Maintenance](menu-administration/mode-maintenance.md)
   * [Paramètres](menu-administration/parametres.md)
