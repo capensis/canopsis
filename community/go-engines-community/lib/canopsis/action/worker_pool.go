@@ -45,7 +45,7 @@ type Task struct {
 	IsMetaAlarmUpdated   bool
 	SkipForInstruction   bool
 	IsInstructionMatched bool
-	AdditionalData       AdditionalData
+	AdditionalData       types.AdditionalData
 }
 
 type TaskResult struct {
@@ -385,7 +385,7 @@ func (s *pool) getRPCWebhookEvent(ctx context.Context, task Task) (*rpc.WebhookE
 	}, false, nil
 }
 
-func (s *pool) resolveAuthor(task Task) (AdditionalData, error) {
+func (s *pool) resolveAuthor(task Task) (types.AdditionalData, error) {
 	additionalData := task.AdditionalData
 	if task.Action.Parameters.ForwardAuthor != nil && *task.Action.Parameters.ForwardAuthor {
 		return additionalData, nil

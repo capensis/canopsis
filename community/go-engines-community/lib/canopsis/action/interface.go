@@ -46,7 +46,7 @@ type ScenarioStorage interface {
 		triggers []string,
 		alarm types.Alarm,
 		entity types.Entity,
-		additionalData AdditionalData,
+		additionalData types.AdditionalData,
 	) error
 
 	// GetScenario returns scenario.
@@ -60,19 +60,19 @@ type TaskManager interface {
 }
 
 type ScenarioExecution struct {
-	ID                   string         `json:"_id"`
-	ScenarioID           string         `json:"sid"`
-	ScenarioName         string         `json:"sn"`
-	AlarmID              string         `json:"aid"`
-	Entity               types.Entity   `json:"e"`
-	ActionExecutions     []Execution    `json:"ae"`
-	LastUpdate           int64          `json:"u"`
-	Tries                int64          `json:"t"`
-	AdditionalData       AdditionalData `json:"ad"`
-	FifoAckEvent         types.Event    `json:"fev"`
-	IsMetaAlarmUpdated   bool           `json:"mau,omitempty"`
-	IsInstructionMatched bool           `json:"im,omitempty"`
-	StartEventProcessing int64          `json:"sep"`
+	ID                   string               `json:"_id"`
+	ScenarioID           string               `json:"sid"`
+	ScenarioName         string               `json:"sn"`
+	AlarmID              string               `json:"aid"`
+	Entity               types.Entity         `json:"e"`
+	ActionExecutions     []Execution          `json:"ae"`
+	LastUpdate           int64                `json:"u"`
+	Tries                int64                `json:"t"`
+	AdditionalData       types.AdditionalData `json:"ad"`
+	FifoAckEvent         types.Event          `json:"fev"`
+	IsMetaAlarmUpdated   bool                 `json:"mau,omitempty"`
+	IsInstructionMatched bool                 `json:"im,omitempty"`
+	StartEventProcessing int64                `json:"sep"`
 }
 
 func (e ScenarioExecution) GetCacheKey() string {
@@ -98,25 +98,13 @@ type ExecuteScenariosTask struct {
 	DelayedScenarioID    string
 	Entity               types.Entity
 	Alarm                types.Alarm
-	AdditionalData       AdditionalData
+	AdditionalData       types.AdditionalData
 	FifoAckEvent         types.Event
 	IsMetaAlarmUpdated   bool
 	IsInstructionMatched bool
 	Start                time.Time
 
 	AbandonedExecutionCacheKey string
-}
-
-type AdditionalData struct {
-	Trigger   string `json:"trigger"`
-	Author    string `json:"author"`
-	User      string `json:"user"`
-	Initiator string `json:"initiator"`
-	Output    string `json:"event_output"`
-	RuleName  string `json:"rule_name"`
-
-	// Deprecated: use Trigger instead of AlarmChangeType
-	AlarmChangeType string `json:"alarm_change_type"`
 }
 
 type Execution struct {

@@ -442,7 +442,7 @@ export const types = {
   ENTITIES_DELETE: `${entitiesModuleName}/${ENTITIES_MUTATION_TYPES.delete}`,
 };
 
-export { default as createEntityModule } from './create-entity-module';
+export { default as createEntityModule, DEFAULT_ENTITY_MODULE_TYPES } from './create-entity-module';
 export { createWidgetModule } from './create-widget-module';
 export { createCRUDModule, createBasicCRUDModule } from './create-crud-module';
 

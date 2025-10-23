@@ -15,7 +15,7 @@ Types  | Description
 --|---
 `user`                  | [Les utilisateurs](../../guide-utilisation/menu-administration/utilisateurs.md)
 `role`                  | [Les rôles](../../guide-utilisation/menu-administration/roles.md)
-`playlist`              | [ Les listes de lecture](../../guide-utilisation/menu-administration/listes-de-lecture.md)
+`playlist`              | [Les listes de lecture](../../guide-utilisation/menu-administration/listes-de-lecture.md)
 `eventfilter`           | [Les règles de filtrage/enrichissement](../../guide-utilisation/menu-exploitation/filtres-evenements.md)
 `scenario`              | [Les règles de scénarios](../../guide-utilisation/menu-exploitation/scenarios.md)
 `metaalarmrule`         | [Les règles de méta alarmes/corrélation](../../guide-utilisation/menu-exploitation/regles-metaalarme.md)

@@ -21,9 +21,18 @@ db.dynamic_infos.dropIndex("aliases_1");
 db.instruction.dropIndex("aliases_1");
 db.kpi_filter.dropIndex("aliases_1");
 
-db.permission.deleteOne({_id: "api_entity_infos_property"});
+db.permission.deleteMany({
+    _id: {
+        $in: [
+            "api_entity_info_property",
+            "models_exploitation_entityInfoProperty",
+        ]
+    }
+});
+
 db.role.updateMany({}, {
     $unset: {
-        "permissions.api_entity_infos_property": "",
+        "permissions.api_entity_info_property": "",
+        "permissions.models_exploitation_entityInfoProperty": "",
     }
 });

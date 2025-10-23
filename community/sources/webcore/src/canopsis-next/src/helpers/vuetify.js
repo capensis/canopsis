@@ -29,6 +29,7 @@ export const getMaxZIndex = (base, minZIndex = 6, exclude = []) => {
 
   const activeElements = [
     ...document.getElementsByClassName('v-menu__content--active'),
+    ...document.getElementsByClassName('menuable__content__active'),
     ...document.getElementsByClassName('v-dialog__content--active'),
     ...document.getElementsByClassName('v-navigation-drawer--open'),
   ];

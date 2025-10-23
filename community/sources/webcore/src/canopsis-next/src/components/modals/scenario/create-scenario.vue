@@ -2,7 +2,7 @@
   <v-form @submit.prevent="submit">
     <modal-wrapper close>
       <template #title="">
-        <span>{{ title }}</span>
+        {{ title }}
       </template>
       <template #text="">
         <template-testing-test-variables-wrapper
@@ -20,9 +20,10 @@
       </template>
       <template #actions="">
         <v-btn
+          :disabled="submitting"
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -46,10 +47,11 @@ import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constan
 
 import { formToScenario, scenarioToForm } from '@/helpers/entities/scenario/form';
 
+import { useI18n } from '@/hooks/i18n';
 import { useInnerModal } from '@/hooks/modals';
 import { useSubmittableForm } from '@/hooks/submittable-form';
 import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-import { useI18n } from '@/hooks/i18n';
+import { useEntityInfoPropertyFetching } from '@/hooks/store/modules/entity-info-property';
 
 import ScenarioForm from '@/components/other/scenario/form/scenario-form.vue';
 import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
@@ -97,6 +99,7 @@ export default {
       },
     });
 
+    useEntityInfoPropertyFetching();
     useFormConfirmableCloseModal({ form, submit, close });
 
     return {
@@ -108,6 +111,7 @@ export default {
       isDisabled,
       submitting,
       submit,
+      close,
     };
   },
 };
