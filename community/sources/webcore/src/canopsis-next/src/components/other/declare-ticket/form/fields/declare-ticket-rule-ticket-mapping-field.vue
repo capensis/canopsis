@@ -40,13 +40,13 @@
           :disabled="disabled"
           :name="ticketIdFieldName"
           :required="ticketIdRequired"
-          :variables="payloadVariablesFromPreviousStep"
+          :variables="variables"
         />
         <declare-ticket-rule-ticket-url-field
           v-field="form.declare_ticket.ticket_url"
           :disabled="disabled"
           :name="ticketUrlFieldName"
-          :variables="payloadVariablesFromPreviousStep"
+          :variables="variables"
         />
         <v-flex offset-xs6>
           <declare-ticket-rule-ticket-url-title-field v-field="form.declare_ticket.ticket_url_title" />
@@ -67,8 +67,9 @@
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
+import { computed } from 'vue';
+
+import { useI18n } from '@/hooks/i18n';
 
 import DeclareTicketRuleTicketIdField from './declare-ticket-rule-ticket-id-field.vue';
 import DeclareTicketRuleTicketCustomFieldsField from './declare-ticket-rule-ticket-custom-fields-field.vue';
@@ -83,7 +84,6 @@ export default {
     DeclareTicketRuleTicketIdField,
     DeclareTicketRuleTicketUrlTitleField,
   },
-  mixins: [formMixin, payloadVariablesMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -121,22 +121,28 @@ export default {
       type: Boolean,
       default: false,
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
   },
-  computed: {
-    ticketIdFieldName() {
-      return `${this.name}.ticket_id`;
-    },
+  setup(props) {
+    const { t } = useI18n();
 
-    ticketUrlFieldName() {
-      return `${this.name}.ticket_url`;
-    },
+    const ticketIdFieldName = computed(() => `${props.name}.ticket_id`);
 
-    ticketUrlHelpText() {
-      return [
-        this.$t('declareTicket.ticketUrlAndIdHelpText'),
-        this.onlyOneTicketId && this.$t('declareTicket.dataFromOneStepAttention'),
-      ].filter(Boolean).join('\n');
-    },
+    const ticketUrlFieldName = computed(() => `${props.name}.ticket_url`);
+
+    const ticketUrlHelpText = computed(() => [
+      t('declareTicket.ticketUrlAndIdHelpText'),
+      props.onlyOneTicketId && t('declareTicket.dataFromOneStepAttention'),
+    ].filter(Boolean).join('\n'));
+
+    return {
+      ticketIdFieldName,
+      ticketUrlFieldName,
+      ticketUrlHelpText,
+    };
   },
 };
 </script>

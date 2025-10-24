@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Activer/Désactiver le mode édition',
   toggleEditViewSubtitle: 'Si vous souhaitez enregistrer les positions des widgets, vous devez désactiver le mode édition',
   name: 'Nom',
+  alias: 'Alias',
   namePrefix: 'Préfixe du nom',
   description: 'Description',
   author: 'Auteur',
@@ -30,6 +31,7 @@ export default {
   stop: 'Fin',
   options: 'Options',
   type: 'Type',
+  actionType: 'Type d\'action',
   quitEditing: 'Quitter le mode édition',
   enabled: 'Activé(e)',
   disabled: 'Désactivé(e)',
@@ -90,6 +92,9 @@ export default {
   to: 'Vers',
   tags: 'Tags',
   actionsLabel: 'Actions',
+  testName: 'Nom du test',
+  ruleType: 'Type de règle',
+  ruleName: 'Nom de la règle',
   noResults: 'Pas de résultats',
   result: 'Résultat',
   exploitation: 'Exploitation',
@@ -99,6 +104,7 @@ export default {
   search: 'Recherche',
   filters: 'Filtres',
   filter: 'Filtre',
+  filterByType: 'Filtrer par type',
   emptyObject: 'Objet vide',
   startDate: 'Date de début',
   endDate: 'Date de fin',
@@ -121,6 +127,7 @@ export default {
   payload: 'Payload',
   note: 'Note',
   output: 'Message',
+  input: 'Entrée',
   created: 'Date de création',
   updated: 'Date de dernière modification',
   expired: 'Date d\'expiration',
@@ -317,13 +324,20 @@ export default {
   customField: 'Champ personnalisé|Champs personnalisés',
   last: 'Dernier',
   inProgress: 'En cours',
+  calculated: 'Calculé',
+  settings: 'Paramètres',
+  after: 'Après',
+  defined: 'Défini',
+  bulkDelete: 'Supprimer la sélection',
   variableTypes: {
     string: 'Chaîne de caractères',
     number: 'Nombre',
     boolean: 'Booléen',
     null: 'Nul',
     array: 'Tableau',
+    stringArray: 'Tableau de chaînes',
     object: 'Object',
+    timestamp: 'Horodatage',
   },
   mixedField: {
     types: {
@@ -332,6 +346,7 @@ export default {
       [PATTERN_FIELD_TYPES.boolean]: '@:common.variableTypes.boolean',
       [PATTERN_FIELD_TYPES.null]: '@:common.variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:common.variableTypes.array',
+      [PATTERN_FIELD_TYPES.timestamp]: '@:common.variableTypes.timestamp',
     },
   },
   saveChanges: 'Sauvegarder',
@@ -488,62 +503,62 @@ export default {
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {
-      text: 'Création d\'alarme',
+      text: 'Alarme créée',
     },
     [TRIGGERS_TYPES.statedec]: {
-      text: 'Diminution de la criticité',
+      text: 'Criticité de l\'alarme diminuée',
     },
     [TRIGGERS_TYPES.changestate]: {
-      text: 'Changement et verrouillage de la criticité',
+      text: 'Criticité de l\'alarme changée par l\'action "changer de criticité"',
     },
     [TRIGGERS_TYPES.stateinc]: {
-      text: 'Augmentation de la criticité',
+      text: 'Criticité de l\'alarme augmentée',
     },
     [TRIGGERS_TYPES.changestatus]: {
-      text: 'Changement de statut (flapping, bagot, ...)',
+      text: 'Statut de l\'alarme changé, par ex. flapping',
     },
     [TRIGGERS_TYPES.ack]: {
-      text: 'Acquittement d\'une alarme',
+      text: 'Alarme acquittée',
     },
     [TRIGGERS_TYPES.ackremove]: {
-      text: 'Suppression de l\'acquittement d\'une alarme',
+      text: 'Alarme désacquittée',
     },
     [TRIGGERS_TYPES.cancel]: {
-      text: 'Annulation d\'une alarme',
+      text: 'Alarme annulée',
     },
     [TRIGGERS_TYPES.uncancel]: {
-      text: 'Annulation de l\'annulation d\'une alarme',
-      helpText: 'L\'annulation ne peut se faire que par un événement posté sur l\'API',
+      text: 'Alarme désannulée',
+      helpText: 'Probablement un déclencheur hérité, car il n\'y a aucun moyen d\'annuler l\'alarme lorsque vous l\'annulez dans l\'interface utilisateur, mais il est possible d\'envoyer un événement d\'annulation via l\'API',
     },
     [TRIGGERS_TYPES.comment]: {
-      text: 'Commentaire sur une alarme',
+      text: 'Alarme commentée',
     },
     [TRIGGERS_TYPES.declareticket]: {
-      text: 'Déclaration de ticket depuis l\'interface graphique',
+      text: 'Ticket déclaré par l\'action de l\'interface utilisateur',
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
-      text: 'Déclaration de ticket depuis un webhook',
+      text: 'Ticket déclaré par le webhook',
     },
     [TRIGGERS_TYPES.assocticket]: {
-      text: 'Association de ticket sur une alarme',
+      text: 'Ticket associé à une alarme',
     },
     [TRIGGERS_TYPES.snooze]: {
-      text: 'Mise en veille d\'une alarme',
+      text: 'Alarme mise en veille',
     },
     [TRIGGERS_TYPES.unsnooze]: {
-      text: 'Sortie de veille d\'une alarme',
+      text: 'Alarme sortie de veille',
     },
     [TRIGGERS_TYPES.resolve]: {
-      text: 'Résolution d\'une alarme',
+      text: 'Alarme résolue',
     },
     [TRIGGERS_TYPES.activate]: {
-      text: 'Activation d\'une alarme',
+      text: 'Alarme activée',
     },
     [TRIGGERS_TYPES.pbhenter]: {
-      text: 'Comportement périodique démarré',
+      text: 'Alarme entrée dans un pbehavior',
     },
     [TRIGGERS_TYPES.pbhleave]: {
-      text: 'Comportement périodique terminé',
+      text: 'Alarme sortie d\'un pbehavior',
     },
     [TRIGGERS_TYPES.instructionfail]: {
       text: 'Consigne manuelle en erreur',
@@ -552,10 +567,10 @@ export default {
       text: 'Consigne automatique en erreur',
     },
     [TRIGGERS_TYPES.instructionjobfail]: {
-      text: 'Job de remédiation en erreur',
+      text: 'Job de consigne manuelle ou automatique en erreur',
     },
     [TRIGGERS_TYPES.instructionjobcomplete]: {
-      text: 'Job de remédiation terminé',
+      text: 'Job de consigne manuelle ou automatique terminé',
     },
     [TRIGGERS_TYPES.instructioncomplete]: {
       text: 'Consigne manuelle terminée',
@@ -564,15 +579,21 @@ export default {
       text: 'Consigne automatique terminée',
     },
     [TRIGGERS_TYPES.autoinstructionresultok]: {
-      text: 'L\'alarme est en état OK après toutes les instructions automatiques',
+      text: 'L\'alarme est en état OK après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.autoinstructionresultfail]: {
-      text: 'L\'alarme n\'est pas dans l\'état OK après toutes les instructions automatiques',
+      text: 'L\'alarme n\'est pas en état OK après toutes les consignes automatiques',
     },
     [TRIGGERS_TYPES.eventscount]: {
-      text: 'L\'alarme a été reçue pour un certain nombre d\'événements',
-      selectedText: 'L\'alarme a été reçue {additionalValue} événements',
+      text: 'L\'alarme a reçu N événements',
+      selectedText: 'L\'alarme a reçu {additionalValue} événements',
       additionalFieldLabel: 'Nombre d\'événements',
+    },
+  },
+  repeatTriggers: {
+    [TRIGGERS_TYPES.eventscount]: {
+      text: 'L\'alarme a reçu un nouvel événement check',
+      selectedText: 'L\'alarme a reçu un nouvel événement check',
     },
   },
   request: {

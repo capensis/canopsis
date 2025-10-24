@@ -105,6 +105,7 @@ describe('pattern-editor-field', () => {
         rules: [
           {
             attribute: alarmPattern.field,
+            alias: false,
             duration: {
               unit: TIME_UNITS.second,
               value: 1,
@@ -207,6 +208,7 @@ describe('pattern-editor-field', () => {
           {
             key: expect.any(String),
             attribute: patternRule.field,
+            alias: false,
             duration: {
               unit: TIME_UNITS.second,
               value: 1,
