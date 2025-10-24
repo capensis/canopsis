@@ -57,9 +57,8 @@ type BaseFilterRequest struct {
 
 type ExportRequest struct {
 	BaseFilterRequest
-	Fields     export.Fields `json:"fields"`
-	Separator  string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
-	TimeFormat string        `json:"time_format" binding:"time_format"`
+	Fields    export.Fields `json:"fields"`
+	Separator string        `json:"separator" binding:"oneoforempty=comma semicolon tab space"`
 }
 
 type ArchiveDisabledRequest struct {
@@ -302,12 +301,4 @@ type StateSettingResponse struct {
 	DependsCount               int    `bson:"-" json:"depends_count,omitempty"`
 	ThresholdState             string `bson:"-" json:"threshold_state,omitempty"`
 	ThresholdStateDependsCount int    `bson:"-" json:"threshold_state_depends_count,omitempty"`
-}
-
-type RefResponse struct {
-	ID        string `bson:"_id" json:"_id"`
-	Type      string `bson:"type" json:"type"`
-	Name      string `bson:"name" json:"name"`
-	Component string `bson:"component" json:"component,omitempty"`
-	Connector string `bson:"connector" json:"connector,omitempty"`
 }

@@ -42,9 +42,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenPaginationRequest_
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -130,9 +131,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -228,9 +230,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -316,9 +319,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -420,9 +424,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithWidgetF
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -496,9 +501,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -565,9 +571,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithCategor
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -708,9 +715,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -868,9 +876,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithInstruc
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -980,13 +989,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithEntityS
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{
-			{Key: "e._id", Value: -1},
-			{Key: "e.category.name", Value: 1},
-			{Key: "_id", Value: 1},
-		}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1077,13 +1083,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipelineForResolvedAlarms_GivenR
 	}
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{
-			{Key: "e._id", Value: -1},
-			{Key: "e.category.name", Value: 1},
-			{Key: "_id", Value: 1},
-		}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1188,13 +1191,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDuratio
 	activeDurationField := fields["v.active_duration"]
 	delete(fields, "v.duration")
 	delete(fields, "v.active_duration")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{
-			{Key: "v.duration", Value: -1},
-			{Key: "v.active_duration", Value: -1},
-			{Key: "_id", Value: 1},
-		}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1267,9 +1267,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearch_
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1352,9 +1353,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchA
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
 	fields := getComputedFields(now, "")
 	fields["is_meta_alarm"] = getIsMetaAlarmField()
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1448,9 +1450,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
 	fields := getComputedFields(now, "")
 	fields["is_meta_alarm"] = getIsMetaAlarmField()
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1542,9 +1545,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchB
 	expectedDataPipeline = append(expectedDataPipeline, getChildrenCountLookup()...)
 	fields := getComputedFields(now, "")
 	fields["is_meta_alarm"] = getIsMetaAlarmField()
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1620,9 +1624,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1694,9 +1699,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1770,9 +1776,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	fields := getComputedFields(now, "")
 	durationField := fields["v.duration"]
 	delete(fields, "v.duration")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1847,9 +1854,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	fields := getComputedFields(now, "")
 	infosField := fields["infos"]
 	delete(fields, "infos")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -1920,9 +1928,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithSearchE
 	fields := getComputedFields(now, "")
 	infosField := fields["infos"]
 	delete(fields, "infos")
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": fields,
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": fields},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -2057,9 +2066,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithMultipl
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetCategoryLookup("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorLookup(authorProvider)...)
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -2166,9 +2176,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetImpactsCountPipeline("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetDependsCountPipeline("e")...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},
@@ -2264,9 +2275,10 @@ func TestMongoQueryBuilder_CreateListAggregationPipeline_GivenRequestWithDepende
 	expectedDataPipeline = append(expectedDataPipeline, getPbehaviorTypeLookup()...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetImpactsCountPipeline("e")...)
 	expectedDataPipeline = append(expectedDataPipeline, dbquery.GetDependsCountPipeline("e")...)
+	expectedDataPipeline = append(expectedDataPipeline, bson.M{
+		"$addFields": getComputedFields(now, ""),
+	})
 	expectedDataPipeline = append(expectedDataPipeline,
-		bson.M{"$sort": bson.D{{Key: "t", Value: -1}, {Key: "_id", Value: 1}}},
-		bson.M{"$addFields": getComputedFields(now, "")},
 		bson.M{"$addFields": bson.M{
 			"e.pbehavior_info": "$v.pbehavior_info",
 		}},

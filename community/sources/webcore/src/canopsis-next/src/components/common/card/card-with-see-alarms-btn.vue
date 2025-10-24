@@ -59,10 +59,6 @@ export default {
     margin: 0;
     background-color: rgba(0, 0, 0, .2);
 
-    span {
-      color: white;
-    }
-
     &.v-btn--active:before, &.v-btn:focus:before, &.v-btn:hover:before {
       background-color: rgba(0, 0, 0, .5);
     }

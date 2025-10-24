@@ -1,37 +1,25 @@
 <template>
-  <div
-    :class="{ 'c-card-iterator-item--small': small }"
-    class="c-card-iterator-item"
-  >
+  <div class="c-card-iterator-item">
     <v-layout
-      class="gap-2"
       align-center
       justify-space-between
     >
-      <v-layout
-        :class="{ 'c-card-iterator-item__actions--draggable-only': !$slots.default }"
-        class="c-card-iterator-item__actions"
-      >
+      <v-layout class="c-card-iterator-item__actions pr-2">
         <c-draggable-step-number
           :color="!expanded && hasChildrenError ? 'error' : 'primary'"
-          :hide-number="small"
-          :drag-class="dragHandleClass"
+          drag-class="item-drag-handler"
         >
           {{ itemNumber }}
         </c-draggable-step-number>
-        <c-expand-btn v-if="$slots.default" v-model="expanded" />
+        <c-expand-btn v-model="expanded" />
       </v-layout>
       <slot name="header" />
       <c-action-btn
-        :icon="small ? 'close' : 'delete'"
-        :small="small"
-        :icon-small="small"
-        :class="{ 'remove-card-btn': small }"
         type="delete"
         @click="$emit('remove')"
       />
     </v-layout>
-    <v-expand-transition v-if="$slots.default" mode="out-in">
+    <v-expand-transition mode="out-in">
       <v-layout
         v-show="expanded"
         :class="{ 'c-card-iterator-item__content--offset': offsetLeft }"
@@ -45,17 +33,14 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
-import { useValidationChildren } from '@/hooks/validator/validation-children';
+import { validationChildrenMixin } from '@/mixins/form';
 
 export default {
   inject: ['$validator'],
+  mixins: [
+    validationChildrenMixin,
+  ],
   props: {
-    defaultExpanded: {
-      type: Boolean,
-      default: false,
-    },
     itemNumber: {
       type: [Number, String],
       default: 0,
@@ -64,47 +49,26 @@ export default {
       type: Boolean,
       default: false,
     },
-    small: {
-      type: Boolean,
-      default: false,
-    },
-    dragHandleClass: {
-      type: String,
-      default: 'item-drag-handler',
-    },
   },
-  setup(props) {
-    const expanded = ref(props.defaultExpanded);
-
-    const { hasChildrenError } = useValidationChildren();
-
+  data() {
     return {
-      expanded,
-      hasChildrenError,
+      expanded: true,
     };
   },
 };
 </script>
 
 <style lang="scss">
+$actionsWidth: 100px;
+
 .c-card-iterator-item {
-  --actions-max-width: 100px;
-  --actions-min-width: 60px;
-  --one-action-width: 26px;
-
   &__actions {
-    max-width: var(--actions-max-width);
-    min-width: var(--actions-min-width);
-
-    &--draggable-only {
-      min-width: var(--one-action-width);
-      max-width: var(--one-action-width);
-    }
+    max-width: $actionsWidth;
   }
 
   &__content {
     &--offset {
-      margin-left: var(--actions-max-width);
+      margin-left: $actionsWidth;
     }
   }
 }

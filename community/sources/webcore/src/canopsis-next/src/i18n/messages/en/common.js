@@ -254,7 +254,6 @@ export default {
   timeTaken: 'Time taken',
   enginesMetrics: 'Engines` metrics',
   failed: 'Failed',
-  finished: 'Finished',
   close: 'Close',
   alarmId: 'Alarm ID',
   entityId: 'Entity ID',
@@ -315,9 +314,6 @@ export default {
   true: 'True',
   false: 'False',
   customField: 'Custom field|Custom fields',
-  inProgress: 'In progress',
-  last: 'Last',
-  seeDetails: 'See details',
   variableTypes: {
     string: 'String',
     number: 'Number',
@@ -422,10 +418,6 @@ export default {
     [ALARM_STATUSES.cancelled]: 'Canceled',
     [ALARM_STATUSES.noEvents]: 'No events',
   },
-  statusResolvedTypes: {
-    [ALARM_STATUSES.closed]: 'Closed and resolved',
-    [ALARM_STATUSES.cancelled]: 'Canceled and resolved',
-  },
   operators: {
     [PATTERN_OPERATORS.equal]: 'Equal',
     [PATTERN_OPERATORS.contains]: 'Contains',
@@ -481,11 +473,6 @@ export default {
     [PATTERN_OPERATORS.ruleIs]: 'Rule is',
 
     [PATTERN_OPERATORS.regexp]: 'Regexp',
-
-    [PATTERN_OPERATORS.within]: 'Within',
-    [PATTERN_OPERATORS.olderThan]: 'Older than',
-    [PATTERN_OPERATORS.inRangeDates]: 'In range (dates)',
-    [PATTERN_OPERATORS.inRangePeriod]: 'In range (period)',
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {

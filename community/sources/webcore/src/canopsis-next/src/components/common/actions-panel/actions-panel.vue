@@ -18,6 +18,7 @@
       />
       <v-menu
         v-if="preparedActions.dropDown.length"
+        v-model="opened"
         key="dropdown-menu"
         bottom
         left
@@ -73,11 +74,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { DEFAULT_ALARM_ACTIONS_INLINE_COUNT } from '@/constants';
-
-import { useComponentInstance } from '@/hooks/vue';
 
 export default {
   props: {
@@ -98,35 +95,39 @@ export default {
       default: false,
     },
   },
-  setup(props) {
-    const instance = useComponentInstance();
-
-    const preparedActions = computed(() => {
-      if (!props.ignoreMediaQuery && instance.$mq !== 'xl') {
+  data() {
+    return {
+      opened: false,
+    };
+  },
+  computed: {
+    preparedActions() {
+      if (!this.ignoreMediaQuery && this.$mq !== 'xl') {
         return {
           inline: [],
-          dropDown: props.actions,
+          dropDown: this.actions,
         };
       }
 
-      if (props.inlineCount < props.actions.length) {
-        const inlineCountWithoutMenu = props.inlineCount - 1;
+      if (this.inlineCount < this.actions.length) {
+        const inlineCountWithoutMenu = this.inlineCount - 1;
 
         return {
-          inline: props.actions.slice(0, inlineCountWithoutMenu),
-          dropDown: props.actions.slice(inlineCountWithoutMenu),
+          inline: this.actions.slice(0, inlineCountWithoutMenu),
+          dropDown: this.actions.slice(inlineCountWithoutMenu),
         };
       }
 
       return {
-        inline: props.actions,
+        inline: this.actions,
         dropDown: [],
       };
-    });
-
-    return {
-      preparedActions,
-    };
+    },
+  },
+  methods: {
+    closeMenu() {
+      this.opened = false;
+    },
   },
 };
 </script>

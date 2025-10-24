@@ -41,7 +41,7 @@ func benchmarkGeneratorGenerateForAlarms(
 	})
 
 	loader := fixtures.NewLoader(dbClient, []string{fixturesPath},
-		fixtures.NewParser(fixtures.NewFaker(password.NewBcryptEncoder())), zerolog.Nop())
+		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), zerolog.Nop())
 	err = loader.Load(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)

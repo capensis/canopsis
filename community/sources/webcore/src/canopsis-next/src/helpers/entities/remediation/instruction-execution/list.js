@@ -1,5 +1,3 @@
-import { REMEDIATION_INSTRUCTION_EXECUTION_STATUSES } from '@/constants';
-
 import { uid } from '@/helpers/uid';
 
 /**
@@ -20,14 +18,4 @@ export const prepareRemediationInstructionExecutionsForAlarmTimeline = execution
 
     return acc;
   }, [])
-);
-
-/**
- * Check if remediation instruction execution is currently running
- *
- * @param {Object} execution - The remediation instruction execution object
- * @returns {boolean} True if execution status is running, false otherwise
- */
-export const remediationInstructionExecutionIsRunning = execution => (
-  execution?.status === REMEDIATION_INSTRUCTION_EXECUTION_STATUSES.running
 );

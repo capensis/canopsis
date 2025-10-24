@@ -7,13 +7,17 @@
       <v-simple-checkbox
         :value="selected"
         :disabled="!selectable"
-        class="service-entity-header__checkbox ma-0 pa-0"
+        class="ma-0 pa-0"
+        color="white"
         dark
         @input="$emit('update:selected', $event)"
       />
     </v-flex>
     <v-flex class="pa-2">
-      <v-icon class="color--inherit" small>
+      <v-icon
+        color="white"
+        small
+      >
         {{ entity.icon }}
       </v-icon>
     </v-flex>
@@ -22,14 +26,14 @@
       xs12
     >
       <v-layout align-center>
-        <div class="mr-1 service-entity-header__name">
+        <div class="mr-1 entity-name">
           {{ entityName }}
         </div>
         <v-btn
           v-for="icon in extraIcons"
           :key="icon.icon"
           :style="{ backgroundColor: icon.color }"
-          class="service-entity-header__extra-icon mx-1"
+          class="mx-1"
           small
           dark
           icon
@@ -47,7 +51,7 @@
           <v-alert
             v-if="lastActionUnavailable"
             :value="lastActionUnavailable"
-            class="service-entity-header__alert ma-0 px-2 py-1"
+            class="entity-alert ma-0 px-2 py-1"
             color="black"
             dismissible
             @input="hideAlert"
@@ -138,12 +142,12 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.service-entity-header__name {
+<style lang="scss" scoped>
+.entity-name {
   line-height: 1.5em;
   word-break: break-all;
 }
-.service-entity-header__alert {
+.entity-alert {
   border: none;
   background-color: rgba(255, 255, 255, 0.2) !important;
   border-radius: 5px;
@@ -152,13 +156,5 @@ export default {
     margin-left: 0;
     font-size: 18px;
   }
-}
-
-.service-entity-header__extra-icon * {
-  color: white !important;
-}
-
-.service-entity-header__checkbox i {
-  color: inherit !important;
 }
 </style>

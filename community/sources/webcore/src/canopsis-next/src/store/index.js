@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { featuresService } from '@/services/features';
+import featuresService from '@/services/features';
 
 import authModule from './modules/auth';
 import i18nModule from './modules/i18n';

@@ -3,14 +3,12 @@
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column extra details 1`] = `
 <alarm-column-value-extra-details-stub
   alarm="[object Object]"
-  class=""
 />
 `;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column impact state 1`] = `
 <color-indicator-wrapper-stub
   alarm="[object Object]"
-  class=""
   entity="[object Object]"
   type="impact_state"
 />
@@ -19,7 +17,7 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column impact stat
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links 1`] = `
 <c-alarm-links-chips-stub
   alarm="[object Object]"
-  class=""
+  class="my-1"
 />
 `;
 
@@ -27,14 +25,14 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links categ
 <c-alarm-links-chips-stub
   alarm="[object Object]"
   category="test"
-  class=""
+  class="my-1"
 />
 `;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links only icon 1`] = `
 <c-alarm-links-chips-stub
   alarm="[object Object]"
-  class=""
+  class="my-1"
   onlyicon="true"
 />
 `;
@@ -42,28 +40,21 @@ exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links only 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column links with inline links count 1`] = `
 <c-alarm-links-chips-stub
   alarm="[object Object]"
-  class=""
+  class="my-1"
   inlinecount="2"
 />
 `;
 
-exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `
-<c-alarm-state-chip-stub
-  class=""
-/>
-`;
+exports[`alarm-column-cell Renders \`alarm-column-cell\` with column state 1`] = `<c-alarm-state-chip-stub />`;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with column status 1`] = `
 <alarm-column-value-status-stub
   alarm="[object Object]"
-  class=""
 />
 `;
 
 exports[`alarm-column-cell Renders \`alarm-column-cell\` with invalid html 1`] = `
-<div
-  class=""
->
+<div>
   <div />
 </div>
 `;

@@ -34,25 +34,11 @@
         />
       </v-flex>
     </v-layout>
-    <v-layout justify-space-between>
-      <c-workflow-field
-        v-field="action.drop_scenario_if_not_matched"
-        :label="$t('scenario.workflow')"
-        :continue-label="$t('scenario.remainingAction')"
-      />
-      <template v-if="isWebhookActionType">
-        <c-workflow-field
-          v-model="parameters.stop_on_fail"
-          :label="$t('scenario.workflowInCaseOfFailure')"
-          :continue-label="$t('scenario.remainingStep')"
-        />
-        <c-workflow-field
-          v-model="parameters.stop_on_success"
-          :label="$t('scenario.workflowInCaseOfSuccess')"
-          :continue-label="$t('scenario.remainingStep')"
-        />
-      </template>
-    </v-layout>
+    <c-workflow-field
+      v-field="action.drop_scenario_if_not_matched"
+      :label="$t('scenario.workflow')"
+      :continue-label="$t('scenario.remainingAction')"
+    />
     <v-textarea
       v-field="action.comment"
       :label="$tc('common.comment')"

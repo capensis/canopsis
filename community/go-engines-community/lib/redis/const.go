@@ -24,7 +24,6 @@ const (
 	AxeSliMetricsPeriodicalLockKey            = "axe-sli-metrics-periodical-lock-key"
 	AxeSoftDeleteCorrelationPeriodicalLockKey = "axe-soft-delete-correlation-periodical-lock-key"
 
-	FifoEngineLockKey      = "fifo-engine-lock-key"
 	FifoDataStorageLockKey = "fifo-datastorage-lock-key"
 
 	ChePeriodicalLockKey                      = "che-periodical-lock-key"
@@ -49,7 +48,6 @@ const (
 	ApiUserActivityMetricLockKey = "api-user-activity-metric"
 	ApiCacheRequestKey           = "api-cache-request"
 	ApiActionLogWatchLockKey     = "api-action-log-watch-lock-key"
-	ApiPbhPatternCountLockKey    = "api-pbh-pattern-count-lock-key"
 
 	CorrelationInactiveDelayPeriodicalLockKey = "correlation-inactive-delay-periodical-lock-key"
 )

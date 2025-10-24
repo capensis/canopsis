@@ -362,7 +362,6 @@ func (e *redisBasedManager) listenTaskResultChannel(ctx context.Context, wg *syn
 func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskResult) {
 	if taskRes.ExecutionCacheKey == "" {
 		e.logger.Error().Err(taskRes.Err).Msg("cannot get execution")
-
 		return
 	}
 
@@ -375,13 +374,10 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Str("entity", taskRes.Alarm.EntityID).
 			Int("step", taskRes.Step).
 			Msg("cannot get execution")
-
 		return
 	}
 
-	executedAction := scenarioExecution.ActionExecutions[taskRes.Step].Action
-	switch taskRes.Status {
-	case TaskCancelled:
+	if taskRes.Status == TaskCancelled {
 		e.logger.Warn().Msgf("worker task was cancelled, error = %s", taskRes.Err.Error())
 
 		if taskRes.ExecutionCacheKey != "" {
@@ -394,48 +390,27 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		}
 
 		return
-	case TaskRpcError:
+	}
+
+	if taskRes.Err != nil {
 		e.logger.Err(taskRes.Err).
 			Str("source", taskRes.Source).
 			Str("alarm", taskRes.Alarm.ID).
 			Str("execution", taskRes.ExecutionCacheKey).
-			Int("step", taskRes.Step).
-			Msg("action execution failed")
-		if executedAction.Parameters.StopOnFail != nil && *executedAction.Parameters.StopOnFail {
-			e.logger.Debug().
-				Str("source", taskRes.Source).
-				Str("alarm", taskRes.Alarm.ID).
-				Str("execution", taskRes.ExecutionCacheKey).
-				Int("step", taskRes.Step).
-				Msg("action failed, stop scenario")
-			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
+			Int("step", taskRes.Step).Msg("execution failed, drop scenario")
+		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
 
-			return
-		}
-	case TaskNotMatched:
-		if executedAction.DropScenarioIfNotMatched {
-			e.logger.Debug().
-				Str("source", taskRes.Source).
-				Str("alarm", taskRes.Alarm.ID).
-				Str("execution", taskRes.ExecutionCacheKey).
-				Int("step", taskRes.Step).
-				Msg("action is not matched, stop scenario")
-			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
+		return
+	}
 
-			return
-		}
-	default:
-		if executedAction.Parameters.StopOnSuccess != nil && *executedAction.Parameters.StopOnSuccess {
-			e.logger.Debug().
-				Str("source", taskRes.Source).
-				Str("alarm", taskRes.Alarm.ID).
-				Str("execution", taskRes.ExecutionCacheKey).
-				Int("step", taskRes.Step).
-				Msg("action succeeded, stop scenario")
-			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
-
-			return
-		}
+	if taskRes.Status == TaskNotMatched && scenarioExecution.ActionExecutions[taskRes.Step].Action.DropScenarioIfNotMatched {
+		e.logger.Debug().
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).Int("step", taskRes.Step).
+			Msg("action is not matched, drop scenario")
+		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
+		return
 	}
 
 	scenarioExecution.ActionExecutions[taskRes.Step].Executed = true
@@ -444,16 +419,15 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 	if err != nil {
 		e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot save execution")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
-
 		return
 	}
 
+	executedAction := scenarioExecution.ActionExecutions[taskRes.Step].Action
 	if executedAction.Type == types.ActionTypeWebhook {
 		_, err = e.executionStorage.IncExecutedWebhookCount(ctx, taskRes.Alarm.ID, 1, false)
 		if err != nil {
 			e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot update counter")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
-
 			return
 		}
 	}
@@ -463,13 +437,46 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 		if err != nil {
 			e.logger.Err(err).Str("execution", scenarioExecution.GetCacheKey()).Msg("cannot process emitted trigger")
 			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, err)
-
 			return
 		}
 	}
 
 	nextStep := taskRes.Step + 1
-	if nextStep >= len(scenarioExecution.ActionExecutions) {
+	if len(scenarioExecution.ActionExecutions) > nextStep {
+		additionalData := scenarioExecution.AdditionalData
+		action := scenarioExecution.ActionExecutions[nextStep].Action
+		skipForChild := false
+		if action.Parameters.SkipForChild != nil {
+			skipForChild = *action.Parameters.SkipForChild
+		}
+		skipForInstruction := false
+		if action.Parameters.SkipForInstruction != nil {
+			skipForInstruction = *action.Parameters.SkipForInstruction
+		}
+		nextTask := Task{
+			Source:               "process task func",
+			Action:               action,
+			Alarm:                taskRes.Alarm,
+			Entity:               scenarioExecution.Entity,
+			Step:                 nextStep,
+			ExecutionID:          scenarioExecution.ID,
+			ExecutionCacheKey:    scenarioExecution.GetCacheKey(),
+			ScenarioID:           scenarioExecution.ScenarioID,
+			ScenarioName:         scenarioExecution.ScenarioName,
+			SkipForChild:         skipForChild,
+			IsMetaAlarmUpdated:   scenarioExecution.IsMetaAlarmUpdated,
+			SkipForInstruction:   skipForInstruction,
+			IsInstructionMatched: scenarioExecution.IsInstructionMatched,
+			AdditionalData:       additionalData,
+		}
+
+		select {
+		case <-ctx.Done():
+			return
+		default:
+			e.taskChannel <- nextTask
+		}
+	} else {
 		e.logger.Debug().
 			Str("source", taskRes.Source).
 			Str("alarm", taskRes.Alarm.ID).
@@ -477,44 +484,6 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 			Int("step", taskRes.Step).
 			Msg("scenario is finished")
 		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, nil)
-
-		return
-	}
-
-	additionalData := scenarioExecution.AdditionalData
-	action := scenarioExecution.ActionExecutions[nextStep].Action
-	skipForChild := false
-	if action.Parameters.SkipForChild != nil {
-		skipForChild = *action.Parameters.SkipForChild
-	}
-
-	skipForInstruction := false
-	if action.Parameters.SkipForInstruction != nil {
-		skipForInstruction = *action.Parameters.SkipForInstruction
-	}
-
-	nextTask := Task{
-		Source:               "process task func",
-		Action:               action,
-		Alarm:                taskRes.Alarm,
-		Entity:               scenarioExecution.Entity,
-		Step:                 nextStep,
-		ExecutionID:          scenarioExecution.ID,
-		ExecutionCacheKey:    scenarioExecution.GetCacheKey(),
-		ScenarioID:           scenarioExecution.ScenarioID,
-		ScenarioName:         scenarioExecution.ScenarioName,
-		SkipForChild:         skipForChild,
-		IsMetaAlarmUpdated:   scenarioExecution.IsMetaAlarmUpdated,
-		SkipForInstruction:   skipForInstruction,
-		IsInstructionMatched: scenarioExecution.IsInstructionMatched,
-		AdditionalData:       additionalData,
-	}
-
-	select {
-	case <-ctx.Done():
-		return
-	default:
-		e.taskChannel <- nextTask
 	}
 }
 

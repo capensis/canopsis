@@ -128,7 +128,7 @@
 import { MODALS, SERVICE_WEATHER_WIDGET_MODAL_TYPES, USER_PERMISSIONS } from '@/constants';
 
 import { generatePreparedDefaultAlarmListWidget } from '@/helpers/entities/widget/form';
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 
 import { permissionsWidgetsServiceWeatherFilters } from '@/mixins/permissions/widgets/service-weather/filters';
 import { permissionsWidgetsServiceWeatherCategory } from '@/mixins/permissions/widgets/service-weather/category';
@@ -137,6 +137,7 @@ import { widgetFilterSelectMixin } from '@/mixins/widget/filter-select';
 import { entitiesServiceMixin } from '@/mixins/entities/service';
 import { widgetFetchQueryMixin } from '@/mixins/widget/fetch-query';
 import { authMixin } from '@/mixins/auth';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 
 import FilterSelector from '@/components/other/filter/partials/filter-selector.vue';
 import FiltersListBtn from '@/components/other/filter/partials/filters-list-btn.vue';
@@ -154,6 +155,7 @@ export default {
     permissionsWidgetsServiceWeatherCategory,
     widgetPeriodicRefreshMixin,
     widgetFilterSelectMixin,
+    entitiesAlarmTagMixin,
     entitiesServiceMixin,
     widgetFetchQueryMixin,
     authMixin,
@@ -237,8 +239,8 @@ export default {
       this.$modals.show({
         name: MODALS.serviceEntities,
         config: {
+          color: getEntityColor(service, this.widget.parameters.colorIndicator),
           service,
-          titleClass: getEntityColorClass(service, this.widget.parameters.colorIndicator),
           widgetParameters: this.widget.parameters,
         },
       });
@@ -311,6 +313,10 @@ export default {
         params: this.getQuery(),
         widgetId: this.widget._id,
       });
+
+      if (!this.alarmTagsPending) {
+        this.fetchAlarmTagsList({ params: { paginate: false } });
+      }
     },
   },
 };

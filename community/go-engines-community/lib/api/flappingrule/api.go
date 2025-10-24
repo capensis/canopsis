@@ -1,6 +1,7 @@
 package flappingrule
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -20,15 +21,18 @@ type API interface {
 type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
+	transformer   common.PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
+	transformer common.PatternFieldsTransformer,
 ) API {
 	return &api{
 		store:         store,
 		mongoExporter: mongoExporter,
+		transformer:   transformer,
 	}
 }
 
@@ -42,14 +46,18 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	rule, err := a.store.Insert(c, request)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+		panic(err)
+	}
 
+	rule, err := a.store.Insert(c, request)
+	if err != nil {
 		panic(err)
 	}
 
@@ -109,14 +117,18 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	rule, err := a.store.Update(c, request)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+		panic(err)
+	}
 
+	rule, err := a.store.Update(c, request)
+	if err != nil {
 		panic(err)
 	}
 
@@ -158,4 +170,18 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.FlappingRuleMongoCollection, b)
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

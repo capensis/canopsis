@@ -12,7 +12,7 @@ exports[`tag-form Renders \`tag-form\` with custom props 1`] = `
     required=""
   />
   <c-color-picker-field-stub
-    value="#2B3E4F"
+    value="#2b3e4f"
   />
   <!---->
 </div>
@@ -24,7 +24,6 @@ exports[`tag-form Renders \`tag-form\` with default props 1`] = `
 >
   <c-name-field-stub
     autofocus=""
-    disabled="true"
     max-length="20"
     name="value"
     required=""

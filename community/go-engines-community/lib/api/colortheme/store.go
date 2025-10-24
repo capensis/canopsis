@@ -66,21 +66,17 @@ func NewStore(
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-	doc := Document{
-		ID:        utils.NewID(),
-		Name:      r.Name,
-		Colors:    r.Colors,
-		FontSize:  r.FontSize,
-		Author:    r.Author,
-		Created:   now,
-		Updated:   now,
-		Deletable: true,
-	}
+
+	r.ID = utils.NewID()
+	r.Created = now
+	r.Updated = now
+	r.Deletable = true
+
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		_, err := s.dbColorCollection.InsertOne(ctx, doc)
+		_, err := s.dbColorCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
 				return common.NewValidationError("name", "Name already exists.")
@@ -89,7 +85,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		response, err = s.GetByID(ctx, doc.ID)
+		response, err = s.GetByID(ctx, r.ID)
 		return err
 	})
 
@@ -105,6 +101,8 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 		return nil, err
 	}
 
+	defer cursor.Close(ctx)
+
 	if cursor.Next(ctx) {
 		var res Response
 		err = cursor.Decode(&res)
@@ -113,14 +111,6 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 		}
 
 		return &res, nil
-	}
-
-	if err = cursor.Err(); err != nil {
-		return nil, err
-	}
-
-	if err = cursor.Close(ctx); err != nil {
-		return nil, err
 	}
 
 	return nil, nil
@@ -150,20 +140,14 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		return nil, err
 	}
 
+	defer cursor.Close(ctx)
+
 	var result AggregationResult
 	if cursor.Next(ctx) {
 		err = cursor.Decode(&result)
 		if err != nil {
 			return nil, err
 		}
-	}
-
-	if err = cursor.Err(); err != nil {
-		return nil, err
-	}
-
-	if err = cursor.Close(ctx); err != nil {
-		return nil, err
 	}
 
 	return &result, nil
@@ -174,19 +158,14 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		return nil, ErrCanopsisDefaultTheme
 	}
 
-	doc := Document{
-		Name:      r.Name,
-		Colors:    r.Colors,
-		FontSize:  r.FontSize,
-		Author:    r.Author,
-		Updated:   datetime.NewCpsTime(),
-		Deletable: true,
-	}
+	r.Updated = datetime.NewCpsTime()
+	r.Deletable = true
+
 	var response *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": doc})
+		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": r})
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
 				return common.NewValidationError("name", "Name already exists.")

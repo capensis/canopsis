@@ -17,8 +17,7 @@
       <v-btn
         :loading="submitting"
         :disabled="isDisabled"
-        color="primary"
-        outlined
+        class="warning"
         @click.prevent="submit(false)"
       >
         {{ $t('modals.clickOutsideConfirmation.buttons.dontSave') }}
@@ -26,7 +25,7 @@
       <v-btn
         :loading="submitting"
         :disabled="isDisabled"
-        color="primary"
+        class="primary"
         @click.prevent="submit(true)"
       >
         {{ $t('modals.clickOutsideConfirmation.buttons.save') }}

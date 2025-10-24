@@ -157,23 +157,7 @@ Cet onglet vous permet d'éditer les notifications relatifs aux consignes.
 ## Icônes
 
 Dans Canopsis, le jeu d'icône [material Design](https://fonts.google.com/icons) est mis à disposition.  
-Vous avez également la possibilité d'ajouter vos propres icônes au format **svg** via ce menu :
-
-![Onglet paramètres des icones](img/parametres_icones.png)
-
-!!! Warning
-    L'icône ajoutée se retrouvera dans la collection `icon` de MongoDB ainsi que dans le répertoire `/opt/canopsis/var/lib/icons` du service `api` qu'il faudra sauvegarder pour ne pas perdre les icones ajoutées. 
-    
-    En installation `docker compose`, il vous faudra gérer ce répertoire avec un montage de volume persistant ( répertoire local accessible en écriture par l'utilisateur qui va lancer le service `api` => ici un utilisateur avec un UID `1000` qui aura aussi précédemment créé le répertoire local `./files-pro/api/var/lib` ). 
-    
-    Exemple de surcharge possible dans le fichier `docker-compose.override.yml` :
-
-    ```yaml
-    api:
-      user: "1000:1000"
-      volumes:
-      - ./files-pro/api/var/lib:/opt/canopsis/var/lib:rw
-    ```
+Vous avez également la possibilité d'ajouter vos propres icônes au format **svg**.  
 
 Vous pourrez ensuite en bénéficier dans les modules compatibles 
 

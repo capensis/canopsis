@@ -131,7 +131,6 @@ describe('mass-actions-panel', () => {
     bulkCreateAlarmAssocticketEvent,
     bulkCreateAlarmCommentEvent,
     bulkCreateAlarmCancelEvent,
-    bulkCreateAlarmChangestateEvent,
   } = createAlarmModule();
   const { metaAlarmModule, addAlarmsIntoMetaAlarm, createMetaAlarm } = createMetaAlarmModule();
 
@@ -183,7 +182,7 @@ describe('mass-actions-panel', () => {
 
     pbehaviorAddAction.trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.pbehaviorPlanning,
         config: {
@@ -232,7 +231,7 @@ describe('mass-actions-panel', () => {
 
     ackAction.trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createAckEvent,
         config: {
@@ -250,7 +249,7 @@ describe('mass-actions-panel', () => {
     await flushPromises();
 
     expect(wrapper).toHaveBeenEmit('clear:items');
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   test('Fast ack event sent after trigger fast ack action', async () => {
@@ -283,7 +282,7 @@ describe('mass-actions-panel', () => {
 
     await flushPromises();
 
-    expect(bulkCreateAlarmAckEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
@@ -291,7 +290,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(wrapper).toHaveBeenEmit('clear:items');
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   test('Fast ack event sent after trigger fast ack action without parameters', async () => {
@@ -318,7 +317,7 @@ describe('mass-actions-panel', () => {
 
     await flushPromises();
 
-    expect(bulkCreateAlarmAckEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmAckEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment: '' })),
@@ -326,7 +325,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(wrapper).toHaveBeenEmit('clear:items');
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   test('Ack remove modal showed after trigger ack remove action', async () => {
@@ -350,7 +349,7 @@ describe('mass-actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.ackRemove).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createEvent,
         config: {
@@ -367,14 +366,14 @@ describe('mass-actions-panel', () => {
 
     await config.action({ comment });
 
-    expect(bulkCreateAlarmAckremoveEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmAckremoveEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: itemsForAck.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
@@ -400,7 +399,7 @@ describe('mass-actions-panel', () => {
 
     cancelAction.trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createEvent,
         config: {
@@ -419,14 +418,14 @@ describe('mass-actions-panel', () => {
 
     await config.action(cancelEvent);
 
-    expect(bulkCreateAlarmCancelEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: items.map(({ _id: alarmId }) => ({ _id: alarmId, ...cancelEvent })),
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
@@ -458,14 +457,14 @@ describe('mass-actions-panel', () => {
 
     await flushPromises();
 
-    expect(bulkCreateAlarmCancelEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
@@ -491,14 +490,14 @@ describe('mass-actions-panel', () => {
 
     await flushPromises();
 
-    expect(bulkCreateAlarmCancelEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmCancelEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: fastActionAlarms.map(({ _id: alarmId }) => ({ _id: alarmId, comment: '' })),
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
@@ -522,7 +521,7 @@ describe('mass-actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.associateTicket).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createAssociateTicketEvent,
         config: {
@@ -543,7 +542,7 @@ describe('mass-actions-panel', () => {
 
     await config.action(ticketEvent);
 
-    expect(bulkCreateAlarmAssocticketEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmAssocticketEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: [{
@@ -554,7 +553,7 @@ describe('mass-actions-panel', () => {
     );
 
     expect(wrapper).toHaveBeenEmit('clear:items');
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
   });
 
   test('Snooze modal showed after trigger snooze action', async () => {
@@ -580,7 +579,7 @@ describe('mass-actions-panel', () => {
 
     selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.snooze).trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createSnoozeEvent,
         config: {
@@ -603,14 +602,14 @@ describe('mass-actions-panel', () => {
 
     await config.action(snoozeEvent);
 
-    expect(bulkCreateAlarmSnoozeEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmSnoozeEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: items.map(({ _id: alarmId }) => ({ _id: alarmId, ...snoozeEvent })),
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
@@ -636,7 +635,7 @@ describe('mass-actions-panel', () => {
 
     ackRemoveAction.trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.linkToMetaAlarm,
         config: {
@@ -656,7 +655,7 @@ describe('mass-actions-panel', () => {
 
     await config.action(manualMetaAlarmEventWithId);
 
-    expect(addAlarmsIntoMetaAlarm).toHaveBeenCalledWith(
+    expect(addAlarmsIntoMetaAlarm).toBeCalledWith(
       expect.any(Object),
       {
         id: manualMetaAlarmEventWithId.id,
@@ -664,7 +663,7 @@ describe('mass-actions-panel', () => {
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
 
     addAlarmsIntoMetaAlarm.mockClear();
@@ -677,7 +676,7 @@ describe('mass-actions-panel', () => {
 
     await config.action(manualMetaAlarmEventWithoutId);
 
-    expect(createMetaAlarm).toHaveBeenCalledWith(
+    expect(createMetaAlarm).toBeCalledWith(
       expect.any(Object),
       {
         id: manualMetaAlarmEventWithoutId.id,
@@ -685,7 +684,7 @@ describe('mass-actions-panel', () => {
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
   });
 
@@ -711,7 +710,7 @@ describe('mass-actions-panel', () => {
 
     commentAction.trigger('click');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.createCommentEvent,
         config: {
@@ -727,84 +726,15 @@ describe('mass-actions-panel', () => {
 
     await config.action({ comment });
 
-    expect(bulkCreateAlarmCommentEvent).toHaveBeenCalledWith(
+    expect(bulkCreateAlarmCommentEvent).toBeCalledWith(
       expect.any(Object),
       {
         data: items.map(({ _id: alarmId }) => ({ _id: alarmId, comment })),
       },
     );
 
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
+    expect(refreshAlarmsList).toBeCalledTimes(1);
     expect(wrapper).toHaveBeenEmit('clear:items');
-  });
-
-  test('Change state modal showed after trigger change state action', async () => {
-    const widgetData = {
-      _id: Faker.datatype.string(),
-      parameters: {},
-    };
-
-    const wrapper = factory({
-      store,
-      propsData: {
-        items: [alarmWithAck],
-        refreshAlarmsList,
-        widget: widgetData,
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    const changeStateAction = selectActionByType(wrapper, ALARM_LIST_ACTIONS_TYPES.changeState);
-
-    changeStateAction.trigger('click');
-
-    expect($modals.show).toHaveBeenCalledWith(
-      {
-        name: MODALS.createChangeStateEvent,
-        config: {
-          items: [alarmWithAck],
-          action: expect.any(Function),
-        },
-      },
-    );
-
-    const [{ config }] = $modals.show.mock.calls[0];
-
-    const changeStateEvent = {
-      state: Faker.datatype.number(),
-      comment: Faker.datatype.string(),
-    };
-
-    await config.action(changeStateEvent);
-
-    expect(bulkCreateAlarmChangestateEvent).toHaveBeenCalledWith(
-      expect.any(Object),
-      {
-        data: [{ _id: alarmWithAck._id, ...changeStateEvent }],
-      },
-    );
-
-    expect(refreshAlarmsList).toHaveBeenCalledTimes(1);
-    expect(wrapper).toHaveBeenEmit('clear:items');
-  });
-
-  test('inlineCount reflects quickMassActions count', () => {
-    const quickMassActions = [
-      ALARM_LIST_ACTIONS_TYPES.fastAck,
-      ALARM_LIST_ACTIONS_TYPES.ack,
-      ALARM_LIST_ACTIONS_TYPES.cancel,
-    ];
-    const wrapper = factory({
-      store,
-      propsData: {
-        items,
-        widget: { parameters: { quickMassActions } },
-      },
-    });
-    // getActionsInlineCount returns quickMassActions.length + 1 (menu button) if not all actions are quick
-    expect(wrapper.vm.inlineCount).toBeGreaterThanOrEqual(quickMassActions.length);
   });
 
   test('Renders `mass-actions-panel` with non empty items', () => {
@@ -861,23 +791,6 @@ describe('mass-actions-panel', () => {
       propsData: {
         items: [...items, alarmWithAck],
         widget,
-      },
-    });
-
-    expect(wrapper).toMatchSnapshot();
-  });
-
-  test('Renders `mass-actions-panel` with quickMassActions set (custom order)', () => {
-    const quickMassActions = [
-      ALARM_LIST_ACTIONS_TYPES.fastAck,
-      ALARM_LIST_ACTIONS_TYPES.ack,
-      ALARM_LIST_ACTIONS_TYPES.cancel,
-    ];
-    const wrapper = snapshotFactory({
-      store,
-      propsData: {
-        items,
-        widget: { parameters: { quickMassActions } },
       },
     });
 

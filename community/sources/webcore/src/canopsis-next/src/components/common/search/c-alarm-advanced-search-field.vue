@@ -12,7 +12,6 @@
               v-model="rules"
               :attributes="attributes"
               :allow-or="allowOr"
-              :allow-focus-on-mount="allowFocusOnMount"
               @input="inputSearch"
             />
           </div>
@@ -77,7 +76,6 @@ export default {
   setup(props, { emit }) {
     const instance = useComponentInstance();
     const rules = ref([advancedSearchRuleItemToFormItem()]);
-    const allowFocusOnMount = ref(true);
 
     let activeSearch = null;
 
@@ -107,16 +105,6 @@ export default {
       allowEntityFields,
       allowPbehaviorFields,
     });
-
-    /**
-     * Temporarily disables the allow focus on mount flag and re-enables it after a delay.
-     * This is used to prevent unwanted focus behavior during certain operations.
-     */
-    const runToggleAllowFocusOnMount = () => {
-      allowFocusOnMount.value = false;
-
-      setTimeout(() => allowFocusOnMount.value = true, 1000);
-    };
 
     /**
      * Submits the current advanced search configuration.
@@ -174,8 +162,6 @@ export default {
       activeSearch = search;
       rules.value = [...search.rules, advancedSearchRuleItemToFormItem()];
 
-      runToggleAllowFocusOnMount();
-
       submit();
     };
 
@@ -198,7 +184,6 @@ export default {
     return {
       rules,
       attributes,
-      allowFocusOnMount,
       allowOr,
 
       select,

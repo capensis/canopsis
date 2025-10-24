@@ -17,14 +17,11 @@
         />
       </template>
     </c-enabled-field>
-    <v-expand-transition>
-      <theme-color-picker-field
-        v-if="value.enabled"
-        v-field="value.color"
-        v-bind="$attrs"
-        :disabled="!value.enabled"
-      />
-    </v-expand-transition>
+    <theme-color-picker-field
+      v-field="value.color"
+      v-bind="$attrs"
+      :disabled="!value.enabled"
+    />
   </v-layout>
 </template>
 

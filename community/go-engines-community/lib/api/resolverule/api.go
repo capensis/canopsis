@@ -1,6 +1,7 @@
 package resolverule
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -11,7 +12,8 @@ import (
 )
 
 type api struct {
-	store Store
+	store       Store
+	transformer common.PatternFieldsTransformer
 }
 
 // Create
@@ -24,14 +26,18 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	rule, err := a.store.Insert(c, request)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+		panic(err)
+	}
 
+	rule, err := a.store.Insert(c, request)
+	if err != nil {
 		panic(err)
 	}
 
@@ -91,14 +97,18 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	rule, err := a.store.Update(c, request)
+	err := a.transformEditRequest(c, &request.EditRequest)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
+		panic(err)
+	}
 
+	rule, err := a.store.Update(c, request)
+	if err != nil {
 		panic(err)
 	}
 
@@ -129,8 +139,26 @@ func (a *api) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func NewApi(store Store) common.CrudAPI {
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func NewApi(
+	store Store,
+	transformer common.PatternFieldsTransformer,
+) common.CrudAPI {
 	return &api{
-		store: store,
+		store:       store,
+		transformer: transformer,
 	}
 }

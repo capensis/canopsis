@@ -5,16 +5,16 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
+	libflag "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/flag"
 )
 
 type Options struct {
-	log.Options
 	Version                 bool
 	FeatureEventProcessing  bool
 	FeatureContextCreation  bool
 	Purge                   bool
 	PrintEventOnError       bool
+	ModeDebug               bool
 	PeriodicalWaitTime      time.Duration
 	InfosDictionaryWaitTime time.Duration
 	ExternalDataApiTimeout  time.Duration
@@ -28,9 +28,9 @@ type Options struct {
 
 func ParseOptions() (Options, []string) {
 	opts := Options{}
-	log.BindCmdFlags(&opts.Options)
 	flag.BoolVar(&opts.FeatureEventProcessing, "processEvent", true, "enable event processing. enabled by default.")
 	flag.BoolVar(&opts.FeatureContextCreation, "createContext", true, "enable context graph creation. enabled by default. WARNING: disable the old context-graph engine when using this.")
+	flag.BoolVar(&opts.ModeDebug, "d", false, "debug")
 	flag.BoolVar(&opts.PrintEventOnError, "printEventOnError", false, "Print event on processing error")
 	flag.BoolVar(&opts.Purge, "purge", false, "purge consumer queue(s) before work")
 	flag.DurationVar(&opts.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two runs of periodical process")
@@ -43,7 +43,11 @@ func ParseOptions() (Options, []string) {
 	flag.IntVar(&opts.SystemWorkers, "systemWorkers", canopsis.DefaultSystemEventWorkers, "Amount of workers to process system event flow.")
 	flag.IntVar(&opts.UserWorkers, "userWorkers", canopsis.DefaultUserEventWorkers, "Amount of workers to process user event flow.")
 
+	flag.Int("workers", 0, "Deprecated: Amount of workers to process each event flow.")
+	flag.String("publishQueue", "", "Deprecated: publish event to this queue.")
+	flag.String("consumeQueue", "", "Deprecated: consume events from this queue.")
+
 	flag.Parse()
 
-	return opts, nil
+	return opts, libflag.FindDeprecatedFlags("workers", "publishQueue", "consumeQueue")
 }

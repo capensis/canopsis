@@ -29,8 +29,6 @@ export const ROUTER_ACCESS_TOKEN_KEY = 'access_token';
 
 export const LOCAL_STORAGE_ACCESS_TOKEN_KEY = VUE_APP_LOCAL_STORAGE_ACCESS_TOKEN_KEY || 'accessToken';
 
-export const LOCAL_STORAGE_WARNING_POPUP_KEY = 'warningPopup';
-
 export const PAGINATION_LIMIT = parseInt(VUE_APP_PAGINATION_LIMIT, 10);
 
 export const PAGINATION_PER_PAGE_VALUES = [5, 10, 20, 50, 100];
@@ -46,7 +44,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
-    'service-entities-list', 'v-icon', 'v-row', 'v-chip', 'c-remediation-instruction-execution-see-details',
+    'service-entities-list', 'v-icon', 'v-row', 'v-chip',
   ]),
   allowedAttributes: {
     '*': [
@@ -74,7 +72,6 @@ export const DEFAULT_SANITIZE_OPTIONS = {
       'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
     'v-chip': ['color', 'text-color'],
-    'c-remediation-instruction-execution-see-details': [':execution'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
@@ -153,9 +150,6 @@ export const SOCKET_ROOMS = {
   alarmDetails: 'alarm-details',
   icons: 'icons',
   testscenario: 'testscenario',
-  notifications: 'notifications',
-  executions: 'executions',
-  simplifiedManualExecutions: 'simplified-manual-executions',
 };
 
 export const API_ROUTES = {
@@ -275,8 +269,7 @@ export const API_ROUTES = {
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
   dataStorage: '/api/v4/data-storage',
-  notificationSettings: '/api/v4/notification-settings',
-  notifications: '/api/v4/notifications',
+  notification: '/api/v4/notification',
   idleRules: '/api/v4/idle-rules',
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
@@ -350,10 +343,8 @@ export const API_ROUTES = {
     executions: '/api/v4/cat/executions',
     jobExecutions: '/api/v4/cat/job-executions',
     alarmExecutions: '/api/v4/cat/alarm-executions',
-    pausedExecutions: '/api/v4/cat/account/executions',
+    pausedExecutions: '/api/v4/cat/account/paused-executions',
     instructionComments: '/api/v4/cat/instruction-comments',
-    executionStatuses: '/api/v4/cat/execution-statuses',
-    readExecution: '/api/v4/cat/executions',
   },
   junit: {
     directory: '/api/v4/cat/junit/directory',
@@ -416,32 +407,26 @@ export const API_ROUTES = {
 };
 
 export const COLORS = {
-  primary: '#2DAC61',
-  secondary: '#2B3E4F',
-  accent: '#678CCA',
-  error: '#D22E2E',
-  errorBackground: '#FFCABE',
-  warning: '#FB8C00',
-  warningBackground: '#FFD27A',
-  success: '#22874C',
-  successBackground: '#90DFB1',
-  info: '#0A6EBD',
-  infoBackground: '#A6D9FF',
+  primary: '#2fab63',
+  secondary: '#2b3e4f',
+  accent: '#82b1ff',
+  error: '#ff5252',
+  info: '#2196f3',
+  success: '#4caf50',
+  warning: '#fb8c00',
   background: '#ffffff',
   activeColor: '#000000',
   table: {
     background: '#FFFFFF',
     rowColor: '#FFFFFF',
     shiftRowColor: '#F5F5F5',
-    shiftRowDarkColor: '#616161',
     hoverRowColor: '#F5F5F5',
-    hoverRowDarkColor: '#616161',
   },
   state: {
-    ok: '#24834C',
-    minor: '#FFF176',
-    major: '#FFA800',
-    critical: '#C62828',
+    ok: '#00a65a',
+    minor: '#fcdc00',
+    major: '#ff9900',
+    critical: '#f56954',
     pause: '#808080',
   },
   status: {
@@ -530,13 +515,6 @@ export const COLORS = {
     '#C2185B',
     '#AD1457',
     '#880E4F',
-  ],
-  impactStateGrouped: [
-    '#568822',
-    '#b0e37b',
-    '#fff176',
-    '#ffb7b8',
-    '#c50711',
   ],
   kpi: {
     downtime: '#c4c4c4',
@@ -681,7 +659,6 @@ export const CSS_COLORS_VARS = {
   primary: 'var(--v-primary-base)',
   secondary: 'var(--v-secondary-base)',
   error: 'var(--v-error-base)',
-  success: 'var(--v-success-base)',
 
   state: {
     ok: 'var(--v-state-ok-base)',
@@ -706,13 +683,9 @@ export const DEFAULT_THEME_COLORS = {
   secondary: COLORS.secondary,
   accent: COLORS.accent,
   error: COLORS.error,
-  error_background: COLORS.errorBackground,
-  warning: COLORS.warning,
-  warning_background: COLORS.warningBackground,
-  success: COLORS.success,
-  success_background: COLORS.successBackground,
   info: COLORS.info,
-  info_background: COLORS.infoBackground,
+  success: COLORS.success,
+  warning: COLORS.warning,
   background: COLORS.background,
   active_color: COLORS.activeColor,
 

@@ -39,7 +39,6 @@
     </v-layout>
     <v-data-table
       v-model="selected"
-      ref="dataTable"
       :headers="preparedHeaders"
       :items="visibleItems"
       :loading="loading"

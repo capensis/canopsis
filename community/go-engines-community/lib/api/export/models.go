@@ -15,7 +15,6 @@ type TaskParameters struct {
 	Separator      rune
 	FilenamePrefix string
 	UserID         string
-	TimeFormat     string
 }
 
 type Task struct {
@@ -29,7 +28,6 @@ type Task struct {
 	Filename   string            `bson:"filename"`
 	FailReason string            `bson:"fail_reason,omitempty"`
 	User       string            `bson:"user"`
-	TimeFormat string            `bson:"time_format"`
 	Created    datetime.CpsTime  `bson:"created"`
 	Launched   *datetime.CpsTime `bson:"launched,omitempty"`
 	Completed  *datetime.CpsTime `bson:"completed,omitempty"`

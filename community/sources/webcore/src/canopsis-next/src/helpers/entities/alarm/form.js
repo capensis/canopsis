@@ -165,14 +165,6 @@ export const isAlarmStatusCancelled = alarm => alarm.v?.status?.val === ALARM_ST
 export const isAlarmStatusOngoing = alarm => alarm.v?.status?.val === ALARM_STATUSES.ongoing;
 
 /**
- * Check alarm status is no events
- *
- * @param {Alarm} alarm
- * @returns {boolean}
- */
-export const isAlarmStatusNoEvents = alarm => alarm.v?.status?.val === ALARM_STATUSES.noEvents;
-
-/**
  * Check alarm status is flapping
  *
  * @param {Alarm} alarm

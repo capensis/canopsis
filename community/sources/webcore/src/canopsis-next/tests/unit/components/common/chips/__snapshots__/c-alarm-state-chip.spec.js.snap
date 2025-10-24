@@ -2,7 +2,7 @@
 
 exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state 1`] = `
 <div
-  class="layout c-alarm-state-chip align-center c-alarm-state-chip--badge"
+  class="layout align-center c-alarm-state-chip--badge"
 >
   <c-alarm-chip-stub
     badge-value="Events count"
@@ -19,7 +19,7 @@ exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state 1`] 
 
 exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state, small and appendIconName 1`] = `
 <div
-  class="layout c-alarm-state-chip align-center c-alarm-state-chip--badge c-alarm-state-chip--small"
+  class="layout align-center c-alarm-state-chip--badge c-alarm-state-chip--small"
 >
   <c-alarm-chip-stub
     badge-value="Events count"
@@ -28,7 +28,7 @@ exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state, sma
   >
     <i
       aria-hidden="true"
-      class="v-icon notranslate c-alarm-state-chip__append-icon material-icons theme--light"
+      class="v-icon notranslate material-icons theme--light white--text"
       style="font-size: 14px;"
     >
       lock
@@ -46,7 +46,7 @@ exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with alarm state, sma
 
 exports[`c-alarm-state-chip Renders \`c-alarm-state-chip\` with default props 1`] = `
 <div
-  class="layout c-alarm-state-chip align-center"
+  class="layout align-center"
 >
   <c-alarm-chip-stub
     value="0"

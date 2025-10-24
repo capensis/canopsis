@@ -62,11 +62,11 @@ export const widgetSettingsMixin = {
     scrollToFirstError() {
       let el = this.$el.querySelector('.v-messages.error--text:first-of-type');
 
-      if (!el?.checkVisibility?.()) {
+      if (!el.checkVisibility()) {
         el = this.$el.querySelector('.v-list-item__title.validation-header.error--text:first-of-type');
       }
 
-      el?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+      el?.scrollIntoView({ block: 'center', behavior: 'smooth' });
     },
 
     /**

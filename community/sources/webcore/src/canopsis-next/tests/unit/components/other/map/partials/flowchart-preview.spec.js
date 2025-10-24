@@ -127,7 +127,7 @@ describe('flowchart-preview', () => {
 
     const flowchart = selectFlowchart(wrapper);
 
-    const colorDarken = '#22360e';
+    const colorDarken = '#89951a';
 
     expect(flowchart.vm.shapes).toEqual({
       [lineShape._id]: lineShape,

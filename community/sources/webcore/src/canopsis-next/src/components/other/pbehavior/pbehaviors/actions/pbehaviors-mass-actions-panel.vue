@@ -10,7 +10,7 @@
       v-if="enablable && someOneDisable"
       :tooltip="$t('pbehavior.massEnable')"
       icon="check_circle"
-      color="success"
+      color="primary"
       @click="showEnablePbehaviorsModal"
     />
     <c-action-btn

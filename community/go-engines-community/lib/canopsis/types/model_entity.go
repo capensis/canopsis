@@ -15,15 +15,6 @@ const (
 	EntityTypeService   = "service"
 )
 
-// Entity info types
-const (
-	EntityInfoTypeBoolean = iota
-	EntityInfoTypeNumber
-	EntityInfoTypeTimestamp
-	EntityInfoTypeString
-	EntityInfoTypeStringArray
-)
-
 const EntityDefaultImpactLevel = 1
 
 // Info contain extra values for the entity

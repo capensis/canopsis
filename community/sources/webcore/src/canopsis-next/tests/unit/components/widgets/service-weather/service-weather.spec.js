@@ -8,7 +8,6 @@ import {
   createQueryModule,
   createServiceModule,
   createUserPreferenceModule,
-  createActiveViewModule,
 } from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
@@ -53,7 +52,6 @@ describe('service-weather', () => {
     sortDesc: [],
     sortBy: [],
     itemsPerPage: DEFAULT_WEATHER_LIMIT,
-    with_tag_colors: true,
     hide_grey: false,
   };
 
@@ -77,14 +75,13 @@ describe('service-weather', () => {
   } = createServiceModule();
   const { queryModule, updateQuery, getQueryById } = createQueryModule();
   const { alarmTagModule } = createAlarmTagModule();
-  const { activeViewModule } = createActiveViewModule();
+
   const createStore = () => createMockedStoreModules([
     authModule,
     userPreferenceModule,
     serviceModule,
     queryModule,
     alarmTagModule,
-    activeViewModule,
   ]);
 
   const store = createStore();
@@ -177,7 +174,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
     });
 
@@ -191,7 +187,7 @@ describe('service-weather', () => {
 
     selectEntityCategoryField(wrapper).triggerCustomEvent('input', category);
 
-    expect(updateUserPreference).toHaveBeenCalledWith(
+    expect(updateUserPreference).toBeCalledWith(
       expect.any(Object),
       {
         data: {
@@ -202,7 +198,7 @@ describe('service-weather', () => {
       },
     );
 
-    expect(updateQuery).toHaveBeenCalledWith(
+    expect(updateQuery).toBeCalledWith(
       expect.any(Object),
       {
         id: widget._id,
@@ -223,7 +219,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
     });
 
@@ -311,7 +306,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
       propsData: {
         widget,
@@ -324,7 +318,7 @@ describe('service-weather', () => {
     alarmListWidget.parameters.serviceDependenciesColumns = widget.parameters.serviceDependenciesColumns;
     alarmListWidget.parameters.widgetColumns = widget.parameters.alarmsList.widgetColumns;
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.alarmsList,
         config: {
@@ -343,7 +337,7 @@ describe('service-weather', () => {
 
     await modalArguments.config.fetchList(params);
 
-    expect(fetchServiceAlarmsWithoutStore).toHaveBeenCalledWith(
+    expect(fetchServiceAlarmsWithoutStore).toBeCalledWith(
       expect.any(Object),
       { id: service._id, params },
     );
@@ -364,7 +358,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
       propsData: {
         widget: {
@@ -381,7 +374,7 @@ describe('service-weather', () => {
 
     await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.alarmsList,
         config: expect.any(Object),
@@ -401,7 +394,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
       propsData: {
         widget,
@@ -412,7 +404,7 @@ describe('service-weather', () => {
 
     await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:root-cause');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.entitiesRootCauseDiagram,
         config: {
@@ -439,7 +431,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
       propsData: {
         widget,
@@ -450,11 +441,11 @@ describe('service-weather', () => {
 
     await selectServiceWeatherItemByIndex(wrapper, 0).triggerCustomEvent('show:service');
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.serviceEntities,
         config: {
-          titleClass: 'state-pause',
+          color: 'var(--v-state-pause-base)',
           service,
           widgetParameters: widget.parameters,
         },
@@ -469,7 +460,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
       propsData: {
         tabId: 'tab-id',
@@ -516,7 +506,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
     });
 
@@ -547,7 +536,6 @@ describe('service-weather', () => {
         userPreferenceModule,
         serviceModule,
         queryModule,
-        activeViewModule,
       ]),
     });
 

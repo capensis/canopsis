@@ -8,7 +8,6 @@ export default createCRUDModule({
   route: API_ROUTES.eventFilter.rules,
   withFetchingParams: true,
   withMeta: true,
-  withWithoutStore: true,
 }, {
   actions: {
     markNewEventFilterFailuresAsRead(context, { id }) {

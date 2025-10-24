@@ -19,7 +19,7 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
         assignment_returned
       </i>
       <span
-        class="text-caption white--text"
+        class="text-caption"
       >
         1
       </span>
@@ -40,7 +40,7 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
         add_photo_alternate
       </i>
       <span
-        class="text-caption white--text"
+        class="text-caption"
       >
         3
       </span>
@@ -61,7 +61,7 @@ exports[`alarm-pbehavior-counters Renders \`alarm-pbehavior-counters\` with cust
         more_horiz
       </i>
       <span
-        class="text-caption white--text"
+        class="text-caption"
       >
         12
       </span>

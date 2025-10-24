@@ -19,5 +19,5 @@ export const USER_PAYLOADS_VARIABLES = {
   lastname: '.User.Lastname',
   externalId: '.User.ExternalID',
   source: '.User.Source',
-  role: '.User.Roles',
+  role: '.User.Role',
 };

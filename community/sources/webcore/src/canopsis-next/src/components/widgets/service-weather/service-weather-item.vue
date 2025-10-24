@@ -29,7 +29,7 @@
         >
           <c-no-events-icon
             :value="service.idle_since"
-            color="white"
+            :color="color"
             top
           />
           <impact-state-indicator
@@ -59,15 +59,16 @@
           </v-btn>
         </v-layout>
         <v-icon
+          :color="color"
           class="service-weather-item__background"
           size="5em"
-          color="white"
         >
           {{ backgroundIcon }}
         </v-icon>
         <v-icon
           v-if="secondaryIconEnabled && service.secondary_icon"
-          class="service-weather-item__secondary-icon white-text mb-1 mr-1"
+          :color="color"
+          class="service-weather-item__secondary-icon mb-1 mr-1"
         >
           {{ service.secondary_icon }}
         </v-icon>
@@ -89,7 +90,7 @@
 <script>
 import { ALARM_STATES, MODALS, SERVICE_WEATHER_DEFAULT_EM_HEIGHT } from '@/constants';
 
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getMostReadableTextColor } from '@/helpers/color';
 import { convertObjectToTreeview } from '@/helpers/treeview';
 
@@ -208,19 +209,22 @@ export default {
       }.true || this.service.icon;
     },
 
-    backgroundColorByActionRequired() {
+    backgroundColor() {
       return {
         [this.isActionRequired]: this.actionRequiredColor,
         [this.isNoActionRequired]: this.noActionRequiredColor,
-      }.true;
+      }.true || getEntityColor(this.service, this.colorIndicator);
     },
 
-    colorByActionRequired() {
-      if (!this.backgroundColorByActionRequired) {
-        return undefined;
+    color() {
+      if (
+        (this.isActionRequired && this.actionRequiredColor)
+        || (this.isNoActionRequired && this.noActionRequiredColor)
+      ) {
+        return getMostReadableTextColor(this.backgroundColor, { level: 'AA', size: 'large' });
       }
 
-      return getMostReadableTextColor(this.backgroundColorByActionRequired, { level: 'AA', size: 'large' });
+      return 'white';
     },
 
     itemClasses() {
@@ -229,7 +233,6 @@ export default {
         `mr-${this.margin.right}`,
         `mb-${this.margin.bottom}`,
         `ml-${this.margin.left}`,
-        getEntityColorClass(this.service, this.colorIndicator),
       ];
     },
 
@@ -240,8 +243,8 @@ export default {
     itemStyle() {
       return {
         height: `${this.itemHeight}em`,
-        backgroundColor: this.backgroundColorByActionRequired,
-        color: this.colorByActionRequired,
+        backgroundColor: this.backgroundColor,
+        color: this.color,
       };
     },
 
@@ -298,7 +301,6 @@ export default {
 <style lang="scss" scoped>
 .service-weather-item {
   overflow: hidden;
-  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.3) 100%);
 
   &__content > * {
     margin-right: 2px;
@@ -313,11 +315,6 @@ export default {
     overflow: hidden;
     text-overflow: ellipsis;
     line-height: 1.2em;
-
-    ::v-deep hr {
-      border-color: currentColor;
-      background-color: currentColor;
-    }
   }
 
   &__background {

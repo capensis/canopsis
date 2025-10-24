@@ -17,8 +17,6 @@ const (
 	ApiExportMongoClientTimeout         = time.Minute
 	ApiMetricsCacheExpiration           = 24 * time.Hour
 	ApiEventsRecorderFetchStatusTimeout = 3 * time.Second
-	ApiWebsocketPingInterval            = 5 * time.Second
-	ApiNotificationDisplayCount         = 3
 
 	RemediationHttpTimeout                    = 5 * time.Second
 	RemediationPauseManualInstructionInterval = 15 * time.Second

@@ -3,8 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/log"
 )
 
 const (
@@ -24,13 +22,13 @@ const (
 )
 
 type flags struct {
-	log.Options
-
 	confFile         string
 	overrideConfFile string
 
 	version bool
 	edition string
+
+	modeDebug bool
 
 	modeMigrateMongo        bool
 	mongoMigrationDirectory string
@@ -54,13 +52,13 @@ type flags struct {
 }
 
 func (f *flags) Parse() {
-	log.BindCmdFlags(&f.Options)
-
 	flag.StringVar(&f.confFile, "conf", DefaultCfgFile, "The configuration file used to initialize Canopsis")
 	flag.StringVar(&f.overrideConfFile, "override", DefaultOverrideCfgFile, "The configuration file used to override default Canopsis configurations, for example /opt/canopsis/etc/conf.d/canopsis-override.toml")
 
 	flag.BoolVar(&f.version, "version", false, "Show the version information")
 	flag.StringVar(&f.edition, "edition", "", fmt.Sprintf("Canopsis edition: %s or %s", EditionCommunity, EditionPro))
+
+	flag.BoolVar(&f.modeDebug, "d", false, "debug mode")
 
 	flag.BoolVar(&f.modeMigrateMongo, "migrate-mongo", true, "If true, it will execute Mongo migration scripts")
 	flag.StringVar(&f.mongoMigrationDirectory, "mongo-migration-directory", DefaultMongoMigrationsPath, "The directory with Mongo migration scripts")

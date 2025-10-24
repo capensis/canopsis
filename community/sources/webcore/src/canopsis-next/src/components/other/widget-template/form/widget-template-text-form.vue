@@ -1,12 +1,23 @@
 <template>
-  <text-editor-field
-    v-field="form.content"
-    v-validate="'required'"
-    :error-messages="errors.collect('content')"
-    :variables="variables"
-    :dark="$system.dark"
-    name="content"
-  />
+  <v-layout column>
+    <v-text-field
+      v-field="form.title"
+      v-validate="'required'"
+      :label="$t('common.name')"
+      :error-messages="errors.collect('title')"
+      class="mb-2"
+      name="title"
+      autofocus
+    />
+    <text-editor-field
+      v-field="form.content"
+      v-validate="'required'"
+      :error-messages="errors.collect('content')"
+      :variables="variables"
+      :dark="$system.dark"
+      name="content"
+    />
+  </v-layout>
 </template>
 
 <script>

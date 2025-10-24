@@ -55,6 +55,7 @@
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
+  QUICK_RANGES,
   EXTERNAL_DATA_TYPES,
   LINK_RULE_TYPES,
   LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES,
@@ -124,9 +125,15 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.ackAt,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
         },
         {
           value: ALARM_PATTERN_FIELDS.creationDate,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
         },
       ];
     },

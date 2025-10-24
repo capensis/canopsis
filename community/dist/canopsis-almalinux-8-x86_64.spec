@@ -6,7 +6,7 @@ Summary: Canopsis community edition
 License: AGPL-3.0-only
 Source0: https://git.canopsis.net/canopsis/canopsis-pro/-/archive/%{version_upstream}/canopsis.tar.gz
 
-BuildRequires: make >= 3.81, gcc, systemd-rpm-macros
+BuildRequires: make >= 3.81, gcc, nodejs, yarn, systemd-rpm-macros
 
 Requires: canopsis-common = %{version_safe} 
 Conflicts: canopsis-pro
@@ -25,22 +25,8 @@ echo "install golang $GOLANG_VERSION."
 wget https://go.dev/dl/go$GOLANG_VERSION.linux-amd64.tar.gz
 tar -C ~ -xzf go$GOLANG_VERSION.linux-amd64.tar.gz
 
-YARN_VERSION=$(grep "^YARN_VERSION" community/.env |awk -F '=' '{print $NF}' | sed 's/ //g')
-echo "install yarn $YARN_VERSION."
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-nvm install $YARN_VERSION
-nvm alias defaut $YARN_VERSION
-node -v
-corepack enable
-corepack prepare yarn@$YARN_VERSION --activate
-yarn --version
-
 %build
 export PATH=$PATH:~/go/bin
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 make -C community/go-engines-community VERSION=%{version_upstream}
 make -C community/sources/webcore/src/canopsis-next VERSION=%{version_upstream}
 
@@ -73,7 +59,7 @@ fi
 /opt/canopsis/share/database/migrations/*.js
 /opt/canopsis/share/database/postgres_migrations/*.sql
 /opt/canopsis/share/database/tech_postgres_migrations/*.sql
-%attr(0755, canopsis, canopsis) /opt/canopsis/var/lib/
+/opt/canopsis/var/lib
 %defattr(0644, root, root, 0755)
 /usr/lib/systemd/system/canopsis-*
 /usr/lib/systemd/system/canopsis.service

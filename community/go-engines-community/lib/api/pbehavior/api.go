@@ -1,6 +1,7 @@
 package pbehavior
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
@@ -9,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -30,30 +30,29 @@ type API interface {
 	BulkConnectorDelete(c *gin.Context)
 	BulkConnectorEdit(c *gin.Context)
 	DBExport(c *gin.Context)
-	ExecPattern(c *gin.Context)
-	ExecAllPatterns(c *gin.Context)
 }
 
 type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
 	computeChan   chan<- rpc.PbehaviorRecomputeEvent
-	jobPublisher  workers.JobPublisher
 	logger        zerolog.Logger
+
+	transformer common.PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
-	jobPublisher workers.JobPublisher,
+	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:         store,
 		mongoExporter: mongoExporter,
 		computeChan:   computeChan,
-		jobPublisher:  jobPublisher,
+		transformer:   transformer,
 		logger:        logger,
 	}
 }
@@ -197,6 +196,16 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
+	err := a.transformEditRequest(c, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
 	pbh, err := a.store.Insert(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
@@ -204,7 +213,6 @@ func (a *api) Create(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
 			return
 		}
-
 		panic(err)
 	}
 
@@ -227,6 +235,16 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
+	err := a.transformEditRequest(c, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
 	pbh, recomputeInherited, err := a.store.Update(c, request)
 	if err != nil {
 		validationErr := common.ValidationError{}
@@ -234,7 +252,6 @@ func (a *api) Update(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
 			return
 		}
-
 		panic(err)
 	}
 
@@ -260,6 +277,23 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
+	if request.CorporateEntityPattern != nil {
+		r, err := a.transformer.TransformEntityPatternFieldsRequest(c, common.EntityPatternFieldsRequest{
+			CorporateEntityPattern: *request.CorporateEntityPattern,
+		})
+		if err != nil {
+			valErr := common.ValidationError{}
+			if errors.As(err, &valErr) {
+				c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+				return
+			}
+			panic(err)
+		}
+		if r.CorporatePattern.ID != "" {
+			request.CorporatePattern = &r.CorporatePattern
+		}
+	}
+
 	pbh, recomputeInherited, err := a.store.UpdateByPatch(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -267,7 +301,6 @@ func (a *api) Patch(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-
 		panic(err)
 	}
 	if pbh == nil {
@@ -326,6 +359,11 @@ func (a *api) BulkCreate(c *gin.Context) {
 	recomputeInherited := false
 
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
+		if err != nil {
+			return "", err
+		}
+
 		pbh, err := a.store.Insert(c, request)
 		if err != nil {
 			return "", err
@@ -351,6 +389,11 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	recomputeInherited := false
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
+		err := a.transformEditRequest(c, &request.EditRequest)
+		if err != nil {
+			return "", err
+		}
+
 		pbh, curRecomputeInherited, err := a.store.Update(c, UpdateRequest(request))
 		if err != nil || pbh == nil {
 			return "", err
@@ -455,33 +498,19 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 func (a *api) BulkConnectorCreate(c *gin.Context) {
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
-	bulk.HandlerWithGrouping(c,
-		func(prev, cur BulkConnectorCreateRequestItem) bool {
-			return cur.Origin == prev.Origin &&
-				cur.Comment == prev.Comment &&
-				cur.Start.Unix() == prev.Start.Unix() &&
-				cur.Stop.Unix() == prev.Stop.Unix()
-		},
-		func(merged, cur BulkConnectorCreateRequestItem) BulkConnectorCreateRequestItem {
-			merged.Entities = append(merged.Entities, cur.Entities...)
+	bulk.Handler(c, func(request BulkConnectorCreateRequestItem) (string, error) {
+		pbh, err := a.store.ConnectorCreate(c, request)
+		if err != nil || pbh == nil {
+			return "", err
+		}
 
-			return merged
-		},
-		func(request BulkConnectorCreateRequestItem) (string, error) {
-			pbh, err := a.store.ConnectorCreate(c, request)
-			if err != nil || pbh == nil {
-				return "", err
-			}
+		if _, ok := exists[pbh.ID]; !ok {
+			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
+			exists[pbh.ID] = struct{}{}
+		}
 
-			if _, ok := exists[pbh.ID]; !ok {
-				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
-				exists[pbh.ID] = struct{}{}
-			}
-
-			return pbh.ID, nil
-		},
-		a.logger,
-	)
+		return pbh.ID, nil
+	}, a.logger)
 
 	for origin, ids := range idsByOrigin {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -497,33 +526,19 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 func (a *api) BulkConnectorDelete(c *gin.Context) {
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
-	bulk.HandlerWithGrouping(c,
-		func(prev, cur BulkConnectorDeleteRequestItem) bool {
-			return cur.Origin == prev.Origin &&
-				cur.Comment == prev.Comment &&
-				cur.Start.Unix() == prev.Start.Unix() &&
-				cur.Stop.Unix() == prev.Stop.Unix()
-		},
-		func(merged, cur BulkConnectorDeleteRequestItem) BulkConnectorDeleteRequestItem {
-			merged.Entities = append(merged.Entities, cur.Entities...)
+	bulk.Handler(c, func(request BulkConnectorDeleteRequestItem) (string, error) {
+		id, err := a.store.ConnectorDelete(c, request)
+		if err != nil || id == "" {
+			return "", err
+		}
 
-			return merged
-		},
-		func(request BulkConnectorDeleteRequestItem) (string, error) {
-			id, err := a.store.ConnectorDelete(c, request)
-			if err != nil || id == "" {
-				return "", err
-			}
+		if _, ok := exists[id]; !ok {
+			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
+			exists[id] = struct{}{}
+		}
 
-			if _, ok := exists[id]; !ok {
-				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
-				exists[id] = struct{}{}
-			}
-
-			return id, nil
-		},
-		a.logger,
-	)
+		return id, nil
+	}, a.logger)
 
 	for origin, ids := range idsByOrigin {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -539,66 +554,51 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 func (a *api) BulkConnectorEdit(c *gin.Context) {
 	idsByOrigin := make(map[string][]string)
 	exists := make(map[string]struct{})
-	bulk.HandlerWithGrouping(c,
-		func(prev, cur BulkConnectorEditRequestItem) bool {
-			return cur.Action == prev.Action &&
-				cur.Origin == prev.Origin &&
-				cur.Comment == prev.Comment &&
-				cur.Start.Unix() == prev.Start.Unix() &&
-				cur.Stop.Unix() == prev.Stop.Unix()
-		},
-		func(merged, cur BulkConnectorEditRequestItem) BulkConnectorEditRequestItem {
-			merged.Entities = append(merged.Entities, cur.Entities...)
-
-			return merged
-		},
-		func(request BulkConnectorEditRequestItem) (string, error) {
-			var id string
-			var err error
-			switch request.Action {
-			case BulkConnectorActionCreate:
-				var pbh *Response
-				pbh, err = a.store.ConnectorCreate(c, BulkConnectorCreateRequestItem{
-					Author:   request.Author,
-					Entities: request.Entities,
-					Origin:   request.Origin,
-					Start:    request.Start,
-					Stop:     request.Stop,
-					Comment:  request.Comment,
-					Name:     request.Name,
-					Reason:   request.Reason,
-					Type:     request.Type,
-					Color:    request.Color,
-				})
-				if pbh != nil {
-					id = pbh.ID
-				}
-			case BulkConnectorActionDelete:
-				id, err = a.store.ConnectorDelete(c, BulkConnectorDeleteRequestItem{
-					Author:   request.Author,
-					Entities: request.Entities,
-					Origin:   request.Origin,
-					Start:    request.Start,
-					Stop:     request.Stop,
-					Comment:  request.Comment,
-				})
-			default:
-				return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
+	bulk.Handler(c, func(request BulkConnectorEditRequestItem) (string, error) {
+		var id string
+		var err error
+		switch request.Action {
+		case BulkConnectorActionCreate:
+			var pbh *Response
+			pbh, err = a.store.ConnectorCreate(c, BulkConnectorCreateRequestItem{
+				Author:   request.Author,
+				Entities: request.Entities,
+				Origin:   request.Origin,
+				Start:    request.Start,
+				Stop:     request.Stop,
+				Comment:  request.Comment,
+				Name:     request.Name,
+				Reason:   request.Reason,
+				Type:     request.Type,
+				Color:    request.Color,
+			})
+			if pbh != nil {
+				id = pbh.ID
 			}
+		case BulkConnectorActionDelete:
+			id, err = a.store.ConnectorDelete(c, BulkConnectorDeleteRequestItem{
+				Author:   request.Author,
+				Entities: request.Entities,
+				Origin:   request.Origin,
+				Start:    request.Start,
+				Stop:     request.Stop,
+				Comment:  request.Comment,
+			})
+		default:
+			return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
+		}
 
-			if err != nil || id == "" {
-				return "", err
-			}
+		if err != nil || id == "" {
+			return "", err
+		}
 
-			if _, ok := exists[id]; !ok {
-				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
-				exists[id] = struct{}{}
-			}
+		if _, ok := exists[id]; !ok {
+			idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], id)
+			exists[id] = struct{}{}
+		}
 
-			return id, nil
-		},
-		a.logger,
-	)
+		return id, nil
+	}, a.logger)
 
 	for origin, ids := range idsByOrigin {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -627,40 +627,16 @@ func (a *api) DBExport(c *gin.Context) {
 	dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
 }
 
-// ExecPattern
-// @Param body body ExecPatternRequest true "body"
-// @Success 200 {object} pattern.CountResponse
-func (a *api) ExecPattern(c *gin.Context) {
-	request := ExecPatternRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
-
-		return
-	}
-
-	res, err := a.store.ExecPatternAndUpdate(c, request.ID, request.EntityPattern)
-	if err != nil {
-		panic(err)
-	}
-
-	if res == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
-
-		return
-	}
-
-	c.JSON(http.StatusOK, res)
-}
-
-func (a *api) ExecAllPatterns(c *gin.Context) {
-	err := a.jobPublisher.Publish(c, "")
-	if err != nil {
-		panic(err)
-	}
-
-	c.Status(http.StatusNoContent)
-}
-
 func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {
 	a.computeChan <- event
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -10,9 +10,6 @@ Le langage Handlebars propose, par défaut, un ensemble de *helpers* permettant 
 
 En plus de ces helpers officiels, Canopsis met à disposition certains helpers supplémentaires qui lui sont propres. La documentation suivante décrit leur fonctionnement.
 
-!!! info "Exemple complet"
-    En parallèle de cette documentation, vous pouvez retrouver un [exemple complet documenté](./exemple_handlebars.md).
-
 ## Liste des helpers Handlebars propres à Canopsis
 
 L'ensemble des helpers suivants sont génériques, et peuvent être utilisés à chaque endroit où la syntaxe Handlebars est permise.
@@ -124,7 +121,7 @@ Ce helper accepte les attributs suivants :
 *  `style` (optionnel). Des instructions de style CSS.
     *  `instructions-css` peut être une chaîne de caractères telle que `"color: blue;"` qui stylise le lien cliquable en bleu.
 
-#### Exemples d'utilisation du helper `internal-link`
+#### Exemples d'utilisation du helper `compare`
 
 Créer un lien (en gras) redirigeant vers la page de météo liée à une entité :
 
@@ -353,7 +350,7 @@ Afficher le produit entre 5 et 6 :
 ### Helper `divide`
 
 ```handlebars
-{{divide 10 2}}
+{{divde 10 2}}
 ```
 
 Ce helper attend en paramètre 2 nombres et renvoie le résultat de leur division
@@ -512,63 +509,7 @@ Donnera la chaine finale : `'Linux Debian Ubuntu Fedora'`
 {{tags}}
 ```
 
-Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge.
-
-#### Exemple d'utilisation du helper `tags`
-
-Afficher tous les tags d'une alarme :
-
-```handlebars
-{{ tags }}
-```
-
-Afficher les tags d'une alarme à partir de leur nom :
-
-```handlebars
-{{ tags 'Tag1' 'Tag2' }}
-```
-
-Afficher les tags d'une alarme à partir d'une expression régulière :
-
-```handlebars
-{{ tags regex='Tag\d+' }}
-```
-
-Afficher les tags d'une alarme à partir d'une expression régulière et de flags supplémentaires :
-
-```handlebars
-{{ tags regex='Tag\d+' flags='i' }}
-```
-
-Afficher les tags d'une alarme en combinant les options :
-
-```handlebars
-{{ tags 'Tag1' 'Tag2' regex='Tag\d+' flags='i' }}
-```
-
-### Helper `map`
-
-```handlebars
-{{map}}
-```
-
-Ce helper permet d'afficher un champ "map" sous forme de badges.
-
-Le champ "map" doit être de la forme suivante : `map[item1:valeur1 item2:valeur2 ... ]`
-
-#### Exemple d'utilisation du helper `map`
-
-Afficher tous les items d'un champ map :
-
-```handlebars
-{{ map alarm.entity.infos.prom_labels_all.value }}
-```
-
-Afficher tous les items d'un champ map sous forme de badges bleus, écrits en blanc :
-
-```handlebars
-{{ map alarm.entity.infos.prom_labels_all.value color='blue' textColor='white' }}
-```
+Ce helper permet d'afficher les `tags` d'une alarme sous forme de badge. Il n'attend pas de paramètre.  
 
 ### Helper `links`
 
@@ -622,3 +563,4 @@ Renvoyer au format json une alarme complète :
 ```handlebars
 {{json alarm.v }}
 ```
+

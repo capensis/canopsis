@@ -1,24 +1,9 @@
-import {
-  COLUMNS_WIDGET_TEMPLATES_TYPES,
-  QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES,
-  CUSTOM_WIDGET_TEMPLATE,
-  WIDGET_TEMPLATES_TYPES,
-} from '@/constants';
+import { COLUMNS_WIDGET_TEMPLATES_TYPES, CUSTOM_WIDGET_TEMPLATE, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
 import { widgetColumnsToForm, formToWidgetColumns } from '../column/form';
-import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-action/form';
+
 /**
- * @typedef {
- *  'alarm_columns'
- *  | 'entity_columns'
- *  | 'alarm_more_infos'
- *  | 'alarm_export_to_pdf'
- *  | 'alarm_quick_actions'
- *  | 'alarm_mass_quick_actions'
- *  | 'weather_item'
- *  | 'weather_modal'
- *  | 'weather_entity'
- * } WidgetTemplateType
+ * @typedef {'alarm' | 'entity'} WidgetTemplateType
  */
 
 /**
@@ -26,7 +11,6 @@ import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-act
  * @property {string} title
  * @property {WidgetTemplateType} type
  * @property {WidgetColumn[]} [columns]
- * @property {WidgetQuickAction[]} [actions]
  * @property {string} [content]
  */
 
@@ -45,7 +29,6 @@ export const widgetTemplateToForm = (widgetTemplate = {}) => ({
   title: widgetTemplate.title ?? '',
   type: widgetTemplate.type ?? WIDGET_TEMPLATES_TYPES.alarmMoreInfos,
   columns: widgetColumnsToForm(widgetTemplate.columns),
-  actions: widgetQuickActionsToForm(widgetTemplate.actions),
   content: widgetTemplate.content ?? '',
 });
 
@@ -57,13 +40,11 @@ export const widgetTemplateToForm = (widgetTemplate = {}) => ({
  * @param {string} content
  * @returns {WidgetTemplate}
  */
-export const formToWidgetTemplate = ({ columns, content, actions, ...form }) => {
+export const formToWidgetTemplate = ({ columns, content, ...form }) => {
   const widgetTemplate = form;
 
   if (COLUMNS_WIDGET_TEMPLATES_TYPES.includes(form.type)) {
     widgetTemplate.columns = formToWidgetColumns(columns);
-  } else if (QUICK_ACTIONS_WIDGET_TEMPLATES_TYPES.includes(form.type)) {
-    widgetTemplate.actions = formToWidgetQuickActions(actions);
   } else {
     widgetTemplate.content = content;
   }

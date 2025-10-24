@@ -27,7 +27,7 @@ exports[`service-entity Renders \`service-entity\` after opened flag updated 1`]
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               keyboard_arrow_down
             </i>
@@ -75,7 +75,7 @@ exports[`service-entity Renders \`service-entity\` with custom props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               keyboard_arrow_down
             </i>
@@ -141,7 +141,7 @@ exports[`service-entity Renders \`service-entity\` with default props 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               keyboard_arrow_down
             </i>
@@ -284,7 +284,7 @@ exports[`service-entity Renders \`service-entity\` with default props and declar
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               keyboard_arrow_down
             </i>
@@ -428,7 +428,7 @@ exports[`service-entity Renders \`service-entity\` with pbehaviors tab 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               keyboard_arrow_down
             </i>
@@ -571,7 +571,7 @@ exports[`service-entity Renders \`service-entity\` with tree of deps tab 1`] = `
           >
             <i
               aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+              class="v-icon notranslate material-icons theme--light white--text"
             >
               keyboard_arrow_down
             </i>

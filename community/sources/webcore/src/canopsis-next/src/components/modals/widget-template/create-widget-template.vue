@@ -5,7 +5,15 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <widget-template-form v-model="form" />
+        <widget-template-columns-form
+          v-if="isColumnsType"
+          v-model="form"
+        />
+        <widget-template-text-form
+          v-else
+          v-model="form"
+          :entity-infos="entityInfos"
+        />
       </template>
       <template #actions="">
         <v-btn
@@ -29,18 +37,18 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { COLUMNS_WIDGET_TEMPLATES_TYPES, MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { widgetTemplateToForm, formToWidgetTemplate } from '@/helpers/entities/widget/template/form';
 
-import { useInnerModal } from '@/hooks/modals';
-import { useI18n } from '@/hooks/i18n';
-import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { entitiesInfosMixin } from '@/mixins/entities/infos';
+import { validationErrorsMixinCreator } from '@/mixins/form';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
-import WidgetTemplateForm from '@/components/other/widget-template/form/widget-template-form.vue';
+import WidgetTemplateColumnsForm from '@/components/other/widget-template/form/widget-template-columns-form.vue';
+import WidgetTemplateTextForm from '@/components/other/widget-template/form/widget-template-text-form.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -51,41 +59,48 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: {
-    WidgetTemplateForm,
+    WidgetTemplateColumnsForm,
+    WidgetTemplateTextForm,
     ModalWrapper,
   },
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+  mixins: [
+    modalInnerMixin,
+    entitiesInfosMixin,
+    submittableMixinCreator(),
+    validationErrorsMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    return {
+      form: widgetTemplateToForm(this.modal.config.widgetTemplate),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title ?? this.$t('modals.createWidgetTemplate.create.title');
+    },
+
+    isColumnsType() {
+      return COLUMNS_WIDGET_TEMPLATES_TYPES.includes(this.form.type);
     },
   },
-  setup(props) {
-    const { config, close } = useInnerModal(props);
-    const { t } = useI18n();
+  mounted() {
+    this.fetchInfos({ withRules: true });
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
 
-    const form = ref(widgetTemplateToForm(config.value.widgetTemplate));
+      if (!isFormValid) {
+        return;
+      }
 
-    const title = computed(() => config.value.title ?? t('modals.createWidgetTemplate.create.title'));
+      if (this.config.action) {
+        await this.config.action(formToWidgetTemplate(this.form));
+      }
 
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToWidgetTemplate(form.value));
-
-        close();
-      },
-    });
-
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    return {
-      form,
-      title,
-      submit,
-      isDisabled,
-      submitting,
-    };
+      this.$modals.hide();
+    },
   },
 };
 </script>

@@ -496,26 +496,24 @@ describe('alarms-list-table', () => {
         alarms,
         columns,
         stickyHeader: true,
-        expandable: true,
       },
     });
 
-    expect(wrapper.vm.expanded).toEqual([]);
+    expect(wrapper.vm.expanded).toEqual({});
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
     alarmsListRow.triggerCustomEvent('expand', true);
 
-    await flushPromises();
-
     const [firstAlarm] = alarms;
-    expect(wrapper.vm.expanded).toHaveLength(1);
-    expect(wrapper.vm.expanded[0]).toEqual(firstAlarm);
+
+    expect(wrapper.vm.expanded).toEqual({
+      [firstAlarm._id]: true,
+    });
 
     alarmsListRow.triggerCustomEvent('expand', false);
-    await flushPromises();
 
-    expect(wrapper.vm.expanded).toEqual([]);
+    expect(wrapper.vm.expanded).toEqual({});
   });
 
   test('Root cause diagram opened after trigger click state event', async () => {
@@ -531,7 +529,7 @@ describe('alarms-list-table', () => {
       mocks: { $modals },
     });
 
-    expect(wrapper.vm.expanded).toEqual([]);
+    expect(wrapper.vm.expanded).toEqual({});
 
     selectAlarmsListRow(wrapper).at(0).triggerCustomEvent('click:state', true);
 

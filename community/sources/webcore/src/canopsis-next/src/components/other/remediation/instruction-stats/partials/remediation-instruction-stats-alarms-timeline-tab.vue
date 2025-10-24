@@ -90,7 +90,7 @@ import { convertDurationToString } from '@/helpers/date/duration';
 import { useI18n } from '@/hooks/i18n';
 import { usePendingWithLocalQuery } from '@/hooks/query/shared';
 import { useQueryOptions } from '@/hooks/query/options';
-import { useRemdeitionInstructionStats } from '@/hooks/store/modules/remediation-instruction-stats';
+import { useRemdeitionInstructionStatsStore } from '@/hooks/store/modules/remediation-instruction-stats';
 
 import AlarmHorizontalTimeline from '@/components/widgets/alarm/timeline/horizontal-timeline.vue';
 import RemediationInstructionStatsAlarmsTimelineTabExpandPanel
@@ -110,7 +110,7 @@ export default {
   },
   setup(props) {
     const { t } = useI18n();
-    const { fetchRemediationInstructionStatsExecutionsListWithoutStore } = useRemdeitionInstructionStats();
+    const { fetchRemediationInstructionStatsExecutionsListWithoutStore } = useRemdeitionInstructionStatsStore();
 
     const remediationInstructionExecutions = ref([]);
     const totalItems = ref(0);
