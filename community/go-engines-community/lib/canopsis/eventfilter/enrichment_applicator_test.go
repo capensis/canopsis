@@ -34,11 +34,13 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
+		gomock.Any(),
 	).DoAndReturn(func(
 		_ context.Context,
 		_, _ string,
 		_ eventfilter.ParsedAction,
 		event *types.Event,
+		_ map[string]eventfilter.UpdatedValue,
 		_ eventfilter.RegexMatch,
 		_ map[string]interface{},
 	) (bool, error) {
@@ -53,6 +55,7 @@ func TestEnrichmentApplyOnSuccess(t *testing.T) {
 		t.Context(),
 		eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnSuccess: expectedOutcome}},
 		&event,
+		nil,
 		eventfilter.RegexMatch{})
 	if resError != nil {
 		t.Errorf("expected not error but got %v", resError)
@@ -84,20 +87,22 @@ func TestEnrichmentApplyOnFailed(t *testing.T) {
 		gomock.Any(),
 		gomock.Any(),
 		gomock.Any(),
+		gomock.Any(),
 	).DoAndReturn(func(
 		_ context.Context,
 		_, _ string,
 		_ eventfilter.ParsedAction,
 		_ *types.Event,
+		_ map[string]eventfilter.UpdatedValue,
 		_ eventfilter.RegexMatch,
 		_ map[string]interface{},
-	) (bool, error) {
-		return false, errors.New("error")
+	) (map[string]eventfilter.UpdatedValue, error) {
+		return nil, errors.New("error")
 	})
 
 	event := types.Event{}
 	applicator := eventfilter.NewEnrichmentApplicator(externaldata.NewGetterContainer(), mockActionProcessor, mockFailureService)
-	res, resError := applicator.Apply(t.Context(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, eventfilter.RegexMatch{})
+	res, resError := applicator.Apply(t.Context(), eventfilter.ParsedRule{Config: eventfilter.ParsedRuleConfig{Actions: []eventfilter.ParsedAction{{}}, OnFailure: expectedOutcome}}, &event, nil, eventfilter.RegexMatch{})
 	if resError == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -156,6 +161,7 @@ func TestApplyWithExternalData(t *testing.T) {
 			},
 		},
 		&event,
+		nil,
 		eventfilter.RegexMatch{},
 	)
 

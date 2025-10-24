@@ -142,7 +142,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (map
 			continue
 		}
 
-		res, err := applicator.Apply(ctx, rule, event, RegexMatch{
+		res, err := applicator.Apply(ctx, rule, event, updatedEntityInfos, RegexMatch{
 			EventRegexMatches: eventRegexMatches,
 			Entity:            entityRegexMatches,
 		})
@@ -152,10 +152,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (map
 			continue
 		}
 
-		for k, v := range res.UpdatedEntityInfos {
-			updatedEntityInfos[k] = v
-		}
-
+		updatedEntityInfos = res.UpdatedEntityInfos
 		if rule.Updated != nil {
 			s.eventCounter.Add(rule.ID, *rule.Updated)
 		}
