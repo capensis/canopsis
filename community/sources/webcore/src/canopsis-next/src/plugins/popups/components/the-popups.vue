@@ -12,11 +12,6 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
-import { useStore } from '@/hooks/store';
-import { usePopups } from '@/hooks/popups';
-
 import PopupItem from './popup-item.vue';
 
 /**
@@ -24,15 +19,10 @@ import PopupItem from './popup-item.vue';
  */
 export default {
   components: { PopupItem },
-  setup() {
-    const store = useStore();
-    const popupsModule = usePopups();
-
-    const popups = computed(() => store.getters[`${popupsModule.moduleName}/popups`]);
-
-    return {
-      popups,
-    };
+  computed: {
+    popups() {
+      return this.$store.getters[`${this.$popups.moduleName}/popups`];
+    },
   },
 };
 </script>

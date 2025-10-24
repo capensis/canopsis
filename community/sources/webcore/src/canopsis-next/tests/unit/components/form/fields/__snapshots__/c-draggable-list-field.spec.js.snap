@@ -3,7 +3,6 @@
 exports[`c-draggable-list-field Renders \`c-draggable-list-field\` with custom props 1`] = `
 <draggable-stub
   animation="2"
-  class=""
   clone="[Function]"
   disabled="true"
   draggable=">*"
@@ -23,7 +22,6 @@ exports[`c-draggable-list-field Renders \`c-draggable-list-field\` with custom p
 exports[`c-draggable-list-field Renders \`c-draggable-list-field\` with default props 1`] = `
 <draggable-stub
   animation="300"
-  class=""
   clone="[Function]"
   draggable=">*"
   element="div"

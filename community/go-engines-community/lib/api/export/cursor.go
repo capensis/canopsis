@@ -6,13 +6,12 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/jackc/pgx/v5"
-	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 func NewMongoCursor(
 	cursor mongo.Cursor,
 	fields []string,
-	transform func(k string, v any) (any, error),
+	transform func(k string, v any) any,
 ) DataCursor {
 	return &mongoCursor{
 		cursor:    cursor,
@@ -36,7 +35,7 @@ func NewPostgresCursor(
 type mongoCursor struct {
 	cursor    mongo.Cursor
 	fields    []string
-	transform func(k string, v any) (any, error)
+	transform func(k string, v any) any
 }
 
 func (c *mongoCursor) Next(ctx context.Context) bool {
@@ -49,8 +48,8 @@ func (c *mongoCursor) Scan(m *map[string]any) error {
 		return err
 	}
 
-	*m, err = filterFields(*m, c.fields, c.transform)
-	return err
+	*m = filterFields(*m, c.fields, c.transform)
+	return nil
 }
 
 func (c *mongoCursor) Close(ctx context.Context) error {
@@ -94,10 +93,8 @@ func (c *postgresCursor) Close(_ context.Context) error {
 func filterFields(
 	m map[string]any,
 	fields []string,
-	transform func(k string, v any) (any, error),
-) (map[string]any, error) {
-	var err error
-
+	transform func(k string, v any) any,
+) map[string]any {
 	res := make(map[string]any, len(fields))
 	for _, field := range fields {
 		v, ok := getNestedVal(m, strings.Split(field, "."))
@@ -108,14 +105,11 @@ func filterFields(
 		if transform == nil {
 			res[field] = v
 		} else {
-			res[field], err = transform(field, v)
-			if err != nil {
-				return nil, err
-			}
+			res[field] = transform(field, v)
 		}
 	}
 
-	return res, nil
+	return res
 }
 
 func getNestedVal(m map[string]any, keys []string) (any, bool) {
@@ -128,7 +122,7 @@ func getNestedVal(m map[string]any, keys []string) (any, bool) {
 			return v, true
 		}
 
-		if mv, ok := v.(bson.M); ok {
+		if mv, ok := v.(map[string]any); ok {
 			return getNestedVal(mv, keys[1:])
 		}
 	}

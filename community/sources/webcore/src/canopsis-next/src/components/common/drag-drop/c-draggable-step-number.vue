@@ -13,7 +13,6 @@
       </v-icon>
     </span>
     <v-avatar
-      v-if="!hideNumber"
       :color="color"
       class="white--text"
       size="32"
@@ -35,10 +34,6 @@ export default {
       default: 'primary',
     },
     disabled: {
-      type: Boolean,
-      default: false,
-    },
-    hideNumber: {
       type: Boolean,
       default: false,
     },

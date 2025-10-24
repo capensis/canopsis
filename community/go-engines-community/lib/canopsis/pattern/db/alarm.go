@@ -2,7 +2,6 @@ package db
 
 import (
 	"fmt"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -37,7 +36,6 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 	emptyAlarm := types.Alarm{}
 	groupQueries := make([]bson.M, len(p))
 	var err error
-	now := time.Now() // to compute relative time values
 
 	for i, group := range p {
 		condQueries := make([]bson.M, len(group))
@@ -89,7 +87,7 @@ func getAlarmPatternGroupMongoQueries(p pattern.Alarm, prefix string) ([]bson.M,
 			if !foundField || err != nil {
 				if _, ok := emptyAlarm.GetTimeField(cond.Field); ok {
 					foundField = true
-					condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField, now)
+					condQueries[j], err = cond.Condition.TimeToMongoQuery(mongoField)
 				}
 			}
 			if !foundField || err != nil {

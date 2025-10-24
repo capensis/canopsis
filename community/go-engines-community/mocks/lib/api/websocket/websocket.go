@@ -261,18 +261,18 @@ func (mr *MockAuthorizerMockRecorder) Authorize(ctx, userID, room any) *gomock.C
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Authorize", reflect.TypeOf((*MockAuthorizer)(nil).Authorize), ctx, userID, room)
 }
 
-// GetGroupIDs mocks base method.
-func (m *MockAuthorizer) GetGroupIDs(group string) []string {
+// GetGroupIds mocks base method.
+func (m *MockAuthorizer) GetGroupIds(group string) []string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroupIDs", group)
+	ret := m.ctrl.Call(m, "GetGroupIds", group)
 	ret0, _ := ret[0].([]string)
 	return ret0
 }
 
-// GetGroupIDs indicates an expected call of GetGroupIDs.
-func (mr *MockAuthorizerMockRecorder) GetGroupIDs(group any) *gomock.Call {
+// GetGroupIds indicates an expected call of GetGroupIds.
+func (mr *MockAuthorizerMockRecorder) GetGroupIds(group any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupIDs", reflect.TypeOf((*MockAuthorizer)(nil).GetGroupIDs), group)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupIds", reflect.TypeOf((*MockAuthorizer)(nil).GetGroupIds), group)
 }
 
 // RemoveGroupRoom mocks base method.
@@ -355,6 +355,20 @@ func (mr *MockHubMockRecorder) Connect(w, r any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Connect", reflect.TypeOf((*MockHub)(nil).Connect), w, r)
 }
 
+// GetConnectedGroupIds mocks base method.
+func (m *MockHub) GetConnectedGroupIds(group string) []string {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetConnectedGroupIds", group)
+	ret0, _ := ret[0].([]string)
+	return ret0
+}
+
+// GetConnectedGroupIds indicates an expected call of GetConnectedGroupIds.
+func (mr *MockHubMockRecorder) GetConnectedGroupIds(group any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConnectedGroupIds", reflect.TypeOf((*MockHub)(nil).GetConnectedGroupIds), group)
+}
+
 // GetConnections mocks base method.
 func (m *MockHub) GetConnections() []websocket.UserConnection {
 	m.ctrl.T.Helper()
@@ -369,32 +383,18 @@ func (mr *MockHubMockRecorder) GetConnections() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConnections", reflect.TypeOf((*MockHub)(nil).GetConnections))
 }
 
-// GetGroupIDs mocks base method.
-func (m *MockHub) GetGroupIDs(group string) []string {
+// GetGroupIds mocks base method.
+func (m *MockHub) GetGroupIds(group string) []string {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetGroupIDs", group)
+	ret := m.ctrl.Call(m, "GetGroupIds", group)
 	ret0, _ := ret[0].([]string)
 	return ret0
 }
 
-// GetGroupIDs indicates an expected call of GetGroupIDs.
-func (mr *MockHubMockRecorder) GetGroupIDs(group any) *gomock.Call {
+// GetGroupIds indicates an expected call of GetGroupIds.
+func (mr *MockHubMockRecorder) GetGroupIds(group any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupIDs", reflect.TypeOf((*MockHub)(nil).GetGroupIDs), group)
-}
-
-// GetUserIDs mocks base method.
-func (m *MockHub) GetUserIDs() []string {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetUserIDs")
-	ret0, _ := ret[0].([]string)
-	return ret0
-}
-
-// GetUserIDs indicates an expected call of GetUserIDs.
-func (mr *MockHubMockRecorder) GetUserIDs() *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserIDs", reflect.TypeOf((*MockHub)(nil).GetUserIDs))
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetGroupIds", reflect.TypeOf((*MockHub)(nil).GetGroupIds), group)
 }
 
 // GetUserTokens mocks base method.
@@ -409,20 +409,6 @@ func (m *MockHub) GetUserTokens() []string {
 func (mr *MockHubMockRecorder) GetUserTokens() *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetUserTokens", reflect.TypeOf((*MockHub)(nil).GetUserTokens))
-}
-
-// IsGroupRoomConnected mocks base method.
-func (m *MockHub) IsGroupRoomConnected(group, id string) bool {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "IsGroupRoomConnected", group, id)
-	ret0, _ := ret[0].(bool)
-	return ret0
-}
-
-// IsGroupRoomConnected indicates an expected call of IsGroupRoomConnected.
-func (mr *MockHubMockRecorder) IsGroupRoomConnected(group, id any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsGroupRoomConnected", reflect.TypeOf((*MockHub)(nil).IsGroupRoomConnected), group, id)
 }
 
 // RegisterGroup mocks base method.
@@ -464,11 +450,9 @@ func (mr *MockHubMockRecorder) RegisterRoom(room any, perms ...any) *gomock.Call
 }
 
 // Send mocks base method.
-func (m *MockHub) Send(room string, msg any) int {
+func (m *MockHub) Send(room string, msg any) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Send", room, msg)
-	ret0, _ := ret[0].(int)
-	return ret0
+	m.ctrl.Call(m, "Send", room, msg)
 }
 
 // Send indicates an expected call of Send.
@@ -478,11 +462,9 @@ func (mr *MockHubMockRecorder) Send(room, msg any) *gomock.Call {
 }
 
 // SendGroupRoom mocks base method.
-func (m *MockHub) SendGroupRoom(group, id string, msg any) int {
+func (m *MockHub) SendGroupRoom(group, id string, msg any) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendGroupRoom", group, id, msg)
-	ret0, _ := ret[0].(int)
-	return ret0
+	m.ctrl.Call(m, "SendGroupRoom", group, id, msg)
 }
 
 // SendGroupRoom indicates an expected call of SendGroupRoom.
@@ -492,45 +474,15 @@ func (mr *MockHubMockRecorder) SendGroupRoom(group, id, msg any) *gomock.Call {
 }
 
 // SendGroupRoomByConnections mocks base method.
-func (m *MockHub) SendGroupRoomByConnections(connIDs []string, group, id string, b any) int {
+func (m *MockHub) SendGroupRoomByConnections(connIds []string, group, id string, b any) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendGroupRoomByConnections", connIDs, group, id, b)
-	ret0, _ := ret[0].(int)
-	return ret0
+	m.ctrl.Call(m, "SendGroupRoomByConnections", connIds, group, id, b)
 }
 
 // SendGroupRoomByConnections indicates an expected call of SendGroupRoomByConnections.
-func (mr *MockHubMockRecorder) SendGroupRoomByConnections(connIDs, group, id, b any) *gomock.Call {
+func (mr *MockHubMockRecorder) SendGroupRoomByConnections(connIds, group, id, b any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendGroupRoomByConnections", reflect.TypeOf((*MockHub)(nil).SendGroupRoomByConnections), connIDs, group, id, b)
-}
-
-// SendRoomByConnections mocks base method.
-func (m *MockHub) SendRoomByConnections(connIDs []string, room string, b any) int {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendRoomByConnections", connIDs, room, b)
-	ret0, _ := ret[0].(int)
-	return ret0
-}
-
-// SendRoomByConnections indicates an expected call of SendRoomByConnections.
-func (mr *MockHubMockRecorder) SendRoomByConnections(connIDs, room, b any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRoomByConnections", reflect.TypeOf((*MockHub)(nil).SendRoomByConnections), connIDs, room, b)
-}
-
-// SendRoomByUser mocks base method.
-func (m *MockHub) SendRoomByUser(userID, room string, b any) int {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendRoomByUser", userID, room, b)
-	ret0, _ := ret[0].(int)
-	return ret0
-}
-
-// SendRoomByUser indicates an expected call of SendRoomByUser.
-func (mr *MockHubMockRecorder) SendRoomByUser(userID, room, b any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRoomByUser", reflect.TypeOf((*MockHub)(nil).SendRoomByUser), userID, room, b)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendGroupRoomByConnections", reflect.TypeOf((*MockHub)(nil).SendGroupRoomByConnections), connIds, group, id, b)
 }
 
 // Start mocks base method.

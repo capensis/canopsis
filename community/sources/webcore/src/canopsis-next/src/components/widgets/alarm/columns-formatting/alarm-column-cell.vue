@@ -18,15 +18,12 @@
         <div
           v-if="column.isHtml"
           v-html="sanitizedValue"
-          :class="textClass"
-          v-on="componentOn"
         />
         <div
           v-else
           v-bind="component.bind"
           :is="component.is"
-          :class="textClass"
-          v-on="componentOn"
+          v-on="component.on"
         />
         <v-btn
           :class="{ 'alarms-column-cell__show-info-btn--small': small }"
@@ -54,21 +51,17 @@
   <div
     v-else-if="column.isHtml"
     v-html="sanitizedValue"
-    :class="textClass"
-    v-on="componentOn"
   />
   <div
     v-else
     v-bind="component.bind"
     :is="component.is"
-    :class="textClass"
-    v-on="componentOn"
+    v-on="component.on"
   />
 </template>
 
 <script>
-import { get, flow } from 'lodash';
-import { ref, computed, inject } from 'vue';
+import { get } from 'lodash';
 
 import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
 import { getAlarmWidgetColumnPopupTemplateId } from '@/helpers/entities/alarm/list';
@@ -119,62 +112,38 @@ export default {
       default: false,
     },
   },
-  setup(props, { emit, listeners }) {
-    const selectAdvancedSearchField = inject('$selectAdvancedSearchField', () => {});
-
-    const opened = ref(false);
-
-    const value = computed(() => {
-      const result = get(props.alarm, props.column.value, '');
-
-      return props.column.filter ? props.column.filter(result) : result;
-    });
-
-    const sanitizedValue = computed(() => sanitizeHtml(linkifyHtml(String(value.value ?? ''))));
-
-    /**
-     * Applies advanced search filter for the column value when clicked
-     * Selects the appropriate field and value based on column configuration
-     *
-     * @param {Event} event - The click event that triggered the filter
-     * @returns {Event} The original event for potential chaining
-     */
-    const applyFilter = (event) => {
-      selectAdvancedSearchField(props.column.value, props.column.isHtml ? sanitizedValue.value : value.value);
-
-      return event;
-    };
-
-    const component = computed(() => (
-      props.column.getComponent({ ...props, value: value.value, $emit: emit, $listeners: listeners })
-    ));
-
-    const componentOn = computed(() => {
-      const result = { ...component.value?.on };
-
-      if (props.column.isFilter) {
-        result.click = component.value?.on?.click ? flow(applyFilter, component.value.on?.click) : applyFilter;
-      }
-
-      return result;
-    });
-
-    const popupTemplateId = computed(() => getAlarmWidgetColumnPopupTemplateId(props.widget._id, props.column.value));
-    const textClass = computed(() => ({ 'alarms-column-cell__filter': props.column.isFilter }));
-
-    const showInfoPopup = () => opened.value = true;
-    const hideInfoPopup = () => opened.value = false;
-
+  data() {
     return {
-      opened,
-      component,
-      sanitizedValue,
-      popupTemplateId,
-      textClass,
-      showInfoPopup,
-      hideInfoPopup,
-      componentOn,
+      opened: false,
     };
+  },
+  computed: {
+    value() {
+      const value = get(this.alarm, this.column.value, '');
+
+      return this.column.filter ? this.column.filter(value) : value;
+    },
+
+    sanitizedValue() {
+      return sanitizeHtml(linkifyHtml(String(this.value ?? '')));
+    },
+
+    component() {
+      return this.column.getComponent(this);
+    },
+
+    popupTemplateId() {
+      return getAlarmWidgetColumnPopupTemplateId(this.widget._id, this.column.value);
+    },
+  },
+  methods: {
+    showInfoPopup() {
+      this.opened = true;
+    },
+
+    hideInfoPopup() {
+      this.opened = false;
+    },
   },
 };
 </script>
@@ -194,14 +163,6 @@ export default {
 
   &__layout {
     max-width: 100%;
-  }
-
-  &__filter {
-    cursor: pointer !important;
-
-    &:not(.c-alarm-state-chip):hover, &.c-alarm-state-chip:hover .chip {
-      text-decoration: underline !important;
-    }
   }
 }
 </style>

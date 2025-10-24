@@ -10,7 +10,7 @@
     >
       {{ icon }}
     </v-icon>
-    <span class="text-caption white--text">{{ count }}</span>
+    <span class="text-caption">{{ count }}</span>
   </v-layout>
 </template>
 

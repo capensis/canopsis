@@ -33,7 +33,7 @@ export const ROUTES_NAMES = {
   exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
   exploitationLinkRules: 'exploitation-link-rules',
   exploitationExternalDataTables: 'exploitation-external-data-tables',
-  notifications: 'notifications',
+  notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
 };
@@ -73,7 +73,7 @@ export const ROUTES = {
   exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
   exploitationLinkRules: '/exploitation/link-rules',
   exploitationExternalDataTables: '/exploitation/external-data-tables',
-  notifications: '/notifications/:tabId',
+  notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
   profileThemes: '/themes',
 };

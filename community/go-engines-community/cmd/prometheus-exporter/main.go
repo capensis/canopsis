@@ -2,6 +2,9 @@ package main
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"net/http"
 	"os"
 	"os/signal"
 	"time"
@@ -15,7 +18,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/sync/errgroup"
+)
+
+const (
+	shutdownTimeout   = 5 * time.Second
+	readHeaderTimeout = 5 * time.Second
 )
 
 func main() {
@@ -30,7 +39,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(ctx, flags.Options)
+	logger := log.NewLogger(ctx, flags.Debug)
 
 	mongoClient, err := mongo.NewClient(ctx, mongo.ClientOptions{
 		ReadPreference: mongo.SecondaryPreferred(),
@@ -70,13 +79,22 @@ func main() {
 		}
 	}()
 
-	m := libprometheus.NewDbCollectionsMetrics()
+	m := libprometheus.NewMetrics()
 
 	reg := prometheus.NewRegistry()
 	err = reg.Register(m)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to register metrics")
 	}
+
+	server := &http.Server{
+		Addr:              fmt.Sprintf(":%d", flags.Port),
+		ReadHeaderTimeout: readHeaderTimeout,
+	}
+	http.HandleFunc("/metrics", func(w http.ResponseWriter, r *http.Request) {
+		logger.Debug().Msg("GET /metrics request")
+		promhttp.HandlerFor(reg, promhttp.HandlerOpts{}).ServeHTTP(w, r)
+	})
 
 	updater := libprometheus.NewUpdater(
 		mongoClient,
@@ -102,11 +120,31 @@ func main() {
 		}
 	})
 	g.Go(func() error {
-		return libprometheus.RunPrometheusExporter(ctx, flags.Port, logger, m)
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			return fmt.Errorf("server listen error: %w", err)
+		}
+
+		return nil
 	})
+	g.Go(func() error {
+		<-ctx.Done()
+
+		shutdownCtx, shutdownCancel := context.WithTimeout(context.WithoutCancel(ctx), shutdownTimeout)
+		defer shutdownCancel()
+
+		if err := server.Shutdown(shutdownCtx); err != nil {
+			return fmt.Errorf("prometheus exporter forced to shutdown: %w", err)
+		}
+
+		return nil
+	})
+
+	logger.Info().Msg("prometheus exporter started")
 
 	err = g.Wait()
 	if err != nil {
 		logger.Fatal().Err(err).Msg("prometheus exporter exited with error")
 	}
+
+	logger.Info().Msg("prometheus exporter stopped")
 }

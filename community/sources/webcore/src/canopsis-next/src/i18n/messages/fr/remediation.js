@@ -10,12 +10,10 @@ export default {
     configurations: 'Configurations',
     jobs: 'Tâches',
     statistics: 'Statistiques de remédiation',
-    instructionStats: 'Évaluation des consignes',
   },
 
   instruction: {
     name: 'Nom de l\'instruction',
-    manualInstructionsProgress: 'Progression des consignes manuelles',
     usingInstruction: 'Ne peut pas être supprimée, car en cours d\'utilisation',
     addStep: 'Ajouter une étape',
     addOperation: 'Ajouter une opération',
@@ -67,12 +65,11 @@ export default {
   },
 
   instructionExecute: {
-    cancelInstruction: 'Annuler l\'instruction',
-    pauseInstruction: 'Suspendre l\'instruction',
     timeToComplete: '{duration} pour terminer',
     completedAt: 'Terminé à {time}',
     failedAt: 'Échec à {time}',
     startedAt: 'Commencé à {time}\n(Date de lancement Canopsis)',
+    closeConfirmationText: 'Souhaitez-vous reprendre cette consigne plus tard ?',
     queueNumber: '{number} {name} travaux sont dans la file d\'attente',
     runJobs: 'Exécuter des tâches',
     popups: {
@@ -80,9 +77,7 @@ export default {
       failed: '{instructionName} a échoué. Veuillez faire remonter ce problème',
       connectionError: 'Il y a un problème de connexion. Veuillez cliquer sur le bouton d\'actualisation ou recharger la page.',
       wasAborted: '{instructionName} a été abandonnée',
-      wasPaused: 'La consigne {instructionName} a été mise en pause.',
-      wasFinished: 'La consigne {instructionName} s\'est terminée.',
-      wasFailed: 'La consigne {instructionName} a échoué.',
+      wasPaused: 'La consigne {instructionName} sur l\'alarme {alarmName} a été interrompue à {date}. Vous pouvez la reprendre manuellement.',
       wasRemovedOrDisabled: 'La consigne {instructionName} a été supprimée ou désactivée.',
     },
     jobs: {

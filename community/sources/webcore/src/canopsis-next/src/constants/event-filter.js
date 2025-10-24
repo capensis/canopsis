@@ -66,11 +66,3 @@ export const EVENT_FILTER_SET_TAGS_VALUE_PREFIXES = {
 export const EVENT_FILTER_SET_TAGS_REGEX = /<value>.*<name>|<name>.*<value>/;
 
 export const EVENT_FILTER_EVENT_EXTRA_PREFIX = 'Event.ExtraInfos.';
-
-export const EVENT_FILTER_EXPAND_PANEL_TABS = {
-  summary: 'summary',
-  pattern: 'pattern',
-  action: 'action',
-  externalData: 'externalData',
-  errors: 'errors',
-};

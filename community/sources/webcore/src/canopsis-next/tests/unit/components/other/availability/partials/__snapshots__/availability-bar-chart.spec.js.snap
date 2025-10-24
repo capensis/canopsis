@@ -24,7 +24,7 @@ exports[`availability-bar-chart Renders \`availability-bar-chart\` with custom p
     >
       <div
         class="v-progress-linear__determinate"
-        style="width: 60%; background-color: rgb(45, 172, 97); border-color: #2dac61;"
+        style="width: 60%; background-color: rgb(47, 171, 99); border-color: #2fab63;"
       />
     </transition-stub>
   </div>
@@ -32,13 +32,13 @@ exports[`availability-bar-chart Renders \`availability-bar-chart\` with custom p
     class="layout column"
   >
     <availability-bar-chart-information-row-stub
-      color="#2DAC61"
+      color="#2fab63"
       label="Uptime"
     >
       8 hrs 20 mins
     </availability-bar-chart-information-row-stub>
     <availability-bar-chart-information-row-stub
-      color="#2B3E4F"
+      color="#2b3e4f"
       label="Downtime"
     >
       5 hrs 33 mins 20 secs

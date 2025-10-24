@@ -126,6 +126,4 @@ class Features {
   }
 }
 
-export const featuresService = new Features();
-
-export default featuresService;
+export default new Features();

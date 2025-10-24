@@ -72,19 +72,4 @@ describe('c-description-field', () => {
 
     expect(wrapper).toMatchSnapshot();
   });
-
-  test('Renders `c-description-field` with max length error', async () => {
-    const wrapper = snapshotFactory({
-      propsData: {
-        value: 'a'.repeat(256),
-        maxLength: 255,
-      },
-    });
-
-    const validator = wrapper.getValidator();
-
-    await validator.validateAll();
-
-    expect(wrapper).toMatchSnapshot();
-  });
 });

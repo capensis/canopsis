@@ -1,6 +1,6 @@
 import { computed } from 'vue';
 
-import { CRUD_ACTIONS, GROUPS_NAVIGATION_TYPES } from '@/constants';
+import { CRUD_ACTIONS } from '@/constants';
 
 import { checkUserAccess } from '@/helpers/entities/permissions/list';
 
@@ -40,27 +40,9 @@ export const useAuth = () => {
     filesAccess: 'filesAccess',
   });
 
-  const isShownGroupsTopBar = computed(() => {
-    const { ui_groups_navigation_type: groupsNavigationType } = getters.currentUser.value;
-    const isSelectedTopBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.topBar;
-    // Note: $mq check would need to be handled differently in composition API
-    return isSelectedTopBar;
-  });
-
-  const isShownGroupsSideBar = computed(() => {
-    const { ui_groups_navigation_type: groupsNavigationType } = getters.currentUser.value;
-    const isSelectedSideBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.sideBar;
-    // Note: $mq and filters are not available in setup, would need to be injected or handled differently
-    // For now, keeping the logic simpler
-    return isSelectedSideBar || !isShownGroupsTopBar.value;
-  });
-
   return {
     ...getters,
     ...actions,
-
-    isShownGroupsTopBar,
-    isShownGroupsSideBar,
   };
 };
 

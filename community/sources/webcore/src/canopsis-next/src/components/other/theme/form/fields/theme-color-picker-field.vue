@@ -25,7 +25,10 @@
 </template>
 
 <script>
+import { formBaseMixin } from '@/mixins/form';
+
 export default {
+  mixins: [formBaseMixin],
   model: {
     prop: 'value',
     event: 'input',

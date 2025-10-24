@@ -66,16 +66,6 @@ func NewActionLogger(
 	retryCount int,
 	retryTimeout time.Duration,
 ) ActionLogger {
-	/*
-	   NOTE: Each collection listed below MUST have the MongoDB option
-	   `changeStreamPreAndPostImages` enabled.
-	   Without this flag, the `fullDocument` and `fullDocumentBeforeChange`
-	   fields will be nil for update and delete events, breaking the action logger.
-	   Enable it for an existing collection (e.g., in a database migration) with:
-	       db.runCommand({collMod: "collection_name", changeStreamPreAndPostImages: {enabled: true}})
-	   Or when creating a collection:
-	       db.createCollection("collection_name", {changeStreamPreAndPostImages: {enabled: true}})
-	*/
 	collectionValueTypeMap := map[string]string{
 		mongo.AlarmTagCollection:                ValueTypeAlarmTag,
 		mongo.ColorThemeCollection:              ValueTypeColorTheme,
@@ -115,9 +105,6 @@ func NewActionLogger(
 		mongo.InstructionMongoCollection:        ValueTypeInstruction,
 		mongo.EventRecordsMongoCollection:       ValueTypeEventRecord,
 		mongo.ExternalDataTableCollection:       ValueTypeExternalData,
-		mongo.EntityInfosPropertyCollection:     ValueTypeEntityInfosProperty,
-
-		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))
@@ -275,16 +262,11 @@ func (l *logger) Watch(ctx context.Context) (err error) {
 		default:
 		}
 
+		var err error
+
 		lock, err = l.obtainLock(ctx)
 		if err != nil {
-			l.zLog.Warn().Err(err).Msgf("failed to obtain lock for action log watcher, waiting for next attempt")
-			select {
-			case <-ctx.Done():
-				return nil
-			case <-time.After(redisLockAcquireInterval):
-				l.zLog.Debug().Msg("action logger: retrying to obtain lock")
-				continue
-			}
+			return err
 		}
 
 		exitChan := l.startLockRefresher(ctx, lock)

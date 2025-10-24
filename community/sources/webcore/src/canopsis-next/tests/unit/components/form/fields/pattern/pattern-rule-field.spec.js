@@ -22,7 +22,6 @@ const stubs = {
   'c-date-time-interval-field': true,
   'c-input-type-field': true,
   'pattern-operator-field': true,
-  'pattern-rule-field-date-value': true,
   'c-mixed-input-field': true,
   'c-duration-field': true,
   'custom-component': true,
@@ -30,9 +29,10 @@ const stubs = {
 
 const selectPatternAttributeField = wrapper => wrapper.find('pattern-attribute-field-stub');
 const selectPatternOperatorField = wrapper => wrapper.find('pattern-operator-field-stub');
-const selectPatternDateValueField = wrapper => wrapper.find('pattern-rule-field-date-value-stub');
 const selectMixedInputField = wrapper => wrapper.find('c-mixed-input-field-stub');
 const selectInfosAttributeField = wrapper => wrapper.find('c-infos-attribute-field-stub');
+const selectQuickDateIntervalTypeField = wrapper => wrapper.find('c-quick-date-interval-type-field-stub');
+const selectDateTimeIntervalField = wrapper => wrapper.find('c-date-time-interval-field-stub');
 const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 
@@ -195,7 +195,7 @@ describe('pattern-rule-field', () => {
     });
   });
 
-  test('Range operator changed after trigger input event on the operator field', () => {
+  test('Range type changed after trigger input event on the date interval type field', () => {
     const rule = {
       ...emptyRule,
       attribute: ALARM_PATTERN_FIELDS.creationDate,
@@ -207,45 +207,48 @@ describe('pattern-rule-field', () => {
       },
     });
 
-    const operatorField = selectPatternOperatorField(wrapper);
+    const quickDateIntervalTypeField = selectQuickDateIntervalTypeField(wrapper);
 
-    operatorField.triggerCustomEvent('input', PATTERN_OPERATORS.inRangePeriod);
-
-    expect(wrapper).toEmitInput({
-      ...rule,
-
-      operator: PATTERN_OPERATORS.inRangePeriod,
-    });
-  });
-
-  test('Range type changed after trigger input event on the date value field', async () => {
-    const rule = {
-      ...emptyRule,
-      operator: PATTERN_OPERATORS.within,
-      attribute: ALARM_PATTERN_FIELDS.creationDate,
-    };
-    const wrapper = factory({
-      propsData: {
-        rule,
-        type: PATTERN_RULE_TYPES.date,
-      },
-    });
-
-    const dateValueField = selectPatternDateValueField(wrapper);
-
-    dateValueField.triggerCustomEvent('input', {
-      ...rule.range,
-      type: QUICK_RANGES.last15Minutes.value,
-    });
+    quickDateIntervalTypeField.triggerCustomEvent('input', QUICK_RANGES.last15Minutes.value);
 
     expect(wrapper).toEmitInput({
       ...rule,
-
-      operator: PATTERN_OPERATORS.within,
       range: {
         ...rule.range,
         type: QUICK_RANGES.last15Minutes.value,
       },
+    });
+  });
+
+  test('Interval changed after trigger input event on the date interval type field', () => {
+    const rule = {
+      ...emptyRule,
+      attribute: ALARM_PATTERN_FIELDS.creationDate,
+      range: {
+        ...emptyRule.range,
+        type: QUICK_RANGES.custom.value,
+      },
+    };
+    const wrapper = factory({
+      propsData: {
+        rule,
+        type: PATTERN_RULE_TYPES.date,
+      },
+    });
+
+    const dateTimeIntervalField = selectDateTimeIntervalField(wrapper);
+
+    const newRange = {
+      type: rule.range.type,
+      from: Faker.datatype.number(),
+      to: Faker.datatype.number(),
+    };
+
+    dateTimeIntervalField.triggerCustomEvent('input', newRange);
+
+    expect(wrapper).toEmitInput({
+      ...rule,
+      range: newRange,
     });
   });
 
@@ -309,6 +312,7 @@ describe('pattern-rule-field', () => {
           { value: PATTERN_FIELD_TYPES.string },
           { value: PATTERN_FIELD_TYPES.stringArray },
         ],
+        intervalRanges: [QUICK_RANGES.last15Minutes, QUICK_RANGES.custom],
         valueField: {
           is: 'custom-component',
           props: {
@@ -379,11 +383,11 @@ describe('pattern-rule-field', () => {
       propsData: {
         rule: {
           attribute: ALARM_PATTERN_FIELDS.creationDate,
-          operator: PATTERN_OPERATORS.inRangeDates,
+          operator: PATTERN_OPERATORS.higher,
           range: {
-            type: QUICK_RANGES.last1Hour.value,
-            from: new Date(),
-            to: new Date(),
+            type: QUICK_RANGES.custom.value,
+            from: 1000000,
+            to: 2000000,
           },
         },
         type: PATTERN_RULE_TYPES.date,

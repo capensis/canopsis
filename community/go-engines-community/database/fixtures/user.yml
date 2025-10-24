@@ -149,22 +149,6 @@ widget_templates:
     title: Default columns
     type: alarm_columns
     columns: *widget_alarm_columns
-  tpl_alarm_quick_actions:
-    <<: *widget_tpl
-    title: Default quick actions
-    type: alarm_quick_actions
-    actions:
-      - ack
-      - fastAck
-      - cancel
-  tpl_alarm_mass_quick_actions:
-    <<: *widget_tpl
-    title: Default quick massive actions
-    type: alarm_mass_quick_actions
-    actions:
-      - ack
-      - fastAck
-      - cancel
   tpl_entity_columns:
     <<: *widget_tpl
     title: Default columns
@@ -579,6 +563,10 @@ permission_group:
     position: <Index()>
   group_technical_exploitation:
     _id: technical_exploitation
+    name: <Current()._id>
+    position: <Index()>
+  group_technical_notification:
+    _id: technical_notification
     name: <Current()._id>
     position: <Index()>
   group_technical_profile:
@@ -1129,14 +1117,6 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_planning"
-  permission_api_pbehavior_patterns:
-    <<: *permission
-    _id: api_pbehavior_patterns
-    name: <Current()._id>
-    description: Check PBehavior patterns
-    groups:
-      - "@group_api"
-      - "@group_api_planning"
 
   # UI permissions
   .api_permissions_entity_pattern: &api_permissions_entity_pattern {
@@ -1420,17 +1400,6 @@ permission:
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
       ]
-  permission_models_remediationInstructionApprove:
-    <<: *permission
-    _id: models_remediationInstructionApprove
-    name: <Current()._id>
-    description: Instructions - instruction approve
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions:
-      "@permission_api_instruction_approve": 1
   permission_models_remediationJob:
     <<: *permission_crud
     _id: models_remediationJob
@@ -1465,18 +1434,6 @@ permission:
     api_permissions:
       "@permission_api_instruction": 4
       "@permission_api_metrics": 1
-  permission_models_instructionStats:
-    <<: *permission_crud
-    _id: models_instructionStats
-    name: <Current()._id>
-    description: Instructions - instructions stats tab
-    groups:
-      - "@group_technical"
-      - "@group_technical_admin"
-      - "@group_technical_admin_general"
-    api_permissions_bitmask:
-      4:
-        "@permission_api_instruction": 4
   permission_models_kpi:
     <<: *permission
     _id: models_kpi
@@ -1604,9 +1561,9 @@ permission:
     api_permissions:
       "@permission_api_viewgroup": 3
       "@permission_api_view": 3
-  permission_models_notification_common:
+  permission_models_notification:
     <<: *permission
-    _id: models_notification_common
+    _id: models_notification
     name: <Current()._id>
     description: Parameters - notification settings
     groups:
@@ -1920,6 +1877,19 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_external_data_table": 0
+
+  # technical -> notification
+  permission_models_notification_instructionStats:
+    <<: *permission_crud
+    _id: models_notification_instructionStats
+    name: <Current()._id>
+    description: Instructions statistics
+    groups:
+      - "@group_technical"
+      - "@group_technical_notification"
+    api_permissions_bitmask:
+      4:
+        "@permission_api_instruction": 4
 
   # technical -> profile
   permission_models_profile_corporatePattern:
@@ -3370,7 +3340,6 @@ role:
       "@permission_models_planningReason": 15
       "@permission_models_planningExceptions": 15
       "@permission_models_remediationInstruction": 15
-      "@permission_models_remediationInstructionApprove": 1
       "@permission_models_remediationJob": 15
       "@permission_models_remediationConfiguration": 15
       "@permission_models_exploitation_eventFilter": 15
@@ -3391,7 +3360,7 @@ role:
       "@permission_models_kpiFilters": 15
       "@permission_models_kpiRatingSettings": 15
       "@permission_models_kpiCollectionSettings": 15
-      "@permission_models_instructionStats": 15
+      "@permission_models_notification_instructionStats": 15
       "@permission_models_profile_corporatePattern": 15
       "@permission_models_map": 15
       "@permission_models_shareToken": 15
@@ -3403,7 +3372,7 @@ role:
       "@permission_models_storageSettings": 15
       "@permission_models_icon": 15
       "@permission_models_view_import_export": 1
-      "@permission_models_notification_common": 1
+      "@permission_models_notification": 1
       "@permission_models_eventsRecord": 1
       "@permission_models_privateView": 1
       "@permission_availability_interval": 1
@@ -3517,7 +3486,6 @@ role:
       "@permission_api_pbehaviortype": 15
       "@permission_api_pbehaviorreason": 15
       "@permission_api_pbehaviorexception": 15
-      "@permission_api_pbehavior_patterns": 1
       "@permission_api_event": 1
       "@permission_api_healthcheck": 1
       "@permission_api_message_rate_stats_read": 1

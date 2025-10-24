@@ -15,17 +15,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/fixtures"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	mock_amqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/amqp"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
-	"go.uber.org/mock/gomock"
 )
 
 func BenchmarkMessageProcessor_Process_GivenOldEntity(b *testing.B) {
@@ -206,8 +203,6 @@ func benchmarkMessageProcessorWithConfig(
 	genEvent func(i int) types.Event,
 ) {
 	ctx := b.Context()
-	ctrl := gomock.NewController(b)
-	defer ctrl.Finish()
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -237,7 +232,7 @@ func benchmarkMessageProcessorWithConfig(
 	})
 
 	loader := fixtures.NewLoader(dbClient, []string{fixturesPath},
-		fixtures.NewParser(fixtures.NewFaker(password.NewBcryptEncoder())), zerolog.Nop())
+		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), zerolog.Nop())
 	err = loader.Load(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -250,11 +245,7 @@ func benchmarkMessageProcessorWithConfig(
 	})
 
 	alarmConfigProvider := config.NewAlarmConfigProvider(cfg, zerolog.Nop())
-	amqpChannel := mock_amqp.NewMockPublisher(ctrl)
-	amqpChannel.EXPECT().PublishWithContext(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
-	notifStore := usernotification.NewStore(dbClient, amqpChannel, json.NewEncoder(),
-		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	failureService := eventfilter.NewFailureService(dbClient, notifStore, time.Hour, "", zerolog.Nop())
+	failureService := eventfilter.NewFailureService(dbClient, time.Hour, zerolog.Nop())
 	eventCounter := eventfilter.NewEventCounter(dbClient, time.Hour, zerolog.Nop())
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(cfg, zerolog.Nop()), config.NewTimezoneConfigProvider(cfg, zerolog.Nop()))
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, zerolog.Nop())

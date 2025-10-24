@@ -10,9 +10,7 @@
         text
         v-on="on"
       >
-        <slot name="title">
-          {{ title }}
-        </slot>
+        {{ title }}
       </v-btn>
     </template>
     <v-list class="py-0">

@@ -52,13 +52,6 @@ Si la version affichée est inférieure à 4.4, vous devez soit utiliser une dis
 !!! important
     L'utilisation de Docker Compose avec un noyau inférieur à 4.4 n'est pas prise en charge.
 
-### URL MongoDB
-
-!!! Warning
-    Si votre mot de passe MongoDB contient des caractères spéciaux (par exemple `@`, `+`, `/`, `%`), vous devez les encoder avant de les utiliser dans l’URL de connexion.
-    
-    Consultez la section [Limitations sur les caractères spéciaux dans l’URL MongoDB](../../../guide-utilisation/limitations/#limitation-des-caracteres-speciaux-dans-lurl-mongodb) pour plus de détails.
-
 ## Installation de Docker et Docker Compose
 
 Vous devez tout d'abord [installer Docker](https://docs.docker.com/engine/install/), version 20.10 minimum (se référer à page [Prérequis des versions][prereq-versions]). Veuillez utiliser les dépôts officiels de Docker, et non pas ceux proposés par votre distribution.
@@ -184,5 +177,5 @@ logrotate -fv /etc/logrotate.d/docker-container
 [prereq-versions]: https://doc.canopsis.net/latest/guide-administration/installation/prerequis-des-versions/#prerequis-systemes
 [compose-spec]: https://docs.docker.com/compose/compose-file/
 [docker-compose]: https://docs.docker.com/compose/install/#install-compose
-[canopsis-pro]: https://git.canopsis.net/sources/canopsis-pro-sources/-/releases
+[canopsis-pro]: https://git.canopsis.net/canopsis/canopsis-pro/-/releases
 [canopsis-community]: https://git.canopsis.net/canopsis/canopsis-community/-/releases

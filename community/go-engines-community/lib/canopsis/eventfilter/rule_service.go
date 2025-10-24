@@ -102,7 +102,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 			matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(rule.EventPattern, event)
 			if err != nil {
 				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
-				s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
+				s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid event pattern: "+err.Error(), nil)
 				continue
 			}
 
@@ -118,7 +118,7 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 				matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
 				if err != nil {
 					s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
-					s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
+					s.failureService.Add(rule.ID, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
 					continue
 				}
 

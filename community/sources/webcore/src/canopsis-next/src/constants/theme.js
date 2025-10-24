@@ -9,5 +9,3 @@ export const THEME_FONT_PIXEL_SIZES = {
   [THEME_FONT_SIZES.medium]: 14,
   [THEME_FONT_SIZES.large]: 16,
 };
-
-export const BACKGROUND_AND_ICONS_COLORS_DIFF = 25;

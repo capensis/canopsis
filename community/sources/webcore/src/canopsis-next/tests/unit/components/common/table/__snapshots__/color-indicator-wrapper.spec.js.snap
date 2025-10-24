@@ -7,7 +7,7 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity
   <!---->
   <div
     class="color-indicator"
-    style="background-color: rgb(86, 136, 34);"
+    style="background-color: rgb(205, 220, 57);"
   >
     2
   </div>
@@ -32,7 +32,7 @@ exports[`color-indicator-wrapper Renders \`color-indicator-wrapper\` with entity
   <!---->
   <div
     class="color-indicator"
-    style="background-color: rgb(255, 241, 118);"
+    style="background-color: rgb(245, 124, 0);"
   >
     12
   </div>

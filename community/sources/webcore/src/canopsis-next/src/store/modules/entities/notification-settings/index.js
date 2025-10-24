@@ -6,10 +6,10 @@ export default {
   namespaced: true,
   actions: {
     fetchItemWithoutStore() {
-      return request.get(API_ROUTES.notificationSettings);
+      return request.get(API_ROUTES.notification);
     },
     update(context, { data }) {
-      return request.put(API_ROUTES.notificationSettings, data);
+      return request.put(API_ROUTES.notification, data);
     },
   },
 };

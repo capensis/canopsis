@@ -2,9 +2,9 @@
   <div class="weather-service-entity-expansion-panel">
     <v-expansion-panels v-model="opened">
       <v-expansion-panel>
-        <v-expansion-panel-header :class="entityColorClass">
+        <v-expansion-panel-header :color="color">
           <template #actions="">
-            <v-icon>
+            <v-icon color="white">
               keyboard_arrow_down
             </v-icon>
           </template>
@@ -83,7 +83,7 @@ import { isNull } from 'lodash';
 
 import { ENTITY_TYPES, MODALS, TREE_OF_DEPENDENCIES_SHOW_TYPES, USER_PERMISSIONS } from '@/constants';
 
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 import { isInstructionTypeManual } from '@/helpers/entities/remediation/instruction/form';
 import {
   getAvailableActionsByEntity,
@@ -165,8 +165,8 @@ export default {
       return this.entity.source_type === ENTITY_TYPES.service;
     },
 
-    entityColorClass() {
-      return getEntityColorClass(this.entity, this.colorIndicator);
+    color() {
+      return getEntityColor(this.entity, this.colorIndicator);
     },
 
     hasAccessToPbehaviors() {
@@ -228,7 +228,7 @@ export default {
 
   & ::v-deep .v-expansion-panel-header__icon .v-icon,
   & ::v-deep .v-expansion-panel__header .v-input .v-icon {
-    color: inherit !important;
+    color: white !important;
   }
 }
 </style>

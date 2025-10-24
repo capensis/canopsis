@@ -186,9 +186,8 @@ func (p *messageProcessor) postProcessUpdatedEntities(
 			false,
 			false,
 			amqp.Publishing{
-				Body:         body,
-				ContentType:  "application/json",
-				DeliveryMode: amqp.Persistent,
+				Body:        body,
+				ContentType: "application/json",
 			},
 		)
 		if err != nil {

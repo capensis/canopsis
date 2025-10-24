@@ -6,13 +6,6 @@
       readonly
       filled
     />
-    <v-text-field
-      :value="instructionExecution.alarm.display_name"
-      :label="$t('alarm.alarmDisplayName')"
-      readonly
-      disabled
-      filled
-    />
     <remediation-instruction-execute-steps
       :steps="instructionExecution.steps"
       :execution-id="instructionExecution._id"

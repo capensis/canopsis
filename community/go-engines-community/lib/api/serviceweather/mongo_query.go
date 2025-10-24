@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
@@ -106,10 +105,6 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	q.handleFilter(r)
 	q.handleSort(r.SortBy, r.Sort)
 
-	if r.WithTagColors {
-		q.lookups = append(q.lookups, lookupWithKey{key: "tag_colors", pipeline: alarm.GetTagColorsLookup()})
-	}
-
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
 
@@ -133,10 +128,6 @@ func (q *MongoQueryBuilder) CreateListDependenciesAggregationPipeline(id string,
 
 	if r.PbhOrigin != "" {
 		q.lookups = append(q.lookups, lookupWithKey{key: "pbh_origin_icon", pipeline: getPbhOriginLookup(r.PbhOrigin, now)})
-	}
-
-	if r.WithTagColors {
-		q.lookups = append(q.lookups, lookupWithKey{key: "tag_colors", pipeline: alarm.GetTagColorsLookup()})
 	}
 
 	return q.createPaginationAggregationPipeline(r.Query), nil

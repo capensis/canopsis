@@ -1,6 +1,6 @@
 <template>
   <modal-wrapper
-    :title-class="titleClass"
+    :title-color="color"
     close
   >
     <template #title="">
@@ -106,6 +106,7 @@ import Observer from '@/services/observer';
 import { authMixin } from '@/mixins/auth';
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesServiceEntityMixin } from '@/mixins/entities/service-entity';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 import { localQueryMixin } from '@/mixins/query/query';
 import { permissionsWidgetsEventComment } from '@/mixins/permissions/widgets/entity-comment';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -135,6 +136,7 @@ export default {
     authMixin,
     localQueryMixin,
     modalInnerMixin,
+    entitiesAlarmTagMixin,
     entitiesServiceEntityMixin,
     permissionsWidgetsEventComment,
     submittableMixinCreator(),
@@ -157,8 +159,8 @@ export default {
       return this.config.service;
     },
 
-    titleClass() {
-      return this.config.titleClass;
+    color() {
+      return this.config.color;
     },
 
     widgetParameters() {
@@ -221,10 +223,13 @@ export default {
 
       const params = this.getQuery();
       params.with_instructions = true;
-      params.with_tag_colors = true;
       params.pbh_origin = PBEHAVIOR_ORIGINS.serviceWeather;
 
       await this.fetchServiceEntitiesList({ id: this.service._id, params });
+
+      if (!this.alarmTagsPending) {
+        this.fetchAlarmTagsList({ params: { paginate: false } });
+      }
 
       this.pending = false;
     },

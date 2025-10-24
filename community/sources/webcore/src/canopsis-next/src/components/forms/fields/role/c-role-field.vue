@@ -20,13 +20,12 @@
 </template>
 
 <script>
-import { ref, computed, watch, onMounted } from 'vue';
+import { createNamespacedHelpers } from 'vuex';
 import { isArray, isObject } from 'lodash';
 
 import { MAX_LIMIT } from '@/constants';
 
-import { usePendingHandler } from '@/hooks/query/pending';
-import { useRole } from '@/hooks/store/modules/role';
+const { mapActions } = createNamespacedHelpers('role');
 
 export default {
   inject: ['$validator'],
@@ -72,64 +71,72 @@ export default {
       required: false,
     },
   },
-  setup(props) {
-    const items = ref([]);
+  data() {
+    return {
+      pending: false,
+      items: [],
+    };
+  },
+  computed: {
+    component() {
+      if (this.autocomplete) {
+        return 'v-autocomplete';
+      }
 
-    const rules = computed(() => ({
-      required: props.required,
-    }));
+      return 'v-select';
+    },
 
-    const component = computed(() => (props.autocomplete ? 'v-autocomplete' : 'v-select'));
-
-    const availableRoles = computed(() => {
-      if (!items.value.length) {
-        if (isArray(props.value)) {
-          return props.value;
+    availableRoles() {
+      if (!this.items.length) {
+        if (isArray(this.value)) {
+          return this.value;
         }
 
-        if (isObject(props.value)) {
-          return [props.value];
+        if (isObject(this.value)) {
+          return [this.value];
         }
       }
 
-      return items.value;
-    });
+      return this.items;
+    },
 
-    const { fetchRolesListWithoutStore } = useRole();
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+  },
+  watch: {
+    disabled(value) {
+      if (!value && !this.items.length) {
+        this.fetchList();
+      }
+    },
+  },
+  mounted() {
+    if (!this.disabled) {
+      this.fetchList();
+    }
+  },
+  methods: {
+    ...mapActions({
+      fetchRolesListWithoutStore: 'fetchListWithoutStore',
+    }),
 
-    const { pending, handler: fetchList } = usePendingHandler(async () => {
+    async fetchList() {
+      this.pending = true;
+
       const params = { limit: MAX_LIMIT };
 
-      if (props.permission) {
-        params.permission = props.permission;
+      if (this.permission) {
+        params.permission = this.permission;
       }
 
-      const { data } = await fetchRolesListWithoutStore({ params });
+      const { data: items } = await this.fetchRolesListWithoutStore({ params });
 
-      items.value = data;
-    });
-
-    watch(() => props.disabled, (newValue) => {
-      if (!newValue && !items.value.length) {
-        fetchList();
-      }
-    });
-
-    onMounted(() => {
-      if (!props.disabled) {
-        fetchList();
-      }
-    });
-
-    return {
-      pending,
-      items,
-      component,
-      availableRoles,
-      rules,
-
-      fetchList,
-    };
+      this.items = items;
+      this.pending = false;
+    },
   },
 };
 </script>

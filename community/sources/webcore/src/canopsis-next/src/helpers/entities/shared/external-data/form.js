@@ -163,7 +163,7 @@ export const formToExternalData = (form = []) => form.map((externalData) => {
   const { type, reference } = externalData;
 
   return isApiExternalDataType(type)
-    ? { reference, type, request: formToRequest(externalData.request) }
+    ? { reference, request: formToRequest(externalData.request) }
     : {
       ...omit(externalData, ['request']),
       ...formToExternalDataConditions(externalData.conditions),

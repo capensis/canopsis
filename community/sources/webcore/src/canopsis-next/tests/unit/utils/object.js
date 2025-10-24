@@ -1,10 +1,10 @@
 import { isObject, isUndefined, isEmpty } from 'lodash';
 
-export const differenceKeys = (object, base, keepValue = false) => Object.keys(object).reduce((acc, key) => {
+export const differenceKeys = (object, base) => Object.keys(object).reduce((acc, key) => {
   if (isUndefined(base[key])) {
-    acc[key] = keepValue ? object[key] : true;
+    acc[key] = true;
   } else if (isObject(object[key]) && isObject(base[key])) {
-    const localDiff = differenceKeys(object[key], base[key], keepValue);
+    const localDiff = differenceKeys(object[key], base[key]);
 
     if (!isEmpty(localDiff)) {
       acc[key] = localDiff;

@@ -33,7 +33,7 @@ export default {
     },
     color: {
       type: String,
-      default: '',
+      default: 'error',
     },
     maxWidth: {
       type: [String, Number],

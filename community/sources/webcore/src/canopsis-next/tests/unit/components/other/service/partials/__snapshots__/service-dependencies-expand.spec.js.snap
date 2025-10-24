@@ -6,7 +6,8 @@ exports[`service-dependencies-expand Renders \`service-dependencies-expand\` wit
     class="v-badge v-badge--overlap theme--light"
   >
     <button
-      class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small impact-state-0"
+      class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
+      style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
       type="button"
     >
       <span
@@ -116,7 +117,8 @@ exports[`service-dependencies-expand Renders \`service-dependencies-expand\` wit
     class="v-badge v-badge--overlap theme--light"
   >
     <button
-      class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small impact-state-0"
+      class="v-btn v-btn--fab v-btn--has-bg v-btn--round theme--dark v-size--small"
+      style="background-color: rgb(47, 171, 99); border-color: #2fab63;"
       type="button"
     >
       <span

@@ -27,17 +27,15 @@ type store struct {
 	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
 	authorProvider        author.Provider
-	transformer           common.PatternFieldsTransformer
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
 
-func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
+func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              db,
 		collection:            db.Collection(mongo.IdleRuleMongoCollection),
 		authorProvider:        authorProvider,
-		transformer:           transformer,
 		defaultSearchByFields: []string{"_id", "name", "description", "author.name"},
 		defaultSortBy:         "created",
 	}
@@ -109,13 +107,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	var idleRule *Rule
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
-
-		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &rule)
-		if err != nil {
-			return err
-		}
-
-		_, err = s.collection.InsertOne(ctx, rule)
+		_, err := s.collection.InsertOne(ctx, rule)
 		if err != nil {
 			return err
 		}
@@ -124,7 +116,6 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 		if err != nil {
 			return err
 		}
-
 		idleRule, err = s.GetOneBy(ctx, rule.ID)
 		return err
 	})
@@ -145,12 +136,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &model)
-		if err != nil {
-			return err
-		}
-
-		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
+		_, err := s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
 		if err != nil {
 			return err
 		}
@@ -198,29 +184,6 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	return common.GetSortQuery(sortBy, r.Sort)
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *idlerule.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
-		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
-	)
-
-	return nil
-}
-
 func transformRequestToModel(r EditRequest) idlerule.Rule {
 	var operation *idlerule.Operation
 	if r.Operation != nil {
@@ -242,6 +205,13 @@ func transformRequestToModel(r EditRequest) idlerule.Rule {
 		DisableDuringPeriods: r.DisableDuringPeriods,
 		AlarmCondition:       r.AlarmCondition,
 		Operation:            operation,
+		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
+		),
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection),
+		),
 	}
 }
 

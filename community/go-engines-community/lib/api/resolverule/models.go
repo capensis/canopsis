@@ -12,7 +12,7 @@ type EditRequest struct {
 	Name        string                    `json:"name" binding:"required,max=255"`
 	Description string                    `json:"description" binding:"max=255"`
 	Duration    datetime.DurationWithUnit `json:"duration" binding:"required"`
-	Priority    int64                     `json:"priority" binding:"min=0"`
+	Priority    int64                     `json:"priority" binding:"required,min=0"`
 	Author      string                    `json:"author" swaggerignore:"true"`
 
 	common.AlarmPatternFieldsRequest

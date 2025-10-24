@@ -22,11 +22,9 @@
         </v-list-item>
       </template>
     </v-combobox>
-    <c-name-field
+    <v-text-field
       v-field="form.comment"
-      :label="$tc('common.note')"
-      :max-length="255"
-      name="comment"
+      :label="$t('common.note')"
     />
     <v-text-field
       v-field="form.component"

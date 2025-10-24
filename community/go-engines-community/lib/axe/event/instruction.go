@@ -26,13 +26,12 @@ func NewInstructionProcessor(
 	logger zerolog.Logger,
 ) Processor {
 	return &instructionProcessor{
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		resolvedAlarmCollection: client.Collection(mongo.ResolvedAlarmMongoCollection),
-		metricsSender:           metricsSender,
-		amqpPublisher:           amqpPublisher,
-		eventGenerator:          eventGenerator,
-		encoder:                 encoder,
-		logger:                  logger,
+		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
+		metricsSender:   metricsSender,
+		amqpPublisher:   amqpPublisher,
+		eventGenerator:  eventGenerator,
+		encoder:         encoder,
+		logger:          logger,
 		alarmStepTypeMap: map[string]string{
 			// Manual instruction
 			types.EventTypeInstructionStarted:   types.AlarmStepInstructionStart,
@@ -69,15 +68,14 @@ func NewInstructionProcessor(
 }
 
 type instructionProcessor struct {
-	alarmCollection         mongo.DbCollection
-	resolvedAlarmCollection mongo.DbCollection
-	metricsSender           metrics.Sender
-	amqpPublisher           libamqp.Publisher
-	eventGenerator          event.Generator
-	encoder                 encoding.Encoder
-	logger                  zerolog.Logger
-	alarmStepTypeMap        map[string]string
-	alarmChangeTypeMap      map[string]types.AlarmChangeType
+	alarmCollection    mongo.DbCollection
+	metricsSender      metrics.Sender
+	amqpPublisher      libamqp.Publisher
+	eventGenerator     event.Generator
+	encoder            encoding.Encoder
+	logger             zerolog.Logger
+	alarmStepTypeMap   map[string]string
+	alarmChangeTypeMap map[string]types.AlarmChangeType
 }
 
 func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -95,45 +93,33 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 	var match bson.M
 	set := bson.M{}
 	if alarmStepType == "" {
-		match = getExactAlarmMatch(event)
+		match = getOpenAlarmMatch(event)
 	} else {
-		match = getExactAlarmMatchWithStepsLimit(event)
+		match = getOpenAlarmMatchWithStepsLimit(event)
 		newStepQuery := execStepUpdateQueryWithInPbhInterval(alarmStepType, "", event.Parameters.Output, event.Parameters)
 		set["v.steps"] = addStepUpdateQuery(newStepQuery)
 		set["v.last_update_date"] = event.Parameters.Timestamp
 	}
 
-	if match == nil {
-		return result, nil
-	}
-
 	switch alarmChangeType {
 	case types.AlarmStepAutoInstructionStart:
 		set["v.inactive_start"] = bson.M{"$cond": bson.M{
-			"if":   "$v.resolved",
-			"then": "$v.inactive_start",
-			"else": bson.M{"$cond": bson.M{
-				"if":   "$auto_instruction_in_progress",
-				"then": event.Parameters.Timestamp,
-				"else": "$v.inactive_start",
-			}},
+			"if":   "$auto_instruction_in_progress",
+			"then": event.Parameters.Timestamp,
+			"else": "$v.inactive_start",
 		}}
-		set["v.inactive_duration"] = bson.M{"$cond": bson.M{
-			"if":   "$v.resolved",
-			"then": "$v.inactive_duration",
-			"else": bson.M{"$sum": bson.A{
-				"$v.inactive_duration",
-				bson.M{"$cond": bson.M{
-					"if": bson.M{"$and": []bson.M{
-						{"$eq": bson.A{"$auto_instruction_in_progress", true}},
-						{"$gt": bson.A{"$v.inactive_start", 0}},
-					}},
-					"then": bson.M{"$subtract": bson.A{
-						event.Parameters.Timestamp,
-						"$v.inactive_start",
-					}},
-					"else": 0,
+		set["v.inactive_duration"] = bson.M{"$sum": bson.A{
+			"$v.inactive_duration",
+			bson.M{"$cond": bson.M{
+				"if": bson.M{"$and": []bson.M{
+					{"$eq": bson.A{"$auto_instruction_in_progress", true}},
+					{"$gt": bson.A{"$v.inactive_start", 0}},
 				}},
+				"then": bson.M{"$subtract": bson.A{
+					event.Parameters.Timestamp,
+					"$v.inactive_start",
+				}},
+				"else": 0,
 			}},
 		}}
 	case types.AlarmStepInstructionComplete, types.AlarmStepInstructionFail:
@@ -176,13 +162,6 @@ func (p *instructionProcessor) Process(ctx context.Context, event rpc.AxeEvent) 
 		}
 
 		return result, err
-	}
-
-	if alarm.IsResolved() && len(set) > 0 {
-		_, err = p.resolvedAlarmCollection.UpdateOne(ctx, match, []bson.M{{"$set": set}})
-		if err != nil {
-			return result, err
-		}
 	}
 
 	alarmChange := types.NewAlarmChange()

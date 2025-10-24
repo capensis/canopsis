@@ -1,7 +1,7 @@
 import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
 import { createMockedStoreModules } from '@unit/utils/store';
 
-import { featuresService } from '@/services/features';
+import featuresService from '@/services/features';
 
 import AlarmsListRow from '@/components/widgets/alarm/partials/alarms-list-row.vue';
 

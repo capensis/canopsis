@@ -28,6 +28,7 @@ exports[`alarm-status-rule-form Renders \`alarm-status-rule-form\` with custom p
   />
   <alarm-status-rule-patterns-form-stub
     class="mt-2"
+    flapping="true"
     form="[object Object]"
   />
 </div>

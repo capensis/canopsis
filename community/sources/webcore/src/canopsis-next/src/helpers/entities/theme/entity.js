@@ -6,13 +6,9 @@ import { isString, kebabCase } from 'lodash';
  * @property {string} secondary
  * @property {string} accent
  * @property {string} error
- * @property {string} error_background
  * @property {string} info
- * @property {string} info_background
  * @property {string} success
- * @property {string} success_background
  * @property {string} warning
- * @property {string} warning_background
  * @property {string} background
  * @property {string} active_color
  */
@@ -79,13 +75,3 @@ const themeObjectColorsToCSSVariables = (colors, prefix = '') => Object.entries(
  * @returns {Object}
  */
 export const themePropertiesToCSSVariables = (colors = {}) => themeObjectColorsToCSSVariables(colors);
-
-/**
- * Extracts the theme variable key from a CSS variable string.
- *
- * @param {string} [cssVariable=''] - The CSS variable string to process.
- * @returns {string} The extracted theme variable key.
- */
-export const getThemeVariableKeyFromCssVariable = (cssVariable = '') => (
-  cssVariable.replace('var(--v-', '').replace('-base)', '')
-);

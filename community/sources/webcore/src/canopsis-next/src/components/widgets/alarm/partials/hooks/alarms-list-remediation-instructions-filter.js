@@ -10,7 +10,7 @@ import {
 } from '@/helpers/entities/remediation/instruction/list';
 
 import { usePendingHandler } from '@/hooks/query/pending';
-import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-instruction';
+import { useRemdeitionInstructionStore } from '@/hooks/store/modules/remediation-instruction';
 
 /**
  * Provides logic to fetch and filter remediation instructions for alarms list.
@@ -24,7 +24,7 @@ import { useRemdeitionInstruction } from '@/hooks/store/modules/remediation-inst
 export const useAlarmsListRemediationInstructionsFilterFetch = (filter) => {
   const instructions = ref([]);
 
-  const { fetchRemediationInstructionsListWithoutStore } = useRemdeitionInstruction();
+  const { fetchRemediationInstructionsListWithoutStore } = useRemdeitionInstructionStore();
 
   const { handler: fetchInstructionsList, pending: instructionsPending } = usePendingHandler(async () => {
     const { data } = await fetchRemediationInstructionsListWithoutStore({ params: { limit: MAX_LIMIT } });

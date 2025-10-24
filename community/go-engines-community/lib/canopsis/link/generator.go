@@ -83,8 +83,7 @@ type parsedRule struct {
 	EntityPattern pattern.Entity
 	ExternalData  []externaldata.ParsedRefParameters
 	Links         []Parameters
-	UrlTpls       []*template.Template
-	LabelTpls     []*template.Template
+	LinkTpls      []*template.Template
 	CodeExecutor  js.Executor
 }
 
@@ -191,7 +190,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 	}
 
 	data := g.getTplData(rule, alarms, entities, user)
-	return g.getLinksByTpl(rule.Links, rule.UrlTpls, rule.LabelTpls, data)
+	return g.getLinksByTpl(rule.Links, rule.LinkTpls, data)
 }
 
 func (g *generator) runWorkers(
@@ -294,35 +293,21 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		}
 
 		pr.Links = rule.Links
-		pr.UrlTpls = make([]*template.Template, len(rule.Links))
-		pr.LabelTpls = make([]*template.Template, len(rule.Links))
+		pr.LinkTpls = make([]*template.Template, len(rule.Links))
 		for i, link := range rule.Links {
 			if link.Url == "" {
 				g.logger.Error().Str("rule", rule.ID).Msg("empty url template in link rule")
 				break
 			}
 
-			parsedUrl := g.tplExecutor.Parse(link.Url)
-			err = parsedUrl.Err
+			parsed := g.tplExecutor.Parse(link.Url)
+			err = parsed.Err
 			if err != nil {
-				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid url template in link rule")
+				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
 				break
 			}
 
-			if link.Label == "" {
-				g.logger.Error().Str("rule", rule.ID).Msg("empty label template in link rule")
-				break
-			}
-
-			parsedLabel := g.tplExecutor.Parse(link.Label)
-			err = parsedLabel.Err
-			if err != nil {
-				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid label template in link rule")
-				break
-			}
-
-			pr.UrlTpls[i] = parsedUrl.Tpl
-			pr.LabelTpls[i] = parsedLabel.Tpl
+			pr.LinkTpls[i] = parsed.Tpl
 		}
 		if err != nil {
 			continue
@@ -458,7 +443,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 		}
 
 		data := g.getTplData(rule, argAlarms, argEntities, user)
-		res[alarms[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.UrlTpls, rule.LabelTpls, data)
+		res[alarms[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 		}
@@ -520,7 +505,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 		}
 
 		data := g.getTplData(rule, argAlarms, argEntities, user)
-		res[entities[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.UrlTpls, rule.LabelTpls, data)
+		res[entities[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 		}
@@ -618,19 +603,13 @@ func (g *generator) processExternalData(
 
 func (g *generator) getLinksWithCategoryByTpl(
 	id string,
-	linkParameters []Parameters,
-	urlTpls []*template.Template,
-	labelTpls []*template.Template,
+	linkTpls []Parameters,
+	tpls []*template.Template,
 	data map[string]any,
 ) ([]linkWithCategory, error) {
-	res := make([]linkWithCategory, len(linkParameters))
-	for i, linkTpl := range linkParameters {
-		url, err := g.tplExecutor.ExecuteByTpl(urlTpls[i], data)
-		if err != nil {
-			return nil, err
-		}
-
-		label, err := g.tplExecutor.ExecuteByTpl(labelTpls[i], data)
+	res := make([]linkWithCategory, len(linkTpls))
+	for i, linkTpl := range linkTpls {
+		url, err := g.tplExecutor.ExecuteByTpl(tpls[i], data)
 		if err != nil {
 			return nil, err
 		}
@@ -639,7 +618,7 @@ func (g *generator) getLinksWithCategoryByTpl(
 			Category: linkTpl.Category,
 			Link: Link{
 				RuleID:     id,
-				Label:      label,
+				Label:      linkTpl.Label,
 				IconName:   linkTpl.IconName,
 				Url:        url,
 				Action:     linkTpl.Action,
@@ -653,25 +632,19 @@ func (g *generator) getLinksWithCategoryByTpl(
 }
 
 func (g *generator) getLinksByTpl(
-	linkParameters []Parameters,
-	urlTpls []*template.Template,
-	labelTpls []*template.Template,
+	linkTpls []Parameters,
+	tpls []*template.Template,
 	data map[string]any,
 ) ([]Link, error) {
-	res := make([]Link, len(linkParameters))
-	for i, linkTpl := range linkParameters {
-		url, err := g.tplExecutor.ExecuteByTpl(urlTpls[i], data)
-		if err != nil {
-			return nil, err
-		}
-
-		label, err := g.tplExecutor.ExecuteByTpl(labelTpls[i], data)
+	res := make([]Link, len(linkTpls))
+	for i, linkTpl := range linkTpls {
+		url, err := g.tplExecutor.ExecuteByTpl(tpls[i], data)
 		if err != nil {
 			return nil, err
 		}
 
 		res[i] = Link{
-			Label:      label,
+			Label:      linkTpl.Label,
 			IconName:   linkTpl.IconName,
 			Url:        url,
 			Action:     linkTpl.Action,

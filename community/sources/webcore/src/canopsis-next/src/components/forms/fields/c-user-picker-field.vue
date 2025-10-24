@@ -15,12 +15,11 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue';
+import { createNamespacedHelpers } from 'vuex';
 
 import { MAX_LIMIT } from '@/constants';
 
-import { usePendingHandler } from '@/hooks/query/pending';
-import { useUser } from '@/hooks/store/modules/user';
+const { mapActions } = createNamespacedHelpers('user');
 
 export default {
   inject: ['$validator'],
@@ -59,37 +58,41 @@ export default {
       default: '_id',
     },
   },
-  setup(props) {
-    const items = ref([]);
+  data() {
+    return {
+      pending: false,
+      items: [],
+    };
+  },
+  computed: {
+    rules() {
+      return {
+        required: this.required,
+      };
+    },
+  },
+  mounted() {
+    this.fetchList();
+  },
+  methods: {
+    ...mapActions({
+      fetchUsersListWithoutStore: 'fetchListWithoutStore',
+    }),
 
-    const rules = computed(() => ({
-      required: props.required,
-    }));
+    async fetchList() {
+      this.pending = true;
 
-    const { fetchUsersListWithoutStore } = useUser();
-
-    const { pending, handler: fetchList } = usePendingHandler(async () => {
       const params = { limit: MAX_LIMIT };
 
-      if (props.permission) {
-        params.permission = props.permission;
+      if (this.permission) {
+        params.permission = this.permission;
       }
 
-      const { data } = await fetchUsersListWithoutStore({ params });
+      const { data: items } = await this.fetchUsersListWithoutStore({ params });
 
-      items.value = data;
-    });
-
-    onMounted(fetchList);
-
-    return {
-      pending,
-      items,
-
-      rules,
-
-      fetchList,
-    };
+      this.items = items;
+      this.pending = false;
+    },
   },
 };
 </script>
