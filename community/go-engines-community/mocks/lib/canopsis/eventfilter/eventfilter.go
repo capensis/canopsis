@@ -44,18 +44,18 @@ func (m *MockRuleApplicator) EXPECT() *MockRuleApplicatorMockRecorder {
 }
 
 // Apply mocks base method.
-func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 *types.Event, arg3 eventfilter.RegexMatch) (eventfilter.RuleResult, error) {
+func (m *MockRuleApplicator) Apply(arg0 context.Context, arg1 eventfilter.ParsedRule, arg2 *types.Event, arg3 map[string]eventfilter.UpdatedValue, arg4 eventfilter.RegexMatch) (eventfilter.RuleResult, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3)
+	ret := m.ctrl.Call(m, "Apply", arg0, arg1, arg2, arg3, arg4)
 	ret0, _ := ret[0].(eventfilter.RuleResult)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Apply indicates an expected call of Apply.
-func (mr *MockRuleApplicatorMockRecorder) Apply(arg0, arg1, arg2, arg3 any) *gomock.Call {
+func (mr *MockRuleApplicatorMockRecorder) Apply(arg0, arg1, arg2, arg3, arg4 any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*MockRuleApplicator)(nil).Apply), arg0, arg1, arg2, arg3)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Apply", reflect.TypeOf((*MockRuleApplicator)(nil).Apply), arg0, arg1, arg2, arg3, arg4)
 }
 
 // MockRuleAdapter is a mock of RuleAdapter interface.
@@ -243,18 +243,18 @@ func (m *MockActionProcessor) EXPECT() *MockActionProcessorMockRecorder {
 }
 
 // Process mocks base method.
-func (m *MockActionProcessor) Process(ctx context.Context, ruleID, ruleDesc string, action eventfilter.ParsedAction, event *types.Event, regexMatch eventfilter.RegexMatch, externalData map[string]any) (map[string]eventfilter.UpdatedValue, error) {
+func (m *MockActionProcessor) Process(ctx context.Context, ruleID, ruleDesc string, action eventfilter.ParsedAction, event *types.Event, updatedEntityInfos map[string]eventfilter.UpdatedValue, regexMatch eventfilter.RegexMatch, externalData map[string]any) (map[string]eventfilter.UpdatedValue, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Process", ctx, ruleID, ruleDesc, action, event, regexMatch, externalData)
+	ret := m.ctrl.Call(m, "Process", ctx, ruleID, ruleDesc, action, event, updatedEntityInfos, regexMatch, externalData)
 	ret0, _ := ret[0].(map[string]eventfilter.UpdatedValue)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // Process indicates an expected call of Process.
-func (mr *MockActionProcessorMockRecorder) Process(ctx, ruleID, ruleDesc, action, event, regexMatch, externalData any) *gomock.Call {
+func (mr *MockActionProcessorMockRecorder) Process(ctx, ruleID, ruleDesc, action, event, updatedEntityInfos, regexMatch, externalData any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActionProcessor)(nil).Process), ctx, ruleID, ruleDesc, action, event, regexMatch, externalData)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Process", reflect.TypeOf((*MockActionProcessor)(nil).Process), ctx, ruleID, ruleDesc, action, event, updatedEntityInfos, regexMatch, externalData)
 }
 
 // MockFailureService is a mock of FailureService interface.

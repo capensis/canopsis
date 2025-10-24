@@ -27,6 +27,7 @@ func TestActionProcessor(t *testing.T) {
 		testName             string
 		action               eventfilter.ParsedAction
 		event                types.Event
+		updatedInfos         map[string]eventfilter.UpdatedValue
 		regexMatches         eventfilter.RegexMatch
 		externalData         map[string]any
 		expectedEvent        types.Event
@@ -140,8 +141,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  "test output",
+					RuleID:   ruleID,
+					NewValue: "test output",
 				},
 			},
 		},
@@ -172,8 +173,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  123,
+					RuleID:   ruleID,
+					NewValue: 123,
 				},
 			},
 		},
@@ -204,8 +205,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  true,
+					RuleID:   ruleID,
+					NewValue: true,
 				},
 			},
 		},
@@ -236,8 +237,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  []string{"test", "test2"},
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
 				},
 			},
 		},
@@ -268,8 +269,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  []string{"test2", "test"},
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
 				},
 			},
 		},
@@ -308,8 +309,9 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  []string{"test2", "test"},
+					RuleID:   ruleID,
+					OldValue: []string{"test"},
+					NewValue: []string{"test", "test2"},
 				},
 			},
 		},
@@ -340,8 +342,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  float64(2),
+					RuleID:   ruleID,
+					NewValue: float64(2),
 				},
 			},
 		},
@@ -372,8 +374,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  float32(2),
+					RuleID:   ruleID,
+					NewValue: float32(2),
 				},
 			},
 		},
@@ -490,8 +492,9 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  "new info",
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
 				},
 			},
 		},
@@ -531,6 +534,96 @@ func TestActionProcessor(t *testing.T) {
 			expectedUpdatedInfos: nil,
 		},
 		{
+			testName: "given updated entity info and set_entity_info action with old value should remove updated entity info",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "old info",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test new description",
+							Value:       "new info",
+						},
+					},
+				},
+			},
+			updatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       "old info",
+						},
+					},
+				},
+			},
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
+		},
+		{
+			testName: "given updated entity info and set_entity_info action with another value should change updated entity info",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test another description",
+				Value:       "another info",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test new description",
+							Value:       "new info",
+						},
+					},
+				},
+			},
+			updatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test another description",
+							Value:       "another info",
+						},
+					},
+				},
+			},
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "another info",
+				},
+			},
+		},
+		{
 			testName: "given set_entity_info_from_template action should return success",
 			action: eventfilter.ParsedAction{
 				Type:        eventfilter.ActionSetEntityInfoFromTemplate,
@@ -559,8 +652,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  "test output",
+					RuleID:   ruleID,
+					NewValue: "test output",
 				},
 			},
 		},
@@ -637,8 +730,9 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  "new info",
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
 				},
 			},
 		},
@@ -855,8 +949,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  "test resource",
+					RuleID:   ruleID,
+					NewValue: "test resource",
 				},
 			},
 		},
@@ -891,8 +985,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  123,
+					RuleID:   ruleID,
+					NewValue: 123,
 				},
 			},
 		},
@@ -927,8 +1021,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  true,
+					RuleID:   ruleID,
+					NewValue: true,
 				},
 			},
 		},
@@ -961,8 +1055,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  "test resource",
+					RuleID:   ruleID,
+					NewValue: "test resource",
 				},
 			},
 		},
@@ -999,8 +1093,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  []string{"test", "test2"},
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
 				},
 			},
 		},
@@ -1037,8 +1131,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  []string{"test2", "test"},
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
 				},
 			},
 		},
@@ -1075,8 +1169,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  []string{"test2", "test"},
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
 				},
 			},
 		},
@@ -1113,8 +1207,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  float64(2),
+					RuleID:   ruleID,
+					NewValue: float64(2),
 				},
 			},
 		},
@@ -1151,8 +1245,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  float32(2),
+					RuleID:   ruleID,
+					NewValue: float32(2),
 				},
 			},
 		},
@@ -1297,8 +1391,9 @@ func TestActionProcessor(t *testing.T) {
 			expectedError: false,
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"Info 1": {
-					RuleID: ruleID,
-					Value:  "test resource",
+					RuleID:   ruleID,
+					OldValue: "old resource",
+					NewValue: "test resource",
 				},
 			},
 		},
@@ -1709,16 +1804,16 @@ func TestActionProcessor(t *testing.T) {
 			},
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"key1": {
-					RuleID: ruleID,
-					Value:  "value1",
+					RuleID:   ruleID,
+					NewValue: "value1",
 				},
 				"key2": {
-					RuleID: ruleID,
-					Value:  []string{"value2", "value3"},
+					RuleID:   ruleID,
+					NewValue: []string{"value2", "value3"},
 				},
 				"key3": {
-					RuleID: ruleID,
-					Value:  float64(3),
+					RuleID:   ruleID,
+					NewValue: float64(3),
 				},
 			},
 			expectedError: false,
@@ -1780,16 +1875,17 @@ func TestActionProcessor(t *testing.T) {
 			},
 			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
 				"key1": {
-					RuleID: ruleID,
-					Value:  "value1",
+					RuleID:   ruleID,
+					OldValue: float32(1),
+					NewValue: "value1",
 				},
 				"key2": {
-					RuleID: ruleID,
-					Value:  []string{"value2", "value3"},
+					RuleID:   ruleID,
+					NewValue: []string{"value2", "value3"},
 				},
 				"key3": {
-					RuleID: ruleID,
-					Value:  float64(3),
+					RuleID:   ruleID,
+					NewValue: float64(3),
 				},
 			},
 			expectedError: false,
@@ -1991,7 +2087,7 @@ func TestActionProcessor(t *testing.T) {
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
 			res, resultErr := processor.Process(t.Context(), ruleID, "", dataset.action, &dataset.event,
-				dataset.regexMatches, dataset.externalData)
+				dataset.updatedInfos, dataset.regexMatches, dataset.externalData)
 			if diff := pretty.Compare(dataset.expectedEvent, dataset.event); diff != "" {
 				t.Fatalf("unexpected event (-want +got):\n%s", diff)
 			}
