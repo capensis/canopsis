@@ -23,7 +23,7 @@
     <c-payload-text-field
       v-field="config.corel_id"
       :label="$t('metaAlarmRule.corelId')"
-      :variables="variables"
+      :variables="templateVars.corel_id"
       name="corelId"
       required
     >
@@ -39,7 +39,7 @@
     <c-payload-text-field
       v-field="config.corel_status"
       :label="$t('metaAlarmRule.corelStatus')"
-      :variables="variables"
+      :variables="templateVars.corel_status"
       name="corelStatus"
       required
     >
@@ -52,10 +52,11 @@
         />
       </template>
     </c-payload-text-field>
-    <c-payload-text-field
+    <v-text-field
       v-field="config.corel_parent"
+      v-validate="'required'"
       :label="$t('metaAlarmRule.corelParent')"
-      :variables="variables"
+      :error-messages="errors.collect('corelParent')"
       name="corelParent"
       required
     >
@@ -67,11 +68,12 @@
           left
         />
       </template>
-    </c-payload-text-field>
-    <c-payload-text-field
+    </v-text-field>
+    <v-text-field
       v-field="config.corel_child"
+      v-validate="'required'"
       :label="$t('metaAlarmRule.corelChild')"
-      :variables="variables"
+      :error-messages="errors.collect('corelChild')"
       name="corelChild"
       required
     >
@@ -83,7 +85,7 @@
           left
         />
       </template>
-    </c-payload-text-field>
+    </v-text-field>
   </v-layout>
 </template>
 
@@ -91,6 +93,7 @@
 import MetaAlarmRuleTimeBasedForm from './meta-alarm-rule-time-based-form.vue';
 
 export default {
+  inject: ['$validator'],
   components: { MetaAlarmRuleTimeBasedForm },
   model: {
     prop: 'config',
@@ -101,9 +104,9 @@ export default {
       type: Object,
       default: () => ({}),
     },
-    variables: {
-      type: Array,
-      default: () => [],
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
 };

@@ -165,7 +165,6 @@ export const useExternalDataTableRecordsModals = ({
  *
  * @param {Object} options - Configuration options
  * @param {Object|Ref<Object>} [options.externalDataTable] - The external data table object
- * @param {Function} [options.fetchExternalDataTable] - The fetch external data table function
  * @param {Object|Ref<Object>} [options.initialQuery] - The initial qurty parameter
  * @returns {Object} Object containing records state and methods
  * @property {Ref<Array>} records - Reactive reference to the fetched records
@@ -183,7 +182,7 @@ export const useExternalDataTableRecordsModals = ({
  * @property {Function} showRemoveExternalDataTableRecordModal - Shows the modal for removing a record
  * @property {Function} showRemoveSelectedExternalDataTableRecordsModal - Shows the modal for removing selected records
  */
-export const useExternalDataTableRecordsList = ({ externalDataTable, fetchExternalDataTable, initialQuery } = {}) => {
+export const useExternalDataTableRecordsList = ({ externalDataTable, initialQuery } = {}) => {
   const { fetchExternalDataTableRecordsListWithoutStore } = useExternalDataTableRecord();
 
   const {
@@ -197,17 +196,13 @@ export const useExternalDataTableRecordsList = ({ externalDataTable, fetchExtern
     fetchList,
   } = useFetchListWithoutStoreWithOptions({
     initialQuery,
-    fetchListHandler: (rest) => {
-      fetchExternalDataTable?.();
-
-      return fetchExternalDataTableRecordsListWithoutStore({
-        ...rest,
-        id: unref(externalDataTable)._id,
-      });
-    },
+    fetchListHandler: rest => fetchExternalDataTableRecordsListWithoutStore({
+      ...rest,
+      id: unref(externalDataTable)._id,
+    }),
   });
 
-  const hasStructure = computed(() => !!unref(externalDataTable).columns?.length);
+  const hasStructure = computed(() => !!unref(externalDataTable).column_configs?.length);
 
   const {
     showImportExternalDataTablesModal,

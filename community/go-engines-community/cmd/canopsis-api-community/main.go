@@ -61,6 +61,7 @@ func main() {
 		pgPoolProvider,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
+		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {

@@ -72,7 +72,7 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 			}
 
 			if infoName := pattern.GetEntityInfoName(f); infoName != "" {
-				if !v.ValidateInfoCondition() {
+				if !v.ValidateEntityInfoCondition() {
 					return false
 				}
 
@@ -80,7 +80,7 @@ func ValidateEntityPattern(p pattern.Entity, forbiddenFields []string) bool {
 			}
 
 			if infoName := pattern.GetEntityComponentInfoName(f); infoName != "" {
-				if !v.ValidateInfoCondition() {
+				if !v.ValidateEntityInfoCondition() {
 					return false
 				}
 
@@ -126,7 +126,7 @@ func MatchEntityPattern(p pattern.Entity, entity *types.Entity) (bool, error) {
 			if infoName := pattern.GetEntityInfoName(f); infoName != "" {
 				infoVal, infoExists := getEntityInfoVal(entity, infoName)
 
-				matched, err = v.MatchInfoCondition(infoVal, infoExists)
+				matched, err = v.MatchEntityInfoCondition(infoVal, infoExists)
 				if err != nil {
 					return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
 				}
@@ -141,7 +141,7 @@ func MatchEntityPattern(p pattern.Entity, entity *types.Entity) (bool, error) {
 			if infoName := pattern.GetEntityComponentInfoName(f); infoName != "" {
 				infoVal, infoExists := getEntityComponentInfoVal(entity, infoName)
 
-				matched, err = v.MatchInfoCondition(infoVal, infoExists)
+				matched, err = v.MatchEntityInfoCondition(infoVal, infoExists)
 				if err != nil {
 					return false, fmt.Errorf("invalid condition for %q field: %w", f, err)
 				}
@@ -229,6 +229,11 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 						if a, err = pattern.GetStringArrayValue(infoVal); err == nil {
 							matched, err = v.Condition.MatchStringArray(a)
 						}
+					case pattern.FieldTypeTimestamp:
+						var t time.Time
+						if t, err = pattern.GetTimeValue(infoVal); err == nil {
+							matched, err = v.Condition.MatchTime(t, time.Now())
+						}
 					default:
 						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)
 					}
@@ -273,6 +278,11 @@ func MatchEntityPatternWithRegexMatches(p pattern.Entity, entity *types.Entity) 
 						var a []string
 						if a, err = pattern.GetStringArrayValue(infoVal); err == nil {
 							matched, err = v.Condition.MatchStringArray(a)
+						}
+					case pattern.FieldTypeTimestamp:
+						var t time.Time
+						if t, err = pattern.GetTimeValue(infoVal); err == nil {
+							matched, err = v.Condition.MatchTime(t, time.Now())
 						}
 					default:
 						return false, entityRegexMatches, fmt.Errorf("invalid field type for %q field: %s", f, v.FieldType)

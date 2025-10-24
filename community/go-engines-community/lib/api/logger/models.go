@@ -52,6 +52,9 @@ const (
 	ValueTypeEntityInfosProperty = "entityinfosproperty"
 
 	ValueTypeUserNotificationSetting = "usernotificationsetting"
+
+	ValueTypeTplTestData = "tpltestdata"
+	ValueTypeTplTest     = "tpltest"
 )
 
 type ActionLogEvent struct {

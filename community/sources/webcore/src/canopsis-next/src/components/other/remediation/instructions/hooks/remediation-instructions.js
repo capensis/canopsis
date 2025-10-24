@@ -44,7 +44,7 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
       remediationInstruction: omit(remediationInstruction, ['_id']),
       title: t('modals.createRemediationInstruction.duplicate.title'),
       action: async (instruction) => {
-        await createRemediationInstruction({ data: instruction });
+        const newInstruction = await createRemediationInstruction({ data: instruction });
 
         popups.success({
           text: t('modals.createRemediationInstruction.duplicate.popups.success', {
@@ -53,6 +53,8 @@ export const useRemediationInstructionsActions = (refresh = () => {}) => {
         });
 
         refresh();
+
+        return newInstruction;
       },
     },
   });

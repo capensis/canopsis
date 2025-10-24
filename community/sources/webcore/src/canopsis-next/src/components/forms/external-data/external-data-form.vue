@@ -11,6 +11,7 @@
       v-field="form[index]"
       :key="item.key"
       :name="`${name}.${item.key}`"
+      :server-error-name="`${name}.${index}`"
       :disabled="disabled"
       :types="types"
       :variables="variables"

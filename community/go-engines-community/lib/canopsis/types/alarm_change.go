@@ -129,19 +129,17 @@ func (ac *AlarmChange) GetTriggers() []string {
 	var triggers []string
 
 	switch ac.Type {
-	case AlarmChangeTypeNone:
+	case AlarmChangeTypeNone, AlarmChangeTypeStateIncrease, AlarmChangeTypeStateDecrease:
+		if ac.Type != AlarmChangeTypeNone {
+			triggers = append(triggers, string(ac.Type))
+		}
+
 		if ac.EventsCount >= MinimalEventsCountThreshold {
 			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
 		}
-	case AlarmChangeTypeStateIncrease:
-		triggers = append(triggers, string(AlarmChangeTypeStateIncrease))
-		if ac.EventsCount >= MinimalEventsCountThreshold {
-			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
-		}
-	case AlarmChangeTypeStateDecrease:
-		triggers = append(triggers, string(AlarmChangeTypeStateDecrease))
-		if ac.EventsCount >= MinimalEventsCountThreshold {
-			triggers = append(triggers, string(AlarmChangeEventsCount)+strconv.Itoa(ac.EventsCount))
+
+		if ac.EventsCount > 0 {
+			triggers = append(triggers, string(AlarmChangeEventsCount))
 		}
 	case AlarmChangeTypeCreateAndPbhEnter:
 		triggers = append(triggers, string(AlarmChangeTypeCreate), string(AlarmChangeTypePbhEnter))
