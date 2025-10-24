@@ -10,7 +10,7 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Instructions data storage
+      Instructions
     </div>
     <!---->
   </div>
@@ -26,23 +26,29 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     </span>
   </div>
   <c-enabled-duration-field-stub
-    help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
-    label="Delete instructions timeline data after"
+    hide-value-on-false=""
+    label="Delete instructions timeline"
     name="remediation.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
     after="[object Object]"
-    help-text="When switched on, the instruction statistics will be deleted after the defined time period."
-    label="Delete instruction statistics data after"
+    hide-value-on-false=""
+    label="Delete instruction statistics"
     name="remediation.delete_stats_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
     after="[object Object]"
-    help-text="When switched on, the instructions summary data will be deleted after the defined time period."
-    label="Delete instructions summary data after"
+    hide-value-on-false=""
+    label="Delete instructions summary"
     name="remediation.delete_mod_stats_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>
@@ -58,29 +64,35 @@ exports[`storage-settings-remediation-form Renders \`storage-settings-remediatio
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Instructions data storage
+      Instructions
     </div>
     <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    help-text="When switched on, the instructions timelines data will be deleted after the defined time period."
-    label="Delete instructions timeline data after"
+    hide-value-on-false=""
+    label="Delete instructions timeline"
     name="remediation.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
     after="[object Object]"
-    help-text="When switched on, the instruction statistics will be deleted after the defined time period."
-    label="Delete instruction statistics data after"
+    hide-value-on-false=""
+    label="Delete instruction statistics"
     name="remediation.delete_stats_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
     after="[object Object]"
-    help-text="When switched on, the instructions summary data will be deleted after the defined time period."
-    label="Delete instructions summary data after"
+    hide-value-on-false=""
+    label="Delete instructions summary"
     name="remediation.delete_mod_stats_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>

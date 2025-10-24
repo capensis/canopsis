@@ -1,5 +1,5 @@
-import { PATTERN_OPERATORS, PATTERN_STRING_OPERATORS, PATTERNS_FIELDS } from '@/constants/pattern';
-import { ALARM_ADVANCED_SEARCH_GROUPS, ALARM_FIELDS } from '@/constants/alarm';
+import { PATTERN_OPERATORS, PATTERN_STRING_OPERATORS, PATTERNS_FIELDS } from './pattern';
+import { ALARM_ADVANCED_SEARCH_GROUPS, ALARM_FIELDS } from './alarm';
 
 export const ADVANCED_SEARCH_ITEM_TYPES = {
   field: 'field',
@@ -93,6 +93,7 @@ export const ALARM_ADVANCED_SEARCH_GROUPS_GROUPED = {
     ALARM_FIELDS.changeState,
     ALARM_FIELDS.totalStateChanges,
   ],
+  [ALARM_ADVANCED_SEARCH_GROUPS.alias]: [],
   [ALARM_ADVANCED_SEARCH_GROUPS.messages]: [
     ALARM_FIELDS.output,
     ALARM_FIELDS.longOutput,

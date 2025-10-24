@@ -10,21 +10,17 @@ exports[`storage-settings-metrics-form Renders \`storage-settings-metrics-form\`
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Internal metrics data storage
+      Internal metrics
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="When enabled, internal metrics data will be deleted after the defined time period"
-      top=""
-    />
+    <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    help-text="All internal metrics older than the defined time period will be deleted"
-    label="Clear metrics storage after"
+    hide-value-on-false=""
+    label="Delete metrics"
     name="metrics.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>
@@ -40,21 +36,17 @@ exports[`storage-settings-metrics-form Renders \`storage-settings-metrics-form\`
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Internal metrics data storage
+      Internal metrics
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="When enabled, internal metrics data will be deleted after the defined time period"
-      top=""
-    />
+    <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    help-text="All internal metrics older than the defined time period will be deleted"
-    label="Clear metrics storage after"
+    hide-value-on-false=""
+    label="Delete metrics"
     name="metrics.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>

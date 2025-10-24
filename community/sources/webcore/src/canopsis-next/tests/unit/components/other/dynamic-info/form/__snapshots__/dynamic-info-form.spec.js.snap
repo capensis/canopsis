@@ -100,8 +100,10 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with custom props 1`] =
         >
           <dynamic-info-infos-form-stub
             class="pa-4"
+            copyvariables=""
             form="[object Object]"
             name="infos"
+            variables=""
           />
         </div>
       </div>
@@ -228,8 +230,10 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with default props 1`] 
         >
           <dynamic-info-infos-form-stub
             class="pa-4"
+            copyvariables=""
             form="[object Object]"
             name="infos"
+            variables=""
           />
         </div>
       </div>
@@ -377,8 +381,10 @@ exports[`dynamic-info-form Renders \`dynamic-info-form\` with errors 1`] = `
         >
           <dynamic-info-infos-form-stub
             class="pa-4"
+            copyvariables=""
             form="[object Object]"
             name="infos"
+            variables=""
           />
         </div>
       </div>

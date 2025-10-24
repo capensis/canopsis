@@ -93,10 +93,10 @@ type Rule struct {
 }
 
 type RuleConfig struct {
-	Resource      string `bson:"resource,omitempty" json:"resource,omitempty"`
-	Component     string `bson:"component,omitempty" json:"component,omitempty"`
-	Connector     string `bson:"connector,omitempty" json:"connector,omitempty"`
-	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty"`
+	Resource      string `bson:"resource,omitempty" json:"resource,omitempty" binding:"template"`
+	Component     string `bson:"component,omitempty" json:"component,omitempty" binding:"template"`
+	Connector     string `bson:"connector,omitempty" json:"connector,omitempty" binding:"template"`
+	ConnectorName string `bson:"connector_name,omitempty" json:"connector_name,omitempty" binding:"template"`
 
 	// enrichment fields
 	Actions   []Action `bson:"actions,omitempty" json:"actions,omitempty" binding:"dive,required_if=Type enrichment"`

@@ -52,9 +52,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`break\` type 1`]
   />
   <c-patterns-field-stub
     entity-counters-type=""
-    some-required=""
+    some-required="true"
     value="[object Object]"
-    with-entity=""
+    with-entity="true"
     with-event=""
   />
   <!---->
@@ -113,9 +113,8 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
   />
   <c-patterns-field-stub
     entity-counters-type=""
-    some-required=""
+    required="true"
     value="[object Object]"
-    with-entity=""
     with-event=""
   />
   <hr
@@ -135,13 +134,13 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`change_entity\` 
         name="external_data"
         optionally="true"
         types=""
-        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        variables=""
       />
     </c-collapse-panel-stub>
     <event-filter-change-entity-form-stub
       form="[object Object]"
       name="config"
-      variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      variables=""
     />
   </c-information-block-stub>
 </div>
@@ -199,9 +198,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`drop\` type 1`] 
   />
   <c-patterns-field-stub
     entity-counters-type=""
-    some-required=""
+    some-required="true"
     value="[object Object]"
-    with-entity=""
+    with-entity="true"
     with-event=""
   />
   <!---->
@@ -260,9 +259,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
   />
   <c-patterns-field-stub
     entity-counters-type=""
-    some-required=""
+    some-required="true"
     value="[object Object]"
-    with-entity=""
+    with-entity="true"
     with-event=""
   />
   <hr
@@ -282,14 +281,15 @@ exports[`event-filter-form Renders \`event-filter-form\` with \`enrichment\` typ
         name="external_data"
         optionally="true"
         types=""
-        variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+        variables=""
       />
     </c-collapse-panel-stub>
     <event-filter-enrichment-form-stub
+      copyvariables=""
       form="[object Object]"
       name="config.actions"
       settagsitems=""
-      templatevariables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+      templatevariables=""
     />
   </c-information-block-stub>
 </div>
@@ -347,9 +347,9 @@ exports[`event-filter-form Renders \`event-filter-form\` with custom props 1`] =
   />
   <c-patterns-field-stub
     entity-counters-type=""
-    some-required=""
+    some-required="true"
     value="[object Object]"
-    with-entity=""
+    with-entity="true"
     with-event=""
   />
   <!---->
@@ -402,8 +402,8 @@ exports[`event-filter-form Renders \`event-filter-form\` with default props 1`] 
   />
   <c-patterns-field-stub
     entity-counters-type=""
-    some-required=""
-    with-entity=""
+    some-required="true"
+    with-entity="true"
     with-event=""
   />
   <!---->
