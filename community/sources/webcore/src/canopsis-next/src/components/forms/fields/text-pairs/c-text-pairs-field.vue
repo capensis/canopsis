@@ -29,6 +29,7 @@
         :item-text="itemText"
         :item-value="itemValue"
         :name="item[itemKey]"
+        :variables="variables"
         @remove="removeItemFromArray(index)"
       >
         <template #append-value="">
@@ -117,6 +118,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
   methods: {

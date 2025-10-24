@@ -12,6 +12,7 @@
       :key="link.key"
       :name="link.key"
       :type="type"
+      :template-vars="templateVars"
       class="mb-3"
       @remove="removeItemFromArray(index)"
     />
@@ -33,14 +34,13 @@ import { LINK_RULE_TYPES } from '@/constants';
 
 import { linkRuleLinkToForm } from '@/helpers/entities/link/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import LinkRuleLinkForm from './link-rule-link-form.vue';
 
 export default {
   inject: ['$validator'],
   components: { LinkRuleLinkForm },
-  mixins: [formArrayMixin],
   model: {
     prop: 'links',
     event: 'input',
@@ -54,11 +54,20 @@ export default {
       type: String,
       default: LINK_RULE_TYPES.alarm,
     },
-  },
-  methods: {
-    addItem() {
-      this.addItemIntoArray(linkRuleLinkToForm());
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
+  },
+  setup(props, { emit }) {
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+
+    const addItem = () => addItemIntoArray(linkRuleLinkToForm());
+
+    return {
+      addItem,
+      removeItemFromArray,
+    };
   },
 };
 </script>

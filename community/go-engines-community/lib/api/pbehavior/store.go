@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"regexp"
 	"sort"
 	"time"
 
@@ -15,6 +14,7 @@ import (
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -66,27 +66,25 @@ type Store interface {
 }
 
 type store struct {
-	dbClient     mongo.DbClient
-	readDbClient mongo.DbClient
-	redisClient  redis.Cmdable
-
+	dbClient           mongo.DbClient
+	readDbClient       mongo.DbClient
+	redisClient        redis.Cmdable
 	dbCollection       mongo.DbCollection
 	entityDbCollection mongo.DbCollection
 
-	authorProvider              author.Provider
-	entityTypeResolver          pbehavior.EntityTypeResolver
-	pbhTypeComputer             pbehavior.TypeComputer
-	timezoneConfigProvider      config.TimezoneConfigProvider
-	websocketHub                websocket.Hub
-	userInterfaceConfigProvider config.UserInterfaceConfigProvider
-	defaultSortBy               string
+	authorProvider         author.Provider
+	entityTypeResolver     pbehavior.EntityTypeResolver
+	pbhTypeComputer        pbehavior.TypeComputer
+	timezoneConfigProvider config.TimezoneConfigProvider
 
+	websocketHub                  websocket.Hub
+	userInterfaceConfigProvider   config.UserInterfaceConfigProvider
+	defaultSortBy                 string
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
 
-	transformer common.PatternFieldsTransformer
-
-	dupErrorRegexp *regexp.Regexp
+	transformer    common.PatternFieldsTransformer
+	dupErrorParser validation.DuplicateErrorParser
 
 	workers int
 }
@@ -119,8 +117,11 @@ func NewStore(
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
-		dupErrorRegexp:                regexp.MustCompile(`{ ([^:]+)`),
-		workers:                       10,
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
+		workers: 10,
 	}
 }
 
@@ -172,7 +173,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -457,7 +458,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -607,7 +608,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -793,7 +794,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -954,7 +955,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 		).Decode(&findDoc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -1343,24 +1344,6 @@ func (s *store) fillActiveStatuses(ctx context.Context, result []Response) error
 	}
 
 	return nil
-}
-
-func (s *store) parseDupError(err error) error {
-	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		switch matchedStr {
-		case "name":
-			return common.NewValidationError("name", "Name already exists.")
-		case "_id":
-			return common.NewValidationError("_id", "ID already exists.")
-		default:
-			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
-		}
-	}
-
-	return fmt.Errorf("can't parse duplication error: %w", err)
 }
 
 func (s *store) execPattern(ctx context.Context, entityPattern pattern.Entity) (int64, int64, error) {
