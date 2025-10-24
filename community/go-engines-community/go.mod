@@ -47,7 +47,7 @@ require (
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/rs/zerolog v1.34.0
-	github.com/russellhaering/gosaml2 v0.10.0
+	github.com/russellhaering/gosaml2 v0.9.1 // do not upgrade! v0.10.0 contains a dirty code, which breakes an assertion decryption.
 	github.com/russellhaering/goxmldsig v1.5.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/teambition/rrule-go v1.8.2
