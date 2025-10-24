@@ -23,7 +23,8 @@
             class="cursor-pointer"
             @click="item.children && expand(!isExpanded)"
           >
-            {{ item.title }}
+            <v-list-item-mask v-if="search && !item.children" :text="item.title" :mask="search" />
+            <span v-else>{{ item.title }}</span>
           </span>
         </td>
         <td v-for="role in roles" :key="role.value">
@@ -42,6 +43,7 @@
         :treeview-permissions="item.children"
         :roles="roles"
         :indent="indent + 1"
+        :search="search"
         @input="$listeners.input"
       />
     </template>
@@ -80,6 +82,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    search: {
+      type: String,
+      default: '',
+    },
   },
   setup(props) {
     const { t } = useI18n();
@@ -104,13 +110,13 @@ export default {
       ...props.roles.map(role => ({ text: role.name, value: role._id, sortable: false })),
     ]);
 
-    const allExpanded = inject('$allExpanded', false);
+    const allExpandedCounter = inject('$allExpandedCounter', 0);
 
     const expanded = ref([]);
 
-    const checkExpanded = () => expanded.value = allExpanded.value ? [...items.value] : [];
+    const checkExpanded = () => expanded.value = allExpandedCounter.value > 0 ? [...items.value] : [];
 
-    watch(allExpanded, () => window.requestAnimationFrame(checkExpanded, props.indent), { immediate: true });
+    watch(allExpandedCounter, () => window.requestAnimationFrame(checkExpanded, props.indent), { immediate: true });
 
     return {
       expanded,
