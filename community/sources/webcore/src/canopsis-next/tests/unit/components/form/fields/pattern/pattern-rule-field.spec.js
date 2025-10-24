@@ -26,6 +26,7 @@ const stubs = {
   'c-mixed-input-field': true,
   'c-duration-field': true,
   'custom-component': true,
+  'c-alert': true,
 };
 
 const selectPatternAttributeField = wrapper => wrapper.find('pattern-attribute-field-stub');
@@ -33,7 +34,6 @@ const selectPatternOperatorField = wrapper => wrapper.find('pattern-operator-fie
 const selectPatternDateValueField = wrapper => wrapper.find('pattern-rule-field-date-value-stub');
 const selectMixedInputField = wrapper => wrapper.find('c-mixed-input-field-stub');
 const selectInfosAttributeField = wrapper => wrapper.find('c-infos-attribute-field-stub');
-const selectInputTypeField = wrapper => wrapper.find('c-input-type-field-stub');
 const selectDurationField = wrapper => wrapper.find('c-duration-field-stub');
 
 describe('pattern-rule-field', () => {
@@ -67,11 +67,87 @@ describe('pattern-rule-field', () => {
 
     const patternAttributeField = selectPatternAttributeField(wrapper);
 
-    patternAttributeField.triggerCustomEvent('input', ALARM_PATTERN_FIELDS.displayName);
+    patternAttributeField.triggerCustomEvent('input', { value: ALARM_PATTERN_FIELDS.displayName });
 
     expect(wrapper).toEmitInput({
       ...emptyRule,
       attribute: ALARM_PATTERN_FIELDS.displayName,
+      alias: false,
+    });
+  });
+
+  test('Pattern attribute field has return-object prop set to true', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+      },
+    });
+
+    const patternAttributeField = selectPatternAttributeField(wrapper);
+
+    expect(patternAttributeField.props('returnObject')).toBe(true);
+  });
+
+  test('Pattern attribute field emits input when updateAttribute is triggered', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+      },
+    });
+
+    const patternAttributeField = selectPatternAttributeField(wrapper);
+
+    const attributeData = { value: ALARM_PATTERN_FIELDS.displayName };
+    patternAttributeField.triggerCustomEvent('input', attributeData);
+
+    expect(wrapper).toEmitInput({
+      ...emptyRule,
+      attribute: ALARM_PATTERN_FIELDS.displayName,
+      alias: false,
+    });
+  });
+
+  test('Attribute with alias changed after trigger input event on the attribute field', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+      },
+    });
+
+    const patternAttributeField = selectPatternAttributeField(wrapper);
+
+    patternAttributeField.triggerCustomEvent('input', {
+      value: ALARM_PATTERN_FIELDS.displayName,
+      alias: true,
+    });
+
+    expect(wrapper).toEmitInput({
+      ...emptyRule,
+      attribute: ALARM_PATTERN_FIELDS.displayName,
+      alias: true,
+      fieldType: PATTERN_FIELD_TYPES.string,
+    });
+  });
+
+  test('Attribute with definedType sets fieldType on updateAttribute', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+      },
+    });
+
+    const patternAttributeField = selectPatternAttributeField(wrapper);
+
+    patternAttributeField.triggerCustomEvent('input', {
+      value: ALARM_PATTERN_FIELDS.output,
+      definedType: PATTERN_FIELD_TYPES.boolean,
+    });
+
+    expect(wrapper).toEmitInput({
+      ...emptyRule,
+      attribute: ALARM_PATTERN_FIELDS.output,
+      alias: false,
+      fieldType: PATTERN_FIELD_TYPES.boolean,
     });
   });
 
@@ -117,32 +193,6 @@ describe('pattern-rule-field', () => {
     expect(wrapper).toEmitInput({
       ...rule,
       value,
-    });
-  });
-
-  test('Value to string changed after trigger input event on the value type field', () => {
-    const rule = {
-      ...emptyRule,
-      attribute: ALARM_PATTERN_FIELDS.output,
-      operator: PATTERN_OPERATORS.equal,
-      value: Faker.datatype.number(),
-      field: PATTERN_RULE_INFOS_FIELDS.value,
-      fieldType: PATTERN_FIELD_TYPES.string,
-    };
-    const wrapper = factory({
-      propsData: {
-        rule,
-        type: PATTERN_RULE_TYPES.infos,
-      },
-    });
-
-    const inputTypeField = selectInputTypeField(wrapper);
-
-    inputTypeField.triggerCustomEvent('input', PATTERN_FIELD_TYPES.string);
-
-    expect(wrapper).toEmitInput({
-      ...rule,
-      value: `${rule.value}`,
     });
   });
 
@@ -277,6 +327,180 @@ describe('pattern-rule-field', () => {
     });
   });
 
+  test('IsAnyInfosRuleOrAlias computed returns true when rule alias is true', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          alias: true,
+        },
+      },
+    });
+
+    expect(wrapper.vm.isAnyInfosRuleOrAlias).toBe(true);
+  });
+
+  test('IsAnyInfosRuleOrAlias computed returns true when type is infos', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+        type: PATTERN_RULE_TYPES.infos,
+      },
+    });
+
+    expect(wrapper.vm.isAnyInfosRuleOrAlias).toBe(true);
+  });
+
+  test('IsAnyInfosRuleOrAlias computed returns true when type is extra infos', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+        type: PATTERN_RULE_TYPES.extraInfos,
+      },
+    });
+
+    expect(wrapper.vm.isAnyInfosRuleOrAlias).toBe(true);
+  });
+
+  test('IsAnyInfosRuleOrAlias computed returns false when rule alias is false and type is not infos', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          alias: false,
+        },
+        type: PATTERN_RULE_TYPES.string,
+      },
+    });
+
+    expect(wrapper.vm.isAnyInfosRuleOrAlias).toBe(false);
+  });
+
+  test('isInfosValueField computed returns true when rule field is value', () => {
+    const rule = {
+      ...emptyRule,
+      field: PATTERN_RULE_INFOS_FIELDS.value,
+    };
+    const wrapper = factory({
+      propsData: {
+        rule,
+      },
+    });
+
+    expect(wrapper.vm.isInfosValueField).toBe(true);
+  });
+
+  test('isInfosValueField computed returns true when rule alias is true', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          alias: true,
+        },
+      },
+    });
+
+    expect(wrapper.vm.isInfosValueField).toBe(true);
+  });
+
+  test('isInfosValueField computed returns false when rule alias is false and field is not value', () => {
+    const rule = {
+      ...emptyRule,
+      field: PATTERN_RULE_INFOS_FIELDS.name,
+    };
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...rule,
+          alias: false,
+        },
+      },
+    });
+
+    expect(wrapper.vm.isInfosValueField).toBe(false);
+  });
+
+  test('isDateRule computed returns true when rule fieldType is timestamp', () => {
+    const rule = {
+      ...emptyRule,
+      fieldType: PATTERN_FIELD_TYPES.timestamp,
+    };
+    const wrapper = factory({
+      propsData: {
+        rule,
+        type: PATTERN_RULE_TYPES.string,
+      },
+    });
+
+    expect(wrapper.vm.isDateRule).toBe(true);
+  });
+
+  test('isDateRule computed returns true when type is date', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+        type: PATTERN_RULE_TYPES.date,
+      },
+    });
+
+    expect(wrapper.vm.isDateRule).toBe(true);
+  });
+
+  test('isDateRule computed returns false when type is not date and fieldType is not timestamp', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: emptyRule,
+        type: PATTERN_RULE_TYPES.string,
+      },
+    });
+
+    expect(wrapper.vm.isDateRule).toBe(false);
+  });
+
+  test('notDefinedType computed returns true when item definedType differs from rule fieldType', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          attribute: 'attribute-1',
+          fieldType: PATTERN_FIELD_TYPES.number,
+        },
+        attributes: [
+          { value: 'attribute-1', text: 'Attribute text 1', definedType: PATTERN_FIELD_TYPES.string },
+        ],
+        inputTypes: [
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.boolean },
+        ],
+      },
+    });
+
+    expect(wrapper.vm.notDefinedType).toBe(true);
+  });
+
+  test('notDefinedType computed returns false when item definedType equals rule fieldType', () => {
+    const wrapper = factory({
+      propsData: {
+        rule: {
+          ...emptyRule,
+          attribute: 'attribute-1',
+          fieldType: PATTERN_FIELD_TYPES.string,
+        },
+        attributes: [
+          { value: 'attribute-1', text: 'Attribute text 1', definedType: PATTERN_FIELD_TYPES.string },
+        ],
+        inputTypes: [
+          { value: PATTERN_FIELD_TYPES.string },
+          { value: PATTERN_FIELD_TYPES.number },
+          { value: PATTERN_FIELD_TYPES.boolean },
+        ],
+      },
+    });
+
+    expect(wrapper.vm.notDefinedType).toBe(false);
+  });
+
   test('Renders `pattern-rule-field` with default props', () => {
     const wrapper = snapshotFactory({
       propsData: {
@@ -387,6 +611,26 @@ describe('pattern-rule-field', () => {
           },
         },
         type: PATTERN_RULE_TYPES.date,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `pattern-rule-field` with timestamp field type as date rule', () => {
+    const wrapper = snapshotFactory({
+      propsData: {
+        rule: {
+          attribute: ALARM_PATTERN_FIELDS.displayName,
+          operator: PATTERN_OPERATORS.inRangeDates,
+          fieldType: PATTERN_FIELD_TYPES.timestamp,
+          range: {
+            type: QUICK_RANGES.last1Hour.value,
+            from: new Date(),
+            to: new Date(),
+          },
+        },
+        type: PATTERN_RULE_TYPES.string,
       },
     });
 

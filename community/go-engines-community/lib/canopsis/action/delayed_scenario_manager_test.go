@@ -29,7 +29,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenNotDelayedScenario_Shoul
 	alarm := types.Alarm{}
 	scenario := action.Scenario{}
 
-	err := manager.AddDelayedScenario(t.Context(), alarm, scenario, action.AdditionalData{})
+	err := manager.AddDelayedScenario(t.Context(), alarm, scenario, types.AdditionalData{})
 	if err == nil {
 		t.Errorf("expected error but nothing")
 	}
@@ -75,7 +75,7 @@ func TestDelayedScenarioManager_AddDelayedScenario_GivenMatchedDelayedScenario_S
 		}
 	}).Return("test-id", nil)
 
-	err := manager.AddDelayedScenario(t.Context(), alarm, scenario, action.AdditionalData{})
+	err := manager.AddDelayedScenario(t.Context(), alarm, scenario, types.AdditionalData{})
 	if err != nil {
 		t.Errorf("expected not error but got %v", err)
 	}

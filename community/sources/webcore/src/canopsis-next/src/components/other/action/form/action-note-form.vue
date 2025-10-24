@@ -3,7 +3,7 @@
     <c-payload-textarea-field
       v-field="value.output"
       :label="$t('scenario.output')"
-      :variables="payloadVariables"
+      :variables="templateVars.output"
     >
       <template #append="">
         <c-help-icon
@@ -17,11 +17,8 @@
 </template>
 
 <script>
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
-
 export default {
   inject: ['$validator'],
-  mixins: [payloadVariablesMixin],
   model: {
     prop: 'value',
     event: 'input',
@@ -31,13 +28,9 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  computed: {
-    payloadVariables() {
-      return [
-        ...this.alarmPayloadVariables,
-        ...this.additionalDataVariables,
-      ];
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
 };

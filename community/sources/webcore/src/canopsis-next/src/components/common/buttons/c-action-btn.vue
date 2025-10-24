@@ -139,5 +139,6 @@ export default {
 <style lang="scss">
 .c-action-btn__button-wrapper {
   display: inline-flex;
+  height: 100%;
 }
 </style>
