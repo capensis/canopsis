@@ -6,4 +6,7 @@ export default {
   allowVariables: 'Autoriser les variables dans le jeton',
   tokenExpirationHelpText: 'Champ de réponse API au format JSON d\'où le "jeton" est extrait',
   tokenCanNotBeDeleted: 'Le jeton ne peut pas être supprimé, il est utilisé dans :\n{rules}',
+  urlHelp: '<p>Les variables accessibles sont : <strong>.Env</strong></p>'
+    + '<i>Par exemple :</i>'
+    + '<pre>"https://exampleurl.com?env={{ .Env }}"</pre>',
 };

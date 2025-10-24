@@ -13,6 +13,7 @@
       :url-variables="templateVars.request"
       :headers-variables="templateVars.request"
       :payload-variables="templateVars.request"
+      :url-help-text="$t('externalAuthToken.urlHelp')"
       name="request"
     />
     <c-information-block :title="$t('common.token')">
