@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -14,6 +15,7 @@ import (
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const PermissionGroupPlaylist = "commonviews_playlist"
@@ -36,6 +38,9 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -48,6 +53,7 @@ type store struct {
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -134,6 +140,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		response = nil
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -173,6 +183,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			bson.M{"$set": model},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -251,7 +265,7 @@ func (s *store) createPermission(ctx context.Context, userID, playlistID, playli
 	_, err = s.roleCollection.UpdateMany(ctx,
 		bson.M{"$or": []bson.M{
 			{"_id": bson.M{"$in": user.Roles}},
-			{"name": security.RoleAdmin},
+			{"_id": security.RoleAdmin},
 		}},
 		bson.M{
 			"$set": bson.M{

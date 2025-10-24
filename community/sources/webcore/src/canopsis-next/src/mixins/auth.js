@@ -26,23 +26,10 @@ export const authMixin = {
       return isSelectedSideBar || isMobileOrTablet || !this.isShownGroupsTopBar;
     },
 
-    /**
-     * Show groups top-bar only for ui_groups_navigation_type='top-bar' only for laptop
-     *
-     * @returns {boolean|*}
-     */
-    isShownGroupsTopBar() {
-      const { ui_groups_navigation_type: groupsNavigationType } = this.currentUser;
-      const isSelectedTopBar = groupsNavigationType === GROUPS_NAVIGATION_TYPES.topBar;
-      const isLaptop = this.$options.filters.mq(this.$mq, { l: true });
-
-      return isSelectedTopBar && isLaptop;
-    },
-
     hasCurrentViewActionsAccess() {
       const { name, params } = this.$route;
 
-      if (name !== ROUTES_NAMES.view) {
+      if (![ROUTES_NAMES.view, ROUTES_NAMES.viewKiosk].includes(name)) {
         return false;
       }
 

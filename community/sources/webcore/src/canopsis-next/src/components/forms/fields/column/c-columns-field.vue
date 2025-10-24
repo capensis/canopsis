@@ -1,37 +1,39 @@
 <template>
   <v-layout column>
-    <c-draggable-list-field
+    <c-card-iterator-field
       v-field="columns"
       :class="{ empty: isColumnsEmpty }"
       :handle="`.${dragItemHandleClass}`"
     >
-      <column-field
-        v-for="(column, index) in columns"
-        v-field="columns[index]"
-        :key="column.key"
-        :name="column.key"
-        :type="type"
-        :drag-handle-class="dragItemHandleClass"
-        :with-html="withHtml"
-        :with-template="withTemplate"
-        :with-color-indicator="withColorIndicator"
-        :with-instructions="withInstructions"
-        :optional-infos-attributes="optionalInfosAttributes"
-        :with-simple-template="withSimpleTemplate"
-        :without-infos-attributes="withoutInfosAttributes"
-        :without-custom-label="withoutCustomLabel"
-        :items="items"
-        :variables="variables"
-        :excluded-columns="excludedColumns"
-        class="mb-3"
-        @remove="remove(index)"
-      />
-    </c-draggable-list-field>
+      <template #item="{ item: column, index }">
+        <column-field
+          v-field="columns[index]"
+          :key="column.key"
+          :name="column.key"
+          :type="type"
+          :drag-handle-class="dragItemHandleClass"
+          :with-html="withHtml"
+          :with-template="withTemplate"
+          :with-color-indicator="withColorIndicator"
+          :with-instructions="withInstructions"
+          :optional-infos-attributes="optionalInfosAttributes"
+          :with-simple-template="withSimpleTemplate"
+          :without-infos-attributes="withoutInfosAttributes"
+          :without-custom-label="withoutCustomLabel"
+          :with-filter-on-click="withFilterOnClick"
+          :items="items"
+          :variables="variables"
+          :excluded-columns="excludedColumns"
+          class="mb-3"
+          @remove="remove(index)"
+        />
+      </template>
+    </c-card-iterator-field>
     <v-layout justify-end>
       <v-tooltip left>
         <template #activator="{ on }">
           <v-btn
-            class="mr-2 mx-0"
+            class="mt-3"
             color="primary"
             fab
             small
@@ -57,11 +59,13 @@ import { widgetColumnToForm } from '@/helpers/entities/widget/column/form';
 import { useArrayModelField } from '@/hooks/form/array-model-field';
 import { useAsyncBootingParent } from '@/hooks/render/async-booting';
 
+import CCardIteratorField from '@/components/forms/fields/card-iterator/c-card-iterator-field.vue';
+
 import ColumnField from './partials/column-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { ColumnField },
+  components: { ColumnField, CCardIteratorField },
   model: {
     prop: 'columns',
     event: 'input',
@@ -108,6 +112,10 @@ export default {
       required: false,
     },
     withoutInfosAttributes: {
+      type: Boolean,
+      default: false,
+    },
+    withFilterOnClick: {
       type: Boolean,
       default: false,
     },

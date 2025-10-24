@@ -244,14 +244,17 @@ export default {
     [USER_PERMISSIONS.technical.planningType]: 'Type de comportement périodique',
     [USER_PERMISSIONS.technical.remediationConfiguration]: 'Consignes - onglet consignes',
     [USER_PERMISSIONS.technical.remediationInstruction]: 'Consignes - onglet instructions',
+    [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Consignes - approuver',
     [USER_PERMISSIONS.technical.remediationJob]: 'Consignes - onglet tâches',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Consignes - onglet statistiques de remédiation',
+    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Consignes - onglet statistiques des consignes',
     [USER_PERMISSIONS.technical.stateSetting]: 'Paramètres de calcul d\'état/sévérité',
     [USER_PERMISSIONS.technical.storageSettings]: 'Paramètres de stockage',
     [USER_PERMISSIONS.technical.tag]: 'Gestion des tags',
     [USER_PERMISSIONS.technical.techmetrics]: 'Bilan de santé - métriques des moteurs',
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Paramètres - modèles de widgets',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Paramètres - import / export',
+    [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
 
     /**
      * Technical Admin Access
@@ -275,12 +278,12 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scénarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Règles SNMP',
     [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'Données externes',
+    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Informations d\'entité',
 
     /**
      * Technical Admin Notification
      */
     [USER_PERMISSIONS.technical.notification.common]: 'Paramètres - paramètres de notification',
-    [USER_PERMISSIONS.technical.notification.instructionStats]: 'Statistiques des consignes',
 
     /**
      * Technical Admin Views and widgets
@@ -317,6 +320,7 @@ export default {
     [USER_PERMISSIONS.api.general.entitycategory]: 'Catégories d\'entités',
     [USER_PERMISSIONS.api.general.entitycomment]: 'Commentaires d\'entités',
     [USER_PERMISSIONS.api.general.entityservice]: 'Entités de type Service',
+    [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Propriétés d\'informations des entités',
     [USER_PERMISSIONS.api.general.event]: 'Événements',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Exporter les configurations',
     [USER_PERMISSIONS.api.general.files]: 'Fichiers',
@@ -344,6 +348,7 @@ export default {
     [USER_PERMISSIONS.api.general.view]: 'Vues',
     [USER_PERMISSIONS.api.general.viewgroup]: 'Groupes de vues',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Modèles de widgets',
+    [USER_PERMISSIONS.api.general.templateData]: 'Données de modèle',
 
     /**
      * API Permissions Rules
@@ -377,5 +382,11 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorException]: 'Dates d\'exceptions de comportements périodiques',
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'Raisons de comportements périodiques',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'Types de comportements périodiques',
+    [USER_PERMISSIONS.api.planning.pbehaviorPatterns]: 'Modèles de comportements périodiques',
+  },
+
+  conditionalTooltips: {
+    approveInstructions: 'Activé car ce rôle a les permissions d\'approuver les consignes',
+    executeManualInstructions: 'Activé car ce rôle a les permissions d\'exécuter des consignes manuelles',
   },
 };

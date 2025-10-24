@@ -2,7 +2,7 @@ import { range } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreGetters, createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreGetters, createMockedStoreModules, createEntityInfoPropertyModule } from '@unit/utils/store';
 import { fakeAlarm } from '@unit/data/alarm';
 import { triggerWindowKeyboardEvent, triggerWindowScrollEvent } from '@unit/utils/events';
 import { mockModals } from '@unit/utils/mock-hooks';
@@ -99,8 +99,11 @@ describe('alarms-list-table', () => {
     },
   };
 
+  const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+
   const store = createMockedStoreModules([
     associativeTableModule,
+    entityInfoPropertyModule,
     createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
   ]);
 
@@ -496,24 +499,26 @@ describe('alarms-list-table', () => {
         alarms,
         columns,
         stickyHeader: true,
+        expandable: true,
       },
     });
 
-    expect(wrapper.vm.expanded).toEqual({});
+    expect(wrapper.vm.expanded).toEqual([]);
 
     const alarmsListRow = selectAlarmsListRow(wrapper).at(0);
 
     alarmsListRow.triggerCustomEvent('expand', true);
 
-    const [firstAlarm] = alarms;
+    await flushPromises();
 
-    expect(wrapper.vm.expanded).toEqual({
-      [firstAlarm._id]: true,
-    });
+    const [firstAlarm] = alarms;
+    expect(wrapper.vm.expanded).toHaveLength(1);
+    expect(wrapper.vm.expanded[0]).toEqual(firstAlarm);
 
     alarmsListRow.triggerCustomEvent('expand', false);
+    await flushPromises();
 
-    expect(wrapper.vm.expanded).toEqual({});
+    expect(wrapper.vm.expanded).toEqual([]);
   });
 
   test('Root cause diagram opened after trigger click state event', async () => {
@@ -529,7 +534,7 @@ describe('alarms-list-table', () => {
       mocks: { $modals },
     });
 
-    expect(wrapper.vm.expanded).toEqual({});
+    expect(wrapper.vm.expanded).toEqual([]);
 
     selectAlarmsListRow(wrapper).at(0).triggerCustomEvent('click:state', true);
 
@@ -557,6 +562,82 @@ describe('alarms-list-table', () => {
     tablePagination.triggerCustomEvent('input', newPaginationOptions);
 
     expect(wrapper).toEmit('update:pagination-options', newPaginationOptions);
+  });
+
+  test('Fetches entity info properties list on mount', async () => {
+    const customFetchList = jest.fn(() => ({}));
+    const customEntityInfoPropertyModule = {
+      name: 'entityInfoProperty',
+      getters: {
+        items: [],
+        itemsWithAlias: [],
+        itemsWithoutAlias: [],
+        meta: {},
+        pending: false,
+      },
+      actions: {
+        fetchList: customFetchList,
+      },
+    };
+
+    const customStore = createMockedStoreModules([
+      associativeTableModule,
+      customEntityInfoPropertyModule,
+      createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
+    ]);
+
+    snapshotFactory({
+      store: customStore,
+      propsData: {
+        options: {},
+        widget: defaultWidget,
+        alarms,
+        columns,
+      },
+    });
+
+    await flushPromises();
+
+    expect(customFetchList).toHaveBeenCalled();
+    expect(customFetchList.mock.calls.some(
+      call => call[1]?.params?.paginate === false,
+    )).toBe(true);
+  });
+
+  test('Shows loading state when entityInfoPropertyPending is true', () => {
+    const customEntityInfoPropertyModule = {
+      name: 'entityInfoProperty',
+      getters: {
+        items: [],
+        itemsWithAlias: [],
+        itemsWithoutAlias: [],
+        meta: {},
+        pending: true,
+      },
+      actions: {
+        fetchList: jest.fn(() => ({})),
+      },
+    };
+
+    const customStore = createMockedStoreModules([
+      associativeTableModule,
+      customEntityInfoPropertyModule,
+      createMockedStoreGetters({ name: 'info', showHeaderOnKioskMode: false }),
+    ]);
+
+    const wrapper = snapshotFactory({
+      store: customStore,
+      propsData: {
+        options: {},
+        widget: defaultWidget,
+        alarms,
+        columns,
+      },
+    });
+
+    const table = selectTable(wrapper);
+
+    expect(table.vm.loading).toBe(true);
   });
 
   test('Renders `alarms-list-table` with default and required props', () => {

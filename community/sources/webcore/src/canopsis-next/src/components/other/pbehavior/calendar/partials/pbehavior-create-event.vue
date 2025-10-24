@@ -6,10 +6,12 @@
   >
     <pbehavior-form
       v-model="form"
+      :pbehavior-id="pbehavior?._id"
       :no-pattern="!!entityPattern"
       :with-inherited="withInherited"
       :no-timezone="noTimezone"
       class="py-3"
+      pbehavior-counter-type
     />
     <v-layout
       class="pbehavior-form__actions"

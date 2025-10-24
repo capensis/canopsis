@@ -8,11 +8,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/resolverule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Store interface {
@@ -27,20 +29,27 @@ type store struct {
 	dbClient       mongo.DbClient
 	dbCollection   mongo.DbCollection
 	authorProvider author.Provider
+	transformer    common.PatternFieldsTransformer
 
 	defaultSearchByFields []string
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 ) Store {
 	return &store{
-		dbClient:       dbClient,
-		dbCollection:   dbClient.Collection(mongo.ResolveRuleMongoCollection),
-		authorProvider: authorProvider,
-
+		dbClient:              dbClient,
+		dbCollection:          dbClient.Collection(mongo.ResolveRuleMongoCollection),
+		authorProvider:        authorProvider,
+		transformer:           transformer,
 		defaultSearchByFields: []string{"_id", "author.name", "name", "description"},
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -56,8 +65,17 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil
 
-		_, err := s.dbCollection.InsertOne(ctx, model)
+		err := s.transformPatternRequestsToModel(ctx, request.EditRequest, &model)
 		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, model)
+		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -133,12 +151,21 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		res = nil
 
-		_, err := s.dbCollection.UpdateOne(
+		err := s.transformPatternRequestsToModel(ctx, request.EditRequest, &model)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": request.ID},
 			bson.M{"$set": model},
 		)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -184,14 +211,30 @@ func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {
 		Name:        r.Name,
 		Description: r.Description,
 		Duration:    r.Duration,
-		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
-		),
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInEntityPattern(mongo.ResolveRuleMongoCollection),
-		),
-		Priority: r.Priority,
-		Author:   r.Author,
+		Priority:    r.Priority,
+		Author:      r.Author,
 	}
+}
+
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *resolverule.Rule) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
+
+	model.Aliases = transformedEntityPatternRequest.Aliases
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInEntityPattern(mongo.ResolveRuleMongoCollection),
+	)
+	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+	)
+
+	return nil
 }

@@ -10,6 +10,7 @@
         :key="action.key"
         :name="`${name}.${action.key}`"
         :variables="variables"
+        :copy-variables="copyVariables"
         :set-tags-items="setTagsItems"
         class="mb-3"
         @remove="removeItemFromArray(index)"
@@ -31,14 +32,13 @@
 <script>
 import { eventFilterActionToForm } from '@/helpers/entities/event-filter/rule/form';
 
-import { formArrayMixin } from '@/mixins/form';
+import { useArrayModelField } from '@/hooks/form/array-model-field';
 
 import EventFilterEnrichmentActionForm from './event-filter-enrichment-action-form.vue';
 
 export default {
   inject: ['$validator'],
   components: { EventFilterEnrichmentActionForm },
-  mixins: [formArrayMixin],
   model: {
     prop: 'actions',
     event: 'input',
@@ -52,6 +52,10 @@ export default {
       type: Array,
       default: () => [],
     },
+    copyVariables: {
+      type: Array,
+      default: () => [],
+    },
     name: {
       type: String,
       default: 'actions',
@@ -61,10 +65,15 @@ export default {
       default: () => [],
     },
   },
-  methods: {
-    addAction() {
-      this.addItemIntoArray(eventFilterActionToForm());
-    },
+  setup(props, { emit }) {
+    const { addItemIntoArray, removeItemFromArray } = useArrayModelField(props, emit);
+
+    const addAction = () => addItemIntoArray(eventFilterActionToForm());
+
+    return {
+      addAction,
+      removeItemFromArray,
+    };
   },
 };
 </script>

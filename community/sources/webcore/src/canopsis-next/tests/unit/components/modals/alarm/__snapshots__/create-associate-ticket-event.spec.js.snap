@@ -37,6 +37,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         />
         <c-description-field-stub
           label="Comment"
+          max-length="255"
           name="comment"
           value=""
         />
@@ -112,6 +113,7 @@ exports[`create-associate-ticket-event Renders \`create-associate-ticket-event\`
         />
         <c-description-field-stub
           label="Comment"
+          max-length="255"
           name="comment"
           value=""
         />

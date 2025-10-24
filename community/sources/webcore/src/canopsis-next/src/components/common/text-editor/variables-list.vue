@@ -30,12 +30,28 @@
         <v-list-item-content>
           <v-list-item-title>
             <v-layout class="gap-4" justify-space-between>
-              <v-list-item-mask v-if="item[itemText]" :text="item[itemText]" :mask="search" />
+              <v-layout v-if="item[itemText] || item.alias" align-center>
+                <v-list-item-mask v-if="item[itemText]" :text="item[itemText]" :mask="search" />
+                <v-icon
+                  v-if="item.alias"
+                  class="ml-1"
+                  color="primary"
+                  small
+                >
+                  alternate_email
+                </v-icon>
+              </v-layout>
               <span
-                v-if="showValue"
+                v-if="showValue && (!hideEmptyValue || !isUndefined(item[itemValue]))"
                 class="grey--text lighten-1"
               >
                 {{ item[itemValue] }}
+              </span>
+              <span
+                v-if="item.defined"
+                class="grey--text lighten-1"
+              >
+                {{ $t('common.defined') }}
               </span>
             </v-layout>
           </v-list-item-title>
@@ -67,6 +83,7 @@
         :item-value="itemValue"
         :z-index="zIndex + 1"
         :show-value="showValue"
+        :hide-empty-value="hideEmptyValue"
         :children-key="childrenKey"
         :return-object="returnObject"
         :clickable-parent="clickableParent"
@@ -76,7 +93,7 @@
   </v-list>
 </template>
 <script>
-import { uniq, uniqBy, isObject } from 'lodash';
+import { uniq, uniqBy, isObject, isUndefined } from 'lodash';
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 export default {
@@ -123,6 +140,10 @@ export default {
       default: false,
     },
     showValue: {
+      type: Boolean,
+      default: false,
+    },
+    hideEmptyValue: {
       type: Boolean,
       default: false,
     },
@@ -225,13 +246,15 @@ export default {
      */
     const selectSubVariable = (item) => {
       /**
-       * We are replacing /\s*}}/ for correct parent prefix checking for payloads
+       * We are replacing /\s*}}/ for correct parent prefix checking for payloads.
+       * If parent value is not set, we are not adding parent prefix.
        * @example detect {{ .LastChild.Alarm.Value }} in {{ .LastChild.Alarm.Value.Infos.something.Value }}
        */
+      const hasParentValue = !!parentItem.value[props.itemValue];
       const parentValue = String(parentItem.value[props.itemValue]).replace(/\s*}}$/, '');
 
       const value = getValue(item);
-      const newValue = String(value).startsWith(parentValue)
+      const newValue = String(value).startsWith(parentValue) || !hasParentValue
         ? value
         : `${parentValue}.${value}`;
 
@@ -307,6 +330,8 @@ export default {
       isActiveItem,
       selectVariable,
       selectSubVariable,
+
+      isUndefined,
     };
   },
 };

@@ -18,6 +18,7 @@
           v-field="steps[index]"
           :step-number="index + 1"
           :disabled="disabled"
+          :template-vars="templateVars"
           @remove="removeStep(index)"
         />
       </template>
@@ -63,6 +64,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {

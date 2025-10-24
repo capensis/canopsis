@@ -25,7 +25,7 @@
             </v-icon>
           </v-btn>
         </template>
-        <span>{{ $t('layout.sideBar.buttons.settings') }}</span>
+        <span>{{ $t('common.settings') }}</span>
       </v-tooltip>
     </template>
     <v-tooltip

@@ -17,7 +17,6 @@
       v-field="operations"
       :disabled="disabled"
       :class="{ 'grey lighten-1': isDragging }"
-      :group="draggableGroup"
       ghost-class="grey"
       handle=".operation-drag-handler"
       @start="startDragging"
@@ -30,6 +29,7 @@
         :index="index"
         :operation-number="getOperationNumber(index)"
         :disabled="disabled"
+        :template-vars="templateVars"
         class="py-1"
         @remove="removeOperation(index)"
       />
@@ -46,8 +46,10 @@
 </template>
 
 <script>
-import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
-import { getLetterByIndex } from '@/helpers/string';
+import {
+  remediationInstructionStepOperationToForm,
+  getOperationNumber,
+} from '@/helpers/entities/remediation/instruction/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -80,6 +82,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -89,14 +95,6 @@ export default {
   computed: {
     hasOperationsErrors() {
       return this.errors.has(this.name);
-    },
-
-    draggableGroup() {
-      return {
-        name: 'remediation-instruction-operations',
-        pull: false,
-        put: false,
-      };
     },
   },
   watch: {
@@ -117,7 +115,7 @@ export default {
   },
   methods: {
     getOperationNumber(index) {
-      return `${this.stepNumber}${getLetterByIndex(index)}`;
+      return getOperationNumber(this.stepNumber, index);
     },
 
     addOperation() {

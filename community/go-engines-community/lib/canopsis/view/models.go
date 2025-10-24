@@ -25,13 +25,15 @@ const (
 )
 
 const (
-	WidgetTemplateTypeAlarmColumns         = "alarm_columns"
-	WidgetTemplateTypeEntityColumns        = "entity_columns"
-	WidgetTemplateTypeAlarmMoreInfos       = "alarm_more_infos"
-	WidgetTemplateTypeAlarmExportToPDF     = "alarm_export_to_pdf"
-	WidgetTemplateTypeServiceWeatherItem   = "weather_item"
-	WidgetTemplateTypeServiceWeatherModal  = "weather_modal"
-	WidgetTemplateTypeServiceWeatherEntity = "weather_entity"
+	WidgetTemplateTypeAlarmColumns          = "alarm_columns"
+	WidgetTemplateTypeEntityColumns         = "entity_columns"
+	WidgetTemplateTypeAlarmMoreInfos        = "alarm_more_infos"
+	WidgetTemplateTypeAlarmExportToPDF      = "alarm_export_to_pdf"
+	WidgetTemplateTypeAlarmQuickActions     = "alarm_quick_actions"
+	WidgetTemplateTypeAlarmQuickMassActions = "alarm_mass_quick_actions"
+	WidgetTemplateTypeServiceWeatherItem    = "weather_item"
+	WidgetTemplateTypeServiceWeatherModal   = "weather_modal"
+	WidgetTemplateTypeServiceWeatherEntity  = "weather_entity"
 )
 
 const PermissionGroupCommonViews = "commonviews"
@@ -184,6 +186,9 @@ type WidgetFilter struct {
 	savedpattern.WeatherServicePatternFields `bson:",inline"`
 
 	IsUserPreference bool `bson:"is_user_preference"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type WidgetTemplate struct {
@@ -192,6 +197,7 @@ type WidgetTemplate struct {
 	Type    string           `bson:"type"`
 	Columns []WidgetColumn   `bson:"columns,omitempty"`
 	Content string           `bson:"content,omitempty"`
+	Actions []string         `bson:"actions,omitempty"`
 	Author  string           `bson:"author"`
 	Created datetime.CpsTime `bson:"created,omitempty"`
 	Updated datetime.CpsTime `bson:"updated,omitempty"`
@@ -206,4 +212,5 @@ type WidgetColumn struct {
 	Template         string `bson:"template,omitempty" json:"template,omitempty"`
 	InlineLinksCount int64  `bson:"inlineLinksCount,omitempty" json:"inlineLinksCount,omitempty"`
 	LinksInRowCount  int64  `bson:"linksInRowCount,omitempty" json:"linksInRowCount,omitempty"`
+	IsFilter         bool   `bson:"isFilter,omitempty" json:"isFilter,omitempty"`
 }

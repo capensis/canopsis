@@ -66,6 +66,10 @@ export default {
     title: 'External data',
   },
 
+  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
+    title: 'Entity infos',
+  },
+
   /**
    * Admin access
    */
@@ -137,6 +141,9 @@ export default {
     title: 'Events records',
     message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
   },
+  [USER_PERMISSIONS.technical.templateTesting]: {
+    title: 'Templates Studio',
+  },
 
   /**
    * Grouped admin
@@ -148,14 +155,6 @@ export default {
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
     title: 'Instructions',
     message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',
-  },
-
-  /**
-   * Notifications
-   */
-  [USER_PERMISSIONS.technical.notification.instructionStats]: {
-    title: 'Instruction rating',
-    message: 'This page contains the statistics on the instructions execution. Users can rate instructions based on their performance.',
   },
 
   /**
