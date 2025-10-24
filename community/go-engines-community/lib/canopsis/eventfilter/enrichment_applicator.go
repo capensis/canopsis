@@ -36,6 +36,7 @@ func (a *enrichmentApplicator) Apply(
 	ctx context.Context,
 	rule ParsedRule,
 	event *types.Event,
+	updatedEntityInfos map[string]UpdatedValue,
 	regexMatch RegexMatch,
 ) (RuleResult, error) {
 	externalData, externalRequestCount, err := getExternalData(ctx, rule, event, regexMatch, a.externalDataContainer, a.failureService)
@@ -43,15 +44,10 @@ func (a *enrichmentApplicator) Apply(
 		return RuleResult{Outcome: rule.Config.OnFailure}, err
 	}
 
-	updatedEntityInfos := make(map[string]UpdatedValue)
 	for _, action := range rule.Config.Actions {
-		u, err := a.actionProcessor.Process(ctx, rule.ID, rule.Description, action, event, regexMatch, externalData)
+		updatedEntityInfos, err = a.actionProcessor.Process(ctx, rule.ID, rule.Description, action, event, updatedEntityInfos, regexMatch, externalData)
 		if err != nil {
 			return RuleResult{Outcome: rule.Config.OnFailure}, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
-		}
-
-		for k, v := range u {
-			updatedEntityInfos[k] = v
 		}
 	}
 

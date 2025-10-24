@@ -90,6 +90,6 @@ func updateMetaAlarmInfos(
 func logInfosUpdate(metricsSender metrics.Sender, entityID string, updatedInfos map[string]eventfilter.UpdatedValue) {
 	now := time.Now()
 	for k, v := range updatedInfos {
-		metricsSender.SendEntityInfosUpdate(now, entityID, v.RuleID, k, v.Value)
+		metricsSender.SendEntityInfosUpdate(now, entityID, v.RuleID, k, v.NewValue)
 	}
 }

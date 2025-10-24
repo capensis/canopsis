@@ -26,7 +26,7 @@ func NewChangeEntityApplicator(
 	}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (RuleResult, error) {
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, _ map[string]UpdatedValue, regexMatch RegexMatch) (RuleResult, error) {
 	externalData, externalRequestCount, err := getExternalData(ctx, rule, event, regexMatch, a.externalDataContainer, a.failureService)
 	if err != nil {
 		return RuleResult{Outcome: OutcomeDrop}, err

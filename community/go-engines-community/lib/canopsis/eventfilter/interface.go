@@ -16,17 +16,25 @@ const (
 )
 
 type ActionProcessor interface {
-	Process(ctx context.Context, ruleID, ruleDesc string, action ParsedAction, event *types.Event, regexMatch RegexMatch, externalData map[string]interface{}) (map[string]UpdatedValue, error)
+	Process(
+		ctx context.Context,
+		ruleID, ruleDesc string,
+		action ParsedAction,
+		event *types.Event,
+		updatedEntityInfos map[string]UpdatedValue,
+		regexMatch RegexMatch,
+		externalData map[string]any,
+	) (map[string]UpdatedValue, error)
 }
 
 type UpdatedValue struct {
-	RuleID string
-	Value  any
+	RuleID             string
+	OldValue, NewValue any
 }
 
 type RuleApplicator interface {
 	// Apply eventfilter rule, the first return value(string) should be one of the outcome constant values
-	Apply(context.Context, ParsedRule, *types.Event, RegexMatch) (RuleResult, error)
+	Apply(context.Context, ParsedRule, *types.Event, map[string]UpdatedValue, RegexMatch) (RuleResult, error)
 }
 
 type RuleResult struct {
