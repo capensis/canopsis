@@ -1,12 +1,12 @@
 <template>
   <span class="d-inline-flex align-center">
-    <c-state-count-changes-chip :color="color">{{ affect.from }}</c-state-count-changes-chip>
+    <c-state-count-changes-chip :state="state">{{ affect.from }}</c-state-count-changes-chip>
     <v-icon size="16">arrow_forward</v-icon>
-    <c-state-count-changes-chip :color="color">{{ affect.to }}</c-state-count-changes-chip></span>
+    <c-state-count-changes-chip :state="state">{{ affect.to }}</c-state-count-changes-chip></span>
 </template>
 
 <script>
-import { CSS_COLORS_VARS } from '@/config';
+import { ALARM_STATES } from '@/constants';
 
 export default {
   props: {
@@ -14,9 +14,9 @@ export default {
       type: Object,
       default: () => ({ from: 0, to: 0 }),
     },
-    color: {
-      type: String,
-      default: CSS_COLORS_VARS.primary,
+    state: {
+      type: Number,
+      default: ALARM_STATES.ok,
     },
   },
 };

@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -32,27 +33,33 @@ type Store interface {
 
 func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
-		dbClient:               dbClient,
-		dbCollection:           dbClient.Collection(mongo.RoleCollection),
-		dbPermissionCollection: dbClient.Collection(mongo.PermissionCollection),
-		dbUserCollection:       dbClient.Collection(mongo.UserCollection),
-		dbTemplateCollection:   dbClient.Collection(mongo.RoleTemplateCollection),
-		defaultSearchByFields:  []string{"_id", "name", "description"},
-		defaultSortBy:          "name",
-		authorProvider:         authorProvider,
+		dbClient:                 dbClient,
+		dbCollection:             dbClient.Collection(mongo.RoleCollection),
+		dbPermissionCollection:   dbClient.Collection(mongo.PermissionCollection),
+		dbUserCollection:         dbClient.Collection(mongo.UserCollection),
+		dbTemplateCollection:     dbClient.Collection(mongo.RoleTemplateCollection),
+		dbNotificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
+		defaultSearchByFields:    []string{"_id", "name", "description"},
+		defaultSortBy:            "name",
+		authorProvider:           authorProvider,
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"name": "Name already exists.",
+		}),
 	}
 }
 
 type store struct {
-	dbClient               mongo.DbClient
-	dbCollection           mongo.DbCollection
-	dbPermissionCollection mongo.DbCollection
-	dbUserCollection       mongo.DbCollection
-	dbTemplateCollection   mongo.DbCollection
-	defaultSearchByFields  []string
-	defaultSortBy          string
+	dbClient                 mongo.DbClient
+	dbCollection             mongo.DbCollection
+	dbPermissionCollection   mongo.DbCollection
+	dbUserCollection         mongo.DbCollection
+	dbTemplateCollection     mongo.DbCollection
+	dbNotificationCollection mongo.DbCollection
+	defaultSearchByFields    []string
+	defaultSortBy            string
 
 	authorProvider author.Provider
+	dupErrorParser validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -63,11 +70,13 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	beforeLimit = append(beforeLimit, getNestedObjectsPipeline()...)
-
-	afterLimit := s.authorProvider.Pipeline()
-
 	if r.Permission != "" {
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
+	}
+
+	afterLimit := s.authorProvider.Pipeline()
+	if r.WithFlags {
+		afterLimit = append(afterLimit, getFlagsPipeline()...)
 	}
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -93,11 +102,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
-			if r.WithFlags {
-				isNotAdmin := res.Data[i].Name != security.RoleAdmin
-				res.Data[i].Editable = &isNotAdmin
-				res.Data[i].Deletable = &isNotAdmin
-			}
 		}
 	}
 
@@ -161,7 +165,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		})
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return common.NewValidationError("name", "Name already exists.")
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -192,7 +196,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 			return err
 		}
 
-		if oldRole.Name == security.RoleAdmin {
+		if oldRole.ID == security.RoleAdmin {
 			return common.NewValidationError("name", "Admin cannot be updated.")
 		}
 
@@ -242,7 +246,7 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 			return err
 		}
 
-		if oldRole.Name == security.RoleAdmin {
+		if oldRole.ID == security.RoleAdmin {
 			return common.NewValidationError("_id", "Admin cannot be updated.")
 		}
 
@@ -267,19 +271,15 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
+	if id == security.RoleAdmin {
+		return false, ErrDeleteAdminRole
+	}
+
 	var deleted int64
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": id, "name": security.RoleAdmin}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return err
-		}
 
-		if err == nil {
-			return ErrDeleteAdminRole
-		}
-
-		err = s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
+		err := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
 		if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			return cmp.Or(err, ErrLinkedToUser)
 		}
@@ -291,10 +291,26 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		}
 
 		deleted, err = s.dbCollection.DeleteOne(ctx, bson.M{"_id": id})
+
 		return err
 	})
+	if err != nil {
+		return false, err
+	}
 
-	return deleted > 0, err
+	_, err = s.dbNotificationCollection.DeleteMany(ctx, bson.M{
+		"roles": bson.A{id},
+	})
+	if err != nil {
+		return false, err
+	}
+
+	_, err = s.dbNotificationCollection.UpdateMany(ctx, bson.M{"roles": id}, bson.M{"$pull": bson.M{"roles": id}})
+	if err != nil {
+		return false, err
+	}
+
+	return deleted > 0, nil
 }
 
 func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
@@ -390,6 +406,28 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func getFlagsPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.UserCollection,
+			"localField":   "_id",
+			"foreignField": "roles",
+			"as":           "user",
+			"pipeline": []bson.M{
+				{"$limit": 1},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$user", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"editable": bson.M{"$ne": bson.A{"$name", security.RoleAdmin}},
+			"deletable": bson.M{"$and": []bson.M{
+				{"$ne": bson.A{"$name", security.RoleAdmin}},
+				{"$eq": bson.A{"", bson.M{"$ifNull": bson.A{"$user._id", ""}}}},
+			}},
+		}},
 	}
 }
 

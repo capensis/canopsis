@@ -1,7 +1,6 @@
 package linkrule
 
 import (
-	"context"
 	"errors"
 	"net/http"
 
@@ -20,25 +19,25 @@ type API interface {
 	GetCategories(*gin.Context)
 	BulkDelete(c *gin.Context)
 	DBExport(c *gin.Context)
+	ValidateTemplates(c *gin.Context)
+	GetTemplateVars(c *gin.Context)
 }
 
 type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
-	transformer   common.PatternFieldsTransformer
 	logger        zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
-	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:         store,
-		mongoExporter: mongoExporter, transformer: transformer,
-		logger: logger,
+		mongoExporter: mongoExporter,
+		logger:        logger,
 	}
 }
 
@@ -50,18 +49,6 @@ func (a *api) Create(c *gin.Context) {
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
-	}
-
-	err := a.transformEditRequest(c, &request)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
-		panic(err)
 	}
 
 	rule, err := a.store.Insert(c, request)
@@ -154,18 +141,6 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformEditRequest(c, &request)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
-		panic(err)
-	}
-
 	rule, err := a.store.Update(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -234,16 +209,39 @@ func (a *api) DBExport(c *gin.Context) {
 	dbexport.AttachFile(c, mongo.LinkRuleMongoCollection, b)
 }
 
-func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
-	var err error
-	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(ctx, request.AlarmPatternFieldsRequest)
-	if err != nil {
-		return err
-	}
-	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(ctx, request.EntityPatternFieldsRequest)
-	if err != nil {
-		return err
+// ValidateTemplates
+// @Param body body TemplateRequest true "body"
+// @Success 200 {object} template.ValidateResponse
+func (a *api) ValidateTemplates(c *gin.Context) {
+	request := TemplateRequest{}
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
 	}
 
-	return nil
+	response, err := a.store.ValidateTemplates(c, request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// GetTemplateVars
+// @Success 200 {array} TemplateVarsResponse
+func (a *api) GetTemplateVars(c *gin.Context) {
+	vars, err := a.store.GetTemplateVars(c)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, vars)
 }

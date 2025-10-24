@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
@@ -80,7 +81,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request ListRequestWi
 	})
 
 	loader := fixtures.NewLoader(dbClient, []string{fixturesPath},
-		fixtures.NewParser(fixtures.NewFaker(password.NewSha1Encoder())), zerolog.Nop())
+		fixtures.NewParser(fixtures.NewFaker(password.NewBcryptEncoder())), zerolog.Nop())
 	err = loader.Load(ctx)
 	if err != nil {
 		b.Fatalf("unexpected error %v", err)
@@ -93,7 +94,7 @@ func benchmarkStoreFind(b *testing.B, fixturesPath string, request ListRequestWi
 	})
 
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	s := NewStore(dbClient, dbClient, nil, config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
+	s := NewStore(dbClient, dbClient, nil, common.NewPatternFieldsTransformer(dbClient), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()),
 		authorProvider, nil, json.NewDecoder(), zerolog.Nop())
 
 	b.ResetTimer()

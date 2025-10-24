@@ -20,6 +20,7 @@ const stubs = {
   'pbehaviors-mass-actions-panel': true,
   'pbehavior-actions': true,
   'pbehaviors-list-expand-item': true,
+  'pbehaviors-list-alarm-filtering-btn': true,
 };
 
 describe('pbehaviors-list', () => {
@@ -40,6 +41,8 @@ describe('pbehaviors-list', () => {
     rrule_end: index % 4 ? 1614861888 + index : null,
     is_active_status: !(index % 2),
     alarm_count: index,
+    pattern_ms: 2500,
+    pattern_exec_at: 1614861888,
     type: {
       icon_name: `type-icon-name-${index}`,
     },

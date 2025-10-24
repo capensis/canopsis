@@ -4,24 +4,43 @@ import (
 	"context"
 	"fmt"
 
+	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-func NewEventFailureCleaner(logger zerolog.Logger) datastorage.Cleaner {
+func NewEventFailureCleaner(
+	publishCh libamqp.Publisher,
+	encoder encoding.Encoder,
+	exchangeName, routingKey, msgContentType string,
+	logger zerolog.Logger,
+) datastorage.Cleaner {
 	return &eventFailureCleaner{
-		logger: logger,
+		publishCh:      publishCh,
+		exchangeName:   exchangeName,
+		routingKey:     routingKey,
+		msgContentType: msgContentType,
+		encoder:        encoder,
+		logger:         logger,
 	}
 }
 
 type eventFailureCleaner struct {
-	logger zerolog.Logger
+	publishCh                libamqp.Publisher
+	exchangeName, routingKey string
+	msgContentType           string
+	encoder                  encoding.Encoder
+	logger                   zerolog.Logger
 }
 
 func (c *eventFailureCleaner) IsEnabled(conf datastorage.Config) bool {
@@ -63,6 +82,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 	countsByRule := make(map[string]int64, datastorage.BulkSize)
 	unreadCountsByRule := make(map[string]int64, datastorage.BulkSize)
 	ruleWriteModels := make([]mongodriver.WriteModel, 0, datastorage.BulkSize)
+	isUnreadDeleted := false
 	for cursor.Next(ctx) {
 		var item eventfilter.Failure
 		err := cursor.Decode(&item)
@@ -74,6 +94,7 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		countsByRule[item.Rule]++
 		if item.Unread {
 			unreadCountsByRule[item.Rule]++
+			isUnreadDeleted = true
 		}
 
 		if len(ids) >= datastorage.BulkSize {
@@ -127,7 +148,90 @@ func (c *eventFailureCleaner) Clean(ctx context.Context, dbClient mongo.DbClient
 		res.Deleted += d
 	}
 
+	if isUnreadDeleted {
+		err = c.deleteNotifications(ctx, dbClient)
+		if err != nil {
+			return res, fmt.Errorf("failed to delete notifications: %w", err)
+		}
+	}
+
 	return res, nil
+}
+
+func (c *eventFailureCleaner) deleteNotifications(ctx context.Context, dbClient mongo.DbClient) error {
+	dbCollection := dbClient.Collection(mongo.UserNotificationCollection)
+	cursor, err := dbCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"type": usernotification.TypeEventFilterFailure}},
+		{"$lookup": bson.M{
+			"from":         mongo.EventFilterRuleCollection,
+			"localField":   "rule._id",
+			"foreignField": "_id",
+			"as":           "eventfilter",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"unread_failures_count": bson.M{"$in": bson.A{0, nil}}}},
+			},
+		}},
+		{"$unwind": "$eventfilter"},
+		{"$project": bson.M{
+			"_id":   1,
+			"roles": 1,
+		}},
+	})
+	if err != nil {
+		return err
+	}
+
+	defer cursor.Close(ctx)
+	ids := make([]string, 0, datastorage.BulkSize)
+	mapRoleIDs := make(map[string]struct{}, datastorage.BulkSize)
+	for cursor.Next(ctx) {
+		n := usernotification.Notification{}
+		err = cursor.Decode(&n)
+		if err != nil {
+			return err
+		}
+
+		ids = append(ids, n.ID)
+		for _, v := range n.Roles {
+			mapRoleIDs[v] = struct{}{}
+		}
+
+		if len(ids) == datastorage.BulkSize {
+			_, err = dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+			if err != nil {
+				return err
+			}
+
+			ids = ids[:0]
+		}
+	}
+
+	if err = cursor.Err(); err != nil {
+		return err
+	}
+
+	if len(ids) > 0 {
+		_, err = dbCollection.DeleteMany(ctx, bson.M{"_id": bson.M{"$in": ids}})
+		if err != nil {
+			return err
+		}
+	}
+
+	if len(mapRoleIDs) > 0 {
+		roleIDs := make([]string, len(mapRoleIDs))
+		i := 0
+		for v := range mapRoleIDs {
+			roleIDs[i] = v
+			i++
+		}
+
+		err = c.sendEvent(ctx, roleIDs)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (c *eventFailureCleaner) getRuleUpdateModel(ruleID string, dec, unreadDec int64) mongodriver.WriteModel {
@@ -141,4 +245,30 @@ func (c *eventFailureCleaner) getRuleUpdateModel(ruleID string, dec, unreadDec i
 	return mongodriver.NewUpdateOneModel().
 		SetFilter(bson.M{"_id": ruleID}).
 		SetUpdate(bson.M{"$inc": update})
+}
+
+func (c *eventFailureCleaner) sendEvent(ctx context.Context, roleIDs []string) error {
+	b, err := c.encoder.Encode(rpc.ApiNotificationEvent{
+		Roles: roleIDs,
+	})
+	if err != nil {
+		return fmt.Errorf("cannot encode notification event: %w", err)
+	}
+
+	err = c.publishCh.PublishWithContext(
+		ctx,
+		c.exchangeName,
+		c.routingKey,
+		false,
+		false,
+		amqp.Publishing{
+			ContentType: c.msgContentType,
+			Body:        b,
+		},
+	)
+	if err != nil {
+		return fmt.Errorf("cannot send notification event: %w", err)
+	}
+
+	return nil
 }

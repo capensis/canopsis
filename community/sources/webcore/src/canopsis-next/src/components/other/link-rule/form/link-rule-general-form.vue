@@ -45,7 +45,7 @@
       <external-data-form
         v-field="form.external_data"
         :types="externalDataTypes"
-        :variables="externalDataPayloadVariables"
+        :variables="templateVars.external_data"
       />
     </c-collapse-panel>
   </v-layout>
@@ -55,14 +55,12 @@
 import {
   ALARM_PATTERN_FIELDS,
   ENTITY_PATTERN_FIELDS,
-  QUICK_RANGES,
   EXTERNAL_DATA_TYPES,
   LINK_RULE_TYPES,
   LINK_RULE_TYPES_TO_DEFAULT_SOURCE_CODES,
 } from '@/constants';
 
 import { formMixin, formValidationHeaderMixin } from '@/mixins/form';
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
 
 import ExternalDataForm from '@/components/forms/external-data/external-data-form.vue';
 
@@ -72,7 +70,6 @@ export default {
   mixins: [
     formMixin,
     formValidationHeaderMixin,
-    payloadVariablesMixin,
   ],
   model: {
     prop: 'form',
@@ -80,6 +77,10 @@ export default {
   },
   props: {
     form: {
+      type: Object,
+      default: () => ({}),
+    },
+    templateVars: {
       type: Object,
       default: () => ({}),
     },
@@ -103,12 +104,6 @@ export default {
       }];
     },
 
-    externalDataPayloadVariables() {
-      return this.isAlarmType
-        ? this.alarmPayloadSubVariables
-        : this.entityPayloadSubVariables;
-    },
-
     alarmPatternAttributes() {
       return [
         {
@@ -125,15 +120,9 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.ackAt,
-          options: {
-            intervalRanges: [QUICK_RANGES.custom],
-          },
         },
         {
           value: ALARM_PATTERN_FIELDS.creationDate,
-          options: {
-            intervalRanges: [QUICK_RANGES.custom],
-          },
         },
       ];
     },

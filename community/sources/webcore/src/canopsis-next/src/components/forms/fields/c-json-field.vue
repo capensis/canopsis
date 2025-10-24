@@ -1,8 +1,38 @@
 <template>
   <v-layout wrap>
     <v-flex xs12>
-      <v-textarea
+      <c-payload-textarea-field
+        v-if="variables?.length"
         v-validate=""
+        v-bind="$attrs"
+        :value="localValue"
+        :label="label"
+        :name="name"
+        :rows="rows"
+        :auto-grow="autoGrow"
+        :filled="box"
+        :readonly="readonly"
+        :outlined="outline"
+        :disabled="disabled"
+        :variables="variables"
+        data-vv-validate-on="none"
+        v-on="listeners"
+      >
+        <template
+          v-if="helpText"
+          #append=""
+        >
+          <c-help-icon
+            :text="helpText"
+            icon="help"
+            left
+          />
+        </template>
+      </c-payload-textarea-field>
+      <v-textarea
+        v-else
+        v-validate=""
+        v-bind="$attrs"
         :value="localValue"
         :label="label"
         :name="name"
@@ -66,6 +96,7 @@ export default {
       default: new Validator(),
     },
   },
+  inheritAttrs: false,
   model: {
     prop: 'value',
     event: 'input',
@@ -150,20 +181,40 @@ export default {
 
       return listeners;
     },
+    rule() {
+      return 'json';
+    },
   },
   watch: {
     value(newValue) {
-      const newLocalValue = this.valueToLocalValue(newValue);
-      this.sourceValue = newLocalValue;
+      let newLocalValue = '{}';
+      let hasError = false;
 
-      if (newLocalValue !== this.localValue) {
-        this.localValue = newLocalValue;
-        this.$validator.reset({ name: this.name });
+      try {
+        newLocalValue = this.valueToLocalValue(newValue, true);
+      } catch (err) {
+        newLocalValue = newValue;
+        hasError = true;
+      } finally {
+        this.sourceValue = newLocalValue;
+
+        if (newLocalValue !== this.localValue) {
+          this.localValue = newLocalValue;
+        }
+
+        if (!hasError) {
+          this.$validator.reset({ name: this.name });
+        } else {
+          /**
+           * Add error after reset, because validator.reset using nextTick twice
+           */
+          this.$nextTick(() => this.$nextTick(() => this.$nextTick(() => this.addValidationError())));
+        }
       }
     },
   },
   methods: {
-    valueToLocalValue(value) {
+    valueToLocalValue(value, throwError = false) {
       try {
         return this.variables
           ? convertPayloadToJson(value)
@@ -171,7 +222,9 @@ export default {
       } catch (err) {
         console.error(err);
 
-        this.$popups.error({ text: this.$t('errors.default') });
+        if (throwError) {
+          throw err;
+        }
 
         return '{}';
       }
@@ -195,12 +248,16 @@ export default {
           this.$emit('input', isString(this.value) ? this.localValue : payload);
         }
       } catch (err) {
-        this.errors.add({
-          field: this.name,
-          msg: this.$t('errors.JSONNotValid'),
-          rule: this.rule,
-        });
+        this.addValidationError();
       }
+    },
+
+    addValidationError() {
+      this.errors.add({
+        field: this.name,
+        msg: this.$t('errors.JSONNotValid'),
+        rule: this.rule,
+      });
     },
 
     reset() {

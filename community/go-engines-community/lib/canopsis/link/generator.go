@@ -60,13 +60,13 @@ type generator struct {
 	rules   []parsedRule
 }
 
-type alarmWithData struct {
+type AlarmWithData struct {
 	types.Alarm  `bson:",inline"`
 	Entity       types.Entity              `bson:"entity"`
 	ExternalData map[string]map[string]any `bson:"-"`
 }
 
-type entityWithData struct {
+type EntityWithData struct {
 	types.Entity `bson:",inline"`
 	ExternalData map[string]map[string]any `bson:"-"`
 }
@@ -83,7 +83,8 @@ type parsedRule struct {
 	EntityPattern pattern.Entity
 	ExternalData  []externaldata.ParsedRefParameters
 	Links         []Parameters
-	LinkTpls      []*template.Template
+	UrlTpls       []*template.Template
+	LabelTpls     []*template.Template
 	CodeExecutor  js.Executor
 }
 
@@ -106,7 +107,7 @@ func (g *generator) Load(ctx context.Context) error {
 
 func (g *generator) GenerateForAlarm(ctx context.Context, alarm types.Alarm, entity types.Entity, user User) (LinksByCategory, error) {
 	res, err := g.runWorkers(ctx, func(ctx context.Context, rule parsedRule) (map[string][]linkWithCategory, error) {
-		return g.generateLinksByAlarms(ctx, rule, []alarmWithData{
+		return g.generateLinksByAlarms(ctx, rule, []AlarmWithData{
 			{
 				Alarm:  alarm,
 				Entity: entity,
@@ -174,9 +175,9 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 		}
 	}
 
-	entities := make([]entityWithData, len(alarms))
+	entities := make([]EntityWithData, len(alarms))
 	for i, alarm := range alarms {
-		entities[i] = entityWithData{Entity: alarm.Entity}
+		entities[i] = EntityWithData{Entity: alarm.Entity}
 	}
 
 	err = g.addExternalData(ctx, rule, alarms, entities)
@@ -190,7 +191,7 @@ func (g *generator) GenerateCombinedForAlarmsByRule(ctx context.Context, ruleId 
 	}
 
 	data := g.getTplData(rule, alarms, entities, user)
-	return g.getLinksByTpl(rule.Links, rule.LinkTpls, data)
+	return g.getLinksByTpl(rule.Links, rule.UrlTpls, rule.LabelTpls, data)
 }
 
 func (g *generator) runWorkers(
@@ -293,21 +294,35 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 		}
 
 		pr.Links = rule.Links
-		pr.LinkTpls = make([]*template.Template, len(rule.Links))
+		pr.UrlTpls = make([]*template.Template, len(rule.Links))
+		pr.LabelTpls = make([]*template.Template, len(rule.Links))
 		for i, link := range rule.Links {
-			if link.Url == "" {
+			if link.URL == "" {
 				g.logger.Error().Str("rule", rule.ID).Msg("empty url template in link rule")
 				break
 			}
 
-			parsed := g.tplExecutor.Parse(link.Url)
-			err = parsed.Err
+			parsedUrl := g.tplExecutor.Parse(link.URL)
+			err = parsedUrl.Err
 			if err != nil {
-				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid template in link rule")
+				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid url template in link rule")
 				break
 			}
 
-			pr.LinkTpls[i] = parsed.Tpl
+			if link.Label == "" {
+				g.logger.Error().Str("rule", rule.ID).Msg("empty label template in link rule")
+				break
+			}
+
+			parsedLabel := g.tplExecutor.Parse(link.Label)
+			err = parsedLabel.Err
+			if err != nil {
+				g.logger.Err(err).Str("rule", rule.ID).Msg("invalid label template in link rule")
+				break
+			}
+
+			pr.UrlTpls[i] = parsedUrl.Tpl
+			pr.LabelTpls[i] = parsedLabel.Tpl
 		}
 		if err != nil {
 			continue
@@ -323,7 +338,7 @@ func (g *generator) getRules(ctx context.Context) ([]parsedRule, error) {
 	return parsedRules, nil
 }
 
-func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithData, error) {
+func (g *generator) getAlarms(ctx context.Context, ids []string) ([]AlarmWithData, error) {
 	pipeline := []bson.M{
 		{"$lookup": bson.M{
 			"from":         mongo.EntityMongoCollection,
@@ -349,7 +364,7 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithDat
 		return nil, err
 	}
 
-	var openAlarms []alarmWithData
+	var openAlarms []AlarmWithData
 	err = openCursor.All(ctx, &openAlarms)
 	if err != nil {
 		return nil, err
@@ -370,7 +385,7 @@ func (g *generator) getAlarms(ctx context.Context, ids []string) ([]alarmWithDat
 		return nil, err
 	}
 
-	var resolvedAlarms []alarmWithData
+	var resolvedAlarms []AlarmWithData
 	err = resolvedCursor.All(ctx, &resolvedAlarms)
 	if err != nil {
 		return nil, err
@@ -403,7 +418,7 @@ func (g *generator) getEntities(ctx context.Context, ids []string) ([]entityWith
 	return entities, err
 }
 
-func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []alarmWithData, user User) (map[string][]linkWithCategory, error) {
+func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, alarms []AlarmWithData, user User) (map[string][]linkWithCategory, error) {
 	res := make(map[string][]linkWithCategory, len(alarms))
 	for i := range alarms {
 		ok, err := match.MatchAlarmPattern(rule.AlarmPattern, &alarms[i].Alarm)
@@ -424,8 +439,8 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 			continue
 		}
 
-		argAlarms := []alarmWithData{alarms[i]}
-		argEntities := []entityWithData{{Entity: alarms[i].Entity}}
+		argAlarms := []AlarmWithData{alarms[i]}
+		argEntities := []EntityWithData{{Entity: alarms[i].Entity}}
 		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
@@ -443,7 +458,7 @@ func (g *generator) generateLinksByAlarms(ctx context.Context, rule parsedRule, 
 		}
 
 		data := g.getTplData(rule, argAlarms, argEntities, user)
-		res[alarms[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
+		res[alarms[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.UrlTpls, rule.LabelTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process alarm")
 		}
@@ -479,15 +494,15 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 			continue
 		}
 
-		var argAlarms []alarmWithData
+		var argAlarms []AlarmWithData
 		if entities[i].Alarm != nil {
-			argAlarms = []alarmWithData{{
+			argAlarms = []AlarmWithData{{
 				Alarm:  *entities[i].Alarm,
 				Entity: entities[i].Entity,
 			}}
 		}
 
-		argEntities := []entityWithData{{Entity: entities[i].Entity}}
+		argEntities := []EntityWithData{{Entity: entities[i].Entity}}
 		err = g.addExternalData(ctx, rule, argAlarms, argEntities)
 		if err != nil {
 			g.logger.Err(err).Str("rule", rule.ID).Msg("cannot get external data by link rule")
@@ -505,7 +520,7 @@ func (g *generator) generateLinksByEntities(ctx context.Context, rule parsedRule
 		}
 
 		data := g.getTplData(rule, argAlarms, argEntities, user)
-		res[entities[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.LinkTpls, data)
+		res[entities[i].ID], err = g.getLinksWithCategoryByTpl(rule.ID, rule.Links, rule.UrlTpls, rule.LabelTpls, data)
 		if err != nil {
 			g.logger.Err(err).Str("linkrule", rule.ID).Msg("cannot process entity")
 		}
@@ -529,8 +544,8 @@ func (g *generator) getRule(id string) parsedRule {
 func (g *generator) addExternalData(
 	ctx context.Context,
 	rule parsedRule,
-	alarms []alarmWithData,
-	entities []entityWithData,
+	alarms []AlarmWithData,
+	entities []EntityWithData,
 ) error {
 	switch rule.Type {
 	case TypeAlarm:
@@ -545,7 +560,7 @@ func (g *generator) addExternalData(
 func (g *generator) addExternalDataToAlarms(
 	ctx context.Context,
 	externalData []externaldata.ParsedRefParameters,
-	data []alarmWithData,
+	data []AlarmWithData,
 ) error {
 	if len(externalData) == 0 {
 		return nil
@@ -568,7 +583,7 @@ func (g *generator) addExternalDataToAlarms(
 func (g *generator) addExternalDataToEntities(
 	ctx context.Context,
 	externalData []externaldata.ParsedRefParameters,
-	data []entityWithData,
+	data []EntityWithData,
 ) error {
 	if len(externalData) == 0 {
 		return nil
@@ -603,13 +618,19 @@ func (g *generator) processExternalData(
 
 func (g *generator) getLinksWithCategoryByTpl(
 	id string,
-	linkTpls []Parameters,
-	tpls []*template.Template,
+	linkParameters []Parameters,
+	urlTpls []*template.Template,
+	labelTpls []*template.Template,
 	data map[string]any,
 ) ([]linkWithCategory, error) {
-	res := make([]linkWithCategory, len(linkTpls))
-	for i, linkTpl := range linkTpls {
-		url, err := g.tplExecutor.ExecuteByTpl(tpls[i], data)
+	res := make([]linkWithCategory, len(linkParameters))
+	for i, linkTpl := range linkParameters {
+		url, err := g.tplExecutor.ExecuteByTpl(urlTpls[i], data)
+		if err != nil {
+			return nil, err
+		}
+
+		label, err := g.tplExecutor.ExecuteByTpl(labelTpls[i], data)
 		if err != nil {
 			return nil, err
 		}
@@ -618,7 +639,7 @@ func (g *generator) getLinksWithCategoryByTpl(
 			Category: linkTpl.Category,
 			Link: Link{
 				RuleID:     id,
-				Label:      linkTpl.Label,
+				Label:      label,
 				IconName:   linkTpl.IconName,
 				Url:        url,
 				Action:     linkTpl.Action,
@@ -632,19 +653,25 @@ func (g *generator) getLinksWithCategoryByTpl(
 }
 
 func (g *generator) getLinksByTpl(
-	linkTpls []Parameters,
-	tpls []*template.Template,
+	linkParameters []Parameters,
+	urlTpls []*template.Template,
+	labelTpls []*template.Template,
 	data map[string]any,
 ) ([]Link, error) {
-	res := make([]Link, len(linkTpls))
-	for i, linkTpl := range linkTpls {
-		url, err := g.tplExecutor.ExecuteByTpl(tpls[i], data)
+	res := make([]Link, len(linkParameters))
+	for i, linkTpl := range linkParameters {
+		url, err := g.tplExecutor.ExecuteByTpl(urlTpls[i], data)
+		if err != nil {
+			return nil, err
+		}
+
+		label, err := g.tplExecutor.ExecuteByTpl(labelTpls[i], data)
 		if err != nil {
 			return nil, err
 		}
 
 		res[i] = Link{
-			Label:      linkTpl.Label,
+			Label:      label,
 			IconName:   linkTpl.IconName,
 			Url:        url,
 			Action:     linkTpl.Action,
@@ -764,8 +791,8 @@ func (g *generator) getLinksByCode(
 
 func (g *generator) getTplData(
 	rule parsedRule,
-	alarms []alarmWithData,
-	entities []entityWithData,
+	alarms []AlarmWithData,
+	entities []EntityWithData,
 	user User,
 ) map[string]any {
 	var data map[string]any
@@ -787,8 +814,8 @@ func (g *generator) getTplData(
 
 func (g *generator) getCodeArgs(
 	rule parsedRule,
-	alarms []alarmWithData,
-	entities []entityWithData,
+	alarms []AlarmWithData,
+	entities []EntityWithData,
 	user User,
 ) []any {
 	var items any

@@ -43,6 +43,7 @@ const (
 	IconManualSuccessfulOtherInProgress
 	IconAutoSuccessfulManualAvailable
 	IconManualSuccessfulManualAvailable
+	IconManualNotExecuted
 )
 
 const (
@@ -64,6 +65,7 @@ type ListRequest struct {
 	WithDeclareTickets bool `form:"with_declare_tickets" json:"with_declare_tickets"`
 	WithLinks          bool `form:"with_links" json:"with_links"`
 	WithDependencies   bool `form:"with_dependencies" json:"with_dependencies"`
+	WithTagColors      bool `form:"with_tag_colors" json:"with_tag_colors"`
 	QueryLog           bool `form:"query_log" json:"query_log"`
 }
 
@@ -94,8 +96,6 @@ type BaseFilterRequest struct {
 	OnlyParents bool              `form:"correlation" json:"correlation"`
 	Category    string            `form:"category" json:"category"`
 
-	// Tag is deprecated, please use tags[] parameter
-	Tag  string   `form:"tag" json:"tag"`
 	Tags []string `form:"tags[]" json:"tags"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
@@ -275,12 +275,13 @@ type ExportResponse struct {
 }
 
 type Alarm struct {
-	ID     string                    `bson:"_id" json:"_id"`
-	Time   datetime.CpsTime          `bson:"t" json:"t" swaggertype:"integer"`
-	Entity entity.Entity             `bson:"entity" json:"entity"`
-	Value  AlarmValue                `bson:"v" json:"v"`
-	Tags   []string                  `bson:"tags" json:"tags"`
-	Infos  map[string]map[string]any `bson:"infos" json:"infos"`
+	ID        string                    `bson:"_id" json:"_id"`
+	Time      datetime.CpsTime          `bson:"t" json:"t" swaggertype:"integer"`
+	Entity    entity.Entity             `bson:"entity" json:"entity"`
+	Value     AlarmValue                `bson:"v" json:"v"`
+	Tags      []string                  `bson:"tags" json:"tags"`
+	TagColors []TagColor                `bson:"tag_colors" json:"tag_colors,omitempty"`
+	Infos     map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	Pbehavior *Pbehavior `bson:"pbehavior,omitempty" json:"pbehavior,omitempty"`
 
@@ -303,6 +304,7 @@ type Alarm struct {
 	FailedAutoInstructions       []string               `bson:"-" json:"failed_auto_instructions,omitempty"`
 	SuccessfulManualInstructions []string               `bson:"-" json:"successful_manual_instructions,omitempty"`
 	SuccessfulAutoInstructions   []string               `bson:"-" json:"successful_auto_instructions,omitempty"`
+	KpiAssignedInstructions      []string               `bson:"kpi_assigned_instructions,omitempty" json:"-"`
 
 	Links       link.LinksByCategory `bson:"-" json:"links,omitempty"`
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
@@ -366,10 +368,13 @@ type AlarmValue struct {
 
 	EventsCount types.CpsNumber `bson:"events_count,omitempty" json:"events_count,omitempty"`
 
-	Infos map[string]map[string]any `bson:"infos" json:"infos"`
+	Infos map[string]map[string]any `bson:"infos" json:"infos" swaggertype:"object"`
 
 	CloseDelayValue int64             `bson:"close_delay_value,omitempty" json:"close_delay_value,omitempty"`
 	CloseDelay      *common.AlarmStep `bson:"close_delay,omitempty" json:"close_delay,omitempty"`
+
+	MaxState     types.CpsNumber `bson:"max_state,omitempty" json:"max_state,omitempty"`
+	InitialState types.CpsNumber `bson:"initial_state,omitempty" json:"initial_state,omitempty"`
 }
 
 type Pbehavior struct {
@@ -383,6 +388,11 @@ type Pbehavior struct {
 	Reason *pbehavior.Reason `bson:"reason" json:"reason"`
 
 	LastComment *pbehaviorcomment.Response `bson:"last_comment" json:"last_comment"`
+}
+
+type TagColor struct {
+	Value string `bson:"value" json:"value"`
+	Color string `bson:"color" json:"color"`
 }
 
 type Instruction struct {
@@ -523,13 +533,25 @@ type LinksRequest struct {
 
 type GetDisplayNamesRequest struct {
 	pagination.Query
+	Opened           *bool    `form:"opened" json:"opened"`
+	Sort             string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	Search           string   `form:"search" json:"search"`
+	AlarmPattern     string   `form:"alarm_pattern" json:"alarm_pattern"`
+	EntityPattern    string   `form:"entity_pattern" json:"entity_pattern"`
+	PbehaviorPattern string   `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+	IDs              []string `form:"ids[]" json:"ids"`
+}
 
-	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	Search string `form:"search" json:"search"`
+func (r GetDisplayNamesRequest) GetOpenedFilter() int {
+	if r.Opened == nil {
+		return OpenedAndRecentResolved
+	}
 
-	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
-	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
-	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+	if *r.Opened {
+		return OnlyOpened
+	}
+
+	return OnlyResolved
 }
 
 type DisplayNameData struct {
@@ -548,4 +570,9 @@ func (r *GetDisplayNamesResponse) GetData() any {
 
 func (r *GetDisplayNamesResponse) GetTotal() int64 {
 	return r.TotalCount
+}
+
+type RefResponse struct {
+	ID          string `bson:"_id" json:"_id"`
+	DisplayName string `bson:"display_name" json:"display_name"`
 }

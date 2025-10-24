@@ -3,6 +3,7 @@ package widgettemplate
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -30,8 +31,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		widgetCollection: dbClient.Collection(mongo.WidgetMongoCollection),
 		authorProvider:   authorProvider,
 
-		widgetParameters: view.GetWidgetTemplateParameters(),
-
+		widgetParameters:      view.GetWidgetTemplateParameters(),
 		defaultSearchByFields: []string{"_id", "title", "type", "author.name"},
 		defaultSortBy:         "created",
 	}
@@ -43,8 +43,7 @@ type store struct {
 	widgetCollection mongo.DbCollection
 	authorProvider   author.Provider
 
-	widgetParameters map[string]map[string][]string
-
+	widgetParameters      map[string]map[string][]string
 	defaultSearchByFields []string
 	defaultSortBy         string
 }
@@ -213,6 +212,11 @@ func (s *store) updateLinkedWidgets(ctx context.Context, tpl Response, userID st
 				view.WidgetTemplateTypeServiceWeatherModal,
 				view.WidgetTemplateTypeServiceWeatherEntity:
 				val = tpl.Content
+			case view.WidgetTemplateTypeAlarmQuickActions,
+				view.WidgetTemplateTypeAlarmQuickMassActions:
+				val = tpl.Actions
+			default:
+				return fmt.Errorf("unknown template type: %s", tpl.Type)
 			}
 
 			_, err := s.widgetCollection.UpdateMany(
@@ -272,6 +276,7 @@ func transformEditRequestToModel(r EditRequest) view.WidgetTemplate {
 		Type:    r.Type,
 		Columns: r.Columns,
 		Content: r.Content,
+		Actions: r.Actions,
 		Author:  r.Author,
 	}
 }

@@ -50,18 +50,20 @@ export const useValidationFormErrors = (form) => {
    * Add exists fields errors to validator errors
    *
    * @param {[string, string][]} existsFieldsErrors
+   * @param {string} [scope]
    */
-  const addExistsFieldsErrors = (existsFieldsErrors) => {
-    validator.errors.add(existsFieldsErrors.map(([field, msg]) => ({ field, msg })));
+  const addExistsFieldsErrors = (existsFieldsErrors, scope) => {
+    validator.errors.add(existsFieldsErrors.map(([field, msg]) => ({ field, msg, scope })));
   };
 
   /**
    * Set form errors from response error and returns true if form errors exists
    *
    * @param {any} [errors = {}]
+   * @param {string} [scope]
    * @return {boolean}
    */
-  const setFormErrors = (errors = {}) => {
+  const setFormErrors = (errors = {}, scope) => {
     if (!validator) {
       return false;
     }
@@ -69,7 +71,7 @@ export const useValidationFormErrors = (form) => {
     const existFieldErrors = getExistsFieldsErrors(errors);
 
     if (existFieldErrors.length) {
-      addExistsFieldsErrors(existFieldErrors);
+      addExistsFieldsErrors(existFieldErrors, scope);
 
       return true;
     }

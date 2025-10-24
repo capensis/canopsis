@@ -157,24 +157,31 @@ service:
     type: set
     value: une_categorie_existante
   pattern:
-    cond: is_one_of
-    field: name
-    value:
-      type: copy
-      value: codeComposant
+    - - cond: is_one_of
+        field: name
+        value:
+          type: copy
+          value: codeComposant
 ```
 
-Autre exemple où le pattern vaut `infos.test` eq `infoValue` :
+Autre exemple où le pattern est multi conditions :
 
 ```
 pattern:
-  cond: eq
-  field: infos.test
-  field_type: string
-  value:
-    type: template
-    field: infoValue
-    value: '{{.Field}}'
+  - - cond: eq
+      field: infos.test
+      field_type: string
+      value:
+        type: template
+        field: infoValue
+        value: '{{.Field}}'
+  - - cond: eq
+      field: infos.env
+      field_type: string
+      value:
+        type: template
+        field: env
+        value: '{{.Field}}'
 ```
 
 !!! note

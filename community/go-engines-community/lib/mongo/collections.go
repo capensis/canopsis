@@ -23,7 +23,6 @@ const (
 	StateSettingsMongoCollection      = "state_settings"
 	BroadcastMessageMongoCollection   = "broadcast_message"
 	AssociativeTableCollection        = "default_associativetable"
-	NotificationMongoCollection       = "notification"
 
 	ViewMongoCollection           = "views"
 	ViewTabMongoCollection        = "viewtabs"
@@ -104,4 +103,12 @@ const (
 
 	ExternalDataTableCollection        = "external_data_table"
 	ExternalDataImportWorkerCollection = "external_data_import_worker"
+
+	EntityInfosPropertyCollection = "entity_infos_property"
+
+	UserNotificationSettingsCollection = "user_notification_settings"
+	UserNotificationCollection         = "user_notification"
+
+	TemplateTestDataCollection = "template_data"
+	TemplateTestCollection     = "template_test"
 )

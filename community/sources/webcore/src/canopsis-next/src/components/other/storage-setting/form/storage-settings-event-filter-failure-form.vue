@@ -1,9 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.eventFilterFailure.title')"
-    :help-text="$t('storageSetting.eventFilterFailure.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.eventFilterFailure.title')">
     <template
       v-if="history"
       #subtitle=""
@@ -14,7 +10,10 @@
       v-field="form.delete_after"
       :label="$t('storageSetting.eventFilterFailure.deleteAfter')"
       :help-text="$t('storageSetting.eventFilterFailure.deleteAfterHelpText')"
-      :name="errorsDeleteAfterFieldName"
+      :suffix="$t('storageSetting.olderThan')"
+      name="errors.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -34,13 +33,8 @@ export default {
       required: true,
     },
     history: {
-      type: Number,
+      type: [Number, Object],
       required: false,
-    },
-  },
-  computed: {
-    errorsDeleteAfterFieldName() {
-      return 'errors.delete_after';
     },
   },
 };

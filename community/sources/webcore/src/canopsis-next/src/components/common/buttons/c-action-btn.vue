@@ -24,7 +24,7 @@
             class="mx-1 my-0 c-action-btn__button"
             @click.stop.prevent="$listeners.click"
           >
-            <v-icon :color="preparedProps.color">
+            <v-icon :color="preparedProps.color" :small="iconSmall">
               {{ preparedProps.icon }}
             </v-icon>
           </v-btn>
@@ -101,6 +101,10 @@ export default {
       type: Boolean,
       required: false,
     },
+    iconSmall: {
+      type: Boolean,
+      default: false,
+    },
   },
   computed: {
     preparedProps() {
@@ -135,5 +139,6 @@ export default {
 <style lang="scss">
 .c-action-btn__button-wrapper {
   display: inline-flex;
+  height: 100%;
 }
 </style>

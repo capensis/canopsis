@@ -71,6 +71,8 @@ export const PBEHAVIOR_LIST_FIELDS = {
   updated: 'updated',
   lastAlarmDate: 'last_alarm_date',
   alarmCount: 'alarm_count',
+  patternMs: 'pattern_ms',
+  patternExecAt: 'pattern_exec_at',
   typeIcon: 'type.icon_name',
   status: 'is_active_status',
   actions: 'actions',

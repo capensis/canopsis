@@ -3,29 +3,32 @@
     v-bind="$attrs"
     :tooltip="tooltip"
   >
-    <template #button="">
-      <v-btn
-        v-clipboard:copy="value"
-        v-clipboard:success="onSuccessCopied"
-        v-clipboard:error="onErrorCopied"
-        :small="small"
-        :fab="fab"
-        class="mx-1 ma-0"
-        icon
-      >
-        <v-icon
-          :color="color"
-          :small="iconSmall"
+    <template #button="{ on: tooltipOn }">
+      <div class="c-action-btn__button-wrapper" v-on="tooltipOn">
+        <v-btn
+          v-clipboard:copy="value"
+          v-clipboard:success="onSuccessCopied"
+          v-clipboard:error="onErrorCopied"
+          :small="small"
+          :fab="fab"
+          class="mx-1 ma-0 c-action-btn__button"
+          icon
         >
-          {{ icon }}
-        </v-icon>
-      </v-btn>
+          <v-icon
+            :color="color"
+            :small="iconSmall"
+          >
+            {{ icon }}
+          </v-icon>
+        </v-btn>
+      </div>
     </template>
   </c-action-btn>
 </template>
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     icon: {
       type: String,
@@ -56,14 +59,14 @@ export default {
       default: false,
     },
   },
-  methods: {
-    onSuccessCopied() {
-      this.$emit('success');
-    },
+  setup(props, { emit }) {
+    const onSuccessCopied = () => emit('success');
+    const onErrorCopied = () => emit('error');
 
-    onErrorCopied() {
-      this.$emit('error');
-    },
+    return {
+      onSuccessCopied,
+      onErrorCopied,
+    };
   },
 };
 </script>

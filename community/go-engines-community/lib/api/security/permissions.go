@@ -31,7 +31,7 @@ const (
 	PermDataStorageRead   = "api_datastorage_read"
 	PermDataStorageUpdate = "api_datastorage_update"
 
-	ObjEventFilter = "api_eventfilter"
+	ObjEventFilterRule = "api_eventfilter"
 
 	ObjBroadcastMessage = "api_broadcast_message"
 
@@ -75,6 +75,12 @@ const (
 	PermIcon = "api_icon"
 
 	ObjExternalDataTable = "api_external_data_table"
+
+	ObjEntityInfoProperty = "api_entity_info_property"
+
+	PermPbhPatterns = "api_pbehavior_patterns"
+
+	ObjTemplateData = "api_template_data"
 )
 
 // PermCheck defines the permission check configuration where Obj is an object and Act is an action

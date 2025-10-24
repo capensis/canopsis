@@ -53,7 +53,21 @@ type ackProcessor struct {
 
 func (p *ackProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
 	result := Result{}
-	if event.Entity == nil || !event.Entity.Enabled {
+	// rare case: event cannot have empty entity
+	if event.Entity == nil {
+		return result, nil
+	}
+
+	// events can be safely ignored if entity is disabled but add log msg for external events
+	if !event.Entity.Enabled {
+		if event.Parameters.Initiator == types.InitiatorExternal {
+			p.logger.Warn().
+				Str("event_type", event.EventType).
+				Str("connector", event.Parameters.Connector+"/"+event.Parameters.ConnectorName).
+				Str("entity", event.Entity.ID).
+				Msg("entity is disabled, event cannot be processed")
+		}
+
 		return result, nil
 	}
 

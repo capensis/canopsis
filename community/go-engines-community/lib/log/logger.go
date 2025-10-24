@@ -3,6 +3,7 @@ package log
 
 import (
 	"context"
+	"flag"
 	"io"
 	"os"
 	"time"
@@ -13,17 +14,27 @@ import (
 	"github.com/rs/zerolog/journald"
 )
 
+type Options struct {
+	Debug  bool
+	Writer string
+}
+
+func BindCmdFlags(opts *Options) {
+	flag.BoolVar(&opts.Debug, "d", false, "Debug mode")
+	flag.StringVar(&opts.Writer, "cps.logger", "", "Logger output destination. Overrides the \"Canopsis.logger.Writer\" setting from the TOML config file.")
+}
+
 // NewLogger returns the default logger, that should be used by all the
 // engines.
 // The returned logger is thread-safe, and may be used in multiple goroutines.
-func NewLogger(ctx context.Context, debug bool) zerolog.Logger {
+func NewLogger(ctx context.Context, opts Options) zerolog.Logger {
 	var (
 		logger               zerolog.Logger
 		loggerWriter, writer io.Writer
 	)
 
 	logLevel := zerolog.InfoLevel
-	if debug {
+	if opts.Debug {
 		logLevel = zerolog.DebugLevel
 	}
 
@@ -41,8 +52,13 @@ func NewLogger(ctx context.Context, debug bool) zerolog.Logger {
 		return logger
 	}
 
-	if cfg.Writer != "" {
-		switch cfg.Writer {
+	writerStr := opts.Writer
+	if writerStr == "" {
+		writerStr = cfg.Writer
+	}
+
+	if writerStr != "" {
+		switch writerStr {
 		case "stderr":
 			writer = os.Stderr
 		case "journald":

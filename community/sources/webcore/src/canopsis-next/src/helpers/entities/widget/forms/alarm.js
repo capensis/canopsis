@@ -10,6 +10,7 @@ import {
   COLOR_INDICATOR_TYPES,
   DEFAULT_ALARMS_WIDGET_COLUMNS,
   DEFAULT_ALARMS_WIDGET_GROUP_COLUMNS,
+  DEFAULT_ALARMS_QUICK_ACTIONS,
   DEFAULT_LINKS_INLINE_COUNT,
   DEFAULT_PERIODIC_REFRESH,
   DEFAULT_SERVICE_DEPENDENCIES_COLUMNS,
@@ -20,6 +21,7 @@ import {
   SORT_ORDERS,
   TIME_UNITS,
   WIDGET_TYPES,
+  DEFAULT_ALARM_MORE_INFO_TEMPLATE,
 } from '@/constants';
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 
@@ -37,11 +39,11 @@ import ALARM_EXPORT_PDF_TEMPLATE from '@/assets/templates/alarm-export-pdf.html'
 import { formToWidgetTemplateValue, widgetTemplateValueToForm } from '../template/form';
 import { formToWidgetColumns, widgetColumnsToForm } from '../column/form';
 import { getWidgetColumnLabel, getWidgetColumnSortable } from '../list';
+import { widgetQuickActionsToForm, formToWidgetQuickActions } from '../quick-action/form';
 
 import { barChartWidgetParametersToForm, formToBarChartWidgetParameters } from './bar-chart';
 import { formToLineChartWidgetParameters, lineChartWidgetParametersToForm } from './line-chart';
 import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './numbers-chart';
-
 /**
  * @typedef {'BarChart', 'LineChart', 'Numbers'} AlarmChartType
  */
@@ -175,6 +177,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} isMultiAckEnabled
  * @property {boolean} isMultiDeclareTicketEnabled
  * @property {boolean} isHtmlEnabledOnTimeLine
+ * @property {boolean} pausePeriodicRefreshOnExpandPanel
  * @property {boolean} isActionsAllowWithOkState
  * @property {boolean} isVirtualScrollEnabled
  * @property {boolean} isCorrelationEnabled
@@ -187,6 +190,11 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
  * @property {AvailabilityField} availability
+ * @property {WidgetQuickAction[]} quickActions
+ * @property {string} quickActionsTemplate
+ * @property {WidgetQuickAction[]} quickMassActions
+ * @property {string} quickMassActionsTemplate
+ * @property {boolean} hideMassActions
  */
 
 /**
@@ -227,6 +235,8 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetColumnForm[]} widgetGroupColumns
  * @property {WidgetColumnForm[]} widgetExportColumns
  * @property {WidgetColumnForm[]} serviceDependenciesColumns
+ * @property {WidgetQuickActionForm[]} quickActions
+ * @property {WidgetQuickActionForm[]} quickMassActions
  */
 
 /**
@@ -293,7 +303,7 @@ export const widgetSortToForm = (sort = {}) => ({
 export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   sort: widgetSortToForm(alarmListParameters.sort),
   itemsPerPage: alarmListParameters.itemsPerPage ?? PAGINATION_LIMIT,
-  moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? '',
+  moreInfoTemplate: alarmListParameters.moreInfoTemplate ?? DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   moreInfoTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.moreInfoTemplateTemplate),
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
@@ -353,7 +363,7 @@ export const alarmListChartToForm = (chart = {}) => {
 export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   itemsPerPage: parameters.itemsPerPage ?? PAGINATION_LIMIT,
   infoPopups: infoPopupsToForm(parameters.infoPopups),
-  moreInfoTemplate: parameters.moreInfoTemplate ?? '',
+  moreInfoTemplate: parameters.moreInfoTemplate ?? DEFAULT_ALARM_MORE_INFO_TEMPLATE,
   moreInfoTemplateTemplate: widgetTemplateValueToForm(parameters.moreInfoTemplateTemplate),
   isAckNoteRequired: !!parameters.isAckNoteRequired,
   isSnoozeNoteRequired: !!parameters.isSnoozeNoteRequired,
@@ -362,6 +372,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   isMultiAckEnabled: !!parameters.isMultiAckEnabled,
   isMultiDeclareTicketEnabled: !!parameters.isMultiDeclareTicketEnabled,
   isHtmlEnabledOnTimeLine: parameters.isHtmlEnabledOnTimeLine ?? true,
+  pausePeriodicRefreshOnExpandPanel: parameters.pausePeriodicRefreshOnExpandPanel ?? false,
   isActionsAllowWithOkState: !!parameters.isActionsAllowWithOkState,
   isVirtualScrollEnabled: !!parameters.isVirtualScrollEnabled,
   isCorrelationEnabled: !!parameters.isCorrelationEnabled,
@@ -401,6 +412,11 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   showRootCauseByStateClick: parameters.showRootCauseByStateClick ?? true,
   rootCauseColorIndicator: parameters.rootCauseColorIndicator ?? COLOR_INDICATOR_TYPES.state,
   availability: availabilityFieldToForm(parameters.availability),
+  quickActionsTemplate: widgetTemplateValueToForm(parameters.quickActionsTemplate),
+  quickMassActionsTemplate: widgetTemplateValueToForm(parameters.quickMassActionsTemplate),
+  quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
+  quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
+  hideMassActions: parameters.hideMassActions ?? false,
 });
 
 /**
@@ -491,6 +507,10 @@ export const formToAlarmListWidgetParameters = (form) => {
     widgetExportColumns: formToWidgetColumns(form.widgetExportColumns),
     serviceDependenciesColumns: formToWidgetColumns(form.serviceDependenciesColumns),
     charts: removeKeyFromEntities(form.charts),
+    quickActionsTemplate: formToWidgetTemplateValue(form.quickActionsTemplate),
+    quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
+    quickActions: formToWidgetQuickActions(form.quickActions),
+    quickMassActions: formToWidgetQuickActions(form.quickMassActions),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
@@ -611,6 +631,24 @@ export const getAlarmsListWidgetColumnComponentGetter = (
 
         return component;
       };
+
+    case ALARM_FIELDS.maxState:
+      return context => ({
+        bind: {
+          is: 'c-alarm-state-chip',
+          value: context.alarm.v?.max_state,
+          small: context.small,
+        },
+      });
+
+    case ALARM_FIELDS.initialState:
+      return context => ({
+        bind: {
+          is: 'c-alarm-state-chip',
+          value: context.alarm.v?.initial_state,
+          small: context.small,
+        },
+      });
 
     case ALARM_FIELDS.status:
       return context => ({

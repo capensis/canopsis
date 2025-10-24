@@ -47,6 +47,7 @@ export default {
   treeOfDependenciesSettings: 'Paramètres de l\'arborescence des dépendances',
   orderBy: 'Trier par',
   periodicRefresh: 'Rafraichissement périodique',
+  pausePeriodicRefreshOnExpandPanel: 'Suspendre le rafraîchissement périodique lors de l\'ouverture du panneau étendu',
   defaultNumberOfElementsPerPage: 'Nombre d\'élements par page par défaut',
   elementsPerPage: 'Élements par page',
   filterOnOpenResolved: 'Filtre sur Ouverte/Résolue',
@@ -64,7 +65,7 @@ export default {
   fastAckOutput: 'Commentaire d\'acquittement rapide',
   fastCancelOutput: 'Commentaire d\'annulation rapide',
   isHtmlEnabledOnTimeLine: 'HTML activé dans la chronologie',
-  isCorrelationEnabled: 'Corrélation activée ?',
+  isCorrelationEnabled: 'Corrélation activée ?',
   fastPbehavior: 'Comportement périodique rapide',
   duration: 'Durée',
   tstop: 'Date de fin',
@@ -153,7 +154,7 @@ export default {
     },
   },
   considerPbehaviors: {
-    title: 'Prendre en compte les comportements périodiques ?',
+    title: 'Prendre en compte les comportements périodiques ?',
   },
   serviceWeatherModalTypes: {
     title: 'Type de modale',
@@ -165,13 +166,14 @@ export default {
   },
   columns: {
     customLabel: 'Étiquette personnalisée',
-    isHtml: 'Est-ce du HTML ?',
+    isHtml: 'Est-ce du HTML ?',
     withTemplate: 'Modèle personnalisé',
-    isState: 'Affiché comme une criticité ?',
+    isState: 'Affiché comme une criticité ?',
     onlyIcon: 'Afficher uniquement les icônes de liens',
     inlineLinksCount: 'Nombre de liens en ligne',
     linksInRowCount: 'Nombre de liens dans la ligne',
     linksInRowCountTooltip: 'Ce nombre de liens sera toujours affiché dans la ligne qui comprend plus de boutons de liens (...)',
+    filterOnClick: 'Filtrer au clic',
   },
   liveReporting: {
     title: 'Reportage en direct',
@@ -198,6 +200,14 @@ export default {
   serverStorage: 'Stockage serveur',
   filenameRecognition: 'Reconnaissance du nom de fichier',
   resultDirectory: 'Stockage des résultats de test',
+  quickActions: {
+    title: 'Actions rapides',
+    description: 'Ces actions seront affichées, les autres seront cachées sous le bouton plus',
+  },
+  quickMassActions: {
+    title: 'Actions massives rapides',
+    hideSwitcher: 'Masquer les actions massives sous le bouton plus',
+  },
   screenshotDirectories: {
     title: 'Paramètres de stockage des captures d\'écran',
     helpText: 'Définir où les captures d\'écran sont stockées',

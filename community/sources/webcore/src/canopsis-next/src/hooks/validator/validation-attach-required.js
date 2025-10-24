@@ -1,3 +1,5 @@
+import { nextTick, onBeforeUnmount, onMounted } from 'vue';
+
 import { useComponentInstance } from '../vue';
 
 import { useValidator } from './validator';
@@ -12,11 +14,16 @@ export const useValidationAttachRequired = (name) => {
   const validator = useValidator();
   const instance = useComponentInstance();
 
+  /**
+   * Attaches a required validation rule to the field if it doesn't already exist
+   *
+   * @param {Function} getter - Function that returns the field's current value for validation
+   */
   const attachRequiredRule = (getter) => {
-    const oldField = validator.fields.find({ name });
+    const oldField = validator?.fields?.find?.({ name });
 
     if (!oldField) {
-      validator.attach({
+      validator?.attach?.({
         name,
         rules: 'required:true',
         getter,
@@ -24,13 +31,60 @@ export const useValidationAttachRequired = (name) => {
       });
     }
   };
-  const validateRequiredRule = () => validator.validate(name);
-  const detachRequiredRule = () => validator.detach(name);
+
+  /**
+   * Validates the required rule for the field
+   *
+   * @returns {Promise|undefined} Promise resolving to validation result, or undefined if validator not available
+   */
+  const validateRequiredRule = () => validator?.validate?.(name);
+
+  /**
+   * Resets the validation state for the field
+   */
+  const resetRequiredRule = () => validator?.reset?.({ name });
+
+  /**
+   * Detaches the validation rule from the field
+   */
+  const detachRequiredRule = () => validator?.detach?.(name);
 
   return {
     validator,
     attachRequiredRule,
+    validateRequiredRule,
+    resetRequiredRule,
+    detachRequiredRule,
+  };
+};
+
+/**
+ * Hook for attaching, validating, and managing required validation rules for a specific field
+ *
+ * @param {string} name - The name of the field to validate
+ * @param {Function} getter - Function that returns the field's value for validation
+ * @returns {Object} An object containing validation control functions
+ * @property {Function} attachRequiredRule - Attaches the required validation rule to the field
+ * @property {Function} detachRequiredRule - Detaches the required validation rule from the field
+ * @property {Function} validateRequiredRule - Synchronously validates the required rule
+ * @property {Function} asyncValidateRequiredRule - Asynchronously validates the required rule on the next tick
+ */
+export const useValidationAttachRequiredForField = (name, getter) => {
+  const { attachRequiredRule, detachRequiredRule, validateRequiredRule } = useValidationAttachRequired(name);
+
+  const validate = () => nextTick(validateRequiredRule);
+
+  onMounted(() => {
+    attachRequiredRule(getter);
+    validateRequiredRule();
+  });
+
+  onBeforeUnmount(detachRequiredRule);
+
+  return {
+    attachRequiredRule,
     detachRequiredRule,
     validateRequiredRule,
+    asyncValidateRequiredRule: validate,
   };
 };

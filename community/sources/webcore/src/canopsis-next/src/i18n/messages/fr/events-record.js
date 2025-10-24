@@ -13,4 +13,6 @@ export default {
   delayBetweenEvents: 'Délai entre les événements',
   resendEvents: 'Renvoyer l\'événement | Renvoyer les événements',
   launchEventRecording: 'Lancement d\'un enregistrement d\'événements',
+  copyEvent: 'Copier l\'événement dans le presse-papiers',
+  eventCopied: 'Événement copié dans le presse-papiers',
 };

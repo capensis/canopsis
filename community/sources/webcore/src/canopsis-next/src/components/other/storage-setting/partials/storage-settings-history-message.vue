@@ -4,8 +4,11 @@
 
 <script>
 import { isNumber } from 'lodash';
+import { computed } from 'vue';
 
 import { convertDateToString } from '@/helpers/date/date';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -30,36 +33,42 @@ export default {
       default: false,
     },
   },
-  computed: {
-    timeString() {
-      if (isNumber(this.history)) {
-        return this.$t('storageSetting.history.scriptLaunched', {
-          launchedAt: convertDateToString(this.history),
+  setup(props) {
+    const { t } = useI18n();
+
+    const timeString = computed(() => {
+      if (isNumber(props.history)) {
+        return t('storageSetting.history.scriptLaunched', {
+          launchedAt: convertDateToString(props.history),
         });
       }
 
-      const { time, deleted, archived } = this.history || {};
+      const { time, deleted, archived } = props.history || {};
 
       const result = [
-        this.$t('storageSetting.history.scriptLaunched', {
+        t('storageSetting.history.scriptLaunched', {
           launchedAt: convertDateToString(time),
         }),
       ];
 
-      if (!this.hideDeleted && isNumber(deleted)) {
-        result.push(this.$t(this.deletedCountMessageKey, {
+      if (!props.hideDeleted && isNumber(deleted)) {
+        result.push(t(props.deletedCountMessageKey, {
           count: deleted,
         }));
       }
 
-      if (!this.hideArchived && isNumber(archived)) {
-        result.push(this.$t(this.archivedCountMessageKey, {
+      if (!props.hideArchived && isNumber(archived)) {
+        result.push(t(props.archivedCountMessageKey, {
           count: archived,
         }));
       }
 
       return result.join(' ');
-    },
+    });
+
+    return {
+      timeString,
+    };
   },
 };
 </script>
