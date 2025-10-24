@@ -96,4 +96,6 @@ extra_css:
 
 extra_javascript:
   # sync this with the version used in <https://squidfunk.github.io/mkdocs-material/reference/diagrams> HTML source
-  - https://unpkg.com/mermaid@8.13.3/dist/mermaid.min.js
+  #- https://unpkg.com/mermaid@8.13.3/dist/mermaid.min.js
+  - https://unpkg.com/mermaid@11.12.0/dist/mermaid.min.js
+

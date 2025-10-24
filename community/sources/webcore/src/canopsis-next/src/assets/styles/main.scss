@@ -395,6 +395,20 @@ html {
   }
 }
 
+.full-width {
+  width: 100%;
+}
+
+.sticky-bottom-buttons {
+  position: sticky;
+  bottom: 10px;
+  pointer-events: none;
+
+  button {
+    pointer-events: all;
+  }
+}
+
 .v-menu__content {
   max-height: 90vh;
 }

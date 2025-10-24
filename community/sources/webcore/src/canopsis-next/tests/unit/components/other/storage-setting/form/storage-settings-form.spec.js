@@ -8,9 +8,7 @@ import { dataStorageSettingsToForm } from '@/helpers/entities/data-storage/form'
 import StorageSettingsForm from '@/components/other/storage-setting/form/storage-settings-form.vue';
 
 const stubs = {
-  'storage-settings-entity-clean-form': true,
   'storage-settings-entity-unlinked-form': true,
-  'storage-settings-entity-disabled-form': true,
   'storage-settings-event-filter-failure-form': true,
   'storage-settings-perf-data-metrics-form': true,
   'storage-settings-metrics-form': true,

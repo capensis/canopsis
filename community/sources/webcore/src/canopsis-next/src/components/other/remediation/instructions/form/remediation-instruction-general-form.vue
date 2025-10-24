@@ -57,11 +57,38 @@
         />
       </v-flex>
     </v-layout>
-    <c-triggers-field
-      v-if="isAutoType"
-      v-field="form.triggers"
-      :triggers="availableTriggers"
-    />
+    <template v-if="isAutoType">
+      <c-triggers-field
+        v-field="form.triggers"
+        :types="availableTriggers"
+        with-additional-values
+      />
+      <v-layout>
+        <c-enabled-field
+          v-field="form.enabled_repeat_triggers"
+          :label="$t('remediation.instruction.enabledRepeatTrigger')"
+        >
+          <template #append>
+            <c-help-icon
+              :text="$t('remediation.instruction.tooltips.enabledRepeatTriggerTooltip')"
+              icon="help"
+              color="grey darken-1"
+              top
+            />
+          </template>
+        </c-enabled-field>
+      </v-layout>
+      <v-expand-transition>
+        <c-triggers-field
+          v-if="form.enabled_repeat_triggers"
+          v-field="form.repeat_triggers"
+          :types="availableRepeatTriggers"
+          :label="$t('remediation.instruction.repeatTriggers')"
+          name="repeat_triggers"
+          translation-key-prefix="common.repeatTriggers"
+        />
+      </v-expand-transition>
+    </template>
     <remediation-instruction-jobs-form
       v-if="isAutoType || isManualSimplified"
       v-field="form.jobs"
@@ -83,7 +110,12 @@
 </template>
 
 <script>
-import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES } from '@/constants';
+import { computed } from 'vue';
+
+import {
+  REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES,
+  REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES,
+} from '@/constants';
 
 import { isInstructionTypeAuto, isInstructionTypeSimpleManual } from '@/helpers/entities/remediation/instruction/form';
 
@@ -128,18 +160,20 @@ export default {
       default: () => ({}),
     },
   },
-  computed: {
-    isAutoType() {
-      return isInstructionTypeAuto(this.form?.type);
-    },
+  setup(props) {
+    const availableTriggers = REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
+    const availableRepeatTriggers = REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES;
 
-    isManualSimplified() {
-      return isInstructionTypeSimpleManual(this.form?.type);
-    },
+    const isAutoType = computed(() => isInstructionTypeAuto(props.form?.type));
+    const isManualSimplified = computed(() => isInstructionTypeSimpleManual(props.form?.type));
 
-    availableTriggers() {
-      return REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
-    },
+    return {
+      availableTriggers,
+      availableRepeatTriggers,
+
+      isAutoType,
+      isManualSimplified,
+    };
   },
 };
 </script>

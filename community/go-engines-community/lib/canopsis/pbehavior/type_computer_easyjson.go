@@ -32,11 +32,6 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "T":
 			if in.IsNull() {
@@ -114,28 +109,55 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "_id":
-			out.ID = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ID = string(in.String())
+			}
 		case "name":
-			out.Name = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Name = string(in.String())
+			}
 		case "description":
-			out.Description = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Description = string(in.String())
+			}
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "priority":
-			out.Priority = int64(in.Int64())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Priority = int64(in.Int64())
+			}
 		case "icon_name":
-			out.IconName = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.IconName = string(in.String())
+			}
 		case "color":
-			out.Color = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Color = string(in.String())
+			}
 		case "author":
-			out.Author = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Author = string(in.String())
+			}
 		case "created":
 			if in.IsNull() {
 				in.Skip()
@@ -144,8 +166,12 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Created == nil {
 					out.Created = new(datetime.CpsTime)
 				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.Created).UnmarshalJSON(data))
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					if data := in.Raw(); in.Ok() {
+						in.AddError((*out.Created).UnmarshalJSON(data))
+					}
 				}
 			}
 		case "updated":
@@ -156,12 +182,20 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Updated == nil {
 					out.Updated = new(datetime.CpsTime)
 				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.Updated).UnmarshalJSON(data))
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					if data := in.Raw(); in.Ok() {
+						in.AddError((*out.Updated).UnmarshalJSON(data))
+					}
 				}
 			}
 		case "hidden":
-			out.Hidden = bool(in.Bool())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Hidden = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -252,18 +286,25 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "n":
-			out.Name = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Name = string(in.String())
+			}
 		case "rn":
-			out.ReasonName = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ReasonName = string(in.String())
+			}
 		case "r":
-			out.ReasonID = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ReasonID = string(in.String())
+			}
 		case "t":
 			if in.IsNull() {
 				in.Skip()
@@ -288,11 +329,23 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Delim(']')
 			}
 		case "c":
-			out.Created = int64(in.Int64())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Created = int64(in.Int64())
+			}
 		case "clr":
-			out.Color = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Color = string(in.String())
+			}
 		case "a":
-			out.Author = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Author = string(in.String())
+			}
 		case "p":
 			if in.IsNull() {
 				in.Skip()
@@ -338,7 +391,11 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Delim(']')
 			}
 		case "i":
-			out.Inherited = bool(in.Bool())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Inherited = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -454,22 +511,33 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "field":
-			out.Field = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Field = string(in.String())
+			}
 		case "field_type":
-			out.FieldType = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.FieldType = string(in.String())
+			}
 		case "cond":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Condition).UnmarshalJSON(data))
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.Condition).UnmarshalJSON(data))
+				}
 			}
 		case "alias":
-			out.Alias = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Alias = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -519,14 +587,13 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "type":
-			out.Type = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Type = string(in.String())
+			}
 		case "value":
 			if m, ok := out.Value.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
@@ -580,17 +647,20 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "t":
-			out.ID = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.ID = string(in.String())
+			}
 		case "s":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.Span).UnmarshalJSON(data))
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				if data := in.Raw(); in.Ok() {
+					in.AddError((out.Span).UnmarshalJSON(data))
+				}
 			}
 		default:
 			in.SkipRecursive()
@@ -631,11 +701,6 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "ComputedPbehaviors":
 			if in.IsNull() {
@@ -647,7 +712,11 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 					key := string(in.String())
 					in.WantColon()
 					var v12 ComputedPbehavior
-					(v12).UnmarshalEasyJSON(in)
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						(v12).UnmarshalEasyJSON(in)
+					}
 					(out.ComputedPbehaviors)[key] = v12
 					in.WantComma()
 				}
@@ -670,7 +739,11 @@ func easyjson950e241aDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Delim('}')
 			}
 		case "DefaultActiveType":
-			out.DefaultActiveType = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.DefaultActiveType = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
