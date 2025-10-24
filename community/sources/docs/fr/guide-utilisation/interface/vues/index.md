@@ -22,6 +22,7 @@ Plusieurs informations concernant la vue sont demandées :
 * Activée: La vue doit-elle être accessible, ou non ?
 * Rafraîchissement périodique : Les données de la vue doivent-elles être rafraîchies régulièrement ?
 ![Rafraîchissement](./img/rafraichissement_vues.png  "Rafraîchissement des vues")
+    * Lorsqu'[une alarme est dépliée](../../../guide-utilisation/interface/widgets/bac-a-alarmes/index.md#agrandir-le-panneau) le rafraîchissement de la vue est suspendu. 
 * Labels de groupes: Labels permettant la classification
 * Groupe (*requis*): Groupe auquel la vue appartient. Le champ permet de rechercher parmi les groupes existants. Si aucun groupe n'est trouvé, appuyez sur la touche Entrée pour en créer un nouveau.
 

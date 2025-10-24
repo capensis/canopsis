@@ -112,7 +112,7 @@ func (m *MockDelayedScenarioManager) EXPECT() *MockDelayedScenarioManagerMockRec
 }
 
 // AddDelayedScenario mocks base method.
-func (m *MockDelayedScenarioManager) AddDelayedScenario(arg0 context.Context, arg1 types.Alarm, arg2 action.Scenario, arg3 action.AdditionalData) error {
+func (m *MockDelayedScenarioManager) AddDelayedScenario(arg0 context.Context, arg1 types.Alarm, arg2 action.Scenario, arg3 types.AdditionalData) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "AddDelayedScenario", arg0, arg1, arg2, arg3)
 	ret0, _ := ret[0].(error)
@@ -522,7 +522,7 @@ func (mr *MockScenarioStorageMockRecorder) ReloadScenarios(ctx any) *gomock.Call
 }
 
 // RunDelayedScenarios mocks base method.
-func (m *MockScenarioStorage) RunDelayedScenarios(ctx context.Context, triggers []string, alarm types.Alarm, entity types.Entity, additionalData action.AdditionalData) error {
+func (m *MockScenarioStorage) RunDelayedScenarios(ctx context.Context, triggers []string, alarm types.Alarm, entity types.Entity, additionalData types.AdditionalData) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "RunDelayedScenarios", ctx, triggers, alarm, entity, additionalData)
 	ret0, _ := ret[0].(error)

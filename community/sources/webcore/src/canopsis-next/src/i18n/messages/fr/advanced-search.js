@@ -8,6 +8,7 @@ export default {
   switchAdvancedSearchActiveToFalse: 'Passer à la recherche simple',
   noDataList: 'Il n\'y a aucun élément à saisir',
   inputPlaceholder: 'Rechercher ou filtrer les résultats...',
+  definedDifferent: 'La valeur diffère de celle définie',
 
   groups: {
     [ALARM_ADVANCED_SEARCH_GROUPS.basic]: 'Basique',
@@ -16,9 +17,11 @@ export default {
     [ALARM_ADVANCED_SEARCH_GROUPS.dates]: 'Dates',
     [ALARM_ADVANCED_SEARCH_GROUPS.actions]: 'Actions',
     [ALARM_ADVANCED_SEARCH_GROUPS.entity]: 'Entité',
+    [ALARM_ADVANCED_SEARCH_GROUPS.alias]: 'Alias',
     [ALARM_ADVANCED_SEARCH_GROUPS.pbehavior]: 'Comportements périodiques',
   },
 
   searchForThisText: 'Appuyez sur <kbd>Entrée</kbd> pour rechercher ce texte',
+  searchByText: 'Rechercher par texte',
   listDisabledMessage: 'Il n\'est pas possible de combiner des modèles\n(alarme, entité et comportement) avec OU (uniquement ET)',
 };

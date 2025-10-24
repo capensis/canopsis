@@ -47,6 +47,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
   </div>
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"
+    templatevars="[object Object]"
     webhooks=""
   />
 </div>
@@ -99,6 +100,7 @@ exports[`declare-ticket-rule-general-form Renders \`declare-ticket-rule-general-
   </div>
   <declare-ticket-rule-webhooks-field-stub
     name="webhooks"
+    templatevars="[object Object]"
     webhooks="[object Object]"
   />
 </div>

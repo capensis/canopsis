@@ -15,18 +15,19 @@
         />
       </v-flex>
       <v-flex xs6>
-        <v-text-field
+        <c-payload-text-field
           v-field="item[itemValue]"
           v-validate="valueValidationRules"
           :label="valueLabel"
           :disabled="disabled"
           :name="valueFieldName"
           :error-messages="errors.collect(valueFieldName)"
+          :variables="variables"
         >
           <template #append="">
             <slot name="append-value" />
           </template>
-        </v-text-field>
+        </c-payload-text-field>
       </v-flex>
     </v-layout>
     <c-action-btn
@@ -80,6 +81,10 @@ export default {
     valueRequired: {
       type: Boolean,
       default: false,
+    },
+    variables: {
+      type: Array,
+      default: () => [],
     },
   },
   computed: {

@@ -114,3 +114,16 @@ export const deepKeyBy = (array, idKey = '_id', childrenKey = 'items', prefix = 
 
   return acc;
 }, {});
+
+/**
+ * Creates an object mapping each array element by special key to its index position.
+ *
+ * @param {Array} [array=[]] - The array to create index mappings for.
+ * @param {string} [key='_id'] - The key to use for object keys.
+ * @returns {Object} An object where keys are array elements and values are their corresponding indexes.
+ */
+export const indexesByKey = (array = [], key = '_id') => array.reduce((acc, item, index) => {
+  acc[item[key]] = index;
+
+  return acc;
+}, {});

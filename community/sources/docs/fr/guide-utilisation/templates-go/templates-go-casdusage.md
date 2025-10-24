@@ -687,4 +687,30 @@ Template pour une notification à envoyer vers un webhook générique:
 * Les variables d'environnement `.Env.CanopsisURL` et `.Env.Environment` doivent être définies
 * Le type de trigger est inclus via `.AdditionalData.Trigger`
 
+## 9. Notification sur le service Gotify
+
+Template pour une notification à envoyer vers [Gotify](https://gotify.net):
+
+```go
+{
+  "title": "🚨 Nouvelle Alarme\n(créée le {{ .Alarm.Value.CreationDate | localtime "02/01/2006 15:04:05" }})",
+  "priority": 5,
+  "message": "# {{ .Alarm.Value.Component |json_unquote}}\n\n![banner](https://www.canopsis.fr/wp-content/uploads/2022/11/logo-canopsis.png)\n\n🧩 **Message**  \n{{ .Alarm.Value.State.Message |json_unquote}}\n\n🧪 **Trigger**  \ncreate\n\n---\n🔗 **Détails** : {{ .Alarm.Value.DisplayName}} -- {{ .Alarm.Value.Component |json_unquote }} / {{ .Alarm.Value.Resource }}",
+  "extras": {
+    "client::display": { "contentType": "text/markdown" },
+    "client::notification": { "click": { "url": "{{ .Env.CanopsisURL }}/alarms/{{ .Alarm.ID }}" } }
+  }
+} "client::notification": {
+      "click": { "url": "http://localhost/alarms/{{ .Alarm.ID }}" }
+  }
+}
+```
+
+**Cas d'usage:** Ce template crée un payload JSON compatible avec le service Gotify
+
+**À noter:**
+
+* Le format JSON est structuré de manière logique pour faciliter l'intégration
+* La variable d'environnement `.Env.CanopsisURL` doit être définie
+
 

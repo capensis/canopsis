@@ -1,5 +1,8 @@
 <script>
 import VCombobox from 'vuetify/lib/components/VCombobox';
+import VSelectList from 'vuetify/lib/components/VSelect/VSelectList';
+
+import VariablesList from '@/components/common/text-editor/variables-list.vue';
 
 import VMenu from '../v-menu/v-menu.vue';
 
@@ -24,6 +27,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    childrenKey: {
+      type: String,
+      required: false,
+    },
   },
   computed: {
     isSearching() {
@@ -32,6 +39,26 @@ export default {
       }
 
       return this.searchIsDirty && (this.forceSearching || this.internalSearch !== this.getText(this.selectedItem));
+    },
+
+    staticList() {
+      if (this.childrenKey) {
+        return this.$createElement(VariablesList, {
+          props: {
+            value: this.value,
+            items: this.items,
+            childrenKey: this.childrenKey,
+            returnObject: this.returnObject,
+            clickableParent: this.clickableParent,
+            pending: this.loading,
+          },
+          on: {
+            input: this.selectItem,
+          },
+        });
+      }
+
+      return this.$createElement(VSelectList, this.listData);
     },
   },
   methods: {
