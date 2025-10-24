@@ -325,6 +325,8 @@ export default {
   last: 'Last',
   seeDetails: 'See details',
   calculated: 'Calculated',
+  settings: 'Settings',
+  after: 'After',
   defined: 'Defined',
   bulkDelete: 'Remove selected',
   variableTypes: {

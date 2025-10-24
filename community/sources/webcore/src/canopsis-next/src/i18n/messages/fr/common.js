@@ -325,6 +325,8 @@ export default {
   last: 'Dernier',
   inProgress: 'En cours',
   calculated: 'Calculé',
+  settings: 'Paramètres',
+  after: 'Après',
   defined: 'Défini',
   bulkDelete: 'Supprimer la sélection',
   variableTypes: {

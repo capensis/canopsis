@@ -20,7 +20,7 @@
     </v-card>
     <v-layout
       v-show="hasChanges"
-      class="submit-button mt-3 gap-2"
+      class="sticky-bottom-buttons mt-3 gap-2"
     >
       <v-btn
         class="ml-3"
@@ -83,15 +83,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped>
-.submit-button {
-  position: sticky;
-  bottom: 10px;
-  pointer-events: none;
-
-  button {
-    pointer-events: all;
-  }
-}
-</style>

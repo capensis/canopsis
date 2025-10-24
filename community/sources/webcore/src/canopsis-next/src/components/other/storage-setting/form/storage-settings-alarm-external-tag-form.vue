@@ -1,8 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.alarmExternalTag.title')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.alarmExternalTag.title')">
     <template
       v-if="history"
       #subtitle=""
@@ -16,7 +13,10 @@
     <c-enabled-duration-field
       v-field="form.delete_after"
       :label="$t('storageSetting.alarmExternalTag.deleteAfter')"
-      :name="alarmExternalTagDeleteAfterFieldName"
+      :suffix="$t('storageSetting.olderThan')"
+      name="alarm_external_tag.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -38,11 +38,6 @@ export default {
     history: {
       type: Object,
       required: false,
-    },
-  },
-  computed: {
-    alarmExternalTagDeleteAfterFieldName() {
-      return 'alarm_external_tag.delete_after';
     },
   },
 };
