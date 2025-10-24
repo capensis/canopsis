@@ -1,9 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.alarm.title')"
-    :help-text="$t('storageSetting.alarm.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$tc('common.alarm', 2)">
     <template
       v-if="history"
       #subtitle=""
@@ -17,17 +13,29 @@
     <c-enabled-duration-field
       v-field="form.archive_after"
       :label="$t('storageSetting.alarm.archiveAfter')"
-      :name="alarmArchiveAfterFieldName"
+      :suffix="$t('common.after')"
+      name="alarm.archive_after"
+      switcher
+      hide-value-on-false
     />
     <c-enabled-duration-field
       v-field="form.delete_after"
       :label="$t('storageSetting.alarm.deleteAfter')"
-      :name="alarmDeleteAfterFieldName"
+      :suffix="$t('common.after')"
+      :after="form.archive_after"
+      name="alarm.delete_after"
+      switcher
+      hide-value-on-false
+      @input="validateDeleteAfter"
     />
   </c-information-block>
 </template>
 
 <script>
+import { nextTick } from 'vue';
+
+import { useValidator } from '@/hooks/validator/validator';
+
 import StorageSettingsHistoryMessage from '../partials/storage-settings-history-message.vue';
 
 export default {
@@ -47,22 +55,14 @@ export default {
       required: false,
     },
   },
-  computed: {
-    alarmArchiveAfterFieldName() {
-      return 'alarm.archive_after';
-    },
+  setup() {
+    const validator = useValidator();
 
-    alarmDeleteAfterFieldName() {
-      return 'alarm.delete_after';
-    },
-  },
-  watch: {
-    form() {
-      this.$validator.validateAll([
-        this.alarmArchiveAfterFieldName,
-        this.alarmDeleteAfterFieldName,
-      ]);
-    },
+    const validateDeleteAfter = () => nextTick(() => validator.validate('alarm.delete_after'));
+
+    return {
+      validateDeleteAfter,
+    };
   },
 };
 </script>

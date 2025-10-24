@@ -176,6 +176,23 @@ func FlattenJSON(b []byte) (flattenRes map[string]any, basicRes any, _ error) {
 	return res, nil, nil
 }
 
+func FlattenJSON(b []byte) (flattenRes map[string]any, basicRes any, _ error) {
+	parsed, err := fastjson.ParseBytes(b)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	initKey := ""
+	res := flatten(parsed, initKey)
+	if len(res) == 1 {
+		if v, ok := res[initKey]; ok {
+			return nil, v, nil
+		}
+	}
+
+	return res, nil, nil
+}
+
 func flatten(in *fastjson.Value, prevKey string) map[string]any {
 	out := make(map[string]any)
 
@@ -193,16 +210,44 @@ func flatten(in *fastjson.Value, prevKey string) map[string]any {
 			}
 		})
 	case fastjson.TypeArray:
-		for idx, v := range in.GetArray() {
+		arr := in.GetArray()
+		arrValues := make([]any, 0, len(arr))
+
+		for idx, v := range arr {
 			newPrevKey := fmt.Sprintf("%s.%d", prevKey, idx)
 			if prevKey == "" {
 				newPrevKey = newPrevKey[1:]
 			}
 
-			nm := flatten(v, newPrevKey)
-			for nk, nv := range nm {
-				out[nk] = nv
+			switch v.Type() {
+			case fastjson.TypeNull:
+				out[newPrevKey] = nil
+				arrValues = append(arrValues, nil)
+			case fastjson.TypeString:
+				out[newPrevKey] = string(v.GetStringBytes())
+				arrValues = append(arrValues, out[newPrevKey])
+			case fastjson.TypeTrue, fastjson.TypeFalse:
+				out[newPrevKey] = v.GetBool()
+				arrValues = append(arrValues, out[newPrevKey])
+			case fastjson.TypeNumber:
+				var err error
+				out[newPrevKey], err = v.Int()
+				if err != nil {
+					out[newPrevKey] = v.GetFloat64()
+				}
+
+				arrValues = append(arrValues, out[newPrevKey])
+			default:
+				nm := flatten(v, newPrevKey)
+				for nk, nv := range nm {
+					out[nk] = nv
+				}
 			}
+		}
+
+		// if all was primitives or empty
+		if len(arrValues) == len(arr) {
+			out[prevKey] = arrValues
 		}
 	case fastjson.TypeNull:
 		out[prevKey] = nil

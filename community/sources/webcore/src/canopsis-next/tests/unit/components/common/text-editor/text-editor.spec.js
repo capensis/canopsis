@@ -119,8 +119,8 @@ describe('text-editor', () => {
 
     variablesMenu.triggerCustomEvent('input', variable);
 
-    expect(wrapper).toEmitInput(`{{ ${variable} }}`);
-    expect(focusSpy).toBeCalled();
+    expect(wrapper).toEmitInput(variable);
+    expect(focusSpy).toHaveBeenCalled();
   });
 
   test('Menu showed after trigger variables button', async () => {
@@ -399,7 +399,6 @@ describe('text-editor', () => {
         config: {},
         errorMessages: ['Error'],
         maxFileSize: 1,
-        withDefaultVariables: true,
       },
       store,
     });

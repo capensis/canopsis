@@ -35,13 +35,6 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
           </a>
         </li>
         <li
-          class="jodit_toolbar_btn jodit_toolbar_btn-variables"
-        >
-          <span
-            class="text-editor__variables-button"
-          />
-        </li>
-        <li
           class="jodit_toolbar_btn jodit_toolbar_btn-empty"
         >
           <a>
@@ -271,15 +264,7 @@ exports[`text-editor Renders \`text-editor\` with custom props 1`] = `
         </p>
       </div>
     </div>
-    <variables-menu-stub
-      childrenkey="variables"
-      clickableparent="true"
-      dense="true"
-      items="[object Object]"
-      positionx="0"
-      positiony="0"
-      value=""
-    />
+    <!---->
     <div
       class="text-editor__details"
     >
