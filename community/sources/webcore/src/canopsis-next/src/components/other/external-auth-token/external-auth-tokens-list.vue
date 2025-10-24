@@ -96,7 +96,6 @@ export default {
       {
         text: t('externalAuthToken.tokenName'),
         value: 'name',
-        sortable: false,
       },
       {
         text: t('common.description'),
@@ -111,12 +110,10 @@ export default {
       {
         text: t('externalAuthToken.lastUsedDate'),
         value: 'last_used',
-        sortable: false,
       },
       {
         text: t('externalAuthToken.lastUpdateDate'),
         value: 'updated',
-        sortable: false,
       },
       {
         value: 'actions',
@@ -128,13 +125,17 @@ export default {
     const preparedTokens = computed(() => props.tokens.map((token) => {
       const linkedRulesTooltip = getLinkedRulesMessage(token.linked_rules);
 
+      if (!linkedRulesTooltip.trim()) {
+        return token;
+      }
+
       const deleteTooltip = t('externalAuthToken.tokenCanNotBeDeleted', { rules: linkedRulesTooltip });
 
       return {
         ...token,
 
         linkedRulesTooltip,
-        deleteTooltip: deleteTooltip ? `<span class="pre-wrap">${deleteTooltip}</span>` : '',
+        deleteTooltip: `<span class="pre-wrap">${deleteTooltip}</span>`,
       };
     }));
 
