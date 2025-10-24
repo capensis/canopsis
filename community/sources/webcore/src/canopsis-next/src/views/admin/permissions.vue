@@ -9,7 +9,7 @@
             {{ $t(`permission.title.${tab.name}`) }}
           </v-tab>
           <v-tab-item :key="`${tab._id}-item`" :value="tab._id">
-            <permissions-table
+            <permissions-table-wrapper
               :treeview-permissions="tab.children"
               :roles="roles"
               @input="changeRole"
@@ -46,11 +46,11 @@ import {
   useRolePermissionFetching,
 } from '@/components/other/permission/hooks/role-permission';
 
-import PermissionsTable from '@/components/other/permission/permissions-table.vue';
+import PermissionsTableWrapper from '@/components/other/permission/permissions-table-wrapper.vue';
 import PermissionsFabBtn from '@/components/other/permission/permissions-fab-btn.vue';
 
 export default {
-  components: { PermissionsTable, PermissionsFabBtn },
+  components: { PermissionsTableWrapper, PermissionsFabBtn },
   setup() {
     const activeTab = ref();
 

@@ -193,3 +193,70 @@ export const getPermissionCheckboxProps = (role, permission, action) => {
  * @returns {boolean} True if the permission belongs to API group, false otherwise
  */
 export const isApiPermission = (permissionId = '') => permissionId.startsWith(USER_PERMISSIONS_GROUPS.api);
+
+/**
+ * Filters treeview permissions by search term recursively
+ *
+ * @param {Object} treeviewPermissions - The treeview permissions object
+ * @param {string} [search=''] - The search term to filter by
+ * @returns {Object} Filtered treeview permissions object. If a parent has any matching child, the parent is included.
+ *
+ * @example
+ * const filtered = filterTreeviewPermissions(permissions, 'alarm');
+ * // Returns tree with only nodes matching 'alarm' and their parents
+ */
+export const filterTreeviewPermissions = (treeviewPermissions, search = '') => {
+  if (!search || !search.trim()) {
+    return treeviewPermissions;
+  }
+
+  const searchLower = search.toLowerCase().trim();
+  const filtered = {};
+
+  const matchesSearch = (node, key) => (
+    node.name?.toLowerCase().includes(searchLower)
+    || node.description?.toLowerCase().includes(searchLower)
+    || key.toLowerCase().includes(searchLower)
+  );
+
+  const filterNode = (node, key) => {
+    const nodeMatches = matchesSearch(node, key);
+
+    if (node.children) {
+      const filteredChildren = {};
+      let hasMatchingChildren = false;
+
+      Object.entries(node.children).forEach(([childKey, childNode]) => {
+        const result = filterNode(childNode, childKey);
+        if (result) {
+          filteredChildren[childKey] = result;
+          hasMatchingChildren = true;
+        }
+      });
+
+      if (nodeMatches || hasMatchingChildren) {
+        const filteredChildrenIds = new Set(Object.keys(filteredChildren));
+        const filteredAllChildren = node.allChildren.filter(child => filteredChildrenIds.has(child._id));
+
+        return {
+          ...node,
+          children: filteredChildren,
+          allChildren: filteredAllChildren.length > 0 ? filteredAllChildren : node.allChildren,
+        };
+      }
+
+      return null;
+    }
+
+    return nodeMatches ? node : null;
+  };
+
+  Object.entries(treeviewPermissions).forEach(([key, node]) => {
+    const result = filterNode(node, key);
+    if (result) {
+      filtered[key] = result;
+    }
+  });
+
+  return filtered;
+};
