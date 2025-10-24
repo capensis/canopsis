@@ -1,9 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.eventFilterFailure.title')"
-    :help-text="$t('storageSetting.eventFilterFailure.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.eventFilterFailure.title')">
     <template
       v-if="history"
       #subtitle=""
@@ -14,7 +10,10 @@
       v-field="form.delete_after"
       :label="$t('storageSetting.eventFilterFailure.deleteAfter')"
       :help-text="$t('storageSetting.eventFilterFailure.deleteAfterHelpText')"
+      :suffix="$t('storageSetting.olderThan')"
       name="errors.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
