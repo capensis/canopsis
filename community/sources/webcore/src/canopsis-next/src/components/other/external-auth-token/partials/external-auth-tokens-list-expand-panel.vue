@@ -7,8 +7,8 @@
           :items="items"
           hide-default-footer
         >
-          <template #item.date="{ item }">
-            {{ item.date | date }}
+          <template #failed="{ item }">
+            {{ item.failed | date }}
           </template>
         </v-data-table>
       </v-card-text>
@@ -33,7 +33,7 @@ export default {
 
     const headers = computed(() => [
       { text: t('common.requestDate'), value: 'failed', width: 200, sortable: false },
-      { text: t('common.output'), value: 'failed_reason', sortable: false },
+      { text: t('common.output'), value: 'fail_reason', sortable: false },
     ]);
 
     const items = computed(() => [props.token]);
