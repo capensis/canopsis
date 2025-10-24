@@ -66,6 +66,14 @@ export default {
       type: String,
       default: 'infos',
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
+    copyVariables: {
+      type: Array,
+      default: () => [],
+    },
   },
   computed: {
     errorMessages() {
@@ -122,6 +130,8 @@ export default {
         name: MODALS.createDynamicInfoInformation,
         config: {
           existingNames: this.form.map(info => info.name),
+          variables: this.variables,
+          copyVariables: this.copyVariables,
           action: newInfo => this.addItemIntoArray(newInfo),
         },
       });
@@ -134,6 +144,8 @@ export default {
           info,
 
           existingNames: this.form.map(({ name }) => name),
+          variables: this.variables,
+          copyVariables: this.copyVariables,
           action: (newInfo) => {
             const index = this.findInfoIndex(info);
 

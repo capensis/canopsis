@@ -10,15 +10,9 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Alarm data storage
+      Alarms
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
-      top=""
-    />
+    <!---->
   </div>
   <div
     class="layout mt-2"
@@ -34,13 +28,20 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     </span>
   </div>
   <c-enabled-duration-field-stub
-    label="Archive resolved alarms data after"
+    hide-value-on-false=""
+    label="Archive resolved alarms data"
     name="alarm.archive_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
-    label="Delete resolved alarms data after"
+    after="[object Object]"
+    hide-value-on-false=""
+    label="Delete resolved alarms data"
     name="alarm.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>
@@ -56,25 +57,26 @@ exports[`storage-settings-alarm-form Renders \`storage-settings-alarm-form\` wit
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Alarm data storage
+      Alarms
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="When switched on, the resolved alarms data will be archived and/or deleted after the defined time period."
-      top=""
-    />
+    <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    label="Archive resolved alarms data after"
+    hide-value-on-false=""
+    label="Archive resolved alarms data"
     name="alarm.archive_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
   <c-enabled-duration-field-stub
-    label="Delete resolved alarms data after"
+    after="[object Object]"
+    hide-value-on-false=""
+    label="Delete resolved alarms data"
     name="alarm.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>

@@ -92,6 +92,7 @@ describe('pattern-groups-field', () => {
             dictionary: '',
             field: '',
             fieldType: PATTERN_FIELD_TYPES.string,
+            alias: false,
             operator: '',
             value: '',
             range: {

@@ -49,7 +49,7 @@ const InstructionStatusApproved = 0
 type Store interface {
 	Find(ctx context.Context, r ListRequestWithPagination, userID string) (*AggregationResult, error)
 	GetAssignedInstructionsMap(ctx context.Context, alarmIds []string) (map[string][]AssignedInstruction, error)
-	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error)
+	GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction, hadAssignedInstructions map[string]bool) (map[string]ExecutionStatus, error)
 	Count(ctx context.Context, r FilterRequest, userID string) (*Count, error)
 	GetByID(ctx context.Context, id, userID string) (*Alarm, error)
 	GetOpenByEntityID(ctx context.Context, id, userID string) (*Alarm, bool, error)
@@ -966,7 +966,12 @@ func (s *store) processInstructionFiltersPipeline(
 	return nil
 }
 
-func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]AssignedInstruction) (map[string]ExecutionStatus, error) {
+func (s *store) GetInstructionExecutionStatuses(
+	ctx context.Context,
+	alarmIDs []string,
+	assignedInstructionsMap map[string][]AssignedInstruction,
+	hadAssignedInstructionsMap map[string]bool,
+) (map[string]ExecutionStatus, error) {
 	if len(alarmIDs) == 0 {
 		return nil, nil
 	}
@@ -1161,7 +1166,7 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 	for _, v := range executionStatuses {
 		delete(leftAlarms, v.ID)
 
-		v.Icon = getInstructionExecutionIcon(v, assignedInstructionsMap)
+		v.Icon = getInstructionExecutionIcon(v, assignedInstructionsMap, hadAssignedInstructionsMap)
 		statusesByAlarm[v.ID] = v
 	}
 
@@ -1170,13 +1175,21 @@ func (s *store) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []
 			statusesByAlarm[alarmID] = ExecutionStatus{
 				Icon: IconManualAvailable,
 			}
+		} else if hadAssignedInstructionsMap[alarmID] {
+			statusesByAlarm[alarmID] = ExecutionStatus{
+				Icon: IconManualNotExecuted,
+			}
 		}
 	}
 
 	return statusesByAlarm, nil
 }
 
-func getInstructionExecutionIcon(status ExecutionStatus, assignedInstructionsMap map[string][]AssignedInstruction) int {
+func getInstructionExecutionIcon(
+	status ExecutionStatus,
+	assignedInstructionsMap map[string][]AssignedInstruction,
+	hadAssignedInstructionsMap map[string]bool,
+) int {
 	availableInstructionsMap := make(map[string]struct{}, len(assignedInstructionsMap[status.ID]))
 	for _, instr := range assignedInstructionsMap[status.ID] {
 		availableInstructionsMap[instr.Name] = struct{}{}
@@ -1201,6 +1214,7 @@ func getInstructionExecutionIcon(status ExecutionStatus, assignedInstructionsMap
 	successfulManualInstruction := len(status.SuccessfulManualInstructions) != 0
 	successfulAutoInstruction := len(status.SuccessfulAutoInstructions) != 0
 	availableInstructions := len(availableInstructionsMap) != 0
+	hadAssignedInstructions := hadAssignedInstructionsMap[status.ID]
 	lastFailed := status.LastFailed
 	lastSuccessful := status.LastSuccessful
 
@@ -1256,6 +1270,10 @@ func getInstructionExecutionIcon(status ExecutionStatus, assignedInstructionsMap
 		return IconManualAvailable
 	}
 
+	if hadAssignedInstructions {
+		return IconManualNotExecuted
+	}
+
 	return NoIcon
 }
 
@@ -1291,16 +1309,25 @@ func (s *store) fillAssignedInstructions(ctx context.Context, result *Aggregatio
 	return assignedInstructionsMap, anyInstructionMatch, nil
 }
 
-func (s *store) fillInstructionExecutionStatusesAndIcon(ctx context.Context, result *AggregationResult, assignedInstructions map[string][]AssignedInstruction) error {
+func (s *store) fillInstructionExecutionStatusesAndIcon(
+	ctx context.Context,
+	result *AggregationResult,
+	assignedInstructions map[string][]AssignedInstruction,
+) error {
 	alarmIDs := make([]string, len(result.Data))
+	hadAssignedInstructions := make(map[string]bool, len(result.Data))
 	for i, item := range result.Data {
 		alarmIDs[i] = item.ID
+		if item.Value.Resolved != nil && len(item.KpiAssignedInstructions) > 0 {
+			hadAssignedInstructions[item.ID] = true
+		}
 	}
+
 	if len(alarmIDs) == 0 {
 		return nil
 	}
 
-	executionStatuses, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs, assignedInstructions)
+	executionStatuses, err := s.GetInstructionExecutionStatuses(ctx, alarmIDs, assignedInstructions, hadAssignedInstructions)
 	if err != nil {
 		return err
 	}

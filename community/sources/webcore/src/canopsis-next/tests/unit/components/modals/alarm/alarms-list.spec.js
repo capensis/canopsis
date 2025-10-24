@@ -1,6 +1,6 @@
 import { generateRenderer } from '@unit/utils/vue';
 import { createModalWrapperStub } from '@unit/stubs/modal';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModules, createEntityInfoPropertyModule } from '@unit/utils/store';
 
 import AlarmsList from '@/components/modals/alarm/alarms-list.vue';
 
@@ -17,8 +17,11 @@ describe('alarms-list', () => {
     },
   };
 
+  const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+
   const store = createMockedStoreModules([
     associativeTableModule,
+    entityInfoPropertyModule,
   ]);
 
   const snapshotFactory = generateRenderer(AlarmsList, { stubs: snapshotStubs });

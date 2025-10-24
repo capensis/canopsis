@@ -1,14 +1,12 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.metrics.title')"
-    :help-text="$t('storageSetting.metrics.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.metrics.title')">
     <c-enabled-duration-field
       v-field="form.delete_after"
       :label="$t('storageSetting.metrics.deleteAfter')"
-      :help-text="$t('storageSetting.metrics.deleteAfterHelpText')"
-      :name="metricsDeleteAfterFieldName"
+      :suffix="$t('common.after')"
+      name="metrics.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -23,11 +21,6 @@ export default {
     form: {
       type: Object,
       required: true,
-    },
-  },
-  computed: {
-    metricsDeleteAfterFieldName() {
-      return 'metrics.delete_after';
     },
   },
 };
