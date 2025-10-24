@@ -2,7 +2,7 @@ import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModules, createTemplateVarsModule, createEntityInfoPropertyModule } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockSidebar } from '@unit/utils/mock-hooks';
@@ -184,6 +184,9 @@ describe('alarm', () => {
     infosModule,
   } = createSettingsMocks();
 
+  const { templateVarsModule } = createTemplateVarsModule();
+  const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
@@ -201,6 +204,7 @@ describe('alarm', () => {
     'v.state.val',
     'v.status.val',
   ];
+  widget.parameters.moreInfoTemplate = '';
 
   const sidebar = {
     name: SIDE_BARS.alarmSettings,
@@ -217,8 +221,10 @@ describe('alarm', () => {
     authModule,
     userPreferenceModule,
     widgetTemplateModule,
+    entityInfoPropertyModule,
     serviceModule,
     infosModule,
+    templateVarsModule,
   ]);
 
   const timestamp = 1386435600000;
@@ -628,7 +634,9 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
+        entityInfoPropertyModule,
         infosModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {
@@ -676,7 +684,9 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
+        entityInfoPropertyModule,
         infosModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {
@@ -1600,7 +1610,9 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         infosModule,
+        entityInfoPropertyModule,
         serviceModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {

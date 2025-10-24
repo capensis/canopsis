@@ -6,13 +6,13 @@ import CAlarmTag from '@/components/forms/fields/alarm/c-alarm-tag-field.vue';
 import CLazySearchField from '@/components/forms/fields/c-lazy-search-field.vue';
 
 const stubs = {
-  'c-alarm-action-chip': true,
+  'c-chip': true,
   'c-lazy-search-field': CLazySearchField,
   'c-select-field': createSelectInputStub('c-select-field'),
 };
 
 const snapshotStubs = {
-  'c-alarm-action-chip': true,
+  'c-chip': true,
   'c-lazy-search-field': true,
   'c-select-field': true,
 };

@@ -1,9 +1,6 @@
 <template>
   <v-form @submit.prevent="submit">
-    <modal-wrapper
-      :close="close"
-      minimize
-    >
+    <modal-wrapper close>
       <template #title="">
         <span>{{ config.assignedInstruction.name }}</span>
       </template>
@@ -31,6 +28,12 @@
           </v-layout>
         </v-fade-transition>
       </template>
+      <template v-if="hasActions" #actions="">
+        <remediation-instruction-execute-btns
+          :instruction-execution="instructionExecution"
+          @close="closeModal"
+        />
+      </template>
     </modal-wrapper>
   </v-form>
 </template>
@@ -51,12 +54,14 @@ import {
   isInstructionExecutionPaused,
   isInstructionExecutionRunning,
 } from '@/helpers/entities/remediation/instruction-execution/form';
+import { remediationInstructionExecutionIsRunning } from '@/helpers/entities/remediation/instruction-execution/list';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { entitiesRemediationJobExecutionMixin } from '@/mixins/entities/remediation/job-execution';
 import { entitiesRemediationInstructionExecutionMixin } from '@/mixins/entities/remediation/instruction-execution';
 
 import RemediationInstructionExecute from '@/components/other/remediation/instruction-execute/remediation-instruction-execute.vue';
+import RemediationInstructionExecuteBtns from '@/components/other/remediation/instruction-execute/partials/remediation-instruction-execute-btns.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -65,6 +70,7 @@ export default {
   components: {
     ModalWrapper,
     RemediationInstructionExecute,
+    RemediationInstructionExecuteBtns,
   },
   mixins: [
     modalInnerMixin,
@@ -80,6 +86,10 @@ export default {
     };
   },
   computed: {
+    hasActions() {
+      return this.instructionExecution && remediationInstructionExecutionIsRunning(this.instructionExecution);
+    },
+
     instruction() {
       return this.config.assignedInstruction;
     },
@@ -104,15 +114,12 @@ export default {
         const isFailedExecution = isInstructionExecutionFailed(instructionExecution)
           || isInstructionExecutionAborted(instructionExecution);
 
-        const type = isFailedExecution ? 'failed' : 'success';
-        const text = this.$t(`remediation.instructionExecute.popups.${type}`, {
-          instructionName: instructionExecution.name,
-        });
-
         if (isFailedExecution) {
+          const text = this.$t('remediation.instructionExecute.popups.failed', {
+            instructionName: instructionExecution.name,
+          });
+
           this.$popups.error({ text });
-        } else {
-          this.$popups.success({ text });
         }
 
         if (this.config.onComplete) {
@@ -137,7 +144,9 @@ export default {
      */
     joinToSocketRoom() {
       if (
-        !this.instructionExecutionId
+        // eslint-disable-next-line no-underscore-dangle
+        this._isDestroyed
+        || !this.instructionExecutionId
         || isInstructionExecutionFailed(this.instructionExecution)
         || isInstructionExecutionAborted(this.instructionExecution)
         || isInstructionExecutionCompleted(this.instructionExecution)
@@ -283,28 +292,6 @@ export default {
     },
 
     /**
-     * Cancel remediation instruction execution with error handler
-     *
-     * @return {Promise<void>}
-     */
-    cancelExecution() {
-      return this.tryToCallWithHandleNotFound(
-        () => this.cancelRemediationInstructionExecution({ id: this.instructionExecutionId }),
-      );
-    },
-
-    /**
-     * Pause remediation instruction execution with error handler
-     *
-     * @return {Promise<void>}
-     */
-    pauseExecution() {
-      return this.tryToCallWithHandleNotFound(
-        () => this.pauseRemediationInstructionExecution({ id: this.instructionExecutionId }),
-      );
-    },
-
-    /**
      * Execute special job by operation
      *
      * @param {RemediationJobExecution} job
@@ -403,6 +390,13 @@ export default {
      * @param {RemediationInstructionStepOperation} operation
      */
     setOperation(operation) {
+      if (!operation) {
+        this.$modals.hide();
+        this.leaveFromSocketRoom();
+
+        return;
+      }
+
       for (const step of this.instructionExecution.steps) {
         const operationIndex = step.operations
           .findIndex(({ operation_id: operationId }) => operationId === operation.operation_id);
@@ -422,7 +416,7 @@ export default {
      */
     async closeModal() {
       if (this.config.onClose) {
-        await this.config.onClose();
+        this.config.onClose();
       }
 
       this.$modals.hide();
@@ -451,33 +445,6 @@ export default {
       }
 
       this.pending = false;
-    },
-
-    /**
-     * Close handler
-     */
-    close() {
-      this.$modals.show({
-        name: MODALS.confirmation,
-        config: {
-          hideTitle: true,
-          text: this.$t('remediation.instructionExecute.closeConfirmationText'),
-          action: async () => {
-            await this.pauseExecution();
-
-            await this.closeModal();
-          },
-          cancel: async (cancelled) => {
-            if (!cancelled) {
-              return;
-            }
-
-            await this.cancelExecution();
-
-            await this.closeModal();
-          },
-        },
-      });
     },
   },
 };

@@ -52,10 +52,6 @@ export const ADMIN_PAGES_RULES = {
   eventsRecord: { edition: CANOPSIS_EDITION.pro },
 };
 
-export const NOTIFICATIONS_PAGES_RULES = {
-  instructionStats: { edition: CANOPSIS_EDITION.pro },
-};
-
 export const USER_PERMISSIONS_PREFIXES = {
   technical: {
     admin: 'models',
@@ -195,6 +191,7 @@ export const USER_PERMISSIONS = {
     remediationJob: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationJob`,
     remediationConfiguration: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationConfiguration`,
     remediationStatistic: `${USER_PERMISSIONS_PREFIXES.technical.admin}_remediationStatistic`,
+    remediationinstructionStats: `${USER_PERMISSIONS_PREFIXES.technical.admin}_instructionStats`, // TODO: rename it to admin
     healthcheck: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheck`,
     techmetrics: `${USER_PERMISSIONS_PREFIXES.technical.admin}_techmetrics`,
     healthcheckStatus: `${USER_PERMISSIONS_PREFIXES.technical.admin}_healthcheckStatus`,
@@ -212,6 +209,7 @@ export const USER_PERMISSIONS = {
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
+    templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
     exploitation: {
       eventFilter: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_eventFilter`,
       pbehavior: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_pbehavior`,
@@ -225,10 +223,10 @@ export const USER_PERMISSIONS = {
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_declareTicketRule`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_linkRule`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_externalData`,
+      entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.technical.exploitation}_entityInfoProperty`,
     },
     notification: {
-      common: USER_PERMISSIONS_PREFIXES.technical.notification,
-      instructionStats: `${USER_PERMISSIONS_PREFIXES.technical.notification}_instructionStats`,
+      common: `${USER_PERMISSIONS_PREFIXES.technical.notification}_common`,
     },
     profile: {
       corporatePattern: `${USER_PERMISSIONS_PREFIXES.technical.profile}_corporatePattern`,
@@ -443,6 +441,7 @@ export const USER_PERMISSIONS = {
       entitycategory: `${USER_PERMISSIONS_PREFIXES.api}_entitycategory`,
       entitycomment: `${USER_PERMISSIONS_PREFIXES.api}_entitycomment`,
       entityservice: `${USER_PERMISSIONS_PREFIXES.api}_entityservice`,
+      entityInfoProperty: `${USER_PERMISSIONS_PREFIXES.api}_entity_info_property`,
       event: `${USER_PERMISSIONS_PREFIXES.api}_event`,
       view: `${USER_PERMISSIONS_PREFIXES.api}_view`,
       viewgroup: `${USER_PERMISSIONS_PREFIXES.api}_viewgroup`,
@@ -479,6 +478,7 @@ export const USER_PERMISSIONS = {
       launchEventRecording: `${USER_PERMISSIONS_PREFIXES.api}_launch_event_recording`,
       resendEvents: `${USER_PERMISSIONS_PREFIXES.api}_resend_events`,
       externalDataTable: `${USER_PERMISSIONS_PREFIXES.api}_external_data_table`,
+      templateData: `${USER_PERMISSIONS_PREFIXES.api}_template_data`,
 
       ...featuresService.get('constants.USER_PERMISSIONS.api.general'),
     },
@@ -508,6 +508,7 @@ export const USER_PERMISSIONS = {
       pbehaviorException: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorexception`,
       pbehaviorReason: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviorreason`,
       pbehaviorType: `${USER_PERMISSIONS_PREFIXES.api}_pbehaviortype`,
+      pbehaviorPatterns: `${USER_PERMISSIONS_PREFIXES.api}_pbehavior_patterns`,
     },
   },
 };
@@ -627,11 +628,59 @@ export const USER_PERMISSIONS_TO_PAGES_RULES = {
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: EXPLOITATION_PAGES_RULES.metaAlarmRule,
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: EXPLOITATION_PAGES_RULES.declareTicketRule,
 
-  /**
-   * Notifications pages
-   */
-  [USER_PERMISSIONS.technical.notification.instructionStats]: NOTIFICATIONS_PAGES_RULES.instructionStats,
 };
+
+/**
+ * Map of permissions that enable other permissions conditionally
+ * Key: Permission ID that triggers the condition
+ * Value: Array of objects with dependent permission ID and i18n tooltip key
+ *
+ * @example
+ * // To add a new conditional permission:
+ * [USER_PERMISSIONS.some.triggerPermission]: [
+ *   {
+ *     dependentPermission: USER_PERMISSIONS.some.dependentPermission,
+ *     tooltipKey: 'permission.conditionalTooltips.someTooltipKey',
+ *   },
+ *   // Multiple dependencies can be added for one trigger permission
+ * ],
+ */
+export const CONDITIONAL_PERMISSIONS_MAP = {
+  [USER_PERMISSIONS.technical.remediationInstructionApprove]: [
+    {
+      dependentPermission: USER_PERMISSIONS.technical.remediationInstruction,
+      tooltipKey: 'permission.conditionalTooltips.approveInstructions',
+    },
+  ],
+  [USER_PERMISSIONS.business.alarmsList.actions.executeInstruction]: [
+    {
+      dependentPermission: USER_PERMISSIONS.technical.remediationinstructionStats,
+      tooltipKey: 'permission.conditionalTooltips.executeManualInstructions',
+    },
+  ],
+};
+
+/**
+ * Inverse map for efficient lookup of conditional dependencies
+ * Key: Dependent permission ID
+ * Value: Array of objects with trigger permission and tooltip key
+ *
+ * This is automatically generated from CONDITIONAL_PERMISSIONS_MAP for O(1) lookup performance
+ */
+export const INVERSE_CONDITIONAL_PERMISSIONS_MAP = Object.entries(CONDITIONAL_PERMISSIONS_MAP)
+  .reduce((acc, [triggerPermission, dependencies]) => {
+    dependencies.forEach(({ dependentPermission, tooltipKey }) => {
+      if (!acc[dependentPermission]) {
+        acc[dependentPermission] = [];
+      }
+      acc[dependentPermission].push({
+        triggerPermission,
+        tooltipKey,
+      });
+    });
+
+    return acc;
+  }, {});
 
 export const DOCUMENTATION_LINKS = {
   /**
@@ -673,9 +722,4 @@ export const DOCUMENTATION_LINKS = {
    */
   [GROUPED_USER_PERMISSIONS_KEYS.planning]: 'latest/guide-utilisation/menu-administration/planification/',
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: 'latest/guide-utilisation/remediation/',
-
-  /**
-   * Notifications
-   */
-  // [USER_PERMISSIONS.technical.notification.instructionStats]: '', // TODO: TBD
 };

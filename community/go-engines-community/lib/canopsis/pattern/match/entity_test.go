@@ -4,7 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -415,6 +417,231 @@ func getMatchEntityPatternDataSets() map[string]entityDataSet {
 					},
 				},
 			},
+			matchResult: false,
+		},
+		"given timestamp info condition with absolute time should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			entity: types.Entity{
+				Infos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       1625097600,
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given timestamp info condition with absolute time should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			entity: types.Entity{
+				Infos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       1672531200,
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given timestamp info condition with relative time should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			entity: types.Entity{
+				Infos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       time.Now().Add(-30 * time.Minute).Unix(),
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given timestamp info condition with relative time should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			entity: types.Entity{
+				Infos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       time.Now().Add(-2 * time.Hour).Unix(),
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given timestamp info condition and non-timestamp info should return error": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			entity: types.Entity{
+				Infos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       "not a timestamp",
+					},
+				},
+			},
+			matchErr:    pattern.ErrWrongConditionValue,
+			matchResult: false,
+		},
+
+		"given timestamp component info condition with absolute time should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       1625097600,
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given timestamp component info condition with absolute time should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       1672531200,
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given timestamp component info condition with relative time should match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       time.Now().Add(-30 * time.Minute).Unix(),
+					},
+				},
+			},
+			matchResult: true,
+		},
+		"given timestamp component info condition with relative time should not match": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: func() pattern.Condition {
+							condition, _ := pattern.NewDurationCondition(pattern.ConditionTimeRelative, datetime.NewDurationWithUnit(3600, datetime.DurationUnitSecond))
+							return condition
+						}(),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       time.Now().Add(-2 * time.Hour).Unix(),
+					},
+				},
+			},
+			matchResult: false,
+		},
+		"given timestamp component info condition and non-timestamp info should return error": {
+			pattern: pattern.Entity{
+				{
+					{
+						Field:     "component_infos.timestamp_info",
+						FieldType: pattern.FieldTypeTimestamp,
+						Condition: pattern.NewTimeIntervalCondition(pattern.ConditionTimeAbsolute, 1609459200, 1640995200),
+					},
+				},
+			},
+			entity: types.Entity{
+				ComponentInfos: map[string]types.Info{
+					"timestamp_info": {
+						Name:        "timestamp_info",
+						Description: "test timestamp",
+						Value:       "not a timestamp",
+					},
+				},
+			},
+			matchErr:    pattern.ErrWrongConditionValue,
 			matchResult: false,
 		},
 	}
