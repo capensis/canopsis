@@ -5,11 +5,14 @@ import (
 	"context"
 	"errors"
 	"reflect"
-	"sort"
+	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entitycounters"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -18,6 +21,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -34,6 +38,8 @@ type Store interface {
 	Create(ctx context.Context, request CreateRequest) (*Response, error)
 	Update(ctx context.Context, request UpdateRequest) (*Response, ServiceChanges, error)
 	Delete(ctx context.Context, id, userID string) (bool, error)
+	ValidateTemplates(request TemplateRequest) (map[string]template.ValidateResponse, error)
+	GetTemplateVars() TemplateVarsResponse
 }
 
 type ServiceChanges struct {
@@ -53,7 +59,11 @@ type store struct {
 	linkGenerator             link.Generator
 	enableSameServiceNames    bool
 	authorProvider            author.Provider
+	tplValidator              validator.Validator
+	tplConfigProvider         config.TemplateConfigProvider
 	logger                    zerolog.Logger
+	tplVars                   []template.VarResponse
+	dupErrorParser            validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -62,6 +72,8 @@ func NewStore(
 	enableSameServiceNames bool,
 	authorProvider author.Provider,
 	transformer common.PatternFieldsTransformer,
+	tplValidator validator.Validator,
+	tplConfigProvider config.TemplateConfigProvider,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -76,7 +88,25 @@ func NewStore(
 		linkGenerator:             linkGenerator,
 		enableSameServiceNames:    enableSameServiceNames,
 		authorProvider:            authorProvider,
+		tplValidator:              tplValidator,
+		tplConfigProvider:         tplConfigProvider,
 		logger:                    logger,
+		tplVars: []template.VarResponse{
+			{Name: "numberOfAlarms", Value: "{{ .All }}"},
+			{Name: "numberOfActiveAlarms", Value: "{{ .Active }}"},
+			{Name: "numberOfDependencies", Value: "{{ .Depends }}"},
+			{Name: "numberOfAlarmsInOKState", Value: "{{ .State.Ok }}"},
+			{Name: "numberOfAlarmsInMinorState", Value: "{{ .State.Minor }}"},
+			{Name: "numberOfAlarmsInMajorState", Value: "{{ .State.Major }}"},
+			{Name: "numberOfAlarmsInCriticalState", Value: "{{ .State.Critical }}"},
+			{Name: "numberOfAcknowledgedAlarms", Value: "{{ .Acknowledged }}"},
+			{Name: "numberOfNotAcknowledgedAlarms", Value: "{{ .NotAcknowledged }}"},
+			{Name: "numberOfAlarmsUnderPbehavior", Value: "{{ .UnderPbehavior }}"},
+			{Name: "numberOfAcknowledgedAlarmsUnderPbehavior", Value: "{{ .AcknowledgedUnderPbh }}"},
+		},
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id": "ID already exists.",
+		}),
 	}
 }
 
@@ -349,6 +379,10 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 
 		_, err = s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -481,6 +515,24 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return true, nil
 }
 
+func (s *store) ValidateTemplates(r TemplateRequest) (map[string]template.ValidateResponse, error) {
+	tplData := entitycounters.EntityCounters{}
+	var err error
+	response := make(map[string]template.ValidateResponse)
+	response["output_template"], err = template.Validate(s.tplValidator, r.Rule.OutputTemplate, tplData)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
+}
+
+func (s *store) GetTemplateVars() TemplateVarsResponse {
+	return TemplateVarsResponse{
+		Output: template.AddEnvVars(s.tplVars, s.tplConfigProvider),
+	}
+}
+
 func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregationResult, userID string) error {
 	if response == nil || len(response.Data) == 0 {
 		return nil
@@ -504,8 +556,8 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 	for i, v := range response.Data {
 		response.Data[i].Links = linksByEntityId[v.ID]
 		for _, links := range response.Data[i].Links {
-			sort.Slice(links, func(i, j int) bool {
-				return links[i].Label < links[j].Label
+			slices.SortFunc(links, func(l, r link.Link) int {
+				return cmp.Compare(l.Label, r.Label)
 			})
 		}
 	}
@@ -514,7 +566,7 @@ func (s *store) fillLinks(ctx context.Context, response *ContextGraphAggregation
 }
 
 func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {
-	return entity.NewMongoQueryBuilder(s.dbClient, s.authorProvider)
+	return entity.NewMongoQueryBuilder(s.dbClient, s.authorProvider, s.transformer)
 }
 
 func (s *store) findUser(ctx context.Context, id string) (link.User, error) {

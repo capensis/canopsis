@@ -81,7 +81,7 @@ pbehavior:
 
 ## Liste complète des paramètres disponibles
 
-La liste des paramètres est disponible ici : [schemas_swagger.yaml](https://github.com/capensis/canopsis/blob/develop/community/go-engines-community/lib/api/docs/schemas_swagger.yaml#L2835)
+La liste des paramètres est disponible ici : [schemas_swagger.yaml](https://github.com/capensis/canopsis/blob/release-25.10/community/go-engines-community/lib/api/docs/schemas_swagger.yaml#L2835)
 
 Chaque paramètres correspond à une collection MongoDB associée.
 

@@ -1,7 +1,8 @@
 <template>
   <v-tabs
+    v-model="activeTab"
     slider-color="primary"
-    centered
+    fixed-tabs
   >
     <v-tab :class="{ 'error--text': hasGeneralError }">
       {{ $t('common.general') }}
@@ -10,33 +11,69 @@
       {{ $tc('common.pattern', 2) }}
     </v-tab>
 
+    <template-testing-test-variables-tab v-if="hasAccess" :disabled="isEmptyVariablesFields" />
+
     <v-tab-item eager>
       <remediation-instruction-general-form
         v-field="form"
-        ref="general"
+        ref="generalElement"
         :disabled="disabled"
         :is-new="isNew"
         :required-approve="requiredApprove"
+        :template-vars="templateVars"
         class="mt-3"
       />
     </v-tab-item>
     <v-tab-item eager>
       <remediation-instruction-patterns-form
         v-field="form.patterns"
-        ref="patterns"
+        ref="patternsElement"
         class="mt-3"
+      />
+    </v-tab-item>
+    <v-tab-item v-if="hasAccess" :disabled="isEmptyVariablesFields">
+      <template-testing-test-variables
+        :general-form="form"
+        :variables-fields="variablesFields"
+        :template-vars="templateVars"
+        :rule-id="ruleId"
+        :type="type"
+        :active="isActiveTestingTab"
       />
     </v-tab-item>
   </v-tabs>
 </template>
 
 <script>
+import {
+  computed,
+  ref,
+  toRef,
+  watch,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
+
+import { TEMPLATE_TESTING_TEST_TYPES } from '@/constants';
+
+import { useTemplateVarsList } from '@/hooks/vars/template';
+
+import {
+  useTestVariablesTabData,
+} from '@/components/other/template-testing/test-variables/hooks/template-test-variables-wrapper';
+
+import TemplateTestingTestVariables from '@/components/other/template-testing/test-variables/template-testing-test-variables.vue';
+import TemplateTestingTestVariablesTab from '@/components/other/template-testing/test-variables/partials/template-testing-test-variables-tab.vue';
+
 import RemediationInstructionGeneralForm from './remediation-instruction-general-form.vue';
 import RemediationInstructionPatternsForm from './remediation-instruction-patterns-form.vue';
 
 export default {
   inject: ['$validator'],
   components: {
+    TemplateTestingTestVariables,
+    TemplateTestingTestVariablesTab,
+
     RemediationInstructionGeneralForm,
     RemediationInstructionPatternsForm,
   },
@@ -65,31 +102,77 @@ export default {
       type: Boolean,
       default: false,
     },
+    ruleId: {
+      type: String,
+      required: false,
+    },
   },
-  data() {
-    return {
-      hasGeneralError: false,
-      hasPatternsError: false,
+  setup(props, { emit }) {
+    const activeTab = ref(0);
+
+    const hasGeneralError = ref(false);
+    const hasPatternsError = ref(false);
+
+    const generalElement = ref(null);
+    const patternsElement = ref(null);
+
+    const type = ref(TEMPLATE_TESTING_TEST_TYPES.instruction);
+
+    const isActiveTestingTab = computed(() => activeTab.value === 2);
+
+    const { vars: templateVars, fetchList } = useTemplateVarsList({
+      type,
+      form: toRef(props, 'form'),
+    });
+
+    const {
+      hasAccess,
+
+      items: variablesFields,
+      isEmptyItems: isEmptyVariablesFields,
+    } = useTestVariablesTabData(props, type, emit);
+
+    let unwatchGeneralTabErrors = null;
+    let unwatchPatternsTabErrors = null;
+
+    const watchTabsErrors = () => {
+      unwatchGeneralTabErrors = watch(() => generalElement.value?.hasAnyError, (value) => {
+        hasGeneralError.value = value;
+      });
+
+      unwatchPatternsTabErrors = watch(() => patternsElement.value?.hasAnyError, (value) => {
+        hasPatternsError.value = value;
+      });
     };
-  },
-  mounted() {
-    this.watchTabsErrors();
-  },
-  methods: {
-    watchTabsErrors() {
-      this.unwatchGeneralTabErrors = this.$watch(() => this.$refs.general?.hasAnyError, (value) => {
-        this.hasGeneralError = value;
-      });
 
-      this.unwatchPatternsTabErrors = this.$watch(() => this.$refs.patterns?.hasAnyError, (value) => {
-        this.hasPatternsError = value;
-      });
-    },
+    const unwatchTabsErrors = () => {
+      unwatchGeneralTabErrors?.();
+      unwatchPatternsTabErrors?.();
+    };
 
-    unwatchTabsErrors() {
-      this.unwatchGeneralTabErrors?.();
-      this.unwatchPatternsTabErrors?.();
-    },
+    onMounted(() => {
+      watchTabsErrors();
+      fetchList();
+    });
+
+    onBeforeUnmount(unwatchTabsErrors);
+
+    return {
+      activeTab,
+      isActiveTestingTab,
+
+      generalElement,
+      patternsElement,
+      hasGeneralError,
+      hasPatternsError,
+
+      hasAccess,
+      variablesFields,
+      isEmptyVariablesFields,
+
+      templateVars,
+      type,
+    };
   },
 };
 </script>

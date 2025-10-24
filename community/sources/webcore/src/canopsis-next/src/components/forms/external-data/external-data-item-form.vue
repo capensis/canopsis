@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-text>
-      <v-layout column>
+      <v-layout class="gap-2" column>
         <v-layout align-center>
           <v-text-field
             v-field="form.reference"
@@ -54,17 +54,23 @@
           :payload-variables="variables"
           :url-variables="variables"
         />
+        <c-alert v-if="errorMessages.length" type="error">
+          {{ errorMessages.join('\n') }}
+        </c-alert>
       </v-layout>
     </v-card-text>
   </v-card>
 </template>
 
 <script>
+import { computed, onMounted } from 'vue';
+
 import { EXTERNAL_DATA_TYPES } from '@/constants';
 
 import { isTableExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
-import { formMixin } from '@/mixins/form';
+import { useI18n } from '@/hooks/i18n';
+import { useValidator } from '@/hooks/validator/validator';
 
 import RequestForm from '@/components/forms/request/request-form.vue';
 
@@ -73,7 +79,6 @@ import ExternalDataTableForm from './external-data-table-form.vue';
 export default {
   inject: ['$validator'],
   components: { RequestForm, ExternalDataTableForm },
-  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -86,6 +91,10 @@ export default {
     name: {
       type: String,
       required: true,
+    },
+    serverErrorName: {
+      type: String,
+      default: '',
     },
     disabled: {
       type: Boolean,
@@ -104,26 +113,41 @@ export default {
       default: false,
     },
   },
-  computed: {
-    availableTypes() {
-      return this.types.length
-        ? this.types
+  setup(props, { emit }) {
+    // Composables
+    const { t } = useI18n();
+    const validator = useValidator();
+
+    // Computed properties
+    const availableTypes = computed(() => (
+      props.types.length
+        ? props.types
         : Object.values(EXTERNAL_DATA_TYPES)
-          .map(type => ({ text: this.$t(`externalData.types.${type}`), value: type }));
-    },
+          .map(type => ({ text: t(`externalData.types.${type}`), value: type }))
+    ));
 
-    isTableType() {
-      return isTableExternalDataType(this.form.type);
-    },
+    const isTableType = computed(() => isTableExternalDataType(props.form.type));
+    const referenceFieldName = computed(() => `${props.name}.reference`);
+    const errorMessages = computed(() => validator.errors.collect(props.serverErrorName));
 
-    referenceFieldName() {
-      return `${this.name}.reference`;
-    },
-  },
-  methods: {
-    remove() {
-      this.$emit('remove', this.form);
-    },
+    // Methods
+    const remove = () => emit('remove', props.form);
+
+    // Lifecycle
+    onMounted(() => {
+      if (props.serverErrorName) {
+        validator.attach({ name: props.serverErrorName });
+      }
+    });
+
+    return {
+      availableTypes,
+      isTableType,
+      referenceFieldName,
+
+      errorMessages,
+      remove,
+    };
   },
 };
 </script>

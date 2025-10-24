@@ -235,13 +235,13 @@ mapping:
       type: set
       value: Composant
     pattern:
-      cond: eq
-      field: infos.codeComposant
-      field_type: string
-      value:
-        type: template
-        field: _source.codeComposant
-        value: '{{uppercase .Field}}'
+      - - cond: eq
+          field: infos.codeComposant
+          field_type: string
+          value:
+            type: template
+            field: _source.codeComposant
+            value: '{{uppercase .Field}}'
     infos:
       env:
         value:
@@ -333,12 +333,12 @@ mapping:
       type: set
       value: Application
     pattern:
-      cond: has_one_of
-      field: infos.applications
-      field_type: string_array
-      value:
-        type: copy
-        value: _source.codeApplication
+      - - cond: has_one_of
+          field: infos.applications
+          field_type: string_array
+          value:
+            type: copy
+            value: _source.codeApplication
     infos:
       env:
         value:
