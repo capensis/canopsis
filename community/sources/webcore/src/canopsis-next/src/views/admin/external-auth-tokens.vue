@@ -68,7 +68,9 @@ export default {
       updateOptions,
       fetchList,
     } = useFetchListWithoutStoreWithOptions({
-      fetchListHandler: params => fetchWebhookTokenRulesListWithoutStore({ params: { ...params, with_flags: true } }),
+      fetchListHandler: ({ params } = {}) => (
+        fetchWebhookTokenRulesListWithoutStore({ params: { ...params, with_flags: true } })
+      ),
     });
 
     /**
