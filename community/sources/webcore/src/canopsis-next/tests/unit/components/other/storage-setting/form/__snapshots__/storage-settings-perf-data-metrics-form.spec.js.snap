@@ -10,21 +10,17 @@ exports[`storage-settings-perf-data-metrics-form Renders \`storage-settings-perf
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      External metrics data storage
+      External metrics
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="When enabled, external metrics data will be deleted after the defined time period"
-      top=""
-    />
+    <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    help-text="All external metrics older than the defined time period will be deleted"
-    label="Clear metrics storage after"
+    hide-value-on-false=""
+    label="Delete metrics"
     name="perf_data_metrics.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>
@@ -40,21 +36,17 @@ exports[`storage-settings-perf-data-metrics-form Renders \`storage-settings-perf
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      External metrics data storage
+      External metrics
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="When enabled, external metrics data will be deleted after the defined time period"
-      top=""
-    />
+    <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    help-text="All external metrics older than the defined time period will be deleted"
-    label="Clear metrics storage after"
+    hide-value-on-false=""
+    label="Delete metrics"
     name="perf_data_metrics.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>

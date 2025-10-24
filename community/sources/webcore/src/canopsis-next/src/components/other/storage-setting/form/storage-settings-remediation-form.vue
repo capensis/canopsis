@@ -1,8 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.remediation.title')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.remediation.title')">
     <template
       v-if="history"
       #subtitle=""
@@ -12,22 +9,28 @@
     <c-enabled-duration-field
       v-field="form.delete_after"
       :label="$t('storageSetting.remediation.deleteAfter')"
-      :help-text="$t('storageSetting.remediation.deleteAfterHelpText')"
-      :name="remediationDeleteAfterFieldName"
+      :suffix="$t('common.after')"
+      name="remediation.delete_after"
+      switcher
+      hide-value-on-false
     />
     <c-enabled-duration-field
       v-field="form.delete_stats_after"
       :label="$t('storageSetting.remediation.deleteStatsAfter')"
-      :help-text="$t('storageSetting.remediation.deleteStatsAfterHelpText')"
-      :name="remediationDeleteStatsAfterFieldName"
       :after="form.delete_after"
+      :suffix="$t('common.after')"
+      name="remediation.delete_stats_after"
+      switcher
+      hide-value-on-false
     />
     <c-enabled-duration-field
       v-field="form.delete_mod_stats_after"
       :label="$t('storageSetting.remediation.deleteModStatsAfter')"
-      :help-text="$t('storageSetting.remediation.deleteModStatsAfterHelpText')"
-      :name="remediationDeleteModStatsAfterFieldName"
       :after="form.delete_stats_after"
+      :suffix="$t('common.after')"
+      name="remediation.delete_mod_stats_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -50,26 +53,6 @@ export default {
     history: {
       type: Number,
       required: false,
-    },
-  },
-  computed: {
-    remediationDeleteAfterFieldName() {
-      return 'remediation.delete_after';
-    },
-
-    remediationDeleteStatsAfterFieldName() {
-      return 'remediation.delete_stats_after';
-    },
-
-    remediationDeleteModStatsAfterFieldName() {
-      return 'remediation.delete_mod_stats_after';
-    },
-  },
-  watch: {
-    form() {
-      this.$validator.validateAll([
-        this.remediationDeleteAfterFieldName,
-      ]);
     },
   },
 };

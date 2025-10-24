@@ -1,14 +1,12 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.perfDataMetrics.title')"
-    :help-text="$t('storageSetting.perfDataMetrics.titleHelp')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.perfDataMetrics.title')">
     <c-enabled-duration-field
       v-field="form.delete_after"
       :label="$t('storageSetting.perfDataMetrics.deleteAfter')"
-      :help-text="$t('storageSetting.perfDataMetrics.deleteAfterHelpText')"
-      :name="perfDataMetricsDeleteAfterFieldName"
+      :suffix="$t('common.after')"
+      name="perf_data_metrics.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -23,11 +21,6 @@ export default {
     form: {
       type: Object,
       required: true,
-    },
-  },
-  computed: {
-    perfDataMetricsDeleteAfterFieldName() {
-      return 'perf_data_metrics.delete_after';
     },
   },
 };
