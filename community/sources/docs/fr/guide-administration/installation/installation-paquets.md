@@ -59,7 +59,7 @@ Vous pouvez vérifier les limites de ressources systèmes avec la commande suiva
 ulimit -a
 ```
 
-Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v7.0/reference/ulimit/), créez le fichier `/etc/security/limits.d/mongo.conf` :
+Pour appliquer la [configuration recommandée par le projet MongoDB](https://www.mongodb.com/docs/v8.0/reference/ulimit/), créez le fichier `/etc/security/limits.d/mongo.conf` :
 
 ```sh
 cat << EOF > /etc/security/limits.d/mongo.conf
@@ -106,13 +106,13 @@ dnf install https://download.postgresql.org/pub/repos/yum/reporpms/EL-$(cat /etc
 Ajout du dépôt pour MongoDB :
 
 ```sh
-cat << EOF > /etc/yum.repos.d/mongodb-org-7.0.repo
-[mongodb-org-7.0]
+cat << EOF > /etc/yum.repos.d/mongodb-org-8.0.repo
+[mongodb-org-8.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/7.0/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/8.0/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
+gpgkey=https://pgp.mongodb.com/server-8.0.asc
 EOF
 ```
 
@@ -248,7 +248,7 @@ dnf versionlock add --raw 'valkey-8.*'
 ```
 
 Les autres dépendances de Canopsis proviennent de canaux garantissant déjà le
-maintien dans la branche majeure souhaitée (exemple : MongoDB 7.0,).
+maintien dans la branche majeure souhaitée (exemple : MongoDB 8.0).
 
 [dnf-versionlock]: https://dnf-plugins-core.readthedocs.io/en/latest/versionlock.html
 

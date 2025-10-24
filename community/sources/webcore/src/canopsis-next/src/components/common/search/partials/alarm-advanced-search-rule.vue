@@ -23,7 +23,7 @@ import {
   toRef,
 } from 'vue';
 
-import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_FIELD_TYPES, PATTERN_QUICK_RANGES } from '@/constants';
+import { ALARM_ADVANCED_SEARCH_CHIP_TYPES, PATTERN_QUICK_RANGES, PATTERN_OPERATORS_WITHOUT_VALUE } from '@/constants';
 
 import { isArrayOperator } from '@/helpers/entities/pattern/form';
 import {
@@ -36,6 +36,7 @@ import {
   isNumberValueType,
 } from '@/helpers/search/alarm-advanced-search';
 
+import { useI18n } from '@/hooks/i18n';
 import { useModelField } from '@/hooks/form/model-field';
 
 import { useAdvancedSearchRuleActiveItems, useAttachAdvancedSearchRuleValidator } from '../hooks/alarm-advanced-search';
@@ -71,15 +72,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    inputTypes: {
-      type: Array,
-      default: () => [
-        { value: PATTERN_FIELD_TYPES.string },
-        { value: PATTERN_FIELD_TYPES.number },
-        { value: PATTERN_FIELD_TYPES.boolean },
-        { value: PATTERN_FIELD_TYPES.stringArray },
-      ],
-    },
     intervalRanges: {
       type: Array,
       default: () => PATTERN_QUICK_RANGES,
@@ -102,6 +94,8 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const { t } = useI18n();
+
     const { updateModel } = useModelField(props, emit);
 
     const inputType = ref(getInitialFormItemType(props.rule, props.union));
@@ -113,7 +107,6 @@ export default {
       rule: toRef(props, 'rule'),
       attributes: toRef(props, 'attributes'),
       intervalRanges: toRef(props, 'intervalRanges'),
-      inputTypes: toRef(props, 'inputTypes'),
       allowOr: toRef(props, 'allowOr'),
     });
 
@@ -176,20 +169,16 @@ export default {
      *                        types in `ALARM_ADVANCED_SEARCH_CHIP_TYPES`.
      */
     const updateChipItem = (value, type) => {
+      const preparedRule = { ...props.rule };
       const oldFilled = props.rule.filled ?? [];
       const typeIndex = oldFilled.indexOf(type);
       const filled = typeIndex === -1 ? oldFilled : oldFilled.slice(0, typeIndex + 1);
 
-      const filledForRemove = typeIndex === -1 ? [] : oldFilled.slice(typeIndex + 1);
       let skipType = false;
 
-      if (isArrayItem(type, value)) {
+      if (isArrayItem(type, value) && !PATTERN_OPERATORS_WITHOUT_VALUE.includes(value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
         skipType = true;
-
-        if (typeIndex > 0) {
-          // filledForRemove = oldFilled.slice(typeIndex + 1);
-        }
       }
 
       if (isCustomRangeItem(type, value)) {
@@ -202,9 +191,21 @@ export default {
         skipType = true;
       }
 
+      if (type === ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute) {
+        const { alias, definedType } = attributesMap.value?.[value] ?? {};
+
+        preparedRule.alias = !!alias;
+
+        if (definedType) {
+          preparedRule.fieldType = definedType;
+          filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType);
+          skipType = true;
+        }
+      }
+
       updateModel({
-        ...props.rule,
-        ...pick(advancedSearchRuleItemToFormItem(), filledForRemove),
+        ...preparedRule,
+        ...pick(advancedSearchRuleItemToFormItem(), oldFilled.filter(field => !filled.includes(field))),
         [type]: value,
         filled: uniq(filled),
       });
@@ -240,7 +241,7 @@ export default {
       const preparedRule = { ...props.rule };
       let skipType = false;
 
-      if (isArrayItem(inputType.value, value)) {
+      if (isArrayItem(inputType.value, value) && !PATTERN_OPERATORS_WITHOUT_VALUE.includes(value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.value);
         preparedRule[ALARM_ADVANCED_SEARCH_CHIP_TYPES.value] = [];
         skipType = true;
@@ -254,6 +255,19 @@ export default {
       if (isDurationItem(inputType.value, value)) {
         filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.duration);
         skipType = true;
+      }
+
+      if (inputType.value === ALARM_ADVANCED_SEARCH_CHIP_TYPES.attribute) {
+        const { alias, definedType } = attributesMap.value?.[value] ?? {};
+
+        preparedRule.alias = !!alias;
+
+        if (definedType) {
+          preparedRule.fieldType = definedType;
+          filled.push(ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType);
+
+          skipType = true;
+        }
       }
 
       updateModel({
@@ -309,6 +323,7 @@ export default {
       closable,
       type = inputType.value,
     }) => {
+      const items = itemsByType.value[type];
       const key = `${props.rule.key}.${type}`;
       let multiple = false;
       let itemText;
@@ -332,8 +347,8 @@ export default {
       }
 
       const bind = {
+        items,
         disabled: props.disabled,
-        items: itemsByType.value[type],
         itemText: itemText ?? 'text',
         itemValue: itemValue ?? 'value',
         allowText: first || !itemsByType.value[type]?.length,
@@ -348,15 +363,29 @@ export default {
       if (input) {
         bind.alwaysActive = true;
       } else {
+        const value = props.rule[type];
+        const definedItem = (items ?? []).find(({ defined }) => defined);
+
+        bind.color = undefined;
+        bind.tooltip = undefined;
+
+        if (definedItem && definedItem.value !== value) {
+          bind.color = 'warning';
+          bind.tooltip = t('advancedSearch.definedDifferent');
+        }
+
+        if (validator.errors.has(props.rule.key)) {
+          bind.color = 'error';
+        }
+
+        bind.value = value;
         bind.alwaysActive = multiple && !props.rule[type]?.length;
         bind.active = isActiveType(type);
-        bind.value = props.rule[type];
         bind.closable = closable;
         bind.multiple = multiple;
-        bind.color = validator.errors.has(props.rule.key) ? 'error' : undefined;
 
         on = {
-          input: value => updateChipItem(value, isText(value) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
+          input: newVlaue => updateChipItem(newVlaue, isText(newVlaue) ? ALARM_ADVANCED_SEARCH_CHIP_TYPES.text : type),
           click: () => clickChip(type),
           focusout: () => focusOutChip(type),
           close: remove,

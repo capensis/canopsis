@@ -3,13 +3,14 @@ import { omit } from 'lodash';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
 import { mockModals, mockPopups, mockSocket } from '@unit/utils/mock-hooks';
-import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 import {
   createActiveViewModule,
   createMockedStoreModule,
   createMockedStoreModules,
   createServiceModule,
+  createWidgetModule,
 } from '@unit/utils/store';
+import { fakeAlarmDetails, fakeStaticAlarms } from '@unit/data/alarm';
 
 import { API_HOST, API_ROUTES } from '@/config';
 import {
@@ -113,13 +114,38 @@ describe('alarms-list', () => {
 
     _id: '880c5d0c-3f31-477c-8365-2f90389326cc',
   };
+
+  const defaultWidgetColumnsActiveColumns = widget.parameters.widgetColumns.map(v => v.value);
+  const defaultMoreInfoTemplateActiveColumns = [
+    'v.display_name',
+    'is_meta_alarm',
+    'v.max_state',
+    'v.initial_state',
+    'v.initial_output',
+    'v.creation_date',
+    'v.ticket.ticket_url',
+    'v.ticket.ticket',
+    'v.ticket',
+    'v.duration',
+    'v.events_count',
+    'v.total_state_changes',
+    'pbehavior.name',
+    'pbehavior.type.name',
+    'pbehavior',
+    'v.comments',
+    'v.tickets',
+    'entity.infos',
+    'entity.component_infos',
+    'v.infos',
+  ];
+
   const defaultQuery = {
     page: 1,
     filters: [],
     sortBy: [],
     sortDesc: [],
     instructionsFilter: {},
-    active_columns: widget.parameters.widgetColumns.map(v => v.value),
+    active_columns: [...defaultWidgetColumnsActiveColumns, ...defaultMoreInfoTemplateActiveColumns],
     correlation: userPreferences.content.isCorrelationEnabled,
     only_bookmarks: userPreferences.content.onlyBookmarks,
     category: userPreferences.content.category,
@@ -128,6 +154,7 @@ describe('alarms-list', () => {
     tstop: LIVE_REPORTING_QUICK_RANGES.last1Year.stop,
     opened: null,
     search: 'search',
+    tags: undefined,
   };
   const view = {
     enabled: true,
@@ -258,6 +285,7 @@ describe('alarms-list', () => {
   };
 
   const { serviceModule, fetchEntityInfosKeysWithoutStore } = createServiceModule();
+  const { widgetModule } = createWidgetModule();
   const { activeViewModule } = createActiveViewModule();
 
   const store = createMockedStoreModules([
@@ -270,6 +298,7 @@ describe('alarms-list', () => {
     authModule,
     alarmTagModule,
     serviceModule,
+    widgetModule,
     activeViewModule,
   ]);
 
@@ -320,7 +349,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(fetchUserPreference).toBeCalledWith(
+    expect(fetchUserPreference).toHaveBeenCalledWith(
       expect.any(Object),
       { id: widget._id },
     );
@@ -355,7 +384,7 @@ describe('alarms-list', () => {
 
     await flushPromises();
 
-    expect(fetchUserPreference).not.toBeCalled();
+    expect(fetchUserPreference).not.toHaveBeenCalled();
 
     expect(updateQuery).toHaveBeenCalledWith(
       expect.any(Object),
@@ -387,6 +416,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,
@@ -449,6 +479,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,
@@ -556,6 +587,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,
@@ -776,6 +808,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,
@@ -916,6 +949,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,
@@ -1001,6 +1035,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,
@@ -1069,6 +1104,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,
@@ -1146,6 +1182,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...alarmModule,
@@ -1221,6 +1258,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...alarmModule,
@@ -1270,6 +1308,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...alarmModule,
@@ -1323,6 +1362,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...alarmModule,
@@ -1792,6 +1832,7 @@ describe('alarms-list', () => {
         serviceModule,
         alarmModule,
         authModule,
+        widgetModule,
         activeViewModule,
         {
           ...userPreferenceModule,
@@ -1856,6 +1897,7 @@ describe('alarms-list', () => {
         serviceModule,
         alarmModule,
         authModule,
+        widgetModule,
         activeViewModule,
         {
           ...userPreferenceModule,
@@ -1967,6 +2009,7 @@ describe('alarms-list', () => {
         userPreferenceModule,
         alarmTagModule,
         serviceModule,
+        widgetModule,
         activeViewModule,
         {
           ...authModule,

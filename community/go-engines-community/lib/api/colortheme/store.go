@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -40,6 +41,8 @@ type store struct {
 
 	defaultSearchByFields   []string
 	defaultCanopsisThemeIDs map[string]struct{}
+
+	dupErrorParser validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -61,6 +64,9 @@ func NewStore(
 			ColorBlind:     {},
 			ColorBlindDark: {},
 		},
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -83,7 +89,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err := s.dbColorCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return common.NewValidationError("name", "Name already exists.")
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -189,7 +195,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		res, err := s.dbColorCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": doc})
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return common.NewValidationError("name", "Name already exists.")
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err

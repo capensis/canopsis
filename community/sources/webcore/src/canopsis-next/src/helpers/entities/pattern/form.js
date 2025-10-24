@@ -3,7 +3,7 @@ import {
   isArray,
   isBoolean,
   isEmpty,
-  isNan,
+  isNaN,
   isNull,
   isNumber,
   isString,
@@ -82,6 +82,7 @@ import { uid } from '@/helpers/uid';
  * @property {PatternRuleCondition} cond
  * @property {string} field
  * @property {string} [field_type]
+ * @property {boolean} [alias]
  */
 
 /**
@@ -105,10 +106,12 @@ import { uid } from '@/helpers/uid';
  * @property {string} operator
  * @property {string} field
  * @property {string} fieldType
+ * @property {string} definedType
  * @property {string} dictionary
  * @property {number | string} value
  * @property {PatternRuleRangeForm} range
  * @property {Duration} duration
+ * @property {boolean} alias
  */
 
 /**
@@ -519,7 +522,7 @@ export const getFieldType = (value) => {
  * @return {boolean}
  */
 export const isValidRuleValueWithFieldType = (rule) => {
-  const { field, cond, field_type: fieldType } = rule;
+  const { field, alias, cond, field_type: fieldType } = rule;
 
   if ([PATTERN_FIELD_TYPES.stringArray, PATTERN_FIELD_TYPES.string].includes(fieldType)) {
     if (isArrayCondition(cond.type)) {
@@ -534,7 +537,7 @@ export const isValidRuleValueWithFieldType = (rule) => {
 
   const isInfos = isInfosPatternRuleField(field) || isExtraInfosPatternRuleField(field);
 
-  return isInfos && getFieldType(cond.value) === fieldType;
+  return (isInfos || alias) && getFieldType(cond.value) === fieldType;
 };
 
 /**
@@ -555,7 +558,7 @@ export const isValidRuleValue = rule => (
  * @param {PatternRule | *} rule
  * @return {boolean}
  */
-export const isValidPatternRule = rule => !!rule?.field
+export const isValidPatternRule = rule => !!(rule?.field || rule?.alias)
   && !isNil(rule.cond?.value)
   && !isNil(rule.cond?.type)
   && (!rule.field_type || isValidRuleFieldType(rule.field_type))
@@ -583,7 +586,7 @@ export const convertValueByType = (value, type, defaultValue) => {
     case PATTERN_FIELD_TYPES.boolean:
       return Boolean(preparedValue);
     case PATTERN_FIELD_TYPES.string:
-      return (isNan(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
+      return (isNaN(preparedValue) || isNull(preparedValue) || isUndefined(preparedValue))
         ? ''
         : String(preparedValue);
     case PATTERN_FIELD_TYPES.null:
@@ -605,6 +608,7 @@ export const getOperatorsByFieldType = (fieldType) => {
   switch (fieldType) {
     case PATTERN_FIELD_TYPES.number:
       return PATTERN_NUMBER_OPERATORS;
+
     case PATTERN_FIELD_TYPES.stringArray:
       return [
         PATTERN_OPERATORS.hasEvery,
@@ -613,8 +617,18 @@ export const getOperatorsByFieldType = (fieldType) => {
         PATTERN_OPERATORS.isEmpty,
         PATTERN_OPERATORS.isNotEmpty,
       ];
+
     case PATTERN_FIELD_TYPES.boolean:
       return [PATTERN_OPERATORS.equal];
+
+    case PATTERN_FIELD_TYPES.timestamp:
+      return [
+        PATTERN_OPERATORS.within,
+        PATTERN_OPERATORS.olderThan,
+        PATTERN_OPERATORS.inRangePeriod,
+        PATTERN_OPERATORS.inRangeDates,
+      ];
+
     default:
       return PATTERN_STRING_OPERATORS;
   }
@@ -842,12 +856,13 @@ export const patternDateRangeToForm = (rule = {}) => {
 export const patternRuleToForm = (rule = {}) => {
   const form = {
     key: uid(),
-    attribute: rule.field ?? '',
+    attribute: rule.alias || rule.field || '',
     operator: '',
     field: '',
     fieldType: rule.field_type ?? PATTERN_FIELD_TYPES.string,
     dictionary: '',
     value: '',
+    alias: !!rule.alias,
     range: {
       type: QUICK_RANGES.last1Hour.value,
       from: 0,
@@ -1020,7 +1035,7 @@ export const patternRuleToForm = (rule = {}) => {
     form.duration = durationToForm(rule.cond.value);
   }
 
-  if (isExtraInfos || isInfos) {
+  if ((isExtraInfos || isInfos) && !rule.alias) {
     if (isExtraInfos) {
       form.attribute = EVENT_FILTER_PATTERN_FIELDS.extraInfos;
       form.dictionary = rule.field.slice(EVENT_FILTER_PATTERN_FIELDS.extraInfos.length + 1);
@@ -1169,7 +1184,7 @@ export const formDateIntervalConditionToPatternRuleCondition = (rule) => {
  */
 export const formRuleToPatternRule = (rule) => {
   const pattern = {
-    field: rule.attribute === ALARM_PATTERN_FIELDS.activated
+    [rule.alias ? 'alias' : 'field']: rule.attribute === ALARM_PATTERN_FIELDS.activated
       ? ALARM_PATTERN_FIELDS.activationDate
       : rule.attribute,
     cond: {
@@ -1187,14 +1202,14 @@ export const formRuleToPatternRule = (rule) => {
     pattern.field = rule.dictionary ? [rule.attribute, rule.dictionary].join('.') : rule.attribute;
   }
 
-  if (isDate) {
+  if ((rule.alias || isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
+    pattern.field_type = rule.fieldType;
+  }
+
+  if (isDate || rule.fieldType === PATTERN_FIELD_TYPES.timestamp) {
     pattern.cond = formDateIntervalConditionToPatternRuleCondition(rule);
 
     return pattern;
-  }
-
-  if ((isExtraInfos || isInfos) && rule.field !== PATTERN_RULE_INFOS_FIELDS.name) {
-    pattern.field_type = rule.fieldType;
   }
 
   switch (rule.operator) {

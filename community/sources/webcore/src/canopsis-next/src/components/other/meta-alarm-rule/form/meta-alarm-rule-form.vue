@@ -44,7 +44,7 @@
         <meta-alarm-rule-general-form
           v-field="form"
           :disabled-id-field="disabledIdField"
-          :variables="outputTemplateVariables"
+          :variables="templateVars.output"
           class="pa-4"
         />
       </v-stepper-content>
@@ -56,7 +56,7 @@
         <div class="pa-4">
           <meta-alarm-rule-type-form
             v-field="form"
-            :variables="templateVariables"
+            :variables="templateVars.entity"
           />
         </div>
       </v-stepper-content>
@@ -70,10 +70,7 @@
           class="pa-4"
         >
           <span class="text--secondary mb-2">{{ $t(`metaAlarmRule.parametersDescription.${form.type}`) }}</span>
-          <meta-alarm-rule-parameters-form
-            v-field="form"
-            :variables="variables"
-          />
+          <meta-alarm-rule-parameters-form v-field="form" :template-vars="templateVars" />
         </c-information-block>
       </v-stepper-content>
     </v-stepper-items>
@@ -81,19 +78,11 @@
 </template>
 
 <script>
-import { computed, ref, toRef } from 'vue';
+import { ref } from 'vue';
 
-import {
-  ALARM_PAYLOADS_VARIABLES,
-  ENTITY_PAYLOADS_VARIABLES,
-  META_ALARMS_FORM_STEPS,
-  META_ALARMS_RULE_TYPES,
-} from '@/constants';
+import { META_ALARMS_FORM_STEPS, META_ALARMS_RULE_TYPES } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
 import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
-import { useEntityServerVariables } from '@/hooks/entities/entity/entity-server-variables';
-import { useAlarmServerVariables } from '@/hooks/entities/alarm/alarm-server-variables';
 
 import MetaAlarmRuleParametersForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-parameters-form.vue';
 import MetaAlarmRuleTypeForm from '@/components/other/meta-alarm-rule/form/meta-alarm-rule-type-form.vue';
@@ -132,62 +121,26 @@ export default {
       type: Array,
       default: () => [],
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, { expose }) {
-    const { tc } = useI18n();
-
-    const { variables: entityPayloadVariables } = useEntityServerVariables({ infos: toRef(props, 'entityInfos') });
-    const { variables: alarmPayloadVariables } = useAlarmServerVariables({ infos: toRef(props, 'alarmInfos') });
-    const variables = computed(() => [
-      {
-        value: ENTITY_PAYLOADS_VARIABLES.entity,
-        text: tc('common.entity'),
-        variables: entityPayloadVariables.value,
-      },
-      {
-        value: ALARM_PAYLOADS_VARIABLES.alarm,
-        text: tc('common.alarm'),
-        variables: alarmPayloadVariables.value,
-      },
-    ]);
-
-    const templateVariables = computed(() => [
-      {
-        value: `.LastChild${ENTITY_PAYLOADS_VARIABLES.entity}`,
-        variables: entityPayloadVariables.value,
-      },
-      {
-        value: `.LastChild${ALARM_PAYLOADS_VARIABLES.alarm}`,
-        variables: alarmPayloadVariables.value,
-      },
-      {
-        value: '.Rule.ID',
-      },
-      {
-        value: '.Rule.Name',
-      },
-    ]);
-
-    const outputTemplateVariables = computed(() => [
-      ...templateVariables.value,
-      {
-        value: '.Count',
-      },
-    ]);
-
     const generalStepElement = ref(null);
+    const typeStepElement = ref(null);
+    const parametersStepElement = ref(null);
+
     const {
       hasChildrenError: hasGeneralError,
       validateChildren: validateGeneralChildren,
     } = useValidationElementChildren(generalStepElement);
 
-    const typeStepElement = ref(null);
     const {
       hasChildrenError: hasTypeError,
       validateChildren: validateTypeChildren,
     } = useValidationElementChildren(typeStepElement);
 
-    const parametersStepElement = ref(null);
     const {
       hasChildrenError: hasParametersError,
       validateChildren: validateParametersChildren,
@@ -203,16 +156,15 @@ export default {
     });
 
     return {
-      generalStepElement,
-      hasGeneralError,
-      parametersStepElement,
-      hasParametersError,
-      typeStepElement,
-      hasTypeError,
-      variables,
-      templateVariables,
-      outputTemplateVariables,
       META_ALARMS_FORM_STEPS,
+
+      generalStepElement,
+      typeStepElement,
+      parametersStepElement,
+
+      hasGeneralError,
+      hasParametersError,
+      hasTypeError,
     };
   },
 };

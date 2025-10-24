@@ -8,11 +8,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/idlerule"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Store interface {
@@ -30,6 +32,7 @@ type store struct {
 	transformer           common.PatternFieldsTransformer
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
@@ -40,6 +43,10 @@ func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer com
 		transformer:           transformer,
 		defaultSearchByFields: []string{"_id", "name", "description", "author.name"},
 		defaultSortBy:         "created",
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -117,6 +124,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 
 		_, err = s.collection.InsertOne(ctx, rule)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -152,6 +163,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 
 		_, err = s.collection.UpdateOne(ctx, bson.M{"_id": model.ID}, bson.M{"$set": model})
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
