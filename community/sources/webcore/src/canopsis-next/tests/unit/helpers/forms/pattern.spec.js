@@ -23,6 +23,7 @@ describe('pattern form converters', () => {
     fieldType: PATTERN_FIELD_TYPES.string,
     dictionary: '',
     value: '',
+    alias: false,
     range: {
       type: QUICK_RANGES.last1Hour.value,
       from: 0,

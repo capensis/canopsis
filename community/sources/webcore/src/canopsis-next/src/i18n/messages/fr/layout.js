@@ -4,7 +4,6 @@ export default {
       edit: 'Activer/Désactiver le mode édition',
       createView: 'Créer une vue',
       createPrivateView: 'Créer une vue privée',
-      settings: 'Paramètres',
     },
     loggedUsersCount: 'Sessions actives',
     ordering: {

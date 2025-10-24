@@ -19,12 +19,6 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
-const (
-	CleanTaskTypeArchiveDisabled = iota
-	CleanTaskTypeArchiveUnlinked
-	CleanTaskTypeCleanArchived
-)
-
 type ListRequestWithPagination struct {
 	pagination.Query
 	ListRequest
@@ -68,13 +62,6 @@ type ArchiveDisabledRequest struct {
 
 type ArchiveUnlinkedRequest struct {
 	ArchiveBefore datetime.DurationWithUnit `json:"archive_before"`
-}
-
-type CleanTask struct {
-	Type                    int
-	ArchiveWithDependencies bool
-	ArchiveBefore           *datetime.DurationWithUnit
-	UserID                  string
 }
 
 type ExportResponse struct {

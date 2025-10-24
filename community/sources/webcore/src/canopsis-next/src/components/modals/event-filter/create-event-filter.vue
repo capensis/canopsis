@@ -5,27 +5,28 @@
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <event-filter-form
+        <template-testing-test-variables-wrapper
           v-model="form"
-          :is-disabled-id-field="config.isDisabledIdField"
-        />
+          :rule-id="ruleId"
+          :type="type"
+        >
+          <template #default="{ templateVars, copyVars }">
+            <event-filter-form
+              v-model="form"
+              :template-vars="templateVars"
+              :copy-vars="copyVars"
+              :is-disabled-id-field="config.isDisabledIdField"
+            />
+          </template>
+        </template-testing-test-variables-wrapper>
       </template>
       <template #actions="">
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
-        </v-btn>
-        <v-btn
-          v-if="hasVariablesFields"
-          :loading="checking"
-          color="orange"
-          dark
-          @click="validateTemplateVariables"
-        >
-          {{ $t('declareTicket.checkSyntax') }}
         </v-btn>
         <v-btn
           :disabled="isDisabled"
@@ -41,25 +42,24 @@
 </template>
 
 <script>
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { computed, ref, watch, inject } from 'vue';
 
-import {
-  eventFilterRuleTemplateVariablesErrorsToForm,
-  eventFilterToForm,
-  formToEventFilter,
-} from '@/helpers/entities/event-filter/rule/form';
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
+
+import { eventFilterToForm, formToEventFilter } from '@/helpers/entities/event-filter/rule/form';
 import {
   isChangeEntityEventFilterRuleType,
   isEnrichmentEventFilterRuleType,
 } from '@/helpers/entities/event-filter/rule/entity';
-import { isApiExternalDataType } from '@/helpers/entities/shared/external-data/entity';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { entitiesTemplateValidatorMixin } from '@/mixins/entities/template-validator';
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useValidationFormErrors } from '@/hooks/validator/validation-form-errors';
 
 import EventFilterForm from '@/components/other/event-filter/form/event-filter-form.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -69,152 +69,61 @@ export default {
     validator: 'new',
     delay: VALIDATION_DELAY,
   },
-  inject: ['$system'],
-  components: { EventFilterForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    entitiesTemplateValidatorMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      checking: false,
-      form: eventFilterToForm(this.modal.config.rule, this.$system.timezone),
-    };
+  components: {
+    EventFilterForm,
+    TemplateTestingTestVariablesWrapper,
+    ModalWrapper,
   },
-  computed: {
-    title() {
-      return this.config.title ?? this.$t('modals.createEventFilter.create.title');
-    },
-
-    isEnrichment() {
-      return isEnrichmentEventFilterRuleType(this.form.type);
-    },
-
-    isChangeEntity() {
-      return isChangeEntityEventFilterRuleType(this.form.type);
-    },
-
-    hasVariablesFields() {
-      return this.isEnrichment || isChangeEntityEventFilterRuleType(this.form.type);
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  watch: {
-    'form.type': {
-      handler() {
-        this.errors.clear();
+  setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.eventFilter;
+
+    const system = inject('$system');
+
+    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const { validator } = useValidationFormErrors();
+
+    const form = ref(eventFilterToForm(config.value.rule, system.timezone));
+
+    const ruleId = computed(() => config.value.rule?._id);
+    const title = computed(() => config.value.title ?? t('modals.createEventFilter.create.title'));
+    const isEnrichment = computed(() => isEnrichmentEventFilterRuleType(form.value.type));
+    const isChangeEntity = computed(() => isChangeEntityEventFilterRuleType(form.value.type));
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        const data = await config.value.action?.(formToEventFilter(form.value, system.timezone));
+
+        close();
+
+        return data;
       },
-    },
-  },
-  methods: {
-    async validateRequestTemplates(request) {
-      const [url, payload] = await this.validateEventFilterRulesVariables({
-        data: [
-          { text: request.url },
-          { text: request.payload },
-        ],
-      });
+    });
 
-      return {
-        url,
-        payload,
-      };
-    },
+    useFormConfirmableCloseModal({ form, submit, close });
 
-    async validateChangeEntityTemplates(config) {
-      const [component, connector, connectorName, resource] = await this.validateEventFilterRulesVariables({
-        data: [
-          { text: config.component },
-          { text: config.connector },
-          { text: config.connector_name },
-          { text: config.resource },
-        ],
-      });
+    watch(() => form.value.type, () => validator.errors.clear());
 
-      return {
-        component,
-        connector,
-        connector_name: connectorName,
-        resource,
-      };
-    },
-
-    async validateArrayWithValueTemplates(array) {
-      const errors = await this.validateEventFilterRulesVariables({
-        data: array.map(({ value }) => ({ text: value })),
-      });
-
-      return errors.map(value => ({ value }));
-    },
-
-    validateExternalDataTemplates(externalData) {
-      return Promise.all(externalData.map(async ({ type, conditions, request }) => {
-        if (isApiExternalDataType(type)) {
-          return {
-            request: await this.validateRequestTemplates(request),
-          };
-        }
-
-        return {
-          conditions: await this.validateArrayWithValueTemplates(conditions),
-        };
-      }));
-    },
-
-    async validateConfigTemplates(config) {
-      const [actions, fields] = await Promise.all([
-        this.isEnrichment ? this.validateArrayWithValueTemplates(config.actions) : undefined,
-        this.isChangeEntity ? this.validateChangeEntityTemplates(config) : undefined,
-      ]);
-
-      return {
-        actions,
-        ...fields,
-      };
-    },
-
-    async validateFormTemplates(form) {
-      const [externalData, config] = await Promise.all([
-        this.validateExternalDataTemplates(form.external_data),
-        this.validateConfigTemplates(form.config),
-      ]);
-
-      return {
-        external_data: externalData,
-        config,
-      };
-    },
-
-    async validateTemplateVariables() {
-      this.checking = true;
-
-      try {
-        const errors = await this.validateFormTemplates(this.form);
-
-        const wasSet = this.setFormErrors(eventFilterRuleTemplateVariablesErrorsToForm(errors, this.form));
-
-        if (!wasSet) {
-          this.$popups.success({ text: this.$t('eventFilter.syntaxIsValid') });
-        }
-      } catch (err) {
-        console.error(err);
-      } finally {
-        this.checking = false;
-      }
-    },
-
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToEventFilter(this.form, this.$system.timezone));
-        }
-
-        this.$modals.hide();
-      }
-    },
+    return {
+      form,
+      config,
+      ruleId,
+      type,
+      title,
+      isEnrichment,
+      isChangeEntity,
+      isDisabled,
+      submitting,
+      submit,
+      close,
+    };
   },
 };
 </script>

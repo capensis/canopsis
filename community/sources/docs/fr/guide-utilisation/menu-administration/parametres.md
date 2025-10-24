@@ -129,6 +129,14 @@ Il s'agit ici de définir des modèles qui seront utilisés dans des fenêtre "P
 
 ![modele-jeu-plusdinfos](./img/modele-jeu-plusdinfos.png)
 
+**Bac à alarmes : Actions rapides (alarme unitaire)**
+
+Il s'agit de la liste des actions unitaires disponibles pour les alarmes.
+
+**Bac à alarmes : Actions rapides (massive)**
+
+Il s'agit de la liste des actions de masse disponibles pour les alarmes.
+
 **Export PDF**
 
 Vous avez la possibilité de définir un modèle qui sera utilisé pour l'export d'alarmes au format PDF.

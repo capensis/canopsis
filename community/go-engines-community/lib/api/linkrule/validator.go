@@ -6,11 +6,22 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	liblink "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 )
 
-func ValidateEditRequest(sl validator.StructLevel) {
+type Validator struct {
+	templateExecutor template.Executor
+}
+
+func NewValidator(templateExecutor template.Executor) *Validator {
+	return &Validator{
+		templateExecutor: templateExecutor,
+	}
+}
+
+func (v *Validator) ValidateEditRequest(sl validator.StructLevel) {
 	var r = sl.Current().Interface().(EditRequest)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
@@ -47,5 +58,27 @@ func ValidateEditRequest(sl validator.StructLevel) {
 		sl.ReportError(r.SourceCode, "SourceCode", "SourceCode", "required_or", "Links")
 	}
 
-	apiexternaldata.ValidateRefParameters(sl, r.ExternalData, []string{externaldata.RefTypeTable})
+	apiexternaldata.ValidateRefParameters(sl, v.templateExecutor, r.ExternalData, []string{externaldata.RefTypeTable})
+}
+
+func (v *Validator) ValidateTemplateRequest(sl validator.StructLevel) {
+	var r = sl.Current().Interface().(TemplateRequest)
+	switch r.Rule.Type {
+	case liblink.TypeAlarm:
+		if r.TestData.Entity != "" {
+			sl.ReportError(r.TestData.Entity, "TestData.Entity", "Entity", "must_be_empty", "")
+		}
+	case liblink.TypeEntity:
+		if r.TestData.Alarm != "" {
+			sl.ReportError(r.TestData.Alarm, "TestData.Alarm", "Alarm", "must_be_empty", "")
+		}
+	}
+
+	if len(r.Rule.Links) > 0 && r.Rule.SourceCode != "" {
+		sl.ReportError(r.Rule.SourceCode, "Rule.SourceCode", "SourceCode", "required_not_both", "Links")
+	}
+	if len(r.Rule.Links) == 0 && r.Rule.SourceCode == "" {
+		sl.ReportError(r.Rule.Links, "Rule.Links", "Links", "required_or", "SourceCode")
+		sl.ReportError(r.Rule.SourceCode, "Rule.SourceCode", "SourceCode", "required_or", "Links")
+	}
 }

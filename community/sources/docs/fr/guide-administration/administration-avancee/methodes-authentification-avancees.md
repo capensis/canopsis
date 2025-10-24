@@ -75,6 +75,7 @@ Définition des paramètres :
 | `attrs`           | Association d'attributs pour les infos de l'utilisateur <br> Un utilisateur Canopsis dispose des attributs `firstname`, `lastname`, `mail` | `{"mail": "mail", "firstname": "givenName", "lastname": "sn"}` |
 | `default_role`    | Rôle Canopsis par défaut au moment de la première connexion   | `Visualisation`                                      |
 | `insecure_skip_verify` | Permet de ne pas vérifier la validité d'un certificat TLS fourni par le serveur (auto-signé, etc.)   | `true`   |
+| `insecure_verify_any_cert` | Permet d'accepter n'importe quel certificat peu importe le domaine utilisé. (Nécessite que `insecure_skip_verify` soit défini à `true`)   | `true`   |
 | `max_tls_ver` (optionnel) | La version maximale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 | `min_tls_ver` (optionnel) | La version minimale de TLS qui est acceptable      | `tls10` ou `tls11` ou `tls12` ou `tls13`                        |
 
@@ -299,6 +300,9 @@ Puis vous devez renseigner les différents paramètres d'authentification oauth2
       votre-nom-de-provider:
         # if open_id is set to true, then the provider is considered as OpenID connect provider and requires the issuer field to be set.
         open_id: true
+        # auth_style determines how client_id and client_secret are sent to the server.
+        # please choose from: 0 - autodetect by the api(default), 1 - in urlencoded params, 2 - in headers.
+        auth_style: 0
         # issuer field defines OpenID url for a discovery mechanism, if open_id is set to false, the issuer is ignored.
         issuer: your-openid-provider-url
         # fields to setup inactivity interval for canopsis api tokens.
@@ -346,6 +350,7 @@ Définition des paramètres :
 | Attribut       |                    Description                               |            Valeur             |
 | -------------- | ------------------------------------------------------------ | ------------------------------ |
 | `open_id`    | Définit si le provider est de type open_id ou non        |   true / false  |
+| `auth_style` | Permet de définir comment le `client_id` et le `client_secret` doivent être envoyés au serveur. | `0`: Comportement par défaut (autodetect), `1`: dans un paramètre (urlencoded), `2:` Dans l'entête de la requête (headers) |
 | `issuer` | Doit être définie dans le cas où le champ `open_id` est à `true`. Permet de vérifier l'identité du provider; elle est fournie par votre provider            | URL                  |
 | `auth_url`  | Adresse d'authentification. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider  | URL |
 | `token_url`  | Adresse de gestion de token. A definir uniquement si `open_id` est à `false`; elle est fournie par votre provider | URL |

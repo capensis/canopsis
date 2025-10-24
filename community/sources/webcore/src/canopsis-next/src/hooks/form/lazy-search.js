@@ -134,7 +134,7 @@ export const useLazySearch = ({
 
     selectedItems.value = arrayValue.value.map(item => (
       dataById[item[unwrappedIdKey] ?? item]
-      ?? (isObject(item) ? item : ({ [unwrappedIdKey]: item, noData: true }))
+        ?? (isObject(item) ? item : ({ [unwrappedIdKey]: item, noData: true }))
     ));
 
     if (attachValue) {
@@ -257,6 +257,16 @@ export const useLazySearch = ({
           : item)),
       unwrappedIdKey,
     );
+
+    if (returnObject) {
+      updateModel(
+        unwrappedMultiple
+          ? selectedItems.value
+          : selectedItems.value[0],
+      );
+
+      return;
+    }
 
     if (returnObject) {
       updateModel(
