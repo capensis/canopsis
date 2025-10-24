@@ -176,23 +176,6 @@ func FlattenJSON(b []byte) (flattenRes map[string]any, basicRes any, _ error) {
 	return res, nil, nil
 }
 
-func FlattenJSON(b []byte) (flattenRes map[string]any, basicRes any, _ error) {
-	parsed, err := fastjson.ParseBytes(b)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	initKey := ""
-	res := flatten(parsed, initKey)
-	if len(res) == 1 {
-		if v, ok := res[initKey]; ok {
-			return nil, v, nil
-		}
-	}
-
-	return res, nil, nil
-}
-
 func flatten(in *fastjson.Value, prevKey string) map[string]any {
 	out := make(map[string]any)
 
