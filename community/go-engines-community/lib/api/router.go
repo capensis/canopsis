@@ -75,6 +75,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -124,7 +125,7 @@ func RegisterRoutes(
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
-	entityCleanerTaskChan chan<- entity.CleanTask,
+	entityCleanerTaskChan chan<- libentity.CleanTask,
 	exportTaskExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	userInterfaceConfig config.UserInterfaceConfigProvider,

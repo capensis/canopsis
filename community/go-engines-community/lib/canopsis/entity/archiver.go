@@ -9,14 +9,15 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Archiver interface {
-	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error)
-	ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) (int64, error)
-	ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) (int64, error)
-	ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) (int64, error)
-	DeleteArchivedEntities(ctx context.Context) (int64, error)
+	ArchiveDisabledEntities(ctx context.Context, archiveDeps bool, limit int) (int64, error)
+	ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime, limit int) (int64, error)
+	ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime, limit int) (int64, error)
+	ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime, limit int) (int64, error)
+	DeleteArchivedEntities(ctx context.Context, limit int) (int64, error)
 }
 
 type archiver struct {
@@ -33,25 +34,25 @@ func NewArchiver(db mongo.DbClient) Archiver {
 	}
 }
 
-func (a *archiver) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool) (int64, error) {
+func (a *archiver) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool, limit int) (int64, error) {
 	var totalArchived int64
 
 	// do not cascade-archive connector dependencies
-	archived, err := a.archiveEntitiesByType(ctx, types.EntityTypeConnector, false)
+	archived, err := a.archiveEntitiesByType(ctx, types.EntityTypeConnector, false, limit)
 	if err != nil {
 		return 0, err
 	}
 
 	totalArchived += archived
 
-	archived, err = a.archiveEntitiesByType(ctx, types.EntityTypeComponent, archiveDeps)
+	archived, err = a.archiveEntitiesByType(ctx, types.EntityTypeComponent, archiveDeps, limit)
 	if err != nil {
 		return 0, err
 	}
 
 	totalArchived += archived
 
-	archived, err = a.archiveEntitiesByType(ctx, types.EntityTypeResource, false)
+	archived, err = a.archiveEntitiesByType(ctx, types.EntityTypeResource, false, limit)
 	if err != nil {
 		return 0, err
 	}
@@ -61,8 +62,8 @@ func (a *archiver) ArchiveDisabledEntities(ctx context.Context, archiveDeps bool
 	return totalArchived, nil
 }
 
-func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime) (int64, error) {
-	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
+func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime.CpsTime, limit int) (int64, error) {
+	pipeline := []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeResource,
 			"services": bson.M{"$in": bson.A{nil, bson.A{}}},
@@ -98,7 +99,13 @@ func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime
 			"as": "resolved_alarms",
 		}},
 		{"$match": bson.M{"resolved_alarms": bson.A{}}},
-	})
+	}
+
+	if limit > 0 {
+		pipeline = append(pipeline, bson.M{"$limit": limit})
+	}
+
+	cursor, err := a.mainCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return 0, err
 	}
@@ -106,8 +113,8 @@ func (a *archiver) ArchiveUnlinkedResources(ctx context.Context, before datetime
 	return a.archiveUnlinked(ctx, cursor)
 }
 
-func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime) (int64, error) {
-	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
+func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetime.CpsTime, limit int) (int64, error) {
+	pipeline := []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeComponent,
 			"services": bson.M{"$in": bson.A{nil, bson.A{}}},
@@ -156,7 +163,13 @@ func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetim
 			"as": "resolved_alarms",
 		}},
 		{"$match": bson.M{"resolved_alarms": bson.A{}}},
-	})
+	}
+
+	if limit > 0 {
+		pipeline = append(pipeline, bson.M{"$limit": limit})
+	}
+
+	cursor, err := a.mainCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return 0, err
 	}
@@ -164,8 +177,8 @@ func (a *archiver) ArchiveUnlinkedComponents(ctx context.Context, before datetim
 	return a.archiveUnlinked(ctx, cursor)
 }
 
-func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime) (int64, error) {
-	cursor, err := a.mainCollection.Aggregate(ctx, []bson.M{
+func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetime.CpsTime, limit int) (int64, error) {
+	pipeline := []bson.M{
 		{"$match": bson.M{
 			"type":     types.EntityTypeConnector,
 			"services": bson.M{"$in": bson.A{nil, bson.A{}}},
@@ -213,7 +226,13 @@ func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetim
 			"as": "resolved_alarms",
 		}},
 		{"$match": bson.M{"resolved_alarms": bson.A{}}},
-	})
+	}
+
+	if limit > 0 {
+		pipeline = append(pipeline, bson.M{"$limit": limit})
+	}
+
+	cursor, err := a.mainCollection.Aggregate(ctx, pipeline)
 	if err != nil {
 		return 0, err
 	}
@@ -221,10 +240,15 @@ func (a *archiver) ArchiveUnlinkedConnectors(ctx context.Context, before datetim
 	return a.archiveUnlinked(ctx, cursor)
 }
 
-func (a *archiver) DeleteArchivedEntities(ctx context.Context) (int64, error) {
+func (a *archiver) DeleteArchivedEntities(ctx context.Context, limit int) (int64, error) {
+	opts := options.Find().SetProjection(bson.M{"_id": 1})
+	if limit > 0 {
+		opts.SetLimit(int64(limit))
+	}
+
 	var totalDeleted int64
 	ids := make([]string, 0, canopsis.DefaultBulkSize)
-	cursor, err := a.archivedCollection.Find(ctx, bson.M{})
+	cursor, err := a.archivedCollection.Find(ctx, bson.M{}, opts)
 	if err != nil {
 		return 0, err
 	}
@@ -266,13 +290,19 @@ func (a *archiver) DeleteArchivedEntities(ctx context.Context) (int64, error) {
 	return totalDeleted, nil
 }
 
-func (a *archiver) archiveEntitiesByType(ctx context.Context, eType string, archiveDeps bool) (int64, error) {
+func (a *archiver) archiveEntitiesByType(ctx context.Context, eType string, archiveDeps bool, limit int) (int64, error) {
+	opts := options.Find().SetProjection(bson.M{"_id": 1})
+	if limit > 0 {
+		opts.SetLimit(int64(limit))
+	}
+
 	cursor, err := a.mainCollection.Find(
 		ctx,
 		bson.M{
 			"enabled": bson.M{"$in": bson.A{false, nil}},
 			"type":    eType,
 		},
+		opts,
 	)
 	if err != nil {
 		return 0, err
