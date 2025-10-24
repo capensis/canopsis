@@ -79,6 +79,8 @@ export default {
   delete: 'Supprimer',
   show: 'Afficher',
   hide: 'Cacher',
+  expandAll: 'Tout développer',
+  collapseAll: 'Tout réduire',
   edit: 'Éditer',
   duplicate: 'Dupliquer',
   play: 'Lecture',

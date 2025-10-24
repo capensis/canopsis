@@ -4,6 +4,7 @@
     :headers="headers"
     :hide-default-header="indent !== 0"
     :items-per-page="items.length"
+    :expanded.sync="expanded"
     class="permissions-table"
     item-key="_id"
     hide-default-footer
@@ -17,7 +18,13 @@
             class="mr-2"
             @expand="expand"
           />
-          <span :class="{ 'font-weight-medium': item.children }">{{ item.title }}</span>
+          <span
+            :class="{ 'font-weight-medium': item.children }"
+            class="cursor-pointer"
+            @click="item.children && expand(!isExpanded)"
+          >
+            {{ item.title }}
+          </span>
         </td>
         <td v-for="role in roles" :key="role.value">
           <permissions-table-cell
@@ -43,7 +50,7 @@
 
 <script>
 import { sortBy } from 'lodash';
-import { computed } from 'vue';
+import { computed, ref, inject, watch } from 'vue';
 
 import { useI18n } from '@/hooks/i18n';
 
@@ -97,7 +104,17 @@ export default {
       ...props.roles.map(role => ({ text: role.name, value: role._id, sortable: false })),
     ]);
 
+    const allExpanded = inject('$allExpanded', false);
+
+    const expanded = ref([]);
+
+    const checkExpanded = () => expanded.value = allExpanded.value ? [...items.value] : [];
+
+    watch(allExpanded, () => window.requestAnimationFrame(checkExpanded, props.indent), { immediate: true });
+
     return {
+      expanded,
+
       items,
       headers,
     };
