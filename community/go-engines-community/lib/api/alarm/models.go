@@ -43,6 +43,7 @@ const (
 	IconManualSuccessfulOtherInProgress
 	IconAutoSuccessfulManualAvailable
 	IconManualSuccessfulManualAvailable
+	IconManualNotExecuted
 )
 
 const (
@@ -95,8 +96,6 @@ type BaseFilterRequest struct {
 	OnlyParents bool              `form:"correlation" json:"correlation"`
 	Category    string            `form:"category" json:"category"`
 
-	// Tag is deprecated, please use tags[] parameter
-	Tag  string   `form:"tag" json:"tag"`
 	Tags []string `form:"tags[]" json:"tags"`
 
 	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
@@ -305,6 +304,7 @@ type Alarm struct {
 	FailedAutoInstructions       []string               `bson:"-" json:"failed_auto_instructions,omitempty"`
 	SuccessfulManualInstructions []string               `bson:"-" json:"successful_manual_instructions,omitempty"`
 	SuccessfulAutoInstructions   []string               `bson:"-" json:"successful_auto_instructions,omitempty"`
+	KpiAssignedInstructions      []string               `bson:"kpi_assigned_instructions,omitempty" json:"-"`
 
 	Links       link.LinksByCategory `bson:"-" json:"links,omitempty"`
 	ImpactState int64                `bson:"impact_state" json:"impact_state"`
@@ -533,13 +533,25 @@ type LinksRequest struct {
 
 type GetDisplayNamesRequest struct {
 	pagination.Query
+	Opened           *bool    `form:"opened" json:"opened"`
+	Sort             string   `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
+	Search           string   `form:"search" json:"search"`
+	AlarmPattern     string   `form:"alarm_pattern" json:"alarm_pattern"`
+	EntityPattern    string   `form:"entity_pattern" json:"entity_pattern"`
+	PbehaviorPattern string   `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+	IDs              []string `form:"ids[]" json:"ids"`
+}
 
-	Sort   string `form:"sort" json:"sort" binding:"oneoforempty=asc desc"`
-	Search string `form:"search" json:"search"`
+func (r GetDisplayNamesRequest) GetOpenedFilter() int {
+	if r.Opened == nil {
+		return OpenedAndRecentResolved
+	}
 
-	AlarmPattern     string `form:"alarm_pattern" json:"alarm_pattern"`
-	EntityPattern    string `form:"entity_pattern" json:"entity_pattern"`
-	PbehaviorPattern string `form:"pbehavior_pattern" json:"pbehavior_pattern"`
+	if *r.Opened {
+		return OnlyOpened
+	}
+
+	return OnlyResolved
 }
 
 type DisplayNameData struct {

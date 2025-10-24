@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-archive-entity-unlinked-form Renders \`storage-settings-archive-entity-unlinked-form\` with custom duration 1`] = `
+<div
+  class="layout gap-2 column"
+>
+  <span
+    class="grey--text"
+  >
+    Archive unlinked entities with no events received for
+  </span>
+  <c-duration-field-stub
+    required=""
+    units="[object Object],[object Object],[object Object],[object Object]"
+    units-label="Unit"
+    value="[object Object]"
+  />
+</div>
+`;
+
+exports[`storage-settings-archive-entity-unlinked-form Renders \`storage-settings-archive-entity-unlinked-form\` with default duration 1`] = `
+<div
+  class="layout gap-2 column"
+>
+  <span
+    class="grey--text"
+  >
+    Archive unlinked entities with no events received for
+  </span>
+  <c-duration-field-stub
+    required=""
+    units="[object Object],[object Object],[object Object],[object Object]"
+    units-label="Unit"
+    value="[object Object]"
+  />
+</div>
+`;

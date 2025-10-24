@@ -8,12 +8,14 @@
       />
     </v-layout>
     <v-layout class="mt-4">
-      <v-textarea
+      <component
+        :is="textareaComponent"
         v-field="value.output"
         v-validate="'required'"
         :label="label || $t('common.note')"
         :error-messages="errors.collect(outputFieldName)"
         :name="outputFieldName"
+        :variables="variables"
         autofocus
       />
     </v-layout>
@@ -22,6 +24,7 @@
 
 <script>
 import { omit } from 'lodash';
+import { computed } from 'vue';
 
 import { ALARM_STATES } from '@/constants';
 
@@ -52,15 +55,26 @@ export default {
       type: String,
       default: 'changeState',
     },
+    variables: {
+      type: Array,
+      default: () => [],
+    },
   },
-  computed: {
-    availableStateValues() {
-      return this.allowChangeSeverityToInfo ? ALARM_STATES : omit(ALARM_STATES, ['ok']);
-    },
+  setup(props) {
+    const outputFieldName = computed(() => `${props.name}.output`);
+    const availableStateValues = computed(() => (
+      props.allowChangeSeverityToInfo ? ALARM_STATES : omit(ALARM_STATES, ['ok'])
+    ));
 
-    outputFieldName() {
-      return `${this.name}.output`;
-    },
+    const textareaComponent = computed(() => (
+      props.variables?.length ? 'c-payload-textarea-field' : 'v-textarea'
+    ));
+
+    return {
+      outputFieldName,
+      availableStateValues,
+      textareaComponent,
+    };
   },
 };
 </script>

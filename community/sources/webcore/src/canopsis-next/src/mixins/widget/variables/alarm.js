@@ -1,3 +1,6 @@
+import { mapValues } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
+
 import {
   ALARM_TEMPLATE_FIELDS,
   ALARM_FIELDS_TO_LABELS_KEYS,
@@ -7,10 +10,20 @@ import {
   ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS,
 } from '@/constants';
 
+import { varsToVariables } from '@/helpers/variables';
+
 import { variablesMixin } from './common';
+
+const { mapActions } = createNamespacedHelpers('template/vars');
 
 export const alarmVariablesMixin = {
   mixins: [variablesMixin],
+  data() {
+    return {
+      templateVars: {},
+      templateVarsPending: false,
+    };
+  },
   computed: {
     ticketVariables() {
       return [this.stepValueVariable, this.stepAuthorVariable];
@@ -185,6 +198,43 @@ export const alarmVariablesMixin = {
           text: this.$tc('common.link', 2),
         },
       ].map(variable => ({ ...variable, value: ALARM_EXPORT_PDF_FIELDS_TO_ORIGINAL_FIELDS[variable.value] }));
+    },
+  },
+  methods: {
+    /**
+     * TODO: use hooks instead in the future
+     */
+    ...mapActions({
+      fetchWidgetsTemplateVarsWithoutStore: 'fetchWidgetsVarsWithoutStore',
+    }),
+
+    addTranslationToTemplateVars(items = []) {
+      return items.map((item) => {
+        const result = {
+          ...item,
+          text: item.alias ? item.text : this.$t(`templateTesting.templateVars.${item.text}`),
+        };
+
+        if (item.variables?.length) {
+          result.variables = this.addTranslationToTemplateVars(item.variables);
+        }
+
+        return result;
+      });
+    },
+
+    async fetchTemplateVars() {
+      try {
+        this.templateVarsPending = true;
+
+        const data = await this.fetchWidgetsTemplateVarsWithoutStore();
+
+        this.templateVars = mapValues(varsToVariables(data), this.addTranslationToTemplateVars);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        this.templateVarsPending = false;
+      }
     },
   },
 };

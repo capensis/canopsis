@@ -26,7 +26,7 @@
     @update:search="updateSearch"
   >
     <template #selection="{ item, index }">
-      <c-alarm-action-chip
+      <c-chip
         v-if="!showCount || index < showCount"
         :color="item.color"
         :title="item[itemText]"
@@ -36,7 +36,7 @@
         @close="removeItemFromSelectedItemsByIndex(index)"
       >
         {{ item[itemText] }}
-      </c-alarm-action-chip>
+      </c-chip>
       <span v-else-if="index === showCount">+{{ selectedItems.length - showCount }} {{ $t('common.more') }}</span>
       <span v-else />
     </template>

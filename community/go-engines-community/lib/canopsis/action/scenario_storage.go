@@ -98,7 +98,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 	triggers []string,
 	alarm types.Alarm,
 	entity types.Entity,
-	additionalData AdditionalData,
+	additionalData types.AdditionalData,
 ) error {
 	s.scenariosMx.RLock()
 	defer s.scenariosMx.RUnlock()
@@ -132,7 +132,7 @@ func (s *scenarioStorage) RunDelayedScenarios(
 
 			if matched {
 				additionalData.Trigger = trigger
-				additionalData.AlarmChangeType = trigger
+				additionalData.AlarmChangeType = trigger //nolint:staticcheck
 				err := s.delayedScenarioManager.AddDelayedScenario(ctx, alarm, scenario, additionalData)
 				if err != nil {
 					return err
