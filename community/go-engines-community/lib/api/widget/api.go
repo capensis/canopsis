@@ -19,23 +19,22 @@ type API interface {
 	Delete(c *gin.Context)
 	Copy(c *gin.Context)
 	UpdateGridPositions(c *gin.Context)
+	ValidateTemplates(c *gin.Context)
+	GetTemplateVars(c *gin.Context)
 }
 
 type api struct {
-	store       Store
-	enforcer    security.Enforcer
-	transformer *RequestTransformer
+	store    Store
+	enforcer security.Enforcer
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
-	transformer *RequestTransformer,
 ) API {
 	return &api{
-		store:       store,
-		enforcer:    enforcer,
-		transformer: transformer,
+		store:    store,
+		enforcer: enforcer,
 	}
 }
 
@@ -65,16 +64,6 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.transformer.Transform(c, &request.EditRequest)
-	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-		panic(err)
-	}
-
 	widget, err := a.store.Insert(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -102,18 +91,14 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	err := a.transformer.Transform(c, &request.EditRequest)
+	widget, err := a.store.Update(c, request)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
-	}
 
-	widget, err := a.store.Update(c, request)
-	if err != nil {
 		panic(err)
 	}
 
@@ -210,6 +195,43 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// ValidateTemplates
+// @Param body body TemplateRequest true "body"
+// @Success 200 {object} template.ValidateResponse
+func (a *api) ValidateTemplates(c *gin.Context) {
+	var request TemplateRequest
+	if err := c.ShouldBind(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	response, err := a.store.ValidateTemplates(c, request)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+
+			return
+		}
+
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, response)
+}
+
+// GetTemplateVars
+// @Success 200 {array} TemplateVarsResponse
+func (a *api) GetTemplateVars(c *gin.Context) {
+	vars, err := a.store.GetTemplateVars(c)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, vars)
 }
 
 func (a *api) checkAccess(ctx context.Context, ids []string, userID, perm string) (bool, error) {

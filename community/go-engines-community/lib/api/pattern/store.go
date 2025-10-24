@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -36,9 +37,11 @@ type Store interface {
 }
 
 type store struct {
-	client         mongo.DbClient
-	collection     mongo.DbCollection
-	authorProvider author.Provider
+	client                        mongo.DbClient
+	readClient                    mongo.DbClient
+	collection                    mongo.DbCollection
+	entityInfosPropertyCollection mongo.DbCollection
+	authorProvider                author.Provider
 
 	linkedCollections []string
 
@@ -49,23 +52,28 @@ type store struct {
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
+	transformer common.PatternFieldsTransformer
+
 	logger zerolog.Logger
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
+	readDbClient mongo.DbClient,
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
-		client:         dbClient,
-		collection:     dbClient.Collection(mongo.PatternMongoCollection),
-		authorProvider: authorProvider,
-
-		defaultSearchByFields: []string{"_id", "author.name", "title"},
-		defaultSortBy:         "created",
+		client:                        dbClient,
+		collection:                    dbClient.Collection(mongo.PatternMongoCollection),
+		readClient:                    readDbClient,
+		entityInfosPropertyCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		authorProvider:                authorProvider,
+		defaultSearchByFields:         []string{"_id", "author.name", "title"},
+		defaultSortBy:                 "created",
 
 		linkedCollections: []string{
 			mongo.WidgetFiltersMongoCollection,
@@ -84,11 +92,10 @@ func NewStore(
 			mongo.AlarmTagCollection,
 		},
 
-		pbhComputeChan: pbhComputeChan,
-
+		pbhComputeChan:        pbhComputeChan,
 		serviceChangeListener: serviceChangeListener,
-
-		logger: logger,
+		transformer:           transformer,
+		logger:                logger,
 	}
 }
 
@@ -102,7 +109,13 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-		_, err := s.collection.InsertOne(ctx, model)
+
+		err := s.transformEntityPatternToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
 			return err
 		}
@@ -211,7 +224,13 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		pbhIds = nil
 		serviceIds = nil
 		prevPattern := savedpattern.SavedPattern{}
-		err := s.collection.FindOneAndUpdate(
+
+		err := s.transformEntityPatternToModel(ctx, request, &model)
+		if err != nil {
+			return err
+		}
+
+		err = s.collection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": request.ID},
 			bson.M{"$set": model},
@@ -224,12 +243,14 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
+		removedAliases := s.getRemovedAliases(prevPattern.Aliases, model.Aliases)
+
 		response, err = s.GetByID(ctx, model.ID, model.Author)
 		if err != nil || response == nil {
 			return err
 		}
 
-		err = s.updateLinkedModels(ctx, *response, request.Author)
+		err = s.updateLinkedModels(ctx, *response, request.Author, removedAliases)
 		if err != nil {
 			return err
 		}
@@ -292,7 +313,32 @@ func (s *store) Delete(ctx context.Context, pattern Response, userID string) (bo
 	return deleted > 0, nil
 }
 
-func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string) error {
+func (s *store) getRemovedAliases(prevAliases, curAliases []string) []string {
+	if len(prevAliases) == 0 {
+		return []string{}
+	}
+
+	curAliasesLen := len(curAliases)
+	if curAliasesLen == 0 {
+		return prevAliases
+	}
+
+	curAliasesMap := make(map[string]bool, curAliasesLen)
+	for _, alias := range curAliases {
+		curAliasesMap[alias] = true
+	}
+
+	removedAliases := make([]string, 0)
+	for _, alias := range prevAliases {
+		if !curAliasesMap[alias] {
+			removedAliases = append(removedAliases, alias)
+		}
+	}
+
+	return removedAliases
+}
+
+func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string, removedAliases []string) error {
 	if !pattern.IsCorporate {
 		return nil
 	}
@@ -339,9 +385,13 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 		}
 
-		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, bson.M{
-			"$set": set,
-		})
+		update := bson.M{"$set": set}
+
+		if len(removedAliases) > 0 {
+			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
+		}
+
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
 		if err != nil {
 			return err
 		}
@@ -349,32 +399,39 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 
 	switch pattern.Type {
 	case savedpattern.TypeEntity:
+		update := bson.M{}
+		if len(removedAliases) > 0 {
+			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
+		}
+
 		metaAlarmRulesCollection := mongo.MetaAlarmRulesMongoCollection
-		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
-			"$set": bson.M{
-				"total_entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
-				),
-				"corporate_total_entity_pattern_title": pattern.Title,
-				"updated":                              datetime.NewCpsTime(),
-				"author":                               author,
-			},
-		})
+		update["$set"] = bson.M{
+			"total_entity_pattern": pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
+			),
+			"corporate_total_entity_pattern_title": pattern.Title,
+			"updated":                              datetime.NewCpsTime(),
+			"author":                               author,
+		}
+
+		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, update)
 		if err != nil {
 			return err
 		}
 
 		scenarioCollection := mongo.ScenarioMongoCollection
+		update["$set"] = bson.M{
+			"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
+			),
+			"actions.$[action].corporate_entity_pattern_title": pattern.Title,
+			"updated": datetime.NewCpsTime(),
+			"author":  author,
+		}
+
 		_, err = s.client.Collection(scenarioCollection).UpdateMany(ctx,
 			bson.M{"actions.corporate_entity_pattern": pattern.ID},
-			bson.M{"$set": bson.M{
-				"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
-					common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
-				),
-				"actions.$[action].corporate_entity_pattern_title": pattern.Title,
-				"updated": datetime.NewCpsTime(),
-				"author":  author,
-			}},
+			update,
 			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
 		)
 		if err != nil {
@@ -501,7 +558,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 	var alarmPatternQuery, alarmPatternAddFields, entityPatternQuery, pbhPatternQuery bson.M
 	alarmsPipeline := make([]bson.M, 0)
 	entitiesPipeline := make([]bson.M, 0)
-	var alarmPatternCount, entityPatternCount, pbhPatternCount, alarmsCount, entitiesCount Count
+	var alarmPatternCount, entityPatternCount, pbhPatternCount, alarmsCount, entitiesCount CountResponse
 	if len(r.AlarmPattern) > 0 {
 		alarmPatternQuery, err = db.AlarmPatternToMongoQuery(r.AlarmPattern, "")
 		if err != nil {
@@ -534,7 +591,14 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.EntityPattern) > 0 {
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "entity")
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: r.EntityPattern,
+		})
+		if err != nil {
+			return res, err
+		}
+
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "entity")
 		if err != nil {
 			return res, err
 		}
@@ -553,7 +617,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 			)
 		}
 
-		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(r.EntityPattern, "")
+		entityPatternQueryForEntities, err := db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -573,7 +637,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 				{"v.resolved": nil},
 				alarmPatternQuery,
 			}}})
-			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmPatternPipeline)
+			alarmPatternCount.Count, alarmPatternCount.Millisecs, err = s.fetchCount(ctx, mongo.AlarmMongoCollection, alarmPatternPipeline)
 			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
 
 			return err
@@ -582,7 +646,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 	if len(pbhPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+			pbhPatternCount.Count, pbhPatternCount.Millisecs, err = s.fetchCount(ctx, mongo.AlarmMongoCollection,
 				[]bson.M{{"$match": bson.M{"$and": []bson.M{
 					{"v.resolved": nil},
 					pbhPatternQuery,
@@ -595,7 +659,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 	if len(entityPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection),
+			entityPatternCount.Count, entityPatternCount.Millisecs, err = s.fetchCount(ctx, mongo.AlarmMongoCollection,
 				[]bson.M{
 					{"$match": bson.M{"v.resolved": nil}},
 					{"$lookup": bson.M{
@@ -617,7 +681,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		fetchAlarmsCount = true
 		g.Go(func() error {
 			var err error
-			alarmsCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmsPipeline)
+			alarmsCount.Count, alarmsCount.Millisecs, err = s.fetchCount(ctx, mongo.AlarmMongoCollection, alarmsPipeline)
 			alarmsCount.OverLimit = alarmsCount.Count > maxCount
 
 			return err
@@ -626,7 +690,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 	if len(entitiesPipeline) > 0 {
 		g.Go(func() error {
 			var err error
-			entitiesCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entitiesPipeline)
+			entitiesCount.Count, entitiesCount.Millisecs, err = s.fetchCount(ctx, mongo.EntityMongoCollection, entitiesPipeline)
 			entitiesCount.OverLimit = entitiesCount.Count > maxCount
 
 			return err
@@ -660,9 +724,16 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	var err error
 	var alarmPatternQuery, alarmPatternAddFields, entityPatternQuery, pbhPatternQuery bson.M
 	entitiesPipeline := make([]bson.M, 0)
-	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount Count
+	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount CountResponse
 	if len(r.EntityPattern) > 0 {
-		entityPatternQuery, err = db.EntityPatternToMongoQuery(r.EntityPattern, "")
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: r.EntityPattern,
+		})
+		if err != nil {
+			return res, err
+		}
+
+		entityPatternQuery, err = db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
 		if err != nil {
 			return res, err
 		}
@@ -721,7 +792,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	if len(entityPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			entityPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection),
+			entityPatternCount.Count, entityPatternCount.Millisecs, err = s.fetchCount(ctx, mongo.EntityMongoCollection,
 				[]bson.M{{"$match": entityPatternQuery}})
 			entityPatternCount.OverLimit = entityPatternCount.Count > maxCount
 
@@ -731,7 +802,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	if len(pbhPatternQuery) > 0 {
 		g.Go(func() error {
 			var err error
-			pbhPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection),
+			pbhPatternCount.Count, pbhPatternCount.Millisecs, err = s.fetchCount(ctx, mongo.EntityMongoCollection,
 				[]bson.M{{"$match": pbhPatternQuery}})
 			pbhPatternCount.OverLimit = pbhPatternCount.Count > maxCount
 
@@ -750,7 +821,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 				bson.M{"$match": bson.M{"v.resolved": nil}},
 				bson.M{"$match": alarmPatternQuery},
 			)
-			alarmPatternCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.AlarmMongoCollection), alarmPatternPipeline)
+			alarmPatternCount.Count, alarmPatternCount.Millisecs, err = s.fetchCount(ctx, mongo.AlarmMongoCollection, alarmPatternPipeline)
 			alarmPatternCount.OverLimit = alarmPatternCount.Count > maxCount
 
 			return err
@@ -762,7 +833,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 		fetchEntitiesCount = true
 		g.Go(func() error {
 			var err error
-			entitiesCount.Count, err = s.fetchCount(ctx, s.client.Collection(mongo.EntityMongoCollection), entitiesPipeline)
+			entitiesCount.Count, entitiesCount.Millisecs, err = s.fetchCount(ctx, mongo.EntityMongoCollection, entitiesPipeline)
 			entitiesCount.OverLimit = entitiesCount.Count > maxCount
 
 			return err
@@ -791,13 +862,15 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 
 func (s *store) fetchCount(
 	ctx context.Context,
-	collection mongo.DbCollection,
+	collectionName string,
 	pipeline []bson.M,
-) (int64, error) {
+) (int64, int64, error) {
+	collection := s.readClient.Collection(collectionName)
 	pipeline = append(pipeline, bson.M{"$count": "total_count"})
+	start := time.Now()
 	cursor, err := collection.Aggregate(ctx, pipeline)
 	if err != nil {
-		return 0, err
+		return 0, 0, err
 	}
 
 	defer cursor.Close(ctx)
@@ -805,9 +878,16 @@ func (s *store) fetchCount(
 	res := AggregationResult{}
 	if cursor.Next(ctx) {
 		err = cursor.Decode(&res)
+		if err != nil {
+			return 0, 0, err
+		}
 	}
 
-	return res.GetTotal(), err
+	if err = cursor.Err(); err != nil {
+		return 0, 0, err
+	}
+
+	return res.GetTotal(), max(time.Since(start).Milliseconds(), 1), nil
 }
 
 func (s *store) findPbehaviors(ctx context.Context, pattern Response) ([]string, error) {
@@ -876,8 +956,6 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	switch request.Type {
 	case savedpattern.TypeAlarm:
 		model.AlarmPattern = request.AlarmPattern
-	case savedpattern.TypeEntity:
-		model.EntityPattern = request.EntityPattern
 	case savedpattern.TypePbehavior:
 		model.PbehaviorPattern = request.PbehaviorPattern
 	case savedpattern.TypeWeatherService:
@@ -885,4 +963,24 @@ func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
 	}
 
 	return model
+}
+
+func (s *store) transformEntityPatternToModel(
+	ctx context.Context,
+	r EditRequest,
+	model *savedpattern.SavedPattern,
+) error {
+	if r.Type == savedpattern.TypeEntity {
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: r.EntityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		model.Aliases = transformedEntityPatternRequest.Aliases
+		model.EntityPattern = transformedEntityPatternRequest.EntityPattern
+	}
+
+	return nil
 }

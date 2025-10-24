@@ -5,6 +5,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 ## Sommaire
 
 *  [Utilisation de l'interface](interface/index.md)
+*  [Les patterns / Filtres](interface/patterns/index.md)
 *  [La remédiation](remediation/index.md)
 *  [Les services](services/index.md)
 *  [Cas d'usage](cas-d-usage/index.md)
@@ -19,6 +20,7 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Données externes](menu-exploitation/donnees-externes.md)
   * [Filtres d'événements](menu-exploitation/filtres-evenements.md)
   * [Générateur de liens](menu-exploitation/generateur-liens.md)
+  * [Informations d'entité](menu-exploitation/informations-entite.md)
   * [Informations dynamiques](menu-exploitation/informations-dynamiques.md)
   * [Règles SNMP](menu-exploitation/regles-snmp.md)
   * [Règles d'inactivité](menu-exploitation/regles-inactivite.md)
@@ -39,9 +41,11 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Consignes](menu-administration/consignes.md)
   * [Enregistrements d'événements](menu-administration/enregistrements-d-evenements.md)
   * [Gestion des tags](menu-administration/gestion-des-tags.md)
+  * [Jetons d'authentification externe](menu-administration/jetons-authentification-externe.md)
   * [KPI](menu-administration/kpi.md)
   * [Mode Maintenance](menu-administration/mode-maintenance.md)
   * [Paramètres](menu-administration/parametres.md)
   * [Paramètres de calcul d'état/sévérité](menu-administration/parametres-de-calculd-etat-sévérité.md)
   * [Paramètres de stockage](menu-administration/parametres-de-stockage.md)
   * [Planification](menu-administration/planification.md) 
+  * [Studio Templates](menu-administration/studio-templates.md) 

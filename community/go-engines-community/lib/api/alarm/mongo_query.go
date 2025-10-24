@@ -97,6 +97,8 @@ type MongoQueryBuilder struct {
 	computedFields              bson.M
 	// excludedFields is used to remove redundant data from result
 	excludedFields []string
+
+	transformer common.PatternFieldsTransformer
 }
 
 type lookupWithKey struct {
@@ -104,11 +106,12 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, alarmCollectionName string) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer, alarmCollectionName string) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection:      client.Collection(mongo.WidgetFiltersMongoCollection),
 		instructionCollection: client.Collection(mongo.InstructionMongoCollection),
 		authorProvider:        authorProvider,
+		transformer:           transformer,
 		alarmCollectionName:   alarmCollectionName,
 
 		defaultSearchByFields: []string{
@@ -190,10 +193,11 @@ func (q *MongoQueryBuilder) clear(now datetime.CpsTime, userID string) {
 	q.excludedFields = []string{"bookmarks", "v.steps", "pbehavior.comments", entityDbPrefix + ".services"}
 }
 
-func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
+func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r GetDisplayNamesRequest, now datetime.CpsTime) ([]bson.M, error) {
 	q.clear(now, "")
 
-	err := q.handlePatterns(FilterRequest{
+	q.handleOpened(r.GetOpenedFilter())
+	err := q.handlePatterns(ctx, FilterRequest{
 		BaseFilterRequest: BaseFilterRequest{
 			AlarmPattern:     r.AlarmPattern,
 			EntityPattern:    r.EntityPattern,
@@ -204,13 +208,16 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(r GetDisplayNamesReque
 		return nil, err
 	}
 
-	match := bson.M{"v.resolved": nil}
-
+	match := bson.M{}
 	if r.Search != "" {
 		match["v.display_name"] = bson.Regex{
 			Pattern: ".*" + regexp.QuoteMeta(r.Search) + ".*",
 			Options: "i",
 		}
+	}
+
+	if len(r.IDs) != 0 {
+		match["_id"] = bson.M{"$in": r.IDs}
 	}
 
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
@@ -248,7 +255,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
-	err = q.handlePatterns(r.FilterRequest)
+	err = q.handlePatterns(ctx, r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -261,6 +268,7 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 		return nil, err
 	}
 	q.handleDependencies(r.WithDependencies)
+	q.handleTagColors(r.WithTagColors)
 
 	return q.createPaginationAggregationPipeline(r.Query), nil
 }
@@ -273,7 +281,7 @@ func (q *MongoQueryBuilder) CreateCountAggregationPipeline(ctx context.Context, 
 		return nil, err
 	}
 
-	err = q.handlePatterns(r)
+	err = q.handlePatterns(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -297,6 +305,7 @@ func (q *MongoQueryBuilder) CreateGetAggregationPipeline(
 	q.clear(now, userID)
 	q.handleOpened(opened)
 	q.handleDependencies(true)
+	q.handleTagColors(true)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 
 	q.computedFields["is_meta_alarm"] = getIsMetaAlarmField()
@@ -336,7 +345,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		return nil, err
 	}
 
-	err = q.handlePatterns(filterRequest)
+	err = q.handlePatterns(ctx, filterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -351,6 +360,7 @@ func (q *MongoQueryBuilder) CreateAggregationPipelineByMatch(
 		return nil, err
 	}
 	q.handleDependencies(true)
+	q.handleTagColors(true)
 
 	return q.createPaginationAggregationPipeline(paginationQuery), nil
 }
@@ -367,6 +377,7 @@ func (q *MongoQueryBuilder) CreateChildrenAggregationPipeline(
 	q.clear(now, userID)
 	q.handleOpened(opened)
 	q.handleDependencies(true)
+	q.handleTagColors(true)
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": bson.M{"v.parents": parentId}})
 	q.lookups = append(q.lookups, lookupWithKey{key: "parents", pipeline: []bson.M{
 		{"$graphLookup": bson.M{
@@ -494,7 +505,7 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 		return nil, err
 	}
 
-	err = q.handlePatterns(r.FilterRequest)
+	err = q.handlePatterns(ctx, r.FilterRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -510,8 +521,13 @@ func (q *MongoQueryBuilder) CreateOnlyListAggregationPipeline(
 	q.handleDependencies(r.WithDependencies)
 
 	beforeLimit, afterLimit := q.createAggregationPipeline()
-	pipeline := append(beforeLimit, q.sort)
+	pipeline := beforeLimit
+	if len(q.sort) > 0 {
+		pipeline = append(pipeline, q.sort)
+	}
+
 	pipeline = append(pipeline, afterLimit...)
+
 	return pipeline, nil
 }
 
@@ -562,6 +578,10 @@ func (q *MongoQueryBuilder) createAggregationPipeline() ([]bson.M, []bson.M) {
 		if !addedLookups[lookup.key] && !q.lookupsOnlyForAdditionalMatch[lookup.key] {
 			afterLimit = append(afterLimit, lookup.pipeline...)
 		}
+	}
+
+	if len(q.sort) > 0 {
+		afterLimit = append(afterLimit, q.sort) // required in case of lookup with unwind/group
 	}
 
 	addFields := bson.M{}
@@ -681,24 +701,24 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 
 		err = q.handleAlarmPattern(filter.AlarmPattern)
 		if err != nil {
-			return fmt.Errorf("invalid alarm pattern in widget filter id=%q: %w", filter.ID, err)
+			return common.NewValidationError("filters."+strconv.Itoa(i), fmt.Sprintf("invalid alarm pattern in widget filter id=%q: %s", filter.ID, err.Error()))
 		}
 
 		err = q.handlePbehaviorPattern(filter.PbehaviorPattern)
 		if err != nil {
-			return fmt.Errorf("invalid pbehavior pattern in widget filter id=%q: %w", filter.ID, err)
+			return common.NewValidationError("filters."+strconv.Itoa(i), fmt.Sprintf("invalid pbehavior pattern in widget filter id=%q: %s", filter.ID, err.Error()))
 		}
 
 		err = q.handleEntityPattern(filter.EntityPattern)
 		if err != nil {
-			return fmt.Errorf("invalid entity pattern in widget filter id=%q: %w", filter.ID, err)
+			return common.NewValidationError("filters."+strconv.Itoa(i), fmt.Sprintf("invalid entity pattern in widget filter id=%q: %s", filter.ID, err.Error()))
 		}
 	}
 
 	return nil
 }
 
-func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
+func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest) error {
 	if r.AlarmPattern != "" {
 		var alarmPattern pattern.Alarm
 		err := json.Unmarshal([]byte(r.AlarmPattern), &alarmPattern)
@@ -729,7 +749,15 @@ func (q *MongoQueryBuilder) handlePatterns(r FilterRequest) error {
 		if err != nil {
 			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 		}
-		err = q.handleEntityPattern(entityPattern)
+
+		transformedEntityPattern, err := q.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+			EntityPattern: entityPattern,
+		})
+		if err != nil {
+			return err
+		}
+
+		err = q.handleEntityPattern(transformedEntityPattern.EntityPattern)
 		if err != nil {
 			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 		}
@@ -935,9 +963,6 @@ func (q *MongoQueryBuilder) addCategoryFilter(r FilterRequest, match *[]bson.M) 
 func (q *MongoQueryBuilder) addTagsFilter(r FilterRequest, match *[]bson.M) {
 	if len(r.Tags) != 0 {
 		*match = append(*match, bson.M{"tags": bson.M{"$in": r.Tags}})
-	} else if r.Tag != "" {
-		// @todo: backward compatibility, tag parameter is deprecated, should be removed in 25.04.
-		*match = append(*match, bson.M{"tags": r.Tag})
 	}
 }
 
@@ -1306,6 +1331,14 @@ func (q *MongoQueryBuilder) entityFieldToDbField(f string) (string, bool) {
 	}
 
 	return "", false
+}
+
+func (q *MongoQueryBuilder) handleTagColors(withTagColors bool) {
+	if !withTagColors {
+		return
+	}
+
+	q.lookups = append(q.lookups, lookupWithKey{key: "tag_colors", pipeline: GetTagColorsLookup()})
 }
 
 func getEntityLookup() []bson.M {
@@ -1683,4 +1716,36 @@ func getOnlyParentsSearchPipeline(
 	}...)
 
 	return pipeline
+}
+
+func GetTagColorsLookup() []bson.M {
+	return []bson.M{
+		{"$addFields": bson.M{
+			"doc": "$$ROOT",
+		}},
+		{"$unwind": bson.M{"path": "$tags", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.AlarmTagCollection,
+			"localField":   "tags",
+			"foreignField": "value",
+			"as":           "tag_colors",
+		}},
+		{"$unwind": bson.M{"path": "$tag_colors", "preserveNullAndEmptyArrays": true}},
+		{"$group": bson.M{
+			"_id": "$_id",
+			"doc": bson.M{"$first": "$doc"},
+			"tag_colors": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if": "$tags",
+				"then": bson.M{
+					"value": "$tags",
+					"color": "$tag_colors.color",
+				},
+				"else": "$$REMOVE",
+			}}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
+			"$doc",
+			bson.M{"tag_colors": "$tag_colors"},
+		}}}},
+	}
 }

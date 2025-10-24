@@ -5,12 +5,12 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` with selected t
   class="layout c-alarm-actions-chips wrap align-center"
 >
   <span
-    class="c-alarm-action-chip"
+    class="c-chip"
     color="color3"
     text-color="white"
   />
   <span
-    class="c-alarm-action-chip"
+    class="c-chip"
     color="color1"
     text-color="white"
   />
@@ -45,17 +45,17 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
   class="layout c-alarm-actions-chips wrap align-center"
 >
   <span
-    class="c-alarm-action-chip"
+    class="c-chip"
     color="color1"
     text-color="white"
   />
   <span
-    class="c-alarm-action-chip"
+    class="c-chip"
     color="color2"
     text-color="white"
   />
   <span
-    class="c-alarm-action-chip"
+    class="c-chip"
     color="color3"
     text-color="white"
   />
@@ -68,7 +68,7 @@ exports[`c-alarm-actions-chips Renders \`c-alarm-actions-chips\` without selecte
   class="layout c-alarm-actions-chips wrap align-center"
 >
   <span
-    class="c-alarm-action-chip"
+    class="c-chip"
     color="color1"
     text-color="white"
   />

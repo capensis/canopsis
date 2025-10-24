@@ -30,7 +30,6 @@ export default {
   eventsFilteredSinceLastUpdate: 'Events filtered since last update',
   errorsSinceLastUpdate: 'Errors since last update',
   markAsRead: 'Mark as read',
-  filterByType: 'Filter by type',
   copyEventToClipboard: 'Copy event to clipboard',
   event: 'Event',
   eventCopied: 'Event copied to clipboard',
@@ -61,48 +60,185 @@ export default {
   actionsTypes: {
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copy]: {
       text: 'Copy a value from a field of event to another',
-      message: 'This action is used used to copy the value or a pair key+value of a control in an event.',
-      description: 'The parameters of the action are:\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.\n- description (optional): the description.\n- name: the name of the event field into which the value must be copied.',
+      message: 'This action is used to copy the value or a pair key+value of a control in an event.',
+      description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
+      + '<p>'
+        + '<ul>'
+          + '<li><strong>description</strong> (optional): the description.</li>'
+          + '<li><strong>name</strong>: the name of the event field into which the value must be copied.</li>'
+          + '<li><strong>value</strong>: the name of the control whose value must be copied. It can be an event field including key+value options, a subgroup of a regular expression, or an external data.</li>'
+        + '</ul>'
+      + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.copyToEntityInfo]: {
       text: 'Copy a value from a field of an event to an info of an entity',
       message: 'This action is used to copy the field value of an event to the field of an entity.',
-      description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field of an entity.\n- value: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.',
+      description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
+      + '<p>'
+        + '<ul>'
+          + '<li><strong>description</strong> (optional): the description.</li>'
+          + '<li><strong>name</strong>: the name of the field of an entity.</li>'
+          + '<li><strong>value</strong>: the name of the control whose value must be copied. It can be an event field, a subgroup of a regular expression, or an external data.</li>'
+        + '</ul>'
+      + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfo]: {
       text: 'Set an info of an entity to a constant',
       message: 'This action is used to set the dynamic information from an entity corresponding to the event.',
-      description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the value of a field.',
+      description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
+      + '<p>'
+        + '<ul>'
+          + '<li><strong>description</strong> (optional): the description.</li>'
+          + '<li><strong>name</strong>: the name of the field.</li>'
+          + '<li><strong>value</strong>: the value of the field.</li>'
+        + '</ul>'
+      + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromTemplate]: {
       text: 'Set a string info of an entity using a template',
       message: 'This action is used to modify the dynamic information from an entity corresponding to the event.',
-      description: 'The parameters of the action are:\n- description (optional): the description\n- name: the name of the field.\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
+      + '<p>'
+        + '<ul>'
+          + '<li><strong>description</strong> (optional): the description.</li>'
+          + '<li><strong>name</strong>: the name of the field.</li>'
+          + '<li><strong>value</strong>: the template used to determine the value of the data item.</li>'
+        + '</ul>'
+      + '</p>'
+      + '<p>Templates {{.Event.Field}}, regular expressions or external data can be used</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setField]: {
       text: 'Set a field of an event to a constant',
       message: 'This action can be used to modify a field of the event.',
-      description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the new value of the field.',
+      description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
+      + '<p>'
+        + '<ul>'
+          + '<li><strong>description</strong> (optional): the description.</li>'
+          + '<li><strong>name</strong>: the name of the field.</li>'
+          + '<li><strong>value</strong>: the new value of the field.</li>'
+        + '</ul>'
+      + '</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setFieldFromTemplate]: {
       text: 'Set a string field of an event using a template',
       message: 'This action allows you to modify an event field from a template.',
-      description: 'The parameters of the action are:\n- description (optional): the description.\n- name: the name of the field.\n- value: the template used to determine the value of the field.\n Templates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
-    },
-    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags]: {
-      text: 'Set tags from a field using regexp match',
-      message: 'This action can be used for setting tags from other filtered events using regexp match.',
-      description: 'Tags of the format ”Name: Value” can be defined using this action.\nEvent filter with one field filtered by Regexp match with name and value variables shall be applied first.\nRegular expressions examples:\n<ul><li><code>(?P&lt;value&gt;[a-zA-Z]+)\\\\s+(?P&lt;name&gt;[a-zA-Z]+);</code> - for strings that contains arrays of <code>value name;</code> divided by <code>;</code></li><li><code>(?P&lt;name&gt;[a-zA-Z]+)\\\\s+(?P&lt;value&gt;[a-zA-Z]+);</code> - for strings that contains arrays of <code>name value;</code> divided by <code>;</code></li><li><code>(?P&lt;name&gt;[a-zA-Z]+):\\s+(?P&lt;value&gt;[a-zA-Z]+);</code> - for strings that contains arrays of <code>name: value;</code> divided by <code>;</code></li></ul>The parameters of the action are:\n- description (optional): the description.\n- value: the event filter field from which the name and value are retrieved.',
-    },
-    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate]: {
-      text: 'Set tags from a field using a template',
-      message: 'This action can be used for setting tags from other event fields using a template.',
-      description: 'Tags of the format ”Name: Value” can be defined using this action.\nThe parameters of the action are:\n- description (optional): the description.\n- name: the name of the tag group\n- value: the template used to determine the value of the data item.\nTemplates {{.Event.NomDuChamp}}, regular expressions or external data can be used.',
+      description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
+      + '<p>'
+        + '<ul>'
+          + '<li><strong>description</strong> (optional): the description.</li>'
+          + '<li><strong>name</strong>: the name of the field.</li>'
+          + '<li><strong>value</strong>: the template used to determine the value of the field.</li>'
+        + '</ul>'
+      + '</p>'
+      + '<p>Templates {{.Event.Field}}, regular expressions or external data can be used</p>',
     },
     [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setEntityInfoFromDictionary]: {
       text: 'Set entity info from a dictionary',
       message: 'This action can be used for setting entity infos from event fields with a dictionary type node.',
-      description: 'The parameters of the action are:\n- Value: the event field from which the infos are retrieved. The value must contain an array of name: value pairs.\n- Description (optional): the description which is used for the entity infos description. If not defined, the entity infos description is left empty.',
+      description: '<h3 class="text-subtitle-1 font-weight-bold">Action parameters</h3>'
+      + '<ul>'
+        + '<li><strong>description</strong> (optional): the description which is used for the entity infos description. If not defined, the entity infos description is left empty.</li>'
+        + '<li><strong>value</strong>: the event field from which the infos are retrieved. The value must contain an array of name: value pairs.</li>'
+      + '</ul>',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTags]: {
+      text: 'Set tags from a field using regexp match',
+      message: 'This action can be used for setting tags from other filtered events using regexp match.',
+      description: '<p>'
+        + 'The <strong>set_tags</strong> action allows for the dynamic creation of tags in the format '
+        + '<strong>"Name: Value"</strong> from a field of the <strong>event currently being processed</strong>, '
+        + 'using <strong>capture groups</strong> defined in a regular expression.'
+        + '</p>'
+
+        + '<p>'
+        + 'This regular expression must be applied upstream, in an <strong>event filter</strong>, '
+        + 'on a text field containing the information to be transformed into tags.'
+        + '</p>'
+
+        + '<p>'
+        + 'The regular expression must include two named groups:'
+        + '</p>'
+
+        + '<p>'
+        + '<ul>'
+        + '<li><code>(?P&lt;name&gt;...)</code> to extract the tag <strong>name</strong>.</li>'
+        + '<li><code>(?P&lt;value&gt;...)</code> to extract the tag <strong>value</strong>.</li>'
+        + '</ul>'
+        + '</p>'
+
+        + '<p>'
+        + 'Once the filter is applied and the groups are detected, the <strong>set_tags</strong> action '
+        + 'uses these values to automatically generate the corresponding tags.'
+        + '</p>'
+
+        + '<h3 class="text-subtitle-1 font-weight-bold mt-4 mb-2">Regular expressions examples</h3>'
+        + '<table>'
+        + '<thead>'
+        + '<tr>'
+        + '<th class="pa-2">Expected format in source field</th>'
+        + '<th class="pa-2">Regular expression</th>'
+        + '</tr>'
+        + '</thead>'
+        + '<tbody>'
+        + '<tr>'
+        + '<td class="pa-2"><code>value name;</code></td>'
+        + '<td class="pa-2"><code>(?P&lt;value&gt;[a-zA-Z]+)\\s+(?P&lt;name&gt;[a-zA-Z]+);</code></td>'
+        + '</tr>'
+        + '<tr>'
+        + '<td class="pa-2"><code>name value;</code></td>'
+        + '<td class="pa-2"><code>(?P&lt;name&gt;[a-zA-Z]+)\\s+(?P&lt;value&gt;[a-zA-Z]+);</code></td>'
+        + '</tr>'
+        + '<tr>'
+        + '<td class="pa-2"><code>name: value;</code></td>'
+        + '<td class="pa-2"><code>(?P&lt;name&gt;[a-zA-Z]+):\\s+(?P&lt;value&gt;[a-zA-Z]+);</code></td>'
+        + '</tr>'
+        + '</tbody>'
+        + '</table>'
+
+        + '<h3 class="text-subtitle-1 font-weight-bold mt-4 mb-2">Action parameters</h3>'
+        + '<p>'
+        + '<ul>'
+        + '<li><strong>description</strong> (optional): comment or free description of the action.</li>'
+        + '<li><strong>value</strong> (required): name of the event field to which the capture groups <code>name</code> and <code>value</code> have been applied.</li>'
+        + '</ul>'
+        + '</p>',
+    },
+    [EVENT_FILTER_ENRICHMENT_ACTIONS_TYPES.setTagsFromTemplate]: {
+      text: 'Set tags from a field using a template',
+      message: 'This action can be used for setting tags from other event fields using a template.',
+      description: '<p>'
+        + 'This action can be used for setting tags from other event fields using a template.'
+        + '</p>'
+
+        + '<p>'
+        + 'The action <strong>set_tags_from_template</strong> allows you to add a <strong>unique tag</strong> in the format '
+        + '<strong>"Name: Value"</strong>, dynamically constructed from a template based on the fields of the event.'
+        + '</p>'
+
+        + '<p>'
+        + 'This action is useful when you want to define a tag whose <strong>value</strong> is calculated from the content of one or more fields '
+        + 'of the event, using Go templating syntax (<code>{{.Event.Field}}</code>).'
+        + '</p>'
+
+        + '<p>'
+        + 'This action only allows the creation of <strong>one tag at a time</strong>.'
+        + '</p>'
+
+        + '<h3 class="text-subtitle-1 font-weight-bold mt-4 mb-2">Action parameters</h3>'
+        + '<p>'
+        + '<ul>'
+        + '<li><strong>description</strong> (optional): a comment or free description of the action.</li>'
+        + '<li><strong>name</strong> (required): the name of the tag to create.</li>'
+        + '<li><strong>value</strong> (required): the template used to generate the tag\'s value.'
+        + '<br>It can contain:'
+        + '<ul>'
+        + '<li>references to the fields of the event (<code>{{.Event.Field}}</code>).</li>'
+        + '<li>regular expressions if the field has been previously filtered.</li>'
+        + '<li>or data from an external source if it has been injected into the context.</li>'
+        + '</ul>'
+        + '</li>'
+        + '</ul>'
+        + '</p>',
     },
   },
 };

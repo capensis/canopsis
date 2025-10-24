@@ -30,14 +30,13 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "search":
-			out.Search = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Search = string(in.String())
+			}
 		case "filters":
 			if in.IsNull() {
 				in.Skip()
@@ -55,14 +54,22 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				for !in.IsDelim(']') {
 					var v1 string
-					v1 = string(in.String())
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v1 = string(in.String())
+					}
 					out.Filters = append(out.Filters, v1)
 					in.WantComma()
 				}
 				in.Delim(']')
 			}
 		case "category":
-			out.Category = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Category = string(in.String())
+			}
 		case "type":
 			if in.IsNull() {
 				in.Skip()
@@ -80,16 +87,28 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				for !in.IsDelim(']') {
 					var v2 string
-					v2 = string(in.String())
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v2 = string(in.String())
+					}
 					out.Type = append(out.Type, v2)
 					in.WantComma()
 				}
 				in.Delim(']')
 			}
 		case "no_events":
-			out.NoEvents = bool(in.Bool())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.NoEvents = bool(in.Bool())
+			}
 		case "entity_pattern":
-			out.EntityPattern = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.EntityPattern = string(in.String())
+			}
 		case "ids":
 			if in.IsNull() {
 				in.Skip()
@@ -107,7 +126,11 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				for !in.IsDelim(']') {
 					var v3 string
-					v3 = string(in.String())
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v3 = string(in.String())
+					}
 					out.IDs = append(out.IDs, v3)
 					in.WantComma()
 				}

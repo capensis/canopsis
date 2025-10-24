@@ -26,13 +26,16 @@ type Rule struct {
 
 	savedpattern.EntityPatternFields `bson:",inline"`
 	savedpattern.AlarmPatternFields  `bson:",inline"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type Parameters struct {
-	Label    string `bson:"label" json:"label" binding:"required,max=255"`
+	Label    string `bson:"label" json:"label" binding:"required,max=255,template"`
 	Category string `bson:"category" json:"category" binding:"max=255"`
 	IconName string `bson:"icon_name" json:"icon_name" binding:"required,max=255"`
-	Url      string `bson:"url" json:"url" binding:"required,max=1000"`
+	URL      string `bson:"url" json:"url" binding:"required,max=1000,template"`
 	Action   string `bson:"action" json:"action" binding:"required,oneof=open copy"`
 	// Single to mark links unavailable to multiple selected alarms
 	Single     bool `bson:"single,omitempty" json:"single,omitempty"`

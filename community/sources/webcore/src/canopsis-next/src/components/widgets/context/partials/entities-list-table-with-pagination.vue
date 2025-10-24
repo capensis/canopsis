@@ -1,11 +1,11 @@
 <template>
   <div>
-    <c-empty-data-table-columns v-if="!columns.length" />
+    <c-empty-data-table-columns v-if="!preparedColumns.length" />
     <c-advanced-data-table
       v-else
       :items="entities"
       :headers="headers"
-      :loading="pending || columnsFiltersPending"
+      :loading="pending || columnsFiltersPending || entityInfoPropertyPending"
       :total-items="meta.total_count"
       :options.sync="options"
       :toolbar-props="toolbarProps"
@@ -16,7 +16,7 @@
       <template #toolbar="">
         <slot name="toolbar" />
         <v-flex
-          v-if="columns.length"
+          v-if="preparedColumns.length"
           xs12
         >
           <v-layout
@@ -34,7 +34,7 @@
         </v-flex>
       </template>
       <template
-        v-for="column in columns"
+        v-for="column in preparedColumns"
         #[column.value]="{ item }"
       >
         <entity-column-cell
@@ -91,6 +91,7 @@ import { MODALS } from '@/constants';
 import { authMixin } from '@/mixins/auth';
 import { widgetOptionsMixin } from '@/mixins/widget/options';
 import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
+import { widgetColumnsEntityInfoPropertyMixin } from '@/mixins/widget/columns/entity-info-property';
 
 import EntityColumnCell from '../columns-formatting/entity-column-cell.vue';
 import ActionsPanel from '../actions/actions-panel.vue';
@@ -109,6 +110,7 @@ export default {
     authMixin,
     widgetOptionsMixin,
     entitiesAlarmColumnsFiltersMixin,
+    widgetColumnsEntityInfoPropertyMixin,
   ],
   props: {
     widget: {
@@ -158,15 +160,23 @@ export default {
       };
     },
 
+    preparedColumns() {
+      return this.columns.map(column => ({
+        ...column,
+
+        text: column.label || this.findAliasByColumnValue(column.value) || column.text,
+      }));
+    },
+
     headers() {
-      if (!this.columns.length) {
+      if (!this.preparedColumns.length) {
         return [];
       }
 
       return this.hideActions
-        ? this.columns
+        ? this.preparedColumns
         : [
-          ...this.columns,
+          ...this.preparedColumns,
 
           { text: this.$t('common.actionsLabel'), value: 'actions', sortable: false },
         ];
@@ -177,6 +187,8 @@ export default {
     },
   },
   async mounted() {
+    this.fetchEntityInfoPropertiesList({ params: { paginate: false } });
+
     this.columnsFiltersPending = true;
     this.columnsFilters = await this.fetchAlarmColumnsFiltersList();
     this.columnsFiltersPending = false;

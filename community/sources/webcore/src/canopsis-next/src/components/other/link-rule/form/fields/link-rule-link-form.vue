@@ -3,9 +3,10 @@
     <v-card-text>
       <v-layout column>
         <v-layout align-center>
-          <c-name-field
+          <c-payload-text-field
             v-field="form.label"
             :label="$t('common.label')"
+            :variables="templateVars.label"
             :name="labelFieldName"
             class="mr-2"
             required
@@ -48,7 +49,7 @@
         <c-payload-text-field
           v-field="form.url"
           :label="$t('common.url')"
-          :variables="urlVariables"
+          :variables="templateVars.url"
           :name="form.key"
           required
         />
@@ -73,13 +74,12 @@
 </template>
 
 <script>
-import { ENTITY_PAYLOADS_VARIABLES, LINK_RULE_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { payloadVariablesMixin } from '@/mixins/payload/variables';
+import { LINK_RULE_TYPES } from '@/constants';
 
 export default {
   inject: ['$validator'],
-  mixins: [payloadVariablesMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -97,56 +97,25 @@ export default {
       type: String,
       default: 'link',
     },
-  },
-  computed: {
-    isAlarmType() {
-      return this.type === LINK_RULE_TYPES.alarm;
-    },
-
-    labelFieldName() {
-      return `${this.name}.label`;
-    },
-
-    iconFieldName() {
-      return `${this.name}.icon`;
-    },
-
-    alarmUrlVariables() {
-      return [
-        ...this.alarmPayloadRangeVariables,
-        ...this.externalDataAlarmPayloadVariables,
-        ...this.userPayloadVariables,
-      ];
-    },
-
-    entityUrlVariables() {
-      return [
-        {
-          value: ENTITY_PAYLOADS_VARIABLES.entities,
-          enumerable: true,
-          variables: [
-            {
-              value: ENTITY_PAYLOADS_VARIABLES.infosValue,
-              text: this.$t('common.infos'),
-            },
-          ],
-        },
-
-        ...this.externalDataEntityPayloadVariables,
-        ...this.userPayloadVariables,
-      ];
-    },
-
-    urlVariables() {
-      return this.isAlarmType
-        ? this.alarmUrlVariables
-        : this.entityUrlVariables;
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
-  methods: {
-    remove() {
-      this.$emit('remove');
-    },
+  setup(props, { emit }) {
+    const isAlarmType = computed(() => props.type === LINK_RULE_TYPES.alarm);
+    const labelFieldName = computed(() => `${props.name}.label`);
+    const iconFieldName = computed(() => `${props.name}.icon`);
+
+    const remove = () => emit('remove');
+
+    return {
+      isAlarmType,
+      labelFieldName,
+      iconFieldName,
+
+      remove,
+    };
   },
 };
 </script>

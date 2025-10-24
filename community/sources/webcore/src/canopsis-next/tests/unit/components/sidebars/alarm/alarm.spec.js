@@ -1,8 +1,8 @@
-import { omit } from 'lodash';
+import { omit, map } from 'lodash';
 import Faker from 'faker';
 
 import { flushPromises, generateShallowRenderer, generateRenderer } from '@unit/utils/vue';
-import { createMockedStoreModules } from '@unit/utils/store';
+import { createMockedStoreModules, createTemplateVarsModule, createEntityInfoPropertyModule } from '@unit/utils/store';
 import { createButtonStub } from '@unit/stubs/button';
 import { createInputStub } from '@unit/stubs/input';
 import { mockSidebar } from '@unit/utils/mock-hooks';
@@ -64,6 +64,7 @@ const stubs = {
   'field-fast-action-output': createInputStub('field-fast-action-output'),
   'field-number': createInputStub('field-number'),
   'field-density': createInputStub('field-density'),
+  'field-quick-alarm-actions': createInputStub('field-quick-alarm-actions'),
   'fast-pbehavior-form': createInputStub('fast-pbehavior-form'),
   'export-csv-form': createInputStub('export-csv-form'),
   'charts-form': createInputStub('charts-form'),
@@ -95,6 +96,7 @@ const snapshotStubs = {
   'field-resize-column-behavior': true,
   'field-root-cause-settings': true,
   'field-availability-graph-settings': true,
+  'field-quick-alarm-actions': true,
 };
 
 const selectSwitcherFieldByTitle = (wrapper, title) => wrapper.find(`input.field-switcher[title="${title}"]`);
@@ -141,6 +143,12 @@ const selectFieldCorrelationEnabled = wrapper => selectSwitcherFieldByTitle(
 );
 const selectFieldRootCauseSettings = wrapper => wrapper.find('.field-root-cause-settings');
 const selectFieldAvailabilityGraphSettings = wrapper => wrapper.find('.field-availability-graph-settings');
+const selectFieldQuickActions = wrapper => wrapper.findAll('.field-quick-alarm-actions').at(0);
+const selectFieldQuickMassActions = wrapper => wrapper.findAll('.field-quick-alarm-actions').at(1);
+const selectFieldHideMassActions = wrapper => selectSwitcherFieldByTitle(
+  wrapper,
+  'Hide massive actions under more button',
+);
 const selectChartsForm = wrapper => wrapper.findAll('input.charts-form').at(0);
 
 describe('alarm', () => {
@@ -176,6 +184,9 @@ describe('alarm', () => {
     infosModule,
   } = createSettingsMocks();
 
+  const { templateVarsModule } = createTemplateVarsModule();
+  const { entityInfoPropertyModule } = createEntityInfoPropertyModule();
+
   const widget = {
     ...generateDefaultAlarmListWidget(),
 
@@ -193,6 +204,7 @@ describe('alarm', () => {
     'v.state.val',
     'v.status.val',
   ];
+  widget.parameters.moreInfoTemplate = '';
 
   const sidebar = {
     name: SIDE_BARS.alarmSettings,
@@ -209,8 +221,10 @@ describe('alarm', () => {
     authModule,
     userPreferenceModule,
     widgetTemplateModule,
+    entityInfoPropertyModule,
     serviceModule,
     infosModule,
+    templateVarsModule,
   ]);
 
   const timestamp = 1386435600000;
@@ -620,7 +634,9 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
+        entityInfoPropertyModule,
         infosModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {
@@ -668,7 +684,9 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         serviceModule,
+        entityInfoPropertyModule,
         infosModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {
@@ -1391,6 +1409,171 @@ describe('alarm', () => {
     });
   });
 
+  test('Quick actions changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickActions = selectFieldQuickActions(wrapper);
+    const newQuickActions = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickActions.triggerCustomEvent('input', newQuickActions);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'quickActions', map(newQuickActions, 'value')),
+      },
+    });
+  });
+
+  test('Quick mass actions changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickMassActions = selectFieldQuickMassActions(wrapper);
+    const newQuickMassActions = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickMassActions.triggerCustomEvent('input', newQuickMassActions);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'quickMassActions', map(newQuickMassActions, 'value')),
+      },
+    });
+  });
+
+  test('Quick actions template changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickActions = selectFieldQuickActions(wrapper);
+    const template = Faker.datatype.uuid();
+    const value = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickActions.triggerCustomEvent('update:template', template, value);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            quickActionsTemplate: template,
+            quickActions: map(value, 'value'),
+          },
+        ),
+      },
+    });
+  });
+
+  test('Quick mass actions template changed after trigger field quick alarm actions', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldQuickMassActions = selectFieldQuickMassActions(wrapper);
+    const template = Faker.datatype.uuid();
+    const value = [{
+      key: Faker.datatype.string(),
+      value: Faker.datatype.string(),
+    }];
+
+    fieldQuickMassActions.triggerCustomEvent('update:template', template, value);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewProperty(
+          widget,
+          'parameters',
+          {
+            ...widget.parameters,
+            quickMassActionsTemplate: template,
+            quickMassActions: map(value, 'value'),
+          },
+        ),
+      },
+    });
+  });
+
+  test('Hide mass actions changed after trigger switcher field', async () => {
+    const wrapper = factory({
+      store,
+      propsData: {
+        sidebar,
+      },
+      mocks: {
+        $sidebar,
+      },
+    });
+
+    const fieldHideMassActions = selectFieldHideMassActions(wrapper);
+    const hideMassActions = Faker.datatype.boolean();
+
+    fieldHideMassActions.triggerCustomEvent('input', hideMassActions);
+
+    await submitWithExpects(wrapper, {
+      fetchActiveView,
+      hideSidebar: $sidebar.hide,
+      widgetMethod: updateWidget,
+      expectData: {
+        id: widget._id,
+        data: getWidgetRequestWithNewParametersProperty(widget, 'hideMassActions', hideMassActions),
+      },
+    });
+  });
+
   test('Renders `alarm` widget settings with default props', async () => {
     const wrapper = snapshotFactory({
       store,
@@ -1427,7 +1610,9 @@ describe('alarm', () => {
         userPreferenceModule,
         widgetTemplateModule,
         infosModule,
+        entityInfoPropertyModule,
         serviceModule,
+        templateVarsModule,
         {
           ...authModule,
           getters: {

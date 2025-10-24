@@ -3,11 +3,19 @@ package widget
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -16,6 +24,10 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+)
+
+const (
+	entityTplVarsIndex = 1
 )
 
 type Store interface {
@@ -28,29 +40,62 @@ type Store interface {
 	Copy(ctx context.Context, widgetID string, r CreateRequest) (*Response, error)
 	CopyForTab(ctx context.Context, tabID, newTabID, author string, isPrivate bool) error
 	UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error)
+	ValidateTemplates(ctx context.Context, request TemplateRequest) (map[string]template.ValidateResponse, error)
+	GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, enforcer security.Enforcer) Store {
+func NewStore(
+	dbClient mongo.DbClient,
+	authorProvider author.Provider,
+	enforcer security.Enforcer,
+	transformer common.PatternFieldsTransformer,
+	tplValidator validator.Validator,
+	tplConfigProvider config.TemplateConfigProvider,
+) Store {
 	return &store{
-		client:             dbClient,
-		collection:         dbClient.Collection(mongo.WidgetMongoCollection),
-		tabCollection:      dbClient.Collection(mongo.ViewTabMongoCollection),
-		filterCollection:   dbClient.Collection(mongo.WidgetFiltersMongoCollection),
-		userPrefCollection: dbClient.Collection(mongo.UserPreferencesMongoCollection),
-		authorProvider:     authorProvider,
-		enforcer:           enforcer,
+		client:                    dbClient,
+		collection:                dbClient.Collection(mongo.WidgetMongoCollection),
+		tabCollection:             dbClient.Collection(mongo.ViewTabMongoCollection),
+		filterCollection:          dbClient.Collection(mongo.WidgetFiltersMongoCollection),
+		userPrefCollection:        dbClient.Collection(mongo.UserPreferencesMongoCollection),
+		widgetTemplateCollection:  dbClient.Collection(mongo.WidgetTemplateMongoCollection),
+		alarmCollection:           dbClient.Collection(mongo.AlarmMongoCollection),
+		tplTestCollection:         dbClient.Collection(mongo.TemplateTestCollection),
+		entityInfosPropCollection: dbClient.Collection(mongo.EntityInfosPropertyCollection),
+		authorProvider:            authorProvider,
+		transformer:               transformer,
+		enforcer:                  enforcer,
+		tplValidator:              tplValidator,
+		tplConfigProvider:         tplConfigProvider,
+		tplVars: []template.VarResponse{
+			{
+				Name:  "alarm",
+				Value: template.GetAlarmVars("{{ ", " }}", ".Alarm", false),
+			},
+			{
+				Name:  "entity",
+				Value: template.GetEntityVars("{{ ", " }}", ".Entity", false),
+			},
+		},
 	}
 }
 
 type store struct {
-	client             mongo.DbClient
-	collection         mongo.DbCollection
-	tabCollection      mongo.DbCollection
-	filterCollection   mongo.DbCollection
-	userPrefCollection mongo.DbCollection
-	authorProvider     author.Provider
-
-	enforcer security.Enforcer
+	client                    mongo.DbClient
+	collection                mongo.DbCollection
+	tabCollection             mongo.DbCollection
+	filterCollection          mongo.DbCollection
+	userPrefCollection        mongo.DbCollection
+	widgetTemplateCollection  mongo.DbCollection
+	alarmCollection           mongo.DbCollection
+	tplTestCollection         mongo.DbCollection
+	entityInfosPropCollection mongo.DbCollection
+	authorProvider            author.Provider
+	transformer               common.PatternFieldsTransformer
+	enforcer                  security.Enforcer
+	tplValidator              validator.Validator
+	tplConfigProvider         config.TemplateConfigProvider
+	tplVars                   []template.VarResponse
 }
 
 func (s *store) FindTabPrivacySettings(ctx context.Context, ids []string) (map[string]apisecurity.ViewTabPrivacySettings, error) {
@@ -181,6 +226,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		}
 	}
 
+	// todo: put inside transaction too
+	err = s.transformTemplateFields(ctx, &r.EditRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	now := datetime.NewCpsTime()
 	widget := transformEditRequestToModel(r.EditRequest)
 	widget.ID = utils.NewID()
@@ -189,27 +240,36 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	widget.Updated = now
 	widget.IsPrivate = tabInfo.IsPrivate
 
-	filters := make([]interface{}, len(r.Filters))
-	for i, filter := range r.Filters {
-		doc := transformFilterRequestToModel(filter)
-		doc.ID = utils.NewID()
-		doc.Widget = widget.ID
-		doc.Author = widget.Author
-		doc.Position = int64(i)
-		doc.Created = now
-		doc.Updated = now
-		doc.IsPrivate = tabInfo.IsPrivate
-
-		if widget.Parameters.MainFilter == filter.ID {
-			widget.Parameters.MainFilter = doc.ID
-		}
-
-		filters[i] = doc
-	}
-
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		filters := make([]view.WidgetFilter, len(r.Filters))
+		for i, filterRequest := range r.Filters {
+			doc := view.WidgetFilter{
+				ID:               utils.NewID(),
+				Title:            filterRequest.Title,
+				IsUserPreference: false,
+				Widget:           widget.ID,
+				Author:           widget.Author,
+				Position:         int64(i),
+				Created:          now,
+				Updated:          now,
+				IsPrivate:        tabInfo.IsPrivate,
+			}
+
+			if widget.Parameters.MainFilter == filterRequest.ID {
+				widget.Parameters.MainFilter = doc.ID
+			}
+
+			err = s.transformPatternRequestsToModel(ctx, filterRequest, i, &doc)
+			if err != nil {
+				return err
+			}
+
+			filters[i] = doc
+		}
+
 		_, err := s.collection.InsertOne(ctx, widget)
 		if err != nil {
 			return err
@@ -235,27 +295,41 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		return nil, err
 	}
 
+	// todo: put inside transaction too
+	err = s.transformTemplateFields(ctx, &r.EditRequest)
+	if err != nil {
+		return nil, err
+	}
+
 	now := datetime.NewCpsTime()
 	widget := transformEditRequestToModel(r.EditRequest)
 	widget.ID = oldWidget.ID
 	widget.Updated = now
 	widget.IsPrivate = oldWidget.IsPrivate
 
-	filters := make(map[string]view.WidgetFilter, len(r.Filters))
-	for i, filter := range r.Filters {
-		doc := transformFilterRequestToModel(filter)
-		doc.Widget = widget.ID
-		doc.Author = widget.Author
-		doc.IsPrivate = widget.IsPrivate
-		doc.Position = int64(i)
-		doc.Updated = now
-
-		filters[filter.ID] = doc
-	}
-
 	var response *Response
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		filters := make(map[string]view.WidgetFilter, len(r.Filters))
+		for i, filterRequest := range r.Filters {
+			doc := view.WidgetFilter{
+				Title:            filterRequest.Title,
+				IsUserPreference: false,
+				Widget:           widget.ID,
+				Author:           widget.Author,
+				IsPrivate:        widget.IsPrivate,
+				Position:         int64(i),
+				Updated:          now,
+			}
+
+			err = s.transformPatternRequestsToModel(ctx, filterRequest, i, &doc)
+			if err != nil {
+				return err
+			}
+
+			filters[filterRequest.ID] = doc
+		}
 
 		cursor, err := s.filterCollection.Find(ctx, bson.M{"widget": widget.ID, "is_user_preference": false})
 		if err != nil {
@@ -338,7 +412,15 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			return err
 		}
 
+		_, err = s.tplTestCollection.UpdateMany(ctx, bson.M{"rule._id": widget.ID, "type": template.TypeTestWidget}, bson.M{
+			"$set": bson.M{"rule.name": widget.Title},
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetOneBy(ctx, widget.ID)
+
 		return err
 	})
 
@@ -371,7 +453,14 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			return err
 		}
 
+		_, err = logger.DeleteByFilter(ctx, bson.M{"rule._id": id, "type": template.TypeTestWidget}, userID,
+			s.tplTestCollection)
+		if err != nil {
+			return err
+		}
+
 		res = true
+
 		return nil
 	})
 
@@ -442,70 +531,6 @@ func (s *store) CopyForTab(ctx context.Context, tabID, newTabID, author string, 
 	return nil
 }
 
-func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r CreateRequest) (*Response, error) {
-	now := datetime.NewCpsTime()
-	newWidget := view.Widget{
-		ID:             utils.NewID(),
-		Tab:            r.Tab,
-		Title:          r.Title,
-		Type:           r.Type,
-		GridParameters: r.GridParameters,
-		Parameters:     r.Parameters,
-		Author:         r.Author,
-		IsPrivate:      isPrivate,
-		Created:        now,
-		Updated:        now,
-	}
-
-	cursor, err := s.filterCollection.Find(ctx, bson.M{
-		"widget":             widgetID,
-		"is_user_preference": false,
-	}, options.Find().SetProjection(bson.M{"author": 0}))
-	if err != nil {
-		return nil, err
-	}
-	defer cursor.Close(ctx)
-
-	mainFilter := ""
-	filters := make([]interface{}, 0)
-	for cursor.Next(ctx) {
-		filter := view.WidgetFilter{}
-		err := cursor.Decode(&filter)
-		if err != nil {
-			return nil, err
-		}
-
-		newId := utils.NewID()
-		// Main filter can be old filter so keep main filter in this case.
-		if newWidget.Parameters.MainFilter == filter.ID {
-			mainFilter = newId
-		}
-
-		filter.ID = newId
-		filter.Widget = newWidget.ID
-		filter.Author = r.Author
-		filter.Created = now
-		filter.Updated = now
-		filter.IsPrivate = isPrivate
-		filters = append(filters, filter)
-	}
-
-	newWidget.Parameters.MainFilter = mainFilter
-	_, err = s.collection.InsertOne(ctx, newWidget)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(filters) > 0 {
-		_, err := s.filterCollection.InsertMany(ctx, filters)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return s.GetOneBy(ctx, newWidget.ID)
-}
-
 func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositionItemRequest) (bool, error) {
 	ids := make([]string, len(items))
 	for i, item := range items {
@@ -562,6 +587,58 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 	return res, err
 }
 
+func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[string]template.ValidateResponse, error) {
+	var alarm types.AlarmWithEntity
+	var err error
+	if r.TestData.Test != "" {
+		alarm, err = template.GetAlarmDataFromTest(ctx, s.tplTestCollection, r.TestData.Test, template.TypeTestWidget, r.Rule.ID)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if r.TestData.Alarm == "" {
+		if alarm.Alarm.ID == "" {
+			return nil, common.NewValidationError("testdata.alarm", "Alarm is missing.")
+		}
+	} else if r.TestData.Alarm != alarm.Alarm.ID { // keep snapshot from the test
+		alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	response := make(map[string]template.ValidateResponse)
+	for i, column := range r.Rule.Columns {
+		if column.Template != "" {
+			response["columns."+strconv.Itoa(i)+".template"], err = template.Validate(s.tplValidator, column.Template, alarm)
+			if err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	return response, nil
+}
+
+func (s *store) GetTemplateVars(ctx context.Context) (TemplateVarsResponse, error) {
+	columnTplVars := template.AddEnvVars(s.tplVars, s.tplConfigProvider)
+
+	aliases, err := template.GetAliases(ctx, s.entityInfosPropCollection)
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to get aliases: %w", err)
+	}
+
+	err = template.AddAliasesVars(columnTplVars, aliases, entityTplVarsIndex, "{{ (index .Entity.Infos \"", "\").Value }}")
+	if err != nil {
+		return TemplateVarsResponse{}, fmt.Errorf("failed to add aliases to columnTplVars: %w", err)
+	}
+
+	return TemplateVarsResponse{
+		Column: columnTplVars,
+	}, nil
+}
+
 func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisecurity.ViewTabPrivacySettings, error) {
 	var tabInfo apisecurity.ViewTabPrivacySettings
 
@@ -595,6 +672,213 @@ func (s *store) deleteFilters(ctx context.Context, widgetID, userID string) erro
 	return err
 }
 
+func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r CreateRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
+	newWidget := view.Widget{
+		ID:             utils.NewID(),
+		Tab:            r.Tab,
+		Title:          r.Title,
+		Type:           r.Type,
+		GridParameters: r.GridParameters,
+		Parameters:     r.Parameters,
+		Author:         r.Author,
+		IsPrivate:      isPrivate,
+		Created:        now,
+		Updated:        now,
+	}
+
+	cursor, err := s.filterCollection.Find(ctx, bson.M{
+		"widget":             widgetID,
+		"is_user_preference": false,
+	}, options.Find().SetProjection(bson.M{"author": 0}))
+	if err != nil {
+		return nil, err
+	}
+	defer cursor.Close(ctx)
+
+	mainFilter := ""
+	filters := make([]any, 0)
+	for cursor.Next(ctx) {
+		filter := view.WidgetFilter{}
+		err := cursor.Decode(&filter)
+		if err != nil {
+			return nil, err
+		}
+
+		newId := utils.NewID()
+		// Main filter can be old filter so keep main filter in this case.
+		if newWidget.Parameters.MainFilter == filter.ID {
+			mainFilter = newId
+		}
+
+		filter.ID = newId
+		filter.Widget = newWidget.ID
+		filter.Author = r.Author
+		filter.Created = now
+		filter.Updated = now
+		filter.IsPrivate = isPrivate
+		filters = append(filters, filter)
+	}
+
+	newWidget.Parameters.MainFilter = mainFilter
+	_, err = s.collection.InsertOne(ctx, newWidget)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(filters) > 0 {
+		_, err := s.filterCollection.InsertMany(ctx, filters)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return s.GetOneBy(ctx, newWidget.ID)
+}
+
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r FilterRequest, i int, model *view.WidgetFilter) error {
+	var valErr common.ValidationError
+
+	transformedAlarmPattern, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
+	if err != nil {
+		if errors.As(err, &valErr) {
+			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
+		}
+
+		return err
+	}
+
+	transformedEntityPattern, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
+	if err != nil {
+		if errors.As(err, &valErr) {
+			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
+		}
+
+		return err
+	}
+
+	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorPatternFieldsRequest(ctx, r.PbehaviorPatternFieldsRequest)
+	if err != nil {
+		if errors.As(err, &valErr) {
+			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
+		}
+
+		return err
+	}
+
+	transformedWeatherPattern, err := s.transformer.TransformWeatherServicePatternFieldsRequest(ctx, r.WeatherServicePatternFieldsRequest)
+	if err != nil {
+		if errors.As(err, &valErr) {
+			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
+		}
+
+		return err
+	}
+
+	model.Aliases = transformedEntityPattern.Aliases
+	model.AlarmPatternFields = transformedAlarmPattern.ToModel()
+	model.EntityPatternFields = transformedEntityPattern.ToModel()
+	model.PbehaviorPatternFields = transformedPbehaviorPattern.ToModel()
+	model.WeatherServicePatternFields = transformedWeatherPattern.ToModel()
+
+	return nil
+}
+
+func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) error {
+	widgetParametersByType := view.GetWidgetTemplateParameters()[r.Type]
+	for tplType, widgetParameters := range widgetParametersByType {
+		for _, parameter := range widgetParameters {
+			parameters := r.Parameters.RemainParameters
+			key := parameter
+			parts := strings.Split(parameter, ".")
+			if len(parts) > 1 {
+				key = parts[len(parts)-1]
+				var ok bool
+				for i := 0; i < len(parts)-1; i++ {
+					parameters, ok = parameters[parts[i]].(map[string]any)
+					if !ok {
+						break
+					}
+				}
+				if !ok {
+					continue
+				}
+			}
+
+			tplId, ok := parameters[key+"Template"].(string)
+			if !ok || tplId == "" {
+				continue
+			}
+			tpl := view.WidgetTemplate{}
+			err := s.widgetTemplateCollection.FindOne(ctx, bson.M{
+				"_id":  tplId,
+				"type": tplType,
+			}).Decode(&tpl)
+			if err != nil {
+				if errors.Is(err, mongodriver.ErrNoDocuments) {
+					return common.NewValidationError("parameters."+parameter+"Template", "Template doesn't exist.")
+				}
+
+				return err
+			}
+
+			parameters[key+"TemplateTitle"] = tpl.Title
+			switch tpl.Type {
+			case view.WidgetTemplateTypeAlarmColumns,
+				view.WidgetTemplateTypeEntityColumns:
+				parameters[key] = tpl.Columns
+			case view.WidgetTemplateTypeAlarmMoreInfos,
+				view.WidgetTemplateTypeAlarmExportToPDF,
+				view.WidgetTemplateTypeServiceWeatherItem,
+				view.WidgetTemplateTypeServiceWeatherModal,
+				view.WidgetTemplateTypeServiceWeatherEntity:
+				parameters[key] = tpl.Content
+			case view.WidgetTemplateTypeAlarmQuickActions,
+				view.WidgetTemplateTypeAlarmQuickMassActions:
+				parameters[key] = tpl.Actions
+			}
+		}
+	}
+
+	return nil
+}
+
+func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithEntity, error) {
+	cursor, err := s.alarmCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{"_id": alarmID}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{
+			"alarm": "$$ROOT",
+		}}},
+		{"$lookup": bson.M{
+			"from":         mongo.EntityMongoCollection,
+			"localField":   "alarm.d",
+			"foreignField": "_id",
+			"as":           "entity",
+		}},
+		{"$unwind": bson.M{"path": "$entity", "preserveNullAndEmptyArrays": true}},
+	})
+	if err != nil {
+		return types.AlarmWithEntity{}, fmt.Errorf("cannot find alarm: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	if !cursor.Next(ctx) {
+		return types.AlarmWithEntity{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+	}
+
+	var alarm types.AlarmWithEntity
+	err = cursor.Decode(&alarm)
+	if err != nil {
+		return types.AlarmWithEntity{}, fmt.Errorf("cannot decode alarm: %w", err)
+	}
+
+	if err = cursor.Err(); err != nil {
+		return types.AlarmWithEntity{}, fmt.Errorf("cannot find alarm: %w", err)
+	}
+
+	return alarm, nil
+}
+
 func transformEditRequestToModel(r EditRequest) view.Widget {
 	return view.Widget{
 		Title:          r.Title,
@@ -602,16 +886,5 @@ func transformEditRequestToModel(r EditRequest) view.Widget {
 		GridParameters: r.GridParameters,
 		Parameters:     r.Parameters,
 		Author:         r.Author,
-	}
-}
-
-func transformFilterRequestToModel(r FilterRequest) view.WidgetFilter {
-	return view.WidgetFilter{
-		Title:                       r.Title,
-		IsUserPreference:            false,
-		AlarmPatternFields:          r.AlarmPatternFieldsRequest.ToModel(),
-		EntityPatternFields:         r.EntityPatternFieldsRequest.ToModel(),
-		PbehaviorPatternFields:      r.PbehaviorPatternFieldsRequest.ToModel(),
-		WeatherServicePatternFields: r.WeatherServicePatternFieldsRequest.ToModel(),
 	}
 }
