@@ -169,6 +169,7 @@ export default {
     userID: 'User ID',
     username: 'Username',
     environmentVariables: 'Env',
+    rawResponse: 'Raw response',
   },
   testDataLabels: {
     [TEMPLATE_TESTING_TEST_VARIABLES_ENTITY_TYPES.event]: 'Event',

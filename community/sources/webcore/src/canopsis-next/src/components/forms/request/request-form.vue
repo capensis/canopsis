@@ -3,7 +3,7 @@
     <request-url-field
       v-if="!hideUrl"
       v-field="form"
-      :help-text="$t('common.request.urlHelp')"
+      :help-text="urlHelpText ||$t('common.request.urlHelp')"
       :name="name"
       :disabled="disabled"
       :url-variables="urlVariables"
@@ -154,6 +154,10 @@ export default {
     withAuthToken: {
       type: Boolean,
       default: false,
+    },
+    urlHelpText: {
+      type: String,
+      default: '',
     },
   },
 
