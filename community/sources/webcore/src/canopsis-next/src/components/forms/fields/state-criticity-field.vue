@@ -21,13 +21,9 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { ALARM_STATES } from '@/constants';
 
 import { getAlarmStateColor } from '@/helpers/entities/alarm/color';
-
-import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -44,18 +40,14 @@ export default {
       default: () => ALARM_STATES,
     },
   },
-  setup(props) {
-    const { t } = useI18n();
-
-    const availableStates = computed(() => Object.entries(props.stateValues).map(([key, state]) => ({
-      text: t(`modals.createChangeStateEvent.states.${key}`),
-      state,
-      color: getAlarmStateColor(state),
-    })));
-
-    return {
-      availableStates,
-    };
+  computed: {
+    availableStates() {
+      return Object.entries(this.stateValues).map(([key, state]) => ({
+        text: this.$t(`modals.createChangeStateEvent.states.${key}`),
+        state,
+        color: getAlarmStateColor(state),
+      }));
+    },
   },
 };
 </script>

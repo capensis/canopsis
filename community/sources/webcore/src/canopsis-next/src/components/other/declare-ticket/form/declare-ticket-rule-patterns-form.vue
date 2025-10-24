@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
 import { formValidationHeaderMixin } from '@/mixins/form';
 
@@ -47,9 +47,15 @@ export default {
         },
         {
           value: ALARM_PATTERN_FIELDS.ackAt,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
         },
         {
           value: ALARM_PATTERN_FIELDS.creationDate,
+          options: {
+            intervalRanges: [QUICK_RANGES.custom],
+          },
         },
       ];
     },

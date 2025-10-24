@@ -22,10 +22,8 @@ func main() {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	var logOpts liblog.Options
 	var version bool
 	var exchange string
-	liblog.BindCmdFlags(&logOpts)
 	flag.StringVar(&exchange, "exchange", canopsis.EventsExchangeName, "exchange name to read events from")
 	flag.BoolVar(&version, "version", false, "Show the version information")
 	flag.Parse()
@@ -35,7 +33,7 @@ func main() {
 		return
 	}
 
-	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(ctx, logOpts), 0, 0)
+	amqpConnection, err := amqp.NewConnection(liblog.NewLogger(ctx, true), 0, 0)
 	if err != nil {
 		log.Fatal(err)
 	}

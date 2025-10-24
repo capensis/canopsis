@@ -20,7 +20,7 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1
         >
           <i
             aria-hidden="true"
-            class="v-icon notranslate material-icons theme--light"
+            class="v-icon notranslate material-icons theme--light white--text"
             style="font-size: 36px;"
           >
             minimize
@@ -44,7 +44,7 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with custom props 1
       >
         <i
           aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light white--text"
           style="font-size: 36px;"
         >
           close
@@ -80,7 +80,7 @@ exports[`modal-title-buttons Renders \`modal-title-buttons\` with minimized moda
       >
         <i
           aria-hidden="true"
-          class="v-icon notranslate material-icons theme--light"
+          class="v-icon notranslate material-icons theme--light white--text"
         >
           maximize
         </i>

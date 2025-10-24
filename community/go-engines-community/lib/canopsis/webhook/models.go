@@ -13,8 +13,6 @@ const (
 	StatusAborted
 )
 
-const MultipleURLsDelimiter = ","
-
 type History struct {
 	ID                string   `bson:"_id" json:"_id"`
 	Alarms            []string `bson:"alarms" json:"alarms"`
@@ -23,18 +21,14 @@ type History struct {
 	DeclareTicketRule string   `bson:"declare_ticket_rule,omitempty" json:"declare_ticket_rule,omitempty"`
 	NextExec          string   `bson:"next_exec,omitempty" json:"next_exec,omitempty"`
 	StopOnFail        bool     `bson:"stop_on_fail,omitempty" json:"stop_on_fail,omitempty"`
-	StopOnSuccess     bool     `bson:"stop_on_success,omitempty" json:"stop_on_success,omitempty"`
-	MultipleURLs      bool     `bson:"multiple_urls,omitempty" json:"multiple_urls,omitempty"`
 	Execution         string   `bson:"execution" json:"execution"`
 	Name              string   `bson:"name" json:"name"`
 
-	SystemName         string             `bson:"system_name,omitempty" json:"system_name,omitempty"`
-	EmitTrigger        bool               `bson:"emit_trigger,omitempty" json:"emit_trigger,omitempty"`
-	Status             int64              `bson:"status" json:"status"`
-	Comment            string             `bson:"comment,omitempty" json:"comment,omitempty"`
-	Request            request.Parameters `bson:"request" json:"request"`
-	ResolvedRequestURL string             `bson:"resolved_request_url,omitempty" json:"resolved_request_url,omitempty"`
-
+	SystemName      string                        `bson:"system_name,omitempty" json:"system_name,omitempty"`
+	EmitTrigger     bool                          `bson:"emit_trigger,omitempty" json:"emit_trigger,omitempty"`
+	Status          int64                         `bson:"status" json:"status"`
+	Comment         string                        `bson:"comment,omitempty" json:"comment,omitempty"`
+	Request         request.Parameters            `bson:"request" json:"request"`
 	DeclareTicket   *request.WebhookDeclareTicket `bson:"declare_ticket,omitempty" json:"declare_ticket,omitempty"`
 	TicketResources bool                          `bson:"ticket_resources,omitempty" json:"ticket_resources,omitempty"`
 	FailReason      string                        `bson:"fail_reason,omitempty" json:"fail_reason,omitempty"`

@@ -17,17 +17,13 @@ import (
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-var ErrNotAdminCreateAdmin = errors.New("cannot create a user with the admin role")
-var ErrNotAdminUpdateAdmin = errors.New("cannot update a user with the admin role")
-var ErrNotAdminDeleteAdmin = errors.New("cannot delete a user with the admin role")
-
 type Store interface {
-	Find(ctx context.Context, r ListRequest, userID string, requestRoles []string) (*AggregationResult, error)
+	Find(ctx context.Context, r ListRequest, userID string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*User, error)
-	Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error)
-	Update(ctx context.Context, r UpdateRequest, userID string, requestRoles []string) (*User, error)
-	Patch(ctx context.Context, r PatchRequest, userID string, requestRoles []string) (*User, error)
-	Delete(ctx context.Context, id, userID string, requestRoles []string) (bool, error)
+	Insert(ctx context.Context, r CreateRequest) (*User, error)
+	Update(ctx context.Context, r UpdateRequest, userID string) (*User, error)
+	Patch(ctx context.Context, r PatchRequest, userID string) (*User, error)
+	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
 func NewStore(
@@ -48,7 +44,6 @@ func NewStore(
 		widgetCollection:       dbClient.Collection(mongo.WidgetMongoCollection),
 		widgetFilterCollection: dbClient.Collection(mongo.WidgetFiltersMongoCollection),
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
-		notificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
 
 		passwordEncoder: passwordEncoder,
 		websocketStore:  websocketStore,
@@ -71,7 +66,6 @@ type store struct {
 	widgetCollection       mongo.DbCollection
 	widgetFilterCollection mongo.DbCollection
 	shareTokenCollection   mongo.DbCollection
-	notificationCollection mongo.DbCollection
 
 	passwordEncoder password.Encoder
 	websocketStore  websocket.Store
@@ -82,7 +76,7 @@ type store struct {
 	defaultSortBy         string
 }
 
-func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, requestRoles []string) (*AggregationResult, error) {
+func (s *store) Find(ctx context.Context, r ListRequest, curUserID string) (*AggregationResult, error) {
 	pipeline := make([]bson.M, 0)
 	project := []bson.M{
 		{"$addFields": bson.M{
@@ -149,21 +143,20 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, reque
 		return nil, err
 	}
 
-	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
+	var onlyOneAdmin bool
+	var lastAdminID string
+	if r.WithFlags {
+		onlyOneAdmin, lastAdminID, _, err = s.checkLastAdmin(ctx)
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	for i := range res.Data {
 		activeConnects := conns[res.Data[i].ID]
 		res.Data[i].ActiveConnects = &activeConnects
 		if r.WithFlags {
-			resAdminUser := false
-			for _, role := range res.Data[i].Roles {
-				if role.ID == security.RoleAdmin {
-					resAdminUser = true
-					break
-				}
-			}
-
-			deletable := res.Data[i].ID != curUserID && (!resAdminUser || isAdminRequest)
+			deletable := res.Data[i].ID != curUserID && (!onlyOneAdmin || res.Data[i].ID != lastAdminID)
 			res.Data[i].Deletable = &deletable
 		}
 
@@ -207,14 +200,10 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*User, error) {
 	return nil, nil
 }
 
-func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error) {
+func (s *store) Insert(ctx context.Context, r CreateRequest) (*User, error) {
 	insertDoc, err := r.getBson(s.passwordEncoder)
 	if err != nil {
 		return nil, err
-	}
-
-	if slices.Contains(r.Roles, security.RoleAdmin) && !slices.Contains(requestRoles, security.RoleAdmin) {
-		return nil, ErrNotAdminCreateAdmin
 	}
 
 	var user *User
@@ -236,7 +225,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 	return user, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, requestRoles []string) (*User, error) {
+func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
 		return nil, common.NewValidationError("enable", "user cannot disable itself")
 	}
@@ -246,20 +235,22 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 		return nil, err
 	}
 
-	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
-
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
-		onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
+		onlyOneAdmin, lastAdminID, adminRoleID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
 		}
 
 		if onlyOneAdmin && lastAdminID == r.ID {
-			if !slices.Contains(r.Roles, security.RoleAdmin) {
+			if !slices.Contains(r.Roles, adminRoleID) {
 				return common.NewValidationError("roles", "last admin cannot be edited")
+			}
+
+			if r.IsEnabled != nil && !*r.IsEnabled {
+				return common.NewValidationError("enable", "last admin cannot be disabled")
 			}
 		}
 
@@ -272,16 +263,6 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 			}
 
 			return err
-		}
-
-		if !isAdminRequest {
-			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return ErrNotAdminUpdateAdmin
-			}
-
-			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "cannot assign the admin role by a non-admin user.")
-			}
 		}
 
 		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdPRoles)
@@ -305,7 +286,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 	return user, nil
 }
 
-func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, requestRoles []string) (*User, error) {
+func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
 		return nil, common.NewValidationError("enable", "user cannot disable itself")
 	}
@@ -315,20 +296,22 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, req
 		return nil, err
 	}
 
-	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
-
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
-		onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
+		onlyOneAdmin, lastAdminID, adminRoleID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
 		}
 
 		if onlyOneAdmin && lastAdminID == r.ID {
-			if !slices.Contains(r.Roles, security.RoleAdmin) {
+			if len(r.Roles) > 0 && !slices.Contains(r.Roles, adminRoleID) {
 				return common.NewValidationError("roles", "last admin cannot be edited")
+			}
+
+			if r.IsEnabled != nil && !*r.IsEnabled {
+				return common.NewValidationError("enable", "last admin cannot be disabled")
 			}
 		}
 
@@ -341,16 +324,6 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, req
 			}
 
 			return err
-		}
-
-		if !isAdminRequest {
-			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return ErrNotAdminUpdateAdmin
-			}
-
-			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "cannot assign the admin role by a non-admin user.")
-			}
 		}
 
 		s.filterIdpFields(updateDoc, prevUser.Source, r.Roles, prevUser.IdPRoles)
@@ -408,31 +381,28 @@ func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, i
 	}
 }
 
-func (s *store) Delete(ctx context.Context, id, userID string, requestRoles []string) (bool, error) {
+func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if id == userID {
 		return false, common.NewValidationError("_id", "user cannot delete itself")
 	}
-
-	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
 
 	var deleted int64
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
-		var prevUser security.User
-
-		// required to get the author in action log listener.
-		err := s.userCollection.FindOneAndUpdate(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}}).Decode(&prevUser)
+		onlyOneAdmin, lastAdminID, _, err := s.checkLastAdmin(ctx)
 		if err != nil {
-			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil
-			}
-
 			return err
 		}
 
-		if slices.Contains(prevUser.Roles, security.RoleAdmin) && !isAdminRequest {
-			return ErrNotAdminDeleteAdmin
+		if onlyOneAdmin && id == lastAdminID {
+			return common.NewValidationError("_id", "last admin cannot be deleted")
+		}
+
+		// required to get the author in action log listener.
+		res, err := s.userCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
+		if err != nil || res.MatchedCount == 0 {
+			return err
 		}
 
 		deleted, err = s.userCollection.DeleteOne(ctx, bson.M{"_id": id})
@@ -460,11 +430,6 @@ func (s *store) Delete(ctx context.Context, id, userID string, requestRoles []st
 	}
 
 	err = s.deleteShareTokens(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	err = s.deleteNotifications(ctx, id)
 	if err != nil {
 		return false, err
 	}
@@ -541,41 +506,44 @@ func (s *store) deleteShareTokens(ctx context.Context, id string) error {
 	return err
 }
 
-func (s *store) deleteNotifications(ctx context.Context, id string) error {
-	_, err := s.notificationCollection.DeleteMany(ctx, bson.M{
-		"user": id,
-	})
-
-	return err
-}
-
-func (s *store) checkLastAdmin(ctx context.Context) (bool, string, error) {
+func (s *store) checkLastAdmin(ctx context.Context) (bool, string, string, error) {
 	cursor, err := s.userCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{"enable": true, "roles": security.RoleAdmin}},
+		{"$match": bson.M{"enable": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.RoleCollection,
+			"localField":   "roles",
+			"foreignField": "_id",
+			"as":           "admin_role",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"name": security.RoleAdmin}},
+			},
+		}},
+		{"$unwind": "$admin_role"},
 		{"$group": bson.M{
-			"_id":     nil,
-			"count":   bson.M{"$sum": 1},
-			"last_id": bson.M{"$first": "$_id"},
+			"_id":           nil,
+			"count":         bson.M{"$sum": 1},
+			"last_id":       bson.M{"$first": "$_id"},
+			"admin_role_id": bson.M{"$first": "$admin_role._id"},
 		}},
 	})
 	if err != nil {
-		return false, "", err
+		return false, "", "", err
 	}
 
 	defer cursor.Close(ctx)
-
 	res := struct {
-		Count  int64  `bson:"count"`
-		LastID string `bson:"last_id"`
+		Count       int64  `bson:"count"`
+		LastID      string `bson:"last_id"`
+		AdminRoleID string `bson:"admin_role_id"`
 	}{}
 	if cursor.Next(ctx) {
 		err = cursor.Decode(&res)
 		if err != nil {
-			return false, "", err
+			return false, "", "", err
 		}
 	}
 
-	return res.Count <= 1, res.LastID, nil
+	return res.Count <= 1, res.LastID, res.AdminRoleID, nil
 }
 
 func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.M {
@@ -596,11 +564,7 @@ func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.
 
 func getRolePipeline() []bson.M {
 	return []bson.M{
-		{"$unwind": bson.M{
-			"path":                       "$roles",
-			"preserveNullAndEmptyArrays": true,
-			"includeArrayIndex":          "role_index",
-		}},
+		{"$unwind": bson.M{"path": "$roles", "preserveNullAndEmptyArrays": true}},
 		{"$lookup": bson.M{
 			"from":         mongo.RoleCollection,
 			"localField":   "roles",

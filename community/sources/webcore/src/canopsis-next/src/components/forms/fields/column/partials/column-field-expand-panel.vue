@@ -101,13 +101,12 @@
     </v-layout>
     <v-switch
       v-if="withHtml"
-      :input-value="column.isHtml"
+      v-field="column.isHtml"
       :label="$t('settings.columns.isHtml')"
       :disabled="!!column.template"
       class="pa-0 my-2"
       color="primary"
       hide-details
-      @change="switchChangeIsHtml($event)"
     />
     <v-switch
       v-if="withColorIndicator"
@@ -125,13 +124,6 @@
         :disabled="!!column.template"
       />
     </v-layout>
-    <v-switch
-      v-if="filterOnClickAvailable"
-      v-field="column.isFilter"
-      :label="$t('settings.columns.filterOnClick')"
-      :disabled="!!column.template || !!column.isHtml"
-      class="pa-0 my-2"
-    />
   </v-layout>
 </template>
 
@@ -145,7 +137,6 @@ import {
   ALARM_LIST_WIDGET_COLUMNS,
   CONTEXT_WIDGET_COLUMNS,
   ALARM_FIELDS,
-  ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK,
 } from '@/constants';
 
 import { isLinksWidgetColumn } from '@/helpers/entities/widget/column/form';
@@ -196,10 +187,6 @@ export default {
       default: false,
     },
     withoutInfosAttributes: {
-      type: Boolean,
-      default: false,
-    },
-    withFilterOnClick: {
       type: Boolean,
       default: false,
     },
@@ -277,10 +264,6 @@ export default {
     columnValueErrorMessages() {
       return this.errors.collect(this.columnValueFieldName);
     },
-
-    filterOnClickAvailable() {
-      return this.withFilterOnClick && !ALARM_FIELDS_WITHOUT_FILTER_ON_CLICK.includes(this.column?.column);
-    },
   },
   watch: {
     withLabel: {
@@ -306,7 +289,6 @@ export default {
         template,
         isHtml: checked && this.column.isHtml ? false : this.column.isHtml,
         colorIndicator: checked && this.column.colorIndicator ? null : this.column.colorIndicator,
-        isFilter: checked && this.column.isFilter ? false : this.column.isFilter,
       });
     },
 
@@ -346,15 +328,6 @@ export default {
           ...this.templateModalConfig,
           action: value => this.updateField('template', value),
         },
-      });
-    },
-
-    switchChangeIsHtml(isHtml) {
-      this.updateModel({
-        ...this.column,
-
-        isHtml,
-        isFilter: isHtml ? false : this.column.isFilter,
       });
     },
   },

@@ -8,7 +8,6 @@ import {
   isNumber,
   isString,
   isUndefined,
-  isEqual,
   omit,
 } from 'lodash';
 
@@ -31,15 +30,20 @@ import {
   PATTERN_OPERATORS,
   SERVICE_WEATHER_PATTERN_FIELDS,
   QUICK_RANGES,
+  PATTERN_QUICK_RANGES,
   PATTERNS_FIELDS,
   PATTERN_CUSTOM_ITEM_VALUE,
   PATTERN_TYPES,
-  PATTERN_QUICK_RANGES_DURATIONS,
+  TIME_UNITS,
 } from '@/constants';
 
-import { convertDateToDateObject, convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
-import { durationToForm, isValidDuration, isValidRangeDuration } from '@/helpers/date/duration';
+import { convertDateToTimestamp, isValidDateInterval } from '@/helpers/date/date';
+import { durationToForm, isValidDuration, toSeconds } from '@/helpers/date/duration';
 import { uid } from '@/helpers/uid';
+import {
+  getDiffBetweenStartAndStopQuickInterval,
+  getQuickRangeByDiffBetweenStartAndStop,
+} from '@/helpers/date/date-intervals';
 
 /**
  * @typedef { 'string' | 'number' | 'infos' | 'date' | 'duration' } PatternRuleType
@@ -214,14 +218,6 @@ export const isDurationRuleType = type => type === PATTERN_RULE_TYPES.duration;
 export const isObjectRuleType = type => type === PATTERN_RULE_TYPES.object;
 
 /**
- * Check rule is number
- *
- * @param {string} type
- * @return {boolean}
- */
-export const isNumberRuleType = type => type === PATTERN_RULE_TYPES.number;
-
-/**
  * Check field type is string array
  *
  * @param {PatternFieldType} type
@@ -310,7 +306,6 @@ export const isDatePatternRuleField = value => [
 export const isNumberPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.state,
   ALARM_PATTERN_FIELDS.status,
-  ALARM_PATTERN_FIELDS.totalStateChanges,
   EVENT_FILTER_PATTERN_FIELDS.state,
   ENTITY_PATTERN_FIELDS.impactLevel,
   SERVICE_WEATHER_PATTERN_FIELDS.state,
@@ -344,7 +339,6 @@ export const isArrayPatternRuleField = value => [
   ALARM_PATTERN_FIELDS.ackMessage,
   ALARM_PATTERN_FIELDS.ackInitiator,
   ALARM_PATTERN_FIELDS.canceledInitiator,
-  ALARM_PATTERN_FIELDS.stateInitiator,
   ENTITY_PATTERN_FIELDS.id,
   ENTITY_PATTERN_FIELDS.name,
   ENTITY_PATTERN_FIELDS.category,
@@ -461,7 +455,7 @@ export const isValidRuleValueWithoutFieldType = (rule) => {
     }
 
     if (cond.type === PATTERN_CONDITIONS.relativeTime) {
-      return isValidRangeDuration(cond.value);
+      return isValidDuration(cond.value);
     }
   }
 
@@ -648,15 +642,6 @@ export const getOperatorsByRule = (rule, ruleType) => {
     ];
   }
 
-  if (isDateRuleType(ruleType)) {
-    operators = [
-      PATTERN_OPERATORS.within,
-      PATTERN_OPERATORS.olderThan,
-      PATTERN_OPERATORS.inRangePeriod,
-      PATTERN_OPERATORS.inRangeDates,
-    ];
-  }
-
   return operators;
 };
 
@@ -724,114 +709,6 @@ export const createEntityIdPatternByValue = value => [[{
     value,
   },
 }]];
-
-/**
- * Get default date form range configuration
- *
- * @return {Object} Default range object with type, from, and to properties
- * @return {string} type - Quick range type (default: last1Hour.value)
- * @return {number} from - Start timestamp (default: 0)
- * @return {number} to - End timestamp (default: 0)
- */
-export const getDefaultDateFormRange = () => ({
-  type: QUICK_RANGES.last1Hour.value,
-  from: 0,
-  to: 0,
-});
-
-/**
- * Get quick range key by duration object
- *
- * @param {Duration} duration - Duration object with value and unit
- * @return {string} Quick range key or custom value if no match found
- */
-export const getPatternQuickByDuration = (duration) => {
-  const [quickRangeValue] = Object.entries(PATTERN_QUICK_RANGES_DURATIONS).find(([, value]) => isEqual(value, duration))
-   ?? [];
-
-  return quickRangeValue ?? QUICK_RANGES.custom.value;
-};
-
-/**
- * Convert pattern rule with date conditions to form format
- *
- * @param {PatternRule} [rule={}] - Pattern rule with date condition
- * @param {Object} [rule.cond] - Rule condition object
- * @param {string} [rule.cond.type] - Condition type (absoluteTime, relativeTime)
- * @param {Object|Duration} [rule.cond.value] - Condition value
- * @param {number} [rule.cond.value.from] - Start timestamp for absoluteTime
- * @param {number} [rule.cond.value.to] - End timestamp for absoluteTime
- * @param {Duration} [rule.cond.value.from] - Start duration for relativeTime range
- * @param {Duration} [rule.cond.value.to] - End duration for relativeTime range
- * @param {number} [rule.cond.value.value] - Duration value for relativeTime
- * @param {string} [rule.cond.value.unit] - Duration unit for relativeTime
- * @return {Object} Form object with operator and range
- * @return {string} operator - Pattern operator (inRangeDates, inRangePeriod, within, olderThan)
- * @return {Object} range - Range configuration object
- * @return {string} [range.type] - Quick range type
- * @return {number|Date} [range.from] - Range start value
- * @return {number|Date} [range.to] - Range end value
- */
-export const patternDateRangeToForm = (rule = {}) => {
-  const range = getDefaultDateFormRange();
-
-  if (rule.cond.type === PATTERN_CONDITIONS.absoluteTime) {
-    range.from = convertDateToDateObject(rule.cond.value?.from);
-    range.to = convertDateToDateObject(rule.cond.value?.to);
-
-    return {
-      operator: PATTERN_OPERATORS.inRangeDates,
-      range,
-    };
-  }
-
-  if (rule.cond.type === PATTERN_CONDITIONS.relativeTime) {
-    if (rule.cond.value?.from && rule.cond.value?.to) {
-      range.from = getPatternQuickByDuration(rule.cond.value?.from);
-      range.to = getPatternQuickByDuration(rule.cond.value?.to);
-
-      if (range.from === QUICK_RANGES.custom.value) {
-        range.fromCustom = rule.cond.value?.from;
-      }
-
-      if (range.to === QUICK_RANGES.custom.value) {
-        range.toCustom = rule.cond.value?.to;
-      }
-
-      return {
-        operator: PATTERN_OPERATORS.inRangePeriod,
-        range,
-      };
-    } if (rule.cond.value?.to) {
-      range.type = getPatternQuickByDuration(rule.cond.value?.to);
-
-      if (range.type === QUICK_RANGES.custom.value) {
-        range.typeCustom = rule.cond.value?.to;
-      }
-
-      return {
-        operator: PATTERN_OPERATORS.olderThan,
-        range,
-      };
-    }
-
-    range.type = getPatternQuickByDuration(rule.cond.value);
-
-    if (range.type === QUICK_RANGES.custom.value) {
-      range.typeCustom = rule.cond.value;
-    }
-
-    return {
-      operator: PATTERN_OPERATORS.within,
-      range,
-    };
-  }
-
-  return {
-    operator: PATTERN_OPERATORS.olderThan,
-    range,
-  };
-};
 
 /**
  * Convert pattern rule to form
@@ -996,14 +873,20 @@ export const patternRuleToForm = (rule = {}) => {
       form.value = rule.cond.value;
       break;
 
-    case PATTERN_CONDITIONS.relativeTime:
-    case PATTERN_CONDITIONS.absoluteTime: {
-      const { operator, range } = patternDateRangeToForm(rule);
+    case PATTERN_CONDITIONS.relativeTime: {
+      const { value, unit } = rule.cond.value;
 
-      form.operator = operator;
-      form.range = range;
+      const seconds = toSeconds(value, unit);
+
+      form.range.type = getQuickRangeByDiffBetweenStartAndStop(seconds, PATTERN_QUICK_RANGES).value;
       break;
     }
+    case PATTERN_CONDITIONS.absoluteTime:
+      form.range = {
+        type: QUICK_RANGES.custom.value,
+        ...rule.cond.value,
+      };
+      break;
 
     case PATTERN_CONDITIONS.hasLabels:
       form.operator = PATTERN_OPERATORS.withLabel;
@@ -1068,12 +951,6 @@ export const patternRulesToGroup = rules => ({
   rules: patternRulesToForm(rules),
 });
 
-/**
- * Convert patterns array to groups format
- *
- * @param {PatternRules[]} [patterns = []] - Array of pattern rules
- * @return {PatternGroupForm[]} Array of pattern group forms
- */
 export const patternsToGroups = (patterns = []) => patterns.map(patternRulesToGroup);
 
 /**
@@ -1100,33 +977,13 @@ export const patternToForm = (pattern = {}) => ({
 });
 
 /**
- * Get duration from rule range by specified keys
- *
- * @param {PatternRuleForm} rule - Pattern rule form object
- * @param {string} [valueKey = 'type'] - Key to get duration type from range
- * @param {string} [customKey = 'typeCustom'] - Key to get custom duration from range
- * @return {Duration} Duration object from pattern quick ranges or custom duration
- */
-export const getRuleRangeDuration = (rule, valueKey = 'type', customKey = 'typeCustom') => {
-  const { range } = rule;
-
-  if (range[valueKey] === QUICK_RANGES.custom.value) {
-    return range[customKey];
-  }
-
-  return PATTERN_QUICK_RANGES_DURATIONS[range[valueKey]] ?? {};
-};
-
-/**
  * Convert range to pattern condition
  *
  * @param {PatternRuleRangeForm} range
  * @return {PatternRuleCondition}
  */
-export const formDateIntervalConditionToPatternRuleCondition = (rule) => {
-  const { operator, range } = rule;
-
-  if (operator === PATTERN_OPERATORS.inRangeDates) {
+export const formDateIntervalConditionToPatternRuleCondition = (range) => {
+  if (range.type === QUICK_RANGES.custom.value) {
     return {
       type: PATTERN_CONDITIONS.absoluteTime,
       value: {
@@ -1136,28 +993,12 @@ export const formDateIntervalConditionToPatternRuleCondition = (rule) => {
     };
   }
 
-  if (operator === PATTERN_OPERATORS.inRangePeriod) {
-    return {
-      type: PATTERN_CONDITIONS.relativeTime,
-      value: {
-        from: getRuleRangeDuration(rule, 'from', 'fromCustom'),
-        to: getRuleRangeDuration(rule, 'to', 'toCustom'),
-      },
-    };
-  }
-
-  if (operator === PATTERN_OPERATORS.within) {
-    return {
-      type: PATTERN_CONDITIONS.relativeTime,
-      value: getRuleRangeDuration(rule),
-    };
-  }
-
   return {
-    type: PATTERN_CONDITIONS.relativeTime,
     value: {
-      to: getRuleRangeDuration(rule),
+      value: getDiffBetweenStartAndStopQuickInterval(range.type),
+      unit: TIME_UNITS.second,
     },
+    type: PATTERN_CONDITIONS.relativeTime,
   };
 };
 
@@ -1188,7 +1029,7 @@ export const formRuleToPatternRule = (rule) => {
   }
 
   if (isDate) {
-    pattern.cond = formDateIntervalConditionToPatternRuleCondition(rule);
+    pattern.cond = formDateIntervalConditionToPatternRuleCondition(rule.range);
 
     return pattern;
   }

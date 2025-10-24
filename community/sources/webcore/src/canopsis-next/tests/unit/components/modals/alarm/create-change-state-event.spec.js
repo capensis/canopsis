@@ -6,8 +6,6 @@ import { createButtonStub } from '@unit/stubs/button';
 import { createFormStub } from '@unit/stubs/form';
 import { createModalWrapperStub } from '@unit/stubs/modal';
 
-import { ALARM_STATES } from '@/constants';
-
 import ClickOutside from '@/services/click-outside';
 
 import CreateChangeStateEvent from '@/components/modals/alarm/create-change-state-event.vue';
@@ -15,7 +13,6 @@ import CreateChangeStateEvent from '@/components/modals/alarm/create-change-stat
 const stubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'c-change-state-field': true,
-  'alarm-general-table': true,
   'v-btn': createButtonStub('v-btn'),
   'v-form': createFormStub('v-form'),
 };
@@ -23,7 +20,6 @@ const stubs = {
 const snapshotStubs = {
   'modal-wrapper': createModalWrapperStub('modal-wrapper'),
   'c-change-state-field': true,
-  'alarm-general-table': true,
 };
 
 const selectButtons = wrapper => wrapper.findAll('button.v-btn');
@@ -132,8 +128,8 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect(action).toHaveBeenCalledWith(changeStateEventData);
-    expect($modals.hide).toHaveBeenCalled();
+    expect(action).toBeCalledWith(changeStateEventData);
+    expect($modals.hide).toBeCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -165,8 +161,8 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect(action).not.toHaveBeenCalled();
-    expect($modals.hide).not.toHaveBeenCalled();
+    expect(action).not.toBeCalled();
+    expect($modals.hide).not.toBeCalled();
 
     validator.detach('name');
   });
@@ -199,8 +195,8 @@ describe('create-change-state-event', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toHaveBeenCalledWith(changeStateEventData);
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect(action).toBeCalledWith(changeStateEventData);
+    expect($modals.hide).not.toBeCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -231,12 +227,12 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
-    expect($popups.error).toHaveBeenCalledWith({
+    expect(consoleErrorSpy).toBeCalledWith(errors);
+    expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toHaveBeenCalledWith(changeStateEventData);
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect(action).toBeCalledWith(changeStateEventData);
+    expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -270,12 +266,12 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect(action).toHaveBeenCalledWith({
+    expect(action).toBeCalledWith({
       ...changeStateEventData,
       comment: newForm.comment,
       state: newForm.state,
     });
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toBeCalled();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -294,108 +290,14 @@ describe('create-change-state-event', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
-  });
-
-  test('Action called with single item state when config.items has one item', async () => {
-    const action = jest.fn();
-    const singleItemState = ALARM_STATES.critical;
-    const singleItem = {
-      ...alarm,
-      v: {
-        ...alarm.v,
-        state: {
-          val: singleItemState,
-        },
-      },
-    };
-
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            items: [singleItem],
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect(action).toHaveBeenCalledWith({
-      comment: '',
-      state: singleItemState,
-    });
-    expect($modals.hide).toHaveBeenCalled();
-  });
-
-  test('Action called with major state when config.items has multiple items', async () => {
-    const action = jest.fn();
-    const multipleItems = [
-      {
-        ...alarm,
-        v: {
-          ...alarm.v,
-          state: {
-            val: ALARM_STATES.critical,
-          },
-        },
-      },
-      {
-        ...alarm,
-        v: {
-          ...alarm.v,
-          state: {
-            val: ALARM_STATES.minor,
-          },
-        },
-      },
-    ];
-
-    const wrapper = factory({
-      propsData: {
-        modal: {
-          config: {
-            items: multipleItems,
-            action,
-          },
-        },
-      },
-      mocks: {
-        $modals,
-      },
-    });
-
-    selectSubmitButton(wrapper).trigger('click');
-
-    await flushPromises();
-
-    expect(action).toHaveBeenCalledWith({
-      comment: '',
-      state: ALARM_STATES.major,
-    });
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toBeCalled();
   });
 
   test('Renders `create-change-state-event`', () => {
     const wrapper = snapshotFactory({
       propsData: {
         modal: {
-          config: {
-            items: [{
-              v: {
-                state: {
-                  val: ALARM_STATES.major,
-                },
-              },
-            }],
-          },
+          config,
         },
       },
       mocks: {

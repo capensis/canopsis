@@ -1,10 +1,4 @@
-import {
-  unref,
-  provide,
-  inject,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
+import { unref, provide, onBeforeUnmount } from 'vue';
 
 import Observer from '@/services/observer';
 
@@ -27,36 +21,6 @@ export const useObserver = ({ key }) => {
   provide(unref(key), observer);
 
   onBeforeUnmount(() => observer.unregisterAll());
-
-  return {
-    observer,
-  };
-};
-
-/**
- * Custom hook to inject an Observer instance and automatically register/unregister a child handler.
- *
- * This hook injects an Observer instance using the given key, registers the provided handler
- * as a child in onMounted, and unregisters it in onBeforeUnmount.
- *
- * @param {Object} params - The parameters object.
- * @param {Function} params.handler - The handler function to register as a child.
- * @param {Ref|string} [params.key='$refresh'] - The key used to inject the Observer instance.
- *                                              It can be a ref or a plain string.
- *
- * @returns {Object} An object containing the Observer instance.
- * @returns {Observer} return.observer - The injected Observer instance.
- */
-export const useChildObserver = ({ handler, key = '$refresh' }) => {
-  const observer = inject(unref(key), new Observer());
-
-  onMounted(() => {
-    observer.registerChild(handler);
-  });
-
-  onBeforeUnmount(() => {
-    observer.unregisterChild(handler);
-  });
 
   return {
     observer,

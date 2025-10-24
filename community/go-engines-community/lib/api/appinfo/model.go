@@ -41,8 +41,6 @@ type GlobalConf struct {
 	FileImportMaxSize uint64   `json:"file_import_max_size"`
 
 	EventsCountTriggerDefaultThreshold int `json:"events_count_trigger_default_threshold"`
-
-	NotificationDisplayCount int `json:"notification_display_count"`
 }
 
 type RemediationConf struct {

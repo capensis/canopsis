@@ -10,28 +10,11 @@ import CColumnsField from '@/components/forms/fields/column/c-columns-field.vue'
 
 const snapshotStubs = {
   'c-draggable-list-field': true,
-  'c-card-iterator-field': true,
   'column-field': true,
 };
 const stubs = {
   ...snapshotStubs,
-
   'v-tooltip': createActivatorElementStub('v-tooltip'),
-  'c-card-iterator-field': {
-    props: {
-      value: {
-        type: Array,
-        default: () => [],
-      },
-    },
-    template: `
-    <ul class="c-card-iterator-field" v-on="$listeners">
-      <li v-for="(item, index) in value" :key="item.key">
-        <slot :item="item" :index="index" name="item" />
-      </li>
-    </ul>
-  `,
-  },
   'v-btn': createButtonStub('v-btn'),
 };
 
@@ -50,14 +33,14 @@ describe('c-columns-field', () => {
   const factory = generateShallowRenderer(CColumnsField, { stubs });
   const snapshotFactory = generateRenderer(CColumnsField, { stubs: snapshotStubs });
 
-  test('Column added after trigger add event', async () => {
+  test('Column added after trigger add event', () => {
     const wrapper = factory({
       propsData: {
         columns,
       },
     });
 
-    await selectAddCardButton(wrapper).trigger('click');
+    selectAddCardButton(wrapper).trigger('click');
 
     expect(wrapper).toEmitInput([
       ...columns,
@@ -69,7 +52,7 @@ describe('c-columns-field', () => {
     ]);
   });
 
-  test('Column changed after trigger column field', async () => {
+  test('Column changed after trigger column field', () => {
     const wrapper = factory({
       propsData: {
         columns,
@@ -81,7 +64,7 @@ describe('c-columns-field', () => {
       label: Faker.datatype.string(),
     };
 
-    await selectColumnFieldByIndex(wrapper, 2).triggerCustomEvent('input', newColumn);
+    selectColumnFieldByIndex(wrapper, 2).triggerCustomEvent('input', newColumn);
 
     expect(wrapper).toEmitInput([
       columns[0],
@@ -91,7 +74,7 @@ describe('c-columns-field', () => {
     ]);
   });
 
-  test('Column removed after trigger remove event', async () => {
+  test('Column removed after trigger remove event', () => {
     const columnToRemoveIndex = 2;
     const wrapper = factory({
       propsData: {
@@ -99,7 +82,7 @@ describe('c-columns-field', () => {
       },
     });
 
-    await selectColumnFieldByIndex(wrapper, columnToRemoveIndex).triggerCustomEvent('remove');
+    selectColumnFieldByIndex(wrapper, columnToRemoveIndex).triggerCustomEvent('remove');
 
     expect(wrapper).toEmitInput([
       columns[0],

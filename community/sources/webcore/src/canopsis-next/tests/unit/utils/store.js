@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
-import { CANOPSIS_EDITION, EXPORT_STATUSES, VIEW_SCREEN_MODES } from '@/constants';
+import { CANOPSIS_EDITION, EXPORT_STATUSES } from '@/constants';
 
 import request from '@/services/request';
 
@@ -656,32 +656,20 @@ export const createActiveViewModule = () => {
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
   const toggleEditing = jest.fn();
-  const setScreenMode = jest.fn();
   const editing = jest.fn().mockReturnValue(false);
   const item = jest.fn().mockReturnValue({});
-  const screenMode = jest.fn().mockReturnValue(VIEW_SCREEN_MODES.default);
-  const isKioskScreenMode = jest.fn().mockReturnValue(false);
-  const resumePeriodicRefresh = jest.fn();
-  const pausePeriodicRefresh = jest.fn();
-  const periodicRefreshPaused = jest.fn().mockReturnValue(false);
 
   const activeViewModule = {
     name: 'activeView',
     getters: {
       editing,
       item,
-      screenMode,
-      isKioskScreenMode,
-      periodicRefreshPaused,
     },
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
       toggleEditing,
-      setScreenMode,
       fetch: fetchActiveView,
-      resumePeriodicRefresh,
-      pausePeriodicRefresh,
     },
   };
 
@@ -691,9 +679,6 @@ export const createActiveViewModule = () => {
     fetchActiveView.mockClear();
     registerEditingOffHandler.mockClear();
     unregisterEditingOffHandler.mockClear();
-    resumePeriodicRefresh.mockClear();
-    pausePeriodicRefresh.mockClear();
-    periodicRefreshPaused.mockClear();
   });
 
   return {
@@ -703,9 +688,6 @@ export const createActiveViewModule = () => {
     unregisterEditingOffHandler,
     fetchActiveView,
     toggleEditing,
-    resumePeriodicRefresh,
-    pausePeriodicRefresh,
-    periodicRefreshPaused,
     activeViewModule,
   };
 };

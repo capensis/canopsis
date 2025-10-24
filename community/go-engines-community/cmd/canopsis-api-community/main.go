@@ -39,7 +39,7 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	logger := log.NewLogger(ctx, flags.Options)
+	logger := log.NewLogger(ctx, flags.Debug)
 
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx)

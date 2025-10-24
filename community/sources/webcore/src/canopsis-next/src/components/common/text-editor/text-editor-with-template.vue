@@ -1,8 +1,10 @@
 <template>
   <v-layout column>
-    <c-widget-template-field
+    <v-select
       :value="form.template"
-      :templates="templates"
+      :items="templatesWithCustom"
+      :label="$t('common.template')"
+      return-object
       @input="updateTemplate"
     />
     <text-editor-field
@@ -22,20 +24,18 @@
 <script>
 import { CUSTOM_WIDGET_TEMPLATE } from '@/constants';
 
-import { useModelField } from '@/hooks/form/model-field';
+import { formMixin } from '@/mixins/form';
 
 import TextEditorField from './text-editor.vue';
 
 export default {
   inject: ['$validator', '$system'],
-
   components: { TextEditorField },
-
+  mixins: [formMixin],
   model: {
     prop: 'form',
     event: 'input',
   },
-
   props: {
     form: {
       type: Object,
@@ -62,37 +62,24 @@ export default {
       required: false,
     },
   },
+  computed: {
+    templatesWithCustom() {
+      return [
+        { value: CUSTOM_WIDGET_TEMPLATE, text: this.$t('common.custom'), content: '' },
 
-  setup(props, { emit }) {
-    const { updateModel, updateField } = useModelField(props, emit);
+        ...this.templates.map(template => ({
+          ...template,
 
-    /**
-     * Handles template selection and updates the model with the selected template and its content.
-     *
-     * @param {Object} param - The template update payload.
-     * @param {string} param.value - The selected template value.
-     * @param {string} param.content - The content associated with the selected template.
-     */
-    const updateTemplate = ({ value, content }) => {
-      if (value === props.form.template) {
-        return;
-      }
-
-      updateModel({
-        template: value,
-        text: content,
-      });
-    };
-
-    /**
-     * Handles text changes. If a custom template is used, updates both text and template fields in the model.
-     * Otherwise, updates only the text field.
-     *
-     * @param {string} text - The new text value.
-     */
-    const updateText = (text) => {
-      if (props.form.template !== CUSTOM_WIDGET_TEMPLATE && text !== props.form.text) {
-        updateModel({
+          value: template._id,
+          text: template.title,
+        })),
+      ];
+    },
+  },
+  methods: {
+    updateText(text) {
+      if (this.form.template !== CUSTOM_WIDGET_TEMPLATE && text !== this.form.text) {
+        this.updateModel({
           text,
           template: CUSTOM_WIDGET_TEMPLATE,
         });
@@ -100,13 +87,19 @@ export default {
         return;
       }
 
-      updateField('text', text);
-    };
+      this.updateField('text', text);
+    },
 
-    return {
-      updateTemplate,
-      updateText,
-    };
+    updateTemplate({ value, content }) {
+      if (value === this.form.template) {
+        return;
+      }
+
+      this.updateModel({
+        template: value,
+        text: content,
+      });
+    },
   },
 };
 </script>

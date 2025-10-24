@@ -12,7 +12,7 @@ import (
 
 // NewRPCClient creates new AMQP RPC client.
 func NewRPCClient(
-	name, serverExchangeName, serverRoutingKey, clientQueueName string,
+	name, serverQueueName, clientQueueName string,
 	consumePrefetchCount, consumePrefetchSize int,
 	workers int,
 	connection libamqp.Connection,
@@ -30,31 +30,28 @@ func NewRPCClient(
 			connection:           connection,
 			logger:               logger,
 		},
-		serverExchangeName: serverExchangeName,
-		serverRoutingKey:   serverRoutingKey,
-		publishCh:          publishCh,
-		workers:            workers,
+		serverQueueName: serverQueueName,
+		publishCh:       publishCh,
+		workers:         workers,
 	}
 }
 
 func NewRPCClientWithoutReply(
-	serverExchangeName string,
-	serverRoutingKey string,
+	serverQueueName string,
 	publishCh libamqp.Channel,
 ) RPCClient {
 	return &rpcClient{
-		serverExchangeName: serverExchangeName,
-		serverRoutingKey:   serverRoutingKey,
-		publishCh:          publishCh,
+		serverQueueName: serverQueueName,
+		publishCh:       publishCh,
 	}
 }
 
 // rpcClient implements RPC client.
 type rpcClient struct {
 	defaultConsumer
-	serverExchangeName string
-	serverRoutingKey   string
-	publishCh          libamqp.Channel
+	// serverQueueName is name of AMQP queue to where client sends RPC requests.
+	serverQueueName string
+	publishCh       libamqp.Channel
 	// amount of workers which process events.
 	workers int
 }
@@ -62,8 +59,8 @@ type rpcClient struct {
 func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
 	err := c.publishCh.PublishWithContext(
 		ctx,
-		c.serverExchangeName,
-		c.serverRoutingKey,
+		"",
+		c.serverQueueName,
 		false,
 		false,
 		amqp.Publishing{
@@ -71,7 +68,6 @@ func (c *rpcClient) Call(ctx context.Context, m RPCMessage) error {
 			CorrelationId: m.CorrelationID,
 			ReplyTo:       c.queue,
 			Body:          m.Body,
-			DeliveryMode:  amqp.Persistent,
 		},
 	)
 	if err != nil {

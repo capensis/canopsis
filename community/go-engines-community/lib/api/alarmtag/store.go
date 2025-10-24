@@ -27,13 +27,12 @@ type Store interface {
 	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		client:          dbClient,
 		collection:      dbClient.Collection(mongo.AlarmTagCollection),
 		labelCollection: dbClient.Collection(mongo.AlarmTagColorCollection),
 		authorProvider:  authorProvider,
-		transformer:     transformer,
 
 		defaultSearchByFields: []string{"value"},
 		defaultSortBy:         "value",
@@ -45,7 +44,6 @@ type store struct {
 	collection      mongo.DbCollection
 	labelCollection mongo.DbCollection
 	authorProvider  author.Provider
-	transformer     common.PatternFieldsTransformer
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -162,28 +160,17 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 }
 
 func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) {
-	var response *Response
-
+	model := transformCreateRequestToModel(r)
+	model.ID = utils.NewID()
+	model.Type = alarmtag.TypeInternal
 	now := datetime.NewCpsTime()
-	tag := alarmtag.AlarmTag{
-		ID:      utils.NewID(),
-		Type:    alarmtag.TypeInternal,
-		Value:   r.Value,
-		Color:   r.Color,
-		Author:  r.Author,
-		Created: now,
-		Updated: now,
-	}
-
+	model.Created = now
+	model.Updated = now
+	var response *Response
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r.EntityPatternFieldsRequest, r.AlarmPatternFieldsRequest, &tag)
-		if err != nil {
-			return err
-		}
-
-		_, err = s.collection.InsertOne(ctx, tag)
+		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
 				return common.NewValidationError("value", "Value already exists.")
@@ -192,12 +179,12 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
-		response, err = s.GetByID(ctx, tag.ID)
+		response, err = s.GetByID(ctx, model.ID)
 		if err != nil {
 			return err
 		}
 
-		label := tag.Value
+		label := model.Value
 		splitLabel := strings.Split(label, ":")
 		if len(splitLabel) > 0 {
 			label = splitLabel[0]
@@ -206,7 +193,11 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err = s.labelCollection.UpdateOne(
 			ctx,
 			bson.M{"_id": label},
-			bson.M{"$setOnInsert": bson.M{"color": tag.Color}},
+			bson.M{
+				"$setOnInsert": bson.M{
+					"color": model.Color,
+				},
+			},
 			options.UpdateOne().SetUpsert(true),
 		)
 
@@ -217,15 +208,11 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 }
 
 func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) {
+	now := datetime.NewCpsTime()
 	var response *Response
-
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
-
-		now := datetime.NewCpsTime()
-
 		var tag alarmtag.AlarmTag
-
 		err := s.collection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&tag)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -235,7 +222,6 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 
 		var updateResult *mongodriver.UpdateResult
-
 		switch tag.Type {
 		case alarmtag.TypeExternal:
 			updateResult, err = s.collection.UpdateOne(ctx,
@@ -254,16 +240,22 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 				return common.NewValidationError("alarm_pattern", "AlarmPattern or EntityPattern is required.")
 			}
 
-			err = s.transformPatternRequestsToModel(ctx, r.EntityPatternFieldsRequest, r.AlarmPatternFieldsRequest, &tag)
-			if err != nil {
-				return err
-			}
-
 			tag.Color = r.Color
 			tag.Author = r.Author
 			tag.Updated = now
-
-			updateResult, err = s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": tag})
+			tag.EntityPatternFields = r.EntityPatternFieldsRequest.ToModelWithoutFields(
+				common.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection),
+			)
+			tag.AlarmPatternFields = r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+				common.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
+				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
+			)
+			updateResult, err = s.collection.UpdateOne(ctx,
+				bson.M{
+					"_id": r.ID,
+				},
+				bson.M{"$set": tag},
+			)
 		}
 
 		if err != nil || updateResult.MatchedCount == 0 {
@@ -300,30 +292,17 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
-func (s *store) transformPatternRequestsToModel(
-	ctx context.Context,
-	entityPatternReq common.EntityPatternFieldsRequest,
-	alarmPatternReq common.AlarmPatternFieldsRequest,
-	model *alarmtag.AlarmTag,
-) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, entityPatternReq)
-	if err != nil {
-		return err
+func transformCreateRequestToModel(r CreateRequest) alarmtag.AlarmTag {
+	return alarmtag.AlarmTag{
+		Value:  r.Value,
+		Color:  r.Color,
+		Author: r.Author,
+		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection),
+		),
+		AlarmPatternFields: r.AlarmPatternFieldsRequest.ToModelWithoutFields(
+			common.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
+			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
+		),
 	}
-
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, alarmPatternReq)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
-		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
-	)
-
-	return nil
 }

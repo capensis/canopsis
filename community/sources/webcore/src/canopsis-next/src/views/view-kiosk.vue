@@ -8,8 +8,6 @@
 </template>
 
 <script>
-import { VIEW_SCREEN_MODES } from '@/constants';
-
 import Observer from '@/services/observer';
 
 import { toSeconds } from '@/helpers/date/duration';
@@ -19,9 +17,6 @@ import { activeViewMixin } from '@/mixins/active-view';
 
 import ViewTabWidgets from '@/components/other/view/view-tab-widgets.vue';
 
-/**
- * TODO: rewrite this periodic refresh functionality in the future
- */
 export default {
   provide() {
     return {
@@ -86,7 +81,6 @@ export default {
 
   created() {
     this.clearActiveView();
-    this.setActiveViewScreenMode(VIEW_SCREEN_MODES.kiosk);
 
     this.$periodicRefresh.register(this.refreshView);
   },

@@ -64,22 +64,21 @@ type CountRequest struct {
 }
 
 type CountAlarmsResponse struct {
-	AlarmPattern     CountResponse `json:"alarm_pattern"`
-	EntityPattern    CountResponse `json:"entity_pattern"`
-	PbehaviorPattern CountResponse `json:"pbehavior_pattern"`
-	All              CountResponse `json:"all"`
-	Entities         CountResponse `json:"entities"`
+	AlarmPattern     Count `json:"alarm_pattern"`
+	EntityPattern    Count `json:"entity_pattern"`
+	PbehaviorPattern Count `json:"pbehavior_pattern"`
+	All              Count `json:"all"`
+	Entities         Count `json:"entities"`
 }
 
 type CountEntitiesResponse struct {
-	AlarmPattern     CountResponse `json:"alarm_pattern"`
-	EntityPattern    CountResponse `json:"entity_pattern"`
-	PbehaviorPattern CountResponse `json:"pbehavior_pattern"`
-	All              CountResponse `json:"all"`
+	AlarmPattern     Count `json:"alarm_pattern"`
+	EntityPattern    Count `json:"entity_pattern"`
+	PbehaviorPattern Count `json:"pbehavior_pattern"`
+	All              Count `json:"all"`
 }
 
-type CountResponse struct {
+type Count struct {
 	Count     int64 `bson:"count" json:"count"`
 	OverLimit bool  `bson:"-" json:"over_limit"`
-	Millisecs int64 `json:"ms"`
 }

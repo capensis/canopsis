@@ -104,7 +104,7 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
       name="fade-transition"
     >
       <div
-        class="v-alert v-sheet theme--dark v-alert--light-background"
+        class="v-alert v-sheet theme--dark error"
         role="alert"
         style="display: none;"
       >
@@ -114,7 +114,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
           <i
             aria-hidden="true"
             class="v-icon notranslate v-alert__icon material-icons theme--dark"
-            style="caret-color: var(--v-error-base);"
           >
             warning
           </i>
@@ -129,7 +128,7 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
       name="fade-transition"
     >
       <div
-        class="v-alert v-sheet theme--dark v-alert--light-background"
+        class="v-alert v-sheet theme--dark warning"
         role="alert"
         style="display: none;"
       >
@@ -139,7 +138,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with advanced tab
           <i
             aria-hidden="true"
             class="v-icon notranslate v-alert__icon material-icons theme--dark"
-            style="caret-color: var(--v-warning-base);"
           >
             priority_high
           </i>
@@ -366,7 +364,7 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
       name="fade-transition"
     >
       <div
-        class="v-alert v-sheet theme--dark v-alert--light-background"
+        class="v-alert v-sheet theme--dark error"
         role="alert"
         style="display: none;"
       >
@@ -376,7 +374,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
           <i
             aria-hidden="true"
             class="v-icon notranslate v-alert__icon material-icons theme--dark"
-            style="caret-color: var(--v-error-base);"
           >
             warning
           </i>
@@ -391,7 +388,7 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
       name="fade-transition"
     >
       <div
-        class="v-alert v-sheet theme--dark v-alert--light-background"
+        class="v-alert v-sheet theme--dark warning"
         role="alert"
         style="display: none;"
       >
@@ -401,7 +398,6 @@ exports[`pattern-editor-field Renders \`pattern-editor-field\` with default prop
           <i
             aria-hidden="true"
             class="v-icon notranslate v-alert__icon material-icons theme--dark"
-            style="caret-color: var(--v-warning-base);"
           >
             priority_high
           </i>

@@ -3,8 +3,8 @@
     v-field="data"
     :disabled="disabled"
     :group="draggableGroup"
-    :handle="handle"
     class="c-card-iterator-field"
+    handle=".item-drag-handler"
     ghost-class="grey"
   >
     <template v-for="(item, index) in data">
@@ -16,7 +16,6 @@
           <slot
             :item="item"
             :index="index"
-            :handle="handle"
             name="item"
           />
         </v-card-text>
@@ -40,17 +39,13 @@ export default {
       type: String,
       default: '_id',
     },
-    handle: {
-      type: String,
-      default: '.item-drag-handler',
-    },
     disabled: {
       type: Boolean,
       default: false,
     },
     draggableGroup: {
       type: Object,
-      required: false,
+      required: true,
     },
   },
 };

@@ -19,10 +19,6 @@ exports[`create-change-state-event Renders \`create-change-state-event\` 1`] = `
     <div
       class="text"
     >
-      <alarm-general-table-stub
-        class="mb-4"
-        items="[object Object]"
-      />
       <c-change-state-field-stub
         label="Note"
         value="[object Object]"

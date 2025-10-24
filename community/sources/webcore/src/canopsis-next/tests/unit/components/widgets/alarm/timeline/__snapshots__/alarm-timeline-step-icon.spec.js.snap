@@ -264,10 +264,8 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
 
 exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step \`resolve\` correctly 1`] = `
 <div>
-  <v-icon-stub
-    color="#2FAB63"
-  >
-    check_circle
+  <v-icon-stub>
+    check_circle_outline
   </v-icon-stub>
 </div>
 `;
@@ -317,7 +315,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="var(--v-status-closed-base)"
   >
-    $vuetify.icons.delayed_check
+    check_circle_outline
   </v-icon-stub>
 </div>
 `;
@@ -357,7 +355,7 @@ exports[`alarm-timeline-step-icon Renders \`alarm-timeline-step-icon\` for step 
   <v-icon-stub
     color="var(--v-status-cancelled-base)"
   >
-    $vuetify.icons.delayed_cancel
+    highlight_off
   </v-icon-stub>
 </div>
 `;

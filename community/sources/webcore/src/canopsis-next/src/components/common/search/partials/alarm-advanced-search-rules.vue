@@ -65,10 +65,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    allowFocusOnMount: {
-      type: Boolean,
-      default: true,
-    },
   },
   setup(props, { emit }) {
     const {
@@ -144,7 +140,7 @@ export default {
         return false;
       }
 
-      return props.allowFocusOnMount && !isArrayOperator(props.rules[index - 1]?.operator);
+      return !isArrayOperator(props.rules[index - 1]?.operator);
     };
 
     return {

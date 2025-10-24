@@ -64,7 +64,7 @@
       </v-icon>
     </template>
     <template #is_active_status="{ item }">
-      <v-icon :color="item.is_active_status ? 'success' : 'error'">
+      <v-icon :color="item.is_active_status ? 'primary' : 'error'">
         $vuetify.icons.settings_sync
       </v-icon>
     </template>

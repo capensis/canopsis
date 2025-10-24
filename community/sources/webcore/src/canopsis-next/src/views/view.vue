@@ -3,7 +3,7 @@
     <v-fade-transition>
       <view-tabs-wrapper
         v-if="isViewTabsReady"
-        :editing="activeViewEditing"
+        :editing="editing"
         :updatable="hasUpdateAccess"
       />
     </v-fade-transition>

@@ -2,16 +2,16 @@
   <div class="d-flex">
     <c-state-count-changes-chips
       :affect="alarmStates.minor"
-      :state="ALARM_STATES.minor"
+      :color="minorColor"
     />
     <c-state-count-changes-chips
       :affect="alarmStates.major"
-      :state="ALARM_STATES.major"
+      :color="majorColor"
       class="ml-2"
     />
     <c-state-count-changes-chips
       :affect="alarmStates.critical"
-      :state="ALARM_STATES.critical"
+      :color="criticalColor"
       class="ml-2"
     />
   </div>
@@ -28,11 +28,6 @@ export default {
       type: Object,
       required: true,
     },
-  },
-  setup() {
-    return {
-      ALARM_STATES,
-    };
   },
   computed: {
     minorColor() {

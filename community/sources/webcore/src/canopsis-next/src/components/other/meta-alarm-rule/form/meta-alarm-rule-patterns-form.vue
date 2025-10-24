@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
 export default {
   inject: ['$validator'],
@@ -40,6 +40,12 @@ export default {
     },
   },
   computed: {
+    intervalOptions() {
+      return {
+        intervalRanges: [QUICK_RANGES.custom],
+      };
+    },
+
     entityAttributes() {
       return [
         {
@@ -53,9 +59,11 @@ export default {
       return [
         {
           value: ALARM_PATTERN_FIELDS.creationDate,
+          options: this.intervalOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.ackAt,
+          options: this.intervalOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.resolved,

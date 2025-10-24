@@ -8,14 +8,13 @@
         <tag-form
           v-model="form"
           :is-imported="isImported"
-          :is-new="isNew"
         />
       </template>
       <template #actions="">
         <v-btn
           depressed
           text
-          @click="close"
+          @click="$modals.hide"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -33,16 +32,13 @@
 </template>
 
 <script>
-import { ref, computed } from 'vue';
-
 import { MODALS, VALIDATION_DELAY } from '@/constants';
 
 import { tagToForm, formToTag } from '@/helpers/entities/tag/form';
 
-import { useI18n } from '@/hooks/i18n';
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
 
 import TagForm from '@/components/other/tag/form/tag-form.vue';
 
@@ -55,46 +51,37 @@ export default {
     delay: VALIDATION_DELAY,
   },
   components: { TagForm, ModalWrapper },
-  props: {
-    modal: {
-      type: Object,
-      required: true,
+  mixins: [
+    modalInnerMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    return {
+      form: tagToForm(this.modal.config.tag),
+    };
+  },
+  computed: {
+    title() {
+      return this.config.title || this.$t('modals.createTag.create.title');
+    },
+
+    isImported() {
+      return this.config.isImported;
     },
   },
-  setup(props) {
-    const { t } = useI18n();
-    const { config, close } = useInnerModal(props);
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
 
-    const form = ref(tagToForm(config.value.tag));
+      if (isFormValid) {
+        if (this.config.action) {
+          await this.config.action(formToTag(this.form));
+        }
 
-    const isNew = computed(() => !config.value.tag?._id);
-    const title = computed(() => (
-      config.value.title || t('modals.createTag.create.title')
-    ));
-
-    const isImported = computed(() => config.value.isImported);
-
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(formToTag(form.value));
-
-        close();
-      },
-    });
-
-    useFormConfirmableCloseModal({ form, submit, close });
-
-    return {
-      form,
-      title,
-      isNew,
-      isImported,
-      isDisabled,
-      submitting,
-      submit,
-      close,
-    };
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

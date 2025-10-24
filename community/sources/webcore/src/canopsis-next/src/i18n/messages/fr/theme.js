@@ -4,37 +4,37 @@ export default {
   themes: 'Thèmes',
   exampleText: 'Bonjour le monde!',
   defaultTheme: 'Le thème est par défaut, vous ne pouvez pas modifier le thème !',
-  checkColors: 'Vérifier les couleurs',
   errors: {
     notReadable: 'Le texte n\'est pas lisible',
   },
   main: {
-    title: 'Couleurs principales de l\'interface',
+    title: 'Principaux éléments de l\'interface utilisateur',
 
-    primary: 'Marque principale',
-    primaryHelpText: 'Couleur principale de l\'identité visuelle (en-tête Canopsis)',
+    primary: 'Couleur principale du produit',
+    primaryHelpText: 'Couleur principale du produit (en-tête Canopsis)',
 
-    secondary: 'Marque secondaire',
-    secondaryHelpText: 'Couleur supplémentaire de l\'identité visuelle (pour les panneaux élargis, menus, etc.)',
+    secondary: 'Couleur secondaire du produit',
+    secondaryHelpText: 'Couleur secondaire (pour les panneaux développés, les menus, etc.)',
 
-    accent: 'Boutons neutres',
+    accent: 'Couleur neutre des boutons',
+    accentHelpText: 'Couleur des boutons neutres (suivant/précédent, etc.)',
 
-    error: 'Icônes / boutons d\'erreur',
-    errorBackground: 'Arrière-plan d\'erreur',
+    error: 'Couleur relative aux erreurs',
+    errorHelpText: 'Couleur des messages d\'erreur, des boutons d\'action en échec, etc.',
 
-    warning: 'Icônes / boutons d\'avertissement',
-    warningBackground: 'Arrière-plan d\'avertissement',
+    info: 'Couleur relatives aux informations',
+    infoHelpText: 'Couleur pour les messages et notifications informatifs',
 
-    success: 'Icônes / boutons de réussite / positif',
-    successBackground: 'Arrière-plan de réussite / positif',
+    success: 'Couleur relative aux Succès',
+    successHelpText: 'Couleur pour les messages et notifications en succès',
 
-    info: 'Icônes / boutons d\'information',
-    infoBackground: 'Arrière-plan d\'information',
+    warning: 'Couleur relative aux avertissements',
+    warningHelpText: 'Couleur des messages d\'avertissement et des notifications',
 
-    background: 'Arrière-plan principal\n',
+    background: 'Couleur de fond principale',
 
-    activeColor: 'Principal actif',
-    activeColorHelpText: 'Couleur principale pour les textes et les icônes',
+    activeColor: 'Couleur active principale',
+    activeColorHelpText: 'Couleur principale des textes et des icônes',
   },
   fontSize: {
     title: 'Paramètres de taille de police',
@@ -48,16 +48,20 @@ export default {
   table: {
     title: 'Paramètres des tableaux',
 
-    background: 'Arrière-plan des tableaux',
+    background: 'Couleur d\'arrière-plan des tableaux',
+    backgroundHelpText: 'Couleur d\'arrière plan pour les tableaux',
 
-    rowColor: 'Ligne des tableaux',
+    rowColor: 'Couleur des lignes des tableaux',
+    rowColorHelpText: 'Couleur des lignes du tableau',
 
     shiftRowEnable: 'Alterner les couleurs d’arrière-plan des tableaux',
     shiftRowEnableHelpText: 'Sélecteur pour activer/désactiver les changements de couleur pour les lignes des tableaux',
 
-    shiftRowColor: 'Arrière-plan de la deuxième ligne des tableaux',
+    shiftRowColor: 'Couleur de la deuxième ligne des tableaux',
+    shiftRowColorHelpText: 'Lorsqu\'elle est activée, les couleurs des lignes changent (une couleur de ligne sur deux est différente)',
 
     hoverRowEnable: 'Changer la couleur de la ligne au survol',
+    hoverRowEnableHelpText: 'Sélecteur pour activer/désactiver le changement de couleur des lignes au survol',
 
     hoverRowColor: 'Couleur des lignes des tableaux au survol',
   },
@@ -65,11 +69,15 @@ export default {
     title: 'Couleurs de criticités',
 
     ok: 'Ok',
+    okHelpText: 'Indication de couleur pour l\'état OK',
 
     minor: 'Mineure',
+    minorHelpText: 'Indication de couleur pour l\'état mineur',
 
     major: 'Majeure',
+    majorHelpText: 'Indication de couleur pour l\'état majeur',
 
     critical: 'Critique',
+    criticalHelpText: 'Indication de couleur pour l\'état critique',
   },
 };

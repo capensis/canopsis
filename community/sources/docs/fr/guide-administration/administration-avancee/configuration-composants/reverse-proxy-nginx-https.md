@@ -1,6 +1,6 @@
 # Activation de HTTPS dans Canopsis
 
-Une configuration HTTPS est proposée avec [Nginx](reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit sa configuration et son activation.
+À partir de Canopsis 4.4.0, une configuration HTTPS est proposée avec [Nginx](reverse-proxy-nginx.md), mais elle n'est cependant pas encore activée par défaut. Ce guide décrit sa configuration et son activation.
 
 ## Apports de la configuration HTTPS
 
@@ -8,7 +8,7 @@ La configuration HTTPS proposée dans Nginx vous permet :
 
 * de sécuriser vos échanges HTTP, ce qui est notamment recommandé si votre accès à Canopsis ne se fait pas au travers d'un intranet sécurisé ou d'un VPN ;
 * d'activer implicitement la prise en charge d'HTTP/2, pour de meilleures performances web dans certaines conditions ;
-* de bénéficier des [Websockets](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API) et donc de la nouvelle Healthcheck.
+* de bénéficier des [Websockets](https://developer.mozilla.org/fr/docs/Web/API/WebSockets_API) et donc de la nouvelle fonctionnalité Healthcheck apparue avec Canopsis 4.4.0.
 
 !!! note
     Les prérequis pour ces fonctionnalités sont les suivants :
@@ -16,7 +16,7 @@ La configuration HTTPS proposée dans Nginx vous permet :
     * assigner un [FQDN](https://fr.wikipedia.org/wiki/Fully_qualified_domain_name) à votre service web Canopsis (ex : `canopsis.mon-si.fr`) ;
     * avoir un navigateur [officiellement pris en charge](../../../guide-utilisation/limitations/index.md#compatibilite-des-anciens-navigateurs) et raisonnablement récent ;
     * disposer d'au moins HTTP/1.1 et des Websockets dans ce navigateur ;
-    * disposer de TLSv1.2 ou de TLSv1.3 sur vos clients HTTPS ;
+    * disposer de TLSv1.2 ou de TLSv1.3 sur vos clients HTTPS (note : TLSv1.3 n'est pas disponible dans les paquets CentOS 7) ;
     * disposer d'OpenSSL sur votre serveur, avec ses dernières mises à jour de sécurité ;
     * utiliser une autorité de certification SSL/TLS en raccord avec les pratiques internes de votre SI (voir ci-dessous) ;
     * mettre en place une politique de renouvellement des certificats et une surveillance de leur expiration.
@@ -53,7 +53,7 @@ En premier lieu, rapprochez-vous de votre autorité de certification afin de con
 
 Vous devez ensuite placer ces fichiers au bon endroit sur votre serveur Canopsis, en fonction de la [méthode d'installation](../../installation/index.md#methodes-dinstallation-de-canopsis) que vous avez choisie.
 
-=== "Paquets RHEL"
+=== "Paquets CentOS 7"
 
     Assurez-vous tout d'abord de la bonne restriction des accès à `/etc/nginx/ssl` avec la commande suivante :
 
@@ -96,7 +96,7 @@ Notez au préalable que :
 * L'utilisation de certificats autosignés provoquera l'affichage d'un message dans votre navigateur lors de la connexion à Canopsis. Vous devrez ajouter une exception sur chaque navigateur devant accéder à Canopsis.
 * De façon générale, les certificats autosignés n'assurent pas un niveau de sécurité suffisant dans un SI, et ne sont donc **pas recommandés**.
 
-=== "Paquets RHEL"
+=== "Paquets CentOS 7"
 
     Sur l'environnement cible, exécutez les commandes suivantes en remplaçant `canopsis.mon-si.fr` par le vrai FQDN de votre service Canopsis :
 
@@ -114,9 +114,9 @@ Notez au préalable que :
 
 ## Activation de la configuration HTTPS
 
-=== "Paquets RHEL"
+=== "Paquets CentOS 7"
 
-    Éditez le fichier `/etc/nginx/conf.d/canopsis.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
+    Éditez le fichier `/etc/nginx/conf.d/default.conf` afin de configurer votre FQDN (ex : `canopsis.mon-si.fr`), et décommentez la ligne `#include /etc/nginx/https.inc` afin d'activer la configuration HTTPS.
 
     ```nginx hl_lines="1 5"
     set $canopsis_server_name "canopsis.mon-si.fr";
@@ -152,7 +152,7 @@ Si vous pouvez garantir que la totalité de vos clients utilisera uniquement une
 
 Pour cela, le moteur `canopsis-api` doit être lancé avec l'option `-secure`.
 
-=== "Paquets RHEL"
+=== "Paquets CentOS 7"
 
     Exécutez les commandes suivantes pour forcer le moteur `canopsis-api` à être lancé avec l'option `-secure` :
 

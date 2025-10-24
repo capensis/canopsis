@@ -71,13 +71,13 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect(action).toHaveBeenCalledWith({
+    expect(action).toBeCalledWith({
       value: '',
       alarm_pattern: [],
       entity_pattern: [],
       color: COLORS.secondary,
     });
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toBeCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -111,8 +111,8 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect(action).not.toHaveBeenCalled();
-    expect($modals.hide).not.toHaveBeenCalled();
+    expect(action).not.toBeCalled();
+    expect($modals.hide).not.toBeCalled();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -131,7 +131,7 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toBeCalledWith();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -161,13 +161,13 @@ describe('create-tag', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toHaveBeenCalledWith({
+    expect(action).toBeCalledWith({
       value: '',
       color: COLORS.secondary,
       alarm_pattern: [],
       entity_pattern: [],
     });
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toBeCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -203,17 +203,17 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
-    expect($popups.error).toHaveBeenCalledWith({
+    expect(consoleErrorSpy).toBeCalledWith(errors);
+    expect($popups.error).toBeCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toHaveBeenCalledWith({
+    expect(action).toBeCalledWith({
       entity_pattern: customTag.entity_pattern,
       alarm_pattern: customTag.alarm_pattern,
       color: customTag.color,
       value: customTag.value,
     });
-    expect($modals.hide).not.toHaveBeenCalledWith();
+    expect($modals.hide).not.toBeCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -243,8 +243,8 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect(action).toHaveBeenCalledWith(newForm);
-    expect($modals.hide).toHaveBeenCalled();
+    expect(action).toBeCalledWith(newForm);
+    expect($modals.hide).toBeCalled();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -263,7 +263,7 @@ describe('create-tag', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toHaveBeenCalled();
+    expect($modals.hide).toBeCalled();
   });
 
   test('Renders `create-tag` with empty modal', () => {

@@ -15,7 +15,7 @@ import SetOnlyDiffPlugin from '@/plugins/set-only-diff';
 import UpdateFieldPlugin from '@/plugins/update-field';
 import SocketPlugin from '@/plugins/socket';
 
-import { featuresService } from '@/services/features';
+import featuresService from '@/services/features';
 
 import store from '@/store';
 import i18n from '@/i18n';
@@ -70,7 +70,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.pbehaviorRecurrentChangesConfirmation]: { maxWidth: 400, persistent: true },
       [MODALS.createRemediationInstruction]: { maxWidth: 960 },
       [MODALS.remediationInstructionApproval]: { maxWidth: 960 },
-      [MODALS.executeRemediationInstruction]: { maxWidth: 960 },
+      [MODALS.executeRemediationInstruction]: { maxWidth: 960, persistent: true },
       [MODALS.imageViewer]: { maxWidth: '90%', contentClass: 'v-dialog__image-viewer' },
       [MODALS.imagesViewer]: { maxWidth: '100%', contentClass: 'v-dialog__images-viewer' },
       [MODALS.rate]: { maxWidth: 500 },
@@ -105,7 +105,6 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.eventsRecord]: { maxWidth: 1600, persistent: true },
       [MODALS.linkToMetaAlarm]: { maxWidth: 920 },
       [MODALS.importExternalDataTableRecords]: { maxWidth: 1200, persistent: true },
-      [MODALS.createTheme]: { maxWidth: 500 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },

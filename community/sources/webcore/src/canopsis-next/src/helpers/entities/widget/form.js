@@ -2,7 +2,7 @@ import { cloneDeep } from 'lodash';
 
 import { WIDGET_TYPES, WIDGET_GRID_SIZES_KEYS, DEFAULT_WIDGET_GRID_PARAMETERS } from '@/constants';
 
-import { featuresService } from '@/services/features';
+import featuresService from '@/services/features';
 
 import { uuid } from '@/helpers/uuid';
 

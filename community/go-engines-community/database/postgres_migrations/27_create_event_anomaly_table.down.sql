@@ -1,6 +1,0 @@
-BEGIN;
-
-DROP MATERIALIZED VIEW IF EXISTS event_anomaly_hourly;
-DROP TABLE IF EXISTS event_anomaly;
-
-END;

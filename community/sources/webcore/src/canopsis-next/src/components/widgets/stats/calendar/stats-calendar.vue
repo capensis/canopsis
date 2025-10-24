@@ -34,15 +34,7 @@
 import { get, isEmpty, omit } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
-import {
-  MODALS,
-  MAX_LIMIT,
-  CALENDAR_TYPES,
-  PBEHAVIOR_CANONICAL_TYPES,
-  PBEHAVIOR_PATTERN_FIELDS,
-  PATTERN_CONDITIONS,
-  PATTERNS_FIELDS,
-} from '@/constants';
+import { MODALS, MAX_LIMIT, CALENDAR_TYPES } from '@/constants';
 
 import { convertDateToTimestamp, convertDateToTimestampByTimezone } from '@/helpers/date/date';
 import { convertAlarmsToEvents, convertEventsToGroupedEvents } from '@/helpers/calendar/calendar';
@@ -141,13 +133,6 @@ export default {
     hasFilters() {
       return this.query?.filters?.length > 0;
     },
-
-    noPbehaviorPattern() {
-      return JSON.stringify([[{
-        field: PBEHAVIOR_PATTERN_FIELDS.canonicalType,
-        cond: { type: PATTERN_CONDITIONS.equal, value: PBEHAVIOR_CANONICAL_TYPES.active },
-      }]]);
-    },
   },
   methods: {
     ...alarmMapActions({
@@ -179,13 +164,7 @@ export default {
     },
 
     getCommonQuery() {
-      const query = omit(this.query, ['filters', 'considerPbehaviors']);
-
-      if (this.query.considerPbehaviors) {
-        query[PATTERNS_FIELDS.pbehavior] = this.noPbehaviorPattern;
-      }
-
-      return query;
+      return omit(this.query, ['filters', 'considerPbehaviors']);
     },
 
     showAlarmsListModal(meta) {
@@ -205,8 +184,8 @@ export default {
             : this.$t('modals.alarmsList.title'),
           fetchList: (params) => {
             const newParams = {
-              ...params,
               ...this.getCommonQuery(),
+              ...params,
 
               tstart: convertDateToTimestamp(meta.tstart),
               tstop: convertDateToTimestamp(meta.tstop),
@@ -225,9 +204,7 @@ export default {
     },
 
     changeCalendar() {
-      if (!isEmpty(this.query)) {
-        this.fetchList();
-      }
+      this.fetchList();
     },
 
     async fetchList() {
@@ -242,9 +219,13 @@ export default {
         this.serverErrorMessage = null;
 
         if (isEmpty(this.query.filters)) {
-          const { data: alarms } = await this.fetchAlarmsListWithoutStore({
+          let { data: alarms } = await this.fetchAlarmsListWithoutStore({
             params: query,
           });
+
+          if (this.query.considerPbehaviors) {
+            alarms = alarms.filter(alarm => isEmpty(alarm.pbehaviors));
+          }
 
           this.alarms = alarms;
           this.alarmsCollections = [];
@@ -257,7 +238,14 @@ export default {
             },
           })));
 
-          this.alarmsCollections = results.map(({ data: alarms }) => alarms);
+          this.alarmsCollections = results.map(({ data: alarms }) => {
+            if (this.query.considerPbehaviors) {
+              return alarms.filter(alarm => isEmpty(alarm.pbehaviors));
+            }
+
+            return alarms;
+          });
+
           this.alarms = [];
         }
       } catch (err) {

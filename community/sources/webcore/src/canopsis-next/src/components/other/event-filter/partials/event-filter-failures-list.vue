@@ -13,9 +13,7 @@
     <template #status="{ item }">
       <c-circle-badge
         v-if="item.unread"
-        class="text-uppercase"
-        color="error"
-        small
+        class="error text-uppercase"
       >
         {{ $t('common.new') }}
       </c-circle-badge>

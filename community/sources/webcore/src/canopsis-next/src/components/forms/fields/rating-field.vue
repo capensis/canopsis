@@ -4,7 +4,7 @@
     :readonly="readonly"
     :hover="hover"
     class="layout"
-    background-color="success"
+    background-color="primary"
     medium
     half-increments
     @input="$emit('input', $event)"

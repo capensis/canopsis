@@ -15,12 +15,6 @@ Pour plus de détails concernant les vues, rendez-vous dans la section "Les vues
 
 Plus types de widgets sont disponibles dans Canopsis, pour en connaitre le fonctionnement, rendez-vous dans les sections "Les widgets", en cliquant [ici](./widgets/index.md).
 
-## Les patterns ou filtres
-
-Les patterns permettent de filtrer dynamiquement les alarmes, les entités, les événements.  
-Ils sont utiles pour paramétrer le comportement de Canopsis attendu.  
-Cette [page de documentation](./patterns/) vous donne tous les détails.
-
 ## Thèmes
 
 L'interface de Canopsis est livrée avec plusieurs thèmes de base qui ne sont pas modifiables par l'utilisateur : 
@@ -47,8 +41,7 @@ Pour les découvrir, cliquez [ici](../menu-administration/parametres.md)
 
 À différents endroits de l'interface de Canopsis, le texte affiché est personnalisable grâce au langage Handlebars.  
 Différents *helpers* sont disponibles pour ajouter un peu de logique dans ces templates.  
-Pour plus de détails, consultez la [documentation des helpers Handlebars de Canopsis](helpers/index.md).  
-Un [exemple complet et documenté](helpers/exemple_handlebars.md) vous donne un aperçu des possibilités offertes.
+Pour plus de détails, consultez la [documentation des helpers Handlebars de Canopsis](helpers/index.md).
 
 ## La diffusion de messages
 

@@ -5,7 +5,6 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
 ## Sommaire
 
 *  [Utilisation de l'interface](interface/index.md)
-*  [Les patterns / Filtres](interface/patterns/index.md)
 *  [La remédiation](remediation/index.md)
 *  [Les services](services/index.md)
 *  [Cas d'usage](cas-d-usage/index.md)

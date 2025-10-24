@@ -23,7 +23,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(ctx, opts.Options)
+	logger := log.NewLogger(ctx, opts.ModeDebug)
 	trace := debug.Start(logger)
 
 	if opts.FeatureEventProcessing {

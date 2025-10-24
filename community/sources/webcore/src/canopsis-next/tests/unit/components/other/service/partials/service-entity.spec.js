@@ -104,7 +104,7 @@ describe('service-entity', () => {
 
     await info.triggerCustomEvent('execute', assignedInstruction);
 
-    expect($modals.show).toHaveBeenCalledWith(
+    expect($modals.show).toBeCalledWith(
       {
         name: MODALS.executeRemediationSimpleInstruction,
         config: {

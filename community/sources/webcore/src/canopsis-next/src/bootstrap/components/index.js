@@ -7,7 +7,6 @@ import * as iconsComponents from './icons';
 import * as overlayComponents from './overlay';
 import * as tableComponents from './table';
 import * as fieldsComponents from './fields';
-import * as additionalComponents from './additional';
 
 /**
  * @param {import('vue').VueConstructor | import('vue').Vue} Vue
@@ -21,7 +20,6 @@ export const registerApplicationComponents = (Vue) => {
     ...overlayComponents,
     ...tableComponents,
     ...fieldsComponents,
-    ...additionalComponents,
   }).forEach(([name, component]) => {
     Vue.component(kebabCase(name), component);
   });

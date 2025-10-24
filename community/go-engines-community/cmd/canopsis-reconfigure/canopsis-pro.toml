@@ -42,24 +42,6 @@ internal = false
 noWait = false
 # args =
 
-[[RabbitMQ.exchanges]]
-name = "canopsis.api_rem_res"
-kind = "fanout"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
-[[RabbitMQ.exchanges]]
-name = "canopsis.api_notification"
-kind = "fanout"
-durable = true
-autoDelete = false
-internal = false
-noWait = false
-# args =
-
 [[RabbitMQ.queues]]
 name = "Engine_action_external"
 durable = true
@@ -420,7 +402,7 @@ MaxExternalResponseSize = 10485760 # 10Mb
 BuildEntityInfosDictionary = true
 BuildDynamicInfosDictionary = true
 # Maximum unique infos key-value pairs to store in dictionary
-InfosDictionaryLimit = 1000
+InfosDictionaryLimit = 1100
 # The default value for a check events count trigger threshold.
 # EventsCountTriggerDefaultThreshold parameter doesn't require api or engines to restart.
 EventsCountTriggerDefaultThreshold = 10
@@ -496,8 +478,6 @@ AuthorScheme = ["$username"]
 #AuthorScheme = ["$username", " ", "$firstname", " ", "$lastname", " ", "$email", " ", "$_id"]
 MetricsCacheExpiration = "24h"
 EventsRecorderFetchStatusTimeout = "3s"
-WebsocketPingInterval = "5s"
-NotificationDisplayCount = 3
 
 # Following parameters are reloaded by api and engines after canopsis-reconfigure updates mongodb.
 [Canopsis.external_data]

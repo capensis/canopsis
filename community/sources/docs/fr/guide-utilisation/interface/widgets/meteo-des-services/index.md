@@ -1,92 +1,68 @@
 # Météo des services
 
-Le widget **Météo des services** permet d'afficher en un coup d'oeil l’état global de plusieurs services du SI.  
-Il s’agit d’une **représentation synthétique et visuelle** de la santé des services métier, avec une codification par couleur et icône.
+![Météo de services](./img/weather.png  "Météo de services")
 
-C’est un outil précieux pour les exploitants souhaitant identifier rapidement les dégradations ou indisponibilités de services critiques.
+## Sommaire
 
-![Météo des services](./img/meteo-des-services.png  "Météo des services")
+### Guide utilisateur
 
-## Utilisation courante
+1. [Présentation générale](#presentation-generale)
+2. [Les tuiles](#les-tuiles)
+3. [La modale](#la-modale)
+
+### Guide exploitant
+
+1. [Aide sur les variables](#aide-variables)
+2. [Paramètres du widget](#parametres-du-widget)
+
+## Guide utilisateur
 
 ### Présentation générale
 
-La météo des services est composée de tuiles.
+### Les tuiles
+
+La météo de services est composée de tuiles.
 
 Exemple d'une tuile :
 
-![Exemple d'une tuile - Météos de services](./img/exemple-tuile.png  "Exemple d'une tuile - Météo des services")
+![Exemple d'une tuile - Météo de services](./img/tuile-weather.png  "Exemple d'une tuile - Météo de services")
 
-Chaque **tuile** représente un [service](../../../services) et indique son état actuel, calculé en fonction des entités rattachées au service et de leur criticité.
+Chaque tuile correspond à un service.
 
-L'état est basé sur :
+Le contenu de texte de cette tuile est personnalisable (*Cf: [Guide exploitant](#guide-exploitant_1)*). Il permet de présenter des informations sur le service.
 
-* La sévérité : sévérité calculée d'après les dépendances du service Info / Mineure / Majeure / Critique (par défaut : pire sévérité ; ou autre algorithme)
-
-ou
-
-* La priorité : produit sévérité × impact (0 à 30 avec échelle de couleurs)
-
-### Anatomie d'une tuile
-
-![Anatomie d'une tuile - Météo des services](./img/anatomie-tuile.png  "Anatomie d'une tuile- Météo des services")
-
-#### Contenu personnalisable
-
-La tuile d'une météo possède une zone personnalisable grâce au [Template - Tuile](#template-tuile).  
-Différentes variables sont accessibles et peuvent être utilisées pour cette personnalisation.  
-
-#### Icônes
-
-_Icône principale_
-
-L'icône principale représente l'état général du service sous-jacent.  
-
-Il peut être équivalent à une sévérité avec les icônes :  
-
-* :material-weather-cloudy: : La sévérité du service est `Critique`
-* :material-account: : La sévérité du service est `Mineure` ou `Majeure`
-* :material-weather-sunny: : La sévirité du service est `OK`. 
-
-Le calcul de sévérité est réalisé selon un algorithme qui peut être :
-
-* La pire sévérité des dépendances du service; C'est le mode calcul utilisé par défaut.
-* Une règle de gestion définie par des [paramètres de calcul de sévérité](../../../menu-administration/parametres-de-calculd-etat-severite/)
-
-L'état général du service peut également être représenté par un comportement périodique
-
-* :material-wrench: : Le service ou toutes ses dépendances sont en comportement périodique de type "maintenance"
-* :material-pause: : Le service ou toutes ses dépendances sont en comportement périodique de type "pause"
-* :material-weather-night: : Le service ou toutes ses dépendances sont en comportement périodique de type "inactif"
-* Autre icône : Le service ou toutes ses dépendances sont en comportement périodique avec un type personnalisé
-
-_Icône secondaire_
-
-L'icône secondaire est une icône représentant un type de comportement périodique.  
-Il s'agit du type avec la priorité la plus haute actuellement appliqué aux dépendances du service.  
+La couleur de la tuile et une icône présente sur celle-ci permettent d'obtenir des informations sur **la criticité** du service.
 
 #### Bac à alarmes
 
-Sur la partie inférieure des tuiles, une indication "Voir les alarmes" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
+Sur le partie inférieuré des tuiles, une indication "See alarms" est cliquable et permet un accès direct à la liste des alarmes liées au service de la tuile.
 
 #### La couleur
 
-La couleur d'une tuile réprésente soit la criticité, soit la priorité du service.  
+Il est possible de définir la couleur des tuiles par criticité d'alarme (par défaut) ou par priorité de service.
 
-_Criticité_
+![](./img/color_indicator.png)
 
-La couleur de la tuile correspond alors à la criticité du service. Elle est calculée selon une [règle de calcul de sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité/). Par défaut on considère la pire criticté des entités dépendantes.
+##### Par criticité
+
+La couleur de la tuile correspond à la criticité du service. Elle est calculée en prenant en compte la pire criticité parmi les entités surveillées par ce service.
 
 > **Exemple**
 >
 > Un service surveille deux entités, A et B:
 > 
-> - A a une criticité "Mineure"
-> - B a une criticité de "Critique"
+> - A a une criticité de 1
+> - B a une criticité de 3
 >
-> La criticité du service sera alors "Critique".
+> La criticité du service sera alors égale à 3.
 
-_Priorité_
+- Vert: Criticité = 0 (Ok)
+- Jaune: Criticité = 1 (Mineur)
+- Orange: Criticité = 2 (Majeur)
+- Rouge: Criticité = 3 (Critique)
+- Gris: Le service (ou toutes les entités du service) possède un comportement périodique actif (pause, maintenance…).
+
+##### Par priorité
 
 La couleur de la tuile correspond à l'état d'impact du service. Cette valeur est le produit de l'alarme la plus critique parmi les entités surveillées par ce service et du niveau d'impact défini de ce dernier.
 
@@ -94,92 +70,113 @@ La couleur de la tuile correspond à l'état d'impact du service. Cette valeur e
 >
 > Un service surveille deux entités, A et B:
 > 
-> - A a un criticité "Mineure" (Valeur = 1) 
-> - B a une criticité "Critique" (Valeur = 3)
+> - A a un criticité de 1 
+> - B a une criticité de 3
 > - Et le niveau d'impact du service est 5
 >
 > L'état d'impact du service est donc de `3 * 5 = 15`
 
 Voici la palette de couleurs correspondant à l'état d'impact :
 
-![](./img/table-priorites.png)
+![](./img/color_prio_table.png)
 
+#### L'échelle
 
-!!! info "Information"
-    Quelque que soit le paramètre retenu, la jauge de priorité est disponible sur la tuile. Elle indique tout simplement la valeur de la priorité actuelle du service.
+Chaque tuile comprend une petite échelle d'état du service.
 
+![](./img/tuile_scale.png)
+
+Cette échelle permet situer l'état du service sur la palette de couleurs ainsi que sa valeur numérique (0 à 30).
 
 #### Le point d'interrogation
 
 Cette icône cliquable permet l'affichage de la valeur de toutes les variables du service. 
 
-Ces variables peuvent être utilisées dans l'édition des templates.
+Ces variables peuvent être utilisées dans l'édition des [templates](#template-tuile).
+
+#### L'icône
+
+- **Soleil**: Le service possède une criticité "Ok" (égale à 0)
+- **Personne**: Le service possède une criticité "Mineure" (égale à 1) ou "Majeure" (égale à 2)
+- **Nuage**: Le service possède une criticité "Critique" (égale à 3)
+- **Clé**: Le service possède un comportement périodique actif, de type "Maintenance"
+- **Lune**: Le service possède un comportement périodique actif, de type "Hors plage de surveillance"
+- **Pause**: Le service ne possède pas de comportement périodique, mais toutes les entités liées à ce service possèdent un comportement périodique actif.
 
 #### Le clignotement
 
-Tant qu'une alarme non acquittée est présente sur une dépendance du service, la tuile "clignote".  
-
-* La tuile clignote : il y a au moins une alarme non prise en charge
-* La tuile ne clignote pas : toutes les alarmes liées à ce service sont acquittées
-
-#### Compteurs
-
-La partie droite d'une tuile présente différents types de compteurs : 
-
-* Compteurs de comportements périodiques : nombre de comportements périodiques par type positionnés sur les dépendances du service
-* Compteurs d'alarmes : nombre d'alarmes par criticité présentes parmi les dépendances du service
+Une tuile de la météo de service clignotera si une des entités lui appartenant possède une alarme non acquittée, et que celui-ci n'est pas en pause ou ne possède pas d'entité en pause.
 
 ### La modale
 
-Au clic sur une tuile de la météo des services, une fenêtre s'ouvre.
+Au clic sur une tuile de la météo de services, une fenêtre s'ouvre.
 
 Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
-Celle-ci contient 
+Celle-ci contient la liste des entités surveillées. Au clic sur l'une de ces entités, deux onglets apparaissent :
 
-* La liste des entités surveillées
-* Les comportements périodiques associés au service
-* Les commentaires associés au services
+- "Info" : Affiche les informations configurées dans le template des entités qui se trouve dans les paramètres avancés du widget. Ainsi que la listes des actions possible.
 
-Au clic sur l'une des entités, plusieurs onglets sont présentés en fonction de l'état de la dépendance :
+![](./img/modale_info.png)
 
-- "Info" : Affiche les informations configurées dans le template des entités qui se trouve dans les paramètres avancés du widget. Ainsi que la listes des actions possibles.
+- "Tree of dependencies" : Affiche l'arbre de dépendences de l'entité sélectionnée.
 
-![](./img/info-entite.png)
-
-- "Arbre de dépendances" : Affiche l'arbre de dépendances de l'entité sélectionnée.
-
-![](./img/arbre-dependances.png)
-
-- "Comportements périodiques" : Affiche la liste des comportements périodiques impactants l'entité
-
-![](./img/comportements-periodiques.png)
+![](./img/modale_tree.png)
 
 ### Les actions
 
-Dans la liste des entités affichées, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de l'état de l'entité.
+Dans la liste des entités affichée, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de la criticité de l'entité.
 
+Au clic sur les icônes d'actions, celles-ci sont mises en attente. Elles ne sont exécutées qu'au clic sur le bouton `Save change`.
 
-- :material-comment: *Commenter l'alarme* 
-- :material-check: *Acquitter l'alarme* / *Supprimer l’acquittement*
-- :material-note-plus: *Associer un ticket* / *Déclarer un ticket*
-- :material-pause: *Comportement périodique de type pause*
-- :material-cancel: *Annuler l'alarme*
+- ![Action: Déclarer un incident](./img/action_declareTicket.png "Action: Déclarer un incident") *Déclarer un incident*: Cette action vous permet de déclarer un numéro de ticket, associé à un incident. Au clic sur cette action, une fenêtre s'ouvre, vous permettant d'indiquer un numéro de ticket. Cette action déclenche également automatiquement une action d'acquittement.
+- ![Action: Pause](./img/action_pause.png "Action: Pause") *Pause*: Cette action vous permet de mettre une entité en pause. Au clic, une fenêtre s'ouvre. Celle-ci vous permet de renseigner un commentaire, ainsi que la raison de la pause. Cette action n'est disponible que pour les entités qui ne sont pas déjà en pause.
+- ![Action: Play](./img/action_play.png "Action: Play") *Play*: Cette action vous permet de modifier tout les comportements périodiques de type `Pause`. La date de fin de ces comportements périodiques est modifiée pour passer à la date actuelle, ce qui met de fait fin à la pause. Cette action n'est disponible que pour les entités en pause.
+- ![Action: acquittement](./img/action_ack.png "Action: acquittement") *Acquittement*: Cette action vous permet d'acquitter une alarme présente sur une entité. Cette action n'est disponible que pour les entités ayant une criticité différente de "Ok" (0), et ayant une alarme non acquittée.
+- ![Action: Validate](./img/action_validate.png "Action: Validate") *Valider*: Cette action déclenche un changement de criticité de l'alarme, de majeure (2) à critique (3). Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant une criticité majeure (2).
+- ![Action: Invalidate](./img/action_invalidate.png "Action: Invalidate") *Invalider*: Cette action déclenche une action d'annulation de l'alarme. Elle entraîne également automatiquement une action d'acquittement. Celle-ci n'est disponible que pour les entités ayant un criticité majeure (2).
 
-
-## Paramètres du widget
+## Guide exploitant
 
 ### Aide - Variables
 
-Durant la configuration de votre widget Météo des services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les services.
+Durant la configuration de votre widget Météo de services, notamment les Templates, il vous sera possible d'accéder à des variables concernant les services.
 
 > **Exemple**
 >
-> Il vous sera possible d'afficher, pour chacune des tuiles de la météo des services, le nom du service, ou son identifiant, etc.
+> Il vous sera possible d'afficher, pour chacune des tuiles de la météo de services, le nom du service, ou son identifiant, etc.
 
 Afin de connaitre les variables disponibles, cliquer sur [le point d'interrogation](#le-point-dinterrogation) d'une tuile.
 
-### Titre (*optionnel*)
+### Paramètres du widget
+
+1. [Taille du widget](#taille-du-widget-requis)
+2. [Titre](#titre-optionnel)
+3. [Éditeur de filtre](#editeur-de-filtre-optionnel)
+4. [Paramètres avancés](#parametres-avances)
+    1. [Colonne de tri par défaut](#colonne-de-tri-par-defaut)
+    2. [Template - Tuiles](#template-tuile)
+    3. [Template - modale](#template-modale)
+    4. [Template - Entités](#template-entites)
+    5. [Colonnes - Petit](#colonnes-petit)
+    6. [Colonnes - Moyen](#colonnes-moyen)
+    7. [Colonnes - Large](#colonnes-large)
+    8. [Marges](#marges)
+    9. [Hauteur](#hauteur)
+    10. [Type de modale](#type-de-modale)
+
+#### Taille du widget (*requis*)
+
+Ce paramètre permet de régler la taille du widget.
+
+![Paramètre Taille du widget](../img/settings/widget-size.png "Paramètre Taille du widget")
+
+La première information à renseigner est la ligne dans laquelle le widget doit apparaitre. Ce champ permet de rechercher parmi les lignes disponibles. Si aucune ligne n'est disponible, ou pour en créer une nouvelle, entrez son nom, puis appuyez sur la touche Entrée.
+
+Ensuite, les 3 champs en dessous permettent de définir respectivement la largeur occupée par le widget sur mobile, tablette, de ordinateur de bureau.
+La largeur maximale est de 12 colonnes pour un widget, la largeur minimale est de 3 colonnes.
+
+#### Titre (*optionnel*)
 
 Ce paramètre permet de définir le titre du widget, qui sera affiché au dessus de celui-ci.
 
@@ -187,54 +184,20 @@ Un champ de texte vous permet de définir ce titre.
 
 #### Editeur de filtre (*optionnel*)
 
-Ce paramètre permet de définir le filtre à appliquer à la météo des services.
+Ce paramètre permet de définir le filtre à appliquer à la météo de services.
 Ce filtre permet de n'afficher qu'une partie des services.
-Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/).
+Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../filtres/index.md).
 
-### Paramètres du bac à alarmes
+Pour créer un filtre, ou éditer celui actuellement actif, cliquez sur le bouton 'Créer/Editer'. Une fenêtre de création de filtre s'ouvre alors.
 
-Vous trouvez ici tous les paramètres relatifs au bac à alarme qui s'ouvre sous forme de modale lorsque l'utilisateur clique sur "Voir les alarmes" en bas d'une tuile.
+Pour supprimer le filtre actuellement actif, cliquez sur l'icone de suppression se trouvant à droite du bouton 'Créer/Editer'. Une fenêtre vous demande alors de confirmer la suppression.
 
-### Limite
+!!! warning "Champs utilisables dans le filtre"
+    Le filtre utilise les champs des entités (qui sont différents des champs utilisables dans les templates). Par exemple, pour filtrer sur le nom d'un service, il faut utiliser `name`, et non `display_name`.
 
-Il s'agit du nombre de tuiles maximum souhaité pour un widget météo des services.
+#### Paramètres avancés
 
-### Indicateur de couleur
-
-La couleur d'un tuile correspond t-elle à la sévérité ou la priorité du service ?
-
-
-### Nom des colonnes pour l'arborescence des dépendances
-
-Afin d'**ajouter une colonne**, cliquez sur le bouton :material-plus:.
-Il vous reste alors à sélectionner la colonne souhaitée dans la liste.
-
-!!! tip "Astuce"
-    Vous pouvez modifier le label de la colonne en activant l'option "Etiquette personnalisée".
-    Cela est très utile lorsque vous utilisez des informations enrichies.
-
-Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
-
-L'ordre des colonnes est modifiable par drag'n drop.
-
-!!! tip "Recommandation"
-    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres/#modeles-de-widgets) pour faciliter la maintenance générale.
-
-
-### Paramètres de l'arborescence des dépendances
-
-Ce paramètre est directement dépendant de la configuration de [calcul d'état/sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité/) réalisée.
-
-| Option                                      | Signification |
-| ------------------------------------------- | ------------------ |
-| Afficher toutes les dépendances             | L'onglet Arbre de dépendances affiche toutes les dépendances de l'entité |
-| Afficher les dépendances définissant l'état | L'onglet Arbre de dépendances n'affiche que les dépendances responsables de la sévérité de l'entité |
-| Afficher le sélecteur                       | L'onglet Arbre de dépendances propose à l'utilisateur de choisir une des deux options |
-
-
-### Paramètres avancés
-
-#### Colonne de tri par défaut
+##### Colonne de tri par défaut
 
 Ce paramètre permet de trier les tuiles selon un attribut pré-défini par ordre alphabétique.  
 
@@ -243,32 +206,30 @@ Ce paramètre permet de trier les tuiles selon un attribut pré-défini par ordr
 
 Par défaut, les attributs disponibles pour le tri sont :
 
-* `Nom` 
-* `Criticité`
+* `name` 
+* `state`
 
-#### Nombre d'éléments par page par défaut
+Vous avez la possibilité d'utiliser le critère de votre choix en écrivant directement dans la configuration l'attribut de tri souhaité.  
 
-Il s'agit du nombre d'entités présentes par page sur la modale.
+Exemple : pour faire un tri selon la valeur du champ enrichi `mon_attribut` ajouté depuis l'[explorateur de contexte](../contexte/index.md), remplissez le formulaire comme suit : 
 
-#### Paramètres du diagramme de cause racine
+![Tri par défaut](./img/tri.png)
 
-Les dépendances d'une entité peuvent être visualisées sous forme de diagramme, accessible depuis la colonne de criticité/sévérité.
-Vous pouvez choisir de présenter les dépendances avec leur sévérité ou leur priorité.
+##### Template - Tuile
 
-#### Template - Tuile
+Ce paramètre permet de personaliser les informations affichées à l'intérieur des tuiles de la météo de service.
 
-Ce paramètre permet de personaliser les informations affichées à l'intérieur des tuiles de la météo des service.
+Le langage utilisé ici est le Handlebars.
 
-Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars/).
+Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Renseignez le template souhaité et cliquez sur 'Soumettre'.
+Une variable est disponible ici pour vous permettre d'afficher les détails du service : `entity`.
+Exemple : Pour afficher le champ `display_name` du service (qui correspond au nom du service), il vous faut écrire dans le template : `{{ entity.display_name }}`.
+Tous les champs disponibles dans le service sont disponibles ici.
 
-!!! tip "Astuce"
-    L'icône `(x)` de la barre d'édition vous permet de visualiser toutes les variables mises à disposition de la tuile.
+##### Template - Modale
 
-#### Template - Modale
-
-Ce paramètre permet de personnaliser les informations affichées à partir d'un clic sur une tuile de météo.
+Ce paramètre permet de personnaliser les informations affichées dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
 Il vous est possible ici d'afficher, à n'importe quel endroit de la modale, la liste des entités concernées par le service sur lequel vous avez cliqué. Pour ce faire, insérez dans le template:
 
@@ -292,62 +253,55 @@ On peut également entrer :
 
 Pour chaque entité de la liste, la valeur de leur champ enrichi customer sera affiché, à la place du nom.
 
+Celui-ci fonctionne de la même manière que le paramètre Template - Tuile présenté ci-dessus. Cliquez [ici](#template-tuile) pour vous rendre à cette partie.
 
-#### Template - Entités
+##### Template - Entités
 
-Ce paramètre permet de personnaliser les informations affichées en dépliant une entité;
+Ce paramètre permet de personnaliser les informations affichées pour chaque entités dans la fenêtre 'Plus d'infos' (ouverte au clic sur 'Plus d'infos', sur une des tuiles de la météo de services).
 
 **Attention: La liste des entités n'est affichée que si cela a été précisé dans le [Template - Modale](#template-modale).**
 
+Le langage utilisé ici est le Handlebars.
 
-#### Colonnes Mobiles, Tablette, Bureau
+Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Entre le texte souhaité pour le template des tuiles, puis cliquez sur 'Envoyer'.
 
-Ces paramètres vous permettent de sélectionner le nombre de tuiles qui seront affichées en largeur selon le périphérique utilisé.
+Une variable est disponible ici pour vous permettre d'afficher les détails de l'entité : `entity`.
+Exemple : Pour afficher le champ 'name' de l'entité (qui correspond au nom de l'entité), il vous faut écrire dans le template : `{{ entity.name }}`.
+Tous les champs disponibles dans l'entité sont disponibles ici.
 
-#### Marges
+##### Colonnes - Petit
 
-Ce paramètre permet de régler les espaces séparant les tuiles de la Météo des services.
+Ce paramètre permet de définir la proportion de l'écran, en largeur, prise par chaque tuile de la météo de services. Ce paramètre concerne les écrans de mobiles (largeur < 450px). Une tuile occupe au minimum une colonne (1/12 de la largeur de la page), et au maximum 12 colonnes (100 % de la largeur de la page).
+
+Il suffit de faire glisser le curseur pour sélectionner le nombre de colonne par tuile souhaité.
+
+##### Colonnes - Moyen
+
+Ce paramètre permet de définir la proportion de l'écran, en largeur, prise par chaque tuile de la météo de services. Ce paramètre concerne les écrans de tablettes (largeur < 900px). Une tuile occupe au minimum une colonne (1/12 de la largeur de la page), et au maximum 12 colonnes (100 % de la largeur de la page).
+
+Il suffit de faire glisser le curseur pour sélectionner le nombre de colonne par tuile souhaité.
+
+##### Colonnes - Large
+
+Ce paramètre permet de définir la proportion de l'écran, en largeur, prise par chaque tuile de la météo de services. Ce paramètre concerne les écrans d'ordinateurs (largeur > 900px). Une tuile occupe au minimum une colonne (1/12 de la largeur de la page), et au maximum 12 colonnes (100 % de la largeur de la page).
+
+Il suffit de faire glisser le curseur pour sélectionner le nombre de colonne par tuile souhaité.
+
+##### Marges
+
+Ce paramètre permet de régler les espaces séparant les tuiles de la Météo de services.
 
 Celui-ci est séparé en quatre, vous permettant de régler l'espace que vous souhaitez pour chaque côté des tuiles (haut, bas, droite et gauche).
 
 Pour modifier ce paramètre, faites glisser le sélecteur, afin de choisir une valeur entre 0 et 5 (0 correspondant à l'absence de marge, 5 le maximum de marge).
 
-Par défaut, ce paramètre est réglé sur une valeur de 1 pour chacun des côtés des tuiles.
+Par défaut, ce paramètre est réglé sur une valeur de 1 pour chacuns des côtés des tuiles.
 
-#### Hauteur
+##### Hauteur
 
-Ce paramètre permet de régler la hauteur des tuiles de la Météo des services.
+Ce paramètre permet de régler la hauteur des tuiles de la Météo de services.
 
 Pour le modifier, faites glisser le sélecteur, afin de choisir une valeur entre 1 (hauteur minimale) et 20 (hauteur maximale).
 
 Par défaut, ce paramètre est réglé sur une valeur de 1.
 
-#### Compteurs
-
-Vous pouvez choisir les compteurs qui seront affichés sur la partie droite des tuiles de météo
-
-* Compteurs de comportements périodiques
-* Compteurs d'états d'entités
-
-#### Affichages divers
-
-Vous pouvez choisir d'afficher ou non les éléments suivants :
-
-* La jauge de priorité
-* L'option qui permet de cacher les tuiles avec un comportement périodique actif
-* L'icône secondaire
-
-#### Appliquer les comportements périodiques également aux dépendances
-
-Si cette option est cochée alors la mise en place d'un comportement périodique sur un service propagera celui-ci à ses dépendances.
-
-#### Type de modale
-
-* Plus d'infos : Le clic sur la tuile ouvre la modale
-* Bac à alarmes : Le bandeau "Voir les alarmes" est affiché
-* Les deux : Les deux options précédentes combinées
-
-#### Paramètres d'état
-
-Vous avez la possibilité de définir l'aspect des tuiles lorsqu'une action est requise ou non.  
-Par exemple, si une alarme d'un service n'est pas acquittée, la tuile clignote. Elle peut également avoir une couleur spécifique dans ce cas.

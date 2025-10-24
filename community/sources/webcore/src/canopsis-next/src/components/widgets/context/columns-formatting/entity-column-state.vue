@@ -1,7 +1,7 @@
 <template>
   <c-alarm-chip v-bind="$attrs" v-on="$listeners">
     <template v-if="appendIconName" #append>
-      <v-icon class="color--inherit" size="14">
+      <v-icon color="white" size="14">
         {{ appendIconName }}
       </v-icon>
     </template>

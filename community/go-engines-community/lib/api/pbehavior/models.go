@@ -24,7 +24,7 @@ const (
 
 type ListRequest struct {
 	pagination.FilteredQuery
-	SortBy string   `form:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date pattern_ms pattern_exec_at"`
+	SortBy string   `form:"sort_by" binding:"oneoforempty=name author.name author.display_name enabled timezone tstart tstop type.name reason.name created updated rrule type.icon_name last_alarm_date"`
 	IDs    []string `form:"ids[]"`
 }
 
@@ -49,7 +49,6 @@ type EditRequest struct {
 	Inherited  bool                               `json:"inherited"`
 
 	common.EntityPatternFieldsRequest
-	ExecPattern bool `json:"exec_pattern"`
 }
 
 type CreateRequest struct {
@@ -124,8 +123,6 @@ type Response struct {
 	Editable *bool  `bson:"editable,omitempty" json:"editable,omitempty"`
 
 	savedpattern.EntityPatternFields `bson:",inline"`
-	PatternMs                        int64             `bson:"pattern_ms,omitempty" json:"pattern_ms"`
-	PatternExecAt                    *datetime.CpsTime `bson:"pattern_exec_at,omitempty" json:"pattern_exec_at" swaggertype:"integer"`
 
 	RRuleComputedStart *datetime.CpsTime `bson:"rrule_cstart" json:"-"`
 
@@ -247,9 +244,4 @@ type BulkConnectorEditRequestItem struct {
 	Reason   string            `json:"reason"`
 	Type     string            `json:"type"`
 	Color    string            `json:"color" binding:"iscolororempty"`
-}
-
-type ExecPatternRequest struct {
-	ID            string         `json:"_id"`
-	EntityPattern pattern.Entity `json:"entity_pattern" binding:"required,entity_pattern"`
 }

@@ -1,22 +1,23 @@
 <template>
   <c-alarm-actions-chips
-    :items="filteredTags"
+    :items="preparedTags"
     :active-items="selectedTags"
     :small="small"
     :inline-count="inlineCount"
     :closable-active="closableActive"
     item-class="c-alarm-tags-chips__chip"
-    item-text="value"
-    item-value="value"
+    item-text="text"
+    item-value="text"
     row
     v-on="$listeners"
   />
 </template>
 
 <script>
-import { computed } from 'vue';
+import { entitiesAlarmTagMixin } from '@/mixins/entities/alarm-tag';
 
 export default {
+  mixins: [entitiesAlarmTagMixin],
   props: {
     alarm: {
       type: Object,
@@ -51,29 +52,32 @@ export default {
       default: '',
     },
   },
-  setup(props) {
-    const filteredTags = computed(() => {
-      const tags = (props.alarm.tag_colors ?? []);
+  computed: {
+    filteredTags() {
+      const tags = (this.alarm.tags ?? []);
       const regexps = [];
 
-      if (props.nameFilter) {
-        regexps.push(new RegExp(props.nameFilter));
+      if (this.nameFilter) {
+        regexps.push(new RegExp(this.nameFilter));
       }
 
-      if (props.regexFilter) {
-        regexps.push(new RegExp(props.regexFilter, props.regexFilterFlags));
+      if (this.regexFilter) {
+        regexps.push(new RegExp(this.regexFilter, this.regexFilterFlags));
       }
 
       if (regexps.length) {
-        return tags.filter(tag => regexps.every(regex => tag?.value?.match?.(regex)));
+        return tags.filter(tag => regexps.every(regex => tag.match(regex)));
       }
 
       return tags;
-    });
+    },
 
-    return {
-      filteredTags,
-    };
+    preparedTags() {
+      return this.filteredTags.map(tag => ({
+        text: tag,
+        color: this.getTagColor(tag),
+      }));
+    },
   },
 };
 </script>
@@ -81,9 +85,5 @@ export default {
 <style lang="scss">
 .c-alarm-tags-chips__chip .v-chip__content {
   padding: 0 4px;
-
-  * {
-    color: white;
-  }
 }
 </style>

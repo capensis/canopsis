@@ -32,7 +32,7 @@ import {
   ENTITY_TYPES,
 } from '@/constants';
 
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 import { generatePreparedDefaultContextWidget } from '@/helpers/entities/widget/form';
 import { getMapEntityText, normalizeTreeOfDependenciesMapEntities } from '@/helpers/entities/map/list';
 
@@ -253,12 +253,9 @@ export default {
         nodeEl.style.width = `${nodeSize}px`;
         nodeEl.style.height = `${nodeSize}px`;
         nodeEl.style.justifyContent = 'center';
-
-        if (!this.colorIndicator) {
-          nodeEl.style.background = COLORS.secondary;
-        } else {
-          nodeEl.classList.add(getEntityColorClass(entity, this.colorIndicator));
-        }
+        nodeEl.style.background = !this.colorIndicator
+          ? COLORS.secondary
+          : getEntityColor(entity, this.colorIndicator);
 
         if (this.hasDependencies(entity) && !dependenciesCount) {
           nodeEl.appendChild(getBadgeEl(entity, opened, pending));

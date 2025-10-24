@@ -54,16 +54,14 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                       arrow_right_alt
                     </i>
                     <span
-                      class="ma-0 v-chip v-chip--no-color theme--light v-size--default white--text impact-state-1"
+                      class="ma-0 v-chip v-chip--no-color theme--light v-size--default v-chip--without-text white--text"
                     >
                       <span
                         class="v-chip__content"
                       >
                         <span
                           class="px-2 text-body-2 font-weight-bold"
-                        >
-                          7
-                        </span>
+                        />
                       </span>
                     </span>
                   </div>
@@ -159,7 +157,6 @@ exports[`service-dependencies Renders \`service-dependencies\` with custom props
                 <tr>
                   <td>
                     <c-no-events-icon-stub
-                      color="error"
                       top=""
                     />
                   </td>
@@ -405,7 +402,6 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 <tr>
                   <td>
                     <c-no-events-icon-stub
-                      color="error"
                       top=""
                     />
                   </td>
@@ -428,7 +424,6 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 <tr>
                   <td>
                     <c-no-events-icon-stub
-                      color="error"
                       top=""
                     />
                   </td>
@@ -451,7 +446,6 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 <tr>
                   <td>
                     <c-no-events-icon-stub
-                      color="error"
                       top=""
                     />
                   </td>
@@ -474,7 +468,6 @@ exports[`service-dependencies Renders \`service-dependencies\` with excluded roo
                 <tr>
                   <td>
                     <c-no-events-icon-stub
-                      color="error"
                       top=""
                     />
                   </td>
@@ -687,7 +680,6 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 <tr>
                   <td>
                     <c-no-events-icon-stub
-                      color="error"
                       top=""
                     />
                   </td>
@@ -710,7 +702,6 @@ exports[`service-dependencies Renders \`service-dependencies\` with pages 1`] = 
                 <tr>
                   <td>
                     <c-no-events-icon-stub
-                      color="error"
                       top=""
                     />
                   </td>

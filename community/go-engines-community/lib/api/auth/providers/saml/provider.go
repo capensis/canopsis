@@ -26,7 +26,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/roleprovider"
 	libsession "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/session"
-	libsectls "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -198,9 +197,6 @@ func (p *provider) loadUrlMetadata(ctx context.Context) error {
 
 	tr := dt.Clone()
 	tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: p.config.InsecureSkipVerify} //nolint:gosec
-	if !p.config.InsecureVerifyAnyCert {
-		tr.TLSClientConfig.VerifyPeerCertificate = libsectls.VerifySelfSignedCertificate(tr.TLSClientConfig)
-	}
 
 	hc := http.Client{Timeout: MetadataReqTimeout, Transport: tr}
 

@@ -50,8 +50,6 @@ Un connecteur permet d’envoyer à Canopsis des évènements à partir de sourc
 | [Nokia NSP](Supervision/NokiaNSP.md) | [Version 19.3](https://www.nokia.com/networks/products/network-services-platform/) | Pro | Non  Version ≥ 3  |
 | [Prometheus](Supervision/Prometheus.md) | [Prometheus](https://prometheus.io/docs/introduction/overview/) | Community | Oui | Toutes versions |
 | [PRTG](Supervision/PRTG.md) | [PRTG](https://www.paessler.com/manuals/prtg/introduction) | Community | Oui | >= 4.3 |
-| [Grafana](Supervision/Grafana.md) | [Grafana](https://grafana.com/docs/grafana/latest/fundamentals/) | Community | Oui | Toutes versions |
-
 
 ## Drivers
 

@@ -22,9 +22,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var logOpts log.Options
 	var version bool
-	log.BindCmdFlags(&logOpts)
 	flag.BoolVar(&version, "version", false, "Show the version information")
 	flag.Parse()
 
@@ -33,7 +31,7 @@ func main() {
 		return
 	}
 
-	logger := log.NewLogger(ctx, logOpts)
+	logger := log.NewLogger(ctx, false)
 
 	err := execCmd(ctx, logger)
 	if err != nil {

@@ -1,58 +1,102 @@
-# :material-view-dashboard-outline: Les widgets dans Canopsis
+# Les widgets
 
-Canopsis propose de nombreux widgets pour afficher, manipuler et analyser les différentes données de supervision. Ces widgets peuvent être disposés librement dans des vues personnalisées, en fonction des besoins des utilisateurs.
+## Les différents types de widgets
 
-Voici un aperçu des principaux widgets disponibles.
+Plusieurs types de widgets sont disponibles dans Canopsis :
 
-<div class="grid cards" markdown>
+* [Bac à alarmes](bac-a-alarmes/index.md)
+* [Explorateur de contexte](contexte/index.md)
+* [Météo de services](meteo-des-services/index.md)
+* [Compteur](compteur/index.md)
+* [Disponibilité](disponibilite/index.md)
+* Statistiques :
+    - Tableau
+    - Compteur
+    - Histogramme
+    - Courbes
+    - Calendrier
+    - Texte
+* [Scénarios JUnit](junit/index.md)
 
-- :material-bell-alert-outline: __[Bac à alarmes](bac-a-alarmes/index.md)__  
-  Visualise les alarmes en cours ou résolues du SI. Permet les interactions sur les alarmes (acquittement, commentaire, ticket, etc.).  
-  ![Bac à alarmes](./bac-a-alarmes/img/bac-a-alarmes.png)
+### [Bac à alarmes](bac-a-alarmes/index.md)
 
-- :material-eye-outline: __[Explorateur de contexte](contexte/index.md)__  
-  Permet de parcourir l'ensemble des entités connues par Canopsis. Il s'agit de la gestion du référentiel interne de Canopsis.
-  ![Explorateur de contexte](./contexte/img/context-explorer.png)
+Le widget **Bac à alarmes** permet de visualiser les alarmes présentes dans le SI.
 
-- :material-weather-cloudy-alert: __[Météo de services](meteo-des-services/index.md)__  
-  Vue synthétique sous forme de tuiles de l'état des services, avec couleurs et icônes pour repérer rapidement les anomalies.  
-  ![Météo des services](./meteo-des-services/img/meteo-des-services.png)
+Il permet de voir les informations de l'alarme (composant concerné, statut de l'alarme, etc), ainsi que d'effectuer des actions sur ces alarmes.
 
-- :material-calendar: __[Calendrier](calendrier/index.md)__  
-  Affiche une répartition du nombre d'alarmes par rapport à une période de temps (jour, mois, heure).  
-  ![Calendrier](./calendrier/img/calendrier.png)
+Pour plus d'information sur ce qu'est une alarme, voir son [entrée dans la page du vocabulaire](../../vocabulaire/index.md#alarme).
 
-- :material-text-box-outline: __[Texte](texte/index.md)__  
-  Affiche du texte à partir d'un modèle.  
-  ![Texte](./texte/img/texte.png)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du bac à alarmes](./bac-a-alarmes/index.md)
 
-- :material-counter: __[Compteur](compteur/index.md)__  
-  Affiche des compteurs d'alarmes sous forme de tuiles selon des seuils définis. Tuiles colorées pour une lecture rapide.  
-  ![Compteur](./compteur/img/counter.png)
+Pour les informations concernant le paramètrage du Bac à alarmes, voir la partie : [Guide de l'exploitant du bac à alarmes](./bac-a-alarmes/index.md#guide-exploitant)
 
-- :material-clipboard-text-outline: __[Scénarios JUnit](junit/index.md)__  
-  Affiche les résultats de tests automatisés formatés en XML JUnit.  
-  ![Junit](./junit/img/junit.png)
+### [Explorateur de contexte](contexte/index.md)
 
-- :material-map-outline: __[Cartographie](cartographie/index.md)__  
-  Affiche les alarmes sous forme de cartes géographiques, logiques ou arborescentes.  
-  ![Cartographie](./cartographie/img/cartographie.png)
+Le widget **Explorateur de contexte** permet de lister les entités (composants, connecteurs, ressources et services).
 
-- :material-calendar-clock: __[Disponibilité](disponibilite/index.md)__  
-  Présente les temps de disponibilité ou d'indisponibilité des entités sur une période définie.  
-  ![Disponibilité](./disponibilite/img/disponibilité.png)
+Il permet de voir les informations concernant chaque entité, de créer de nouvelles entités, d'en supprimer, ainsi que de les éditer.
+Il permet également d'accéder à la liste des comportements périodiques de chaque entité, d'en ajouter, et d'en supprimer.
 
-- :material-database-outline: __[Données externes](donnees-externes/index.md)__  
-  Permet de gérer les collections/tables de données utilisées pour les enrichissements externes.  
-  ![Données externes](./donnees-externes/img/donnees_externes_widget.png)
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'explorateur de contexte](./contexte/index.md)
 
-- :material-chart-box-outline: __[Graphiques](graphiques/index.md)__  
-  Affiche des graphiques (barres, lignes, camemberts ou chiffres) à partir de métriques internes ou externes, pour analyser les tendances, ratios ou totaux.  
-  ![Widgets graphiques](./graphiques/img/graphiques.png)
+### [Météo de services](meteo-des-services/index.md)
 
+Le widget **Météo de services** permet d'afficher rapidement l'état des services.
 
-</div>
+Celui-ci présente sous forme de grille un ensemble de services, avec un jeu de couleurs et d'icones permettant d'observer rapidement une éventuelle source de problème.
 
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la météo de services](./meteo-des-services/index.md)
 
-> Pour chaque widget, des paramètres de configuration sont disponibles via le mode édition des vues. Consultez la page détaillée de chaque widget pour plus d'informations.
+### [Compteur](compteur/index.md)
 
+Le widget **Compteur** permet de présenter des compteurs d'alarmes.  
+
+Il se présente sous la forme d'une grille de tuiles, avec un un jeu de couleurs et d'icônes permettant de constater un dépassement de seuil. 
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur](./compteur/index.md)
+
+### [Disponibilité](disponibilite/index.md)
+
+Le widget **Disponibilité** permet de présenter les temps de disponibilité et d'indisponibilité des entités dans Canopsis.
+Ces temps sont présentés sous forme de tableau prenant en paramètres les éléments suivants :
+
+* Période à considérer
+* Filtres sur les entités
+* Sélection du temps de disponibilité ou d'indisponibilité
+* Temps minimum et maximum à considérer
+
+### Tableau de statistiques
+
+Le widget **Tableau de statistiques** permet de représenter sous forme de tableau un ensemble de statistiques du SI, ou d'un sous-ensemble du SI.
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du tableau de statistiques](./stats/index.md)
+
+### Compteur de statistique
+
+Le widget **Compteur de statistique** permet d'afficher la valeur d'une statistique, avec un jeu de couleur permettant de caractérisé la criticité de chacune des valeurs.
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du compteur de statistique](./stats/index.md)
+
+### Histogramme de statistiques
+
+Le widget **Histogramme** permet de représenter un ensemble de statistiques sous forme d'histogramme.
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de l'histogramme](./stats/index.md)
+
+### Courbe de statistiques
+
+Le widget **Courbe** permet de visualiser un ensemble de statistiques sous forme de courbes.
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement de la courbe](./stats/index.md)
+
+### Calendrier de statistique
+
+Le widget **Calendrier** permet d'afficher le nombre d'alarmes par période de temps (par heure, par jour, par mois), dans une vue calendrier.
+
+Pour les informations concernant le widget en lui-même, voir la partie sur le [fonctionnement du calendrier](./stats/index.md)
+
+### Scénarios JUnit
+
+Le widget **JUnit** permet d’afficher les résultats d'exécution de scénarios au format XML JUnit.
+
+Pour les informations concernant le widget en lui-même, voir la page [JUnit](./junit/index.md).

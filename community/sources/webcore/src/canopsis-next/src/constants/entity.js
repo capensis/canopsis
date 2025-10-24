@@ -442,7 +442,7 @@ export const ENTITY_FIELDS_TO_LABELS_KEYS = {
   [ENTITY_FIELDS.infos]: 'common.infos',
   [ENTITY_FIELDS.componentInfos]: 'entity.fields.componentInfos',
   [ENTITY_FIELDS.links]: 'common.link',
-  [ENTITY_FIELDS.alarmDisplayName]: 'alarm.alarmDisplayName',
+  [ENTITY_FIELDS.alarmDisplayName]: 'entity.fields.alarmDisplayName',
   [ENTITY_FIELDS.alarmCreationDate]: 'entity.fields.alarmCreationDate',
   [ENTITY_FIELDS.importSource]: 'entity.fields.importSource',
   [ENTITY_FIELDS.imported]: 'entity.fields.imported',

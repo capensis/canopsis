@@ -16,7 +16,7 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
     class="text"
   >
     <div
-      class="v-alert v-sheet theme--dark v-alert--light-background"
+      class="v-alert v-sheet theme--dark info"
       role="alert"
     >
       <div
@@ -25,7 +25,6 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
         <i
           aria-hidden="true"
           class="v-icon notranslate v-alert__icon material-icons theme--dark"
-          style="caret-color: var(--v-info-base);"
         >
           info
         </i>
@@ -55,7 +54,7 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
       </span>
     </button>
     <button
-      class="v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default primary"
+      class="primary v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
     >
       <span
@@ -65,7 +64,7 @@ exports[`confirm-ack-with-ticket Renders \`confirm-ack-with-ticket\` with empty 
       </span>
     </button>
     <button
-      class="v-btn v-btn--outlined theme--light v-size--default primary--text"
+      class="warning v-btn v-btn--is-elevated v-btn--has-bg theme--light v-size--default"
       type="button"
     >
       <span

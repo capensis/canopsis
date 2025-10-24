@@ -7,9 +7,18 @@ import (
 )
 
 func getOpenAlarmMatch(event rpc.AxeEvent) bson.M {
-	m := getExactOpenAlarmMatch(event)
-	if m != nil {
-		return m
+	if event.Alarm != nil {
+		return bson.M{
+			"_id":        event.Alarm.ID,
+			"v.resolved": nil,
+		}
+	}
+
+	if event.AlarmID != "" {
+		return bson.M{
+			"_id":        event.AlarmID,
+			"v.resolved": nil,
+		}
 	}
 
 	return bson.M{
@@ -18,42 +27,8 @@ func getOpenAlarmMatch(event rpc.AxeEvent) bson.M {
 	}
 }
 
-func getExactAlarmMatch(event rpc.AxeEvent) bson.M {
-	if event.Alarm != nil {
-		return bson.M{"_id": event.Alarm.ID}
-	}
-
-	if event.AlarmID != "" {
-		return bson.M{"_id": event.AlarmID}
-	}
-
-	return nil
-}
-
-func getExactOpenAlarmMatch(event rpc.AxeEvent) bson.M {
-	m := getExactAlarmMatch(event)
-	if m == nil {
-		return nil
-	}
-
-	m["v.resolved"] = nil
-
-	return m
-}
-
 func getOpenAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
 	match := getOpenAlarmMatch(event)
-	match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
-
-	return match
-}
-
-func getExactAlarmMatchWithStepsLimit(event rpc.AxeEvent) bson.M {
-	match := getExactAlarmMatch(event)
-	if match == nil {
-		return nil
-	}
-
 	match["$expr"] = bson.M{"$lt": bson.A{bson.M{"$size": "$v.steps"}, types.AlarmStepsHardLimit}}
 
 	return match

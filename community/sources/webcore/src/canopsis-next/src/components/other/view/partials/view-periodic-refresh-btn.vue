@@ -3,7 +3,7 @@
     <template #activator="{ on }">
       <v-btn
         :input-value="isPeriodicRefreshEnabled"
-        :loading="activeViewPending"
+        :loading="pending"
         color="secondary"
         fab
         dark
@@ -53,10 +53,6 @@ export default {
     };
   },
   computed: {
-    periodicRefreshFullPaused() {
-      return this.activeViewPeriodicRefreshPaused || this.isNavigationEditingMode;
-    },
-
     tooltipContent() {
       return this.isPeriodicRefreshEnabled
         ? this.periodicRefreshProgressFormatted
@@ -85,19 +81,17 @@ export default {
     },
 
     refreshHandler() {
-      return this.isPeriodicRefreshEnabled && !this.periodicRefreshFullPaused
+      return this.isPeriodicRefreshEnabled && !this.isNavigationEditingMode
         ? this.callSubscribers
         : this.refresh;
     },
   },
   watch: {
     isPeriodicRefreshEnabled(value, oldValue) {
-      if (value && (!oldValue || !this.periodicRefreshInterval) && !this.periodicRefreshFullPaused) {
+      if (value && (!oldValue || !this.periodicRefreshInterval) && !this.isNavigationEditingMode) {
         this.startPeriodicRefreshInterval();
       } else if (oldValue && !value) {
         this.stopPeriodicRefreshInterval();
-      } else if (value && !oldValue) {
-        this.resetRefreshInterval();
       }
     },
 
@@ -107,17 +101,38 @@ export default {
       }
     },
 
-    isNavigationEditingMode(value) {
-      this.periodicRefreshPausedWatcher(value, this.$t('layout.sideBar.ordering.popups.periodicRefreshWasPausedWhileEditingGroups'));
-    },
+    isNavigationEditingMode(value, oldValue) {
+      if (value !== oldValue && this.isPeriodicRefreshEnabled) {
+        if (this.popupId) {
+          this.$popups.remove({ id: this.popupId });
+        }
 
-    activeViewPeriodicRefreshPaused(value) {
-      this.periodicRefreshPausedWatcher(value, this.$t('layout.sideBar.ordering.popups.periodicRefreshWasPaused'));
+        if (value) {
+          this.popupId = uid('popup');
+
+          this.$popups.info({
+            id: this.popupId,
+            text: this.$t('layout.sideBar.ordering.popups.periodicRefreshWasPaused'),
+            autoClose: 7000,
+          });
+
+          this.stopPeriodicRefreshInterval();
+        } else {
+          this.popupId = uid('popup');
+
+          this.$popups.info({
+            id: this.popupId,
+            text: this.$t('layout.sideBar.ordering.popups.periodicRefreshWasResumed'),
+          });
+
+          this.resumePeriodicRefreshInterval();
+        }
+      }
     },
   },
 
   mounted() {
-    if (this.isPeriodicRefreshEnabled && !this.periodicRefreshFullPaused) {
+    if (this.isPeriodicRefreshEnabled && !this.isNavigationEditingMode) {
       this.startPeriodicRefreshInterval();
     }
   },
@@ -127,38 +142,6 @@ export default {
   },
 
   methods: {
-    periodicRefreshPausedWatcher(value, pausedPopup) {
-      if (value !== !!this.periodicRefreshInterval || value !== this.periodicRefreshFullPaused) {
-        return;
-      }
-
-      if (this.popupId) {
-        this.$popups.remove({ id: this.popupId });
-        this.popupId = null;
-      }
-
-      if (value && this.periodicRefreshFullPaused) {
-        this.stopPeriodicRefreshInterval();
-
-        this.popupId = uid('popup');
-        this.$popups.info({
-          id: this.popupId,
-          text: pausedPopup,
-          autoClose: 7000,
-        });
-
-        return;
-      }
-
-      this.resumePeriodicRefreshInterval();
-
-      this.popupId = uid('popup');
-      this.$popups.info({
-        id: this.popupId,
-        text: this.$t('layout.sideBar.ordering.popups.periodicRefreshWasResumed'),
-      });
-    },
-
     refresh() {
       return this.$periodicRefresh.notify();
     },

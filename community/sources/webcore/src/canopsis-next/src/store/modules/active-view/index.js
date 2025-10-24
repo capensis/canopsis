@@ -1,5 +1,3 @@
-import { VIEW_SCREEN_MODES } from '@/constants';
-
 import activeWidgetsModule from './active-widgets';
 
 export const types = {
@@ -13,12 +11,7 @@ export const types = {
   FETCH_ITEM_COMPLETED: 'FETCH_ITEM_COMPLETED',
   FETCH_ITEM_FAILED: 'FETCH_ITEM_FAILED',
 
-  RESUME_PERIODIC_REFRESH: 'RESUME_PERIODIC_REFRESH',
-  PAUSE_PERIODIC_REFRESH: 'PAUSE_PERIODIC_REFRESH',
-
   CLEAR: 'CLEAR',
-
-  SET_SCREEN_MODE: 'SET_SCREEN_MODE',
 };
 
 export default {
@@ -29,18 +22,13 @@ export default {
     pending: false,
     editing: false,
     editingProcess: false,
-    screenMode: VIEW_SCREEN_MODES.default,
     editingOffHandlers: [],
-    periodicRefreshPaused: false,
   },
   getters: {
     editing: state => state.editing,
     editingProcess: state => state.editingProcess,
     pending: state => state.pending,
-    screenMode: state => state.screenMode,
-    isKioskScreenMode: state => [VIEW_SCREEN_MODES.kiosk, VIEW_SCREEN_MODES.kioskFullscreen].includes(state.screenMode),
     item: (state, getters, rootState, rootGetters) => rootGetters['view/getViewById'](state.id),
-    periodicRefreshPaused: state => state.periodicRefreshPaused,
   },
   mutations: {
     [types.TOGGLE_EDITING]: (state) => {
@@ -74,25 +62,11 @@ export default {
       state.id = null;
     },
 
-    [types.RESUME_PERIODIC_REFRESH]: (state) => {
-      state.periodicRefreshPaused = false;
-    },
-
-    [types.PAUSE_PERIODIC_REFRESH]: (state) => {
-      state.periodicRefreshPaused = true;
-    },
-
     [types.CLEAR]: (state) => {
       state.id = null;
       state.pending = false;
       state.editing = false;
-      state.screenMode = VIEW_SCREEN_MODES.default;
       state.editingOffHandlers = [];
-      state.periodicRefreshPaused = false;
-    },
-
-    [types.SET_SCREEN_MODE]: (state, screenMode) => {
-      state.screenMode = screenMode;
     },
   },
   actions: {
@@ -138,25 +112,9 @@ export default {
       }
     },
 
-    resumePeriodicRefresh({ commit }) {
-      commit(types.RESUME_PERIODIC_REFRESH);
-    },
-
-    pausePeriodicRefresh({ commit }) {
-      commit(types.PAUSE_PERIODIC_REFRESH);
-    },
-
     clear({ commit, dispatch }) {
       commit(types.CLEAR);
       dispatch('activeWidgets/clear');
-    },
-
-    setScreenMode({ commit, getters }, screenMode) {
-      if (getters.screenMode === screenMode) {
-        return;
-      }
-
-      commit(types.SET_SCREEN_MODE, screenMode);
     },
   },
 };

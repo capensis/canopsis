@@ -2,7 +2,7 @@
   <v-fade-transition>
     <c-simple-tooltip
       v-if="pageScrolled"
-      :content="$t('common.toTheTop')"
+      :message="$t('common.toTheTop')"
       top
     >
       <template #activator="{ on }">
@@ -21,16 +21,9 @@
 </template>
 
 <script>
-import { useScrollToTop } from '@/hooks/scroll-to-top';
+import { scrollToTopMixin } from '@/mixins/scroll-to-top';
 
 export default {
-  setup() {
-    const { pageScrolled, scrollToTop } = useScrollToTop();
-
-    return {
-      pageScrolled,
-      scrollToTop,
-    };
-  },
+  mixins: [scrollToTopMixin],
 };
 </script>

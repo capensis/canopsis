@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"math"
-	"slices"
 	"strings"
 	"time"
 
@@ -60,14 +59,12 @@ type FieldCondition struct {
 	// FieldType is only defined for custom fields, ex: infos.
 	FieldType string    `json:"field_type,omitempty" bson:"field_type,omitempty"`
 	Condition Condition `json:"cond" bson:"cond"`
-	// Alias can only be defined for entity infos.
-	Alias string `json:"alias,omitempty" bson:"alias,omitempty"`
 }
 
 // Condition represents an expression to decide if a value fits.
 type Condition struct {
-	Type  string `json:"type" bson:"type"`
-	Value any    `json:"value" bson:"value" swaggertype:"object"`
+	Type  string      `json:"type" bson:"type"`
+	Value interface{} `json:"value" bson:"value"`
 
 	valueStr              *string
 	valueRegexp           utils.RegexExpression
@@ -76,10 +73,7 @@ type Condition struct {
 	valueStrArray         []string
 	valueTimeIntervalFrom *int64
 	valueTimeIntervalTo   *int64
-	// valueDuration is a single duration for >, <  and "after relative_time" conditions
-	// valueDurationTo is second duration for "before relative_time" condition
-	valueDuration   *int64
-	valueDurationTo *int64
+	valueDuration         *int64
 }
 
 // RegexMatches is a type that contains the values of the sub-expressions of a
@@ -143,48 +137,18 @@ func NewTimeIntervalCondition(t string, from, to int64) Condition {
 	}
 }
 
-func NewDurationCondition(t string, d ...datetime.DurationWithUnit) (Condition, error) {
-	if len(d) == 0 || len(d) > 2 {
-		return Condition{}, fmt.Errorf("wrong number of duration arguments: %d", len(d))
-	}
-
-	durationFrom, err := d[0].To(datetime.DurationUnitSecond)
+func NewDurationCondition(t string, d datetime.DurationWithUnit) (Condition, error) {
+	var err error
+	d, err = d.To(datetime.DurationUnitSecond)
 	if err != nil {
 		return Condition{}, err
 	}
 
-	c := Condition{
+	return Condition{
 		Type:          t,
-		Value:         d[0],
-		valueDuration: &durationFrom.Value,
-	}
-
-	if len(d) == 1 {
-		return c, nil
-	}
-
-	durationTo, err := d[1].To(datetime.DurationUnitSecond)
-	if err != nil {
-		return Condition{}, err
-	}
-
-	if durationTo.Value == 0 {
-		return c, nil
-	}
-
-	c.valueDurationTo = &durationTo.Value
-	if durationFrom.Value == 0 {
-		c.Value = map[string]*datetime.DurationWithUnit{"to": &d[1]}
-		c.valueDuration = nil
-	} else {
-		if durationFrom.Value < durationTo.Value {
-			return Condition{}, fmt.Errorf("from (%d) < to (%d)", durationFrom.Value, durationTo.Value)
-		}
-
-		c.Value = map[string]*datetime.DurationWithUnit{"from": &d[0], "to": &d[1]}
-	}
-
-	return c, nil
+		Value:         d,
+		valueDuration: &d.Value,
+	}, nil
 }
 
 func (c *Condition) GetValueStr() *string {
@@ -221,13 +185,25 @@ func (c *Condition) MatchString(value string) (bool, error) {
 		if len(c.valueStrArray) == 0 {
 			return false, ErrWrongConditionValue
 		}
-		return slices.Contains(c.valueStrArray, value), nil
+		for _, item := range c.valueStrArray {
+			if item == value {
+				return true, nil
+			}
+		}
+
+		return false, nil
 	case ConditionIsNotOneOf:
 		if len(c.valueStrArray) == 0 {
 			return false, ErrWrongConditionValue
 		}
 
-		return !slices.Contains(c.valueStrArray, value), nil
+		for _, item := range c.valueStrArray {
+			if item == value {
+				return false, nil
+			}
+		}
+
+		return true, nil
 	case ConditionRegexp,
 		ConditionContain,
 		ConditionNotContain,
@@ -269,14 +245,25 @@ func (c *Condition) MatchStringWithRegexpMatches(value string) (bool, RegexMatch
 		if len(c.valueStrArray) == 0 {
 			return false, nil, ErrWrongConditionValue
 		}
+		for _, item := range c.valueStrArray {
+			if item == value {
+				return true, nil, nil
+			}
+		}
 
-		return slices.Contains(c.valueStrArray, value), nil, nil
+		return false, nil, nil
 	case ConditionIsNotOneOf:
 		if len(c.valueStrArray) == 0 {
 			return false, nil, ErrWrongConditionValue
 		}
 
-		return !slices.Contains(c.valueStrArray, value), nil, nil
+		for _, item := range c.valueStrArray {
+			if item == value {
+				return false, nil, nil
+			}
+		}
+
+		return true, nil, nil
 	case ConditionRegexp,
 		ConditionContain,
 		ConditionNotContain,
@@ -428,28 +415,14 @@ func (c *Condition) MatchTags(tags []string) (bool, error) {
 	}
 }
 
-func (c *Condition) MatchTime(value, now time.Time) (bool, error) {
+func (c *Condition) MatchTime(value time.Time) (bool, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
-		if c.valueDuration == nil && c.valueDurationTo == nil {
+		if c.valueDuration == nil {
 			return false, ErrWrongConditionValue
 		}
-		var t1, t2 time.Time
-		if c.valueDurationTo != nil {
-			t2 = now.Add(time.Duration(-*c.valueDurationTo) * time.Second)
-		}
-		if c.valueDuration != nil {
-			t1 = now.Add(time.Duration(-*c.valueDuration) * time.Second)
-			if c.valueDurationTo != nil {
-				// when both durations are set, t1 must be not after t2
-				if t1.After(t2) {
-					return false, fmt.Errorf("duration from (%d) < to (%d)", *c.valueDuration, *c.valueDurationTo)
-				}
-				return value.After(t1) && value.Before(t2), nil
-			}
-		}
 
-		return (!t1.IsZero() && value.After(t1)) || value.Before(t2), nil
+		return value.After(time.Now().Add(time.Duration(-*c.valueDuration) * time.Second)), nil
 	case ConditionTimeAbsolute:
 		if c.valueTimeIntervalFrom == nil || c.valueTimeIntervalTo == nil {
 			return false, ErrWrongConditionValue
@@ -791,28 +764,16 @@ func (c *Condition) StringArrayInArrayToMongoQuery(arrayField, arrayItemField st
 	return bson.M{arrayField: bson.M{"$elemMatch": cond}}, nil
 }
 
-func (c *Condition) TimeToMongoQuery(f string, now time.Time) (bson.M, error) {
+func (c *Condition) TimeToMongoQuery(f string) (bson.M, error) {
 	switch c.Type {
 	case ConditionTimeRelative:
-		if c.valueDuration == nil && c.valueDurationTo == nil {
+		if c.valueDuration == nil {
 			return nil, ErrWrongConditionValue
 		}
-		var t1, t2 datetime.CpsTime
-		if c.valueDurationTo != nil {
-			t2 = datetime.NewCpsTime(now.Add(time.Duration(-*c.valueDurationTo) * time.Second).Unix())
-		}
-		if c.valueDuration != nil {
-			t1 = datetime.NewCpsTime(now.Add(time.Duration(-*c.valueDuration) * time.Second).Unix())
-			if c.valueDurationTo != nil {
-				// when both durations are set, t1 must be not after t2
-				if t1.Time.After(t2.Time) {
-					return nil, fmt.Errorf("duration from (%d) < to (%d)", *c.valueDuration, *c.valueDurationTo)
-				}
-				return bson.M{f: bson.M{"$gt": t1, "$lt": t2}}, nil
-			}
-			return bson.M{f: bson.M{"$gt": t1}}, nil
-		}
-		return bson.M{f: bson.M{"$lt": t2}}, nil
+
+		t := datetime.CpsTime{Time: time.Now().Add(time.Duration(-*c.valueDuration) * time.Second)}
+
+		return bson.M{f: bson.M{"$gt": t}}, nil
 	case ConditionTimeAbsolute:
 		if c.valueTimeIntervalFrom == nil || c.valueTimeIntervalTo == nil {
 			return nil, ErrWrongConditionValue
@@ -1258,44 +1219,12 @@ func (c *Condition) parseValue() {
 		return
 	}
 
-	if from, to, err := getDurationValues(c.Value); err == nil {
-		if from == nil {
-			if to == nil {
-				return
-			}
-
-			dBySec, err := to.To(datetime.DurationUnitSecond)
-			if err != nil {
-				return
-			}
-			c.Value = map[string]*datetime.DurationWithUnit{
-				"to": to,
-			}
-			c.valueDurationTo = &dBySec.Value
-			return
+	if d, err := getDurationValue(c.Value); err == nil {
+		dBySec, err := d.To(datetime.DurationUnitSecond)
+		if err == nil {
+			c.Value = d
+			c.valueDuration = &dBySec.Value
 		}
-
-		fromBySec, err := from.To(datetime.DurationUnitSecond)
-		if err != nil {
-			return
-		}
-
-		c.valueDuration = &fromBySec.Value
-		if to == nil {
-			c.Value = *from
-			return
-		}
-
-		c.Value = map[string]*datetime.DurationWithUnit{
-			"from": from,
-			"to":   to,
-		}
-		toBySec, err := to.To(datetime.DurationUnitSecond)
-		if err != nil {
-			return
-		}
-
-		c.valueDurationTo = &toBySec.Value
 		return
 	}
 }
@@ -1436,9 +1365,18 @@ func GetStringArrayValue(v interface{}) ([]string, error) {
 }
 
 func getTimeIntervalValue(v interface{}) (int64, int64, error) {
-	mapVal, err := parseMapVal(v)
-	if err != nil {
-		return 0, 0, err
+	var mapVal map[string]interface{}
+	if m, ok := v.(map[string]interface{}); ok {
+		mapVal = m
+	} else if m, ok := v.(bson.D); ok {
+		mapVal = make(map[string]interface{}, len(m))
+		for _, e := range m {
+			mapVal[e.Key] = e.Value
+		}
+	} else if m, ok := v.(bson.M); ok {
+		mapVal = m
+	} else {
+		return 0, 0, ErrWrongConditionValue
 	}
 
 	rawFrom, ok := mapVal["from"]
@@ -1464,83 +1402,42 @@ func getTimeIntervalValue(v interface{}) (int64, int64, error) {
 	return from, to, nil
 }
 
-func getDurationValues(v any) (from, to *datetime.DurationWithUnit, err error) {
-	mapVal, err := parseMapVal(v)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	rawTo, ok := mapVal["to"]
-	if !ok {
-		from, err = parseDurationWithUnit(mapVal)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		return from, nil, nil
-	}
-
-	rawVal, err := parseMapVal(rawTo)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	to, err = parseDurationWithUnit(rawVal)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	rawVal, err = parseMapVal(mapVal["from"])
-	if err == nil {
-		from, err = parseDurationWithUnit(rawVal)
-		if err != nil {
-			return nil, nil, err
-		}
-	}
-
-	return from, to, nil
-}
-
-func parseMapVal(v any) (map[string]any, error) {
-	var mapVal map[string]any
-	switch m := v.(type) {
-	case map[string]any:
+func getDurationValue(v interface{}) (datetime.DurationWithUnit, error) {
+	var mapVal map[string]interface{}
+	if m, ok := v.(map[string]interface{}); ok {
 		mapVal = m
-	case bson.D:
-		mapVal = make(map[string]any, len(m))
+	} else if m, ok := v.(bson.D); ok {
+		mapVal = make(map[string]interface{}, len(m))
 		for _, e := range m {
 			mapVal[e.Key] = e.Value
 		}
-	case bson.M:
+	} else if m, ok := v.(bson.M); ok {
 		mapVal = m
-	default:
-		return nil, ErrWrongConditionValue
+	} else {
+		return datetime.DurationWithUnit{}, ErrWrongConditionValue
 	}
-	return mapVal, nil
-}
 
-func parseDurationWithUnit(m map[string]any) (*datetime.DurationWithUnit, error) {
-	rawVal, ok := m["value"]
+	rawVal, ok := mapVal["value"]
 	if !ok {
-		return nil, errors.New("condition value expected 'value' key")
+		return datetime.DurationWithUnit{}, errors.New("condition value expected 'value' key")
 	}
 
 	val, err := GetIntValue(rawVal)
 	if err != nil {
-		return nil, err
+		return datetime.DurationWithUnit{}, err
 	}
 
-	rawUnit, ok := m["unit"]
+	rawUnit, ok := mapVal["unit"]
 	if !ok {
-		return nil, errors.New("condition value expected 'unit' key")
+		return datetime.DurationWithUnit{}, errors.New("condition value expected 'unit' key")
 	}
 
 	unit, err := GetStringValue(rawUnit)
 	if err != nil {
-		return nil, err
+		return datetime.DurationWithUnit{}, err
 	}
 
-	return &datetime.DurationWithUnit{
+	return datetime.DurationWithUnit{
 		Value: val,
 		Unit:  unit,
 	}, nil

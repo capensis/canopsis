@@ -35,7 +35,6 @@ import stateSettingModule from './state-setting';
 import associativeTableModule from './associative-table';
 import dataStorageModule from './data-storage';
 import notificationSettingsModule from './notification-settings';
-import notificationModule from './notification';
 import idleRulesModule from './idle-rules';
 import flappingRulesModule from './flapping-rules';
 import resolveRulesModule from './resolve-rules';
@@ -106,7 +105,6 @@ export default {
   associativeTable: associativeTableModule,
   dataStorage: dataStorageModule,
   notificationSettings: notificationSettingsModule,
-  notification: notificationModule,
   idleRules: idleRulesModule,
   flappingRules: flappingRulesModule,
   resolveRules: resolveRulesModule,

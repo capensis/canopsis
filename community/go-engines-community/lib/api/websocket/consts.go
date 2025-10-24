@@ -11,6 +11,4 @@ const (
 	RoomHealthcheckStatus = "healthcheck-status"
 	RoomMessageRates      = "message-rates"
 	RoomIcons             = "icons"
-	RoomNotifications     = "notifications"
-	RoomPbhPatterns       = "pbehavior-patterns"
 )

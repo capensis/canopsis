@@ -16,7 +16,7 @@ const (
 )
 
 type ActionProcessor interface {
-	Process(ctx context.Context, ruleID, ruleDesc string, action ParsedAction, event *types.Event, regexMatch RegexMatch, externalData map[string]interface{}) (bool, error)
+	Process(ctx context.Context, ruleID string, action ParsedAction, event *types.Event, regexMatch RegexMatch, externalData map[string]interface{}) (bool, error)
 }
 
 type RuleApplicator interface {

@@ -3,7 +3,7 @@
     <v-card-title
       v-if="$slots.title"
       :style="titleStyle"
-      :class="titleClass ?? 'white--text'"
+      class="white--text"
     >
       <div class="modal-wrapper__title text-h5">
         <div>
@@ -62,10 +62,6 @@ export default {
     titleColor: {
       type: String,
       default: CSS_COLORS_VARS.primary,
-    },
-    titleClass: {
-      type: String,
-      required: false,
     },
     textClass: {
       type: String,

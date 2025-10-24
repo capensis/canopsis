@@ -759,7 +759,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 	}
 	exportCursor := newExportCursor(cursor, t.Fields, common.GetRealFormatTime(r.TimeFormat), location,
-		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
+		instructions, linkGenerator, user, s.tplExecutor, withModel, s.logger)
 	return exportCursor, nil
 }
 

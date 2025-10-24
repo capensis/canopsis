@@ -1,6 +1,6 @@
 <template>
   <div :style="widgetWrapperStyles">
-    <template v-if="widget.title || activeViewEditing">
+    <template v-if="widget.title || editing">
       <v-card-title class="widget-title pa-2">
         <v-layout
           justify-space-between
@@ -33,7 +33,7 @@ import { createNamespacedHelpers } from 'vuex';
 
 import { WIDGET_TYPES, WIDGET_TYPES_RULES, WIDGET_GRID_ROW_HEIGHT, COMPONENTS_BY_WIDGET_TYPES } from '@/constants';
 
-import { featuresService } from '@/services/features';
+import featuresService from '@/services/features';
 
 import { prepareAlarmListWidget } from '@/helpers/entities/widget/forms/alarm';
 import { prepareContextWidget } from '@/helpers/entities/widget/forms/context';
@@ -43,7 +43,6 @@ import { prepareMapWidget } from '@/helpers/entities/widget/forms/map';
 import { prepareAvailabilityWidget } from '@/helpers/entities/widget/forms/availability';
 
 import { authMixin } from '@/mixins/auth';
-import { activeViewMixin } from '@/mixins/active-view';
 
 import AlarmsListWidget from './alarm/alarms-list.vue';
 import EntitiesListWidget from './context/entities-list.vue';
@@ -85,7 +84,7 @@ export default {
 
     ...featuresService.get('components.widgetWrapper.components', {}),
   },
-  mixins: [authMixin, activeViewMixin],
+  mixins: [authMixin],
   props: {
     widget: {
       type: Object,
@@ -94,6 +93,14 @@ export default {
     tab: {
       type: Object,
       required: true,
+    },
+    editing: {
+      type: Boolean,
+      default: false,
+    },
+    kiosk: {
+      type: Boolean,
+      default: false,
     },
     visible: {
       type: Boolean,
@@ -144,7 +151,7 @@ export default {
       const widgetComponentsMap = { ...COMPONENTS_BY_WIDGET_TYPES };
       let widgetSpecificsProp = {};
 
-      if (this.activeViewIsKioskScreenMode) {
+      if (this.kiosk) {
         widgetSpecificsProp = {
           ...this.widget.parameters.kiosk,
         };

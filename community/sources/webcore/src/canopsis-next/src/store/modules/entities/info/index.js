@@ -59,7 +59,6 @@ export default {
     serialName: state => state.appInfo?.serial_name,
     versionUpdated: state => state.appInfo?.version_updated,
     versionDescription: state => state.appInfo?.version_description ?? '',
-    notificationDisplayCount: state => state.appInfo?.notification_display_count ?? 0,
   },
   mutations: {
     [types.FETCH_APP_INFO](state) {

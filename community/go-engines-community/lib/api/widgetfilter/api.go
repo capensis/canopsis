@@ -20,17 +20,20 @@ type API interface {
 }
 
 type api struct {
-	store    Store
-	enforcer security.Enforcer
+	store       Store
+	enforcer    security.Enforcer
+	transformer PatternFieldsTransformer
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
+	transformer PatternFieldsTransformer,
 ) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
+		store:       store,
+		enforcer:    enforcer,
+		transformer: transformer,
 	}
 }
 
@@ -109,13 +112,22 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
+	err := a.transformEditRequest(c, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
 	var granted bool
 	perm := model.PermissionUpdate
 	if *request.IsUserPreference {
 		perm = model.PermissionRead
 	}
 
-	var err error
 	granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userID, perm)
 	if err != nil {
 		panic(err)
@@ -140,12 +152,6 @@ func (a *api) Create(c *gin.Context) {
 
 	filter, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		panic(err)
 	}
 
@@ -166,13 +172,22 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
+	err := a.transformEditRequest(c, &request.EditRequest)
+	if err != nil {
+		valErr := common.ValidationError{}
+		if errors.As(err, &valErr) {
+			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+			return
+		}
+		panic(err)
+	}
+
 	var granted bool
 	perm := model.PermissionUpdate
 	if *request.IsUserPreference {
 		perm = model.PermissionRead
 	}
 
-	var err error
 	granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userID, perm)
 	if err != nil {
 		panic(err)
@@ -211,12 +226,6 @@ func (a *api) Update(c *gin.Context) {
 
 	filter, err = a.store.Update(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		panic(err)
 	}
 
@@ -379,4 +388,46 @@ func (a *api) checkAccessByWidget(ctx context.Context, id, userID, perm string) 
 	granted, err := a.enforcer.Enforce(userID, viewId, perm)
 
 	return granted, isPrivate, err
+}
+
+func (a *api) transformEditRequest(ctx context.Context, request *EditRequest) error {
+	var err error
+	request.AlarmPatternFieldsRequest, err = a.transformer.TransformAlarmPatternFieldsRequest(
+		ctx,
+		request.AlarmPatternFieldsRequest,
+		*request.IsUserPreference,
+		request.Author,
+	)
+	if err != nil {
+		return err
+	}
+	request.EntityPatternFieldsRequest, err = a.transformer.TransformEntityPatternFieldsRequest(
+		ctx,
+		request.EntityPatternFieldsRequest,
+		*request.IsUserPreference,
+		request.Author,
+	)
+	if err != nil {
+		return err
+	}
+	request.PbehaviorPatternFieldsRequest, err = a.transformer.TransformPbehaviorPatternFieldsRequest(
+		ctx,
+		request.PbehaviorPatternFieldsRequest,
+		*request.IsUserPreference,
+		request.Author,
+	)
+	if err != nil {
+		return err
+	}
+	request.WeatherServicePatternFieldsRequest, err = a.transformer.TransformWeatherServicePatternFieldsRequest(
+		ctx,
+		request.WeatherServicePatternFieldsRequest,
+		*request.IsUserPreference,
+		request.Author,
+	)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

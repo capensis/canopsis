@@ -2,7 +2,7 @@
   <v-layout column>
     <c-name-field
       v-field="form.value"
-      :disabled="isImported || !isNew"
+      :disabled="isImported"
       :max-length="maxTagNameLength"
       name="value"
       autofocus
@@ -33,10 +33,6 @@ export default {
       default: () => ({}),
     },
     isImported: {
-      type: Boolean,
-      default: false,
-    },
-    isNew: {
       type: Boolean,
       default: false,
     },

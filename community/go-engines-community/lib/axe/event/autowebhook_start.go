@@ -16,14 +16,12 @@ func NewAutoWebhookStartProcessor(
 	client mongo.DbClient,
 ) Processor {
 	return &autoWebhookStartProcessor{
-		alarmCollection:         client.Collection(mongo.AlarmMongoCollection),
-		resolvedAlarmCollection: client.Collection(mongo.ResolvedAlarmMongoCollection),
+		alarmCollection: client.Collection(mongo.AlarmMongoCollection),
 	}
 }
 
 type autoWebhookStartProcessor struct {
-	alarmCollection         mongo.DbCollection
-	resolvedAlarmCollection mongo.DbCollection
+	alarmCollection mongo.DbCollection
 }
 
 func (p *autoWebhookStartProcessor) Process(ctx context.Context, event rpc.AxeEvent) (Result, error) {
@@ -32,11 +30,7 @@ func (p *autoWebhookStartProcessor) Process(ctx context.Context, event rpc.AxeEv
 		return result, nil
 	}
 
-	match := getExactAlarmMatchWithStepsLimit(event)
-	if match == nil {
-		return result, nil
-	}
-
+	match := getOpenAlarmMatchWithStepsLimit(event)
 	match["v.steps"] = bson.M{"$not": bson.M{"$elemMatch": bson.M{
 		"exec": event.Parameters.Execution,
 		"_t":   types.AlarmStepWebhookStart,
@@ -59,13 +53,6 @@ func (p *autoWebhookStartProcessor) Process(ctx context.Context, event rpc.AxeEv
 		}
 
 		return result, err
-	}
-
-	if alarm.IsResolved() {
-		_, err = p.resolvedAlarmCollection.UpdateOne(ctx, match, update)
-		if err != nil {
-			return result, err
-		}
 	}
 
 	alarmChange := types.NewAlarmChange()

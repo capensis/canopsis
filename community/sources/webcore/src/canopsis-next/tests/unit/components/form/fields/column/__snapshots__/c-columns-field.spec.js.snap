@@ -4,12 +4,34 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
 <div
   class="layout column"
 >
-  <c-card-iterator-field-stub
+  <c-draggable-list-field-stub
     class=""
-    data="[object Object],[object Object]"
     handle=".column-drag-handle"
-    itemkey="_id"
-  />
+    value="[object Object],[object Object]"
+  >
+    <column-field-stub
+      class="mb-3"
+      column="[object Object]"
+      draghandleclass="column-drag-handle"
+      excludedcolumns=""
+      name="key-1"
+      type="entity"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+    <column-field-stub
+      class="mb-3"
+      column="[object Object]"
+      draghandleclass="column-drag-handle"
+      excludedcolumns=""
+      name="key-2"
+      type="entity"
+      withcolorindicator="true"
+      withhtml="true"
+      withtemplate="true"
+    />
+  </c-draggable-list-field-stub>
   <div
     class="layout justify-end"
   >
@@ -18,7 +40,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with custom props 1`] = `
     >
       <!---->
       <button
-        class="mt-3 v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small primary"
+        class="mr-2 mx-0 v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small primary"
         type="button"
       >
         <span
@@ -41,11 +63,10 @@ exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
 <div
   class="layout column"
 >
-  <c-card-iterator-field-stub
+  <c-draggable-list-field-stub
     class="empty"
-    data=""
     handle=".column-drag-handle"
-    itemkey="_id"
+    value=""
   />
   <div
     class="layout justify-end"
@@ -55,7 +76,7 @@ exports[`c-columns-field Renders \`c-columns-field\` with default props 1`] = `
     >
       <!---->
       <button
-        class="mt-3 v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small primary"
+        class="mr-2 mx-0 v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small primary"
         type="button"
       >
         <span

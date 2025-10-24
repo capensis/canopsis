@@ -1,5 +1,13 @@
 <template>
   <v-layout column>
+    <v-text-field
+      v-field="form.title"
+      v-validate="'required'"
+      :label="$t('common.name')"
+      :error-messages="errors.collect('title')"
+      name="title"
+      autofocus
+    />
     <span class="text-body-2 my-2">{{ $tc('common.column', 2) }}</span>
     <v-flex xs12>
       <v-alert
@@ -15,20 +23,19 @@
       with-color-indicator
       with-template
       with-html
-      @input="validate"
+      @input="validateRequiredRule"
     />
   </v-layout>
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { ENTITIES_TYPES, WIDGET_TEMPLATES_TYPES } from '@/constants';
 
-import { useValidationAttachRequiredForField } from '@/hooks/validator/validation-attach-required';
+import { validationAttachRequiredMixin } from '@/mixins/form/validation-attach-required';
 
 export default {
   inject: ['$validator'],
+  mixins: [validationAttachRequiredMixin],
   model: {
     prop: 'form',
     event: 'input',
@@ -39,22 +46,22 @@ export default {
       default: () => ({}),
     },
   },
+  computed: {
+    entityType() {
+      return this.form.type === WIDGET_TEMPLATES_TYPES.alarmColumns
+        ? ENTITIES_TYPES.alarm
+        : ENTITIES_TYPES.entity;
+    },
 
-  setup(props) {
-    const name = 'columns';
-
-    const {
-      asyncValidateRequiredRule: validate,
-    } = useValidationAttachRequiredForField(name, () => !!props.form.columns?.length);
-
-    const entityType = computed(() => (props.form.type === WIDGET_TEMPLATES_TYPES.alarmColumns
-      ? ENTITIES_TYPES.alarm
-      : ENTITIES_TYPES.entity));
-
-    return {
-      validate,
-      entityType,
-    };
+    name() {
+      return 'columns';
+    },
+  },
+  mounted() {
+    this.attachRequiredRule(() => this.form.columns.length > 0);
+  },
+  beforeDestroy() {
+    this.detachRequiredRule();
   },
 };
 </script>

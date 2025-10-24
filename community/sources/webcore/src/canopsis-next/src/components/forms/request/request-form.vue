@@ -8,28 +8,6 @@
       :disabled="disabled"
       :url-variables="urlVariables"
     />
-    <v-layout v-if="withMultipleUrls">
-      <v-flex
-        offset-xs6
-        xs6
-      >
-        <c-enabled-field
-          :value="multiple"
-          :label="$t('scenario.allowMultipleUrls')"
-          :disabled="disabled"
-          @input="updateMultiple"
-        >
-          <template #append>
-            <c-help-icon
-              :text="$t('scenario.allowMultipleUrlsTooltip')"
-              icon="help"
-              color="grey darken-1"
-              left
-            />
-          </template>
-        </c-enabled-field>
-      </v-flex>
-    </v-layout>
     <v-layout>
       <v-flex
         class="mr-3"
@@ -133,22 +111,6 @@ export default {
       type: Array,
       default: () => [],
     },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
-    withMultipleUrls: {
-      type: Boolean,
-      default: false,
-    },
-  },
-
-  setup(props, { emit }) {
-    const updateMultiple = multiple => emit('update:multiple', multiple);
-
-    return {
-      updateMultiple,
-    };
   },
 };
 </script>

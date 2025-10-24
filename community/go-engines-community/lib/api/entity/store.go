@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -36,14 +35,13 @@ type Store interface {
 }
 
 type store struct {
-	db                       mongo.DbClient
-	dbExport                 mongo.DbClient
-	mainCollection           mongo.DbCollection
-	stateSettingsCollection  mongo.DbCollection
-	entityInfoPropCollection mongo.DbCollection
-	timezoneConfigProvider   config.TimezoneConfigProvider
-	authorProvider           author.Provider
-	decoder                  encoding.Decoder
+	db                      mongo.DbClient
+	dbExport                mongo.DbClient
+	mainCollection          mongo.DbCollection
+	stateSettingsCollection mongo.DbCollection
+	timezoneConfigProvider  config.TimezoneConfigProvider
+	authorProvider          author.Provider
+	decoder                 encoding.Decoder
 }
 
 func NewStore(
@@ -53,14 +51,13 @@ func NewStore(
 	decoder encoding.Decoder,
 ) Store {
 	return &store{
-		db:                       db,
-		dbExport:                 dbExport,
-		mainCollection:           db.Collection(mongo.EntityMongoCollection),
-		stateSettingsCollection:  db.Collection(mongo.StateSettingsMongoCollection),
-		entityInfoPropCollection: db.Collection(mongo.EntityInfosPropertyCollection),
-		timezoneConfigProvider:   timezoneConfigProvider,
-		authorProvider:           authorProvider,
-		decoder:                  decoder,
+		db:                      db,
+		dbExport:                dbExport,
+		mainCollection:          db.Collection(mongo.EntityMongoCollection),
+		stateSettingsCollection: db.Collection(mongo.StateSettingsMongoCollection),
+		timezoneConfigProvider:  timezoneConfigProvider,
+		authorProvider:          authorProvider,
+		decoder:                 decoder,
 	}
 }
 
@@ -400,82 +397,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		return nil, err
 	}
 
-	location := s.timezoneConfigProvider.Get().Location
-	timeFormat := common.GetRealFormatTime(t.TimeFormat)
-	timestampPropsCache := map[string]bool{}
-
-	return export.NewMongoCursor(cursor, t.Fields.Fields(), func(k string, v any) (any, error) {
-		switch k {
-		case "infos",
-			"component_infos":
-			if m, ok := v.(bson.M); ok {
-				for mk, mv := range m {
-					if info, ok := mv.(bson.M); ok {
-						if i, ok := s.getInt64(info["value"]); ok {
-							var err error
-
-							info["value"], err = s.transformIntInfoValue(ctx, mk, timeFormat, location, timestampPropsCache, i)
-							if err != nil {
-								return nil, err
-							}
-						}
-					}
-				}
-			}
-		}
-
-		for _, prefix := range []string{"infos.", "component_infos."} {
-			if cut, ok := strings.CutPrefix(k, prefix); ok {
-				if key, ok := strings.CutSuffix(cut, ".value"); ok {
-					if i, ok := s.getInt64(v); ok {
-						return s.transformIntInfoValue(ctx, key, timeFormat, location, timestampPropsCache, i)
-					}
-				}
-
-				break
-			}
-		}
-
-		return v, nil
-	}), nil
-}
-
-func (s *store) getInt64(v any) (int64, bool) {
-	switch i := v.(type) {
-	case int64:
-		return i, true
-	case int32:
-		return int64(i), true
-	case int:
-		return int64(i), true
-	case float32:
-		return int64(i), true
-	case float64:
-		return int64(i), true
-	default:
-		return 0, false
-	}
-}
-
-func (s *store) transformIntInfoValue(ctx context.Context, name, timeFormat string, location *time.Location, timestampPropsCache map[string]bool, v int64) (any, error) {
-	var isTimestamp bool
-	var ok bool
-
-	if isTimestamp, ok = timestampPropsCache[name]; !ok {
-		err := s.entityInfoPropCollection.FindOne(ctx, bson.M{"name": name, "type": types.EntityInfoTypeTimestamp}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, err
-		}
-
-		isTimestamp = err == nil
-		timestampPropsCache[name] = isTimestamp
-	}
-
-	if isTimestamp {
-		return datetime.NewCpsTime(v).In(location).Time.Format(timeFormat), nil
-	}
-
-	return v, nil
+	return export.NewMongoCursor(cursor, t.Fields.Fields(), nil), nil
 }
 
 func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingRequest) (StateSettingResponse, error) {

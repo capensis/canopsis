@@ -31,7 +31,7 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
     >
       <!---->
       <div
-        class="v-alert v-sheet theme--dark v-alert--light-background"
+        class="v-alert v-sheet theme--dark info"
         role="alert"
       >
         <div
@@ -40,7 +40,6 @@ exports[`service-weather Renders \`service-weather\` with default props 1`] = `
           <i
             aria-hidden="true"
             class="v-icon notranslate v-alert__icon material-icons theme--dark"
-            style="caret-color: var(--v-info-base);"
           >
             info
           </i>
@@ -88,7 +87,7 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
       class="layout justify-center"
     >
       <div
-        class="v-alert v-sheet theme--dark v-alert--light-background"
+        class="v-alert v-sheet theme--dark error"
         role="alert"
       >
         <div
@@ -97,7 +96,6 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
           <i
             aria-hidden="true"
             class="v-icon notranslate v-alert__icon material-icons theme--dark"
-            style="caret-color: var(--v-error-base);"
           >
             warning
           </i>
@@ -128,7 +126,7 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
         </div>
       </div>
       <div
-        class="v-alert v-sheet theme--dark v-alert--light-background"
+        class="v-alert v-sheet theme--dark info"
         role="alert"
       >
         <div
@@ -137,7 +135,6 @@ exports[`service-weather Renders \`service-weather\` with errors 1`] = `
           <i
             aria-hidden="true"
             class="v-icon notranslate v-alert__icon material-icons theme--dark"
-            style="caret-color: var(--v-info-base);"
           >
             info
           </i>

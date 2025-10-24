@@ -36,7 +36,7 @@ import {
   getIconElement,
   getProgressElement,
 } from '@/helpers/entities/entity/cytoscape';
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 
 import { entitiesEntityDependenciesMixin } from '@/mixins/entities/entity-dependencies';
 
@@ -302,15 +302,14 @@ export default {
       const { entity, pending, opened, root } = node;
 
       const element = getEntityNodeElement(node);
-
-      element.classList.add(getEntityColorClass(entity, this.colorIndicator));
+      element.style.background = getEntityColor(entity, this.colorIndicator);
 
       if (pending || (!root && entity.state_setting?.title && entity.state_depends_count > 0)) {
         const badge = getBadgeElement();
         badge.dataset.id = entity._id;
 
         badge.appendChild(
-          pending ? getProgressElement() : getIconElement(opened ? 'remove' : 'add', 'white'),
+          pending ? getProgressElement() : getIconElement(opened ? 'remove' : 'add'),
         );
 
         element.appendChild(badge);

@@ -23,7 +23,7 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with empty modal 1`] 
         class="layout justify-end"
       >
         <button
-          class="v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small secondary"
+          class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small secondary--text"
           type="button"
         >
           <span
@@ -93,7 +93,7 @@ exports[`info-popup-setting Renders \`info-popup-setting\` with interval 1`] = `
         class="layout justify-end"
       >
         <button
-          class="v-btn v-btn--is-elevated v-btn--fab v-btn--has-bg v-btn--round theme--light v-size--small secondary"
+          class="v-btn v-btn--fab v-btn--icon v-btn--round theme--light v-size--small secondary--text"
           type="button"
         >
           <span

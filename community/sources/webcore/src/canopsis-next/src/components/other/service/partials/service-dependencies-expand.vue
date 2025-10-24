@@ -23,7 +23,7 @@
       overlap
     >
       <v-btn
-        :class="entityColorClass"
+        :color="entityColor"
         fab
         small
         depressed
@@ -63,7 +63,7 @@
 <script>
 import { COLOR_INDICATOR_TYPES } from '@/constants';
 
-import { getEntityColorClass } from '@/helpers/entities/entity/color';
+import { getEntityColor } from '@/helpers/entities/entity/color';
 import { getIconByEntityType } from '@/helpers/entities/entity/icons';
 
 export default {
@@ -82,8 +82,8 @@ export default {
       return this.item?.entity ?? {};
     },
 
-    entityColorClass() {
-      return getEntityColorClass(this.entity, COLOR_INDICATOR_TYPES.impactState);
+    entityColor() {
+      return getEntityColor(this.entity, COLOR_INDICATOR_TYPES.impactState);
     },
 
     entityIcon() {

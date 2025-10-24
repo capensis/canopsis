@@ -13,7 +13,6 @@ const stubs = {
   'meta-alarm-rule-tags-form': true,
   'meta-alarm-rule-infos-form': true,
   'c-enabled-field': true,
-  'c-name-field': createInputStub('c-name-field'),
   'c-help-icon': true,
 };
 
@@ -21,11 +20,10 @@ const snapshotStubs = {
   'meta-alarm-rule-tags-form': true,
   'meta-alarm-rule-infos-form': true,
   'c-enabled-field': true,
-  'c-name-field': true,
   'c-help-icon': true,
 };
 
-const selectTextField = wrapper => wrapper.find('.c-name-field');
+const selectTextField = wrapper => wrapper.find('.v-text-field');
 const selectComboboxField = wrapper => wrapper.find('.v-combobox');
 const selectEnabledField = wrapper => wrapper.find('c-enabled-field-stub');
 
@@ -95,6 +93,7 @@ describe('link-meta-alarm-form', () => {
     });
 
     const comment = Faker.datatype.string();
+
     selectTextField(wrapper).setValue(comment);
 
     expect(wrapper).toEmitInput({ ...form, comment });

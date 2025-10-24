@@ -10,20 +10,16 @@ import { getMapEntityText } from '@/helpers/entities/map/list';
  * Create vuetify icon element
  *
  * @param {string} name
- * @param {string} [color]
  * @return {HTMLElement}
  */
-export const getIconElement = (name, color) => {
+export const getIconElement = (name) => {
   const badgeIconEl = document.createElement('i');
   badgeIconEl.classList.add(
     'v-icon',
     'material-icons',
     'theme--light',
+    'white--text',
   );
-
-  if (color) {
-    badgeIconEl.classList.add(`${color}--text`);
-  }
 
   badgeIconEl.innerHTML = name;
 
@@ -90,7 +86,7 @@ export const getStateSettingsNodeIconElement = (node) => {
  */
 export const getProgressElement = () => {
   const progressContentCircleEl = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  progressContentCircleEl.classList.add('v-progress-circular__overlay', 'white--text');
+  progressContentCircleEl.classList.add('v-progress-circular__overlay');
   progressContentCircleEl.setAttribute('fill', 'transparent');
   progressContentCircleEl.setAttribute('cx', '45.714285714285715');
   progressContentCircleEl.setAttribute('cy', '45.714285714285715');
@@ -109,6 +105,7 @@ export const getProgressElement = () => {
     'v-progress-circular',
     'v-progress-circular--indeterminate',
     'v-progress-circular--visible',
+    'white--text',
     'position-relative',
   );
 

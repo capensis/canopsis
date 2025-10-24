@@ -401,7 +401,7 @@ func (e *taskExecutor) dumpDb(
 	done := make(chan struct{})
 	var err error
 	var dumpFilepath string
-	go func(ctx context.Context) {
+	go func() {
 		defer close(done)
 
 		var pgConnStr string
@@ -426,8 +426,8 @@ func (e *taskExecutor) dumpDb(
 			return
 		}
 
-		err = postgres.Dump(ctx, pgConnStr, dumpFilepath)
-	}(ctx)
+		err = postgres.Dump(pgConnStr, dumpFilepath)
+	}()
 
 	ticket := time.NewTicker(abandonedTickInterval)
 	defer ticket.Stop()

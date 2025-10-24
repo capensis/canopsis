@@ -179,9 +179,6 @@ type Parameters struct {
 	SkipForChild       *bool                         `json:"skip_for_child,omitempty" bson:"skip_for_child"`
 	SkipForInstruction *bool                         `json:"skip_for_instruction,omitempty" bson:"skip_for_instruction,omitempty"`
 	DeclareTicket      *request.WebhookDeclareTicket `json:"declare_ticket,omitempty" bson:"declare_ticket"`
-	StopOnFail         *bool                         `json:"stop_on_fail,omitempty" bson:"stop_on_fail,omitempty"`
-	StopOnSuccess      *bool                         `json:"stop_on_success,omitempty" bson:"stop_on_success,omitempty"`
-	MultipleURLs       *bool                         `json:"multiple_urls,omitempty" bson:"multiple_urls,omitempty"`
 }
 
 type AggregationResult struct {

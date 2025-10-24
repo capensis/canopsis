@@ -1,11 +1,6 @@
 import { difference } from 'lodash';
 
-import {
-  PERMISSIONS_TYPES_TO_ACTIONS,
-  CRUD_ACTIONS,
-  USER_PERMISSIONS_GROUPS,
-  INVERSE_CONDITIONAL_PERMISSIONS_MAP,
-} from '@/constants';
+import { PERMISSIONS_TYPES_TO_ACTIONS, CRUD_ACTIONS, USER_PERMISSIONS_GROUPS } from '@/constants';
 
 /**
  * Check user access for a permission
@@ -15,17 +10,15 @@ import {
  * @returns {boolean}
  */
 export const checkUserAccess = (permission, action) => {
-  // Early return if no permission or actions
   if (!permission?.actions) {
     return false;
   }
 
-  // Early return for 'can' action
-  if (action === CRUD_ACTIONS.can) {
-    return permission.actions.length >= 0;
-  }
+  const { actions } = permission;
 
-  return permission.actions.includes(action);
+  return action === CRUD_ACTIONS.can
+    ? actions.length >= 0
+    : actions.includes(action);
 };
 
 /**
@@ -46,14 +39,9 @@ export const checkUserAnyAccess = (permissions, action) => (
  * @param {Object} permission
  * @returns {*}
  */
-export const getPermissionActions = (permission) => {
-  // Early return if no permission
-  if (!permission?.type) {
-    return [CRUD_ACTIONS.can];
-  }
-
-  return PERMISSIONS_TYPES_TO_ACTIONS[permission.type] || [CRUD_ACTIONS.can];
-};
+export const getPermissionActions = permission => (PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
+  ? PERMISSIONS_TYPES_TO_ACTIONS[permission.type]
+  : [CRUD_ACTIONS.can]);
 
 /**
  * Converts a flat permissions array into a hierarchical tree structure
@@ -113,37 +101,6 @@ export const permissionsToTreeview = (permissions = []) => permissions.reduce((a
 }, {});
 
 /**
- * Checks if a permission should be disabled and provides tooltip key based on conditional dependencies
- *
- * @param {Object} role - The role object containing permissions
- * @param {string} permissionId - The permission ID to check
- * @returns {Object|null} Object with disabled flag, inputValue, and tooltip key, or null if no conditions apply
- */
-export const getConditionalPermissionState = (role, permissionId) => {
-  if (!role?.permissions) {
-    return null;
-  }
-
-  const conditionalDependencies = INVERSE_CONDITIONAL_PERMISSIONS_MAP[permissionId];
-
-  if (!conditionalDependencies?.length) {
-    return null;
-  }
-
-  const activeConditional = conditionalDependencies.find(
-    ({ triggerPermission }) => role.permissions[triggerPermission]?.length > 0,
-  );
-
-  return activeConditional
-    ? {
-      disabled: true,
-      tooltipKey: activeConditional.tooltipKey,
-      inputValue: true,
-    }
-    : null;
-};
-
-/**
  * Get properties for a permission checkbox based on role and permission details.
  *
  * @param {Object} role - The role object containing permissions.
@@ -153,36 +110,22 @@ export const getConditionalPermissionState = (role, permissionId) => {
  * - `inputValue`: {boolean} Indicates if the checkbox should be checked.
  * - `indeterminate`: {boolean} Indicates if the checkbox should be in an indeterminate state
  * (only present if `permission.allChildren` exists).
- * - `disabled`: {boolean} Indicates if the checkbox should be disabled.
- * - `tooltipKey`: {string} i18n key for tooltip text for disabled checkboxes.
  */
 export const getPermissionCheckboxProps = (role, permission, action) => {
-  if (!role || !permission) {
-    return { inputValue: false };
-  }
-
-  const conditionalState = getConditionalPermissionState(role, permission._id);
-
   if (permission.allChildren) {
     const childrenPermissionsDiffs = permission.allChildren
-      .map(({ _id: id, actions }) => difference(actions ?? [], role.permissions?.[id] ?? []).length);
+      .map(({ _id: id, actions }) => difference(actions ?? [], role.permissions[id] ?? []).length);
     const inputValue = childrenPermissionsDiffs.every(v => !v);
-    const hasCheckedChildren = permission.allChildren.some(({ _id: id }) => !!role.permissions?.[id]?.length);
+    const hasCheckedChildren = permission.allChildren.some(({ _id: id }) => !!role.permissions[id]?.length);
 
     return {
       inputValue,
       indeterminate: !inputValue && hasCheckedChildren,
-      ...(conditionalState || {}),
     };
   }
 
-  const inputValue = conditionalState?.inputValue
-    ?? role.permissions?.[permission._id]?.includes(action)
-    ?? false;
-
   return {
-    inputValue,
-    ...(conditionalState || {}),
+    inputValue: role.permissions[permission._id]?.includes(action) ?? false,
   };
 };
 

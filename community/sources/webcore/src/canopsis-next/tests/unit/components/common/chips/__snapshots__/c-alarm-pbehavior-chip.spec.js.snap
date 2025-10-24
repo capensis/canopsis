@@ -10,7 +10,7 @@ exports[`c-alarm-pbehavior-chip Renders \`c-alarm-pbehavior-chip\` with black co
 
 exports[`c-alarm-pbehavior-chip Renders \`c-alarm-pbehavior-chip\` with default props 1`] = `
 <c-alarm-extra-details-chip-stub
-  color="#2B3E4F"
+  color="#2b3e4f"
   icon="pause"
   icon-color="white"
 />

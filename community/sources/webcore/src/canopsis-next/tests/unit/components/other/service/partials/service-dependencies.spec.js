@@ -80,7 +80,6 @@ describe('service-dependencies', () => {
       'data-alarm-entity-3',
       'data-alarm-entity-4',
     ],
-    impact_state: 7,
   };
 
   const { entityModule } = createEntityModule();

@@ -1,7 +1,6 @@
 <template>
   <v-layout>
     <v-btn
-      class="advanced-search__history__item__btn"
       small
       icon
       @click.prevent.stop="remove"
@@ -12,7 +11,6 @@
     </v-btn>
     <v-btn
       :class="{ 'advanced-search__history__item__btn--pinned': pinned }"
-      class="advanced-search__history__item__btn"
       small
       icon
       @click.prevent.stop="togglePin"
@@ -50,11 +48,11 @@ export default {
 
 <style lang="scss">
 .v-list-item {
-  .advanced-search__history__item__btn.v-btn:not(.advanced-search__history__item__btn--pinned) {
+  .v-btn:not(.advanced-search__history__item__btn--pinned) {
     opacity: 0;
   }
 
-  &:hover .advanced-search__history__item__btn.v-btn {
+  &:hover .v-btn {
     opacity: 1;
   }
 }

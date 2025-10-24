@@ -23,15 +23,17 @@
 
 <script>
 import { isEmpty } from 'lodash';
+import { createNamespacedHelpers } from 'vuex';
 
-import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY, LOCAL_STORAGE_WARNING_POPUP_KEY } from '@/config';
-import { EXCLUDED_SERVER_ERROR_STATUSES, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
+import { SOCKET_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
+import { EXCLUDED_SERVER_ERROR_STATUSES, MAX_LIMIT, RESPONSE_STATUSES, ROUTES_NAMES } from '@/constants';
 
 import Socket from '@/plugins/socket/services/socket';
 
 import localStorageService from '@/services/local-storage';
 
 import { reloadPageWithTrailingSlashes } from '@/helpers/url';
+import { convertDateToString } from '@/helpers/date/date';
 
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
@@ -39,12 +41,13 @@ import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
 import { vuetifyCustomIconsRegisterMixin } from '@/mixins/vuetify/custom-icons/register';
-import { appRemediationInstructionExecutionsPopupsMixin } from '@/mixins/app/remediation-instruction-executions-popups';
 
 import TheNavigation from '@/components/layout/navigation/the-navigation.vue';
 import ActiveBroadcastMessage from '@/components/layout/broadcast-message/active-broadcast-message.vue';
 
 import '@/assets/styles/main.scss';
+
+const { mapActions } = createNamespacedHelpers('remediationInstructionExecution');
 
 export default {
   components: {
@@ -58,7 +61,6 @@ export default {
     entitiesUserMixin,
     entitiesTemplateVarsMixin,
     vuetifyCustomIconsRegisterMixin,
-    appRemediationInstructionExecutionsPopupsMixin,
   ],
   data() {
     return {
@@ -78,16 +80,11 @@ export default {
     },
 
     routeViewKey() {
-      switch (this.$route.name) {
-        case ROUTES_NAMES.view:
-          return this.$route.path;
-
-        case ROUTES_NAMES.notifications:
-          return this.$route.name;
-
-        default:
-          return this.$route.fullPath;
+      if (this.$route.name === ROUTES_NAMES.view) {
+        return this.$route.path;
       }
+
+      return this.$route.fullPath;
     },
   },
   watch: {
@@ -98,6 +95,7 @@ export default {
     reloadPageWithTrailingSlashes();
   },
   created() {
+    this.registerCurrentUserOnceWatcher();
     this.socketConnectWithErrorHandling();
   },
   async mounted() {
@@ -111,15 +109,17 @@ export default {
 
     await this.fetchAppInfoWithErrorHandling();
 
-    this.registerCurrentUserOnceWatcher();
-
     if (!this.isLoggedIn) {
       this.setTheme(this.defaultColorTheme);
     }
   },
   methods: {
+    ...mapActions({
+      fetchPausedExecutionsWithoutStore: 'fetchPausedListWithoutStore',
+    }),
+
     showLocalStorageWarningPopupMessage() {
-      const text = localStorageService.pop(LOCAL_STORAGE_WARNING_POPUP_KEY);
+      const text = localStorageService.pop('warningPopup');
 
       if (text) {
         this.$popups.warning({ text, autoClose: false });
@@ -132,15 +132,34 @@ export default {
           this.$socket.authenticate(localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY));
 
           this.setTheme(currentUser.ui_theme_colors);
-          this.filesAccess();
+
+          await this.filesAccess();
 
           if (this.isProVersion) {
-            this.runExecutionsPopups();
+            this.showPausedExecutionsPopup();
           }
 
           unwatch();
         }
       });
+    },
+
+    async showPausedExecutionsPopup() {
+      const pausedExecutions = await this.fetchPausedExecutionsWithoutStore({
+        params: { limit: MAX_LIMIT },
+      });
+
+      if (!pausedExecutions || !pausedExecutions.length) {
+        return;
+      }
+
+      pausedExecutions.forEach((execution = {}) => this.$popups.info({
+        text: this.$t('remediation.instructionExecute.popups.wasPaused', {
+          instructionName: execution.instruction_name,
+          alarmName: execution.alarm_name,
+          date: convertDateToString(execution.paused),
+        }),
+      }));
     },
 
     socketConnectWithErrorHandling() {
@@ -164,7 +183,7 @@ export default {
         const statusCode = +message;
 
         if (statusCode === RESPONSE_STATUSES.unauthorized || message === Socket.ERROR_MESSAGES.authenticationFailed) {
-          localStorageService.set(LOCAL_STORAGE_WARNING_POPUP_KEY, this.$t('warnings.authTokenExpired'));
+          localStorageService.set('warningPopup', this.$t('warnings.authTokenExpired'));
           this.logout();
 
           return;

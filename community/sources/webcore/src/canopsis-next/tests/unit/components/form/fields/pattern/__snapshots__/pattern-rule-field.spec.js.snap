@@ -110,25 +110,20 @@ exports[`pattern-rule-field Renders \`pattern-rule-field\` with date type 1`] = 
     <div
       class="layout"
     >
-      <!---->
       <div
         class="flex pl-3 xs5"
       >
-        <pattern-operator-field-stub
-          label=""
-          name="rule.operator"
-          operators=""
-          required="true"
-          value="in_range_dates"
+        <c-quick-date-interval-type-field-stub
+          name="rule"
+          ranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+          value="custom"
         />
       </div>
       <div
         class="flex pl-3 xs7"
       >
-        <pattern-rule-field-date-value-stub
-          intervalranges="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
-          name="rule.value"
-          operator="in_range_dates"
+        <c-date-time-interval-field-stub
+          name="rule"
           value="[object Object]"
         />
       </div>

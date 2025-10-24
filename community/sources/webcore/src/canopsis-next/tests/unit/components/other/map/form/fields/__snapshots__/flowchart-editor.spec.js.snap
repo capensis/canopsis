@@ -55,7 +55,7 @@ exports[`flowchart-editor Renders \`flowchart-editor\` with validation errors  1
   <div
     class="flowchart flowchart-map-editor mb-2"
     shapes="[object Object]"
-    style="border-color: #d22e2e;"
+    style="border-color: #ff5252;"
   >
     <add-location-btn-stub />
     <hr

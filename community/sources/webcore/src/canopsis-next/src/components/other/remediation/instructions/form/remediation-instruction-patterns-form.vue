@@ -7,7 +7,6 @@
       with-alarm
       with-entity
       both-counters
-      some-required
     />
     <c-collapse-panel
       :title="$t('remediation.pattern.tabs.pbehaviorTypes.title')"
@@ -19,7 +18,7 @@
 </template>
 
 <script>
-import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS } from '@/constants';
+import { ALARM_PATTERN_FIELDS, ENTITY_PATTERN_FIELDS, QUICK_RANGES } from '@/constants';
 
 import { formValidationHeaderMixin } from '@/mixins/form';
 
@@ -46,13 +45,21 @@ export default {
     },
   },
   computed: {
+    intervalOptions() {
+      return {
+        intervalRanges: [QUICK_RANGES.custom],
+      };
+    },
+
     alarmAttributes() {
       return [
         {
           value: ALARM_PATTERN_FIELDS.creationDate,
+          options: this.intervalOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.ackAt,
+          options: this.intervalOptions,
         },
         {
           value: ALARM_PATTERN_FIELDS.lastUpdateDate,

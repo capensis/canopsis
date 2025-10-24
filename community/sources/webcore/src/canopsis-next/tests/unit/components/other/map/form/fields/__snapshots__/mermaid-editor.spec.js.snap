@@ -112,7 +112,7 @@ exports[`mermaid-editor Renders \`mermaid-editor\` with validation errors  1`] =
 >
   <div
     class="layout mermaid-editor mb-2"
-    style="min-height: 500px; border-color: #d22e2e;"
+    style="min-height: 500px; border-color: #ff5252;"
   >
     <div
       class="flex mermaid-editor__sidebar"

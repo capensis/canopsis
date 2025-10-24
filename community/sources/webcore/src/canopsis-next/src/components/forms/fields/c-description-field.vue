@@ -54,22 +54,12 @@ export default {
       type: String,
       default: '',
     },
-    maxLength: {
-      type: Number,
-      required: false,
-    },
   },
   computed: {
     rules() {
-      const rules = {
+      return {
         required: this.required,
       };
-
-      if (this.maxLength) {
-        rules.max = this.maxLength;
-      }
-
-      return rules;
     },
   },
 };

@@ -79,17 +79,44 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input v-input--is-disabled theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light primary--text"
+            <div
+              class="v-input__slot"
             >
-              check_box
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  disabled="disabled"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -114,17 +141,44 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input v-input--is-disabled theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light primary--text"
+            <div
+              class="v-input__slot"
             >
-              check_box
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  disabled="disabled"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -149,17 +203,44 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input v-input--is-disabled theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  disabled="disabled"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -268,17 +349,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -303,17 +410,44 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input v-input--is-disabled theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light primary--text"
+            <div
+              class="v-input__slot"
             >
-              check_box
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  disabled="disabled"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -337,17 +471,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -371,17 +531,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -405,17 +591,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -439,17 +651,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -473,17 +711,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -507,17 +771,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -541,17 +831,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -575,17 +891,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -609,17 +951,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -643,17 +1011,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -677,17 +1071,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -711,17 +1131,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -745,17 +1191,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -779,17 +1251,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -813,17 +1311,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -847,17 +1371,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -881,17 +1431,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -915,17 +1491,43 @@ exports[`c-alarm-metric-parameters-field Renders \`c-alarm-metric-parameters-fie
         class="v-list-item__action"
       >
         <div
-          class="v-simple-checkbox"
+          class="v-input theme--light v-input--selection-controls v-input--checkbox"
         >
           <div
-            class="v-input--selection-controls__input"
+            class="v-input__control"
           >
-            <i
-              aria-hidden="true"
-              class="v-icon notranslate material-icons theme--light"
+            <div
+              class="v-input__slot"
             >
-              check_box_outline_blank
-            </i>
+              <div
+                class="v-input--selection-controls__input"
+              >
+                <i
+                  aria-hidden="true"
+                  class="v-icon notranslate material-icons theme--light"
+                >
+                  check_box_outline_blank
+                </i>
+                <input
+                  aria-checked="false"
+                  role="checkbox"
+                  type="checkbox"
+                  value=""
+                />
+                <div
+                  class="v-input--selection-controls__ripple"
+                />
+              </div>
+            </div>
+            <div
+              class="v-messages theme--light"
+            >
+              <transition-group-stub
+                class="v-messages__wrapper"
+                name="message-transition"
+                tag="div"
+              />
+            </div>
           </div>
         </div>
       </div>

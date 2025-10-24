@@ -1,7 +1,7 @@
 <template>
   <c-lazy-search-field
     v-field="value"
-    :label="$t('alarm.alarmDisplayName')"
+    :label="$t('entity.fields.alarmDisplayName')"
     :loading="pending"
     :items="alarms"
     :name="name"

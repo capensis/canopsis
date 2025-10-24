@@ -27,7 +27,7 @@ describe('mass-actions-panel', () => {
         actions,
       },
       mocks: {
-        $mq: 'l+',
+        $windowSize: 'l+',
       },
     });
 
@@ -40,7 +40,7 @@ describe('mass-actions-panel', () => {
     secondActionElement.trigger('click');
 
     const [, secondAction] = actions;
-    expect(secondAction.method).toHaveBeenCalledTimes(1);
+    expect(secondAction.method).toBeCalledTimes(1);
   });
 
   it('Method into dropdown called after trigger click on action item button. On the tablet size.', () => {
@@ -53,7 +53,7 @@ describe('mass-actions-panel', () => {
         actions,
       },
       mocks: {
-        $mq: 't',
+        $windowSize: 't',
       },
     });
 
@@ -71,7 +71,7 @@ describe('mass-actions-panel', () => {
   it('Renders `mass-actions-panel` with actions on the large size', () => {
     const wrapper = snapshotFactory({
       mocks: {
-        $mq: 'l+',
+        $windowSize: 'l+',
       },
       propsData: {
         actions: [editAction, deleteAction],
@@ -84,7 +84,7 @@ describe('mass-actions-panel', () => {
   it('Renders `mass-actions-panel` with actions correctly on the tablet size', () => {
     const wrapper = snapshotFactory({
       mocks: {
-        $mq: 't',
+        $windowSize: 't',
       },
       propsData: {
         actions: [editAction, deleteAction],
@@ -100,7 +100,7 @@ describe('mass-actions-panel', () => {
   it('Renders `mass-actions-panel` with actions correctly on the mobile size', () => {
     const wrapper = snapshotFactory({
       mocks: {
-        $mq: 'm',
+        $windowSize: 'm',
       },
       propsData: {
         actions: [editAction, deleteAction],

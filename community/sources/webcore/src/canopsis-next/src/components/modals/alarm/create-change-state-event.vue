@@ -5,11 +5,6 @@
         <span>{{ $t('modals.createChangeStateEvent.title') }}</span>
       </template>
       <template #text="">
-        <alarm-general-table
-          v-if="config.items"
-          :items="config.items"
-          class="mb-4"
-        />
         <c-change-state-field
           v-model="form"
           :label="$t('modals.createChangeStateEvent.fields.output')"
@@ -19,7 +14,7 @@
         <v-btn
           depressed
           text
-          @click="close"
+          @click="$modals.hide"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -37,15 +32,12 @@
 </template>
 
 <script>
-import { ref } from 'vue';
-
 import { MODALS, ALARM_STATES } from '@/constants';
 
-import { useInnerModal } from '@/hooks/modals';
-import { useSubmittableForm } from '@/hooks/submittable-form';
-import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
-
-import AlarmGeneralTable from '@/components/widgets/alarm/alarm-general-list.vue';
+import { modalInnerMixin } from '@/mixins/modal/inner';
+import { submittableMixinCreator } from '@/mixins/submittable';
+import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesInfoMixin } from '@/mixins/entities/info';
 
 import ModalWrapper from '../modal-wrapper.vue';
 
@@ -57,42 +49,33 @@ export default {
   $_veeValidate: {
     validator: 'new',
   },
-  components: { AlarmGeneralTable, ModalWrapper },
-  props: {
-    modal: {
-      type: Object,
-      required: true,
-    },
-  },
-  setup(props) {
-    const { config, close } = useInnerModal(props);
-
-    const { items } = props.modal.config;
-    const [firstItem] = items ?? [];
-
-    const form = ref({
-      comment: '',
-      state: firstItem && items.length === 1 ? firstItem.v.state.val : ALARM_STATES.major,
-    });
-
-    const { submit, isDisabled, submitting } = useSubmittableForm({
-      form,
-      method: async () => {
-        await config.value.action?.(form.value);
-        close();
-      },
-    });
-
-    useFormConfirmableCloseModal({ form, submit, close });
+  components: { ModalWrapper },
+  mixins: [
+    modalInnerMixin,
+    entitiesInfoMixin,
+    submittableMixinCreator(),
+    confirmableModalMixinCreator(),
+  ],
+  data() {
+    const [firstItem] = this.modal.config.items ?? [];
 
     return {
-      config,
-      form,
-      isDisabled,
-      submitting,
-      submit,
-      close,
+      form: {
+        comment: '',
+        state: firstItem ? firstItem.v.state.val : ALARM_STATES.major,
+      },
     };
+  },
+  methods: {
+    async submit() {
+      const isFormValid = await this.$validator.validateAll();
+
+      if (isFormValid) {
+        await this.config?.action?.(this.form);
+
+        this.$modals.hide();
+      }
+    },
   },
 };
 </script>

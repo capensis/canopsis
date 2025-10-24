@@ -3,7 +3,6 @@
 exports[`actions-panel Renders \`actions-panel\` with auto instruction in running 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -19,11 +18,6 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -100,115 +94,6 @@ exports[`actions-panel Renders \`actions-panel\` with auto instruction in runnin
   <button
     class="action-executeInstruction"
     disabled="disabled"
-  >
-    Resume Paused instruction|assignment|executeInstruction
-  </button>
-</div>
-`;
-
-exports[`actions-panel Renders \`actions-panel\` with custom quickActions order (snapshot) 1`] = `
-<div
-  class="shared-actions-panel"
-  inlinecount="4"
->
-  <button
-    class="action-ack"
-  >
-    Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-ackRemove"
-  >
-    Cancel ack|remove_done|ackRemove
-  </button>
-  <button
-    class="action-changeState"
-  >
-    Change and lock severity|thumbs_up_down|changeState
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
-  </button>
-  <button
-    class="action-declareTicket"
-  >
-    Declare ticket|note_add|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
-  </button>
-  <button
-    class="action-snooze"
-  >
-    Snooze alarm|alarm|snooze
-  </button>
-  <button
-    class="action-fastPbehaviorAdd"
-  >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
-  </button>
-  <button
-    class="action-pbehaviorAdd"
-  >
-    Periodical behavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="action-addBookmark"
-  >
-    Add bookmark|$vuetify.icons.bookmark_add|addBookmark
-  </button>
-  <button
-    class="action-history"
-  >
-    History|history|history
-  </button>
-  <button
-    class="action-variablesHelp"
-  >
-    List of available variables|help|variablesHelp
-  </button>
-  <button
-    class="action-exportPdf"
-  >
-    Export alarm to PDF file|assignment_returned|exportPdf
-  </button>
-  <button
-    class="action-removeAlarmsFromManualMetaAlarm"
-  >
-    Unlink alarm from manual meta alarm|link_off|removeAlarmsFromManualMetaAlarm
-  </button>
-  <button
-    class="action-executeInstruction"
-  >
-    Running instruction in progress...|assignment|executeInstruction
-  </button>
-  <button
-    class="action-executeInstruction"
-    disabled="disabled"
-  >
-    Execute New instruction|assignment|executeInstruction
-  </button>
-  <button
-    class="action-executeInstruction"
   >
     Resume Paused instruction|assignment|executeInstruction
   </button>
@@ -218,14 +103,12 @@ exports[`actions-panel Renders \`actions-panel\` with custom quickActions order 
 exports[`actions-panel Renders \`actions-panel\` with full unresolved alarm, but without access 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 />
 `;
 
 exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -241,11 +124,6 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -334,7 +212,6 @@ exports[`actions-panel Renders \`actions-panel\` with links in alarm 1`] = `
 exports[`actions-panel Renders \`actions-panel\` with links in resolved alarm 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-addBookmark"
@@ -362,7 +239,6 @@ exports[`actions-panel Renders \`actions-panel\` with links in resolved alarm 1`
 exports[`actions-panel Renders \`actions-panel\` with manual instruction in running 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -378,11 +254,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -468,7 +339,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in runn
 exports[`actions-panel Renders \`actions-panel\` with manual instruction in waiting result 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -484,11 +354,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -574,7 +439,6 @@ exports[`actions-panel Renders \`actions-panel\` with manual instruction in wait
 exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta alarm 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -590,11 +454,6 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -683,7 +542,6 @@ exports[`actions-panel Renders \`actions-panel\` with parentAlarm with auto meta
 exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -699,11 +557,6 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -782,7 +635,6 @@ exports[`actions-panel Renders \`actions-panel\` with paused manual instruction 
 exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-addBookmark"
@@ -810,7 +662,6 @@ exports[`actions-panel Renders \`actions-panel\` with resolved alarm 1`] = `
 exports[`actions-panel Renders \`actions-panel\` with simple manual instruction in running 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -826,11 +677,6 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -922,7 +768,6 @@ exports[`actions-panel Renders \`actions-panel\` with simple manual instruction 
 exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapping status 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -938,11 +783,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -1031,7 +871,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and flapp
 exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoing status 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ack"
@@ -1120,7 +959,6 @@ exports[`actions-panel Renders \`actions-panel\` with unresolved alarm and ongoi
 exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket_rules 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-ackRemove"
@@ -1136,11 +974,6 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
     class="action-ack"
   >
     Ack|check|ack
-  </button>
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
   </button>
   <button
     class="action-cancel"
@@ -1224,7 +1057,6 @@ exports[`actions-panel Renders \`actions-panel\` without assigned_declare_ticket
 exports[`actions-panel Renders \`actions-panel\` without entity, instructions, but with status stealthy 1`] = `
 <div
   class="shared-actions-panel"
-  inlinecount="4"
 >
   <button
     class="action-cancel"

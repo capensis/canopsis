@@ -6,7 +6,7 @@ exports[`availability-bar-chart-information-row Renders \`availability-bar-chart
 >
   <div
     class="availability-bar-chart-information-row__color"
-    style="background-color: rgb(45, 172, 97);"
+    style="background-color: rgb(47, 171, 99);"
   />
   <div
     class="availability-bar-chart-information-row__label"

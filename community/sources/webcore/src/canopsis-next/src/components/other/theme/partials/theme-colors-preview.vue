@@ -10,7 +10,10 @@
           justify-space-between
           align-center
         >
-          <span>{{ preparedText }}</span>
+          <span>{{ $t('theme.exampleText') }}</span>
+          <v-icon :color="color">
+            help
+          </v-icon>
         </v-layout>
       </v-card-text>
     </v-card>
@@ -24,11 +27,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
-
 import { isReadableColor, isDarkColor } from '@/helpers/color';
-
-import { useI18n } from '@/hooks/i18n';
 
 export default {
   props: {
@@ -44,23 +43,15 @@ export default {
       type: Number,
       required: false,
     },
-    text: {
-      type: String,
-      default: '',
-    },
   },
-  setup(props) {
-    const { t } = useI18n();
+  computed: {
+    isDarkBackground() {
+      return isDarkColor(this.backgroundColor);
+    },
 
-    const isDarkBackground = computed(() => isDarkColor(props.backgroundColor));
-    const isTableColorReadable = computed(() => isReadableColor(props.backgroundColor, props.color));
-    const preparedText = computed(() => props.text || t('theme.exampleText'));
-
-    return {
-      isDarkBackground,
-      isTableColorReadable,
-      preparedText,
-    };
+    isTableColorReadable() {
+      return isReadableColor(this.backgroundColor, this.color);
+    },
   },
 };
 </script>

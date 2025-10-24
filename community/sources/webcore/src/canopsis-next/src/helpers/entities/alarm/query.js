@@ -112,7 +112,6 @@ export function convertAlarmWidgetToQuery(widget) {
 
     page: 1,
     with_instructions: true,
-    with_tag_colors: true,
     with_declare_tickets: true,
     with_links: true,
     sortBy: [],

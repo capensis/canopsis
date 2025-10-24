@@ -1,5 +1,5 @@
 import { generateRenderer } from '@unit/utils/vue';
-import { createAuthModule, createActiveViewModule, createMockedStoreModules } from '@unit/utils/store';
+import { createAuthModule, createMockedStoreModules } from '@unit/utils/store';
 
 import { CANOPSIS_EDITION, ROUTES_NAMES, VIEW_USER_PERMISSIONS_NAMES, WIDGET_TYPES } from '@/constants';
 
@@ -32,11 +32,6 @@ describe('widget-wrapper', () => {
   const tabId = 'tab-id';
 
   const { authModule } = createAuthModule();
-  const {
-    editing,
-    activeViewModule,
-  } = createActiveViewModule();
-
   const authModuleWithAccess = {
     ...authModule,
     getters: {
@@ -65,7 +60,6 @@ describe('widget-wrapper', () => {
     },
     store: createMockedStoreModules([
       authModule,
-      activeViewModule,
     ]),
   });
 
@@ -78,10 +72,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: false,
       },
       store: createMockedStoreModules([
         authModuleWithAccess,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -103,10 +97,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: false,
       },
       store: createMockedStoreModules([
         authModule,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -128,10 +122,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: false,
       },
       store: createMockedStoreModules([
         authModuleWithAccess,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -153,10 +147,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: false,
       },
       store: createMockedStoreModules([
         authModule,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -178,10 +172,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: false,
       },
       store: createMockedStoreModules([
         authModuleWithAccess,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -203,10 +197,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: false,
       },
       store: createMockedStoreModules([
         authModule,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -229,10 +223,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: false,
       },
       store: createMockedStoreModules([
         authModuleWithAccess,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -246,8 +240,6 @@ describe('widget-wrapper', () => {
   });
 
   it('Renders `widget-wrapper` with editing mode', () => {
-    editing.mockReturnValue(true);
-
     const wrapper = snapshotFactory({
       propsData: {
         widget: {
@@ -256,10 +248,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: true,
       },
       store: createMockedStoreModules([
         authModuleWithAccess,
-        activeViewModule,
         {
           name: 'info',
           getters: {
@@ -273,8 +265,6 @@ describe('widget-wrapper', () => {
   });
 
   it('Renders `widget-wrapper` with title and editing mode', () => {
-    editing.mockReturnValue(true);
-
     const wrapper = snapshotFactory({
       propsData: {
         widget: {
@@ -284,10 +274,10 @@ describe('widget-wrapper', () => {
         tab: {
           _id: tabId,
         },
+        editing: true,
       },
       store: createMockedStoreModules([
         authModuleWithAccess,
-        activeViewModule,
         {
           name: 'info',
           getters: {

@@ -132,6 +132,8 @@
     "sass": "1.32.12",
     "sass-loader": "13.3.2",
     "selenium-server": "^3.141.59",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
     "svg-inline-loader": "^0.8.2",
     "url": "^0.11.3",
     "vue-cli-plugin-test-attrs": "^0.1.5",
@@ -163,5 +165,5 @@
     "@vue/cli-plugin-unit-jest/babel-jest": "29.7.0",
     "postcss": "^8.2.15"
   },
-  "packageManager": "yarn@4.9.1"
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

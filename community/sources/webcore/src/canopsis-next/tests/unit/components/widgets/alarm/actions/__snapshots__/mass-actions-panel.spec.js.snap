@@ -3,7 +3,6 @@
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] = `
 <div
   class="shared-actions-panel"
-  inline-count="3"
 >
   <button
     class="action-ack"
@@ -26,7 +25,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with empty items 1`] 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
 <div
   class="shared-actions-panel"
-  inline-count="13"
 >
   <button
     class="action-fastPbehaviorAdd"
@@ -52,11 +50,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
     class="action-ackRemove"
   >
     Cancel ack|remove_done|ackRemove
-  </button>
-  <button
-    class="action-changeState"
-  >
-    Change and lock severity|thumbs_up_down|changeState
   </button>
   <button
     class="action-cancel"
@@ -99,7 +92,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta ack 1`] = `
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] = `
 <div
   class="shared-actions-panel"
-  inline-count="11"
 >
   <button
     class="action-fastPbehaviorAdd"
@@ -162,7 +154,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with meta alarm 1`] =
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with non empty items 1`] = `
 <div
   class="shared-actions-panel"
-  inline-count="11"
 >
   <button
     class="action-fastPbehaviorAdd"
@@ -225,7 +216,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with non empty items 
 exports[`mass-actions-panel Renders \`mass-actions-panel\` with one item 1`] = `
 <div
   class="shared-actions-panel"
-  inline-count="12"
 >
   <button
     class="action-fastPbehaviorAdd"
@@ -286,69 +276,6 @@ exports[`mass-actions-panel Renders \`mass-actions-panel\` with one item 1`] = `
     class="action-rule_id..with rule id"
   >
     Follow the link "with rule id"||rule_id..with rule id
-  </button>
-</div>
-`;
-
-exports[`mass-actions-panel Renders \`mass-actions-panel\` with quickMassActions set (custom order) 1`] = `
-<div
-  class="shared-actions-panel"
-  inline-count="11"
->
-  <button
-    class="action-fastAck"
-  >
-    Fast ack|done_all|fastAck
-  </button>
-  <button
-    class="action-ack"
-  >
-    Ack|check|ack
-  </button>
-  <button
-    class="action-cancel"
-  >
-    Cancel alarm|$vuetify.icons.list_delete|cancel
-  </button>
-  <button
-    class="action-fastPbehaviorAdd"
-  >
-    Fast periodical behavior|$vuetify.icons.motion_photos_paused|fastPbehaviorAdd
-  </button>
-  <button
-    class="action-pbehaviorAdd"
-  >
-    Periodical behavior|pause|pbehaviorAdd
-  </button>
-  <button
-    class="action-fastCancel"
-  >
-    Fast cancel|delete|fastCancel
-  </button>
-  <button
-    class="action-comment"
-  >
-    Comment|comment|comment
-  </button>
-  <button
-    class="action-declareTicket"
-  >
-    Declare ticket|note_add|declareTicket
-  </button>
-  <button
-    class="action-associateTicket"
-  >
-    Associate ticket|$vuetify.icons.sticky_note_2|associateTicket
-  </button>
-  <button
-    class="action-snooze"
-  >
-    Snooze alarm|alarm|snooze
-  </button>
-  <button
-    class="action-linkToMetaAlarm"
-  >
-    Link to a meta alarm|center_focus_strong|linkToMetaAlarm
   </button>
 </div>
 `;

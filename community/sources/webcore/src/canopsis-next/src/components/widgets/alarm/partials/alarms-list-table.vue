@@ -74,13 +74,12 @@
         :loading="loading || columnsFiltersPending"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
-        :expanded.sync="expanded"
         class="alarms-list-table v-data-table--expand"
         item-key="_id"
         loader-height="2"
         hide-default-footer
         multi-sort
-        v-on="tableListeners"
+        @update:options="$emit('update:options', $event)"
       >
         <template #progress="">
           <v-fade-transition>
@@ -187,7 +186,6 @@
 <script>
 import { get, intersectionBy } from 'lodash';
 
-import { VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
   ALARM_ACTION_BUTTON_MARGINS,
   ALARM_ACTION_BUTTON_WIDTHS,
@@ -198,7 +196,7 @@ import {
   MODALS,
 } from '@/constants';
 
-import { featuresService } from '@/services/features';
+import featuresService from '@/services/features';
 import { AsyncBooting } from '@/services/async-booting';
 import { TableIntersectionObserver } from '@/services/table-intersection-observer';
 
@@ -212,7 +210,6 @@ import {
 import { isActionAvailableForAlarm } from '@/helpers/entities/alarm/form';
 import { calculateAlarmLinksColumnWidth } from '@/helpers/entities/alarm/list';
 
-import { activeViewMixin } from '@/mixins/active-view';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { widgetColumnsAlarmMixin } from '@/mixins/widget/columns/alarm';
 import { widgetRowsSelectingAlarmMixin } from '@/mixins/widget/rows/alarm-selecting';
@@ -246,7 +243,6 @@ export default {
     AlarmsListRow,
   },
   mixins: [
-    activeViewMixin,
     entitiesInfoMixin,
     widgetColumnsAlarmMixin,
     widgetStickyAlarmMixin,
@@ -350,7 +346,6 @@ export default {
   data() {
     return {
       bootedRows: {},
-      expanded: [],
     };
   },
   computed: {
@@ -366,6 +361,10 @@ export default {
 
     unresolvedSelected() {
       return this.selected.filter(item => isActionAvailableForAlarm(item, this.widget));
+    },
+
+    expanded() {
+      return this.$refs.dataTable.expansion;
     },
 
     isColumnsChanging() {
@@ -530,18 +529,6 @@ export default {
     paginationItems() {
       return [5, 10, 20, 50, 100, 200];
     },
-
-    tableListeners() {
-      const listeners = {
-        'update:options': event => this.$emit('update:options', event),
-      };
-
-      if (this.widget.parameters.pausePeriodicRefreshOnExpandPanel) {
-        listeners['update:expanded'] = this.checkExpandedForPausePeriodicRefresh;
-      }
-
-      return listeners;
-    },
   },
 
   watch: {
@@ -576,12 +563,6 @@ export default {
       },
     },
 
-    dense() {
-      if (!this.resizableColumn) {
-        this.$nextTick(() => this.calculateColumnsWidths());
-      }
-    },
-
     'widget.parameters.isVirtualScrollEnabled': {
       handler(isVirtualScrollEnabled) {
         if (isVirtualScrollEnabled) {
@@ -595,10 +576,10 @@ export default {
       immediate: true,
     },
 
-    'widget.parameters.pausePeriodicRefreshOnExpandPanel': {
-      handler(pausePeriodicRefreshOnExpandPanel) {
-        this.checkExpandedForPausePeriodicRefresh(pausePeriodicRefreshOnExpandPanel ? this.expanded : []);
-      },
+    dense() {
+      if (!this.resizableColumn) {
+        this.$nextTick(() => this.calculateColumnsWidths());
+      }
     },
   },
 
@@ -751,21 +732,6 @@ export default {
       if (this.selecting) {
         this.calculateRowsPositions();
       }
-    },
-
-    checkExpandedForPausePeriodicRefresh(expanded) {
-      if (expanded.length) {
-        this.pausePeriodicRefresh();
-
-        return;
-      }
-
-      this.resumePeriodicRefresh();
-
-      /**
-       * We need to recalculate sticky horizontal scroll position
-       */
-      setTimeout(() => this.stickyScrollHandler(), VUETIFY_ANIMATION_DELAY);
     },
   },
 };

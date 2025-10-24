@@ -4,7 +4,7 @@
     class="view"
   >
     <portal
-      v-if="activeViewEditing"
+      v-if="editing"
       :to="$constants.PORTALS_NAMES.additionalTopBarItems"
     >
       <window-size-field
@@ -19,11 +19,11 @@
       :columns-count="$constants.WIDGET_GRID_COLUMNS_COUNT"
       :row-height="$constants.WIDGET_GRID_ROW_HEIGHT"
       :style="layoutStyle"
-      :disabled="!activeViewEditing || !visible"
+      :disabled="!editing || !visible"
     >
       <template #item="{ on, item }">
         <widget-edit-drag-handler
-          v-if="activeViewEditing"
+          v-if="editing"
           :widget="item.widget"
           :auto-height="item.autoHeight"
           :tab="tab"
@@ -32,6 +32,8 @@
         <widget-wrapper
           :widget="item.widget"
           :tab="tab"
+          :kiosk="kiosk"
+          :editing="editing"
           :visible="visible"
         />
       </template>
@@ -72,6 +74,10 @@ export default {
       type: Object,
       required: true,
     },
+    kiosk: {
+      type: Boolean,
+      default: false,
+    },
     visible: {
       type: Boolean,
       default: false,
@@ -106,7 +112,7 @@ export default {
       },
     },
 
-    activeViewEditing() {
+    editing() {
       this.size = MQ_KEYS_TO_WIDGET_GRID_SIZES_KEYS_MAP[this.$mq];
     },
 

@@ -1,13 +1,41 @@
 <template>
-  <card-iterator-item
-    :drag-handle-class="dragHandleClass"
-    :default-expanded="isExpanded"
-    class="column-field"
-    small
-    @remove="$emit('remove')"
-  >
-    <template #header>
+  <v-card class="column-field">
+    <v-tooltip left>
+      <template #activator="{ on }">
+        <v-btn
+          class="column-field__remove-btn"
+          small
+          text
+          icon
+          v-on="on"
+          @click="$emit('remove')"
+        >
+          <v-icon
+            color="error"
+            small
+          >
+            close
+          </v-icon>
+        </v-btn>
+      </template>
+      <span>{{ $t('common.delete') }}</span>
+    </v-tooltip>
+    <v-card-text>
       <v-layout align-center>
+        <span class="handler mr-1">
+          <v-icon
+            :class="dragHandleClass"
+            class="draggable"
+          >
+            drag_indicator
+          </v-icon>
+        </span>
+        <c-expand-btn
+          v-if="!withoutCustomLabel"
+          v-model="expanded"
+          :color="hasChildrenError ? 'error' : ''"
+          class="mr-1"
+        />
         <c-name-field
           v-if="isCustom"
           v-field="column.label"
@@ -45,28 +73,27 @@
           <span>{{ $t('common.convertToCustomColumn') }}</span>
         </v-tooltip>
       </v-layout>
-    </template>
-
-    <v-expand-transition v-if="!withoutCustomLabel" mode="out-in">
-      <column-field-expand-panel
-        v-if="bootedExpandPanel"
-        v-field="column"
-        :name="name"
-        :with-label="!isCustom"
-        :with-field="isCustom"
-        :with-html="withHtml"
-        :with-template="withTemplate"
-        :with-color-indicator="withColorIndicator"
-        :with-instructions="withInstructions"
-        :with-simple-template="withSimpleTemplate"
-        :with-filter-on-click="withFilterOnClick"
-        :optional-infos-attributes="optionalInfosAttributes"
-        :without-infos-attributes="withoutInfosAttributes"
-        :variables="variables"
-        class="pl-1"
-      />
-    </v-expand-transition>
-  </card-iterator-item>
+      <v-expand-transition v-if="!withoutCustomLabel" mode="out-in">
+        <column-field-expand-panel
+          v-if="bootedExpandPanel"
+          v-show="expanded"
+          v-field="column"
+          :name="name"
+          :with-label="!isCustom"
+          :with-field="isCustom"
+          :with-html="withHtml"
+          :with-template="withTemplate"
+          :with-color-indicator="withColorIndicator"
+          :with-instructions="withInstructions"
+          :with-simple-template="withSimpleTemplate"
+          :optional-infos-attributes="optionalInfosAttributes"
+          :without-infos-attributes="withoutInfosAttributes"
+          :variables="variables"
+          class="pl-1"
+        />
+      </v-expand-transition>
+    </v-card-text>
+  </v-card>
 </template>
 
 <script>
@@ -90,13 +117,11 @@ import { useValidationChildren } from '@/hooks/validator/validation-children';
 import { useModelField } from '@/hooks/form/model-field';
 import { useAsyncBootingChild } from '@/hooks/render/async-booting';
 
-import CardIteratorItem from '@/components/forms/fields/card-iterator/c-card-iterator-item.vue';
-
 import ColumnFieldExpandPanel from './column-field-expand-panel.vue';
 
 export default {
   inject: ['$validator', '$asyncBooting'],
-  components: { ColumnFieldExpandPanel, CardIteratorItem },
+  components: { ColumnFieldExpandPanel },
   model: {
     prop: 'column',
     event: 'input',
@@ -146,10 +171,6 @@ export default {
       type: Boolean,
       default: false,
     },
-    withFilterOnClick: {
-      type: Boolean,
-      default: false,
-    },
     optionalInfosAttributes: {
       type: Boolean,
       default: false,
@@ -168,13 +189,13 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const expanded = ref(!props.column?.column);
     const isCustom = ref(false);
-    const isExpanded = ref(!props.column.column);
 
     const { t, tc } = useI18n();
     const validator = useValidator();
     const { updateModel } = useModelField(props, emit);
-    const { booted: bootedExpandPanel } = useAsyncBootingChild(!props.column?.column);
+    const { booted: bootedExpandPanel } = useAsyncBootingChild(expanded.value);
     const { hasChildrenError } = useValidationChildren();
 
     const selectMenuProps = {
@@ -285,7 +306,7 @@ export default {
     };
 
     return {
-      isExpanded,
+      expanded,
       isCustom,
       bootedExpandPanel,
       availableColumns,
@@ -302,7 +323,25 @@ export default {
 </script>
 
 <style lang="scss">
-.column-field .v-input {
-  min-width: 236px;
+.column-field {
+  position: relative;
+
+  &__remove-btn.v-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  &-menu {
+    .v-subheader {
+      font-size: 16px;
+      font-weight: 700;
+      color: inherit;
+    }
+
+    .v-list-item {
+      padding-left: 24px;
+    }
+  }
 }
 </style>

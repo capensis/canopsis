@@ -1,11 +1,11 @@
-import { kebabCase, merge, pick } from 'lodash';
+import { kebabCase, merge } from 'lodash';
 
-import { DEFAULT_THEME_COLORS, COLORS } from '@/config';
-import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants';
+import { DEFAULT_THEME_COLORS } from '@/config';
 
-import { colorToRgba, getDarkenColor, isDarkColor, getMostReadableTextColor } from '@/helpers/color';
+import { colorToRgba, getDarkenColor, isDarkColor } from '@/helpers/color';
 import { themePropertiesToCSSVariables } from '@/helpers/entities/theme/entity';
-import { convertTypeColors } from '@/helpers/entities/theme/form';
+
+import { THEME_FONT_PIXEL_SIZES, THEME_FONT_SIZES } from '@/constants/theme';
 
 export const systemThemeMixin = {
   data() {
@@ -52,8 +52,6 @@ export const systemThemeMixin = {
 
     ejectCSS() {
       document.head.removeChild(this.styleElement);
-
-      delete this.styleElement;
     },
 
     setTheme(theme) {
@@ -62,26 +60,14 @@ export const systemThemeMixin = {
 
       const white = '#fff';
       const black = '#000';
+
       const isDark = isDarkColor(main.background);
 
-      const stateText = Object.entries(state).reduce((acc, [key, color]) => {
-        acc[`${key}-text`] = getMostReadableTextColor(color);
-
-        return acc;
-      }, {});
-
       const vuetifyVariables = merge({}, DEFAULT_THEME_COLORS, {
-        table,
-        'impact-state': COLORS.impactStateGrouped,
-
-        state: {
-          ...state,
-          ...stateText,
-        },
-        applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
-
         ...main,
-        ...convertTypeColors(main),
+        table,
+        state,
+        applicationBackground: getDarkenColor(main.background, isDark ? 7 : 2),
       });
 
       const variables = themePropertiesToCSSVariables(vuetifyVariables);
@@ -92,13 +78,6 @@ export const systemThemeMixin = {
 
       const lightBaseColor = isDark ? black : main.active_color;
       const darkBaseColor = isDark ? main.active_color : white;
-
-      const typeBackgroundColors = pick(vuetifyVariables, [
-        'error-background',
-        'warning-background',
-        'success-background',
-        'info-background',
-      ]);
 
       const textLight = {
         primary: colorToRgba(lightBaseColor, 0.87),
@@ -141,8 +120,6 @@ export const systemThemeMixin = {
         buttonsDark,
         stepper,
         divider,
-
-        ...typeBackgroundColors,
       };
       this.system.dark = isDark;
       this.system.theme = theme;

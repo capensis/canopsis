@@ -73,8 +73,8 @@ state_settings:
         major: 20
         critical: 30
         type: 1
-user_notification_settings:
-  settings:
+notification:
+  instruction:
     _id: notification
     instruction:
       rate: true

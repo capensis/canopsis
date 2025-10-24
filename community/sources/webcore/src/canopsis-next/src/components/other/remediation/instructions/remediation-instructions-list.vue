@@ -30,14 +30,14 @@
     <template #type="{ item }">
       {{ $t(`remediation.instruction.types.${item.type}`) }}
     </template>
-    <template #updated="{ item }">
-      {{ item.updated | date }}
+    <template #last_modified="{ item }">
+      {{ item.last_modified | date }}
     </template>
     <template #last_executed_on="{ item }">
       {{ item.last_executed_on | date }}
     </template>
     <template #actions="{ item }">
-      <v-layout>
+      <v-layout justify-end>
         <c-action-btn
           v-if="isInstructionDismissed(item)"
           :tooltip="$t('remediation.instruction.approvalDismissed')"
@@ -136,12 +136,11 @@ export default {
         },
         {
           text: this.$t('common.lastModifiedOn'),
-          value: 'updated',
+          value: 'last_modified',
         },
         {
           text: this.$t('common.priority'),
           value: 'priority',
-          sortable: false,
         },
         {
           text: this.$t('common.status'),

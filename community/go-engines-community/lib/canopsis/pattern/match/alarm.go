@@ -2,7 +2,6 @@ package match
 
 import (
 	"fmt"
-	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -12,8 +11,6 @@ func MatchAlarmPattern(p pattern.Alarm, alarm *types.Alarm) (bool, error) {
 	if len(p) == 0 {
 		return true, nil
 	}
-
-	now := time.Now() // to compute relative time values
 
 	for idx := range p {
 		matched := false
@@ -59,7 +56,7 @@ func MatchAlarmPattern(p pattern.Alarm, alarm *types.Alarm) (bool, error) {
 			if !foundField || err != nil {
 				if t, ok := alarm.GetTimeField(f); ok {
 					foundField = true
-					matched, err = v.Condition.MatchTime(t, now)
+					matched, err = v.Condition.MatchTime(t)
 				}
 			}
 			if !foundField || err != nil {
@@ -106,7 +103,6 @@ func ValidateAlarmPattern(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFiel
 	for _, field := range onlyTimeAbsoluteFields {
 		timeAbsoluteFieldsMap[field] = true
 	}
-	now := time.Now() // to compute relative time values
 
 	for idx := range p {
 		if len(p[idx]) == 0 {
@@ -149,7 +145,7 @@ func ValidateAlarmPattern(p pattern.Alarm, forbiddenFields, onlyTimeAbsoluteFiel
 			if !foundField || err != nil {
 				if t, ok := emptyAlarm.GetTimeField(f); ok {
 					foundField = true
-					_, err = v.Condition.MatchTime(t, now)
+					_, err = v.Condition.MatchTime(t)
 				}
 			}
 			if !foundField || err != nil {
