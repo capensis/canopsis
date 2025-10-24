@@ -10,7 +10,7 @@ exports[`storage-settings-alarm-external-tag-form Renders \`storage-settings-ala
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Alarm external tags data storage
+      Alarm external tags
     </div>
     <!---->
   </div>
@@ -28,8 +28,11 @@ exports[`storage-settings-alarm-external-tag-form Renders \`storage-settings-ala
     </span>
   </div>
   <c-enabled-duration-field-stub
-    label="Clear external tags after"
+    hide-value-on-false=""
+    label="Delete external tags"
     name="alarm_external_tag.delete_after"
+    suffix="Older than"
+    switcher=""
     value="[object Object]"
   />
 </div>
@@ -45,14 +48,17 @@ exports[`storage-settings-alarm-external-tag-form Renders \`storage-settings-ala
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Alarm external tags data storage
+      Alarm external tags
     </div>
     <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    label="Clear external tags after"
+    hide-value-on-false=""
+    label="Delete external tags"
     name="alarm_external_tag.delete_after"
+    suffix="Older than"
+    switcher=""
     value="[object Object]"
   />
 </div>

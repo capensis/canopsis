@@ -798,11 +798,21 @@ export default {
       phrase: 'update the storage policy',
     },
     cleanStorage: {
-      title: 'Archive/delete entities. Are you sure ?',
-      text: 'You are about to archive and/or delete data.\n'
-        + '<strong>Deletion operation won\'t be cancellable.</strong>',
-      phraseText: 'Please, type the following to confirm:',
-      phrase: 'archive or delete',
+      title: 'Clean archive',
+      text: '<span class="font-weight-regular">Are you sure?</span>\n'
+        + '<strong>This operation won\'t be cancellable. All archived entities (disabled and unlinked) will be deleted forever</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time delete operation</strong> :',
+      phrase: 'delete',
+    },
+    archiveUnlinkedEntities: {
+      title: 'Archive unlinked entities',
+      text: '<span class="font-weight-regular">Are you sure ?</span>\n'
+        + '<strong>This operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time archive operation</strong> :',
+      phrase: 'archive',
+    },
+    archiveDisabledEntities: {
+      title: 'Archive disabled entities',
     },
     deleteExternalDataTable: {
       title: 'Delete Reference table / collection',
@@ -1078,9 +1088,6 @@ export default {
     duplicate: {
       title: 'Duplicate theme',
     },
-  },
-  archiveDisabledEntities: {
-    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
   },
   createIcon: {
     create: {
