@@ -9,7 +9,7 @@ exports[`pbehaviors-list-alarm-filtering-btn Renders \`pbehaviors-list-alarm-fil
     class="v-btn__content"
   >
     <!---->
-  Run alarm filtering
+  Evaluate all patterns
 
   </span>
 </button>

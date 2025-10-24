@@ -103,7 +103,20 @@ export const PATTERN_FIELD_TYPES = {
   boolean: 'bool',
   null: 'null',
   stringArray: 'string_array',
+  timestamp: 'timestamp',
 };
+
+export const DEFAULT_PATTERN_FIELD_TYPES = [
+  { value: PATTERN_FIELD_TYPES.string },
+  { value: PATTERN_FIELD_TYPES.number },
+  { value: PATTERN_FIELD_TYPES.boolean },
+  { value: PATTERN_FIELD_TYPES.stringArray },
+];
+
+export const ENTITY_PATTERN_FIELD_TYPES = [
+  ...DEFAULT_PATTERN_FIELD_TYPES,
+  { value: PATTERN_FIELD_TYPES.timestamp },
+];
 
 export const PATTERN_OPERATORS_WITHOUT_VALUE = [
   PATTERN_OPERATORS.exist,
