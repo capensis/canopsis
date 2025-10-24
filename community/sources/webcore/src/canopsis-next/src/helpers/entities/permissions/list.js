@@ -1,4 +1,4 @@
-import { difference } from 'lodash';
+import { difference, isEmpty } from 'lodash';
 
 import {
   PERMISSIONS_TYPES_TO_ACTIONS,
@@ -6,6 +6,8 @@ import {
   USER_PERMISSIONS_GROUPS,
   INVERSE_CONDITIONAL_PERMISSIONS_MAP,
 } from '@/constants';
+
+import { filterObjectEntries, collectLeafKeys } from '@/helpers/collection';
 
 /**
  * Check user access for a permission
@@ -211,52 +213,47 @@ export const filterTreeviewPermissions = (treeviewPermissions, search = '') => {
   }
 
   const searchLower = search.toLowerCase().trim();
-  const filtered = {};
 
+  /**
+   * Check if a node matches the search term
+   *
+   * @param {Object} node - The node to check
+   * @param {string} key - The key of the node
+   * @returns {boolean} True if the node matches the search term
+   */
   const matchesSearch = (node, key) => (
     node.name?.toLowerCase().includes(searchLower)
     || node.description?.toLowerCase().includes(searchLower)
     || key.toLowerCase().includes(searchLower)
   );
 
+  /**
+   * Recursively filters a node and its children based on search criteria
+   *
+   * @param {Object} node - The node to filter
+   * @param {string} key - The key of the node
+   * @returns {Object|null} Filtered node with children, or null if no matches found
+   */
   const filterNode = (node, key) => {
-    const nodeMatches = matchesSearch(node, key);
-
     if (node.children) {
-      const filteredChildren = {};
-      let hasMatchingChildren = false;
+      const filteredChildren = filterObjectEntries(
+        node.children,
+        (childNode, childKey) => filterNode(childNode, childKey),
+      );
 
-      Object.entries(node.children).forEach(([childKey, childNode]) => {
-        const result = filterNode(childNode, childKey);
-        if (result) {
-          filteredChildren[childKey] = result;
-          hasMatchingChildren = true;
-        }
-      });
-
-      if (nodeMatches || hasMatchingChildren) {
-        const filteredChildrenIds = new Set(Object.keys(filteredChildren));
-        const filteredAllChildren = node.allChildren.filter(child => filteredChildrenIds.has(child._id));
-
-        return {
-          ...node,
-          children: filteredChildren,
-          allChildren: filteredAllChildren.length > 0 ? filteredAllChildren : node.allChildren,
-        };
+      if (isEmpty(filteredChildren)) {
+        return null;
       }
 
-      return null;
+      const filteredAllChildren = node.allChildren.filter(
+        child => collectLeafKeys(filteredChildren).has(child._id),
+      );
+
+      return { ...node, children: filteredChildren, allChildren: filteredAllChildren };
     }
 
-    return nodeMatches ? node : null;
+    return matchesSearch(node, key) ? node : null;
   };
 
-  Object.entries(treeviewPermissions).forEach(([key, node]) => {
-    const result = filterNode(node, key);
-    if (result) {
-      filtered[key] = result;
-    }
-  });
-
-  return filtered;
+  return filterObjectEntries(treeviewPermissions, (node, key) => filterNode(node, key));
 };
