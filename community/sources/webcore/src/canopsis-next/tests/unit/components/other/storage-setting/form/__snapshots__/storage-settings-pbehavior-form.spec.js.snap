@@ -10,7 +10,7 @@ exports[`storage-settings-pbehavior-form Renders \`storage-settings-pbehavior-fo
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      PBehavior data storage
+      PBehavior
     </div>
     <!---->
   </div>
@@ -26,9 +26,12 @@ exports[`storage-settings-pbehavior-form Renders \`storage-settings-pbehavior-fo
     </span>
   </div>
   <c-enabled-duration-field-stub
-    help-text="When switched on, inactive PBehaviors will be deleted after the defined time period from the last event."
-    label="Delete PBehavior data after"
+    help-text="Inactive PBehaviors will be deleted after the defined time period from the last event"
+    hide-value-on-false=""
+    label="Delete inactive PBehavior"
     name="pbehavior.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>
@@ -44,15 +47,18 @@ exports[`storage-settings-pbehavior-form Renders \`storage-settings-pbehavior-fo
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      PBehavior data storage
+      PBehavior
     </div>
     <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    help-text="When switched on, inactive PBehaviors will be deleted after the defined time period from the last event."
-    label="Delete PBehavior data after"
+    help-text="Inactive PBehaviors will be deleted after the defined time period from the last event"
+    hide-value-on-false=""
+    label="Delete inactive PBehavior"
     name="pbehavior.delete_after"
+    suffix="After"
+    switcher=""
     value="[object Object]"
   />
 </div>

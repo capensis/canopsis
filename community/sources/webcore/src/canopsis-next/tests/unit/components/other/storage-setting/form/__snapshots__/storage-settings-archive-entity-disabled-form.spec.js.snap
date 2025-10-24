@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`storage-settings-archive-entity-disabled-form Renders \`storage-settings-archive-entity-disabled-form\` with custom form 1`] = `
+<div
+  class="v-input v-input--is-label-active v-input--is-dirty theme--light v-input--selection-controls v-input--checkbox primary--text"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-input--selection-controls__input"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light primary--text"
+        >
+          check_box
+        </i>
+        <input
+          aria-checked="true"
+          role="checkbox"
+          type="checkbox"
+          value=""
+        />
+        <div
+          class="v-input--selection-controls__ripple primary--text"
+        />
+      </div>
+      <label
+        class="v-label theme--light"
+        style="left: 0px; position: relative;"
+      >
+    Remove the impacting and dependent entities as well
+        <c-help-icon-stub
+          color="info"
+          icon-class="ml-2"
+          max-width="300"
+          text="<strong>For connectors:</strong>
+<ul><li>all impacting and dependent <strong class=\\"font-italic\\">components</strong> and <strong class=\\"font-italic\\">resources</strong> will be archived or deleted forever.</li></ul>
+<strong>For components:</strong>
+<ul><li>all dependent <strong class=\\"font-italic\\">resources</strong> will be archived or deleted forever as well.</li></ul>"
+          top="top"
+        />
+      </label>
+    </div>
+    <div
+      class="v-messages theme--light primary--text"
+    >
+      <transition-group-stub
+        class="v-messages__wrapper"
+        name="message-transition"
+        tag="div"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`storage-settings-archive-entity-disabled-form Renders \`storage-settings-archive-entity-disabled-form\` with default form 1`] = `
+<div
+  class="v-input theme--light v-input--selection-controls v-input--checkbox"
+>
+  <div
+    class="v-input__control"
+  >
+    <div
+      class="v-input__slot"
+    >
+      <div
+        class="v-input--selection-controls__input"
+      >
+        <i
+          aria-hidden="true"
+          class="v-icon notranslate material-icons theme--light"
+        >
+          check_box_outline_blank
+        </i>
+        <input
+          aria-checked="false"
+          role="checkbox"
+          type="checkbox"
+          value=""
+        />
+        <div
+          class="v-input--selection-controls__ripple"
+        />
+      </div>
+      <label
+        class="v-label theme--light"
+        style="left: 0px; position: relative;"
+      >
+    Remove the impacting and dependent entities as well
+        <c-help-icon-stub
+          color="info"
+          icon-class="ml-2"
+          max-width="300"
+          text="<strong>For connectors:</strong>
+<ul><li>all impacting and dependent <strong class=\\"font-italic\\">components</strong> and <strong class=\\"font-italic\\">resources</strong> will be archived or deleted forever.</li></ul>
+<strong>For components:</strong>
+<ul><li>all dependent <strong class=\\"font-italic\\">resources</strong> will be archived or deleted forever as well.</li></ul>"
+          top="top"
+        />
+      </label>
+    </div>
+    <div
+      class="v-messages theme--light"
+    >
+      <transition-group-stub
+        class="v-messages__wrapper"
+        name="message-transition"
+        tag="div"
+      />
+    </div>
+  </div>
+</div>
+`;
