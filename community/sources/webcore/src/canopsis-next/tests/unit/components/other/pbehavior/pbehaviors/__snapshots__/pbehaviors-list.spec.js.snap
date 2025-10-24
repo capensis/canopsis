@@ -508,7 +508,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </div>
             </th>
             <th
-              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-label="Pattern filtering time: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_ms"
@@ -521,7 +521,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span
                   class=""
                 >
-                  Alarm filtering time
+                  Pattern filtering time
                 </span>
                 <i
                   aria-hidden="true"
@@ -533,7 +533,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
               </div>
             </th>
             <th
-              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-label="Last pattern evaluation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_exec_at"
@@ -546,7 +546,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props 1`] = `
                 <span
                   class=""
                 >
-                  Last filtering date
+                  Last pattern evaluation date
                 </span>
                 <i
                   aria-hidden="true"
@@ -3157,7 +3157,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
               </div>
             </th>
             <th
-              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-label="Pattern filtering time: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_ms"
@@ -3170,7 +3170,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
                 <span
                   class=""
                 >
-                  Alarm filtering time
+                  Pattern filtering time
                 </span>
                 <i
                   aria-hidden="true"
@@ -3182,7 +3182,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
               </div>
             </th>
             <th
-              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-label="Last pattern evaluation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_exec_at"
@@ -3195,7 +3195,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with custom props and with 
                 <span
                   class=""
                 >
-                  Last filtering date
+                  Last pattern evaluation date
                 </span>
                 <i
                   aria-hidden="true"
@@ -5719,7 +5719,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               </div>
             </th>
             <th
-              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-label="Pattern filtering time: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_ms"
@@ -5732,7 +5732,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span
                   class=""
                 >
-                  Alarm filtering time
+                  Pattern filtering time
                 </span>
                 <i
                   aria-hidden="true"
@@ -5744,7 +5744,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
               </div>
             </th>
             <th
-              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-label="Last pattern evaluation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_exec_at"
@@ -5757,7 +5757,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with default props 1`] = `
                 <span
                   class=""
                 >
-                  Last filtering date
+                  Last pattern evaluation date
                 </span>
                 <i
                   aria-hidden="true"
@@ -6326,7 +6326,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </div>
             </th>
             <th
-              aria-label="Alarm filtering time: Not sorted. Activate to sort ascending."
+              aria-label="Pattern filtering time: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_ms"
@@ -6339,7 +6339,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span
                   class=""
                 >
-                  Alarm filtering time
+                  Pattern filtering time
                 </span>
                 <i
                   aria-hidden="true"
@@ -6351,7 +6351,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
               </div>
             </th>
             <th
-              aria-label="Last filtering date: Not sorted. Activate to sort ascending."
+              aria-label="Last pattern evaluation date: Not sorted. Activate to sort ascending."
               aria-sort="none"
               class="text-start sortable"
               data-value="pattern_exec_at"
@@ -6364,7 +6364,7 @@ exports[`pbehaviors-list Renders \`pbehaviors-list\` with expanded panel 1`] = `
                 <span
                   class=""
                 >
-                  Last filtering date
+                  Last pattern evaluation date
                 </span>
                 <i
                   aria-hidden="true"

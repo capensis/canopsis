@@ -1,6 +1,7 @@
 import { isUndefined, omit, pick, cloneDeep } from 'lodash';
 
 import {
+  PATTERNS_FIELDS,
   REMEDIATION_INSTRUCTION_APPROVAL_TYPES,
   REMEDIATION_INSTRUCTION_STATUSES,
   REMEDIATION_INSTRUCTION_TYPES,
@@ -12,6 +13,7 @@ import { uuid } from '@/helpers/uuid';
 import { getLetterByIndex } from '@/helpers/string';
 import { durationToForm } from '@/helpers/date/duration';
 import { flattenErrorMap } from '@/helpers/entities/shared/form';
+import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/filter/form';
 
 /**
  * @typedef {
@@ -96,6 +98,7 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 /**
  * @typedef {Object} RemediationInstructionAuto
  * @property {RemediationInstructionAutoTrigger[]} triggers
+ * @property {RemediationInstructionAutoTrigger[]} repeat_triggers
  * @property {number} [priority]
  * @property {number} [retry_count]
  * @property {RemediationInstructionJob[]} [jobs]
@@ -119,6 +122,7 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
 /**
  * @typedef {RemediationInstruction} RemediationInstructionForm
  * @property {boolean} retry_enabled
+ * @property {boolean} enabled_repeat_triggers
  * @property {RemediationInstructionStepForm[]} steps
  * @property {RemediationInstructionJobForm[]} jobs
  * @property {RemediationInstructionApprovalForm} approval
@@ -129,6 +133,21 @@ import { flattenErrorMap } from '@/helpers/entities/shared/form';
  * @property {string} [user]
  * @property {string} [role]
  * @property {string} comment
+ */
+
+/**
+ * @typedef {RemediationInstruction} RemediationInstructionFull
+ * @property {string[]} [active_on_pbh] - Array of pbehavior IDs when the instruction should be active
+ * @property {string[]} [disabled_on_pbh] - Array of pbehavior IDs when the instruction should be disabled
+ */
+
+/**
+ * @typedef {RemediationInstructionForm} RemediationInstructionFullForm
+ * @property {FilterPatternsForm & { active_on_pbh: string[], disabled_on_pbh: string[] }} patterns - Pattern form data
+ * @property {PatternGroupsForm} [patterns.alarm_pattern] - Alarm pattern form data
+ * @property {PatternGroupsForm} [patterns.entity_pattern] - Entity pattern form data
+ * @property {string[]} patterns.active_on_pbh - Array of pbehavior IDs when the instruction should be active
+ * @property {string[]} patterns.disabled_on_pbh - Array of pbehavior IDs when the instruction should be disabled
  */
 
 /**
@@ -304,14 +323,35 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => {
     steps: remediationInstructionStepsToForm(remediationInstruction.steps),
     approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
     jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
+    enabled_repeat_triggers: !!remediationInstruction.repeat_triggers?.length,
   };
 
   if (remediationInstruction.triggers) {
     form.triggers = [...remediationInstruction.triggers];
   }
 
+  if (remediationInstruction.repeat_triggers) {
+    form.repeat_triggers = [...remediationInstruction.repeat_triggers];
+  }
+
   return form;
 };
+
+/**
+ * Convert a remediation instruction object to a complete form object including patterns
+ *
+ * @param {RemediationInstructionFull} [remediationInstruction={}] - The remediation instruction object
+ * @returns {RemediationInstructionFullForm} Complete form object with patterns
+ */
+export const remediationInstructionToFullForm = (remediationInstruction = {}) => ({
+  ...remediationInstructionToForm(remediationInstruction),
+  patterns: {
+    ...filterPatternsToForm(remediationInstruction, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+
+    active_on_pbh: remediationInstruction?.active_on_pbh ?? [],
+    disabled_on_pbh: remediationInstruction?.disabled_on_pbh ?? [],
+  },
+});
 
 /**
  * Convert a remediation instruction step operations form array to a API compatible operation array
@@ -383,8 +423,12 @@ export const formToRemediationInstruction = (form) => {
     jobs,
     priority,
     triggers,
+
     retry_enabled: retryEnabled,
     retry_count: retryCount,
+    enabled_repeat_triggers: enabledRepeatTriggers,
+    repeat_triggers: repeatTriggers,
+
     ...instruction
   } = form;
 
@@ -396,6 +440,7 @@ export const formToRemediationInstruction = (form) => {
     if (isInstructionTypeAuto(form?.type)) {
       instruction.priority = priority;
       instruction.triggers = triggers;
+      instruction.repeat_triggers = enabledRepeatTriggers ? repeatTriggers : [];
     }
   }
 
@@ -432,6 +477,20 @@ export const remediationInstructionErrorsToForm = (errors, form) => flattenError
   }
 
   return errorMessages;
+});
+
+/**
+ * Convert a remediation instruction form object to an API request compatible object
+ *
+ * @param {RemediationInstructionFullForm} [form={}] - The form object containing the full remediation instruction data
+ * @returns {RemediationInstructionFullForm} API-compatible remediation instruction object with patterns
+ */
+export const formToRemediationInstructionRequest = (form = {}) => ({
+  ...formToRemediationInstruction(form),
+  ...formFilterToPatterns(form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
+
+  active_on_pbh: form.patterns?.active_on_pbh,
+  disabled_on_pbh: form.patterns?.disabled_on_pbh,
 });
 
 /**

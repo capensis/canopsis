@@ -85,11 +85,38 @@
         />
       </v-fade-transition>
     </v-layout>
-    <c-triggers-field
-      v-if="isAutoType"
-      v-field="form.triggers"
-      :triggers="availableTriggers"
-    />
+    <template v-if="isAutoType">
+      <c-triggers-field
+        v-field="form.triggers"
+        :types="availableTriggers"
+        with-additional-values
+      />
+      <v-layout>
+        <c-enabled-field
+          v-field="form.enabled_repeat_triggers"
+          :label="$t('remediation.instruction.enabledRepeatTrigger')"
+        >
+          <template #append>
+            <c-help-icon
+              :text="$t('remediation.instruction.tooltips.enabledRepeatTriggerTooltip')"
+              icon="help"
+              color="grey darken-1"
+              top
+            />
+          </template>
+        </c-enabled-field>
+      </v-layout>
+      <v-expand-transition>
+        <c-triggers-field
+          v-if="form.enabled_repeat_triggers"
+          v-field="form.repeat_triggers"
+          :types="availableRepeatTriggers"
+          :label="$t('remediation.instruction.repeatTriggers')"
+          name="repeat_triggers"
+          translation-key-prefix="common.repeatTriggers"
+        />
+      </v-expand-transition>
+    </template>
     <remediation-instruction-jobs-form
       v-if="isAutoType || isManualSimplified"
       v-field="form.jobs"
@@ -99,6 +126,7 @@
       v-else
       v-field="form.steps"
       :disabled="disabled"
+      :template-vars="templateVars"
     />
     <remediation-instruction-approval-form
       v-if="!disabledCommon"
@@ -112,7 +140,10 @@
 <script>
 import { computed } from 'vue';
 
-import { REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES } from '@/constants';
+import {
+  REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES,
+  REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES,
+} from '@/constants';
 
 import { isInstructionTypeAuto, isInstructionTypeSimpleManual } from '@/helpers/entities/remediation/instruction/form';
 
@@ -154,9 +185,14 @@ export default {
       type: Boolean,
       default: false,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props, { emit }) {
     const availableTriggers = REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
+    const availableRepeatTriggers = REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES;
 
     const { updateModel } = useModelField(props, emit);
 
@@ -180,6 +216,7 @@ export default {
 
     return {
       availableTriggers,
+      availableRepeatTriggers,
 
       isAutoType,
       isManualSimplified,
@@ -187,6 +224,5 @@ export default {
       updateRetryEnabled,
     };
   },
-
 };
 </script>

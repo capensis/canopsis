@@ -107,6 +107,10 @@ func (e *executor) Parse(text string) ParsedTemplate {
 }
 
 func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {
+	if tpl == nil {
+		return "", nil
+	}
+
 	buf, ok := e.bufPool.Get().(*bytes.Buffer)
 	if !ok {
 		return "", errors.New("unknown buffer type")

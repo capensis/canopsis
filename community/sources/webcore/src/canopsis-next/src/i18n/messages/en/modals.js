@@ -49,6 +49,22 @@ export default {
       title: 'Edit an information',
     },
   },
+  createEntityInfoProperty: {
+    create: {
+      title: 'Add entity infos properties',
+      success: 'Entity info property created successfully',
+    },
+    edit: {
+      title: 'Edit entity infos properties',
+      success: 'Entity info property updated successfully',
+    },
+    duplicate: {
+      title: 'Duplicate entity infos properties',
+    },
+    remove: {
+      success: 'Entity info property removed successfully',
+    },
+  },
   view: {
     create: {
       title: 'Create a view',
@@ -782,17 +798,39 @@ export default {
       phrase: 'update the storage policy',
     },
     cleanStorage: {
-      title: 'Archive/delete entities. Are you sure ?',
-      text: 'You are about to archive and/or delete data.\n'
-        + '<strong>Deletion operation won\'t be cancellable.</strong>',
-      phraseText: 'Please, type the following to confirm:',
-      phrase: 'archive or delete',
+      title: 'Clean archive',
+      text: '<span class="font-weight-regular">Are you sure?</span>\n'
+        + '<strong>This operation won\'t be cancellable. All archived entities (disabled and unlinked) will be deleted forever</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time delete operation</strong> :',
+      phrase: 'delete',
+    },
+    archiveUnlinkedEntities: {
+      title: 'Archive unlinked entities',
+      text: '<span class="font-weight-regular">Are you sure ?</span>\n'
+        + '<strong>This operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time archive operation</strong> :',
+      phrase: 'archive',
+    },
+    archiveDisabledEntities: {
+      title: 'Archive disabled entities',
     },
     deleteExternalDataTable: {
       title: 'Delete Reference table / collection',
       text: 'You are about to delete data.\n'
         + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type table / collection name to confirm:',
+    },
+    templateTestingData: {
+      title: 'Delete test data',
+      text: 'You are about to delete test data.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type test data name to confirm:',
+    },
+    templateTestingTest: {
+      title: 'Delete test',
+      text: 'You are about to delete test.\n'
+        + '<strong>Deletion operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type test name to confirm:',
     },
   },
   pbehaviorsCalendar: {
@@ -802,7 +840,7 @@ export default {
     },
   },
   confirmationRunAlarmFiltering: {
-    title: 'Run alarm filtering ?',
+    title: 'Evaluate all patterns ?',
     text: 'This procedure will impact <strong>performance</strong> of Canopsis',
   },
   createAlarmPattern: {
@@ -1021,6 +1059,14 @@ export default {
     title: 'Confirm create tickets',
     text: 'Some alarms already have tickets created.\nDo you want to create new tickets for them?',
   },
+  confirmationRemoveEntityInfoProperty: {
+    title: 'Delete entity info property',
+    alert: '<span class="text-body-1">You are about to delete properties of entity infos <strong>{name}</strong>.</span>\n'
+      + '<strong>Deletion operation won’t be cancellable.</strong>',
+    text: 'In the following places <strong>alias</strong> will be change to <strong>entity infos name</strong>,'
+      + ' selected <strong>type will not be changed</strong>: '
+      + '<ul><li>patterns</li><li>advanced search</li><li>manually added infos</li></ul>',
+  },
   createTag: {
     create: {
       title: 'Create a tag',
@@ -1042,9 +1088,6 @@ export default {
     duplicate: {
       title: 'Duplicate theme',
     },
-  },
-  archiveDisabledEntities: {
-    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
   },
   createIcon: {
     create: {
@@ -1078,5 +1121,21 @@ export default {
     duplicate: {
       title: 'Duplicate record',
     },
+  },
+  createTemplateTestingData: {
+    create: {
+      title: 'Create template testing data',
+    },
+    edit: {
+      title: 'Edit template testing data',
+    },
+  },
+  createTemplateTestingTest: {
+    edit: {
+      title: 'Edit test',
+    },
+  },
+  createTemplateData: {
+    title: 'Create template data',
   },
 };
