@@ -39,7 +39,7 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	logger := log.NewLogger(ctx, flags.Debug)
+	logger := log.NewLogger(ctx, flags.Options)
 
 	// Retrieve config.
 	dbClient, err := mongo.NewClient(ctx)
@@ -61,6 +61,7 @@ func main() {
 		pgPoolProvider,
 		metrics.NewNullMetaUpdater(),
 		metrics.NewNullMetaUpdater(),
+		nil,
 		func(ctx context.Context) {
 			err := dbClient.Disconnect(ctx)
 			if err != nil {

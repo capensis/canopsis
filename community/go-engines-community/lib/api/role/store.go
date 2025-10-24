@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -41,6 +42,9 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		defaultSearchByFields:    []string{"_id", "name", "description"},
 		defaultSortBy:            "name",
 		authorProvider:           authorProvider,
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -55,6 +59,7 @@ type store struct {
 	defaultSortBy            string
 
 	authorProvider author.Provider
+	dupErrorParser validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -65,11 +70,13 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	}
 
 	beforeLimit = append(beforeLimit, getNestedObjectsPipeline()...)
-
-	afterLimit := s.authorProvider.Pipeline()
-
 	if r.Permission != "" {
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"permissions._id": r.Permission}})
+	}
+
+	afterLimit := s.authorProvider.Pipeline()
+	if r.WithFlags {
+		afterLimit = append(afterLimit, getFlagsPipeline()...)
 	}
 
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -95,11 +102,6 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 
 		for i := range res.Data {
 			fillRolePermissions(&res.Data[i])
-			if r.WithFlags {
-				isNotAdmin := res.Data[i].ID != security.RoleAdmin
-				res.Data[i].Editable = &isNotAdmin
-				res.Data[i].Deletable = &isNotAdmin
-			}
 		}
 	}
 
@@ -163,7 +165,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		})
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return common.NewValidationError("name", "Name already exists.")
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -404,6 +406,28 @@ func getNestedObjectsPipeline() []bson.M {
 			"as":           "defaultview",
 		}},
 		{"$unwind": bson.M{"path": "$defaultview", "preserveNullAndEmptyArrays": true}},
+	}
+}
+
+func getFlagsPipeline() []bson.M {
+	return []bson.M{
+		{"$lookup": bson.M{
+			"from":         mongo.UserCollection,
+			"localField":   "_id",
+			"foreignField": "roles",
+			"as":           "user",
+			"pipeline": []bson.M{
+				{"$limit": 1},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$user", "preserveNullAndEmptyArrays": true}},
+		{"$addFields": bson.M{
+			"editable": bson.M{"$ne": bson.A{"$name", security.RoleAdmin}},
+			"deletable": bson.M{"$and": []bson.M{
+				{"$ne": bson.A{"$name", security.RoleAdmin}},
+				{"$eq": bson.A{"", bson.M{"$ifNull": bson.A{"$user._id", ""}}}},
+			}},
+		}},
 	}
 }
 

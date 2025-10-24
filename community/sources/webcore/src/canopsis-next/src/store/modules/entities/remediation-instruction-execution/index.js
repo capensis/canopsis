@@ -9,8 +9,12 @@ export default {
       return request.get(`${API_ROUTES.remediation.executions}/${id}`, { params });
     },
 
-    fetchPausedListWithoutStore(context, { params }) {
+    fetchPausedListWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.remediation.pausedExecutions, { params });
+    },
+
+    fetchStatusesListWithoutStore() {
+      return request.get(API_ROUTES.remediation.executionStatuses);
     },
 
     create(context, { data } = {}) {
@@ -47,6 +51,10 @@ export default {
 
     fetchAlarmExecutionsWithoutStore(context, { alarmId, params }) {
       return request.get(`${API_ROUTES.remediation.alarmExecutions}/${alarmId}`, { params });
+    },
+
+    read(context, { id }) {
+      return request.put(`${API_ROUTES.remediation.executions}/${id}/read`);
     },
   },
 };

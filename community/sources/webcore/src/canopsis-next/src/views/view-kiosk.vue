@@ -8,6 +8,8 @@
 </template>
 
 <script>
+import { VIEW_SCREEN_MODES } from '@/constants';
+
 import Observer from '@/services/observer';
 
 import { toSeconds } from '@/helpers/date/duration';
@@ -84,6 +86,7 @@ export default {
 
   created() {
     this.clearActiveView();
+    this.setActiveViewScreenMode(VIEW_SCREEN_MODES.kiosk);
 
     this.$periodicRefresh.register(this.refreshView);
   },

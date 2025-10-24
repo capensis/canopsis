@@ -132,6 +132,7 @@ export const useInfo = () => {
     serialName: 'serialName',
     versionUpdated: 'versionUpdated',
     versionDescription: 'versionDescription',
+    notificationDisplayCount: 'notificationDisplayCount',
   });
 
   const isProVersion = computed(() => getters.edition.value === CANOPSIS_EDITION.pro);
