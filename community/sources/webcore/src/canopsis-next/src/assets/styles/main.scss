@@ -430,6 +430,18 @@ html {
   }
 }
 
+.v-list-item__mask {
+  .theme--light & {
+    color: var(--v-text-light-disabled, rgba(0, 0, 0, 0.38));
+    background: #eeeeee;
+  }
+
+  .theme--dark & {
+    color: var(--v-text-dark-disabled, rgba(255, 255, 255, 0.5));
+    background: #494949;
+  }
+}
+
 *[aria-required="true"] label:before {
   content: '*' !important;
   padding-right: 4px !important;
