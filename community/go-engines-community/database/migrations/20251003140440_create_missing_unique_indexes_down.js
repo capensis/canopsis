@@ -1,0 +1,15 @@
+db.action_scenario.dropIndex("name_1");
+db.link_rule.dropIndex("name_1");
+db.pbehavior_reason.dropIndex("name_1");
+db.pbehavior_type.dropIndex("name_1");
+db.pbehavior_exception.dropIndex("name_1");
+db.entity_category.dropIndex("name_1");
+db.entity_category.createIndex({name: 1}, {name: "name_1"});
+db.view_playlist.dropIndex("name_1");
+db.idle_rule.dropIndex("name_1");
+db.resolve_rule.dropIndex("name_1");
+db.flapping_rule.dropIndex("name_1");
+db.declare_ticket_rule.dropIndex("name_1");
+db.job.dropIndex("name_1");
+db.job_config.dropIndex("name_1");
+db.kpi_filter.dropIndex("name_1");

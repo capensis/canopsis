@@ -1,17 +1,17 @@
 /**
- * @typedef {string | number | boolean | null} ContextEntityInfoValuePrimitive
+ * @typedef {string | number | boolean | null | Date} ContextEntityInfoValue
  */
 
 /**
  * @typedef {Object} ContextEntityInfo
  * @property {string} name
  * @property {string} description
- * @property {ContextEntityInfoValuePrimitive[] | ContextEntityInfoValuePrimitive} value
+ * @property {ContextEntityInfoValue[] | ContextEntityInfoValue} value
  */
 
 /**
  * @typedef {ContextEntityInfo} ContextEntityInfoForm
- * @property {ContextEntityInfoValuePrimitive} value
+ * @property {ContextEntityInfoValue} value
  */
 
 /**

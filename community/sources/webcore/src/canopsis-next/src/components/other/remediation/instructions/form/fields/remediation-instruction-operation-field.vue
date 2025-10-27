@@ -56,6 +56,7 @@
                     :label="$t('common.description')"
                     :error-messages="errors.collect(descriptionFieldName)"
                     :name="descriptionFieldName"
+                    :variables="templateVars.operation"
                   />
                   <jobs-chips
                     v-if="disabled && operation.jobs && operation.jobs.length"
@@ -136,6 +137,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {
