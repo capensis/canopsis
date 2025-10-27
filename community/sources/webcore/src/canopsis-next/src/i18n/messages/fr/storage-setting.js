@@ -1,103 +1,96 @@
 export default {
+  receivedFor: 'Reçu pour',
+  olderThan: 'Plus ancien que',
   alarm: {
-    title: 'Stockage des données d\'alarme',
-    titleHelp: 'Lorsque ces options sont activées, les données d\'alarmes résolues sont archivées et/ou supprimées après la période de temps définie.',
-    archiveAfter: 'Archiver les données d\'alarmes résolues après',
-    deleteAfter: 'Supprimer les données d\'alarmes résolues après',
+    archiveAfter: 'Archiver les données d\'alarmes résolues',
+    deleteAfter: 'Supprimer les données d\'alarmes résolues',
   },
   junit: {
-    title: 'Stockage de données JUnit',
-    deleteAfter: 'Supprimer les données des suites de tests après',
-    deleteAfterHelpText: 'Lorsque cette option est activée, les données des suites de tests JUnit (XML, captures d\'écran et vidéos) sont supprimées après la période définie.',
+    title: 'JUnit',
+    deleteAfter: 'Supprimer les données des suites de tests',
+    deleteAfterHelpText: '(XMLs, captures d\'écran, vidéos)',
   },
   remediation: {
-    title: 'Stockage des données de consigne',
-    deleteAfter: 'Supprimer les données de la chronologie des instructions après',
-    deleteAfterHelpText: 'Lorsqu\'il est activé, les données de chronologie des instructions seront supprimées après la période de temps définie.',
-    deleteStatsAfter: 'Supprimer les données statistiques d\'instruction après',
-    deleteStatsAfterHelpText: 'Lorsqu\'il est activé, les statistiques d\'instruction seront supprimées après la période de temps définie.',
-    deleteModStatsAfter: 'Supprimer les données récapitulatives des instructions après',
-    deleteModStatsAfterHelpText: 'Lorsqu\'il est activé, les données récapitulatives des instructions seront supprimées après la période de temps définie.',
+    title: 'Consignes',
+    deleteAfter: 'Supprimer la chronologie des consignes',
+    deleteStatsAfter: 'Supprimer les statistiques de consignes',
+    deleteModStatsAfter: 'Supprimer le résumé des consignes',
   },
   entity: {
-    title: 'Stockage des données des entités',
-    titleHelp: 'Toutes les entités désactivées avec des alarmes associées peuvent être archivées (déplacées dans la collection séparée) et/ou supprimées pour toujours.',
+    title: 'Stockage des données d\'entités',
+    titleHelp: 'Toutes les entités désactivées avec des alarmes associées peuvent être archivées (déplacées vers une collection séparée) et/ou supprimées définitivement.',
     archiveDependencies: 'Supprimer également les entités impactantes et dépendantes',
-    archiveDependenciesHelp: 'Pour les connecteurs, tous les composants et toutes les ressources impactants et dépendants seront archivés ou supprimés pour toujours. Pour les composants, toutes les ressources dépendantes seront également archivées ou supprimées pour toujours.',
+    archiveDependenciesHelp: '<strong>Pour les connecteurs :</strong>\n'
+      + '<ul><li>tous les <strong class="font-italic">composants</strong> et <strong class="font-italic">ressources</strong> impactants et dépendants seront archivés ou supprimés définitivement.</li></ul>\n'
+      + '<strong>Pour les composants :</strong>\n'
+      + '<ul><li>toutes les <strong class="font-italic">ressources</strong> dépendantes seront également archivées ou supprimées définitivement.</li></ul>',
     archiveDisabled: 'Archiver les entités désactivées',
   },
   entityUnlinked: {
-    title: 'Unlinked entities storage',
-    titleHelp: 'All unlinked connectors, components and resources without alarms and updated long time ago can be archived.',
-    archiveBefore: 'Archive entities when no events received for',
-    archiveUnlinked: 'Archive unlinked entities',
+    title: 'Entités non liées',
+    archiveAfter: 'Archiver les entités sans événements',
+    archiveUnlinked: 'Archiver les entités non liées',
+    archiveUnlinkedAfter: 'Archiver les entités non liées sans événements reçus depuis',
   },
   entityArchived: {
-    title: 'Archived data storage',
-    titleHelp: 'All the archived entities can be deleted forever.',
-    cleanArchive: 'Clean archive',
+    title: 'Stockage des données archivées',
+    titleHelp: 'Toutes les entités archivées peuvent être supprimées définitivement.',
+    cleanArchive: 'Nettoyer l\'archive',
   },
   pbehavior: {
-    title: 'Stockage des données de comportements périodiques',
-    deleteAfter: 'Supprimer les données de comportements périodiques après',
-    deleteAfterHelpText: 'Lorsque cette option est activée, les comportements périodiques inactifs sont supprimés après la période de temps définie à partir du dernier événement.',
+    title: 'Comportements périodiques',
+    deleteAfter: 'Supprimer les PBehavior inactifs',
+    deleteAfterHelpText: 'Les comportements périodiques inactifs seront supprimés après la période définie depuis le dernier événement',
   },
   healthCheck: {
-    title: 'Stockage des données du bilan de santé',
-    deleteAfter: 'Supprimer les données de flux entrant FIFO après',
+    title: 'Bilan de santé',
+    deleteAfter: 'Supprimer le flux entrant FIFO',
   },
   webhook: {
-    title: 'Stockage de données Webhooks',
-    titleHelp: 'L\'historique de toutes les demandes de webhook est conservé dans des journaux',
-    deleteAfter: 'Effacer les journaux des webhooks après',
-    deleteAfterHelpText: 'Tous les historiques de demandes de webhook antérieurs à la période définie seront supprimés',
-    logCredentials: 'Ouvrir les données d\'authentification dans les journaux',
-    logCredentialsHelpText: 'Lorsqu\'il est activé, toutes les informations d\'identification et les données d\'authentification sont écrites dans les journaux de manière ouverte (non recommandé). \n'
-      + 'Lorsqu\'il est désactivé, tous les mots de passe, jetons et données d\'authentification sont masqués et écrits sous la forme *** dans les journaux.',
+    title: 'Webhooks',
+    deleteAfter: 'Supprimer l\'historique des requêtes webhooks',
+    logCredentials: 'Afficher les données d\'authentification dans les logs',
+    logCredentialsHelpText: 'Affecte la façon dont les mots de passe, tokens et données d\'authentification apparaissent dans les logs. \n'
+      + '<ul><li>activé : affichés en clair (non recommandé)</li>'
+      + '<li>désactivé : masqués avec ***</li></ul>',
   },
   metrics: {
-    title: 'Stockage interne des données de métriques',
-    titleHelp: 'Lorsque cette option est activée, les données de métriques internes seront supprimées après la période définie',
-    deleteAfter: 'Effacer le stockage des métriques après',
-    deleteAfterHelpText: 'Toutes les métriques internes antérieures à la période définie seront supprimées',
+    title: 'Métriques internes (KPI, performances moteurs)',
+    deleteAfter: 'Supprimer les métriques',
   },
   perfDataMetrics: {
-    title: 'Stockage de données de métriques externes',
-    titleHelp: 'Lorsque cette option est activée, les données de métriques externes seront supprimées après la période définie',
-    deleteAfter: 'Effacer le stockage des métriques après',
-    deleteAfterHelpText: 'Toutes les métriques externes antérieures à la période définie seront supprimées',
+    title: 'Métriques externes (perf_data transmises par événement)',
+    deleteAfter: 'Supprimer les métriques',
   },
   eventFilterFailure: {
-    title: 'Stockage des données des messages d\'erreur',
-    titleHelp: 'Lorsqu\'il est activé, les données des messages d\'erreur seront supprimées après la période de temps définie. Cependant, toutes les erreurs sont disponibles dans les journaux.',
-    deleteAfter: 'Effacer les messages d\'erreur antérieurs à',
-    deleteAfterHelpText: 'Tous les messages d\'erreur antérieurs à la période définie seront supprimés',
+    title: 'Messages d\'erreur des filtres d\'événements',
+    deleteAfter: 'Supprimer les messages d\'erreur',
+    deleteAfterHelpText: 'Toutes les erreurs seront toujours disponibles dans les logs',
   },
   alarmExternalTag: {
-    title: 'Stockage des données des tags externes d\'alarme',
-    deleteAfter: 'Effacer les balises externes après',
-  },
-  history: {
-    scriptLaunched: 'Script lancé à {launchedAt}.',
-    alarm: {
-      deletedCount: 'Alarmes supprimées : {count}.',
-      archivedCount: 'Alarmes archivées : {count}.',
-    },
-    entity: {
-      deletedCount: 'Entités supprimées : {count}.',
-      archivedCount: 'Entités archivées : {count}.',
-    },
-    alarmExternalTag: {
-      deletedCount: 'Balises externes d\'alarme supprimées : {count}.',
-    },
+    title: 'Tags externes d\'alarme',
+    deleteAfter: 'Supprimer les tags externes',
   },
   eventsRecords: {
-    title: 'Stockage des données des enregistrements d\'événements',
-    titleHelp: 'Tous les enregistrements plus anciens que la période définie seront supprimés',
-    deleteAfter: 'Supprimer les enregistrements d\'événements après',
+    title: 'Enregistrements d\'événements',
+    deleteAfter: 'Supprimer les enregistrements d\'événements',
   },
   entityInfosLog: {
     title: 'Filtre d\'événements : journaux d\'enrichissement d\'entité',
     deleteAfter: 'Supprimer les journaux de filtre d\'événements antérieurs à',
+  },
+  history: {
+    scriptLaunched: 'Script lancé à {launchedAt}.',
+    alarm: {
+      deletedCount: 'Alarmes supprimées : {count}.',
+      archivedCount: 'Alarmes archivées : {count}.',
+    },
+    entity: {
+      deletedCount: 'Entités supprimées : {count}.',
+      archivedCount: 'Entités archivées : {count}.',
+    },
+    alarmExternalTag: {
+      deletedCount: 'Tags externes d\'alarme supprimés : {count}.',
+    },
   },
 };

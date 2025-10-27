@@ -18,6 +18,7 @@ export const useExternalDataTableImport = () => {
     createExternalDataTableImport: 'create',
     fetchExternalDataTableImportData: 'fetchData',
     fetchExternalDataTableImportStatus: 'fetchStatus',
+    previewExternalDataTableImport: 'preview',
     completeExternalDataTableImport: 'complete',
   });
 

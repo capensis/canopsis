@@ -365,6 +365,18 @@ func RegisterTranslations(v *validator.Validate) {
 		t, _ := ut.T("table_name", fe.StructField(), fe.Param())
 		return t
 	})
+	_ = v.RegisterTranslation("unauth", trans, func(ut ut.Translator) error {
+		return ut.Add("unauth", "{0} is not accessible.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("unauth", fe.StructField(), fe.Param())
+		return t
+	})
+	_ = v.RegisterTranslation("must_be_string", trans, func(ut ut.Translator) error {
+		return ut.Add("must_be_string", "{0} must be a string.", true)
+	}, func(ut ut.Translator, fe validator.FieldError) string {
+		t, _ := ut.T("must_be_string", fe.StructField(), fe.Param())
+		return t
+	})
 }
 
 // TranslateError returns custom validation error message.

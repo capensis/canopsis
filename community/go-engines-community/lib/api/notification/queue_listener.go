@@ -25,7 +25,7 @@ type QueueListener interface {
 
 func NewQueueListener(
 	dbClient mongo.DbClient,
-	channel amqp.Channel,
+	amqpConn amqp.Connection,
 	websocketHub websocket.Hub,
 	store Store,
 	decoder encoding.Decoder,
@@ -33,7 +33,7 @@ func NewQueueListener(
 	logger zerolog.Logger,
 ) QueueListener {
 	return &queueListener{
-		channel:        channel,
+		amqpConn:       amqpConn,
 		websocketHub:   websocketHub,
 		store:          store,
 		userCollection: dbClient.Collection(mongo.UserCollection),
@@ -45,7 +45,7 @@ func NewQueueListener(
 }
 
 type queueListener struct {
-	channel        amqp.Channel
+	amqpConn       amqp.Connection
 	websocketHub   websocket.Hub
 	store          Store
 	userCollection mongo.DbCollection
@@ -56,7 +56,13 @@ type queueListener struct {
 }
 
 func (s *queueListener) Listen(ctx context.Context) error {
-	q, err := s.channel.QueueDeclare(
+	channel, err := s.amqpConn.Channel()
+	if err != nil {
+		return fmt.Errorf("cannot create rmq channel: %w", err)
+	}
+
+	defer channel.Close()
+	q, err := channel.QueueDeclare(
 		"",    // name
 		true,  // durable
 		true,  // delete when unused
@@ -68,7 +74,7 @@ func (s *queueListener) Listen(ctx context.Context) error {
 		return fmt.Errorf("cannot declare queue: %w", err)
 	}
 
-	err = s.channel.QueueBind(
+	err = channel.QueueBind(
 		q.Name,                               // name
 		"",                                   // key
 		canopsis.ApiNotificationExchangeName, // exchange
@@ -79,7 +85,7 @@ func (s *queueListener) Listen(ctx context.Context) error {
 		return fmt.Errorf("cannot bind queue: %w", err)
 	}
 
-	ch, err := s.channel.Consume(q.Name, "", false, false, false, false, nil)
+	ch, err := channel.Consume(q.Name, "", false, false, false, false, nil)
 	if err != nil {
 		return fmt.Errorf("failed to consume events: %w", err)
 	}
@@ -108,7 +114,7 @@ func (s *queueListener) Listen(ctx context.Context) error {
 					if err != nil {
 						s.logger.Err(err).Msg("failed to process notification event")
 						if mongo.IsConnectionError(err) {
-							err = s.channel.Nack(msg.DeliveryTag, false, true)
+							err = channel.Nack(msg.DeliveryTag, false, true)
 							if err != nil {
 								s.logger.Err(err).Msg("failed to negatively acknowledge message")
 							}
@@ -117,7 +123,7 @@ func (s *queueListener) Listen(ctx context.Context) error {
 						}
 					}
 
-					err = s.channel.Ack(msg.DeliveryTag, false)
+					err = channel.Ack(msg.DeliveryTag, false)
 					if err != nil {
 						s.logger.Err(err).Msg("failed to acknowledge message")
 					}

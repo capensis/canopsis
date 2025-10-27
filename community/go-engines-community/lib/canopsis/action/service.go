@@ -184,7 +184,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 	}
 
 	if event.EventType == types.EventTypeRunDelayedScenario {
-		additionalData := AdditionalData{}
+		additionalData := types.AdditionalData{}
 		err := s.decoder.Decode([]byte(event.DelayedScenarioData), &additionalData)
 		if err != nil {
 			s.logger.Err(err).Msg("invalid additional data for delayed scenario")
@@ -235,7 +235,7 @@ func (s *service) Process(ctx context.Context, event *types.Event) error {
 		Alarm:    alarm,
 		Entity:   entity,
 		Start:    start,
-		AdditionalData: AdditionalData{
+		AdditionalData: types.AdditionalData{
 			AlarmChangeType: string(event.AlarmChange.Type),
 			Author:          event.Author,
 			User:            event.UserID,
