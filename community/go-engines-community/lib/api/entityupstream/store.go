@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -23,16 +24,19 @@ type store struct {
 	dbClient       mongo.DbClient
 	dbCollection   mongo.DbCollection
 	authorProvider author.Provider
+	transformer    common.PatternFieldsTransformer
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 ) Store {
 	return &store{
 		dbClient:       dbClient,
 		dbCollection:   dbClient.Collection(mongo.EntityMongoCollection),
 		authorProvider: authorProvider,
+		transformer:    transformer,
 	}
 }
 
@@ -127,5 +131,5 @@ func (s *store) GetUpstream(ctx context.Context, id string) (*Response, bool, er
 }
 
 func (s *store) getQueryBuilder() *entity.MongoQueryBuilder {
-	return entity.NewMongoQueryBuilder(s.dbClient, s.authorProvider)
+	return entity.NewMongoQueryBuilder(s.dbClient, s.authorProvider, s.transformer)
 }
