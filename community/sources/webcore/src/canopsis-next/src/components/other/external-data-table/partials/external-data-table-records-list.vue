@@ -23,7 +23,7 @@
       ref="tableElement"
       :loading="pending"
       :options="options"
-      :items="records"
+      :items="preparedRecords"
       :headers="sortedHeadersWithWidth"
       :expand="expandable"
       :select-all="selectable"
@@ -33,6 +33,7 @@
       :ultra-dense="isSmallDense"
       :table-class="tableClass"
       :style="tableStyle"
+      class="external-data-table"
       advanced-pagination
       @update:options="$emit('update:options', $event)"
     >
@@ -105,18 +106,30 @@
           @click="$emit('remove-selected', selected)"
         />
       </template>
-      <template #body.prepend="">
+      <template #body.prepend>
         <tr>
           <td v-if="selectable" />
           <td v-if="expandable" />
           <td v-for="header in sortedHeaders" :key="header.value">
-            <div class="py-1">
-              <external-data-table-column-type-field
-                v-if="header.value !== '_id' && header.value !== 'actions'"
+            <v-layout v-if="header.value === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN">
+              <span class="font-italic font-weight-bold grey--text">
+                {{ $t('common.calculated') }}
+              </span>
+            </v-layout>
+            <v-layout v-else-if="header.value !== '_id' && header.value !== 'actions'" class="py-1 gap-2" column>
+              <external-data-table-column-data-type-field
                 v-field="columns[header.value]"
-                :disabled="disabled"
+                :table-separator="separator"
+                :disabled="disabledTypes"
+                :disabled-types="disabledTypesForTypeField"
               />
-            </div>
+              <v-flex>
+                <external-data-table-column-tag-field
+                  v-field="columns[header.value].tag"
+                  :disabled="disabled"
+                />
+              </v-flex>
+            </v-layout>
             <span
               v-if="resizingMode"
               :key="`${header.value}.resize`"
@@ -134,9 +147,18 @@
         <span
           :key="`header.${header.value}`"
           :title="header.text"
+          :class="{ 'table-cell__header--error': header.errors?.length }"
           class="table-cell__content"
         >
           {{ header.text }}
+          <c-help-icon
+            v-if="header.errors?.length"
+            :text="header.errors.join(', ')"
+            color="error"
+            icon="help"
+            small
+            top
+          />
         </span>
         <span
           v-if="draggingMode"
@@ -158,10 +180,11 @@
       >
         <span
           :key="`${header.value}`"
-          :title="item[header.value]"
+          :title="item[header.value]?.initial_value ?? item[header.value]"
+          :class="{ 'table-cell__content--error': item[header.value]?.transform_error }"
           class="table-cell__content"
         >
-          {{ item[header.value] }}
+          {{ item[header.value]?.initial_value ?? item[header.value] }}
         </span>
         <span
           v-if="resizingMode"
@@ -191,6 +214,19 @@
         <external-data-table-records-list-expand-panel :record="item" />
       </template>
     </c-advanced-data-table>
+    <c-alert
+      v-if="errorsMessages.length"
+      type="error"
+    >
+      <span class="text-body-1">
+        {{ $tc('externalData.fieldsHasError', errorsMessages.length, { count: errorsMessages.length }) }}
+        <ul>
+          <li v-for="error in errorsMessages" :key="error.name">
+            <strong>{{ error.name }}</strong>: {{ error.message }}
+          </li>
+        </ul>
+      </span>
+    </c-alert>
   </div>
 </template>
 
@@ -198,20 +234,32 @@
 import { isEmpty } from 'lodash';
 import { computed, ref, toRef } from 'vue';
 
-import { DENSE_TYPES } from '@/constants';
+import { DENSE_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES, EXTERNAL_DATA_TABLE_PRIORITY_COLUMN } from '@/constants';
+
+import { convertDateToString } from '@/helpers/date/date';
 
 import { useI18n } from '@/hooks/i18n';
 import { useHTMLElement } from '@/hooks/html-elements';
 import { useTableColumnsSettings } from '@/hooks/table/columns-settings';
 
-import ExternalDataTableColumnTypeField from '../form/fields/external-data-table-column-type-field.vue';
+import ExternalDataTableColumnTagField from '../form/fields/external-data-table-column-tag-field.vue';
+import ExternalDataTableColumnDataTypeField from '../form/fields/external-data-table-column-data-type-field.vue';
 
 import ExternalDataTableRecordsListExpandPanel from './external-data-table-records-list-expand-panel.vue';
 
 const DRAGGABLE_CLASS = 'external-data-table-records__draggable-column';
 
+const EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS = {
+  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.datetime]: convertDateToString,
+  [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.timestamp]: value => convertDateToString(Number(value)),
+};
+
 export default {
-  components: { ExternalDataTableRecordsListExpandPanel, ExternalDataTableColumnTypeField },
+  components: {
+    ExternalDataTableColumnTagField,
+    ExternalDataTableColumnDataTypeField,
+    ExternalDataTableRecordsListExpandPanel,
+  },
   model: {
     prop: 'columns',
     event: 'input',
@@ -224,6 +272,10 @@ export default {
     columns: {
       type: Object,
       default: () => ({}),
+    },
+    originalColumns: {
+      type: Object,
+      required: false,
     },
     options: {
       type: Object,
@@ -297,6 +349,14 @@ export default {
       type: String,
       required: false,
     },
+    separator: {
+      type: String,
+      required: false,
+    },
+    disabledTypes: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, { emit }) {
     const { t } = useI18n();
@@ -311,17 +371,43 @@ export default {
       selector: 'table > thead tr',
     });
 
+    const columnsForTableDisplaying = computed(() => props.originalColumns || props.columns);
+
+    const preparedRecords = computed(() => props.records.map(record => (
+      Object.entries(record).reduce((acc, [key, value]) => {
+        const filter = EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES_TO_FILTERS[columnsForTableDisplaying.value?.[key]?.type];
+
+        acc[key] = filter ? filter(value) : value;
+
+        return acc;
+      }, {})
+    )));
+
     /**
      * COMPUTED
      */
     const isEmptyColumns = computed(() => isEmpty(props.columns));
 
+    const errorsMessages = computed(() => (
+      Object.values(props.columns).reduce((acc, column) => {
+        if (column.messages?.length) {
+          acc.push({
+            name: column.name,
+            message: `${column.rows.slice(0, 5)?.join(', ')}${column.rows.length > 5 ? ` ${t('externalData.andMore')}` : ''}`,
+          });
+        }
+
+        return acc;
+      }, [])
+    ));
+
     const headers = computed(() => {
-      const result = Object.keys(props.columns).map(column => ({
-        value: column,
-        text: column,
+      const result = Object.values(columnsForTableDisplaying.value).map((column = {}) => ({
+        value: column.name,
+        text: column.name,
         class: DRAGGABLE_CLASS,
-        sortable: true,
+        sortable: false,
+        errors: column.messages,
       }));
 
       if (props.withActions) {
@@ -338,6 +424,13 @@ export default {
 
     const isSmallDense = computed(() => props.dense === DENSE_TYPES.small);
     const isMediumDense = computed(() => props.dense === DENSE_TYPES.medium);
+
+    const disabledTypesForTypeField = computed(() => {
+      const hasRegexpField = Object.values(props.columns)
+        .some(({ type }) => type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
+
+      return hasRegexpField ? [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp] : [];
+    });
 
     const updatePage = page => emit('update:options', { ...props.options, page });
 
@@ -366,10 +459,15 @@ export default {
     return {
       tableElement,
 
+      EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+
+      preparedRecords,
       isEmptyColumns,
+      errorsMessages,
       headers,
       isSmallDense,
       isMediumDense,
+      disabledTypesForTypeField,
 
       updatePage,
 
@@ -401,6 +499,14 @@ export default {
     th[data-value="data-table-select"], th[data-value="data-table-expand"] {
       width: 60px !important;
     }
+  }
+
+  .table-cell__header--error, .table-cell__content--error  {
+    color: var(--v-error-base);
+  }
+
+  .table-cell__content--error {
+    font-style: italic;
   }
 
   &-records__draggable-column {

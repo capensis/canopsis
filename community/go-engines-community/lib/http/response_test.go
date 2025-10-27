@@ -67,33 +67,33 @@ func TestReadResponse(t *testing.T) {
 
 func TestFlatten(t *testing.T) {
 	dataSets := map[string]struct {
-		input          interface{}
-		expectedOutput map[string]interface{}
+		input          any
+		expectedOutput map[string]any
 	}{
 		"test simple map": {
-			input: map[string]interface{}{
+			input: map[string]any{
 				"a": 1,
 				"b": "test",
 				"c": false,
 			},
-			expectedOutput: map[string]interface{}{
+			expectedOutput: map[string]any{
 				"a": 1,
 				"b": "test",
 				"c": false,
 			},
 		},
 		"test map with nested maps": {
-			input: map[string]interface{}{
+			input: map[string]any{
 				"a": 1,
-				"b": map[string]interface{}{
+				"b": map[string]any{
 					"d": 1,
-					"e": map[string]interface{}{
+					"e": map[string]any{
 						"f": "test",
 					},
 				},
 				"c": 2,
 			},
-			expectedOutput: map[string]interface{}{
+			expectedOutput: map[string]any{
 				"a":     1,
 				"b.d":   1,
 				"b.e.f": "test",
@@ -101,71 +101,92 @@ func TestFlatten(t *testing.T) {
 			},
 		},
 		"test map with arrays": {
-			input: map[string]interface{}{
-				"a": []interface{}{
-					map[string]interface{}{
+			input: map[string]any{
+				"a": []any{
+					map[string]any{
 						"b": 1,
 						"c": "test",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"b": 2,
 						"c": "test 2",
 					},
-					map[string]interface{}{
+					map[string]any{
 						"b": 3,
-						"c": map[string]interface{}{
+						"c": map[string]any{
 							"d": 2,
 							"e": "test",
 						},
 					},
 				},
-				"f": map[string]interface{}{
+				"f": map[string]any{
 					"g": 3,
 					"h": "test",
 				},
-				"i": []interface{}{
-					map[string]interface{}{
+				"i": []any{
+					map[string]any{
 						"j": 1,
-						"k": []interface{}{
-							map[string]interface{}{
+						"k": []any{
+							map[string]any{
 								"l": 10,
 								"m": true,
 							},
-							map[string]interface{}{
+							map[string]any{
 								"l": 20,
 								"m": false,
 							},
-							map[string]interface{}{
+							map[string]any{
 								"l": 30,
 								"m": true,
 							},
 						},
 					},
-					map[string]interface{}{
+					map[string]any{
 						"j": 2,
-						"k": []interface{}{
-							map[string]interface{}{
+						"k": []any{
+							map[string]any{
 								"l": 30,
 								"m": false,
 							},
-							map[string]interface{}{
+							map[string]any{
 								"l": 20,
 								"m": true,
 							},
-							map[string]interface{}{
+							map[string]any{
 								"l": 10,
 								"m": false,
 							},
 						},
 					},
 				},
-				"n": []interface{}{
+				"n": []any{
 					1,
 					2,
 					3,
 				},
+				"o": []any{
+					1,
+					"2",
+					true,
+					nil,
+				},
+				"p": []any{
+					[]any{
+						map[string]any{
+							"q": 1,
+							"r": []any{
+								"1",
+								"2",
+								"3",
+							},
+							"s": 3,
+						},
+					},
+				},
+				"t": []any{},
+				"u": []any{[]any{}},
 			},
-			expectedOutput: map[string]interface{}{
+			expectedOutput: map[string]any{
 				"a.0.b":     1,
 				"a.0.c":     "test",
 				"a.1.b":     2,
@@ -189,27 +210,41 @@ func TestFlatten(t *testing.T) {
 				"i.1.k.1.m": true,
 				"i.1.k.2.l": 10,
 				"i.1.k.2.m": false,
+				"n":         []any{1, 2, 3},
 				"n.0":       1,
 				"n.1":       2,
 				"n.2":       3,
+				"o":         []any{1, "2", true, nil},
+				"o.0":       1,
+				"o.1":       "2",
+				"o.2":       true,
+				"o.3":       nil,
+				"p.0.0.q":   1,
+				"p.0.0.r":   []any{"1", "2", "3"},
+				"p.0.0.r.0": "1",
+				"p.0.0.r.1": "2",
+				"p.0.0.r.2": "3",
+				"p.0.0.s":   3,
+				"t":         []any{},
+				"u.0":       []any{},
 			},
 		},
 		"test_input_array": {
-			input: []interface{}{
+			input: []any{
 				1,
 				"abc",
-				map[string]interface{}{
+				map[string]any{
 					"a": 1,
 					"b": 2,
 					"c": 3,
 				},
-				[]interface{}{
+				[]any{
 					4,
 					5,
 					"6",
 				},
 			},
-			expectedOutput: map[string]interface{}{
+			expectedOutput: map[string]any{
 				"0":   1,
 				"1":   "abc",
 				"2.a": 1,
@@ -218,6 +253,7 @@ func TestFlatten(t *testing.T) {
 				"3.0": 4,
 				"3.1": 5,
 				"3.2": "6",
+				"3":   []any{4, 5, "6"},
 			},
 		},
 	}

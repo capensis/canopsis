@@ -24,12 +24,18 @@ exports[`variables-list Renders \`variables-list\` with custom props 1`] = `
         <div
           class="layout gap-4 justify-space-between"
         >
-          <span>
-            Entity
-            <span
-              class="v-list-item__mask"
-            />
-          </span>
+          <div
+            class="layout align-center"
+          >
+            <span>
+              Entity
+              <span
+                class="v-list-item__mask"
+              />
+            </span>
+            <!---->
+          </div>
+          <!---->
           <!---->
         </div>
       </div>

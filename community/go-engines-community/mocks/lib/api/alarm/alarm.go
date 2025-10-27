@@ -209,18 +209,18 @@ func (mr *MockStoreMockRecorder) GetDisplayNames(ctx, r any) *gomock.Call {
 }
 
 // GetInstructionExecutionStatuses mocks base method.
-func (m *MockStore) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]alarm.AssignedInstruction) (map[string]alarm.ExecutionStatus, error) {
+func (m *MockStore) GetInstructionExecutionStatuses(ctx context.Context, alarmIDs []string, assignedInstructionsMap map[string][]alarm.AssignedInstruction, hadAssignedInstructions map[string]bool) (map[string]alarm.ExecutionStatus, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetInstructionExecutionStatuses", ctx, alarmIDs, assignedInstructionsMap)
+	ret := m.ctrl.Call(m, "GetInstructionExecutionStatuses", ctx, alarmIDs, assignedInstructionsMap, hadAssignedInstructions)
 	ret0, _ := ret[0].(map[string]alarm.ExecutionStatus)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetInstructionExecutionStatuses indicates an expected call of GetInstructionExecutionStatuses.
-func (mr *MockStoreMockRecorder) GetInstructionExecutionStatuses(ctx, alarmIDs, assignedInstructionsMap any) *gomock.Call {
+func (mr *MockStoreMockRecorder) GetInstructionExecutionStatuses(ctx, alarmIDs, assignedInstructionsMap, hadAssignedInstructions any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInstructionExecutionStatuses", reflect.TypeOf((*MockStore)(nil).GetInstructionExecutionStatuses), ctx, alarmIDs, assignedInstructionsMap)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetInstructionExecutionStatuses", reflect.TypeOf((*MockStore)(nil).GetInstructionExecutionStatuses), ctx, alarmIDs, assignedInstructionsMap, hadAssignedInstructions)
 }
 
 // GetLinks mocks base method.
