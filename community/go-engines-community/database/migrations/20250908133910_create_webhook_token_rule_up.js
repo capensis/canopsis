@@ -19,6 +19,22 @@ if (!db.permission.findOne({_id: "api_webhook_token_rule"})) {
             "permissions.api_webhook_token_rule": 15
         }
     });
+
+    db.permission.updateMany(
+        {
+            _id: {
+                $in: [
+                    "models_exploitation_scenario",
+                    "models_exploitation_declareTicketRule"
+                ]
+            }
+        },
+        {
+            $set: {
+                "api_permissions.api_webhook_token_rule": 4
+            }
+        }
+    );
 }
 
 if (!db.permission.findOne({_id: "models_externalAuthTokens"})) {
@@ -27,7 +43,8 @@ if (!db.permission.findOne({_id: "models_externalAuthTokens"})) {
         name: "models_externalAuthTokens",
         type: "CRUD",
         description: "Webhook token rule",
-        groups: ["technical", "technical_admin", "technical_admin_general"]
+        groups: ["technical", "technical_admin", "technical_admin_general"],
+        api_permissions: {api_webhook_token_rule: 0}
     });
     db.role.updateOne({name: "admin"}, {
         $set: {
