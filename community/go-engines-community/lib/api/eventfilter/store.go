@@ -313,18 +313,24 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
+		_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": request.ID, "unread": true}, bson.M{
+			"$unset": bson.M{
+				"unread": "",
+			},
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetByID(ctx, model.ID)
+
 		return err
 	})
 	if err != nil || response == nil {
 		return nil, err
 	}
 
-	_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": request.ID, "unread": true}, bson.M{
-		"$unset": bson.M{
-			"unread": "",
-		},
-	})
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, request.ID)
 	if err != nil {
 		return nil, err
 	}
