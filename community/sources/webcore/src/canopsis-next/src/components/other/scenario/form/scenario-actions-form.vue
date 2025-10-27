@@ -18,6 +18,7 @@
           :name="`${name}.${action.key}`"
           :action-number="index + 1"
           :has-previous-webhook="hasPreviousWebhook(index)"
+          :template-vars="templateVars"
           @remove="removeItemFromArray(index)"
           @duplicate="duplicateAction(action)"
         />
@@ -64,6 +65,10 @@ export default {
       type: String,
       default: 'actions',
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
     hasActionsErrors() {
@@ -84,6 +89,10 @@ export default {
 
         return acc;
       }, []);
+    },
+
+    firstWebhookIndex() {
+      return this.webhookIndexes[0];
     },
   },
   watch: {
@@ -116,7 +125,7 @@ export default {
     },
 
     hasPreviousWebhook(index) {
-      return this.webhookIndexes.indexOf(index) > 0;
+      return this.firstWebhookIndex < index;
     },
 
     duplicateAction(action) {

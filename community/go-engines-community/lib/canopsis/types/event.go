@@ -245,11 +245,16 @@ func (e *Event) GetEID() string {
 	if e.Resource != "" {
 		return e.Resource + "/" + e.Component
 	}
+
 	if e.Component != "" {
 		return e.Component
 	}
 
-	return e.Connector + "/" + e.ConnectorName
+	if e.Connector != "" {
+		return e.Connector + "/" + e.ConnectorName
+	}
+
+	return ""
 }
 
 // GetLockID returns lock name that used to block alarm

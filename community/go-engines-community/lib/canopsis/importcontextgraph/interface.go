@@ -44,6 +44,9 @@ type EntityConfiguration struct {
 	Enabled        bool                  `json:"enabled"`
 	Tags           map[string]string     `json:"tags"`
 	Action         string                `json:"action"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `json:"-"`
 }
 
 type Entity struct {
@@ -64,4 +67,25 @@ type Entity struct {
 	ImportTags        []string              `bson:"imtags"`
 	ImportSource      string                `bson:"import_source"`
 	Imported          datetime.CpsTime      `bson:"imported"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases"`
+	ID             string                `bson:"_id"`
+	Name           string                `bson:"name"`
+	Component      string                `bson:"component,omitempty"`
+	Services       []string              `bson:"services,omitempty"`
+	EnableHistory  []int64               `bson:"enable_history"`
+	EntityPattern  pattern.Entity        `bson:"entity_pattern,omitempty"`
+	OutputTemplate string                `bson:"output_template,omitempty"`
+	Infos          map[string]types.Info `bson:"infos"`
+	Type           string                `bson:"type"`
+	CategoryID     string                `bson:"category,omitempty"`
+	ImpactLevel    int64                 `bson:"impact_level,omitempty"`
+	Enabled        bool                  `bson:"enabled,omitempty"`
+	ImportTags     []string              `bson:"imtags"`
+	ImportSource   string                `bson:"import_source"`
+	Imported       datetime.CpsTime      `bson:"imported"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases"`
 }

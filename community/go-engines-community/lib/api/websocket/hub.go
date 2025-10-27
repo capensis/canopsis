@@ -431,7 +431,7 @@ func (h *hub) join(ctx context.Context, connID, room string, data any) bool {
 			return closed
 		}
 
-		h.logger.Err(err).Msg("cannot authorize user")
+		h.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot authorize user")
 		err = conn.WriteJSON(WMessage{
 			Type:  WMessageFail,
 			Room:  room,
@@ -777,7 +777,7 @@ func (h *hub) checkRoomAuth(ctx context.Context, room string, checked map[string
 		userID := c.userID
 		ok, err := h.authorizer.Authorize(ctx, userID, room)
 		if err != nil {
-			h.logger.Err(err).Msg("cannot authorize user")
+			h.logger.Err(err).Str("room", room).Str("user", userID).Msg("cannot authorize user")
 
 			err = conn.WriteJSON(WMessage{
 				Type:  WMessageFail,

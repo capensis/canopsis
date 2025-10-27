@@ -3,6 +3,7 @@ package fixtures
 import (
 	"errors"
 	"math/rand"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -137,4 +138,8 @@ func (*Faker) ToObjectID(s string) interface{} {
 
 func (*Faker) ObjectID() interface{} {
 	return bson.NewObjectID()
+}
+
+func (*Faker) AbsPath(path string) (string, error) {
+	return filepath.Abs(path)
 }
