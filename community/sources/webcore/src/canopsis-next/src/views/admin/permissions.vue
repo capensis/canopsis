@@ -1,7 +1,7 @@
 <template>
-  <v-container class="admin-rights">
+  <div class="admin-rights">
     <c-page-header />
-    <v-card class="position-relative">
+    <v-card class="ma-4 mt-0 px-4 pb-4">
       <c-progress-overlay :pending="pending" />
       <v-tabs v-model="activeTab" fixed-tabs>
         <template v-for="tab in treeviewPermissions">
@@ -35,7 +35,7 @@
     </v-layout>
 
     <permissions-fab-btn @refresh="fetchList" />
-  </v-container>
+  </div>
 </template>
 
 <script>
