@@ -18,16 +18,18 @@
       </v-layout>
     </v-layout>
     <permissions-table
-      :treeview-permissions="filteredTreeviewPermissions"
+      :items="filteredItems"
       :roles="roles"
       :disabled="disabled"
       :search="search"
+      :search-depth="searchDepth"
       @input="updateTreeviewPermissions"
     />
   </v-layout>
 </template>
 
 <script>
+import { sortBy } from 'lodash';
 import {
   computed,
   provide,
@@ -37,6 +39,8 @@ import {
 } from 'vue';
 
 import { filterTreeviewPermissions } from '@/helpers/entities/permissions/list';
+
+import { useI18n } from '@/hooks/i18n';
 
 import PermissionsTable from './permissions-table.vue';
 
@@ -55,12 +59,35 @@ export default {
       type: Boolean,
       default: false,
     },
+    searchDepth: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props, { emit }) {
+    const { t } = useI18n();
+
     const search = ref('');
 
-    const filteredTreeviewPermissions = computed(() => (
-      filterTreeviewPermissions(props.treeviewPermissions, search.value)
+    const getTranslatedAndSortedItems = (items = {}) => sortBy(Object.values(items).map((item) => {
+      const newItem = { ...item };
+      const { title, name, children, _id: id } = item;
+
+      if (!title) {
+        newItem.title = name ? t(`permission.title.${name}`) : id;
+      }
+
+      if (children) {
+        newItem.children = getTranslatedAndSortedItems(children);
+      }
+
+      return newItem;
+    }), ['position', 'title']);
+
+    const itemsWithTranslations = computed(() => getTranslatedAndSortedItems(props.treeviewPermissions));
+
+    const filteredItems = computed(() => (
+      filterTreeviewPermissions(itemsWithTranslations.value, search.value, props.searchDepth)
     ));
 
     const allExpandedCounter = ref(0);
@@ -86,16 +113,21 @@ export default {
      */
     const submitSearch = (value = '') => search.value = value;
 
+    /**
+     * Emits input event to update treeview permissions in parent component
+     *
+     * @param {...*} args - Updated permissions data to be passed to parent
+     */
     const updateTreeviewPermissions = (...args) => emit('input', ...args);
 
     provide('$allExpandedCounter', allExpandedCounter);
 
-    watch(filteredTreeviewPermissions, () => search.value && nextTick(expandAll));
+    watch(filteredItems, () => search.value && nextTick(expandAll));
 
     return {
       search,
 
-      filteredTreeviewPermissions,
+      filteredItems,
 
       expandAll,
       collapseAll,
