@@ -1940,6 +1940,8 @@ permission:
       - "@group_technical"
       - "@group_technical_admin"
       - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_webhook_token_rule": 0
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -2075,6 +2077,7 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_action": 0
+      "@permission_api_webhook_token_rule": 4
       <<: [
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
@@ -2131,6 +2134,7 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_declare_ticket_rule": 0
+      "@permission_api_webhook_token_rule": 4
       <<: [
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern,
