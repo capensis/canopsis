@@ -1,4 +1,4 @@
-import { difference, isEmpty } from 'lodash';
+import { difference } from 'lodash';
 
 import {
   PERMISSIONS_TYPES_TO_ACTIONS,
@@ -6,8 +6,6 @@ import {
   USER_PERMISSIONS_GROUPS,
   INVERSE_CONDITIONAL_PERMISSIONS_MAP,
 } from '@/constants';
-
-import { filterObjectEntries, collectLeafKeys } from '@/helpers/collection';
 
 /**
  * Check user access for a permission
@@ -199,17 +197,28 @@ export const isApiPermission = (permissionId = '') => permissionId.startsWith(US
 /**
  * Filters treeview permissions by search term recursively
  *
- * @param {Object} treeviewPermissions - The treeview permissions object
+ * @param {Array} items - The items to filter
  * @param {string} [search=''] - The search term to filter by
- * @returns {Object} Filtered treeview permissions object. If a parent has any matching child, the parent is included.
+ * @param {number|null} [searchDepth] - Depth level to search at
+ *   (null = deepest nodes, 0 = leaf nodes, 1 = penultimate, etc.)
+ * @returns {Object} Filtered treeview permissions object.
+ *   If a parent has any matching child, the parent is included.
  *
  * @example
  * const filtered = filterTreeviewPermissions(permissions, 'alarm');
- * // Returns tree with only nodes matching 'alarm' and their parents
+ * // Returns tree with only deepest/leaf nodes matching 'alarm' and their parents
+ *
+ * @example
+ * const filtered = filterTreeviewPermissions(permissions, 'alarm', 0);
+ * // Returns tree with only leaf nodes matching 'alarm' and their parents
+ *
+ * @example
+ * const filtered = filterTreeviewPermissions(permissions, 'alarm', 1);
+ * // Returns tree with only penultimate nodes (depth 1) matching 'alarm' and their parents
  */
-export const filterTreeviewPermissions = (treeviewPermissions, search = '') => {
+export const filterTreeviewPermissions = (items, search = '', searchDepth) => {
   if (!search || !search.trim()) {
-    return treeviewPermissions;
+    return items;
   }
 
   const searchLower = search.toLowerCase().trim();
@@ -218,44 +227,78 @@ export const filterTreeviewPermissions = (treeviewPermissions, search = '') => {
    * Check if a node matches the search term
    *
    * @param {Object} node - The node to check
-   * @param {string} key - The key of the node
    * @returns {boolean} True if the node matches the search term
    */
-  const matchesSearch = (node, key) => (
-    node.name?.toLowerCase().includes(searchLower)
-    || key.toLowerCase().includes(searchLower)
+  const matchesSearch = node => (
+    node?.name?.toLowerCase().includes(searchLower)
+    || node?.title?.toLowerCase().includes(searchLower)
   );
 
   /**
-   * Recursively filters a node and its children based on search criteria
-   * Only leaf nodes (without children) can match the search term
+   * Recursively collects all leaf node IDs from an array structure
    *
-   * @param {Object} node - The node to filter
-   * @param {string} key - The key of the node
-   * @returns {Object|null} Filtered node with children, or null if no matches found
+   * @param {Array} nodes - The array of nodes to collect IDs from
+   * @returns {Set} Set of all leaf node IDs
    */
-  const filterNode = (node, key) => {
-    if (node.children) {
-      // Parent nodes are included only if they have matching leaf descendants
-      const filteredChildren = filterObjectEntries(
-        node.children,
-        (childNode, childKey) => filterNode(childNode, childKey),
-      );
+  const collectLeafIds = (nodes) => {
+    const ids = new Set();
 
-      if (isEmpty(filteredChildren)) {
-        return null;
+    nodes.forEach((node) => {
+      if (node.children && node.children.length > 0) {
+        collectLeafIds(node.children).forEach(id => ids.add(id));
+
+        return;
       }
 
-      const filteredAllChildren = node.allChildren.filter(
-        child => collectLeafKeys(filteredChildren).has(child._id),
-      );
+      ids.add(node._id);
+    });
 
-      return { ...node, children: filteredChildren, allChildren: filteredAllChildren };
-    }
-
-    // Only leaf nodes (without children) can match the search
-    return matchesSearch(node, key) ? node : null;
+    return ids;
   };
 
-  return filterObjectEntries(treeviewPermissions, (node, key) => filterNode(node, key));
+  /**
+   * Filters an array of nodes by applying a filter function and returns only truthy results
+   *
+   * @param {Array} nodes - The array of nodes to filter
+   * @param {Function} filterFn - Filter function to apply to each node
+   * @returns {Array} Array with only truthy filtered results
+   */
+  const filterNodesArray = (nodes, filterFn) => nodes.reduce((acc, node) => {
+    const filteredNode = filterFn(node);
+
+    if (filteredNode) {
+      acc.push(filteredNode);
+    }
+
+    return acc;
+  }, []);
+
+  /**
+   * Recursively filters a node and its children based on search criteria
+   *
+   * @param {Object} node - The node to filter
+   * @param {number} currentDepth - Current depth level in the tree (0 = root level)
+   * @returns {Object|null} Filtered node with children, or null if no matches found
+   */
+  const filterNode = (node, currentDepth = 0) => {
+    if (currentDepth === searchDepth || !node.children) {
+      return matchesSearch(node) ? node : null;
+    }
+
+    /**
+     * Parent nodes are included only if they have matching descendants
+     */
+    const filteredChildren = filterNodesArray(node.children, childNode => filterNode(childNode, currentDepth + 1));
+
+    if (!filteredChildren.length) {
+      return null;
+    }
+
+    const leafIds = collectLeafIds(filteredChildren);
+    const filteredAllChildren = node.allChildren.filter(child => leafIds.has(child._id));
+
+    return { ...node, children: filteredChildren, allChildren: filteredAllChildren };
+  };
+
+  return filterNodesArray(items, item => filterNode(item, 0));
 };

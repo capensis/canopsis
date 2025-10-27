@@ -11,7 +11,8 @@
           <v-tab-item :key="`${tab._id}-item`" :value="tab._id">
             <permissions-table-wrapper
               :treeview-permissions="tab.children"
-              :roles="roles"
+              :roles="tab._id === apiTabId ? apiRoles : uiRoles"
+              :search-depth="searchDepthByTabId[tab._id]"
               @input="changeRole"
             />
           </v-tab-item>
@@ -41,6 +42,8 @@
 <script>
 import { ref, onMounted } from 'vue';
 
+import { USER_PERMISSIONS_GROUPS } from '@/constants';
+
 import {
   useRolePermissionActions,
   useRolePermissionFetching,
@@ -53,17 +56,22 @@ export default {
   components: { PermissionsTableWrapper, PermissionsFabBtn },
   setup() {
     const activeTab = ref();
+    const apiTabId = USER_PERMISSIONS_GROUPS.api;
+    const searchDepthByTabId = {
+      [USER_PERMISSIONS_GROUPS.commonviews]: 1,
+    };
 
     const {
       pending,
-      roles,
+      uiRoles,
+      apiRoles,
       treeviewPermissions,
       hasChanges,
       resetRolesById,
       updateRoles,
       changeRole,
       fetchList,
-    } = useRolePermissionFetching({ activeTab });
+    } = useRolePermissionFetching();
 
     const { submit, cancel } = useRolePermissionActions({ updateRoles, resetRolesById });
 
@@ -71,8 +79,13 @@ export default {
 
     return {
       activeTab,
+
+      apiTabId,
+      searchDepthByTabId,
+
       pending,
-      roles,
+      uiRoles,
+      apiRoles,
       treeviewPermissions,
       hasChanges,
       changeRole,
