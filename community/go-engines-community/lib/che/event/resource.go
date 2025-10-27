@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/techmetrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -21,6 +22,7 @@ type resourceProcessor struct {
 	dbAlarmCollection   libmongo.DbCollection
 	contextGraphManager contextgraph.Manager
 	eventFilterService  eventfilter.Service
+	metricsSender       metrics.Sender
 	logger              zerolog.Logger
 }
 
@@ -28,6 +30,7 @@ func NewResourceProcessor(
 	dbClient libmongo.DbClient,
 	contextGraphManager contextgraph.Manager,
 	eventFilterService eventfilter.Service,
+	metricsSender metrics.Sender,
 	logger zerolog.Logger,
 ) Processor {
 	return &resourceProcessor{
@@ -36,6 +39,7 @@ func NewResourceProcessor(
 		dbAlarmCollection:   dbClient.Collection(libmongo.AlarmMongoCollection),
 		contextGraphManager: contextGraphManager,
 		eventFilterService:  eventFilterService,
+		metricsSender:       metricsSender,
 		logger:              logger,
 	}
 }
@@ -83,13 +87,13 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 
 	// Process event by event filters.
 	if event.Entity.Enabled {
-		var isInfosUpdated bool
-		isInfosUpdated, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
+		var updatedInfos map[string]eventfilter.UpdatedValue
+		updatedInfos, eventMetric.ExecutedEnrichRules, eventMetric.ExternalRequests, err = p.eventFilterService.ProcessEvent(ctx, event)
 		if err != nil {
 			return nil, nil, eventMetric, err
 		}
 
-		if isInfosUpdated {
+		if len(updatedInfos) > 0 {
 			_, err = p.dbEntityCollection.UpdateOne(
 				ctx,
 				bson.M{"_id": event.Entity.ID},
@@ -101,6 +105,7 @@ func (p *resourceProcessor) Process(ctx context.Context, event *types.Event) (
 
 			eventMetric.IsInfosUpdated = true
 			report.CheckResource = true
+			logInfosUpdate(p.metricsSender, event.Entity.ID, updatedInfos)
 		}
 	}
 
