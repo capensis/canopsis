@@ -71,6 +71,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -101,6 +102,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -129,6 +131,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -165,6 +168,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -193,6 +197,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -230,6 +235,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
     selectSubmitButton(wrapper).trigger('click');
@@ -239,8 +245,8 @@ describe('text-field-editor', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(value);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(value);
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     wrapper.destroy();
   });
@@ -248,7 +254,7 @@ describe('text-field-editor', () => {
   test('Errors added after trigger submit button with common error', async () => {
     const error = Faker.lorem.words();
     const name = Faker.lorem.word();
-    const action = jest.fn().mockRejectedValue({ error });
+    const action = jest.fn().mockRejectedValue({ [name]: error });
     const wrapper = factory({
       propsData: {
         modal: {
@@ -264,6 +270,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
     selectSubmitButton(wrapper).trigger('click');
@@ -272,9 +279,9 @@ describe('text-field-editor', () => {
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
-    expect({ [name]: error }).toEqual(addedErrors);
-    expect(action).toBeCalledWith('');
-    expect($modals.hide).not.toBeCalledWith();
+    expect(addedErrors).toEqual({ [name]: error });
+    expect(action).toHaveBeenCalledWith('');
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     wrapper.destroy();
   });
@@ -282,7 +289,7 @@ describe('text-field-editor', () => {
   test('Errors added after trigger submit button with error message', async () => {
     const message = Faker.lorem.words();
     const name = Faker.lorem.word();
-    const action = jest.fn().mockRejectedValue({ message });
+    const action = jest.fn().mockRejectedValue({ [name]: message });
     const wrapper = factory({
       propsData: {
         modal: {
@@ -298,6 +305,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
     selectSubmitButton(wrapper).trigger('click');
@@ -306,9 +314,9 @@ describe('text-field-editor', () => {
 
     const addedErrors = wrapper.getValidatorErrorsObject();
 
-    expect({ [name]: message }).toEqual(addedErrors);
-    expect(action).toBeCalledWith('');
-    expect($modals.hide).not.toBeCalledWith();
+    expect(addedErrors).toEqual({ [name]: message });
+    expect(action).toHaveBeenCalledWith('');
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     wrapper.destroy();
   });
@@ -330,6 +338,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -343,8 +352,8 @@ describe('text-field-editor', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(newValue);
-    expect($modals.hide).toBeCalled();
+    expect(action).toHaveBeenCalledWith(newValue);
+    expect($modals.hide).toHaveBeenCalled();
 
     wrapper.destroy();
   });
@@ -358,6 +367,7 @@ describe('text-field-editor', () => {
       },
       mocks: {
         $modals,
+        $popups,
       },
     });
 
@@ -365,7 +375,7 @@ describe('text-field-editor', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Renders `text-field-editor` with empty modal', () => {

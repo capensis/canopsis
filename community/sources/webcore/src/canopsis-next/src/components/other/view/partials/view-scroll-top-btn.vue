@@ -21,9 +21,16 @@
 </template>
 
 <script>
-import { scrollToTopMixin } from '@/mixins/scroll-to-top';
+import { useScrollToTop } from '@/hooks/scroll-to-top';
 
 export default {
-  mixins: [scrollToTopMixin],
+  setup() {
+    const { pageScrolled, scrollToTop } = useScrollToTop();
+
+    return {
+      pageScrolled,
+      scrollToTop,
+    };
+  },
 };
 </script>

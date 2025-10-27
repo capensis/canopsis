@@ -25,6 +25,7 @@ export default {
   filterByBookmark: 'Filtrer par signet',
   runTest: 'Exécuter le test',
   tagFilter: 'Filtre de balises',
+  alarmDisplayName: 'Nom d\'affichage de l\'alarme',
   popups: {
     exportFailed: 'Impossible d\'exporter la liste des alarmes au format CSV',
     addBookmarkSuccess: 'Le signet a été ajouté',
@@ -146,6 +147,7 @@ export default {
     resetChangeColumns: 'Réinitialiser l\'ordre/le redimensionnement des colonnes',
     startChangeColumns: 'Commencer à modifier l\'ordre/le redimensionnement des colonnes',
     finishChangeColumns: 'Terminer la modification de l\'ordre/du redimensionnement des colonnes',
+    withoutAnyExecution: 'La consigne manuelle n\'a pas été exécutée',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Nombre d\'alarmes créées',

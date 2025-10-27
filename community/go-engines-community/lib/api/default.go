@@ -18,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
@@ -26,8 +25,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/notification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
+	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -35,6 +36,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -72,6 +74,7 @@ const (
 	jobKeyExport        = "export"
 	jobKeyImport        = "import"
 	jobKeyExtDataImport = "extdataimport"
+	jobKeyPbhPatterns   = "pbhpatterns"
 )
 
 //go:embed swaggerui/*
@@ -102,6 +105,7 @@ func Default(
 	pgPoolProvider postgres.PoolProvider,
 	metricsEntityMetaUpdater metrics.MetaUpdater,
 	metricsUserMetaUpdater metrics.MetaUpdater,
+	tplTestTypePermMapping map[int][]any,
 	deferFunc DeferFunc,
 	overrideDocs bool,
 ) (API, Services, error) {
@@ -157,7 +161,7 @@ func Default(
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
-	amqpChannel, err := amqpConn.Channel()
+	amqpPublisher, err := amqpConn.Channel()
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot connect to rmq: %w", err)
 	}
@@ -206,12 +210,12 @@ func Default(
 	pbhEntityTypeResolver := libpbehavior.NewEntityTypeResolver(pbhStore, logger)
 	// Create entity service event publisher.
 	entityPublChan := make(chan entityservice.ChangeEntityMessage, chanBuf)
-	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpChannel, json.NewEncoder(),
+	entityServiceEventPublisher := entityservice.NewEventPublisher(amqpPublisher, json.NewEncoder(),
 		canopsis.JsonContentType, canopsis.DefaultExchangeName, canopsis.FIFOQueueName, canopsis.ApiConnector, logger)
 
-	entityCleanerTaskChan := make(chan entity.CleanTask)
-	disabledEntityCleaner := entity.NewDisabledCleaner(
-		lockRedisSession,
+	entityCleanerTaskChan := make(chan libentity.CleanTask)
+	disabledEntityCleaner := libentity.NewCleaner(
+		libredis.NewLockClient(lockRedisSession),
 		datastorage.NewAdapter(primaryDbClient),
 		services.DataStorageConfigProvider,
 		metricsEntityMetaUpdater,
@@ -225,25 +229,26 @@ func Default(
 	}
 
 	services.UserInterfaceConfigProvider = config.NewUserInterfaceConfigProvider(userInterfaceConfig, logger)
-	workersRunner := workers.NewRunner(amqpChannel, amqpChannel, logger)
+	workersRunner := workers.NewRunner(amqpConn, logger)
 	// Create csv exporter.
-	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, workersRunner),
+	services.ExportTaskExecutor = export.NewTaskExecutor(primaryDbClient, workers.NewJobPublisher(jobKeyExport, amqpPublisher),
 		services.TimezoneConfigProvider, filepath.Join(cfg.File.Dir, canopsis.SubDirExport), logger)
 	workersRunner.AddJobExecutor(jobKeyExport, func(ctx context.Context, id string) error {
 		return services.ExportTaskExecutor.ExecuteTask(ctx, id)
 	})
 	importWorker := contextgraph.NewImportWorker(
 		cfg,
-		contextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+		contextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 		contextgraph.NewMongoStatusReporter(primaryDbClient),
 		importcontextgraph.NewWorker(
 			primaryDbClient,
-			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpChannel),
+			importcontextgraph.NewEventPublisher(canopsis.DefaultExchangeName, canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, amqpPublisher),
 			metricsEntityMetaUpdater,
 			canopsis.ApiConnector,
+			common.NewPatternFieldsTransformer(primaryDbClient),
 			logger,
 		),
-		workers.NewJobPublisher(jobKeyImport, workersRunner),
+		workers.NewJobPublisher(jobKeyImport, amqpPublisher),
 		logger,
 	)
 	workersRunner.AddJobExecutor(jobKeyImport, func(ctx context.Context, _ string) error {
@@ -269,8 +274,8 @@ func Default(
 	services.ExternalDataContainer = externaldata.NewGetterContainer()
 	services.LinkGenerator = link.NewGenerator(primaryDbClient, tplExecutor, services.ExternalDataContainer, logger)
 	authorProvider := author.NewProvider(services.ApiConfigProvider)
-	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, services.TimezoneConfigProvider,
-		authorProvider, tplExecutor, json.NewDecoder(), logger)
+	alarmStore := alarmapi.NewStore(secondaryDbClient, dbExportClient, services.LinkGenerator, common.NewPatternFieldsTransformer(primaryDbClient),
+		services.TimezoneConfigProvider, authorProvider, tplExecutor, json.NewDecoder(), logger)
 	alarmWatcher := alarmapi.NewWatcher(noTimeoutClient, websocketHub, alarmStore, json.NewEncoder(), json.NewDecoder(), logger)
 
 	messageRateWatcher := messageratestats.NewWatcher(websocketHub, messageratestats.NewStore(pgPoolProvider),
@@ -305,16 +310,44 @@ func Default(
 	)
 
 	exdataImportWorker := apiexternaldata.NewImportWorker(primaryDbClient, pgPoolProvider,
-		filepath.Join(cfg.File.Dir, canopsis.SubDirExDataImport), workers.NewJobPublisher(jobKeyExtDataImport, workersRunner),
+		filepath.Join(cfg.File.Dir, canopsis.SubDirExDataImport), workers.NewJobPublisher(jobKeyExtDataImport, amqpPublisher),
 		logger)
 	workersRunner.AddJobExecutor(jobKeyExtDataImport, func(ctx context.Context, id string) error {
 		return exdataImportWorker.ProcessJob(ctx, id)
 	})
+	apiPbhStore := pbehavior.NewStore(primaryDbClient, secondaryDbClient, lockRedisSession, pbhEntityTypeResolver,
+		libpbehavior.NewTypeComputer(libpbehavior.NewModelProvider(primaryDbClient, authorProvider), json.NewDecoder()),
+		services.TimezoneConfigProvider, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient),
+		websocketHub, services.UserInterfaceConfigProvider)
+	workersRunner.AddJobExecutor(jobKeyPbhPatterns, func(ctx context.Context, _ string) error {
+		return apiPbhStore.ExecPatternsAndUpdate(ctx)
+	})
 
-	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpChannel, json.NewEncoder(),
+	services.NotificationStore = usernotification.NewStore(primaryDbClient, amqpPublisher, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
-	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpChannel, websocketHub,
+	notifQueueListener := notification.NewQueueListener(primaryDbClient, amqpConn, websocketHub,
 		notification.NewStore(primaryDbClient, authorProvider), json.NewDecoder(), services.ApiConfigProvider, logger)
+
+	if tplTestTypePermMapping == nil {
+		tplTestTypePermMapping = make(map[int][]any)
+	}
+
+	tplTestTypePermMapping[libcommtemplate.TypeTestEventFilterRule] = []any{
+		apisecurity.ObjEventFilterRule,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestLinkRule] = []any{
+		apisecurity.ObjLinkRule,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestActionScenario] = []any{
+		apisecurity.ObjAction,
+		securitymodel.PermissionCreate,
+	}
+	tplTestTypePermMapping[libcommtemplate.TypeTestWidget] = []any{
+		apisecurity.ObjView,
+		securitymodel.PermissionCreate,
+	}
 
 	// Create api.
 	api := New(
@@ -391,7 +424,7 @@ func Default(
 			})
 		})
 
-		RegisterValidators(primaryDbClient, security.GetConfig())
+		RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
 		RegisterRoutes(
 			ctx,
 			cfg,
@@ -403,7 +436,8 @@ func Default(
 			secondaryDbClient,
 			dbExportClient,
 			pgPoolProvider,
-			amqpChannel,
+			amqpPublisher,
+			lockRedisSession,
 			services.ApiConfigProvider,
 			services.TimezoneConfigProvider,
 			services.TemplateConfigProvider,
@@ -413,7 +447,6 @@ func Default(
 			entityCleanerTaskChan,
 			services.ExportTaskExecutor,
 			techMetricsTaskExecutor,
-			amqpChannel,
 			services.UserInterfaceConfigProvider,
 			websocketHub,
 			websocketStore,
@@ -429,7 +462,9 @@ func Default(
 			securityConfig,
 			exdataImportWorker,
 			services.NotificationStore,
+			services.ExternalDataContainer,
 			workersRunner,
+			tplTestTypePermMapping,
 			logger,
 		)
 	})
@@ -491,9 +526,9 @@ func Default(
 	api.AddWorker("enforce_policy_load", func(ctx context.Context) {
 		services.Enforcer.StartAutoLoadPolicy(ctx, flags.PeriodicalWaitTime)
 	})
-	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpChannel, logger))
+	api.AddWorker("pbehavior_compute", sendPbhRecomputeEvents(pbhComputeChan, json.NewEncoder(), amqpPublisher, logger))
 
-	stateSettingsListener := statesetting.NewListener(primaryDbClient, amqpChannel, canopsis.ApiConnector,
+	stateSettingsListener := statesetting.NewListener(primaryDbClient, amqpPublisher, canopsis.ApiConnector,
 		flags.IntegrationPeriodicalWaitTime, flags.StateSettingRecomputeDelay, json.NewEncoder(), logger)
 	api.AddWorker("state_settings_listener", func(ctx context.Context) {
 		stateSettingsListener.Listen(ctx, stateSettingsUpdatesChan)
@@ -603,6 +638,10 @@ func registerWebsocketRooms(websocketHub websocket.Hub) error {
 	}
 
 	if err := websocketHub.RegisterRoom(websocket.RoomIcons); err != nil {
+		return fmt.Errorf("fail to register websocket room: %w", err)
+	}
+
+	if err := websocketHub.RegisterRoom(websocket.RoomPbhPatterns, apisecurity.PermPbhPatterns, securitymodel.PermissionCan); err != nil {
 		return fmt.Errorf("fail to register websocket room: %w", err)
 	}
 

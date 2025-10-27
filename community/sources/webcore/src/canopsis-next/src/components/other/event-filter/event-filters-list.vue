@@ -1,5 +1,6 @@
 <template>
   <c-advanced-data-table
+    ref="advancedDataTable"
     :items="eventFilters"
     :headers="headers"
     :loading="pending"
@@ -31,7 +32,8 @@
     <template #unread_failures_count="{ item }">
       <c-circle-badge
         v-if="item.unread_failures_count"
-        class="error"
+        color="error"
+        small
       >
         {{ item.unread_failures_count }}
       </c-circle-badge>
@@ -70,6 +72,7 @@
     </template>
     <template #expand="{ item }">
       <event-filters-list-expand-panel
+        ref="expandPanel"
         :event-filter="item"
         @refresh="$emit('refresh')"
       />
