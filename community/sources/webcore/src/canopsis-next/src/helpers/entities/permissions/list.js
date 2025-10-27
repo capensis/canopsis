@@ -223,12 +223,12 @@ export const filterTreeviewPermissions = (treeviewPermissions, search = '') => {
    */
   const matchesSearch = (node, key) => (
     node.name?.toLowerCase().includes(searchLower)
-    || node.description?.toLowerCase().includes(searchLower)
     || key.toLowerCase().includes(searchLower)
   );
 
   /**
    * Recursively filters a node and its children based on search criteria
+   * Only leaf nodes (without children) can match the search term
    *
    * @param {Object} node - The node to filter
    * @param {string} key - The key of the node
@@ -236,6 +236,7 @@ export const filterTreeviewPermissions = (treeviewPermissions, search = '') => {
    */
   const filterNode = (node, key) => {
     if (node.children) {
+      // Parent nodes are included only if they have matching leaf descendants
       const filteredChildren = filterObjectEntries(
         node.children,
         (childNode, childKey) => filterNode(childNode, childKey),
@@ -252,6 +253,7 @@ export const filterTreeviewPermissions = (treeviewPermissions, search = '') => {
       return { ...node, children: filteredChildren, allChildren: filteredAllChildren };
     }
 
+    // Only leaf nodes (without children) can match the search
     return matchesSearch(node, key) ? node : null;
   };
 
