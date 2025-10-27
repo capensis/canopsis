@@ -11,7 +11,7 @@
   >
     <template #item="{ item, isExpanded, expand }">
       <tr>
-        <td :class="{ [`pl-${indent * 3 + 2}`]: true, 'cursor-pointer': item.children }">
+        <td :class="{ [`pl-${indent * 3 + 2}`]: true }">
           <c-expand-btn
             v-if="item.children"
             :expanded="isExpanded"
@@ -19,8 +19,7 @@
             @expand="expand"
           />
           <span
-            :class="{ 'font-weight-medium': item.children }"
-            class="cursor-pointer"
+            :class="{ 'font-weight-medium': item.children, 'cursor-pointer': item.children }"
             @click="item.children && expand(!isExpanded)"
           >
             <v-list-item-mask v-if="search && !item.children" :text="item.title" :mask="search" />
@@ -173,6 +172,16 @@ export default {
 
   .v-input--selection-controls__input {
     margin: 0;
+  }
+
+  &.v-data-table:not(.v-data-table--expand) tbody tr {
+    &:nth-of-type(2n + 1) {
+    background-color: transparent !important;
+
+    &:hover {
+      background: var(--v-table-hover-row-color-base, #eeeeee) !important;
+    }
+  }
   }
 }
 </style>
