@@ -36,6 +36,7 @@ const AdminTags = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/tag
 const AdminStorageSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/storage-settings.vue');
 const AdminStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/state-settings.vue');
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
+const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -48,10 +49,11 @@ const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusR
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
 const ExploitationExternalDataTables = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/external-data-tables.vue');
+const ExploitationEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/exploitation/entity-infos-properties.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
-const NotificationInstructionStats = () => import(/* webpackChunkName: "InstructionStats" */ '@/views/notification/instruction-stats.vue');
+const Notifications = () => import(/* webpackChunkName: "Notifications" */ '@/views/notification/notifications.vue');
 
 Vue.use(Router);
 
@@ -276,6 +278,18 @@ const routes = [
     },
   },
   {
+    path: ROUTES.adminTemplateTesting,
+    name: ROUTES_NAMES.adminTemplateTesting,
+    component: AdminTemplateTesting,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        action: CRUD_ACTIONS.can,
+        id: USER_PERMISSIONS.technical.templateTesting,
+      },
+    },
+  },
+  {
     path: ROUTES.exploitationPbehaviors,
     name: ROUTES_NAMES.exploitationPbehaviors,
     component: ExploitationPbehaviors,
@@ -421,6 +435,17 @@ const routes = [
     },
   },
   {
+    path: ROUTES.exploitationEntityInfosProperties,
+    name: ROUTES_NAMES.exploitationEntityInfosProperties,
+    component: ExploitationEntityInfosProperties,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
+      },
+    },
+  },
+  {
     path: ROUTES.profilePatterns,
     name: ROUTES_NAMES.profilePatterns,
     component: ProfilePatterns,
@@ -440,15 +465,13 @@ const routes = [
     },
   },
   {
-    path: ROUTES.notificationInstructionStats,
-    name: ROUTES_NAMES.notificationInstructionStats,
-    component: NotificationInstructionStats,
+    path: ROUTES.notifications,
+    name: ROUTES_NAMES.notifications,
+    component: Notifications,
     meta: {
       requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.notification.instructionStats,
-      },
     },
+    props: route => ({ tabId: route.params.tabId, activeId: route.query.id }),
   },
   {
     path: ROUTES.error,

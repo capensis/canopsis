@@ -1,8 +1,5 @@
 <template>
-  <c-information-block
-    :title="$t('storageSetting.pbehavior.title')"
-    help-icon-color="info"
-  >
+  <c-information-block :title="$t('storageSetting.pbehavior.title')">
     <template
       v-if="history"
       #subtitle=""
@@ -13,7 +10,10 @@
       v-field="form.delete_after"
       :label="$t('storageSetting.pbehavior.deleteAfter')"
       :help-text="$t('storageSetting.pbehavior.deleteAfterHelpText')"
-      :name="pbehaviorDeleteAfterFieldName"
+      :suffix="$t('common.after')"
+      name="pbehavior.delete_after"
+      switcher
+      hide-value-on-false
     />
   </c-information-block>
 </template>
@@ -35,11 +35,6 @@ export default {
     history: {
       type: Number,
       required: false,
-    },
-  },
-  computed: {
-    pbehaviorDeleteAfterFieldName() {
-      return 'pbehavior.delete_after';
     },
   },
 };

@@ -36,6 +36,7 @@ import { formToIdleRule, idleRuleToForm } from '@/helpers/entities/idle-rule/for
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
 import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import IdleRuleForm from '@/components/other/idle-rule/form/idle-rule-form.vue';
 
@@ -53,6 +54,7 @@ export default {
   },
   mixins: [
     modalInnerMixin,
+    entitiesEntityInfoPropertyMixin,
     submittableMixinCreator(),
     confirmableModalMixinCreator(),
   ],
@@ -65,6 +67,12 @@ export default {
     title() {
       return this.config.title || this.$t('modals.createAlarmIdleRule.create.title');
     },
+  },
+  mounted() {
+    /**
+     * We need to call this for aliases variables
+     */
+    this.fetchAllEntityInfoPropertiesList();
   },
   methods: {
     async submit() {

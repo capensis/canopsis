@@ -6,16 +6,13 @@ import { createCRUDModule } from '@/store/plugins/entities';
 
 export default createCRUDModule({
   route: API_ROUTES.maps,
+  bulkRoute: API_ROUTES.bulkMaps,
   withFetchingParams: true,
   withWithoutStore: true,
 }, {
   actions: {
     fetchItemWithoutStore(context, { id, params }) {
       return request.get(`${API_ROUTES.maps}/${id}`, { params });
-    },
-
-    bulkRemove(context, { data }) {
-      return request.delete(API_ROUTES.bulkMaps, { data });
     },
 
     fetchItemStateWithoutStore(context, { id, params }) {

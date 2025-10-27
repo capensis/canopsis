@@ -9,7 +9,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -37,7 +39,7 @@ type api struct {
 	taskCreator          export.TaskCreator
 	defaultExportFields  export.Fields
 	exportSeparators     map[string]rune
-	cleanTaskChan        chan<- CleanTask
+	cleanTaskChan        chan<- libentity.CleanTask
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
 	metricMetaUpdater    metrics.MetaUpdater
 	encoder              encoding.Encoder
@@ -47,7 +49,7 @@ type api struct {
 func NewApi(
 	store Store,
 	taskCreator export.TaskCreator,
-	cleanTaskChan chan<- CleanTask,
+	cleanTaskChan chan<- libentity.CleanTask,
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
 	encoder encoding.Encoder,
@@ -194,8 +196,8 @@ func (a *api) ArchiveDisabled(c *gin.Context) {
 	}
 
 	select {
-	case a.cleanTaskChan <- CleanTask{
-		Type:                    CleanTaskTypeArchiveDisabled,
+	case a.cleanTaskChan <- libentity.CleanTask{
+		Type:                    libentity.CleanTaskTypeArchiveDisabled,
 		ArchiveWithDependencies: r.WithDependencies,
 		UserID:                  c.MustGet(auth.UserKey).(string),
 	}:
@@ -216,9 +218,9 @@ func (a *api) ArchiveUnlinked(c *gin.Context) {
 	}
 
 	select {
-	case a.cleanTaskChan <- CleanTask{
-		Type:          CleanTaskTypeArchiveUnlinked,
-		ArchiveBefore: &r.ArchiveBefore,
+	case a.cleanTaskChan <- libentity.CleanTask{
+		Type:          libentity.CleanTaskTypeArchiveUnlinked,
+		ArchiveBefore: r.ArchiveBefore.SubFrom(datetime.NewCpsTime()),
 		UserID:        c.MustGet(auth.UserKey).(string),
 	}:
 	default:
@@ -230,8 +232,8 @@ func (a *api) ArchiveUnlinked(c *gin.Context) {
 
 func (a *api) CleanArchived(c *gin.Context) {
 	select {
-	case a.cleanTaskChan <- CleanTask{
-		Type:   CleanTaskTypeCleanArchived,
+	case a.cleanTaskChan <- libentity.CleanTask{
+		Type:   libentity.CleanTaskTypeCleanArchived,
 		UserID: c.MustGet(auth.UserKey).(string),
 	}:
 	default:
