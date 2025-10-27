@@ -75,6 +75,10 @@ export default {
     title: 'Events recordings',
     deleteAfter: 'Delete events recordings',
   },
+  entityInfosLog: {
+    title: 'Event filter: entity enrichment logs',
+    deleteAfter: 'Delete event filter logs older than',
+  },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',
     alarm: {

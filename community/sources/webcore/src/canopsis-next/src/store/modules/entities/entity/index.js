@@ -165,5 +165,9 @@ export default createEntityModule({
     bulkDisable(context, { data }) {
       return request.put(API_ROUTES.bulkEntitiesDisable, data);
     },
+
+    fetchEntityInfosLogsListWithoutStore(context, { params }) {
+      return request.get(API_ROUTES.entityInfosLog, { params });
+    },
   },
 });

@@ -62,6 +62,11 @@ import { durationWithEnabledToForm } from '@/helpers/date/duration';
  */
 
 /**
+ * @typedef {Object} DataStorageEntityInfosLogConfig
+ * @property {DurationWithEnabled} delete_after
+ */
+
+/**
  * @typedef {Object} DataStorageConfig
  * @property {DataStorageJunitConfig} junit
  * @property {DataStorageRemediationConfig} remediation
@@ -260,6 +265,18 @@ export const dataStorageEventsRecordsToForm = (eventsRecords = {}) => ({
 });
 
 /**
+ * Convert data storage entity infos log config to form object
+ *
+ * @param {DataStorageEntityInfosLogConfig} entityInfosLog
+ * @return {DataStorageEntityInfosLogConfig}
+ */
+export const dataStorageEntityInfosLogToForm = (entityInfosLog = {}) => ({
+  delete_after: entityInfosLog.delete_after
+    ? durationWithEnabledToForm(entityInfosLog.delete_after)
+    : { value: 7, unit: TIME_UNITS.day, enabled: true },
+});
+
+/**
  * Convert data storage object to data storage form
  *
  * @param {DataStorageConfig} dataStorage
@@ -278,4 +295,5 @@ export const dataStorageSettingsToForm = (dataStorage = {}) => ({
   event_filter_failure: dataStorageEventFilterFailureToForm(dataStorage.event_filter_failure),
   alarm_external_tag: dataStorageAlarmExternalTagToForm(dataStorage.alarm_external_tag),
   event_records: dataStorageEventsRecordsToForm(dataStorage.event_records),
+  entity_infos_log: dataStorageEntityInfosLogToForm(dataStorage.entity_infos_log),
 });
