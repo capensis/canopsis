@@ -91,7 +91,9 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with custom props 1`] = `
     <span
       class="text-caption text--secondary error--text"
     >
-      At least one pattern has to be defined. Please define filter patterns for rule
+      <span>
+        At least one pattern has to be defined. Please define filter patterns for rule
+      </span>
     </span>
     <!---->
     <button
@@ -132,7 +134,9 @@ exports[`c-patterns-field Renders \`c-patterns-field\` with default props 1`] = 
   >
     <span
       class="text-caption text--secondary"
-    />
+    >
+      <span />
+    </span>
     <!---->
     <button
       class="mr-0 ml-4 v-btn v-btn--disabled v-btn--has-bg theme--light v-size--default"

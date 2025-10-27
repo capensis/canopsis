@@ -13,7 +13,7 @@ repo_name: 'git.canopsis.net'
 
 docs_dir:
    sources/docs/fr
-copyright: Documentation © Capensis 2018–2022 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
+copyright: Documentation © Capensis 2018–2025 / CC BY-SA 3.0 FR (https://creativecommons.org/licenses/by-sa/3.0/fr/)
 
 theme:
   name: material
@@ -66,6 +66,7 @@ markdown_extensions:
     - pymdownx.emoji:
         emoji_index: !!python/name:material.extensions.emoji.twemoji
         emoji_generator: !!python/name:material.extensions.emoji.to_svg
+    - md_in_html
 
 plugins:
     - git-revision-date-localized:
@@ -76,6 +77,8 @@ plugins:
           - en
     - render_swagger
     - awesome-pages
+    - include-markdown
+    - glightbox
 
 extra:
   social:
@@ -93,4 +96,6 @@ extra_css:
 
 extra_javascript:
   # sync this with the version used in <https://squidfunk.github.io/mkdocs-material/reference/diagrams> HTML source
-  - https://unpkg.com/mermaid@8.13.3/dist/mermaid.min.js
+  #- https://unpkg.com/mermaid@8.13.3/dist/mermaid.min.js
+  - https://unpkg.com/mermaid@11.12.0/dist/mermaid.min.js
+

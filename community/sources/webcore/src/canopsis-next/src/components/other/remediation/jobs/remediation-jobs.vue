@@ -73,7 +73,7 @@ export default {
           remediationJob: omit(remediationJob, ['_id']),
           title: this.$t('modals.createRemediationJob.duplicate.title'),
           action: async (job) => {
-            await this.createRemediationJob({ data: job });
+            const newRemediationJob = await this.createRemediationJob({ data: job });
 
             this.$popups.success({
               text: this.$t('modals.createRemediationJob.duplicate.popups.success', {
@@ -82,6 +82,8 @@ export default {
             });
 
             await this.fetchList();
+
+            return newRemediationJob;
           },
         },
       });

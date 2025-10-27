@@ -1,15 +1,24 @@
 <template>
-  <v-form @submit.prevent="submit">
+  <v-form>
     <modal-wrapper close>
       <template #title="">
         <span>{{ title }}</span>
       </template>
       <template #text="">
-        <remediation-job-form
+        <template-testing-test-variables-wrapper
           v-model="form"
-          :with-payload="withPayload"
-          :with-query="withQuery"
-        />
+          :rule-id="remediationJobId"
+          :type="type"
+        >
+          <template #default="{ templateVars }">
+            <remediation-job-form
+              v-model="form"
+              :with-payload="withPayload"
+              :with-query="withQuery"
+              :template-vars="templateVars"
+            />
+          </template>
+        </template-testing-test-variables-wrapper>
       </template>
       <template #actions="">
         <v-btn
@@ -24,6 +33,7 @@
           :loading="submitting"
           class="primary"
           type="submit"
+          @click="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
@@ -33,21 +43,22 @@
 </template>
 
 <script>
-import { createNamespacedHelpers } from 'vuex';
+import { computed, ref, watch } from 'vue';
 
-import { MODALS, VALIDATION_DELAY } from '@/constants';
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import { formToRemediationJob, remediationJobToForm } from '@/helpers/entities/remediation/job/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useStore } from '@/hooks/store';
 
 import RemediationJobForm from '@/components/other/remediation/jobs/form/remediation-job-form.vue';
+import TemplateTestingTestVariablesWrapper from '@/components/other/template-testing/test-variables/template-testing-test-variables-wrapper.vue';
 
 import ModalWrapper from '../modal-wrapper.vue';
-
-const { mapGetters: mapInfoGetters } = createNamespacedHelpers('info');
 
 export default {
   name: MODALS.createRemediationJob,
@@ -58,48 +69,61 @@ export default {
   components: {
     ModalWrapper,
     RemediationJobForm,
+    TemplateTestingTestVariablesWrapper,
   },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.job;
+
+    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const store = useStore();
+
+    const form = ref(remediationJobToForm(config.value.remediationJob));
+
+    const remediationJobId = computed(() => config.value.remediationJob?._id);
+    const title = computed(() => config.value.title ?? t('modals.createRemediationJob.create.title'));
+
+    const remediationJobConfigTypes = computed(() => store.getters['info/remediationJobConfigTypes']);
+    const remediationJobConfigType = computed(() => remediationJobConfigTypes.value.find(
+      ({ name }) => name === form.value.config.type,
+    ));
+
+    const withPayload = computed(() => remediationJobConfigType.value?.with_body);
+    const withQuery = computed(() => remediationJobConfigType.value?.with_query);
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        const data = await config.value.action?.(formToRemediationJob(form.value));
+
+        close();
+
+        return data;
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    watch(remediationJobConfigType, newConfigType => form.value.configType = newConfigType, { immediate: true });
+
     return {
-      form: remediationJobToForm(this.modal.config.remediationJob),
+      form,
+      config,
+      remediationJobId,
+      type,
+      title,
+      isDisabled,
+      submitting,
+      submit,
+      withPayload,
+      withQuery,
     };
-  },
-  computed: {
-    ...mapInfoGetters(['remediationJobConfigTypes']),
-
-    title() {
-      return this.config.title ?? this.$t('modals.createRemediationJob.create.title');
-    },
-
-    remediationJobConfigType() {
-      return this.remediationJobConfigTypes.find(({ name }) => name === this.form.config.type);
-    },
-
-    withPayload() {
-      return this.remediationJobConfigType?.with_body;
-    },
-
-    withQuery() {
-      return this.remediationJobConfigType?.with_query;
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToRemediationJob(this.form, this.remediationJobConfigType));
-        }
-
-        this.$modals.hide();
-      }
-    },
   },
 };
 </script>

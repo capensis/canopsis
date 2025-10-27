@@ -25,6 +25,7 @@ export default {
   filterByBookmark: 'Filter by bookmark',
   runTest: 'Run test',
   tagFilter: 'Tag filter',
+  alarmDisplayName: 'Alarm display name',
   popups: {
     exportFailed: 'Failed to export alarms list in CSV format',
     addBookmarkSuccess: 'Bookmark was added',
@@ -147,6 +148,7 @@ export default {
     resetChangeColumns: 'Reset columns ordering/resizing',
     startChangeColumns: 'Start change columns ordering/resizing',
     finishChangeColumns: 'Finish change columns ordering/resizing',
+    withoutAnyExecution: 'Manual instruction wasn\'t executed',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',

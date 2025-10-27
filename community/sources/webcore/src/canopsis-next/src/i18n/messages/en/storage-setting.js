@@ -1,36 +1,36 @@
 export default {
+  receivedFor: 'Received for',
+  olderThan: 'Older than',
   alarm: {
-    title: 'Alarm data storage',
-    titleHelp: 'When switched on, the resolved alarms data will be archived and/or deleted after the defined time period.',
-    archiveAfter: 'Archive resolved alarms data after',
-    deleteAfter: 'Delete resolved alarms data after',
+    archiveAfter: 'Archive resolved alarms data',
+    deleteAfter: 'Delete resolved alarms data',
   },
   junit: {
-    title: 'JUnit data storage',
-    deleteAfter: 'Delete test suites data after',
-    deleteAfterHelpText: 'When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period.',
+    title: 'JUnit',
+    deleteAfter: 'Delete test suites data',
+    deleteAfterHelpText: '(XMLs, screenshots, videos)',
   },
   remediation: {
-    title: 'Instructions data storage',
-    deleteAfter: 'Delete instructions timeline data after',
-    deleteAfterHelpText: 'When switched on, the instructions timelines data will be deleted after the defined time period.',
-    deleteStatsAfter: 'Delete instruction statistics data after',
-    deleteStatsAfterHelpText: 'When switched on, the instruction statistics will be deleted after the defined time period.',
-    deleteModStatsAfter: 'Delete instructions summary data after',
-    deleteModStatsAfterHelpText: 'When switched on, the instructions summary data will be deleted after the defined time period.',
+    title: 'Instructions',
+    deleteAfter: 'Delete instructions timeline',
+    deleteStatsAfter: 'Delete instruction statistics',
+    deleteModStatsAfter: 'Delete instructions summary',
   },
   entity: {
     title: 'Entities data storage',
     titleHelp: 'All disabled entities with associated alarms can be archived (moved to the separate collection) and/or deleted forever.',
     archiveDependencies: 'Remove the impacting and dependent entities as well',
-    archiveDependenciesHelp: 'For connectors, all impacting and dependent components and resources will be archived or deleted forever. For components, all dependent resources will be archived or deleted forever as well.',
+    archiveDependenciesHelp: '<strong>For connectors:</strong>\n'
+      + '<ul><li>all impacting and dependent <strong class="font-italic">components</strong> and <strong class="font-italic">resources</strong> will be archived or deleted forever.</li></ul>\n'
+      + '<strong>For components:</strong>\n'
+      + '<ul><li>all dependent <strong class="font-italic">resources</strong> will be archived or deleted forever as well.</li></ul>',
     archiveDisabled: 'Archive disabled entities',
   },
   entityUnlinked: {
-    title: 'Unlinked entities storage',
-    titleHelp: 'All unlinked connectors, components and resources without alarms and updated long time ago can be archived.',
-    archiveBefore: 'Archive entities when no events received for',
+    title: 'Unlinked entities',
+    archiveAfter: 'Archive entities with no events',
     archiveUnlinked: 'Archive unlinked entities',
+    archiveUnlinkedAfter: 'Archive unlinked entities with no events received for',
   },
   entityArchived: {
     title: 'Archived data storage',
@@ -38,44 +38,46 @@ export default {
     cleanArchive: 'Clean archive',
   },
   pbehavior: {
-    title: 'PBehavior data storage',
-    deleteAfter: 'Delete PBehavior data after',
-    deleteAfterHelpText: 'When switched on, inactive PBehaviors will be deleted after the defined time period from the last event.',
+    title: 'PBehavior',
+    deleteAfter: 'Delete inactive PBehavior',
+    deleteAfterHelpText: 'Inactive PBehaviors will be deleted after the defined time period from the last event',
   },
   healthCheck: {
-    title: 'Healthcheck data storage',
-    deleteAfter: 'Delete FIFO incoming flow data after',
+    title: 'Healthcheck',
+    deleteAfter: 'Delete FIFO incoming flow',
   },
   webhook: {
-    title: 'Webhooks data storage',
-    titleHelp: 'All webhook requests history is kept in logs',
-    deleteAfter: 'Clear webhooks logs after',
-    deleteAfterHelpText: 'All webhook requests history older than the defined time period will be deleted',
+    title: 'Webhooks',
+    deleteAfter: 'Delete webhooks requests history',
     logCredentials: 'Open auth data in logs',
-    logCredentialsHelpText: 'When enabled, all credentials and auth data is written in logs in open way (not recommended). \n'
-      + 'When disabled, all passwords, tokens and auth data is hidden and written as *** in logs.',
+    logCredentialsHelpText: 'Affects how passwords, tokens and auth data are written in logs. \n'
+      + '<ul><li>enabled: in open way (not recommended)</li>'
+      + '<li>disabled: hidden with ***</li></ul>',
   },
   metrics: {
-    title: 'Internal metrics data storage',
-    titleHelp: 'When enabled, internal metrics data will be deleted after the defined time period',
-    deleteAfter: 'Clear metrics storage after',
-    deleteAfterHelpText: 'All internal metrics older than the defined time period will be deleted',
+    title: 'Internal metrics',
+    deleteAfter: 'Delete metrics',
   },
   perfDataMetrics: {
-    title: 'External metrics data storage',
-    titleHelp: 'When enabled, external metrics data will be deleted after the defined time period',
-    deleteAfter: 'Clear metrics storage after',
-    deleteAfterHelpText: 'All external metrics older than the defined time period will be deleted',
+    title: 'External metrics',
+    deleteAfter: 'Delete metrics',
   },
   eventFilterFailure: {
-    title: 'Error messages data storage',
-    titleHelp: 'When enabled, error messages data will be deleted after the defined time period. However, all errors are available in logs.',
-    deleteAfter: 'Clear error messages older than',
-    deleteAfterHelpText: 'All error messages older than the defined time period will be deleted',
+    title: 'Event filter error messages',
+    deleteAfter: 'Delete error messages',
+    deleteAfterHelpText: 'All errors will still be available in logs',
   },
   alarmExternalTag: {
-    title: 'Alarm external tags data storage',
-    deleteAfter: 'Clear external tags after',
+    title: 'Alarm external tags',
+    deleteAfter: 'Delete external tags',
+  },
+  eventsRecords: {
+    title: 'Events recordings',
+    deleteAfter: 'Delete events recordings',
+  },
+  entityInfosLog: {
+    title: 'Event filter: entity enrichment logs',
+    deleteAfter: 'Delete event filter logs older than',
   },
   history: {
     scriptLaunched: 'Script launched at {launchedAt}.',
@@ -90,14 +92,5 @@ export default {
     alarmExternalTag: {
       deletedCount: 'Alarm external tags deleted: {count}.',
     },
-  },
-  eventsRecords: {
-    title: 'Events recordings data storage',
-    titleHelp: 'All recordings older than the defined time period will be deleted',
-    deleteAfter: 'Delete events recordings after',
-  },
-  entityInfosLog: {
-    title: 'Event filter: entity enrichment logs',
-    deleteAfter: 'Delete event filter logs older than',
   },
 };

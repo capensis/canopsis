@@ -18,9 +18,9 @@ Pour rappel, SELinux n'est pas supporté.
 
 ## Prérequis composants Canopsis
 
-Composant   | Version (Pour Canopsis 24.04)         |
+Composant   | Version (Pour Canopsis 25.04)         |
 ------------|------------------|
-MongoDB     | 7.0              |
+MongoDB     | 8.0              |
 Nginx       | >= 1.26 (uniquement pour l'installation via paquets RPM) |
 PostgreSQL  | >= 15               |
 TimescaleDB | 2.15.1           |
