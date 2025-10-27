@@ -319,13 +319,13 @@ func TestChangeEntityApply(t *testing.T) {
 
 	for _, dataSet := range dataSets {
 		t.Run(dataSet.testName, func(t *testing.T) {
-			outcome, _, _, err := applicator.Apply(t.Context(), dataSet.rule, &dataSet.event, dataSet.regexMatches)
+			res, err := applicator.Apply(t.Context(), dataSet.rule, &dataSet.event, nil, dataSet.regexMatches)
 			if err != nil {
 				t.Errorf("expected not error but got %v", err)
 			}
 
-			if outcome != eventfilter.OutcomePass {
-				t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, outcome)
+			if res.Outcome != eventfilter.OutcomePass {
+				t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, res.Outcome)
 			}
 
 			if !reflect.DeepEqual(dataSet.expectedEvent, dataSet.event) {
@@ -372,7 +372,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 		ConnectorName: "connector name",
 	}
 
-	outcome, _, _, err := applicator.Apply(
+	res, err := applicator.Apply(
 		t.Context(),
 		eventfilter.ParsedRule{
 			ExternalData: externalData,
@@ -381,6 +381,7 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 			},
 		},
 		&event,
+		nil,
 		eventfilter.RegexMatch{},
 	)
 
@@ -388,8 +389,8 @@ func TestChangeEntityApplyWithExternalData(t *testing.T) {
 		t.Errorf("expected not error but got %v", err)
 	}
 
-	if outcome != eventfilter.OutcomePass {
-		t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, outcome)
+	if res.Outcome != eventfilter.OutcomePass {
+		t.Errorf("expected outcome %s, but got %s", eventfilter.OutcomePass, res.Outcome)
 	}
 
 	if !reflect.DeepEqual(expectedEvent, event) {
