@@ -27,18 +27,20 @@
       {{ $t(`externalData.tableTypes.${item.type}`) }}
     </template>
     <template #actions="{ item }">
-      <c-action-btn
-        v-if="updatable"
-        type="edit"
-        @click="$emit('edit', item)"
-      />
-      <c-action-btn
-        v-if="removable"
-        :disabled-button="!!item.deleteTooltip"
-        :tooltip="item.deleteTooltip"
-        type="delete"
-        @click="remove(item)"
-      />
+      <v-layout align-center>
+        <c-action-btn
+          v-if="updatable"
+          type="edit"
+          @click="$emit('edit', item)"
+        />
+        <c-action-btn
+          v-if="removable"
+          :disabled-button="!!item.deleteTooltip"
+          :tooltip="item.deleteTooltip"
+          type="delete"
+          @click="remove(item)"
+        />
+      </v-layout>
     </template>
     <template #expand="{ item }">
       <external-data-tables-list-expand-panel :external-data-table="item" />
