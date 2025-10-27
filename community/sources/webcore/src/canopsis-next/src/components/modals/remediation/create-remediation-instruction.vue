@@ -17,6 +17,7 @@
           :disabled="disabled"
           :is-new="isNew"
           :required-approve="requiredInstructionApprove"
+          :rule-id="config.remediationInstruction?._id"
         />
       </template>
       <template #actions="">
@@ -32,6 +33,7 @@
           :loading="submitting"
           class="primary"
           type="submit"
+          @click="submit"
         >
           {{ $t('common.submit') }}
         </v-btn>
@@ -41,22 +43,22 @@
 </template>
 
 <script>
+import { computed, ref } from 'vue';
 import { createNamespacedHelpers } from 'vuex';
 
-import { MODALS, VALIDATION_DELAY, PATTERNS_FIELDS } from '@/constants';
+import { MODALS, TEMPLATE_TESTING_TEST_TYPES, VALIDATION_DELAY } from '@/constants';
 
 import {
-  formToRemediationInstruction,
+  formToRemediationInstructionRequest,
   remediationInstructionErrorsToForm,
-  remediationInstructionToForm,
+  remediationInstructionToFullForm,
 } from '@/helpers/entities/remediation/instruction/form';
-import { filterPatternsToForm, formFilterToPatterns } from '@/helpers/entities/filter/form';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { validationErrorsMixinCreator } from '@/mixins/form/validation-errors';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
-import { authMixin } from '@/mixins/auth';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useI18n } from '@/hooks/i18n';
+import { useAuth } from '@/hooks/auth';
 
 import RemediationInstructionForm from '@/components/other/remediation/instructions/form/remediation-instruction-form.vue';
 import RemediationInstructionApprovalAlert from '@/components/other/remediation/instructions/partials/approval-alert.vue';
@@ -76,90 +78,72 @@ export default {
     RemediationInstructionForm,
     RemediationInstructionApprovalAlert,
   },
-  mixins: [
-    authMixin,
-    modalInnerMixin,
-    validationErrorsMixinCreator(),
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
+  props: {
+    modal: {
+      type: Object,
+      required: true,
+    },
+  },
+  setup(props) {
+    const type = TEMPLATE_TESTING_TEST_TYPES.instruction;
+
+    const { config, close } = useInnerModal(props);
+    const { t } = useI18n();
+    const { currentUser } = useAuth();
+
+    const form = ref(remediationInstructionToFullForm(config.value.remediationInstruction));
+
+    const title = computed(() => config.value.title || t('modals.createRemediationInstruction.create.title'));
+    const disabled = computed(() => config.value.disabled);
+    const isNew = computed(() => !config.value.remediationInstruction?._id);
+    const approval = computed(() => config.value.remediationInstruction?.approval);
+    const hasApproval = computed(() => !!approval.value);
+    const isChangesDismissed = computed(() => !!approval.value?.dismissed_by);
+    const isChangesByCurrentUser = computed(() => approval.value?.requested_by?._id === currentUser.value._id);
+
+    const alertUserName = computed(() => {
+      const { dismissed_by: dismissedBy, requested_by: requestedBy } = approval.value ?? {};
+      return dismissedBy?.display_name ?? requestedBy?.display_name;
+    });
+
+    const alertComment = computed(() => approval.value?.dismiss_comment ?? approval.value?.comment);
+
+    const { submit, isDisabled, submitting } = useSubmittableForm({
+      form,
+      method: async () => {
+        const data = await config.value.action?.(formToRemediationInstructionRequest(form.value));
+
+        close();
+
+        return data;
+      },
+      errorsToValidation: err => remediationInstructionErrorsToForm(err, form.value),
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
     return {
-      form: { ...remediationInstructionToForm(this.modal.config.remediationInstruction),
-        patterns: {
-          ...filterPatternsToForm(
-            this.modal.config.remediationInstruction,
-            [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity],
-          ),
-          active_on_pbh: this.modal.config.remediationInstruction?.active_on_pbh ?? [],
-          disabled_on_pbh: this.modal.config.remediationInstruction?.disabled_on_pbh ?? [],
-        } },
+      form,
+      config,
+      isNew,
+      type,
+      title,
+      disabled,
+      approval,
+      hasApproval,
+      isChangesDismissed,
+      isChangesByCurrentUser,
+      alertUserName,
+      alertComment,
+      isDisabled,
+      submitting,
+      submit,
     };
   },
   computed: {
     ...mapGetters({
       requiredInstructionApprove: 'requiredInstructionApprove',
     }),
-
-    title() {
-      return this.config.title || this.$t('modals.createRemediationInstruction.create.title');
-    },
-
-    disabled() {
-      return this.config.disabled;
-    },
-
-    isNew() {
-      return !this.modal.config.remediationInstruction?._id;
-    },
-
-    approval() {
-      return this.modal.config.remediationInstruction?.approval;
-    },
-
-    hasApproval() {
-      return !!this.approval;
-    },
-
-    isChangesDismissed() {
-      return !!this.approval?.dismissed_by;
-    },
-
-    isChangesByCurrentUser() {
-      return this.approval?.requested_by?._id === this.currentUser._id;
-    },
-
-    alertUserName() {
-      const { dismissed_by: dismissedBy, requested_by: requestedBy } = this.approval ?? {};
-
-      return dismissedBy?.display_name ?? requestedBy?.display_name;
-    },
-
-    alertComment() {
-      return this.approval?.dismiss_comment ?? this.approval?.comment;
-    },
-  },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
-
-      if (isFormValid) {
-        try {
-          if (this.config.action) {
-            await this.config.action({
-              ...formToRemediationInstruction(this.form),
-              ...formFilterToPatterns(this.form.patterns, [PATTERNS_FIELDS.alarm, PATTERNS_FIELDS.entity]),
-              active_on_pbh: this.form.patterns.active_on_pbh,
-              disabled_on_pbh: this.form.patterns.disabled_on_pbh,
-            });
-          }
-
-          this.$modals.hide();
-        } catch (err) {
-          this.setFormErrors(remediationInstructionErrorsToForm(err, this.form));
-        }
-      }
-    },
   },
 };
 </script>

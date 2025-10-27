@@ -29,6 +29,7 @@
         :index="index"
         :operation-number="getOperationNumber(index)"
         :disabled="disabled"
+        :template-vars="templateVars"
         class="py-1"
         @remove="removeOperation(index)"
       />
@@ -45,8 +46,10 @@
 </template>
 
 <script>
-import { remediationInstructionStepOperationToForm } from '@/helpers/entities/remediation/instruction/form';
-import { getLetterByIndex } from '@/helpers/string';
+import {
+  remediationInstructionStepOperationToForm,
+  getOperationNumber,
+} from '@/helpers/entities/remediation/instruction/form';
 
 import { formArrayMixin } from '@/mixins/form';
 
@@ -79,6 +82,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   data() {
     return {
@@ -108,7 +115,7 @@ export default {
   },
   methods: {
     getOperationNumber(index) {
-      return `${this.stepNumber}${getLetterByIndex(index)}`;
+      return getOperationNumber(this.stepNumber, index);
     },
 
     addOperation() {

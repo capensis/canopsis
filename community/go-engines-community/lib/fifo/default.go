@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datastorage"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
 	libengine "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/engine"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/healthcheck"
@@ -78,7 +79,7 @@ func ParseOptions() (Options, []string) {
 	return opts, nil
 }
 
-func Default(ctx context.Context, options Options, logger zerolog.Logger) (libengine.Engine, Services) {
+func Default(ctx context.Context, metricsEntityMetaUpdater metrics.MetaUpdater, options Options, logger zerolog.Logger) (libengine.Engine, Services) {
 	var m depmake.DependencyMaker
 	s := Services{}
 
@@ -124,7 +125,7 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 	notifStore := usernotification.NewStore(s.DbClient, amqpChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	s.EventFilterFailureService = eventfilter.NewFailureService(s.DbClient, notifStore,
-		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilterRule, logger)
 	templateExecutor := template.NewExecutor(templateConfigProvider, timezoneConfigProvider)
 	ruleAdapter := eventfilter.NewRuleAdapter(s.DbClient)
 	ruleApplicatorContainer := eventfilter.NewRuleApplicatorContainer()
@@ -303,6 +304,16 @@ func Default(ctx context.Context, options Options, logger zerolog.Logger) (liben
 		dataStorageConfigProvider,
 		logger,
 	)
+
+	disabledEntityCleaner := libentity.NewCleaner(
+		redis.NewLockClient(engineLockRedisClient),
+		datastorage.NewAdapter(s.DbClient),
+		dataStorageConfigProvider,
+		metricsEntityMetaUpdater,
+		logger,
+	)
+
+	s.DataStoragePeriodicalWorker.AddCleaner("entity", disabledEntityCleaner)
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm", alarm.NewCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("alarm_external_tag", axe.NewExternalTagCleaner(logger))
 	s.DataStoragePeriodicalWorker.AddCleaner("pbehavior", pbehavior.NewCleaner(logger))

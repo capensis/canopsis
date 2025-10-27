@@ -24,7 +24,7 @@ import {
 import { useValidationHeader } from '@/hooks/validator/validation-header';
 import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 
-import JavaScriptCodeEditor from './fields/javascript-code-editor.vue';
+import JavaScriptCodeEditor from '@/components/common/code-editor/javascript-code-editor.vue';
 
 export default {
   components: { JavaScriptCodeEditor },
