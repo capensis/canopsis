@@ -757,7 +757,7 @@ func RegisterRoutes(
 				entityserviceAPI.GetTemplateVars)
 		}
 
-		entityupstreamAPI := entityupstream.NewApi(entityupstream.NewStore(primaryDbClient, authorProvider))
+		entityupstreamAPI := entityupstream.NewApi(entityupstream.NewStore(primaryDbClient, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient)))
 		{
 			protected.GET(
 				"/entity-downstreams",
