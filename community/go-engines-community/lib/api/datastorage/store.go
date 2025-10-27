@@ -94,7 +94,17 @@ func (s *store) updateRetentionPolicy(ctx context.Context, data datastorage.Data
 		return err
 	}
 
-	return s.updatePerfDataRetentionPolicy(ctx, data, pgPool)
+	err = s.updatePerfDataRetentionPolicy(ctx, data, pgPool)
+	if err != nil {
+		return err
+	}
+
+	err = s.updateEntityInfosLogRetentionPolicy(ctx, data, pgPool)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *store) updateInstructionRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
@@ -196,6 +206,23 @@ func (s *store) updateMessageRateRetentionPolicy(ctx context.Context, data datas
 	deleteAfter := data.Config.HealthCheck.DeleteAfter
 	if datetime.IsDurationEnabledAndValid(deleteAfter) {
 		err = s.addRetentionPolicy(ctx, pgPool, metrics.MessageRateHourly, deleteAfter.String())
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (s *store) updateEntityInfosLogRetentionPolicy(ctx context.Context, data datastorage.DataStorage, pgPool postgres.Pool) error {
+	err := s.deleteRetentionPolicy(ctx, pgPool, metrics.EntityInfosUpdate)
+	if err != nil {
+		return err
+	}
+
+	deleteAfter := data.Config.EntityInfosLog.DeleteAfter
+	if datetime.IsDurationEnabledAndValid(deleteAfter) {
+		err = s.addRetentionPolicy(ctx, pgPool, metrics.EntityInfosUpdate, deleteAfter.String())
 		if err != nil {
 			return err
 		}
