@@ -1,6 +1,6 @@
 import { createNamespacedHelpers } from 'vuex';
 
-const { mapActions, mapGetters } = createNamespacedHelpers('templateVars');
+const { mapActions, mapGetters } = createNamespacedHelpers('template/vars');
 
 export const entitiesTemplateVarsMixin = {
   computed: {

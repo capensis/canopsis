@@ -4,7 +4,6 @@ export default {
       edit: 'Toggle editing mode',
       createView: 'Create view',
       createPrivateView: 'Create private view',
-      settings: 'Settings',
     },
     loggedUsersCount: 'Active sessions',
     ordering: {

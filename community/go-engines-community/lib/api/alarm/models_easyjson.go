@@ -31,14 +31,13 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 	for !in.IsDelim('}') {
 		key := in.UnsafeFieldName(false)
 		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
 		switch key {
 		case "time_format":
-			out.TimeFormat = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TimeFormat = string(in.String())
+			}
 		case "filters":
 			if in.IsNull() {
 				in.Skip()
@@ -56,16 +55,28 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				for !in.IsDelim(']') {
 					var v1 string
-					v1 = string(in.String())
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v1 = string(in.String())
+					}
 					out.Filters = append(out.Filters, v1)
 					in.WantComma()
 				}
 				in.Delim(']')
 			}
 		case "search":
-			out.Search = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Search = string(in.String())
+			}
 		case "time_field":
-			out.TimeField = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TimeField = string(in.String())
+			}
 		case "tstart":
 			if in.IsNull() {
 				in.Skip()
@@ -74,8 +85,12 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.StartFrom == nil {
 					out.StartFrom = new(datetime.CpsTime)
 				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.StartFrom).UnmarshalJSON(data))
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					if data := in.Raw(); in.Ok() {
+						in.AddError((*out.StartFrom).UnmarshalJSON(data))
+					}
 				}
 			}
 		case "tstop":
@@ -86,8 +101,12 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.StartTo == nil {
 					out.StartTo = new(datetime.CpsTime)
 				}
-				if data := in.Raw(); in.Ok() {
-					in.AddError((*out.StartTo).UnmarshalJSON(data))
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					if data := in.Raw(); in.Ok() {
+						in.AddError((*out.StartTo).UnmarshalJSON(data))
+					}
 				}
 			}
 		case "opened":
@@ -98,14 +117,24 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.Opened == nil {
 					out.Opened = new(bool)
 				}
-				*out.Opened = bool(in.Bool())
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.Opened = bool(in.Bool())
+				}
 			}
 		case "correlation":
-			out.OnlyParents = bool(in.Bool())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.OnlyParents = bool(in.Bool())
+			}
 		case "category":
-			out.Category = string(in.String())
-		case "tag":
-			out.Tag = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.Category = string(in.String())
+			}
 		case "tags":
 			if in.IsNull() {
 				in.Skip()
@@ -123,18 +152,34 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				for !in.IsDelim(']') {
 					var v2 string
-					v2 = string(in.String())
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v2 = string(in.String())
+					}
 					out.Tags = append(out.Tags, v2)
 					in.WantComma()
 				}
 				in.Delim(']')
 			}
 		case "alarm_pattern":
-			out.AlarmPattern = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.AlarmPattern = string(in.String())
+			}
 		case "entity_pattern":
-			out.EntityPattern = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.EntityPattern = string(in.String())
+			}
 		case "pbehavior_pattern":
-			out.PbehaviorPattern = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.PbehaviorPattern = string(in.String())
+			}
 		case "instruction_filter_type":
 			if in.IsNull() {
 				in.Skip()
@@ -143,7 +188,11 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.InstructionFilterType == nil {
 					out.InstructionFilterType = new(int)
 				}
-				*out.InstructionFilterType = int(in.Int())
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.InstructionFilterType = int(in.Int())
+				}
 			}
 		case "instruction_type":
 			if in.IsNull() {
@@ -153,7 +202,11 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				if out.InstructionType == nil {
 					out.InstructionType = new(int)
 				}
-				*out.InstructionType = int(in.Int())
+				if in.IsNull() {
+					in.Skip()
+				} else {
+					*out.InstructionType = int(in.Int())
+				}
 			}
 		case "instruction_statuses":
 			if in.IsNull() {
@@ -172,7 +225,11 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				for !in.IsDelim(']') {
 					var v3 int
-					v3 = int(in.Int())
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v3 = int(in.Int())
+					}
 					out.InstructionStatuses = append(out.InstructionStatuses, v3)
 					in.WantComma()
 				}
@@ -195,14 +252,22 @@ func easyjsonD2b7633eDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				}
 				for !in.IsDelim(']') {
 					var v4 string
-					v4 = string(in.String())
+					if in.IsNull() {
+						in.Skip()
+					} else {
+						v4 = string(in.String())
+					}
 					out.InstructionIDs = append(out.InstructionIDs, v4)
 					in.WantComma()
 				}
 				in.Delim(']')
 			}
 		case "only_bookmarks":
-			out.OnlyBookmarks = bool(in.Bool())
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.OnlyBookmarks = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -284,11 +349,6 @@ func easyjsonD2b7633eEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"category\":"
 		out.RawString(prefix)
 		out.String(string(in.Category))
-	}
-	{
-		const prefix string = ",\"tag\":"
-		out.RawString(prefix)
-		out.String(string(in.Tag))
 	}
 	{
 		const prefix string = ",\"tags\":"

@@ -5,6 +5,7 @@ import * as VuetifyDirectives from 'vuetify/lib/directives';
 import icons from './components/icons';
 import ClickOutside from './directives/click-outside';
 import VAlert from './components/v-alert/v-alert.vue';
+import VAutocomplete from './components/v-autocomplete/v-autocomplete.vue';
 import VCombobox from './components/v-combobox/v-combobox.vue';
 import VChip from './components/v-chip/v-chip.vue';
 import VIcon from './components/v-icon/v-icon.vue';
@@ -22,6 +23,7 @@ import VSelect from './components/v-select/v-select.vue';
 import VListGroup from './components/v-list/v-list-group.vue';
 import VListItemMask from './components/v-list/v-list-item-mask.vue';
 import VTabs from './components/v-tabs/v-tabs.vue';
+import VTextarea from './components/v-textarea/v-textarea.vue';
 
 import './styles/vuetify.scss';
 
@@ -46,7 +48,9 @@ export const createVuetify = (Vue, options) => {
       VListGroup,
       VListItemMask,
       VCombobox,
+      VAutocomplete,
       VTabs,
+      VTextarea,
     },
 
     directives: {

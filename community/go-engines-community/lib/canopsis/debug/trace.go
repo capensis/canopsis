@@ -3,6 +3,7 @@ package debug
 import (
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	_ "net/http/pprof" //nolint:gosec
 	"os"
@@ -10,6 +11,8 @@ import (
 	"runtime"
 	"runtime/pprof"
 	"runtime/trace"
+	"strconv"
+	"time"
 
 	"github.com/rs/zerolog"
 )
@@ -20,6 +23,11 @@ const (
 	envCPU       = "CPS_DEBUG_PPROF_CPU"
 	envMemory    = "CPS_DEBUG_PPROF_MEMORY"
 	envTrace     = "CPS_DEBUG_TRACE"
+	// custom host:port for pprof web server
+	envWebPort     = "CPS_DEBUG_WEB_PPROF_PORT"
+	webDefaultPort = "6060"
+	envWebHost     = "CPS_DEBUG_WEB_PPROF_HOST"
+	webDefaultHost = "localhost"
 )
 
 // Trace is a struct containing informations about the traces and profiles that
@@ -45,25 +53,62 @@ func profilingWebEnabled() bool {
 	return os.Getenv(envWebEnable) == "1"
 }
 
-// getPath returns the absolute path of the file set in the provided
-// environment variable.
-func getPath(environmentVariable string) string {
-	fpath := os.Getenv(environmentVariable)
-	if fpath == "" {
-		return ""
+// profilingWebPort returns port number provided by CPS_DEBUG_WEB_PPROF_PORT environment
+// variable. This will be default as webDefaultPort when not provided or invalid
+func profilingWebPort() (string, error) {
+	val := os.Getenv(envWebPort)
+
+	if val == "" {
+		return webDefaultPort, nil
 	}
 
-	fpath, _ = filepath.Abs(fpath)
+	_, err := strconv.ParseUint(val, 10, 16)
+	if err != nil {
+		return webDefaultPort, fmt.Errorf("the environment variable %s must be 16 bit unsigned integer but got %s; use default value %s instead", envWebPort, val, webDefaultPort)
+	}
 
-	return fpath
+	return val, nil
+}
+
+// profilingWebHost returns host provided by CPS_DEBUG_WEB_PPROF_HOST environment
+// variable.
+func profilingWebHost() (string, error) {
+	val := os.Getenv(envWebHost)
+
+	switch val {
+	case "":
+		return webDefaultHost, fmt.Errorf("the environment variable %s is empty; use default value %s instead", envWebHost, webDefaultHost)
+	case "*":
+		return "", nil
+	}
+
+	return val, nil
+}
+
+// getPath returns the absolute path of the file set in the provided
+// environment variable.
+func getPath(environmentVariable string, logger zerolog.Logger) (string, error) {
+	fpath := os.Getenv(environmentVariable)
+	if fpath == "" {
+		logger.Info().Msgf("the environment variable %s is empty, skipping", environmentVariable)
+		// Not an error, just not enabled
+		return "", nil
+	}
+
+	fpath, err := filepath.Abs(fpath)
+	if err != nil {
+		return "", fmt.Errorf("failed to get absolute path for %s: %w", environmentVariable, err)
+	}
+
+	return fpath, nil
 }
 
 // startCPU enables CPU profiling for the current process, and writes the CPU
 // profile to the path set in the CPS_DEBUG_PPROF_CPU environment variable.
 func startCPU(logger zerolog.Logger) error {
-	fpath := getPath(envCPU)
-	if fpath == "" {
-		return fmt.Errorf("the environment variable %s is empty", envCPU)
+	fpath, err := getPath(envCPU, logger)
+	if err != nil {
+		return err
 	}
 
 	fh, err := os.Create(fpath)
@@ -85,9 +130,9 @@ func startCPU(logger zerolog.Logger) error {
 // heap profile to the path set in the CPS_DEBUG_PPROF_MEMORY environment
 // variable.
 func startMemory(logger zerolog.Logger) (io.WriteCloser, error) {
-	fpath := getPath(envMemory)
-	if fpath == "" {
-		return nil, fmt.Errorf("the environment variable %s is empty", envMemory)
+	fpath, err := getPath(envMemory, logger)
+	if err != nil {
+		return nil, err
 	}
 
 	fh, err := os.Create(fpath)
@@ -102,13 +147,7 @@ func startMemory(logger zerolog.Logger) (io.WriteCloser, error) {
 
 // startTrace enabled tracing for the current process, and writes the trace to
 // the path set in the CPS_DEBUG_TRACE environment variable.
-func startTrace(logger zerolog.Logger) (io.WriteCloser, error) {
-	fpath := getPath(envTrace)
-	if fpath == "" {
-		return nil, fmt.Errorf("the environment variable %s is empty",
-			envMemory)
-	}
-
+func startTrace(fpath string, logger zerolog.Logger) (io.WriteCloser, error) {
 	fh, err := os.Create(fpath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create trace file: %w", err)
@@ -150,11 +189,27 @@ func Start(logger zerolog.Logger) Trace {
 			t.memoryWriter = writer
 		}
 	} else if profilingWebEnabled() {
+		port, err := profilingWebPort()
+		if err != nil {
+			logger.Warn().Msg(err.Error())
+		}
+
+		host, err := profilingWebHost()
+		if err != nil {
+			logger.Warn().Msg(err.Error())
+		}
+
+		profAddr := net.JoinHostPort(host, port)
 		runtime.SetBlockProfileRate(1)
 		runtime.SetMutexProfileFraction(1)
-		logger.Info().Msg("Profiling web ENABLED")
+		logger.Info().Str("address", profAddr).Msg("Profiling web ENABLED")
 		go func() {
-			err := http.ListenAndServe("localhost:6060", nil) //nolint:gosec
+			srv := &http.Server{
+				Addr:         profAddr,
+				ReadTimeout:  30 * time.Second,
+				WriteTimeout: 30 * time.Second,
+			}
+			err := srv.ListenAndServe()
 			if err != nil {
 				logger.Err(err).Msg("fail to start pprof server")
 			}
@@ -163,11 +218,13 @@ func Start(logger zerolog.Logger) Trace {
 		logger.Info().Msg("Profiling DISABLED")
 	}
 
-	tracePath := getPath(envTrace)
-	if tracePath != "" {
+	tracePath, err := getPath(envTrace, logger)
+	if err != nil {
+		logger.Err(err).Msg("Error")
+	} else if tracePath != "" {
 		logger.Info().Msg("Tracing ENABLED")
 
-		writer, err := startTrace(logger)
+		writer, err := startTrace(tracePath, logger)
 		if err != nil {
 			logger.Err(err).Msg("Error")
 		} else {
@@ -183,20 +240,41 @@ func Start(logger zerolog.Logger) Trace {
 
 // Stop stops the traces and profiles, and writes them.
 func (t Trace) Stop() {
+	var errorCount int
+
 	if t.cpuStarted {
 		pprof.StopCPUProfile()
+		t.Logger.Info().Msg("CPU profiling stopped")
 	}
 
 	if t.memoryStarted {
 		runtime.GC()
 		if err := pprof.WriteHeapProfile(t.memoryWriter); err != nil {
-			t.Logger.Err(err).Msg("mem error: cannot write heap profile")
+			t.Logger.Err(err).Msg("failed to write heap profile")
+			errorCount++
+		} else {
+			t.Logger.Info().Msg("Memory profile written successfully")
 		}
-		t.memoryWriter.Close()
+
+		if err := t.memoryWriter.Close(); err != nil {
+			t.Logger.Err(err).Msg("failed to close memory profile file")
+			errorCount++
+		}
 	}
 
 	if t.traceStarted {
 		trace.Stop()
-		t.traceWriter.Close()
+		t.Logger.Info().Msg("Tracing stopped")
+
+		if err := t.traceWriter.Close(); err != nil {
+			t.Logger.Err(err).Msg("failed to close trace file")
+			errorCount++
+		}
+	}
+
+	if errorCount > 0 {
+		t.Logger.Error().Int("error_count", errorCount).Msg("Stop completed with errors")
+	} else {
+		t.Logger.Info().Msg("All profiling and tracing stopped successfully")
 	}
 }

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { keyBy, mergeWith, isArray } from 'lodash';
+import { isArray, mergeWith } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import {
@@ -36,12 +36,16 @@ import {
   PATTERN_OPERATORS,
   PATTERN_RULE_TYPES,
   PATTERN_STRING_OPERATORS,
+  ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES,
+  ENTITY_PATTERN_FIELD_TYPES,
 } from '@/constants';
 
 import { formGroupsToPatternRulesQuery } from '@/helpers/entities/pattern/form';
 import { getMapEntityText } from '@/helpers/entities/map/list';
+import { indexesByKey } from '@/helpers/array';
 
 import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
+import { entitiesEntityInfoPropertyMixin } from '@/mixins/entities/entity-info-property';
 
 import PatternEditorField from '@/components/forms/fields/pattern/pattern-editor-field.vue';
 
@@ -50,7 +54,7 @@ const { mapActions: mapServiceActions } = createNamespacedHelpers('service');
 
 export default {
   components: { PatternEditorField },
-  mixins: [patternCountEntitiesModalMixin],
+  mixins: [patternCountEntitiesModalMixin, entitiesEntityInfoPropertyMixin],
   model: {
     prop: 'patterns',
     event: 'input',
@@ -191,7 +195,22 @@ export default {
       };
     },
 
+    infosWithDefinedTypes() {
+      return this.infos.map(({ type, ...info }) => ({
+        ...info,
+        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[type],
+      }));
+    },
+
     infosOptions() {
+      return {
+        infos: this.infosWithDefinedTypes,
+        type: PATTERN_RULE_TYPES.infos,
+        inputTypes: ENTITY_PATTERN_FIELD_TYPES,
+      };
+    },
+
+    componentInfosOptions() {
       return {
         infos: this.infos,
         type: PATTERN_RULE_TYPES.infos,
@@ -261,6 +280,19 @@ export default {
       };
     },
 
+    aliasesAttributes() {
+      return this.entityInfoPropertiesWithAlias.map(item => ({
+        text: item.alias,
+        value: item.alias,
+        alias: true,
+        originalValue: item.name,
+        definedType: ALARM_ADVANCED_SEARCH_INFOS_TYPES_TO_PATTERNS_FIELD_TYPES[item.type],
+        options: {
+          inputTypes: ENTITY_PATTERN_FIELD_TYPES,
+        },
+      }));
+    },
+
     entityAttributes() {
       return [
         {
@@ -296,7 +328,7 @@ export default {
         {
           text: this.$tc('common.componentInfo', 2),
           value: ENTITY_PATTERN_FIELDS.componentInfos,
-          options: this.infosOptions,
+          options: this.componentInfosOptions,
         },
         {
           text: this.$t('common.category'),
@@ -313,31 +345,38 @@ export default {
           value: ENTITY_PATTERN_FIELDS.lastEventDate,
           options: this.dateOptions,
         },
+        ...this.aliasesAttributes,
       ];
     },
 
-    availableAttributesByValue() {
-      return keyBy(this.entityAttributes, 'value');
-    },
-
-    externalAttributesByValue() {
-      return keyBy(this.attributes, 'value');
-    },
-
     availableEntityAttributes() {
-      const mergedAttributes = mergeWith(
-        {},
-        this.availableAttributesByValue,
-        this.externalAttributesByValue,
-        (a, b) => (isArray(b) ? b : undefined),
-      );
+      const mergedAttributes = [...this.entityAttributes];
+      const availableAttributesIndexesByValue = indexesByKey(this.attributes, 'value');
 
-      return Object.values(mergedAttributes);
+      this.attributes.forEach((attribute) => {
+        const index = availableAttributesIndexesByValue[attribute.value];
+
+        if (index !== -1) {
+          mergedAttributes.push(attribute);
+
+          return;
+        }
+
+        mergedAttributes[index] = mergeWith(
+          {},
+          mergedAttributes[index],
+          attribute,
+          (a, b) => (isArray(b) ? b : undefined),
+        );
+      });
+
+      return mergedAttributes;
     },
   },
   mounted() {
     this.fetchCategories();
     this.fetchInfos();
+    this.fetchAllEntityInfoPropertiesList();
   },
   methods: {
     ...mapEntityCategoryActions({ fetchCategoriesListWithoutStore: 'fetchListWithoutStore' }),

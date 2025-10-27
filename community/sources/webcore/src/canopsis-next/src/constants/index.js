@@ -39,4 +39,8 @@ export * from './advanced-search';
 export * from './sanitize';
 export * from './events-record';
 export * from './role';
+export * from './notification';
 export * from './theme';
+export * from './view';
+export * from './template-testing';
+export * from './entity-info-property';

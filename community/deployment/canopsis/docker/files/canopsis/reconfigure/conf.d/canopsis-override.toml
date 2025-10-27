@@ -3,7 +3,7 @@
 #
 # Complete documentation about this file and various parameters
 # can be found here (FR):
-# https://doc.canopsis.net/guide-administration/administration-avancee/modification-canopsis-toml/
+# https://doc.canopsis.net/latest/guide-administration/administration-avancee/modification-canopsis-toml/
 #
 
 #[Canopsis.alarm]

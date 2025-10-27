@@ -50,6 +50,47 @@ export const usePendingWithLocalQuery = ({
 };
 
 /**
+ * Custom hook to manage local query state with options handling.
+ *
+ * @param {Object} options - Configuration options for the hook.
+ * @param {Object} [options.initialQuery] - The initial state of the query object.
+ * @param {Function} [options.comparator] - Function used to compare the old and new query values.
+ * @param {Function} [options.onUpdate] - Callback function triggered when the query updates.
+ * @returns {Object} An object containing query state, options, and update functions.
+ */
+export const useLocalQueryWithOptions = ({ initialQuery, comparator, onUpdate }) => {
+  const queryData = useLocalQuery({
+    initialQuery,
+    comparator,
+    onUpdate,
+  });
+
+  const { options, updateOptions } = useQueryOptions(queryData.query, queryData.updateQuery);
+
+  return {
+    ...queryData,
+    options,
+    updateOptions,
+  };
+};
+
+/**
+ * Custom hook to fetch a list of data with local query and options management.
+ *
+ * This hook combines local query state management with options (such as pagination and sorting),
+ * and triggers the provided fetchListHandler callback with the query converted to request params.
+ *
+ * @param {Object} options - Configuration options for the hook.
+ * @param {Function} options.fetchListHandler - Async function that fetches data based on provided parameters.
+ * @param {Object} [options.initialQuery] - The initial state of the query object.
+ * @returns {Object} An object containing query state, options, and update functions.
+ */
+export const useFetchListWithOptions = ({ fetchListHandler, initialQuery }) => useLocalQueryWithOptions({
+  initialQuery,
+  onUpdate: fetchQuery => fetchListHandler({ params: convertQueryToRequest(fetchQuery) }),
+});
+
+/**
  * Custom hook to fetch a list of data with query options management
  *
  * This hook combines data fetching with query state management and options handling.

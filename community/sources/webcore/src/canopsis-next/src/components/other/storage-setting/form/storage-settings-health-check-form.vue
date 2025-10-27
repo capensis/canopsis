@@ -1,9 +1,6 @@
 <template>
   <v-layout column>
-    <c-information-block
-      :title="$t('storageSetting.healthCheck.title')"
-      help-icon-color="info"
-    >
+    <c-information-block :title="$t('storageSetting.healthCheck.title')">
       <template
         v-if="history"
         #subtitle=""
@@ -13,7 +10,10 @@
       <c-enabled-duration-field
         v-field="form.delete_after"
         :label="$t('storageSetting.healthCheck.deleteAfter')"
-        :name="healthCheckDeleteAfterFieldName"
+        :suffix="$t('common.after')"
+        name="health_check.delete_after"
+        switcher
+        hide-value-on-false
       />
     </c-information-block>
   </v-layout>
@@ -36,11 +36,6 @@ export default {
     history: {
       type: Number,
       required: false,
-    },
-  },
-  computed: {
-    healthCheckDeleteAfterFieldName() {
-      return 'health_check.delete_after';
     },
   },
 };
