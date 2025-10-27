@@ -49,11 +49,15 @@
       </v-menu>
     </template>
     <template v-else>
-      <c-date-interval-field
+      <component
+        :is="withHours ? 'c-date-time-interval-field' : 'c-date-interval-field'"
         :value="intervalObject"
         :disabled="disabled"
         :is-allowed-from-date="isAllowedFromDate"
         :is-allowed-to-date="isAllowedToDate"
+        :round-hours="withHours"
+        :hide-details="withHours"
+        :with-icon="withHours"
         @input="updateModel($event)"
       />
       <div class="c-quick-interval__range">
@@ -155,7 +159,7 @@ export default {
     },
 
     intervalToAsTimestamp() {
-      return convertStopDateIntervalToTimestamp(this.interval.to);
+      return !this.interval.to ? 0 : convertStopDateIntervalToTimestamp(this.interval.to);
     },
 
     intervalFromString() {
@@ -203,7 +207,11 @@ export default {
     },
 
     isLessToDate(dateTimestamp) {
-      return this.interval.to && dateTimestamp < this.intervalToAsTimestamp;
+      if (!this.interval.to) {
+        return true;
+      }
+
+      return dateTimestamp < this.intervalToAsTimestamp;
     },
 
     isLessNowDate(dateTimestamp) {
