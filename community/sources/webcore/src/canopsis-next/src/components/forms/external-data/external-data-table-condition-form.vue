@@ -18,11 +18,13 @@
       <v-select
         v-field="condition.attribute"
         v-validate="'required'"
-        :items="columns"
+        :items="columnsForSelectedConditionType"
         :label="$t('common.attribute')"
         :name="conditionFieldName"
         :error-messages="errors.collect(conditionFieldName)"
         :disabled="disabled"
+        item-text="name"
+        item-value="name"
       />
     </v-flex>
     <v-flex
@@ -58,13 +60,14 @@
 </template>
 
 <script>
-import { EXTERNAL_DATA_CONDITION_TYPES } from '@/constants';
+import { computed } from 'vue';
 
-import { formMixin } from '@/mixins/form';
+import { EXTERNAL_DATA_CONDITION_TYPES, EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES } from '@/constants';
+
+import { useI18n } from '@/hooks/i18n';
 
 export default {
   inject: ['$validator'],
-  mixins: [formMixin],
   model: {
     prop: 'condition',
     event: 'input',
@@ -95,24 +98,31 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    conditionTypes() {
-      return Object.values(EXTERNAL_DATA_CONDITION_TYPES)
-        .map(type => ({ text: this.$t(`externalData.conditionTypes.${type}`), value: type }));
-    },
+  setup(props, { emit }) {
+    const { t } = useI18n();
 
-    conditionFieldName() {
-      return `${this.name}.condition`;
-    },
+    const conditionTypes = computed(() => Object.values(EXTERNAL_DATA_CONDITION_TYPES)
+      .map(type => ({ text: t(`externalData.conditionTypes.${type}`), value: type })));
 
-    valueFieldName() {
-      return `${this.name}.value`;
-    },
-  },
-  methods: {
-    removeCondition() {
-      this.$emit('remove', this.condition);
-    },
+    const columnsForSelectedConditionType = computed(() => (
+      props.condition.type === EXTERNAL_DATA_CONDITION_TYPES.regexp
+        ? props.columns.filter(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp)
+        : props.columns
+    ));
+
+    const conditionFieldName = computed(() => `${props.name}.condition`);
+
+    const valueFieldName = computed(() => `${props.name}.value`);
+
+    const removeCondition = () => emit('remove', props.condition);
+
+    return {
+      conditionTypes,
+      columnsForSelectedConditionType,
+      conditionFieldName,
+      valueFieldName,
+      removeCondition,
+    };
   },
 };
 </script>

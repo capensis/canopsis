@@ -21,7 +21,8 @@ const (
 	JunitTestCaseMediaMongoCollection = "junit_test_case_media"
 	PlaylistMongoCollection           = "view_playlist"
 	StateSettingsMongoCollection      = "state_settings"
-	BroadcastMessageMongoCollection   = "broadcast_message"
+	BroadcastMessageCollection        = "broadcast_message"
+	BroadcastMessageReadCollection    = "broadcast_message_read"
 	AssociativeTableCollection        = "default_associativetable"
 
 	ViewMongoCollection           = "views"
@@ -108,4 +109,7 @@ const (
 
 	UserNotificationSettingsCollection = "user_notification_settings"
 	UserNotificationCollection         = "user_notification"
+
+	TemplateTestDataCollection = "template_data"
+	TemplateTestCollection     = "template_test"
 )

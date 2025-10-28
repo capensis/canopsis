@@ -71,7 +71,7 @@
         :server-items-length="totalItems"
         :options="options"
         :show-select="selectable"
-        :loading="loading || columnsFiltersPending"
+        :loading="loading || columnsFiltersPending || entityInfoPropertyPending"
         :dense="isMediumDense"
         :ultra-dense="isSmallDense"
         :expanded.sync="expanded"
@@ -609,6 +609,8 @@ export default {
 
   mounted() {
     this.$tbodyEl = this.$el.querySelector('tbody');
+
+    this.fetchEntityInfoPropertiesList({ params: { paginate: false } });
   },
 
   beforeDestroy() {

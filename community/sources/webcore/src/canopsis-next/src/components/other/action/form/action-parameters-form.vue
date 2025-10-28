@@ -51,6 +51,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   computed: {
     component() {
@@ -75,6 +79,12 @@ export default {
 
       if (this.type === ACTION_TYPES.webhook) {
         props.hasPrevious = this.hasPreviousWebhook;
+      }
+
+      if (this.type === ACTION_TYPES.changeState) {
+        props.variables = this.templateVars?.output;
+      } else {
+        props.templateVars = this.templateVars;
       }
 
       return props;

@@ -44,12 +44,14 @@ type store struct {
 	timezoneConfigProvider   config.TimezoneConfigProvider
 	authorProvider           author.Provider
 	decoder                  encoding.Decoder
+	transformer              common.PatternFieldsTransformer
 }
 
 func NewStore(
 	db, dbExport mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
+	transformer common.PatternFieldsTransformer,
 	decoder encoding.Decoder,
 ) Store {
 	return &store{
@@ -61,6 +63,7 @@ func NewStore(
 		timezoneConfigProvider:   timezoneConfigProvider,
 		authorProvider:           authorProvider,
 		decoder:                  decoder,
+		transformer:              transformer,
 	}
 }
 
@@ -649,7 +652,7 @@ func (s *store) fillConnectorType(result *AggregationResult) {
 }
 
 func (s *store) getQueryBuilder() *MongoQueryBuilder {
-	return NewMongoQueryBuilder(s.db, s.authorProvider)
+	return NewMongoQueryBuilder(s.db, s.authorProvider, s.transformer)
 }
 
 func (s *store) fillPerfData(result *AggregationResult, perfData []string) {
