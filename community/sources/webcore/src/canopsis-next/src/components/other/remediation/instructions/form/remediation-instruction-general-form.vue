@@ -57,6 +57,34 @@
         />
       </v-flex>
     </v-layout>
+    <v-layout v-if="isAutoType" class="gap-3">
+      <c-enabled-field
+        :value="form.retry_enabled"
+        :label="$t('remediation.instruction.retryEnabled')"
+        class="pb-1"
+        @input="updateRetryEnabled"
+      >
+        <template #append>
+          <c-help-icon
+            :text="$t('remediation.instruction.retryEnabledTooltip')"
+            icon="help"
+            color="grey darken-1"
+            top
+          />
+        </template>
+      </c-enabled-field>
+      <v-fade-transition>
+        <c-number-field
+          v-if="form.retry_enabled"
+          v-field="form.retry_count"
+          :label="$t('remediation.instruction.retryCount')"
+          :min="1"
+          :max="100"
+          name="retry_count"
+          required
+        />
+      </v-fade-transition>
+    </v-layout>
     <template v-if="isAutoType">
       <c-triggers-field
         v-field="form.triggers"
@@ -119,6 +147,8 @@ import {
 
 import { isInstructionTypeAuto, isInstructionTypeSimpleManual } from '@/helpers/entities/remediation/instruction/form';
 
+import { useModelField } from '@/hooks/form/model-field';
+
 import RemediationInstructionStepsForm from './remediation-instruction-steps-form.vue';
 import RemediationInstructionJobsForm from './remediation-instruction-jobs-form.vue';
 import RemediationInstructionApprovalForm from './remediation-instruction-approval-form.vue';
@@ -160,12 +190,29 @@ export default {
       default: () => ({}),
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const availableTriggers = REMEDIATION_AUTO_INSTRUCTION_TRIGGERS_TYPES;
     const availableRepeatTriggers = REMEDIATION_AUTO_INSTRUCTION_REPEAT_TRIGGERS_TYPES;
 
+    const { updateModel } = useModelField(props, emit);
+
     const isAutoType = computed(() => isInstructionTypeAuto(props.form?.type));
     const isManualSimplified = computed(() => isInstructionTypeSimpleManual(props.form?.type));
+
+    /**
+     * Updates the retry enabled field and sets initial retry count when enabled
+     *
+     * @param {boolean} value - The new retry enabled state
+     */
+    const updateRetryEnabled = (value) => {
+      const newForm = { ...props.form, retry_enabled: value };
+
+      if (value) {
+        newForm.retry_count = 1;
+      }
+
+      updateModel(newForm);
+    };
 
     return {
       availableTriggers,
@@ -173,6 +220,8 @@ export default {
 
       isAutoType,
       isManualSimplified,
+
+      updateRetryEnabled,
     };
   },
 };

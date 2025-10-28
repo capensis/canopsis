@@ -1051,6 +1051,10 @@ export default {
     title: 'Leave maintenance mode',
     text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
   },
+  confirmationMarkAsRead: {
+    title: 'Mark as read',
+    text: 'Are you sure you want to mark this broadcast message as read and hide it?',
+  },
   confirmationCreateNewTicketForAlarm: {
     title: 'Confirm create tickets',
     text: 'This alarm already has tickets created.\nDo you want to create a new one?',

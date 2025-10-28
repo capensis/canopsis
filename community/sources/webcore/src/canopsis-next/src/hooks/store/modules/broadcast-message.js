@@ -17,7 +17,9 @@ const useBroadcastMessageStoreModule = () => useStoreModuleHooks('broadcastMessa
  *       createBroadcastMessage,
  *       updateBroadcastMessage,
  *       removeBroadcastMessage,
- *       fetchBroadcastMessagesListWithoutStore
+ *       fetchBroadcastMessagesListWithoutStore,
+ *       fetchBroadcastMessagesListWithPreviousParams,
+ *       fetchActiveBroadcastMessagesListWithoutStore
  *     } = useBroadcastMessages();
  *
  *     // Access and use the functions as needed
@@ -26,7 +28,10 @@ const useBroadcastMessageStoreModule = () => useStoreModuleHooks('broadcastMessa
  *       createBroadcastMessage,
  *       updateBroadcastMessage,
  *       removeBroadcastMessage,
- *       fetchBroadcastMessagesListWithoutStore
+ *       fetchBroadcastMessagesListWithoutStore,
+ *       fetchBroadcastMessagesListWithPreviousParams,
+ *       fetchActiveBroadcastMessagesListWithoutStore
+ *       markBroadcastMessageAsRead
  *     };
  *   }
  * }
@@ -41,6 +46,7 @@ export const useBroadcastMessages = () => {
     fetchBroadcastMessagesListWithoutStore: 'fetchListWithoutStore',
     fetchBroadcastMessagesListWithPreviousParams: 'fetchListWithPreviousParams',
     fetchActiveBroadcastMessagesListWithoutStore: 'fetchActiveListWithoutStore',
+    markBroadcastMessageAsRead: 'markAsRead',
   });
 
   return {
