@@ -105,10 +105,6 @@ export const ImportPbehaviorException = () => ({
   component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/import-pbehavior-exception.vue'),
   loading: LoaderOverlay,
 });
-export const PbehaviorPatterns = () => ({
-  component: import(/* webpackChunkName: "Pbehavior" */ './pbehavior/pbehavior-patterns.vue'),
-  loading: LoaderOverlay,
-});
 export const Confirmation = () => ({
   component: import(/* webpackChunkName: "Common" */ './common/confirmation.vue'),
   loading: LoaderOverlay,
@@ -325,10 +321,6 @@ export const StateSettingInheritedEntityPattern = () => ({
   component: import(/* webpackChunkName: "Context" */ './state-setting/state-setting-inherited-entity-pattern.vue'),
   loading: LoaderOverlay,
 });
-export const ArchiveDisabledEntities = () => ({
-  component: import(/* webpackChunkName: "Parameters" */ './storage-setting/archive-disabled-entities.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateIdleRule = () => ({
   component: import(/* webpackChunkName: "IdleRule" */ './idle-rule/create-idle-rule.vue'),
   loading: LoaderOverlay,
@@ -446,5 +438,20 @@ export const CreateExternalDataTableRecord = () => ({
 
 export const ImportExternalDataTableRecords = () => ({
   component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/import-external-data-table-records.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTemplateTestingData = () => ({
+  component: import(/* webpackChunkName: "TemplateTesting" */ './template-testing/create-template-testing-data.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateTemplateTestingTest = () => ({
+  component: import(/* webpackChunkName: "TemplateTesting" */ './template-testing/create-template-testing-test.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateEntityInfoProperty = () => ({
+  component: import(/* webpackChunkName: "EntityInfoProperty" */ './entity-info-property/create-entity-info-property.vue'),
   loading: LoaderOverlay,
 });

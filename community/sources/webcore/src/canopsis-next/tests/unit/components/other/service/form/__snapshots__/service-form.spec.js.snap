@@ -50,7 +50,6 @@ exports[`service-form Renders \`service-form\` with custom props 1`] = `
     label="Output template"
     name="output_template"
     value="output-template"
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
   <c-enabled-field-stub />
   <entity-state-setting-stub
@@ -196,7 +195,6 @@ exports[`service-form Renders \`service-form\` with default props 1`] = `
     label="Output template"
     name="output_template"
     value=""
-    variables="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   />
   <c-enabled-field-stub />
   <entity-state-setting-stub

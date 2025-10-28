@@ -89,6 +89,7 @@ export const isJobFinished = job => [
  * @return {RemediationJobForm}
  */
 export const remediationJobToForm = (remediationJob = {}) => ({
+  configType: {},
   config: remediationJob.config ?? '',
   job_id: remediationJob.job_id ?? '',
   name: remediationJob.name ?? '',
@@ -104,11 +105,10 @@ export const remediationJobToForm = (remediationJob = {}) => ({
  * Convert remediation job form object to API compatible object
  *
  * @param {RemediationJobForm} form
- * @param {RemediationConfigurationFormType} configType
  * @return {RemediationJob}
  */
-export const formToRemediationJob = (form, configType) => {
-  const { job_wait_interval: jobWaitInterval, config, payload, query, ...remediationJob } = form;
+export const formToRemediationJob = (form) => {
+  const { job_wait_interval: jobWaitInterval, config, payload, query, configType, ...remediationJob } = form;
 
   if (configType?.with_body) {
     remediationJob.payload = payload;

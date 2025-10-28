@@ -43,13 +43,13 @@ func (s *ruleService) LoadRules(ctx context.Context, types []string) error {
 	return nil
 }
 
-func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (bool, int64, map[string]int64, error) {
+func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (map[string]UpdatedValue, int64, map[string]int64, error) {
 	s.rulesMutex.RLock()
 	defer s.rulesMutex.RUnlock()
 
 	outcome := OutcomePass
 	now := datetime.NewCpsTime()
-	entityUpdated := false
+	updatedEntityInfos := make(map[string]UpdatedValue)
 	var executedEnrichRuleCount int64
 	externalRequestCount := make(map[string]int64)
 	for _, rule := range s.rules {
@@ -95,10 +95,11 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 				s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 			}
 
+			s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "missing entity and event patterns", nil)
 			continue
 		}
 
-		if len(rule.EventPattern) > 0 || len(rule.EntityPattern) > 0 {
+		if len(rule.EventPattern) > 0 {
 			matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(rule.EventPattern, event)
 			if err != nil {
 				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid event pattern")
@@ -113,22 +114,30 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 
 				continue
 			}
+		}
 
-			if event.Entity != nil {
-				matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
-				if err != nil {
-					s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
-					s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
-					continue
+		if len(rule.EntityPattern) > 0 {
+			if event.Entity == nil {
+				if event.Debug {
+					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: entity is missing")
 				}
 
-				if !matched {
-					if event.Debug {
-						s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
-					}
+				continue
+			}
 
-					continue
+			matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(rule.EntityPattern, event.Entity)
+			if err != nil {
+				s.logger.Err(err).Str("rule_id", rule.ID).Msg("Event filter rule service: invalid entity pattern")
+				s.failureService.Add(rule.ID, rule.Description, FailureTypeInvalidPattern, "invalid entity pattern: "+err.Error(), nil)
+				continue
+			}
+
+			if !matched {
+				if event.Debug {
+					s.logger.Info().Str("rule", rule.ID).Str("event_type", event.EventType).Str("entity", event.GetEID()).Msg("Event filter rule service: rule is not matched")
 				}
+
+				continue
 			}
 		}
 
@@ -142,18 +151,17 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 			continue
 		}
 
-		var isUpdated bool
-		var ruleExternalRequestCount map[string]int64
-		outcome, isUpdated, ruleExternalRequestCount, err = applicator.Apply(ctx, rule, event, RegexMatch{
+		res, err := applicator.Apply(ctx, rule, event, updatedEntityInfos, RegexMatch{
 			EventRegexMatches: eventRegexMatches,
 			Entity:            entityRegexMatches,
 		})
+		outcome = res.Outcome
 		if err != nil {
 			s.logger.Err(err).Str("rule_id", rule.ID).Str("rule_type", rule.Type).Msg("Event filter rule service: failed to apply")
 			continue
 		}
 
-		entityUpdated = entityUpdated || isUpdated
+		updatedEntityInfos = res.UpdatedEntityInfos
 		if rule.Updated != nil {
 			s.eventCounter.Add(rule.ID, *rule.Updated)
 		}
@@ -162,16 +170,16 @@ func (s *ruleService) ProcessEvent(ctx context.Context, event *types.Event) (boo
 			executedEnrichRuleCount++
 		}
 
-		for k, v := range ruleExternalRequestCount {
+		for k, v := range res.ExternalRequestCount {
 			externalRequestCount[k] += v
 		}
 	}
 
 	if outcome == OutcomeDrop {
-		return false, executedEnrichRuleCount, externalRequestCount, ErrDropOutcome
+		return updatedEntityInfos, executedEnrichRuleCount, externalRequestCount, ErrDropOutcome
 	}
 
-	return entityUpdated, executedEnrichRuleCount, externalRequestCount, nil
+	return updatedEntityInfos, executedEnrichRuleCount, externalRequestCount, nil
 }
 
 func NewRuleService(

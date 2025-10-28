@@ -31,7 +31,7 @@
         />
       </v-flex>
     </v-layout>
-    <declare-ticket-rule-webhooks-field v-field="form.webhooks" />
+    <declare-ticket-rule-webhooks-field v-field="form.webhooks" :template-vars="templateVars" />
   </v-layout>
 </template>
 
@@ -50,6 +50,10 @@ export default {
   },
   props: {
     form: {
+      type: Object,
+      default: () => ({}),
+    },
+    templateVars: {
       type: Object,
       default: () => ({}),
     },

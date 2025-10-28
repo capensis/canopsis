@@ -5,10 +5,12 @@ import {
   getAlarmsListWidgetColumnComponentGetter,
 } from '@/helpers/entities/widget/forms/alarm';
 
-import { entitiesAlarmColumnsFiltersMixin } from '@/mixins/entities/associative-table/alarm-columns-filters';
+import { entitiesAlarmColumnsFiltersMixin } from '../../entities/associative-table/alarm-columns-filters';
+
+import { widgetColumnsEntityInfoPropertyMixin } from './entity-info-property';
 
 export const widgetColumnsAlarmMixin = {
-  mixins: [entitiesAlarmColumnsFiltersMixin],
+  mixins: [entitiesAlarmColumnsFiltersMixin, widgetColumnsEntityInfoPropertyMixin],
   data() {
     return {
       columnsFilters: [],
@@ -40,7 +42,7 @@ export const widgetColumnsAlarmMixin = {
 
       return (this.columns ?? []).map(column => ({
         ...column,
-
+        text: column.label || this.findAliasByColumnValue(column.value, 'entity') || column.text,
         popupTemplate: this.infoPopupsMap[column.value] ?? this.infoPopupsMap[`alarm.${column.value}`],
         filter: this.$i18n.locale && this.getColumnFilter(column.value),
         getComponent: getAlarmsListWidgetColumnComponentGetter(
@@ -57,6 +59,7 @@ export const widgetColumnsAlarmMixin = {
   },
   mounted() {
     this.fetchColumnFilters();
+    this.fetchEntityInfoPropertiesList({ params: { paginate: false } });
   },
   methods: {
     getColumnFilter(value) {

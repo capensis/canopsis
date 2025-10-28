@@ -28,6 +28,8 @@ const (
 	UserMetaData           = "users"
 	EntityCategoryMetaData = "entity_categories"
 
+	MetricsCriteria = "metrics_criteria"
+
 	InstructionExecution             = "instruction_execution"
 	InstructionExecutionHourly       = "instruction_execution_hourly"
 	InstructionExecutionByModifiedOn = "instruction_execution_by_modified_on"
@@ -41,6 +43,8 @@ const (
 
 	MessageRate       = "message_rate"
 	MessageRateHourly = "message_rate_hourly"
+
+	EntityInfosUpdate = "entity_infos_update"
 )
 
 // criteria type

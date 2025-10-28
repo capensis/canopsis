@@ -93,7 +93,7 @@ func NewActionLogger(
 		mongo.WidgetFiltersMongoCollection:      ValueTypeWidgetFilter,
 		mongo.EntityMongoCollection:             ValueTypeEntity,
 		mongo.EntityCategoryMongoCollection:     ValueTypeEntityCategory,
-		mongo.BroadcastMessageMongoCollection:   ValueTypeBroadcastMessage,
+		mongo.BroadcastMessageCollection:        ValueTypeBroadcastMessage,
 		mongo.EventFilterRuleCollection:         ValueTypeEventFilter,
 		mongo.FlappingRuleMongoCollection:       ValueTypeFlappingRule,
 		mongo.IdleRuleMongoCollection:           ValueTypeIdleRule,
@@ -118,6 +118,9 @@ func NewActionLogger(
 		mongo.EntityInfosPropertyCollection:     ValueTypeEntityInfosProperty,
 
 		mongo.UserNotificationSettingsCollection: ValueTypeUserNotificationSetting,
+
+		mongo.TemplateTestDataCollection: ValueTypeTplTestData,
+		mongo.TemplateTestCollection:     ValueTypeTplTest,
 	}
 
 	watchedCollections := make([]string, 0, len(collectionValueTypeMap))
