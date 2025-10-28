@@ -7,31 +7,46 @@
       :color="activeMessage.color"
     >
       <template
-        v-if="isLoggedIn && activeMessage.maintenance"
+        v-if="isLoggedIn"
         #actions=""
       >
+        <template v-if="activeMessage.maintenance">
+          <v-btn
+            class="mr-2"
+            color="white"
+            outlined
+            rounded
+            small
+            @click="showEditBroadcastMessageModal(activeMessage)"
+          >
+            <v-icon small>
+              edit
+            </v-icon>
+          </v-btn>
+          <v-btn
+            class="my-0 ml-0 mr-2"
+            color="white"
+            outlined
+            rounded
+            small
+            @click="showConfirmationLeaveMaintenanceMode"
+          >
+            <v-icon small>
+              logout
+            </v-icon>
+          </v-btn>
+        </template>
         <v-btn
-          class="mr-2"
-          color="white"
-          outlined
-          rounded
-          small
-          @click="showEditBroadcastMessageModal(activeMessage)"
-        >
-          <v-icon small>
-            edit
-          </v-icon>
-        </v-btn>
-        <v-btn
+          v-else
           class="my-0 ml-0 mr-2"
           color="white"
           outlined
           rounded
           small
-          @click="showConfirmationLeaveMaintenanceMode"
+          @click="showConfirmationMarkAsRead(activeMessage)"
         >
           <v-icon small>
-            logout
+            close
           </v-icon>
         </v-btn>
       </template>
@@ -72,6 +87,7 @@ export default {
     const { maintenance, updateMaintenanceMode, fetchAppInfo } = useInfo();
     const {
       updateBroadcastMessage,
+      markBroadcastMessageAsRead,
       fetchBroadcastMessagesListWithPreviousParams,
       fetchActiveBroadcastMessagesListWithoutStore,
     } = useBroadcastMessages();
@@ -103,6 +119,7 @@ export default {
 
     /**
      * Fetches the list of active broadcast messages without storing in Vuex
+     * Fetches the list of active broadcast messages and updates the local state.
      */
     const fetchList = async () => {
       const data = await fetchActiveBroadcastMessagesListWithoutStore();
@@ -111,14 +128,15 @@ export default {
     };
 
     /**
-     * Disables maintenance mode by updating the maintenance mode status and refreshing app info
+     * Disables maintenance mode by updating the maintenance mode setting
+     * and refreshing the application info.
      */
     const disableMaintenanceMode = async () => {
       await updateMaintenanceMode({
         data: { enabled: false },
       });
 
-      await fetchAppInfo();
+      return fetchAppInfo();
     };
 
     /**
@@ -159,11 +177,29 @@ export default {
           text: t('modals.confirmationLeaveMaintenance.text'),
           action: async () => {
             await disableMaintenanceMode();
-            await fetchList();
+
+            return fetchList();
           },
         },
       });
     };
+
+    /**
+     * Shows a confirmation modal for marking a broadcast message as read.
+     * Upon confirmation, disables maintenance mode and refreshes the broadcast messages list.
+     */
+    const showConfirmationMarkAsRead = (broadcaseMessage = {}) => modals.show({
+      name: MODALS.confirmation,
+      config: {
+        title: t('modals.confirmationMarkAsRead.title'),
+        text: t('modals.confirmationMarkAsRead.text'),
+        action: async () => {
+          await markBroadcastMessageAsRead({ id: broadcaseMessage._id });
+
+          return fetchList();
+        },
+      },
+    });
 
     useSocketRoom({
       room: SOCKET_ROOMS.broadcastMessages,
@@ -173,6 +209,7 @@ export default {
     });
 
     watch(maintenance, () => fetchList());
+    watch(isLoggedIn, fetchList);
 
     onMounted(fetchList);
 
@@ -181,6 +218,7 @@ export default {
       isLoggedIn,
       showEditBroadcastMessageModal,
       showConfirmationLeaveMaintenanceMode,
+      showConfirmationMarkAsRead,
     };
   },
 };
