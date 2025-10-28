@@ -57,7 +57,7 @@
         />
       </v-flex>
     </v-layout>
-    <v-layout class="gap-3">
+    <v-layout v-if="isAutoType" class="gap-3">
       <c-enabled-field
         :value="form.retry_enabled"
         :label="$t('remediation.instruction.retryEnabled')"
