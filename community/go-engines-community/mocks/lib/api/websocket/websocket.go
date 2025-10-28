@@ -369,6 +369,20 @@ func (mr *MockHubMockRecorder) GetConnections() *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConnections", reflect.TypeOf((*MockHub)(nil).GetConnections))
 }
 
+// GetConnectionsByRoom mocks base method.
+func (m *MockHub) GetConnectionsByRoom(room string) []websocket.UserConnection {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetConnectionsByRoom", room)
+	ret0, _ := ret[0].([]websocket.UserConnection)
+	return ret0
+}
+
+// GetConnectionsByRoom indicates an expected call of GetConnectionsByRoom.
+func (mr *MockHubMockRecorder) GetConnectionsByRoom(room any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetConnectionsByRoom", reflect.TypeOf((*MockHub)(nil).GetConnectionsByRoom), room)
+}
+
 // GetGroupIDs mocks base method.
 func (m *MockHub) GetGroupIDs(group string) []string {
 	m.ctrl.T.Helper()
@@ -531,6 +545,30 @@ func (m *MockHub) SendRoomByUser(userID, room string, b any) int {
 func (mr *MockHubMockRecorder) SendRoomByUser(userID, room, b any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendRoomByUser", reflect.TypeOf((*MockHub)(nil).SendRoomByUser), userID, room, b)
+}
+
+// SendToConn mocks base method.
+func (m *MockHub) SendToConn(connID, room string, msg any) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendToConn", connID, room, msg)
+}
+
+// SendToConn indicates an expected call of SendToConn.
+func (mr *MockHubMockRecorder) SendToConn(connID, room, msg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendToConn", reflect.TypeOf((*MockHub)(nil).SendToConn), connID, room, msg)
+}
+
+// SendToUser mocks base method.
+func (m *MockHub) SendToUser(userID, room string, msg any) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendToUser", userID, room, msg)
+}
+
+// SendToUser indicates an expected call of SendToUser.
+func (mr *MockHubMockRecorder) SendToUser(userID, room, msg any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendToUser", reflect.TypeOf((*MockHub)(nil).SendToUser), userID, room, msg)
 }
 
 // Start mocks base method.
