@@ -150,6 +150,18 @@ func (mr *MockSenderMockRecorder) SendCreateAndPbhEnter(alarm, timestamp any) *g
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCreateAndPbhEnter", reflect.TypeOf((*MockSender)(nil).SendCreateAndPbhEnter), alarm, timestamp)
 }
 
+// SendEntityInfosUpdate mocks base method.
+func (m *MockSender) SendEntityInfosUpdate(timestamp time.Time, entityID, ruleID, name string, val any) {
+	m.ctrl.T.Helper()
+	m.ctrl.Call(m, "SendEntityInfosUpdate", timestamp, entityID, ruleID, name, val)
+}
+
+// SendEntityInfosUpdate indicates an expected call of SendEntityInfosUpdate.
+func (mr *MockSenderMockRecorder) SendEntityInfosUpdate(timestamp, entityID, ruleID, name, val any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendEntityInfosUpdate", reflect.TypeOf((*MockSender)(nil).SendEntityInfosUpdate), timestamp, entityID, ruleID, name, val)
+}
+
 // SendEventMetrics mocks base method.
 func (m *MockSender) SendEventMetrics(alarm types.Alarm, entity types.Entity, alarmChange types.AlarmChange, timestamp time.Time, initiator, userID, instructionID, notAckedMetricType string) {
 	m.ctrl.T.Helper()

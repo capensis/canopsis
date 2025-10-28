@@ -11,6 +11,7 @@ type EditRequest struct {
 	Message string           `bson:"message" json:"message" binding:"required"`
 	Start   datetime.CpsTime `bson:"start" json:"start" binding:"required" swaggertype:"integer"`
 	End     datetime.CpsTime `bson:"end" json:"end" binding:"required" swaggertype:"integer"`
+	Views   []string         `bson:"views" json:"views"`
 
 	Author  string            `bson:"author,omitempty" json:"author,omitempty" swaggerignore:"true"`
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"-" swaggerignore:"true"`
@@ -27,7 +28,7 @@ type UpdateRequest struct {
 	ID          string `bson:"_id" json:"-"`
 }
 
-type FilteredQuery struct {
+type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id message"`
 }
@@ -38,6 +39,7 @@ type Response struct {
 	Message string           `bson:"message" json:"message"`
 	Start   datetime.CpsTime `bson:"start" json:"start" swaggertype:"integer"`
 	End     datetime.CpsTime `bson:"end" json:"end" swaggertype:"integer"`
+	Views   []string         `bson:"views" json:"views"`
 
 	Author  *author.Author    `bson:"author,omitempty" json:"author,omitempty"`
 	Created *datetime.CpsTime `bson:"created,omitempty" json:"created,omitempty" swaggertype:"integer"`
