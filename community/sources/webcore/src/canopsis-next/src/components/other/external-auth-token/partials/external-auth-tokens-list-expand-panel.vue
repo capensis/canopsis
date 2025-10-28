@@ -7,7 +7,7 @@
           :items="items"
           hide-default-footer
         >
-          <template #failed="{ item }">
+          <template #item.failed="{ item }">
             {{ item.failed | date }}
           </template>
         </v-data-table>
