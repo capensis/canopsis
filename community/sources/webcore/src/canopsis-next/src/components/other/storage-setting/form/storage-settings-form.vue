@@ -35,6 +35,7 @@
       v-field="form.event_filter_failure"
       :history="history.event_filter_failure"
     />
+    <storage-settings-entity-infos-log-form v-field="form.entity_infos_log" />
     <storage-settings-alarm-external-tag-form
       v-field="form.alarm_external_tag"
       :history="history.alarm_external_tag"
@@ -59,6 +60,7 @@ import StorageSettingsEventFilterFailureForm from './storage-settings-event-filt
 import StorageSettingsAlarmExternalTagForm from './storage-settings-alarm-external-tag-form.vue';
 import StorageSettingsEntityUnlinkedForm from './storage-settings-entity-unlinked-form.vue';
 import StorageSettingsEventsRecordsForm from './storage-settings-events-records-form.vue';
+import StorageSettingsEntityInfosLogForm from './storage-settings-entity-infos-log-form.vue';
 
 export default {
   inject: ['$validator'],
@@ -75,6 +77,7 @@ export default {
     StorageSettingsRemediationForm,
     StorageSettingsAlarmForm,
     StorageSettingsEventsRecordsForm,
+    StorageSettingsEntityInfosLogForm,
   },
   model: {
     prop: 'form',

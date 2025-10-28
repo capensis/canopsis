@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`alarms-expand-panel-entity-enrichments Renders \`alarms-expand-panel-entity-enrichments\` with default props 1`] = `
+<entity-infos-logs-list-stub
+  items=""
+  options="[object Object]"
+/>
+`;
+
+exports[`alarms-expand-panel-entity-enrichments Renders \`alarms-expand-panel-entity-enrichments\` with empty data 1`] = `
+<entity-infos-logs-list-stub
+  items=""
+  options="[object Object]"
+/>
+`;
+
+exports[`alarms-expand-panel-entity-enrichments Renders \`alarms-expand-panel-entity-enrichments\` with minimal alarm prop 1`] = `
+<entity-infos-logs-list-stub
+  items=""
+  options="[object Object]"
+/>
+`;
