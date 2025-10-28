@@ -41,13 +41,19 @@ export default {
     executeInstruction: 'Execute {instructionName}',
     resumeInstruction: 'Resume {instructionName}',
     inProgressInstruction: '{instructionName} in progress...',
+    retryEnabled: 'Retry for unsuccessful executions',
+    retryEnabledTooltip: 'Where execution result - Alarm state isn\'t OK',
+    retryCount: 'Number of attempts',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
       [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatic',
     },
+    enabledRepeatTrigger: 'Repeat execution on trigger',
+    repeatTriggers: 'Repeat triggers',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
+      enabledRepeatTriggerTooltip: 'Repeat on trigger in case if previous execution\nfailed (result - alarm state not OK)',
     },
     table: {
       rating: 'Rating',
@@ -95,7 +101,6 @@ export default {
       skip: 'Skip job',
       await: 'Await',
       failedReason: 'Failed reason',
-      output: 'Output',
       instructionFailed: 'Instruction failed',
       instructionComplete: 'Instruction complete',
       stopped: 'Stopped',

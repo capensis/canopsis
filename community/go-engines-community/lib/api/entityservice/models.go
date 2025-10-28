@@ -5,6 +5,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
@@ -53,7 +54,7 @@ type EditRequest struct {
 	Name           string               `json:"name" binding:"required,max=255"`
 	Author         string               `json:"author" swaggerignore:"true"`
 	Enabled        *bool                `json:"enabled" binding:"required"`
-	OutputTemplate string               `json:"output_template" binding:"required,max=500"`
+	OutputTemplate string               `json:"output_template" binding:"required,max=500,template"`
 	Category       string               `json:"category"`
 	ImpactLevel    int64                `json:"impact_level" binding:"required,min=1,max=10"`
 	Infos          []entity.InfoRequest `json:"infos" binding:"dive"`
@@ -87,4 +88,16 @@ type StateSettingResponse struct {
 	ID     string `bson:"_id" json:"_id"`
 	Title  string `bson:"title" json:"title"`
 	Method string `bson:"method" json:"method"`
+}
+
+type TemplateRequest struct {
+	Rule TemplateRuleRequest `json:"rule"`
+}
+
+type TemplateRuleRequest struct {
+	OutputTemplate string `json:"output_template" binding:"required"`
+}
+
+type TemplateVarsResponse struct {
+	Output []template.VarResponse `json:"output"`
 }

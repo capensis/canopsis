@@ -46,7 +46,7 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"dynamic_infos":              mongo.DynamicInfosRulesMongoCollection,
 			"playlist":                   mongo.PlaylistMongoCollection,
 			"state_settings":             mongo.StateSettingsMongoCollection,
-			"broadcast":                  mongo.BroadcastMessageMongoCollection,
+			"broadcast":                  mongo.BroadcastMessageCollection,
 			"associative_table":          mongo.AssociativeTableCollection,
 			"user_notification_settings": mongo.UserNotificationSettingsCollection,
 			"view":                       mongo.ViewMongoCollection,
@@ -69,6 +69,8 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 			"link_rule":                  mongo.LinkRuleMongoCollection,
 			"map":                        mongo.MapMongoCollection,
 			"entity_infos_property":      mongo.EntityInfosPropertyCollection,
+			"template_data":              mongo.TemplateTestDataCollection,
+			"template_test":              mongo.TemplateTestCollection,
 		},
 	}
 }

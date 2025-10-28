@@ -10,15 +10,9 @@ exports[`storage-settings-events-records-form Renders \`storage-settings-events-
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Events recordings data storage
+      Events recordings
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="All recordings older than the defined time period will be deleted"
-      top=""
-    />
+    <!---->
   </div>
   <div
     class="layout mt-2"
@@ -32,8 +26,11 @@ exports[`storage-settings-events-records-form Renders \`storage-settings-events-
     </span>
   </div>
   <c-enabled-duration-field-stub
-    label="Delete events recordings after"
+    hide-value-on-false=""
+    label="Delete events recordings"
     name="eventsRecords.delete_after"
+    suffix="Older than"
+    switcher=""
     value="[object Object]"
   />
 </div>
@@ -49,20 +46,17 @@ exports[`storage-settings-events-records-form Renders \`storage-settings-events-
     <div
       class="text-subtitle-1 font-weight-bold"
     >
-      Events recordings data storage
+      Events recordings
     </div>
-    <c-help-icon-stub
-      color="info"
-      icon-class="ml-2"
-      max-width="300"
-      text="All recordings older than the defined time period will be deleted"
-      top=""
-    />
+    <!---->
   </div>
   <!---->
   <c-enabled-duration-field-stub
-    label="Delete events recordings after"
+    hide-value-on-false=""
+    label="Delete events recordings"
     name="eventsRecords.delete_after"
+    suffix="Older than"
+    switcher=""
     value="[object Object]"
   />
 </div>

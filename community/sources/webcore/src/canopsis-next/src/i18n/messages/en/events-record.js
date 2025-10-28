@@ -13,4 +13,6 @@ export default {
   delayBetweenEvents: 'Delay between events',
   resendEvents: 'Resend event | Resend events',
   launchEventRecording: 'Launch events recording',
+  copyEvent: 'Copy event to clipboard',
+  eventCopied: 'Event copied to clipboard',
 };

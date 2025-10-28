@@ -8,7 +8,7 @@
       />
     </div>
     <div>
-      {{ $t('remediation.instructionExecute.jobs.output') }}:&nbsp;
+      {{ $t('common.output') }}:&nbsp;
       <span
         v-html="output"
         class="pre-wrap"

@@ -130,6 +130,7 @@ export default {
     entityGantt: 'Gantt chart',
     ticketsDeclared: 'Tickets declared',
     remediation: 'Remediation',
+    entityEnrichments: 'Entity enrichments',
   },
   moreInfos: {
     defineATemplate: 'To define a template for this window, go to the alarms list settings',
@@ -147,6 +148,7 @@ export default {
     resetChangeColumns: 'Reset columns ordering/resizing',
     startChangeColumns: 'Start change columns ordering/resizing',
     finishChangeColumns: 'Finish change columns ordering/resizing',
+    withoutAnyExecution: 'Manual instruction wasn\'t executed',
   },
   metrics: {
     [ALARM_METRIC_PARAMETERS.createdAlarms]: 'Number of created alarms',

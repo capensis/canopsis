@@ -44,7 +44,7 @@ exports[`meta-alarm-rule-parameters-form Renders \`meta-alarm-rule-parameters-fo
   <!---->
   <meta-alarm-rule-corel-form-stub
     config="[object Object]"
-    variables=""
+    templatevars="[object Object]"
   />
   <meta-alarm-rule-patterns-form-stub
     form="[object Object]"

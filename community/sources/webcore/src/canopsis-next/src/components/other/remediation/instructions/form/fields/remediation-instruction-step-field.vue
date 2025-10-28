@@ -46,6 +46,7 @@
       :name="operationFieldName"
       :step-number="stepNumber"
       :disabled="disabled"
+      :template-vars="templateVars"
     />
   </c-card-iterator-item>
 </template>
@@ -101,6 +102,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data() {

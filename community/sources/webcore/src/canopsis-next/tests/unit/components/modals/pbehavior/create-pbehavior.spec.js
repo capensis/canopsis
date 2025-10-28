@@ -48,6 +48,11 @@ describe('create-pbehavior', () => {
     timezone: 'Europe/Paris',
   };
 
+  const defaultPbehaviorRequest = {
+    ...defaultPbehavior,
+    exec_pattern: true,
+  };
+
   const factory = generateShallowRenderer(CreatePbehavior, {
 
     stubs,
@@ -86,8 +91,8 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith(defaultPbehavior);
-    expect($modals.hide).toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(defaultPbehaviorRequest);
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -118,8 +123,8 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
+    expect(action).not.toHaveBeenCalled();
+    expect($modals.hide).not.toHaveBeenCalled();
   });
 
   test('Form submitted after trigger submit button without action', async () => {
@@ -135,7 +140,7 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalledWith();
   });
 
   test('Errors added after trigger submit button with action errors', async () => {
@@ -162,8 +167,8 @@ describe('create-pbehavior', () => {
     const addedErrors = wrapper.getValidatorErrorsObject();
 
     expect(formErrors).toEqual(addedErrors);
-    expect(action).toBeCalledWith(defaultPbehavior);
-    expect($modals.hide).not.toBeCalledWith();
+    expect(action).toHaveBeenCalledWith(defaultPbehaviorRequest);
+    expect($modals.hide).not.toHaveBeenCalledWith();
   });
 
   test('Error popup showed after trigger submit button with action errors', async () => {
@@ -194,17 +199,17 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect(consoleErrorSpy).toBeCalledWith(errors);
-    expect($popups.error).toBeCalledWith({
+    expect(consoleErrorSpy).toHaveBeenCalledWith(errors);
+    expect($popups.error).toHaveBeenCalledWith({
       text: `${errors.unavailableField}\n${errors.anotherUnavailableField}`,
     });
-    expect(action).toBeCalledWith({
-      ...defaultPbehavior,
+    expect(action).toHaveBeenCalledWith({
+      ...defaultPbehaviorRequest,
       entity_pattern: customPbehavior.entity_pattern,
       name: customPbehavior.name,
       _id: customPbehavior._id,
     });
-    expect($modals.hide).not.toBeCalledWith();
+    expect($modals.hide).not.toHaveBeenCalledWith();
 
     consoleErrorSpy.mockClear();
   });
@@ -235,11 +240,11 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect(action).toBeCalledWith({
-      ...defaultPbehavior,
+    expect(action).toHaveBeenCalledWith({
+      ...defaultPbehaviorRequest,
       ...newForm,
     });
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Modal hidden after trigger cancel button', async () => {
@@ -255,7 +260,7 @@ describe('create-pbehavior', () => {
 
     await flushPromises();
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Renders `create-pbehavior` with empty modal', () => {

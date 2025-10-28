@@ -4,8 +4,8 @@
     ref="field"
     :value="value"
     :search-input="value"
-    :label="label || $t('common.payload')"
-    :items="availableVariables"
+    :label="label ?? $t('common.payload')"
+    :items="variables"
     :disabled="disabled"
     :return-object="false"
     :menu-props="menuProps"
@@ -22,20 +22,13 @@
     <template #append-outer="">
       <slot name="append-outer" />
     </template>
-    <template #item="{ item, attrs }">
-      <v-list-item
-        v-bind="{ ...attrs, value: item.value === variablesMenuValue }"
-        @click="pasteVariable(item.value)"
-      >
-        <v-list-item-content>{{ item.text }}</v-list-item-content>
-        <span class="ml-4 grey--text">{{ item.value }}</span>
-      </v-list-item>
-    </template>
     <template #list="">
       <variables-list
-        :items="availableVariables"
+        :value="variablesMenuValue"
+        :items="variables"
         children-key="variables"
         show-value
+        hide-empty-value
         clickable-parent
         @input="pasteVariable"
       />
@@ -81,8 +74,14 @@ export default {
       };
     },
 
+    hasValidationRules() {
+      return Object.values(this.rules).some(rule => !!rule);
+    },
+
     errorMessages() {
-      return this.errors.collect(this.name);
+      return this.errors.collect(this.name).map((message = '') => (
+        message.includes('|') ? message.split('|')[1] : message
+      ));
     },
 
     menuProps() {
@@ -101,7 +100,13 @@ export default {
 
       if (this.errorMessages?.length) {
         this.$nextTick(() => {
-          this.$validator.validate(this.name);
+          if (this.hasValidationRules) {
+            this.$validator.validate(this.name);
+
+            return;
+          }
+
+          this.errors.remove(this.name);
         });
       }
     },

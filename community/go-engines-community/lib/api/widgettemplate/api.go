@@ -9,16 +9,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type api struct {
-	store Store
-}
-
-func NewApi(
-	store Store,
-) common.CrudAPI {
+func NewApi(store Store) common.CrudAPI {
 	return &api{
 		store: store,
 	}
+}
+
+type api struct {
+	store Store
 }
 
 // List

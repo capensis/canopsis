@@ -46,7 +46,7 @@ func NewStore(
 	return &store{
 		dbClient:            dbClient,
 		configCollection:    dbClient.Collection(mongo.ConfigurationMongoCollection),
-		broadcastCollection: dbClient.Collection(mongo.BroadcastMessageMongoCollection),
+		broadcastCollection: dbClient.Collection(mongo.BroadcastMessageCollection),
 
 		userProvider: userProvider,
 		tokenService: tokenService,

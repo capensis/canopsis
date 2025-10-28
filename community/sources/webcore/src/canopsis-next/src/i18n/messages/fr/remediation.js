@@ -41,13 +41,19 @@ export default {
     executeInstruction: 'Exécuter la consigne "{instructionName}"',
     resumeInstruction: 'Reprendre la consigne "{instructionName}"',
     inProgressInstruction: '{instructionName} en cours...',
+    retryEnabled: 'Réessayer pour les exécutions infructueuses',
+    retryEnabledTooltip: 'Lorsque le résultat de l\'exécution - L\'état de l\'alarme n\'est pas OK',
+    retryCount: 'Nombre de tentatives',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manuel simplifié',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manuel',
       [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatique',
     },
+    enabledRepeatTrigger: 'Répéter l\'exécution sur déclenchement',
+    repeatTriggers: 'Répéter les déclencheurs',
     tooltips: {
       endpoint: 'Le point de terminaison doit être une question qui appelle une réponse Oui/Non',
+      enabledRepeatTriggerTooltip: 'Répéter lors du déclenchement si l\'exécution précédente\na échoué (résultat - état de l\'alarme non OK)',
     },
     table: {
       rating: 'Évaluation',
@@ -95,7 +101,6 @@ export default {
       skip: 'Ignorer la tâche',
       await: 'Attendre',
       failedReason: 'Raison de l\'échec',
-      output: 'Retour',
       instructionFailed: 'Échec de d\'une consigne',
       instructionComplete: 'Exécution des consignes terminée',
       stopped: 'Arrêté',
