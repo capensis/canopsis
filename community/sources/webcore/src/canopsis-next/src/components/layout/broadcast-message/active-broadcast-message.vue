@@ -179,6 +179,7 @@ export default {
     useSocketRoom(SOCKET_ROOMS.broadcastMessages, setActiveMessages);
 
     watch(maintenance, fetchList);
+    watch(isLoggedIn, fetchList);
 
     onMounted(fetchList);
 
