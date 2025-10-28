@@ -8,5 +8,5 @@ export default {
   tokenCanNotBeDeleted: 'Le jeton ne peut pas être supprimé, il est utilisé dans :\n{rules}',
   urlHelp: '<p>Les variables accessibles sont : <strong>.Env</strong></p>'
     + '<i>Par exemple :</i>'
-    + '<pre>"https://exampleurl.com?env={{ .Env }}"</pre>',
+    + '<pre>"https://exampleurl.com?env={{ .Env.System.ENV_var }}"</pre>',
 };

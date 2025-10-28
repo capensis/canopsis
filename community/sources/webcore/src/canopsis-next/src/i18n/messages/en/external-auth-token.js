@@ -8,5 +8,5 @@ export default {
   tokenCanNotBeDeleted: 'Token can not be deleted, it is used in:\n{rules}',
   urlHelp: '<p>The accessible variables are: <strong>.Env</strong></p>'
     + '<i>For example:</i>'
-    + '<pre>"https://exampleurl.com?env={{ .Env }}"</pre>',
+    + '<pre>"https://exampleurl.com?env={{ .Env.System.ENV_var }}"</pre>',
 };
