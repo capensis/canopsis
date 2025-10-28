@@ -24,6 +24,9 @@
           <template #append="">
             <slot name="append" />
           </template>
+          <template #append-outer="">
+            <slot name="append-outer" />
+          </template>
         </v-text-field>
       </div>
     </template>
