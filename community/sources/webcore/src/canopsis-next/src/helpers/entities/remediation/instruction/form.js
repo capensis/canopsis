@@ -432,19 +432,22 @@ export const formToRemediationInstruction = (form) => {
     ...instruction
   } = form;
 
-  if (isInstructionTypeManual(form?.type)) {
+  const isManualType = isInstructionTypeManual(form?.type);
+  const isAutoType = isInstructionTypeAuto(form?.type);
+
+  if (isManualType) {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
 
-    if (isInstructionTypeAuto(form?.type)) {
+    if (isAutoType) {
       instruction.priority = priority;
       instruction.triggers = triggers;
       instruction.repeat_triggers = enabledRepeatTriggers ? repeatTriggers : [];
     }
   }
 
-  if (retryEnabled) {
+  if (isAutoType && retryEnabled) {
     instruction.retry_count = retryCount;
   }
 
