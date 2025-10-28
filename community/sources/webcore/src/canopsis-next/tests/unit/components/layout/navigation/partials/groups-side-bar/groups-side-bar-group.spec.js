@@ -1,7 +1,12 @@
 import Faker from 'faker';
 
-import { generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
-import { createAuthModule, createMockedStoreModules, createNavigationModule } from '@unit/utils/store';
+import { flushPromises, generateRenderer, generateShallowRenderer } from '@unit/utils/vue';
+import {
+  createAuthModule,
+  createMockedStoreModules,
+  createNavigationModule,
+  createActiveViewModule,
+} from '@unit/utils/store';
 import { mockModals } from '@unit/utils/mock-hooks';
 
 import { MODALS } from '@/constants';
@@ -22,12 +27,15 @@ describe('groups-side-bar-group', () => {
 
   const { navigationModule } = createNavigationModule();
   const { authModule } = createAuthModule();
+  const { activeViewModule, item: activeView } = createActiveViewModule();
   const store = createMockedStoreModules([
     navigationModule,
     authModule,
+    activeViewModule,
   ]);
 
   const group = {
+    _id: 'group-1',
     views: [{ _id: 'group-view-1' }, { _id: 'group-view-2' }],
   };
 
@@ -37,7 +45,7 @@ describe('groups-side-bar-group', () => {
   });
   const snapshotFactory = generateRenderer(GroupsSideBarGroup, { stubs });
 
-  it('Edit group modal showed after trigger group panel', () => {
+  test('Edit group modal showed after trigger group panel', () => {
     const wrapper = factory({
       store,
       propsData: {
@@ -47,7 +55,7 @@ describe('groups-side-bar-group', () => {
 
     selectGroupPanelNode(wrapper).$emit('change');
 
-    expect($modals.show).toBeCalledWith({
+    expect($modals.show).toHaveBeenCalledWith({
       name: MODALS.createGroup,
       config: {
         title: 'Edit group',
@@ -59,7 +67,7 @@ describe('groups-side-bar-group', () => {
     });
   });
 
-  it('Change views order after trigger draggable list', () => {
+  test('Change views order after trigger draggable list', () => {
     const views = [
       { _id: Faker.datatype.string() },
       { _id: Faker.datatype.string() },
@@ -86,7 +94,7 @@ describe('groups-side-bar-group', () => {
     });
   });
 
-  it('Renders `groups-side-bar-group` with default data', () => {
+  test('Renders `groups-side-bar-group` with default data', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -97,7 +105,7 @@ describe('groups-side-bar-group', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `groups-side-bar-group` with custom data', () => {
+  test('Renders `groups-side-bar-group` with custom data', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
@@ -109,7 +117,31 @@ describe('groups-side-bar-group', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `groups-side-bar-group` with empty groups', () => {
+  test('Renders `groups-side-bar-group` with custom data and with active view', async () => {
+    activeView.mockReturnValueOnce({
+      group: {
+        _id: group._id,
+      },
+    });
+
+    await flushPromises();
+
+    const wrapper = snapshotFactory({
+      store: createMockedStoreModules([
+        navigationModule,
+        authModule,
+        activeViewModule,
+      ]),
+      propsData: {
+        group,
+        isGroupsOrderChanged: true,
+      },
+    });
+
+    expect(wrapper).toMatchSnapshot();
+  });
+
+  test('Renders `groups-side-bar-group` with empty groups', () => {
     const wrapper = snapshotFactory({
       store,
       propsData: {
