@@ -182,6 +182,10 @@ func (s *timescaleDBSender) SendMessageRate(timestamp time.Time, eventType, conn
 	})
 }
 
+func (s *timescaleDBSender) SendEntityInfosUpdate(_ time.Time, _, _, _ string, _ any) {
+
+}
+
 func (s *timescaleDBSender) send(ctx context.Context) {
 	if !s.configProvider.Get().Enabled {
 		s.cleanBatches()

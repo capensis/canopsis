@@ -4,16 +4,28 @@ export const queryIntervalFilterMixin = {
   inject: ['$system'],
   methods: {
     getIntervalQuery() {
-      const { interval } = this.query;
+      const { interval, with_history: withHistory } = this.query;
 
       if (!interval) {
         return {};
       }
 
-      return convertMetricIntervalToTimestamp({
+      const result = convertMetricIntervalToTimestamp({
         interval,
         timezone: this.$system.timezone,
       });
+
+      if (withHistory) {
+        const { from: prevFrom, to: prevTo } = convertMetricIntervalToTimestamp({
+          interval: result,
+          timezone: this.$system.timezone,
+        });
+
+        result.prev_from = prevFrom;
+        result.prev_to = prevTo;
+      }
+
+      return result;
     },
 
     updateInterval(interval) {
