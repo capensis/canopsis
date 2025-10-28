@@ -25,6 +25,11 @@ configuration:
           value: 30
           unit: d
           enabled: true
+      entity_infos_log:
+        delete_after:
+          value: 7
+          unit: d
+          enabled: true
   alarm_tag_color:
     _id: alarm_tag_color
     colors:

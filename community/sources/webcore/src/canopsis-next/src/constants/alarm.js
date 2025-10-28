@@ -1105,6 +1105,7 @@ export const ALARMS_EXPAND_PANEL_TABS = {
   charts: 'charts',
   remediation: 'remediation',
   availability: 'availability',
+  entityEnrichments: 'entityEnrichments',
 };
 
 export const ALARM_LINK_ICON_CHIP_WIDTH = 26;

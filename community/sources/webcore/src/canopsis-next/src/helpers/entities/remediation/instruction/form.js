@@ -100,6 +100,7 @@ import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/f
  * @property {RemediationInstructionAutoTrigger[]} triggers
  * @property {RemediationInstructionAutoTrigger[]} repeat_triggers
  * @property {number} [priority]
+ * @property {number} [retry_count]
  * @property {RemediationInstructionJob[]} [jobs]
  */
 
@@ -120,6 +121,7 @@ import { formFilterToPatterns, filterPatternsToForm } from '@/helpers/entities/f
 
 /**
  * @typedef {RemediationInstruction} RemediationInstructionForm
+ * @property {boolean} retry_enabled
  * @property {boolean} enabled_repeat_triggers
  * @property {RemediationInstructionStepForm[]} steps
  * @property {RemediationInstructionJobForm[]} jobs
@@ -316,6 +318,8 @@ export const remediationInstructionToForm = (remediationInstruction = {}) => {
     alarm_pattern: remediationInstruction.alarm_pattern,
     entity_pattern: remediationInstruction.entity_pattern,
     description: remediationInstruction.description || '',
+    retry_enabled: !!remediationInstruction.retry_count,
+    retry_count: remediationInstruction.retry_count || 1,
     steps: remediationInstructionStepsToForm(remediationInstruction.steps),
     approval: remediationInstructionApprovalToForm(remediationInstruction.approval),
     jobs: remediationInstructionJobsToForm(remediationInstruction.jobs),
@@ -419,26 +423,37 @@ export const formToRemediationInstruction = (form) => {
     jobs,
     priority,
     triggers,
+
+    retry_enabled: retryEnabled,
+    retry_count: retryCount,
     enabled_repeat_triggers: enabledRepeatTriggers,
     repeat_triggers: repeatTriggers,
 
     ...instruction
   } = form;
 
-  if (isInstructionTypeManual(form?.type)) {
+  const isManualType = isInstructionTypeManual(form?.type);
+  const isAutoType = isInstructionTypeAuto(form?.type);
+
+  if (isManualType) {
     instruction.steps = formStepsToRemediationInstructionSteps(steps);
   } else {
     instruction.jobs = formJobsToRemediationInstructionJobs(jobs);
 
-    if (isInstructionTypeAuto(form?.type)) {
+    if (isAutoType) {
       instruction.priority = priority;
       instruction.triggers = triggers;
       instruction.repeat_triggers = enabledRepeatTriggers ? repeatTriggers : [];
     }
   }
 
+  if (isAutoType && retryEnabled) {
+    instruction.retry_count = retryCount;
+  }
+
   return {
     ...instruction,
+
     alarm_pattern: form.alarm_pattern,
     entity_pattern: form.entity_pattern,
     approval: formApprovalToRemediationInstructionApproval(form.approval),
