@@ -13,6 +13,8 @@ export const isOmitEqual = (value, other, paths) => isEqual(omit(value, paths), 
 /**
  * Is equal objects with special keys
  *
+ * @todo WORKS INCORRECTLY FOR ARRAYS
+ *
  * @param {Object|Array} value
  * @param {Object|Array} other
  * @param {String|Array} [paths]

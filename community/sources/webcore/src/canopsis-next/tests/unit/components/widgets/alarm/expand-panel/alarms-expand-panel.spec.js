@@ -25,6 +25,7 @@ const stubs = {
   'pbehaviors-simple-list': true,
   'alarms-expand-panel-charts': true,
   'alarms-expand-panel-remediation': true,
+  'alarms-expand-panel-entity-enrichments': true,
   'entity-availability': true,
   'c-compiled-template': CCompiledTemplate,
   'c-runtime-template': CRuntimeTemplate,

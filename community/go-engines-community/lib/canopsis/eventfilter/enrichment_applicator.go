@@ -36,24 +36,26 @@ func (a *enrichmentApplicator) Apply(
 	ctx context.Context,
 	rule ParsedRule,
 	event *types.Event,
+	updatedEntityInfos map[string]UpdatedValue,
 	regexMatch RegexMatch,
-) (string, bool, map[string]int64, error) {
-	var entityUpdated bool
+) (RuleResult, error) {
 	externalData, externalRequestCount, err := getExternalData(ctx, rule, event, regexMatch, a.externalDataContainer, a.failureService)
 	if err != nil {
-		return rule.Config.OnFailure, false, nil, err
+		return RuleResult{Outcome: rule.Config.OnFailure}, err
 	}
 
 	for _, action := range rule.Config.Actions {
-		isUpdated, err := a.actionProcessor.Process(ctx, rule.ID, rule.Description, action, event, regexMatch, externalData)
+		updatedEntityInfos, err = a.actionProcessor.Process(ctx, rule.ID, rule.Description, action, event, updatedEntityInfos, regexMatch, externalData)
 		if err != nil {
-			return rule.Config.OnFailure, false, nil, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
+			return RuleResult{Outcome: rule.Config.OnFailure}, fmt.Errorf("invalid action name=%q type=%q: %w", action.Name, action.Type, err)
 		}
-
-		entityUpdated = entityUpdated || isUpdated
 	}
 
-	return rule.Config.OnSuccess, entityUpdated, externalRequestCount, nil
+	return RuleResult{
+		Outcome:              rule.Config.OnSuccess,
+		UpdatedEntityInfos:   updatedEntityInfos,
+		ExternalRequestCount: externalRequestCount,
+	}, nil
 }
 
 func getExternalData(
