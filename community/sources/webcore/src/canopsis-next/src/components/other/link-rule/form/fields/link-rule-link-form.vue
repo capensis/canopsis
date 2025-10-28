@@ -55,7 +55,7 @@
         />
         <v-radio-group
           v-field="form.action"
-          :label="$t('linkRule.actionType')"
+          :label="$t('common.actionType')"
         >
           <v-radio
             :value="$constants.LINK_RULE_ACTIONS.open"

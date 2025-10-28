@@ -75,6 +75,10 @@ export default {
     title: 'Enregistrements d\'événements',
     deleteAfter: 'Supprimer les enregistrements d\'événements',
   },
+  entityInfosLog: {
+    title: 'Filtre d\'événements : journaux d\'enrichissement d\'entité',
+    deleteAfter: 'Supprimer les journaux de filtre d\'événements antérieurs à',
+  },
   history: {
     scriptLaunched: 'Script lancé à {launchedAt}.',
     alarm: {

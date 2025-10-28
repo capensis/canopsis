@@ -38,15 +38,6 @@ func (s *service) Start(ctx context.Context, ch <-chan bool) {
 	ticker := time.NewTicker(s.interval)
 	defer ticker.Stop()
 
-	messages, err := s.store.GetActive(ctx)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fetch messages")
-	}
-	previous := make(map[string]bool, len(messages))
-	for _, v := range messages {
-		previous[v.ID] = true
-	}
-
 	for {
 		select {
 		case <-ctx.Done():
@@ -56,42 +47,22 @@ func (s *service) Start(ctx context.Context, ch <-chan bool) {
 				return
 			}
 
-			previous = s.check(ctx, previous, false)
-		case <-ticker.C:
-			previous = s.check(ctx, previous, true)
+			s.check(ctx)
 		}
 	}
 }
 
-func (s *service) check(ctx context.Context, previous map[string]bool, onChange bool) map[string]bool {
-	messages, err := s.store.GetActive(ctx)
-	if err != nil {
-		s.logger.Err(err).Msg("cannot fetch messages")
-		return previous
-	}
+func (s *service) check(ctx context.Context) {
+	room := websocket.RoomBroadcastMessages
+	conns := s.websocketHub.GetConnectionsByRoom(room)
+	for _, c := range conns {
+		messages, err := s.store.GetActive(ctx, c.UserID)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot fetch messages")
 
-	if onChange {
-		// Check if messages are changed.
-		if len(previous) == len(messages) {
-			equal := true
-			for _, v := range messages {
-				if !previous[v.ID] {
-					equal = false
-					break
-				}
-			}
-
-			if equal {
-				return previous
-			}
+			return
 		}
-	}
 
-	ids := make(map[string]bool, len(messages))
-	for _, v := range messages {
-		ids[v.ID] = true
+		s.websocketHub.SendToConn(c.ID, room, messages)
 	}
-	s.websocketHub.Send(websocket.RoomBroadcastMessages, messages)
-
-	return ids
 }

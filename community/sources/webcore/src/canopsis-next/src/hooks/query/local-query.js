@@ -43,6 +43,12 @@ export const useLocalQuery = ({
 } = {}) => {
   const query = ref({ ...unref(initialQuery) });
 
+  /**
+   * Updates the entire query object with a new query.
+   * Triggers the onUpdate callback if the new query differs from the old one according to the comparator.
+   *
+   * @param {Object} newQuery - The new query object to replace the current query.
+   */
   const updateQuery = (newQuery) => {
     const oldQuery = query.value;
 
@@ -53,6 +59,13 @@ export const useLocalQuery = ({
     }
   };
 
+  /**
+   * Updates a specific field in the query object.
+   * Triggers the onUpdate callback if the new value differs from the old value.
+   *
+   * @param {string} field - The field name to update in the query object.
+   * @param {*} value - The new value for the specified field.
+   */
   const updateQueryField = (field, value) => {
     const oldValue = query.value?.[field];
 
@@ -63,8 +76,16 @@ export const useLocalQuery = ({
     }
   };
 
+  /**
+   * Resets the query to its initial state.
+   */
   const resetQuery = () => query.value = { ...unref(initialQuery) };
 
+  /**
+   * Calls the onUpdate callback with the provided query or the current query value.
+   *
+   * @param {Object} [handlerQuery=query.value] - The query object to pass to the onUpdate callback.
+   */
   const handler = (handlerQuery = query.value) => onUpdate(handlerQuery);
 
   const updateQueryFieldsMethods = Object.keys(unref(initialQuery)).reduce((acc, field) => {

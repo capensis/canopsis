@@ -9,6 +9,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+const MaxStrLength = 255
+
 type Sender interface {
 	Run(ctx context.Context)
 	SendAck(alarm types.Alarm, userID string, timestamp time.Time)
@@ -50,4 +52,6 @@ type Sender interface {
 	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
 
 	SendMessageRate(timestamp time.Time, eventType, connectorName string)
+
+	SendEntityInfosUpdate(timestamp time.Time, entityID, ruleID, name string, val any)
 }

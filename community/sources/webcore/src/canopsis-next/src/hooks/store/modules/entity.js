@@ -7,6 +7,7 @@ export const useEntity = () => {
 
   const actions = useActions({
     fetchContextEntitiesListWithoutStore: 'fetchListWithoutStore',
+    fetchEntityInfosLogsListWithoutStore: 'fetchEntityInfosLogsListWithoutStore',
     archiveDisabledEntitiesData: 'archiveDisabledEntitiesData',
     archiveUnlinkedEntitiesData: 'archiveUnlinkedEntitiesData',
     cleanArchivedEntitiesData: 'cleanArchivedEntitiesData',

@@ -80,6 +80,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with availability 1
         >
     Availability
         </a>
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#entityEnrichments"
+          role="tab"
+          tabindex="0"
+        >
+    Entity enrichments
+        </a>
       </div>
     </div>
     <div
@@ -275,6 +284,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with availability 1
           </div>
         </div>
       </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="entityEnrichments"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <alarms-expand-panel-entity-enrichments-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
     </div>
   </div>
 </div>
@@ -352,6 +389,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
         >
     Remediation
         </a>
+        <!---->
         <!---->
       </div>
     </div>
@@ -524,6 +562,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with custom props 1
           </div>
         </div>
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -633,6 +672,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
         >
     Availability
         </a>
+        <!---->
       </div>
     </div>
     <div
@@ -922,6 +962,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with full alarm 1`]
           </div>
         </div>
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
@@ -1007,6 +1048,15 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
     Remediation
         </a>
         <!---->
+        <a
+          aria-selected="false"
+          class="v-tab"
+          href="#entityEnrichments"
+          role="tab"
+          tabindex="0"
+        >
+    Entity enrichments
+        </a>
       </div>
     </div>
     <div
@@ -1205,6 +1255,34 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with gantt 1`] = `
           </div>
         </div>
       </transition-stub>
+      <transition-stub
+        name="v-window-x-transition"
+      >
+        <div
+          class="v-window-item v-window-item--active"
+          id="entityEnrichments"
+        >
+          <div
+            class="layout pa-3"
+          >
+            <div
+              class="flex offset-xs0 xs12"
+            >
+              <div
+                class="tab-item-card v-card v-sheet theme--light"
+              >
+                <div
+                  class="v-card__text"
+                >
+                  <alarms-expand-panel-entity-enrichments-stub
+                    alarm="[object Object]"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </transition-stub>
     </div>
   </div>
 </div>
@@ -1281,6 +1359,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
         >
     Remediation
         </a>
+        <!---->
         <!---->
       </div>
     </div>
@@ -1453,6 +1532,7 @@ exports[`alarms-expand-panel Renders \`alarms-expand-panel\` with required props
           </div>
         </div>
       </transition-stub>
+      <!---->
     </div>
   </div>
 </div>
