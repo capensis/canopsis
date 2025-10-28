@@ -1571,6 +1571,25 @@ paths:
             application/json:
               schema:
                 $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
+  /broadcast-message/{id}/read:
+    put:
+      tags:
+        - broadcast-messages
+      summary: Read broadcast message by id
+      description: |
+        Read broadcast message by id.
+      operationId: broadcast-messages-read-by-id
+      parameters:
+        - $ref: '#/components/parameters/id'
+      responses:
+        204:
+          description: OK
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: 'schemas_swagger.yaml#/definitions/common.ErrorResponse'
   /bulk/alarm-tags:
     delete:
       tags:
