@@ -646,20 +646,24 @@ export const createServiceModule = () => {
 
 export const createEntityModule = () => {
   const fetchStateSettingWithoutStore = jest.fn();
+  const fetchEntityInfosLogsListWithoutStore = jest.fn();
 
   afterEach(() => {
     fetchStateSettingWithoutStore.mockClear();
+    fetchEntityInfosLogsListWithoutStore.mockClear();
   });
 
   const entityModule = {
     name: 'entity',
     actions: {
       fetchStateSettingWithoutStore,
+      fetchEntityInfosLogsListWithoutStore,
     },
   };
 
   return {
     fetchStateSettingWithoutStore,
+    fetchEntityInfosLogsListWithoutStore,
     entityModule,
   };
 };

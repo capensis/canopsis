@@ -21,6 +21,9 @@
           readonly
           @click:append="clear"
         >
+          <template #append="">
+            <slot name="append" />
+          </template>
           <template #append-outer="">
             <slot name="append-outer" />
           </template>
