@@ -1439,9 +1439,10 @@ func RegisterRoutes(
 		)
 
 		// broadcast message API
-		broadcastMessageApi := broadcastmessage.NewApi(
+		broadcastMessageApi := broadcastmessage.NewAPI(
 			broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider),
 			broadcastMessageChan,
+			websocketHub,
 		)
 		broadcastMessageRouter := protected.Group("/broadcast-message")
 		{
@@ -1464,13 +1465,19 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjBroadcastMessage, model.PermissionRead, enforcer),
 				broadcastMessageApi.List)
 			broadcastMessageRouter.PUT(
+				"/:id/read",
+				middleware.OnlyAuth(),
+				broadcastMessageApi.Read)
+			broadcastMessageRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjBroadcastMessage, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				broadcastMessageApi.Update)
 			// can not make typical format like /api/v4/broadcast-message/active
 			// because it would be failed with conflict error apart of get /:id route
-			router.GET(BaseUrl+"/active-broadcast-message", broadcastMessageApi.GetActive)
+			protected.GET(
+				"/active-broadcast-message",
+				broadcastMessageApi.GetActive)
 		}
 
 		associativeTableApi := associativetable.NewApi(associativetable.NewStore(primaryDbClient))
