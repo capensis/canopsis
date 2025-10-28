@@ -26,10 +26,10 @@ func NewChangeEntityApplicator(
 	}
 }
 
-func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, regexMatch RegexMatch) (string, bool, map[string]int64, error) {
+func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, event *types.Event, _ map[string]UpdatedValue, regexMatch RegexMatch) (RuleResult, error) {
 	externalData, externalRequestCount, err := getExternalData(ctx, rule, event, regexMatch, a.externalDataContainer, a.failureService)
 	if err != nil {
-		return OutcomeDrop, false, nil, err
+		return RuleResult{Outcome: OutcomeDrop}, err
 	}
 
 	templateParams := Template{
@@ -42,7 +42,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		resource, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Resource", rule.Config.Resource,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, nil, err
+			return RuleResult{Outcome: OutcomeDrop}, err
 		}
 
 		event.Resource = resource
@@ -52,7 +52,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		component, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Component", rule.Config.Component,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, nil, err
+			return RuleResult{Outcome: OutcomeDrop}, err
 		}
 
 		event.Component = component
@@ -62,7 +62,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		connector, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Connector", rule.Config.Connector,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, nil, err
+			return RuleResult{Outcome: OutcomeDrop}, err
 		}
 
 		event.Connector = connector
@@ -72,7 +72,7 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		connectorName, err := ExecuteParsedTemplate(rule.ID, rule.Description, "ConnectorName", rule.Config.ConnectorName,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, nil, err
+			return RuleResult{Outcome: OutcomeDrop}, err
 		}
 
 		event.ConnectorName = connectorName
@@ -82,11 +82,11 @@ func (a *changeEntityApplicator) Apply(ctx context.Context, rule ParsedRule, eve
 		upstream, err := ExecuteParsedTemplate(rule.ID, rule.Description, "Upstream", rule.Config.Upstream,
 			templateParams, event, a.failureService, a.templateExecutor)
 		if err != nil {
-			return OutcomeDrop, false, nil, err
+			return RuleResult{Outcome: OutcomeDrop}, err
 		}
 
 		event.Upstream = upstream
 	}
 
-	return OutcomePass, false, externalRequestCount, nil
+	return RuleResult{Outcome: OutcomePass, ExternalRequestCount: externalRequestCount}, nil
 }
