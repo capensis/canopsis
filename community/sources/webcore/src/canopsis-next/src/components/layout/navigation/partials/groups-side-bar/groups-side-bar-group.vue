@@ -3,6 +3,7 @@
     :group="group"
     :order-changed="isGroupsOrderChanged"
     :is-editing="isNavigationEditingMode"
+    :active="isActiveGroup"
     :editable="hasViewGroupEditAccess && isNavigationEditingMode"
     @change="showEditGroupModal"
   >
