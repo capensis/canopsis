@@ -798,11 +798,21 @@ export default {
       phrase: 'modifier la politique de stockage',
     },
     cleanStorage: {
-      title: 'Archivage/Suppression des entités. Êtes vous sur ?',
-      text: 'Vous êtes sur le point d\'archiver et/ou de supprimer des données.\n'
-        + '<strong>Les opérations de suppression sont irreversibles.</strong>',
-      phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
-      phrase: 'archiver ou supprimer',
+      title: 'Nettoyer l\'archive',
+      text: '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n'
+        + '<strong>Cette opération ne pourra pas être annulée. Toutes les entités archivées (désactivées et non liées) seront supprimées définitivement</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression unique</strong> :',
+      phrase: 'supprimer',
+    },
+    archiveUnlinkedEntities: {
+      title: 'Archiver les entités non liées',
+      text: '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n'
+        + '<strong>Cette opération ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération d\'archivage unique</strong> :',
+      phrase: 'archiver',
+    },
+    archiveDisabledEntities: {
+      title: 'Archiver les entités désactivées',
     },
     deleteExternalDataTable: {
       title: 'Supprimer la Collection / Table',
@@ -836,7 +846,7 @@ export default {
     },
   },
   confirmationRunAlarmFiltering: {
-    title: 'Lancer le filtrage d\'alarmes ?',
+    title: 'Évaluer tous les patterns ?',
     text: 'Cette procédure va impacter les <strong>performances</strong> de Canopsis',
   },
   createAlarmPattern: {
@@ -1047,6 +1057,10 @@ export default {
     title: 'Quitter le mode maintenance',
     text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
   },
+  confirmationMarkAsRead: {
+    title: 'Marquer comme lu',
+    text: 'Êtes-vous sûr de vouloir marquer ce message de diffusion comme lu et le masquer ?',
+  },
   confirmationCreateNewTicketForAlarm: {
     title: 'Confirmer la création de tickets',
     text: 'Au moins un ticket existe déjà pour cette alarme.\nVoulez-vous en créer un nouveau ?',
@@ -1084,9 +1098,6 @@ export default {
     duplicate: {
       title: 'Thème en double',
     },
-  },
-  archiveDisabledEntities: {
-    text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
   },
   createIcon: {
     create: {

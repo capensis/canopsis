@@ -41,6 +41,9 @@ export default {
     executeInstruction: 'Execute {instructionName}',
     resumeInstruction: 'Resume {instructionName}',
     inProgressInstruction: '{instructionName} in progress...',
+    retryEnabled: 'Retry for unsuccessful executions',
+    retryEnabledTooltip: 'Where execution result - Alarm state isn\'t OK',
+    retryCount: 'Number of attempts',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',

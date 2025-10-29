@@ -31,7 +31,6 @@ type Sender interface {
 
 	SendQueue(metricName string, timestamp time.Time, length int64)
 
-	SendCheEntityInfo(timestamp time.Time, name string)
 	SendCheEvent(metric CheEventMetric)
 
 	SendAxePeriodical(metric AxePeriodicalMetric)
@@ -157,13 +156,6 @@ func (s *sender) SendPBehaviorPeriodical(metric PbehaviorPeriodicalMetric) {
 		metric.Events,
 		metric.Entities,
 		metric.Pbehaviors,
-	})
-}
-
-func (s *sender) SendCheEntityInfo(timestamp time.Time, name string) {
-	s.addBatch(CheInfos, []any{
-		timestamp.UTC(),
-		name,
 	})
 }
 
@@ -454,11 +446,6 @@ func (s *sender) getColumns(metricName string) []string {
 		return []string{
 			"time",
 			"length",
-		}
-	case CheInfos:
-		return []string{
-			"time",
-			"name",
 		}
 	case ApiRequests:
 		return []string{
