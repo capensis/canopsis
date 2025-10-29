@@ -20,11 +20,6 @@ import (
 const EnvURL = "CPS_POSTGRES_URL"
 const EnvTechURL = "CPS_POSTGRES_TECH_URL"
 
-const (
-	MetricsCriteria = "metrics_criteria"
-	Entities        = "entities"
-)
-
 // See error codes table for "Class 57 - Operator Intervention" https://www.postgresql.org/docs/9.6/errcodes-appendix.html#ERRCODES-TABLE
 const pgErrOperatorInterventionPrefix = "57"
 

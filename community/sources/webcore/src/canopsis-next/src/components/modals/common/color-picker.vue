@@ -38,7 +38,7 @@
 <script>
 import { MODALS } from '@/constants';
 
-import { colorToHex, colorToRgb, isValidColor } from '@/helpers/color';
+import { colorToHex8, colorToRgb, isValidColor } from '@/helpers/color';
 
 import { modalInnerMixin } from '@/mixins/modal/inner';
 import { submittableMixinCreator } from '@/mixins/submittable';
@@ -60,7 +60,7 @@ export default {
 
     if (config.color) {
       if (isValidColor(config.color)) {
-        color.hex = colorToHex(config.color);
+        color.hex = colorToHex8(config.color);
       }
     }
 
@@ -79,8 +79,9 @@ export default {
   methods: {
     async submit() {
       if (this.config.action) {
-        const { hex } = this.color;
-        const result = this.isHexType ? hex : colorToRgb(hex);
+        const { hex, hex8 } = this.color;
+
+        const result = this.isHexType ? (hex8 || hex) : colorToRgb(hex);
 
         await this.config.action(result);
       }

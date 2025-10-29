@@ -28,7 +28,7 @@ describe('group-panel', () => {
     },
   });
 
-  it('Change event emitted after trigger button', () => {
+  test('Change event emitted after trigger button', () => {
     const wrapper = factory({
       propsData: {
         editable: true,
@@ -41,7 +41,7 @@ describe('group-panel', () => {
     expect(wrapper).toHaveBeenEmit('change');
   });
 
-  it('Renders `group-panel` with required props', () => {
+  test('Renders `group-panel` with required props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         group: {
@@ -53,7 +53,7 @@ describe('group-panel', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
-  it('Renders `group-panel` with custom props', () => {
+  test('Renders `group-panel` with custom props', () => {
     const wrapper = snapshotFactory({
       propsData: {
         group: {
@@ -63,6 +63,7 @@ describe('group-panel', () => {
         isEditing: true,
         orderChanged: true,
         hideActions: true,
+        active: true,
       },
       slots: {
         default: '<div class="default-slot" />',

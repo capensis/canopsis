@@ -15,6 +15,7 @@
           />
           <broadcast-message-form
             v-model="form"
+            :tree-items="treeItems"
             class="pa-3"
           />
         </v-layout>
@@ -23,7 +24,7 @@
         <v-btn
           depressed
           text
-          @click="$modals.hide"
+          @click="close"
         >
           {{ $t('common.cancel') }}
         </v-btn>
@@ -40,13 +41,18 @@
 </template>
 
 <script>
-import { MODALS } from '@/constants';
+import { computed, ref, watch, onMounted } from 'vue';
 
-import { messageToForm, formToMessage } from '@/helpers/entities/broadcast-message/form';
+import { MODALS, BROADCAST_MESSAGE_VIEWS } from '@/constants';
 
-import { modalInnerMixin } from '@/mixins/modal/inner';
-import { submittableMixinCreator } from '@/mixins/submittable';
-import { confirmableModalMixinCreator } from '@/mixins/confirmable-modal';
+import { messageToForm, formToMessage, prepareMessageViews } from '@/helpers/entities/broadcast-message/form';
+
+import { useI18n } from '@/hooks/i18n';
+import { useInnerModal } from '@/hooks/modals';
+import { useSubmittableForm } from '@/hooks/submittable-form';
+import { useFormConfirmableCloseModal } from '@/hooks/confirmable-modal';
+import { useViewGroup } from '@/hooks/store/modules/view';
+import { usePlaylist } from '@/hooks/store/modules/playlist';
 
 import BroadcastMessage from '@/components/other/broadcast-message/partials/broadcast-message.vue';
 import BroadcastMessageForm from '@/components/other/broadcast-message/form/broadcast-message-form.vue';
@@ -59,37 +65,118 @@ export default {
     validator: 'new',
   },
   components: { BroadcastMessage, BroadcastMessageForm, ModalWrapper },
-  mixins: [
-    modalInnerMixin,
-    submittableMixinCreator(),
-    confirmableModalMixinCreator(),
-  ],
-  data() {
-    return {
-      form: messageToForm(this.modal.config.message),
-    };
-  },
-  computed: {
-    title() {
-      return this.modal.config.title || this.$t('modals.createBroadcastMessage.create.title');
-    },
-
-    message() {
-      return this.form.message || this.$t('modals.createBroadcastMessage.defaultMessage');
+  props: {
+    modal: {
+      type: Object,
+      required: true,
     },
   },
-  methods: {
-    async submit() {
-      const isFormValid = await this.$validator.validateAll();
+  setup(props) {
+    const { t, tc } = useI18n();
+    const { config, close } = useInnerModal(props);
 
-      if (isFormValid) {
-        if (this.config.action) {
-          await this.config.action(formToMessage(this.form));
-        }
+    const form = ref(messageToForm(config.value.message));
+    const title = computed(() => config.value.title || t('modals.createBroadcastMessage.create.title'));
+    const message = computed(() => form.value.message || t('modals.createBroadcastMessage.defaultMessage'));
 
-        this.$modals.hide();
+    const { groups, fetchAllGroupsListWithWidgets } = useViewGroup();
+    const { items: playlistItems, fetchList: fetchPlaylistList } = usePlaylist();
+
+    const viewGroupsTree = computed(() => {
+      if (!groups.value || !groups.value.length) {
+        return [];
       }
-    },
+
+      return groups.value.map((group = {}) => ({
+        value: group._id,
+        name: group.title || group.name,
+        children: (group.views || []).map(view => ({
+          value: view._id,
+          name: view.title || view.name,
+        })),
+      }));
+    });
+
+    const playlistsTree = computed(() => {
+      if (!playlistItems.value || !playlistItems.value.length) {
+        return [];
+      }
+
+      return playlistItems.value.map(playlist => ({
+        value: playlist.name,
+        name: playlist.name,
+      }));
+    });
+
+    const treeItems = computed(() => [
+      {
+        value: BROADCAST_MESSAGE_VIEWS.login,
+        name: t('common.login'),
+      },
+      {
+        value: BROADCAST_MESSAGE_VIEWS.exploitation,
+        name: t('common.exploitation'),
+      },
+      {
+        value: BROADCAST_MESSAGE_VIEWS.administration,
+        name: t('common.administration'),
+      },
+      {
+        value: BROADCAST_MESSAGE_VIEWS.notifications,
+        name: tc('common.notification', 2),
+      },
+      {
+        value: BROADCAST_MESSAGE_VIEWS.profile,
+        name: t('common.profile'),
+      },
+      {
+        value: BROADCAST_MESSAGE_VIEWS.allViews,
+        name: t('broadcastMessage.allViews'),
+        children: viewGroupsTree.value,
+      },
+      {
+        value: BROADCAST_MESSAGE_VIEWS.allPlaylists,
+        name: t('broadcastMessage.allPlaylists'),
+        children: playlistsTree.value,
+      },
+    ]);
+
+    const { submit, isDisabled } = useSubmittableForm({
+      form,
+      method: async () => {
+        await config.value.action?.(formToMessage(form.value, treeItems.value));
+
+        close();
+      },
+    });
+
+    useFormConfirmableCloseModal({ form, submit, close });
+
+    watch(treeItems, (newTreeItems) => {
+      form.value.views = prepareMessageViews(form.value.views, newTreeItems);
+    });
+
+    onMounted(async () => {
+      try {
+        await Promise.all([
+          fetchAllGroupsListWithWidgets(),
+          fetchPlaylistList(),
+        ]);
+      } catch (err) {
+        console.error(err);
+      }
+    });
+
+    return {
+      form,
+      title,
+      message,
+      isDisabled,
+      treeItems,
+
+      submit,
+      close,
+    };
   },
 };
 </script>

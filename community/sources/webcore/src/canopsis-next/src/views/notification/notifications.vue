@@ -285,7 +285,7 @@ export default {
       fetchInstructionsToRateList();
     };
 
-    useSocketRoom(SOCKET_ROOMS.notifications, fetchAllLists);
+    useSocketRoom({ room: SOCKET_ROOMS.notifications, listener: fetchAllLists });
 
     onBeforeMount(() => {
       if (!props.tabId) {
