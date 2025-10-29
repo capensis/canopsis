@@ -3,7 +3,10 @@ package event
 import (
 	"context"
 	"fmt"
+	"time"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -82,4 +85,11 @@ func updateMetaAlarmInfos(
 	}
 
 	return nil
+}
+
+func logInfosUpdate(metricsSender metrics.Sender, entityID string, updatedInfos map[string]eventfilter.UpdatedValue) {
+	now := time.Now()
+	for k, v := range updatedInfos {
+		metricsSender.SendEntityInfosUpdate(now, entityID, v.RuleID, k, v.NewValue)
+	}
 }

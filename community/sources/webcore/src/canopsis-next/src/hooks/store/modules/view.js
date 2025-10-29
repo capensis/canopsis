@@ -1,3 +1,5 @@
+import { MAX_LIMIT } from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 import { usePopups } from '@/hooks/popups';
 import { useStoreModuleHooks } from '@/hooks/store';
@@ -11,13 +13,15 @@ import { useStoreModuleHooks } from '@/hooks/store';
  * @property {Function} useGetters - Hook for accessing view module getters
  * @property {Function} useActions - Hook for accessing view module actions
  */
-const useViewStoreModule = () => useStoreModuleHooks('view');
+export const useViewStoreModule = () => useStoreModuleHooks('view');
 
 /**
  * Hook for managing view-related operations and state
  * Replaces the entitiesViewMixin functionality with Composition API
  *
  * @returns {Object} An object containing view getters, actions, and methods
+ * @property {Function} getViewById - Gets a view by ID
+ * @property {Function} getViewTabById - Gets a view tab by ID
  * @property {Function} createView - Creates a new view
  * @property {Function} updateView - Updates an existing view
  * @property {Function} updateViewsPositions - Updates view positions
@@ -35,7 +39,12 @@ export const useView = () => {
   const { t } = useI18n();
   const popups = usePopups();
 
-  const { useActions } = useViewStoreModule();
+  const { useGetters, useActions } = useViewStoreModule();
+
+  const getters = useGetters({
+    getViewById: 'getViewById',
+    getViewTabById: 'getViewTabById',
+  });
 
   const actions = useActions({
     createView: 'createView',
@@ -127,10 +136,98 @@ export const useView = () => {
   };
 
   return {
+    ...getters,
     ...actions,
     createViewWithPopup,
     updateViewWithPopup,
     copyViewWithPopup,
     removeViewWithPopup,
+  };
+};
+
+/**
+ * Hook for managing view group-related operations and state
+ * Replaces the entitiesViewGroupMixin functionality with Composition API
+ *
+ * @returns {Object} An object containing view group getters, actions, and methods
+ * @property {import('vue').ComputedRef} groups - View groups items
+ * @property {import('vue').ComputedRef} groupsPending - Pending state
+ * @property {import('vue').ComputedRef} meta - Metadata
+ * @property {Function} getGroupById - Gets a group by ID
+ * @property {Function} getViewById - Gets a view by ID
+ * @property {Function} getViewTabById - Gets a view tab by ID
+ * @property {Function} fetchGroupsList - Fetches the list of view groups
+ * @property {Function} fetchGroupsListWithoutStore - Fetches groups list without storing
+ * @property {Function} createGroup - Creates a new group
+ * @property {Function} createPrivateGroup - Creates a private group
+ * @property {Function} updateGroup - Updates a group
+ * @property {Function} updatePrivateGroup - Updates a private group
+ * @property {Function} removeGroup - Removes a group
+ * @property {Function} removePrivateGroup - Removes a private group
+ * @property {Function} fetchCurrentUser - Fetches the current user
+ * @property {Function} fetchAllGroupsListWithWidgets - Fetches all groups with widgets
+ * @property {Function} fetchAllGroupsListWithWidgetsWithCurrentUser - Fetches all groups with widgets and current user
+ */
+export const useViewGroup = () => {
+  const { useGetters, useActions } = useViewStoreModule();
+  const { useActions: useAuthActions } = useStoreModuleHooks('auth');
+
+  const getters = useGetters({
+    groups: 'items',
+    groupsPending: 'pending',
+    meta: 'meta',
+    getGroupById: 'getGroupById',
+    getViewById: 'getViewById',
+    getViewTabById: 'getViewTabById',
+  });
+
+  const actions = useActions({
+    fetchGroupsList: 'fetchList',
+    fetchGroupsListWithoutStore: 'fetchListWithoutStore',
+    createGroup: 'create',
+    createPrivateGroup: 'createPrivateGroup',
+    updateGroup: 'update',
+    updatePrivateGroup: 'updatePrivateGroup',
+    removeGroup: 'remove',
+    removePrivateGroup: 'removePrivateGroup',
+  });
+
+  const authActions = useAuthActions({
+    fetchCurrentUser: 'fetchCurrentUser',
+  });
+
+  /**
+   * Fetches all groups list with views, tabs, widgets, flags, and private groups
+   *
+   * @returns {Promise}
+   */
+  const fetchAllGroupsListWithWidgets = () => actions.fetchGroupsList({
+    params: {
+      limit: MAX_LIMIT,
+      page: 1,
+      with_views: true,
+      with_tabs: true,
+      with_widgets: true,
+      with_flags: true,
+      with_private: true,
+    },
+  });
+
+  /**
+   * Fetches all groups list with widgets and current user in parallel
+   *
+   * @returns {Promise<Array>}
+   */
+  const fetchAllGroupsListWithWidgetsWithCurrentUser = () => Promise.all([
+    fetchAllGroupsListWithWidgets(),
+    authActions.fetchCurrentUser(),
+  ]);
+
+  return {
+    ...getters,
+    ...actions,
+    ...authActions,
+    fetchAllGroupsListWithWidgets,
+    fetchAllGroupsListWithWidgetsWithCurrentUser,
   };
 };

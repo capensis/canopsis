@@ -75,7 +75,7 @@ export default {
      */
     const minimizeMenu = () => isMenuOpen.value = false;
 
-    useSocketRoom(SOCKET_ROOMS.executions, (data = []) => executions.value = data);
+    useSocketRoom({ room: SOCKET_ROOMS.executions, listener: (data = []) => executions.value = data });
 
     onMounted(fetchList);
 

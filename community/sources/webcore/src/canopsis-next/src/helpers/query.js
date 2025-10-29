@@ -1,7 +1,8 @@
 import { isNil } from 'lodash';
 
 import { convertSortToRequest } from '@/helpers/entities/shared/query';
-import { convertMetricIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertStartDateIntervalToTimestamp, convertStopDateIntervalToTimestamp } from '@/helpers/date/date-intervals';
+import { convertDateToEndOfDayTimestamp, convertDateToStartOfDayTimestamp } from '@/helpers/date/date';
 
 /**
  * Converts query parameters into a request object.
@@ -41,15 +42,16 @@ export const convertQueryToRequest = ({
     query.type = type;
   }
 
-  if (interval?.from && interval?.to) {
-    const { from, to } = convertMetricIntervalToTimestamp({ interval });
-
-    query.from = from;
-    query.to = to;
+  if (interval?.from) {
+    query.from = convertDateToStartOfDayTimestamp(convertStartDateIntervalToTimestamp(
+      interval.from,
+    ));
   }
 
-  if (!isNil(type)) {
-    query.type = type;
+  if (interval?.to) {
+    query.to = convertDateToEndOfDayTimestamp(convertStopDateIntervalToTimestamp(
+      interval.to,
+    ));
   }
 
   return query;

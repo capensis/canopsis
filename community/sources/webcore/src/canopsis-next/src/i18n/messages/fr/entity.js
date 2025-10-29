@@ -36,4 +36,10 @@ export default {
   comments: {
     emptyList: 'Aucun commentaire n\'a encore été ajouté',
   },
+  infosLog: {
+    eventFilterId: 'Filtre d\'événement',
+    eventFilterDescription: 'Description du filtre d\'événement',
+    oldValue: 'Ancienne valeur',
+    newValue: 'Nouvelle valeur',
+  },
 };

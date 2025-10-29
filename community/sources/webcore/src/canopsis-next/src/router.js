@@ -334,19 +334,6 @@ const routes = [
     },
   },
   {
-    path: ROUTES.playlist,
-    name: ROUTES_NAMES.playlist,
-    component: Playlist,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: route => route.params.id,
-        action: CRUD_ACTIONS.read,
-      },
-    },
-    props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
-  },
-  {
     path: ROUTES.exploitationMetaAlarmRules,
     name: ROUTES_NAMES.exploitationMetaAlarmRules,
     component: ExploitationMetaAlarmRules,
@@ -444,6 +431,19 @@ const routes = [
         id: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
       },
     },
+  },
+  {
+    path: ROUTES.playlist,
+    name: ROUTES_NAMES.playlist,
+    component: Playlist,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: route => route.params.id,
+        action: CRUD_ACTIONS.read,
+      },
+    },
+    props: route => ({ id: route.params.id, autoplay: String(route.query.autoplay) === 'true' }),
   },
   {
     path: ROUTES.profilePatterns,

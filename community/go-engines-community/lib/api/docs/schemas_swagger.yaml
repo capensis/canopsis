@@ -1221,6 +1221,10 @@ definitions:
         type: string
       start:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     required:
     - color
     - end
@@ -1247,6 +1251,10 @@ definitions:
         type: integer
       updated:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     type: object
   broadcastmessage.UpdateRequest:
     properties:
@@ -1258,6 +1266,10 @@ definitions:
         type: string
       start:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     required:
     - color
     - end
@@ -1542,6 +1554,11 @@ definitions:
       entity:
         properties:
           archive_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
+      entity_infos_log:
+        properties:
+          delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       event_filter_failure:

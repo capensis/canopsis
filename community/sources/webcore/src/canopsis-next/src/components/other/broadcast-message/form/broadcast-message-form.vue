@@ -1,58 +1,45 @@
 <template>
-  <div>
-    <v-layout>
-      <v-flex xs12>
-        <text-editor-field
-          v-field="form.message"
-          v-validate="'required'"
-          :label="$t('common.message')"
-          :error-messages="errors.collect('message')"
-          name="message"
-          autofocus
-          public
-        />
-      </v-flex>
-    </v-layout>
-    <v-layout>
-      <c-color-picker-field v-field="form.color" />
-    </v-layout>
-    <v-layout>
-      <date-time-picker-field
-        v-validate="startRules"
-        :value="form.start"
-        :label="$t('common.start')"
-        :error-message="errors.collect('start')"
-        name="start"
-        @input="updateField('start', $event)"
+  <v-tabs
+    slider-color="primary"
+    centered
+  >
+    <v-tab :class="{ 'error--text': hasGeneralError }">
+      {{ $t('common.general') }}
+    </v-tab>
+    <v-tab :class="{ 'error--text': hasPagesError }">
+      {{ $t('broadcastMessage.viewsAndPages') }}
+    </v-tab>
+
+    <v-tab-item eager>
+      <broadcast-message-general-form
+        v-field="form"
+        ref="generalElement"
       />
-    </v-layout>
-    <v-layout>
-      <date-time-picker-field
-        v-validate="endRules"
-        :value="form.end"
-        :label="$t('common.end')"
-        :error-message="errors.collect('end')"
-        name="end"
-        @input="updateField('end', $event)"
+    </v-tab-item>
+    <v-tab-item eager>
+      <broadcast-message-views-form
+        v-field="form.views"
+        ref="pagesElement"
+        :tree-items="treeItems"
       />
-    </v-layout>
-  </div>
+    </v-tab-item>
+  </v-tabs>
 </template>
 
 <script>
-import { DATETIME_FORMATS } from '@/constants';
+import { ref } from 'vue';
 
-import { convertDateToString } from '@/helpers/date/date';
+import { useValidationElementChildren } from '@/hooks/validator/validation-element-children';
 
-import { formMixin } from '@/mixins/form';
-
-import DateTimePickerField from '@/components/forms/fields/date-time-picker/date-time-picker-field.vue';
-import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
+import BroadcastMessageGeneralForm from './broadcast-message-general-form.vue';
+import BroadcastMessageViewsForm from './broadcast-message-views-form.vue';
 
 export default {
   inject: ['$validator'],
-  components: { TextEditorField, DateTimePickerField },
-  mixins: [formMixin],
+  components: {
+    BroadcastMessageGeneralForm,
+    BroadcastMessageViewsForm,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -62,22 +49,25 @@ export default {
       type: Object,
       required: true,
     },
+    treeItems: {
+      type: Array,
+      default: () => [],
+    },
   },
-  computed: {
-    startRules() {
-      return {
-        required: true,
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
+  setup() {
+    const generalElement = ref(null);
+    const pagesElement = ref(null);
 
-    endRules() {
-      return {
-        required: true,
-        after: [convertDateToString(this.form.start, DATETIME_FORMATS.dateTimePicker)],
-        date_format: DATETIME_FORMATS.veeValidateDateTimeFormat,
-      };
-    },
+    const { hasChildrenError: hasGeneralError } = useValidationElementChildren(generalElement);
+    const { hasChildrenError: hasPagesError } = useValidationElementChildren(pagesElement);
+
+    return {
+      generalElement,
+      pagesElement,
+
+      hasGeneralError,
+      hasPagesError,
+    };
   },
 };
 </script>
