@@ -1221,6 +1221,10 @@ definitions:
         type: string
       start:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     required:
     - color
     - end
@@ -1247,6 +1251,10 @@ definitions:
         type: integer
       updated:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     type: object
   broadcastmessage.UpdateRequest:
     properties:
@@ -1258,6 +1266,10 @@ definitions:
         type: string
       start:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     required:
     - color
     - end
@@ -1535,6 +1547,16 @@ definitions:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       alarm_external_tag:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
+      entity:
+        properties:
+          archive_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
+      entity_infos_log:
         properties:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
@@ -3123,14 +3145,8 @@ definitions:
             * `5` - type datetime
             * `6` - type timestamp
             * `7` - type regexp
-        enum:
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
-        - 7
+        maximum: 7
+        minimum: 1
         type: integer
     required:
     - name
@@ -6524,6 +6540,8 @@ definitions:
     type: object
   template.VarResponse:
     properties:
+      alias:
+        type: boolean
       name:
         type: string
       value:

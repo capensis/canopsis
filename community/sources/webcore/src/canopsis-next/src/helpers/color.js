@@ -66,6 +66,14 @@ export const colorToRgba = (color, alpha = 1.0) => tinycolor(color)
 export const colorToHex = color => tinycolor(color).toHexString();
 
 /**
+ * Convert color to hex8
+ *
+ * @param {string|Object} color
+ * @return {string}
+ */
+export const colorToHex8 = color => tinycolor(color).toHex8String();
+
+/**
  * Check color is valid
  *
  * @param {string|Object} color

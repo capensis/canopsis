@@ -327,6 +327,8 @@ export default {
   calculated: 'Calculated',
   token: 'Token',
   requestDate: 'Request date',
+  settings: 'Settings',
+  after: 'After',
   defined: 'Defined',
   bulkDelete: 'Remove selected',
   variableTypes: {
