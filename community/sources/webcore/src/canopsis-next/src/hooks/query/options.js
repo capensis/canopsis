@@ -3,7 +3,7 @@ import { computed, unref } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
-import { isPickEqual } from '@/helpers/collection';
+import { isSeveralEqual } from '@/helpers/collection';
 
 /**
  * Custom hook to manage query options for pagination and sorting.
@@ -37,7 +37,7 @@ export const useQueryOptions = (query, updateQuery) => {
       'mustSort',
     ]);
 
-    const isEqualOptions = isPickEqual(
+    const isEqualOptions = isSeveralEqual(
       options.value,
       value,
       ['search', 'page', 'itemsPerPage', 'sortBy', 'sortDesc', ...Object.keys(otherValues)],

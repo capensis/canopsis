@@ -10,6 +10,7 @@
   >
     <template #activator="{ on }">
       <v-btn
+        :class="{ 'group-item__active': isActiveGroup }"
         class="group-item__dropdown-btn"
         text
         dark
