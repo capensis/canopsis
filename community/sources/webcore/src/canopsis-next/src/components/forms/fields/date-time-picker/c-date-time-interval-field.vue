@@ -9,7 +9,11 @@
       :hide-details="hideDetails"
       :allowed-dates="isAllowedFromDate"
       :round-hours="roundHours"
-    />
+    >
+      <template v-if="withIcon" #append="">
+        <v-icon>calendar_today</v-icon>
+      </template>
+    </date-time-picker-field>
     <date-time-picker-field
       v-validate="rules"
       v-field="value.to"
@@ -19,7 +23,11 @@
       :hide-details="hideDetails"
       :allowed-dates="isAllowedToDate"
       :round-hours="roundHours"
-    />
+    >
+      <template v-if="withIcon" #append="">
+        <v-icon>calendar_today</v-icon>
+      </template>
+    </date-time-picker-field>
   </div>
 </template>
 
@@ -69,6 +77,10 @@ export default {
       default: false,
     },
     roundHours: {
+      type: Boolean,
+      default: false,
+    },
+    withIcon: {
       type: Boolean,
       default: false,
     },

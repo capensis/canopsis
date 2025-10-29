@@ -92,12 +92,14 @@
 </template>
 
 <script>
+import { uniq } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { isDeepOrderChanged } from '@/helpers/dragdrop';
 import { groupsWithViewsToPositions } from '@/helpers/entities/view/form';
 
 import { entitiesViewMixin } from '@/mixins/entities/view';
+import { activeViewMixin } from '@/mixins/active-view';
 import { layoutNavigationGroupsBarMixin } from '@/mixins/layout/navigation/groups-bar';
 
 import GroupsSettingsButton from '../groups-settings-button.vue';
@@ -128,6 +130,7 @@ export default {
   },
   mixins: [
     entitiesViewMixin,
+    activeViewMixin,
     layoutNavigationGroupsBarMixin,
   ],
   props: {
@@ -139,6 +142,7 @@ export default {
   data() {
     return {
       mutatedGroups: [],
+      draggableComponentDataValue: [],
     };
   },
   computed: {
@@ -180,6 +184,10 @@ export default {
           accordion: true,
           flat: true,
           tile: true,
+          value: this.draggableComponentDataValue,
+        },
+        on: {
+          change: value => this.draggableComponentDataValue = value,
         },
       };
     },
@@ -192,6 +200,12 @@ export default {
         this.setMutatedGroups(groups);
       },
     },
+
+    isOpen(value) {
+      if (value) {
+        this.calculateDraggableComponentDataValue();
+      }
+    },
   },
   methods: {
     /**
@@ -199,6 +213,22 @@ export default {
      */
     resetMutatedGroups() {
       this.setMutatedGroups(this.publicGroups);
+    },
+
+    calculateDraggableComponentDataValue() {
+      const groupId = this.view?.group?._id;
+
+      if (!groupId) {
+        return;
+      }
+
+      const index = this.mutatedGroups.findIndex(group => group._id === groupId);
+
+      if (index === -1) {
+        return;
+      }
+
+      this.draggableComponentDataValue = uniq([...this.draggableComponentDataValue, index]);
     },
 
     /**
@@ -212,6 +242,10 @@ export default {
 
         views: [...group.views],
       }));
+
+      if (this.isOpen && !this.draggableComponentDataValue) {
+        this.calculateDraggableComponentDataValue();
+      }
     },
 
     /**

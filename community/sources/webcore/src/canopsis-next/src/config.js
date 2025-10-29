@@ -433,6 +433,7 @@ export const API_ROUTES = {
     event: '/api/v4/cat/event-records/events',
     bulkEvent: '/api/v4/cat/event-records/events/bulk',
   },
+  entityInfosLog: '/api/v4/cat/entity-infos-log',
   templateVarsSpecificCat: {
     declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-vars',
     dynamicInfos: '/api/v4/cat/dynamic-infos-template-vars',

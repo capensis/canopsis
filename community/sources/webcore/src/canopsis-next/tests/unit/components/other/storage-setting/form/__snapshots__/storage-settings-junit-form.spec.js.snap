@@ -2,65 +2,63 @@
 
 exports[`storage-settings-junit-form Renders \`storage-settings-junit-form\` with custom form and history 1`] = `
 <div
-  class="layout column"
+  class="layout c-information-block column"
 >
   <div
-    class="layout c-information-block column"
+    class="layout"
   >
     <div
-      class="layout"
+      class="text-subtitle-1 font-weight-bold"
     >
-      <div
-        class="text-subtitle-1 font-weight-bold"
-      >
-      JUnit data storage
-      </div>
-      <!---->
+      JUnit
     </div>
-    <div
-      class="layout mt-2"
-    >
-      <span
-        class="text--secondary"
-      >
-        <storage-settings-history-message-stub
-          history="1611210000"
-        />
-      </span>
-    </div>
-    <c-enabled-duration-field-stub
-      help-text="When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period."
-      label="Delete test suites data after"
-      name="junit.delete_after"
-    />
+    <!---->
   </div>
+  <div
+    class="layout mt-2"
+  >
+    <span
+      class="text--secondary"
+    >
+      <storage-settings-history-message-stub
+        history="1611210000"
+      />
+    </span>
+  </div>
+  <c-enabled-duration-field-stub
+    help-text="(XMLs, screenshots, videos)"
+    hide-value-on-false=""
+    label="Delete test suites data"
+    name="junit.delete_after"
+    suffix="Older than"
+    switcher=""
+  />
 </div>
 `;
 
 exports[`storage-settings-junit-form Renders \`storage-settings-junit-form\` with default form 1`] = `
 <div
-  class="layout column"
+  class="layout c-information-block column"
 >
   <div
-    class="layout c-information-block column"
+    class="layout"
   >
     <div
-      class="layout"
+      class="text-subtitle-1 font-weight-bold"
     >
-      <div
-        class="text-subtitle-1 font-weight-bold"
-      >
-      JUnit data storage
-      </div>
-      <!---->
+      JUnit
     </div>
     <!---->
-    <c-enabled-duration-field-stub
-      help-text="When switched on, the JUnit test suites data (XMLs, screenshots and videos) will be deleted after the defined time period."
-      label="Delete test suites data after"
-      name="junit.delete_after"
-      value="[object Object]"
-    />
   </div>
+  <!---->
+  <c-enabled-duration-field-stub
+    help-text="(XMLs, screenshots, videos)"
+    hide-value-on-false=""
+    label="Delete test suites data"
+    name="junit.delete_after"
+    suffix="Older than"
+    switcher=""
+    value="[object Object]"
+  />
 </div>
 `;
