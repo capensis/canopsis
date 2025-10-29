@@ -75,9 +75,11 @@ const (
 	MibCollection       = "default_mibs"
 	SnmpRulesCollection = "default_snmprules"
 
-	ScenarioMongoCollection          = "action_scenario"
-	DeclareTicketRuleMongoCollection = "declare_ticket_rule"
-	WebhookHistoryMongoCollection    = "webhook_history"
+	ScenarioCollection            = "action_scenario"
+	DeclareTicketRuleCollection   = "declare_ticket_rule"
+	WebhookTokenRuleCollection    = "webhook_token_rule" //nolint:gosec
+	WebhookHistoryCollection      = "webhook_history"
+	WebhookTokenHistoryCollection = "webhook_token_history" //nolint:gosec
 
 	LinkRuleMongoCollection = "link_rule"
 
