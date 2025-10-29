@@ -1,9 +1,6 @@
 <template>
-  <v-layout>
-    <v-flex
-      class="pr-3"
-      xs7
-    >
+  <v-layout class="gap-2">
+    <v-flex :xs6="sameWidth" :xs7="!sameWidth">
       <c-number-field
         v-field="duration.value"
         :label="label || $t('common.duration')"
@@ -16,7 +13,7 @@
         :autofocus="autofocus"
       />
     </v-flex>
-    <v-flex xs5>
+    <v-flex :xs6="sameWidth" :xs5="!sameWidth">
       <v-select
         v-validate="unitValidateRules"
         :value="duration.unit"
@@ -100,6 +97,10 @@ export default {
       default: false,
     },
     autofocus: {
+      type: Boolean,
+      default: false,
+    },
+    sameWidth: {
       type: Boolean,
       default: false,
     },

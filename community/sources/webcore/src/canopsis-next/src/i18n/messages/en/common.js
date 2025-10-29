@@ -325,6 +325,8 @@ export default {
   last: 'Last',
   seeDetails: 'See details',
   calculated: 'Calculated',
+  token: 'Token',
+  requestDate: 'Request date',
   settings: 'Settings',
   after: 'After',
   defined: 'Defined',
@@ -621,5 +623,16 @@ export default {
       csv: 'CSV file',
     },
     fileSizeMb: 'maximum {size} MB',
+  },
+
+  linkedRulesTooltip: {
+    andMore: 'and more...',
+    linkedRules: {
+      widget: '<strong>Widgets</strong> that uses this item<br><ul>{rules}</ul>',
+      eventfilter: '<strong>Event filters</strong>\n<ul>{rules}</ul>',
+      linkrule: '<strong>Links</strong>\n<ul>{rules}</ul>',
+      scenario: '<strong>Scenarios</strong>\n<ul>{rules}</ul>',
+      declareticketrule: '<strong>Declare ticket rules</strong>\n<ul>{rules}</ul>',
+    },
   },
 };

@@ -129,4 +129,6 @@ export const MODALS = {
 
   createTemplateTestingData: 'create-template-testing-data',
   createTemplateTestingTest: 'create-template-testing-test',
+
+  createExternalAuthToken: 'create-external-auth-token',
 };

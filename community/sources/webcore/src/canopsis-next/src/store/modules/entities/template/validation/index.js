@@ -44,5 +44,9 @@ export default {
     validateMetaAlarmRules(context, { data }) {
       return request.post(API_ROUTES.templateValidationCat.metaAlarmRules, data);
     },
+
+    validateWebhookTokenRules(context, { data }) {
+      return request.post(API_ROUTES.templateValidationCat.webhookTokenRules, data);
+    },
   },
 };

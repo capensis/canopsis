@@ -54,8 +54,8 @@
           :payload-variables="variables"
           :url-variables="variables"
         />
-        <c-alert v-if="errorMessages.length" type="error">
-          {{ errorMessages.join('\n') }}
+        <c-alert v-if="serverErrorMessages.length" type="error">
+          {{ serverErrorMessages.join('\n') }}
         </c-alert>
       </v-layout>
     </v-card-text>
@@ -114,11 +114,9 @@ export default {
     },
   },
   setup(props, { emit }) {
-    // Composables
     const { t } = useI18n();
     const validator = useValidator();
 
-    // Computed properties
     const availableTypes = computed(() => (
       props.types.length
         ? props.types
@@ -128,12 +126,10 @@ export default {
 
     const isTableType = computed(() => isTableExternalDataType(props.form.type));
     const referenceFieldName = computed(() => `${props.name}.reference`);
-    const errorMessages = computed(() => validator.errors.collect(props.serverErrorName));
+    const serverErrorMessages = computed(() => validator.errors.collect(props.serverErrorName));
 
-    // Methods
     const remove = () => emit('remove', props.form);
 
-    // Lifecycle
     onMounted(() => {
       if (props.serverErrorName) {
         validator.attach({ name: props.serverErrorName });
@@ -144,8 +140,8 @@ export default {
       availableTypes,
       isTableType,
       referenceFieldName,
+      serverErrorMessages,
 
-      errorMessages,
       remove,
     };
   },

@@ -521,7 +521,7 @@ func (p *provider) getUserInfoOAuth2(ctx context.Context, token *oauth2.Token) (
 
 	defer resp.Body.Close()
 
-	flatResp, err := libhttp.FlattenResponse(nil, resp, p.maxResponseSize)
+	flatResp, _, err := libhttp.FlattenResponse(nil, resp, p.maxResponseSize)
 	if err != nil {
 		return "", nil, errors.New("failed to flatten response")
 	}

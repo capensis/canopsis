@@ -35,6 +35,7 @@ import { reloadPageWithTrailingSlashes } from '@/helpers/url';
 
 import { authMixin } from '@/mixins/auth';
 import { systemMixin } from '@/mixins/system';
+import { shownHeaderMixin } from '@/mixins/shown-header';
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesUserMixin } from '@/mixins/entities/user';
 import { entitiesTemplateVarsMixin } from '@/mixins/entities/template-vars';
@@ -54,6 +55,7 @@ export default {
   mixins: [
     authMixin,
     systemMixin,
+    shownHeaderMixin,
     entitiesInfoMixin,
     entitiesUserMixin,
     entitiesTemplateVarsMixin,

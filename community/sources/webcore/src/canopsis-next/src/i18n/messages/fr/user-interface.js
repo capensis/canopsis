@@ -9,6 +9,7 @@ export default {
   errorPopupTimeout: 'Délai d\'affichage pour les popups d\'erreurs',
   allowChangeSeverityToInfo: 'Autorise le changement de criticité en Info',
   showHeaderOnKioskMode: 'Afficher l\'en-tête en mode kiosque',
+  showHeaderOnKioskModeTooltip: 'L\'en-tête ne sera pas disponible en mode kiosque plein écran',
   maxMatchedItems: 'Seuil d\'éléments avant avertissement',
   checkCountRequestTimeout: 'Délai d\'expiration de la requête',
   requiredInstructionApprove: 'Approbation des consignes requise',
