@@ -12,8 +12,8 @@
         :url-variables="templateVars[webhookTemplateVarsKey]"
       />
     </template>
-    <request-form
-      v-field="form.request"
+    <request-with-token-form
+      v-field="form"
       :name="requestFormName"
       :headers-variables="templateVars[webhookTemplateVarsKey]"
       :payload-variables="templateVars[webhookTemplateVarsKey]"
@@ -43,13 +43,13 @@ import { computed, toRef } from 'vue';
 
 import { useConfirmableForm } from '@/hooks/confirmable-form';
 
-import RequestForm from '@/components/forms/request/request-form.vue';
+import RequestWithTokenForm from '@/components/forms/request/request-with-token-form.vue';
 import RequestUrlField from '@/components/forms/request/fields/request-url-field.vue';
 
 import DeclareTicketRuleTicketMappingField from './declare-ticket-rule-ticket-mapping-field.vue';
 
 export default {
-  components: { RequestUrlField, DeclareTicketRuleTicketMappingField, RequestForm },
+  components: { RequestUrlField, DeclareTicketRuleTicketMappingField, RequestWithTokenForm },
   model: {
     prop: 'form',
     event: 'input',
@@ -88,21 +88,17 @@ export default {
     const requestFormName = computed(() => `${props.name}.request`);
     const webhookTemplateVarsKey = computed(() => (props.hasPrevious ? 'webhook' : 'first_webhook'));
 
-    /**
-     * Removes the webhook by emitting a remove event
-     */
-    const removeWebhook = () => emit('remove');
-
-    const { confirmAction } = useConfirmableForm({
-      method: removeWebhook,
-      cloning: true,
+    const { confirmAction: removeWebhook } = useConfirmableForm({
       form: toRef(props, 'form'),
+      action: () => emit('remove'),
+      cloning: true,
     });
 
     return {
       requestFormName,
       webhookTemplateVarsKey,
-      removeWebhook: confirmAction,
+
+      removeWebhook,
     };
   },
 };

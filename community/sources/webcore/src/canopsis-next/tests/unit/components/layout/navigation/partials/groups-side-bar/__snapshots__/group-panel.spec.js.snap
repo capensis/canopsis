@@ -7,7 +7,7 @@ exports[`group-panel Renders \`group-panel\` with custom props 1`] = `
   hide-actions="true"
 >
   <button
-    class="v-expansion-panel-header pa-0 pr-6"
+    class="v-expansion-panel-header pa-0 pr-6 group-panel__active"
     type="button"
   >
     <div

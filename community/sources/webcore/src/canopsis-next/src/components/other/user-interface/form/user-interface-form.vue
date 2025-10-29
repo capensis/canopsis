@@ -73,10 +73,21 @@
         />
       </v-flex>
       <v-flex xs6>
-        <c-enabled-field
-          v-field="form.show_header_on_kiosk_mode"
-          :label="$t('userInterface.showHeaderOnKioskMode')"
-        />
+        <v-layout>
+          <c-enabled-field
+            v-field="form.show_header_on_kiosk_mode"
+            :label="$t('userInterface.showHeaderOnKioskMode')"
+          >
+            <template #append>
+              <c-help-icon
+                :text="$t('userInterface.showHeaderOnKioskModeTooltip')"
+                color="grey darken-1"
+                icon="help"
+                top
+              />
+            </template>
+          </c-enabled-field>
+        </v-layout>
       </v-flex>
     </v-layout>
     <v-layout>

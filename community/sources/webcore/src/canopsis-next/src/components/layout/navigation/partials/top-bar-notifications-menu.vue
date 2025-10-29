@@ -117,7 +117,7 @@ export default {
       totalCount.value = newTotalCount ?? 0;
     };
 
-    useSocketRoom(SOCKET_ROOMS.notifications, updateNotifications);
+    useSocketRoom({ room: SOCKET_ROOMS.notifications, listener: updateNotifications });
 
     onMounted(fetchList);
 
