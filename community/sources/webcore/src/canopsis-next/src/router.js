@@ -37,6 +37,7 @@ const AdminStorageSettings = () => import(/* webpackChunkName: "Tags" */ '@/view
 const AdminStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/admin/state-settings.vue');
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
 const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
+const AdminExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/external-auth-tokens.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -286,6 +287,17 @@ const routes = [
       requiresPermission: {
         action: CRUD_ACTIONS.can,
         id: USER_PERMISSIONS.technical.templateTesting,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminExternalAuthTokens,
+    name: ROUTES_NAMES.adminExternalAuthTokens,
+    component: AdminExternalAuthTokens,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.externalAuthTokens,
       },
     },
   },

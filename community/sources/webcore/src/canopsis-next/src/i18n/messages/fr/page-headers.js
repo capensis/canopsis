@@ -145,6 +145,9 @@ export default {
   [USER_PERMISSIONS.technical.templateTesting]: {
     title: 'Studio Templates',
   },
+  [USER_PERMISSIONS.technical.externalAuthTokens]: {
+    title: 'Jetons d\'authentification externes',
+  },
 
   /**
    * Grouped admin

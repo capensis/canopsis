@@ -255,6 +255,7 @@ export default {
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Paramètres - modèles de widgets',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Paramètres - import / export',
     [USER_PERMISSIONS.technical.templateTesting]: 'Test de modèle',
+    [USER_PERMISSIONS.technical.externalAuthTokens]: 'Jetons d\'authentification externes',
 
     /**
      * Technical Admin Access
