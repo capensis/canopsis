@@ -1,9 +1,9 @@
 <template>
-  <v-layout column>
+  <v-layout class="gap-2" column>
     <request-url-field
       v-if="!hideUrl"
       v-field="form"
-      :help-text="$t('common.request.urlHelp')"
+      :help-text="urlHelpText ||$t('common.request.urlHelp')"
       :name="name"
       :disabled="disabled"
       :url-variables="urlVariables"
@@ -59,11 +59,16 @@
       :disabled="disabled"
       hide-details
     />
-    <request-auth-field
-      v-field="form.auth"
-      :name="`${name}.auth`"
-      :disabled="disabled"
-    />
+    <c-information-block :title="$t('user.auth')" class="mb-2 mt-2">
+      <request-auth-with-token-field
+        v-field="form.auth"
+        :auth-token="authToken"
+        :name="`${name}.auth`"
+        :disabled="disabled"
+        :only-credentials="!withAuthToken"
+        @update:auth-token="updateAuthToken"
+      />
+    </c-information-block>
     <c-information-block
       :title="$tc('common.header', 2)"
       :help-text="$t('common.request.headersHelpText')"
@@ -90,16 +95,17 @@
 </template>
 
 <script>
-import { formMixin } from '@/mixins/form';
-
-import RequestAuthField from './fields/request-auth-field.vue';
-import RequestHeadersField from './fields/request-headers-field.vue';
 import RequestUrlField from './fields/request-url-field.vue';
+import RequestHeadersField from './fields/request-headers-field.vue';
+import RequestAuthWithTokenField from './fields/request-auth-with-token-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: { RequestUrlField, RequestHeadersField, RequestAuthField },
-  mixins: [formMixin],
+  components: {
+    RequestUrlField,
+    RequestHeadersField,
+    RequestAuthWithTokenField,
+  },
   model: {
     prop: 'form',
     event: 'input',
@@ -108,6 +114,14 @@ export default {
     form: {
       type: Object,
       required: true,
+    },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    authToken: {
+      type: Object,
+      default: () => ({}),
     },
     name: {
       type: String,
@@ -133,21 +147,27 @@ export default {
       type: Array,
       default: () => [],
     },
-    multiple: {
-      type: Boolean,
-      default: false,
-    },
     withMultipleUrls: {
       type: Boolean,
       default: false,
+    },
+    withAuthToken: {
+      type: Boolean,
+      default: false,
+    },
+    urlHelpText: {
+      type: String,
+      default: '',
     },
   },
 
   setup(props, { emit }) {
     const updateMultiple = multiple => emit('update:multiple', multiple);
+    const updateAuthToken = authToken => emit('update:auth-token', authToken);
 
     return {
       updateMultiple,
+      updateAuthToken,
     };
   },
 };

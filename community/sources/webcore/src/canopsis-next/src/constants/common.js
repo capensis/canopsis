@@ -20,6 +20,7 @@ export const ROUTES_NAMES = {
   adminStorageSettings: 'admin-storage-settings',
   adminStateSettings: 'admin-state-settings',
   adminEventsRecords: 'admin-events-records',
+  adminExternalAuthTokens: 'admin-external-auth-tokens',
   adminTemplateTesting: 'admin-template-testing',
   exploitationPbehaviors: 'exploitation-pbehaviors',
   exploitationEventFilters: 'exploitation-event-filters',
@@ -63,6 +64,7 @@ export const ROUTES = {
   adminStorageSettings: '/admin/storage-settings',
   adminStateSettings: '/admin/state-settings',
   adminEventsRecords: '/admin/events-records',
+  adminExternalAuthTokens: '/admin/external-auth-tokens',
   adminTemplateTesting: '/admin/template-testing',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
@@ -508,6 +510,10 @@ export const DENSE_TYPES = {
   medium: 1,
   small: 2,
 };
+
+export const LINKED_RULES_TYPES = ['widget', 'eventfilter', 'linkrule', 'scenario', 'declareticketrule'];
+
+export const LINKED_RULES_COUNT = 5;
 
 export const INFOS_NAME_VARIABLE = '%infos_name%';
 
