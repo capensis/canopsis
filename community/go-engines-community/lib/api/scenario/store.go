@@ -23,6 +23,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -131,7 +132,7 @@ func NewStore(
 
 	return &store{
 		dbClient:                  db,
-		collection:                db.Collection(mongo.ScenarioMongoCollection),
+		collection:                db.Collection(mongo.ScenarioCollection),
 		alarmCollection:           db.Collection(mongo.AlarmMongoCollection),
 		tplDataCollection:         db.Collection(mongo.TemplateTestDataCollection),
 		tplTestCollection:         db.Collection(mongo.TemplateTestCollection),
@@ -458,11 +459,11 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionReq
 			Comment:    r[idx].Comment,
 			Parameters: r[idx].Parameters,
 			EntityPatternFields: transformEntityPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioMongoCollection),
+				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioCollection),
 			),
 			AlarmPatternFields: transformedAlarmPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
-				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioMongoCollection),
+				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioCollection),
+				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioCollection),
 			),
 			DropScenarioIfNotMatched: *r[idx].DropScenarioIfNotMatched,
 			EmitTrigger:              *r[idx].EmitTrigger,
@@ -625,9 +626,19 @@ func (s *store) validateActionTpls(
 
 			iStr := strconv.Itoa(i)
 			if td, ok := whTestData[i]; ok {
-				whResponse = td.Body
+				b, err := s.encoder.Encode(td.Body)
+				if err != nil {
+					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not a JSON.")
+				}
+
+				flatten, _, err := http.FlattenJSON(b)
+				if err != nil {
+					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not JSON.")
+				}
+
 				whHeader = td.Headers
-				for k, v := range whResponse {
+				for k, v := range flatten {
+					whResponse[k] = v
 					whResponseMap[iStr+"."+k] = v
 				}
 			} else {

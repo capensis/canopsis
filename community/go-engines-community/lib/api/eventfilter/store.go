@@ -28,6 +28,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -731,7 +732,21 @@ func (s *store) validateExdataTpls(
 			}
 
 			if td, ok := exdataTestData[i]; ok {
-				externalData[d.Reference] = td.Body
+				b, err := s.encoder.Encode(td.Body)
+				if err != nil {
+					return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is not JSON.")
+				}
+
+				flatten, basicRes, err := http.FlattenJSON(b)
+				if err != nil {
+					return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is not JSON.")
+				}
+
+				if flatten == nil {
+					externalData[d.Reference] = basicRes
+				} else {
+					externalData[d.Reference] = flatten
+				}
 			} else {
 				return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is missing.")
 			}

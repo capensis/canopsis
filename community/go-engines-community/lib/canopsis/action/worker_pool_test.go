@@ -67,7 +67,7 @@ func TestPool_RunWorkers_GivenMatchedTask_ShouldDoRpcCall(t *testing.T) {
 		switch name {
 		case mongo.AlarmMongoCollection:
 			return alarmCollectionMock
-		case mongo.WebhookHistoryMongoCollection:
+		case mongo.WebhookHistoryCollection:
 			return webhookHistoryCollectionMock
 		}
 
@@ -290,7 +290,7 @@ func TestPool_RunWorkers_GivenCancelContext_ShouldCancelTasks(t *testing.T) {
 		switch name {
 		case mongo.AlarmMongoCollection:
 			return alarmCollectionMock
-		case mongo.WebhookHistoryMongoCollection:
+		case mongo.WebhookHistoryCollection:
 			return webhookHistoryCollectionMock
 		}
 

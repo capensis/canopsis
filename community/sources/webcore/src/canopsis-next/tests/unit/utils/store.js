@@ -716,6 +716,7 @@ export const createActiveViewModule = () => {
   const toggleEditing = jest.fn();
   const setScreenMode = jest.fn();
   const editing = jest.fn().mockReturnValue(false);
+  const item = jest.fn().mockReturnValue({});
   const screenMode = jest.fn().mockReturnValue(VIEW_SCREEN_MODES.default);
   const isKioskScreenMode = jest.fn().mockReturnValue(false);
   const resumePeriodicRefresh = jest.fn();
@@ -726,6 +727,7 @@ export const createActiveViewModule = () => {
     name: 'activeView',
     getters: {
       editing,
+      item,
       screenMode,
       isKioskScreenMode,
       periodicRefreshPaused,
@@ -753,6 +755,7 @@ export const createActiveViewModule = () => {
   });
 
   return {
+    item,
     editing,
     registerEditingOffHandler,
     unregisterEditingOffHandler,

@@ -69,6 +69,7 @@ import dbExportModule from './db-export';
 import externalDataTableModule from './external-data-table';
 import templateModule from './template';
 import copyModule from './copy';
+import webhookTokenRuleModule from './webhook-token-rule';
 
 export default {
   alarm: alarmModule,
@@ -142,4 +143,5 @@ export default {
   externalDataTable: externalDataTableModule,
   template: templateModule,
   copy: copyModule,
+  webhookTokenRule: webhookTokenRuleModule,
 };

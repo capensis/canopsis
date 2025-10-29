@@ -21,6 +21,7 @@ import { formToDynamicInfo } from '@/helpers/entities/dynamic-info/rule/form';
 import { formToRemediationInstructionRequest } from '@/helpers/entities/remediation/instruction/form';
 import { formToRemediationJob } from '@/helpers/entities/remediation/job/form';
 import { formToMetaAlarmRule } from '@/helpers/entities/meta-alarm/rule/form';
+import { formToExternalAuthToken } from '@/helpers/entities/external-auth-token/form';
 import {
   formToTemplateTestingTestValidateForm,
   getChangesForValidateForm,
@@ -393,6 +394,7 @@ export const useTemplateTestRunner = (props) => {
     validateInstructions,
     validateJobs,
     validateMetaAlarmRules,
+    validateWebhookTokenRules,
   } = useTemplateValidation();
 
   const validateHandler = computed(() => ({
@@ -405,6 +407,7 @@ export const useTemplateTestRunner = (props) => {
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: validateInstructions,
     [TEMPLATE_TESTING_TEST_TYPES.job]: validateJobs,
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: validateMetaAlarmRules,
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: validateWebhookTokenRules,
   })[props.type] ?? validateEntityServices);
 
   const formToRequest = computed(() => ({
@@ -417,6 +420,7 @@ export const useTemplateTestRunner = (props) => {
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: formToRemediationInstructionRequest,
     [TEMPLATE_TESTING_TEST_TYPES.job]: formToRemediationJob,
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: formToMetaAlarmRule,
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: formToExternalAuthToken,
   })[props.type] ?? formToService);
 
   /**

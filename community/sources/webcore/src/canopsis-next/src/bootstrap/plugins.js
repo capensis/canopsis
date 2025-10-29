@@ -105,6 +105,7 @@ export const bootstrapApplicationPlugins = (Vue) => {
       [MODALS.linkToMetaAlarm]: { maxWidth: 920 },
       [MODALS.importExternalDataTableRecords]: { maxWidth: 1200, persistent: true },
       [MODALS.createTheme]: { maxWidth: 500 },
+      [MODALS.createExternalAuthToken]: { maxWidth: 1100 },
 
       ...featuresService.get('components.modals.dialogPropsMap'),
     },
