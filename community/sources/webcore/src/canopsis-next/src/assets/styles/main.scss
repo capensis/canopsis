@@ -386,6 +386,11 @@ html {
     & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;
+
+      .v-icon {
+        word-break: normal;
+        word-wrap: normal;
+      }
     }
   }
 

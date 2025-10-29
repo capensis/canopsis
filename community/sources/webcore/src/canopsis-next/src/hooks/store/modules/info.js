@@ -1,9 +1,8 @@
 import { isMatch } from 'lodash';
 import { computed } from 'vue';
-import { useRoute } from 'vue-router/composables';
 
 import { DEFAULT_APP_TITLE } from '@/config';
-import { CANOPSIS_EDITION, ROUTES_NAMES, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
+import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
 import { compile } from '@/helpers/handlebars';
 import { sanitizeHtml } from '@/helpers/html';
@@ -16,27 +15,6 @@ import { useStoreModuleHooks } from '@/hooks/store';
  * @returns {Object} Store module hooks for the 'info' namespace
  */
 export const useInfoStoreModule = () => useStoreModuleHooks('info');
-
-/**
- * Hook to determine header visibility based on route and kiosk mode settings.
- */
-export const useShownHeader = () => {
-  const { useGetters } = useInfoStoreModule();
-
-  const getters = useGetters(['showHeaderOnKioskMode']);
-
-  const route = useRoute();
-  const shownHeader = computed(() => (
-    route?.name === ROUTES_NAMES.viewKiosk
-      ? getters.showHeaderOnKioskMode.value
-      : !route?.meta?.hideHeader
-  ));
-
-  return {
-    ...getters,
-    shownHeader,
-  };
-};
 
 /**
  * Hook for accessing and managing application information and settings.
@@ -85,7 +63,6 @@ export const useShownHeader = () => {
  * @returns {Object} Hook return object
  * @property {InfoGetters} getters - All available getters
  * @property {ComputedRef<boolean>} isProVersion - Whether running pro edition
- * @property {ComputedRef<boolean>} shownHeader - Header visibility state
  * @property {Function} fetchAppInfo - Fetches application information
  * @property {Function} updateUserInterface - Updates UI settings
  * @property {Function} checkAppInfoAccessByPermission - Checks permission access
@@ -137,8 +114,6 @@ export const useInfo = () => {
 
   const isProVersion = computed(() => getters.edition.value === CANOPSIS_EDITION.pro);
 
-  const { shownHeader } = useShownHeader();
-
   const actions = useActions({
     fetchAppInfo: 'fetchAppInfo',
     updateUserInterface: 'updateUserInterface',
@@ -178,7 +153,6 @@ export const useInfo = () => {
   return {
     ...getters,
     isProVersion,
-    shownHeader,
 
     ...actions,
     checkAppInfoAccessByPermission,
