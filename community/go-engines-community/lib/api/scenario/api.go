@@ -236,12 +236,12 @@ func (a *api) DBExport(c *gin.Context) {
 		return
 	}
 
-	b, err := a.mongoExporter.Export(c, mongo.ScenarioMongoCollection, request)
+	b, err := a.mongoExporter.Export(c, mongo.ScenarioCollection, request)
 	if err != nil {
 		panic(err)
 	}
 
-	dbexport.AttachFile(c, mongo.ScenarioMongoCollection, b)
+	dbexport.AttachFile(c, mongo.ScenarioCollection, b)
 }
 
 // ValidateTemplates
