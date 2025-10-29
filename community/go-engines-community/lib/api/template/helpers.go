@@ -199,7 +199,7 @@ var eventTplVars = []tplVar{
 }
 
 type ResponseTestData struct {
-	Body    map[string]any    `bson:"body"`
+	Body    any               `bson:"body"`
 	Headers map[string]string `bson:"headers"`
 }
 

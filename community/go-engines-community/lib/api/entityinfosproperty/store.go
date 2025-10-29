@@ -61,12 +61,12 @@ func NewStore(
 			dbClient.Collection(libmongo.PbehaviorMongoCollection),
 			dbClient.Collection(libmongo.ResolveRuleMongoCollection),
 			dbClient.Collection(libmongo.WidgetFiltersMongoCollection),
-			dbClient.Collection(libmongo.DeclareTicketRuleMongoCollection),
+			dbClient.Collection(libmongo.DeclareTicketRuleCollection),
 			dbClient.Collection(libmongo.InstructionMongoCollection),
 			dbClient.Collection(libmongo.DynamicInfosRulesMongoCollection),
 			dbClient.Collection(libmongo.KpiFilterMongoCollection),
 			dbClient.Collection(libmongo.MetaAlarmRulesMongoCollection),
-			dbClient.Collection(libmongo.ScenarioMongoCollection),
+			dbClient.Collection(libmongo.ScenarioCollection),
 		},
 		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
 			"name":  "Name already exists.",
@@ -257,7 +257,7 @@ func (s *store) updateAliasInLinkedCollections(ctx context.Context, id, oldAlias
 				"entity_pattern.$[].$[i].alias":       newAlias,
 				"total_entity_pattern.$[].$[i].alias": newAlias,
 			}
-		case libmongo.ScenarioMongoCollection:
+		case libmongo.ScenarioCollection:
 			update = bson.M{
 				"actions.$[].entity_pattern.$[].$[i].alias": newAlias,
 			}
@@ -291,7 +291,7 @@ func (s *store) removeAliasFromLinkedCollections(ctx context.Context, id, oldAli
 				"entity_pattern.$[].$[i].alias":       "",
 				"total_entity_pattern.$[].$[i].alias": "",
 			}
-		case libmongo.ScenarioMongoCollection:
+		case libmongo.ScenarioCollection:
 			unset = bson.M{
 				"actions.$[].entity_pattern.$[].$[i].alias": "",
 			}

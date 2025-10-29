@@ -24,6 +24,7 @@ const (
 	TypeTestInstruction
 	TypeTestJob
 	TypeTestMetaAlarmRule
+	TypeTestWebhookTokenRule
 )
 
 type ValidateResponse struct {
@@ -40,7 +41,7 @@ type EditDataRequest struct {
 	Type        *int              `json:"type" binding:"required,oneof=0 1"`
 	Name        string            `json:"name" binding:"required,max=255"`
 	Description string            `json:"description" binding:"max=500"`
-	Body        map[string]any    `json:"body" binding:"required"`
+	Body        any               `json:"body" binding:"required"`
 	Headers     map[string]string `json:"headers" binding:"dive,max=500"`
 	Author      string            `json:"author" swaggerignore:"true"`
 }
@@ -71,7 +72,7 @@ type DataResponse struct {
 	Type        int               `json:"type" bson:"type"`
 	Name        string            `json:"name" bson:"name"`
 	Description string            `json:"description" bson:"description"`
-	Body        map[string]any    `json:"body" bson:"body"`
+	Body        any               `json:"body" bson:"body"`
 	Headers     map[string]string `json:"headers,omitempty" bson:"headers"`
 	Created     datetime.CpsTime  `json:"created" bson:"created" swaggertype:"integer"`
 	Updated     datetime.CpsTime  `json:"updated" bson:"updated" swaggertype:"integer"`
@@ -95,7 +96,7 @@ type DataModel struct {
 	Type        int               `bson:"type"`
 	Name        string            `bson:"name"`
 	Description string            `bson:"description"`
-	Body        map[string]any    `bson:"body"`
+	Body        any               `bson:"body"`
 	Headers     map[string]string `bson:"headers"`
 	Author      string            `bson:"author"`
 	Created     *datetime.CpsTime `bson:"created,omitempty"`
@@ -116,10 +117,12 @@ type EditTestRequest struct {
 	//   * `6` - Instruction
 	//   * `7` - Job
 	//   * `8` - Meta-alarm rule
+	//   * `9` - Webhook token rule
 	Type *int   `json:"type" binding:"required"`
 	Rule string `json:"rule" binding:"required"`
 	Data struct {
 		Event     string         `json:"event"`
+		Response  string         `json:"response"`
 		Responses map[int]string `json:"responses"`
 		Alarm     string         `json:"alarm"`
 		Entity    string         `json:"entity"`
@@ -141,6 +144,7 @@ type ListTestRequest struct {
 	//   * `6` - Instruction
 	//   * `7` - Job
 	//   * `8` - Meta-alarm rule
+	//   * `9` - Webhook token rule
 	Type *int     `form:"type"`
 	Rule string   `form:"rule"`
 	IDs  []string `form:"ids[]"`
@@ -160,6 +164,10 @@ type TestResponse struct {
 			ID   string `json:"_id" bson:"_id"`
 			Name string `json:"name" bson:"name"`
 		} `json:"event,omitempty" bson:"event,omitempty"`
+		Response *struct {
+			ID   string `json:"_id" bson:"_id"`
+			Name string `json:"name" bson:"name"`
+		} `json:"response,omitempty" bson:"response,omitempty"`
 		Responses map[int]struct {
 			ID   string `json:"_id" bson:"_id"`
 			Name string `json:"name" bson:"name"`
@@ -186,6 +194,7 @@ type TestModel struct {
 	} `bson:"rule"`
 	Data struct {
 		Event     string                      `bson:"event,omitempty"`
+		Response  string                      `bson:"response,omitempty"`
 		Responses map[int]string              `bson:"responses,omitempty"`
 		Alarm     *types.AlarmWithEntityField `bson:"alarm,omitempty"`
 		Entity    *types.Entity               `bson:"entity,omitempty"`

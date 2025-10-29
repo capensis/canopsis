@@ -42,10 +42,10 @@ func (m *MockGetter) EXPECT() *MockGetterMockRecorder {
 }
 
 // Get mocks base method.
-func (m *MockGetter) Get(ctx context.Context, parameters externaldata.ParsedRefParameters, templateParameters any) (map[string]any, error) {
+func (m *MockGetter) Get(ctx context.Context, parameters externaldata.ParsedRefParameters, templateParameters any) (any, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "Get", ctx, parameters, templateParameters)
-	ret0, _ := ret[0].(map[string]any)
+	ret0, _ := ret[0].(any)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

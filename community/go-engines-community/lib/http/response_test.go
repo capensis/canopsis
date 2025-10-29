@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 	"math/rand"
-	"net/http"
 	"reflect"
 	"strconv"
 	"testing"
@@ -21,22 +20,18 @@ func TestReadResponse(t *testing.T) {
 	}
 
 	dataSet := []struct {
-		Response    *http.Response
+		Body        io.ReadCloser
 		MaxSize     int64
 		ExpectedRes []byte
 		ExpectedErr error
 	}{
 		{
-			Response: &http.Response{
-				Body: io.NopCloser(bytes.NewReader(longBuff)),
-			},
+			Body:        io.NopCloser(bytes.NewReader(longBuff)),
 			MaxSize:     int64(len(longBuff)),
 			ExpectedRes: longBuff,
 		},
 		{
-			Response: &http.Response{
-				Body: io.NopCloser(bytes.NewReader(longBuff[:buffChunk/2])),
-			},
+			Body:        io.NopCloser(bytes.NewReader(longBuff[:buffChunk/2])),
 			MaxSize:     buffChunk,
 			ExpectedRes: longBuff[:buffChunk/2],
 		},
@@ -44,9 +39,7 @@ func TestReadResponse(t *testing.T) {
 			ExpectedErr: ErrResponseTooLong,
 		},
 		{
-			Response: &http.Response{
-				Body: io.NopCloser(bytes.NewReader(longBuff)),
-			},
+			Body:        io.NopCloser(bytes.NewReader(longBuff)),
 			MaxSize:     int64(len(longBuff) / 4 * 3),
 			ExpectedErr: ErrResponseTooLong,
 		},
@@ -54,7 +47,7 @@ func TestReadResponse(t *testing.T) {
 
 	for i, data := range dataSet {
 		t.Run(strconv.Itoa(i), func(t *testing.T) {
-			res, err := ReadResponse(data.Response, data.MaxSize)
+			res, err := ReadResponse(data.Body, data.MaxSize)
 			if !errors.Is(err, data.ExpectedErr) {
 				t.Errorf("expected err %v but got %v", data.ExpectedErr, err)
 			}
