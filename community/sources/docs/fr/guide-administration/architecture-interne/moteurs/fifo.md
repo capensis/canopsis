@@ -4,16 +4,16 @@
 
 Le moteur FIFO a pour objectif de garantir la chronologie des événements et d'appliquer les règles de transformations d'entités. Ce moteur est disponible en édition Community.
 
-Afin de garantir l’ordre strict de traitement des événements, **une seule instance du moteur FIFO** doit être active à un instant donné. 
+Afin de garantir l'ordre strict de traitement des événements, **une seule instance du moteur FIFO** doit être active à un instant donné. 
 Pour faire respecter cette contrainte, un **mécanisme de verrouillage distribué** a été mis en place pour empêcher tout lancement simultané de plusieurs instances.
 
 Ce mécanisme, basé sur Redis, empêche le lancement simultané de plusieurs instances du moteur. 
 
-Lors du démarrage, le moteur tente d'acquérir un verrou exclusif dans Redis. Si ce verrou n’est pas obtenu après plusieurs tentatives, le moteur s'arrête automatiquement. Le verrou est maintenu pendant l’exécution et libéré à l’arrêt propre du moteur. 
+Lors du démarrage, le moteur tente d'acquérir un verrou exclusif dans Redis. Si ce verrou n'est pas obtenu après plusieurs tentatives, le moteur s'arrête automatiquement. Le verrou est maintenu pendant l'exécution et libéré à l'arrêt propre du moteur. 
 
-En cas d’arrêt forcé, le verrou expirera au bout de 2 minutes et 15 secondes, ou après la durée définie par `-periodicalWaitTime` + `15s` si cette dernière est plus longue. 
+En cas d'arrêt forcé, le verrou expirera au bout de 2 minutes et 15 secondes, ou après la durée définie par `-periodicalWaitTime` + `15s` si cette dernière est plus longue. 
 
-Ce mécanisme garantit qu’une seule instance du moteur FIFO peut s’exécuter à un instant donné.
+Ce mécanisme garantit qu'une seule instance du moteur FIFO peut s'exécuter à un instant donné.
 
 Pour plus d'informations sur la fonctionnalité de transformation d'entités, consultez la [documentation sur les filtres d'événements](../../../../guide-utilisation/menu-exploitation/filtres-evenements/#type-change-entity).
 
@@ -23,14 +23,14 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 
 | Option | Description |
 |--------|------------|
-| `-consumeQueue string` | *Obsolète* : File d'attente pour la consommation des événements |
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
-| `-eventsStatsFlushInterval duration` | *Obsolète* : Intervalle entre les sauvegardes des statistiques de Redis vers MongoDB (défaut : 1m0s) |
+| `-enablePrometheusExporter` | Active l'exporteur Prometheus |
 | `-externalDataApiTimeout duration` | Délai d'attente pour les requêtes HTTP vers l'API externe (défaut : 30s) |
 | `-lockTtl int` | Temps de vie (TTL) du verrou Redis en secondes (défaut : 10) |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |
 | `-printEventOnError` | Affiche l'événement en cas d'erreur de traitement |
-| `-publishQueue string` | *Obsolète* : File d'attente pour la publication des événements |
+| `-prometheusExporterPort int` | Port de l'exporteur Prometheus (défaut : 9180) |
 | `-version` | Affiche les informations de version |
 | `-workers int` | Nombre de workers pour traiter les événements fifo_ack (défaut : 10) |
 
