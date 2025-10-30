@@ -101,15 +101,22 @@ export default {
     const { updateModel } = useModelField(props, emit);
     const { pending, columns, fetchColumns } = useExternalDataTableColumns();
 
-    const preparedColumns = computed(() => columns.value.reduce((acc, column) => {
-      acc.push({ text: column.name, value: column.name });
+    const preparedColumns = computed(() => {
+      const hasRegexpColumns = Object.values(columns.value)
+        .some(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
 
-      if (column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp) {
-        acc.push({ text: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN, value: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN });
+      if (!hasRegexpColumns) {
+        return columns.value;
       }
 
-      return acc;
-    }, []));
+      return [
+        ...columns.value,
+        {
+          text: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+          value: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+        },
+      ];
+    });
 
     const updateTable = async (tableId) => {
       await fetchColumns(tableId);
