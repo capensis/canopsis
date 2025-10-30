@@ -6,6 +6,7 @@ import {
   CRUD_ACTIONS,
   ROUTES_NAMES,
   ROUTES,
+  OLD_ROUTES,
   USER_PERMISSIONS,
   GROUPED_USER_PERMISSIONS,
 } from '@/constants';
@@ -28,7 +29,6 @@ const AdminParameters = () => import(/* webpackChunkName: "Parameters" */ '@/vie
 const AdminBroadcastMessages = () => import(/* webpackChunkName: "BroadcastMessage" */ '@/views/admin/broadcast-messages.vue');
 const AdminPlaylists = () => import(/* webpackChunkName: "Playlist" */ '@/views/admin/playlists.vue');
 const AdminPlanning = () => import(/* webpackChunkName: "Planning" */ '@/views/admin/planning.vue');
-const AdminRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/admin/remediation.vue');
 const AdminHealthcheck = () => import(/* webpackChunkName: "Healthcheck" */ '@/views/admin/healthcheck.vue');
 const AdminKPI = () => import(/* webpackChunkName: "KPI" */ '@/views/admin/kpi.vue');
 const AdminMaps = () => import(/* webpackChunkName: "Maps" */ '@/views/admin/maps.vue');
@@ -38,6 +38,8 @@ const AdminStateSettings = () => import(/* webpackChunkName: "Tags" */ '@/views/
 const AdminEventsRecords = () => import(/* webpackChunkName: "EventsRecords" */ '@/views/admin/events-records.vue');
 const AdminTemplateTesting = () => import(/* webpackChunkName: "TemplateTesting" */ '@/views/admin/template-testing.vue');
 const AdminExternalAuthTokens = () => import(/* webpackChunkName: "ExternalAuthTokens" */ '@/views/admin/external-auth-tokens.vue');
+const AdminEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/admin/entity-infos-properties.vue');
+const AdminExternalDataTables = () => import(/* webpackChunkName: "ExternalDataTables" */ '@/views/admin/external-data-tables.vue');
 const ExploitationPbehaviors = () => import(/* webpackChunkName: "Pbehavior" */ '@/views/exploitation/pbehaviors.vue');
 const ExploitationEventFilters = () => import(/* webpackChunkName: "EventFilters" */ '@/views/exploitation/event-filters.vue');
 const ExploitationSnmpRules = () => import(/* webpackChunkName: "SnmpRule" */ '@/views/exploitation/snmp-rules.vue');
@@ -49,8 +51,7 @@ const ExploitationFlappingRules = () => import(/* webpackChunkName: "AlarmStatus
 const ExploitationResolveRules = () => import(/* webpackChunkName: "AlarmStatusRule" */ '@/views/exploitation/resolve-rules.vue');
 const ExploitationDeclareTicketRules = () => import(/* webpackChunkName: "DeclareTicketRule" */ '@/views/exploitation/declare-ticket-rules.vue');
 const ExploitationLinkRules = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/link-rules.vue');
-const ExploitationExternalDataTables = () => import(/* webpackChunkName: "LinkRule" */ '@/views/exploitation/external-data-tables.vue');
-const ExploitationEntityInfosProperties = () => import(/* webpackChunkName: "EntityInfosProperties" */ '@/views/exploitation/entity-infos-properties.vue');
+const ExploitationRemediation = () => import(/* webpackChunkName: "Remediation" */ '@/views/exploitation/remediation.vue');
 const ProfilePatterns = () => import(/* webpackChunkName: "Pattern" */ '@/views/profile/patterns.vue');
 const ProfileThemes = () => import(/* webpackChunkName: "Theme" */ '@/views/profile/themes.vue');
 const Playlist = () => import(/* webpackChunkName: "Playlist" */ '@/views/playlist.vue');
@@ -188,17 +189,6 @@ const routes = [
     },
   },
   {
-    path: ROUTES.adminRemediation,
-    name: ROUTES_NAMES.adminRemediation,
-    component: AdminRemediation,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: GROUPED_USER_PERMISSIONS.remediation,
-      },
-    },
-  },
-  {
     path: ROUTES.adminHealthcheck,
     name: ROUTES_NAMES.adminHealthcheck,
     component: AdminHealthcheck,
@@ -298,6 +288,28 @@ const routes = [
       requiresLogin: true,
       requiresPermission: {
         id: USER_PERMISSIONS.technical.externalAuthTokens,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminExternalDataTables,
+    name: ROUTES_NAMES.adminExternalDataTables,
+    component: AdminExternalDataTables,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.exploitation.externalDataTable,
+      },
+    },
+  },
+  {
+    path: ROUTES.adminEntityInfosProperties,
+    name: ROUTES_NAMES.adminEntityInfosProperties,
+    component: AdminEntityInfosProperties,
+    meta: {
+      requiresLogin: true,
+      requiresPermission: {
+        id: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
       },
     },
   },
@@ -423,24 +435,13 @@ const routes = [
     },
   },
   {
-    path: ROUTES.exploitationExternalDataTables,
-    name: ROUTES_NAMES.exploitationExternalDataTables,
-    component: ExploitationExternalDataTables,
+    path: ROUTES.exploitationRemediation,
+    name: ROUTES_NAMES.exploitationRemediation,
+    component: ExploitationRemediation,
     meta: {
       requiresLogin: true,
       requiresPermission: {
-        id: USER_PERMISSIONS.technical.exploitation.externalDataTable,
-      },
-    },
-  },
-  {
-    path: ROUTES.exploitationEntityInfosProperties,
-    name: ROUTES_NAMES.exploitationEntityInfosProperties,
-    component: ExploitationEntityInfosProperties,
-    meta: {
-      requiresLogin: true,
-      requiresPermission: {
-        id: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
+        id: GROUPED_USER_PERMISSIONS.remediation,
       },
     },
   },
@@ -494,11 +495,26 @@ const routes = [
     },
     props: route => ({ message: route.query.message, redirect: route.query.redirect }),
   },
+
+  /**
+   * REDIRECTS FOR OLD ROUTES
+   */
+  {
+    path: OLD_ROUTES.remediation,
+    redirect: { name: ROUTES_NAMES.exploitationRemediation },
+  },
+  {
+    path: OLD_ROUTES.externalDataTables,
+    redirect: { name: ROUTES_NAMES.adminExternalDataTables },
+  },
+  {
+    path: OLD_ROUTES.entityInfosProperties,
+    redirect: { name: ROUTES_NAMES.adminEntityInfosProperties },
+  },
+
   {
     path: '*',
-    redirect: {
-      name: ROUTES_NAMES.home,
-    },
+    redirect: { name: ROUTES_NAMES.home },
   },
 ];
 
