@@ -3,5 +3,4 @@ export const PARAMETERS_TABS = {
   viewExportImport: 'viewExportImport',
   notificationSettings: 'notificationSettings',
   widgetTemplates: 'widgetTemplates',
-  icons: 'icons',
 };

@@ -1,42 +1,10 @@
 <template>
-  <v-menu
-    v-if="administrationGroupedLinks.length"
-    content-class="top-bar-menu__content topbar-menu-administration__content"
-    bottom
-    offset-y
-  >
-    <template #activator="{ on }">
-      <v-btn
-        class="white--text"
-        text
-        v-on="on"
-      >
-        {{ $t('common.administration') }}
-      </v-btn>
-    </template>
-    <v-list class="py-0">
-      <template v-for="(group, index) in administrationGroupedLinks">
-        <v-subheader
-          v-if="group.title"
-          :key="`${group.title}-title`"
-          class="text-subtitle-1"
-          @click.stop=""
-        >
-          {{ group.title }}
-        </v-subheader>
-        <top-bar-menu-link
-          v-for="link in group.links"
-          :key="link.title"
-          :link="link"
-          class="top-bar-administration-menu-link"
-        />
-        <v-divider
-          v-if="index < administrationGroupedLinks.length - 1"
-          :key="`${group.title}-divider`"
-        />
-      </template>
-    </v-list>
-  </v-menu>
+  <top-bar-menu
+    :title="$t('common.administration')"
+    :links="administrationLinks"
+    :permissions-with-default-type="permissionsWithDefaultType"
+    content-class="topbar-menu-administration__content"
+  />
 </template>
 
 <script>
@@ -44,15 +12,16 @@ import { computed } from 'vue';
 
 import { USER_PERMISSIONS, ROUTES_NAMES, GROUPED_USER_PERMISSIONS } from '@/constants';
 
+import { uid } from '@/helpers/uid';
+
 import { useI18n } from '@/hooks/i18n';
 
-import { useTopBarMenu } from './hooks/top-bar-menu';
 import { useMaintenanceActions } from './hooks/maintenance-actions';
-import TopBarMenuLink from './top-bar-menu-link.vue';
+import TopBarMenu from './top-bar-menu.vue';
 
 export default {
   name: 'TopBarAdministrationMenu', // We need it for recursive
-  components: { TopBarMenuLink },
+  components: { TopBarMenu },
   setup() {
     const { t, tc } = useI18n();
     const { showToggleMaintenanceModeModal } = useMaintenanceActions();
@@ -64,9 +33,9 @@ export default {
       USER_PERMISSIONS.technical.maintenance,
       USER_PERMISSIONS.technical.eventsRecord,
       USER_PERMISSIONS.technical.templateTesting,
+      USER_PERMISSIONS.technical.viewImportExport,
+      USER_PERMISSIONS.technical.notification.common,
     ];
-
-    const { prepareLinks } = useTopBarMenu({ permissionsWithDefaultType });
 
     const accessLinks = [
       {
@@ -136,90 +105,127 @@ export default {
       },
     ];
 
-    const generalLinksWithChildren = [
+    const customObjectsLinks = computed(() => [
       {
-        icon: 'ticket',
-        title: t('layout.topbar.customObjects'),
-        links: [
-          {
-            route: { name: ROUTES_NAMES.adminExternalAuthTokens },
-            icon: 'security',
-            permission: USER_PERMISSIONS.technical.externalAuthTokens,
-          },
-          {
-            route: { name: ROUTES_NAMES.adminExternalDataTables },
-            icon: '$vuetify.icons.database_outlined',
-            permission: USER_PERMISSIONS.technical.exploitation.externalDataTable,
-          },
-          {
-            route: { name: ROUTES_NAMES.adminEntityInfosProperties },
-            icon: 'info',
-            permission: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
-          },
-        ],
+        route: { name: ROUTES_NAMES.adminCustomObjectsExternalAuthTokens },
+        icon: 'security',
+        permission: USER_PERMISSIONS.technical.externalAuthTokens,
       },
       {
-        route: { name: ROUTES_NAMES.adminParameters },
-        icon: 'settings',
-        permission: USER_PERMISSIONS.technical.parameters,
+        route: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
+        icon: '$vuetify.icons.database_outlined',
+        permission: USER_PERMISSIONS.technical.exploitation.externalDataTable,
       },
       {
-        route: { name: ROUTES_NAMES.adminMaps },
+        route: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties },
+        icon: 'info',
+        permission: USER_PERMISSIONS.technical.exploitation.entityInfoProperty,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsIcons },
+        icon: '$vuetify.icons.square_circle',
+        title: tc('common.icon', 2),
+        permission: USER_PERMISSIONS.technical.icon,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminCustomObjectsMaps },
         icon: 'edit_location',
         permission: USER_PERMISSIONS.technical.map,
       },
       {
-        route: { name: ROUTES_NAMES.adminTags },
+        route: { name: ROUTES_NAMES.adminCustomObjectsTags },
         icon: 'local_offer',
         permission: USER_PERMISSIONS.technical.tag,
       },
+    ]);
+
+    const settingsLinks = computed(() => [
       {
-        route: { name: ROUTES_NAMES.adminStorageSettings },
-        icon: '$vuetify.icons.storage',
-        permission: USER_PERMISSIONS.technical.storageSettings,
+        route: { name: ROUTES_NAMES.adminSettingsUserInterface },
+        icon: 'computer',
+        title: t('common.userInterface'),
+        permission: USER_PERMISSIONS.technical.parameters,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsViewsImportExport },
+        icon: 'import_export',
+        title: t('parameters.tabs.importExportViews'),
+        permission: USER_PERMISSIONS.technical.viewImportExport,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsNotifications },
+        icon: 'notifications',
+        title: t('parameters.tabs.notificationsSettings'),
+        permission: USER_PERMISSIONS.technical.notification.common,
+      },
+      {
+        route: { name: ROUTES_NAMES.adminSettingsWidgetTemplates },
+        icon: 'widgets',
+        title: tc('common.widgetTemplate', 2),
+        permission: USER_PERMISSIONS.technical.widgetTemplate,
       },
       {
         route: { name: ROUTES_NAMES.adminStateSettings },
         icon: 'add_alert',
         permission: USER_PERMISSIONS.technical.stateSetting,
       },
+      {
+        route: { name: ROUTES_NAMES.adminStorageSettings },
+        icon: '$vuetify.icons.storage',
+        permission: USER_PERMISSIONS.technical.storageSettings,
+      },
+    ]);
+
+    const generalLinksWithChildren = [
+      {
+        icon: 'local_offer',
+        title: t('layout.topbar.customObjects'),
+        links: customObjectsLinks.value,
+      },
+      {
+        icon: 'settings',
+        title: t('common.settings'),
+        links: settingsLinks.value,
+      },
     ];
 
-    const administrationGroupedLinks = computed(() => {
-      const groupedLinks = [
-        {
-          title: t('common.access'),
-          links: accessLinks,
-        },
-        {
-          title: t('common.maintenance'),
-          links: maintenanceLinks,
-        },
-        {
-          title: tc('common.communication', 2),
-          links: communicationsLinks,
-        },
-        {
-          links: generalLinks,
-        },
-        {
-          links: generalLinksWithChildren,
-        },
-      ];
+    const administrationLinks = computed(() => [
+      {
+        title: t('common.access'),
+        links: accessLinks,
+      },
+      {
+        title: t('common.maintenance'),
+        links: maintenanceLinks,
+      },
+      {
+        title: tc('common.communication', 2),
+        links: communicationsLinks,
+      },
+      {
+        links: generalLinks,
+      },
+      {
+        links: generalLinksWithChildren,
+      },
+    ].reduce((acc, group) => {
+      if (group.title) {
+        acc.push({ title: group.title, header: true });
+      }
 
-      return groupedLinks.reduce((acc, group) => {
-        const links = prepareLinks(group.links);
+      acc.push(
+        ...group.links,
 
-        if (links.length) {
-          acc.push({ links, title: group.title });
-        }
+        { divider: true, key: uid() },
+      );
 
-        return acc;
-      }, []);
-    });
+      return acc;
+    }, []));
 
     return {
-      administrationGroupedLinks,
+      permissionsWithDefaultType,
+
+      administrationLinks,
     };
   },
 };
