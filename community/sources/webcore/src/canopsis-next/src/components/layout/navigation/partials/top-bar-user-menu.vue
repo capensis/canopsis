@@ -1,67 +1,92 @@
 <template>
-  <v-menu
-    bottom
-    offset-y
-    offset-x
-  >
-    <template #activator="{ on }">
-      <v-btn
-        class="white--text"
-        text
-        v-on="on"
-      >
-        {{ userName }}
-      </v-btn>
-    </template>
-    <v-list class="py-0">
-      <top-bar-profile-menu-link
-        v-for="link in links"
-        :key="link.title"
-        :link="link"
-      />
-    </v-list>
-  </v-menu>
+  <top-bar-menu :title="userName" :links="links" without-sort />
 </template>
 
 <script>
+import { computed, inject } from 'vue';
+import { useRouter } from 'vue-router/composables';
+
 import { MODALS, ROUTES_NAMES, USER_PERMISSIONS } from '@/constants';
 
-import { authMixin } from '@/mixins/auth';
-import { entitiesUserMixin } from '@/mixins/entities/user';
-import { entitiesInfoMixin } from '@/mixins/entities/info';
-import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
+import { useAuth } from '@/hooks/auth';
+import { useUser } from '@/hooks/store/modules/user';
+import { useInfo } from '@/hooks/store/modules/info';
+import { useI18n } from '@/hooks/i18n';
+import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 
-import TopBarProfileMenuLink from './top-bar-profile-menu-link.vue';
+import { useTopBarMenu } from './hooks/top-bar-menu';
+import TopBarMenu from './top-bar-menu.vue';
 
 export default {
-  inject: ['$system'],
-  components: { TopBarProfileMenuLink },
-  mixins: [
-    authMixin,
-    entitiesUserMixin,
-    entitiesInfoMixin,
-    layoutNavigationTopBarMenuMixin,
-  ],
-  computed: {
-    userName() {
-      return this.currentUser.display_name || this.currentUser._id;
-    },
+  components: { TopBarMenu },
+  setup() {
+    const $system = inject('$system');
+    const router = useRouter();
 
-    links() {
-      const links = [
+    const { t } = useI18n();
+    const modals = useModals();
+    const popups = usePopups();
+    const { currentUser, logout, fetchCurrentUser } = useAuth();
+    const { updateCurrentUser } = useUser();
+    const { defaultColorTheme } = useInfo();
+    const { filterLinks } = useTopBarMenu();
+
+    const userName = computed(() => currentUser.value.display_name || currentUser.value._id);
+
+    /**
+     * Opens the user profile modal for editing user preferences.
+     * After successful update, shows a success popup, refreshes the current user data,
+     * and applies the updated theme.
+     */
+    const showEditUserModal = () => {
+      modals.show({
+        name: MODALS.createUser,
+        config: {
+          title: t('common.profile'),
+          user: currentUser.value,
+          onlyUserPrefs: true,
+          action: async (data) => {
+            await updateCurrentUser({ data });
+
+            popups.success({ text: t('success.default', data.ui_language) });
+
+            await fetchCurrentUser();
+
+            $system.setTheme(currentUser.value.ui_theme_colors);
+          },
+        },
+      });
+    };
+
+    /**
+     * Handles user logout.
+     * Logs out the current user, redirects to the login page,
+     * and resets the theme to the default color theme.
+     */
+    const logoutHandler = async () => {
+      await logout({
+        redirect: () => router.replaceAsync({ name: ROUTES_NAMES.login }),
+      });
+
+      $system.setTheme(defaultColorTheme.value);
+    };
+
+    const links = computed(() => {
+      const rawLinks = [
         {
           icon: 'person',
-          title: this.$t('user.seeProfile'),
-          handler: this.showEditUserModal,
+          title: t('user.seeProfile'),
+          handler: showEditUserModal,
         },
         {
           icon: 'filter_list',
-          title: this.$t('pattern.patterns'),
+          title: t('pattern.patterns'),
           route: { name: ROUTES_NAMES.profilePatterns },
         },
         {
           icon: 'palette',
-          title: this.$t('theme.themes'),
+          title: t('theme.themes'),
           route: { name: ROUTES_NAMES.profileThemes },
           permission: USER_PERMISSIONS.technical.profile.theme,
         },
@@ -69,42 +94,22 @@ export default {
           icon: 'exit_to_app',
           color: 'error',
           class: 'top-bar-user-menu__logout-btn',
-          title: this.$t('common.logout'),
-          handler: this.logoutHandler,
+          title: t('common.logout'),
+          handler: logoutHandler,
         },
-      ];
+      ].map(link => ({
+        ...link,
 
-      return this.filterLinks(links);
-    },
-  },
-  methods: {
-    showEditUserModal() {
-      this.$modals.show({
-        name: MODALS.createUser,
-        config: {
-          title: this.$t('common.profile'),
-          user: this.currentUser,
-          onlyUserPrefs: true,
-          action: async (data) => {
-            await this.updateCurrentUser({ data });
+        class: [link.class, 'text-uppercase text-body-2'].filter(Boolean).join(' '),
+      }));
 
-            this.$popups.success({ text: this.$t('success.default', data.ui_language) });
+      return filterLinks(rawLinks);
+    });
 
-            await this.fetchCurrentUser();
-
-            this.$system.setTheme(this.currentUser.ui_theme_colors);
-          },
-        },
-      });
-    },
-
-    async logoutHandler() {
-      await this.logout({
-        redirect: () => this.$router.replaceAsync({ name: ROUTES_NAMES.login }),
-      });
-
-      this.$system.setTheme(this.defaultColorTheme);
-    },
+    return {
+      userName,
+      links,
+    };
   },
 };
 </script>
