@@ -27,13 +27,13 @@
 </template>
 
 <script>
-import { layoutNavigationTopBarMenuMixin } from '@/mixins/layout/navigation/top-bar-menu';
+import { computed } from 'vue';
 
+import { useTopBarMenu } from './hooks/top-bar-menu';
 import TopBarMenuLink from './top-bar-menu-link.vue';
 
 export default {
   components: { TopBarMenuLink },
-  mixins: [layoutNavigationTopBarMenuMixin],
   inheritAttrs: false,
   props: {
     title: {
@@ -45,10 +45,14 @@ export default {
       default: () => [],
     },
   },
-  computed: {
-    preparedLinks() {
-      return this.prepareLinks(this.links);
-    },
+  setup(props) {
+    const { prepareLinks } = useTopBarMenu();
+
+    const preparedLinks = computed(() => prepareLinks(props.links));
+
+    return {
+      preparedLinks,
+    };
   },
 };
 </script>

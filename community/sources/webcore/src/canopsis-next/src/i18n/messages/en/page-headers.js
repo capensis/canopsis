@@ -8,7 +8,7 @@ export default {
    * Exploitation
    */
   [USER_PERMISSIONS.technical.exploitation.eventFilter]: {
-    title: 'Event filter',
+    title: 'Event filters',
     message: 'The event-filter is a feature of engine-che, allowing to define rules handling events.',
   },
 
@@ -18,22 +18,26 @@ export default {
   },
 
   [USER_PERMISSIONS.technical.exploitation.metaAlarmRule]: {
-    title: 'Meta alarm rule',
+    title: 'Meta alarm rules',
+    topbarTitle: 'Meta alarms',
     message: 'Meta alarm rules can be used for grouping alarms by types and criteria (parent-child relationship, time interval, etc).',
   },
 
   [USER_PERMISSIONS.technical.exploitation.idleRules]: {
     title: 'Idle rules',
+    topbarTitle: 'Idle',
     message: 'Idle rules for entities and alarms can be used in order to monitor events and alarm states in order to be aware when events are not receiving or alarm state is not changed for a long time because of errors or invalid configuration.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.flappingRules]: {
     title: 'Flapping rules',
+    topbarTitle: 'Flapping',
     message: 'An alarm inherits flapping status when it oscillates from an alert to a stable state a certain number of times over a given period.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.resolveRules]: {
     title: 'Resolve rules',
+    topbarTitle: 'Resolve',
     message: 'When an alarm receives a recovery type event, it changes to the closed status. Before considering this alarm as definitively resolved, Canopsis can wait for a delay. This delay can be useful if the alarm flaps or if the user wishes keep the alarm open in case of error.',
   },
 
@@ -49,16 +53,18 @@ export default {
 
   [USER_PERMISSIONS.technical.exploitation.snmpRule]: {
     title: 'SNMP rules',
+    topbarTitle: 'SNMP',
     message: 'The SNMP engine allows the processing of SNMP traps retrieved by the connector snmp2canopsis.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.declareTicketRule]: {
     title: 'Ticket declaration rules',
+    topbarTitle: 'Ticket declaration',
     message: 'Allows you to define the rules for creating incident tickets for multiple incident management tools. These tickets are created by a driver from the WebUI, and Canopsis then takes care of contacting the incident management tool to record the ticket.',
   },
 
   [USER_PERMISSIONS.technical.exploitation.linkRule]: {
-    title: 'Links generator',
+    title: 'Link generator',
     message: 'Allows you to define the rules for associating links with alarms',
   },
 

@@ -3,24 +3,18 @@
     :to="link.route"
     class="top-bar-menu-link"
     active-class=""
-    @click="handleClick"
+    @click="click"
   >
+    <v-list-item-avatar class="ml-2" size="24">
+      <v-icon class="text--secondary" size="24">
+        {{ link.icon }}
+      </v-icon>
+    </v-list-item-avatar>
     <v-list-item-title>
       <v-layout justify-space-between>
         <span>{{ link.title }}</span>
       </v-layout>
     </v-list-item-title>
-    <v-list-item-avatar
-      class="ml-2"
-      size="24"
-    >
-      <v-icon
-        class="text--secondary"
-        size="24"
-      >
-        {{ link.icon }}
-      </v-icon>
-    </v-list-item-avatar>
   </v-list-item>
 </template>
 
@@ -32,10 +26,12 @@ export default {
       default: () => ({}),
     },
   },
-  methods: {
-    handleClick() {
-      this.link.handler?.();
-    },
+  setup(props) {
+    const click = () => props.link.handler?.();
+
+    return {
+      click,
+    };
   },
 };
 </script>

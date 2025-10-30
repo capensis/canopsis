@@ -3,7 +3,7 @@
     :to="link.route"
     :class="link.class"
     active-class=""
-    @click="handleClick"
+    @click="click"
   >
     <v-list-item-avatar class="my-0">
       <v-icon
@@ -30,10 +30,12 @@ export default {
       default: () => ({}),
     },
   },
-  methods: {
-    handleClick() {
-      this.link.handler?.();
-    },
+  setup(props) {
+    const click = () => props.link.handler?.();
+
+    return {
+      click,
+    };
   },
 };
 </script>
