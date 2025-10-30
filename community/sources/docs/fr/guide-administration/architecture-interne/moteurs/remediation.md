@@ -13,6 +13,7 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 | Option | Description |
 |--------|------------|
 | `-cleanUp` | Nettoie les données de remédiation |
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-lastRetryInterval duration` | Intervalle de réessai du dernier job d'une instruction de remédiation en cours d'exécution (défaut : 1m0s) |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |

@@ -12,17 +12,16 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 
 | Option | Description |
 |--------|------------|
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-externalWorkers int` | Nombre de workers pour traiter le flux d'événements "external" (défaut : 4) |
 | `-infosDictionaryWaitTime duration` | Durée d'attente entre deux exécutions du processus de mise à jour du dictionnaire d'informations dynamiques (défaut : 1h0m0s) |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |
 | `-printEventOnError` | Affiche l'événement en cas d'erreur de traitement |
-| `-publishQueue string` | *Obsolète* : File d'attente pour la publication des événements |
 | `-rpcWorkers int` | Nombre de workers pour traiter le flux d'événements RPC (défaut : 4) |
 | `-systemWorkers int` | Nombre de workers pour traiter le flux d'événements "system" (défaut : 4) |
 | `-userWorkers int` | Nombre de workers pour traiter le flux d'événements "user" (défaut : 2) |
 | `-version` | Affiche les informations de version |
-| `-workers int` | *Obsolète* : Nombre de workers pour traiter chaque flux d'événements |
 
 ## Exemple d'utilisation
 
