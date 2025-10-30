@@ -12,7 +12,6 @@ export const ROUTES_NAMES = {
   adminBroadcastMessages: 'admin-broadcast-messages',
   adminPlaylists: 'admin-playlists',
   adminPlanning: 'admin-planning-administration',
-  adminRemediation: 'admin-remediation-administration',
   adminHealthcheck: 'admin-healthcheck',
   adminKPI: 'admin-kpi',
   adminMaps: 'admin-maps',
@@ -34,12 +33,19 @@ export const ROUTES_NAMES = {
   exploitationDeclareTicketRules: 'exploitation-declare-ticket-rules',
   exploitationLinkRules: 'exploitation-link-rules',
   exploitationExternalDataTables: 'exploitation-external-data-tables',
+  exploitationRemediation: 'exploitation-remediation',
   playlist: 'playlist',
   notifications: 'notifications',
   exploitationEntityInfosProperties: 'exploitation-entity-infos-properties',
   notificationInstructionStats: 'notification-instruction-stats',
   profilePatterns: 'profile-patterns',
   profileThemes: 'profile-themes',
+};
+
+export const OLD_ROUTES = {
+  remediation: '/admin/remediation', // Is using for rederect to exploitationRemediation
+  externalDataTables: '/admin/external-data-tables', // Is using for rederect to adminExternalDataTables
+  entityInfosProperties: '/admin/entity-infos-properties', // Is using for rederect to adminEntityInfosProperties
 };
 
 export const ROUTES = {
@@ -56,7 +62,6 @@ export const ROUTES = {
   adminBroadcastMessages: '/admin/broadcast-messages',
   adminPlaylists: '/admin/playlists',
   adminPlanning: '/admin/planning',
-  adminRemediation: '/admin/remediation',
   adminHealthcheck: '/admin/healthcheck',
   adminKPI: '/admin/kpi',
   adminMaps: '/admin/maps',
@@ -66,6 +71,8 @@ export const ROUTES = {
   adminEventsRecords: '/admin/events-records',
   adminExternalAuthTokens: '/admin/external-auth-tokens',
   adminTemplateTesting: '/admin/template-testing',
+  adminExternalDataTables: '/admin/external-data-tables',
+  adminEntityInfosProperties: '/admin/entity-infos-properties',
   exploitationPbehaviors: '/exploitation/pbehaviors',
   exploitationEventFilters: '/exploitation/event-filters',
   exploitationSnmpRules: '/exploitation/snmp-rules',
@@ -77,10 +84,9 @@ export const ROUTES = {
   exploitationResolveRules: '/exploitation/resolve-rules',
   exploitationDeclareTicketRules: '/exploitation/declare-ticket-rules',
   exploitationLinkRules: '/exploitation/link-rules',
-  exploitationExternalDataTables: '/exploitation/external-data-tables',
+  exploitationRemediation: '/exploitation/remediation',
   playlist: '/playlist/:id',
   notifications: '/notifications/:tabId',
-  exploitationEntityInfosProperties: '/exploitation/entity-infos-properties',
   notificationInstructionStats: '/notification/instruction-stats',
   profilePatterns: '/filters',
   profileThemes: '/themes',
