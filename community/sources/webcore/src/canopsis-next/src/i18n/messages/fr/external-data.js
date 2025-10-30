@@ -95,7 +95,6 @@ export default {
     [EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp]: {
       text: '@:common.regexp',
       tooltip: 'Une nouvelle colonne Priorité sera ajoutée après ces étapes :<br>1. À toutes les valeurs ^ est ajouté au début et $ à la fin (sauf pour le .*)<br>2. Chaque valeur est notée<br><br><table style="border-collapse: collapse; width: 100%;"><thead><tr><th style="border: 1px solid currentColor;" class="pa-2">Type de valeur</th><th style="border: 1px solid currentColor;" class="pa-2">Score</th></tr></thead><tbody><tr><td style="border: 1px solid currentColor;" class="pa-2">Vide OU .* OU .+</td><td style="border: 1px solid currentColor;" class="pa-2">0</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Contient * OU regex général</td><td style="border: 1px solid currentColor;" class="pa-2">1</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Avec un seul ^ OU $</td><td style="border: 1px solid currentColor;" class="pa-2">2</td></tr><tr><td style="border: 1px solid currentColor;" class="pa-2">Valeur exacte (commence par ^ et finit par $)</td><td style="border: 1px solid currentColor;" class="pa-2">3</td></tr></tbody></table><br>3. La colonne Priorité est ajoutée avec la priorité résumée (toutes les priorités des colonnes regexp sont additionnées)',
-      disabledMessage: 'La table a déjà un champ Priorité',
     },
   },
   tableColumnDataTypesAdditionalChips: {
