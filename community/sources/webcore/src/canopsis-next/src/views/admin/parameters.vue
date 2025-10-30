@@ -30,12 +30,6 @@
             >
               {{ $t('parameters.tabs.widgetTemplates') }}
             </v-tab>
-            <v-tab
-              v-if="hasReadAnyIconAccess"
-              :href="`#${$constants.PARAMETERS_TABS.icons}`"
-            >
-              {{ $tc('common.icon', 2) }}
-            </v-tab>
             <v-tabs-items v-model="activeTab">
               <v-tab-item :value="$constants.PARAMETERS_TABS.parameters">
                 <v-card-text>
@@ -64,14 +58,6 @@
                   <widget-templates />
                 </v-card-text>
               </v-tab-item>
-              <v-tab-item
-                v-if="hasReadAnyIconAccess"
-                :value="$constants.PARAMETERS_TABS.icons"
-              >
-                <v-card-text>
-                  <icons />
-                </v-card-text>
-              </v-tab-item>
             </v-tabs-items>
           </v-tabs>
         </v-card>
@@ -93,10 +79,8 @@ import { MODALS, PARAMETERS_TABS } from '@/constants';
 
 import { entitiesInfoMixin } from '@/mixins/entities/info';
 import { entitiesWidgetTemplatesMixin } from '@/mixins/entities/widget-template';
-import { entitiesIconMixin } from '@/mixins/entities/icon';
 import { permissionsTechnicalParametersMixin } from '@/mixins/permissions/technical/parameters';
 import { permissionsTechnicalWidgetTemplateMixin } from '@/mixins/permissions/technical/widget-templates';
-import { permissionsTechnicalIconMixin } from '@/mixins/permissions/technical/icon';
 import { permissionsTechnicalNotificationMixin } from '@/mixins/permissions/technical/notification';
 import { permissionsTechnicalViewImportExportMixin } from '@/mixins/permissions/technical/view-import-export';
 
@@ -104,7 +88,6 @@ import UserInterface from '@/components/other/user-interface/user-interface.vue'
 import ViewsImportExport from '@/components/other/view/views-import-export.vue';
 import NotificationsSettings from '@/components/other/notification/notifications-settings.vue';
 import WidgetTemplates from '@/components/other/widget-template/widget-templates.vue';
-import Icons from '@/components/other/icons/icons.vue';
 
 export default {
   components: {
@@ -112,15 +95,12 @@ export default {
     ViewsImportExport,
     NotificationsSettings,
     WidgetTemplates,
-    Icons,
   },
   mixins: [
     entitiesInfoMixin,
-    entitiesIconMixin,
     entitiesWidgetTemplatesMixin,
     permissionsTechnicalParametersMixin,
     permissionsTechnicalWidgetTemplateMixin,
-    permissionsTechnicalIconMixin,
     permissionsTechnicalNotificationMixin,
     permissionsTechnicalViewImportExportMixin,
   ],

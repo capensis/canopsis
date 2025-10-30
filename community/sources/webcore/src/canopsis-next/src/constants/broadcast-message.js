@@ -39,7 +39,6 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.adminRights]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminUsers]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminRoles]: BROADCAST_MESSAGE_VIEWS.administration,
-  [ROUTES_NAMES.adminParameters]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminBroadcastMessages]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminPlaylists]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminPlanning]: BROADCAST_MESSAGE_VIEWS.administration,
@@ -51,6 +50,11 @@ export const ROUTES_NAMES_TO_BROADCAST_MESSAGES = {
   [ROUTES_NAMES.adminStorageSettings]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminStateSettings]: BROADCAST_MESSAGE_VIEWS.administration,
   [ROUTES_NAMES.adminEventsRecords]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminSettingsIcons]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminSettingsUserInterface]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminSettingsViewsImportExport]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminSettingsNotifications]: BROADCAST_MESSAGE_VIEWS.administration,
+  [ROUTES_NAMES.adminSettingsWidgetTemplates]: BROADCAST_MESSAGE_VIEWS.administration,
 
   [ROUTES_NAMES.notifications]: BROADCAST_MESSAGE_VIEWS.notifications,
 

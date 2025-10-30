@@ -1,4 +1,5 @@
 import { sortBy, isArray } from 'lodash';
+import { unref } from 'vue';
 
 import { groupedPermissionToPermission } from '@/helpers/permission';
 
@@ -12,9 +13,10 @@ import { useI18n } from '@/hooks/i18n';
  *
  * @param {Object} options - Configuration options
  * @param {Array} [options.permissionsWithDefaultType=[]] - List of permissions that use default type checking
+ * @param {boolean} [options.withoutSort=true] - Whether to sort links by title
  * @returns {Object} An object containing methods to prepare menu links
  */
-export const useTopBarMenu = ({ permissionsWithDefaultType = [] } = {}) => {
+export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = true } = {}) => {
   const { checkAccess, checkReadAccess } = useCurrentUserPermissions();
   const { checkAppInfoAccessByPermission } = useInfo();
   const { t } = useI18n();
@@ -27,7 +29,7 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [] } = {}) => {
    */
   const checkWholeAccess = (permission) => {
     if (checkAppInfoAccessByPermission(permission)) {
-      return permissionsWithDefaultType.includes(permission)
+      return unref(permissionsWithDefaultType).includes(permission)
         ? checkAccess(permission)
         : checkReadAccess(permission);
     }
@@ -81,12 +83,12 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [] } = {}) => {
 
         return {
           ...link,
-          title: topbarTitle || title,
+          title: link.title || topbarTitle || title,
         };
       })
       .filter(link => link !== null);
 
-    return sortBy(preparedLinks, 'title');
+    return withoutSort ? preparedLinks : sortBy(preparedLinks, 'title');
   };
 
   return {
