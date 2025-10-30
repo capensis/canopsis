@@ -121,8 +121,10 @@ export const externalDataTableToForm = (externalDataTable = {}) => ({
  * const editForm = externalDataTableColumnConfigsToForm(columnsConfigs, false);
  * // Same structure but all type properties will be null
  */
-export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImport = false) => (
-  (columnsConfigs ?? []).reduce((acc, columnConfig) => {
+export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImport = false) => {
+  let hasRegexpColumns = false;
+
+  return (columnsConfigs ?? []).reduce((acc, columnConfig, index) => {
     const name = columnConfig.name ?? '';
 
     acc[name] = {
@@ -138,14 +140,17 @@ export const externalDataTableColumnConfigsToForm = (columnsConfigs = [], isImpo
     };
 
     if (columnConfig.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp) {
+      hasRegexpColumns = true;
+    }
+
+    if (hasRegexpColumns && index === columnsConfigs.length - 1) {
       acc[EXTERNAL_DATA_TABLE_PRIORITY_COLUMN] = {
         name: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
       };
     }
-
     return acc;
-  }, {})
-);
+  }, {});
+};
 
 /**
  * Converts a form representation of external data table columns to a config representation.
@@ -236,16 +241,19 @@ export const getDefaultSeparator = (value, tableSeparator) => {
  * @param {Object<string, ExternalDataTableColumnConfig>} form - The form object to process
  * @returns {Object<string, ExternalDataTableColumnConfig>} Form with priority column added if needed
  */
-export const addPriorityColumnForRegexpTypes = form => (
-  Object.entries(form).reduce((acc, [name, value]) => {
-    acc[name] = value;
+export const addPriorityColumnForRegexpTypes = (form) => {
+  const hasRegexpColumns = Object.values(form)
+    .some(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
 
-    if (value.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp) {
-      acc[EXTERNAL_DATA_TABLE_PRIORITY_COLUMN] = {
-        name: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
-      };
-    }
+  if (!hasRegexpColumns) {
+    return form;
+  }
 
-    return acc;
-  }, {})
-);
+  return {
+    ...form,
+
+    [EXTERNAL_DATA_TABLE_PRIORITY_COLUMN]: {
+      name: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+    },
+  };
+};
