@@ -13,6 +13,7 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 | Option | Description |
 |--------|------------|
 | `-computeRruleEnd` | Calcule la fin des règles récurrentes (rrule) pour les comportements périodiques et quitte |
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-frameDuration int` | Le moteur calcule tous les comportements périodiques pour un intervalle futur dont la durée est contrôlée par ce paramètre. La valeur par défaut est de 120 minutes. Cette valeur peut être réduite si le pré-calcul utilise trop de ressources système (défaut : 120) |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |

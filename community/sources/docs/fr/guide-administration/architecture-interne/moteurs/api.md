@@ -11,11 +11,13 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement de l
 | Option | Description |
 |--------|------------|
 | `-c string` | Répertoire des fichiers de configuration (défaut : "/opt/canopsis/share/config") |
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-docs` | Active la documentation Swagger. Disponible sur l'url `/swagger` |
 | `-enableSameServiceNames` | Permet d'avoir des noms de service identiques, par défaut les services ont des noms uniques |
 | `-entityCategoryMetaPeriodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique pour mettre à jour les métadonnées de catégorie d'entité (défaut : 1m0s) |
 | `-externalDataAPITimeout duration` | Délai d'attente pour les requêtes HTTP vers l'API externe (défaut : 30s) |
+| `-instructionRateNotificationPeriodicalWaitTime duration` | Durée pour vérifier les instructions et créer des notifications de taux (défaut : 1h0m0s) |
 | `-integrationPeriodicalWaitTime duration` | Durée d'attente pour vérifier périodiquement les résultats des tâches des moteurs (défaut : 5s) |
 | `-logBody` | Active la journalisation des corps de requêtes et réponses |
 | `-logBodyOnError` | Active la journalisation des corps de requêtes et réponses en cas d'erreur |
