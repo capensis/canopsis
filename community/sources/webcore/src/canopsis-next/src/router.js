@@ -313,6 +313,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
+        action: CRUD_ACTIONS.can,
         id: USER_PERMISSIONS.technical.viewImportExport,
       },
     },
@@ -324,6 +325,7 @@ const routes = [
     meta: {
       requiresLogin: true,
       requiresPermission: {
+        action: CRUD_ACTIONS.can,
         id: USER_PERMISSIONS.technical.notification.common,
       },
     },
@@ -553,11 +555,11 @@ const routes = [
   },
   {
     path: OLD_ROUTES.externalDataTables,
-    redirect: { name: ROUTES_NAMES.adminExternalDataTables },
+    redirect: { name: ROUTES_NAMES.adminCustomObjectsExternalDataTables },
   },
   {
     path: OLD_ROUTES.entityInfosProperties,
-    redirect: { name: ROUTES_NAMES.adminEntityInfosProperties },
+    redirect: { name: ROUTES_NAMES.adminCustomObjectsEntityInfosProperties },
   },
   {
     path: OLD_ROUTES.parameters,

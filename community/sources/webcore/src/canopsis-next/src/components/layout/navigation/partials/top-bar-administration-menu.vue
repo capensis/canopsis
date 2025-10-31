@@ -143,34 +143,30 @@ export default {
       {
         route: { name: ROUTES_NAMES.adminSettingsUserInterface },
         icon: 'computer',
-        title: t('common.userInterface'),
         permission: USER_PERMISSIONS.technical.parameters,
       },
       {
         route: { name: ROUTES_NAMES.adminSettingsViewsImportExport },
         icon: 'import_export',
-        title: t('parameters.tabs.importExportViews'),
         permission: USER_PERMISSIONS.technical.viewImportExport,
       },
       {
         route: { name: ROUTES_NAMES.adminSettingsNotifications },
         icon: 'notifications',
-        title: t('parameters.tabs.notificationsSettings'),
         permission: USER_PERMISSIONS.technical.notification.common,
       },
       {
         route: { name: ROUTES_NAMES.adminSettingsWidgetTemplates },
         icon: 'widgets',
-        title: tc('common.widgetTemplate', 2),
         permission: USER_PERMISSIONS.technical.widgetTemplate,
       },
       {
-        route: { name: ROUTES_NAMES.adminStateSettings },
+        route: { name: ROUTES_NAMES.adminSettingsStateSettings },
         icon: 'add_alert',
         permission: USER_PERMISSIONS.technical.stateSetting,
       },
       {
-        route: { name: ROUTES_NAMES.adminStorageSettings },
+        route: { name: ROUTES_NAMES.adminSettingsStorageSettings },
         icon: '$vuetify.icons.storage',
         permission: USER_PERMISSIONS.technical.storageSettings,
       },
