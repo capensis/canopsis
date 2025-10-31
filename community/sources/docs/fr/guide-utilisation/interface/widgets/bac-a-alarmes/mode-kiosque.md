@@ -1,58 +1,83 @@
 # Mode TV (ou Kiosque) 
 
-Le mode TV (ou mode Kiosque) est un mode disponible dans les vues de Canopsis, il permet de changer la manière dont les informations sont affichés à l'écran pour être adapté à des écrans de supervision (visible par plusieurs opérateurs sur le même site. Par exemple: dans un service informatique ou un service de supervision).
+Le mode TV (ou mode Kiosque) est un mode disponible dans les vues de Canopsis, il permet de changer la manière dont les informations sont affichées à l'écran pour être adapté à des écrans de supervision (visible par plusieurs opérateurs sur le même site. Par exemple: dans un service informatique ou un service de supervision).
 
-Le mode TV possède 3 type différents de vue :  
-- [Plein écran](#kiosque--plein-écran) 
-- [Kiosque uniquement](#kiosque-uniquement) 
-- [Kiosque + Plein écran](#kiosque--plein-écran) 
+## Types de vues disponibles
 
-Il existe deux possibilités d'accéder au mode kiosque.
-- Depuis la bac à alarme en passant en mode édition ou en utilisant les raccourcis
-- En allant sur l'URL: `https://[canopsis]/kiosk-views/<ID de la vue>/<ID de l'onglet>` *(Ces deux informations peuvent être trouver dans l'URL lorsque vous êtes sur le bac à alarme)
+Le mode TV propose 3 types d'affichage :
 
-### Configurer le mode kiosque du widget
+1. [Plein écran](#plein-ecran) 
+2. [Kiosque uniquement](#kiosque-uniquement) 
+3. [Kiosque + Plein écran](#kiosque-plein-ecran) 
 
-Pour configurer le mode kiosque, il faut se rendre dans le menu d'édition du bac à alarmes (CTRL + E) puis sur en appuyant sur les 3 points `...` dans l'onglet `Vues` puis `Mode kiosque`.
+## Accéder au mode Kiosque
 
-3 options sont disponibles:
-| Option                  | Utilisation                                                                            |
-|-------------------------|----------------------------------------------------------------------------------------|
-| Masquer les actions | Permet de faire disparaître la colonne des actions rapides.                                 |
-| Masquer la sélection de masse     | Permet de faire disparaître la colonne de sélections de masses.                      |
-| Masquer la barre des tâches        | Permet de faire disparaître la barre des tâches |
+2 possibilités existent pour activer le mode Kiosque :
 
+1. Depuis la bac à alarme, en passant en mode édition ou en utilisant les raccourcis
+2. En accédant directement à l'URL: `https://[canopsis]/kiosk-views/<ID de la vue>/<ID de l'onglet>` *(Ces deux identifiants peuvent être trouvés dans l'URL lorsque vous êtes sur le bac à alarmes)*
+
+## Configurer le mode kiosque du widget
+
+Pour configurer le mode kiosque
+
+1. Passez en mode édition (CTRL + E)
+2. Ouvrez le menu `...` dans l'onglet `Vues`
+3. Sélectionnez `Mode kiosque`
+
+Options disponibles :
+
+| Option                         | Utilisation                                          |
+|--------------------------------|------------------------------------------------------|
+| Masquer les actions            | Supprime la colonne des actions rapides.             |
+| Masquer la sélection de masse  | Supprime la colonne permettant la sélection multiple |
+| Masquer la barre des tâches    | Supprime la barre des tâches                         |
+
+## Modes d'affichage
 
 ### Affichage par défaut
+
 *Raccourcis: Alt/CMD + Shift + 1*
 
 ![Affichage par défaut](./img/kiosque.png)
 
 ### Plein écran
+
 *Raccourcis: Alt/CMD + Shift + 2*
 
-Le mode plein écran permet d'afficher la vue en cours en plein écran en désaffichant la barre de navigation du haut ainsi que la barre latéral. Ce mode ne prend pas en compte les éléments configuré dans les paramètres du mode kiosque.
+Le mode plein écran affiche la vue en cours en masquant la barre de navigation supérieure et la barre latérale.
+
+!!! info "Information"
+    Ce mode n’applique pas les paramètres définis dans le menu Mode kiosque.
 
 ![Mode plein écran](./img/kiosque1.png)
 
 ### Kiosque uniquement
+
 *Raccourcis: Alt/CMD + Shift + 3*
 
-Le mode kiosque permet d'afficher la vue en cours en appliquant la configuation choisie par bac à alarme dans le menu `Edition > Vues > Mode kiosque`.
+Le mode Kiosque affiche la vue selon la configuration définie dans Édition > Vues > Mode kiosque.
 
 ![Mode plein écran](./img/kiosque2.png)
 
 
 ### Kiosque + Plein écran
+
 *Raccourcis: Alt/CMD + Shift + 4*
 
-Le mode kiosque en plein écran permet d'afficher la vue en cours en en plein écran en appliquant la configuation choisie par bac à alarme dans le menu `Edition > Vues > Mode kioskque`.
+Le mode Kiosque + Plein écran combine les deux modes : il affiche la vue en plein écran tout en appliquant la configuration du mode kiosque.
 
 ![Mode plein écran](./img/kiosque3.png)
 
 ### En tête de Canopsis
 
-Par défaut, l'en-tête de Canopsis est désactivé, pour le faire apparaître il faut se rendre dans la partie `Administration > Paramètres` puis activé l'option `Afficher l'en-tête en mode kiosque`.
+Par défaut, l’en-tête de Canopsis est masqué en mode kiosque.  
+Pour l’afficher :
 
-Il est important de noter que cette option n'est pas disponible pour le mode `Kiosque + Plein écran`.
+1. Rendez-vous dans Administration > Paramètres.
+2. Activez l’option Afficher l’en-tête en mode kiosque.
+
+!!! info "Information"
+    Cette option n’est pas disponible pour le mode Kiosque + Plein écran.
+
 

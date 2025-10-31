@@ -249,6 +249,7 @@ Le bac à alarmes peut afficher plus ou moins d'alarmes sur une page.
 
 #### Mode kiosque
 
+Le mode Kiosque permet d'adapter l'affichage du bac à alarmes pour une utilisation sur écran de supervision, en masquant les éléments non essentiels et en facilitant la lecture à distance.  
 La documentation du mode kiosque est disponible sur la page [Mode TV (ou Kiosque) ](./mode-kiosque.md)
 
 #### Entête collant
