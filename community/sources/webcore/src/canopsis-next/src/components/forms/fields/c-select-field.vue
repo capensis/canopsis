@@ -86,7 +86,7 @@ export default {
       default: 'text',
     },
     itemValue: {
-      type: String,
+      type: [String, Function],
       default: 'value',
     },
     name: {

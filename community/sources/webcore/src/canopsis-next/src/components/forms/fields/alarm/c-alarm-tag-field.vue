@@ -12,10 +12,10 @@
     :autocomplete="!combobox"
     :hide-details="!required"
     :hide-selected="hideSelected"
+    :multiple="multiple"
     class="c-alarm-tag-field"
     item-text="value"
     item-value="value"
-    multiple
     chips
     dense
     clearable
@@ -46,7 +46,7 @@
         v-bind="attrs"
         v-on="on"
       >
-        <v-list-item-action>
+        <v-list-item-action v-if="multiple">
           <v-checkbox
             :input-value="attrs.inputValue"
             :color="parent.color"
@@ -57,11 +57,14 @@
         </v-list-item-content>
       </v-list-item>
     </template>
+    <template v-if="$slots['no-data']" #no-data="">
+      <slot name="no-data" />
+    </template>
   </c-lazy-search-field>
 </template>
 
 <script>
-import { toRef } from 'vue';
+import { toRef, watch } from 'vue';
 
 import { PAGINATION_LIMIT } from '@/config';
 
@@ -110,6 +113,10 @@ export default {
       type: Number,
       required: false,
     },
+    multiple: {
+      type: Boolean,
+      required: false,
+    },
   },
   setup(props, { emit }) {
     const { fetchAlarmTagsListWithoutStore } = useAlarmTag();
@@ -125,12 +132,15 @@ export default {
       removeItemFromSelectedItemsByIndex,
       updateSearch,
     } = useLazySearch({
-      value: toRef(props, 'value'),
-      addable: toRef(props, 'addable'),
-      idKey: 'value',
       idParamsKey: 'values',
       fetchHandler: fetchAlarmTagsListWithoutStore,
+      idKey: 'value',
+      value: toRef(props, 'value'),
+      addable: toRef(props, 'addable'),
+      multiple: true,
     }, emit);
+
+    watch(() => props.onlyLabels, fetchItems);
 
     return {
       selectedItems,

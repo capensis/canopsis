@@ -126,7 +126,7 @@ describe('link-to-meta-alarm', () => {
 
     const newData = {
       comment: Faker.datatype.string(),
-      metaAlarm: Faker.datatype.string(),
+      metaAlarm: { _id: Faker.datatype.string(), noData: true },
       auto_resolve: true,
     };
 
@@ -136,13 +136,13 @@ describe('link-to-meta-alarm', () => {
 
     await flushPromises(true);
 
-    expect(action).toBeCalledWith({
-      name: newData.metaAlarm,
+    expect(action).toHaveBeenCalledWith({
+      name: newData.metaAlarm._id,
       alarms: [alarm._id],
       comment: newData.comment,
       auto_resolve: newData.auto_resolve,
     });
-    expect($modals.hide).toBeCalledWith();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Form didn\'t submitted after trigger submit button with error', async () => {
@@ -178,8 +178,8 @@ describe('link-to-meta-alarm', () => {
 
     await flushPromises(true);
 
-    expect(action).not.toBeCalled();
-    expect($modals.hide).not.toBeCalled();
+    expect(action).not.toHaveBeenCalled();
+    expect($modals.hide).not.toHaveBeenCalled();
 
     validator.detach('name');
   });
@@ -200,7 +200,7 @@ describe('link-to-meta-alarm', () => {
 
     await flushPromises(true);
 
-    expect($modals.hide).toBeCalled();
+    expect($modals.hide).toHaveBeenCalled();
   });
 
   test('Renders `link-to-meta-alarm` with empty modal', () => {
