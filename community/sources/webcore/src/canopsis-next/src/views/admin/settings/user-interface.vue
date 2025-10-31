@@ -1,10 +1,11 @@
 <template>
-  <c-page @refresh="fetchInfo">
-    <template #header>
-      {{ $t('common.userInterface') }}
-    </template>
-    <user-interface :disabled="!hasUpdateParametersAccess" />
-  </c-page>
+  <v-container>
+    <c-page @refresh="fetchAppInfo">
+      <v-card-text>
+        <user-interface :disabled="!hasUpdateParametersAccess" />
+      </v-card-text>
+    </c-page>
+  </v-container>
 </template>
 
 <script>
@@ -19,11 +20,11 @@ export default {
   components: { UserInterface },
   setup() {
     const { hasUpdateAccess: hasUpdateParametersAccess } = useCRUDPermissions(USER_PERMISSIONS.technical.parameters);
-    const { fetchInfo } = useInfo();
+    const { fetchAppInfo } = useInfo();
 
     return {
       hasUpdateParametersAccess,
-      fetchInfo,
+      fetchAppInfo,
     };
   },
 };

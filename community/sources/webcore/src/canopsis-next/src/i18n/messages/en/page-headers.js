@@ -108,8 +108,14 @@ export default {
    * Admin general
    */
   [USER_PERMISSIONS.technical.parameters]: {
-    title: 'Parameters',
-    message: 'Various and varied parameters of the Canopsis interface',
+    title: 'User interface',
+  },
+  [USER_PERMISSIONS.technical.viewImportExport]: {
+    title: 'Import / export',
+  },
+  [USER_PERMISSIONS.technical.notification.common]: {
+    title: 'Notifications settings',
+    topbarTitle: 'Notifications',
   },
   [USER_PERMISSIONS.technical.healthcheck]: {
     title: 'Healthcheck',
@@ -137,10 +143,12 @@ export default {
   },
   [USER_PERMISSIONS.technical.storageSettings]: {
     title: 'Storage settings',
+    topbarTitle: 'Storage',
     message: 'Allows you to define data retention policies.',
   },
   [USER_PERMISSIONS.technical.stateSetting]: {
     title: 'State settings',
+    topbarTitle: 'State',
     message: 'Allows you to define methods for calculating the state/severity of components and/or services.\nUseful for modeling dependency trees.',
   },
   [USER_PERMISSIONS.technical.eventsRecord]: {
@@ -152,6 +160,9 @@ export default {
   },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'External auth tokens',
+  },
+  [USER_PERMISSIONS.technical.widgetTemplate]: {
+    title: 'Widget templates',
   },
 
   /**

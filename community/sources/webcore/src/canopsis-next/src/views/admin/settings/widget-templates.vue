@@ -5,9 +5,6 @@
     @create="showSelectWidgetTemplateTypeModal"
     @refresh="fetchWidgetTemplatesListWithPreviousParams"
   >
-    <template #header>
-      {{ $tc('common.widgetTemplate', 2) }}
-    </template>
     <widget-templates />
   </c-page>
 </template>

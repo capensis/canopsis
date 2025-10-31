@@ -50,8 +50,8 @@ export const ROUTES_NAMES = {
 
 export const OLD_ROUTES = {
   remediation: '/admin/remediation', // Is using for rederect to exploitationRemediation
-  externalDataTables: '/admin/external-data-tables', // Is using for rederect to adminExternalDataTables
-  entityInfosProperties: '/admin/entity-infos-properties', // Is using for rederect to adminEntityInfosProperties
+  externalDataTables: '/admin/external-data-tables', // Is using for rederect to adminCustomObjectsExternalDataTables
+  entityInfosProperties: '/admin/entity-infos-properties', // Is using for rederect to adminCustomObjectsEntityInfosProperties
   parameters: '/admin/parameters', // Is using for redirect to adminSettingsUserInterface
 };
 
