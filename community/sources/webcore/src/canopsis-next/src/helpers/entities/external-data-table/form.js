@@ -236,6 +236,29 @@ export const getDefaultSeparator = (value, tableSeparator) => {
 };
 
 /**
+ * Adds priority column to columns array when regexp columns are detected.
+ *
+ * @param {Array} columns - Array of column objects with type property
+ * @returns {Array} Columns array with priority column added if needed
+ */
+export const addPriorityColumnToColumnsArray = (columns = []) => {
+  const hasRegexpColumns = columns.some(column => column.type === EXTERNAL_DATA_TABLE_COLUMN_DATA_TYPES.regexp);
+
+  if (!hasRegexpColumns) {
+    return columns;
+  }
+
+  return [
+    ...columns,
+    {
+      text: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+      value: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+      name: EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
+    },
+  ];
+};
+
+/**
  * Adds priority column to form when regexp columns are detected.
  *
  * @param {Object<string, ExternalDataTableColumnConfig>} form - The form object to process
