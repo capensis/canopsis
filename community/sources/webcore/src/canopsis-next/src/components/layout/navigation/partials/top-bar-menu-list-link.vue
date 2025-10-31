@@ -2,7 +2,6 @@
   <v-list-item
     :to="link.route"
     :class="link.class"
-    :disabled="link.links?.length === 0"
     class="top-bar-menu-link"
     active-class=""
     @click="click"
@@ -39,6 +38,7 @@ export default {
       }
 
       props.link.handler?.();
+      emit('click');
     };
 
     const handleMouseEnter = event => emit('mouseenter', event);

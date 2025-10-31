@@ -1,10 +1,8 @@
 <template>
   <v-menu
     v-if="preparedLinks.length"
-    v-field="value"
+    v-model="openedMenu"
     v-bind="$attrs"
-    :position-x="positionX"
-    :position-y="positionY"
   >
     <template #activator="{ on }">
       <v-btn
@@ -21,12 +19,13 @@
       :links="preparedLinks"
       :permissions-with-default-type="permissionsWithDefaultType"
       :without-sort="withoutSort"
+      @click="handleClick"
     />
   </v-menu>
 </template>
 
 <script>
-import { computed, toRef } from 'vue';
+import { computed, ref, toRef } from 'vue';
 
 import { useTopBarMenu } from './hooks/top-bar-menu';
 import TopBarMenuList from './top-bar-menu-list.vue';
@@ -59,16 +58,10 @@ export default {
       type: Boolean,
       default: true,
     },
-    positionX: {
-      type: Number,
-      default: 0,
-    },
-    positionY: {
-      type: Number,
-      default: 0,
-    },
   },
   setup(props) {
+    const openedMenu = ref(false);
+
     const { prepareLinks } = useTopBarMenu({
       withoutSort: toRef(props, 'withoutSort'),
       permissionsWithDefaultType: toRef(props, 'permissionsWithDefaultType'),
@@ -76,8 +69,14 @@ export default {
 
     const preparedLinks = computed(() => prepareLinks(props.links));
 
+    const handleClick = () => openedMenu.value = false;
+
     return {
+      openedMenu,
+
       preparedLinks,
+
+      handleClick,
     };
   },
 };
