@@ -356,6 +356,7 @@ export default {
           is: 'c-meta-alarm-rule-field',
           props: {
             required: true,
+            clearable: true,
           },
         },
       };
