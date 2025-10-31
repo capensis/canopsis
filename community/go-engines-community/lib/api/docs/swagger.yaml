@@ -16362,7 +16362,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.TemplateVarsResponse'
+                $ref: 'schemas_swagger.yaml#/definitions/widget.TemplateVarsResponse'
   /widget-template-validate:
     post:
       tags:
@@ -16378,7 +16378,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'schemas_swagger.yaml#/definitions/widgettemplate.TemplateRequest'
+              $ref: 'schemas_swagger.yaml#/definitions/widget.TemplateRequest'
             examples:
               validate:
                 summary: Validate
