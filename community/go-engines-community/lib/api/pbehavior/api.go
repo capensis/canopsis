@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
@@ -517,7 +518,10 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 			}
 
 			if _, ok := exists[pbh.ID]; !ok {
-				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
+				// skip add to idsByOrigin when pbh is not effective
+				if pbh.Stop == nil || pbh.RRule != "" || pbh.Stop.Unix() >= time.Now().Unix() {
+					idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
+				}
 				exists[pbh.ID] = struct{}{}
 			}
 
