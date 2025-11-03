@@ -62,9 +62,7 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const updateOptions = (newOptions) => {
-      emit('update:options', newOptions);
-    };
+    const updateOptions = newOptions => emit('update:options', newOptions);
 
     return {
       updateOptions,
