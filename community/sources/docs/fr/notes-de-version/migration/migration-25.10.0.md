@@ -95,6 +95,15 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
     Canopsis 25.10 est livré avec un nouveau jeu de configurations de référence.
     Vous devez télécharger ces configurations et y reporter vos personnalisations.  
 
+!!! warning "Warning - Helm"
+
+    Dans le cadre de la mise à jour vers Canopsis 25.10, les dépendances Helm pour MongoDB, RabbitMQ et Valkey ne s’appuient plus sur les charts Bitnami mais sur nos propres charts maintenus en interne. 
+
+    La migration ne concerne donc pas uniquement Canopsis lui-même, mais également ces composants sous-jacents.
+
+    Une attention particulière doit être portée aux valeurs de configuration et aux paramètres de persistance afin de garantir une transition fluide et sans perte de données.
+
+
 === "Docker Compose"
 
     Si vous êtes utilisateur de l'édition `community`, voici les étapes à suivre.
@@ -127,6 +136,22 @@ Vous devez prévoir une interruption du service afin de procéder à la mise à 
 
     Non concerné car ces configurations sont livrées directement dans les charts Helm.
 
+### Mise à jour de Valkey (Helm uniquement)
+
+Valkey ne s’appuie plus sur les charts Bitnami, mais sur nos propres charts maintenus en interne.
+Il est donc nécessaire de supprimer le StatefulSet ainsi que le PVC associé.
+
+Supprimer le Statefulset Valkey
+
+```sh
+kubectl get statefulset |grep valkey| awk {'print $1'}| xargs kubectl delete statefulset
+```
+
+Supprimer le PVC Valkey
+
+```sh
+kubectl get pvc |grep valkey| awk {'print $1'}| xargs kubectl delete pvc
+```
 
 ### Mise à jour de TimescaleDB
 
@@ -331,120 +356,12 @@ Deux étapes sont à suivre :
 
 === "Helm"
 
-    Sauvegarder les bases de données :
+    Sauvegarder la base de données Canopsis :
 
     ```sh
-    kubectl exec canopsis-timescaledb-7f6cb44d6b-q9s76 -- pg_dump postgresql://cpspostgres:canopsis@canopsis-timescaledb:5432/canopsis -Ft -f /tmp/postgres_canopsis_dump.tar
-    kubectl exec canopsis-timescaledb-7f6cb44d6b-q9s76 -- pg_dump postgresql://cpspostgres:canopsis@canopsis-timescaledb:5432/canopsis-techmetrics -Ft -f /tmp/postgres_canopsis_techmetrics_dump.tar
-
-    kubectl cp canopsis-timescaledb-7f6cb44d6b-q9s76:/tmp/postgres_canopsis_dump.tar postgres_canopsis_dump.tar
-    kubectl cp canopsis-timescaledb-7f6cb44d6b-q9s76:/tmp/postgres_canopsis_techmetrics_dump.tar postgres_canopsis_techmetrics_dump.tar
-    ```
-
-    Arrêt de TimescaleDB :
-
-    ```sh
-    kubectl delete deployment canopsis-timescaledb
-    ```
-
-    Déploiement de PostgreSQL 15 - TimescaleDB 2.14.2
-
-    ```sh
-    kubectl apply -f - <<EOF
-    apiVersion: apps/v1
-    kind: StatefulSet
-    metadata:
-      name: canopsis-timescaledb
-    spec:
-      selector:
-        matchLabels: 
-          app.kubernetes.io/name: canopsis-pro
-      serviceName: canopsis-timescaledb-headless
-      updateStrategy:
-        type: RollingUpdate
-      template:
-        metadata:
-          labels:
-            app.kubernetes.io/name: canopsis-pro
-        spec:
-          containers:
-            - name: timescaledb
-              image: docker.io/timescale/timescaledb:2.14.2-pg15
-              ports:
-                - containerPort: 5432
-              env:
-                - name: TIMESCALEDB_TELEMETRY
-                  value: "off"
-                - name: POSTGRES_DB
-                  value: "canopsis"
-                - name: POSTGRES_USER
-                  value: "cpspostgres"
-                - name: POSTGRES_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: canopsis-timescaledb
-                      key: timescaledb-password
-              readinessProbe:
-                exec:
-                  command:
-                    - /bin/bash
-                    - -c
-                    - pg_isready -d $POSTGRES_DB -U $POSTGRES_USER
-                initialDelaySeconds: 5
-                periodSeconds: 10
-                timeoutSeconds: 5
-              volumeMounts:
-                - name: datadir
-                  mountPath: /var/lib/postgresql/data
-          imagePullSecrets:
-            - name: canopsisregistry
-      volumeClaimTemplates:
-        - metadata:
-            name: datadir
-            annotations:
-              helm.sh/resource-policy: "keep"
-          spec:
-            accessModes:
-              - ReadWriteOnce
-            resources:
-              requests:
-                storage: 8Gi
-    EOF
-    ```
-
-    Création de la base de données techmetrics :
-
-    ```sh
-    export POSTGRES_PASSWORD=$(kubectl get secret canopsis-timescaledb -o jsonpath='{.data.timescaledb-password}' | base64 --decode)
-
-    kubectl exec canopsis-timescaledb-0 -it -- sh -c 'export PGPASSWORD=$POSTGRES_PASSWORD; psql postgresql://cpspostgres:$PGPASSWORD@canopsis-timescaledb-0:5432/postgres'
-
-    CREATE database canopsis_tech_metrics;
-    \c canopsis_tech_metrics
-    CREATE EXTENSION IF NOT EXISTS timescaledb;
-    SET password_encryption = 'scram-sha-256';
-    CREATE USER cpspostgres_tech_metrics WITH PASSWORD 'canopsis';
-    exit
-    ```
-
-    Restauration des dumps : 
-
-    ```sh
-    kubectl cp postgres_canopsis_dump.tar canopsis-timescaledb-0:/tmp
-
-    kubectl cp postgres_canopsis_techmetrics_dump.tar canopsis-timescaledb-0:/tmp
-
-    kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis --no-owner -Ft -v /tmp/postgres_canopsis_dump.tar
-
-    kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis_tech_metrics --no-owner -Ft -v /tmp/postgres_canopsis_techmetrics_dump.tar
-    ```
-
-    Une erreur du type `pg_restore: error: could not execute query: ERROR: role "monitoring" does not exist` peut être visible. Cela est dû au fait que le rôle "monitoring" n'existe pas. Il sera recréé lors de l'exécution de l'update.
-
-    Suppression du statefulset PostgreSQL : 
-
-    ```sh
-    kubectl delete statefulset canopsis-timescaledb
+    kubectl exec canopsis-timescaledb-0 -- pg_dump postgresql://cpspostgres:canopsis@canopsis-timescaledb:5432/canopsis -Ft -f /tmp/postgres_canopsis_dump.tar
+    
+    kubectl cp canopsis-timescaledb-0:/tmp/postgres_canopsis_dump.tar postgres_canopsis_dump.tar
     ```
 
 ### Mise à jour de MongoDB
@@ -535,7 +452,7 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
 
     Arrêt des pods MongoDB :
     ```sh
-    kubectl scale statefulset canopsis-mongodb --replicas=0
+      kubectl get statefulset --no-headers=true |grep mongodb| awk {'print $1'}| xargs kubectl delete statefulset
     ```
 
     Suppresion des PVCs MongoDB :
@@ -543,14 +460,30 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     kubectl get pvc --no-headers=true | awk '{print $1}' | grep mongodb | xargs kubectl delete pvc
     ```
 
+    !!! warning Attention
+        Veillez à bien adapter la commande ci-dessous avec vos paramètres présent dans votre fichier de surcharges, par exemple customer-values.yml.
+
     Mise à jour de MongoDB :
     ```sh
     helm repo update
 
-    helm upgrade canopsis bitnami/mongodb --set auth.enabled=true --set architecture=replicaset --set replicaCount=3 --set auth.enabled=true --set auth.usernames={'cpsmongo'} --set auth.passwords={'canopsis'} --set auth.databases={'canopsis'} --set externalAccess.enable=true --set replicaSetName=rs0 --set persistence.resourcePolicy=keep --set externalAccess.service.type=ClusterIP --set arbiter.enabled=false --version 15.6.2
+    helm upgrade canopsis canopsis/mongodb \
+    --set enabled=true \
+    --set settings.rootUsername=root \
+    --set settings.rootPassword=root \
+    --set replicaSet.enabled=true \
+    --set replicaSet.name=rs0 \
+    --set replicaSet.secondaries=0 \
+    --set replicaSet.key="c29tZXJhbmRvbXN0cmluZzEyMzQ1Ng==" \
+    --set userDatabase.name=canopsis \
+    --set userDatabase.user=cpsmongo \
+    --set userDatabase.password=canopsis \
+    --set storage.keepPvc=true \
+    --set storage.requestedSize=8Gi \
+    --version 1.1.0
     ```
 
-    Lorsque les trois replicas sont UP, copie du dump de la DB sur l'instance 0 de MongoDB : 
+    Lorsque le POD est UP, copie du dump de la DB sur l'instance 0 de MongoDB : 
     ```sh
     kubectl cp ./canopsis canopsis-mongodb-0:/tmp/
     ```
@@ -559,6 +492,11 @@ Dans cette version de Canopsis, la base de données MongoDB passe de la version 
     ```sh
     kubectl exec -n canopsis canopsis-mongodb-0 -- mongorestore -u cpsmongo --password canopsis --gzip --db canopsis /tmp/canopsis
     ``` 
+
+    Suppression du Statefulset :
+    ```sh
+    kubectl delete statefulset canopsis-mongodb
+    ```
 
 
 
@@ -606,43 +544,12 @@ Dans cette version de Canopsis, le bus de données RabbitMQ passe de la version 
 
 === "Helm"
 
-    Répérer le statefulset RabbitMQ
+    
+    Supprimer le volume associé à RabbitMQ
 
     ```sh
-    kubectl get statefulset | grep rabbitmq
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep rabbitmq | xargs kubectl delete pvc
     ```
-
-    L’exécution de cette commande renverra quelque chose comme
-
-    ```sh
-    canopsis-prod-rabbitmq       1/1     11m
-    ```
-
-    Suppression du statefulset RabbitMQ
-
-    ```sh
-    kubectl delete statefulset canopsis-prod-rabbitmq
-    ```
-
-    Repérer le volume associé à RabbitMQ
-
-    ```sh
-    kubectl get pvc | grep rabbitmq
-    ```
-
-    Cette commande devrait vous renvoyer un résultat similaire à
-
-    ```sh
-    data-canopsis-prod-rabbitmq-0   Bound pvc-ad1f6b85-042d-4019-a406-d2fe09acc60c   8Gi        RWO            standard       <unset>                 40h
-    ```
-
-    Suppression du volume
-
-    ```sh
-    kubectl delete pvc data-canopsis-prod-rabbitmq-0
-    ```
-
-
 
 ### Lancement du provisioning `canopsis-reconfigure`
 
