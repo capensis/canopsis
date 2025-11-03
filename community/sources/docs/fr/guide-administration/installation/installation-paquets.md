@@ -242,7 +242,7 @@ Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB, 
 ```sh
 dnf install 'dnf-command(versionlock)'
 dnf versionlock add timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
-dnf versionlock add --raw 'rabbitmq-server-4.*'
+dnf versionlock add --raw 'rabbitmq-server-4.0*'
 dnf versionlock add --raw 'erlang-27.*'
 dnf versionlock add --raw 'valkey-8.*'
 ```
