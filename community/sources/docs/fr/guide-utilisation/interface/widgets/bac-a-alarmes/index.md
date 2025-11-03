@@ -249,18 +249,8 @@ Le bac à alarmes peut afficher plus ou moins d'alarmes sur une page.
 
 #### Mode kiosque
 
-Canopsis met à disposition un mode "kiosque" pour chaque vue, accessible via une URL construite de la manière suivante :
-
-```
-https://canopsis/kiosk-views/<view_id>/<tab_id>
-```
-
-Ces vues sont adaptées pour des écrans d'informations, de communication dans les couloirs, ou tout simplement sur les murs de salle de supervision.
-
-
-* Masquer les actions : La colonne action est masquée
-* Masquer la sélection en masse : Les actions de masse sont masquées
-* Masquer la barre des tâches : La barre d'entête (recherche, filtre, tags, etc) est masquée
+Le mode Kiosque permet d'adapter l'affichage du bac à alarmes pour une utilisation sur écran de supervision, en masquant les éléments non essentiels et en facilitant la lecture à distance.  
+La documentation du mode kiosque est disponible sur la page [Mode TV (ou Kiosque) ](./mode-kiosque.md)
 
 #### Entête collant
 
