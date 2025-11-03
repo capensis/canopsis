@@ -400,7 +400,7 @@ export default {
         value: column.name,
         text: column.name,
         class: DRAGGABLE_CLASS,
-        sortable: false,
+        sortable: column.name === EXTERNAL_DATA_TABLE_PRIORITY_COLUMN,
         errors: column.messages,
       }));
 
