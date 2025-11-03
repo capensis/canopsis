@@ -1488,11 +1488,22 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 			continue
 		}
 
+		var addPriorityColumn bool
+
 		columns := make([]string, len(t.ColumnConfigs))
 		hasCol := make(map[string]bool, len(t.ColumnConfigs))
 		for i, c := range t.ColumnConfigs {
 			hasCol[c.Name] = true
 			columns[i] = c.Name
+
+			if c.Type == externaldata.ColumnTypeRegexp {
+				addPriorityColumn = true
+			}
+		}
+
+		if addPriorityColumn {
+			columns = append(columns, priorityColumnName)
+			hasCol[priorityColumnName] = true
 		}
 
 		if params.SortBy != "" && !hasCol[params.SortBy] {
