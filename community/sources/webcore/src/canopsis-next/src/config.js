@@ -412,6 +412,7 @@ export const API_ROUTES = {
   metaAlarm: '/api/v4/cat/meta-alarms',
   snmpRule: '/api/v4/cat/snmprules',
   snmpMib: '/api/v4/cat/snmpmibs',
+  webhookTokenRule: '/api/v4/cat/webhook-token-rules',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
@@ -432,12 +433,14 @@ export const API_ROUTES = {
     event: '/api/v4/cat/event-records/events',
     bulkEvent: '/api/v4/cat/event-records/events/bulk',
   },
+  entityInfosLog: '/api/v4/cat/entity-infos-log',
   templateVarsSpecificCat: {
     declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-vars',
     dynamicInfos: '/api/v4/cat/dynamic-infos-template-vars',
     instructions: '/api/v4/cat/instruction-template-vars',
     jobs: '/api/v4/cat/job-template-vars',
     metaAlarmRules: '/api/v4/cat/metaalarmrule-template-vars',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-vars',
   },
   templateValidationCat: {
     declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-validate',
@@ -445,6 +448,7 @@ export const API_ROUTES = {
     instructions: '/api/v4/cat/instruction-template-validate',
     jobs: '/api/v4/cat/job-template-validate',
     metaAlarmRules: '/api/v4/cat/metaalarmrule-template-validate',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-validate',
   },
   copyVarsCat: {
     dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',

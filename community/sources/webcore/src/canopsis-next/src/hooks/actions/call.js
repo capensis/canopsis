@@ -6,9 +6,10 @@ import { usePopups } from '@/hooks/popups';
  * This hook uses the `useI18n` for internationalization to fetch localized strings for messages,
  * and `usePopups` for displaying success or error messages in popup format.
  *
+ * @param {boolean} throwOnError - Whether to throw the error if it occurs.
  * @returns {Object} An object containing the `callActionWithPopup` method.
  */
-export const useCallActionWithPopup = () => {
+export const useCallActionWithPopup = (throwOnError = false) => {
   const { t } = useI18n();
   const popups = usePopups();
 
@@ -24,6 +25,10 @@ export const useCallActionWithPopup = () => {
       return afterAction?.();
     } catch (err) {
       console.error(err);
+
+      if (throwOnError) {
+        throw err;
+      }
 
       return popups.error({ text: errorText });
     }

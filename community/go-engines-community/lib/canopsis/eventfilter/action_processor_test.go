@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
 	mock_eventfilter "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/eventfilter"
-	mock_techmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/techmetrics"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -23,15 +22,17 @@ func TestActionProcessor(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
+	ruleID := "test"
 	dataSets := []struct {
-		testName              string
-		action                eventfilter.ParsedAction
-		event                 types.Event
-		regexMatches          eventfilter.RegexMatch
-		externalData          map[string]interface{}
-		expectedEvent         types.Event
-		expectedError         bool
-		expectedEntityUpdated bool
+		testName             string
+		action               eventfilter.ParsedAction
+		event                types.Event
+		updatedInfos         map[string]eventfilter.UpdatedValue
+		regexMatches         eventfilter.RegexMatch
+		externalData         map[string]any
+		expectedEvent        types.Event
+		expectedError        bool
+		expectedUpdatedInfos map[string]eventfilter.UpdatedValue
 	}{
 		{
 			testName: "given set_field action should return success",
@@ -46,8 +47,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Output: "test output",
 			},
-			expectedError:         false,
-			expectedEntityUpdated: false,
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_field action should return error, because of wrong value field type",
@@ -56,12 +57,12 @@ func TestActionProcessor(t *testing.T) {
 				Name:  "Output",
 				Value: 5,
 			},
-			event:                 types.Event{},
-			regexMatches:          eventfilter.RegexMatch{},
-			externalData:          map[string]interface{}{},
-			expectedEvent:         types.Event{},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			event:                types.Event{},
+			regexMatches:         eventfilter.RegexMatch{},
+			externalData:         map[string]interface{}{},
+			expectedEvent:        types.Event{},
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_field_from_template action should return success",
@@ -78,8 +79,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Output: "test output",
 			},
-			expectedError:         false,
-			expectedEntityUpdated: false,
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_field_from_template action should return error, because of wrong template",
@@ -93,9 +94,9 @@ func TestActionProcessor(t *testing.T) {
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
-			expectedEvent:         types.Event{},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedEvent:        types.Event{},
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_field_from_template action should return error, because value should be a string",
@@ -109,9 +110,9 @@ func TestActionProcessor(t *testing.T) {
 			externalData: map[string]interface{}{
 				"data_1": "test output",
 			},
-			expectedEvent:         types.Event{},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedEvent:        types.Event{},
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info action should return success with string type",
@@ -137,8 +138,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: "test output",
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return success with int type",
@@ -164,8 +170,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: 123,
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return success with bool type",
@@ -191,8 +202,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: true,
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return success with string slice type",
@@ -218,8 +234,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return success with slice of interfaces but all items are strings",
@@ -245,8 +266,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return success with bson.A",
@@ -280,8 +306,14 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: []string{"test"},
+					NewValue: []string{"test", "test2"},
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return success with float64 as a whole number",
@@ -307,8 +339,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: float64(2),
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return success with float32 as a whole number",
@@ -334,8 +371,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: float32(2),
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should return error with float value",
@@ -353,8 +395,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info action should return error with slice of interfaces, where some are not strings",
@@ -372,8 +414,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info action should return error with bson.A, where some are not strings",
@@ -391,8 +433,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info action should return error with structs",
@@ -412,8 +454,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info action should return updated entity true, if infos is changed",
@@ -447,8 +489,14 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info action should not return updated entity true, if info is not changed",
@@ -482,8 +530,98 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: false,
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
+		},
+		{
+			testName: "given updated entity info and set_entity_info action with old value should remove updated entity info",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test description",
+				Value:       "old info",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test new description",
+							Value:       "new info",
+						},
+					},
+				},
+			},
+			updatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test description",
+							Value:       "old info",
+						},
+					},
+				},
+			},
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
+		},
+		{
+			testName: "given updated entity info and set_entity_info action with another value should change updated entity info",
+			action: eventfilter.ParsedAction{
+				Type:        eventfilter.ActionSetEntityInfo,
+				Name:        "Info 1",
+				Description: "Test another description",
+				Value:       "another info",
+			},
+			event: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test new description",
+							Value:       "new info",
+						},
+					},
+				},
+			},
+			updatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
+				},
+			},
+			regexMatches: eventfilter.RegexMatch{},
+			externalData: map[string]interface{}{},
+			expectedEvent: types.Event{
+				Entity: &types.Entity{
+					Infos: map[string]types.Info{
+						"Info 1": {
+							Name:        "Info 1",
+							Description: "Test another description",
+							Value:       "another info",
+						},
+					},
+				},
+			},
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "another info",
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info_from_template action should return success",
@@ -511,8 +649,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: "test output",
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because of wrong template",
@@ -530,8 +673,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info_from_template action should return error, because value should be a string",
@@ -549,8 +692,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Entity: &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info_from_template action should return updated entity true, if infos is changed",
@@ -584,8 +727,14 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old info",
+					NewValue: "new info",
+				},
+			},
 		},
 		{
 			testName: "given set_entity_info_from_template action should not return updated entity true, if info is not changed",
@@ -619,8 +768,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: false,
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy action should return success",
@@ -638,8 +787,8 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Output:   "test resource",
 			},
-			expectedError:         false,
-			expectedEntityUpdated: false,
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy action should return error, because value should be a string",
@@ -656,8 +805,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy action should return error, because get field doesn't exist",
@@ -674,8 +823,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy action should return error, because set field doesn't exist",
@@ -692,8 +841,8 @@ func TestActionProcessor(t *testing.T) {
 			expectedEvent: types.Event{
 				Resource: "test resource",
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy action should return success with Tags copied from ExtraInfos",
@@ -735,8 +884,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: false,
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy action should return error because ExtraInfos value is incompatible type with Tags",
@@ -797,8 +946,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: "test resource",
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with int type",
@@ -828,8 +982,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: 123,
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with bool type",
@@ -859,8 +1018,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: true,
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string type",
@@ -888,8 +1052,13 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: "test resource",
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with string slice type",
@@ -921,8 +1090,13 @@ func TestActionProcessor(t *testing.T) {
 					"Test": []string{"test", "test2"},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with slice of interfaces but all items are strings",
@@ -954,8 +1128,13 @@ func TestActionProcessor(t *testing.T) {
 					"Test": []interface{}{"test2", "test"},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success with bson.A",
@@ -987,8 +1166,13 @@ func TestActionProcessor(t *testing.T) {
 					"Test": bson.A{"test2", "test"},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: []string{"test", "test2"},
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success  with float64 as a whole number",
@@ -1020,8 +1204,13 @@ func TestActionProcessor(t *testing.T) {
 					"Test": float64(2),
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: float64(2),
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return success  with float32 as a whole number",
@@ -1053,8 +1242,13 @@ func TestActionProcessor(t *testing.T) {
 					"Test": float32(2),
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					NewValue: float32(2),
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with float value",
@@ -1078,8 +1272,8 @@ func TestActionProcessor(t *testing.T) {
 					"Test": 1.2,
 				},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with slice of interfaces, where some are not strings",
@@ -1103,8 +1297,8 @@ func TestActionProcessor(t *testing.T) {
 					"Test": []interface{}{"test1", 1, "test2"},
 				},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with bson.A, where some are not strings",
@@ -1128,8 +1322,8 @@ func TestActionProcessor(t *testing.T) {
 					"Test": bson.A{"test1", 1, "test2"},
 				},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error with structs",
@@ -1157,8 +1351,8 @@ func TestActionProcessor(t *testing.T) {
 					}{Test: "test"},
 				},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy_to_entity_info action should change existing info",
@@ -1194,8 +1388,14 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: true,
+			expectedError: false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"Info 1": {
+					RuleID:   ruleID,
+					OldValue: "old resource",
+					NewValue: "test resource",
+				},
+			},
 		},
 		{
 			testName: "given copy_to_entity_info action should not return entity updated true, if info is not changed",
@@ -1231,8 +1431,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedError:         false,
-			expectedEntityUpdated: false,
+			expectedError:        false,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value is not a string",
@@ -1252,8 +1452,8 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given copy_to_entity_info action should return error, because value field is not exist",
@@ -1273,8 +1473,8 @@ func TestActionProcessor(t *testing.T) {
 				Resource: "test resource",
 				Entity:   &types.Entity{},
 			},
-			expectedError:         true,
-			expectedEntityUpdated: false,
+			expectedError:        true,
+			expectedUpdatedInfos: nil,
 		},
 		{
 			testName: "given set_entity_info action with string slice with another order of items then in entity should return is updated false",
@@ -1602,8 +1802,21 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedEntityUpdated: true,
-			expectedError:         false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"key1": {
+					RuleID:   ruleID,
+					NewValue: "value1",
+				},
+				"key2": {
+					RuleID:   ruleID,
+					NewValue: []string{"value2", "value3"},
+				},
+				"key3": {
+					RuleID:   ruleID,
+					NewValue: float64(3),
+				},
+			},
+			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info_from_dictionary action should update ExtraInfos and return success",
@@ -1660,8 +1873,22 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedEntityUpdated: true,
-			expectedError:         false,
+			expectedUpdatedInfos: map[string]eventfilter.UpdatedValue{
+				"key1": {
+					RuleID:   ruleID,
+					OldValue: float32(1),
+					NewValue: "value1",
+				},
+				"key2": {
+					RuleID:   ruleID,
+					NewValue: []string{"value2", "value3"},
+				},
+				"key3": {
+					RuleID:   ruleID,
+					NewValue: float64(3),
+				},
+			},
+			expectedError: false,
 		},
 		{
 			testName: "given set_entity_info_from_dictionary action and without a dictionary should return success without EntityUpdated",
@@ -1696,8 +1923,8 @@ func TestActionProcessor(t *testing.T) {
 				},
 				ExtraInfos: map[string]any{},
 			},
-			expectedEntityUpdated: false,
-			expectedError:         false,
+			expectedUpdatedInfos: nil,
+			expectedError:        false,
 		},
 		{
 			testName: "given set_entity_info_from_dictionary action and dictionary is not a map should return error",
@@ -1720,8 +1947,8 @@ func TestActionProcessor(t *testing.T) {
 					"dict": "not a map",
 				},
 			},
-			expectedEntityUpdated: false,
-			expectedError:         true,
+			expectedUpdatedInfos: nil,
+			expectedError:        true,
 		},
 		{
 			testName: "given set_entity_info_from_dictionary action and dictionary has invalid field should return error",
@@ -1752,8 +1979,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedEntityUpdated: false,
-			expectedError:         true,
+			expectedUpdatedInfos: nil,
+			expectedError:        true,
 		},
 		{
 			testName: "given set_entity_info_from_dictionary action and dictionary is nil should return error",
@@ -1776,8 +2003,8 @@ func TestActionProcessor(t *testing.T) {
 					"dict": nil,
 				},
 			},
-			expectedEntityUpdated: false,
-			expectedError:         true,
+			expectedUpdatedInfos: nil,
+			expectedError:        true,
 		},
 		{
 			testName: "given set_entity_info_from_dictionary action without infos change should return entity not updated",
@@ -1845,8 +2072,8 @@ func TestActionProcessor(t *testing.T) {
 					},
 				},
 			},
-			expectedEntityUpdated: false,
-			expectedError:         false,
+			expectedUpdatedInfos: nil,
+			expectedError:        false,
 		},
 	}
 
@@ -1856,28 +2083,27 @@ func TestActionProcessor(t *testing.T) {
 	}).AnyTimes()
 	mockFailureService := mock_eventfilter.NewMockFailureService(ctrl)
 	mockFailureService.EXPECT().Add(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).AnyTimes()
-	mockTechMetricsSender := mock_techmetrics.NewMockSender(ctrl)
-	mockTechMetricsSender.EXPECT().SendCheEntityInfo(gomock.Any(), gomock.Any()).AnyTimes()
-	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor, mockTechMetricsSender)
+	processor := eventfilter.NewActionProcessor(mockAlarmConfigProvider, mockFailureService, tplExecutor)
 	for _, dataset := range dataSets {
 		t.Run(dataset.testName, func(t *testing.T) {
-			resultEntityUpdated, resultErr := processor.Process(t.Context(), "test", "", dataset.action, &dataset.event,
-				dataset.regexMatches, dataset.externalData)
+			res, resultErr := processor.Process(t.Context(), ruleID, "", dataset.action, &dataset.event,
+				dataset.updatedInfos, dataset.regexMatches, dataset.externalData)
 			if diff := pretty.Compare(dataset.expectedEvent, dataset.event); diff != "" {
-				t.Errorf("unexpected event: %s", diff)
+				t.Fatalf("unexpected event (-want +got):\n%s", diff)
 			}
 
 			if dataset.expectedError && resultErr == nil {
-				t.Error("expected an error")
+				t.Fatalf("expected an error")
 			}
 
-			if dataset.expectedEntityUpdated != resultEntityUpdated {
-				t.Errorf("expected an entityUpdated = %v, but got %v", dataset.expectedEntityUpdated, resultEntityUpdated)
+			if diff := pretty.Compare(dataset.expectedUpdatedInfos, res); diff != "" {
+				t.Fatalf("unexpected result (-want +got):\n%s", diff)
 			}
 
 			if !dataset.expectedError && resultErr != nil {
-				t.Errorf("expected no error but got %+v", resultErr)
+				t.Fatalf("expected no error but got %+v", resultErr)
 			}
+
 			if resultErr != nil {
 				t.Logf("%s returned: %s", dataset.testName, resultErr)
 			}

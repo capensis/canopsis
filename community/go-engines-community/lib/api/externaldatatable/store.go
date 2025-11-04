@@ -31,8 +31,6 @@ const (
 	pgErrCodeDuplicateTable     = "42P07"
 	mongoErrCodeNamespaceExists = 48
 
-	limitLinkedRules = 11
-
 	maxStringLengthErrMsg = "string length must be less than " + MaxStringLenStr
 )
 
@@ -112,7 +110,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 				"as":           "tmp_linked_widgets",
 				"pipeline": []bson.M{
 					{"$match": bson.M{"type": view.WidgetTypeExternalData}},
-					{"$limit": limitLinkedRules},
+					{"$limit": common.LimitLinkedRules},
 					{"$project": bson.M{
 						"name": "$title",
 					}},
@@ -147,7 +145,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 					"foreignField": "external_data.table",
 					"as":           "tmp_linked_rules",
 					"pipeline": []bson.M{
-						{"$limit": limitLinkedRules},
+						{"$limit": common.LimitLinkedRules},
 						{"$project": bson.M{
 							"name": bson.M{"$cond": bson.M{
 								"if":   "$name",
@@ -1490,11 +1488,22 @@ func TransformRefParameters(ctx context.Context, r []externaldata.RefParameters,
 			continue
 		}
 
+		var addPriorityColumn bool
+
 		columns := make([]string, len(t.ColumnConfigs))
 		hasCol := make(map[string]bool, len(t.ColumnConfigs))
 		for i, c := range t.ColumnConfigs {
 			hasCol[c.Name] = true
 			columns[i] = c.Name
+
+			if c.Type == externaldata.ColumnTypeRegexp {
+				addPriorityColumn = true
+			}
+		}
+
+		if addPriorityColumn {
+			columns = append(columns, priorityColumnName)
+			hasCol[priorityColumnName] = true
 		}
 
 		if params.SortBy != "" && !hasCol[params.SortBy] {

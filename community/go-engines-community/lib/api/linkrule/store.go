@@ -801,7 +801,7 @@ func (s *store) validateExdataTpls(
 		var err error
 		for j := range alarms {
 			if alarms[j].ExternalData == nil {
-				alarms[j].ExternalData = make(map[string]map[string]any, len(r.Rule.ExternalData))
+				alarms[j].ExternalData = make(map[string]any, len(r.Rule.ExternalData))
 			}
 
 			alarms[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, alarms[j], "rule.external_data."+strconv.Itoa(i))
@@ -812,7 +812,7 @@ func (s *store) validateExdataTpls(
 
 		for j := range entities {
 			if entities[j].ExternalData == nil {
-				entities[j].ExternalData = make(map[string]map[string]any, len(r.Rule.ExternalData))
+				entities[j].ExternalData = make(map[string]any, len(r.Rule.ExternalData))
 			}
 
 			entities[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, entities[j], "rule.external_data."+strconv.Itoa(i))
@@ -830,7 +830,7 @@ func (s *store) processTableExdata(
 	d template.TemplateRefParameters,
 	tplData any,
 	field string,
-) (map[string]any, error) {
+) (any, error) {
 	getter, ok := s.externalDataContainer.Get(d.Type)
 	if !ok {
 		return nil, fmt.Errorf("cannot find external data getter by type %q", d.Type)

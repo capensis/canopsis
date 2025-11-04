@@ -75,6 +75,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding/json"
+	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
 	libentityservice "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
@@ -124,7 +125,7 @@ func RegisterRoutes(
 	pbhEntityTypeResolver libpbehavior.EntityTypeResolver,
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	entityPublChan chan<- libentityservice.ChangeEntityMessage,
-	entityCleanerTaskChan chan<- entity.CleanTask,
+	entityCleanerTaskChan chan<- libentity.CleanTask,
 	exportTaskExecutor export.TaskExecutor,
 	techMetricsTaskExecutor techmetrics.TaskExecutor,
 	userInterfaceConfig config.UserInterfaceConfigProvider,
@@ -1438,9 +1439,10 @@ func RegisterRoutes(
 		)
 
 		// broadcast message API
-		broadcastMessageApi := broadcastmessage.NewApi(
+		broadcastMessageApi := broadcastmessage.NewAPI(
 			broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider),
 			broadcastMessageChan,
+			websocketHub,
 		)
 		broadcastMessageRouter := protected.Group("/broadcast-message")
 		{
@@ -1463,13 +1465,19 @@ func RegisterRoutes(
 				middleware.Authorize(apisecurity.ObjBroadcastMessage, model.PermissionRead, enforcer),
 				broadcastMessageApi.List)
 			broadcastMessageRouter.PUT(
+				"/:id/read",
+				middleware.OnlyAuth(),
+				broadcastMessageApi.Read)
+			broadcastMessageRouter.PUT(
 				"/:id",
 				middleware.Authorize(apisecurity.ObjBroadcastMessage, model.PermissionUpdate, enforcer),
 				middleware.SetAuthor(),
 				broadcastMessageApi.Update)
 			// can not make typical format like /api/v4/broadcast-message/active
 			// because it would be failed with conflict error apart of get /:id route
-			router.GET(BaseUrl+"/active-broadcast-message", broadcastMessageApi.GetActive)
+			protected.GET(
+				"/active-broadcast-message",
+				broadcastMessageApi.GetActive)
 		}
 
 		associativeTableApi := associativetable.NewApi(associativetable.NewStore(primaryDbClient))

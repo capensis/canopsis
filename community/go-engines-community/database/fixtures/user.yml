@@ -1267,6 +1267,14 @@ permission:
     groups:
       - "@group_api"
       - "@group_api_rules"
+  permission_api_webhook_token_rule:
+    <<: *permission_crud
+    _id: api_webhook_token_rule
+    name: <Current()._id>
+    description: Webhook token rule
+    groups:
+      - "@group_api"
+      - "@group_api_rules"
 
   # api -> remediation
   permission_api_job_config:
@@ -1923,6 +1931,17 @@ permission:
       - "@group_technical"
       - "@group_technical_admin"
       - "@group_technical_admin_general"
+  permission_models_externalAuthTokens:
+    <<: *permission_crud
+    _id: models_externalAuthTokens
+    name: <Current()._id>
+    description: Webhook token rule
+    groups:
+      - "@group_technical"
+      - "@group_technical_admin"
+      - "@group_technical_admin_general"
+    api_permissions:
+      "@permission_api_webhook_token_rule": 0
 
   # technical -> viewsandwidgets
   permission_models_privateView:
@@ -2058,6 +2077,7 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_action": 0
+      "@permission_api_webhook_token_rule": 4
       <<: [
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
@@ -2114,6 +2134,7 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_declare_ticket_rule": 0
+      "@permission_api_webhook_token_rule": 4
       <<: [
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern,
@@ -3630,6 +3651,7 @@ role:
       "@permission_models_shareToken": 15
       "@permission_models_techmetrics": 1
       "@permission_models_templateTesting": 1
+      "@permission_models_externalAuthTokens": 15
       "@permission_models_widgetTemplate": 15
       "@permission_models_tag": 15
       "@permission_models_profile_color_theme": 15
@@ -3784,6 +3806,7 @@ role:
       "@permission_api_snmpmib": 15
       "@permission_api_external_data_table": 15
       "@permission_api_template_data": 15
+      "@permission_api_webhook_token_rule": 15
       "@permission_api_corporate_pattern": 1
       "@permission_api_map": 15
       "@permission_api_share_token": 15

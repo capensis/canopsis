@@ -798,17 +798,33 @@ export default {
       phrase: 'modifier la politique de stockage',
     },
     cleanStorage: {
-      title: 'Archivage/Suppression des entités. Êtes vous sur ?',
-      text: 'Vous êtes sur le point d\'archiver et/ou de supprimer des données.\n'
-        + '<strong>Les opérations de suppression sont irreversibles.</strong>',
-      phraseText: 'Merci de recopier le texte qui suit pour confirmer:',
-      phrase: 'archiver ou supprimer',
+      title: 'Nettoyer l\'archive',
+      text: '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n'
+        + '<strong>Cette opération ne pourra pas être annulée. Toutes les entités archivées (désactivées et non liées) seront supprimées définitivement</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération de suppression unique</strong> :',
+      phrase: 'supprimer',
+    },
+    archiveUnlinkedEntities: {
+      title: 'Archiver les entités non liées',
+      text: '<span class="font-weight-regular">Êtes-vous sûr ?</span>\n'
+        + '<strong>Cette opération ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez taper ce qui suit pour confirmer <strong>l\'opération d\'archivage unique</strong> :',
+      phrase: 'archiver',
+    },
+    archiveDisabledEntities: {
+      title: 'Archiver les entités désactivées',
     },
     deleteExternalDataTable: {
       title: 'Supprimer la Collection / Table',
       text: 'vous êtes sur le point de supprimer des données.\n'
         + '<strong>Cette opération est irreversible.</strong>',
       phraseText: 'Veuillez saisir le nom de la Collection / Table pour confirmer:',
+    },
+    deleteExternalAuthToken: {
+      title: 'Supprimer le jeton d\'authentification',
+      text: '<span class="font-weight-regular">Vous êtes sur le point de supprimer le jeton.</span>\n'
+        + '<strong>L\'opération de suppression ne pourra pas être annulée.</strong>',
+      phraseText: 'Veuillez saisir le nom du jeton pour confirmer :',
     },
     templateTestingData: {
       title: 'Supprimer les données de test',
@@ -1041,6 +1057,10 @@ export default {
     title: 'Quitter le mode maintenance',
     text: 'Êtes-vous sûr de vouloir quitter le mode maintenance ?\nTous les utilisateurs pourront à nouveau se connecter à Canopsis.',
   },
+  confirmationMarkAsRead: {
+    title: 'Marquer comme lu',
+    text: 'Êtes-vous sûr de vouloir marquer ce message de diffusion comme lu et le masquer ?',
+  },
   confirmationCreateNewTicketForAlarm: {
     title: 'Confirmer la création de tickets',
     text: 'Au moins un ticket existe déjà pour cette alarme.\nVoulez-vous en créer un nouveau ?',
@@ -1079,9 +1099,6 @@ export default {
       title: 'Thème en double',
     },
   },
-  archiveDisabledEntities: {
-    text: 'Êtes-vous sûr de vouloir archiver les entités désactivées ?\nCette action ne peut pas être annulée',
-  },
   createIcon: {
     create: {
       title: 'Icône de téléchargement',
@@ -1113,6 +1130,14 @@ export default {
     },
     duplicate: {
       title: 'Dupliquer',
+    },
+  },
+  createExternalAuthToken: {
+    create: {
+      title: 'Créer un jeton d\'authentification externe',
+    },
+    edit: {
+      title: 'Modifier le jeton d\'authentification externe',
     },
   },
   createTemplateTestingData: {

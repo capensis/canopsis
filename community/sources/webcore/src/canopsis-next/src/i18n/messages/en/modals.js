@@ -798,17 +798,33 @@ export default {
       phrase: 'update the storage policy',
     },
     cleanStorage: {
-      title: 'Archive/delete entities. Are you sure ?',
-      text: 'You are about to archive and/or delete data.\n'
-        + '<strong>Deletion operation won\'t be cancellable.</strong>',
-      phraseText: 'Please, type the following to confirm:',
-      phrase: 'archive or delete',
+      title: 'Clean archive',
+      text: '<span class="font-weight-regular">Are you sure?</span>\n'
+        + '<strong>This operation won\'t be cancellable. All archived entities (disabled and unlinked) will be deleted forever</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time delete operation</strong> :',
+      phrase: 'delete',
+    },
+    archiveUnlinkedEntities: {
+      title: 'Archive unlinked entities',
+      text: '<span class="font-weight-regular">Are you sure ?</span>\n'
+        + '<strong>This operation won\'t be cancellable.</strong>',
+      phraseText: 'Please type the following to confirm <strong>one-time archive operation</strong> :',
+      phrase: 'archive',
+    },
+    archiveDisabledEntities: {
+      title: 'Archive disabled entities',
     },
     deleteExternalDataTable: {
       title: 'Delete Reference table / collection',
       text: 'You are about to delete data.\n'
         + '<strong>Deletion operation won\'t be cancellable.</strong>',
       phraseText: 'Please type table / collection name to confirm:',
+    },
+    deleteExternalAuthToken: {
+      title: 'Delete auth token',
+      text: '<span class="font-weight-regular">You are about to delete the token.</span>\n'
+        + '<strong>Deletion operation won’t be cancellable.</strong>',
+      phraseText: 'Please type the token name to confirm:',
     },
     templateTestingData: {
       title: 'Delete test data',
@@ -1041,6 +1057,10 @@ export default {
     title: 'Leave maintenance mode',
     text: 'Are you sure you want to leave the maintenance mode?\nAll users will be able to login to the system after leaving.',
   },
+  confirmationMarkAsRead: {
+    title: 'Mark as read',
+    text: 'Are you sure you want to mark this broadcast message as read and hide it?',
+  },
   confirmationCreateNewTicketForAlarm: {
     title: 'Confirm create tickets',
     text: 'This alarm already has tickets created.\nDo you want to create a new one?',
@@ -1079,9 +1099,6 @@ export default {
       title: 'Duplicate theme',
     },
   },
-  archiveDisabledEntities: {
-    text: 'Are you sure you want to archive disabled entities?\nThis action cannot be undone',
-  },
   createIcon: {
     create: {
       title: 'Upload icon',
@@ -1113,6 +1130,14 @@ export default {
     },
     duplicate: {
       title: 'Duplicate record',
+    },
+  },
+  createExternalAuthToken: {
+    create: {
+      title: 'Create external auth token',
+    },
+    edit: {
+      title: 'Edit external auth token',
     },
   },
   createTemplateTestingData: {
