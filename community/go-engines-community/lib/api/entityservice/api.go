@@ -67,7 +67,7 @@ func (a *api) Get(c *gin.Context) {
 }
 
 // GetDependencies
-// @Success 200 {object} common.PaginatedListResponse{data=[]ContextGraphEntity}
+// @Success 200 {object} pagination.ListResponse{data=[]ContextGraphEntity}
 func (a *api) GetDependencies(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -88,17 +88,12 @@ func (a *api) GetDependencies(c *gin.Context) {
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
 // GetImpacts
-// @Success 200 {object} common.PaginatedListResponse{data=[]ContextGraphEntity}
+// @Success 200 {object} pagination.ListResponse{data=[]ContextGraphEntity}
 func (a *api) GetImpacts(c *gin.Context) {
 	var r ContextGraphRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -119,12 +114,7 @@ func (a *api) GetImpacts(c *gin.Context) {
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 

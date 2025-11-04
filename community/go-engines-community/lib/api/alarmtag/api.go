@@ -35,7 +35,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -50,17 +50,12 @@ func (a *api) List(c *gin.Context) {
 		panic(err)
 	}
 
-	response, err := common.NewPaginatedResponse(r.Query, tags)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	response := pagination.NewResponse(r.Query, tags)
 	c.JSON(http.StatusOK, response)
 }
 
 // ListLabels
-// @Success 200 {object} common.PaginatedListResponse{data=[]LabelResponse}
+// @Success 200 {object} pagination.ListResponse{data=[]LabelResponse}
 func (a *api) ListLabels(c *gin.Context) {
 	var r ListLabelsRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -74,12 +69,7 @@ func (a *api) ListLabels(c *gin.Context) {
 		panic(err)
 	}
 
-	response, err := common.NewPaginatedResponse(r.Query, tags)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	response := pagination.NewResponse(r.Query, tags)
 	c.JSON(http.StatusOK, response)
 }
 

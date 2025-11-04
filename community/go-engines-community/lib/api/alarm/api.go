@@ -71,7 +71,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+// @Success 200 {object} pagination.ListResponse{data=[]Alarm}
 func (a *api) List(c *gin.Context) {
 	var r ListRequestWithPagination
 	r.Query = pagination.GetDefaultQuery()
@@ -92,12 +92,7 @@ func (a *api) List(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -225,7 +220,7 @@ func (a *api) GetDetails(c *gin.Context) {
 }
 
 // ListByService
-// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+// @Success 200 {object} pagination.ListResponse{data=[]Alarm}
 func (a *api) ListByService(c *gin.Context) {
 	r := ListByServiceRequest{
 		Query: pagination.GetDefaultQuery(),
@@ -246,17 +241,12 @@ func (a *api) ListByService(c *gin.Context) {
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
 // ListByComponent
-// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+// @Success 200 {object} pagination.ListResponse{data=[]Alarm}
 func (a *api) ListByComponent(c *gin.Context) {
 	r := ListByComponentRequest{
 		Query: pagination.GetDefaultQuery(),
@@ -277,17 +267,12 @@ func (a *api) ListByComponent(c *gin.Context) {
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
 // ResolvedList
-// @Success 200 {object} common.PaginatedListResponse{data=[]Alarm}
+// @Success 200 {object} pagination.ListResponse{data=[]Alarm}
 func (a *api) ResolvedList(c *gin.Context) {
 	r := ResolvedListRequest{
 		Query: pagination.GetDefaultQuery(),
@@ -308,12 +293,7 @@ func (a *api) ResolvedList(c *gin.Context) {
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -440,7 +420,7 @@ func (a *api) GetLinks(c *gin.Context) {
 }
 
 // GetDisplayNames
-// @Success 200 {object} common.PaginatedListResponse{data=[]DisplayNameData}
+// @Success 200 {object} pagination.ListResponse{data=[]DisplayNameData}
 func (a *api) GetDisplayNames(c *gin.Context) {
 	var r GetDisplayNamesRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -461,11 +441,6 @@ func (a *api) GetDisplayNames(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }

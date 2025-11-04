@@ -29,8 +29,9 @@ func NewApi(
 	}
 }
 
+// ListKeys
 // List info dictionary keys
-// @Success 200 {object} common.PaginatedListResponse{data=[]Result}
+// @Success 200 {object} pagination.ListResponse{data=[]Result}
 func (a *api) ListKeys(c *gin.Context) {
 	var request ListKeysRequest
 	request.Query = pagination.GetDefaultQuery()
@@ -44,17 +45,13 @@ func (a *api) ListKeys(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(request.Query, findResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(request.Query, findResult)
 	c.JSON(http.StatusOK, res)
 }
 
+// ListValues
 // List info dictionary values
-// @Success 200 {object} common.PaginatedListResponse{data=[]Result}
+// @Success 200 {object} pagination.ListResponse{data=[]Result}
 func (a *api) ListValues(c *gin.Context) {
 	var request ListValuesRequest
 	request.Query = pagination.GetDefaultQuery()
@@ -68,11 +65,6 @@ func (a *api) ListValues(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(request.Query, findResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(request.Query, findResult)
 	c.JSON(http.StatusOK, res)
 }

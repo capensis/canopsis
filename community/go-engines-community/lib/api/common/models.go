@@ -2,14 +2,12 @@ package common
 
 import (
 	"errors"
-	"math"
 	"net/http"
 	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
@@ -18,64 +16,6 @@ import (
 )
 
 const LimitLinkedRules = 11
-
-// PaginatedMeta is meta for paginated list data.
-type PaginatedMeta struct {
-	Page       int64 `json:"page"`
-	PerPage    int64 `json:"per_page"`
-	PageCount  int64 `json:"page_count"`
-	TotalCount int64 `json:"total_count"`
-}
-
-// PaginatedListResponse is response for paginated list data.
-type PaginatedListResponse struct {
-	Data interface{}   `json:"data"`
-	Meta PaginatedMeta `json:"meta"`
-}
-
-// PaginatedData provides access to inner data and total count
-type PaginatedData interface {
-	GetData() interface{}
-	GetTotal() int64
-}
-
-func NewPaginatedResponse(q pagination.Query, d PaginatedData) (PaginatedListResponse, error) {
-	meta, err := NewPaginatedMeta(q, d.GetTotal())
-	if err != nil {
-		return PaginatedListResponse{}, err
-	}
-
-	data := d.GetData()
-	if data == nil {
-		data = []interface{}{}
-	}
-
-	return PaginatedListResponse{
-		Data: data,
-		Meta: meta,
-	}, nil
-}
-
-func NewPaginatedMeta(q pagination.Query, total int64) (PaginatedMeta, error) {
-	if !q.Paginate {
-		q.Limit = total
-	}
-
-	var pageCount int64
-	if q.Limit > 0 {
-		pageCount = int64(math.Ceil(float64(total) / float64(q.Limit)))
-	}
-	if pageCount == 0 {
-		pageCount = 1
-	}
-
-	return PaginatedMeta{
-		Page:       q.Page,
-		PerPage:    q.Limit,
-		PageCount:  pageCount,
-		TotalCount: total,
-	}, nil
-}
 
 // ErrorResponse is base failed response.
 type ErrorResponse struct {
