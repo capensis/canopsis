@@ -102,18 +102,6 @@ func (mr *MockSenderMockRecorder) SendAxePeriodical(metric any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendAxePeriodical", reflect.TypeOf((*MockSender)(nil).SendAxePeriodical), metric)
 }
 
-// SendCheEntityInfo mocks base method.
-func (m *MockSender) SendCheEntityInfo(timestamp time.Time, name string) {
-	m.ctrl.T.Helper()
-	m.ctrl.Call(m, "SendCheEntityInfo", timestamp, name)
-}
-
-// SendCheEntityInfo indicates an expected call of SendCheEntityInfo.
-func (mr *MockSenderMockRecorder) SendCheEntityInfo(timestamp, name any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCheEntityInfo", reflect.TypeOf((*MockSender)(nil).SendCheEntityInfo), timestamp, name)
-}
-
 // SendCheEvent mocks base method.
 func (m *MockSender) SendCheEvent(metric techmetrics.CheEventMetric) {
 	m.ctrl.T.Helper()

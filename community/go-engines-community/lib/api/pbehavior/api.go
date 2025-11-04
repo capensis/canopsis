@@ -3,12 +3,14 @@ package pbehavior
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -29,12 +31,15 @@ type API interface {
 	BulkConnectorDelete(c *gin.Context)
 	BulkConnectorEdit(c *gin.Context)
 	DBExport(c *gin.Context)
+	ExecPattern(c *gin.Context)
+	ExecAllPatterns(c *gin.Context)
 }
 
 type api struct {
 	store         Store
 	mongoExporter dbexport.Exporter
 	computeChan   chan<- rpc.PbehaviorRecomputeEvent
+	jobPublisher  workers.JobPublisher
 	logger        zerolog.Logger
 }
 
@@ -42,12 +47,14 @@ func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
+	jobPublisher workers.JobPublisher,
 	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:         store,
 		mongoExporter: mongoExporter,
 		computeChan:   computeChan,
+		jobPublisher:  jobPublisher,
 		logger:        logger,
 	}
 }
@@ -468,7 +475,10 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 			}
 
 			if _, ok := exists[pbh.ID]; !ok {
-				idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
+				// skip add to idsByOrigin when pbh is not effective
+				if pbh.Stop == nil || pbh.RRule != "" || pbh.Stop.Unix() >= time.Now().Unix() {
+					idsByOrigin[request.Origin] = append(idsByOrigin[request.Origin], pbh.ID)
+				}
 				exists[pbh.ID] = struct{}{}
 			}
 
@@ -619,6 +629,40 @@ func (a *api) DBExport(c *gin.Context) {
 	}
 
 	dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
+}
+
+// ExecPattern
+// @Param body body ExecPatternRequest true "body"
+// @Success 200 {object} pattern.CountResponse
+func (a *api) ExecPattern(c *gin.Context) {
+	request := ExecPatternRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+
+		return
+	}
+
+	res, err := a.store.ExecPatternAndUpdate(c, request.ID, request.EntityPattern)
+	if err != nil {
+		panic(err)
+	}
+
+	if res == nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) ExecAllPatterns(c *gin.Context) {
+	err := a.jobPublisher.Publish(c, "")
+	if err != nil {
+		panic(err)
+	}
+
+	c.Status(http.StatusNoContent)
 }
 
 func (a *api) sendComputeTask(event rpc.PbehaviorRecomputeEvent) {

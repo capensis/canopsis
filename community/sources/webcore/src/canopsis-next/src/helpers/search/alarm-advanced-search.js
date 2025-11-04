@@ -102,10 +102,14 @@ export const getInitialFormItemType = (item, union = false) => {
  * @param {string} [params.range] - The range of the rule item.
  * @param {string} [params.operator] - The operator of the rule item.
  * @param {string} [params.text] - The text of the rule item.
+ * @param {boolean} [params.alias] - The alias of the rule item.
  * @param {AdvancedSearchChipType | null} [type = null] - The current chip type.
  * @returns {AdvancedSearchChipType | null} - The next chip type, or null if there is no next type.
  */
-export const getNextForFormItemType = ({ attribute, fieldType, range, operator, text } = {}, type = null) => {
+export const getNextForFormItemType = (
+  { attribute, fieldType, range, operator, text, alias } = {},
+  type = null,
+) => {
   if (text || [ALARM_ADVANCED_SEARCH_CHIP_TYPES.union, ALARM_ADVANCED_SEARCH_CHIP_TYPES.text].includes(type)) {
     return null;
   }
@@ -120,7 +124,7 @@ export const getNextForFormItemType = ({ attribute, fieldType, range, operator, 
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.range;
       }
 
-      if (isValueInfosPatternRuleField(attribute)) {
+      if (isValueInfosPatternRuleField(attribute) || alias) {
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType;
       }
 
@@ -133,6 +137,10 @@ export const getNextForFormItemType = ({ attribute, fieldType, range, operator, 
     case ALARM_ADVANCED_SEARCH_CHIP_TYPES.fieldType:
       if (fieldType === PATTERN_FIELD_TYPES.boolean) {
         return ALARM_ADVANCED_SEARCH_CHIP_TYPES.value;
+      }
+
+      if (fieldType === PATTERN_FIELD_TYPES.timestamp) {
+        return ALARM_ADVANCED_SEARCH_CHIP_TYPES.range;
       }
 
       return ALARM_ADVANCED_SEARCH_CHIP_TYPES.operator;
@@ -199,7 +207,6 @@ export const getFilledArrayForAdvancedSearchFormItem = (formItem) => {
 export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) => {
   const formItem = patternRuleToForm(advancedSearchRuleItem);
 
-  formItem.filled = getFilledArrayForAdvancedSearchFormItem(formItem);
   formItem.rangeValue = {
     from: formItem.range.from,
     to: formItem.range.to,
@@ -217,6 +224,8 @@ export const advancedSearchRuleItemToFormItem = (advancedSearchRuleItem = {}) =>
     formItem.attribute = [formItem.attribute, formItem.field].join('.');
     formItem.field = '';
   }
+
+  formItem.filled = getFilledArrayForAdvancedSearchFormItem(formItem);
 
   return formItem;
 };
@@ -267,7 +276,7 @@ export const advancedSearchToForm = ({ search = '', positions = [], ...patterns 
 
     const formItem = advancedSearchRuleItemToFormItem(clonedPatterns[key][0]?.pop?.());
 
-    if (key === PATTERNS_FIELDS.entity) {
+    if (key === PATTERNS_FIELDS.entity && !formItem.alias) {
       formItem.attribute = ['entity', formItem.attribute].join('.');
     } else if (key === PATTERNS_FIELDS.pbehavior) {
       formItem.attribute = ['v', formItem.attribute].join('.');
@@ -342,7 +351,7 @@ export const formToAdvancedSearch = (form = []) => {
 
     let key = PATTERNS_FIELDS.alarm;
 
-    if (isEntityPatternField(preparedItem.attribute)) {
+    if (isEntityPatternField(preparedItem.attribute) || item?.alias) {
       key = PATTERNS_FIELDS.entity;
       preparedItem.attribute = preparedItem.attribute.replace(/^entity\./, '');
     } else if (isPbehaviorPatternField(preparedItem.attribute)) {

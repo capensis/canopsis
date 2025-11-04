@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import AxiosMockAdapter from 'axios-mock-adapter';
 import Faker from 'faker';
 
-import { CANOPSIS_EDITION, EXPORT_STATUSES } from '@/constants';
+import { CANOPSIS_EDITION, EXPORT_STATUSES, VIEW_SCREEN_MODES } from '@/constants';
 
 import request from '@/services/request';
 
@@ -540,6 +540,60 @@ export const createViewModule = () => {
   };
 };
 
+export const createTemplateVarsModule = () => {
+  const fetchEntityServicesVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchEventFiltersVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchLinkRulesVarsWithoutStore = jest.fn().mockResolvedValue({ alarm: [], entity: [] });
+  const fetchScenariosVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchWidgetsVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchDeclareTicketRulesVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchDynamicInfosVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchInstructionsVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchJobsVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchMetaAlarmRulesVarsWithoutStore = jest.fn().mockResolvedValue([]);
+  const fetchList = jest.fn();
+  const items = jest.fn().mockReturnValue([]);
+  const pending = jest.fn().mockReturnValue(false);
+
+  const templateVarsModule = {
+    name: 'template/vars',
+    getters: {
+      items,
+      pending,
+    },
+    actions: {
+      fetchList,
+      fetchEntityServicesVarsWithoutStore,
+      fetchEventFiltersVarsWithoutStore,
+      fetchLinkRulesVarsWithoutStore,
+      fetchScenariosVarsWithoutStore,
+      fetchWidgetsVarsWithoutStore,
+      fetchDeclareTicketRulesVarsWithoutStore,
+      fetchDynamicInfosVarsWithoutStore,
+      fetchInstructionsVarsWithoutStore,
+      fetchJobsVarsWithoutStore,
+      fetchMetaAlarmRulesVarsWithoutStore,
+    },
+  };
+
+  return {
+    templateVarsModule,
+    fetchEntityServicesVarsWithoutStore,
+    fetchEventFiltersVarsWithoutStore,
+    fetchLinkRulesVarsWithoutStore,
+    fetchScenariosVarsWithoutStore,
+    fetchWidgetsVarsWithoutStore,
+    fetchDeclareTicketRulesVarsWithoutStore,
+    fetchDynamicInfosVarsWithoutStore,
+    fetchInstructionsVarsWithoutStore,
+    fetchJobsVarsWithoutStore,
+    fetchMetaAlarmRulesVarsWithoutStore,
+    fetchList,
+    items,
+    pending,
+  };
+};
+
 export const createServiceModule = () => {
   const fetchEntityInfosKeysWithoutStore = jest.fn().mockReturnValue({
     data: [],
@@ -592,20 +646,24 @@ export const createServiceModule = () => {
 
 export const createEntityModule = () => {
   const fetchStateSettingWithoutStore = jest.fn();
+  const fetchEntityInfosLogsListWithoutStore = jest.fn();
 
   afterEach(() => {
     fetchStateSettingWithoutStore.mockClear();
+    fetchEntityInfosLogsListWithoutStore.mockClear();
   });
 
   const entityModule = {
     name: 'entity',
     actions: {
       fetchStateSettingWithoutStore,
+      fetchEntityInfosLogsListWithoutStore,
     },
   };
 
   return {
     fetchStateSettingWithoutStore,
+    fetchEntityInfosLogsListWithoutStore,
     entityModule,
   };
 };
@@ -656,21 +714,29 @@ export const createActiveViewModule = () => {
   const unregisterEditingOffHandler = jest.fn();
   const fetchActiveView = jest.fn();
   const toggleEditing = jest.fn();
+  const setScreenMode = jest.fn();
+  const editing = jest.fn().mockReturnValue(false);
+  const item = jest.fn().mockReturnValue({});
+  const screenMode = jest.fn().mockReturnValue(VIEW_SCREEN_MODES.default);
+  const isKioskScreenMode = jest.fn().mockReturnValue(false);
   const resumePeriodicRefresh = jest.fn();
   const pausePeriodicRefresh = jest.fn();
-  const editing = jest.fn().mockReturnValue(false);
   const periodicRefreshPaused = jest.fn().mockReturnValue(false);
 
   const activeViewModule = {
     name: 'activeView',
     getters: {
       editing,
+      item,
+      screenMode,
+      isKioskScreenMode,
       periodicRefreshPaused,
     },
     actions: {
       registerEditingOffHandler,
       unregisterEditingOffHandler,
       toggleEditing,
+      setScreenMode,
       fetch: fetchActiveView,
       resumePeriodicRefresh,
       pausePeriodicRefresh,
@@ -689,6 +755,7 @@ export const createActiveViewModule = () => {
   });
 
   return {
+    item,
     editing,
     registerEditingOffHandler,
     unregisterEditingOffHandler,
@@ -1454,5 +1521,97 @@ export const createRemediationInstructionModule = () => {
   return {
     remediationInstructionModule,
     fetchRemediationInstructionsListWithoutStore,
+  };
+};
+
+export const createEntityInfoPropertyModule = () => {
+  const entityInfoProperties = jest.fn().mockReturnValue([]);
+  const entityInfoPropertiesWithAlias = jest.fn().mockReturnValue([]);
+  const entityInfoPropertiesWithoutAlias = jest.fn().mockReturnValue([]);
+  const entityInfoPropertyMeta = jest.fn().mockReturnValue({
+    total_count: 0,
+  });
+  const entityInfoPropertyPending = jest.fn().mockReturnValue(false);
+
+  const fetchEntityInfoPropertiesList = jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      total_count: 0,
+    },
+  });
+  const fetchEntityInfoPropertiesListWithoutStore = jest.fn().mockResolvedValue({
+    data: [],
+    meta: {
+      total_count: 0,
+    },
+  });
+
+  const createEntityInfoProperty = jest.fn();
+  const updateEntityInfoProperty = jest.fn();
+  const removeEntityInfoProperty = jest.fn();
+
+  afterEach(() => {
+    entityInfoProperties.mockClear();
+    entityInfoPropertiesWithAlias.mockClear();
+    entityInfoPropertiesWithoutAlias.mockClear();
+    entityInfoPropertyMeta.mockClear();
+    entityInfoPropertyPending.mockClear();
+    fetchEntityInfoPropertiesList.mockClear();
+    fetchEntityInfoPropertiesListWithoutStore.mockClear();
+    createEntityInfoProperty.mockClear();
+    updateEntityInfoProperty.mockClear();
+    removeEntityInfoProperty.mockClear();
+  });
+
+  const entityInfoPropertyModule = {
+    name: 'entityInfoProperty',
+    getters: {
+      items: entityInfoProperties,
+      itemsWithAlias: entityInfoPropertiesWithAlias,
+      itemsWithoutAlias: entityInfoPropertiesWithoutAlias,
+      meta: entityInfoPropertyMeta,
+      pending: entityInfoPropertyPending,
+    },
+    actions: {
+      fetchList: fetchEntityInfoPropertiesList,
+      create: createEntityInfoProperty,
+      update: updateEntityInfoProperty,
+      remove: removeEntityInfoProperty,
+      fetchListWithoutStore: fetchEntityInfoPropertiesListWithoutStore,
+    },
+  };
+
+  return {
+    entityInfoPropertyModule,
+    entityInfoProperties,
+    entityInfoPropertiesWithAlias,
+    entityInfoPropertiesWithoutAlias,
+    entityInfoPropertyMeta,
+    entityInfoPropertyPending,
+    fetchEntityInfoPropertiesList,
+    fetchEntityInfoPropertiesListWithoutStore,
+    createEntityInfoProperty,
+    updateEntityInfoProperty,
+    removeEntityInfoProperty,
+  };
+};
+
+export const createPbehaviorPatternsModule = () => {
+  const runAlarmFiltering = jest.fn().mockResolvedValue();
+
+  const pbehaviorPatternsModule = {
+    name: 'pbehaviorPatterns',
+    actions: {
+      runAlarmFiltering,
+    },
+  };
+
+  afterEach(() => {
+    runAlarmFiltering.mockClear();
+  });
+
+  return {
+    runAlarmFiltering,
+    pbehaviorPatternsModule,
   };
 };

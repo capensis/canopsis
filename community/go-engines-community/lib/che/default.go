@@ -70,7 +70,7 @@ func NewEngine(
 	notifStore := usernotification.NewStore(primaryDbClient, amqpChannel, json.NewEncoder(),
 		canopsis.ApiNotificationExchangeName, "", canopsis.JsonContentType)
 	eventFilterFailureService := eventfilter.NewFailureService(primaryDbClient, notifStore,
-		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilter, logger)
+		utils.MinDuration(canopsis.DefaultFlushInterval, options.PeriodicalWaitTime), apisecurity.ObjEventFilterRule, logger)
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.CheEngineName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
 		cfg.Global.ReconnectRetries, cfg.Global.GetReconnectTimeout(), logger)
@@ -83,7 +83,7 @@ func NewEngine(
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeEnrichment, eventfilter.NewEnrichmentApplicator(
 		externalDataContainer,
-		eventfilter.NewActionProcessor(alarmConfigProvider, eventFilterFailureService, templateExecutor, techMetricsSender),
+		eventfilter.NewActionProcessor(alarmConfigProvider, eventFilterFailureService, templateExecutor),
 		eventFilterFailureService,
 	))
 	ruleApplicatorContainer.Set(eventfilter.RuleTypeDrop, eventfilter.NewDropApplicator())
@@ -180,22 +180,25 @@ func NewEngine(
 
 	engine.AddRoutine(func(ctx context.Context) error {
 		eventFilterEventCounter.Run(ctx)
+
 		return nil
 	})
 	engine.AddRoutine(func(ctx context.Context) error {
 		eventFilterFailureService.Run(ctx)
+
 		return nil
 	})
 	engine.AddRoutine(func(ctx context.Context) error {
 		techMetricsSender.Run(ctx)
+
 		return nil
 	})
 
 	eventProcessor := event.NewProcessorContainer()
-	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(primaryDbClient, contextGraphManager, eventFilterService, logger))
-	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(primaryDbClient, contextGraphManager, eventFilterService, logger))
-	eventProcessor.Set(types.SourceTypeConnector, event.NewConnectorProcessor(primaryDbClient, contextGraphManager, eventFilterService))
-	eventProcessor.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient, contextGraphManager, eventFilterService))
+	eventProcessor.Set(types.SourceTypeResource, event.NewResourceProcessor(primaryDbClient, contextGraphManager, eventFilterService, metricsSender, logger))
+	eventProcessor.Set(types.SourceTypeComponent, event.NewComponentProcessor(primaryDbClient, contextGraphManager, eventFilterService, metricsSender, logger))
+	eventProcessor.Set(types.SourceTypeConnector, event.NewConnectorProcessor(primaryDbClient, contextGraphManager, eventFilterService, metricsSender))
+	eventProcessor.Set(types.SourceTypeService, event.NewServiceProcessor(primaryDbClient, contextGraphManager, eventFilterService, metricsSender))
 
 	mainMessageProcessor := &messageProcessor{
 		FeaturePrintEventOnError: options.PrintEventOnError,

@@ -105,6 +105,7 @@ export const MODALS = {
   createService: 'create-service',
   entityDependenciesList: 'entity-dependencies-list',
   entitiesRootCauseDiagram: 'entities-root-cause-diagram',
+  createEntityInfoProperty: 'create-entity-info-property',
   createEntityInfo: 'create-entity-info',
   serviceEntities: 'service-entities',
   entitiesList: 'entities-list',
@@ -114,8 +115,6 @@ export const MODALS = {
   createStateSetting: 'create-state-setting',
   createJunitStateSetting: 'create-junit-state-setting',
   stateSettingInheritedEntityPattern: 'state-setting-inherited-entity-pattern',
-
-  archiveDisabledEntities: 'archive-disabled-entities',
 
   createIcon: 'create-icon',
 
@@ -127,4 +126,9 @@ export const MODALS = {
   createExternalDataTable: 'create-external-data-table',
   createExternalDataTableRecord: 'create-external-data-table-record',
   importExternalDataTableRecords: 'import-external-data-table-records',
+
+  createTemplateTestingData: 'create-template-testing-data',
+  createTemplateTestingTest: 'create-template-testing-test',
+
+  createExternalAuthToken: 'create-external-auth-token',
 };

@@ -16,5 +16,9 @@ export default createCRUDModule({
     async fetchActiveListWithoutStore() {
       return request.get(API_ROUTES.broadcastMessage.activeList);
     },
+
+    markAsRead(context, { id }) {
+      return request.put(`${API_ROUTES.broadcastMessage.list}/${id}/read`);
+    },
   },
 });

@@ -5,8 +5,8 @@
         v-field="form.app_title"
         :disabled="disabled"
         :label="$t('userInterface.appTitle')"
+        :variables="variables"
         class="fill-width"
-        with-default-variables
       />
     </v-layout>
     <c-duration-field
@@ -73,10 +73,21 @@
         />
       </v-flex>
       <v-flex xs6>
-        <c-enabled-field
-          v-field="form.show_header_on_kiosk_mode"
-          :label="$t('userInterface.showHeaderOnKioskMode')"
-        />
+        <v-layout>
+          <c-enabled-field
+            v-field="form.show_header_on_kiosk_mode"
+            :label="$t('userInterface.showHeaderOnKioskMode')"
+          >
+            <template #append>
+              <c-help-icon
+                :text="$t('userInterface.showHeaderOnKioskModeTooltip')"
+                color="grey darken-1"
+                icon="help"
+                top
+              />
+            </template>
+          </c-enabled-field>
+        </v-layout>
       </v-flex>
     </v-layout>
     <v-layout>
@@ -125,7 +136,6 @@
           :label="$t('userInterface.versionDescriptionTooltip')"
           :config="textEditorConfig"
           :variables="versionDescriptionVariables"
-          with-default-variables
           public
         />
       </v-flex>
@@ -136,7 +146,7 @@
           v-field="form.footer"
           :label="$t('userInterface.footer')"
           :config="textEditorConfig"
-          with-default-variables
+          :variables="variables"
           public
         />
       </v-flex>
@@ -147,7 +157,7 @@
           v-field="form.login_page_description"
           :label="$t('userInterface.description')"
           :config="textEditorConfig"
-          with-default-variables
+          :variables="variables"
           public
         />
       </v-flex>
@@ -177,7 +187,10 @@ import { computed, ref } from 'vue';
 
 import { MAX_ICON_SIZE_IN_KB } from '@/constants';
 
+import { objectToVariables, variableTemplatePreparer } from '@/helpers/variables';
+
 import { useModelField } from '@/hooks/form/model-field';
+import { useTemplateVars } from '@/hooks/store/modules/template-vars';
 
 import FileSelector from '@/components/forms/fields/file-selector.vue';
 import TextEditorField from '@/components/forms/fields/text-editor-field.vue';
@@ -203,16 +216,21 @@ export default {
   },
   setup(props, { emit }) {
     const { updateField } = useModelField(props, emit);
+    const { templateVars } = useTemplateVars();
 
     const maxFileSize = MAX_ICON_SIZE_IN_KB;
 
     const fileSelectorElement = ref(null);
+    const variables = computed(() => objectToVariables({ env: templateVars.value }));
 
-    const versionDescriptionVariables = [
-      'edition',
-      'versionUpdated',
-      'serialName',
-    ].map(value => ({ value, text: value }));
+    const versionDescriptionVariables = computed(() => ([
+      ...variables.value,
+      ...[
+        'edition',
+        'versionUpdated',
+        'serialName',
+      ].map(text => ({ text, value: variableTemplatePreparer(text) })),
+    ]));
 
     const textEditorConfig = computed(() => ({ disabled: props.disabled }));
 
@@ -235,6 +253,7 @@ export default {
       maxFileSize,
       fileSelectorElement,
       textEditorConfig,
+      variables,
       versionDescriptionVariables,
 
       changeLogoFile,

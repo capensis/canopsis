@@ -86,8 +86,9 @@ func NewProvider(
 			ClientSecret: config.ClientSecret,
 			RedirectURL:  config.RedirectURL,
 			Endpoint: oauth2.Endpoint{
-				AuthURL:  config.AuthURL,
-				TokenURL: config.TokenURL,
+				AuthURL:   config.AuthURL,
+				TokenURL:  config.TokenURL,
+				AuthStyle: config.AuthStyle,
 			},
 			Scopes: config.Scopes,
 		},
@@ -127,6 +128,7 @@ func (p *provider) loadOpenIDMetadata(ctx context.Context) error {
 
 	p.oidcVerifier = p.oidcProvider.Verifier(&oidc.Config{ClientID: p.config.ClientID})
 	p.oauth2Config.Endpoint = p.oidcProvider.Endpoint()
+	p.oauth2Config.Endpoint.AuthStyle = p.config.AuthStyle
 	p.oidcProviderValidUntil = time.Now().Add(auth.DefaultMetaValidDuration)
 
 	return nil
@@ -519,7 +521,7 @@ func (p *provider) getUserInfoOAuth2(ctx context.Context, token *oauth2.Token) (
 
 	defer resp.Body.Close()
 
-	flatResp, err := libhttp.FlattenResponse(nil, resp, p.maxResponseSize)
+	flatResp, _, err := libhttp.FlattenResponse(nil, resp, p.maxResponseSize)
 	if err != nil {
 		return "", nil, errors.New("failed to flatten response")
 	}
@@ -558,13 +560,18 @@ func (p *provider) getUserInfoOpenID(ctx context.Context, token *oauth2.Token, i
 		return "", userInfo, fmt.Errorf("failed to decode token claims: %w", err)
 	}
 
-	if p.logger.GetLevel() == zerolog.DebugLevel {
-		b, err := json.Marshal(tokenClaims)
-		if err != nil {
-			return "", userInfo, fmt.Errorf("failed to json marshal token claims: %w", err)
-		}
+	tokenClaimsBytes, err := json.Marshal(tokenClaims)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to json marshal token claims: %w", err)
+	}
 
-		p.logger.Debug().RawJSON("token_claims", b).Msg("token claims")
+	tokenClaims, _, err = libhttp.FlattenJSON(tokenClaimsBytes)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to flatten json: %w", err)
+	}
+
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		p.logger.Debug().RawJSON("token_claims", tokenClaimsBytes).Msg("token claims")
 	}
 
 	for k, v := range tokenClaims {
@@ -581,13 +588,18 @@ func (p *provider) getUserInfoOpenID(ctx context.Context, token *oauth2.Token, i
 		return "", userInfo, fmt.Errorf("failed to decode user info claims: %w", err)
 	}
 
-	if p.logger.GetLevel() == zerolog.DebugLevel {
-		b, err := json.Marshal(userInfoClaims)
-		if err != nil {
-			return "", userInfo, fmt.Errorf("failed to json marshal user info response: %w", err)
-		}
+	userInfoClaimsBytes, err := json.Marshal(userInfoClaims)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to json marshal token claims: %w", err)
+	}
 
-		p.logger.Debug().RawJSON("user_info_response", b).Msg("user info response")
+	userInfoClaims, _, err = libhttp.FlattenJSON(userInfoClaimsBytes)
+	if err != nil {
+		return "", userInfo, fmt.Errorf("failed to flatten json: %w", err)
+	}
+
+	if p.logger.GetLevel() == zerolog.DebugLevel {
+		p.logger.Debug().RawJSON("user_info_response", userInfoClaimsBytes).Msg("user info response")
 	}
 
 	for k, v := range userInfoClaims {

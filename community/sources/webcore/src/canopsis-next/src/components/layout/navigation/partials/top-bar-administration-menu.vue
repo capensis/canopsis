@@ -1,7 +1,7 @@
 <template>
   <v-menu
     v-if="administrationGroupedLinks.length"
-    content-class="administration-menu__content"
+    content-class="top-bar-menu__content"
     bottom
     offset-y
   >
@@ -30,7 +30,7 @@
           class="top-bar-administration-menu-link"
         />
         <v-divider
-          v-if="index &lt; administrationGroupedLinks.length - 1"
+          v-if="index < administrationGroupedLinks.length - 1"
           :key="`${group.title}-divider`"
         />
       </template>
@@ -120,6 +120,11 @@ export default {
           permission: USER_PERMISSIONS.technical.eventsRecord,
         },
         {
+          route: { name: ROUTES_NAMES.adminExternalAuthTokens },
+          icon: 'security',
+          permission: USER_PERMISSIONS.technical.externalAuthTokens,
+        },
+        {
           route: { name: ROUTES_NAMES.adminParameters },
           icon: 'settings',
           permission: USER_PERMISSIONS.technical.parameters,
@@ -169,6 +174,11 @@ export default {
           icon: 'add_alert',
           permission: USER_PERMISSIONS.technical.stateSetting,
         },
+        {
+          route: { name: ROUTES_NAMES.adminTemplateTesting },
+          icon: 'code',
+          permission: USER_PERMISSIONS.technical.templateTesting,
+        },
       ];
     },
 
@@ -179,18 +189,9 @@ export default {
         USER_PERMISSIONS.technical.kpi,
         USER_PERMISSIONS.technical.maintenance,
         USER_PERMISSIONS.technical.eventsRecord,
+        USER_PERMISSIONS.technical.templateTesting,
       ];
     },
   },
 };
 </script>
-
-<style lang="scss">
-.administration-menu__content {
-  max-height: 95vh;
-
-  .v-avatar {
-    border-radius: unset;
-  }
-}
-</style>

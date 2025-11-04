@@ -10,10 +10,12 @@ export default {
     configurations: 'Configurations',
     jobs: 'Jobs',
     statistics: 'Remediation statistics',
+    instructionStats: 'Instruction rating',
   },
 
   instruction: {
     name: 'Instruction name',
+    manualInstructionsProgress: 'Manual instructions progress',
     usingInstruction: 'Cannot be deleted since it is in use',
     addStep: 'Add step',
     addOperation: 'Add operation',
@@ -39,13 +41,19 @@ export default {
     executeInstruction: 'Execute {instructionName}',
     resumeInstruction: 'Resume {instructionName}',
     inProgressInstruction: '{instructionName} in progress...',
+    retryEnabled: 'Retry for unsuccessful executions',
+    retryEnabledTooltip: 'Where execution result - Alarm state isn\'t OK',
+    retryCount: 'Number of attempts',
     types: {
       [REMEDIATION_INSTRUCTION_TYPES.simpleManual]: 'Manual simplified',
       [REMEDIATION_INSTRUCTION_TYPES.manual]: 'Manual',
       [REMEDIATION_INSTRUCTION_TYPES.auto]: 'Automatic',
     },
+    enabledRepeatTrigger: 'Repeat execution on trigger',
+    repeatTriggers: 'Repeat triggers',
     tooltips: {
       endpoint: 'Endpoint should be in question in Yes/No format',
+      enabledRepeatTriggerTooltip: 'Repeat on trigger in case if previous execution\nfailed (result - alarm state not OK)',
     },
     table: {
       rating: 'Rating',
@@ -65,11 +73,12 @@ export default {
   },
 
   instructionExecute: {
+    cancelInstruction: 'Cancel instruction',
+    pauseInstruction: 'Pause instruction',
     timeToComplete: '{duration} to complete',
     completedAt: 'Completed at {time}',
     failedAt: 'Failed at {time}',
     startedAt: 'Started at {time}',
-    closeConfirmationText: 'Would you like to resume this instruction later?',
     queueNumber: '{number} {name} jobs are in the queue',
     runJobs: 'Run jobs',
     popups: {
@@ -77,7 +86,9 @@ export default {
       failed: '{instructionName} has been failed. Please escalate this problem further',
       connectionError: 'There is a problem with connection. Please click on refresh button or reload the page.',
       wasAborted: '{instructionName} has been aborted',
-      wasPaused: 'The {instructionName} instruction on {alarmName} alarm was paused at {date}. You can resume it manually.',
+      wasPaused: '{instructionName} instruction paused.',
+      wasFinished: '{instructionName} instruction finished.',
+      wasFailed: '{instructionName} instruction failed.',
       wasRemovedOrDisabled: 'The {instructionName} instruction was removed or disabled.',
     },
     jobs: {
@@ -90,7 +101,6 @@ export default {
       skip: 'Skip job',
       await: 'Await',
       failedReason: 'Failed reason',
-      output: 'Output',
       instructionFailed: 'Instruction failed',
       instructionComplete: 'Instruction complete',
       stopped: 'Stopped',
