@@ -55,7 +55,10 @@ export const widgetAlarmsSocketMixin = {
 
       if (!isEqual(mapIds(queries), mapIds(prevQueries))) {
         this.leaveAlarmDetailsSocketRoom();
-        this.joinToAlarmDetailsSocketRoom(queries);
+
+        if (queries.length) {
+          this.joinToAlarmDetailsSocketRoom(queries);
+        }
       }
     },
 

@@ -1,0 +1,6 @@
+BEGIN;
+
+DROP MATERIALIZED VIEW IF EXISTS che_infos_summary_daily;
+DROP TABLE IF EXISTS che_infos;
+
+COMMIT;

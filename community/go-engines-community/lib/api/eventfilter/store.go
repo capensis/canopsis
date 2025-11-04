@@ -28,6 +28,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -312,18 +313,24 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 			return err
 		}
 
+		_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": request.ID, "unread": true}, bson.M{
+			"$unset": bson.M{
+				"unread": "",
+			},
+		})
+		if err != nil {
+			return err
+		}
+
 		response, err = s.GetByID(ctx, model.ID)
+
 		return err
 	})
 	if err != nil || response == nil {
 		return nil, err
 	}
 
-	_, err = s.dbFailureCollection.UpdateMany(ctx, bson.M{"rule": request.ID, "unread": true}, bson.M{
-		"$unset": bson.M{
-			"unread": "",
-		},
-	})
+	err = s.notificationStore.DeleteForEventFilterFailure(ctx, request.ID)
 	if err != nil {
 		return nil, err
 	}
@@ -725,7 +732,21 @@ func (s *store) validateExdataTpls(
 			}
 
 			if td, ok := exdataTestData[i]; ok {
-				externalData[d.Reference] = td.Body
+				b, err := s.encoder.Encode(td.Body)
+				if err != nil {
+					return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is not JSON.")
+				}
+
+				flatten, basicRes, err := http.FlattenJSON(b)
+				if err != nil {
+					return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is not JSON.")
+				}
+
+				if flatten == nil {
+					externalData[d.Reference] = basicRes
+				} else {
+					externalData[d.Reference] = flatten
+				}
 			} else {
 				return nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is missing.")
 			}

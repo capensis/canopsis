@@ -5,6 +5,7 @@
     :hide-default-header="indent !== 0"
     :items-per-page="preparedItems.length"
     :expanded.sync="expanded"
+    :class="{ 'permissions-table--collapsed-header': indent !== 0 }"
     class="permissions-table"
     item-key="_id"
     hide-default-footer
@@ -130,7 +131,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.permissions-table ::v-deep {
+.permissions-table {
+  &--collapsed-header ::v-deep thead {
+    visibility: collapse;
+
+    th {
+      position: relative !important;
+      top: 0 !important;
+    }
+  }
+
+  ::v-deep {
   --topBarHeight: 48px;
   --checkboxCellWidth: 112px;
   --cellPadding: 8px 8px;
@@ -185,5 +196,6 @@ export default {
     }
   }
   }
+}
 }
 </style>

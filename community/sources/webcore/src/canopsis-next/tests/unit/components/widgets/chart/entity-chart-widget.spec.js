@@ -138,13 +138,15 @@ describe('entity-chart-widget', () => {
 
     await flushPromises();
 
-    expect(fetchEntityAggregateMetricsWithoutStore).toBeCalledWith(
+    expect(fetchEntityAggregateMetricsWithoutStore).toHaveBeenCalledWith(
       expect.any(Object),
       {
         params: {
           entity: entityId,
           from: 1383865200,
+          prev_from: 1383865200,
           to: 1386370800,
+          prev_to: 1386370800,
           with_history: true,
           sampling: SAMPLINGS.day,
           parameters: [

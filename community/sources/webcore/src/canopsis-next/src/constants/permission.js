@@ -206,6 +206,7 @@ export const USER_PERMISSIONS = {
     storageSettings: `${USER_PERMISSIONS_PREFIXES.technical.admin}_storageSettings`,
     icon: `${USER_PERMISSIONS_PREFIXES.technical.admin}_icon`,
     eventsRecord: `${USER_PERMISSIONS_PREFIXES.technical.admin}_eventsRecord`,
+    externalAuthTokens: `${USER_PERMISSIONS_PREFIXES.technical.admin}_externalAuthTokens`,
     viewImportExport: `${USER_PERMISSIONS_PREFIXES.technical.admin}_view_import_export`,
     templateTesting: `${USER_PERMISSIONS_PREFIXES.technical.admin}_templateTesting`,
     exploitation: {
@@ -493,6 +494,7 @@ export const USER_PERMISSIONS = {
       declareTicketRule: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_rule`,
       declareTicketExecution: `${USER_PERMISSIONS_PREFIXES.api}_declare_ticket_execution`,
       linkRule: `${USER_PERMISSIONS_PREFIXES.api}_link_rule`,
+      webhookTokenRule: `${USER_PERMISSIONS_PREFIXES.api}_webhook_token_rule`,
     },
     remediation: {
       instruction: `${USER_PERMISSIONS_PREFIXES.api}_instruction`,

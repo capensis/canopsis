@@ -1,9 +1,13 @@
+import { createNamespacedHelpers } from 'vuex';
+
 import { MODALS } from '@/constants';
 
 import { entitiesViewGroupMixin } from '@/mixins/entities/view/group';
 import { permissionsTechnicalViewMixin } from '@/mixins/permissions/technical/view';
 
 import { layoutNavigationEditingModeMixin } from './editing-mode';
+
+const { mapGetters } = createNamespacedHelpers('activeView');
 
 export const layoutNavigationGroupsBarGroupMixin = {
   mixins: [
@@ -15,6 +19,15 @@ export const layoutNavigationGroupsBarGroupMixin = {
     group: {
       type: Object,
       required: true,
+    },
+  },
+  computed: {
+    ...mapGetters({
+      activeView: 'item',
+    }),
+
+    isActiveGroup() {
+      return this.activeView?.group?._id === this.group._id;
     },
   },
   methods: {

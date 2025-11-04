@@ -9,14 +9,16 @@
     advanced-pagination
     @update:options="$emit('update:options', $event)"
   >
-    <template #status="{ item }">
-      {{ $t(`broadcastMessage.statuses.${item.status}`) }}
-    </template>
     <template #message="{ item }">
       <broadcast-message
         :message="item.message"
         :color="item.color"
       />
+    </template>
+    <template #status="{ item }">
+      <span :class="{ 'success--text': item.status === activeStatus, 'grey--text': item.status !== activeStatus }">
+        {{ $t(`broadcastMessage.statuses.${item.status}`) }}
+      </span>
     </template>
     <template #start="{ item }">
       {{ item.start | date }}
@@ -83,18 +85,20 @@ export default {
     },
   },
   setup(props) {
+    const activeStatus = BROADCAST_MESSAGES_STATUSES.active;
+
     const { t } = useI18n();
 
     const headers = computed(() => [
       {
-        text: t('common.status'),
-        value: 'status',
+        text: t('common.preview'),
+        value: 'message',
+        width: 400,
         sortable: false,
       },
       {
-        text: t('common.preview'),
-        value: 'message',
-        width: 300,
+        text: t('common.status'),
+        value: 'status',
         sortable: false,
       },
       {
@@ -132,7 +136,10 @@ export default {
     }));
 
     return {
+      activeStatus,
+
       headers,
+
       preparedBroadcastMessages,
     };
   },

@@ -321,10 +321,6 @@ export const StateSettingInheritedEntityPattern = () => ({
   component: import(/* webpackChunkName: "Context" */ './state-setting/state-setting-inherited-entity-pattern.vue'),
   loading: LoaderOverlay,
 });
-export const ArchiveDisabledEntities = () => ({
-  component: import(/* webpackChunkName: "Parameters" */ './storage-setting/archive-disabled-entities.vue'),
-  loading: LoaderOverlay,
-});
 export const CreateIdleRule = () => ({
   component: import(/* webpackChunkName: "IdleRule" */ './idle-rule/create-idle-rule.vue'),
   loading: LoaderOverlay,
@@ -442,6 +438,11 @@ export const CreateExternalDataTableRecord = () => ({
 
 export const ImportExternalDataTableRecords = () => ({
   component: import(/* webpackChunkName: "ExternalData" */ './external-data-table/import-external-data-table-records.vue'),
+  loading: LoaderOverlay,
+});
+
+export const CreateExternalAuthToken = () => ({
+  component: import(/* webpackChunkName: "ExternalAuthToken" */ './external-auth-token/create-external-auth-token.vue'),
   loading: LoaderOverlay,
 });
 
