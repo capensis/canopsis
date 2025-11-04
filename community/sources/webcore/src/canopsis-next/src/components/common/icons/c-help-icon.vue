@@ -12,6 +12,7 @@
         :color="color"
         :size="size"
         :class="iconClass"
+        :small="small"
         v-on="on"
       >
         {{ icon }}
@@ -63,6 +64,10 @@ export default {
     },
     size: {
       type: String,
+      required: false,
+    },
+    small: {
+      type: Boolean,
       required: false,
     },
     iconClass: {

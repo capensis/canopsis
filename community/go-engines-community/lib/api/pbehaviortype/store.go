@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	libpriority "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -35,6 +36,8 @@ type store struct {
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
+
+	dupErrorParser validation.DuplicateErrorParser
 }
 
 // NewStore instantiates pbehavior type store.
@@ -45,6 +48,11 @@ func NewStore(db mongo.DbClient, authorProvider author.Provider) Store {
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description", "type"},
 		defaultSortBy:         "name",
+
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"_id":  "ID already exists.",
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -169,6 +177,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 		_, err = s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 
@@ -249,6 +261,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 				"hidden": doc.Hidden,
 			}})
 			if err != nil {
+				if mongodriver.IsDuplicateKeyError(err) {
+					return s.dupErrorParser.Parse(err)
+				}
+
 				return err
 			}
 
@@ -263,6 +279,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 			result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
 			if err != nil || result.MatchedCount == 0 {
+				if mongodriver.IsDuplicateKeyError(err) {
+					return s.dupErrorParser.Parse(err)
+				}
+
 				return err
 			}
 		}
@@ -378,7 +398,7 @@ func (s *store) isLinkedToException(ctx context.Context, id string) (bool, error
 
 // isLinkedToAction checks if there is action with linked type.
 func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
-	actionCollection := s.dbClient.Collection(mongo.ScenarioMongoCollection)
+	actionCollection := s.dbClient.Collection(mongo.ScenarioCollection)
 	res := actionCollection.FindOne(ctx, bson.M{
 		"actions": bson.M{
 			"$elemMatch": bson.M{
@@ -462,7 +482,7 @@ func getDefaultAndDeletablePipeline(prioritiesOfDefaultTypes []int64) []bson.M {
 			"as": "pbhs",
 		}},
 		{"$lookup": bson.M{
-			"from": mongo.ScenarioMongoCollection,
+			"from": mongo.ScenarioCollection,
 			"let":  bson.M{"type": "$_id"},
 			"pipeline": []bson.M{
 				{"$match": bson.M{"$expr": bson.M{"$eq": bson.A{"$actions.parameters.type", "$$type"}}}},

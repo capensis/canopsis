@@ -15,16 +15,21 @@ var ErrResponseTooLong = errors.New("response too long")
 const buffChunk = 512
 
 type ResponseError struct {
+	statusCode int
 	failReason string
 	err        error
 }
 
-func NewResponseError(err error, failReason string) *ResponseError {
-	return &ResponseError{failReason: failReason, err: err}
+func NewResponseError(err error, statusCode int, failReason string) *ResponseError {
+	return &ResponseError{statusCode: statusCode, failReason: failReason, err: err}
 }
 
 func (e *ResponseError) Error() string {
 	return e.err.Error()
+}
+
+func (e *ResponseError) StatusCode() int {
+	return e.statusCode
 }
 
 func (e *ResponseError) FailReason() string {
@@ -35,7 +40,7 @@ func (e *ResponseError) Unwrap() error {
 	return e.err
 }
 
-func ReadResponse(response *http.Response, maxSize int64) ([]byte, error) {
+func ReadResponse(responseBody io.ReadCloser, maxSize int64) ([]byte, error) {
 	if maxSize <= 0 {
 		return nil, &ResponseError{
 			failReason: ErrResponseTooLong.Error(),
@@ -48,7 +53,7 @@ func ReadResponse(response *http.Response, maxSize int64) ([]byte, error) {
 		if len(b) == cap(b) {
 			b = append(b, 0)[:len(b)]
 		}
-		n, err := response.Body.Read(b[len(b):cap(b)])
+		n, err := responseBody.Read(b[len(b):cap(b)])
 		b = b[:len(b)+n]
 		if err != nil {
 			if errors.Is(err, io.EOF) {
@@ -96,13 +101,18 @@ func ValidateStatusCode(
 	reqUrl := request.URL.String()
 	errMsg := ""
 	if resErrMsgKey != "" {
-		body, err := ReadResponse(response, maxSize)
+		var r io.ReadCloser
+		var err error
+		r, response.Body, err = DrainBody(response.Body)
 		if err == nil {
-			parsed, err := fastjson.ParseBytes(body)
+			body, err := ReadResponse(r, maxSize)
 			if err == nil {
-				errFieldVal := parsed.GetStringBytes(strings.Split(resErrMsgKey, ".")...)
-				if len(errFieldVal) > 0 {
-					errMsg = string(errFieldVal)
+				parsed, err := fastjson.ParseBytes(body)
+				if err == nil {
+					errFieldVal := parsed.GetStringBytes(strings.Split(resErrMsgKey, ".")...)
+					if len(errFieldVal) > 0 {
+						errMsg = string(errFieldVal)
+					}
 				}
 			}
 		}
@@ -127,26 +137,43 @@ func ValidateStatusCode(
 }
 
 // FlattenResponse reads response body to a new map[string]any with a flat hierarchy.
-func FlattenResponse(request *http.Request, response *http.Response, maxSize int64) (map[string]any, error) {
-	body, err := ReadResponse(response, maxSize)
+func FlattenResponse(request *http.Request, response *http.Response, maxSize int64) (flattenRes map[string]any, basicRes any, _ error) {
+	body, err := ReadResponse(response.Body, maxSize)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	v, err := fastjson.ParseBytes(body)
+	res, basicRes, err := FlattenJSON(body)
 	if err != nil {
 		failReason := ""
 		if request != nil {
 			failReason = "response of " + request.Method + " " + request.URL.String() + " is not valid JSON"
 		}
 
-		return nil, &ResponseError{
+		return nil, nil, &ResponseError{
 			failReason: failReason,
 			err:        err,
 		}
 	}
 
-	return flatten(v, ""), nil
+	return res, basicRes, nil
+}
+
+func FlattenJSON(b []byte) (flattenRes map[string]any, basicRes any, _ error) {
+	parsed, err := fastjson.ParseBytes(b)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	initKey := ""
+	res := flatten(parsed, initKey)
+	if len(res) == 1 {
+		if v, ok := res[initKey]; ok {
+			return nil, v, nil
+		}
+	}
+
+	return res, nil, nil
 }
 
 func flatten(in *fastjson.Value, prevKey string) map[string]any {
@@ -166,16 +193,44 @@ func flatten(in *fastjson.Value, prevKey string) map[string]any {
 			}
 		})
 	case fastjson.TypeArray:
-		for idx, v := range in.GetArray() {
+		arr := in.GetArray()
+		arrValues := make([]any, 0, len(arr))
+
+		for idx, v := range arr {
 			newPrevKey := fmt.Sprintf("%s.%d", prevKey, idx)
 			if prevKey == "" {
 				newPrevKey = newPrevKey[1:]
 			}
 
-			nm := flatten(v, newPrevKey)
-			for nk, nv := range nm {
-				out[nk] = nv
+			switch v.Type() {
+			case fastjson.TypeNull:
+				out[newPrevKey] = nil
+				arrValues = append(arrValues, nil)
+			case fastjson.TypeString:
+				out[newPrevKey] = string(v.GetStringBytes())
+				arrValues = append(arrValues, out[newPrevKey])
+			case fastjson.TypeTrue, fastjson.TypeFalse:
+				out[newPrevKey] = v.GetBool()
+				arrValues = append(arrValues, out[newPrevKey])
+			case fastjson.TypeNumber:
+				var err error
+				out[newPrevKey], err = v.Int()
+				if err != nil {
+					out[newPrevKey] = v.GetFloat64()
+				}
+
+				arrValues = append(arrValues, out[newPrevKey])
+			default:
+				nm := flatten(v, newPrevKey)
+				for nk, nv := range nm {
+					out[nk] = nv
+				}
 			}
+		}
+
+		// if all was primitives or empty
+		if len(arrValues) == len(arr) {
+			out[prevKey] = arrValues
 		}
 	case fastjson.TypeNull:
 		out[prevKey] = nil

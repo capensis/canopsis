@@ -67,6 +67,10 @@ export default {
     title: 'Données externes',
   },
 
+  [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: {
+    title: 'Informations d\'entité',
+  },
+
   /**
    * Admin access
    */
@@ -138,6 +142,12 @@ export default {
     title: 'Enregistrements d\'événements',
     message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
   },
+  [USER_PERMISSIONS.technical.templateTesting]: {
+    title: 'Studio Templates',
+  },
+  [USER_PERMISSIONS.technical.externalAuthTokens]: {
+    title: 'Jetons d\'authentification externes',
+  },
 
   /**
    * Grouped admin
@@ -149,15 +159,6 @@ export default {
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
     title: 'Consignes',
     message: 'Permet de créer des consignes de remédiation, avec ou sans job, pour corriger des situations.',
-  },
-
-  /**
-   * Notifications
-   */
-  [USER_PERMISSIONS.technical.notification.instructionStats]: {
-    title: 'Évaluation des consignes',
-    message: 'Affiche les statistiques sur l\'exécution des consignes. Les utilisateurs peuvent les évaluer en fonction de leur efficacité.',
-
   },
 
   /**

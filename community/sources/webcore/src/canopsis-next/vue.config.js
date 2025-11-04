@@ -34,7 +34,7 @@ module.exports = {
     );
 
     config.plugin('monaco-editor-webpack-plugin')
-      .use(MonacoWebpackPlugin, [{ languages: [] }]);
+      .use(MonacoWebpackPlugin, [{ languages: ['json', 'javascript'] }]);
 
     config.module.rule('html')
       .test(/^((?!index).)*\.html$/i)

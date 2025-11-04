@@ -43,6 +43,9 @@ type EntityConfiguration struct {
 	Enabled        bool                  `json:"enabled"`
 	Tags           map[string]string     `json:"tags"`
 	Action         string                `json:"action"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `json:"-"`
 }
 
 type Entity struct {
@@ -61,4 +64,7 @@ type Entity struct {
 	ImportTags     []string              `bson:"imtags"`
 	ImportSource   string                `bson:"import_source"`
 	Imported       datetime.CpsTime      `bson:"imported"`
+
+	// Aliases is used to ease find by entity info property api.
+	Aliases []string `bson:"aliases"`
 }

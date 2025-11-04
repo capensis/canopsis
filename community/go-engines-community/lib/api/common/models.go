@@ -17,6 +17,8 @@ import (
 	"github.com/valyala/fastjson"
 )
 
+const LimitLinkedRules = 11
+
 // PaginatedMeta is meta for paginated list data.
 type PaginatedMeta struct {
 	Page       int64 `json:"page"`

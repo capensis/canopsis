@@ -15,7 +15,7 @@
         </v-list-item-content>
       </v-list-item>
       <v-divider
-        v-if="index &lt; comments.length - 1"
+        v-if="index < comments.length - 1"
         :key="`divider-${index}`"
       />
     </template>

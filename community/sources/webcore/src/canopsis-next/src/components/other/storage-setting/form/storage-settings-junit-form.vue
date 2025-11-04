@@ -1,23 +1,21 @@
 <template>
-  <v-layout column>
-    <c-information-block
-      :title="$t('storageSetting.junit.title')"
-      help-icon-color="info"
+  <c-information-block :title="$t('storageSetting.junit.title')">
+    <template
+      v-if="history"
+      #subtitle=""
     >
-      <template
-        v-if="history"
-        #subtitle=""
-      >
-        <storage-settings-history-message :history="history" />
-      </template>
-      <c-enabled-duration-field
-        v-field="form.delete_after"
-        :label="$t('storageSetting.junit.deleteAfter')"
-        :help-text="$t('storageSetting.junit.deleteAfterHelpText')"
-        :name="junitDeleteAfterFieldName"
-      />
-    </c-information-block>
-  </v-layout>
+      <storage-settings-history-message :history="history" />
+    </template>
+    <c-enabled-duration-field
+      v-field="form.delete_after"
+      :label="$t('storageSetting.junit.deleteAfter')"
+      :help-text="$t('storageSetting.junit.deleteAfterHelpText')"
+      :suffix="$t('storageSetting.olderThan')"
+      name="junit.delete_after"
+      switcher
+      hide-value-on-false
+    />
+  </c-information-block>
 </template>
 
 <script>
@@ -37,11 +35,6 @@ export default {
     history: {
       type: Number,
       required: false,
-    },
-  },
-  computed: {
-    junitDeleteAfterFieldName() {
-      return 'junit.delete_after';
     },
   },
 };

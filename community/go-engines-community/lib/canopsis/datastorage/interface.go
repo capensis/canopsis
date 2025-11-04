@@ -37,6 +37,9 @@ type Config struct {
 		ArchiveAfter *datetime.DurationWithEnabled `bson:"archive_after,omitempty" json:"archive_after"`
 		DeleteAfter  *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"alarm" json:"alarm"`
+	Entity struct {
+		ArchiveAfter *datetime.DurationWithEnabled `bson:"archive_after,omitempty" json:"archive_after"`
+	} `bson:"entity" json:"entity"`
 	AlarmExternalTag struct {
 		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"alarm_external_tag" json:"alarm_external_tag"`
@@ -62,6 +65,9 @@ type Config struct {
 	EventRecords struct {
 		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
 	} `bson:"event_records" json:"event_records"`
+	EntityInfosLog struct {
+		DeleteAfter *datetime.DurationWithEnabled `bson:"delete_after,omitempty" json:"delete_after"`
+	} `bson:"entity_infos_log" json:"entity_infos_log"`
 }
 
 type HistoryWithCount struct {

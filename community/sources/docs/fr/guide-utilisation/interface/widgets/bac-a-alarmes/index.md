@@ -25,6 +25,18 @@ Au clic sur le chevron d'une alarme (tout à gauche), la chronologie de l'alarme
 
 Tous les changements opérés sur une alarme sont indiqués dans cette chronologie.
 
+### Lien unique d'alarme
+
+Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
+Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
+
+* `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
+* `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
+
+L'identifiant d'un widget est disponible pour copie dans le mode **édition**.  
+![Copier l'identifiant du widget](./img/copier-identifiant-widget.png)
+
+
 ### Filtrage des alarmes
 
 Tout l'entête du widget est prévu pour filtrer les alarmes à afficher dans la liste.
@@ -99,15 +111,8 @@ Pour chaque alarme, des actions sont disponibles.
 
 Pour le détail de chacune des actions, voir la [liste des actions](actions.md) du Bac à alarmes.
 
-!!! info "Information"
-    Vous pouvez accéder à une alarme en particulier grâce à une URL directe.  
-    Cette URL est de la forme : `http(s)://URL_CANOPSIS/alarms/<alarmID>[?widgetId=<widgetID>]`.  
-    
-    * `<alarmID>` **(requis)** : correspond à l'attribut `_id` de l'alarme.
-    * `<widgetID>` **(optionnel)** : correspond à l'identifiant d'un widget. Lorsque cet identifiant est précisé, la configuration du widget s'applique (colonnes, plus d'infos, etc.)
-    
-    L'identifiant d'un widget est disponible pour copie dans le mode **édition**.  
-    ![Copier l'identifiant du widget](./img/copier-identifiant-widget.png)
+
+
 
 ## Paramètres du widget
 
@@ -151,9 +156,15 @@ Les paramètres qui sont décrits dans ce paragraphe concernent les éléments s
 Afin d'**ajouter une colonne**, cliquez sur le bouton :material-plus:.
 Il vous reste alors à sélectionner la colonne souhaitée dans la liste.
 
-!!! tip "Astuce"
-    Vous pouvez modifier le label de la colonne en activant l'option "Etiquette personnalisée".
-    Cela est très utile lorsque vous utilisez des informations enrichies.
+Chaque colonne peut être configurée plus finement en fonction de son type :
+
+| Option                      | Utilisation                                                                                 |
+| --------------------------- | ------------------------------------------------------------------------------------------- |
+| **Étiquette personnalisée** | Définit un alias à afficher pour la colonne.                                                |
+| **Modèle personnalisé**     | Personnalise le contenu affiché dans la colonne à l'aide d'un template Handlebars.          |
+| **Interprétation HTML**     | Permet d'afficher le HTML contenu dans la colonne (au lieu de le montrer comme texte brut). |
+| **Indicateur de couleur**   | Ajoute un fond coloré en fonction de la sévérité ou de la priorité de l'alarme.             |
+| **Filtre au clic**          | Déclenche une recherche basée sur le contenu de la colonne lorsqu'on clique dessus.         |
 
 Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix rouge présente en haut à droite de la case de la colonne que vous souhaitez effacer.
 
@@ -238,18 +249,8 @@ Le bac à alarmes peut afficher plus ou moins d'alarmes sur une page.
 
 #### Mode kiosque
 
-Canopsis met à disposition un mode "kiosque" pour chaque vue, accessible via une URL construite de la manière suivante :
-
-```
-https://canopsis/kiosk-views/<view_id>/<tab_id>
-```
-
-Ces vues sont adaptées pour des écrans d'informations, de communication dans les couloirs, ou tout simplement sur les murs de salle de supervision.
-
-
-* Masquer les actions : La colonne action est masquée
-* Masquer la sélection en masse : Les actions de masse sont masquées
-* Masquer la barre des tâches : La barre d'entête (recherche, filtre, tags, etc) est masquée
+Le mode Kiosque permet d'adapter l'affichage du bac à alarmes pour une utilisation sur écran de supervision, en masquant les éléments non essentiels et en facilitant la lecture à distance.  
+La documentation du mode kiosque est disponible sur la page [Mode TV (ou Kiosque) ](./mode-kiosque.md)
 
 #### Entête collant
 
@@ -301,6 +302,14 @@ Lorsque cette option est activée, les entêtes de colonnes restent affichées e
 #### Modèle pour l'export PDF
 
 Vous pouvez personnaliser le PDF qui sera généré lors de l'export d'une alarme.  
+
+#### Actions rapides
+
+Les actions présentées dans la colonnes "actions" peuvent être sélectionnées et ordonnées.
+
+#### Actions massives rapides
+
+Les actions de masse présentées dans l'entête peuvent être sélectionnées et ordonnées.
 
 ### Agrandir le panneau
 

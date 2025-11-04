@@ -5,24 +5,30 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 type API interface {
 	common.CrudAPI
+	BulkDelete(c *gin.Context)
 }
 
 type api struct {
-	store Store
+	store  Store
+	logger zerolog.Logger
 }
 
 func NewApi(
 	store Store,
+	logger zerolog.Logger,
 ) API {
 	return &api{
-		store: store,
+		store:  store,
+		logger: logger,
 	}
 }
 
@@ -138,4 +144,19 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	c.Status(http.StatusNoContent)
+}
+
+// BulkDelete
+// @Param body body []BulkDeleteRequestItem true "body"
+func (a *api) BulkDelete(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+
+	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
+		ok, err := a.store.Delete(c, request.ID, userID)
+		if err != nil || !ok {
+			return "", err
+		}
+
+		return request.ID, nil
+	}, a.logger)
 }
