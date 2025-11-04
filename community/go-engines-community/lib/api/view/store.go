@@ -7,6 +7,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -464,7 +465,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 	if len(r.Views) > 0 {
 		pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": r.Views}}}}
 		pipeline = append(pipeline, nestedObjectsPipeline...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", common.SortAsc))
 		pipeline = append(pipeline, bson.M{"$project": bson.M{
 			"_id":      0,
 			"author":   0,
@@ -512,7 +513,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			}}}},
 		}...)
 		pipeline = append(pipeline, nestedObjectsPipeline...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", common.SortAsc))
 		pipeline = append(pipeline, []bson.M{
 			{"$project": bson.M{
 				"author":   0,
@@ -539,7 +540,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 				"position": 0,
 			}},
 		}...)
-		pipeline = append(pipeline, common.GetSortQuery("position", common.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery("position", common.SortAsc))
 		cursor, err := s.groupCollection.Aggregate(ctx, pipeline)
 		if err != nil {
 			return ExportResponse{}, err

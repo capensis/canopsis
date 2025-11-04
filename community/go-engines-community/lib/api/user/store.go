@@ -8,6 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -96,7 +97,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, reque
 	}
 	project = append(project, s.authorProvider.Pipeline()...)
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 || r.Permission != "" {
 		pipeline = append(pipeline, getRolePipeline()...)
 	} else {
@@ -117,7 +118,7 @@ func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, reque
 
 	project = append(project, getViewPipeline()...)
 
-	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	project = append(project, sort)
 	cursor, err := s.userCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,

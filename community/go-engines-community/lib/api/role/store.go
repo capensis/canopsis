@@ -8,6 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -64,7 +65,7 @@ type store struct {
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
 	beforeLimit := make([]bson.M, 0)
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
@@ -82,7 +83,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		beforeLimit,
-		common.GetSortQuery(cmp.Or(r.SortBy, "name"), r.Sort),
+		mongoquery.GetSortQuery(cmp.Or(r.SortBy, "name"), r.Sort),
 		afterLimit,
 	))
 
