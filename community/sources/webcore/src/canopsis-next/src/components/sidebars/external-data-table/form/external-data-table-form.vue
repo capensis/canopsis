@@ -100,7 +100,12 @@ export default {
     const { updateModel } = useModelField(props, emit);
     const { pending, columns, fetchColumns } = useExternalDataTableColumns();
 
-    const preparedColumns = computed(() => addPriorityColumnToColumnsArray(columns.value));
+    const preparedColumns = computed(() => addPriorityColumnToColumnsArray(columns.value).map(column => ({
+      ...column,
+
+      text: column.name,
+      value: column.name,
+    })));
 
     const updateTable = async (tableId) => {
       await fetchColumns(tableId);
