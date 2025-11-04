@@ -363,6 +363,93 @@ Deux étapes sont à suivre :
     
     kubectl cp canopsis-timescaledb-0:/tmp/postgres_canopsis_dump.tar postgres_canopsis_dump.tar
     ```
+    
+    Supprimer le Statefulset ainsi que le PVC :
+
+    ```sh
+    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
+
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete pvc
+    ```
+
+    Déploiement de PostgreSQL 17 - TimescaleDB 2.21.4
+
+    ```sh
+    kubectl apply -f - <<EOF
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: canopsis-timescaledb
+    spec:
+      selector:
+        matchLabels:
+          app.kubernetes.io/name: canopsis-pro
+      serviceName: canopsis-timescaledb-headless
+      updateStrategy:
+        type: RollingUpdate
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: canopsis-pro
+        spec:
+          containers:
+            - name: timescaledb
+              image: docker.io/timescale/timescaledb:2.21.4-pg17
+              ports:
+                - containerPort: 5432
+              env:
+                - name: TIMESCALEDB_TELEMETRY
+                  value: "off"
+                - name: POSTGRES_DB
+                  value: "canopsis"
+                - name: POSTGRES_USER
+                  value: "cpspostgres"
+                - name: POSTGRES_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: canopsis-timescaledb
+                      key: timescaledb-password
+              readinessProbe:
+                exec:
+                  command:
+                    - /bin/bash
+                    - -c
+                    - pg_isready -d \$POSTGRES_DB -U \$POSTGRES_USER
+                initialDelaySeconds: 5
+                periodSeconds: 10
+                timeoutSeconds: 5
+              volumeMounts:
+                - name: datadir
+                  mountPath: /var/lib/postgresql/data
+          imagePullSecrets:
+            - name: canopsisregistry
+      volumeClaimTemplates:
+        - metadata:
+            name: datadir
+            annotations:
+              helm.sh/resource-policy: "keep"
+          spec:
+            accessModes:
+              - ReadWriteOnce
+            resources:
+              requests:
+                storage: 8Gi
+    EOF
+    ```
+
+    Restauration du dump :
+
+    ```sh
+    kubectl cp postgres_canopsis_dump.tar canopsis-timescaledb-0:/tmp
+
+    kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis --no-owner -Ft -v /tmp/postgres_canopsis_dump.tar
+    ```
+
+    Suppresion du Statefulset :
+
+    ```sh
+    kubectl get pvc --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
+    ```
 
 ### Mise à jour de MongoDB
 
