@@ -3,7 +3,6 @@
     <c-progress-overlay :pending="pending" />
     <external-data-table-records-list
       v-model="columns"
-      :external-data-table="externalDataTable"
       :records="records"
       :pending="recordsPending"
       :has-structure="!!externalDataTable.column_configs?.length"

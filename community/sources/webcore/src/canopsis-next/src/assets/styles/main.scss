@@ -177,6 +177,10 @@ html {
   flex-shrink: 0;
 }
 
+.group-item__active, .group-panel__active {
+  background-color: var(--v-secondary-darken1) !important;
+}
+
 .c-extra-details__message {
   max-width: 600px;
   white-space: pre-line;
@@ -382,6 +386,11 @@ html {
     & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;
+
+      .v-icon {
+        word-break: normal;
+        word-wrap: normal;
+      }
     }
   }
 
@@ -392,6 +401,20 @@ html {
       text-overflow: ellipsis;
       display: block;
     }
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.sticky-bottom-buttons {
+  position: sticky;
+  bottom: 10px;
+  pointer-events: none;
+
+  button {
+    pointer-events: all;
   }
 }
 
@@ -420,9 +443,9 @@ html {
 }
 
 *[aria-required="true"] label:before {
-  content: '*';
-  padding-right: 4px;
-  color: var(--v-error-base);
+  content: '*' !important;
+  padding-right: 4px !important;
+  color: var(--v-error-base) !important;
 }
 
 @for $i from 0 through 16 {

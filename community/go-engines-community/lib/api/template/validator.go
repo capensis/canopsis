@@ -71,6 +71,10 @@ func (v *Validator) ValidateEditTestRequest(sl validator.StructLevel) {
 			if len(r.Data.Responses) == 0 {
 				sl.ReportError(r.Data.Responses, "Data.Responses", "Responses", "required", "")
 			}
+		case TypeTestWebhookTokenRule:
+			if r.Data.Response == "" {
+				sl.ReportError(r.Data.Response, "Data.Response", "Response", "required", "")
+			}
 		default:
 			sl.ReportError(r.Type, "Type", "Type", "invalid", "")
 		}

@@ -116,8 +116,6 @@ export const MODALS = {
   createJunitStateSetting: 'create-junit-state-setting',
   stateSettingInheritedEntityPattern: 'state-setting-inherited-entity-pattern',
 
-  archiveDisabledEntities: 'archive-disabled-entities',
-
   createIcon: 'create-icon',
 
   eventsRecord: 'events-record',
@@ -131,4 +129,6 @@ export const MODALS = {
 
   createTemplateTestingData: 'create-template-testing-data',
   createTemplateTestingTest: 'create-template-testing-test',
+
+  createExternalAuthToken: 'create-external-auth-token',
 };

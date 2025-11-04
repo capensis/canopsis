@@ -256,7 +256,6 @@ export default {
   sharedTokens: 'Jetons partagés',
   notAvailable: 'Indisponible',
   addMore: 'Ajouter plus',
-  seeDetails: 'Voir les détails',
   more: 'plus',
   all: 'Tous',
   attribute: 'Attribut',
@@ -324,9 +323,14 @@ export default {
   true: 'Vrai',
   false: 'Faux',
   customField: 'Champ personnalisé|Champs personnalisés',
-  last: 'Dernier',
   inProgress: 'En cours',
+  last: 'Dernier',
+  seeDetails: 'Voir les détails',
   calculated: 'Calculé',
+  token: 'Jeton',
+  requestDate: 'Date de la demande',
+  settings: 'Paramètres',
+  after: 'Après',
   defined: 'Défini',
   bulkDelete: 'Supprimer la sélection',
   variableTypes: {
@@ -621,5 +625,16 @@ export default {
       csv: 'fichier CSV',
     },
     fileSizeMb: 'Taille du fichier (MB)',
+  },
+
+  linkedRulesTooltip: {
+    andMore: 'et plus...',
+    linkedRules: {
+      widget: '<strong>Widgets</strong> qui utilisent cet élément<br><ul>{rules}</ul>',
+      eventfilter: '<strong>Filtres d\'événements</strong>\n<ul>{rules}</ul>',
+      linkrule: '<strong>Liens</strong>\n<ul>{rules}</ul>',
+      scenario: '<strong>Scénarios</strong>\n<ul>{rules}</ul>',
+      declareticketrule: '<strong>Règles de déclaration de tickets</strong>\n<ul>{rules}</ul>',
+    },
   },
 };

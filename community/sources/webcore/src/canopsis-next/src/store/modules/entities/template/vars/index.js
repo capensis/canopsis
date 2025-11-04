@@ -85,5 +85,9 @@ export default {
     fetchMetaAlarmRulesVarsWithoutStore(context, { params } = {}) {
       return request.get(API_ROUTES.templateVarsSpecificCat.metaAlarmRules, { params });
     },
+
+    fetchWebhookTokenRulesVarsWithoutStore(context, { params } = {}) {
+      return request.get(API_ROUTES.templateVarsSpecificCat.webhookTokenRules, { params });
+    },
   },
 };

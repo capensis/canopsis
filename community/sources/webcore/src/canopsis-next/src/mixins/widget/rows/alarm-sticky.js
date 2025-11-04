@@ -1,7 +1,10 @@
 import { TOP_BAR_HEIGHT } from '@/config';
 import { ALARMS_LIST_HEADER_OPACITY_DELAY } from '@/constants';
 
+import { shownHeaderMixin } from '@/mixins/shown-header';
+
 export const widgetStickyAlarmMixin = {
+  mixins: [shownHeaderMixin],
   props: {
     stickyHeader: {
       type: Boolean,

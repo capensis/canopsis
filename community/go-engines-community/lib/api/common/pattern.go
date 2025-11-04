@@ -446,10 +446,10 @@ func GetForbiddenFieldsInEntityPattern(collection string) []string {
 		mongo.MetaAlarmRulesMongoCollection,
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
-		mongo.ScenarioMongoCollection,
+		mongo.ScenarioCollection,
 		mongo.InstructionMongoCollection,
 		mongo.KpiFilterMongoCollection,
-		mongo.DeclareTicketRuleMongoCollection,
+		mongo.DeclareTicketRuleCollection,
 		mongo.LinkRuleMongoCollection,
 		mongo.AlarmTagCollection:
 		return []string{"last_event_date"}
@@ -464,9 +464,9 @@ func GetForbiddenFieldsInAlarmPattern(collection string) []string {
 		mongo.MetaAlarmRulesMongoCollection,
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
-		mongo.ScenarioMongoCollection,
+		mongo.ScenarioCollection,
 		mongo.InstructionMongoCollection,
-		mongo.DeclareTicketRuleMongoCollection,
+		mongo.DeclareTicketRuleCollection,
 		mongo.LinkRuleMongoCollection:
 		return []string{"v.last_event_date", "v.last_update_date", "v.resolved"}
 	case mongo.DynamicInfosRulesMongoCollection:
@@ -485,9 +485,9 @@ func GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection string) []string {
 		mongo.MetaAlarmRulesMongoCollection,
 		mongo.FlappingRuleMongoCollection,
 		mongo.ResolveRuleMongoCollection,
-		mongo.ScenarioMongoCollection,
+		mongo.ScenarioCollection,
 		mongo.InstructionMongoCollection,
-		mongo.DeclareTicketRuleMongoCollection,
+		mongo.DeclareTicketRuleCollection,
 		mongo.LinkRuleMongoCollection,
 		mongo.AlarmTagCollection:
 		return []string{"v.creation_date", "v.ack.t", "v.activation_date"}

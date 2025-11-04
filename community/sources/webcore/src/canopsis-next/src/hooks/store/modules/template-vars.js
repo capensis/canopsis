@@ -56,6 +56,7 @@ export const useTemplateVars = () => {
     fetchInstructionsTemplateVarsWithoutStore: 'fetchInstructionsVarsWithoutStore',
     fetchJobsTemplateVarsWithoutStore: 'fetchJobsVarsWithoutStore',
     fetchMetaAlarmRulesTemplateVarsWithoutStore: 'fetchMetaAlarmRulesVarsWithoutStore',
+    fetchWebhookTokenRulesTemplateVarsWithoutStore: 'fetchWebhookTokenRulesVarsWithoutStore',
   });
 
   return {

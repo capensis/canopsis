@@ -6,17 +6,32 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 )
 
 type API interface {
 	common.CrudAPI
 	GetActive(c *gin.Context)
+	Read(c *gin.Context)
+}
+
+func NewAPI(
+	store Store,
+	onChangeListener chan<- bool,
+	websocketHub websocket.Hub,
+) API {
+	return &api{
+		store:            store,
+		onChangeListener: onChangeListener,
+		websocketHub:     websocketHub,
+	}
 }
 
 type api struct {
 	store            Store
 	onChangeListener chan<- bool
+	websocketHub     websocket.Hub
 }
 
 // Create
@@ -47,7 +62,7 @@ func (a *api) Create(c *gin.Context) {
 // List
 // @Success 200 {object} common.PaginatedListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
-	var query FilteredQuery
+	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
 
 	if err := c.ShouldBind(&query); err != nil {
@@ -122,6 +137,7 @@ func (a *api) Delete(c *gin.Context) {
 
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
 		return
 	}
 
@@ -133,21 +149,40 @@ func (a *api) Delete(c *gin.Context) {
 // GetActive
 // @Success 200 {array} Response
 func (a *api) GetActive(c *gin.Context) {
-	actives, err := a.store.GetActive(c)
+	userID := ""
+	if v, ok := c.Get(auth.UserKey); ok {
+		userID, _ = v.(string)
+	}
+
+	res, err := a.store.GetActive(c, userID)
 	if err != nil {
 		panic(err)
 	}
-	c.JSON(http.StatusOK, actives)
+
+	c.JSON(http.StatusOK, res)
 }
 
-func NewApi(
-	store Store,
-	onChangeListener chan<- bool,
-) API {
-	return &api{
-		store:            store,
-		onChangeListener: onChangeListener,
+func (a *api) Read(c *gin.Context) {
+	userID := c.MustGet(auth.UserKey).(string)
+	ok, err := a.store.Read(c, c.Param("id"), userID)
+	if err != nil {
+		panic(err)
 	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+
+		return
+	}
+
+	msgs, err := a.store.GetActive(c, userID)
+	if err != nil {
+		panic(err)
+	}
+
+	a.websocketHub.SendToUser(userID, websocket.RoomBroadcastMessages, msgs)
+
+	c.Status(http.StatusNoContent)
 }
 
 func (a *api) sendOnChange() {

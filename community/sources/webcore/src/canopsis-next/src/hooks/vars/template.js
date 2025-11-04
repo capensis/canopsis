@@ -34,6 +34,7 @@ export const useTemplateVarsList = ({ type, form } = {}) => {
     fetchInstructionsTemplateVarsWithoutStore,
     fetchJobsTemplateVarsWithoutStore,
     fetchMetaAlarmRulesTemplateVarsWithoutStore,
+    fetchWebhookTokenRulesTemplateVarsWithoutStore,
   } = useTemplateVars();
 
   const fetchHandler = computed(() => ({
@@ -50,6 +51,7 @@ export const useTemplateVarsList = ({ type, form } = {}) => {
     [TEMPLATE_TESTING_TEST_TYPES.instruction]: fetchInstructionsTemplateVarsWithoutStore,
     [TEMPLATE_TESTING_TEST_TYPES.job]: fetchJobsTemplateVarsWithoutStore,
     [TEMPLATE_TESTING_TEST_TYPES.metaAlarmRule]: fetchMetaAlarmRulesTemplateVarsWithoutStore,
+    [TEMPLATE_TESTING_TEST_TYPES.externalAuthToken]: fetchWebhookTokenRulesTemplateVarsWithoutStore,
   }[unref(type)] ?? fetchEntityServicesTemplateVarsWithoutStore));
 
   const { prepare: prepareVars } = useVarsPrepare('templateTesting.templateVars');

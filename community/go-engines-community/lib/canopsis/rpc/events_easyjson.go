@@ -40,6 +40,12 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 			} else {
 				out.Execution = string(in.String())
 			}
+		case "token_execution":
+			if in.IsNull() {
+				in.Skip()
+			} else {
+				out.TokenExecution = string(in.String())
+			}
 		case "healthcheck":
 			if in.IsNull() {
 				in.Skip()
@@ -64,6 +70,11 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		const prefix string = ",\"execution\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Execution))
+	}
+	{
+		const prefix string = ",\"token_execution\":"
+		out.RawString(prefix)
+		out.String(string(in.TokenExecution))
 	}
 	{
 		const prefix string = ",\"healthcheck\":"
