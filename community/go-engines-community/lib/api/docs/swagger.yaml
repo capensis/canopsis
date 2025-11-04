@@ -238,7 +238,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -478,7 +478,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -523,7 +523,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -886,7 +886,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -1447,7 +1447,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -3859,7 +3859,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -4092,7 +4092,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -4560,7 +4560,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -4847,7 +4847,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5011,7 +5011,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5233,7 +5233,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5272,7 +5272,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5327,7 +5327,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5670,7 +5670,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5722,7 +5722,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -5771,7 +5771,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -6279,7 +6279,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -6802,7 +6802,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7286,7 +7286,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7361,7 +7361,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7541,7 +7541,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -7933,7 +7933,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -8353,7 +8353,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -8566,7 +8566,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -9137,7 +9137,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -9343,7 +9343,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -9754,7 +9754,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10028,7 +10028,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10241,7 +10241,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10465,7 +10465,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10819,7 +10819,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10900,7 +10900,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -10940,7 +10940,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11085,7 +11085,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11318,7 +11318,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11382,7 +11382,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -11609,7 +11609,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -12968,7 +12968,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -13063,7 +13063,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -13551,7 +13551,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -13991,7 +13991,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -14240,7 +14240,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -14491,7 +14491,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -14804,7 +14804,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -15612,7 +15612,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -15667,7 +15667,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -15823,7 +15823,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
@@ -16165,7 +16165,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: 'schemas_swagger.yaml#/definitions/common.PaginatedListResponse'
+                  - $ref: 'schemas_swagger.yaml#/definitions/pagination.ListResponse'
                   - type: object
                     properties:
                       data:
