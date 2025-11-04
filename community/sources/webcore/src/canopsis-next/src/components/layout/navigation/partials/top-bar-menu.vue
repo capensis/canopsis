@@ -56,7 +56,7 @@ export default {
     },
     withoutSort: {
       type: Boolean,
-      default: true,
+      default: false,
     },
   },
   setup(props) {
