@@ -86,9 +86,9 @@ export const useTopBarMenu = ({ permissionsWithDefaultType = [], withoutSort = t
           title: link.title || topbarTitle || title,
         };
       })
-      .filter(link => link !== null);
+      .filter(Boolean);
 
-    return withoutSort ? preparedLinks : sortBy(preparedLinks, 'title');
+    return unref(withoutSort) ? preparedLinks : sortBy(preparedLinks, 'title');
   };
 
   return {

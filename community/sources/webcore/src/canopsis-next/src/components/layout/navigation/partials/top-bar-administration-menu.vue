@@ -4,6 +4,7 @@
     :links="administrationLinks"
     :permissions-with-default-type="permissionsWithDefaultType"
     content-class="topbar-menu-administration__content"
+    without-sort
   />
 </template>
 
@@ -20,7 +21,6 @@ import { useMaintenanceActions } from './hooks/maintenance-actions';
 import TopBarMenu from './top-bar-menu.vue';
 
 export default {
-  name: 'TopBarAdministrationMenu', // We need it for recursive
   components: { TopBarMenu },
   setup() {
     const { t, tc } = useI18n();

@@ -1,10 +1,9 @@
 <template>
-  <c-page>
-    <template #header>
-      {{ $t('parameters.tabs.importExportViews') }}
-    </template>
-    <views-import-export />
-  </c-page>
+  <v-container>
+    <c-page>
+      <views-import-export />
+    </c-page>
+  </v-container>
 </template>
 
 <script>

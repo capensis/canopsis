@@ -1,5 +1,9 @@
 <template>
-  <top-bar-menu :title="userName" :links="links" without-sort />
+  <top-bar-menu
+    :title="userName"
+    :links="links"
+    without-sort
+  />
 </template>
 
 <script>
