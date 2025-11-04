@@ -1,8 +1,9 @@
 <template>
   <v-data-table
-    :items="items"
+    :items="preparedItems"
     :headers="headers"
-    :items-per-page="items.length"
+    :items-per-page="preparedItems.length"
+    :expanded.sync="expanded"
     :class="{ 'permissions-table--collapsed-header': indent !== 0 }"
     class="permissions-table"
     item-key="_id"
@@ -10,14 +11,20 @@
   >
     <template #item="{ item, isExpanded, expand }">
       <tr>
-        <td :class="{ [`pl-${indent * 3 + 2}`]: true, 'cursor-pointer': item.children }">
+        <td :class="{ [`pl-${indent * 3 + 2}`]: true }">
           <c-expand-btn
             v-if="item.children"
             :expanded="isExpanded"
             class="mr-2"
             @expand="expand"
           />
-          <span :class="{ 'font-weight-medium': item.children }">{{ item.title }}</span>
+          <span
+            :class="{ 'font-weight-medium': item.children, 'cursor-pointer': item.children }"
+            @click="item.children && expand(!isExpanded)"
+          >
+            <v-list-item-mask v-if="item.hasMask" :text="item.title" :mask="search" />
+            <span v-else>{{ item.title }}</span>
+          </span>
         </td>
         <td v-for="role in roles" :key="role.value">
           <permissions-table-cell
@@ -32,9 +39,11 @@
     <template #expanded-item="{ item }">
       <permissions-table
         v-if="item.children"
-        :treeview-permissions="item.children"
+        :items="item.children"
         :roles="roles"
         :indent="indent + 1"
+        :search="search"
+        :search-depth="searchDepth"
         @input="$listeners.input"
       />
     </template>
@@ -42,10 +51,7 @@
 </template>
 
 <script>
-import { sortBy } from 'lodash';
-import { computed } from 'vue';
-
-import { useI18n } from '@/hooks/i18n';
+import { computed, ref, inject, watch } from 'vue';
 
 import PermissionsTableCell from './permissions-table-cell.vue';
 
@@ -57,9 +63,9 @@ export default {
     event: 'input',
   },
   props: {
-    treeviewPermissions: {
-      type: Object,
-      default: () => ({}),
+    items: {
+      type: Array,
+      default: () => [],
     },
     roles: {
       type: Array,
@@ -73,23 +79,22 @@ export default {
       type: Boolean,
       default: false,
     },
+    search: {
+      type: String,
+      default: '',
+    },
+    searchDepth: {
+      type: Number,
+      required: false,
+    },
   },
   setup(props) {
-    const { t } = useI18n();
+    const preparedItems = computed(() => props.items.map(item => ({
+      ...item,
 
-    const items = computed(() => sortBy(Object.values(props.treeviewPermissions).map((item) => {
-      let { title } = item;
-
-      if (!title) {
-        title = item.name ? t(`permission.title.${item.name}`) : item._id;
-      }
-
-      return {
-        ...item,
-
-        title,
-      };
-    }), ['position', 'title']));
+      hasMask: props.search
+      && (props.searchDepth === props.indent || (!props.searchDepth && !item.children)),
+    })));
 
     const headers = computed(() => [
       { text: '', sortable: false },
@@ -97,8 +102,27 @@ export default {
       ...props.roles.map(role => ({ text: role.name, value: role._id, sortable: false })),
     ]);
 
+    /**
+     * Expand/collapse functionality for permissions table
+     * Listens to global allExpandedCounter from parent and updates expanded state accordingly
+     * Uses requestAnimationFrame for smooth UI updates based on indent level
+     */
+    const allExpandedCounter = inject('$allExpandedCounter', 0);
+
+    const expanded = ref([]);
+
+    /**
+     * Updates the expanded state based on allExpandedCounter value
+     * Expands all items if counter is positive, collapses all otherwise
+     */
+    const checkExpanded = () => expanded.value = allExpandedCounter.value > 0 ? [...preparedItems.value] : [];
+
+    watch(allExpandedCounter, () => window.requestAnimationFrame(checkExpanded, props.indent), { immediate: true });
+
     return {
-      items,
+      expanded,
+
+      preparedItems,
       headers,
     };
   },
@@ -160,6 +184,16 @@ export default {
 
   .v-input--selection-controls__input {
     margin: 0;
+  }
+
+  &.v-data-table:not(.v-data-table--expand) tbody tr {
+    &:nth-of-type(2n + 1) {
+    background-color: transparent !important;
+
+    &:hover {
+      background: var(--v-table-hover-row-color-base, #eeeeee) !important;
+    }
+  }
   }
 }
 }
