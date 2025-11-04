@@ -242,7 +242,7 @@ export const CreateBroadcastMessage = () => ({
   loading: LoaderOverlay,
 });
 export const CreateCommentTemplate = () => ({
-  component: import(/* webpackChunkName: "CommentTemplate" */ './admin/create-comment-template.vue'),
+  component: import(/* webpackChunkName: "CommentTemplate" */ './comment-template/create-comment-template.vue'),
   loading: LoaderOverlay,
 });
 export const CreateEventFilter = () => ({
