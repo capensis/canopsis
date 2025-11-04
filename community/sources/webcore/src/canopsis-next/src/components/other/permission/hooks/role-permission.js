@@ -8,7 +8,14 @@ import {
 } from 'lodash';
 import { computed, ref, unref, set } from 'vue';
 
-import { API_USER_PERMISSIONS_ROOT_GROUPS, MAX_LIMIT, MODALS, ROLE_TYPES } from '@/constants';
+import {
+  API_USER_PERMISSIONS_ROOT_GROUPS,
+  MAX_LIMIT,
+  MODALS,
+  ROLE_TYPES,
+  CRUD_ACTIONS,
+  CONDITIONAL_PERMISSIONS_MAP,
+} from '@/constants';
 
 import { permissionsToTreeview } from '@/helpers/entities/permissions/list';
 import { formToRolePermissions, roleToPermissionForm } from '@/helpers/entities/role/form';
@@ -105,9 +112,35 @@ export const useRolePermissionFetching = ({ activeTab } = {}) => {
    * @param {string|number} roleId - The identifier of the role to be modified
    * @param {Array<string|number>} permissionsIds - An array of permission identifiers to be set for the role
    */
-  const setChangedRolePermissions = (roleId, permissionsIds) => (
-    permissionsIds.forEach(permissionId => setChangedRolePermission(roleId, permissionId))
-  );
+  const setChangedRolePermissions = (roleId, permissionsIds) => {
+    permissionsIds.map(permissionId => setChangedRolePermission(roleId, permissionId));
+  };
+
+  /**
+   * Automatically enables dependent permissions based on conditional rules
+   *
+   * @param {Object} role - The role object
+   * @param {string} permissionId - The permission ID that was changed
+   * @param {boolean} value - Whether the permission was enabled or disabled
+   */
+  const enableDependentPermissions = (role, permissionId, value) => {
+    if (!value) {
+      return;
+    }
+
+    const dependencies = CONDITIONAL_PERMISSIONS_MAP[permissionId];
+
+    if (!dependencies?.length) {
+      return;
+    }
+
+    const crudActions = [CRUD_ACTIONS.create, CRUD_ACTIONS.read, CRUD_ACTIONS.update, CRUD_ACTIONS.delete];
+
+    dependencies.forEach(({ dependentPermission }) => {
+      setChangedRolePermission(role._id, dependentPermission);
+      set(rolesById.value[role._id].permissions, dependentPermission, crudActions);
+    });
+  };
 
   /**
    * Updates role permissions and their associated actions in the role-based access control system.
@@ -167,11 +200,12 @@ export const useRolePermissionFetching = ({ activeTab } = {}) => {
 
     if (!newActions.length) {
       set(rolesById.value[role._id], 'permissions', omit(role.permissions, permission._id));
-
-      return;
+    } else {
+      set(rolesById.value[role._id].permissions, permission._id, newActions);
     }
 
-    set(rolesById.value[role._id].permissions, permission._id, newActions);
+    // Handle conditional permissions after the main permission change
+    enableDependentPermissions(role, permission._id, value && newActions.length > 0);
   };
 
   /**

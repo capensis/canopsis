@@ -49,6 +49,7 @@ import { computed, onMounted } from 'vue';
 
 import { setSeveralFields } from '@/helpers/immutable';
 import { widgetColumnsToForm } from '@/helpers/entities/widget/column/form';
+import { addPriorityColumnToColumnsArray } from '@/helpers/entities/external-data-table/form';
 
 import { useModelField } from '@/hooks/form/model-field';
 
@@ -99,7 +100,12 @@ export default {
     const { updateModel } = useModelField(props, emit);
     const { pending, columns, fetchColumns } = useExternalDataTableColumns();
 
-    const preparedColumns = computed(() => columns.value.map(column => ({ text: column, value: column })));
+    const preparedColumns = computed(() => addPriorityColumnToColumnsArray(columns.value).map(column => ({
+      ...column,
+
+      text: column.name,
+      value: column.name,
+    })));
 
     const updateTable = async (tableId) => {
       await fetchColumns(tableId);

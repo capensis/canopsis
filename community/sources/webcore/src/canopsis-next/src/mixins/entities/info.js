@@ -2,7 +2,7 @@ import { createNamespacedHelpers } from 'vuex';
 import { isMatch, isArray } from 'lodash';
 
 import { DEFAULT_APP_TITLE } from '@/config';
-import { CANOPSIS_EDITION, ROUTES_NAMES, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
+import { CANOPSIS_EDITION, USER_PERMISSIONS_TO_PAGES_RULES } from '@/constants';
 
 import { sanitizeHtml } from '@/helpers/html';
 import { compile } from '@/helpers/handlebars';
@@ -10,6 +10,9 @@ import { groupedPermissionToPermission } from '@/helpers/permission';
 
 const { mapGetters, mapActions } = createNamespacedHelpers('info');
 
+/**
+ * TODO: use hook useInfo instead of mixins
+ */
 export const entitiesInfoMixin = {
   computed: {
     ...mapGetters({
@@ -50,12 +53,6 @@ export const entitiesInfoMixin = {
 
     isProVersion() {
       return this.edition === CANOPSIS_EDITION.pro;
-    },
-
-    shownHeader() {
-      return this.$route?.name === ROUTES_NAMES.viewKiosk
-        ? this.showHeaderOnKioskMode
-        : !this.$route?.meta?.hideHeader;
     },
   },
   methods: {

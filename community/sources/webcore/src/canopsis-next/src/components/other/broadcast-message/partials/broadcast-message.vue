@@ -1,6 +1,6 @@
 <template>
   <div
-    :style="{ backgroundColor: color }"
+    :style="{ backgroundColor: color, color: textColor }"
     :title="message"
     class="broadcast-message pa-2"
   >
@@ -19,6 +19,10 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+
+import { getMostReadableTextColor } from '@/helpers/color';
+
 export default {
   props: {
     message: {
@@ -29,6 +33,13 @@ export default {
       type: String,
       default: '',
     },
+  },
+  setup(props) {
+    const textColor = computed(() => getMostReadableTextColor(props.color, { level: 'AA', size: 'large' }));
+
+    return {
+      textColor,
+    };
   },
 };
 </script>

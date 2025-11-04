@@ -13,6 +13,7 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 | Option | Description |
 |--------|------------|
 | `-configPath string` | Chemin du fichier de configuration du moteur Webhook (défaut : "/opt/canopsis/etc/webhook.conf.toml") |
+| `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-lastRetryInterval duration` | Intervalle de réessai pour l'exécution d'un webhook (défaut : 1m0s) |
 | `-periodicalWaitTime duration` | Durée d'attente entre deux exécutions du processus périodique (défaut : 1m0s) |

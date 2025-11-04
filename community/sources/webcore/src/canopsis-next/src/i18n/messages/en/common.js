@@ -21,6 +21,7 @@ export default {
   toggleEditView: 'Toggle view edition mode',
   toggleEditViewSubtitle: 'If you want to save widget positions you should toggle off the editing mode for that',
   name: 'Name',
+  alias: 'Alias',
   namePrefix: 'Name prefix',
   description: 'Description',
   author: 'Author',
@@ -30,6 +31,7 @@ export default {
   stop: 'Stop',
   options: 'Options',
   type: 'Type',
+  actionType: 'Action type',
   quitEditing: 'Quit editing',
   enabled: 'Enabled',
   disabled: 'Disabled',
@@ -90,6 +92,9 @@ export default {
   to: 'To',
   tags: 'tags',
   actionsLabel: 'Actions',
+  testName: 'Test name',
+  ruleType: 'Rule type',
+  ruleName: 'Rule name',
   noResults: 'No results',
   result: 'Result',
   exploitation: 'Exploitation',
@@ -99,6 +104,7 @@ export default {
   search: 'Search',
   filters: 'Filters',
   filter: 'Filter',
+  filterByType: 'Filter by type',
   emptyObject: 'Empty object',
   startDate: 'Start date',
   endDate: 'End date',
@@ -121,6 +127,7 @@ export default {
   payload: 'Payload',
   note: 'Note',
   output: 'Output',
+  input: 'Input',
   created: 'Creation date',
   updated: 'Last update date',
   expired: 'Expired date',
@@ -237,7 +244,6 @@ export default {
   cycleDependency: 'Cycle dependency',
   checkPattern: 'Check pattern',
   checkFilter: 'Check filter',
-  itemFound: '{count} item found | {count} items found',
   canonicalType: 'Canonical type',
   map: 'Map | Maps',
   instructions: 'Instructions',
@@ -254,6 +260,7 @@ export default {
   timeTaken: 'Time taken',
   enginesMetrics: 'Engines` metrics',
   failed: 'Failed',
+  finished: 'Finished',
   close: 'Close',
   alarmId: 'Alarm ID',
   entityId: 'Entity ID',
@@ -314,14 +321,25 @@ export default {
   true: 'True',
   false: 'False',
   customField: 'Custom field|Custom fields',
+  inProgress: 'In progress',
   last: 'Last',
+  seeDetails: 'See details',
+  calculated: 'Calculated',
+  token: 'Token',
+  requestDate: 'Request date',
+  settings: 'Settings',
+  after: 'After',
+  defined: 'Defined',
+  bulkDelete: 'Remove selected',
   variableTypes: {
     string: 'String',
     number: 'Number',
     boolean: 'Boolean',
     null: 'Null',
     array: 'Array',
+    stringArray: 'Array of strings',
     object: 'Object',
+    timestamp: 'Timestamp',
   },
   mixedField: {
     types: {
@@ -330,6 +348,7 @@ export default {
       [PATTERN_FIELD_TYPES.boolean]: '@:common.variableTypes.boolean',
       [PATTERN_FIELD_TYPES.null]: '@:common.variableTypes.null',
       [PATTERN_FIELD_TYPES.stringArray]: '@:common.variableTypes.array',
+      [PATTERN_FIELD_TYPES.timestamp]: '@:common.variableTypes.timestamp',
     },
   },
   saveChanges: 'Save changes',
@@ -486,62 +505,62 @@ export default {
   },
   triggers: {
     [TRIGGERS_TYPES.create]: {
-      text: 'Alarm creation',
+      text: 'Alarm created',
     },
     [TRIGGERS_TYPES.statedec]: {
-      text: 'Alarm state decrease',
+      text: 'Alarm state decreased',
     },
     [TRIGGERS_TYPES.changestate]: {
-      text: 'Alarm state has been changed by "change state" action',
+      text: 'Alarm state changed by "change state" action',
     },
     [TRIGGERS_TYPES.stateinc]: {
-      text: 'Alarm state increase',
+      text: 'Alarm state increased',
     },
     [TRIGGERS_TYPES.changestatus]: {
-      text: 'Alarm status changes eg. flapping',
+      text: 'Alarm status changed eg. flapping',
     },
     [TRIGGERS_TYPES.ack]: {
-      text: 'Alarm has been acked',
+      text: 'Alarm acked',
     },
     [TRIGGERS_TYPES.ackremove]: {
-      text: 'Alarm has been unacked',
+      text: 'Alarm unacked',
     },
     [TRIGGERS_TYPES.cancel]: {
-      text: 'Alarm has been cancelled',
+      text: 'Alarm cancelled',
     },
     [TRIGGERS_TYPES.uncancel]: {
-      text: 'Alarm has been uncancelled',
+      text: 'Alarm uncancelled',
       helpText: 'Probably legacy trigger, because there is no way to uncancel alarm when you cancel it in the UI, but it\'s possible to send an uncancel event via API',
     },
     [TRIGGERS_TYPES.comment]: {
-      text: 'Alarm has been commented',
+      text: 'Alarm commented',
     },
     [TRIGGERS_TYPES.declareticket]: {
-      text: 'Ticket has been declared by the UI action',
+      text: 'Ticket declared by the UI action',
     },
     [TRIGGERS_TYPES.declareticketwebhook]: {
-      text: 'Ticket has been declared by the webhook',
+      text: 'Ticket declared by the webhook',
     },
     [TRIGGERS_TYPES.assocticket]: {
-      text: 'Ticket has been associated with an alarm',
+      text: 'Ticket associated with an alarm',
     },
     [TRIGGERS_TYPES.snooze]: {
-      text: 'Alarm has been snoozed',
+      text: 'Alarm snoozed',
     },
     [TRIGGERS_TYPES.unsnooze]: {
-      text: 'Alarm has been unsnoozed',
+      text: 'Alarm unsnoozed',
     },
     [TRIGGERS_TYPES.resolve]: {
-      text: 'Alarm has been resolved',
+      text: 'Alarm resolved',
     },
     [TRIGGERS_TYPES.activate]: {
-      text: 'Alarm has been activated',
+      text: 'Alarm activated',
     },
     [TRIGGERS_TYPES.pbhenter]: {
-      text: 'Alarm enters a periodic behavior',
+      text: 'Alarm entered pbehavior',
     },
     [TRIGGERS_TYPES.pbhleave]: {
-      text: 'Alarm leaves a periodic behavior',
+      text: 'Alarm leaved pbehavior',
     },
     [TRIGGERS_TYPES.instructionfail]: {
       text: 'Manual instruction has failed',
@@ -568,9 +587,15 @@ export default {
       text: 'Alarm is in not OK state after all auto instructions',
     },
     [TRIGGERS_TYPES.eventscount]: {
-      text: 'Alarm has been received a number of events',
-      selectedText: 'Alarm has been received {additionalValue} events',
+      text: 'Alarm received N events',
+      selectedText: 'Alarm received {additionalValue} events',
       additionalFieldLabel: 'Number of events',
+    },
+  },
+  repeatTriggers: {
+    [TRIGGERS_TYPES.eventscount]: {
+      text: 'Alarm received new check event',
+      selectedText: 'Alarm received new check event',
     },
   },
   request: {
@@ -598,5 +623,16 @@ export default {
       csv: 'CSV file',
     },
     fileSizeMb: 'maximum {size} MB',
+  },
+
+  linkedRulesTooltip: {
+    andMore: 'and more...',
+    linkedRules: {
+      widget: '<strong>Widgets</strong> that uses this item<br><ul>{rules}</ul>',
+      eventfilter: '<strong>Event filters</strong>\n<ul>{rules}</ul>',
+      linkrule: '<strong>Links</strong>\n<ul>{rules}</ul>',
+      scenario: '<strong>Scenarios</strong>\n<ul>{rules}</ul>',
+      declareticketrule: '<strong>Declare ticket rules</strong>\n<ul>{rules}</ul>',
+    },
   },
 };

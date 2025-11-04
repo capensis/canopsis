@@ -68,6 +68,13 @@
     >
       {{ $t('common.availability') }}
     </v-tab>
+    <v-tab
+      v-if="hasEntityEnrichments"
+      :href="`#${$constants.ALARMS_EXPAND_PANEL_TABS.entityEnrichments}`"
+    >
+      {{ $t('alarm.tabs.entityEnrichments') }}
+    </v-tab>
+
     <v-tabs-items
       v-model="activeTab"
       mandatory
@@ -206,6 +213,14 @@
           <alarms-expand-panel-remediation :alarm="alarm" />
         </alarms-expand-panel-tab-item-wrapper>
       </v-tab-item>
+      <v-tab-item
+        v-if="hasEntityEnrichments"
+        :value="$constants.ALARMS_EXPAND_PANEL_TABS.entityEnrichments"
+      >
+        <alarms-expand-panel-tab-item-wrapper :card-flex-class="cardFlexClass">
+          <alarms-expand-panel-entity-enrichments :alarm="alarm" />
+        </alarms-expand-panel-tab-item-wrapper>
+      </v-tab-item>
     </v-tabs-items>
   </v-tabs>
 </template>
@@ -241,6 +256,7 @@ import AlarmsExpandPanelTabItemWrapper from './alarms-expand-panel-tab-item-wrap
 import AlarmsExpandPanelMoreInfos from './alarms-expand-panel-more-infos.vue';
 import AlarmsExpandPanelChildren from './alarms-expand-panel-children.vue';
 import AlarmsExpandPanelRemediation from './alarms-expand-panel-remediation.vue';
+import AlarmsExpandPanelEntityEnrichments from './alarms-expand-panel-entity-enrichments.vue';
 
 export default {
   components: {
@@ -255,6 +271,7 @@ export default {
     AlarmsExpandPanelMoreInfos,
     AlarmsExpandPanelChildren,
     AlarmsExpandPanelRemediation,
+    AlarmsExpandPanelEntityEnrichments,
   },
   mixins: [
     authMixin,
@@ -358,6 +375,10 @@ export default {
       return this.widget.parameters.charts?.length && this.filteredPerfData.length;
     },
 
+    hasEntityEnrichments() {
+      return this.isProVersion;
+    },
+
     isAvailabilityEnabled() {
       return this.widget.parameters.availability?.enabled;
     },
@@ -411,12 +432,14 @@ export default {
 
     search: {
       immediate: true,
-      handler(search) {
-        this.query = {
-          ...this.query,
+      handler(search, prevSearch = '') {
+        if (search !== prevSearch) {
+          this.query = {
+            ...this.query,
 
-          search,
-        };
+            search,
+          };
+        }
       },
     },
   },

@@ -20,6 +20,7 @@
           :is-declare-ticket-exist="!webhook.declare_ticket.enabled && isSomeOneDeclareTicketEnabled"
           :has-previous="!!index"
           :webhook-number="index + 1"
+          :template-vars="templateVars"
           @remove="removeItemFromArray(index)"
         />
       </template>
@@ -64,6 +65,10 @@ export default {
     disabled: {
       type: Boolean,
       default: false,
+    },
+    templateVars: {
+      type: Object,
+      default: () => ({}),
     },
   },
   computed: {

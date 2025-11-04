@@ -15,9 +15,9 @@
 </template>
 
 <script>
-import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
+import { INFOS_COLUMN_PREFIX } from '@/constants';
 
-const INFOS_COLUMN_PREFIX = 'entity.infos';
+import { widgetColumnsFiltersMixin } from '@/mixins/widget/columns-filters';
 
 export default {
   mixins: [widgetColumnsFiltersMixin],

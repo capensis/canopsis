@@ -114,8 +114,9 @@ type AxeResultEvent struct {
 //
 //easyjson:json
 type WebhookEvent struct {
-	Execution   string `json:"execution"`
-	Healthcheck bool   `json:"healthcheck"`
+	Execution      string `json:"execution"`
+	TokenExecution string `json:"token_execution"`
+	Healthcheck    bool   `json:"healthcheck"`
 }
 
 // PbehaviorRecomputeEvent

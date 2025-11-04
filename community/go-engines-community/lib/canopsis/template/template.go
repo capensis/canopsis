@@ -33,6 +33,17 @@ type ParsedTemplate struct {
 	Err  error
 }
 
+func (p *ParsedTemplate) ContainsField(v string) bool {
+	if p.Text == "" {
+		return false
+	}
+
+	// remove comments from the template text, non-greedy
+	cleanTemplate := regexp.MustCompile(`\{\{\s*/\*.*?\*/\s*}}`).ReplaceAllString(p.Text, "")
+
+	return regexp.MustCompile(`\{\{[^}]*\.` + regexp.QuoteMeta(v) + `(\.|[\s\}\)\|])`).MatchString(cleanTemplate)
+}
+
 type Executor interface {
 	Execute(tplStr string, data any) (string, error)
 	Parse(text string) ParsedTemplate
@@ -96,6 +107,10 @@ func (e *executor) Parse(text string) ParsedTemplate {
 }
 
 func (e *executor) ExecuteByTpl(tpl *template.Template, data any) (string, error) {
+	if tpl == nil {
+		return "", nil
+	}
+
 	buf, ok := e.bufPool.Get().(*bytes.Buffer)
 	if !ok {
 		return "", errors.New("unknown buffer type")
@@ -467,6 +482,10 @@ func castTime(v interface{}) (time.Time, bool) {
 func addDefaultTplVarsToData(data any, defaultVars map[string]any) any {
 	if len(defaultVars) == 0 {
 		return data
+	}
+
+	if data == nil {
+		return defaultVars
 	}
 
 	mapData, ok := libreflect.ToMap(data)

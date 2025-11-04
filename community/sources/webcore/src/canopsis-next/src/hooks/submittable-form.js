@@ -1,4 +1,6 @@
-import { computed } from 'vue';
+import { computed, provide } from 'vue';
+
+import Observer from '@/services/observer';
 
 import { promisedTimeout } from '@/helpers/async';
 
@@ -18,6 +20,7 @@ import { usePopups } from './popups';
  * @param {Object} options - Configuration options for the submittable form.
  * @param {Object} options.form - The form data object that will be validated.
  * @param {Function} options.method - The submission method to be called if the form is valid.
+ * @param {Function} [options.errorsToValidation = v => v] - The function to convert errors to validation errors.
  * @param {boolean} [options.withTimeout = false] - The property for timeout enabling.
  * @returns {Object} An object containing methods and properties to manage the form submission.
  * @example
@@ -34,20 +37,26 @@ import { usePopups } from './popups';
  *   </form>
  * </template>
  */
-export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
+export const useSubmittableForm = ({ form, method, scope = null, errorsToValidation = v => v, withTimeout = true }) => {
   const popups = usePopups();
   const { validator, setFormErrors } = useValidationFormErrors(form);
   const { t } = useI18n();
+
+  const afterSubmitObserver = new Observer();
+
+  provide('$afterSubmitObserver', afterSubmitObserver);
 
   const submitHandler = async (...args) => {
     try {
       const isFormValid = await validator.validateAll();
 
       if (isFormValid) {
-        await method(...args);
+        const data = await method(...args);
+
+        await afterSubmitObserver.notify(data);
       }
     } catch (err) {
-      const wasSet = setFormErrors(err);
+      const wasSet = setFormErrors(errorsToValidation(err));
 
       if (!wasSet) {
         console.error(err);
@@ -72,7 +81,21 @@ export const useSubmittableForm = ({ form, method, withTimeout = true }) => {
       : submitHandler,
   );
 
-  const isDisabled = computed(() => submitting.value || validator.errors?.any?.());
+  /**
+   * We write custom any errors flag instead of errors.any
+   * because we need to keep logic with filtering nullable scope
+   */
+  const hasAnyErrors = computed(() => !!validator.errors.items.filter(item => (
+    item?.scope === scope && validator.errors.vmId === item?.vmId
+  )).length);
+
+  const isDisabled = computed(() => {
+    if (!validator?.errors) {
+      return submitting.value;
+    }
+
+    return submitting.value || hasAnyErrors.value;
+  });
 
   return {
     submitting,

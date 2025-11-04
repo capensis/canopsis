@@ -14,14 +14,17 @@ export default {
   alarmsCount: '{alarmsCount} alarmes trouvées',
   entitiesCount: '{entitiesCount} entités trouvées',
   alarmsEntitiesCount: '{alarmsCount} alarmes et {entitiesCount} entités trouvées',
+  searchTime: 'Temps de recherche : <strong>{duration}</strong>',
   patternAlarms: 'Alarmes de modèle',
   patternEntities: 'Entités de modèle',
+  itemFound: 'Trouvé: <strong>{count} élément</strong> | Trouvé: <strong>{count} éléments</strong>',
   types: {
     [PATTERN_TYPES.alarm]: 'Modèle d\'alarme',
     [PATTERN_TYPES.entity]: 'Modèle d\'entité',
     [PATTERN_TYPES.pbehavior]: 'Modèle de comportements périodiques',
     [PATTERN_TYPES.serviceWeather]: 'Modèle de météo des services',
   },
+  notDefinedType: 'Le type sélectionné diffère du type défini dans les informations d\'entité',
   errors: {
     ruleRequired: 'Veuillez ajouter au moins une règle',
     groupRequired: 'Veuillez ajouter au moins un groupe',

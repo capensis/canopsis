@@ -57,10 +57,10 @@ func (a Action) Match(entity types.Entity, alarm types.Alarm) (bool, error) {
 }
 
 type Parameters struct {
-	Output string `json:"output,omitempty" bson:"output,omitempty" binding:"max=1000"`
+	Output string `json:"output,omitempty" bson:"output,omitempty" binding:"max=1000,template"`
 
 	ForwardAuthor *bool  `json:"forward_author,omitempty" bson:"forward_author,omitempty"`
-	Author        string `json:"author,omitempty" bson:"author,omitempty"`
+	Author        string `json:"author,omitempty" bson:"author,omitempty" binding:"template"`
 
 	// State is used in changestate action.
 	//   * `0` - Info
@@ -98,6 +98,8 @@ type Parameters struct {
 	Color string `json:"color,omitempty" bson:"color,omitempty"`
 	// Request is used in webhook action.
 	Request *request.Parameters `json:"request,omitempty" bson:"request,omitempty"`
+	// AuthToken is used in webhook action.
+	AuthToken *request.WebhookAuthToken `json:"auth_token,omitempty" bson:"auth_token,omitempty"`
 	// SkipForChild is used in webhook action.
 	SkipForChild *bool `json:"skip_for_child,omitempty" bson:"skip_for_child,omitempty"`
 	// SkipForInstruction is used in webhook action.

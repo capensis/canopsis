@@ -30,7 +30,12 @@
         </v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title>{{ item.text }}</v-list-item-title>
+        <v-list-item-title>
+          {{ item.text }}
+          <span v-if="item.defined" class="ml-2 grey--text lighten-1">
+            ({{ $t('common.defined') }})
+          </span>
+        </v-list-item-title>
       </v-list-item-content>
     </template>
   </v-select>
@@ -96,6 +101,7 @@ export default {
         [PATTERN_FIELD_TYPES.boolean]: 'toggle_on',
         [PATTERN_FIELD_TYPES.null]: 'space_bar',
         [PATTERN_FIELD_TYPES.stringArray]: 'view_array',
+        [PATTERN_FIELD_TYPES.timestamp]: 'calendar_today',
       }[type];
     },
   },

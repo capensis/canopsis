@@ -85,6 +85,9 @@ definitions:
     type: object
   action.Parameters:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
+        description: AuthToken is used in webhook action.
       author:
         type: string
       color:
@@ -613,6 +616,13 @@ definitions:
         type: integer
       type:
         $ref: '#/definitions/pbehavior.Type'
+    type: object
+  alarm.RefResponse:
+    properties:
+      _id:
+        type: string
+      display_name:
+        type: string
     type: object
   alarm.Step:
     properties:
@@ -1239,6 +1249,10 @@ definitions:
         type: string
       start:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     required:
     - color
     - end
@@ -1265,6 +1279,10 @@ definitions:
         type: integer
       updated:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     type: object
   broadcastmessage.UpdateRequest:
     properties:
@@ -1276,6 +1294,10 @@ definitions:
         type: string
       start:
         type: integer
+      views:
+        items:
+          type: string
+        type: array
     required:
     - color
     - end
@@ -1604,6 +1626,16 @@ definitions:
             $ref: '#/definitions/datetime.DurationWithEnabled'
         type: object
       alarm_external_tag:
+        properties:
+          delete_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
+      entity:
+        properties:
+          archive_after:
+            $ref: '#/definitions/datetime.DurationWithEnabled'
+        type: object
+      entity_infos_log:
         properties:
           delete_after:
             $ref: '#/definitions/datetime.DurationWithEnabled'
@@ -1991,6 +2023,19 @@ definitions:
         description: TypeName is Name of pbehavior.Type.
         type: string
     type: object
+  entity.RefResponse:
+    properties:
+      _id:
+        type: string
+      component:
+        type: string
+      connector:
+        type: string
+      name:
+        type: string
+      type:
+        type: string
+    type: object
   entity.StateSettingResponse:
     properties:
       _id:
@@ -2203,6 +2248,13 @@ definitions:
         type: integer
       value:
         type: string
+    type: object
+  entityinfosproperty.BulkDeleteRequestItem:
+    properties:
+      _id:
+        type: string
+    required:
+    - _id
     type: object
   entityinfosproperty.CreateRequest:
     properties:
@@ -2568,6 +2620,25 @@ definitions:
       title:
         type: string
     type: object
+  entityservice.TemplateRequest:
+    properties:
+      rule:
+        $ref: '#/definitions/entityservice.TemplateRuleRequest'
+    type: object
+  entityservice.TemplateRuleRequest:
+    properties:
+      output_template:
+        type: string
+    required:
+    - output_template
+    type: object
+  entityservice.TemplateVarsResponse:
+    properties:
+      output:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+    type: object
   entityservice.UpdateRequest:
     properties:
       category:
@@ -2683,6 +2754,13 @@ definitions:
     - _id
     - description
     - type
+    type: object
+  eventfilter.CopyVarsResponse:
+    properties:
+      config:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
     type: object
   eventfilter.CreateRequest:
     properties:
@@ -2850,6 +2928,82 @@ definitions:
       resource:
         type: string
     type: object
+  eventfilter.TemplateRequest:
+    properties:
+      rule:
+        properties:
+          _id:
+            type: string
+          config:
+            $ref: '#/definitions/eventfilter.TemplateRuleConfigRequest'
+          corporate_entity_pattern:
+            type: string
+          entity_pattern:
+            items:
+              items:
+                $ref: '#/definitions/pattern.FieldCondition'
+              type: array
+            type: array
+          event_pattern:
+            items:
+              items:
+                $ref: '#/definitions/pattern.FieldCondition'
+              type: array
+            type: array
+          external_data:
+            items:
+              $ref: '#/definitions/template.TemplateRefParameters'
+            type: array
+          type:
+            enum:
+            - break
+            - drop
+            - enrichment
+            - change_entity
+            type: string
+        required:
+        - type
+        type: object
+      testdata:
+        properties:
+          event:
+            type: string
+          responses:
+            additionalProperties:
+              type: string
+            description: TestData.Responses keys correspond with Rule.ExternalData
+              keys
+            type: object
+          test:
+            type: string
+        type: object
+    type: object
+  eventfilter.TemplateRuleConfigRequest:
+    properties:
+      actions:
+        items:
+          $ref: '#/definitions/eventfilter.Action'
+        type: array
+      component:
+        type: string
+      connector:
+        type: string
+      connector_name:
+        type: string
+      resource:
+        type: string
+    type: object
+  eventfilter.TemplateVarsResponse:
+    properties:
+      config:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      external_data:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+    type: object
   eventfilter.UpdateRequest:
     properties:
       config:
@@ -2969,6 +3123,15 @@ definitions:
           type: string
         type: array
     type: object
+  externaldata.ColumnConfig:
+    properties:
+      name:
+        type: string
+      tag:
+        type: integer
+      type:
+        type: integer
+    type: object
   externaldata.RefParameters:
     properties:
       optional:
@@ -3017,6 +3180,57 @@ definitions:
     required:
     - _id
     type: object
+  externaldatatable.ColumnConfig:
+    properties:
+      decimal_separator:
+        description: |-
+          Possible decimal separator values.
+            * `dot` - dot separator
+            * `comma` - comma separator
+        type: string
+      name:
+        type: string
+      string_array_separator:
+        type: string
+      string_array_type:
+        description: |-
+          Possible string array types.
+            * `1` - json array
+            * `2` - custom separator array
+        enum:
+        - 1
+        - 2
+        type: integer
+      tag:
+        enum:
+        - 0
+        - 1
+        - 2
+        type: integer
+      thousands_separator:
+        description: |-
+          Possible thousands separator values.
+            * `dot` - dot separator
+            * `comma` - comma separator
+            * `space` - space separator
+        type: string
+      type:
+        description: |-
+          Possible type values.
+            * `1` - type string
+            * `2` - type boolean
+            * `3` - type number
+            * `4` - type string_array
+            * `5` - type datetime
+            * `6` - type timestamp
+            * `7` - type regexp
+        maximum: 7
+        minimum: 1
+        type: integer
+    required:
+    - name
+    - type
+    type: object
   externaldatatable.EditRequest:
     properties:
       description:
@@ -3032,6 +3246,17 @@ definitions:
     required:
     - name
     - type
+    type: object
+  externaldatatable.ErrorInfo:
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+      rows:
+        items:
+          type: integer
+        type: array
     type: object
   externaldatatable.ExportRequest:
     properties:
@@ -3057,21 +3282,27 @@ definitions:
     type: object
   externaldatatable.ImportCompleteRequest:
     properties:
-      column_types:
+      column_tags:
         items:
           type: integer
         type: array
     required:
-    - column_types
+    - column_tags
     type: object
   externaldatatable.ImportJob:
     properties:
       _id:
         type: string
-      columns:
+      column_configs:
         items:
-          type: string
+          $ref: '#/definitions/externaldatatable.ColumnConfig'
         type: array
+      error_info:
+        additionalProperties:
+          $ref: '#/definitions/externaldatatable.ErrorInfo'
+        type: object
+      fail_reason:
+        type: string
       status:
         type: integer
     type: object
@@ -3097,22 +3328,18 @@ definitions:
       sort_by:
         type: string
       table:
-        $ref: '#/definitions/externaldatatable.Response'
+        $ref: '#/definitions/externaldatatable.Table'
         description: are used in db external data
       type:
         type: string
     type: object
-  externaldatatable.Response:
+  externaldatatable.Table:
     properties:
       _id:
         type: string
-      column_types:
+      column_configs:
         items:
-          type: integer
-        type: array
-      columns:
-        items:
-          type: string
+          $ref: '#/definitions/externaldata.ColumnConfig'
         type: array
       created:
         type: integer
@@ -3142,7 +3369,7 @@ definitions:
     type: object
   externaldatatable.UpdateRequest:
     properties:
-      column_types:
+      column_tags:
         items:
           type: integer
         type: array
@@ -3157,7 +3384,7 @@ definitions:
         - 1
         type: integer
     required:
-    - column_types
+    - column_tags
     - name
     - type
     type: object
@@ -3866,6 +4093,74 @@ definitions:
       updated:
         type: integer
     type: object
+  linkrule.TemplateRequest:
+    properties:
+      rule:
+        properties:
+          _id:
+            type: string
+          external_data:
+            items:
+              $ref: '#/definitions/template.TemplateRefParameters'
+            type: array
+          links:
+            items:
+              $ref: '#/definitions/linkrule.TemplateRequestLink'
+            type: array
+          source_code:
+            type: string
+          type:
+            enum:
+            - alarm
+            - entity
+            type: string
+        required:
+        - type
+        type: object
+      testdata:
+        properties:
+          alarm:
+            type: string
+          entity:
+            type: string
+          test:
+            type: string
+          user:
+            type: string
+        type: object
+    type: object
+  linkrule.TemplateRequestLink:
+    properties:
+      label:
+        type: string
+      url:
+        type: string
+    required:
+    - label
+    - url
+    type: object
+  linkrule.TemplateVarsResponse:
+    properties:
+      alarm:
+        $ref: '#/definitions/linkrule.TemplateVarsResponseItem'
+      entity:
+        $ref: '#/definitions/linkrule.TemplateVarsResponseItem'
+    type: object
+  linkrule.TemplateVarsResponseItem:
+    properties:
+      external_data:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      label:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      url:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+    type: object
   maintenance.Request:
     properties:
       color:
@@ -3945,36 +4240,29 @@ definitions:
       value:
         type: object
     type: object
-  pattern.Count:
-    properties:
-      count:
-        type: integer
-      over_limit:
-        type: boolean
-    type: object
   pattern.CountAlarmsResponse:
     properties:
       alarm_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       all:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       entities:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       entity_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.CountEntitiesResponse:
     properties:
       alarm_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       all:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       entity_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
       pbehavior_pattern:
-        $ref: '#/definitions/pattern.Count'
+        $ref: '#/definitions/pattern.CountResponse'
     type: object
   pattern.CountRequest:
     properties:
@@ -3996,6 +4284,15 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  pattern.CountResponse:
+    properties:
+      count:
+        type: integer
+      ms:
+        type: integer
+      over_limit:
+        type: boolean
     type: object
   pattern.EditRequest:
     properties:
@@ -4256,6 +4553,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
@@ -4320,6 +4619,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
@@ -4343,6 +4644,19 @@ definitions:
     - reason
     - tstart
     - type
+    type: object
+  pbehavior.ExecPatternRequest:
+    properties:
+      _id:
+        type: string
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    required:
+    - entity_pattern
     type: object
   pbehavior.PatchRequest:
     properties:
@@ -4454,6 +4768,10 @@ definitions:
         type: string
       origin:
         type: string
+      pattern_exec_at:
+        type: integer
+      pattern_ms:
+        type: integer
       reason:
         $ref: '#/definitions/pbehaviorreason.Response'
       rrule:
@@ -4519,6 +4837,8 @@ definitions:
         items:
           $ref: '#/definitions/pbehaviorexception.ExdateRequest'
         type: array
+      exec_pattern:
+        type: boolean
       inherited:
         type: boolean
       name:
@@ -4952,6 +5272,17 @@ definitions:
     - method
     - url
     type: object
+  request.WebhookAuthToken:
+    properties:
+      header:
+        type: string
+      payload_field:
+        type: string
+      query_string:
+        type: string
+      rule:
+        type: string
+    type: object
   request.WebhookDeclareTicket:
     properties:
       customFields:
@@ -5379,6 +5710,8 @@ definitions:
     type: object
   scenario.Parameters:
     properties:
+      auth_token:
+        $ref: '#/definitions/request.WebhookAuthToken'
       author:
         type: string
       declare_ticket:
@@ -5467,6 +5800,85 @@ definitions:
       updated:
         type: integer
     type: object
+  scenario.TemplateActionParameters:
+    properties:
+      author:
+        type: string
+      declare_ticket:
+        $ref: '#/definitions/template.TemplateWebhookDeclareTicket'
+      forward_author:
+        type: boolean
+      output:
+        type: string
+      request:
+        $ref: '#/definitions/template.TemplateParameters'
+    type: object
+  scenario.TemplateActionRequest:
+    properties:
+      parameters:
+        $ref: '#/definitions/scenario.TemplateActionParameters'
+      type:
+        type: string
+    required:
+    - type
+    type: object
+  scenario.TemplateRequest:
+    properties:
+      rule:
+        properties:
+          _id:
+            type: string
+          actions:
+            items:
+              $ref: '#/definitions/scenario.TemplateActionRequest'
+            type: array
+          name:
+            type: string
+          triggers:
+            items:
+              $ref: '#/definitions/scenario.Trigger'
+            type: array
+        required:
+        - actions
+        - name
+        - triggers
+        type: object
+      testdata:
+        properties:
+          event:
+            type: string
+          responses:
+            additionalProperties:
+              type: string
+            description: TestData.Responses keys correspond with Rule.Actions keys
+            type: object
+          test:
+            type: string
+        type: object
+    type: object
+  scenario.TemplateVarsResponse:
+    properties:
+      author:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      first_webhook:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      output:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      ticket:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+      webhook:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
+    type: object
   scenario.Trigger:
     properties:
       threshold:
@@ -5489,9 +5901,9 @@ definitions:
             * `snooze` - Alarm has been snoozed
             * `unsnooze` - Alarm has been unsnoozed
             * `pbhenter` - Alarm enters a periodic behavior
+            * `pbhleave` - Alarm leaves a periodic behavior
             * `activate` - Alarm has been activated
             * `resolve` - Alarm has been resolved
-            * `pbhleave` - Alarm leaves a periodic behavior
             * `instructionfail` - Manual instruction has failed
             * `autoinstructionfail` - Auto instruction has failed
             * `instructionjobfail` - Manual or auto instruction's job is failed
@@ -6012,21 +6424,226 @@ definitions:
       enabled:
         type: boolean
     type: object
-  template.Request:
+  template.DataResponse:
     properties:
-      text:
+      _id:
+        type: string
+      body:
+        type: any
+      created:
+        type: integer
+      description:
+        type: string
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      name:
+        type: string
+      type:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  template.EditDataRequest:
+    properties:
+      body:
+        type: any
+      description:
+        maxLength: 500
+        type: string
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      name:
+        maxLength: 255
+        type: string
+      type:
+        description: |-
+          Possible types:
+            * `0` - Event test data
+            * `1` - Response test data
+        enum:
+        - 0
+        - 1
+        type: integer
+    required:
+    - body
+    - name
+    - type
+    type: object
+  template.EditTestRequest:
+    properties:
+      data:
+        properties:
+          alarm:
+            type: string
+          entity:
+            type: string
+          event:
+            type: string
+          response:
+            type: string
+          responses:
+            additionalProperties:
+              type: string
+            type: object
+          user:
+            type: string
+        type: object
+      description:
+        maxLength: 500
+        type: string
+      name:
+        maxLength: 255
+        type: string
+      rule:
+        type: string
+      type:
+        description: |-
+          Possible types:
+            * `0` - Event filter rule
+            * `1` - Link rule
+            * `2` - Action scenario
+            * `3` - Widget
+            * `4` - Declare ticket rule
+            * `5` - Dynamic-infos rule
+            * `6` - Instruction
+            * `7` - Job
+            * `8` - Meta-alarm rule
+            * `9` - Webhook token rule
+        type: integer
+    required:
+    - data
+    - name
+    - rule
+    - type
+    type: object
+  template.TemplateParameters:
+    properties:
+      headers:
+        additionalProperties:
+          type: string
+        type: object
+      payload:
+        type: string
+      url:
+        type: string
+    required:
+    - url
+    type: object
+  template.TemplateRefParameters:
+    properties:
+      optional:
+        type: boolean
+      reference:
+        type: string
+      regexp:
+        additionalProperties:
+          type: string
+        type: object
+      request:
+        $ref: '#/definitions/template.TemplateParameters'
+      select:
+        additionalProperties:
+          type: string
+        type: object
+      sort:
+        type: string
+      sort_by:
+        type: string
+      table:
+        type: string
+      type:
+        type: string
+    required:
+    - reference
+    - type
+    type: object
+  template.TemplateWebhookDeclareTicket:
+    properties:
+      ticket_id_tpl:
+        type: string
+      ticket_url_tpl:
         type: string
     type: object
-  template.Response:
+  template.TestResponse:
+    properties:
+      _id:
+        type: string
+      created:
+        type: integer
+      data:
+        properties:
+          alarm:
+            $ref: '#/definitions/alarm.RefResponse'
+          entity:
+            $ref: '#/definitions/entity.RefResponse'
+          event:
+            properties:
+              _id:
+                type: string
+              name:
+                type: string
+            type: object
+          response:
+            properties:
+              _id:
+                type: string
+              name:
+                type: string
+            type: object
+          responses:
+            additionalProperties:
+              properties:
+                _id:
+                  type: string
+                name:
+                  type: string
+              type: object
+            type: object
+          user:
+            properties:
+              _id:
+                type: string
+              display_name:
+                type: string
+            type: object
+        type: object
+      description:
+        type: string
+      name:
+        type: string
+      rule:
+        properties:
+          _id:
+            type: string
+          name:
+            type: string
+        type: object
+      type:
+        type: integer
+      updated:
+        type: integer
+    type: object
+  template.ValidateResponse:
     properties:
       err:
         $ref: '#/definitions/validator.ErrReport'
       is_valid:
         type: boolean
-      warnings:
-        items:
-          $ref: '#/definitions/validator.WrnReport'
-        type: array
+      result:
+        type: string
+    type: object
+  template.VarResponse:
+    properties:
+      alias:
+        type: boolean
+      name:
+        type: string
+      value:
+        type: any
     type: object
   types.Author:
     properties:
@@ -6375,30 +6992,6 @@ definitions:
       line:
         type: integer
       message:
-        type: string
-      type:
-        description: |-
-          Possible error type values.
-            * `0` - Undefined error
-            * `1` - Unexpected block
-            * `2` - Unexpected symbol
-            * `3` - Unexpected function
-            * `4` - Unexpected EOF
-        type: integer
-      var:
-        description: Var is defined only for template exec errors
-        type: string
-    type: object
-  validator.WrnReport:
-    properties:
-      message:
-        type: string
-      type:
-        description: |-
-          Possible warning type values.
-            * `0` - Might be unfinished variable block
-        type: integer
-      var:
         type: string
     type: object
   view.EditPositionItemRequest:
@@ -6754,6 +7347,32 @@ definitions:
         type: string
       updated:
         type: integer
+    type: object
+  widget.TemplateRequest:
+    properties:
+      rule:
+        properties:
+          _id:
+            type: string
+          columns:
+            items:
+              $ref: '#/definitions/view.WidgetColumn'
+            type: array
+        type: object
+      testdata:
+        properties:
+          alarm:
+            type: string
+          test:
+            type: string
+        type: object
+    type: object
+  widget.TemplateVarsResponse:
+    properties:
+      column:
+        items:
+          $ref: '#/definitions/template.VarResponse'
+        type: array
     type: object
   widgetfilter.EditRequest:
     properties:

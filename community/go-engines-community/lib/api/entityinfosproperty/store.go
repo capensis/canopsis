@@ -4,12 +4,12 @@ import (
 	"cmp"
 	"context"
 	"errors"
-	"fmt"
 	"regexp"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -35,6 +35,7 @@ type store struct {
 	dupErrorRegexp        *regexp.Regexp
 
 	linkedCollections []libmongo.DbCollection
+	dupErrorParser    validation.DuplicateErrorParser
 }
 
 func NewStore(
@@ -60,13 +61,17 @@ func NewStore(
 			dbClient.Collection(libmongo.PbehaviorMongoCollection),
 			dbClient.Collection(libmongo.ResolveRuleMongoCollection),
 			dbClient.Collection(libmongo.WidgetFiltersMongoCollection),
-			dbClient.Collection(libmongo.DeclareTicketRuleMongoCollection),
+			dbClient.Collection(libmongo.DeclareTicketRuleCollection),
 			dbClient.Collection(libmongo.InstructionMongoCollection),
 			dbClient.Collection(libmongo.DynamicInfosRulesMongoCollection),
 			dbClient.Collection(libmongo.KpiFilterMongoCollection),
 			dbClient.Collection(libmongo.MetaAlarmRulesMongoCollection),
-			dbClient.Collection(libmongo.ScenarioMongoCollection),
+			dbClient.Collection(libmongo.ScenarioCollection),
 		},
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"name":  "Name already exists.",
+			"alias": "Alias already exists.",
+		}),
 	}
 }
 
@@ -85,7 +90,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
@@ -173,43 +178,31 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 
 		var oldProp InfoProperty
 
-		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": r.ID}, bson.M{"$set": r}, options.FindOneAndUpdate().SetReturnDocument(options.Before)).Decode(&oldProp)
+		unset := bson.M{}
+		if r.Alias == "" {
+			unset["alias"] = ""
+		}
+
+		err := s.dbCollection.FindOneAndUpdate(ctx, bson.M{"_id": r.ID}, bson.M{"$set": r, "$unset": unset}, options.FindOneAndUpdate().SetReturnDocument(options.Before)).Decode(&oldProp)
 		if err != nil {
 			if errors.Is(err, mongo.ErrNoDocuments) {
 				return nil
 			}
 
 			if mongo.IsDuplicateKeyError(err) {
-				return s.parseDupError(err)
+				return s.dupErrorParser.Parse(err)
 			}
 
 			return err
 		}
 
-		for _, collection := range s.linkedCollections {
-			var update bson.M
-			switch collection.Name() {
-			case libmongo.MetaAlarmRulesMongoCollection:
-				update = bson.M{
-					"entity_pattern.$[].$[i].alias":       r.Alias,
-					"total_entity_pattern.$[].$[i].alias": r.Alias,
-				}
-			case libmongo.ScenarioMongoCollection:
-				update = bson.M{
-					"actions.$[].entity_pattern.$[].$[i].alias": r.Alias,
-				}
-			default:
-				update = bson.M{
-					"entity_pattern.$[].$[i].alias": r.Alias,
-				}
+		if oldProp.Alias != "" {
+			if r.Alias == "" {
+				err = s.removeAliasFromLinkedCollections(ctx, r.ID, oldProp.Alias)
+			} else if r.Alias != oldProp.Alias {
+				err = s.updateAliasInLinkedCollections(ctx, r.ID, oldProp.Alias, r.Alias)
 			}
 
-			_, err = collection.UpdateMany(
-				ctx,
-				bson.M{"aliases": r.ID},
-				bson.M{"$set": update},
-				options.UpdateMany().SetArrayFilters([]any{bson.M{"i.alias": oldProp.Alias}}),
-			)
 			if err != nil {
 				return err
 			}
@@ -241,30 +234,8 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			}
 		}
 
-		for _, collection := range s.linkedCollections {
-			var update bson.M
-			switch collection.Name() {
-			case libmongo.MetaAlarmRulesMongoCollection:
-				update = bson.M{
-					"entity_pattern.$[].$[i].alias":       "",
-					"total_entity_pattern.$[].$[i].alias": "",
-				}
-			case libmongo.ScenarioMongoCollection:
-				update = bson.M{
-					"actions.$[].entity_pattern.$[].$[i].alias": "",
-				}
-			default:
-				update = bson.M{
-					"entity_pattern.$[].$[i].alias": "",
-				}
-			}
-
-			_, err = collection.UpdateMany(
-				ctx,
-				bson.M{"aliases": id},
-				bson.M{"$set": update, "$pull": bson.M{"aliases": id}},
-				options.UpdateMany().SetArrayFilters([]any{bson.M{"i.alias": oldProp.Alias}}),
-			)
+		if oldProp.Alias != "" {
+			err = s.removeAliasFromLinkedCollections(ctx, id, oldProp.Alias)
 			if err != nil {
 				return err
 			}
@@ -277,20 +248,69 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
-func (s *store) parseDupError(err error) error {
-	match := s.dupErrorRegexp.FindStringSubmatch(err.Error())
-	if len(match) > 1 {
-		matchedStr := match[1]
-
-		switch matchedStr {
-		case "name":
-			return common.NewValidationError("name", "Name already exists.")
-		case "alias":
-			return common.NewValidationError("alias", "Alias already exists.")
+func (s *store) updateAliasInLinkedCollections(ctx context.Context, id, oldAlias, newAlias string) error {
+	for _, collection := range s.linkedCollections {
+		var update bson.M
+		switch collection.Name() {
+		case libmongo.MetaAlarmRulesMongoCollection:
+			update = bson.M{
+				"entity_pattern.$[].$[i].alias":       newAlias,
+				"total_entity_pattern.$[].$[i].alias": newAlias,
+			}
+		case libmongo.ScenarioCollection:
+			update = bson.M{
+				"actions.$[].entity_pattern.$[].$[i].alias": newAlias,
+			}
 		default:
-			return common.NewValidationError(matchedStr, matchedStr+" already exists.")
+			update = bson.M{
+				"entity_pattern.$[].$[i].alias": newAlias,
+			}
+		}
+
+		_, err := collection.UpdateMany(
+			ctx,
+			bson.M{"aliases": id},
+			bson.M{"$set": update},
+			options.UpdateMany().SetArrayFilters([]any{bson.M{"i.alias": oldAlias}}),
+		)
+		if err != nil {
+			return err
 		}
 	}
 
-	return fmt.Errorf("can't parse duplication error: %w", err)
+	return nil
+}
+
+func (s *store) removeAliasFromLinkedCollections(ctx context.Context, id, oldAlias string) error {
+	for _, collection := range s.linkedCollections {
+		var unset bson.M
+
+		switch collection.Name() {
+		case libmongo.MetaAlarmRulesMongoCollection:
+			unset = bson.M{
+				"entity_pattern.$[].$[i].alias":       "",
+				"total_entity_pattern.$[].$[i].alias": "",
+			}
+		case libmongo.ScenarioCollection:
+			unset = bson.M{
+				"actions.$[].entity_pattern.$[].$[i].alias": "",
+			}
+		default:
+			unset = bson.M{
+				"entity_pattern.$[].$[i].alias": "",
+			}
+		}
+
+		_, err := collection.UpdateMany(
+			ctx,
+			bson.M{"aliases": id},
+			bson.M{"$unset": unset, "$pull": bson.M{"aliases": id}},
+			options.UpdateMany().SetArrayFilters([]any{bson.M{"i.alias": oldAlias}}),
+		)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

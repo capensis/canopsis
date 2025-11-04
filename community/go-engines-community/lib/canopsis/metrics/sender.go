@@ -9,6 +9,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 )
 
+const MaxStrLength = 255
+
 type Sender interface {
 	Run(ctx context.Context)
 	SendAck(alarm types.Alarm, userID string, timestamp time.Time)
@@ -20,8 +22,8 @@ type Sender interface {
 	SendCorrelation(timestamp time.Time, child types.Alarm)
 	SendUserActivity(timestamp time.Time, username string, value int64)
 	SendPbhEnter(alarm types.Alarm, entity types.Entity)
-	SendPbhLeave(entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTimestamp time.Time)
-	SendPbhLeaveAndEnter(alarm types.Alarm, entity types.Entity, prevCanonicalType string, prevTimestamp time.Time)
+	SendPbhLeave(entity types.Entity, timestamp time.Time, prevCanonicalType string, prevTime time.Time)
+	SendPbhLeaveAndEnter(alarm types.Alarm, entity types.Entity, prevCanonicalType string, prevTime time.Time)
 	SendUpdateState(alarm types.Alarm, entity types.Entity, previousState types.CpsNumber)
 
 	SendAutoInstructionExecutionStart(alarm types.Alarm, timestamp time.Time)
@@ -50,4 +52,6 @@ type Sender interface {
 	SendSliMetric(timestamp time.Time, alarm types.Alarm, entity types.Entity)
 
 	SendMessageRate(timestamp time.Time, eventType, connectorName string)
+
+	SendEntityInfosUpdate(timestamp time.Time, entityID, ruleID, name string, val any)
 }

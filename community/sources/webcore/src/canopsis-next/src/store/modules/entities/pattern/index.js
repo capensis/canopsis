@@ -8,6 +8,7 @@ import corporatePatternModule from './corporate';
 
 export default createCRUDModule({
   route: API_ROUTES.pattern.list,
+  bulkRoute: API_ROUTES.pattern.bulkList,
   withFetchingParams: true,
   withWithoutStore: true,
 }, {
@@ -15,10 +16,6 @@ export default createCRUDModule({
     corporate: corporatePatternModule,
   },
   actions: {
-    bulkRemove(context, { data }) {
-      return request.delete(API_ROUTES.pattern.bulkList, { data });
-    },
-
     checkPatternsEntitiesCount(context, { data }) {
       return request.post(API_ROUTES.pattern.entitiesCount, data);
     },

@@ -19,11 +19,13 @@
       <v-flex xs6>
         <v-select
           v-field="form.sort_by"
-          :items="columns"
+          :items="preparedColumns"
           :label="$t('externalData.fields.sortBy')"
           :name="sortByFieldName"
           :error-messages="errors.collect(sortByFieldName)"
           :disabled="disabled"
+          item-text="name"
+          item-value="name"
         />
       </v-flex>
       <v-flex
@@ -70,6 +72,7 @@ import { computed, ref } from 'vue';
 
 import { SORT_ORDERS } from '@/constants';
 
+import { addPriorityColumnToColumnsArray } from '@/helpers/entities/external-data-table/form';
 import { externalDataItemConditionAttributeToForm } from '@/helpers/entities/shared/external-data/form';
 
 import { useModelField } from '@/hooks/form/model-field';
@@ -119,21 +122,40 @@ export default {
     const sortFieldName = computed(() => `${props.name}.sort`);
     const sortByFieldName = computed(() => `${props.name}.sort_by`);
 
+    const preparedColumns = computed(() => addPriorityColumnToColumnsArray(columns.value));
+    /**
+     * Adds a new condition to the external data table form.
+     */
     const addCondition = () => updateField('conditions', [
       ...props.form.conditions,
 
       externalDataItemConditionAttributeToForm(),
     ]);
 
+    /**
+     * Removes a condition from the external data table form by index.
+     *
+     * @param {number} index - The index of the condition to remove from the conditions array
+     */
     const removeCondition = index => updateField(
       'conditions',
       props.form.conditions.filter((condition, conditionIndex) => index !== conditionIndex),
     );
 
-    const updateSelectedItems = ([table = {}] = []) => columns.value = table?.columns ?? [];
+    /**
+     * Updates the available columns based on selected external data table.
+     *
+     * @param {Array} [tables=[]] - Array of selected tables, expects first item to be the main table
+     * @param {Object} [tables[0]={}] - The selected external data table object
+     * @param {Array} [tables[0].column_configs] - Array of column configuration objects
+     * @param {string} tables[0].column_configs[].type - Column data type
+     * @param {string} tables[0].column_configs[].name - Column name identifier
+     */
+    const updateSelectedItems = ([table = {}] = []) => columns.value = table?.column_configs ?? [];
 
     return {
       columns,
+      preparedColumns,
 
       sortOrders,
       hasOnlyOneCondition,

@@ -7,6 +7,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -30,6 +31,9 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
 		authorProvider:        authorProvider,
+		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
+			"name": "Name already exists.",
+		}),
 	}
 }
 
@@ -40,6 +44,7 @@ type store struct {
 	defaultSearchByFields []string
 	defaultSortBy         string
 	authorProvider        author.Provider
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, error) {
@@ -120,6 +125,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		response = nil
 		_, err := s.dbCollection.InsertOne(ctx, category)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 		response, err = s.GetOneBy(ctx, category.ID)
@@ -144,6 +153,10 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			}},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err)
+			}
+
 			return err
 		}
 

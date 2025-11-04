@@ -18,6 +18,8 @@ import (
 type PeriodicalWorker interface {
 	engine.PeriodicalWorker
 	AddCleaner(k string, c Cleaner)
+	// OnSchedule defines if data cleaning should be executed only on schedule.
+	OnSchedule(v bool)
 }
 
 type Cleaner interface {
@@ -44,6 +46,7 @@ func NewPeriodicalWorker(
 		periodicalInterval:     periodicalInterval,
 		timezoneConfigProvider: timezoneConfigProvider,
 		scheduleConfigProvider: scheduleConfigProvider,
+		onSchedule:             true,
 		cleaners:               make([]orderedCleaner, 0),
 		logger:                 logger,
 	}
@@ -54,6 +57,7 @@ type worker struct {
 	periodicalInterval     time.Duration
 	timezoneConfigProvider config.TimezoneConfigProvider
 	scheduleConfigProvider config.DataStorageConfigProvider
+	onSchedule             bool
 	cleaners               []orderedCleaner
 	logger                 zerolog.Logger
 }
@@ -67,6 +71,10 @@ func (w *worker) AddCleaner(k string, c Cleaner) {
 	w.cleaners = append(w.cleaners, orderedCleaner{k, c})
 }
 
+func (w *worker) OnSchedule(v bool) {
+	w.onSchedule = v
+}
+
 func (w *worker) GetInterval() time.Duration {
 	return w.periodicalInterval
 }
@@ -78,7 +86,7 @@ func (w *worker) Work(ctx context.Context) {
 
 	now := datetime.NewCpsTime().In(w.timezoneConfigProvider.Get().Location)
 	schConf := w.scheduleConfigProvider.Get()
-	if !schConf.TimeToExecute.IsScheduledTime(now) {
+	if w.onSchedule && !schConf.TimeToExecute.IsScheduledTime(now) {
 		return
 	}
 
@@ -123,7 +131,7 @@ func (w *worker) Work(ctx context.Context) {
 	i := startIdx
 	for {
 		c := w.cleaners[i]
-		if c.Cleaner.IsEnabled(conf.Config) && !w.isAlreadyExecuted(now, conf.History, c.Key) {
+		if c.Cleaner.IsEnabled(conf.Config) && (!w.onSchedule || !w.isAlreadyExecuted(now, conf.History, c.Key)) {
 			res, err := c.Cleaner.Clean(cleanCtx, dbClient, conf.Config, now, limit)
 			h := HistoryWithCount{
 				Time:     now,

@@ -104,8 +104,8 @@ func NewUpdater(
 			PbehaviorLabel:         client.Collection(libmongo.PbehaviorMongoCollection),
 			ResolveRuleLabel:       client.Collection(libmongo.ResolveRuleMongoCollection),
 			SnmpRuleLabel:          client.Collection(libmongo.SnmpRulesCollection),
-			ScenarioLabel:          client.Collection(libmongo.ScenarioMongoCollection),
-			DeclareTicketRuleLabel: client.Collection(libmongo.DeclareTicketRuleMongoCollection),
+			ScenarioLabel:          client.Collection(libmongo.ScenarioCollection),
+			DeclareTicketRuleLabel: client.Collection(libmongo.DeclareTicketRuleCollection),
 		},
 
 		entityTypeLabels: []string{

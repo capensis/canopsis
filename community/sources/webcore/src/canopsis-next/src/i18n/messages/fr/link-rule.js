@@ -10,7 +10,6 @@ export default {
   type: 'Type de lien',
   single: 'Appliquer ce lien uniquement à une seule alarme ?',
   hideInMenu: 'Masquer ce lien des actions d\'alarme ?',
-  actionType: 'Type d\'action',
   types: {
     [LINK_RULE_TYPES.alarm]: 'Alarme',
     [LINK_RULE_TYPES.entity]: 'Entité',

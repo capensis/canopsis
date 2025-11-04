@@ -247,12 +247,15 @@ export default {
     [USER_PERMISSIONS.technical.remediationInstructionApprove]: 'Instructions - approve',
     [USER_PERMISSIONS.technical.remediationJob]: 'Instructions - jobs tab',
     [USER_PERMISSIONS.technical.remediationStatistic]: 'Instructions - remediation statistics tab',
+    [USER_PERMISSIONS.technical.remediationinstructionStats]: 'Instructions - instructions stats tab',
     [USER_PERMISSIONS.technical.stateSetting]: 'State settings',
     [USER_PERMISSIONS.technical.storageSettings]: 'Storage settings',
     [USER_PERMISSIONS.technical.tag]: 'Tags management',
     [USER_PERMISSIONS.technical.techmetrics]: 'Healthcheck - engines\' metrics',
     [USER_PERMISSIONS.technical.widgetTemplate]: 'Parameters - widget templates',
     [USER_PERMISSIONS.technical.viewImportExport]: 'Parameters - import / export',
+    [USER_PERMISSIONS.technical.templateTesting]: 'Template testing',
+    [USER_PERMISSIONS.technical.externalAuthTokens]: 'External auth tokens',
 
     /**
      * Technical Admin Access
@@ -276,12 +279,12 @@ export default {
     [USER_PERMISSIONS.technical.exploitation.scenario]: 'Scenarios',
     [USER_PERMISSIONS.technical.exploitation.snmpRule]: 'Snmp rules',
     [USER_PERMISSIONS.technical.exploitation.externalDataTable]: 'External data',
+    [USER_PERMISSIONS.technical.exploitation.entityInfoProperty]: 'Entity infos',
 
     /**
-     * Technical Admin Notification
-     */
+    * Technical Admin Notification
+    */
     [USER_PERMISSIONS.technical.notification.common]: 'Parameters - notification settings ',
-    [USER_PERMISSIONS.technical.notification.instructionStats]: 'Instructions stats',
 
     /**
      * Technical Admin Views and widgets
@@ -318,6 +321,7 @@ export default {
     [USER_PERMISSIONS.api.general.entitycategory]: 'Entity categories',
     [USER_PERMISSIONS.api.general.entitycomment]: 'Entity comments',
     [USER_PERMISSIONS.api.general.entityservice]: 'Entity services',
+    [USER_PERMISSIONS.api.general.entityInfoProperty]: 'Entity infos properties',
     [USER_PERMISSIONS.api.general.event]: 'Events',
     [USER_PERMISSIONS.api.general.exportConfigurations]: 'Export configurations',
     [USER_PERMISSIONS.api.general.files]: 'Files',
@@ -345,6 +349,7 @@ export default {
     [USER_PERMISSIONS.api.general.view]: 'Views',
     [USER_PERMISSIONS.api.general.viewgroup]: 'View groups',
     [USER_PERMISSIONS.api.general.widgetTemplate]: 'Widget templates',
+    [USER_PERMISSIONS.api.general.templateData]: 'Template data',
 
     /**
      * API Permissions Rules
@@ -378,5 +383,11 @@ export default {
     [USER_PERMISSIONS.api.planning.pbehaviorException]: 'PBehavior exceptions',
     [USER_PERMISSIONS.api.planning.pbehaviorReason]: 'PBehavior reasons',
     [USER_PERMISSIONS.api.planning.pbehaviorType]: 'PBehavior types',
+    [USER_PERMISSIONS.api.planning.pbehaviorPatterns]: 'Pbehavior patterns',
+  },
+
+  conditionalTooltips: {
+    approveInstructions: 'Enabled because this role has permissions to approve instructions',
+    executeManualInstructions: 'Enabled because this role has permissions to execute manual instructions',
   },
 };

@@ -154,6 +154,10 @@ html {
   }
 }
 
+.v-tab.v-tab--disabled {
+  opacity: .5;
+}
+
 .c-nowrap {
   white-space: nowrap;
 }
@@ -171,6 +175,10 @@ html {
   margin: 0;
   padding: 0;
   flex-shrink: 0;
+}
+
+.group-item__active, .group-panel__active {
+  background-color: var(--v-secondary-darken1) !important;
 }
 
 .c-extra-details__message {
@@ -287,6 +295,21 @@ html {
   overflow: visible !important;
 }
 
+.remove-card-btn {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  margin: 0 !important;
+}
+
+.text-ucfirst {
+  text-transform: lowercase;
+
+  &::first-letter {
+    text-transform: uppercase;
+  }
+}
+
 .color--inherit {
   color: inherit !important;
 }
@@ -363,6 +386,11 @@ html {
     & > .v-data-table__wrapper > table > tbody > tr > td:not(:last-of-type) {
       word-break: break-all;
       word-wrap: break-word;
+
+      .v-icon {
+        word-break: normal;
+        word-wrap: normal;
+      }
     }
   }
 
@@ -376,10 +404,36 @@ html {
   }
 }
 
+.full-width {
+  width: 100%;
+}
+
+.sticky-bottom-buttons {
+  position: sticky;
+  bottom: 10px;
+  pointer-events: none;
+
+  button {
+    pointer-events: all;
+  }
+}
+
+.v-menu__content {
+  max-height: 90vh;
+}
+
+.top-bar-menu__content {
+  max-height: 95vh;
+
+  .v-avatar {
+    border-radius: unset;
+  }
+}
+
 *[aria-required="true"] label:before {
-  content: '*';
-  padding-right: 4px;
-  color: var(--v-error-base);
+  content: '*' !important;
+  padding-right: 4px !important;
+  color: var(--v-error-base) !important;
 }
 
 @for $i from 0 through 16 {

@@ -179,7 +179,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with custom props 1`] =
                 </div>
               </th>
               <th
-                aria-label="Not sorted. Activate to sort ascending."
+                aria-label="Label-1: Not sorted. Activate to sort ascending."
                 aria-sort="none"
                 class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
@@ -315,7 +315,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
           >
             <tr>
               <th
-                aria-label="Not sorted. Activate to sort ascending."
+                aria-label="Label-1: Not sorted. Activate to sort ascending."
                 aria-sort="none"
                 class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
@@ -409,7 +409,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
           >
             <tr>
               <th
-                aria-label="Not sorted. Activate to sort ascending."
+                aria-label="Label-1: Not sorted. Activate to sort ascending."
                 aria-sort="none"
                 class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
@@ -501,7 +501,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
           >
             <tr>
               <th
-                aria-label="Not sorted. Activate to sort ascending."
+                aria-label="Label-1: Not sorted. Activate to sort ascending."
                 aria-sort="none"
                 class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
@@ -712,7 +712,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 </div>
               </th>
               <th
-                aria-label="Not sorted. Activate to sort ascending."
+                aria-label="Label-1: Not sorted. Activate to sort ascending."
                 aria-sort="none"
                 class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
@@ -831,7 +831,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with default and requir
                 </div>
               </th>
               <th
-                aria-label="Not sorted. Activate to sort ascending."
+                aria-label="Label-1: Not sorted. Activate to sort ascending."
                 aria-sort="none"
                 class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"
@@ -1037,7 +1037,7 @@ exports[`alarms-list-table Renders \`alarms-list-table\` with expandable, but wi
                 </div>
               </th>
               <th
-                aria-label="Not sorted. Activate to sort ascending."
+                aria-label="Label-1: Not sorted. Activate to sort ascending."
                 aria-sort="none"
                 class="text-start alarms-list-table__draggable-column sortable"
                 data-value="label"

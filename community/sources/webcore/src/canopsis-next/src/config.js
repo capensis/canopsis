@@ -46,7 +46,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
      * VUE COMPONENTS
      */
     'router-link', 'c-alarm-chip', 'c-alarm-tags-chips', 'c-entity-tags-chips', 'c-copy-wrapper', 'c-links-list',
-    'service-entities-list', 'v-icon', 'v-row', 'v-chip',
+    'service-entities-list', 'v-icon', 'v-row', 'v-chip', 'c-remediation-instruction-execution-see-details',
   ]),
   allowedAttributes: {
     '*': [
@@ -74,6 +74,7 @@ export const DEFAULT_SANITIZE_OPTIONS = {
       'entity-name-field', '@refresh', '@update:options', '@add:action',
     ],
     'v-chip': ['color', 'text-color'],
+    'c-remediation-instruction-execution-see-details': [':execution'],
   },
   allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat(['data']),
   disallowedTagsMode: 'escape',
@@ -152,6 +153,10 @@ export const SOCKET_ROOMS = {
   alarmDetails: 'alarm-details',
   icons: 'icons',
   testscenario: 'testscenario',
+  notifications: 'notifications',
+  executions: 'executions',
+  simplifiedManualExecutions: 'simplified-manual-executions',
+  pbehaviorPatterns: 'pbehavior-patterns',
 };
 
 export const API_ROUTES = {
@@ -184,6 +189,8 @@ export const API_ROUTES = {
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
   entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
+  entityInfosProperties: '/api/v4/entity-infos-properties',
+  bulkEntityInfosProperties: '/api/v4/bulk/entity-infos-properties',
   weatherService: '/api/v4/weather-services',
   alarmListExport: '/api/v4/alarm-export',
   alarmTag: {
@@ -251,6 +258,8 @@ export const API_ROUTES = {
     reasons: '/api/v4/pbehavior-reasons',
     calendar: '/api/v4/pbehavior-calendar',
     bulkEntityPbehaviors: '/api/v4/bulk/entity-pbehaviors',
+    patterns: '/api/v4/pbehavior-patterns',
+    allPatterns: '/api/v4/all-pbehavior-patterns',
   },
   engineRunInfo: '/api/v4/engine-runinfo',
   cas: {
@@ -271,7 +280,8 @@ export const API_ROUTES = {
   entityCategories: '/api/v4/entity-categories',
   stateSetting: '/api/v4/state-settings',
   dataStorage: '/api/v4/data-storage',
-  notification: '/api/v4/notification',
+  notificationSettings: '/api/v4/notification-settings',
+  notifications: '/api/v4/notifications',
   idleRules: '/api/v4/idle-rules',
   flappingRules: '/api/v4/flapping-rules',
   resolveRules: '/api/v4/resolve-rules',
@@ -286,10 +296,24 @@ export const API_ROUTES = {
   techMetrics: '/api/v4/tech-metrics-export',
   techMetricsSettings: '/api/v4/tech-metrics-settings',
   templateVars: '/api/v4/template-vars',
-  templateValidator: {
-    declareTicketRules: '/api/v4/template-validator/declare-ticket-rules',
-    scenarios: '/api/v4/template-validator/scenarios',
-    eventFilterRules: '/api/v4/template-validator/event-filter-rules',
+  templateData: '/api/v4/template-data',
+  templateTests: '/api/v4/template-test',
+  templateVarsSpecific: {
+    entityServices: '/api/v4/entityservice-template-vars',
+    eventFilters: '/api/v4/eventfilter-template-vars',
+    scenarios: '/api/v4/scenario-template-vars',
+    linkRules: '/api/v4/link-rule-template-vars',
+    widgets: '/api/v4/widget-template-vars',
+  },
+  templateValidation: {
+    entityServices: '/api/v4/entityservice-template-validate',
+    eventFilters: '/api/v4/eventfilter-template-validate',
+    scenarios: '/api/v4/scenario-template-validate',
+    linkRules: '/api/v4/link-rule-template-validate',
+    widgets: '/api/v4/widget-template-validate',
+  },
+  copyVars: {
+    eventFilters: '/api/v4/eventfilter-copy-vars',
   },
   linkRule: '/api/v4/link-rules',
   bulkLinkRule: '/api/v4/bulk/link-rules',
@@ -345,8 +369,10 @@ export const API_ROUTES = {
     executions: '/api/v4/cat/executions',
     jobExecutions: '/api/v4/cat/job-executions',
     alarmExecutions: '/api/v4/cat/alarm-executions',
-    pausedExecutions: '/api/v4/cat/account/paused-executions',
+    pausedExecutions: '/api/v4/cat/account/executions',
     instructionComments: '/api/v4/cat/instruction-comments',
+    executionStatuses: '/api/v4/cat/execution-statuses',
+    readExecution: '/api/v4/cat/executions',
   },
   junit: {
     directory: '/api/v4/cat/junit/directory',
@@ -386,6 +412,7 @@ export const API_ROUTES = {
   metaAlarm: '/api/v4/cat/meta-alarms',
   snmpRule: '/api/v4/cat/snmprules',
   snmpMib: '/api/v4/cat/snmpmibs',
+  webhookTokenRule: '/api/v4/cat/webhook-token-rules',
   declareTicket: {
     rules: '/api/v4/cat/declare-ticket-rules',
     bulkRules: '/api/v4/cat/bulk/declare-ticket-rules',
@@ -405,6 +432,26 @@ export const API_ROUTES = {
     current: '/api/v4/cat/event-records-current',
     event: '/api/v4/cat/event-records/events',
     bulkEvent: '/api/v4/cat/event-records/events/bulk',
+  },
+  entityInfosLog: '/api/v4/cat/entity-infos-log',
+  templateVarsSpecificCat: {
+    declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-vars',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-vars',
+    instructions: '/api/v4/cat/instruction-template-vars',
+    jobs: '/api/v4/cat/job-template-vars',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-vars',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-vars',
+  },
+  templateValidationCat: {
+    declareTicketRules: '/api/v4/cat/declare-ticket-rule-template-validate',
+    dynamicInfos: '/api/v4/cat/dynamic-infos-template-validate',
+    instructions: '/api/v4/cat/instruction-template-validate',
+    jobs: '/api/v4/cat/job-template-validate',
+    metaAlarmRules: '/api/v4/cat/metaalarmrule-template-validate',
+    webhookTokenRules: '/api/v4/cat/webhook-token-rule-template-validate',
+  },
+  copyVarsCat: {
+    dynamicInfos: '/api/v4/cat/dynamic-infos-copy-vars',
   },
 };
 
