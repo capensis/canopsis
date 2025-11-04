@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/gin-gonic/gin"
@@ -16,7 +17,7 @@ func NewApi(
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	logger zerolog.Logger,
-) common.CrudAPI {
+) crud.API {
 	return &api{
 		store:       store,
 		computeChan: computeChan,
