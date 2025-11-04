@@ -34,6 +34,7 @@ export const MODALS = {
   createUser: 'create-user',
   createRole: 'create-role',
   createBroadcastMessage: 'create-broadcast-message',
+  createCommentTemplate: 'create-comment-template',
   createEventFilter: 'create-event-filter',
   createMetaAlarmRule: 'create-meta-alarm-rule',
   createPattern: 'create-pattern',
