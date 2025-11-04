@@ -12,6 +12,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -95,7 +96,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.IDs}}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -177,7 +178,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		}
 	}
 
-	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	if len(project) > 0 {
 		project = append(project, sort)
 	}
@@ -892,7 +893,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	switch table.Type {
 	case externaldata.TypeMongoDB:
 		pipeline := make([]bson.M, 0)
-		filter := common.GetSearchQuery(r.Search, searchBy)
+		filter := mongoquery.GetSearchQuery(r.Search, searchBy)
 		if len(filter) > 0 {
 			pipeline = append(pipeline, bson.M{"$match": filter})
 		}
@@ -903,7 +904,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 		}
 
 		pipeline = append(pipeline, bson.M{"$project": project})
-		pipeline = append(pipeline, common.GetSortQuery(externaldata.IDColumnName, mongo.SortAsc))
+		pipeline = append(pipeline, mongoquery.GetSortQuery(externaldata.IDColumnName, mongo.SortAsc))
 
 		cursor, err := s.dbExportClient.Collection(table.getDBTableName()).Aggregate(ctx, pipeline, options.Aggregate().SetAllowDiskUse(true))
 		if err != nil {
@@ -1071,7 +1072,7 @@ func (s *store) findPreviewDataFromMongo(ctx context.Context, job ImportJob, req
 
 func (s *store) findDataFromMongo(ctx context.Context, collectionName string, columns []string, request ListDataRequest) (*AggregationDataResult, error) {
 	pipeline := make([]bson.M, 0)
-	filter := common.GetSearchQuery(request.Search, columns)
+	filter := mongoquery.GetSearchQuery(request.Search, columns)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -1079,7 +1080,7 @@ func (s *store) findDataFromMongo(ctx context.Context, collectionName string, co
 	cursor, err := s.dbClient.Collection(collectionName).Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(request.SortBy, externaldata.IDColumnName), request.Sort),
+		mongoquery.GetSortQuery(cmp.Or(request.SortBy, externaldata.IDColumnName), request.Sort),
 	))
 	if err != nil {
 		return nil, err
