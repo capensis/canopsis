@@ -100,6 +100,10 @@ export default {
     title: 'Diffusion de messages',
     message: 'Permet d\'afficher des bannières et des messages d\'information dans l\'interface de Canopsis.',
   },
+  [USER_PERMISSIONS.technical.commentTemplate]: {
+    title: 'Modèles de commentaires',
+    topbarTitle: 'Modèles de commentaires',
+  },
   [USER_PERMISSIONS.technical.playlist]: {
     title: 'Listes de lecture',
     message: 'Permet de personnaliser l\'affichage des vues en les faisant défiler les unes après les autres avec un délai défini.',

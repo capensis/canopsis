@@ -156,6 +156,11 @@ export default {
         permission: USER_PERMISSIONS.technical.notification.common,
       },
       {
+        route: { name: ROUTES_NAMES.adminSettingsCommentTemplates },
+        icon: 'comment',
+        permission: USER_PERMISSIONS.technical.commentTemplate,
+      },
+      {
         route: { name: ROUTES_NAMES.adminSettingsWidgetTemplates },
         icon: 'widgets',
         permission: USER_PERMISSIONS.technical.widgetTemplate,

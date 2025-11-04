@@ -99,6 +99,10 @@ export default {
     title: 'Broadcast messages',
     message: 'The Canopsis broadcasting messages can be used for displaying banners and information messages that will appear in the Canopsis interface.',
   },
+  [USER_PERMISSIONS.technical.commentTemplate]: {
+    title: 'Comment templates',
+    topbarTitle: 'Comment templates',
+  },
   [USER_PERMISSIONS.technical.playlist]: {
     title: 'Playlists',
     message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
