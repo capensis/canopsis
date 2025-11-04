@@ -229,10 +229,7 @@ export const filterTreeviewPermissions = (items, search = '', searchDepth) => {
    * @param {Object} node - The node to check
    * @returns {boolean} True if the node matches the search term
    */
-  const matchesSearch = node => (
-    node?.name?.toLowerCase().includes(searchLower)
-    || node?.title?.toLowerCase().includes(searchLower)
-  );
+  const matchesSearch = node => node?.title?.toLowerCase().includes(searchLower);
 
   /**
    * Recursively collects all leaf node IDs from an array structure
