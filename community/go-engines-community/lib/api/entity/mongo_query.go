@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
@@ -144,7 +145,7 @@ func (q *MongoQueryBuilder) CreateTreeOfDepsAggregationPipeline(
 	}
 
 	if search != "" {
-		and = append(and, common.GetSearchQuery(search, q.defaultSearchByFields))
+		and = append(and, mongoquery.GetSearchQuery(search, q.defaultSearchByFields))
 	}
 
 	q.entityMatch = append(q.entityMatch, bson.M{"$match": bson.M{"$and": and}})
@@ -390,7 +391,7 @@ func (q *MongoQueryBuilder) addSearchFilter(r ListRequest, match *[]bson.M) {
 		searchBy = q.defaultSearchByFields
 	}
 
-	*match = append(*match, common.GetSearchQuery(r.Search, searchBy))
+	*match = append(*match, mongoquery.GetSearchQuery(r.Search, searchBy))
 }
 
 func (q *MongoQueryBuilder) addCategoryFilter(r ListRequest, match *[]bson.M) {
@@ -436,7 +437,7 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) {
 	}
 
 	q.adjustLookupsForSort([]string{sortBy})
-	q.sort = common.GetSortQuery(sortBy, sort)
+	q.sort = mongoquery.GetSortQuery(sortBy, sort)
 }
 
 func (q *MongoQueryBuilder) adjustLookupsForSort(sortFields []string) {

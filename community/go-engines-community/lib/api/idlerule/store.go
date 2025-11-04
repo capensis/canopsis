@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -52,7 +53,7 @@ func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer com
 
 func (s *store) Find(ctx context.Context, r FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -210,7 +211,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 		sortBy = "duration.value"
 	}
 
-	return common.GetSortQuery(sortBy, r.Sort)
+	return mongoquery.GetSortQuery(sortBy, r.Sort)
 }
 
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *idlerule.Rule) error {
