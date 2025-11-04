@@ -2,7 +2,6 @@
   <v-data-table
     :items="preparedItems"
     :headers="headers"
-    :hide-default-header="indent !== 0"
     :items-per-page="preparedItems.length"
     :expanded.sync="expanded"
     :class="{ 'permissions-table--collapsed-header': indent !== 0 }"
