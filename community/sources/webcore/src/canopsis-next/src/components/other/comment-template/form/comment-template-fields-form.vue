@@ -2,30 +2,32 @@
   <v-layout class="gap-2" column>
     <span class="text-subtitle-2">{{ $t('common.fields') }}</span>
     <c-card-iterator-field
-      v-field="fields"
+      v-field="form"
       :handle="`.${dragItemHandleClass}`"
       item-key="key"
     >
       <template #item="{ index }">
         <c-card-iterator-item
           :drag-handle-class="dragItemHandleClass"
-          :item-number="index + 1"
+          small
           @remove="removeField(index)"
         >
           <template #header>
-            <c-name-field
-              v-field="fields[index].name"
-              :label="$t('common.fieldName')"
-              :name="`fields[${index}].name`"
-              hide-details
-              required
-            />
+            <v-layout column>
+              <c-name-field
+                v-field="form[index].name"
+                :label="$t('common.fieldName')"
+                :name="`fields[${index}].name`"
+                hide-details
+                required
+              />
+              <c-enabled-field
+                v-field="form[index].required"
+                :label="$t('common.required')"
+                hide-details
+              />
+            </v-layout>
           </template>
-          <c-enabled-field
-            v-field="fields[index].required"
-            :label="$t('common.required')"
-            hide-details
-          />
         </c-card-iterator-item>
       </template>
     </c-card-iterator-field>
@@ -53,11 +55,11 @@ import { useArrayModelField } from '@/hooks/form/array-model-field';
 export default {
   inject: ['$validator'],
   model: {
-    prop: 'fields',
+    prop: 'form',
     event: 'input',
   },
   props: {
-    fields: {
+    form: {
       type: Array,
       required: true,
     },

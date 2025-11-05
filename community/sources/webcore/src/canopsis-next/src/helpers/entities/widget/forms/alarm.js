@@ -195,6 +195,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetQuickAction[]} quickMassActions
  * @property {string} quickMassActionsTemplate
  * @property {boolean} hideMassActions
+ * @property {Array} commentTemplates
  */
 
 /**
@@ -417,6 +418,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
+  commentTemplates: addKeyInEntities(parameters.commentTemplates ?? []),
 });
 
 /**
@@ -511,6 +513,7 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
+    commentTemplates: removeKeyFromEntities(form.commentTemplates),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
