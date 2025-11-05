@@ -227,7 +227,7 @@ func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity, r Fi
 
 	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": pbhIDs}}}}
 	pipeline = append(pipeline, GetNestedObjectsPipeline(s.authorProvider)...)
-	pipeline = append(pipeline, mongoquery.GetSortQuery("created", common.SortAsc))
+	pipeline = append(pipeline, mongoquery.GetSortQuery("created", pagination.SortAsc))
 	if r.WithFlags {
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 			"editable": bson.M{"$cond": bson.M{

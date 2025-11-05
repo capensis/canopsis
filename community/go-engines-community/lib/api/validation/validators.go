@@ -1,4 +1,4 @@
-package common
+package validation
 
 import (
 	"context"
@@ -21,8 +21,6 @@ import (
 )
 
 const (
-	SortAsc     = "asc"
-	SortDesc    = "desc"
 	MaxIDLength = 255
 
 	tableNameRegexString = `^[a-zA-Z_]\w+$`
@@ -124,8 +122,8 @@ func ValidateFilteredQuery(sl validator.StructLevel) {
 	// Validate sort
 	if r.Sort != "" {
 		sorts := []string{
-			SortAsc,
-			SortDesc,
+			pagination.SortAsc,
+			pagination.SortDesc,
 		}
 
 		found := false
