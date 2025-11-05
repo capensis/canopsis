@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -39,14 +40,14 @@ type store struct {
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 	defaultSearchByFields    []string
 	dupErrorParser           validation.DuplicateErrorParser
-	transformer              common.PatternFieldsTransformer
+	transformer              patternfields.Transformer
 }
 
 func NewStore(
 	dbClient mongo.DbClient,
 	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 ) Store {
 	return &store{
 		dbClient:                 dbClient,
@@ -325,7 +326,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 	uniqueAliases := make([]string, 0)
 
 	if r.EntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 			EntityPattern: *r.EntityPattern,
 		})
 		if err != nil {
@@ -343,7 +344,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 	}
 
 	if r.InheritedEntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 			EntityPattern: *r.InheritedEntityPattern,
 		})
 		if err != nil {

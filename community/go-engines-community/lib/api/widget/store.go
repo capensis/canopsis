@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -48,7 +49,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
 	enforcer security.Enforcer,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	tplValidator validator.Validator,
 	tplConfigProvider config.TemplateConfigProvider,
 ) Store {
@@ -91,7 +92,7 @@ type store struct {
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
 	authorProvider            author.Provider
-	transformer               common.PatternFieldsTransformer
+	transformer               patternfields.Transformer
 	enforcer                  security.Enforcer
 	tplValidator              validator.Validator
 	tplConfigProvider         config.TemplateConfigProvider
@@ -739,7 +740,7 @@ func (s *store) copy(ctx context.Context, widgetID string, isPrivate bool, r Cre
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r FilterRequest, i int, model *view.WidgetFilter) error {
 	var valErr common.ValidationError
 
-	transformedAlarmPattern, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
+	transformedAlarmPattern, err := s.transformer.TransformAlarmRequest(ctx, r.AlarmRequest)
 	if err != nil {
 		if errors.As(err, &valErr) {
 			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
@@ -748,7 +749,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r FilterReq
 		return err
 	}
 
-	transformedEntityPattern, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
+	transformedEntityPattern, err := s.transformer.TransformEntityRequest(ctx, r.EntityRequest)
 	if err != nil {
 		if errors.As(err, &valErr) {
 			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
@@ -757,7 +758,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r FilterReq
 		return err
 	}
 
-	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorPatternFieldsRequest(ctx, r.PbehaviorPatternFieldsRequest)
+	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorRequest(ctx, r.PbehaviorRequest)
 	if err != nil {
 		if errors.As(err, &valErr) {
 			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))
@@ -766,7 +767,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r FilterReq
 		return err
 	}
 
-	transformedWeatherPattern, err := s.transformer.TransformWeatherServicePatternFieldsRequest(ctx, r.WeatherServicePatternFieldsRequest)
+	transformedWeatherPattern, err := s.transformer.TransformWeatherServiceRequest(ctx, r.WeatherServiceRequest)
 	if err != nil {
 		if errors.As(err, &valErr) {
 			return valErr.AddFieldPrefix("filters." + strconv.Itoa(i))

@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -35,7 +35,7 @@ func (v *basicValidator) ValidateEditRequest(ctx context.Context, sl validator.S
 	v.validateCategory(ctx, sl, r.Category)
 
 	if r.CorporateEntityPattern == "" && len(r.EntityPattern) > 0 &&
-		!match.ValidateEntityPattern(r.EntityPattern, common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)) {
+		!match.ValidateEntityPattern(r.EntityPattern, patternfields.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection)) {
 		sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "entity_pattern", "")
 	}
 }

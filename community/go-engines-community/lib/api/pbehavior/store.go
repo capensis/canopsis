@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -84,7 +85,7 @@ type store struct {
 	entitiesDefaultSearchByFields []string
 	entitiesDefaultSortBy         string
 
-	transformer    common.PatternFieldsTransformer
+	transformer    patternfields.Transformer
 	dupErrorParser validation.DuplicateErrorParser
 
 	workers int
@@ -98,7 +99,7 @@ func NewStore(
 	pbhTypeComputer pbehavior.TypeComputer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	websocketHub websocket.Hub,
 	userInterfaceConfigProvider config.UserInterfaceConfigProvider,
 ) Store {
@@ -149,7 +150,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	doc.Comments = make([]pbehavior.Comment, 0)
 	doc.RRuleEnd = rruleEnd
 	if r.ExecPattern {
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
 		if err != nil {
 			return nil, err
 		}
@@ -166,7 +167,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
 		if err != nil {
 			return err
 		}
@@ -401,7 +402,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 	}
 
 	if r.ExecPattern {
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
 		if err != nil {
 			return nil, false, err
 		}
@@ -449,7 +450,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 			}
 		}
 
-		err = s.transformPatternRequestToModel(ctx, r.EntityPatternFieldsRequest, &doc)
+		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
 		if err != nil {
 			return err
 		}
@@ -583,7 +584,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 			corpPattern = *r.CorporateEntityPattern
 		}
 
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 			CorporateEntityPattern: corpPattern,
 			EntityPattern:          r.EntityPattern,
 		})
@@ -592,11 +593,11 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		}
 
 		if r.CorporateEntityPattern != nil {
-			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
+			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
 			set["corporate_entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.ID
 			set["corporate_entity_pattern_title"] = transformedEntityPatternRequest.CorporatePattern.Title
 		} else if r.EntityPattern != nil {
-			set["entity_pattern"] = transformedEntityPatternRequest.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
+			set["entity_pattern"] = transformedEntityPatternRequest.EntityPattern.RemoveFields(patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
 			unset["corporate_entity_pattern"] = ""
 			unset["corporate_entity_pattern_title"] = ""
 		}
@@ -1412,15 +1413,15 @@ func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 	}
 }
 
-func (s *store) transformPatternRequestToModel(ctx context.Context, r common.EntityPatternFieldsRequest, model *pbehavior.PBehavior) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+func (s *store) transformPatternRequestToModel(ctx context.Context, r patternfields.EntityRequest, model *pbehavior.PBehavior) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r)
 	if err != nil {
 		return err
 	}
 
 	model.Aliases = transformedEntityPatternRequest.Aliases
 	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection),
+		patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection),
 	)
 
 	return nil

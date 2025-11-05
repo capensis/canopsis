@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -76,7 +77,7 @@ type store struct {
 	dbUserCollection                 mongo.DbCollection
 	authorProvider                   author.Provider
 	linkGenerator                    link.Generator
-	transformer                      common.PatternFieldsTransformer
+	transformer                      patternfields.Transformer
 
 	timezoneConfigProvider config.TimezoneConfigProvider
 
@@ -93,7 +94,7 @@ func NewStore(
 	dbClient,
 	dbExportClient mongo.DbClient,
 	linkGenerator link.Generator,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
 	tplExecutor template.Executor,
