@@ -6,7 +6,6 @@ import (
 	"mime/multipart"
 	"os"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -222,7 +221,7 @@ func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*Aggr
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		mongoquery.GetSortQuery(s.defaultSortBy, common.SortAsc),
+		mongoquery.GetSortQuery(s.defaultSortBy, pagination.SortAsc),
 	))
 	if err != nil {
 		return nil, err

@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
@@ -297,7 +296,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 
 func (s *store) getSortQuery(sortBy, sort string) bson.M {
 	sortDir := 1
-	if sort == common.SortDesc {
+	if sort == pagination.SortDesc {
 		sortDir = -1
 	}
 

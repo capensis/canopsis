@@ -390,7 +390,7 @@ func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (
 	cursor, err := s.dbFailureCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		[]bson.M{{"$match": match}},
-		mongoquery.GetSortQuery("t", common.SortDesc),
+		mongoquery.GetSortQuery("t", pagination.SortDesc),
 	))
 
 	if err != nil {

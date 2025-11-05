@@ -139,7 +139,7 @@ func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider,
 			entityRequestPrefix + ".type":        {},
 		},
 		defaultSortBy: "t",
-		defaultSort:   common.SortDesc,
+		defaultSort:   pagination.SortDesc,
 
 		fieldsAliases: map[string]string{
 			"uid":            "_id",
@@ -225,7 +225,7 @@ func (q *MongoQueryBuilder) CreateGetDisplayNamesPipeline(ctx context.Context, r
 	q.alarmMatch = append(q.alarmMatch, bson.M{"$match": match})
 
 	sortDir := 1
-	if r.Sort == common.SortDesc {
+	if r.Sort == pagination.SortDesc {
 		sortDir = -1
 	}
 
@@ -1138,7 +1138,7 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) error {
 
 			sortBy := split[0]
 			sortDir := 1
-			if split[1] == common.SortDesc {
+			if split[1] == pagination.SortDesc {
 				sortDir = -1
 			}
 
