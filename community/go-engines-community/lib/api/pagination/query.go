@@ -11,6 +11,11 @@ const (
 	DefaultPaginate = true
 )
 
+const (
+	SortAsc  = "asc"
+	SortDesc = "desc"
+)
+
 // Query is base request for pagination.
 type Query struct {
 	Page     int64 `form:"page" json:"page" binding:"numeric,gt=0"`
