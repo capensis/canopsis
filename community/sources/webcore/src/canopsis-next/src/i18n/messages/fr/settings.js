@@ -95,7 +95,7 @@ export default {
   liveWatchingTooltip: 'Si activé, les alarmes sont mises à jour en direct à l\'aide de websockets',
   defaultInheritedPbehavior: 'Appliquer pbehavior également aux dépendances',
   expandPanel: {
-    title: 'Agrandir le panneau',
+    title: 'Panneau dépliable',
   },
   exportCsv: {
     title: 'Exporter CSV',
@@ -176,7 +176,7 @@ export default {
     filterOnClick: 'Filtrer au clic',
   },
   liveReporting: {
-    title: 'Reportage en direct',
+    title: 'Filtre temporel',
     field: 'Définir un intervalle de dates',
   },
   counterLevels: {
