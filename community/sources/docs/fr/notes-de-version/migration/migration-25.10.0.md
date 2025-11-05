@@ -717,7 +717,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     !!! warning Attention
             Ce bloc est réservé uniquement aux environnements impliquant MongoDB exécuté dans un environnement Kubernetes.
             
-            Si ce n'est pas votre cas, référez-vous au bloc [RHEL 8](#__tabbed_4_2)
+            Si ce n'est pas votre cas, référez-vous au bloc [Paquets RPM](#__tabbed_1_2)
 
     Dump de la base de données Canopsis :
     ```sh
