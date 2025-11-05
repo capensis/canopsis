@@ -5,9 +5,9 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -30,7 +30,7 @@ type store struct {
 	dbClient       mongo.DbClient
 	dbCollection   mongo.DbCollection
 	authorProvider author.Provider
-	transformer    common.PatternFieldsTransformer
+	transformer    patternfields.Transformer
 
 	defaultSearchByFields []string
 	dupErrorParser        validation.DuplicateErrorParser
@@ -39,7 +39,7 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 ) Store {
 	return &store{
 		dbClient:              dbClient,
@@ -218,23 +218,23 @@ func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {
 }
 
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *resolverule.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r.EntityRequest)
 	if err != nil {
 		return err
 	}
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, r.AlarmPatternFieldsRequest)
+	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, r.AlarmRequest)
 	if err != nil {
 		return err
 	}
 
 	model.Aliases = transformedEntityPatternRequest.Aliases
 	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.ResolveRuleMongoCollection),
+		patternfields.GetForbiddenFieldsInEntityPattern(mongo.ResolveRuleMongoCollection),
 	)
 	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
-		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+		patternfields.GetForbiddenFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
+		patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
 	)
 
 	return nil

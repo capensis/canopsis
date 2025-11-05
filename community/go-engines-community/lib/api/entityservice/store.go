@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -55,7 +56,7 @@ type store struct {
 	entityCounters            mongo.DbCollection
 	userDbCollection          mongo.DbCollection
 	stateSettingDbCollection  mongo.DbCollection
-	transformer               common.PatternFieldsTransformer
+	transformer               patternfields.Transformer
 	linkGenerator             link.Generator
 	enableSameServiceNames    bool
 	authorProvider            author.Provider
@@ -71,7 +72,7 @@ func NewStore(
 	linkGenerator link.Generator,
 	enableSameServiceNames bool,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	tplValidator validator.Validator,
 	tplConfigProvider config.TemplateConfigProvider,
 	logger zerolog.Logger,
@@ -369,7 +370,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			}
 		}
 
-		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityPatternFieldsRequest)
+		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityRequest)
 		if err != nil {
 			return err
 		}
@@ -450,7 +451,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			}
 		}
 
-		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityPatternFieldsRequest)
+		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityRequest)
 		if err != nil {
 			return err
 		}
@@ -588,13 +589,13 @@ func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	return user, errors.New("user not found")
 }
 
-func (s *store) transformEntityPatternRequest(ctx context.Context, r common.EntityPatternFieldsRequest) (savedpattern.EntityPatternFields, []string, error) {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+func (s *store) transformEntityPatternRequest(ctx context.Context, r patternfields.EntityRequest) (savedpattern.EntityPatternFields, []string, error) {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r)
 	if err != nil {
 		return savedpattern.EntityPatternFields{}, nil, err
 	}
 
-	transformedPattern := transformedEntityPatternRequest.ToModelWithoutFields(common.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
+	transformedPattern := transformedEntityPatternRequest.ToModelWithoutFields(patternfields.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
 
 	return transformedPattern, transformedEntityPatternRequest.Aliases, nil
 }

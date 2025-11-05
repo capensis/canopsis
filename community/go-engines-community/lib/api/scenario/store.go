@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -58,7 +59,7 @@ type store struct {
 	tplDataCollection         mongo.DbCollection
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
-	transformer               common.PatternFieldsTransformer
+	transformer               patternfields.Transformer
 	authorProvider            author.Provider
 	tplValidator              validator.Validator
 	tplExecutor               libtemplate.Executor
@@ -79,7 +80,7 @@ type store struct {
 func NewStore(
 	db mongo.DbClient,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	tplValidator validator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
@@ -430,7 +431,7 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionReq
 	uniqueAliases := make([]string, 0)
 
 	for idx, actionRequest := range r {
-		transformedAlarmPatternFieldsRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, actionRequest.AlarmPatternFieldsRequest)
+		transformedAlarmPatternFieldsRequest, err := s.transformer.TransformAlarmRequest(ctx, actionRequest.AlarmRequest)
 		if err != nil {
 			if errors.As(err, &valErr) {
 				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
@@ -439,7 +440,7 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionReq
 			return nil, nil, err
 		}
 
-		transformEntityPatternFieldsRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, actionRequest.EntityPatternFieldsRequest)
+		transformEntityPatternFieldsRequest, err := s.transformer.TransformEntityRequest(ctx, actionRequest.EntityRequest)
 		if err != nil {
 			if errors.As(err, &valErr) {
 				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
@@ -460,11 +461,11 @@ func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionReq
 			Comment:    r[idx].Comment,
 			Parameters: r[idx].Parameters,
 			EntityPatternFields: transformEntityPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInEntityPattern(mongo.ScenarioCollection),
+				patternfields.GetForbiddenFieldsInEntityPattern(mongo.ScenarioCollection),
 			),
 			AlarmPatternFields: transformedAlarmPatternFieldsRequest.ToModelWithoutFields(
-				common.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioCollection),
-				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioCollection),
+				patternfields.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioCollection),
+				patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioCollection),
 			),
 			DropScenarioIfNotMatched: *r[idx].DropScenarioIfNotMatched,
 			EmitTrigger:              *r[idx].EmitTrigger,
