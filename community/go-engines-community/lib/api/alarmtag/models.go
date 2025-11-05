@@ -2,8 +2,8 @@ package alarmtag
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 )
@@ -24,8 +24,8 @@ type CreateRequest struct {
 	Color  string `json:"color" binding:"required,iscolor"`
 	Author string `json:"author" swaggerignore:"true"`
 
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
 }
 
 type UpdateRequest struct {
@@ -33,8 +33,8 @@ type UpdateRequest struct {
 	Color  string `json:"color" binding:"required,iscolor"`
 	Author string `json:"author" swaggerignore:"true"`
 
-	common.AlarmPatternFieldsRequest
-	common.EntityPatternFieldsRequest
+	patternfields.AlarmRequest
+	patternfields.EntityRequest
 }
 
 type Response struct {

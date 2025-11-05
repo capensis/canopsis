@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -62,7 +63,7 @@ type store struct {
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
 	authorProvider            author.Provider
-	transformer               common.PatternFieldsTransformer
+	transformer               patternfields.Transformer
 	tplValidator              validator.Validator
 	tplExecutor               libtemplate.Executor
 	tplConfigProvider         config.TemplateConfigProvider
@@ -81,7 +82,7 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	tplValidator validator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
@@ -496,14 +497,14 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (lin
 		SourceCode:   r.SourceCode,
 		ExternalData: externalData,
 		Author:       r.Author,
-		EntityPatternFields: r.EntityPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
+		EntityPatternFields: r.EntityRequest.ToModelWithoutFields(
+			patternfields.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
 		),
 	}
 	if r.Type == link.TypeAlarm {
-		rule.AlarmPatternFields = r.AlarmPatternFieldsRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
+		rule.AlarmPatternFields = r.AlarmRequest.ToModelWithoutFields(
+			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
+			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
 		)
 	}
 
@@ -511,26 +512,26 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (lin
 }
 
 func (s *store) transformPatternRequestsToModel(ctx context.Context, req EditRequest, model *link.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, req.EntityPatternFieldsRequest)
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, req.EntityRequest)
 	if err != nil {
 		return err
 	}
 
 	if req.Type == link.TypeAlarm {
-		transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, req.AlarmPatternFieldsRequest)
+		transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, req.AlarmRequest)
 		if err != nil {
 			return err
 		}
 
 		model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-			common.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-			common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
+			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
+			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
 		)
 	}
 
 	model.Aliases = transformedEntityPatternRequest.Aliases
 	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
+		patternfields.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
 	)
 
 	return nil
