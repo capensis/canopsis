@@ -226,7 +226,7 @@ export default {
   searchBy: 'Search by',
   dictionary: 'Dictionary',
   condition: 'Condition | Conditions',
-  template: 'Template',
+  template: 'Template | Templates',
   pbehaviorList: 'List periodic behaviors',
   canceled: 'Canceled',
   snooze: 'Snooze',
