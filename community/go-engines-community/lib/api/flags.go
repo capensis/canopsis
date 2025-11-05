@@ -20,10 +20,11 @@ func (f *Flags) ParseArgs() {
 	flag.StringVar(&f.ConfigDir, "c", defaultConfigDir, "Configuration files directory")
 	flag.BoolVar(&f.SecureSession, "secure", false, "Secure session")
 	flag.BoolVar(&f.EnableDocs, "docs", false, "Set to enable Swagger docs")
-	flag.DurationVar(&f.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Duration to wait between two run of periodical process")
-	flag.DurationVar(&f.IntegrationPeriodicalWaitTime, "integrationPeriodicalWaitTime", 5*time.Second, "Duration to periodically check results of engines' tasks")
-	flag.DurationVar(&f.EntityCategoryMetaPeriodicalWaitTime, "entityCategoryMetaPeriodicalWaitTime", time.Minute, "Duration to wait between two run of periodical process to update entity category meta")
-	flag.DurationVar(&f.InstructionRateNotificationPeriodicalWaitTime, "instructionRateNotificationPeriodicalWaitTime", time.Hour, "Duration to check instructions and create rate notifications")
+	flag.DurationVar(&f.PeriodicalWaitTime, "periodicalWaitTime", canopsis.PeriodicalWaitTime, "Interval to wait between two run of periodical process")
+	flag.DurationVar(&f.IntegrationPeriodicalWaitTime, "integrationPeriodicalWaitTime", 5*time.Second, "Interval to periodically check results of engines' tasks")
+	flag.DurationVar(&f.EntityCategoryMetaPeriodicalWaitTime, "entityCategoryMetaPeriodicalWaitTime", time.Minute, "Interval to periodically update entity category meta")
+	flag.DurationVar(&f.InstructionRateNotificationPeriodicalWaitTime, "instructionRateNotificationPeriodicalWaitTime", time.Hour, "Interval to periodically check instructions and create rate notifications")
+	flag.DurationVar(&f.BroadcastMessagePeriodicalWaitTime, "broadcastMessagePeriodicalWaitTime", time.Minute, "Interval to periodically check broadcast messages")
 	flag.DurationVar(&f.StateSettingRecomputeDelay, "stateSettingRecomputeDelay", time.Second, "Minimum duration to wait before send recompute event for services and components")
 	flag.BoolVar(&f.EnableSameServiceNames, "enableSameServiceNames", false, "Enable same service names, services have unique names by default")
 	flag.DurationVar(&f.ExternalDataAPITimeout, "externalDataAPITimeout", 30*time.Second, "External API HTTP Request Timeout.")
@@ -45,6 +46,7 @@ type Flags struct {
 	IntegrationPeriodicalWaitTime                 time.Duration
 	EntityCategoryMetaPeriodicalWaitTime          time.Duration
 	InstructionRateNotificationPeriodicalWaitTime time.Duration
+	BroadcastMessagePeriodicalWaitTime            time.Duration
 
 	StateSettingRecomputeDelay time.Duration
 
