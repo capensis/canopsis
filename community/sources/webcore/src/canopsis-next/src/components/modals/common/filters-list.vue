@@ -169,6 +169,8 @@ export default {
         await this.updateWidgetFiltersPositions({
           data: mapIds(filters),
         });
+
+        await this.fetchUserPreference({ id: this.config.widgetId });
       } catch (err) {
         console.error(err);
 
