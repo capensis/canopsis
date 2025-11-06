@@ -156,6 +156,9 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
       form="[object Object]"
     />
@@ -817,6 +820,9 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
       form="[object Object]"
     />
@@ -1476,6 +1482,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
       form="[object Object]"
     />
@@ -2135,6 +2144,9 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
         value="true"
       />
     </widget-settings-group-stub>
+    <field-comment-templates-stub
+      templates=""
+    />
     <fast-pbehavior-form-stub
       form="[object Object]"
     />
