@@ -72,6 +72,20 @@ func TestNewMeta(t *testing.T) {
 		{
 			query: Query{
 				Page:     1,
+				Limit:    0,
+				Paginate: true,
+			},
+			total: 34,
+			expected: MetaResponse{
+				Page:       1,
+				PerPage:    0,
+				PageCount:  1,
+				TotalCount: 34,
+			},
+		},
+		{
+			query: Query{
+				Page:     1,
 				Limit:    10,
 				Paginate: false,
 			},

@@ -34,7 +34,7 @@ func NewResponse(q Query, d Data) ListResponse {
 func NewMeta(q Query, total int64) MetaResponse {
 	if q.Paginate {
 		var pageCount int64
-		if total > 0 && q.Limit > 0 {
+		if total > q.Limit && q.Limit > 0 {
 			pageCount = int64(math.Ceil(float64(total) / float64(q.Limit)))
 		} else {
 			pageCount = 1
