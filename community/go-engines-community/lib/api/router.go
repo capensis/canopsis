@@ -2614,12 +2614,30 @@ func RegisterRoutes(
 			)
 			entityInfosPropertyRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjEntity,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.ObjEntityInfoProperty,
+						Act: model.PermissionRead,
+					},
+				}, enforcer),
 				entityInfosPropertyAPI.List,
 			)
 			entityInfosPropertyRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer),
+				middleware.AuthorizeAtLeastOnePerm([]apisecurity.PermCheck{
+					{
+						Obj: apisecurity.ObjEntity,
+						Act: model.PermissionRead,
+					},
+					{
+						Obj: apisecurity.ObjEntityInfoProperty,
+						Act: model.PermissionRead,
+					},
+				}, enforcer),
 				entityInfosPropertyAPI.Get,
 			)
 			entityInfosPropertyRouter.PUT(
