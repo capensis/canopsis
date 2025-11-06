@@ -19,7 +19,7 @@
       </v-flex>
       <v-flex
         class="pr-3"
-        xs4
+        xs3
       >
         <c-alarm-state-field
           v-field="form.sli_avail_state"
@@ -27,7 +27,7 @@
           required
         />
       </v-flex>
-      <v-flex xs2>
+      <v-flex xs3>
         <c-impact-level-field
           v-field="form.impact_level"
           required
