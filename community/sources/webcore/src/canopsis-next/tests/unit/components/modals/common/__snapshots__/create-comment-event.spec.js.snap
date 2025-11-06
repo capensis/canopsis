@@ -20,15 +20,13 @@ exports[`create-comment-event Renders \`create-comment-event\` with empty modal 
       class="text"
     >
       <div
-        class="layout column"
+        class="layout gap-4 column"
       >
         <!---->
-        <c-name-field
-          autofocus=""
-          label="Comment"
-          max-length="255"
-          name="comment"
-          required=""
+        <alarm-comment-template-form-stub
+          form="[object Object]"
+          templates=""
+          value="[object Object]"
         />
       </div>
     </div>
@@ -80,22 +78,15 @@ exports[`create-comment-event Renders \`create-comment-event\` with items 1`] = 
       class="text"
     >
       <div
-        class="layout column"
+        class="layout gap-4 column"
       >
         <alarm-general-table-stub
           items="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
         />
-        <hr
-          aria-orientation="horizontal"
-          class="my-3 v-divider theme--light"
-          role="separator"
-        />
-        <c-name-field
-          autofocus=""
-          label="Comment"
-          max-length="255"
-          name="comment"
-          required=""
+        <alarm-comment-template-form-stub
+          form="[object Object]"
+          templates=""
+          value="[object Object]"
         />
       </div>
     </div>
