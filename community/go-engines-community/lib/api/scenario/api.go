@@ -9,7 +9,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -23,20 +25,23 @@ type API interface {
 }
 
 type api struct {
-	store         Store
-	mongoExporter dbexport.Exporter
-	logger        zerolog.Logger
+	store          Store
+	mongoExporter  dbexport.Exporter
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:         store,
-		mongoExporter: mongoExporter,
-		logger:        logger,
+		store:          store,
+		mongoExporter:  mongoExporter,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
 }
 
@@ -45,15 +50,17 @@ func NewApi(
 func (a *api) List(c *gin.Context) {
 	var query FilteredQuery
 	query.Query = pagination.GetDefaultQuery()
+	if err := validation.Bind(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
 
-	if err := c.ShouldBind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
 		return
 	}
 
 	scenarios, err := a.store.Find(c, query)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(query.Query, scenarios)
@@ -65,8 +72,11 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	scenario, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
+
 	if scenario == nil {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
@@ -80,10 +90,9 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Scenario
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
-	var err error
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
-	if err = c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
@@ -94,7 +103,10 @@ func (a *api) Create(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if scenario == nil {
@@ -115,15 +127,18 @@ func (a *api) Update(c *gin.Context) {
 
 	oldScenario, err := a.store.GetOneBy(c, request.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if oldScenario == nil {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
 		return
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -134,7 +149,10 @@ func (a *api) Update(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if newScenario == nil {
@@ -150,7 +168,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	scenario, err := a.store.GetOneBy(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if scenario == nil {
@@ -160,7 +180,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -226,15 +248,17 @@ func (a *api) BulkDelete(c *gin.Context) {
 // @Param body body dbexport.Request true "body"
 func (a *api) DBExport(c *gin.Context) {
 	request := dbexport.Request{}
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
 		return
 	}
 
 	b, err := a.mongoExporter.Export(c, mongo.ScenarioCollection, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	dbexport.AttachFile(c, mongo.ScenarioCollection, b)
@@ -245,8 +269,8 @@ func (a *api) DBExport(c *gin.Context) {
 // @Success 200 {object} template.ValidateResponse
 func (a *api) ValidateTemplates(c *gin.Context) {
 	var request TemplateRequest
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -260,7 +284,9 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -271,7 +297,9 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 func (a *api) GetTemplateVars(c *gin.Context) {
 	vars, err := a.store.GetTemplateVars(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, vars)

@@ -83,7 +83,7 @@ func (s *store) Enable(ctx context.Context, message, color, userID string) error
 
 		users, err := s.userProvider.FindWithoutPermission(ctx, apisecurity.PermMaintenance)
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		userIDs := make([]string, len(users))

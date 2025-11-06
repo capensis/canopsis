@@ -8,8 +8,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -21,17 +23,20 @@ type API interface {
 }
 
 type api struct {
-	store    Store
-	enforcer security.Enforcer
+	store          Store
+	enforcer       security.Enforcer
+	errorResponder httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -42,14 +47,17 @@ func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, _, err := a.checkAccessByWidget(c, r.Widget, userID, model.PermissionRead)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -59,7 +67,9 @@ func (a *api) List(c *gin.Context) {
 
 	users, err := a.store.Find(c, r, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, users)
@@ -73,7 +83,9 @@ func (a *api) Get(c *gin.Context) {
 	id := c.Param("id")
 	ok, _, err := a.checkAccess(c, id, userID, model.PermissionRead)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -83,7 +95,9 @@ func (a *api) Get(c *gin.Context) {
 
 	filter, err := a.store.GetOneBy(c, id, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if filter == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -100,8 +114,9 @@ func (a *api) Create(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	request := CreateRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -114,7 +129,9 @@ func (a *api) Create(c *gin.Context) {
 	var err error
 	granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userID, perm)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !granted {
@@ -125,7 +142,9 @@ func (a *api) Create(c *gin.Context) {
 	if !*request.IsUserPreference && !request.IsPrivate {
 		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -142,7 +161,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, filter)
@@ -157,8 +178,9 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -171,7 +193,9 @@ func (a *api) Update(c *gin.Context) {
 	var err error
 	granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userID, perm)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !granted {
@@ -182,7 +206,9 @@ func (a *api) Update(c *gin.Context) {
 	if !*request.IsUserPreference && !request.IsPrivate {
 		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -193,7 +219,9 @@ func (a *api) Update(c *gin.Context) {
 
 	filter, err := a.store.GetOneBy(c, request.ID, request.Author)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if filter == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -213,7 +241,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if filter == nil {
@@ -230,7 +260,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	filter, err := a.store.GetOneBy(c, id, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if filter == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -244,7 +276,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	granted, isPrivate, err := a.checkAccess(c, id, userID, perm)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !granted {
@@ -255,7 +289,9 @@ func (a *api) Delete(c *gin.Context) {
 	if !filter.IsUserPreference && !isPrivate {
 		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -266,7 +302,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, id, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -281,8 +319,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditPositionRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -294,7 +333,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	firstItem := request.Items[0]
 	firstFilter, err := a.store.GetOneBy(c, firstItem, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if firstFilter == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -309,7 +350,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 
 	granted, isPrivate, err := a.checkAccess(c, firstItem, userID, perm)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !granted {
@@ -320,7 +363,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	if !isUserPreference && !isPrivate {
 		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjView, model.PermissionUpdate)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -336,7 +381,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

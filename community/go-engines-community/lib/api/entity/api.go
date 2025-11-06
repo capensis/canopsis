@@ -8,7 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entity"
@@ -43,6 +45,7 @@ type api struct {
 	entityChangeListener chan<- entityservice.ChangeEntityMessage
 	metricMetaUpdater    metrics.MetaUpdater
 	encoder              encoding.Encoder
+	errorResponder       httperror.Responder
 	logger               zerolog.Logger
 }
 
@@ -53,6 +56,7 @@ func NewApi(
 	entityChangeListener chan<- entityservice.ChangeEntityMessage,
 	metricMetaUpdater metrics.MetaUpdater,
 	encoder encoding.Encoder,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "name", "type", "enabled", "connector", "component", "services"}
@@ -74,6 +78,7 @@ func NewApi(
 		entityChangeListener: entityChangeListener,
 		metricMetaUpdater:    metricMetaUpdater,
 		encoder:              encoder,
+		errorResponder:       errorResponder,
 		logger:               logger,
 	}
 }
@@ -83,8 +88,9 @@ func NewApi(
 func (a *api) List(c *gin.Context) {
 	var query ListRequestWithPagination
 	query.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.Bind(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -96,7 +102,9 @@ func (a *api) List(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(query.Query, entities)
@@ -108,8 +116,9 @@ func (a *api) List(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -120,7 +129,9 @@ func (a *api) StartExport(c *gin.Context) {
 
 	params, err := a.encoder.Encode(r.BaseFilterRequest)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	userID := c.MustGet(authctx.UserKey).(string)
@@ -135,7 +146,9 @@ func (a *api) StartExport(c *gin.Context) {
 	})
 
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, ExportResponse{
@@ -150,7 +163,9 @@ func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if t == nil {
@@ -168,7 +183,9 @@ func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
@@ -185,8 +202,9 @@ func (a *api) DownloadExport(c *gin.Context) {
 // @Param body body ArchiveDisabledRequest true "body"
 func (a *api) ArchiveDisabled(c *gin.Context) {
 	var r ArchiveDisabledRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -207,8 +225,9 @@ func (a *api) ArchiveDisabled(c *gin.Context) {
 // @Param body body ArchiveUnlinkedRequest true "body"
 func (a *api) ArchiveUnlinked(c *gin.Context) {
 	var r ArchiveUnlinkedRequest
-	if err := c.ShouldBindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -254,14 +273,17 @@ func (a *api) BulkDisable(c *gin.Context) {
 // @Success 200 {object} ContextGraphResponse
 func (a *api) GetContextGraph(c *gin.Context) {
 	var r ContextGraphRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	res, err := a.store.GetContextGraph(c, r.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -278,14 +300,17 @@ func (a *api) GetContextGraph(c *gin.Context) {
 func (a *api) CheckStateSetting(c *gin.Context) {
 	request := CheckStateSettingRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	response, err := a.store.CheckStateSetting(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, response)
@@ -295,8 +320,8 @@ func (a *api) CheckStateSetting(c *gin.Context) {
 // @Success 200 {object} StateSettingResponse
 func (a *api) GetStateSetting(c *gin.Context) {
 	request := ContextGraphRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -309,7 +334,9 @@ func (a *api) GetStateSetting(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, response)

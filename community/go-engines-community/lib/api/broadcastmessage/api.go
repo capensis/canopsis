@@ -6,7 +6,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 )
@@ -21,11 +23,13 @@ func NewAPI(
 	store Store,
 	onChangeListener chan<- bool,
 	websocketHub websocket.Hub,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
 		store:            store,
 		onChangeListener: onChangeListener,
 		websocketHub:     websocketHub,
+		errorResponder:   errorResponder,
 	}
 }
 
@@ -33,6 +37,7 @@ type api struct {
 	store            Store
 	onChangeListener chan<- bool
 	websocketHub     websocket.Hub
+	errorResponder   httperror.Responder
 }
 
 // Create
@@ -40,14 +45,17 @@ type api struct {
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := CreateRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	res, err := a.store.Insert(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -66,14 +74,17 @@ func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.Bind(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(query.Query, aggregationResult)
@@ -85,7 +96,9 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	bm, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if bm == nil {
@@ -104,15 +117,17 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	res, err := a.store.Update(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -128,7 +143,9 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -152,7 +169,9 @@ func (a *api) GetActive(c *gin.Context) {
 
 	res, err := a.store.GetActive(c, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -162,7 +181,9 @@ func (a *api) Read(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	ok, err := a.store.Read(c, c.Param("id"), userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -173,7 +194,9 @@ func (a *api) Read(c *gin.Context) {
 
 	msgs, err := a.store.GetActive(c, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	a.websocketHub.SendToUser(userID, websocket.RoomBroadcastMessages, msgs)
