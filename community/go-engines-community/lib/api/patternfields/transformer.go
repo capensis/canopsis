@@ -3,6 +3,7 @@ package patternfields
 import (
 	"context"
 	"errors"
+	"fmt"
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -165,47 +166,66 @@ func (t *baseTransformer) getCommonFilter(isPrivate bool, user string) bson.M {
 }
 
 func (t *baseTransformer) transformAliases(ctx context.Context, origPattern pattern.Entity, errPrefix string) (pattern.Entity, []string, error) {
-	var uniqueAliasesMap = make(map[string]string)
-	var uniqueAliases []string
-
 	mutPattern := make([][]pattern.FieldCondition, len(origPattern))
+	aliases := make([]string, 0)
 	for i := range origPattern {
 		mutPattern[i] = slices.Clone(origPattern[i])
-	}
-
-	for _, p := range mutPattern {
-		for idx, subP := range p {
-			if subP.Alias == "" {
-				continue
-			}
-
-			var doc struct {
-				ID   string `bson:"_id"`
-				Name string `bson:"name"`
-			}
-
-			if k, ok := uniqueAliasesMap[subP.Alias]; ok {
-				p[idx].Field = "infos." + k
-			} else {
-				err := t.entityInfosPropertyCollection.FindOne(
-					ctx,
-					bson.M{"alias": subP.Alias},
-					options.FindOne().SetProjection(bson.M{"name": 1}),
-				).Decode(&doc)
-				if err != nil {
-					if errors.Is(err, mongodriver.ErrNoDocuments) {
-						return nil, nil, common.NewValidationError(errPrefix+".alias", "Alias doesn't exist.")
-					}
-
-					return nil, nil, err
-				}
-
-				p[idx].Field = "infos." + doc.Name
-				uniqueAliases = append(uniqueAliases, doc.ID)
-				uniqueAliasesMap[subP.Alias] = doc.Name
+		for _, g := range mutPattern[i] {
+			if g.Alias != "" {
+				aliases = append(aliases, g.Alias)
 			}
 		}
 	}
 
-	return mutPattern, uniqueAliases, nil
+	if len(aliases) == 0 {
+		return origPattern, nil, nil
+	}
+
+	cursor, err := t.entityInfosPropertyCollection.Find(
+		ctx,
+		bson.M{"alias": bson.M{"$in": aliases}},
+		options.Find().SetProjection(bson.M{"alias": 1, "name": 1}),
+	)
+	if err != nil {
+		return nil, nil, fmt.Errorf("cannot find entity aliases: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	infoNamesByAlias := make(map[string]string, len(aliases))
+	aliasPropIDs := make([]string, 0, len(aliases))
+	for cursor.Next(ctx) {
+		prop := struct {
+			ID    string `bson:"_id"`
+			Alias string `bson:"alias"`
+			Name  string `bson:"name"`
+		}{}
+		err = cursor.Decode(&prop)
+		if err != nil {
+			return nil, nil, fmt.Errorf("cannot decode entity alias: %w", err)
+		}
+
+		infoNamesByAlias[prop.Alias] = prop.Name
+		aliasPropIDs = append(aliasPropIDs, prop.ID)
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, nil, fmt.Errorf("cannot fetch entity aliases: %w", err)
+	}
+
+	for _, g := range mutPattern {
+		for idx, p := range g {
+			if p.Alias == "" {
+				continue
+			}
+
+			n, ok := infoNamesByAlias[p.Alias]
+			if !ok {
+				return nil, nil, common.NewValidationError(errPrefix+".alias", "Alias doesn't exist.")
+			}
+
+			g[idx].Field = "infos." + n
+		}
+	}
+
+	return mutPattern, aliasPropIDs, nil
 }

@@ -35,10 +35,8 @@ func ValidatePbehaviorPattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.PbehaviorInfo)
-	if !ok {
-		return false
-	}
 
-	return match.ValidatePbehaviorInfoPattern(p)
+	p, ok := i.(pattern.PbehaviorInfo)
+
+	return ok && match.ValidatePbehaviorInfoPattern(p)
 }
