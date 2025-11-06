@@ -460,7 +460,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     Une fois le [dépôt mise à jour vers la version `8.0`](#mise-à-jour-de-dépôts), on peut lancer l'upgrade
 
     ```sh
-    dnf upgrade mongodb-org mongodb-org-database mongodb-org-server mongodb-org-mongos
+    dnf upgrade mongodb-org mongodb-org-database mongodb-org-server mongodb-org-mongos mongodb-org-tools
     ```
 
     Une fois mis à jour, le service doit être relancé
