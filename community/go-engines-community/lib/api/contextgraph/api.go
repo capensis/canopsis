@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -24,12 +25,13 @@ const (
 )
 
 type api struct {
-	reporter      StatusReporter
-	jobPublisher  workers.JobPublisher
-	dir           string
-	filePattern   string
-	maxImportSize uint64
-	logger        zerolog.Logger
+	reporter       StatusReporter
+	jobPublisher   workers.JobPublisher
+	dir            string
+	filePattern    string
+	maxImportSize  uint64
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
 func NewApi(
@@ -37,18 +39,18 @@ func NewApi(
 	reporter StatusReporter,
 	jobPublisher workers.JobPublisher,
 	maxImportSize uint64,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
-	a := &api{
-		dir:           filepath.Join(conf.File.Dir, canopsis.SubDirImport),
-		filePattern:   filePattern,
-		reporter:      reporter,
-		jobPublisher:  jobPublisher,
-		maxImportSize: maxImportSize,
-		logger:        logger,
+	return &api{
+		dir:            filepath.Join(conf.File.Dir, canopsis.SubDirImport),
+		filePattern:    filePattern,
+		reporter:       reporter,
+		jobPublisher:   jobPublisher,
+		maxImportSize:  maxImportSize,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
-
-	return a
 }
 
 // ImportAll
@@ -80,7 +82,9 @@ func (a *api) ImportAll(c *gin.Context) {
 
 	jobID, err := a.createImportJob(c, job, raw)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
@@ -116,7 +120,9 @@ func (a *api) ImportPartial(c *gin.Context) {
 
 	jobID, err := a.createImportJob(c, job, raw)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, ImportResponse{ID: jobID})
@@ -156,7 +162,9 @@ func (a *api) Status(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, status)

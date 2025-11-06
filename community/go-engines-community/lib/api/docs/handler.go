@@ -4,12 +4,13 @@ import (
 	"net/http"
 	"strings"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v3"
 )
 
-func GetHandler(generatedSchemasContent []byte, contents ...[]byte) func(c *gin.Context) {
+func GetHandler(errorResponder httperror.Responder, generatedSchemasContent []byte, contents ...[]byte) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var mergedContent map[string]interface{}
 
@@ -18,7 +19,9 @@ func GetHandler(generatedSchemasContent []byte, contents ...[]byte) func(c *gin.
 			var parsed map[string]interface{}
 			err := yaml.Unmarshal([]byte(replacedSchemasContent), &parsed)
 			if err != nil {
-				panic(err)
+				errorResponder.Respond(c, err)
+
+				return
 			}
 			if mergedContent == nil {
 				mergedContent = parsed
@@ -54,7 +57,9 @@ func GetHandler(generatedSchemasContent []byte, contents ...[]byte) func(c *gin.
 		var parsed map[string]interface{}
 		err := yaml.Unmarshal([]byte(replacedSchemasContent), &parsed)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 		if schemas, ok := parsed["definitions"].(map[string]interface{}); ok {
 			if mergedComponents, ok := mergedContent["components"].(map[string]interface{}); ok {

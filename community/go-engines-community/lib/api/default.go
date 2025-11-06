@@ -21,6 +21,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/healthcheck"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apilogger "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
@@ -30,6 +31,7 @@ import (
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	apitechmetrics "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/techmetrics"
 	libcommtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -97,6 +99,7 @@ type Services struct {
 	UserInterfaceConfigProvider *config.BaseUserInterfaceConfigProvider
 	ExternalDataContainer       *externaldata.GetterContainer
 	NotificationStore           usernotification.Store
+	ErrorResponder              httperror.Responder
 }
 
 func Default(
@@ -407,11 +410,12 @@ func Default(
 	)
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
-	err = RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
+	uniTrans, err := RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
 	}
 
+	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(uniTrans, logger), logger)
 	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
 		router.Use(middleware.Recovery(logger))
@@ -435,6 +439,7 @@ func Default(
 			router,
 			security,
 			services.Enforcer,
+			services.ErrorResponder,
 			services.LinkGenerator,
 			primaryDbClient,
 			secondaryDbClient,
@@ -488,7 +493,7 @@ func Default(
 				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
 			api.AddRouter(func(router *gin.Engine) {
-				router.GET("/swagger.yaml", docs.GetHandler(schemasContent, content))
+				router.GET("/swagger.yaml", docs.GetHandler(services.ErrorResponder, schemasContent, content))
 			})
 		}
 	}

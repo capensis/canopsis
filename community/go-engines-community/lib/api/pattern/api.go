@@ -10,8 +10,10 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -27,9 +29,10 @@ type API interface {
 }
 
 type api struct {
-	store    Store
-	enforcer security.Enforcer
-	logger   zerolog.Logger
+	store          Store
+	enforcer       security.Enforcer
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 
 	configProvider config.UserInterfaceConfigProvider
 }
@@ -38,12 +41,14 @@ func NewApi(
 	store Store,
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
-		logger:   logger,
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
+		logger:         logger,
 
 		configProvider: configProvider,
 	}
@@ -54,15 +59,18 @@ func NewApi(
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := EditRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	if *request.IsCorporate {
 		ok, err := a.enforcer.Enforce(c.MustGet(authctx.UserKey).(string), apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -79,7 +87,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, pattern)
@@ -91,14 +101,17 @@ func (a *api) List(c *gin.Context) {
 	var request ListRequest
 	request.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	aggregationResult, err := a.store.Find(c, request, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(request.Query, aggregationResult)
@@ -110,7 +123,9 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	pattern, err := a.store.GetByID(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if pattern == nil {
@@ -129,14 +144,17 @@ func (a *api) Update(c *gin.Context) {
 	request := EditRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	pattern, err := a.store.GetByID(c, request.ID, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if pattern == nil {
@@ -157,7 +175,9 @@ func (a *api) Update(c *gin.Context) {
 	if pattern.IsCorporate {
 		ok, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -174,7 +194,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if pattern == nil {
@@ -190,7 +212,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	pattern, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if pattern == nil {
@@ -201,7 +225,9 @@ func (a *api) Delete(c *gin.Context) {
 	if pattern.IsCorporate {
 		ok, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -212,7 +238,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, *pattern, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -230,7 +258,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	canDeleteCorporate, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
@@ -257,8 +287,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 // @Success 200 {object} CountAlarmsResponse
 func (a *api) CountAlarms(c *gin.Context) {
 	request := CountRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -274,7 +305,9 @@ func (a *api) CountAlarms(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -285,8 +318,9 @@ func (a *api) CountAlarms(c *gin.Context) {
 // @Success 200 {object} CountEntitiesResponse
 func (a *api) CountEntities(c *gin.Context) {
 	request := CountRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -302,7 +336,9 @@ func (a *api) CountEntities(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)

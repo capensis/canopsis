@@ -35,11 +35,11 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 			r.Config.Resource == "" &&
 			r.Config.Connector == "" &&
 			r.Config.ConnectorName == "" {
-			sl.ReportError(r.Config, "config", "Config", "required", "")
+			sl.ReportError(r.Config, "Config", "Config", "required", "")
 		}
 	case eventfilter.RuleTypeEnrichment:
 		if len(r.Config.Actions) == 0 {
-			sl.ReportError(r.Config.Actions, "actions", "Actions", "required", "")
+			sl.ReportError(r.Config.Actions, "Actions", "Config.Actions", "required", "")
 		}
 
 		for i, action := range r.Config.Actions {
@@ -47,16 +47,17 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 			case eventfilter.ActionSetFieldFromTemplate,
 				eventfilter.ActionSetEntityInfoFromTemplate,
 				eventfilter.ActionSetTagsFromTemplate:
+				structNs := "Config.Actions." + strconv.Itoa(i) + ".Value"
 				strVal, ok := action.Value.(string)
 				if !ok {
-					sl.ReportError(action.Value, "Config.Actions."+strconv.Itoa(i)+".Value", "Value", "must_be_string", "")
+					sl.ReportError(action.Value, "Value", structNs, "must_be_string", "")
 					continue
 				}
 
 				if strVal != "" {
 					parsedValue := v.templateExecutor.Parse(strVal)
 					if parsedValue.Err != nil {
-						sl.ReportError(strVal, "Config.Actions."+strconv.Itoa(i)+".Value", "Value", "template", "")
+						sl.ReportError(strVal, "Value", structNs, "template", "")
 					}
 				}
 			}
@@ -68,22 +69,22 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 			eventfilter.OutcomeBreak,
 		}
 		if r.Config.OnSuccess == "" {
-			sl.ReportError(r.Config.OnSuccess, "on_success", "OnSuccess", "required_if", "Type enrichment")
+			sl.ReportError(r.Config.OnSuccess, "OnSuccess", "Config.OnSuccess", "required_if", "Type enrichment")
 		} else {
 			switch r.Config.OnSuccess {
 			case eventfilter.OutcomePass, eventfilter.OutcomeDrop, eventfilter.OutcomeBreak:
 			default:
-				sl.ReportError(r.Config.OnSuccess, "on_success", "OnSuccess", "oneof", strings.Join(validOutcome, " "))
+				sl.ReportError(r.Config.OnSuccess, "OnSuccess", "Config.OnSuccess", "oneof", strings.Join(validOutcome, " "))
 			}
 		}
 
 		if r.Config.OnFailure == "" {
-			sl.ReportError(r.Config.OnFailure, "on_failure", "OnFailure", "required_if", "Type enrichment")
+			sl.ReportError(r.Config.OnFailure, "OnFailure", "Config.OnFailure", "required_if", "Type enrichment")
 		} else {
 			switch r.Config.OnFailure {
 			case eventfilter.OutcomePass, eventfilter.OutcomeDrop, eventfilter.OutcomeBreak:
 			default:
-				sl.ReportError(r.Config.OnFailure, "on_failure", "OnFailure", "oneof", strings.Join(validOutcome, " "))
+				sl.ReportError(r.Config.OnFailure, "OnFailure", "Config.OnFailure", "oneof", strings.Join(validOutcome, " "))
 			}
 		}
 	}
@@ -144,11 +145,11 @@ func (v *Validator) ValidateTemplateRuleRequest(sl validator.StructLevel) {
 			r.Config.Resource == "" &&
 			r.Config.Connector == "" &&
 			r.Config.ConnectorName == "" {
-			sl.ReportError(r.Config, "config", "Config", "required", "")
+			sl.ReportError(r.Config, "Config", "Config", "required", "")
 		}
 	case eventfilter.RuleTypeEnrichment:
 		if len(r.Config.Actions) == 0 {
-			sl.ReportError(r.Config.Actions, "actions", "Actions", "required", "")
+			sl.ReportError(r.Config.Actions, "Actions", "Config.Actions", "required", "")
 		}
 	}
 
