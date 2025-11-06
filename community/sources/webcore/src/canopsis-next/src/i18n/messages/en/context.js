@@ -1,7 +1,7 @@
 export default {
   impacts: 'Impacts',
   dependencies: 'Dependencies',
-  noEventsFilter: 'No events filter',
+  noEventsFilter: 'Idle entities',
   impactChain: 'Impact chain',
   resolvedAlarms: 'Resolved alarms',
   activeAlarm: 'Active alarm',
