@@ -1036,7 +1036,7 @@ export default {
       title: 'Modifier le thème',
     },
     duplicate: {
-      title: 'Thème en double',
+      title: 'Dupliquer le thème',
     },
   },
   archiveDisabledEntities: {
