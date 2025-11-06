@@ -11,10 +11,8 @@ func ValidateEventPattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.Event)
-	if !ok {
-		return false
-	}
 
-	return match.ValidateEventPattern(p)
+	p, ok := i.(pattern.Event)
+
+	return ok && match.ValidateEventPattern(p)
 }
