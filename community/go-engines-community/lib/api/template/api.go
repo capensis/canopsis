@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -151,7 +151,7 @@ func (a *api) UpdateData(c *gin.Context) {
 }
 
 func (a *api) DeleteData(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	ok, err := a.store.DeleteData(c, c.Param("id"), userID)
 	if err != nil {
 		if errors.Is(err, ErrIsLinked) {
@@ -208,7 +208,7 @@ func (a *api) ListTest(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.FindTest(c, r, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -228,7 +228,7 @@ func (a *api) ListTest(c *gin.Context) {
 // GetTest
 // @Success 200 {object} TestResponse
 func (a *api) GetTest(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	res, err := a.store.GetTest(c, c.Param("id"), userID)
 	if err != nil {
 		panic(err)
@@ -278,7 +278,7 @@ func (a *api) UpdateTest(c *gin.Context) {
 }
 
 func (a *api) DeleteTest(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	ok, err := a.store.DeleteTest(c, c.Param("id"), userID)
 	if err != nil {
 		panic(err)

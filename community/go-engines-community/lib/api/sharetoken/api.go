@@ -3,7 +3,7 @@ package sharetoken
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
@@ -37,7 +37,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	token, err := a.store.Insert(c, c.MustGet(auth.UserKey).(string), request)
+	token, err := a.store.Insert(c, c.MustGet(authctx.UserKey).(string), request)
 	if err != nil {
 		panic(err)
 	}

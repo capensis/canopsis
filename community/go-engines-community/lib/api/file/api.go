@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -73,7 +73,7 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if !m.IsPublic {
-		user := c.MustGet(auth.UserKey)
+		user := c.MustGet(authctx.UserKey)
 		ok, err := a.enforcer.Enforce(user, apisecurity.ObjFile, model.PermissionRead)
 		if err != nil {
 			panic(err)
@@ -114,7 +114,7 @@ func (a *api) List(c *gin.Context) {
 
 	for _, f := range res {
 		if !f.IsPublic {
-			user := c.MustGet(auth.UserKey)
+			user := c.MustGet(authctx.UserKey)
 			ok, err := a.enforcer.Enforce(user, apisecurity.ObjFile, model.PermissionRead)
 			if err != nil {
 				panic(err)

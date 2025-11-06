@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
@@ -51,7 +51,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c, query, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	users, err := a.store.Find(c, query, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
 	if err != nil {
 		panic(err)
 	}
@@ -86,7 +86,7 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Insert(c, request, c.MustGet(auth.RolesKey).([]string))
+	user, err := a.store.Insert(c, request, c.MustGet(authctx.Roles).([]string))
 	if err != nil {
 		if errors.Is(err, ErrNotAdminCreateAdmin) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -119,7 +119,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(c, request, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	user, err := a.store.Update(c, request, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -159,7 +159,7 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Patch(c, request, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	user, err := a.store.Patch(c, request, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -188,7 +188,7 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string), c.MustGet(auth.RolesKey).([]string))
+	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -219,7 +219,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(auth.RolesKey).([]string)
+	requestRoles := c.MustGet(authctx.Roles).([]string)
 
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		user, err := a.store.Insert(c, request, requestRoles)
@@ -240,9 +240,9 @@ func (a *api) BulkCreate(c *gin.Context) {
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(auth.RolesKey).([]string)
+	requestRoles := c.MustGet(authctx.Roles).([]string)
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		user, err := a.store.Update(c, UpdateRequest(request), userID, requestRoles)
@@ -264,8 +264,8 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	roles := c.MustGet(auth.RolesKey).([]string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	roles := c.MustGet(authctx.Roles).([]string)
 	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID, userID, roles)
@@ -287,9 +287,9 @@ func (a *api) BulkDelete(c *gin.Context) {
 // BulkPatch
 // @Param body body []BulkPatchRequestItem true "body"
 func (a *api) BulkPatch(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(auth.RolesKey).([]string)
+	requestRoles := c.MustGet(authctx.Roles).([]string)
 
 	bulk.Handler(c, func(request BulkPatchRequestItem) (string, error) {
 		user, err := a.store.Patch(c, PatchRequest(request), userID, requestRoles)
