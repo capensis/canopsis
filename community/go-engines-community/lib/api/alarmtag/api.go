@@ -8,7 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -20,17 +22,20 @@ type API interface {
 }
 
 type api struct {
-	store  Store
-	logger zerolog.Logger
+	store          Store
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
 func NewApi(
 	store Store,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:  store,
-		logger: logger,
+		store:          store,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
 }
 
@@ -40,14 +45,17 @@ func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	tags, err := a.store.Find(c, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	response := pagination.NewResponse(r.Query, tags)
@@ -59,14 +67,17 @@ func (a *api) List(c *gin.Context) {
 func (a *api) ListLabels(c *gin.Context) {
 	var r ListLabelsRequest
 	r.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	tags, err := a.store.FindLabels(c, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	response := pagination.NewResponse(r.Query, tags)
@@ -78,7 +89,9 @@ func (a *api) ListLabels(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	response, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if response == nil {
@@ -94,8 +107,9 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := CreateRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -107,7 +121,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, response)
@@ -120,8 +136,9 @@ func (a *api) Update(c *gin.Context) {
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -133,7 +150,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if response == nil {
@@ -149,7 +168,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	tag, err := a.store.GetByID(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if tag == nil {
@@ -159,7 +180,9 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

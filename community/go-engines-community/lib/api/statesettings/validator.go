@@ -137,12 +137,12 @@ func (v *baseValidator) ValidateStateThreshold(sl validator.StructLevel) {
 
 	if r.Method == statesetting.CalculationMethodShare {
 		if r.Value > 99 {
-			sl.ReportError(r.Value, "Value", "Value", "ltfield", "100")
+			sl.ReportError(r.Value, "Value", "Value", "lt", "100")
 		}
 	}
 
 	if r.Value < 0 {
-		sl.ReportError(r.Value, "Value", "Value", "gtfield", "-1")
+		sl.ReportError(r.Value, "Value", "Value", "gt", "-1")
 	}
 }
 

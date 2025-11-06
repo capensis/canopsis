@@ -8,7 +8,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
@@ -39,14 +41,15 @@ type api struct {
 	defaultExportFields export.Fields
 	exportSeparators    map[string]rune
 	encoder             encoding.Encoder
-
-	logger zerolog.Logger
+	errorResponder      httperror.Responder
+	logger              zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	taskCreator export.TaskCreator,
 	encoder encoding.Encoder,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	fields := []string{"_id", "v.connector", "v.connector_name", "v.component",
@@ -65,8 +68,9 @@ func NewApi(
 		defaultExportFields: defaultExportFields,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
-		encoder: encoder,
-		logger:  logger,
+		encoder:        encoder,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
 }
 
@@ -76,8 +80,9 @@ func (a *api) List(c *gin.Context) {
 	var r ListRequestWithPagination
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -89,7 +94,9 @@ func (a *api) List(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, aggregationResult)
@@ -102,7 +109,9 @@ func (a *api) Get(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	alarm, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if alarm == nil {
@@ -117,15 +126,18 @@ func (a *api) Get(c *gin.Context) {
 // @Success 200 {object} Alarm
 func (a *api) GetOpen(c *gin.Context) {
 	r := GetOpenRequest{}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	userID := c.MustGet(authctx.UserKey).(string)
 	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -147,7 +159,9 @@ func (a *api) GetOpen(c *gin.Context) {
 func (a *api) GetDetails(c *gin.Context) {
 	raw, err := c.GetRawData()
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	jsonValue, err := fastjson.ParseBytes(raw)
@@ -225,15 +239,18 @@ func (a *api) ListByService(c *gin.Context) {
 	r := ListByServiceRequest{
 		Query: pagination.GetDefaultQuery(),
 	}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.FindByService(c, c.Param("id"), r, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if aggregationResult == nil {
@@ -251,15 +268,18 @@ func (a *api) ListByComponent(c *gin.Context) {
 	r := ListByComponentRequest{
 		Query: pagination.GetDefaultQuery(),
 	}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.FindByComponent(c, r, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if aggregationResult == nil {
@@ -277,15 +297,18 @@ func (a *api) ResolvedList(c *gin.Context) {
 	r := ResolvedListRequest{
 		Query: pagination.GetDefaultQuery(),
 	}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.FindResolved(c, r, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if aggregationResult == nil {
@@ -302,14 +325,17 @@ func (a *api) ResolvedList(c *gin.Context) {
 func (a *api) Count(c *gin.Context) {
 	var r FilterRequest
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	res, err := a.store.Count(c, r, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -320,8 +346,9 @@ func (a *api) Count(c *gin.Context) {
 // @Success 200 {object} ExportResponse
 func (a *api) StartExport(c *gin.Context) {
 	var r ExportRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -332,7 +359,9 @@ func (a *api) StartExport(c *gin.Context) {
 
 	params, err := a.encoder.Encode(r.ExportFetchParameters)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	userID := c.MustGet(authctx.UserKey).(string)
@@ -345,7 +374,9 @@ func (a *api) StartExport(c *gin.Context) {
 		UserID:         userID,
 	})
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, ExportResponse{
@@ -360,7 +391,9 @@ func (a *api) GetExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if t == nil {
@@ -378,7 +411,9 @@ func (a *api) DownloadExport(c *gin.Context) {
 	id := c.Param("id")
 	t, err := a.taskCreator.Get(c, id)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
@@ -395,8 +430,9 @@ func (a *api) DownloadExport(c *gin.Context) {
 // @Success 200 {array} link.Link
 func (a *api) GetLinks(c *gin.Context) {
 	var r LinksRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -408,7 +444,9 @@ func (a *api) GetLinks(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -425,8 +463,9 @@ func (a *api) GetDisplayNames(c *gin.Context) {
 	var r GetDisplayNamesRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -438,7 +477,9 @@ func (a *api) GetDisplayNames(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, aggregationResult)

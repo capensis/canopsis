@@ -7,7 +7,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -19,20 +21,23 @@ type API interface {
 }
 
 type api struct {
-	store       Store
-	computeChan chan<- rpc.PbehaviorRecomputeEvent
-	logger      zerolog.Logger
+	store          Store
+	computeChan    chan<- rpc.PbehaviorRecomputeEvent
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:       store,
-		computeChan: computeChan,
-		logger:      logger,
+		store:          store,
+		computeChan:    computeChan,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
 }
 
@@ -42,14 +47,17 @@ func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	types, err := a.store.Find(c, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, types)
@@ -61,7 +69,9 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	pt, err := a.store.GetByID(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if pt == nil {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
@@ -76,8 +86,9 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} pbehavior.Type
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -95,7 +106,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -115,8 +128,9 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -134,7 +148,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -155,7 +171,9 @@ func (a *api) Delete(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -171,7 +189,9 @@ func (a *api) Delete(c *gin.Context) {
 func (a *api) GetNextPriority(c *gin.Context) {
 	priority, err := a.store.GetNextPriority(c)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, PriorityResponse{Priority: priority})

@@ -14,7 +14,9 @@ import (
 
 	libapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
@@ -23,8 +25,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
 	"github.com/gin-gonic/gin"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/rs/zerolog"
 )
+
+var trans *ut.UniversalTranslator
 
 func init() {
 	dbClient, err := mongo.NewClient(context.Background())
@@ -33,8 +38,7 @@ func init() {
 	}
 
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-
-	err = libapi.RegisterValidators(dbClient, security.Config{}, nil, tplExecutor)
+	trans, err = libapi.RegisterValidators(dbClient, security.Config{}, nil, tplExecutor)
 	if err != nil {
 		panic(err)
 	}
@@ -95,7 +99,8 @@ func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
 	}()
 	authorProvider := author.NewProvider(&config.BaseApiConfigProvider{})
 	store := pbehavior.NewStore(dbClient, nil, nil, nil, nil, nil, authorProvider, nil, nil, nil)
-	api := pbehavior.NewApi(store, nil, ch, nil, zerolog.Nop())
+	errorResponder := httperror.NewResponder(validation.NewErrorTranslator(trans, zerolog.Nop()), zerolog.Nop())
+	api := pbehavior.NewApi(store, nil, ch, nil, errorResponder, zerolog.Nop())
 	reqBodies := make([]io.ReadCloser, b.N)
 	now := time.Now().Unix()
 	tomorrow := time.Now().AddDate(0, 0, 1).Unix()

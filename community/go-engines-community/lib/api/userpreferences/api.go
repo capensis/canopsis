@@ -6,6 +6,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -18,20 +20,23 @@ type API interface {
 }
 
 type api struct {
-	store       Store
-	widgetStore widget.Store
-	enforcer    security.Enforcer
+	store          Store
+	widgetStore    widget.Store
+	enforcer       security.Enforcer
+	errorResponder httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	widgetStore widget.Store,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:       store,
-		widgetStore: widgetStore,
-		enforcer:    enforcer,
+		store:          store,
+		widgetStore:    widgetStore,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -43,7 +48,9 @@ func (a *api) Get(c *gin.Context) {
 
 	ok, err := a.checkAccess(c, widgetId, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
@@ -52,7 +59,9 @@ func (a *api) Get(c *gin.Context) {
 
 	response, err := a.store.Find(c, userID, widgetId)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if response == nil {
@@ -69,14 +78,17 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) Update(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	ok, err := a.checkAccess(c, request.Widget, userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
@@ -85,7 +97,9 @@ func (a *api) Update(c *gin.Context) {
 
 	response, err := a.store.Update(c, userID, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if response == nil {

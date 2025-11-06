@@ -12,7 +12,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
 )
@@ -33,20 +35,23 @@ func NewApi(
 	websocketHub websocket.Hub,
 	maxSize uint64,
 	mimeTypes []string,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:        store,
-		websocketHub: websocketHub,
-		maxSize:      maxSize,
-		mimeTypes:    mimeTypes,
+		store:          store,
+		websocketHub:   websocketHub,
+		maxSize:        maxSize,
+		mimeTypes:      mimeTypes,
+		errorResponder: errorResponder,
 	}
 }
 
 type api struct {
-	store        Store
-	websocketHub websocket.Hub
-	maxSize      uint64
-	mimeTypes    []string
+	store          Store
+	websocketHub   websocket.Hub
+	maxSize        uint64
+	mimeTypes      []string
+	errorResponder httperror.Responder
 }
 
 type websocketMsg struct {
@@ -61,8 +66,9 @@ func (a *api) Create(c *gin.Context) {
 	request := EditRequest{
 		Author: userID,
 	}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -81,7 +87,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	a.websocketHub.Send(websocket.RoomIcons, websocketMsg{
@@ -94,7 +102,9 @@ func (a *api) Create(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	res, err := a.store.Get(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -110,14 +120,17 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) List(c *gin.Context) {
 	query := pagination.FilteredQuery{}
 	query.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.Bind(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	aggregationResult, err := a.store.List(c, query)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(query.Query, aggregationResult)
@@ -133,8 +146,9 @@ func (a *api) Update(c *gin.Context) {
 		Author: userID,
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -153,7 +167,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -177,8 +193,9 @@ func (a *api) Patch(c *gin.Context) {
 		Author: userID,
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -200,7 +217,9 @@ func (a *api) Patch(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -219,7 +238,9 @@ func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

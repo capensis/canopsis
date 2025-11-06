@@ -7,19 +7,21 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
 )
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
-func NewApi(
-	store Store,
-) crud.API {
+func NewApi(store Store, errorResponder httperror.Responder) crud.API {
 	return &api{
-		store: store,
+		store:          store,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -29,14 +31,17 @@ func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	categories, err := a.store.Find(c, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, categories)
@@ -48,7 +53,9 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	category, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if category == nil {
 		c.JSON(http.StatusNotFound, common.NotFoundResponse)
@@ -64,8 +71,9 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) Create(c *gin.Context) {
 	var request EditRequest
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -77,7 +85,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, category)
@@ -91,8 +101,9 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.JSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -104,7 +115,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if category == nil {
@@ -123,7 +136,9 @@ func (a *api) Delete(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

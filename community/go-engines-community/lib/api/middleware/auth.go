@@ -51,6 +51,7 @@ func Auth(providers []security.HttpProvider, maintenanceAdapter config.Maintenan
 				c.Set(authctx.UserKey, user.ID)
 				c.Set(authctx.Roles, user.Roles)
 				c.Set(authctx.ApiKey, user.AuthApiKey)
+				c.Set(authctx.Locale, user.Language)
 				break
 			}
 		}

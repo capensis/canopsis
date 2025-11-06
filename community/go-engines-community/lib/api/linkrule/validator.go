@@ -66,19 +66,19 @@ func (v *Validator) ValidateTemplateRequest(sl validator.StructLevel) {
 	switch r.Rule.Type {
 	case liblink.TypeAlarm:
 		if r.TestData.Entity != "" {
-			sl.ReportError(r.TestData.Entity, "TestData.Entity", "Entity", "must_be_empty", "")
+			sl.ReportError(r.TestData.Entity, "Entity", "TestData.Entity", "must_be_empty", "")
 		}
 	case liblink.TypeEntity:
 		if r.TestData.Alarm != "" {
-			sl.ReportError(r.TestData.Alarm, "TestData.Alarm", "Alarm", "must_be_empty", "")
+			sl.ReportError(r.TestData.Alarm, "Alarm", "TestData.Alarm", "must_be_empty", "")
 		}
 	}
 
 	if len(r.Rule.Links) > 0 && r.Rule.SourceCode != "" {
-		sl.ReportError(r.Rule.SourceCode, "Rule.SourceCode", "SourceCode", "required_not_both", "Links")
+		sl.ReportError(r.Rule.SourceCode, "SourceCode", "Rule.SourceCode", "required_not_both", "Links")
 	}
 	if len(r.Rule.Links) == 0 && r.Rule.SourceCode == "" {
-		sl.ReportError(r.Rule.Links, "Rule.Links", "Links", "required_or", "SourceCode")
-		sl.ReportError(r.Rule.SourceCode, "Rule.SourceCode", "SourceCode", "required_or", "Links")
+		sl.ReportError(r.Rule.Links, "Links", "Rule.Links", "required_or", "SourceCode")
+		sl.ReportError(r.Rule.SourceCode, "SourceCode", "Rule.SourceCode", "required_or", "Links")
 	}
 }

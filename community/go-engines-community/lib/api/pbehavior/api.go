@@ -10,7 +10,9 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbexport"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -37,11 +39,12 @@ type API interface {
 }
 
 type api struct {
-	store         Store
-	mongoExporter dbexport.Exporter
-	computeChan   chan<- rpc.PbehaviorRecomputeEvent
-	jobPublisher  workers.JobPublisher
-	logger        zerolog.Logger
+	store          Store
+	mongoExporter  dbexport.Exporter
+	computeChan    chan<- rpc.PbehaviorRecomputeEvent
+	jobPublisher   workers.JobPublisher
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
 func NewApi(
@@ -49,14 +52,16 @@ func NewApi(
 	mongoExporter dbexport.Exporter,
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	jobPublisher workers.JobPublisher,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:         store,
-		mongoExporter: mongoExporter,
-		computeChan:   computeChan,
-		jobPublisher:  jobPublisher,
-		logger:        logger,
+		store:          store,
+		mongoExporter:  mongoExporter,
+		computeChan:    computeChan,
+		jobPublisher:   jobPublisher,
+		errorResponder: errorResponder,
+		logger:         logger,
 	}
 }
 
@@ -66,15 +71,17 @@ func (a *api) List(c *gin.Context) {
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	aggregationResult, err := a.store.Find(c, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, aggregationResult)
@@ -85,15 +92,17 @@ func (a *api) List(c *gin.Context) {
 // @Success 200 {array} Response
 func (a *api) ListByEntityID(c *gin.Context) {
 	var r FindByEntityIDRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	entity, err := a.store.FindEntity(c, r.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if entity == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -102,7 +111,9 @@ func (a *api) ListByEntityID(c *gin.Context) {
 
 	res, err := a.store.FindByEntityID(c, *entity, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -112,15 +123,17 @@ func (a *api) ListByEntityID(c *gin.Context) {
 // @Success 200 {array} CalendarResponse
 func (a *api) CalendarByEntityID(c *gin.Context) {
 	var r CalendarByEntityIDRequest
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	entity, err := a.store.FindEntity(c, r.ID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if entity == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -129,7 +142,9 @@ func (a *api) CalendarByEntityID(c *gin.Context) {
 
 	res, err := a.store.CalendarByEntityID(c, *entity, r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -140,7 +155,9 @@ func (a *api) CalendarByEntityID(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	pbh, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if pbh == nil {
@@ -157,15 +174,17 @@ func (a *api) ListEntities(c *gin.Context) {
 	var r EntitiesListRequest
 	r.Query = pagination.GetDefaultQuery()
 
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	aggregationResult, err := a.store.FindEntities(c, c.Param("id"), r)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if aggregationResult == nil {
@@ -183,8 +202,8 @@ func (a *api) ListEntities(c *gin.Context) {
 func (a *api) Create(c *gin.Context) {
 	var request CreateRequest
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -197,7 +216,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: []string{pbh.ID}, RecomputeInherited: pbh.Inherited})
@@ -213,8 +234,8 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -227,7 +248,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if pbh == nil {
@@ -247,8 +270,9 @@ func (a *api) Patch(c *gin.Context) {
 	request := PatchRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -260,7 +284,9 @@ func (a *api) Patch(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if pbh == nil {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -276,7 +302,9 @@ func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
 	ok, recomputeInherited, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -291,15 +319,17 @@ func (a *api) Delete(c *gin.Context) {
 func (a *api) DeleteByName(c *gin.Context) {
 	request := DeleteByNameRequest{}
 
-	if err := c.ShouldBindQuery(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if id == "" {
@@ -609,14 +639,17 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 func (a *api) DBExport(c *gin.Context) {
 	request := dbexport.Request{}
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	b, err := a.mongoExporter.Export(c, mongo.PbehaviorMongoCollection, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	dbexport.AttachFile(c, mongo.PbehaviorMongoCollection, b)
@@ -627,15 +660,17 @@ func (a *api) DBExport(c *gin.Context) {
 // @Success 200 {object} pattern.CountResponse
 func (a *api) ExecPattern(c *gin.Context) {
 	request := ExecPatternRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	res, err := a.store.ExecPatternAndUpdate(c, request.ID, request.EntityPattern)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res == nil {
@@ -650,7 +685,9 @@ func (a *api) ExecPattern(c *gin.Context) {
 func (a *api) ExecAllPatterns(c *gin.Context) {
 	err := a.jobPublisher.Publish(c, "")
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.Status(http.StatusNoContent)

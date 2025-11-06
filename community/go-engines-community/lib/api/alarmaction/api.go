@@ -7,6 +7,8 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 )
@@ -33,12 +35,17 @@ type API interface {
 }
 
 type api struct {
-	store  Store
-	logger zerolog.Logger
+	store          Store
+	errorResponder httperror.Responder
+	logger         zerolog.Logger
 }
 
-func NewApi(store Store, logger zerolog.Logger) API {
-	return &api{store: store, logger: logger}
+func NewApi(store Store, errorResponder httperror.Responder, logger zerolog.Logger) API {
+	return &api{
+		store:          store,
+		errorResponder: errorResponder,
+		logger:         logger,
+	}
 }
 
 // Ack
@@ -47,8 +54,9 @@ func (a *api) Ack(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := AckRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -59,7 +67,9 @@ func (a *api) Ack(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -75,8 +85,9 @@ func (a *api) AckRemove(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -87,7 +98,9 @@ func (a *api) AckRemove(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -103,8 +116,9 @@ func (a *api) Snooze(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := SnoozeRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -115,7 +129,9 @@ func (a *api) Snooze(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -131,8 +147,9 @@ func (a *api) Cancel(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -143,7 +160,9 @@ func (a *api) Cancel(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -159,8 +178,9 @@ func (a *api) Uncancel(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := Request{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -171,7 +191,9 @@ func (a *api) Uncancel(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -187,8 +209,9 @@ func (a *api) AssocTicket(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := AssocTicketRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -199,7 +222,9 @@ func (a *api) AssocTicket(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -215,8 +240,9 @@ func (a *api) Comment(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := CommentRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -227,7 +253,9 @@ func (a *api) Comment(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -243,8 +271,9 @@ func (a *api) ChangeState(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	username := c.MustGet(authctx.Username).(string)
 	request := ChangeStateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -255,7 +284,9 @@ func (a *api) ChangeState(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -388,7 +419,9 @@ func (a *api) BulkChangeState(c *gin.Context) {
 func (a *api) AddBookmark(c *gin.Context) {
 	found, err := a.store.AddBookmark(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !found {
@@ -402,7 +435,9 @@ func (a *api) AddBookmark(c *gin.Context) {
 func (a *api) RemoveBookmark(c *gin.Context) {
 	found, err := a.store.RemoveBookmark(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !found {

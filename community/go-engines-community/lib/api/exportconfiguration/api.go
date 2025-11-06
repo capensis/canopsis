@@ -7,6 +7,8 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/goccy/go-yaml"
@@ -22,14 +24,16 @@ type API interface {
 
 type api struct {
 	client          mongo.DbClient
+	errorResponder  httperror.Responder
 	logger          zerolog.Logger
 	collectionNames map[string]string
 }
 
-func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
+func NewApi(client mongo.DbClient, errorResponder httperror.Responder, logger zerolog.Logger) API {
 	return &api{
-		client: client,
-		logger: logger,
+		client:         client,
+		errorResponder: errorResponder,
+		logger:         logger,
 		collectionNames: map[string]string{
 			"configuration":              mongo.ConfigurationMongoCollection,
 			"user":                       mongo.UserCollection,
@@ -81,8 +85,9 @@ func NewApi(client mongo.DbClient, logger zerolog.Logger) API {
 func (a *api) Export(c *gin.Context) {
 	var r Request
 
-	if err := c.ShouldBindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -94,7 +99,9 @@ func (a *api) Export(c *gin.Context) {
 
 	file, err := os.CreateTemp("", "cps_export_configurations_*.yml")
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	filename := file.Name()
@@ -117,18 +124,24 @@ func (a *api) Export(c *gin.Context) {
 	for _, collection := range r.Exports {
 		err = a.addContents(c, contents, collection)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 	}
 
 	b, err := yaml.Marshal(contents)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	_, err = file.Write(b)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.FileAttachment(filename, exportFileName)
