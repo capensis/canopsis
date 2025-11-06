@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -107,7 +107,7 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrDefaultRule) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

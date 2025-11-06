@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
@@ -22,7 +22,7 @@ func AuthorizeByID(
 			panic(errors.New("missing id parameter"))
 		}
 
-		rawSubj, ok := c.Get(auth.UserKey)
+		rawSubj, ok := c.Get(authctx.UserKey)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return

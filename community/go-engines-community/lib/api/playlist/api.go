@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/middleware"
@@ -122,7 +122,7 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	ok, err := a.checkAccess(c, request.TabsList, userID)
 	if err != nil {
 		panic(err)
@@ -153,7 +153,7 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
+	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}

@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"go.uber.org/mock/gomock"
@@ -26,7 +26,7 @@ func TestRecovery_GivenNoUserKey_ShouldReturnUnauthorizedResponse(t *testing.T) 
 		okURL,
 		Recovery(zerolog.Nop()),
 		func(c *gin.Context) {
-			c.MustGet(auth.UserKey)
+			c.MustGet(authctx.UserKey)
 		},
 	)
 

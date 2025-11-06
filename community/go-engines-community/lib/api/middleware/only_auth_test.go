@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,7 +13,7 @@ func TestOnlyAuth_GivenAuthUser_ShouldReturnResponse(t *testing.T) {
 	expectedCode := http.StatusOK
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
-		c.Set(auth.UserKey, subj)
+		c.Set(authctx.UserKey, subj)
 	})
 	router.GET(
 		okURL,

@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"github.com/gin-gonic/gin"
@@ -53,8 +53,8 @@ func (a *api) List(c *gin.Context) {
 // @Param body body Request true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 
 	var request Request
 
@@ -86,8 +86,8 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body UpdateRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 
 	request := UpdateRequest{
 		ID: c.Param("id"),

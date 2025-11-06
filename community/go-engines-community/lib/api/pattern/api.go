@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
@@ -60,7 +60,7 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	if *request.IsCorporate {
-		ok, err := a.enforcer.Enforce(c.MustGet(auth.UserKey).(string), apisecurity.PermCorporatePattern, model.PermissionCan)
+		ok, err := a.enforcer.Enforce(c.MustGet(authctx.UserKey).(string), apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			panic(err)
 		}
@@ -96,7 +96,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c, request, c.MustGet(auth.UserKey).(string))
+	aggregationResult, err := a.store.Find(c, request, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -108,7 +108,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	pattern, err := a.store.GetByID(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	pattern, err := a.store.GetByID(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -125,7 +125,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditRequest{
 		ID: c.Param("id"),
 	}
@@ -186,7 +186,7 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 
 	pattern, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
@@ -226,7 +226,7 @@ func (a *api) Delete(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 
 	canDeleteCorporate, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 	if err != nil {

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -38,7 +38,7 @@ func NewApi(
 // List
 // @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
@@ -69,7 +69,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	id := c.Param("id")
 	ok, _, err := a.checkAccess(c, id, userID, model.PermissionRead)
 	if err != nil {
@@ -97,7 +97,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := CreateRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -152,7 +152,7 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -225,7 +225,7 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	id := c.Param("id")
 
 	filter, err := a.store.GetOneBy(c, id, userID)
@@ -278,7 +278,7 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) UpdatePositions(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditPositionRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
