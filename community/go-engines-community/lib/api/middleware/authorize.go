@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -21,7 +21,7 @@ func Authorize(
 	enforcer security.Enforcer,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawSubj, ok := c.Get(auth.UserKey)
+		rawSubj, ok := c.Get(authctx.UserKey)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
@@ -52,7 +52,7 @@ func AuthorizeAtLeastOnePerm(
 	enforcer security.Enforcer,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawSubj, ok := c.Get(auth.UserKey)
+		rawSubj, ok := c.Get(authctx.UserKey)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return

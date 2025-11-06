@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -50,8 +50,8 @@ func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t
 			c.String(
 				expectedCode,
 				"test %v %v",
-				c.MustGet(auth.UserKey).(string),
-				c.MustGet(auth.ApiKey).(string),
+				c.MustGet(authctx.UserKey).(string),
+				c.MustGet(authctx.ApiKey).(string),
 			)
 		},
 	)

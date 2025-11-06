@@ -9,7 +9,7 @@ import (
 	"path"
 	"slices"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -57,7 +57,7 @@ type websocketMsg struct {
 // Create
 // @Success 200 {array} Response
 func (a *api) Create(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditRequest{
 		Author: userID,
 	}
@@ -127,7 +127,7 @@ func (a *api) List(c *gin.Context) {
 // Update
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditRequest{
 		ID:     c.Param("id"),
 		Author: userID,
@@ -171,7 +171,7 @@ func (a *api) Update(c *gin.Context) {
 // Patch
 // @Success 200 {object} Response
 func (a *api) Patch(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := PatchRequest{
 		ID:     c.Param("id"),
 		Author: userID,
@@ -217,7 +217,7 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
+	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}

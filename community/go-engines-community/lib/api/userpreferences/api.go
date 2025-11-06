@@ -4,7 +4,7 @@ import (
 	"context"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -38,7 +38,7 @@ func NewApi(
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	widgetId := c.Param("id")
 
 	ok, err := a.checkAccess(c, widgetId, userID)
@@ -67,7 +67,7 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditRequest{}
 	if err := c.ShouldBindJSON(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))

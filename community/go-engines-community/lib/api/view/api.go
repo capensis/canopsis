@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -112,7 +112,7 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -157,7 +157,7 @@ func (a *api) Copy(c *gin.Context) {
 // UpdatePositions
 // @Param body body []EditPositionItemRequest true "body"
 func (a *api) UpdatePositions(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditPositionRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -194,7 +194,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 // Import
 // @Param body body []ImportItemRequest true "body"
 func (a *api) Import(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := ImportRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {
@@ -242,7 +242,7 @@ func (a *api) Import(c *gin.Context) {
 // @Param body body ExportRequest true "body"
 // @Success 200 {object} ExportResponse
 func (a *api) Export(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := ExportRequest{}
 
 	if err := c.ShouldBind(&request); err != nil {

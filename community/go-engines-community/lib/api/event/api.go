@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -157,7 +157,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 		eventType == types.EventTypeChangestate ||
 		eventType == types.EventTypeSnooze {
 
-		roles, ok := c.Get(auth.RolesKey)
+		roles, ok := c.Get(authctx.Roles)
 		role := ""
 		if ok {
 			if s, ok := roles.([]string); ok && len(s) > 0 {
@@ -184,7 +184,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if author == "" {
-		contextAuthor := c.MustGet(auth.Username).(string)
+		contextAuthor := c.MustGet(authctx.Username).(string)
 		value.Set("author", fastjson.MustParse(fmt.Sprintf("%q", contextAuthor)))
 	}
 
@@ -195,7 +195,7 @@ func (a *api) processValue(c *gin.Context, value *fastjson.Value) bool {
 	}
 
 	if user == "" {
-		contextUser := c.MustGet(auth.UserKey).(string)
+		contextUser := c.MustGet(authctx.UserKey).(string)
 		value.Set("user_id", fastjson.MustParse(fmt.Sprintf("%q", contextUser)))
 	}
 

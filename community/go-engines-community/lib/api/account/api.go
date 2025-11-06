@@ -3,7 +3,7 @@ package account
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 )
@@ -26,7 +26,7 @@ type api struct {
 // Me
 // @Success 200 {object} User
 func (a *api) Me(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 
 	user, err := a.store.GetOneBy(c, userID)
 	if err != nil {
@@ -45,7 +45,7 @@ func (a *api) Me(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} User
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditRequest{
 		ID: userID,
 		// author is needed for action logs, in that case the user modifies himself, so he's the author.

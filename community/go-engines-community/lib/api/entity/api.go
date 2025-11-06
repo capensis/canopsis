@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -123,7 +123,7 @@ func (a *api) StartExport(c *gin.Context) {
 		panic(err)
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	task, err := a.taskCreator.Create(c, export.TaskParameters{
 		Type:           "entity",
 		Parameters:     string(params),
@@ -194,7 +194,7 @@ func (a *api) ArchiveDisabled(c *gin.Context) {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:                    libentity.CleanTaskTypeArchiveDisabled,
 		ArchiveWithDependencies: r.WithDependencies,
-		UserID:                  c.MustGet(auth.UserKey).(string),
+		UserID:                  c.MustGet(authctx.UserKey).(string),
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -216,7 +216,7 @@ func (a *api) ArchiveUnlinked(c *gin.Context) {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:          libentity.CleanTaskTypeArchiveUnlinked,
 		ArchiveBefore: r.ArchiveBefore.SubFrom(datetime.NewCpsTime()),
-		UserID:        c.MustGet(auth.UserKey).(string),
+		UserID:        c.MustGet(authctx.UserKey).(string),
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -229,7 +229,7 @@ func (a *api) CleanArchived(c *gin.Context) {
 	select {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:   libentity.CleanTaskTypeCleanArchived,
-		UserID: c.MustGet(auth.UserKey).(string),
+		UserID: c.MustGet(authctx.UserKey).(string),
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -316,7 +316,7 @@ func (a *api) GetStateSetting(c *gin.Context) {
 }
 
 func (a *api) toggle(c *gin.Context, enabled bool) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 
 	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
 		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, userID, enabled)
