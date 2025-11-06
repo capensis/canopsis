@@ -27,15 +27,15 @@ export default {
     archiveDisabled: 'Archiver les entités désactivées',
   },
   entityUnlinked: {
-    title: 'Unlinked entities storage',
-    titleHelp: 'All unlinked connectors, components and resources without alarms and updated long time ago can be archived.',
-    archiveBefore: 'Archive entities when no events received for',
-    archiveUnlinked: 'Archive unlinked entities',
+    title: 'Stockage des entités non liées',
+    titleHelp: 'Tous les connecteurs, composants et ressources non liés sans alarmes et mis à jour il y a longtemps peuvent être archivés.',
+    archiveBefore: 'Archiver les entités lorsqu\'aucun événement n\'est reçu pendant',
+    archiveUnlinked: 'Archiver les entités non liées',
   },
   entityArchived: {
-    title: 'Archived data storage',
-    titleHelp: 'All the archived entities can be deleted forever.',
-    cleanArchive: 'Clean archive',
+    title: 'Stockage des données archivées',
+    titleHelp: 'Toutes les entités archivées peuvent être supprimées définitivement.',
+    cleanArchive: 'Nettoyer l\'archive',
   },
   pbehavior: {
     title: 'Stockage des données de comportements périodiques',
