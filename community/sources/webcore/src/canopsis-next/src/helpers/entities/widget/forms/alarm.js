@@ -1,4 +1,10 @@
-import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
+import {
+  cloneDeep,
+  isBoolean,
+  isNull,
+  omit,
+  map,
+} from 'lodash';
 
 import {
   DENSE_TYPES,
@@ -513,7 +519,7 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
-    commentTemplates: removeKeyFromEntities(form.commentTemplates),
+    commentTemplates: map(form.commentTemplates, 'template'),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
@@ -738,4 +744,22 @@ export const getAlarmsListWidgetColumnComponentGetter = (
       maxLetters,
     },
   });
+};
+
+/**
+ * Convert comment form to create comment event payload
+ *
+ * @param {Object} form - Comment form data
+ * @returns {Object} Comment event payload with either comment or struct_comment
+ */
+export const createCommentFormToCreateCommentEvent = (form) => {
+  if (!form.template) {
+    return {
+      comment: form.comment,
+    };
+  }
+
+  return {
+    struct_comment: Object.entries(form).map(([field, message]) => ({ field, message })),
+  };
 };
