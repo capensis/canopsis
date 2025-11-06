@@ -49,3 +49,6 @@ Guide destiné à l'utilisateur final, il vous accompagne dans la prise en main 
   * [Paramètres de stockage](menu-administration/parametres-de-stockage.md)
   * [Planification](menu-administration/planification.md) 
   * [Studio Templates](menu-administration/studio-templates.md) 
+
+### Menu **Notifications**
+  * [Notifications](menu-notifications/notifications.md)
