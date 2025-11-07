@@ -1,4 +1,4 @@
-import { omit } from 'lodash';
+import { omit, isEmpty } from 'lodash';
 
 import { ALARM_STATES, ACTION_TYPES, PATTERNS_FIELDS, WORKFLOW_TYPES } from '@/constants';
 
@@ -189,18 +189,22 @@ const defaultActionParametersToForm = (parameters = {}) => ({
  * @param {ActionWebhookParameters} [parameters = {}]
  * @returns {ActionWebhookFormParameters}
  */
-const webhookActionParametersToForm = (parameters = {}) => ({
-  ...defaultActionForwardAuthorToForm(parameters),
-  declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
-  request: requestToForm(parameters.request, parameters.auth_token),
-  auth_token: requestAuthTokenToForm(parameters.auth_token),
-  multiple_urls: parameters.multiple_urls ?? false,
-  skip_for_child: parameters.skip_for_child ?? false,
-  skip_for_instruction: parameters.skip_for_instruction ?? false,
-  stop_on_fail: parameters.stop_on_fail ?? WORKFLOW_TYPES.stop,
-  stop_on_success: parameters.stop_on_success ?? WORKFLOW_TYPES.stop,
-  ticket_system_name: parameters.ticket_system_name ?? '',
-});
+const webhookActionParametersToForm = (parameters = {}) => {
+  const isEmptyParameters = isEmpty(parameters);
+
+  return {
+    ...defaultActionForwardAuthorToForm(parameters),
+    declare_ticket: declareTicketRuleWebhookDeclareTicketToForm(parameters.declare_ticket),
+    request: requestToForm(parameters.request, parameters.auth_token),
+    auth_token: requestAuthTokenToForm(parameters.auth_token),
+    multiple_urls: parameters.multiple_urls ?? false,
+    skip_for_child: parameters.skip_for_child ?? false,
+    skip_for_instruction: parameters.skip_for_instruction ?? false,
+    stop_on_fail: isEmptyParameters ? WORKFLOW_TYPES.stop : parameters.stop_on_fail ?? WORKFLOW_TYPES.continue,
+    stop_on_success: isEmptyParameters ? WORKFLOW_TYPES.stop : parameters.stop_on_success ?? WORKFLOW_TYPES.continue,
+    ticket_system_name: parameters.ticket_system_name ?? '',
+  };
+};
 
 /**
  * Convert action snooze parameters to form
