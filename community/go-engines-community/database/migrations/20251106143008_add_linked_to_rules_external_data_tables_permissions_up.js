@@ -1,9 +1,37 @@
-db.role.updateMany({"$or":[
-    {"permissions.models_exploitation_linkRule": {$ne: null}},
-    {"permissions.models_exploitation_eventFilter": {$ne: null}},
-]}, {
-    $set: {
-        "permissions.api_external_data_table": 4
+db.role.updateMany({
+    "$and": [
+        {
+            "$or": [
+                {
+                    "permissions.models_exploitation_linkRule": {
+                        "$ne": null
+                    }
+                },
+                {
+                    "permissions.models_exploitation_eventFilter": {
+                        "$ne": null
+                    }
+                }
+            ]
+        },
+        {
+            "$or": [
+                {
+                    "permissions.api_external_data_table": null
+                },
+                {
+                    "permissions.api_external_data_table": {
+                        "$bitsAllClear": [
+                            2
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}, {
+    $bit: {
+        "permissions.api_external_data_table": {or: 4}
     }
 });
 
