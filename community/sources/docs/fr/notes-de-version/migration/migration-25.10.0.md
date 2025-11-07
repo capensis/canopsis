@@ -289,7 +289,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     ## Paquets RPM
     ### Mise à jour de dépôts
 
-    Certaines briques logiciels nécessitent un changement de dépôts
+    Certaines briques logicielles nécessitent un changement de dépôts
 
     #### MongoDB:
 
@@ -356,7 +356,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     systemctl disable postgresql-15.service
     ```
 
-    On retire le `versionlock`, on mets à jour `timescaledb` et on mets de nouveau un `versionlock`
+    On retire le `versionlock`, on met à jour `timescaledb` et on met de nouveau un `versionlock`
 
     ```sh
     dnf versionlock delete timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
@@ -368,7 +368,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     ```sh
     postgresql-17-setup initdb
     timescaledb-tune -yes --pg-config=/usr/pgsql-17/bin/pg_config
-    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/15/data/postgresql.conf
+    echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/17/data/postgresql.conf
     ```
 
     On réactive postgresql et on vérifie que ça a bien redémarré 
@@ -377,7 +377,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     systemctl status postgresql-17.service
     ```
 
-    On recréait ensuite les bases
+    On recrée ensuite les bases
 
     ```sql 
     sudo -iu postgres psql
@@ -459,7 +459,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     systemctl stop mongod.service
     ```
 
-    Une fois le [dépôt mise à jour vers la version `8.0`](#mise-à-jour-de-dépôts), on peut lancer l'upgrade
+    Une fois le [dépôt mise à jour vers la version `8.0`](#mise-a-jour-de-depots), on peut lancer l'upgrade
 
     ```sh
     dnf upgrade mongodb-org mongodb-org-database mongodb-org-server mongodb-org-mongos mongodb-org-tools -y
@@ -470,7 +470,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     systemctl start mongod.service
     ```
 
-    Il faut ensuite se connecter avec l'utilisateur `root` et lancer la mise à jour
+    Il faut ensuite se connecter avec l'utilisateur `root` et terminer la mise à jour
     ```sh
     mongosh -u root -p root
     > db.adminCommand( { setFeatureCompatibilityVersion: "8.0", confirm: true } )
