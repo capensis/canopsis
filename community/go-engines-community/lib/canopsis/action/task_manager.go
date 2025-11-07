@@ -424,18 +424,6 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 
 			return
 		}
-	default:
-		if executedAction.Parameters.StopOnSuccess != nil && *executedAction.Parameters.StopOnSuccess {
-			e.logger.Debug().
-				Str("source", taskRes.Source).
-				Str("alarm", taskRes.Alarm.ID).
-				Str("execution", taskRes.ExecutionCacheKey).
-				Int("step", taskRes.Step).
-				Msg("action succeeded, stop scenario")
-			e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
-
-			return
-		}
 	}
 
 	scenarioExecution.ActionExecutions[taskRes.Step].Executed = true
@@ -466,6 +454,18 @@ func (e *redisBasedManager) processTaskResult(ctx context.Context, taskRes TaskR
 
 			return
 		}
+	}
+
+	if executedAction.Parameters.StopOnSuccess != nil && *executedAction.Parameters.StopOnSuccess {
+		e.logger.Debug().
+			Str("source", taskRes.Source).
+			Str("alarm", taskRes.Alarm.ID).
+			Str("execution", taskRes.ExecutionCacheKey).
+			Int("step", taskRes.Step).
+			Msg("action succeeded, stop scenario")
+		e.finishExecution(ctx, taskRes.Alarm, *scenarioExecution, taskRes.Err)
+
+		return
 	}
 
 	nextStep := taskRes.Step + 1
