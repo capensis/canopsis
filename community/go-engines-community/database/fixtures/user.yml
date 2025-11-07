@@ -2014,6 +2014,7 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_eventfilter": 0
+      "@permission_api_external_data_table": 4
       <<: [
         *api_permissions_event_pattern,
         *api_permissions_entity_pattern
@@ -2150,6 +2151,7 @@ permission:
       - "@group_technical_exploitation"
     api_permissions:
       "@permission_api_link_rule": 0
+      "@permission_api_external_data_table": 4
       <<: [
         *api_permissions_alarm_pattern,
         *api_permissions_entity_pattern
