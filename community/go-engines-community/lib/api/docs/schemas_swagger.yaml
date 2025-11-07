@@ -7328,6 +7328,10 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      comment_templates:
+        items:
+          $ref: '#/definitions/commenttemplate.Response'
+        type: array
       created:
         type: integer
       filters:

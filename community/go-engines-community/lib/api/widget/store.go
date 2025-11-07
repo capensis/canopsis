@@ -167,9 +167,17 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 			},
 			"as": "filters",
 		}},
+		{"$lookup": bson.M{
+			"from":         mongo.CommentTemplateMongoCollection,
+			"localField":   "parameters.comment_templates",
+			"foreignField": "_id",
+			"as":           "comment_templates",
+		}},
 		{"$unwind": bson.M{"path": "$filters", "preserveNullAndEmptyArrays": true}},
+		{"$unwind": bson.M{"path": "$comment_templates", "preserveNullAndEmptyArrays": true}},
 	}
 	pipeline = append(pipeline, s.authorProvider.PipelineForField("filters.author")...)
+	pipeline = append(pipeline, s.authorProvider.PipelineForField("comment_templates.author")...)
 	pipeline = append(pipeline,
 		bson.M{"$sort": bson.M{"filters.position": 1}},
 		bson.M{"$group": bson.M{
@@ -180,10 +188,16 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 				"then": "$filters",
 				"else": "$$REMOVE",
 			}}},
+			"comment_templates": bson.M{"$push": bson.M{"$cond": bson.M{
+				"if":   "$comment_templates._id",
+				"then": "$comment_templates",
+				"else": "$$REMOVE",
+			}}},
 		}},
 		bson.M{"$replaceRoot": bson.M{"newRoot": bson.M{"$mergeObjects": bson.A{
 			"$data",
 			bson.M{"filters": "$filters"},
+			bson.M{"comment_templates": "$comment_templates"},
 		}}}},
 	)
 	pipeline = append(pipeline, s.authorProvider.Pipeline()...)
