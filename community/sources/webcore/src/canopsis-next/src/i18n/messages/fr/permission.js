@@ -50,7 +50,7 @@ export default {
     [USER_PERMISSIONS_GROUPS.widgetsPiechartViewsettings]: 'Paramètres de vue du widget Diagramme circulaire',
     [USER_PERMISSIONS_GROUPS.widgetsServiceweather]: 'Météo des Services',
     [USER_PERMISSIONS_GROUPS.widgetsServiceweatherAlarmactions]: 'Actions pour les alarmes du widget Météo des Services',
-    [USER_PERMISSIONS_GROUPS.widgetsServiceweatherViewsettings]: 'Paramètres de vue dwidget Météo des Services',
+    [USER_PERMISSIONS_GROUPS.widgetsServiceweatherViewsettings]: 'Paramètres de vue du widget Météo des Services',
     [USER_PERMISSIONS_GROUPS.widgetsServiceweatherWidgetsettings]: 'Paramètres du widget Météo des Services',
     [USER_PERMISSIONS_GROUPS.widgetsTestingweather]: 'Scénario Junit',
     [USER_PERMISSIONS_GROUPS.widgetsUserstatistics]: 'Statistiques Utilisateurs',

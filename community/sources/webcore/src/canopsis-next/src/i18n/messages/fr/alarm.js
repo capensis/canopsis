@@ -70,7 +70,7 @@ export default {
     by: 'par',
     launched: 'lancé',
     junit: 'JUnit',
-    groupItems: 'Éléments de groupe',
+    groupItems: 'Grouper les éléments',
     steps: {
       [ALARM_LIST_STEPS.statedec]: 'Sévérité diminuée',
       [ALARM_LIST_STEPS.stateinc]: 'Sévérité augmentée',
