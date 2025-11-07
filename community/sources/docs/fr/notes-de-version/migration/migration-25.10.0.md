@@ -426,6 +426,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     Et on réimporte les données
 
     ```sh
+    set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
     sudo -iu postgres pg_restore --no-owner -Fc -v -d $(eval echo "$CPS_POSTGRES_URL") /tmp/canopsis-YYYY-MM-DD-canopsis-dump.sql.gz
     sudo -iu postgres pg_restore --no-owner -Fc -v -d $(eval echo "$CPS_POSTGRES_TECH_URL") /tmp/canopsis-YYYY-MM-DD-canopsis_tech_metrics-dump.sql.gz
     ```
