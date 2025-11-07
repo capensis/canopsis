@@ -13,7 +13,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     withlivewatching="true"
   />
   <widget-settings-group-stub
-    title="Live reporting"
+    title="Time filter"
   >
     <field-live-reporting-stub
       value="[object Object]"
@@ -615,7 +615,7 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
     </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
-    title="Expand panel"
+    title="Expandable panel"
   >
     <widget-settings-group-stub
       title="More infos"
@@ -679,7 +679,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     withlivewatching="true"
   />
   <widget-settings-group-stub
-    title="Live reporting"
+    title="Time filter"
   >
     <field-live-reporting-stub
       value="[object Object]"
@@ -1277,7 +1277,7 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
     </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
-    title="Expand panel"
+    title="Expandable panel"
   >
     <widget-settings-group-stub
       title="More infos"
@@ -1341,7 +1341,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     withlivewatching="true"
   />
   <widget-settings-group-stub
-    title="Live reporting"
+    title="Time filter"
   >
     <field-live-reporting-stub
       value="[object Object]"
@@ -1935,7 +1935,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
     </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
-    title="Expand panel"
+    title="Expandable panel"
   >
     <widget-settings-group-stub
       title="More infos"
@@ -2000,7 +2000,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     withlivewatching="true"
   />
   <widget-settings-group-stub
-    title="Live reporting"
+    title="Time filter"
   >
     <field-live-reporting-stub
       value="[object Object]"
@@ -2594,7 +2594,7 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
     </widget-settings-group-stub>
   </widget-settings-group-stub>
   <widget-settings-group-stub
-    title="Expand panel"
+    title="Expandable panel"
   >
     <widget-settings-group-stub
       title="More infos"
