@@ -1,7 +1,7 @@
 export default {
   impacts: 'Impacts',
   dependencies: 'Dépendances',
-  noEventsFilter: 'Aucun filtre d\'événements',
+  noEventsFilter: 'Sans évènements récents',
   impactChain: 'Chaîne d\'impact',
   resolvedAlarms: 'Alarmes résolues',
   activeAlarm: 'Alarme active',

@@ -49,7 +49,7 @@ export default {
   webhook: {
     title: 'Webhooks',
     deleteAfter: 'Delete webhooks requests history',
-    logCredentials: 'Open auth data in logs',
+    logCredentials: 'Display authentication data in logs (plaintext)',
     logCredentialsHelpText: 'Affects how passwords, tokens and auth data are written in logs. \n'
       + '<ul><li>enabled: in open way (not recommended)</li>'
       + '<li>disabled: hidden with ***</li></ul>',
