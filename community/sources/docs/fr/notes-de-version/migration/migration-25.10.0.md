@@ -313,6 +313,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     ```
 
     Une fois fait, nous allons retirer le `versionlock` et le mettre à jour vers la version `25.10`
+
     ```sh
     dnf versionlock delete 'canopsis-pro-25.04.*'
     dnf versionlock delete 'canopsis-webui-25.04.*'
@@ -322,8 +323,9 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     ```
 
     Puis on lance la mise à jour
+
     ```sh
-    dnf upgrade canopsis-pro canopsis-webui
+    dnf upgrade canopsis-pro canopsis-webui -y
     ```
 
     Le paquet `canopsis-pro` va automatiquement aller récupérer la version du client pour `mongodb`.
@@ -358,7 +360,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
 
     ```sh
     dnf versionlock delete timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
-    dnf install timescaledb-2-postgresql-17-2.21.4 timescaledb-2-loader-postgresql-17-2.21.4
+    dnf install timescaledb-2-postgresql-17-2.21.4 timescaledb-2-loader-postgresql-17-2.21.4 -y
     dnf versionlock add --raw timescaledb-2-loader-postgresql-17 timescaledb-2-postgresql-17
     ```
 
@@ -460,7 +462,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     Une fois le [dépôt mise à jour vers la version `8.0`](#mise-à-jour-de-dépôts), on peut lancer l'upgrade
 
     ```sh
-    dnf upgrade mongodb-org mongodb-org-database mongodb-org-server mongodb-org-mongos mongodb-org-tools
+    dnf upgrade mongodb-org mongodb-org-database mongodb-org-server mongodb-org-mongos mongodb-org-tools -y
     ```
 
     Une fois mis à jour, le service doit être relancé
@@ -494,7 +496,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     Une fois fait, on peut lancer la mise à jour : 
 
     ```sh
-    dnf upgrade rabbitmq-server
+    dnf upgrade rabbitmq-server -y
     ```
 
     On peut ensuite vérifier la version de `rabbitmq` :
