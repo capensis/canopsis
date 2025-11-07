@@ -404,7 +404,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     canopsis_tech_metrics=# exit        
     ```
 
-    Une fois fait, on vérifie que l'extension est bien installée et à jour
+    Puis vérifier que l'extension Timescaledb est bien à jour
     ```sql
     postgres=# \c canopsis
     canopsis=# \dx timescaledb
