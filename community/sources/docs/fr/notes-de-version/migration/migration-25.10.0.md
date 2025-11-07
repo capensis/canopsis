@@ -4,7 +4,7 @@ Ce guide donne les instructions vous permettant de mettre à jour Canopsis 25.04
 
 ## Prérequis
 
-L'ensemble de cette procédure doit être lu avant son exécution.
+L'ensemble de cette procédure doit être lue avant son exécution.
 
 Ce document ne prend en compte que Canopsis Community et Canopsis Pro : tout développement personnalisé dont vous pourriez bénéficier ne fait pas partie du cadre de ce Guide de migration.
 
@@ -40,7 +40,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     > exit
     ```
 
-    ### Arrêt de l'environnement en cours de lancement
+    ### Arrêt de l'environnement en cours d'exécution
 
     Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
 
@@ -48,7 +48,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     CPS_EDITION=pro docker compose down
     ```
 
-    ### Mise à jour Canopsis
+    ### Mise à jour de l'applicatif Canopsis
 
     !!! information "Information"
 
@@ -293,7 +293,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
 
     #### MongoDB:
 
-    ```
+    ```sh
     cat << EOF > /etc/yum.repos.d/mongodb-org-8.0.repo
     [mongodb-org-8.0]
     name=MongoDB Repository
@@ -304,15 +304,15 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     EOF
     ```
 
-    ### Mise à jour paquets Canopsis
+    ### Mise à jour des paquets de l'applicatif Canopsis
 
-    Pour réaliser la mise à jour des paquets de Canopsis il faut d'abord couper l'application
+    Pour réaliser la mise à jour de Canopsis il faut dans un premier temps arrêter l'application
 
     ```sh
     systemctl stop canopsis.service
     ```
 
-    Une fois fait, nous allons retirer le `versionlock` et le mettre à jour vers la version `25.10`
+    Une fois le service correctement arrêté, il faut lever le `versionlock` éventuellement présent pour mettre à jour vers la version `25.10`
 
     ```sh
     dnf versionlock delete 'canopsis-pro-25.04.*'
@@ -322,13 +322,13 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     dnf versionlock add --raw 'canopsis-webui-25.10.*'
     ```
 
-    Puis on lance la mise à jour
+    La mise à jour des packages peut ensuite commencer
 
     ```sh
     dnf upgrade canopsis-pro canopsis-webui -y
     ```
 
-    Le paquet `canopsis-pro` va automatiquement aller récupérer la version du client pour `mongodb`.
+    Le paquet `canopsis-pro` a une dépendance vers le client `mongodb`, de ce fait ce paquet sera installé durant cette installation.
 
 
     ### Mise à jour TimescaleDB
@@ -341,7 +341,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     1. Mise à jour de TimescaleDB 2.15.1 vers 2.21.4
     2. Mise à jour de PostgreSQL 15 vers 17
 
-    Dans un premier temps, on sauvegarde nos bases
+    Dans un premier temps, on sauvegarde les bases de données `canopsis` et `canopsis_tech_metrics`
 
     ```sh
     set -o allexport ; source /opt/canopsis/etc/go-engines-vars.conf
@@ -349,14 +349,14 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     sudo -iu postgres pg_dump $(eval echo "$CPS_POSTGRES_TECH_URL") --no-owner -Fc -v -f /tmp/canopsis-$(date +"%Y-%m-%d")-canopsis_tech_metrics-dump.sql.gz
     ```
 
-    Puis on coupe le service et on le désactive
+    On peut ensuite arrêter le service et le désactiver
 
     ```sh
     systemctl stop postgresql-15.service
     systemctl disable postgresql-15.service
     ```
 
-    On retire le `versionlock`, on met à jour `timescaledb` et on met de nouveau un `versionlock`
+    On peut maintenant supprimer l'éventuel `versionlock` relatif à cette brique, et mettre à jour `timescaledb` avant de poser un `versionlock` sur la nouvelle version
 
     ```sh
     dnf versionlock delete timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
@@ -364,20 +364,21 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     dnf versionlock add --raw timescaledb-2-loader-postgresql-17 timescaledb-2-postgresql-17
     ```
 
-    Une fois fait, on initialise 
+    Il faut ensuite initialiser la nouvelle instance PostgreSQL 17
+
     ```sh
     postgresql-17-setup initdb
     timescaledb-tune -yes --pg-config=/usr/pgsql-17/bin/pg_config
     echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/17/data/postgresql.conf
     ```
 
-    On réactive postgresql et on vérifie que ça a bien redémarré 
+    La réactiver au boot et on vérifie son bon démarrage
     ```sh
     systemctl enable --now postgresql-17.service
     systemctl status postgresql-17.service
     ```
 
-    On recrée ensuite les bases
+    Il faut ensuite recréer les bases de données ainsi que les utilisateurs associés
 
     ```sql 
     sudo -iu postgres psql
@@ -390,7 +391,6 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     canopsis=# ALTER DATABASE canopsis OWNER TO cpspostgres;
     canopsis=# exit
     ```
-
 
     ```sql
     sudo -iu postgres psql
@@ -567,7 +567,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     Le retour doit être de la forme `{ "featureCompatibilityVersion" : { "version" : "7.0" }, "ok" : 1 }`
     Si ce n'est pas le cas, vous ne pouvez pas continuer la mise à jour.
 
-    ### Arrêt de l'environnement en cours de lancement
+    ### Arrêt de l'environnement en cours d'exécution
 
     Vous devez prévoir une interruption du service afin de procéder à la mise à jour qui va suivre.
 
@@ -575,7 +575,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     kubectl delete deployments --all
     ```
 
-    ## Mise à jour Canopsis
+    ### Mise à jour de l'applicatif Canopsis
 
     !!! information "Information"
 
