@@ -28,16 +28,13 @@ import { computed } from 'vue';
 
 import { ALARM_STATES } from '@/constants';
 
-import { entitiesInfoMixin } from '@/mixins/entities/info';
+import { useInfo } from '@/hooks/store/modules/info';
 
 import StateCriticityField from '@/components/forms/fields/state-criticity-field.vue';
 
 export default {
   inject: ['$validator'],
-  components: {
-    StateCriticityField,
-  },
-  mixins: [entitiesInfoMixin],
+  components: { StateCriticityField },
   model: {
     prop: 'value',
     event: 'input',
@@ -61,9 +58,11 @@ export default {
     },
   },
   setup(props) {
+    const { allowChangeSeverityToInfo } = useInfo();
+
     const outputFieldName = computed(() => `${props.name}.output`);
     const availableStateValues = computed(() => (
-      props.allowChangeSeverityToInfo ? ALARM_STATES : omit(ALARM_STATES, ['ok'])
+      allowChangeSeverityToInfo.value ? ALARM_STATES : omit(ALARM_STATES, ['ok'])
     ));
 
     const textareaComponent = computed(() => (
