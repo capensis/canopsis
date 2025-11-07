@@ -89,7 +89,7 @@ Liste des changements et procédures particulières à suivre pour chaque mise �
 
     | Version      | Notes de version                                         | API | Date       | Remarques |
     | ------------ |:--------------------------------------------------------:| --- | ---------- | --------- |
-    | **25.10.0**  | [📝](notes-de-version/25.10.0.md)  | 🔄 [Changelog](notes-de-version/api/changelog-25.10.0.md)<br>⚠️ [Breaking](notes-de-version/api/breaking-25.10.0.md) | 28/10/2025 | 🧭 [Guide de migration](notes-de-version/migration/migration-25.10.0.md) |
+    | **25.10.0**  | [📝](notes-de-version/25.10.0.md)  | 🔄 [Changelog](notes-de-version/api/changelog-25.10.0.md)<br>⚠️ [Breaking](notes-de-version/api/breaking-25.10.0.md) | 7/11/2025 | 🧭 [Guide de migration](notes-de-version/migration/migration-25.10.0.md) |
 
 
 
