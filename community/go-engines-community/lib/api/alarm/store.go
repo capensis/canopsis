@@ -15,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -757,7 +758,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 			return nil, err
 		}
 	}
-	exportCursor := newExportCursor(cursor, t.Fields, common.GetRealFormatTime(r.TimeFormat), location,
+	exportCursor := newExportCursor(cursor, t.Fields, validation.GetRealFormatTime(r.TimeFormat), location,
 		instructions, linkGenerator, user, s.tplExecutor, withModel, s.dbClient.Collection(mongo.EntityInfosPropertyCollection), s.logger)
 	return exportCursor, nil
 }
