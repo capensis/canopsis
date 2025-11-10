@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -44,14 +45,14 @@ type store struct {
 	timezoneConfigProvider   config.TimezoneConfigProvider
 	authorProvider           author.Provider
 	decoder                  encoding.Decoder
-	transformer              common.PatternFieldsTransformer
+	transformer              patternfields.Transformer
 }
 
 func NewStore(
 	db, dbExport mongo.DbClient,
 	timezoneConfigProvider config.TimezoneConfigProvider,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	decoder encoding.Decoder,
 ) Store {
 	return &store{

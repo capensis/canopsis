@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -60,7 +61,7 @@ type store struct {
 	dbEntityCollection      mongo.DbCollection
 	dbTplDataCollection     mongo.DbCollection
 	dbTplTestCollection     mongo.DbCollection
-	transformer             common.PatternFieldsTransformer
+	transformer             patternfields.Transformer
 	authorProvider          author.Provider
 	notificationStore       usernotification.Store
 	tplValidator            validator.Validator
@@ -80,7 +81,7 @@ type store struct {
 func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	notificationStore usernotification.Store,
 	tplValidator validator.Validator,
 	tplExecutor libtemplate.Executor,
@@ -150,7 +151,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err = s.transformEntityPatternRequestToModel(ctx, request.EntityPatternFieldsRequest, &model)
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, &model)
 		if err != nil {
 			return err
 		}
@@ -286,7 +287,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err = s.transformEntityPatternRequestToModel(ctx, request.EntityPatternFieldsRequest, &model)
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, &model)
 		if err != nil {
 			return err
 		}
@@ -462,7 +463,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 	}
 
 	var err error
-	r.Rule.EntityPatternFieldsRequest, err = s.transformer.TransformEntityPatternFieldsRequest(ctx, r.Rule.EntityPatternFieldsRequest)
+	r.Rule.EntityRequest, err = s.transformer.TransformEntityRequest(ctx, r.Rule.EntityRequest)
 	if err != nil {
 		return nil, err
 	}
@@ -544,8 +545,8 @@ func (s *store) getResponseLookups() []bson.M {
 	return pipeline
 }
 
-func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r common.EntityPatternFieldsRequest, model *eventfilter.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r)
+func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r patternfields.EntityRequest, model *eventfilter.Rule) error {
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r)
 	if err != nil {
 		return err
 	}
