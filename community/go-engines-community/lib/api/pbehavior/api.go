@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
@@ -274,7 +274,7 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, recomputeInherited, err := a.store.Delete(c, id, c.MustGet(auth.UserKey).(string))
+	ok, recomputeInherited, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -297,7 +297,7 @@ func (a *api) DeleteByName(c *gin.Context) {
 		return
 	}
 
-	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, c.MustGet(auth.UserKey).(string))
+	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -366,7 +366,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	recomputeInherited := false
 
 	ids := make([]string, 0)
@@ -391,8 +391,8 @@ func (a *api) BulkDelete(c *gin.Context) {
 // BulkEntityCreate
 // @Param body body []BulkEntityCreateRequestItem true "body"
 func (a *api) BulkEntityCreate(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityCreateRequestItem) (string, error) {
 		pbh, err := a.store.EntityInsert(c, request)
@@ -418,8 +418,8 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 // BulkEntityDelete
 // @Param body body []BulkEntityDeleteRequestItem true "body"
 func (a *api) BulkEntityDelete(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityDeleteRequestItem) (string, error) {
 		id, err := a.store.EntityDelete(c, request)
