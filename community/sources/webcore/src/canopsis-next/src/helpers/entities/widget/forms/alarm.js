@@ -1,4 +1,10 @@
-import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
+import {
+  cloneDeep,
+  isBoolean,
+  isNull,
+  omit,
+  map,
+} from 'lodash';
 
 import {
   DENSE_TYPES,
@@ -508,7 +514,7 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
  * @param {Array} [form=[]]
  * @return {Array}
  */
-export const formToWidgetCommentTemplates = (form = []) => form.map('template');
+export const formToWidgetCommentTemplates = (form = []) => map(form, 'template');
 
 /**
  * Convert form parameters to alarm list widget parameters
