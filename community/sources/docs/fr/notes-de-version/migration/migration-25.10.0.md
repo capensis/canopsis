@@ -494,10 +494,22 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     dnf versionlock add --raw 'rabbitmq-server-4.1*'
     ```
 
+    Il faut couper le service
+
+    ```sh
+    systemctl stop rabbitmq-server.service
+    ```
+
     Une fois fait, on peut lancer la mise à jour : 
 
     ```sh
     dnf upgrade rabbitmq-server -y
+    ```
+
+    Le service doit être démarrer
+
+    ```sh
+    systemctl start rabbitmq-server.service
     ```
 
     On peut ensuite vérifier la version de `rabbitmq` :
