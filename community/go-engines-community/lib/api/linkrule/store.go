@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
@@ -237,12 +238,12 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
-	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery(cmp.Or(request.SortBy, s.defaultSortBy), request.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(request.SortBy, s.defaultSortBy), request.Sort)
 	project := apiexternaldata.GetRefParametersLookups()
 	project = append(project, sort)
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
