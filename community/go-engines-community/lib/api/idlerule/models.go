@@ -112,12 +112,10 @@ type AggregationResult struct {
 	TotalCount int64  `bson:"total_count" json:"total_count"`
 }
 
-// GetTotal implementation PaginatedData interface
 func (r AggregationResult) GetTotal() int64 {
 	return r.TotalCount
 }
 
-// GetData implementation PaginatedData interface
 func (r AggregationResult) GetData() interface{} {
 	return r.Data
 }

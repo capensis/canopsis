@@ -30,7 +30,7 @@ func NewApi(
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	r := pagination.GetDefaultQuery()
 	if err := c.ShouldBind(&r); err != nil {
@@ -45,12 +45,7 @@ func (a *api) List(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(r, &aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(r, &aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 

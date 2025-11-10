@@ -73,7 +73,7 @@ func (a *api) CreateData(c *gin.Context) {
 }
 
 // ListData
-// @Success 200 {object} common.PaginatedListResponse{data=[]DataResponse}
+// @Success 200 {object} pagination.ListResponse{data=[]DataResponse}
 func (a *api) ListData(c *gin.Context) {
 	var r ListDataRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -95,13 +95,7 @@ func (a *api) ListData(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, &aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, &aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
@@ -204,7 +198,7 @@ func (a *api) CreateTest(c *gin.Context) {
 }
 
 // ListTest
-// @Success 200 {object} common.PaginatedListResponse{data=[]TestResponse}
+// @Success 200 {object} pagination.ListResponse{data=[]TestResponse}
 func (a *api) ListTest(c *gin.Context) {
 	var r ListTestRequest
 	r.Query = pagination.GetDefaultQuery()
@@ -227,13 +221,7 @@ func (a *api) ListTest(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(r.Query, &aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-
-		return
-	}
-
+	res := pagination.NewResponse(r.Query, &aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
