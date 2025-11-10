@@ -77,7 +77,7 @@ export default {
   },
 
   /**
-   * Admin access
+   * Administration - Access
    */
   [USER_PERMISSIONS.technical.permission]: {
     title: 'Rights',
@@ -93,23 +93,58 @@ export default {
   },
 
   /**
-   * Admin communications
+   * Administration - Maintenance
+   */
+  [USER_PERMISSIONS.technical.maintenance]: {
+    title: 'Maintenance mode',
+    message: 'Switches Canopsis to maintenance mode. All users except administrators will be logged out.',
+  },
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
+    title: 'Planning',
+    message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
+  },
+
+  /**
+   * Administration - Communications
    */
   [USER_PERMISSIONS.technical.broadcastMessage]: {
     title: 'Broadcast messages',
     message: 'The Canopsis broadcasting messages can be used for displaying banners and information messages that will appear in the Canopsis interface.',
   },
-  [USER_PERMISSIONS.technical.commentTemplate]: {
-    title: 'Comment templates',
-    topbarTitle: 'Comment templates',
-  },
   [USER_PERMISSIONS.technical.playlist]: {
     title: 'Playlists',
     message: 'Playlists can be used for the views customization which can be displayed one after another with an associated delay.',
   },
+  [USER_PERMISSIONS.technical.healthcheck]: {
+    title: 'Healthcheck',
+    message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
+  },
+  [USER_PERMISSIONS.technical.kpi]: {
+    title: 'KPI',
+    message: 'Allows you to present indicators in the form of graphs',
+  },
+  [USER_PERMISSIONS.technical.eventsRecord]: {
+    title: 'Events records',
+    message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
+  },
+  [USER_PERMISSIONS.technical.templateTesting]: {
+    title: 'Templates Studio',
+  },
 
   /**
-   * Admin general
+   * Administration - Custom objects
+   */
+  [USER_PERMISSIONS.technical.map]: {
+    title: 'Maps',
+    message: 'Module to define and display maps (geographic, logical, mermaid, etc.) via the "Map" widget.',
+  },
+  [USER_PERMISSIONS.technical.commentTemplate]: {
+    title: 'Comment templates',
+    topbarTitle: 'Comment templates',
+  },
+
+  /**
+   * Administration - Settings
    */
   [USER_PERMISSIONS.technical.parameters]: {
     title: 'User interface',
@@ -121,25 +156,9 @@ export default {
     title: 'Notifications settings',
     topbarTitle: 'Notifications',
   },
-  [USER_PERMISSIONS.technical.healthcheck]: {
-    title: 'Healthcheck',
-    message: 'The Healthcheck feature is the dashboard with states and errors indications of all systems included to the Canopsis.',
-  },
   [USER_PERMISSIONS.technical.engine]: {
     title: 'Engines',
     message: 'This page contains the information about the sequence and configuration of engines. To work properly, the chain of engines must be continuous.',
-  },
-  [USER_PERMISSIONS.technical.kpi]: {
-    title: 'KPI',
-    message: 'Allows you to present indicators in the form of graphs',
-  },
-  [USER_PERMISSIONS.technical.map]: {
-    title: 'Maps',
-    message: 'Module to define and display maps (geographic, logical, mermaid, etc.) via the "Map" widget.',
-  },
-  [USER_PERMISSIONS.technical.maintenance]: {
-    title: 'Maintenance mode',
-    message: 'Switches Canopsis to maintenance mode. All users except administrators will be logged out.',
   },
   [USER_PERMISSIONS.technical.tag]: {
     title: 'Tags management',
@@ -155,13 +174,6 @@ export default {
     topbarTitle: 'State',
     message: 'Allows you to define methods for calculating the state/severity of components and/or services.\nUseful for modeling dependency trees.',
   },
-  [USER_PERMISSIONS.technical.eventsRecord]: {
-    title: 'Events records',
-    message: 'Allows you to define and trigger the recording of events as soon as they arrive in the Canopsis data bus.',
-  },
-  [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Templates Studio',
-  },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'External auth tokens',
   },
@@ -170,12 +182,8 @@ export default {
   },
 
   /**
-   * Grouped admin
+   * Administration - Remediation
    */
-  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
-    title: 'Planning',
-    message: 'The Canopsis Planning Administration functionality can be used for the periodic behavior types customization.',
-  },
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
     title: 'Instructions',
     message: 'The Canopsis Remediation feature is used for creation plans or instructions to correct situations.',

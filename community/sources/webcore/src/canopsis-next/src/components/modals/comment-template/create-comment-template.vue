@@ -61,6 +61,7 @@ export default {
     const { config, close } = useInnerModal(props);
 
     const form = ref(commentTemplateToForm(config.value.template));
+
     const title = computed(() => config.value.title || t('modals.createCommentTemplate.create.title'));
 
     const { submitting, isDisabled, submit } = useSubmittableForm({
