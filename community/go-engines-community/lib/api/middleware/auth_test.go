@@ -6,7 +6,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_config "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/canopsis/config"
@@ -44,8 +44,8 @@ func TestAuth_GivenCredentials_ShouldReturnResponseAndSetUserDataToContext(t *te
 			c.String(
 				expectedCode,
 				"test %v %v",
-				c.MustGet(auth.UserKey).(string),
-				c.MustGet(auth.ApiKey).(string),
+				c.MustGet(authctx.UserKey).(string),
+				c.MustGet(authctx.ApiKey).(string),
 			)
 		},
 	)

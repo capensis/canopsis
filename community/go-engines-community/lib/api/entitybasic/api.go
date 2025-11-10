@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
@@ -122,7 +122,7 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.Delete(c, request.ID, c.MustGet(auth.UserKey).(string))
+	entity, err := a.store.Delete(c, request.ID, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		if errors.Is(err, ErrLinkedEntityToAlarm) || errors.Is(err, ErrComponent) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

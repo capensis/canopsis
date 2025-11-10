@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/mock/gomock"
@@ -24,7 +24,7 @@ func TestAuthorizeByID_GivenAuthorizedUser_ShouldReturnResponse(t *testing.T) {
 		Return(true, nil)
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
-		c.Set(auth.UserKey, subj)
+		c.Set(authctx.UserKey, subj)
 	})
 	router.GET(
 		"/obj/:id",
@@ -78,7 +78,7 @@ func TestAuthorizeByID_GivenNotAuthorizedUser_ShouldForbiddenError(t *testing.T)
 		Return(false, nil)
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
-		c.Set(auth.UserKey, subj)
+		c.Set(authctx.UserKey, subj)
 	})
 	router.GET(
 		"/obj/:id",

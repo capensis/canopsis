@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"github.com/gin-gonic/gin"
@@ -23,7 +23,7 @@ func AuthorizeOwnership(strategy security.OwnershipStrategy) gin.HandlerFunc {
 			panic(errors.New("missing ownership strategy"))
 		}
 
-		rawSubj, ok := c.Get(auth.UserKey)
+		rawSubj, ok := c.Get(authctx.UserKey)
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return

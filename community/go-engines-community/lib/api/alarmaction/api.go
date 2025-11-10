@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
@@ -44,8 +44,8 @@ func NewApi(store Store, logger zerolog.Logger) API {
 // Ack
 // @Param body body AckRequest true "body"
 func (a *api) Ack(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := AckRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -72,8 +72,8 @@ func (a *api) Ack(c *gin.Context) {
 // AckRemove
 // @Param body body Request true "body"
 func (a *api) AckRemove(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -100,8 +100,8 @@ func (a *api) AckRemove(c *gin.Context) {
 // Snooze
 // @Param body body SnoozeRequest true "body"
 func (a *api) Snooze(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := SnoozeRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -128,8 +128,8 @@ func (a *api) Snooze(c *gin.Context) {
 // Cancel
 // @Param body body Request true "body"
 func (a *api) Cancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -156,8 +156,8 @@ func (a *api) Cancel(c *gin.Context) {
 // Uncancel
 // @Param body body Request true "body"
 func (a *api) Uncancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := Request{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -184,8 +184,8 @@ func (a *api) Uncancel(c *gin.Context) {
 // AssocTicket
 // @Param body body AssocTicketRequest true "body"
 func (a *api) AssocTicket(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := AssocTicketRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -212,8 +212,8 @@ func (a *api) AssocTicket(c *gin.Context) {
 // Comment
 // @Param body body CommentRequest true "body"
 func (a *api) Comment(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := CommentRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -240,8 +240,8 @@ func (a *api) Comment(c *gin.Context) {
 // ChangeState
 // @Param body body ChangeStateRequest true "body"
 func (a *api) ChangeState(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	request := ChangeStateRequest{}
 	if err := c.ShouldBind(&request); err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
@@ -268,8 +268,8 @@ func (a *api) ChangeState(c *gin.Context) {
 // BulkAck
 // @Param body body []BulkAckRequestItem true "body"
 func (a *api) BulkAck(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkAckRequestItem) (string, error) {
 		ok, err := a.store.Ack(c, request.ID, request.AckRequest, userID, username)
 		if err != nil || !ok {
@@ -283,8 +283,8 @@ func (a *api) BulkAck(c *gin.Context) {
 // BulkAckRemove
 // @Param body body []BulkRequestItem true "body"
 func (a *api) BulkAckRemove(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.AckRemove(c, request.ID, request.Request, userID, username)
 		if err != nil || !ok {
@@ -298,8 +298,8 @@ func (a *api) BulkAckRemove(c *gin.Context) {
 // BulkSnooze
 // @Param body body []BulkSnoozeRequestItem true "body"
 func (a *api) BulkSnooze(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkSnoozeRequestItem) (string, error) {
 		ok, err := a.store.Snooze(c, request.ID, request.SnoozeRequest, userID, username)
 		if err != nil || !ok {
@@ -313,8 +313,8 @@ func (a *api) BulkSnooze(c *gin.Context) {
 // BulkCancel
 // @Param body body []BulkRequestItem true "body"
 func (a *api) BulkCancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.Cancel(c, request.ID, request.Request, userID, username)
 		if err != nil || !ok {
@@ -328,8 +328,8 @@ func (a *api) BulkCancel(c *gin.Context) {
 // BulkUncancel
 // @Param body body []BulkRequestItem true "body"
 func (a *api) BulkUncancel(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.Uncancel(c, request.ID, request.Request, userID, username)
 		if err != nil || !ok {
@@ -343,8 +343,8 @@ func (a *api) BulkUncancel(c *gin.Context) {
 // BulkAssocTicket
 // @Param body body []BulkAssocTicketRequestItem true "body"
 func (a *api) BulkAssocTicket(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkAssocTicketRequestItem) (string, error) {
 		ok, err := a.store.AssocTicket(c, request.ID, request.AssocTicketRequest, userID, username)
 		if err != nil || !ok {
@@ -358,8 +358,8 @@ func (a *api) BulkAssocTicket(c *gin.Context) {
 // BulkComment
 // @Param body body []BulkCommentRequestItem true "body"
 func (a *api) BulkComment(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkCommentRequestItem) (string, error) {
 		ok, err := a.store.Comment(c, request.ID, request.CommentRequest, userID, username)
 		if err != nil || !ok {
@@ -373,8 +373,8 @@ func (a *api) BulkComment(c *gin.Context) {
 // BulkChangeState
 // @Param body body []BulkChangeStateRequestItem true "body"
 func (a *api) BulkChangeState(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
-	username := c.MustGet(auth.Username).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
+	username := c.MustGet(authctx.Username).(string)
 	bulk.Handler(c, func(request BulkChangeStateRequestItem) (string, error) {
 		ok, err := a.store.ChangeState(c, request.ID, request.ChangeStateRequest, userID, username)
 		if err != nil || !ok {
@@ -386,7 +386,7 @@ func (a *api) BulkChangeState(c *gin.Context) {
 }
 
 func (a *api) AddBookmark(c *gin.Context) {
-	found, err := a.store.AddBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	found, err := a.store.AddBookmark(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -400,7 +400,7 @@ func (a *api) AddBookmark(c *gin.Context) {
 }
 
 func (a *api) RemoveBookmark(c *gin.Context) {
-	found, err := a.store.RemoveBookmark(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	found, err := a.store.RemoveBookmark(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}

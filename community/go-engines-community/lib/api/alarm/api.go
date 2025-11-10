@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -81,7 +81,7 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.Find(c, r, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -99,7 +99,7 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Alarm
 func (a *api) Get(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	alarm, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
 		panic(err)
@@ -122,7 +122,7 @@ func (a *api) GetOpen(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	alarm, ok, err := a.store.GetOpenByEntityID(c, r.ID, userID)
 	if err != nil {
 		panic(err)
@@ -163,7 +163,7 @@ func (a *api) GetDetails(c *gin.Context) {
 	}
 
 	response := make([]DetailsResponse, len(rawObjects))
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
@@ -230,7 +230,7 @@ func (a *api) ListByService(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.FindByService(c, c.Param("id"), r, userID)
 	if err != nil {
 		panic(err)
@@ -256,7 +256,7 @@ func (a *api) ListByComponent(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.FindByComponent(c, r, userID)
 	if err != nil {
 		panic(err)
@@ -282,7 +282,7 @@ func (a *api) ResolvedList(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	aggregationResult, err := a.store.FindResolved(c, r, userID)
 	if err != nil {
 		panic(err)
@@ -307,7 +307,7 @@ func (a *api) Count(c *gin.Context) {
 		return
 	}
 
-	res, err := a.store.Count(c, r, c.MustGet(auth.UserKey).(string))
+	res, err := a.store.Count(c, r, c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -335,7 +335,7 @@ func (a *api) StartExport(c *gin.Context) {
 		panic(err)
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	task, err := a.taskCreator.Create(c, export.TaskParameters{
 		Type:           "alarm",
 		Parameters:     string(params),
@@ -400,7 +400,7 @@ func (a *api) GetLinks(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids, userID)
 	if err != nil {
 		valErr := common.ValidationError{}

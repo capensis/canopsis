@@ -8,7 +8,7 @@ import (
 	"io"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
@@ -32,7 +32,7 @@ func SetAuthor() func(c *gin.Context) {
 			panic(err)
 		}
 
-		userID := c.MustGet(auth.UserKey)
+		userID := c.MustGet(authctx.UserKey)
 		body["author"] = userID
 
 		encodedStr, err := json.Marshal(body)
@@ -80,9 +80,9 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) fun
 		}
 
 		if addAuthor {
-			userID, ok := c.MustGet(auth.UserKey).(string)
+			userID, ok := c.MustGet(authctx.UserKey).(string)
 			if !ok {
-				panic(fmt.Errorf("unknown type of %s", auth.UserKey))
+				panic(fmt.Errorf("unknown type of %s", authctx.UserKey))
 			}
 
 			for _, object := range rawObjects {
