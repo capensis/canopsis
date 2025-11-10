@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -225,7 +226,7 @@ func (s *store) FindByEntityID(ctx context.Context, entity libtypes.Entity, r Fi
 
 	pipeline := []bson.M{{"$match": bson.M{"_id": bson.M{"$in": pbhIDs}}}}
 	pipeline = append(pipeline, GetNestedObjectsPipeline(s.authorProvider)...)
-	pipeline = append(pipeline, common.GetSortQuery("created", common.SortAsc))
+	pipeline = append(pipeline, mongoquery.GetSortQuery("created", common.SortAsc))
 	if r.WithFlags {
 		pipeline = append(pipeline, bson.M{"$addFields": bson.M{
 			"editable": bson.M{"$cond": bson.M{
@@ -330,7 +331,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	pipeline := []bson.M{
 		{"$match": match},
 	}
-	filter := common.GetSearchQuery(request.Search, s.entitiesDefaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(request.Search, s.entitiesDefaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -347,7 +348,7 @@ func (s *store) FindEntities(ctx context.Context, pbhID string, request Entities
 	cursor, err := s.entityDbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(request.SortBy, s.entitiesDefaultSortBy), request.Sort),
+		mongoquery.GetSortQuery(cmp.Or(request.SortBy, s.entitiesDefaultSortBy), request.Sort),
 		project,
 	))
 

@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	libfile "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
@@ -213,7 +214,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 
 func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*AggregationResult, error) {
 	var pipeline []bson.M
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -221,7 +222,7 @@ func (s *store) List(ctx context.Context, query pagination.FilteredQuery) (*Aggr
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		query.Query,
 		pipeline,
-		common.GetSortQuery(s.defaultSortBy, common.SortAsc),
+		mongoquery.GetSortQuery(s.defaultSortBy, common.SortAsc),
 	))
 	if err != nil {
 		return nil, err

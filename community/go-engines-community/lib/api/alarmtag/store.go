@@ -8,6 +8,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
@@ -65,7 +66,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		match = append(match, bson.M{"value": bson.M{"$in": r.Values}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		match = append(match, filter)
 	}
@@ -85,7 +86,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+		mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 		project,
 	))
 
@@ -114,7 +115,7 @@ func (s *store) FindLabels(ctx context.Context, r ListLabelsRequest) (*Aggregati
 		match = append(match, bson.M{"_id": bson.M{"$in": r.IDs}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, []string{"_id"})
+	filter := mongoquery.GetSearchQuery(r.Search, []string{"_id"})
 	if len(filter) > 0 {
 		match = append(match, filter)
 	}
@@ -126,7 +127,7 @@ func (s *store) FindLabels(ctx context.Context, r ListLabelsRequest) (*Aggregati
 	cursor, err := s.labelCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery("_id", common.SortAsc),
+		mongoquery.GetSortQuery("_id", common.SortAsc),
 	))
 	if err != nil {
 		return nil, err
