@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -49,10 +49,10 @@ func SessionAuth(db mongo.DbClient, configProvider config.ApiConfigProvider, sto
 
 				// The user credentials was found, set user's id to key UserKey in this context,
 				// the user's id can be read later using c.MustGet(auth.UserKey).
-				c.Set(auth.UserKey, user.ID)
-				c.Set(auth.Username, user.DisplayName)
-				c.Set(auth.RolesKey, user.Roles)
-				c.Set(auth.ApiKey, user.AuthApiKey)
+				c.Set(authctx.UserKey, user.ID)
+				c.Set(authctx.Username, user.DisplayName)
+				c.Set(authctx.Roles, user.Roles)
+				c.Set(authctx.ApiKey, user.AuthApiKey)
 			} else {
 				panic("user key is not string")
 			}

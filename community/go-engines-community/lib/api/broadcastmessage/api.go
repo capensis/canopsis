@@ -3,7 +3,7 @@ package broadcastmessage
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -126,7 +126,7 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(auth.UserKey).(string))
+	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
 		panic(err)
 	}
@@ -146,7 +146,7 @@ func (a *api) Delete(c *gin.Context) {
 // @Success 200 {array} Response
 func (a *api) GetActive(c *gin.Context) {
 	userID := ""
-	if v, ok := c.Get(auth.UserKey); ok {
+	if v, ok := c.Get(authctx.UserKey); ok {
 		userID, _ = v.(string)
 	}
 
@@ -159,7 +159,7 @@ func (a *api) GetActive(c *gin.Context) {
 }
 
 func (a *api) Read(c *gin.Context) {
-	userID := c.MustGet(auth.UserKey).(string)
+	userID := c.MustGet(authctx.UserKey).(string)
 	ok, err := a.store.Read(c, c.Param("id"), userID)
 	if err != nil {
 		panic(err)

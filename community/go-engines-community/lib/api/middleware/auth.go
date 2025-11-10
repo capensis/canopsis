@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -47,10 +47,10 @@ func Auth(providers []security.HttpProvider, maintenanceAdapter config.Maintenan
 
 				// The user credentials was found, set user's id to key UserKey in this context,
 				// the user's id can be read later using c.MustGet(auth.UserKey).
-				c.Set(auth.Username, user.DisplayName)
-				c.Set(auth.UserKey, user.ID)
-				c.Set(auth.RolesKey, user.Roles)
-				c.Set(auth.ApiKey, user.AuthApiKey)
+				c.Set(authctx.Username, user.DisplayName)
+				c.Set(authctx.UserKey, user.ID)
+				c.Set(authctx.Roles, user.Roles)
+				c.Set(authctx.ApiKey, user.AuthApiKey)
 				break
 			}
 		}

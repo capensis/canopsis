@@ -9,7 +9,7 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -17,9 +17,9 @@ import (
 )
 
 var (
-	MissingUserKeyPanicMsg  = "Key \"" + auth.UserKey + "\" does not exist"
-	MissingUsernamePanicMsg = "Key \"" + auth.Username + "\" does not exist"
-	MissingApiKeyPanicMsg   = "Key \"" + auth.ApiKey + "\" does not exist"
+	MissingUserKeyPanicMsg  = "Key \"" + authctx.UserKey + "\" does not exist"
+	MissingUsernamePanicMsg = "Key \"" + authctx.Username + "\" does not exist"
+	MissingApiKeyPanicMsg   = "Key \"" + authctx.ApiKey + "\" does not exist"
 )
 
 // Recovery recovers from any panics and if there was one it logs error and writes InternalServerError response.
