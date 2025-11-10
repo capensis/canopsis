@@ -134,7 +134,14 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	entity, err := a.store.Delete(c, request.ID, c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	entity, err := a.store.Delete(c, request.ID, userID)
 	if err != nil {
 		if errors.Is(err, ErrLinkedEntityToAlarm) || errors.Is(err, ErrComponent) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

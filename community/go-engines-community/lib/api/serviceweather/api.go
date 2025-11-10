@@ -71,7 +71,12 @@ func (a *api) EntityList(c *gin.Context) {
 	}
 
 	id := c.Param("id")
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	aggregationResult, err := a.store.FindEntities(c, id, query, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)

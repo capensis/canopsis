@@ -10,13 +10,14 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/valyala/fastjson"
 )
 
 // SetAuthor middleware sets authorized user id to author field to request body. Use it for create and update model endpoints.
-func SetAuthor() func(c *gin.Context) {
+func SetAuthor(errorResponder httperror.Responder) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var body map[string]interface{}
 
@@ -29,15 +30,24 @@ func SetAuthor() func(c *gin.Context) {
 				c.Next()
 				return
 			}
-			panic(err)
+
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
-		userID := c.MustGet(authctx.UserKey)
-		body["author"] = userID
+		body["author"], err = authctx.GetUserKey(c)
+		if err != nil {
+			errorResponder.Respond(c, err)
+
+			return
+		}
 
 		encodedStr, err := json.Marshal(body)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		c.Request.Body = io.NopCloser(bytes.NewBuffer(encodedStr))
@@ -47,13 +57,15 @@ func SetAuthor() func(c *gin.Context) {
 }
 
 // PreProcessBulk middleware checks if bulk has valid size and sets authorized user id to author field to bulk request body. Use it for create and update model endpoints.
-func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) func(c *gin.Context) {
+func PreProcessBulk(configProvider config.ApiConfigProvider, errorResponder httperror.Responder, addAuthor bool) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var ar fastjson.Arena
 
 		raw, err := c.GetRawData()
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if len(raw) == 0 {
@@ -80,9 +92,11 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, addAuthor bool) fun
 		}
 
 		if addAuthor {
-			userID, ok := c.MustGet(authctx.UserKey).(string)
-			if !ok {
-				panic(fmt.Errorf("unknown type of %s", authctx.UserKey))
+			userID, err := authctx.GetUserKey(c)
+			if err != nil {
+				errorResponder.Respond(c, err)
+
+				return
 			}
 
 			for _, object := range rawObjects {

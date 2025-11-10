@@ -138,7 +138,12 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ok, err := a.checkAccess(c, request.TabsList, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -173,7 +178,14 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, id, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 

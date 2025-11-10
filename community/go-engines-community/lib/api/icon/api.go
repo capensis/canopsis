@@ -62,7 +62,12 @@ type websocketMsg struct {
 // Create
 // @Success 200 {array} Response
 func (a *api) Create(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := EditRequest{
 		Author: userID,
 	}
@@ -140,7 +145,12 @@ func (a *api) List(c *gin.Context) {
 // Update
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := EditRequest{
 		ID:     c.Param("id"),
 		Author: userID,
@@ -187,7 +197,12 @@ func (a *api) Update(c *gin.Context) {
 // Patch
 // @Success 200 {object} Response
 func (a *api) Patch(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := PatchRequest{
 		ID:     c.Param("id"),
 		Author: userID,
@@ -236,7 +251,14 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, id, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
