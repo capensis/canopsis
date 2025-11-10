@@ -301,6 +301,7 @@ export const ALARM_STATUSES = {
   flapping: 3,
   cancelled: 4,
   noEvents: 5,
+  unknown: 6,
 };
 
 export const ALARM_STATUSES_ICONS = {
@@ -310,6 +311,7 @@ export const ALARM_STATUSES_ICONS = {
   [ALARM_STATUSES.flapping]: 'swap_vert',
   [ALARM_STATUSES.cancelled]: '$vuetify.icons.delayed_cancel',
   [ALARM_STATUSES.noEvents]: 'sync_problem',
+  [ALARM_STATUSES.unknown]: '$vuetify.icons.question_mark',
 };
 
 export const ALARM_STATUSES_RESOLVED_ICONS = {
@@ -324,6 +326,7 @@ export const ALARM_STATUSES_TEXTS = {
   [ALARM_STATUSES.flapping]: 'flapping',
   [ALARM_STATUSES.cancelled]: 'cancelled',
   [ALARM_STATUSES.noEvents]: 'no events',
+  [ALARM_STATUSES.unknown]: 'unknown',
 };
 
 export const ALARM_LIST_ACTIONS_TYPES = {
