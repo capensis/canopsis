@@ -13,7 +13,29 @@
     v-on="$listeners"
   >
     <template #activator="{ on }">
+      <v-chip
+        v-if="hasUpstream"
+        :color="iconStyle.color"
+        :small="small"
+        class="px-2"
+        v-on="on"
+      >
+        <v-icon
+          size="16"
+          color="white"
+          class="mr-2"
+        >
+          {{ status.icon }}
+        </v-icon>
+        <v-icon
+          size="16"
+          color="white"
+        >
+          $vuetify.icons.flow
+        </v-icon>
+      </v-chip>
       <v-icon
+        v-else
         :size="iconSize"
         :style="iconStyle"
         v-on="on"
@@ -47,10 +69,11 @@ export default {
   setup(props) {
     const { t, te } = useI18n();
 
-    const statusValue = computed(() => props.alarm.v.status?.val);
-    const isNoEventsStatus = computed(() => statusValue.value === ALARM_STATUSES.noEvents);
+    const statusValue = computed(() => 6); // TODO: revert change
+    const isNoEventsStatus = computed(() => true);
     const isOngoingStatus = computed(() => statusValue.value === ALARM_STATUSES.ongoing);
-    const idleSince = computed(() => props.alarm.entity.idle_since);
+    const hasUpstream = computed(() => true); // TODO: change to props.alarm.entity.upstream
+    const idleSince = computed(() => 23);
     const resolved = computed(() => !!props.alarm.v.resolved);
     const status = computed(() => formatAlarmStatus(statusValue.value, resolved.value));
     const state = computed(() => formatAlarmState(props.alarm.v.state.val));
@@ -65,6 +88,7 @@ export default {
       statusValue,
       isNoEventsStatus,
       isOngoingStatus,
+      hasUpstream,
       idleSince,
       status,
       state,

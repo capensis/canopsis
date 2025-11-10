@@ -491,7 +491,7 @@ export const COLORS = {
     ongoing: '#F9A825',
     cancelled: '#757575',
     noEvents: '#FF5252',
-    unknown: '#000',
+    unknown: '#808080',
   },
   alarmSteps: {
     ack: '#35485D',
@@ -738,6 +738,7 @@ export const CSS_COLORS_VARS = {
     ongoing: 'var(--v-status-ongoing-base)',
     cancelled: 'var(--v-status-cancelled-base)',
     noEvents: 'var(--v-status-noEvents-base)',
+    unknown: 'var(--v-status-unknown-base)',
   },
 };
 
