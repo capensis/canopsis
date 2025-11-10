@@ -43,7 +43,12 @@ func NewApi(
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	widgetId := c.Param("id")
 
 	ok, err := a.checkAccess(c, widgetId, userID)
@@ -76,7 +81,12 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := EditRequest{}
 	if err := validation.Bind(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)

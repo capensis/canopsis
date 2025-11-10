@@ -41,8 +41,18 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(authctx.UserKey).(string)
-	roleIDs := c.MustGet(authctx.Roles).([]string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	aggregationResult, err := a.store.Find(c, r, userID, roleIDs)
 	if err != nil {
 		a.errorResponder.Respond(c, err)

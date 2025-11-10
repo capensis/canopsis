@@ -194,7 +194,16 @@ func Default(
 	sessionStore.Options.MaxAge = cookieOptions.MaxAge
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
-	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer, services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions, logger)
+	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
+	uniTrans, err := RegisterValidators(primaryDbClient, securityConfig, services.Enforcer, tplExecutor)
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
+	}
+
+	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(uniTrans, logger), logger)
+	security := NewSecurity(securityConfig, cfg, primaryDbClient, sessionStore, services.Enforcer,
+		services.ApiConfigProvider, config.NewMaintenanceAdapter(primaryDbClient), cookieOptions,
+		services.ErrorResponder, logger)
 
 	if flags.EnableSameServiceNames {
 		logger.Info().Msg("Non-unique names for services ENABLED")
@@ -258,7 +267,6 @@ func Default(
 	workersRunner.AddJobExecutor(jobKeyImport, func(ctx context.Context, _ string) error {
 		return importWorker.ProcessFirstJob(ctx)
 	})
-	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
 	websocketStore := websocket.NewStore(primaryDbClient, flags.IntegrationPeriodicalWaitTime)
 	websocketUpgrader := websocket.NewUpgrader(gorillawebsocket.Upgrader{
 		ReadBufferSize:  websocketReadBufferSize,
@@ -410,12 +418,7 @@ func Default(
 	)
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
-	uniTrans, err := RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
-	if err != nil {
-		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
-	}
 
-	services.ErrorResponder = httperror.NewResponder(validation.NewErrorTranslator(uniTrans, logger), logger)
 	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
 		router.Use(middleware.Recovery(logger))

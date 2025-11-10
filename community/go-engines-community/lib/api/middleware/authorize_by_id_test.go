@@ -1,10 +1,12 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	mock_httperror "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/httperror"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/mock/gomock"
@@ -22,13 +24,14 @@ func TestAuthorizeByID_GivenAuthorizedUser_ShouldReturnResponse(t *testing.T) {
 		EXPECT().
 		Enforce(subj, obj, act).
 		Return(true, nil)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
-		c.Set(authctx.UserKey, subj)
+		authctx.SetUserKey(c, subj)
 	})
 	router.GET(
 		"/obj/:id",
-		AuthorizeByID(act, mockEnforcer),
+		AuthorizeByID(act, mockEnforcer, mockErrResponder),
 		okHandler,
 	)
 
@@ -50,10 +53,18 @@ func TestAuthorizeByID_GivenNoUser_ShouldReturnUnauthorizedError(t *testing.T) {
 		EXPECT().
 		Enforce(gomock.Any()).
 		Times(0)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Any()).Do(func(c *gin.Context, err error) {
+		if errors.Is(err, authctx.ErrNotFound) {
+			c.AbortWithStatus(expectedCode)
+		} else {
+			c.AbortWithStatus(http.StatusInternalServerError)
+		}
+	})
 	router := gin.New()
 	router.GET(
 		"/obj/:id",
-		AuthorizeByID(act, mockEnforcer),
+		AuthorizeByID(act, mockEnforcer, mockErrResponder),
 		okHandler,
 	)
 
@@ -76,13 +87,14 @@ func TestAuthorizeByID_GivenNotAuthorizedUser_ShouldForbiddenError(t *testing.T)
 		EXPECT().
 		Enforce(subj, obj, act).
 		Return(false, nil)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
-		c.Set(authctx.UserKey, subj)
+		authctx.SetUserKey(c, subj)
 	})
 	router.GET(
 		"/obj/:id",
-		AuthorizeByID(act, mockEnforcer),
+		AuthorizeByID(act, mockEnforcer, mockErrResponder),
 		okHandler,
 	)
 

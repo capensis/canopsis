@@ -134,7 +134,12 @@ func (a *api) StartExport(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	task, err := a.taskCreator.Create(c, export.TaskParameters{
 		Type:           "entity",
 		Parameters:     string(params),
@@ -208,11 +213,18 @@ func (a *api) ArchiveDisabled(c *gin.Context) {
 		return
 	}
 
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
 	select {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:                    libentity.CleanTaskTypeArchiveDisabled,
 		ArchiveWithDependencies: r.WithDependencies,
-		UserID:                  c.MustGet(authctx.UserKey).(string),
+		UserID:                  userID,
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -231,11 +243,18 @@ func (a *api) ArchiveUnlinked(c *gin.Context) {
 		return
 	}
 
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
 	select {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:          libentity.CleanTaskTypeArchiveUnlinked,
 		ArchiveBefore: r.ArchiveBefore.SubFrom(datetime.NewCpsTime()),
-		UserID:        c.MustGet(authctx.UserKey).(string),
+		UserID:        userID,
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -245,10 +264,17 @@ func (a *api) ArchiveUnlinked(c *gin.Context) {
 }
 
 func (a *api) CleanArchived(c *gin.Context) {
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
 	select {
 	case a.cleanTaskChan <- libentity.CleanTask{
 		Type:   libentity.CleanTaskTypeCleanArchived,
-		UserID: c.MustGet(authctx.UserKey).(string),
+		UserID: userID,
 	}:
 	default:
 		a.logger.Debug().Msg("cleaning in progress, skip")
@@ -343,7 +369,12 @@ func (a *api) GetStateSetting(c *gin.Context) {
 }
 
 func (a *api) toggle(c *gin.Context, enabled bool) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
 		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, userID, enabled)

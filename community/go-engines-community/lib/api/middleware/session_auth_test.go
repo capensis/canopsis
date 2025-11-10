@@ -10,6 +10,7 @@ import (
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_sessions "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/github.com/gorilla/sessions"
+	mock_httperror "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/httperror"
 	mock_mongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/mongo"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/sessions"
@@ -42,16 +43,31 @@ func TestSessionAuth_GivenAuthUser_ShouldReturnResponseAndSetUserDataToContext(t
 		EXPECT().
 		Collection(gomock.Eq(libmongo.UserCollection)).
 		Return(mockDbCollection)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.GET(
 		okURL,
-		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore),
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore, mockErrResponder),
 		func(c *gin.Context) {
+			userID, err := authctx.GetUserKey(c)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+
+				return
+			}
+
+			apiKey, err := authctx.GetAPIKey(c)
+			if err != nil {
+				c.AbortWithStatusJSON(http.StatusInternalServerError, err)
+
+				return
+			}
+
 			c.String(
 				expectedCode,
 				"test %v %v",
-				c.MustGet(authctx.UserKey).(string),
-				c.MustGet(authctx.ApiKey).(string),
+				userID,
+				apiKey,
 			)
 		},
 	)
@@ -84,10 +100,11 @@ func TestSessionAuth_GivenNoSession_ShouldReturnResponse(t *testing.T) {
 		EXPECT().
 		Collection(gomock.Any()).
 		Times(0)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.GET(
 		okURL,
-		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore),
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore, mockErrResponder),
 		okHandler,
 	)
 
@@ -119,10 +136,11 @@ func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *te
 		EXPECT().
 		Collection(gomock.Any()).
 		Return(mockDbCollection)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.GET(
 		okURL,
-		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore),
+		SessionAuth(mockDbClient, config.NewApiConfigProvider(config.CanopsisConf{}, zerolog.Nop()), mockStore, mockErrResponder),
 		okHandler,
 	)
 

@@ -115,7 +115,14 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
 	if err != nil {
 		valErr := ValidationError{}
 		if errors.As(err, &valErr) {
@@ -170,7 +177,12 @@ func (a *api) Copy(c *gin.Context) {
 }
 
 func (a *api) UpdatePositions(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := EditPositionRequest{}
 
 	if err := validation.Bind(c, &request); err != nil {

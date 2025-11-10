@@ -9,17 +9,10 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
-)
-
-var (
-	MissingUserKeyPanicMsg  = "Key \"" + authctx.UserKey + "\" does not exist"
-	MissingUsernamePanicMsg = "Key \"" + authctx.Username + "\" does not exist"
-	MissingApiKeyPanicMsg   = "Key \"" + authctx.ApiKey + "\" does not exist"
 )
 
 // Recovery recovers from any panics and if there was one it logs error and writes InternalServerError response.
@@ -43,15 +36,6 @@ func Recovery(logger zerolog.Logger) gin.HandlerFunc {
 						logger.Err(err).Msgf("panic recovered")
 						_ = c.Error(err)
 						c.Abort()
-						return
-					}
-				}
-
-				if errMsg, ok := r.(string); ok {
-					// Handle unauth response
-					switch errMsg {
-					case MissingUserKeyPanicMsg, MissingUsernamePanicMsg, MissingApiKeyPanicMsg:
-						c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 						return
 					}
 				}

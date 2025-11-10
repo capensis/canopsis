@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
@@ -15,27 +16,28 @@ import (
 func AuthorizeByID(
 	act string,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		obj := c.Param("id")
 		if obj == "" {
-			panic(errors.New("missing id parameter"))
-		}
+			errorResponder.Respond(c, errors.New("missing id parameter"))
 
-		rawSubj, ok := c.Get(authctx.UserKey)
-		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 			return
 		}
 
-		subj, ok := rawSubj.(string)
-		if !ok {
-			panic("user key is not a string")
+		subj, err := authctx.GetUserKey(c)
+		if err != nil {
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		ok, err := enforcer.Enforce(subj, obj, act)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
