@@ -145,7 +145,7 @@
         />
       </widget-settings-group>
 
-      <field-comment-templates v-model="form.parameters.commentTemplates" />
+      <field-comment-templates v-model="form.parameters.comment_templates" />
 
       <fast-pbehavior-form v-model="form.parameters" />
 

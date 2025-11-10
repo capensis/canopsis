@@ -17,6 +17,7 @@
         </v-btn>
         <v-btn
           :disabled="isDisabled"
+          :loading="submitting"
           class="primary"
           type="submit"
         >
@@ -62,7 +63,7 @@ export default {
     const form = ref(commentTemplateToForm(config.value.template));
     const title = computed(() => config.value.title || t('modals.createCommentTemplate.create.title'));
 
-    const { submit, isDisabled } = useSubmittableForm({
+    const { submitting, isDisabled, submit } = useSubmittableForm({
       form,
       method: async () => {
         await config.value.action?.(formToCommentTemplate(form.value));
@@ -76,6 +77,7 @@ export default {
     return {
       form,
       title,
+      submitting,
       isDisabled,
 
       submit,

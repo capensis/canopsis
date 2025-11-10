@@ -201,7 +201,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {WidgetQuickAction[]} quickMassActions
  * @property {string} quickMassActionsTemplate
  * @property {boolean} hideMassActions
- * @property {Array} commentTemplates
+ * @property {Array} comment_templates
  */
 
 /**
@@ -424,7 +424,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
-  commentTemplates: addKeyInEntities(parameters.commentTemplates ?? []),
+  comment_templates: addKeyInEntities(parameters.comment_templates ?? []),
 });
 
 /**
@@ -519,7 +519,7 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
-    commentTemplates: map(form.commentTemplates, 'template'),
+    comment_templates: map(form.comment_templates, 'template'),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
@@ -760,6 +760,9 @@ export const createCommentFormToCreateCommentEvent = (form) => {
   }
 
   return {
-    struct_comment: Object.entries(form).map(([field, message]) => ({ field, message })),
+    struct_comment: (form.template?.fields ?? []).map(({ name: field }) => ({
+      field,
+      message: form[field],
+    })),
   };
 };

@@ -16,7 +16,6 @@
       <v-layout>
         <c-action-btn
           v-if="editable"
-          :disabled="!item.editable"
           type="edit"
           @click="$emit('edit', item)"
         />
