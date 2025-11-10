@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
@@ -99,7 +100,7 @@ type MongoQueryBuilder struct {
 	// excludedFields is used to remove redundant data from result
 	excludedFields []string
 
-	transformer common.PatternFieldsTransformer
+	transformer patternfields.Transformer
 }
 
 type lookupWithKey struct {
@@ -107,7 +108,7 @@ type lookupWithKey struct {
 	pipeline []bson.M
 }
 
-func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer, alarmCollectionName string) *MongoQueryBuilder {
+func NewMongoQueryBuilder(client mongo.DbClient, authorProvider author.Provider, transformer patternfields.Transformer, alarmCollectionName string) *MongoQueryBuilder {
 	return &MongoQueryBuilder{
 		filterCollection:      client.Collection(mongo.WidgetFiltersMongoCollection),
 		instructionCollection: client.Collection(mongo.InstructionMongoCollection),
@@ -751,7 +752,7 @@ func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest)
 			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 		}
 
-		transformedEntityPattern, err := q.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		transformedEntityPattern, err := q.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 			EntityPattern: entityPattern,
 		})
 		if err != nil {

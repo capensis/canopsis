@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -28,7 +28,7 @@ type Store interface {
 	UpdatePositions(ctx context.Context, filters []string, widgetId, userID string, isPrivate bool) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer patternfields.Transformer) Store {
 	return &store{
 		client:             dbClient,
 		collection:         dbClient.Collection(mongo.WidgetFiltersMongoCollection),
@@ -45,7 +45,7 @@ type store struct {
 	widgetCollection   mongo.DbCollection
 	userPrefCollection mongo.DbCollection
 	authorProvider     author.Provider
-	transformer        common.PatternFieldsTransformer
+	transformer        patternfields.Transformer
 }
 
 func (s *store) FindViewId(ctx context.Context, id string) (string, string, bool, error) {
@@ -471,7 +471,7 @@ func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 }
 
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *view.WidgetFilter) error {
-	transformedAlarmPattern, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, common.AlarmPatternFieldsRequest{
+	transformedAlarmPattern, err := s.transformer.TransformAlarmRequest(ctx, patternfields.AlarmRequest{
 		AlarmPattern:          r.AlarmPattern,
 		CorporateAlarmPattern: r.CorporateAlarmPattern,
 		IsPrivate:             *r.IsUserPreference,
@@ -481,7 +481,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 		return err
 	}
 
-	transformedEntityPattern, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+	transformedEntityPattern, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 		EntityPattern:          r.EntityPattern,
 		CorporateEntityPattern: r.CorporateEntityPattern,
 		IsPrivate:              *r.IsUserPreference,
@@ -491,7 +491,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 		return err
 	}
 
-	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorPatternFieldsRequest(ctx, common.PbehaviorPatternFieldsRequest{
+	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorRequest(ctx, patternfields.PbehaviorRequest{
 		PbehaviorPattern:          r.PbehaviorPattern,
 		CorporatePbehaviorPattern: r.CorporatePbehaviorPattern,
 		IsPrivate:                 *r.IsUserPreference,
@@ -501,7 +501,7 @@ func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditReque
 		return err
 	}
 
-	transformedWeatherPattern, err := s.transformer.TransformWeatherServicePatternFieldsRequest(ctx, common.WeatherServicePatternFieldsRequest{
+	transformedWeatherPattern, err := s.transformer.TransformWeatherServiceRequest(ctx, patternfields.WeatherServiceRequest{
 		WeatherServicePattern:          r.WeatherServicePattern,
 		CorporateWeatherServicePattern: r.CorporateWeatherServicePattern,
 		IsPrivate:                      *r.IsUserPreference,
