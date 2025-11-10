@@ -295,6 +295,218 @@ describe('create-comment-event', () => {
     expect(wrapper.vm.templates).toEqual(templates);
   });
 
+  test('Form submitted with template sends struct_comment instead of comment', async () => {
+    const action = jest.fn();
+    const template = {
+      _id: '1',
+      name: 'Template 1',
+      fields: [
+        { name: 'field1', label: 'Field 1', required: true },
+        { name: 'field2', label: 'Field 2', required: false },
+      ],
+    };
+
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+            templates: [template],
+          },
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    wrapper.vm.form.template = template;
+    wrapper.vm.form.field1 = Faker.datatype.string();
+    wrapper.vm.form.field2 = Faker.datatype.string();
+
+    const submitButton = selectSubmitButton(wrapper);
+    submitButton.trigger('click');
+
+    await flushPromises();
+
+    expect(action).toHaveBeenCalledTimes(1);
+    expect(action).toHaveBeenCalledWith({
+      struct_comment: [
+        { field: 'field1', message: wrapper.vm.form.field1 },
+        { field: 'field2', message: wrapper.vm.form.field2 },
+      ],
+    });
+    expect($modals.hide).toHaveBeenCalled();
+  });
+
+  test('Form submitted without template sends comment', async () => {
+    const action = jest.fn();
+    const comment = Faker.datatype.string();
+
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+            templates: [],
+          },
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    wrapper.vm.form.template = null;
+    wrapper.vm.form.comment = comment;
+
+    const submitButton = selectSubmitButton(wrapper);
+    submitButton.trigger('click');
+
+    await flushPromises();
+
+    expect(action).toHaveBeenCalledTimes(1);
+    expect(action).toHaveBeenCalledWith({
+      comment,
+    });
+    expect(action).not.toHaveBeenCalledWith(expect.objectContaining({
+      struct_comment: expect.any(Array),
+    }));
+    expect($modals.hide).toHaveBeenCalled();
+  });
+
+  test('Struct_comment includes all template fields', async () => {
+    const action = jest.fn();
+    const template = {
+      _id: '2',
+      name: 'Multi Field Template',
+      fields: [
+        { name: 'summary', label: 'Summary', required: true },
+        { name: 'details', label: 'Details', required: false },
+        { name: 'resolution', label: 'Resolution', required: false },
+      ],
+    };
+
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+            templates: [template],
+          },
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    wrapper.vm.form.template = template;
+    wrapper.vm.form.summary = Faker.datatype.string();
+    wrapper.vm.form.details = Faker.datatype.string();
+    wrapper.vm.form.resolution = Faker.datatype.string();
+
+    const submitButton = selectSubmitButton(wrapper);
+    submitButton.trigger('click');
+
+    await flushPromises();
+
+    expect(action).toHaveBeenCalledTimes(1);
+    expect(action).toHaveBeenCalledWith({
+      struct_comment: [
+        { field: 'summary', message: wrapper.vm.form.summary },
+        { field: 'details', message: wrapper.vm.form.details },
+        { field: 'resolution', message: wrapper.vm.form.resolution },
+      ],
+    });
+    expect($modals.hide).toHaveBeenCalled();
+  });
+
+  test('Struct_comment handles empty template fields array', async () => {
+    const action = jest.fn();
+    const template = {
+      _id: '3',
+      name: 'Empty Template',
+      fields: [],
+    };
+
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+            templates: [template],
+          },
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    wrapper.vm.form.template = template;
+
+    const submitButton = selectSubmitButton(wrapper);
+    submitButton.trigger('click');
+
+    await flushPromises();
+
+    expect(action).toHaveBeenCalledTimes(1);
+    expect(action).toHaveBeenCalledWith({
+      struct_comment: [],
+    });
+    expect($modals.hide).toHaveBeenCalled();
+  });
+
+  test('Form switches from comment to struct_comment when template is selected', async () => {
+    const action = jest.fn();
+    const template = {
+      _id: '4',
+      name: 'Switch Template',
+      fields: [
+        { name: 'field1', label: 'Field 1', required: true },
+      ],
+    };
+
+    const wrapper = factory({
+      propsData: {
+        modal: {
+          config: {
+            action,
+            templates: [template],
+          },
+        },
+      },
+      mocks: {
+        $modals,
+      },
+    });
+
+    // First, set a comment without template
+    wrapper.vm.form.comment = Faker.datatype.string();
+    wrapper.vm.form.template = null;
+
+    // Then select a template
+    wrapper.vm.form.template = template;
+    wrapper.vm.form.field1 = Faker.datatype.string();
+
+    const submitButton = selectSubmitButton(wrapper);
+    submitButton.trigger('click');
+
+    await flushPromises();
+
+    expect(action).toHaveBeenCalledTimes(1);
+    expect(action).toHaveBeenCalledWith({
+      struct_comment: [
+        { field: 'field1', message: wrapper.vm.form.field1 },
+      ],
+    });
+    expect(action).not.toHaveBeenCalledWith(expect.objectContaining({
+      comment: expect.any(String),
+    }));
+    expect($modals.hide).toHaveBeenCalled();
+  });
+
   test('Renders `create-comment-event` with empty modal', () => {
     const wrapper = snapshotFactory({
       propsData: {

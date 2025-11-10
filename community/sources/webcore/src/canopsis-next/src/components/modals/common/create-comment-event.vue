@@ -9,7 +9,7 @@
           <template v-if="items.length">
             <alarm-general-table :items="items" />
           </template>
-          <alarm-comment-template-form v-field="form" :templates="templates" />
+          <alarm-comment-template-form v-model="form" :templates="templates" />
         </v-layout>
       </template>
       <template #actions="">
