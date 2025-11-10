@@ -1,10 +1,4 @@
-import {
-  cloneDeep,
-  isBoolean,
-  isNull,
-  omit,
-  map,
-} from 'lodash';
+import { cloneDeep, isBoolean, isNull, omit } from 'lodash';
 
 import {
   DENSE_TYPES,
@@ -31,6 +25,7 @@ import {
 } from '@/constants';
 import { EXPAND_DEFAULT_MAX_LETTERS, PAGINATION_LIMIT } from '@/config';
 
+import { uid } from '@/helpers/uid';
 import { setSeveralFields } from '@/helpers/immutable';
 import { convertDateToStringWithFormatForToday } from '@/helpers/date/date';
 import { convertDurationToString, durationWithEnabledToForm, isValidUnit } from '@/helpers/date/duration';
@@ -362,6 +357,19 @@ export const alarmListChartToForm = (chart = {}) => {
 };
 
 /**
+ * Convert widget comment template IDs to form objects with unique keys
+ *
+ * @param {Array} [commentTemplates=[]]
+ * @return {Array}
+ */
+export const widgetCommentTemplatesToForm = (commentTemplates = []) => (
+  commentTemplates.map(template => ({
+    template,
+    key: uid(),
+  }))
+);
+
+/**
  * Convert alarm list widget parameters to form
  *
  * @param {AlarmListWidgetDefaultParameters} [parameters = {}]
@@ -424,7 +432,7 @@ export const alarmListWidgetDefaultParametersToForm = (parameters = {}) => ({
   quickActions: widgetQuickActionsToForm(parameters.quickActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   quickMassActions: widgetQuickActionsToForm(parameters.quickMassActions ?? DEFAULT_ALARMS_QUICK_ACTIONS),
   hideMassActions: parameters.hideMassActions ?? false,
-  comment_templates: addKeyInEntities(parameters.comment_templates ?? []),
+  comment_templates: widgetCommentTemplatesToForm(parameters.comment_templates ?? []),
 });
 
 /**
@@ -495,6 +503,14 @@ export const formToAlarmListChart = ({ type, title, parameters }) => {
 };
 
 /**
+ * Convert widget comment templates form to array of template values
+ *
+ * @param {Array} [form=[]]
+ * @return {Array}
+ */
+export const formToWidgetCommentTemplates = (form = []) => form.map('template');
+
+/**
  * Convert form parameters to alarm list widget parameters
  *
  * @param {AlarmListWidgetParametersForm} form
@@ -519,7 +535,7 @@ export const formToAlarmListWidgetParameters = (form) => {
     quickMassActionsTemplate: formToWidgetTemplateValue(form.quickMassActionsTemplate),
     quickActions: formToWidgetQuickActions(form.quickActions),
     quickMassActions: formToWidgetQuickActions(form.quickMassActions),
-    comment_templates: map(form.comment_templates, 'template'),
+    comment_templates: formToWidgetCommentTemplates(form.comment_templates),
   };
 
   parameters.usedAlarmProperties = convertAlarmWidgetParametersToActiveColumns(parameters);
