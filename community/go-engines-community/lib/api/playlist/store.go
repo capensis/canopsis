@@ -5,7 +5,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -63,7 +63,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"_id": bson.M{"$in": r.Ids}}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -76,7 +76,7 @@ func (s *store) Find(ctx context.Context, r ListRequest) (*AggregationResult, er
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, r.Sort),
+		mongoquery.GetSortQuery(sortBy, r.Sort),
 	))
 
 	if err != nil {

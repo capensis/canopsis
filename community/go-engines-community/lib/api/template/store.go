@@ -9,6 +9,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -120,7 +121,7 @@ func (s *store) FindData(ctx context.Context, r ListDataRequest) (AggregationDat
 		}}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
@@ -128,7 +129,7 @@ func (s *store) FindData(ctx context.Context, r ListDataRequest) (AggregationDat
 	cursor, err := s.testDataCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		beforeLimit,
-		common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
+		mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort),
 	))
 	if err != nil {
 		return res, err
@@ -297,12 +298,12 @@ func (s *store) FindTest(ctx context.Context, r ListTestRequest, userID string) 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"rule._id": r.Rule}})
 	}
 
-	filter := common.GetSearchQuery(r.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(r.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		beforeLimit = append(beforeLimit, bson.M{"$match": filter})
 	}
 
-	sort := common.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(r.SortBy, s.defaultSortBy), r.Sort)
 	afterLimit := s.getTestNestedObjectsPipeline()
 	afterLimit = append(afterLimit, sort)
 	cursor, err := s.testCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(

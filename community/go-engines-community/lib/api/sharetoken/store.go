@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -104,7 +104,7 @@ func (s *store) Insert(ctx context.Context, userID string, r EditRequest) (*Resp
 func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResult, error) {
 	pipeline := s.authorProvider.PipelineForField("user")
 	pipeline = append(pipeline, getRolePipeline()...)
-	filter := common.GetSearchQuery(request.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(request.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		pipeline = append(pipeline, bson.M{"$match": filter})
 	}
@@ -131,7 +131,7 @@ func (s *store) Find(ctx context.Context, request ListRequest) (*AggregationResu
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		request.Query,
 		pipeline,
-		common.GetSortQuery(sortBy, request.Sort),
+		mongoquery.GetSortQuery(sortBy, request.Sort),
 		project,
 	))
 	if err != nil {

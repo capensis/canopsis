@@ -12,6 +12,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
@@ -208,7 +209,7 @@ func (s *store) GetByID(ctx context.Context, id string) (*Response, error) {
 func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResult, error) {
 	pipeline := s.authorProvider.Pipeline()
 	andCond := make([]bson.M, 0)
-	filter := common.GetSearchQuery(query.Search, s.defaultSearchByFields)
+	filter := mongoquery.GetSearchQuery(query.Search, s.defaultSearchByFields)
 	if len(filter) > 0 {
 		andCond = append(andCond, filter)
 	}
@@ -221,7 +222,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 		pipeline = append(pipeline, bson.M{"$match": bson.M{"$and": andCond}})
 	}
 
-	sort := common.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
+	sort := mongoquery.GetSortQuery(cmp.Or(query.SortBy, s.defaultSortBy), query.Sort)
 	project := s.getResponseLookups()
 	project = append(project, sort)
 	cursor, err := s.dbCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
@@ -388,7 +389,7 @@ func (s *store) FindFailures(ctx context.Context, id string, r FailureRequest) (
 	cursor, err := s.dbFailureCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		[]bson.M{{"$match": match}},
-		common.GetSortQuery("t", common.SortDesc),
+		mongoquery.GetSortQuery("t", common.SortDesc),
 	))
 
 	if err != nil {

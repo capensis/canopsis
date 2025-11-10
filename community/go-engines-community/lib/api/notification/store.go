@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -48,7 +48,7 @@ func (s *store) Find(ctx context.Context, r pagination.Query, userID string, rol
 	cursor, err := s.collection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r,
 		beforeLimit,
-		common.GetSortQuery("time", mongo.SortDesc),
+		mongoquery.GetSortQuery("time", mongo.SortDesc),
 		afterLimit,
 	))
 	if err != nil {
