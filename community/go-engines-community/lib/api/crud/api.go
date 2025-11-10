@@ -1,8 +1,8 @@
-package common
+package crud
 
 import "github.com/gin-gonic/gin"
 
-type CrudAPI interface {
+type API interface {
 	Create(c *gin.Context)
 	List(c *gin.Context)
 	Get(c *gin.Context)
@@ -10,8 +10,8 @@ type CrudAPI interface {
 	Delete(c *gin.Context)
 }
 
-type BulkCrudAPI interface {
-	CrudAPI
+type BulkAPI interface {
+	API
 	BulkCreate(c *gin.Context)
 	BulkUpdate(c *gin.Context)
 	BulkDelete(c *gin.Context)
