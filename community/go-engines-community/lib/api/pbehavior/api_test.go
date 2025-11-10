@@ -34,7 +34,10 @@ func init() {
 
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
 
-	libapi.RegisterValidators(dbClient, security.Config{}, nil, tplExecutor)
+	err = libapi.RegisterValidators(dbClient, security.Config{}, nil, tplExecutor)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func BenchmarkBulkConnectorEdit_Given100CreateItems(b *testing.B) {

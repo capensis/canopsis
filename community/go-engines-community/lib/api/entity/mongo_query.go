@@ -434,7 +434,7 @@ func (q *MongoQueryBuilder) handleSort(r SortRequest) {
 	}
 	sort := r.Sort
 	if sort == "" {
-		sort = common.SortAsc
+		sort = pagination.SortAsc
 	}
 
 	q.adjustLookupsForSort([]string{sortBy})

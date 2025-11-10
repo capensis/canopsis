@@ -128,7 +128,7 @@ func (s *store) FindLabels(ctx context.Context, r ListLabelsRequest) (*Aggregati
 	cursor, err := s.labelCollection.Aggregate(ctx, pagination.CreateAggregationPipeline(
 		r.Query,
 		pipeline,
-		mongoquery.GetSortQuery("_id", common.SortAsc),
+		mongoquery.GetSortQuery("_id", pagination.SortAsc),
 	))
 	if err != nil {
 		return nil, err

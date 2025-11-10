@@ -337,7 +337,7 @@ func (q *MongoQueryBuilder) handleSort(sortBy, sort string) {
 		q.lookupsForSort["alarm"] = true
 	}
 	sortDir := 1
-	if sort == common.SortDesc {
+	if sort == pagination.SortDesc {
 		sortDir = -1
 	}
 

@@ -407,6 +407,10 @@ func Default(
 	)
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
+	err = RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
+	if err != nil {
+		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
+	}
 
 	api.AddRouter(func(router *gin.Engine) {
 		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
@@ -425,7 +429,6 @@ func Default(
 			})
 		})
 
-		RegisterValidators(primaryDbClient, security.GetConfig(), services.Enforcer, tplExecutor)
 		RegisterRoutes(
 			ctx,
 			cfg,

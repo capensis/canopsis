@@ -8,10 +8,10 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/statesettings"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -405,7 +405,7 @@ func (s *store) Export(ctx context.Context, t export.Task) (export.DataCursor, e
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
-	timeFormat := common.GetRealFormatTime(t.TimeFormat)
+	timeFormat := validation.GetRealFormatTime(t.TimeFormat)
 	timestampPropsCache := map[string]bool{}
 
 	return export.NewMongoCursor(cursor, t.Fields.Fields(), func(k string, v any) (any, error) {
