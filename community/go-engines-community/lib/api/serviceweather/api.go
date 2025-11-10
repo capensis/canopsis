@@ -26,7 +26,7 @@ type api struct {
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Service}
+// @Success 200 {object} pagination.ListResponse{data=[]Service}
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
@@ -47,17 +47,12 @@ func (a *api) List(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(query.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(query.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
 // EntityList
-// @Success 200 {object} common.PaginatedListResponse{data=[]Entity}
+// @Success 200 {object} pagination.ListResponse{data=[]Entity}
 func (a *api) EntityList(c *gin.Context) {
 	var query EntitiesListRequest
 	query.Query = pagination.GetDefaultQuery()
@@ -79,11 +74,6 @@ func (a *api) EntityList(c *gin.Context) {
 		return
 	}
 
-	res, err := common.NewPaginatedResponse(query.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(query.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
