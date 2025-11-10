@@ -78,7 +78,7 @@ export default {
   },
 
   /**
-   * Admin access
+   * Administration - Access
    */
   [USER_PERMISSIONS.technical.permission]: {
     title: 'Droits',
@@ -94,23 +94,58 @@ export default {
   },
 
   /**
-   * Admin communications
+   * Administration - Maintenance
+   */
+  [USER_PERMISSIONS.technical.maintenance]: {
+    title: 'Mode de Maintenance',
+    message: 'Permet de basculer Canopsis en mode maintenance. Tous les utilisateurs, à l\'exception des administrateurs, seront déconnectés.',
+  },
+  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
+    title: 'Planification',
+    message: 'Permet d\'administrer la planification dans Canopsis et de personnaliser les types de comportements périodiques.',
+  },
+
+  /**
+   * Administration - Communications
    */
   [USER_PERMISSIONS.technical.broadcastMessage]: {
     title: 'Diffusion de messages',
     message: 'Permet d\'afficher des bannières et des messages d\'information dans l\'interface de Canopsis.',
   },
-  [USER_PERMISSIONS.technical.commentTemplate]: {
-    title: 'Modèles de commentaires',
-    topbarTitle: 'Modèles de commentaires',
-  },
   [USER_PERMISSIONS.technical.playlist]: {
     title: 'Listes de lecture',
     message: 'Permet de personnaliser l\'affichage des vues en les faisant défiler les unes après les autres avec un délai défini.',
   },
+  [USER_PERMISSIONS.technical.healthcheck]: {
+    title: 'Bilan de santé',
+    message: 'Le Healthcheck est un tableau de bord indiquant l\'état et les erreurs de tous les composants inclus dans Canopsis.',
+  },
+  [USER_PERMISSIONS.technical.kpi]: {
+    title: 'KPI',
+    message: 'Permet de présenter des indicateurs sous forme de graphiques',
+  },
+  [USER_PERMISSIONS.technical.eventsRecord]: {
+    title: 'Enregistrements d\'événements',
+    message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
+  },
+  [USER_PERMISSIONS.technical.templateTesting]: {
+    title: 'Studio Templates',
+  },
 
   /**
-   * Admin general
+   * Administration - Custom objects
+   */
+  [USER_PERMISSIONS.technical.map]: {
+    title: 'Cartographie',
+    message: 'Module permettant de définir et d\'afficher des cartes (géographiques, logiques, mermaid, etc.) via le widget "Map".',
+  },
+  [USER_PERMISSIONS.technical.commentTemplate]: {
+    title: 'Modèles de commentaires',
+    topbarTitle: 'Modèles de commentaires',
+  },
+
+  /**
+   * Administration - Settings
    */
   [USER_PERMISSIONS.technical.parameters]: {
     title: 'Interface utilisateur',
@@ -122,25 +157,9 @@ export default {
     title: 'Paramètres de notification',
     topbarTitle: 'Notifications',
   },
-  [USER_PERMISSIONS.technical.healthcheck]: {
-    title: 'Bilan de santé',
-    message: 'Le Healthcheck est un tableau de bord indiquant l\'état et les erreurs de tous les composants inclus dans Canopsis.',
-  },
   [USER_PERMISSIONS.technical.engine]: {
     title: 'Engines',
     message: 'Cette page contient les informations sur la séquence et la configuration des moteurs. Pour fonctionner correctement, la chaîne des moteurs doit être continue.',
-  },
-  [USER_PERMISSIONS.technical.kpi]: {
-    title: 'KPI',
-    message: 'Permet de présenter des indicateurs sous forme de graphiques',
-  },
-  [USER_PERMISSIONS.technical.map]: {
-    title: 'Cartographie',
-    message: 'Module permettant de définir et d\'afficher des cartes (géographiques, logiques, mermaid, etc.) via le widget "Map".',
-  },
-  [USER_PERMISSIONS.technical.maintenance]: {
-    title: 'Mode de Maintenance',
-    message: 'Permet de basculer Canopsis en mode maintenance. Tous les utilisateurs, à l\'exception des administrateurs, seront déconnectés.',
   },
   [USER_PERMISSIONS.technical.tag]: {
     title: 'Gestion des Tags',
@@ -156,13 +175,6 @@ export default {
     topbarTitle: 'État',
     message: 'Permet de définir des méthodes de calcul d\'état/sévérité de composants et/ou de services.\nUtile pour modéliser des arbres de dépendances.',
   },
-  [USER_PERMISSIONS.technical.eventsRecord]: {
-    title: 'Enregistrements d\'événements',
-    message: 'Permet de définir et de déclencher l\'enregistrement des événements dès leur arrivée dans le bus de données Canopsis.',
-  },
-  [USER_PERMISSIONS.technical.templateTesting]: {
-    title: 'Studio Templates',
-  },
   [USER_PERMISSIONS.technical.externalAuthTokens]: {
     title: 'Jetons d\'authentification externes',
   },
@@ -171,12 +183,8 @@ export default {
   },
 
   /**
-   * Grouped admin
+   * Administration - Remediation
    */
-  [GROUPED_USER_PERMISSIONS_KEYS.planning]: {
-    title: 'Planification',
-    message: 'Permet d\'administrer la planification dans Canopsis et de personnaliser les types de comportements périodiques.',
-  },
   [GROUPED_USER_PERMISSIONS_KEYS.remediation]: {
     title: 'Consignes',
     message: 'Permet de créer des consignes de remédiation, avec ou sans job, pour corriger des situations.',
