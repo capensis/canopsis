@@ -3,10 +3,13 @@
     <v-card-text>
       <v-layout class="gap-2" column>
         <c-select-field
+          v-if="templates.length"
           v-field="form.template"
           :items="templates"
           :label="$tc('common.template', 1)"
           name="template"
+          item-text="name"
+          item-value="_id"
           return-object
           clearable
           @input="clearErrors"
@@ -33,6 +36,10 @@ import { useValidator } from '@/hooks/validator/validator';
 
 export default {
   inject: ['$validator'],
+  model: {
+    prop: 'form',
+    event: 'input',
+  },
   props: {
     form: {
       type: Object,
