@@ -15,6 +15,7 @@ import (
 	"unicode/utf8"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -1333,7 +1334,7 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	existColumns := make(map[string]bool, len(columns))
 	for _, c := range columns {
 		existColumns[c] = true
-		if !common.IsTableName(c) || c == externaldata.IDColumnName {
+		if !validation.IsTableName(c) || c == externaldata.IDColumnName {
 			invalidCols = append(invalidCols, strconv.Quote(c))
 		}
 	}
