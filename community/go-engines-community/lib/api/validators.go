@@ -21,6 +21,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/messageratestats"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviortimespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/resolverule"
@@ -78,23 +79,23 @@ func RegisterValidators(client mongo.DbClient, secConfig libsecurity.Config, enf
 	if err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("event_pattern", common.ValidateEventPattern)
+	err = v.RegisterValidation("event_pattern", patternfields.ValidateEventPattern)
 	if err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("alarm_pattern", common.ValidateAlarmPattern)
+	err = v.RegisterValidation("alarm_pattern", patternfields.ValidateAlarmPattern)
 	if err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("entity_pattern", common.ValidateEntityPattern)
+	err = v.RegisterValidation("entity_pattern", patternfields.ValidateEntityPattern)
 	if err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("pbehavior_pattern", common.ValidatePbehaviorPattern)
+	err = v.RegisterValidation("pbehavior_pattern", patternfields.ValidatePbehaviorPattern)
 	if err != nil {
 		panic(err)
 	}
-	err = v.RegisterValidation("weather_service_pattern", common.ValidateWeatherServicePattern)
+	err = v.RegisterValidation("weather_service_pattern", patternfields.ValidateWeatherServicePattern)
 	if err != nil {
 		panic(err)
 	}

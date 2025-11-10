@@ -10,6 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/alarmtag"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -29,7 +30,7 @@ type Store interface {
 	Delete(ctx context.Context, id, userID string) (bool, error)
 }
 
-func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer common.PatternFieldsTransformer) Store {
+func NewStore(dbClient mongo.DbClient, authorProvider author.Provider, transformer patternfields.Transformer) Store {
 	return &store{
 		client:          dbClient,
 		collection:      dbClient.Collection(mongo.AlarmTagCollection),
@@ -51,7 +52,7 @@ type store struct {
 	collection      mongo.DbCollection
 	labelCollection mongo.DbCollection
 	authorProvider  author.Provider
-	transformer     common.PatternFieldsTransformer
+	transformer     patternfields.Transformer
 
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -186,7 +187,7 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r.EntityPatternFieldsRequest, r.AlarmPatternFieldsRequest, &tag)
+		err := s.transformPatternRequestsToModel(ctx, r.EntityRequest, r.AlarmRequest, &tag)
 		if err != nil {
 			return err
 		}
@@ -262,7 +263,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 				return common.NewValidationError("alarm_pattern", "AlarmPattern or EntityPattern is required.")
 			}
 
-			err = s.transformPatternRequestsToModel(ctx, r.EntityPatternFieldsRequest, r.AlarmPatternFieldsRequest, &tag)
+			err = s.transformPatternRequestsToModel(ctx, r.EntityRequest, r.AlarmRequest, &tag)
 			if err != nil {
 				return err
 			}
@@ -310,27 +311,27 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 
 func (s *store) transformPatternRequestsToModel(
 	ctx context.Context,
-	entityPatternReq common.EntityPatternFieldsRequest,
-	alarmPatternReq common.AlarmPatternFieldsRequest,
+	entityPatternReq patternfields.EntityRequest,
+	alarmPatternReq patternfields.AlarmRequest,
 	model *alarmtag.AlarmTag,
 ) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, entityPatternReq)
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, entityPatternReq)
 	if err != nil {
 		return err
 	}
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmPatternFieldsRequest(ctx, alarmPatternReq)
+	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, alarmPatternReq)
 	if err != nil {
 		return err
 	}
 
 	model.Aliases = transformedEntityPatternRequest.Aliases
 	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection),
+		patternfields.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection),
 	)
 	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		common.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
-		common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
+		patternfields.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
+		patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
 	)
 
 	return nil

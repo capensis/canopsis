@@ -8,9 +8,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
@@ -53,7 +53,7 @@ type store struct {
 
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage
 
-	transformer common.PatternFieldsTransformer
+	transformer patternfields.Transformer
 
 	logger zerolog.Logger
 }
@@ -64,7 +64,7 @@ func NewStore(
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
 	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
 	authorProvider author.Provider,
-	transformer common.PatternFieldsTransformer,
+	transformer patternfields.Transformer,
 	logger zerolog.Logger,
 ) Store {
 	return &store{
@@ -367,13 +367,13 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 		switch pattern.Type {
 		case savedpattern.TypeAlarm:
 			set["alarm_pattern"] = pattern.AlarmPattern.RemoveFields(
-				common.GetForbiddenFieldsInAlarmPattern(collection),
-				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+				patternfields.GetForbiddenFieldsInAlarmPattern(collection),
+				patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
 			)
 			set["corporate_alarm_pattern_title"] = pattern.Title
 		case savedpattern.TypeEntity:
 			set["entity_pattern"] = pattern.EntityPattern.RemoveFields(
-				common.GetForbiddenFieldsInEntityPattern(collection),
+				patternfields.GetForbiddenFieldsInEntityPattern(collection),
 			)
 			set["corporate_entity_pattern_title"] = pattern.Title
 		case savedpattern.TypePbehavior:
@@ -408,7 +408,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 		metaAlarmRulesCollection := mongo.MetaAlarmRulesMongoCollection
 		update["$set"] = bson.M{
 			"total_entity_pattern": pattern.EntityPattern.RemoveFields(
-				common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
+				patternfields.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
 			),
 			"corporate_total_entity_pattern_title": pattern.Title,
 			"updated":                              datetime.NewCpsTime(),
@@ -423,7 +423,7 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 		scenarioCollection := mongo.ScenarioCollection
 		update["$set"] = bson.M{
 			"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
-				common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
+				patternfields.GetForbiddenFieldsInEntityPattern(scenarioCollection),
 			),
 			"actions.$[action].corporate_entity_pattern_title": pattern.Title,
 			"updated": datetime.NewCpsTime(),
@@ -444,8 +444,8 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
 			bson.M{"$set": bson.M{
 				"actions.$[action].alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					common.GetForbiddenFieldsInAlarmPattern(scenarioCollection),
-					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(scenarioCollection),
+					patternfields.GetForbiddenFieldsInAlarmPattern(scenarioCollection),
+					patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(scenarioCollection),
 				),
 				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
 				"updated": datetime.NewCpsTime(),
@@ -592,7 +592,7 @@ func (s *store) CountAlarms(ctx context.Context, r CountRequest, maxCount int64)
 		}
 	}
 	if len(r.EntityPattern) > 0 {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 			EntityPattern: r.EntityPattern,
 		})
 		if err != nil {
@@ -727,7 +727,7 @@ func (s *store) CountEntities(ctx context.Context, r CountRequest, maxCount int6
 	entitiesPipeline := make([]bson.M, 0)
 	var alarmPatternCount, entityPatternCount, pbhPatternCount, entitiesCount CountResponse
 	if len(r.EntityPattern) > 0 {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 			EntityPattern: r.EntityPattern,
 		})
 		if err != nil {
@@ -972,7 +972,7 @@ func (s *store) transformEntityPatternToModel(
 	model *savedpattern.SavedPattern,
 ) error {
 	if r.Type == savedpattern.TypeEntity {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
 			EntityPattern: r.EntityPattern,
 		})
 		if err != nil {
