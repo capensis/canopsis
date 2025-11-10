@@ -40,7 +40,14 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	token, err := a.store.Insert(c, c.MustGet(authctx.UserKey).(string), request)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	token, err := a.store.Insert(c, userID, request)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 

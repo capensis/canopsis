@@ -168,7 +168,12 @@ func (a *api) UpdateData(c *gin.Context) {
 }
 
 func (a *api) DeleteData(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ok, err := a.store.DeleteData(c, c.Param("id"), userID)
 	if err != nil {
 		if errors.Is(err, ErrIsLinked) {
@@ -229,7 +234,12 @@ func (a *api) ListTest(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	aggregationResult, err := a.store.FindTest(c, r, userID)
 	if err != nil {
 		valErr := common.ValidationError{}
@@ -251,7 +261,12 @@ func (a *api) ListTest(c *gin.Context) {
 // GetTest
 // @Success 200 {object} TestResponse
 func (a *api) GetTest(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	res, err := a.store.GetTest(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -305,7 +320,12 @@ func (a *api) UpdateTest(c *gin.Context) {
 }
 
 func (a *api) DeleteTest(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ok, err := a.store.DeleteTest(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)

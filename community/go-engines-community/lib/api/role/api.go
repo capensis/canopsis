@@ -146,7 +146,14 @@ func (a *api) Update(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, id, userID)
 	if err != nil {
 		if errors.Is(err, ErrLinkedToUser) || errors.Is(err, ErrDeleteAdminRole) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -171,7 +178,12 @@ func (a *api) Delete(c *gin.Context) {
 // BulkUpdatePermissions
 // @Param body body []BulkUpdatePermissionsRequestItem true "body"
 func (a *api) BulkUpdatePermissions(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	bulk.Handler(c, func(request BulkUpdatePermissionsRequestItem) (string, error) {
 		ok, err := a.store.UpdatePermissions(c, request, userID)
 		if err != nil || !ok {
