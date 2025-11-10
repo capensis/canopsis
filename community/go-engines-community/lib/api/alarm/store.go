@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -500,10 +501,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userID string)
 	}
 
 	if r.Steps != nil {
-		details.Steps.Meta, err = common.NewPaginatedMeta(r.Steps.Query, details.StepsCount)
-		if err != nil {
-			return nil, err
-		}
+		details.Steps.Meta = pagination.NewMeta(r.Steps.Query, details.StepsCount)
 	}
 
 	if r.Children != nil {
@@ -536,10 +534,7 @@ func (s *store) GetDetails(ctx context.Context, r DetailsRequest, userID string)
 			}
 		}
 
-		meta, err := common.NewPaginatedMeta(r.Children.Query, children.TotalCount)
-		if err != nil {
-			return nil, err
-		}
+		meta := pagination.NewMeta(r.Children.Query, children.TotalCount)
 		details.Children = &ChildrenDetails{
 			Data: children.Data,
 			Meta: meta,

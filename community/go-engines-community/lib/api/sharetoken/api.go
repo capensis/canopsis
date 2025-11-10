@@ -46,7 +46,7 @@ func (a *api) Create(c *gin.Context) {
 }
 
 // List
-// @Success 200 {object} common.PaginatedListResponse{data=[]Response}
+// @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
 	var request ListRequest
 	request.Query = pagination.GetDefaultQuery()
@@ -61,12 +61,7 @@ func (a *api) List(c *gin.Context) {
 		panic(err)
 	}
 
-	res, err := common.NewPaginatedResponse(request.Query, aggregationResult)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-		return
-	}
-
+	res := pagination.NewResponse(request.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
 }
 
