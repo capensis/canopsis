@@ -19,7 +19,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -51,7 +50,6 @@ func NewAPI(
 	exportTaskCreator export.TaskCreator,
 	exportParamsEncoder encoding.Encoder,
 	errorResponder httperror.Responder,
-	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:               store,
@@ -60,7 +58,6 @@ func NewAPI(
 		exportTaskCreator:   exportTaskCreator,
 		exportParamsEncoder: exportParamsEncoder,
 		errorResponder:      errorResponder,
-		logger:              logger,
 		exportSeparators: map[string]rune{"comma": ',', "semicolon": ';',
 			"tab": '	', "space": ' '},
 	}
@@ -73,7 +70,6 @@ type api struct {
 	exportTaskCreator   export.TaskCreator
 	exportParamsEncoder encoding.Encoder
 	errorResponder      httperror.Responder
-	logger              zerolog.Logger
 	exportSeparators    map[string]rune
 }
 
@@ -700,12 +696,16 @@ func (a *api) BulkDeleteData(c *gin.Context) {
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.DeleteData(c, table, request.ID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 func (a *api) GetSchema(c *gin.Context) {
