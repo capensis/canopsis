@@ -292,6 +292,8 @@ export const ALARM_STATES_CLASSES = {
   [ALARM_STATES.critical]: 'state-critical',
 };
 
+export const ALARM_STATES_UNKNOWN_CLASS = 'state-unknown';
+
 export const ALARM_STATUSES = {
   closed: 0,
   ongoing: 1,
