@@ -52,7 +52,7 @@ export default {
     const isOngoingStatus = computed(() => statusValue.value === ALARM_STATUSES.ongoing);
     const idleSince = computed(() => props.alarm.entity.idle_since);
     const resolved = computed(() => !!props.alarm.v.resolved);
-    const status = computed(() => formatAlarmStatus(statusValue.value));
+    const status = computed(() => formatAlarmStatus(statusValue.value, resolved.value));
     const state = computed(() => formatAlarmState(props.alarm.v.state.val));
     const statusColor = computed(() => (isOngoingStatus.value ? state.value.color : status.value.color));
     const iconSize = computed(() => (props.small ? 24 : undefined));

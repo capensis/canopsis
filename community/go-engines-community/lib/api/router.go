@@ -2653,14 +2653,26 @@ func RegisterRoutes(
 				middleware.SetAuthor(errorResponder),
 				entityInfosPropertyAPI.Create,
 			)
+
+			entityInfosPropertyGetPerms := []apisecurity.PermCheck{
+				{
+					Obj: apisecurity.ObjEntity,
+					Act: model.PermissionRead,
+				},
+				{
+					Obj: apisecurity.ObjEntityInfoProperty,
+					Act: model.PermissionRead,
+				},
+			}
+
 			entityInfosPropertyRouter.GET(
 				"",
-				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer, errorResponder),
+				middleware.AuthorizeAtLeastOnePerm(entityInfosPropertyGetPerms, enforcer, errorResponder),
 				entityInfosPropertyAPI.List,
 			)
 			entityInfosPropertyRouter.GET(
 				"/:id",
-				middleware.Authorize(apisecurity.ObjEntityInfoProperty, model.PermissionRead, enforcer, errorResponder),
+				middleware.AuthorizeAtLeastOnePerm(entityInfosPropertyGetPerms, enforcer, errorResponder),
 				entityInfosPropertyAPI.Get,
 			)
 			entityInfosPropertyRouter.PUT(
