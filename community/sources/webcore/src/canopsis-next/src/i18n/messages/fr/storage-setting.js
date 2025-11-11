@@ -49,7 +49,7 @@ export default {
   webhook: {
     title: 'Webhooks',
     deleteAfter: 'Supprimer l\'historique des requêtes webhooks',
-    logCredentials: 'Afficher les données d\'authentification dans les logs',
+    logCredentials: 'Afficher les données d\'authentification en clair dans les journaux',
     logCredentialsHelpText: 'Affecte la façon dont les mots de passe, tokens et données d\'authentification apparaissent dans les logs. \n'
       + '<ul><li>activé : affichés en clair (non recommandé)</li>'
       + '<li>désactivé : masqués avec ***</li></ul>',
