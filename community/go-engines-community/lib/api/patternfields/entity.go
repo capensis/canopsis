@@ -88,12 +88,10 @@ func ValidateEntityPattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.Entity)
-	if !ok {
-		return false
-	}
 
-	return match.ValidateEntityPattern(p, nil)
+	p, ok := i.(pattern.Entity)
+
+	return ok && match.ValidateEntityPattern(p, nil)
 }
 
 func GetForbiddenFieldsInEntityPattern(collection string) []string {
