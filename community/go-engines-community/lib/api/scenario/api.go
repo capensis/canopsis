@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -28,20 +27,17 @@ type api struct {
 	store          Store
 	mongoExporter  dbexport.Exporter
 	errorResponder httperror.Responder
-	logger         zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
 	errorResponder httperror.Responder,
-	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:          store,
 		mongoExporter:  mongoExporter,
 		errorResponder: errorResponder,
-		logger:         logger,
 	}
 }
 
@@ -210,25 +206,24 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		return scenario.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		oldScenario, err := a.store.GetOneBy(c, request.ID)
-		if err != nil || oldScenario == nil {
+		scenario, err := a.store.Update(c, UpdateRequest(request))
+		if err != nil {
 			return "", err
 		}
 
-		scenario, err := a.store.Update(c, UpdateRequest(request))
-		if err != nil || scenario == nil {
-			return "", err
+		if scenario == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		return scenario.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkDelete
@@ -242,18 +237,17 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		scenario, err := a.store.GetOneBy(c, request.ID)
-		if err != nil || scenario == nil {
-			return "", err
-		}
-
 		ok, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
-		return scenario.ID, nil
-	}, a.logger)
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
+		return request.ID, nil
+	}, a.errorResponder)
 }
 
 // DBExport

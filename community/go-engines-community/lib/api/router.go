@@ -146,7 +146,6 @@ func RegisterRoutes(
 	exdataImportWorker externaldatatable.ImportWorker,
 	notifStore usernotification.Store,
 	externalDataContainer *externaldata.GetterContainer,
-	workersRunner *workers.Runner,
 	tplTestTypePermMapping map[int][]any,
 	logger zerolog.Logger,
 ) {
@@ -221,7 +220,7 @@ func RegisterRoutes(
 		}
 
 		userApi := user.NewApi(user.NewStore(primaryDbClient, security.GetPasswordEncoder(), websocketStore, authorProvider, securityConfig),
-			metricsUserMetaUpdater, errorResponder, logger)
+			metricsUserMetaUpdater, errorResponder)
 		userRouter := protected.Group("/users")
 		{
 			userRouter.POST("",
@@ -255,7 +254,7 @@ func RegisterRoutes(
 				userApi.Delete,
 			)
 		}
-		roleApi := role.NewApi(role.NewStore(primaryDbClient, authorProvider), errorResponder, logger)
+		roleApi := role.NewApi(role.NewStore(primaryDbClient, authorProvider), errorResponder)
 		roleRouter := protected.Group("/roles")
 		{
 			roleRouter.POST("",
@@ -318,7 +317,7 @@ func RegisterRoutes(
 		alarmAPI := alarm.NewApi(alarmStore, exportTaskExecutor, json.NewEncoder(), errorResponder, logger)
 		alarmActionAPI := alarmaction.NewApi(alarmaction.NewStore(primaryDbClient, amqpPublisher, canopsis.DefaultExchangeName,
 			canopsis.FIFOQueueName, json.NewEncoder(), canopsis.JsonContentType, eventGenerator, logger),
-			errorResponder, logger)
+			errorResponder)
 		alarmRouter := protected.Group("/alarms")
 		{
 			alarmRouter.GET(
@@ -503,7 +502,6 @@ func RegisterRoutes(
 				json.NewEncoder(), json.NewDecoder()),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
-			logger,
 		)
 		eventFilterRouter := protected.Group("/eventfilter/rules")
 		{
@@ -572,7 +570,6 @@ func RegisterRoutes(
 			pbhComputeChan,
 			workers.NewJobPublisher(jobKeyPbhPatterns, amqpPublisher),
 			errorResponder,
-			logger,
 		)
 		pbehaviorRouter := protected.Group("/pbehaviors")
 		{
@@ -1533,7 +1530,6 @@ func RegisterRoutes(
 				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, json.NewEncoder(), json.NewDecoder()),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
-			logger,
 		)
 		scenarioRouter := protected.Group("/scenarios")
 		{
@@ -1688,7 +1684,7 @@ func RegisterRoutes(
 		}
 
 		idleRuleStore := idlerule.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient))
-		idleRuleAPI := idlerule.NewApi(idleRuleStore, dbexport.NewExporter(primaryDbClient), errorResponder, logger)
+		idleRuleAPI := idlerule.NewApi(idleRuleStore, dbexport.NewExporter(primaryDbClient), errorResponder)
 		idleRuleRouter := protected.Group("/idle-rules")
 		{
 			idleRuleRouter.POST(
@@ -1726,7 +1722,7 @@ func RegisterRoutes(
 
 		patternAPI := pattern.NewApi(
 			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, errorResponder, logger)
+			userInterfaceConfig, enforcer, errorResponder)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth(errorResponder))
@@ -1769,7 +1765,6 @@ func RegisterRoutes(
 				validator.NewValidator(tplExecutor), tplExecutor, templateConfigProvider, externalDataContainer, enforcer),
 			dbexport.NewExporter(primaryDbClient),
 			errorResponder,
-			logger,
 		)
 		linkRuleRouter := protected.Group("/link-rules")
 		{
@@ -1827,7 +1822,6 @@ func RegisterRoutes(
 		alarmTagAPI := alarmtag.NewApi(
 			alarmtag.NewStore(primaryDbClient, authorProvider, patternfields.NewTransformer(primaryDbClient)),
 			errorResponder,
-			logger,
 		)
 		alarmTagRouter := protected.Group("/alarm-tags")
 		{
@@ -1867,7 +1861,7 @@ func RegisterRoutes(
 
 		colorThemeApi := colortheme.NewApi(
 			colortheme.NewStore(primaryDbClient, authorProvider, userInterfaceAdapter),
-			errorResponder, logger)
+			errorResponder)
 		colorThemeRouter := protected.Group("/color-themes")
 		{
 			colorThemeRouter.POST(
@@ -1935,7 +1929,7 @@ func RegisterRoutes(
 
 		externalDataStore := externaldatatable.NewStore(primaryDbClient, pgPoolProvider, dbExportClient, json.NewDecoder())
 		externalDataTableAPI := externaldatatable.NewAPI(externalDataStore, exdataImportWorker,
-			conf.File.ImportMaxSize, exportTaskExecutor, json.NewEncoder(), errorResponder, logger)
+			conf.File.ImportMaxSize, exportTaskExecutor, json.NewEncoder(), errorResponder)
 		externalDataTableRouter := protected.Group("/external-data-tables")
 		{
 			externalDataTableRouter.POST(
@@ -2644,7 +2638,7 @@ func RegisterRoutes(
 		)
 
 		entityInfosPropertyAPI := entityinfosproperty.NewApi(
-			entityinfosproperty.NewStore(primaryDbClient, authorProvider), errorResponder, logger)
+			entityinfosproperty.NewStore(primaryDbClient, authorProvider), errorResponder)
 		entityInfosPropertyRouter := protected.Group("/entity-infos-properties")
 		{
 			entityInfosPropertyRouter.POST(

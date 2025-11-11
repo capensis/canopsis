@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -30,20 +29,17 @@ type api struct {
 	store          Store
 	mongoExporter  dbexport.Exporter
 	errorResponder httperror.Responder
-	logger         zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
 	errorResponder httperror.Responder,
-	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:          store,
 		mongoExporter:  mongoExporter,
 		errorResponder: errorResponder,
-		logger:         logger,
 	}
 }
 
@@ -212,12 +208,16 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // DBExport

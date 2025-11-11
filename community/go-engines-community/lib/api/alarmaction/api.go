@@ -10,7 +10,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -37,14 +36,12 @@ type API interface {
 type api struct {
 	store          Store
 	errorResponder httperror.Responder
-	logger         zerolog.Logger
 }
 
-func NewApi(store Store, errorResponder httperror.Responder, logger zerolog.Logger) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
 		store:          store,
 		errorResponder: errorResponder,
-		logger:         logger,
 	}
 }
 
@@ -395,12 +392,16 @@ func (a *api) BulkAck(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkAckRequestItem) (string, error) {
 		ok, err := a.store.Ack(c, request.ID, request.AckRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkAckRemove
@@ -420,12 +421,16 @@ func (a *api) BulkAckRemove(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.AckRemove(c, request.ID, request.Request, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkSnooze
@@ -445,12 +450,16 @@ func (a *api) BulkSnooze(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkSnoozeRequestItem) (string, error) {
 		ok, err := a.store.Snooze(c, request.ID, request.SnoozeRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkCancel
@@ -470,12 +479,16 @@ func (a *api) BulkCancel(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.Cancel(c, request.ID, request.Request, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkUncancel
@@ -495,12 +508,16 @@ func (a *api) BulkUncancel(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkRequestItem) (string, error) {
 		ok, err := a.store.Uncancel(c, request.ID, request.Request, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkAssocTicket
@@ -520,12 +537,16 @@ func (a *api) BulkAssocTicket(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkAssocTicketRequestItem) (string, error) {
 		ok, err := a.store.AssocTicket(c, request.ID, request.AssocTicketRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkComment
@@ -545,12 +566,16 @@ func (a *api) BulkComment(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkCommentRequestItem) (string, error) {
 		ok, err := a.store.Comment(c, request.ID, request.CommentRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkChangeState
@@ -570,12 +595,16 @@ func (a *api) BulkChangeState(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkChangeStateRequestItem) (string, error) {
 		ok, err := a.store.ChangeState(c, request.ID, request.ChangeStateRequest, userID, username)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 func (a *api) AddBookmark(c *gin.Context) {

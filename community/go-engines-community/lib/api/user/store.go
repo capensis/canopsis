@@ -10,25 +10,23 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
-
-var ErrNotAdminCreateAdmin = errors.New("cannot create a user with the admin role")
-var ErrNotAdminUpdateAdmin = errors.New("cannot update a user with the admin role")
-var ErrNotAdminDeleteAdmin = errors.New("cannot delete a user with the admin role")
 
 type Store interface {
 	Find(ctx context.Context, r ListRequest, userID string, requestRoles []string) (*AggregationResult, error)
 	GetOneBy(ctx context.Context, id string) (*User, error)
 	Insert(ctx context.Context, r CreateRequest, requestRoles []string) (*User, error)
-	Update(ctx context.Context, r UpdateRequest, userID string, requestRoles []string) (*User, error)
-	Patch(ctx context.Context, r PatchRequest, userID string, requestRoles []string) (*User, error)
-	Delete(ctx context.Context, id, userID string, requestRoles []string) (bool, error)
+	Update(ctx context.Context, r BulkUpdateRequestItem, userID string, requestRoles []string) (*User, error)
+	Patch(ctx context.Context, r BulkPatchRequestItem, userID string, requestRoles []string) (*User, error)
+	Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error)
 }
 
 func NewStore(
@@ -217,7 +215,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 	}
 
 	if slices.Contains(r.Roles, security.RoleAdmin) && !slices.Contains(requestRoles, security.RoleAdmin) {
-		return nil, ErrNotAdminCreateAdmin
+		return nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("admin_role", "Roles", "Roles")},
+			r,
+		)
 	}
 
 	var user *User
@@ -239,7 +240,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 	return user, nil
 }
 
-func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, requestRoles []string) (*User, error) {
+func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
 		return nil, common.NewValidationError("enable", "user cannot disable itself")
 	}
@@ -279,11 +280,17 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return ErrNotAdminUpdateAdmin
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("admin_user", "ID", "ID")},
+					r,
+				)
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "cannot assign the admin role by a non-admin user.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("admin_role", "Roles", "Roles")},
+					r,
+				)
 			}
 		}
 
@@ -308,7 +315,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest, curUserID string, r
 	return user, nil
 }
 
-func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, requestRoles []string) (*User, error) {
+func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
 		return nil, common.NewValidationError("enable", "user cannot disable itself")
 	}
@@ -348,11 +355,17 @@ func (s *store) Patch(ctx context.Context, r PatchRequest, curUserID string, req
 
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return ErrNotAdminUpdateAdmin
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("admin_user", "ID", "ID")},
+					r,
+				)
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "cannot assign the admin role by a non-admin user.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("admin_role", "Roles", "Roles")},
+					r,
+				)
 			}
 		}
 
@@ -411,7 +424,8 @@ func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, i
 	}
 }
 
-func (s *store) Delete(ctx context.Context, id, userID string, requestRoles []string) (bool, error) {
+func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error) {
+	id := r.ID
 	if id == userID {
 		return false, common.NewValidationError("_id", "user cannot delete itself")
 	}
@@ -435,7 +449,10 @@ func (s *store) Delete(ctx context.Context, id, userID string, requestRoles []st
 		}
 
 		if slices.Contains(prevUser.Roles, security.RoleAdmin) && !isAdminRequest {
-			return ErrNotAdminDeleteAdmin
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("admin_user", "ID", "ID")},
+				r,
+			)
 		}
 
 		deleted, err = s.userCollection.DeleteOne(ctx, bson.M{"_id": id})

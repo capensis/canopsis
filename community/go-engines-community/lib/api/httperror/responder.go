@@ -16,6 +16,7 @@ import (
 )
 
 var ErrNotFound = errors.New("not found")
+var ErrUnauthorized = errors.New("unauthorized")
 
 type Responder interface {
 	// Respond calls c.Abort() and writes response code and body based on error.
@@ -52,6 +53,8 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 	logLvl := zerolog.DebugLevel
 	if errors.Is(err, ErrNotFound) {
 		code = http.StatusNotFound
+	} else if errors.Is(err, ErrUnauthorized) {
+		code = http.StatusUnauthorized
 	} else if errors.Is(err, validation.ErrInvalidRequestBody) {
 		code = http.StatusBadRequest
 	} else if errors.Is(err, authctx.ErrNotFound) {
