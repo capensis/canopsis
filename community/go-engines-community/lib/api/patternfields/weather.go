@@ -35,10 +35,8 @@ func ValidateWeatherServicePattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.WeatherServicePattern)
-	if !ok {
-		return false
-	}
 
-	return match.ValidateWeatherServicePattern(p)
+	p, ok := i.(pattern.WeatherServicePattern)
+
+	return ok && match.ValidateWeatherServicePattern(p)
 }

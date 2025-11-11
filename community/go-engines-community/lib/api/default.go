@@ -298,7 +298,7 @@ func Default(
 		return nil, services, fmt.Errorf("cannot register websocket groups: %w", err)
 	}
 
-	broadcastMessageChan := make(chan bool)
+	broadcastMessageChan := make(chan bool, chanBuf)
 
 	techMetricsConfigProvider := config.NewTechMetricsConfigProvider(cfg, logger)
 	techMetricsSender := techmetrics.NewSender(canopsis.ApiName+"/"+utils.NewID(), techMetricsConfigProvider, canopsis.TechMetricsFlushInterval,
@@ -584,7 +584,9 @@ func Default(
 	api.AddWorker("websocket_conns", updateWebsocketConns(flags.IntegrationPeriodicalWaitTime, websocketHub, websocketStore, logger))
 
 	maintenanceAdapter := config.NewMaintenanceAdapter(primaryDbClient)
-	broadcastMessageService := broadcastmessage.NewService(broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), websocketHub, canopsis.PeriodicalWaitTime, logger)
+	broadcastMessageService := broadcastmessage.NewService(
+		broadcastmessage.NewStore(primaryDbClient, maintenanceAdapter, authorProvider), websocketHub,
+		flags.BroadcastMessagePeriodicalWaitTime, logger)
 	api.AddWorker("broadcast_message", func(ctx context.Context) {
 		broadcastMessageService.Start(ctx, broadcastMessageChan)
 	})
