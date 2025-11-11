@@ -50,12 +50,10 @@ func ValidateAlarmPattern(fl validator.FieldLevel) bool {
 	if i == nil {
 		return true
 	}
-	p, ok := i.(pattern.Alarm)
-	if !ok {
-		return false
-	}
 
-	return match.ValidateAlarmPattern(p, nil, nil)
+	p, ok := i.(pattern.Alarm)
+
+	return ok && match.ValidateAlarmPattern(p, nil, nil)
 }
 
 func GetForbiddenFieldsInAlarmPattern(collection string) []string {
