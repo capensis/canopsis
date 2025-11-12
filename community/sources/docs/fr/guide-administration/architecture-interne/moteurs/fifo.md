@@ -23,6 +23,7 @@ L'option `-h` permet d'afficher toutes les options disponibles au lancement du m
 
 | Option | Description |
 |--------|------------|
+| `-cleanUp` | Exécute immédiatement toutes les opérations d'archivage et de suppression des données, puis quitte le programme une fois celles-ci terminées. |
 | `-cps.logger string` | Destination de sortie du logger. Remplace le paramètre "Canopsis.logger.Writer" du fichier de configuration TOML |
 | `-d` | Active le mode debug |
 | `-enablePrometheusExporter` | Active l'exporteur Prometheus |
