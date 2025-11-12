@@ -166,9 +166,7 @@ func NewStore(
 				Value: template.GetEntityVars("{{ ", " }}", "", false),
 			},
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name": "Name already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -196,7 +194,7 @@ func (s *store) Insert(ctx context.Context, request EditRequest) (*Response, err
 		_, err = s.collection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -301,7 +299,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 		)
 		if err != nil || res.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
