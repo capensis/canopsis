@@ -153,10 +153,7 @@ func NewStore(
 		firstWhTplVars:            firstWhTplVars,
 		whTplVars:                 whTplVars,
 		ticketTplVars:             ticketTplVars,
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:            validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -240,7 +237,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 		_, err := s.collection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, model)
 			}
 
 			return err
@@ -281,7 +278,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 		res, err := s.collection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil || res.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, model)
 			}
 
 			return err

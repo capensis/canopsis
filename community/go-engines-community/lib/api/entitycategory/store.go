@@ -31,9 +31,7 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		defaultSearchByFields: []string{"_id", "name"},
 		defaultSortBy:         "name",
 		authorProvider:        authorProvider,
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -126,7 +124,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err := s.dbCollection.InsertOne(ctx, category)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, category)
 			}
 
 			return err
@@ -154,7 +152,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		)
 		if err != nil || res.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Category{})
 			}
 
 			return err

@@ -8,7 +8,6 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
@@ -22,10 +21,11 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -60,7 +60,7 @@ type store struct {
 	linkGenerator             link.Generator
 	enableSameServiceNames    bool
 	authorProvider            author.Provider
-	tplValidator              validator.Validator
+	tplValidator              tplvalidator.Validator
 	tplConfigProvider         config.TemplateConfigProvider
 	logger                    zerolog.Logger
 	tplVars                   []template.VarResponse
@@ -73,7 +73,7 @@ func NewStore(
 	enableSameServiceNames bool,
 	authorProvider author.Provider,
 	transformer patternfields.Transformer,
-	tplValidator validator.Validator,
+	tplValidator tplvalidator.Validator,
 	tplConfigProvider config.TemplateConfigProvider,
 	logger zerolog.Logger,
 ) Store {
@@ -105,9 +105,7 @@ func NewStore(
 			{Name: "numberOfAlarmsUnderPbehavior", Value: "{{ .UnderPbehavior }}"},
 			{Name: "numberOfAcknowledgedAlarmsUnderPbehavior", Value: "{{ .AcknowledgedUnderPbh }}"},
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id": "ID already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -362,7 +360,10 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 				"soft_deleted": nil,
 			}).Err()
 			if err == nil {
-				return common.NewValidationError("name", "Name already exists.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
+					Response{},
+				)
 			}
 
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -381,7 +382,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 		_, err = s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -443,7 +444,10 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 				"soft_deleted": nil,
 			}).Err()
 			if err == nil {
-				return common.NewValidationError("name", "Name already exists.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
+					Response{},
+				)
 			}
 
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {

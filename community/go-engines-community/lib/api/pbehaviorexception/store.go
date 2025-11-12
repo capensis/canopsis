@@ -50,10 +50,7 @@ func NewStore(dbClient mongo.DbClient, timezoneConfigProvider config.TimezoneCon
 		defaultSortBy:         "created",
 
 		timezoneConfigProvider: timezoneConfigProvider,
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:         validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -87,7 +84,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, doc)
 			}
 
 			return err
@@ -183,7 +180,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		result, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": doc.ID}, bson.M{"$set": doc})
 		if err != nil || result.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, doc)
 			}
 
 			return err
