@@ -11,20 +11,20 @@ Solution       | Version    |
 Architecture   | x86-64     |
 Docker CE      | ≥ 20.10.17 avec le plugin Compose |
 Noyau Linux    | ≥ 4.4 (uniquement pour l'installation via Docker Compose)             |
-OS             | = RHEL 8 (uniquement pour l'installation via paquets RPM) |
+OS             | = RHEL 8 / 9 (uniquement pour l'installation via paquets RPM) |
 Python         | 3          |
 
 Pour rappel, SELinux n'est pas supporté. 
 
 ## Prérequis composants Canopsis
 
-Composant   | Version (Pour Canopsis 25.04)         |
+Composant   | Version (Pour Canopsis 25.10)         |
 ------------|------------------|
 MongoDB     | 8.0              |
 Nginx       | >= 1.26 (uniquement pour l'installation via paquets RPM) |
-PostgreSQL  | >= 15               |
-TimescaleDB | 2.15.1           |
-RabbitMQ    | >= 4.0             |
+PostgreSQL  | >= 17               |
+TimescaleDB | 2.21.4           |
+RabbitMQ    | >= 4.1             |
 Valkey       | 8.0   |
 
 ## Prérequis composants externes
