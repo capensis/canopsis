@@ -147,11 +147,11 @@ func (v *Validator) validateActionParametersRequest(sl validator.StructLevel, t 
 		}
 
 		if params.StopOnFail == nil {
-			sl.ReportError(params.StopOnFail, "Parameters.StopOnFail", "StopOnFail", "required", "")
+			sl.ReportError(params.StopOnFail, "StopOnFail", "Parameters.StopOnFail", "required", "")
 		}
 
 		if params.StopOnSuccess == nil {
-			sl.ReportError(params.StopOnSuccess, "Parameters.StopOnSuccess", "StopOnSuccess", "required", "")
+			sl.ReportError(params.StopOnSuccess, "StopOnSuccess", "Parameters.StopOnSuccess", "required", "")
 		}
 	}
 }
