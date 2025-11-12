@@ -306,7 +306,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		if pattern.IsCorporate && !canDeleteCorporate {
-			return "", httperror.ErrUnauthorized
+			return "", httperror.ErrForbidden
 		}
 
 		ok, err := a.store.Delete(c, *pattern, userID)
