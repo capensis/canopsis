@@ -156,11 +156,9 @@ func (a *api) getSession(c *gin.Context) (*sessions.Session, error) {
 		var securecookieError securecookie.Error
 		if errors.As(err, &securecookieError) {
 			// if securecookie decode failed (for example due changed key), then it's a new session
-			session, err = a.sessionStore.New(c.Request, security.SessionKey)
+			return a.sessionStore.New(c.Request, security.SessionKey)
 		}
-	}
 
-	if err != nil {
 		return nil, err
 	}
 
