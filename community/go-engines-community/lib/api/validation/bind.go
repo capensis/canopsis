@@ -12,12 +12,7 @@ var ErrInvalidRequestBody = errors.New("invalid request body")
 
 func Bind(c *gin.Context, v any) error {
 	if err := c.ShouldBind(v); err != nil {
-		var valErrs validator.ValidationErrors
-		if errors.As(err, &valErrs) {
-			return NewError(valErrs, v)
-		}
-
-		return ErrInvalidRequestBody
+		return convertValErr(err, v)
 	}
 
 	return nil
@@ -25,12 +20,7 @@ func Bind(c *gin.Context, v any) error {
 
 func BindQuery(c *gin.Context, v any) error {
 	if err := c.ShouldBindQuery(v); err != nil {
-		var valErrs validator.ValidationErrors
-		if errors.As(err, &valErrs) {
-			return NewError(valErrs, v)
-		}
-
-		return ErrInvalidRequestBody
+		return convertValErr(err, v)
 	}
 
 	return nil
@@ -38,11 +28,17 @@ func BindQuery(c *gin.Context, v any) error {
 
 func ValidateStruct(v any) error {
 	if err := binding.Validator.ValidateStruct(v); err != nil {
-		var valErrs validator.ValidationErrors
-		if errors.As(err, &valErrs) {
-			return NewError(valErrs, v)
-		}
+		return convertValErr(err, v)
 	}
 
 	return nil
+}
+
+func convertValErr(err error, v any) error {
+	var valErr validator.ValidationErrors
+	if errors.As(err, &valErr) {
+		return NewError(valErr, v)
+	}
+
+	return ErrInvalidRequestBody
 }
