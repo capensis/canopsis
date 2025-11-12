@@ -109,7 +109,7 @@ Ajout du dépôt pour MongoDB :
 cat << EOF > /etc/yum.repos.d/mongodb-org-8.0.repo
 [mongodb-org-8.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/8.0/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/\$releasever/mongodb-org/8.0/x86_64/
 gpgcheck=1
 enabled=1
 gpgkey=https://pgp.mongodb.com/server-8.0.asc
@@ -234,15 +234,15 @@ dnf module disable nginx php
 ### Installation
 
 ```sh
-dnf install logrotate socat mongodb-org nginx valkey timescaledb-2-postgresql-15-2.15.1 timescaledb-2-loader-postgresql-15-2.15.1 erlang rabbitmq-server
+dnf install logrotate socat mongodb-org nginx valkey timescaledb-2-postgresql-17-2.21.4 timescaledb-2-loader-postgresql-17-2.21.4 erlang rabbitmq-server
 ```
 
 Pour éviter une mise à jour vers des versions non souhaitées de TimescaleDB, RabbitMQ ou Valkey, vous devriez utiliser [*versionlock*][dnf-versionlock] :
 
 ```sh
 dnf install 'dnf-command(versionlock)'
-dnf versionlock add timescaledb-2-loader-postgresql-15 timescaledb-2-postgresql-15
-dnf versionlock add --raw 'rabbitmq-server-4.*'
+dnf versionlock add timescaledb-2-loader-postgresql-17 timescaledb-2-postgresql-17
+dnf versionlock add --raw 'rabbitmq-server-4.1.*'
 dnf versionlock add --raw 'erlang-27.*'
 dnf versionlock add --raw 'valkey-8.*'
 ```
@@ -361,15 +361,15 @@ Les manipulations d'installation dans MongoDB sont terminées.
 Initialiser l'instance PostgreSQL puis initialiser TimescaleDB (cf. [documentation de l'outil de règlage](https://docs.timescale.com/timescaledb/latest/how-to-guides/configuration/timescaledb-tune/) de TimescaleDB) :
 
 ```sh
-postgresql-15-setup initdb
-timescaledb-tune -yes --pg-config=/usr/pgsql-15/bin/pg_config
-echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/15/data/postgresql.conf
+postgresql-17-setup initdb
+timescaledb-tune -yes --pg-config=/usr/pgsql-17/bin/pg_config
+echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/17/data/postgresql.conf
 ```
 
 Activer et démarrer le service :
 
 ```sh
-systemctl enable --now postgresql-15.service
+systemctl enable --now postgresql-17.service
 ```
 
 Se connecter à l'instance PostgreSQL avec l'identité du superuser `postgres` :
@@ -668,13 +668,13 @@ d'une mise à jour de routine de l'ensemble des paquets système.
 === "Canopsis Community (édition open-source)"
 
     ```sh
-    dnf versionlock add --raw 'canopsis-25.04.*'
-    dnf versionlock add --raw 'canopsis-webui-25.04.*'
+    dnf versionlock add --raw 'canopsis-25.10.*'
+    dnf versionlock add --raw 'canopsis-webui-25.10.*'
     ```
 
 === "Canopsis Pro (souscription commerciale)"
 
     ```sh
-    dnf versionlock add --raw 'canopsis-pro-25.04.*'
-    dnf versionlock add --raw 'canopsis-webui-25.04.*'
+    dnf versionlock add --raw 'canopsis-pro-25.10.*'
+    dnf versionlock add --raw 'canopsis-webui-25.10.*'
     ```
