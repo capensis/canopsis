@@ -9,7 +9,7 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-var reBrackets = regexp.MustCompile(`(\.*)\[([^\]]+)\](\.*)`)
+var reBrackets = regexp.MustCompile(`\[([^\]]+)\]`)
 
 func NewError(errors validator.ValidationErrors, validatedStruct any) *Error {
 	return &Error{
@@ -42,19 +42,7 @@ func (e *Error) TransformNamespace(ns string) string {
 	}
 
 	// remove brackets
-	ns = reBrackets.ReplaceAllStringFunc(ns, func(s string) string {
-		s = strings.ReplaceAll(s, "[", "")
-		s = strings.ReplaceAll(s, "]", "")
-		if s[0] != '.' {
-			s = "." + s
-		}
-
-		if s[len(s)-1] != '.' {
-			s = s + "."
-		}
-
-		return s
-	})
+	ns = reBrackets.ReplaceAllString(ns, ".$1")
 	// replace name to json tag name
 	path := strings.Split(ns, ".")
 	rv := e.rvValidatedStruct
