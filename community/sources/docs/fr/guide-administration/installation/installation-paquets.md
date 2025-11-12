@@ -605,6 +605,7 @@ d'une mise à jour de routine de l'ensemble des paquets système.
 
     ```sh
     dnf versionlock add --raw 'canopsis-24.04.*'
+    dnf versionlock add --raw 'canopsis-common-24.04.*'
     dnf versionlock add --raw 'canopsis-webui-24.04.*'
     ```
 
@@ -612,5 +613,6 @@ d'une mise à jour de routine de l'ensemble des paquets système.
 
     ```sh
     dnf versionlock add --raw 'canopsis-pro-24.04.*'
+    dnf versionlock add --raw 'canopsis-common-24.04.*'
     dnf versionlock add --raw 'canopsis-webui-24.04.*'
     ```
