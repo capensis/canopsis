@@ -47,10 +47,7 @@ func NewStore(
 		authorProvider:        authorProvider,
 		transformer:           transformer,
 		defaultSearchByFields: []string{"_id", "author.name", "name", "description"},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -74,7 +71,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -164,7 +161,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 		)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err

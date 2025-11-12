@@ -55,10 +55,8 @@ func NewStore(
 		authorProvider:           authorProvider,
 		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
 		defaultSearchByFields:    []string{"_id", "title"},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"title": "Title already exists.",
-		}),
-		transformer: transformer,
+		dupErrorParser:           validation.NewDuplicateErrorParser(),
+		transformer:              transformer,
 	}
 }
 
@@ -140,7 +138,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 		_, err = s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -208,7 +206,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		).Decode(&oldVersion)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			if errors.Is(err, mongodriver.ErrNoDocuments) {

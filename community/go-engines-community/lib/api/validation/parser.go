@@ -2,40 +2,67 @@ package validation
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
+	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"github.com/go-playground/validator/v10"
 )
 
 type duplicateErrorParser struct {
 	dupErrorRegexp *regexp.Regexp
-	fields         map[string]string
 }
 
 type DuplicateErrorParser interface {
-	Parse(err error) error
+	Parse(err error, validatedStruct any) error
 }
 
-func NewDuplicateErrorParser(fields map[string]string) DuplicateErrorParser {
+func NewDuplicateErrorParser() DuplicateErrorParser {
 	return &duplicateErrorParser{
 		dupErrorRegexp: regexp.MustCompile(`{ ([^:]+)`),
-		fields:         fields,
 	}
 }
 
-func (p *duplicateErrorParser) Parse(err error) error {
+func (p *duplicateErrorParser) Parse(err error, validatedStruct any) error {
 	match := p.dupErrorRegexp.FindStringSubmatch(err.Error())
 	if len(match) > 1 {
-		matchedStr := match[1]
-
-		for k, v := range p.fields {
-			if matchedStr == k {
-				return common.NewValidationError(k, v)
-			}
+		field := match[1]
+		rt := reflect.ValueOf(validatedStruct).Type()
+		rf := p.findStructFieldByTag(rt, "bson", field)
+		if rf != nil {
+			return NewError(
+				validator.ValidationErrors{NewFieldError("exist", rf.Name, rf.Name)},
+				validatedStruct,
+			)
 		}
-
-		return common.NewValidationError(matchedStr, matchedStr+" already exists.")
 	}
 
 	return fmt.Errorf("can't parse duplication error: %w", err)
+}
+
+func (p *duplicateErrorParser) findStructFieldByTag(rt reflect.Type, tagKey, tagVal string) *reflect.StructField {
+	if rt.Kind() == reflect.Ptr || rt.Kind() == reflect.Interface {
+		return p.findStructFieldByTag(rt.Elem(), tagKey, tagVal)
+	}
+
+	if rt.Kind() == reflect.Struct {
+		for i := 0; i < rt.NumField(); i++ {
+			rf := rt.Field(i)
+			if rf.Anonymous {
+				ft := p.findStructFieldByTag(rf.Type, tagKey, tagVal)
+				if ft != nil {
+					return ft
+				}
+
+				continue
+			}
+
+			ft := strings.Split(rf.Tag.Get(tagKey), ",")
+			if ft[0] == tagVal {
+				return &rf
+			}
+		}
+	}
+
+	return nil
 }
