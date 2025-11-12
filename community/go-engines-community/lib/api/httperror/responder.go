@@ -64,7 +64,8 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 		logLvl = zerolog.ErrorLevel
 	} else {
 		code = http.StatusInternalServerError
-		_ = c.Error(err)
+		// c.Error panics if a nil error is passed — log stack trace to debug GetResponse call with nil error
+		err = c.Error(err)
 		logLvl = zerolog.ErrorLevel
 	}
 
