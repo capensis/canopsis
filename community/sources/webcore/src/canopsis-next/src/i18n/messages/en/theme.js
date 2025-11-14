@@ -8,32 +8,27 @@ export default {
     notReadable: 'Text is not readable',
   },
   main: {
-    title: 'Main UI elements',
+    title: 'Main UI colors',
 
-    primary: 'Main brand color',
+    primary: 'Main brand',
     primaryHelpText: 'Main brand color (Canopsis header)',
 
-    secondary: 'Secondary brand color',
+    secondary: 'Secondary brand',
     secondaryHelpText: 'Additional brand color (for expanded panels, menus, etc)',
 
-    accent: 'Neutral buttons color',
-    accentHelpText: 'Color for neutral buttons (next/previous, etc)',
+    accent: 'Neutral buttons',
 
-    error: 'Error color',
-    errorHelpText: 'Color for error messages, negative action buttons, etc',
+    error: 'Error',
 
-    info: 'Info color',
-    infoHelpText: 'Color for neutral messages and notifications',
+    info: 'Info',
 
-    success: 'Success/positive color',
-    successHelpText: 'Color for positive/success messages and notifications',
+    success: 'Success/positive',
 
-    warning: 'Warning color',
-    warningHelpText: 'Color for warning messages and notifications',
+    warning: 'Warning',
 
-    background: 'Main background color',
+    background: 'Main background',
 
-    activeColor: 'Main active color',
+    activeColor: 'Main active',
     activeColorHelpText: 'Main color for texts and icons',
   },
   fontSize: {
