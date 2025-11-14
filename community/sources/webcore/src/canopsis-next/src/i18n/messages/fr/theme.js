@@ -8,32 +8,27 @@ export default {
     notReadable: 'Le texte n\'est pas lisible',
   },
   main: {
-    title: 'Principaux éléments de l\'interface utilisateur',
+    title: 'Couleurs principales de l\'interface',
 
-    primary: 'Couleur principale du produit',
+    primary: 'Marque principale',
     primaryHelpText: 'Couleur principale du produit (en-tête Canopsis)',
 
-    secondary: 'Couleur secondaire du produit',
+    secondary: 'Marque secondaire',
     secondaryHelpText: 'Couleur secondaire (pour les panneaux développés, les menus, etc.)',
 
-    accent: 'Couleur neutre des boutons',
-    accentHelpText: 'Couleur des boutons neutres (suivant/précédent, etc.)',
+    accent: 'Boutons neutres',
 
-    error: 'Couleur relative aux erreurs',
-    errorHelpText: 'Couleur des messages d\'erreur, des boutons d\'action en échec, etc.',
+    error: 'Erreur',
 
-    info: 'Couleur relatives aux informations',
-    infoHelpText: 'Couleur pour les messages et notifications informatifs',
+    info: 'Info',
 
-    success: 'Couleur relative aux Succès',
-    successHelpText: 'Couleur pour les messages et notifications en succès',
+    success: 'Succès/positif',
 
-    warning: 'Couleur relative aux avertissements',
-    warningHelpText: 'Couleur des messages d\'avertissement et des notifications',
+    warning: 'Avertissement',
 
-    background: 'Couleur de fond principale',
+    background: 'Arrière-plan principal',
 
-    activeColor: 'Couleur active principale',
+    activeColor: 'Actif principal',
     activeColorHelpText: 'Couleur principale des textes et des icônes',
   },
   fontSize: {
