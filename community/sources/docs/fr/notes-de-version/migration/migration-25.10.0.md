@@ -372,6 +372,12 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     echo "timescaledb.telemetry_level=off" >> /var/lib/pgsql/17/data/postgresql.conf
     ```
 
+    Définir la zone de temps de la base de donnée à `UTC`: (Nécessaire pour le bon fonctionnement de Canopsis)
+    ```sh
+    sed -i "s/^#\?timezone.*/timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+    sed -i "s/^#\?log_timezone.*/log_timezone = 'UTC'/" /var/lib/pgsql/17/data/postgresql.conf
+    ```
+
     La réactiver au boot et on vérifie son bon démarrage
     ```sh
     systemctl enable --now postgresql-17.service
