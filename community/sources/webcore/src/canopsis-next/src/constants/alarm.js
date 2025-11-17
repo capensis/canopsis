@@ -314,6 +314,16 @@ export const ALARM_STATUSES_ICONS = {
   [ALARM_STATUSES.unknown]: '$vuetify.icons.question_mark',
 };
 
+export const ALARM_STATUSES_CLASSES = {
+  [ALARM_STATUSES.closed]: 'status-closed',
+  [ALARM_STATUSES.ongoing]: 'status-ongoing',
+  [ALARM_STATUSES.stealthy]: 'status-stealthy',
+  [ALARM_STATUSES.flapping]: 'status-flapping',
+  [ALARM_STATUSES.cancelled]: 'status-cancelled',
+  [ALARM_STATUSES.noEvents]: 'status-noEvents',
+  [ALARM_STATUSES.unknown]: 'status-unknown',
+};
+
 export const ALARM_STATUSES_RESOLVED_ICONS = {
   [ALARM_STATUSES.closed]: 'check_circle',
   [ALARM_STATUSES.cancelled]: 'cancel',
