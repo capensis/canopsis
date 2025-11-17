@@ -2,32 +2,29 @@
   <entity-network-graph
     ref="entityNetworkGraphElement"
     :options="options"
-    :tooltip-options="tooltipOptions"
     :ready="ready"
     :loading="isLoading"
     :color-indicator="colorIndicator"
     :meta-by-entity-id="metaByEntityId"
     :has-children="hasChildren"
-    :on-badge-click="toggleDependencies"
+    :on-badge-click="toggleChildren"
     :on-show-more-click="showMore"
   />
 </template>
 
 <script>
+import { omit, isEmpty } from 'lodash';
 import { ref, computed, watch, onMounted } from 'vue';
-import { omit } from 'lodash';
 
 import { PAGINATION_LIMIT, VUETIFY_ANIMATION_DELAY } from '@/config';
 import {
   ROOT_CAUSE_DIAGRAM_OPTIONS,
-  ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
-  ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
-  COLOR_INDICATOR_TYPES,
+  ENTITY_UPSTREAM_GRAPH_LAYOUT_OPTIONS,
+  COLOR_INDICATOR_TYPES_WITH_STATUS,
   ENTITY_FIELDS,
   SORT_ORDERS,
 } from '@/constants';
 
-import { useI18n } from '@/hooks/i18n';
 import { useEntityNetworkGraph } from '@/hooks/entity-network-graph';
 import { useService } from '@/hooks/store/modules/service';
 
@@ -40,70 +37,95 @@ export default {
       type: Object,
       required: true,
     },
-    stateSetting: {
-      type: Object,
-      required: false,
-    },
     pending: {
       type: Boolean,
       default: false,
     },
-    colorIndicator: {
-      type: String,
-      default: COLOR_INDICATOR_TYPES.state,
-    },
   },
   setup(props) {
-    const { tc } = useI18n();
+    const colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.status;
 
     const entityNetworkGraphElement = ref(null);
     const ready = ref(false);
     const pendingEntities = ref(true);
 
-    const { fetchServiceDependenciesWithoutStore } = useService();
+    const { fetchEntityUpstreamWithoutStore, fetchEntityDownstreamsWithoutStore } = useService();
 
-    const fetchHandler = async (id, page) => {
-      const result = await fetchServiceDependenciesWithoutStore({
-        id,
-        params: {
-          page,
-          limit: PAGINATION_LIMIT,
-          with_flags: true,
-          define_state: true,
-          sort_by: ENTITY_FIELDS.impactState,
-          sort: SORT_ORDERS.desc.toLowerCase(),
-        },
-      });
+    const fetchParent = async (id) => {
+      const parent = await fetchEntityUpstreamWithoutStore({ id });
 
-      return result;
+      return {
+        data: isEmpty(parent) ? [] : [{ ...parent, isParent: true }],
+      };
     };
 
-    const isEvent = computed(() => props.stateSetting && !props.stateSetting?.title);
+    const fetchChildren = async (id, page) => fetchEntityDownstreamsWithoutStore({
+      id,
+      params: {
+        page,
+        limit: PAGINATION_LIMIT,
+        with_flags: true,
+        define_state: true,
+        sort_by: ENTITY_FIELDS.impactState,
+        sort: SORT_ORDERS.desc.toLowerCase(),
+      },
+    });
 
     const {
       metaByEntityId,
-      entitiesElements,
+      entitiesElements: rawEntitiesElements,
       toggleChildren: toggleChildrenFromHook,
       initRelations: initRelationsFromHook,
       showMore: showMoreFromHook,
       resetEntities,
     } = useEntityNetworkGraph({
       entity: props.entity,
-      withEvents: true,
-      isEvent,
-      fetchHandler,
-    });
+      fetchHandler: async (id, page, entity) => {
+        const responses = [];
 
-    const tooltipOptions = computed(() => ({
-      offsetY: (ROOT_CAUSE_DIAGRAM_OPTIONS.nodeSize / 2) + ROOT_CAUSE_DIAGRAM_TOOLTIP_OFFSET,
-      getContent: ({ isEvents, entity, root }) => {
-        if (isEvents || root) {
-          return '';
+        if (id === props.entity._id) {
+          responses.push(fetchParent(id, page), fetchChildren(id, page));
+        } else {
+          responses.push(entity.isParent ? fetchParent(id) : fetchChildren(id, page));
         }
 
-        return entity.state_setting?.title || tc('common.event', 2);
+        const [
+          { data: parentData } = { data: [] },
+          { data: childrenData, meta: childrenMeta } = { data: [], meta: {} },
+        ] = await Promise.all(responses);
+
+        return {
+          data: [...parentData, ...childrenData],
+          meta: childrenMeta,
+        };
       },
-    }));
+    });
+
+    const entitiesElements = computed(() => {
+      const elements = rawEntitiesElements.value;
+
+      return elements.map((element) => {
+        if (element.group === 'edges' && element.data) {
+          const sourceEntity = elements.find(e => e.group === 'nodes' && e.data?.id === element.data.source);
+          const targetEntity = elements.find(e => e.group === 'nodes' && e.data?.id === element.data.target);
+          const { isParent: sourceIsParent } = sourceEntity?.data?.entity ?? {};
+          const { isParent: targetIsParent } = targetEntity?.data?.entity ?? {};
+
+          if ((sourceIsParent && !targetIsParent) || (sourceIsParent && targetIsParent)) {
+            return {
+              ...element,
+              data: {
+                ...element.data,
+                source: element.data.target,
+                target: element.data.source,
+              },
+            };
+          }
+        }
+
+        return element;
+      });
+    });
 
     const isLoading = computed(() => props.pending || pendingEntities.value);
 
@@ -125,18 +147,15 @@ export default {
         },
       },
       {
-        selector: 'node[isEvents]',
-        style: {
-          width: 30,
-          height: 30,
-        },
-      },
-      {
         selector: 'edge',
         style: {
           width: 2,
           'curve-style': 'bezier',
-          'line-color': 'silver',
+          'line-color': 'black',
+          'target-arrow-shape': 'vee',
+          'target-arrow-color': 'black',
+          'arrow-scale': 1.5,
+          'target-distance-from-node': 20,
         },
       },
     ]);
@@ -151,7 +170,7 @@ export default {
 
       if (entitiesElements.value.length) {
         opts.layout = {
-          ...ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS,
+          ...ENTITY_UPSTREAM_GRAPH_LAYOUT_OPTIONS,
         };
       }
 
@@ -159,15 +178,15 @@ export default {
     });
 
     /**
-     * Check if entity has children based on state settings and dependencies count
+     * Check if entity has children based on upstream/downstream count
      *
      * @param {object} entity - Entity object
      * @returns {boolean} True if entity has children
      */
-    const hasChildren = (entity = {}) => entity.state_setting?.title && entity.state_depends_count > 0;
+    const hasChildren = (entity = {}) => (entity.isParent && entity.upstream) || entity.downstream_count > 0;
 
     /**
-     * Toggle children visibility and reset graph layout
+     * Handle toggling children visibility and reset graph layout
      *
      * @param {object} target - Target node object
      */
@@ -211,17 +230,13 @@ export default {
     onMounted(async () => {
       pendingEntities.value = true;
 
-      if (!isEvent.value) {
-        await initRelations(props.entity._id);
-      } else {
-        entityNetworkGraphElement.value.resetLayout();
-      }
+      await initRelations(props.entity._id);
 
       /**
        * @desc: We are waiting modal showing animation
        */
       setTimeout(() => {
-        entityNetworkGraphElement.value.fit();
+        entityNetworkGraphElement.value.fit(20);
         ready.value = true;
       }, VUETIFY_ANIMATION_DELAY);
 
@@ -229,12 +244,12 @@ export default {
     });
 
     return {
+      colorIndicator,
       entityNetworkGraphElement,
       metaByEntityId,
       ready,
       isLoading,
       options,
-      tooltipOptions,
       toggleChildren,
       showMore,
       hasChildren,

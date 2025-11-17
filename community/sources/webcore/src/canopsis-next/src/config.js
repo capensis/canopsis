@@ -188,6 +188,8 @@ export const API_ROUTES = {
   serviceDependencies: '/api/v4/entityservice-dependencies',
   serviceImpacts: '/api/v4/entityservice-impacts',
   serviceAlarms: '/api/v4/entityservice-alarms',
+  entityUpstream: '/api/v4/entity-upstream',
+  entityDownstreams: '/api/v4/entity-downstreams',
   entityInfosDictionaryKeys: '/api/v4/entity-infos-dictionary/keys',
   entityInfosProperties: '/api/v4/entity-infos-properties',
   bulkEntityInfosProperties: '/api/v4/bulk/entity-infos-properties',
