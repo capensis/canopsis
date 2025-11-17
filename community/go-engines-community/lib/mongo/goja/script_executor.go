@@ -2,6 +2,7 @@ package goja
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"regexp"
@@ -60,6 +61,11 @@ func (e *scriptExecutor) Exec(ctx context.Context, file string) error {
 
 	_, err = vm.RunProgram(prg)
 	if err != nil {
+		var ex *goja.Exception
+		if errors.As(err, &ex) {
+			return fmt.Errorf("cannot execute js %q: %w\nstack: %s", file, err, ex.String())
+		}
+
 		return fmt.Errorf("cannot execute js %q: %w", file, err)
 	}
 
