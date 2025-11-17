@@ -72,7 +72,11 @@ export default {
 
       if (isFormValid) {
         if (this.config.action) {
-          await this.config.action(formToTheme(this.form));
+          const result = formToTheme(this.form); // TODO: revert
+
+          result.colors.table.hover_row = true;
+          result.colors.table.shift_row = true;
+          await this.config.action(result);
         }
 
         this.$modals.hide();

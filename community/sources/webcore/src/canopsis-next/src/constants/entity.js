@@ -264,6 +264,12 @@ export const COLOR_INDICATOR_TYPES = {
   impactState: 'impact_state',
 };
 
+export const COLOR_INDICATOR_TYPES_WITH_STATUS = {
+  ...COLOR_INDICATOR_TYPES,
+
+  status: 'status',
+};
+
 export const STATE_SETTING_ENTITY_TYPES = [
   ENTITY_TYPES.component,
   ENTITY_TYPES.service,
@@ -513,9 +519,18 @@ export const ROOT_CAUSE_DIAGRAM_LAYOUT_OPTIONS = {
   name: 'dagre',
   animate: 'end',
   fit: true,
-  rankDir: 'LR',
+  rankDir: 'RL',
   padding: 40,
   minLen: 5,
+};
+
+export const ENTITY_UPSTREAM_GRAPH_LAYOUT_OPTIONS = {
+  name: 'dagre',
+  animate: 'end',
+  fit: true,
+  rankDir: 'BT',
+  padding: 40,
+  minLen: 4,
 };
 
 export const ENTITY_TYPES_ICONS = {
@@ -523,6 +538,11 @@ export const ENTITY_TYPES_ICONS = {
   [ENTITY_TYPES.connector]: 'perm_identity',
   [ENTITY_TYPES.resource]: 'perm_identity',
   [ENTITY_TYPES.service]: '$vuetify.icons.engineering',
+};
+
+export const ENTITY_NETWORK_DIRECTIONS = {
+  children: 'children',
+  parents: 'parents',
 };
 
 export const ENTITY_TYPES_ICONS_FOR_CYTOSCAPE = {

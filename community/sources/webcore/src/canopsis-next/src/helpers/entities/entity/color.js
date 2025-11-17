@@ -2,10 +2,11 @@ import { isNumber } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
 import {
-  COLOR_INDICATOR_TYPES,
+  COLOR_INDICATOR_TYPES_WITH_STATUS,
   EVENT_ENTITY_COLORS_BY_TYPE,
   PBEHAVIOR_CANONICAL_TYPES,
   ALARM_STATES_CLASSES,
+  ALARM_STATUSES_CLASSES,
 } from '@/constants';
 
 import { getAlarmImpactStateColor, getAlarmStateColor, getAlarmImpactStateGroupedColorIndex } from '../alarm/color';
@@ -29,24 +30,29 @@ const isEntityPauseState = (pbehaviorInfo, isGrey) => (
  * Get color class for a entity by colorIndicator and isGrey parameters
  *
  * @param {Service | Entity | {}} [entity = {}]
- * @param {string} [colorIndicator = COLOR_INDICATOR_TYPES.state]
+ * @param {string} [colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state]
  * @returns {string|*}
  */
 export const getEntityColorClass = (
   {
+    status,
     state,
     is_grey: isGrey,
     pbehavior_info: pbehaviorInfo,
     impact_state: impactState,
   } = {},
-  colorIndicator = COLOR_INDICATOR_TYPES.state,
+  colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state,
 ) => {
   if (isEntityPauseState(pbehaviorInfo, isGrey)) {
     return 'state-pause';
   }
 
-  if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
+  if (colorIndicator === COLOR_INDICATOR_TYPES_WITH_STATUS.state) {
     return ALARM_STATES_CLASSES[state?.val] ?? ALARM_STATES_CLASSES[state];
+  }
+
+  if (colorIndicator === COLOR_INDICATOR_TYPES_WITH_STATUS.status) {
+    return ALARM_STATUSES_CLASSES[status?.val] ?? ALARM_STATUSES_CLASSES[status];
   }
 
   return `impact-state-${getAlarmImpactStateGroupedColorIndex(impactState)}`;
@@ -66,13 +72,13 @@ export const getEntityColor = (
     pbehavior_info: pbehaviorInfo,
     impact_state: impactState,
   } = {},
-  colorIndicator = COLOR_INDICATOR_TYPES.state,
+  colorIndicator = COLOR_INDICATOR_TYPES_WITH_STATUS.state,
 ) => {
   if (isEntityPauseState(pbehaviorInfo, isGrey)) {
     return CSS_COLORS_VARS.state.pause;
   }
 
-  if (colorIndicator === COLOR_INDICATOR_TYPES.state) {
+  if (colorIndicator === COLOR_INDICATOR_TYPES_WITH_STATUS.state) {
     return getAlarmStateColor(isNumber(state) ? state : state?.val);
   }
 
