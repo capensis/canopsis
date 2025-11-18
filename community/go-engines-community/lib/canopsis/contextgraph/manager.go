@@ -61,7 +61,7 @@ func (m *manager) InheritComponentFields(resource, component *types.Entity, comm
 		matched := true
 
 		if component.StateInfo.InheritedPattern != nil {
-			matched, err = match.MatchEntityPattern(*component.StateInfo.InheritedPattern, resource)
+			matched, err = match.MatchEntityPattern(component.StateInfo.InheritedPattern, resource)
 			if err != nil {
 				return err
 			}
@@ -809,7 +809,7 @@ func (m *manager) ProcessComponentDependencies(ctx context.Context, component *t
 
 		if component.StateInfo != nil {
 			if component.StateInfo.InheritedPattern != nil {
-				matched, err = match.MatchEntityPattern(*component.StateInfo.InheritedPattern, &resource)
+				matched, err = match.MatchEntityPattern(component.StateInfo.InheritedPattern, &resource)
 				if err != nil {
 					return nil, err
 				}

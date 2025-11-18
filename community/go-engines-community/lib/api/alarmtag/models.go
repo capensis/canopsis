@@ -20,16 +20,16 @@ type ListLabelsRequest struct {
 }
 
 type CreateRequest struct {
-	Value  string `json:"value" binding:"required,max=255"`
-	Color  string `json:"color" binding:"required,iscolor"`
-	Author string `json:"author" swaggerignore:"true"`
-
-	patternfields.AlarmRequest
-	patternfields.EntityRequest
+	EditRequest
+	Value string `json:"value" binding:"required,max=255"`
 }
 
 type UpdateRequest struct {
-	ID     string `json:"-"`
+	EditRequest
+	ID string `json:"-"`
+}
+
+type EditRequest struct {
 	Color  string `json:"color" binding:"required,iscolor"`
 	Author string `json:"author" swaggerignore:"true"`
 

@@ -67,6 +67,7 @@ func NewStore(
 			dbClient.Collection(libmongo.KpiFilterMongoCollection),
 			dbClient.Collection(libmongo.MetaAlarmRulesMongoCollection),
 			dbClient.Collection(libmongo.ScenarioCollection),
+			dbClient.Collection(libmongo.StateSettingsMongoCollection),
 		},
 		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
@@ -258,6 +259,11 @@ func (s *store) updateAliasInLinkedCollections(ctx context.Context, id, oldAlias
 			update = bson.M{
 				"actions.$[].entity_pattern.$[].$[i].alias": newAlias,
 			}
+		case libmongo.StateSettingsMongoCollection:
+			update = bson.M{
+				"entity_pattern.$[].$[i].alias":           newAlias,
+				"inherited_entity_pattern.$[].$[i].alias": newAlias,
+			}
 		default:
 			update = bson.M{
 				"entity_pattern.$[].$[i].alias": newAlias,
@@ -291,6 +297,11 @@ func (s *store) removeAliasFromLinkedCollections(ctx context.Context, id, oldAli
 		case libmongo.ScenarioCollection:
 			unset = bson.M{
 				"actions.$[].entity_pattern.$[].$[i].alias": "",
+			}
+		case libmongo.StateSettingsMongoCollection:
+			unset = bson.M{
+				"entity_pattern.$[].$[i].alias":           "",
+				"inherited_entity_pattern.$[].$[i].alias": "",
 			}
 		default:
 			unset = bson.M{

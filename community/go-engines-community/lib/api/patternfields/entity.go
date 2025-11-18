@@ -1,7 +1,6 @@
 package patternfields
 
 import (
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/correlation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -14,9 +13,6 @@ type EntityRequest struct {
 	CorporateEntityPattern string         `json:"corporate_entity_pattern"`
 
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
-	Aliases          []string                  `json:"-"`
-	IsPrivate        bool                      `json:"-"`
-	User             string                    `json:"-"`
 }
 
 func (r EntityRequest) ToModel() savedpattern.EntityPatternFields {
@@ -33,53 +29,19 @@ func (r EntityRequest) ToModel() savedpattern.EntityPatternFields {
 	}
 }
 
-func (r EntityRequest) ToModelWithoutFields(forbiddenFields []string) savedpattern.EntityPatternFields {
+func (r EntityRequest) ToModelWithoutFields(collectionName string) savedpattern.EntityPatternFields {
 	if r.CorporatePattern.ID == "" {
 		return savedpattern.EntityPatternFields{
 			EntityPattern: r.EntityPattern,
 		}
 	}
 
+	forbiddenFields := GetForbiddenFieldsInEntityPattern(collectionName)
+
 	return savedpattern.EntityPatternFields{
 		EntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
 		CorporateEntityPattern:      r.CorporatePattern.ID,
 		CorporateEntityPatternTitle: r.CorporatePattern.Title,
-	}
-}
-
-type TotalEntityRequest struct {
-	TotalEntityPattern          pattern.Entity `json:"total_entity_pattern" binding:"entity_pattern"`
-	CorporateTotalEntityPattern string         `json:"corporate_total_entity_pattern"`
-
-	CorporatePattern savedpattern.SavedPattern `json:"-"`
-	Aliases          []string                  `json:"-"`
-}
-
-func (r TotalEntityRequest) ToModel() correlation.TotalEntityPatternFields {
-	if r.CorporatePattern.ID == "" {
-		return correlation.TotalEntityPatternFields{
-			TotalEntityPattern: r.TotalEntityPattern,
-		}
-	}
-
-	return correlation.TotalEntityPatternFields{
-		TotalEntityPattern:               r.CorporatePattern.EntityPattern,
-		CorporateTotalEntityPattern:      r.CorporatePattern.ID,
-		CorporateTotalEntityPatternTitle: r.CorporatePattern.Title,
-	}
-}
-
-func (r TotalEntityRequest) ToModelWithoutFields(forbiddenFields []string) correlation.TotalEntityPatternFields {
-	if r.CorporatePattern.ID == "" {
-		return correlation.TotalEntityPatternFields{
-			TotalEntityPattern: r.TotalEntityPattern,
-		}
-	}
-
-	return correlation.TotalEntityPatternFields{
-		TotalEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
-		CorporateTotalEntityPattern:      r.CorporatePattern.ID,
-		CorporateTotalEntityPatternTitle: r.CorporatePattern.Title,
 	}
 }
 
@@ -116,4 +78,17 @@ func GetForbiddenFieldsInEntityPattern(collection string) []string {
 	default:
 		return nil
 	}
+}
+
+func GetAliases(p pattern.Entity) []string {
+	aliases := make([]string, 0)
+	for _, g := range p {
+		for _, c := range g {
+			if c.Alias != "" {
+				aliases = append(aliases, c.Alias)
+			}
+		}
+	}
+
+	return aliases
 }

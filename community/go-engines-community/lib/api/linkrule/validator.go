@@ -46,7 +46,15 @@ func (v *Validator) ValidateEditRequest(sl validator.StructLevel) {
 		}
 	case liblink.TypeEntity:
 		if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" {
-			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "AlarmPattern")
+			sl.ReportError(r.EntityPattern, "EntityPattern", "EntityPattern", "required", "")
+		}
+
+		if len(r.AlarmPattern) > 0 {
+			sl.ReportError(r.AlarmPattern, "AlarmPattern", "AlarmPattern", "excluded", "")
+		}
+
+		if r.CorporateAlarmPattern != "" {
+			sl.ReportError(r.CorporateAlarmPattern, "CorporateAlarmPattern", "CorporateAlarmPattern", "excluded", "")
 		}
 	}
 

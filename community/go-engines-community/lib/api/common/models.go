@@ -194,15 +194,6 @@ func (v ValidationError) Error() string {
 	return b.String()
 }
 
-func (v ValidationError) AddFieldPrefix(p string) ValidationError {
-	errMsgs := make(map[string]string, len(v.errMsgs))
-	for f, m := range v.errMsgs {
-		errMsgs[p+"."+f] = m
-	}
-
-	return ValidationError{errMsgs: errMsgs}
-}
-
 func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
 	return ValidationErrorResponse{
 		Errors: v.errMsgs,
