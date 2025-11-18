@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import { isEmpty, uniq } from 'lodash';
 import { ref, computed, unref } from 'vue';
 
 import { normalizeTreeOfDependenciesMapEntities, getEntityChildrenElements } from '@/helpers/entities/map/list';
@@ -205,7 +205,7 @@ export const useEntityNetworkGraph = ({
         ...entitiesById.value,
         [id]: {
           ...entitiesById.value[id],
-          [unwrappedChildrenKey]: [...currentChildren, ...childrenIds],
+          [unwrappedChildrenKey]: uniq([...currentChildren, ...childrenIds]),
         },
       };
     } finally {
