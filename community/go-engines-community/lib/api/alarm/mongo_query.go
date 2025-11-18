@@ -17,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
@@ -25,6 +26,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/expression/parser"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -752,14 +754,26 @@ func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest)
 			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 		}
 
-		transformedEntityPattern, err := q.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
-			EntityPattern: entityPattern,
-		})
+		aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(entityPattern))
 		if err != nil {
 			return err
 		}
 
-		err = q.handleEntityPattern(transformedEntityPattern.EntityPattern)
+		var valErrs validator.ValidationErrors
+		entityPattern, _, valErrs = q.transformer.ApplyAliases(entityPattern, aliases)
+		if len(valErrs) > 0 {
+			// use anonymous struct to correctly transform validation error namespace
+			// because r.EntityPattern has string type
+			validatedStruct := struct {
+				EntityPattern pattern.Entity `json:"entity_pattern"`
+			}{
+				EntityPattern: entityPattern,
+			}
+
+			return validation.NewError(valErrs, validatedStruct)
+		}
+
+		err = q.handleEntityPattern(entityPattern)
 		if err != nil {
 			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
 		}

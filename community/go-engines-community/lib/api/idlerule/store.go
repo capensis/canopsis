@@ -212,26 +212,10 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 }
 
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *idlerule.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r.EntityRequest)
-	if err != nil {
-		return err
-	}
+	var err error
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.collection.Name())
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, r.AlarmRequest)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInEntityPattern(mongo.IdleRuleMongoCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
-		patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.IdleRuleMongoCollection),
-	)
-
-	return nil
+	return err
 }
 
 func transformRequestToModel(r EditRequest) idlerule.Rule {

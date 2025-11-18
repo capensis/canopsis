@@ -30,10 +30,10 @@ type RuleUpdatedMessage struct {
 	ID      string
 	Updated datetime.CpsTime
 
-	OldPattern *pattern.Entity // nil if a state setting is new
+	OldPattern pattern.Entity // nil if a state setting is new
 	OldType    string
 
-	NewPattern *pattern.Entity
+	NewPattern pattern.Entity
 	NewType    string
 }
 
@@ -151,14 +151,14 @@ func (l *listener) processRules(ctx context.Context, updatedRules map[string]Rul
 					}
 
 					if msg.NewPattern != nil {
-						err := l.processPattern(ctx, *msg.NewPattern, msg.NewType)
+						err := l.processPattern(ctx, msg.NewPattern, msg.NewType)
 						if err != nil {
 							return err
 						}
 					}
 
 					if msg.OldPattern != nil {
-						err := l.processPattern(ctx, *msg.OldPattern, msg.OldType)
+						err := l.processPattern(ctx, msg.OldPattern, msg.OldType)
 						if err != nil {
 							return err
 						}
