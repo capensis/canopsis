@@ -20,6 +20,7 @@ import {
   computed,
   ref,
   nextTick,
+  watch,
   onMounted,
   onBeforeUnmount,
 } from 'vue';
@@ -219,6 +220,8 @@ export default {
     };
 
     const fit = (padding = 0) => networkGraphElement.value.$cy.fit(padding);
+
+    watch(() => props.options.elements, () => resetLayout());
 
     onMounted(() => networkGraphElement.value.$cy.on('tap', tapHandler));
     onBeforeUnmount(() => networkGraphElement.value.$cy.off('tap', tapHandler));
