@@ -540,11 +540,6 @@ export const ENTITY_TYPES_ICONS = {
   [ENTITY_TYPES.service]: '$vuetify.icons.engineering',
 };
 
-export const ENTITY_NETWORK_DIRECTIONS = {
-  children: 'children',
-  parents: 'parents',
-};
-
 export const ENTITY_TYPES_ICONS_FOR_CYTOSCAPE = {
   ...ENTITY_TYPES_ICONS,
 

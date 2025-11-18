@@ -25,7 +25,7 @@ import {
   SORT_ORDERS,
 } from '@/constants';
 
-import { useEntityNetworkGraph } from '@/hooks/entity-network-graph';
+import { useEntityNetworkGraph } from '@/hooks/charts/entity-network-graph';
 import { useService } from '@/hooks/store/modules/service';
 
 import EntityNetworkGraph from '@/components/common/chart/entity-network-graph.vue';
@@ -73,11 +73,12 @@ export default {
 
     const {
       metaByEntityId,
-      entitiesElements: rawEntitiesElements,
-      toggleChildren: toggleChildrenFromHook,
-      initRelations: initRelationsFromHook,
-      showMore: showMoreFromHook,
+      toggleChildren,
+      initRelations,
+      showMore,
       resetEntities,
+
+      entitiesElements: rawEntitiesElements,
     } = useEntityNetworkGraph({
       entity: props.entity,
       fetchHandler: async (id, page, entity) => {
@@ -192,47 +193,7 @@ export default {
      */
     const hasChildren = (entity = {}) => (entity.isParent && entity.upstream) || entity.downstream_count > 0;
 
-    /**
-     * Handle toggling children visibility and reset graph layout
-     *
-     * @param {object} target - Target node object
-     */
-    const toggleChildren = async (target) => {
-      await toggleChildrenFromHook(target);
-
-      entityNetworkGraphElement.value.resetLayout();
-    };
-
-    /**
-     * Initialize entity relations and reset graph layout
-     *
-     * @param {object} target - Target node object
-     */
-    const initRelations = async (target) => {
-      await initRelationsFromHook(target);
-
-      entityNetworkGraphElement.value.resetLayout();
-    };
-
-    /**
-     * Show more items and reset graph layout
-     *
-     * @param {object} target - Target node object
-     */
-    const showMore = async (target) => {
-      await showMoreFromHook(target);
-
-      entityNetworkGraphElement.value.resetLayout();
-    };
-
-    watch(() => props.entity, () => {
-      resetEntities(props.entity);
-
-      /**
-       * TODO: investigate this behavior in the future
-       */
-      setTimeout(() => entityNetworkGraphElement.value.resetLayout(), 1000);
-    });
+    watch(() => props.entity, entity => resetEntities(entity));
 
     onMounted(async () => {
       pendingEntities.value = true;
