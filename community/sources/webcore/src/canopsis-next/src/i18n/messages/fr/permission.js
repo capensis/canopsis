@@ -625,6 +625,18 @@ export default {
       name: 'Statut du bilan de santé',
       description: 'Statut du bilan de santé dans l\'entête  pour les utilisateurs disposant de cette autorisation',
     },
+    [USERS_PERMISSIONS.technical.icon]: {
+      name: 'Paramètres - Icônes',
+      description: 'Cette autorisation définit l\'accès aux paramètres des icônes',
+    },
+    [USERS_PERMISSIONS.technical.stateSetting]: {
+      name: 'Paramètres de calcul d\'état/sévérité',
+      description: 'Cette autorisation définit l\'accès aux paramètres de calcul d\'état/sévérité',
+    },
+    [USERS_PERMISSIONS.technical.storageSettings]: {
+      name: 'Paramètres de stockage',
+      description: 'Cette autorisation définit l\'accès aux paramètres de stockage',
+    },
     [USERS_PERMISSIONS.technical.kpi]: {
       name: 'KPI',
       description: 'Cette autorisation définit l\'accès aux métriques KPI',
@@ -634,7 +646,7 @@ export default {
       description: 'Cette autorisation définit l\'accès aux filtres pour les métriques KPI',
     },
     [USERS_PERMISSIONS.technical.kpiRatingSettings]: {
-      name: 'KPI : rating',
+      name: 'KPI : évaluation',
       description: 'Cette autorisation définit l\'accès aux paramètres d\'évaluation des KPI',
     },
     [USERS_PERMISSIONS.technical.kpiCollectionSettings]: {
@@ -748,6 +760,10 @@ export default {
     [USERS_PERMISSIONS.api.general.alarmUpdate]: {
       name: 'Mettre à jour les alarmes',
       description: 'Accès à la route API pour mettre à jour les alarmes',
+    },
+    [USERS_PERMISSIONS.api.general.alarmTag]: {
+      name: 'Gérer les Tags d\'alarmes',
+      description: 'Accès à la route API pour CRUD les tags des alarmes',
     },
     [USERS_PERMISSIONS.api.general.entity]: {
       name: 'Entité',
@@ -876,6 +892,14 @@ export default {
     [USERS_PERMISSIONS.api.general.theme]: {
       name: 'Thèmes graphiques',
       description: 'Accès à l\'API route vers les thèmes',
+    },
+    [USERS_PERMISSIONS.api.general.icon]: {
+      name: 'Gestion des icônes',
+      description: 'Accès à la route API pour gérer les icônes',
+    },
+    [USERS_PERMISSIONS.api.general.view]: {
+      name: 'Gestion des vues',
+      description: 'Accès à la route API pour gérer les vues',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {
