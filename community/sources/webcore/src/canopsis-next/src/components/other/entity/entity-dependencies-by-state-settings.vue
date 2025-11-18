@@ -28,7 +28,7 @@ import {
 } from '@/constants';
 
 import { useI18n } from '@/hooks/i18n';
-import { useEntityNetworkGraph } from '@/hooks/entity-network-graph';
+import { useEntityNetworkGraph } from '@/hooks/charts/entity-network-graph';
 import { useService } from '@/hooks/store/modules/service';
 
 import EntityNetworkGraph from '@/components/common/chart/entity-network-graph.vue';
@@ -83,9 +83,9 @@ export default {
     const {
       metaByEntityId,
       entitiesElements,
-      toggleChildren: toggleChildrenFromHook,
-      initRelations: initRelationsFromHook,
-      showMore: showMoreFromHook,
+      toggleChildren,
+      initRelations,
+      showMore,
       resetEntities,
     } = useEntityNetworkGraph({
       entity: props.entity,
@@ -166,47 +166,7 @@ export default {
      */
     const hasChildren = (entity = {}) => entity.state_setting?.title && entity.state_depends_count > 0;
 
-    /**
-     * Toggle children visibility and reset graph layout
-     *
-     * @param {object} target - Target node object
-     */
-    const toggleChildren = async (target) => {
-      await toggleChildrenFromHook(target);
-
-      entityNetworkGraphElement.value.resetLayout();
-    };
-
-    /**
-     * Initialize entity relations and reset graph layout
-     *
-     * @param {object} target - Target node object
-     */
-    const initRelations = async (target) => {
-      await initRelationsFromHook(target);
-
-      entityNetworkGraphElement.value.resetLayout();
-    };
-
-    /**
-     * Show more items and reset graph layout
-     *
-     * @param {object} target - Target node object
-     */
-    const showMore = async (target) => {
-      await showMoreFromHook(target);
-
-      entityNetworkGraphElement.value.resetLayout();
-    };
-
-    watch(() => props.entity, () => {
-      resetEntities(props.entity);
-
-      /**
-       * TODO: investigate this behavior in the future
-       */
-      setTimeout(() => entityNetworkGraphElement.value.resetLayout(), 1000);
-    });
+    watch(() => props.entity, () => resetEntities(props.entity));
 
     onMounted(async () => {
       pendingEntities.value = true;
