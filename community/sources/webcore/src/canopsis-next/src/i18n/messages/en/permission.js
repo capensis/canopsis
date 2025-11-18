@@ -625,6 +625,18 @@ export default {
       name: 'Healthcheck status',
       description: 'The system healthcheck status is shown in the header for users with this permission',
     },
+    [USERS_PERMISSIONS.technical.icon]: {
+      name: 'Parameters - Icons',
+      description: 'This permission defines the access to the Icons settings',
+    },
+    [USERS_PERMISSIONS.technical.stateSetting]: {
+      name: 'State settings',
+      description: 'This permission defines the access to the State settings',
+    },
+    [USERS_PERMISSIONS.technical.storageSettings]: {
+      name: 'Storage settings',
+      description: 'This permission defines the access to the Storage settings',
+    },
     [USERS_PERMISSIONS.technical.kpi]: {
       name: 'KPI',
       description: 'This permission defines the access to KPI metrics',
@@ -748,6 +760,10 @@ export default {
     [USERS_PERMISSIONS.api.general.alarmUpdate]: {
       name: 'Update alarms',
       description: 'Access to API route to update alarms',
+    },
+    [USERS_PERMISSIONS.api.general.alarmTag]: {
+      name: 'Alarm tags',
+      description: 'Access to API route to CRUD alarm tags',
     },
     [USERS_PERMISSIONS.api.general.entity]: {
       name: 'Entity',
@@ -876,6 +892,14 @@ export default {
     [USERS_PERMISSIONS.api.general.theme]: {
       name: 'Themes',
       description: 'Access to API route to the themes',
+    },
+    [USERS_PERMISSIONS.api.general.icon]: {
+      name: 'Create icons',
+      description: 'Access to API route to create icons',
+    },
+    [USERS_PERMISSIONS.api.general.view]: {
+      name: 'Views',
+      description: 'Access to API route to CRUD views',
     },
 
     [USERS_PERMISSIONS.api.rules.action]: {
