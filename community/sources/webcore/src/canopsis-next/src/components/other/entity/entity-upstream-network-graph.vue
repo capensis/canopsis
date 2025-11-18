@@ -81,18 +81,25 @@ export default {
     } = useEntityNetworkGraph({
       entity: props.entity,
       fetchHandler: async (id, page, entity) => {
-        const responses = [];
+        let parentPromise;
+        let childrenPromise;
 
         if (id === props.entity._id) {
-          responses.push(fetchParent(id, page), fetchChildren(id, page));
+          if (page === 1) {
+            parentPromise = fetchParent(id);
+          }
+
+          childrenPromise = fetchChildren(id, page);
+        } else if (entity.isParent) {
+          parentPromise = fetchParent(id);
         } else {
-          responses.push(entity.isParent ? fetchParent(id) : fetchChildren(id, page));
+          childrenPromise = fetchChildren(id, page);
         }
 
         const [
           { data: parentData } = { data: [] },
           { data: childrenData, meta: childrenMeta } = { data: [], meta: {} },
-        ] = await Promise.all(responses);
+        ] = await Promise.all([parentPromise, childrenPromise]);
 
         return {
           data: [...parentData, ...childrenData],
@@ -151,11 +158,11 @@ export default {
         style: {
           width: 2,
           'curve-style': 'bezier',
-          'line-color': 'black',
+          'line-color': 'silver',
           'target-arrow-shape': 'vee',
-          'target-arrow-color': 'black',
+          'target-arrow-color': 'silver',
           'arrow-scale': 1.5,
-          'target-distance-from-node': 20,
+          'target-distance-from-node': 30,
         },
       },
     ]);
