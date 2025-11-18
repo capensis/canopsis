@@ -12,8 +12,6 @@ type WeatherServiceRequest struct {
 	CorporateWeatherServicePattern string                        `json:"corporate_weather_service_pattern"`
 
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
-	IsPrivate        bool                      `json:"-"`
-	User             string                    `json:"-"`
 }
 
 func (r WeatherServiceRequest) ToModel() savedpattern.WeatherServicePatternFields {

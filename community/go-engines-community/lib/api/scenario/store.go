@@ -22,12 +22,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/webhook"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -61,7 +62,7 @@ type store struct {
 	entityInfosPropCollection mongo.DbCollection
 	transformer               patternfields.Transformer
 	authorProvider            author.Provider
-	tplValidator              validator.Validator
+	tplValidator              tplvalidator.Validator
 	tplExecutor               libtemplate.Executor
 	tplConfigProvider         config.TemplateConfigProvider
 	encoder                   encoding.Encoder
@@ -81,7 +82,7 @@ func NewStore(
 	db mongo.DbClient,
 	authorProvider author.Provider,
 	transformer patternfields.Transformer,
-	tplValidator validator.Validator,
+	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
 	encoder encoding.Encoder,
@@ -229,7 +230,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
 
-		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.Actions)
+		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.EditRequest)
 		if err != nil {
 			return err
 		}
@@ -270,7 +271,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
 
-		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.Actions)
+		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.EditRequest)
 		if err != nil {
 			return err
 		}
@@ -418,58 +419,74 @@ func (s *store) transformEditRequestToModel(r EditRequest) libaction.Scenario {
 	}
 }
 
-func (s *store) transformActionRequestToModel(ctx context.Context, r []ActionRequest) ([]libaction.Action, []string, error) {
+func (s *store) transformActionRequestToModel(ctx context.Context, r EditRequest) ([]libaction.Action, []string, error) {
 	var err error
-	var valErr common.ValidationError
+	patternIDs := make([]string, 0)
+	aliases := make([]string, 0)
+	for _, ar := range r.Actions {
+		patternIDs = append(patternIDs,
+			ar.CorporateAlarmPattern,
+			ar.CorporateEntityPattern,
+		)
+		aliases = append(aliases, patternfields.GetAliases(ar.EntityPattern)...)
+	}
 
-	actions := make([]libaction.Action, len(r))
+	patterns, err := s.transformer.FetchCorporatePatterns(ctx, patternIDs...)
+	if err != nil {
+		return nil, nil, err
+	}
 
-	uniqueAliasesMap := make(map[string]bool)
-	uniqueAliases := make([]string, 0)
+	aliasProps, err := s.transformer.FetchAliases(ctx, aliases)
+	if err != nil {
+		return nil, nil, err
+	}
 
-	for idx, actionRequest := range r {
-		transformedAlarmPatternFieldsRequest, err := s.transformer.TransformAlarmRequest(ctx, actionRequest.AlarmRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return nil, nil, err
+	actions := make([]libaction.Action, len(r.Actions))
+	aliasPropMap := make(map[string]bool)
+	var applyAliasPropIDs []string
+	var valErrs, applyErrs validator.ValidationErrors
+	actionsFieldName := "Actions"
+	for idx, ar := range r.Actions {
+		sIdx := strconv.Itoa(idx)
+		ar.AlarmRequest, applyErrs = s.transformer.ApplyAlarmCorporatePattern(ar.AlarmRequest, patterns, actionsFieldName, sIdx, "CorporateAlarmPattern")
+		valErrs = append(valErrs, applyErrs...)
+		ar.EntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(ar.EntityRequest, patterns, actionsFieldName, sIdx, "CorporateEntityPattern")
+		valErrs = append(valErrs, applyErrs...)
+		for _, id := range applyAliasPropIDs {
+			aliasPropMap[id] = true
 		}
 
-		transformEntityPatternFieldsRequest, err := s.transformer.TransformEntityRequest(ctx, actionRequest.EntityRequest)
-		if err != nil {
-			if errors.As(err, &valErr) {
-				return nil, nil, valErr.AddFieldPrefix("actions." + strconv.Itoa(idx))
-			}
-
-			return nil, nil, err
+		ar.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(ar.EntityPattern, aliasProps, actionsFieldName, sIdx, "EntityPattern")
+		valErrs = append(valErrs, applyErrs...)
+		for _, id := range applyAliasPropIDs {
+			aliasPropMap[id] = true
 		}
 
-		for _, alias := range transformEntityPatternFieldsRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
-			}
+		if len(valErrs) > 0 {
+			continue
 		}
 
 		actions[idx] = libaction.Action{
-			Type:       r[idx].Type,
-			Comment:    r[idx].Comment,
-			Parameters: r[idx].Parameters,
-			EntityPatternFields: transformEntityPatternFieldsRequest.ToModelWithoutFields(
-				patternfields.GetForbiddenFieldsInEntityPattern(mongo.ScenarioCollection),
-			),
-			AlarmPatternFields: transformedAlarmPatternFieldsRequest.ToModelWithoutFields(
-				patternfields.GetForbiddenFieldsInAlarmPattern(mongo.ScenarioCollection),
-				patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ScenarioCollection),
-			),
-			DropScenarioIfNotMatched: *r[idx].DropScenarioIfNotMatched,
-			EmitTrigger:              *r[idx].EmitTrigger,
+			Type:                     ar.Type,
+			Comment:                  ar.Comment,
+			Parameters:               ar.Parameters,
+			EntityPatternFields:      ar.EntityRequest.ToModelWithoutFields(s.collection.Name()),
+			AlarmPatternFields:       ar.AlarmRequest.ToModelWithoutFields(s.collection.Name()),
+			DropScenarioIfNotMatched: *ar.DropScenarioIfNotMatched,
+			EmitTrigger:              *ar.EmitTrigger,
 		}
 	}
 
-	return actions, uniqueAliases, err
+	if len(valErrs) > 0 {
+		return nil, nil, validation.NewError(valErrs, r)
+	}
+
+	aliasPropIDs := make([]string, 0, len(aliasPropMap))
+	for id := range aliasPropMap {
+		aliasPropIDs = append(aliasPropIDs, id)
+	}
+
+	return actions, aliasPropIDs, err
 }
 
 func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event, *webhook.TplAlarm, map[int]template.ResponseTestData, error) {
