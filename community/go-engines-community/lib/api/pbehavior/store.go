@@ -590,6 +590,12 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 			return err
 		}
 
+		if len(transformedEntityPatternRequest.Aliases) > 0 {
+			set["aliases"] = transformedEntityPatternRequest.Aliases
+		} else {
+			unset["aliases"] = ""
+		}
+
 		if r.CorporateEntityPattern != nil {
 			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
 			set["corporate_entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.ID
