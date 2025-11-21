@@ -4,6 +4,7 @@ exports[`alarms-expand-panel-children Renders \`alarms-expand-panel-children\` w
 <alarms-list-table-with-pagination-stub
   alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  columnssettings="[object Object]"
   expandable="true"
   loading="true"
   meta="[object Object]"
@@ -18,6 +19,7 @@ exports[`alarms-expand-panel-children Renders \`alarms-expand-panel-children\` w
 <alarms-list-table-with-pagination-stub
   alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  columnssettings="[object Object]"
   expandable="true"
   meta="[object Object]"
   parentalarm="[object Object]"
@@ -31,6 +33,7 @@ exports[`alarms-expand-panel-children Renders \`alarms-expand-panel-children\` w
 <alarms-list-table-with-pagination-stub
   alarms="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
   columns="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+  columnssettings="[object Object]"
   editing="true"
   expandable="true"
   meta="[object Object]"

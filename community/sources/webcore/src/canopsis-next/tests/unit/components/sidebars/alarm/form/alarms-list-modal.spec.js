@@ -10,6 +10,7 @@ import AlarmsListModal from '@/components/sidebars/alarm/form/alarms-list-modal.
 
 const stubs = {
   'widget-settings-group': true,
+  'field-resize-column-behavior': true,
   'field-default-sort-column': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
@@ -20,6 +21,7 @@ const stubs = {
 
 const snapshotStubs = {
   'widget-settings-group': true,
+  'field-resize-column-behavior': true,
   'field-default-sort-column': true,
   'field-columns': true,
   'field-default-elements-per-page': true,
@@ -42,6 +44,7 @@ describe('alarms-list-modal', () => {
       column: Faker.datatype.string(),
       template: Faker.datatype.string(),
     }],
+    columns: {},
     moreInfoTemplate: Faker.datatype.string(),
   };
 
