@@ -24,7 +24,7 @@
         <div
           v-else
           v-bind="component.bind"
-          :is="component.bind?.is"
+          :is="component.is || component.bind?.is"
           :class="textClass"
           v-on="componentOn"
         />
@@ -60,7 +60,7 @@
   <div
     v-else
     v-bind="component.bind"
-    :is="component.bind?.is"
+    :is="component.is || component.bind?.is"
     :class="textClass"
     v-on="componentOn"
   />
