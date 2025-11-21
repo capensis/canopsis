@@ -60,6 +60,8 @@ exports[`alarm Renders \`alarm\` widget settings with all rights 1`] = `
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub
@@ -726,6 +728,8 @@ exports[`alarm Renders \`alarm\` widget settings with custom props 1`] = `
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub
@@ -1388,6 +1392,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props 1`] = `
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub
@@ -2047,6 +2053,8 @@ exports[`alarm Renders \`alarm\` widget settings with default props with changed
       withcolorindicator="true"
     />
     <field-resize-column-behavior-stub
+      draggable="true"
+      resizable="true"
       value="[object Object]"
     />
     <field-root-cause-settings-stub

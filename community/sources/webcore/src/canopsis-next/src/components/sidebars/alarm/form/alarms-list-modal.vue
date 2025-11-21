@@ -17,6 +17,7 @@
       with-color-indicator
       @update:template="updateColumnsTemplate"
     />
+    <field-resize-column-behavior v-field="form.columns" resizable />
     <field-default-elements-per-page v-field="form.itemsPerPage" />
     <field-info-popup
       v-field="form.infoPopups"
@@ -59,6 +60,7 @@ import { alarmVariablesMixin } from '@/mixins/widget/variables/alarm';
 
 import FieldDefaultSortColumn from '@/components/sidebars/form/fields/default-sort-column.vue';
 import FieldColumns from '@/components/sidebars/form/fields/columns.vue';
+import FieldResizeColumnBehavior from '@/components/sidebars/alarm/form/fields/resize-column-behavior.vue';
 import FieldInfoPopup from '@/components/sidebars/alarm/form/fields/info-popup.vue';
 import FieldTextEditorWithTemplate from '@/components/sidebars/form/fields/text-editor-with-template.vue';
 import FieldDefaultElementsPerPage from '@/components/sidebars/form/fields/default-elements-per-page.vue';
@@ -73,6 +75,7 @@ export default {
     WidgetSettingsGroup,
     FieldDefaultSortColumn,
     FieldColumns,
+    FieldResizeColumnBehavior,
     FieldInfoPopup,
     FieldTextEditorWithTemplate,
     FieldDefaultElementsPerPage,

@@ -149,6 +149,7 @@ import { formToNumbersWidgetParameters, numbersWidgetParametersToForm } from './
  * @property {string} exportPdfTemplateTemplate
  * @property {boolean} showRootCauseByStateClick
  * @property {ColorIndicator} rootCauseColorIndicator
+ * @property {WidgetColumnsParameters} columns
  */
 
 /**
@@ -308,6 +309,7 @@ export const alarmListBaseParametersToForm = (alarmListParameters = {}) => ({
   infoPopups: infoPopupsToForm(alarmListParameters.infoPopups),
   widgetColumnsTemplate: widgetTemplateValueToForm(alarmListParameters.widgetColumnsTemplate),
   widgetColumns: widgetColumnsToForm(alarmListParameters.widgetColumns ?? DEFAULT_ALARMS_WIDGET_COLUMNS),
+  columns: columnsParametersToForm(alarmListParameters.columns),
   exportPdfTemplate: alarmListParameters.exportPdfTemplate ?? ALARM_EXPORT_PDF_TEMPLATE,
   exportPdfTemplateTemplate: widgetTemplateValueToForm(alarmListParameters.exportPdfTemplateTemplate),
   showRootCauseByStateClick: alarmListParameters.showRootCauseByStateClick ?? true,
