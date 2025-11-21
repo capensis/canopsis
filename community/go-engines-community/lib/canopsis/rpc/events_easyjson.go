@@ -1329,52 +1329,44 @@ func easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 				in.Skip()
 				out.InheritedPattern = nil
 			} else {
+				in.Delim('[')
 				if out.InheritedPattern == nil {
-					out.InheritedPattern = new(pattern.Entity)
-				}
-				if in.IsNull() {
-					in.Skip()
-					*out.InheritedPattern = nil
-				} else {
-					in.Delim('[')
-					if *out.InheritedPattern == nil {
-						if !in.IsDelim(']') {
-							*out.InheritedPattern = make(pattern.Entity, 0, 2)
-						} else {
-							*out.InheritedPattern = pattern.Entity{}
-						}
+					if !in.IsDelim(']') {
+						out.InheritedPattern = make(pattern.Entity, 0, 2)
 					} else {
-						*out.InheritedPattern = (*out.InheritedPattern)[:0]
+						out.InheritedPattern = pattern.Entity{}
 					}
-					for !in.IsDelim(']') {
-						var v23 []pattern.FieldCondition
-						if in.IsNull() {
-							in.Skip()
-							v23 = nil
-						} else {
-							in.Delim('[')
-							if v23 == nil {
-								if !in.IsDelim(']') {
-									v23 = make([]pattern.FieldCondition, 0, 0)
-								} else {
-									v23 = []pattern.FieldCondition{}
-								}
-							} else {
-								v23 = (v23)[:0]
-							}
-							for !in.IsDelim(']') {
-								var v24 pattern.FieldCondition
-								easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(in, &v24)
-								v23 = append(v23, v24)
-								in.WantComma()
-							}
-							in.Delim(']')
-						}
-						*out.InheritedPattern = append(*out.InheritedPattern, v23)
-						in.WantComma()
-					}
-					in.Delim(']')
+				} else {
+					out.InheritedPattern = (out.InheritedPattern)[:0]
 				}
+				for !in.IsDelim(']') {
+					var v23 []pattern.FieldCondition
+					if in.IsNull() {
+						in.Skip()
+						v23 = nil
+					} else {
+						in.Delim('[')
+						if v23 == nil {
+							if !in.IsDelim(']') {
+								v23 = make([]pattern.FieldCondition, 0, 0)
+							} else {
+								v23 = []pattern.FieldCondition{}
+							}
+						} else {
+							v23 = (v23)[:0]
+						}
+						for !in.IsDelim(']') {
+							var v24 pattern.FieldCondition
+							easyjson692db02bDecodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEnginesCommunityLibCanopsisPattern(in, &v24)
+							v23 = append(v23, v24)
+							in.WantComma()
+						}
+						in.Delim(']')
+					}
+					out.InheritedPattern = append(out.InheritedPattern, v23)
+					in.WantComma()
+				}
+				in.Delim(']')
 			}
 		default:
 			in.SkipRecursive()
@@ -1395,14 +1387,12 @@ func easyjson692db02bEncodeGitCanopsisNetCanopsisCanopsisCommunityCommunityGoEng
 		out.RawString(prefix[1:])
 		out.String(string(in.ID))
 	}
-	if in.InheritedPattern != nil {
+	if len(in.InheritedPattern) != 0 {
 		const prefix string = ",\"inherited_pattern\":"
 		out.RawString(prefix)
-		if *in.InheritedPattern == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
-		} else {
+		{
 			out.RawByte('[')
-			for v25, v26 := range *in.InheritedPattern {
+			for v25, v26 := range in.InheritedPattern {
 				if v25 > 0 {
 					out.RawByte(',')
 				}
