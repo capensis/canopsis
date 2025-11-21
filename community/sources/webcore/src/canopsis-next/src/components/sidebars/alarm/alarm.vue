@@ -55,7 +55,7 @@
         with-color-indicator
         @update:template="updateServiceDependenciesColumnsTemplate"
       />
-      <field-resize-column-behavior v-model="form.parameters.columns" />
+      <field-resize-column-behavior v-model="form.parameters.columns" draggable resizable />
       <field-root-cause-settings v-model="form.parameters" />
       <field-info-popup
         v-model="form.parameters.infoPopups"

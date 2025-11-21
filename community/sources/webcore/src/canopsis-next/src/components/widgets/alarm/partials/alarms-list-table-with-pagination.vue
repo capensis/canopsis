@@ -5,6 +5,7 @@
     :total-items="meta.total_count"
     :options.sync="options"
     :columns="columns"
+    :columns-settings="columnsSettings"
     :loading="loading"
     :parent-alarm="parentAlarm"
     :hide-children="hideChildren"
@@ -14,13 +15,19 @@
     :expandable="expandable"
     :hide-actions="hideActions"
     :hide-pagination="hidePagination"
+    :resizable-column="resizableColumn"
+    :draggable-column="draggableColumn"
+    :cells-content-behavior="cellsContentBehavior"
     eager
     @update:page="updatePage"
     @update:items-per-page="updateItemsPerPage"
+    @update:columns-settings="updateColumnsSettings"
   />
 </template>
 
 <script>
+import { computed } from 'vue';
+
 import { PAGINATION_LIMIT } from '@/config';
 
 import { convertDataTableOptionsToQuery } from '@/helpers/entities/shared/query';
@@ -45,6 +52,10 @@ export default {
     columns: {
       type: Array,
       default: () => [],
+    },
+    columnsSettings: {
+      type: Object,
+      default: () => ({}),
     },
     meta: {
       type: Object,
@@ -91,45 +102,71 @@ export default {
       default: () => {},
     },
   },
-  computed: {
-    options: {
+  setup(props, { emit }) {
+    const resizableColumn = computed(() => !!props.widget.parameters?.columns?.resizable);
+    const draggableColumn = computed(() => !!props.widget.parameters?.columns?.draggable);
+    const cellsContentBehavior = computed(() => props.widget.parameters?.columns?.cells_content_behavior);
+
+    const options = computed({
       get() {
-        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = this.query;
+        const { page = 1, itemsPerPage = PAGINATION_LIMIT, sortBy = [], sortDesc = [] } = props.query;
 
         return { page, itemsPerPage, sortBy, sortDesc };
       },
 
       set(newOptions) {
-        const convertedOptions = convertDataTableOptionsToQuery(newOptions, this.options);
+        const convertedOptions = convertDataTableOptionsToQuery(newOptions, options.value);
 
-        if (convertedOptions === this.options) {
+        if (convertedOptions === options.value) {
           return;
         }
 
-        this.$emit('update:query', {
-          ...this.query,
+        emit('update:query', {
+          ...props.query,
           ...convertedOptions,
         });
       },
-    },
-  },
-  methods: {
-    updateItemsPerPage(itemsPerPage) {
-      this.$emit('update:query', {
-        ...this.query,
+    });
 
-        itemsPerPage,
-        page: getPageForNewItemsPerPage(itemsPerPage, this.query.itemsPerPage, this.query.page),
-      });
-    },
+    /**
+     * Updates items per page and recalculates the current page number
+     *
+     * @param {number} itemsPerPage - New items per page value
+     */
+    const updateItemsPerPage = itemsPerPage => emit('update:query', {
+      ...props.query,
 
-    updatePage(page) {
-      this.$emit('update:query', {
-        ...this.query,
+      itemsPerPage,
+      page: getPageForNewItemsPerPage(itemsPerPage, props.query.itemsPerPage, props.query.page),
+    });
 
-        page,
-      });
-    },
+    /**
+     * Updates the current page number
+     *
+     * @param {number} page - New page number
+     */
+    const updatePage = page => emit('update:query', {
+      ...props.query,
+
+      page,
+    });
+
+    /**
+     * Updates the columns settings
+     *
+     * @param {Object} columnsSettings - New columns settings
+     */
+    const updateColumnsSettings = columnsSettings => emit('update:columns-settings', columnsSettings);
+
+    return {
+      resizableColumn,
+      draggableColumn,
+      cellsContentBehavior,
+      options,
+      updateItemsPerPage,
+      updatePage,
+      updateColumnsSettings,
+    };
   },
 };
 </script>

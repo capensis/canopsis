@@ -23,17 +23,22 @@ exports[`service-weather Renders \`service-weather\` widget settings with custom
   <field-color-indicator-stub
     value="state"
   />
-  <field-columns-stub
-    columns="[object Object],[object Object]"
-    label="Column names for tree of dependencies"
-    template="Symbol(custom)"
-    templates=""
-    type="entity"
-    withcolorindicator="true"
-  />
-  <field-tree-of-dependencies-settings-stub
-    value="2"
-  />
+  <widget-settings-group-stub
+    title="Tree of dependencies"
+  >
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-tree-of-dependencies-settings-stub
+      label="Settings"
+      value="2"
+    />
+  </widget-settings-group-stub>
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -165,17 +170,22 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
   <field-color-indicator-stub
     value="state"
   />
-  <field-columns-stub
-    columns="[object Object],[object Object]"
-    label="Column names for tree of dependencies"
-    template="Symbol(custom)"
-    templates=""
-    type="entity"
-    withcolorindicator="true"
-  />
-  <field-tree-of-dependencies-settings-stub
-    value="2"
-  />
+  <widget-settings-group-stub
+    title="Tree of dependencies"
+  >
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-tree-of-dependencies-settings-stub
+      label="Settings"
+      value="2"
+    />
+  </widget-settings-group-stub>
   <widget-settings-group-stub
     title="Advanced settings"
   >
@@ -313,17 +323,22 @@ exports[`service-weather Renders \`service-weather\` widget settings with defaul
   <field-color-indicator-stub
     value="state"
   />
-  <field-columns-stub
-    columns="[object Object],[object Object]"
-    label="Column names for tree of dependencies"
-    template="Symbol(custom)"
-    templates=""
-    type="entity"
-    withcolorindicator="true"
-  />
-  <field-tree-of-dependencies-settings-stub
-    value="2"
-  />
+  <widget-settings-group-stub
+    title="Tree of dependencies"
+  >
+    <field-columns-stub
+      columns="[object Object],[object Object]"
+      label="Column names"
+      template="Symbol(custom)"
+      templates=""
+      type="entity"
+      withcolorindicator="true"
+    />
+    <field-tree-of-dependencies-settings-stub
+      label="Settings"
+      value="2"
+    />
+  </widget-settings-group-stub>
   <widget-settings-group-stub
     title="Advanced settings"
   >

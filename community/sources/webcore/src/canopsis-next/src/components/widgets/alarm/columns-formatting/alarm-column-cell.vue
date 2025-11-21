@@ -24,7 +24,7 @@
         <div
           v-else
           v-bind="component.bind"
-          :is="component.is"
+          :is="component.bind?.is"
           :class="textClass"
           v-on="componentOn"
         />
@@ -60,14 +60,14 @@
   <div
     v-else
     v-bind="component.bind"
-    :is="component.is"
+    :is="component.bind?.is"
     :class="textClass"
     v-on="componentOn"
   />
 </template>
 
 <script>
-import { get, flow } from 'lodash';
+import { get, flow, isObject } from 'lodash';
 import { ref, computed, inject } from 'vue';
 
 import { sanitizeHtml, linkifyHtml } from '@/helpers/html';
@@ -160,7 +160,19 @@ export default {
     });
 
     const popupTemplateId = computed(() => getAlarmWidgetColumnPopupTemplateId(props.widget._id, props.column.value));
-    const textClass = computed(() => ({ 'alarms-column-cell__filter': props.column.isFilter }));
+    const textClass = computed(() => {
+      let result = {
+        'alarms-column-cell__filter': props.column.isFilter,
+      };
+
+      if (isObject(component.value?.bind?.class)) {
+        result = { ...result, ...component.value?.bind?.class };
+      } else {
+        result[component.value?.bind?.class] = !!component.value?.bind?.class;
+      }
+
+      return result;
+    });
 
     const showInfoPopup = () => opened.value = true;
     const hideInfoPopup = () => opened.value = false;
