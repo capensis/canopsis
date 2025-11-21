@@ -520,7 +520,7 @@ func (s *store) CheckStateSetting(ctx context.Context, r CheckStateSettingReques
 			return response, err
 		}
 
-		matched, err := match.MatchEntityPattern(*stateSetting.EntityPattern, &ent)
+		matched, err := match.MatchEntityPattern(stateSetting.EntityPattern, &ent)
 		if err != nil {
 			return response, err
 		}
