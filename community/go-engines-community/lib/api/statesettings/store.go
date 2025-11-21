@@ -121,22 +121,22 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-
-	r.ID = utils.NewID()
-	r.Created = &now
-	r.Updated = &now
+	m := s.transformRequestToDocument(r)
+	m.ID = utils.NewID()
+	m.Created = &now
+	m.Updated = &now
 
 	var response *Response
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		err := s.transformPatternRequestsToModel(ctx, r, &m)
 		if err != nil {
 			return err
 		}
 
-		_, err = s.dbCollection.InsertOne(ctx, r)
+		_, err = s.dbCollection.InsertOne(ctx, m)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
 				return s.dupErrorParser.Parse(err)
@@ -145,19 +145,20 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, m.ID, m.Priority)
 		if err != nil {
 			return err
 		}
 
-		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+		if m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
 			}
 		}
 
-		response, err = s.GetByID(ctx, r.ID)
+		response, err = s.GetByID(ctx, m.ID)
+
 		return err
 	})
 	if err != nil {
@@ -180,29 +181,21 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	var response *Response
 	var oldVersion statesetting.StateSetting
-
-	r.Updated = &now
+	m := s.transformRequestToDocument(r)
+	m.Updated = &now
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		err := s.transformPatternRequestsToModel(ctx, r, &m)
 		if err != nil {
 			return err
-		}
-
-		unset := make(bson.M)
-		switch r.Method {
-		case statesetting.MethodDependencies:
-			unset["inherited_entity_pattern"] = 1
-		case statesetting.MethodInherited:
-			unset["state_thresholds"] = 1
 		}
 
 		err = s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r, "$unset": unset},
+			bson.M{"$set": m},
 			options.FindOneAndUpdate().SetReturnDocument(options.Before),
 		).Decode(&oldVersion)
 		if err != nil {
@@ -217,12 +210,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, m.Priority)
 		if err != nil {
 			return err
 		}
 
-		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+		if m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
@@ -230,13 +223,14 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		response, err = s.GetByID(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
+	if response != nil && (m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited) {
 		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
 			ID:         response.ID,
 			NewPattern: response.EntityPattern,
@@ -319,43 +313,57 @@ func (s *store) updateNotify(ctx context.Context) error {
 	return err
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *StateSetting) error {
+func (s *store) transformRequestToDocument(r EditRequest) statesetting.StateSetting {
+	m := statesetting.StateSetting{
+		Method:          r.Method,
+		Enabled:         r.Enabled,
+		Priority:        r.Priority,
+		StateThresholds: r.StateThresholds.ToModel(),
+		JUnitThresholds: r.JUnitThresholds.ToModel(),
+	}
+	if r.Title != nil {
+		m.Title = *r.Title
+	}
+
+	if r.Type != nil {
+		m.Type = *r.Type
+	}
+
+	return m
+}
+
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *statesetting.StateSetting) error {
 	uniqueAliasesMap := make(map[string]bool)
 	uniqueAliases := make([]string, 0)
 
-	if r.EntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: *r.EntityPattern,
-		})
-		if err != nil {
-			return err
-		}
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, r.EntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
 
-		model.EntityPattern = &transformedEntityPatternRequest.EntityPattern
-
-		for _, alias := range transformedEntityPatternRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
-			}
+	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInEntityPattern(s.dbCollection.Name()),
+	)
+	for _, alias := range transformedEntityPatternRequest.Aliases {
+		if !uniqueAliasesMap[alias] {
+			uniqueAliasesMap[alias] = true
+			uniqueAliases = append(uniqueAliases, alias)
 		}
 	}
 
-	if r.InheritedEntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
-			EntityPattern: *r.InheritedEntityPattern,
-		})
-		if err != nil {
-			return err
-		}
+	transformedInheritedEntityPatternRequest, err := s.transformer.TransformInheritedEntityPatternFieldsRequest(ctx, r.InheritedEntityPatternFieldsRequest)
+	if err != nil {
+		return err
+	}
 
-		model.InheritedEntityPattern = &transformedEntityPatternRequest.EntityPattern
+	model.InheritedEntityPatternFields = transformedInheritedEntityPatternRequest.ToModelWithoutFields(
+		common.GetForbiddenFieldsInEntityPattern(s.dbCollection.Name()),
+	)
 
-		for _, alias := range transformedEntityPatternRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
-			}
+	for _, alias := range transformedInheritedEntityPatternRequest.Aliases {
+		if !uniqueAliasesMap[alias] {
+			uniqueAliasesMap[alias] = true
+			uniqueAliases = append(uniqueAliases, alias)
 		}
 	}
 
