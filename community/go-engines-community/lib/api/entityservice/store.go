@@ -184,14 +184,14 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 			return nil, err
 		}
 		if ec.Rule != nil {
-			var entityPattern *pattern.Entity
+			var entityPattern pattern.Entity
 			switch ec.Rule.Method {
 			case statesetting.MethodInherited, statesetting.MethodDependencies:
 				entityPattern = ec.Rule.InheritedEntityPattern
 			}
-			if entityPattern != nil {
+			if len(entityPattern) > 0 {
 				var patternMongoQuery bson.M
-				patternMongoQuery, err = db.EntityPatternToMongoQuery(*entityPattern, "")
+				patternMongoQuery, err = db.EntityPatternToMongoQuery(entityPattern, "")
 				if err != nil {
 					return nil, err
 				}

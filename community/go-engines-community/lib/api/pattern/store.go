@@ -12,10 +12,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
@@ -50,7 +52,9 @@ type store struct {
 
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent
 
-	serviceChangeListener chan<- entityservice.ChangeEntityMessage
+	serviceChangeChan chan<- entityservice.ChangeEntityMessage
+
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage
 
 	transformer common.PatternFieldsTransformer
 
@@ -61,7 +65,8 @@ func NewStore(
 	dbClient mongo.DbClient,
 	readDbClient mongo.DbClient,
 	pbhComputeChan chan<- rpc.PbehaviorRecomputeEvent,
-	serviceChangeListener chan<- entityservice.ChangeEntityMessage,
+	serviceChangeChan chan<- entityservice.ChangeEntityMessage,
+	stateSettingsUpdatesChan chan statesetting.RuleUpdatedMessage,
 	authorProvider author.Provider,
 	transformer common.PatternFieldsTransformer,
 	logger zerolog.Logger,
@@ -90,12 +95,14 @@ func NewStore(
 			mongo.DeclareTicketRuleCollection,
 			mongo.LinkRuleMongoCollection,
 			mongo.AlarmTagCollection,
+			mongo.StateSettingsMongoCollection,
 		},
 
-		pbhComputeChan:        pbhComputeChan,
-		serviceChangeListener: serviceChangeListener,
-		transformer:           transformer,
-		logger:                logger,
+		pbhComputeChan:           pbhComputeChan,
+		serviceChangeChan:        serviceChangeChan,
+		stateSettingsUpdatesChan: stateSettingsUpdatesChan,
+		transformer:              transformer,
+		logger:                   logger,
 	}
 }
 
@@ -219,6 +226,7 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 
 	var response *Response
 	var pbhIds, serviceIds []string
+	var stateSettingMsgs []statesetting.RuleUpdatedMessage
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 		pbhIds = nil
@@ -255,13 +263,18 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
-		if !reflect.DeepEqual(response.EntityPattern, prevPattern.EntityPattern) {
+		if response.Type == savedpattern.TypeEntity && !reflect.DeepEqual(response.EntityPattern, prevPattern.EntityPattern) {
 			pbhIds, err = s.findPbehaviors(ctx, *response)
 			if err != nil {
 				return err
 			}
 
 			serviceIds, err = s.findEntityServices(ctx, *response)
+			if err != nil {
+				return err
+			}
+
+			stateSettingMsgs, err = s.findStateSettings(ctx, *response, prevPattern.EntityPattern)
 			if err != nil {
 				return err
 			}
@@ -276,11 +289,17 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 
 	if len(serviceIds) > 0 {
 		for _, serviceId := range serviceIds {
-			s.serviceChangeListener <- entityservice.ChangeEntityMessage{
+			s.serviceChangeChan <- entityservice.ChangeEntityMessage{
 				ID:                      serviceId,
 				EntityType:              types.EntityTypeService,
 				IsServicePatternChanged: true,
 			}
+		}
+	}
+
+	if len(stateSettingMsgs) > 0 {
+		for _, msg := range stateSettingMsgs {
+			s.stateSettingsUpdatesChan <- msg
 		}
 	}
 
@@ -437,6 +456,21 @@ func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author
 		if err != nil {
 			return err
 		}
+
+		stateSettingRulesCollection := mongo.StateSettingsMongoCollection
+		update["$set"] = bson.M{
+			"inherited_entity_pattern": pattern.EntityPattern.RemoveFields(
+				common.GetForbiddenFieldsInEntityPattern(stateSettingRulesCollection),
+			),
+			"corporate_inherited_entity_pattern_title": pattern.Title,
+			"updated": datetime.NewCpsTime(),
+			"author":  author,
+		}
+
+		_, err = s.client.Collection(stateSettingRulesCollection).UpdateMany(ctx, bson.M{"corporate_inherited_entity_pattern": pattern.ID}, update)
+		if err != nil {
+			return err
+		}
 	case savedpattern.TypeAlarm:
 		scenarioCollection := mongo.ScenarioCollection
 		_, err := s.client.Collection(scenarioCollection).UpdateMany(ctx,
@@ -525,6 +559,20 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response, author 
 			},
 			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
 		)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.client.Collection(mongo.StateSettingsMongoCollection).UpdateMany(ctx, bson.M{"corporate_inherited_entity_pattern": pattern.ID}, bson.M{
+			"$set": bson.M{
+				"updated": datetime.NewCpsTime(),
+				"author":  author,
+			},
+			"$unset": bson.M{
+				"corporate_inherited_entity_pattern":       "",
+				"corporate_inherited_entity_pattern_title": "",
+			},
+		})
 		if err != nil {
 			return err
 		}
@@ -943,6 +991,65 @@ func (s *store) findEntityServices(ctx context.Context, pattern Response) ([]str
 	}
 
 	return ids, nil
+}
+
+func (s *store) findStateSettings(ctx context.Context, pattern Response, prevEntityPattern pattern.Entity) ([]statesetting.RuleUpdatedMessage, error) {
+	if pattern.Type != savedpattern.TypeEntity {
+		return nil, nil
+	}
+
+	cursor, err := s.client.Collection(mongo.StateSettingsMongoCollection).Find(ctx, bson.M{
+		"method": bson.M{"$in": []string{statesetting.MethodInherited, statesetting.MethodDependencies}},
+		"$or": []bson.M{
+			{"corporate_entity_pattern": pattern.ID},
+			{"corporate_inherited_entity_pattern": pattern.ID},
+		},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("cannot find state settings: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+
+	now := datetime.NewCpsTime()
+	msgs := make([]statesetting.RuleUpdatedMessage, 0)
+	for cursor.Next(ctx) {
+		m := statesetting.StateSetting{}
+		err = cursor.Decode(&m)
+		if err != nil {
+			s.logger.Err(err).Msg("cannot decode state setting")
+			continue
+		}
+
+		msg := statesetting.RuleUpdatedMessage{
+			ID:         m.ID,
+			NewPattern: m.EntityPattern,
+			NewType:    m.Type,
+			OldType:    m.Type,
+			Updated:    now,
+		}
+		if m.CorporateEntityPattern == pattern.ID {
+			msg.OldPattern = prevEntityPattern
+		} else {
+			msg.OldPattern = m.EntityPattern
+		}
+
+		msgs = append(msgs, msg)
+	}
+
+	if len(msgs) > 0 {
+		_, err = s.client.Collection(mongo.EngineNotificationCollection).UpdateOne(
+			ctx,
+			bson.M{"_id": statesetting.StateSettingsNotificationID},
+			bson.M{"$set": bson.M{"time": time.Now()}},
+			options.UpdateOne().SetUpsert(true),
+		)
+		if err != nil {
+			return nil, fmt.Errorf("cannot notify of state setting changes: %w", err)
+		}
+	}
+
+	return msgs, nil
 }
 
 func transformRequestToModel(request EditRequest) savedpattern.SavedPattern {
