@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -17,11 +18,12 @@ import (
 )
 
 var (
-	ErrNotExistCorporateAlarmPattern          = NewValidationError("corporate_alarm_pattern", "CorporateAlarmPattern doesn't exist.")
-	ErrNotExistCorporateEntityPattern         = NewValidationError("corporate_entity_pattern", "CorporateEntityPattern doesn't exist.")
-	ErrNotExistCorporateTotalEntityPattern    = NewValidationError("corporate_total_entity_pattern", "CorporateTotalEntityPattern doesn't exist.")
-	ErrNotExistCorporatePbehaviorPattern      = NewValidationError("corporate_pbehavior_pattern", "CorporatePbehaviorPattern doesn't exist.")
-	ErrNotExistCorporateWeatherServicePattern = NewValidationError("corporate_weather_service_pattern", "CorporateWeatherServicePattern doesn't exist.")
+	ErrNotExistCorporateAlarmPattern           = NewValidationError("corporate_alarm_pattern", "CorporateAlarmPattern doesn't exist.")
+	ErrNotExistCorporateEntityPattern          = NewValidationError("corporate_entity_pattern", "CorporateEntityPattern doesn't exist.")
+	ErrNotExistCorporateTotalEntityPattern     = NewValidationError("corporate_total_entity_pattern", "CorporateTotalEntityPattern doesn't exist.")
+	ErrNotExistCorporateInheritedEntityPattern = NewValidationError("corporate_inherited_entity_pattern", "CorporateInheritedEntityPattern doesn't exist.")
+	ErrNotExistCorporatePbehaviorPattern       = NewValidationError("corporate_pbehavior_pattern", "CorporatePbehaviorPattern doesn't exist.")
+	ErrNotExistCorporateWeatherServicePattern  = NewValidationError("corporate_weather_service_pattern", "CorporateWeatherServicePattern doesn't exist.")
 )
 
 type AlarmPatternFieldsRequest struct {
@@ -151,6 +153,7 @@ type PatternFieldsTransformer interface {
 	TransformPbehaviorPatternFieldsRequest(ctx context.Context, r PbehaviorPatternFieldsRequest) (PbehaviorPatternFieldsRequest, error)
 	TransformWeatherServicePatternFieldsRequest(ctx context.Context, r WeatherServicePatternFieldsRequest) (WeatherServicePatternFieldsRequest, error)
 	TransformTotalEntityPatternFieldsRequest(ctx context.Context, r TotalEntityPatternFieldsRequest) (TotalEntityPatternFieldsRequest, error)
+	TransformInheritedEntityPatternFieldsRequest(ctx context.Context, r InheritedEntityPatternFieldsRequest) (InheritedEntityPatternFieldsRequest, error)
 }
 
 func NewPatternFieldsTransformer(client mongo.DbClient) PatternFieldsTransformer {
@@ -246,6 +249,30 @@ func (t *basePatternFieldsTransformer) TransformTotalEntityPatternFieldsRequest(
 	var err error
 
 	r.TotalEntityPattern, r.Aliases, err = t.transformAliases(ctx, entityPattern, "total_entity_pattern")
+	return r, err
+}
+
+func (t *basePatternFieldsTransformer) TransformInheritedEntityPatternFieldsRequest(ctx context.Context, r InheritedEntityPatternFieldsRequest) (InheritedEntityPatternFieldsRequest, error) {
+	if r.CorporateInheritedEntityPattern != "" {
+		err := t.patternCollection.FindOne(ctx, bson.M{"_id": r.CorporateInheritedEntityPattern, "type": savedpattern.TypeEntity}).Decode(&r.CorporatePattern)
+		if err != nil {
+			if errors.Is(err, mongodriver.ErrNoDocuments) {
+				return r, ErrNotExistCorporateInheritedEntityPattern
+			}
+
+			return r, err
+		}
+	}
+
+	entityPattern := r.InheritedEntityPattern
+	if r.CorporateInheritedEntityPattern != "" {
+		entityPattern = r.CorporatePattern.EntityPattern
+	}
+
+	var err error
+
+	r.InheritedEntityPattern, r.Aliases, err = t.transformAliases(ctx, entityPattern, "inherited_entity_pattern")
+
 	return r, err
 }
 
@@ -366,6 +393,42 @@ func (r TotalEntityPatternFieldsRequest) ToModelWithoutFields(forbiddenFields []
 		TotalEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
 		CorporateTotalEntityPattern:      r.CorporatePattern.ID,
 		CorporateTotalEntityPatternTitle: r.CorporatePattern.Title,
+	}
+}
+
+type InheritedEntityPatternFieldsRequest struct {
+	InheritedEntityPattern          pattern.Entity `json:"inherited_entity_pattern" binding:"entity_pattern"`
+	CorporateInheritedEntityPattern string         `json:"corporate_inherited_entity_pattern"`
+
+	CorporatePattern savedpattern.SavedPattern `json:"-"`
+	Aliases          []string                  `json:"-"`
+}
+
+func (r InheritedEntityPatternFieldsRequest) ToModel() statesetting.InheritedEntityPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return statesetting.InheritedEntityPatternFields{
+			InheritedEntityPattern: r.InheritedEntityPattern,
+		}
+	}
+
+	return statesetting.InheritedEntityPatternFields{
+		InheritedEntityPattern:               r.CorporatePattern.EntityPattern,
+		CorporateInheritedEntityPattern:      r.CorporatePattern.ID,
+		CorporateInheritedEntityPatternTitle: r.CorporatePattern.Title,
+	}
+}
+
+func (r InheritedEntityPatternFieldsRequest) ToModelWithoutFields(forbiddenFields []string) statesetting.InheritedEntityPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return statesetting.InheritedEntityPatternFields{
+			InheritedEntityPattern: r.InheritedEntityPattern,
+		}
+	}
+
+	return statesetting.InheritedEntityPatternFields{
+		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
+		CorporateInheritedEntityPattern:      r.CorporatePattern.ID,
+		CorporateInheritedEntityPatternTitle: r.CorporatePattern.Title,
 	}
 }
 
