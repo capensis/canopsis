@@ -71,12 +71,6 @@ func (a *api) Create(c *gin.Context) {
 
 	tab, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -157,12 +151,6 @@ func (a *api) Copy(c *gin.Context) {
 
 	tab, err := a.store.Copy(c, id, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

@@ -1,7 +1,6 @@
 package pbehavior
 
 import (
-	"errors"
 	"net/http"
 	"time"
 
@@ -18,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -206,12 +206,6 @@ func (a *api) Create(c *gin.Context) {
 
 	pbh, err := a.store.Insert(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -238,12 +232,6 @@ func (a *api) Update(c *gin.Context) {
 
 	pbh, recomputeInherited, err := a.store.Update(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -274,12 +262,6 @@ func (a *api) Patch(c *gin.Context) {
 
 	pbh, recomputeInherited, err := a.store.UpdateByPatch(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -667,7 +649,10 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 					Comment:  request.Comment,
 				})
 			default:
-				return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
+				return "", validation.NewError(
+					validator.ValidationErrors{validation.NewFieldErrorWithParam("oneof", "Action", "Action", BulkConnectorActionCreate+" "+BulkConnectorActionDelete)},
+					request,
+				)
 			}
 
 			if err != nil {

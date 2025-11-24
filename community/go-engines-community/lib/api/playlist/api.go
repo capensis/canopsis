@@ -2,7 +2,6 @@ package playlist
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
@@ -110,12 +109,6 @@ func (a *api) Create(c *gin.Context) {
 
 	playlist, err := a.store.Insert(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -157,12 +150,6 @@ func (a *api) Update(c *gin.Context) {
 
 	playlist, err := a.store.Update(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

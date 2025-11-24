@@ -5,11 +5,12 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pbehavior"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -92,7 +93,10 @@ func (s *store) Delete(ctx context.Context, id string) (bool, error) {
 		}
 
 		if pbh.Origin != "" && len(pbh.Comments) > 0 && pbh.Comments[0].ID == id {
-			return common.NewValidationError("_id", "Cannot remove main comment.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "_id", "_id")},
+				nil,
+			)
 		}
 
 		res, err := s.dbCollection.UpdateOne(

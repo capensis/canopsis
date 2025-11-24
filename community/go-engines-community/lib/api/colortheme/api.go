@@ -44,12 +44,6 @@ func (a *api) Create(c *gin.Context) {
 
 	theme, err := a.store.Insert(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -121,12 +115,6 @@ func (a *api) Update(c *gin.Context) {
 	if err != nil {
 		if errors.Is(err, ErrCanopsisDefaultTheme) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
-
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
 			return
 		}
 

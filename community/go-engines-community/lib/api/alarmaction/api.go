@@ -1,7 +1,6 @@
 package alarmaction
 
 import (
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
@@ -71,11 +70,6 @@ func (a *api) Ack(c *gin.Context) {
 
 	ok, err := a.store.Ack(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -112,11 +106,6 @@ func (a *api) AckRemove(c *gin.Context) {
 
 	ok, err := a.store.AckRemove(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -153,11 +142,6 @@ func (a *api) Snooze(c *gin.Context) {
 
 	ok, err := a.store.Snooze(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -194,11 +178,6 @@ func (a *api) Cancel(c *gin.Context) {
 
 	ok, err := a.store.Cancel(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -235,11 +214,6 @@ func (a *api) Uncancel(c *gin.Context) {
 
 	ok, err := a.store.Uncancel(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -276,11 +250,6 @@ func (a *api) AssocTicket(c *gin.Context) {
 
 	ok, err := a.store.AssocTicket(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -317,11 +286,6 @@ func (a *api) Comment(c *gin.Context) {
 
 	ok, err := a.store.Comment(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -358,11 +322,6 @@ func (a *api) ChangeState(c *gin.Context) {
 
 	ok, err := a.store.ChangeState(c, c.Param("id"), request, userID, username)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
