@@ -214,8 +214,7 @@ func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {
 	}
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *resolverule.Rule) error {
-	var err error
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *resolverule.Rule) (err error) {
 	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.dbCollection.Name())
 
 	return err

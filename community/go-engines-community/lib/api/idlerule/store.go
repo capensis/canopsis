@@ -211,8 +211,7 @@ func (s *store) getSort(r FilteredQuery) bson.M {
 	return mongoquery.GetSortQuery(sortBy, r.Sort)
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *idlerule.Rule) error {
-	var err error
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *idlerule.Rule) (err error) {
 	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.collection.Name())
 
 	return err
