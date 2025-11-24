@@ -538,8 +538,7 @@ func (s *store) getResponseLookups() []bson.M {
 	return pipeline
 }
 
-func (s *store) transformEntityPatternRequestToModel(ctx context.Context, er patternfields.EntityRequest, r any, model *eventfilter.Rule) error {
-	var err error
+func (s *store) transformEntityPatternRequestToModel(ctx context.Context, er patternfields.EntityRequest, r any, model *eventfilter.Rule) (err error) {
 	model.EntityPatternFields, model.Aliases, err = s.transformer.TransformEntityRequest(ctx, er, r, s.dbCollection.Name())
 
 	return err

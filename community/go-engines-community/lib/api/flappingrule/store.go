@@ -201,8 +201,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *flappingrule.Rule) error {
-	var err error
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *flappingrule.Rule) (err error) {
 	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.dbCollection.Name())
 
 	return err
