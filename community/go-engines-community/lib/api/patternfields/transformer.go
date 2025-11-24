@@ -345,7 +345,7 @@ func (t *baseTransformer) TransformEntityRequest(
 		var patterns Patterns
 		patterns, err = t.FetchCorporatePatterns(ctx, er.CorporateEntityPattern)
 		if err != nil {
-			return
+			return epf, aliasPropIDs, err
 		}
 
 		er, aliasPropIDs, valErrs = t.ApplyEntityCorporatePattern(er, patterns)
@@ -353,21 +353,19 @@ func (t *baseTransformer) TransformEntityRequest(
 		var aliases Aliases
 		aliases, err = t.FetchAliases(ctx, GetAliases(er.EntityPattern))
 		if err != nil {
-			return
+			return epf, aliasPropIDs, err
 		}
 
 		er.EntityPattern, aliasPropIDs, valErrs = t.ApplyAliases(er.EntityPattern, aliases)
 	}
 
 	if len(valErrs) > 0 {
-		err = validation.NewError(valErrs, r)
-
-		return
+		return epf, aliasPropIDs, validation.NewError(valErrs, r)
 	}
 
 	epf = er.ToModelWithoutFields(collectionName)
 
-	return
+	return epf, aliasPropIDs, nil
 }
 
 func (t *baseTransformer) TransformAlarmAndEntityRequest(
@@ -382,7 +380,7 @@ func (t *baseTransformer) TransformAlarmAndEntityRequest(
 		er.CorporateEntityPattern,
 	)
 	if err != nil {
-		return
+		return apf, epf, aliasPropIDs, err
 	}
 
 	var valErrs, applyErrs validator.ValidationErrors
@@ -394,7 +392,7 @@ func (t *baseTransformer) TransformAlarmAndEntityRequest(
 		var aliases Aliases
 		aliases, err = t.FetchAliases(ctx, GetAliases(er.EntityPattern))
 		if err != nil {
-			return
+			return apf, epf, aliasPropIDs, err
 		}
 
 		er.EntityPattern, aliasPropIDs, applyErrs = t.ApplyAliases(er.EntityPattern, aliases)
@@ -402,15 +400,13 @@ func (t *baseTransformer) TransformAlarmAndEntityRequest(
 
 	valErrs = append(valErrs, applyErrs...)
 	if len(valErrs) > 0 {
-		err = validation.NewError(valErrs, r)
-
-		return
+		return apf, epf, aliasPropIDs, validation.NewError(valErrs, r)
 	}
 
 	apf = ar.ToModelWithoutFields(collectionName)
 	epf = er.ToModelWithoutFields(collectionName)
 
-	return
+	return apf, epf, aliasPropIDs, nil
 }
 
 func (t *baseTransformer) TransformAliases(ctx context.Context, p pattern.Entity, r any) (pattern.Entity, []string, error) {
