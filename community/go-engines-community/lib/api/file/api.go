@@ -1,7 +1,6 @@
 package file
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 
@@ -54,12 +53,6 @@ func (a *api) Create(c *gin.Context) {
 
 	res, err := a.store.Create(c, request.Public, form)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

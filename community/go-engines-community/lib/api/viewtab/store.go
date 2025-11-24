@@ -5,8 +5,8 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
@@ -14,6 +14,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -186,8 +187,18 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			return err
 		}
 
+		if viewInfo.ID == "" {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
+				r,
+			)
+		}
+
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
-			return common.NewValidationError("view", "View is private.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
+				r,
+			)
 		}
 
 		if !viewInfo.IsPrivate {
@@ -197,7 +208,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			}
 
 			if !ok {
-				return common.NewValidationError("view", "Can't modify a view.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
+					r,
+				)
 			}
 		}
 
@@ -307,8 +321,18 @@ func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Respo
 			return err
 		}
 
+		if viewInfo.ID == "" {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
+				r,
+			)
+		}
+
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
-			return common.NewValidationError("view", "View is private.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
+				r,
+			)
 		}
 
 		if !viewInfo.IsPrivate {
@@ -318,7 +342,10 @@ func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Respo
 			}
 
 			if !ok {
-				return common.NewValidationError("view", "Can't modify a view.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
+					r,
+				)
 			}
 		}
 
@@ -516,7 +543,7 @@ func (s *store) getViewPrivacySettings(ctx context.Context, viewID string) (apis
 
 	err := s.viewCollection.FindOne(ctx, bson.M{"_id": viewID}).Decode(&viewInfo)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return viewInfo, common.NewValidationError("view", "View doesn't exist.")
+		return viewInfo, nil
 	}
 
 	return viewInfo, err

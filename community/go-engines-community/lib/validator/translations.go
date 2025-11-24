@@ -223,10 +223,34 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} doit être un nom de table valide",
 			},
 		},
-		"must_be_string": {
+		"value_string": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid string value",
 				types.LocaleFr: "{0} doit être une valeur de type chaîne valide",
+			},
+		},
+		"value_number": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid number value",
+				types.LocaleFr: "{0} doit être une valeur de type nombre valide",
+			},
+		},
+		"value_boolean": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid boolean value",
+				types.LocaleFr: "{0} doit être une valeur de type booléen valide",
+			},
+		},
+		"value_string_array": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid string array value",
+				types.LocaleFr: "{0} doit être une valeur de type tableau de chaînes valide",
+			},
+		},
+		"value_timestamp": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid timestamp value",
+				types.LocaleFr: "{0} doit être une valeur de timestamp valide",
 			},
 		},
 		"info_value": {
@@ -283,16 +307,100 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} contient une valeur qui n’est pas applicable",
 			},
 		},
-		"admin_role": {
+		"not_accessible": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains a value that is not accessible",
+				types.LocaleFr: "{0} contient une valeur qui n’est pas accessible",
+			},
+		},
+		"assign_role": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} contains a role that the current user is not permitted to assign",
 				types.LocaleFr: "{0} contient un rôle que l'utilisateur actuel n'est pas autorisé à attribuer",
 			},
 		},
-		"admin_user": {
+		"access_user": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} contains a user that the current user is not permitted to edit",
 				types.LocaleFr: "{0} contient un utilisateur que l'utilisateur actuel n'est pas autorisé à modifier",
+			},
+		},
+		"access_role": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains a role that the current user is not permitted to edit",
+				types.LocaleFr: "{0} contient un rôle que l’utilisateur actuel n’est pas autorisé à modifier",
+			},
+		},
+		"filesize": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a file of {1} bytes or less",
+				types.LocaleFr: "{0} doit être un fichier de {1} bytes ou moins",
+			},
+		},
+		"filetype": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a file of one of the following types [{1}]",
+				types.LocaleFr: "{0} doit être un fichier d’un des types suivants [{1}]",
+			},
+		},
+		"type": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be of a valid type",
+				types.LocaleFr: "{0} doit être d’un type valide",
+			},
+		},
+		"rulematch": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must match the rule",
+				types.LocaleFr: "{0} doit correspondre à la règle",
+			},
+		},
+		"linked": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must not be linked to another object",
+				types.LocaleFr: "{0} ne doit pas être lié à un autre objet",
+			},
+		},
+		"allchildren": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must not contain all linked alarms",
+				types.LocaleFr: "{0} ne doit pas contenir toutes les alarmes liées",
+			},
+		},
+		"disabled": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must not contain a disabled object",
+				types.LocaleFr: "{0} ne doit pas contenir d’objet désactivé",
+			},
+		},
+		"unchangeable": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must not be updated",
+				types.LocaleFr: "{0} ne doit pas être mis à jour",
+			},
+		},
+		"slicelen": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must contain {1}",
+				types.LocaleFr: "{0} doit contenir {1}",
+			},
+		},
+		"strmax": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a maximum of {1} in length",
+				types.LocaleFr: "{0} doit faire une taille maximum de {1}",
+			},
+		},
+		"invalidcols": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains invalid columns [{1}]",
+				types.LocaleFr: "{0} contient des colonnes invalides [{1}]",
+			},
+		},
+		"missingcols": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must contain columns [{1}]",
+				types.LocaleFr: "{0} doit contenir toutes les colonnes [{1}]",
 			},
 		},
 	}

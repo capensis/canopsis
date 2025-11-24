@@ -17,6 +17,16 @@ func NewFieldError(tag, field, namespace string) validator.FieldError {
 	}
 }
 
+func NewFieldErrorWithParam(tag, field, namespace, param string) validator.FieldError {
+	return &fieldError{
+		tag:   tag,
+		field: field,
+		ns:    namespace,
+		param: param,
+		value: nil,
+	}
+}
+
 type fieldError struct {
 	tag   string
 	field string
@@ -67,7 +77,7 @@ func (e *fieldError) Type() reflect.Type {
 
 func (e *fieldError) Translate(ut ut.Translator) string {
 	if ut != nil {
-		if t, err := ut.T(e.Tag(), e.Field()); err == nil {
+		if t, err := ut.T(e.Tag(), e.Field(), e.Param()); err == nil {
 			return t
 		}
 	}

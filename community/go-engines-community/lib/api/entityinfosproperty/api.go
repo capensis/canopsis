@@ -1,7 +1,6 @@
 package entityinfosproperty
 
 import (
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
@@ -86,12 +85,6 @@ func (a *api) Create(c *gin.Context) {
 
 	property, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -116,12 +109,6 @@ func (a *api) Update(c *gin.Context) {
 
 	property, err := a.store.Update(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
