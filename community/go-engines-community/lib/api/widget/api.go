@@ -74,12 +74,6 @@ func (a *api) Create(c *gin.Context) {
 
 	widget, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -104,12 +98,6 @@ func (a *api) Update(c *gin.Context) {
 
 	widget, err := a.store.Update(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -160,12 +148,6 @@ func (a *api) Copy(c *gin.Context) {
 
 	widget, err := a.store.Copy(c, c.Param("id"), request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -245,13 +227,6 @@ func (a *api) ValidateTemplates(c *gin.Context) {
 
 	response, err := a.store.ValidateTemplates(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

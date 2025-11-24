@@ -2,7 +2,6 @@ package pattern
 
 import (
 	"context"
-	"errors"
 	"net/http"
 	"time"
 
@@ -84,12 +83,6 @@ func (a *api) Create(c *gin.Context) {
 
 	pattern, err := a.store.Insert(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -210,12 +203,6 @@ func (a *api) Update(c *gin.Context) {
 
 	pattern, err = a.store.Update(c, request)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -339,12 +326,6 @@ func (a *api) CountAlarms(c *gin.Context) {
 
 	res, err := a.store.CountAlarms(ctx, request, int64(conf.MaxMatchedItems))
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -370,12 +351,6 @@ func (a *api) CountEntities(c *gin.Context) {
 
 	res, err := a.store.CountEntities(ctx, request, int64(conf.MaxMatchedItems))
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

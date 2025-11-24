@@ -11,6 +11,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -58,8 +59,9 @@ func NewApi(
 // @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportAll(c *gin.Context) {
 	query := ImportQuery{}
-	if err := c.BindQuery(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.BindQuery(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -95,8 +97,9 @@ func (a *api) ImportAll(c *gin.Context) {
 // @Success 200 {object} contextgraph.ImportResponse
 func (a *api) ImportPartial(c *gin.Context) {
 	query := ImportQuery{}
-	if err := c.BindQuery(&query); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, query))
+	if err := validation.BindQuery(c, &query); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 

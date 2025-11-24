@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/go-playground/validator/v10"
-	"github.com/valyala/fastjson"
 )
 
 const LimitLinkedRules = 11
@@ -61,31 +60,6 @@ func TransformValidationErrors(errs validator.ValidationErrors, request interfac
 	}
 
 	return res
-}
-
-func NewValidationErrorFastJsonValue(ar *fastjson.Arena, err error, request interface{}) *fastjson.Value {
-	var validatorErrs validator.ValidationErrors
-	if errors.As(err, &validatorErrs) {
-		value := ar.NewObject()
-		for _, fe := range validatorErrs {
-			field := transformNamespace(fe.StructNamespace(), request)
-			value.Set(field, ar.NewString(libvalidator.TranslateError(fe)))
-		}
-
-		return value
-	}
-
-	var commonValidatorErrs ValidationError
-	if errors.As(err, &commonValidatorErrs) {
-		value := ar.NewObject()
-		for k, v := range commonValidatorErrs.ValidationErrorResponse().Errors {
-			value.Set(k, ar.NewString(v))
-		}
-
-		return value
-	}
-
-	return ar.NewString("request has invalid structure")
 }
 
 // transformNamespace prepares field namespace for response.
@@ -163,41 +137,6 @@ loop:
 	}
 
 	return strings.Join(res, ".")
-}
-
-type ValidationError struct {
-	errMsgs map[string]string
-}
-
-func NewValidationError(field, errMsg string) ValidationError {
-	return ValidationError{errMsgs: map[string]string{field: errMsg}}
-}
-
-func NewValidationErrors(errMsgs map[string]string) ValidationError {
-	return ValidationError{errMsgs: errMsgs}
-}
-
-func (v ValidationError) Error() string {
-	b := strings.Builder{}
-	i := 0
-	for field, errMsg := range v.errMsgs {
-		b.WriteString(field)
-		b.WriteString(": ")
-		b.WriteString(errMsg)
-		if i < len(v.errMsgs)-1 {
-			b.WriteString("; ")
-		}
-
-		i++
-	}
-
-	return b.String()
-}
-
-func (v ValidationError) ValidationErrorResponse() ValidationErrorResponse {
-	return ValidationErrorResponse{
-		Errors: v.errMsgs,
-	}
 }
 
 type AlarmStep struct {

@@ -50,7 +50,7 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 				structNs := "Config.Actions." + strconv.Itoa(i) + ".Value"
 				strVal, ok := action.Value.(string)
 				if !ok {
-					sl.ReportError(action.Value, "Value", structNs, "must_be_string", "")
+					sl.ReportError(action.Value, "Value", structNs, "value_string", "")
 					continue
 				}
 

@@ -3,14 +3,15 @@ package file
 import (
 	"context"
 	"errors"
-	"fmt"
 	"mime/multipart"
+	"strconv"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -164,9 +165,12 @@ func (s *store) validateFormRequest(form *multipart.Form) ([]*multipart.FileHead
 	files := make([]*multipart.FileHeader, 0)
 
 	for field, headers := range form.File {
-		for i, header := range headers {
+		for _, header := range headers {
 			if s.maxSize > 0 && uint64(header.Size) > s.maxSize {
-				return nil, common.NewValidationError(fmt.Sprintf("%s[%d]", field, i), fmt.Sprintf("file size %d exceeds limit %d", header.Size, s.maxSize))
+				return nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldErrorWithParam("filesize", field, field, strconv.FormatUint(s.maxSize, 10))},
+					nil,
+				)
 			}
 
 			files = append(files, header)

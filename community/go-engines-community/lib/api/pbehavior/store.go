@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -30,6 +29,7 @@ import (
 	libredis "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/redis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/timespan"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/kylelemons/godebug/pretty"
 	"github.com/redis/go-redis/v9"
 	librrule "github.com/teambition/rrule-go"
@@ -433,12 +433,12 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		recomputeInherited = prevPbh.Inherited
 
 		if prevPbh.Origin != "" {
-			if len(prevPbh.Entities) > 0 {
-				return common.NewValidationError("_id", "Cannot update an external pbehavior.")
-			}
+			valErr := validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "_id", "_id")},
+				nil,
+			)
 
-			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
-			if !*r.Enabled || r.RRule != "" || r.Timezone != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
+			if len(prevPbh.Entities) > 0 || !*r.Enabled || r.RRule != "" || r.Timezone != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
 				return valErr
 			}
 
@@ -554,12 +554,13 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		recomputeInherited = prevPbh.Inherited
 
 		if prevPbh.Origin != "" {
-			if len(prevPbh.Entities) > 0 {
-				return common.NewValidationError("_id", "Cannot update an external pbehavior.")
-			}
+			valErr := validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "_id", "_id")},
+				nil,
+			)
 
-			valErr := common.NewValidationError("_id", "Cannot update a pbehavior with origin.")
-			if r.Enabled != nil && !*r.Enabled ||
+			if len(prevPbh.Entities) > 0 ||
+				r.Enabled != nil && !*r.Enabled ||
 				r.RRule != nil && *r.RRule != "" ||
 				r.Timezone != nil && *r.Timezone != "" ||
 				len(r.Exdates) > 0 ||
@@ -797,7 +798,10 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		}
 
 		if updateRes.UpsertedCount == 0 {
-			return common.NewValidationError("entity", "Pbehavior for origin already exists.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("exist", "Origin", "Origin")},
+				r,
+			)
 		}
 
 		pbh, err = s.GetOneBy(ctx, doc.ID)
