@@ -494,3 +494,52 @@ html {
     }
   }
 }
+
+.c-alternative-bg-panel {
+  border-radius: 8px !important;
+
+  .v-expansion-panel-header {
+    flex-direction: row-reverse;
+    color: grey;
+
+    .v-icon {
+      margin-right: 8px;
+    }
+  }
+
+  .theme--light & {
+    &,
+    .v-expansion-panel-header,
+    .v-card,
+    .v-data-table,
+    .v-data-table tbody tr {
+      // For selictivity
+      background-color: var(--v-application-background-darken1) !important;
+      border-color: var(--v-application-background-darken1) !important;
+    }
+
+    .v-expansion-panel-header,
+    .v-icon {
+      color: var(--v-application-background-darken4) !important;
+    }
+  }
+
+  .theme--dark & {
+
+    &,
+    .v-expansion-panel-header,
+    .v-card,
+    .v-data-table,
+    .v-data-table tbody tr {
+      // For selictivity
+      color: var(--v-active-color-base) !important;
+      background-color: var(--v-application-background-lighten2) !important;
+      border-color: var(--v-application-background-lighten2) !important;
+    }
+
+    .v-expansion-panel-header,
+    .v-icon {
+      color: var(--v-application-background-lighten5) !important;
+    }
+  }
+}

@@ -25,6 +25,13 @@ export default {
     [PATTERN_TYPES.serviceWeather]: 'Modèle de météo des services',
   },
   notDefinedType: 'Le type sélectionné diffère du type défini dans les informations d\'entité',
+  tryOptimization: 'Essayer l\'optimisation',
+  suggestions: 'Suggestions',
+  rejectAllSuggestions: 'REJETER TOUTES LES SUGGESTIONS',
+  foundEntities: 'trouvé: {count} entités',
+  sameEntities: 'mêmes entités',
+  conditionsOptimized: 'Les conditions suivantes ont été optimisées :',
+  applyThisSuggestion: 'APPLIQUER CETTE SUGGESTION',
   errors: {
     ruleRequired: 'Veuillez ajouter au moins une règle',
     groupRequired: 'Veuillez ajouter au moins un groupe',

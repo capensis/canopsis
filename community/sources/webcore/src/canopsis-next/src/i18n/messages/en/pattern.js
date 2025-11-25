@@ -25,6 +25,13 @@ export default {
     [PATTERN_TYPES.serviceWeather]: 'Service weather pattern',
   },
   notDefinedType: 'Selected type differs from the type set in Entity infos',
+  tryOptimization: 'Try optimization',
+  suggestions: 'Suggestions',
+  rejectAllSuggestions: 'REJECT ALL SUGGESTIONS',
+  foundEntities: 'found: {count} entities',
+  sameEntities: 'same entities',
+  conditionsOptimized: 'The following conditions were optimized:',
+  applyThisSuggestion: 'APPLY THIS SUGGESTION',
   errors: {
     ruleRequired: 'Please add at least one rule',
     groupRequired: 'Please add at least one group',
