@@ -100,6 +100,24 @@
         @input="errors.remove(serviceWeatherName)"
       />
     </c-collapse-panel>
+    <pattern-suggestions
+      v-if="hasRegexpPatterns"
+      :suggestions="[{optimizedPattern: value.alarm_pattern}, {optimizedPattern: value.alarm_pattern}]"
+    />
+    <c-alert :value="hasRegexpPatterns" type="info">
+      <v-layout justify-space-between>
+        <v-flex>
+          Try optimization of Regexp to speed up the query<br>
+          <span class="font-weight-regular">Regexp queries usually work slower than normal queries.</span>
+        </v-flex>
+        <v-btn color="info" @click="tryOptimization">
+          <v-icon class="mr-2" color="white">
+            $vuetify.icons.wand_shine
+          </v-icon>
+          {{ $t('pattern.tryOptimization') }}
+        </v-btn>
+      </v-layout>
+    </c-alert>
     <c-alert
       :value="allOverLimit"
       type="warning"
@@ -150,7 +168,13 @@ import { isString, isEmpty } from 'lodash';
 import { createNamespacedHelpers } from 'vuex';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { PATTERNS_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
+import {
+  PATTERNS_FIELDS,
+  PATTERN_DURATION_FORMAT,
+  TIME_UNITS,
+  PATTERN_OPERATORS,
+  MODALS,
+} from '@/constants';
 
 import { sanitizeHtml } from '@/helpers/html';
 import {
@@ -165,6 +189,7 @@ import { patternCountAlarmsModalMixin } from '@/mixins/pattern/pattern-count-ala
 import { patternCountEntitiesModalMixin } from '@/mixins/pattern/pattern-count-entities-modal';
 
 import PatternCountMessage from '@/components/forms/fields/pattern/pattern-count-message.vue';
+import PatternSuggestions from '@/components/forms/fields/pattern/pattern-suggestions.vue';
 
 const { mapActions: mapPatternActions } = createNamespacedHelpers('pattern');
 
@@ -172,7 +197,7 @@ const getFieldPatternName = (componentName, fieldName) => [componentName, fieldN
 
 export default {
   inject: ['$validator'],
-  components: { PatternCountMessage },
+  components: { PatternCountMessage, PatternSuggestions },
   mixins: [patternCountAlarmsModalMixin, patternCountEntitiesModalMixin],
   model: {
     prop: 'value',
@@ -326,6 +351,14 @@ export default {
 
     isPatternRequired() {
       return this.someRequired ? !this.hasPatterns : this.required;
+    },
+
+    hasRegexpPatterns() {
+      return Object.values(this.value).some(({ groups = [] }) => (
+        groups.some(group => (
+          group.rules.some(rule => rule.operator === PATTERN_OPERATORS.regexp)
+        ))
+      ));
     },
 
     patternNamesToFields() {
@@ -503,6 +536,12 @@ export default {
       }
 
       return this.isValidPatternRules(rules) ? CSS_COLORS_VARS.primary : CSS_COLORS_VARS.error;
+    },
+
+    tryOptimization() {
+      this.$modals.show({
+        name: MODALS.entitiesComparison,
+      });
     },
   },
 };

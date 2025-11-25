@@ -291,6 +291,7 @@ export const API_ROUTES = {
     bulkList: '/api/v4/bulk/patterns',
     entitiesCount: '/api/v4/patterns-entities-count',
     alarmsCount: '/api/v4/patterns-alarms-count',
+    entitiesOptimize: '/api/v4/patterns-entities-optimize',
   },
   shareTokens: '/api/v4/share-tokens',
   techMetrics: '/api/v4/tech-metrics-export',
