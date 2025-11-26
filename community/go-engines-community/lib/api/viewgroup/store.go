@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -342,7 +343,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 				return err
 			}
 		} else {
-			return ErrLinkedToView
+			return httperror.NewConflictError("The group cannot be deleted because it is referenced by a view.")
 		}
 
 		// required to get the author in action log listener.

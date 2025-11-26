@@ -11,6 +11,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
@@ -433,17 +434,41 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		recomputeInherited = prevPbh.Inherited
 
 		if prevPbh.Origin != "" {
-			valErr := validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "_id", "_id")},
-				nil,
-			)
+			if len(prevPbh.Entities) > 0 {
+				return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
+			}
 
-			if len(prevPbh.Entities) > 0 || !*r.Enabled || r.RRule != "" || r.Timezone != "" || len(r.Exdates) > 0 || len(r.Exceptions) > 0 || r.CorporateEntityPattern != "" {
-				return valErr
+			var fieldErrs validator.ValidationErrors
+			if !*r.Enabled {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Enabled", "Enabled"))
+			}
+
+			if r.RRule != "" {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "RRule", "RRule"))
+			}
+
+			if r.Timezone != "" {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Timezone", "Timezone"))
+			}
+
+			if len(r.Exdates) > 0 {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exdates", "Exdates"))
+			}
+
+			if len(r.Exceptions) > 0 {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exceptions", "Exceptions"))
+			}
+
+			if r.CorporateEntityPattern != "" {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "CorporateEntityPattern", "CorporateEntityPattern"))
 			}
 
 			if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
-				return valErr
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "EntityPattern", "EntityPattern"))
+			}
+
+			if len(fieldErrs) > 0 {
+				return validation.NewError(fieldErrs, r)
 			}
 		}
 
@@ -554,26 +579,43 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		recomputeInherited = prevPbh.Inherited
 
 		if prevPbh.Origin != "" {
-			valErr := validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "_id", "_id")},
-				nil,
-			)
+			if len(prevPbh.Entities) > 0 {
+				return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
+			}
 
-			if len(prevPbh.Entities) > 0 ||
-				r.Enabled != nil && !*r.Enabled ||
-				r.RRule != nil && *r.RRule != "" ||
-				r.Timezone != nil && *r.Timezone != "" ||
-				len(r.Exdates) > 0 ||
-				len(r.Exceptions) > 0 ||
-				r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "" {
+			var fieldErrs validator.ValidationErrors
+			if r.Enabled != nil && !*r.Enabled {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Enabled", "Enabled"))
+			}
 
-				return valErr
+			if r.RRule != nil && *r.RRule != "" {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "RRule", "RRule"))
+			}
+
+			if r.Timezone != nil && *r.Timezone != "" {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Timezone", "Timezone"))
+			}
+
+			if len(r.Exdates) > 0 {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exdates", "Exdates"))
+			}
+
+			if len(r.Exceptions) > 0 {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exceptions", "Exceptions"))
+			}
+
+			if r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "" {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "CorporateEntityPattern", "CorporateEntityPattern"))
 			}
 
 			if r.EntityPattern != nil {
 				if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
-					return valErr
+					fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "EntityPattern", "EntityPattern"))
 				}
+			}
+
+			if len(fieldErrs) > 0 {
+				return validation.NewError(fieldErrs, r)
 			}
 		}
 

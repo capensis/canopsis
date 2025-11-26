@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
@@ -142,7 +143,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, model.ID, model.Priority)
 		if err != nil {
 			return err
 		}
@@ -205,7 +206,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, r.Priority)
+		err = priority.UpdateFollowing(ctx, s.dbCollection, r.ID, model.Priority)
 		if err != nil {
 			return err
 		}
@@ -239,8 +240,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	if id == statesetting.JUnitID || id == statesetting.ServiceID {
-		return false, ErrDefaultRule
+	if id == statesetting.ServiceID {
+		return false, httperror.NewForbiddenError("The default service rule cannot be deleted.")
+	}
+
+	if id == statesetting.JUnitID {
+		return false, httperror.NewForbiddenError("The default junit rule cannot be deleted.")
 	}
 
 	var oldVersion statesetting.StateSetting

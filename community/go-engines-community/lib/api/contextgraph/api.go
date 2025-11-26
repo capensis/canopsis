@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
@@ -73,12 +72,14 @@ func (a *api) ImportAll(c *gin.Context) {
 
 	raw, err := c.GetRawData()
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
+		a.errorResponder.Respond(c, httperror.ErrRequestEntityTooLarge)
+
 		return
 	}
 
@@ -112,12 +113,14 @@ func (a *api) ImportPartial(c *gin.Context) {
 
 	raw, err := c.GetRawData()
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	if a.maxImportSize > 0 && uint64(len(raw)) > a.maxImportSize {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("request size %d exceeds limit %d", len(raw), a.maxImportSize)))
+		a.errorResponder.Respond(c, httperror.ErrRequestEntityTooLarge)
+
 		return
 	}
 
@@ -161,7 +164,8 @@ func (a *api) Status(c *gin.Context) {
 	status, err := a.reporter.GetStatus(c, c.Param("id"))
 	if err != nil {
 		if errors.Is(err, ErrNotFound) {
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 			return
 		}
 

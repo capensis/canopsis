@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/entityservice"
@@ -62,7 +61,8 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 	if entity == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -97,7 +97,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if entity == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -143,19 +144,13 @@ func (a *api) Delete(c *gin.Context) {
 
 	entity, err := a.store.Delete(c, request.ID, userID)
 	if err != nil {
-		if errors.Is(err, ErrLinkedEntityToAlarm) || errors.Is(err, ErrComponent) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	if entity == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}

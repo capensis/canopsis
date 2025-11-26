@@ -9,7 +9,6 @@ import (
 	"runtime/debug"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -36,19 +35,24 @@ func Recovery(logger zerolog.Logger) gin.HandlerFunc {
 						logger.Err(err).Msgf("panic recovered")
 						_ = c.Error(err)
 						c.Abort()
+
 						return
 					}
 				}
 
 				if err != nil && errors.Is(err, context.Canceled) {
 					logger.Warn().Err(err).Msg("panic recovered")
-					c.AbortWithStatusJSON(http.StatusRequestTimeout, common.RequestTimeoutResponse)
+					code := http.StatusRequestTimeout
+					c.AbortWithStatusJSON(code, map[string]string{"error": http.StatusText(code)})
+
 					return
 				}
 
 				if err != nil && (errors.Is(err, context.DeadlineExceeded) || mongodriver.IsTimeout(err)) {
 					logger.Err(err).Msg("panic recovered")
-					c.AbortWithStatusJSON(http.StatusRequestTimeout, common.RequestTimeoutResponse)
+					code := http.StatusRequestTimeout
+					c.AbortWithStatusJSON(code, map[string]string{"error": http.StatusText(code)})
+
 					return
 				}
 
@@ -56,9 +60,11 @@ func Recovery(logger zerolog.Logger) gin.HandlerFunc {
 					_ = c.Error(err)
 				}
 				logger.Err(errToLog).Msgf("panic recovered\n%s\n", debug.Stack())
-				c.AbortWithStatusJSON(http.StatusInternalServerError, common.InternalServerErrorResponse)
+				code := http.StatusInternalServerError
+				c.AbortWithStatusJSON(code, map[string]string{"error": http.StatusText(code)})
 			}
 		}()
+
 		c.Next()
 	}
 }

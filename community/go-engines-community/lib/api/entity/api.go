@@ -6,7 +6,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -168,7 +167,8 @@ func (a *api) GetExport(c *gin.Context) {
 	}
 
 	if t == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -188,7 +188,8 @@ func (a *api) DownloadExport(c *gin.Context) {
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -307,7 +308,8 @@ func (a *api) GetContextGraph(c *gin.Context) {
 	}
 
 	if res == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -349,7 +351,7 @@ func (a *api) GetStateSetting(c *gin.Context) {
 	response, err := a.store.GetStateSetting(c, request.ID)
 	if err != nil {
 		if errors.Is(err, ErrNoFound) {
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 			return
 		}

@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -17,8 +18,8 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
-var ErrEnabled = errors.New("maintenance mode has already been enabled")
-var ErrDisabled = errors.New("maintenance mode has already been disabled")
+var ErrEnabled = httperror.NewConflictError("Maintenance mode is already enabled.")
+var ErrDisabled = httperror.NewConflictError("Maintenance mode is already disabled.")
 
 const defaultColor = "#e75e40"
 

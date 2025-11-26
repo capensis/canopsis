@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
@@ -45,7 +44,8 @@ func (a *api) Me(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 
@@ -82,7 +82,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 

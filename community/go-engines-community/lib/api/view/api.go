@@ -1,13 +1,11 @@
 package view
 
 import (
-	"errors"
 	"fmt"
 	"net/http"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -55,7 +53,8 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if view == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -105,7 +104,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if view == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -128,7 +128,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -154,7 +155,8 @@ func (a *api) Copy(c *gin.Context) {
 	}
 
 	if view == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -187,7 +189,8 @@ func (a *api) UpdatePositions(c *gin.Context) {
 				return
 			}
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 				return
 			}
 		}
@@ -201,7 +204,8 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -240,7 +244,8 @@ func (a *api) Import(c *gin.Context) {
 				return
 			}
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 				return
 			}
 		}
@@ -248,15 +253,6 @@ func (a *api) Import(c *gin.Context) {
 
 	err = a.store.Import(c, request, userID)
 	if err != nil {
-		valError := ValidationError{}
-		if errors.As(err, &valError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{
-				Errors: map[string]string{
-					valError.field: valError.Error(),
-				},
-			})
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -292,7 +288,8 @@ func (a *api) Export(c *gin.Context) {
 				return
 			}
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 				return
 			}
 		}
@@ -305,22 +302,14 @@ func (a *api) Export(c *gin.Context) {
 			return
 		}
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
 
 	response, err := a.store.Export(c, request)
 	if err != nil {
-		valError := ValidationError{}
-		if errors.As(err, &valError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{
-				Errors: map[string]string{
-					valError.field: valError.Error(),
-				},
-			})
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return

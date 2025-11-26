@@ -8,6 +8,7 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -257,7 +258,7 @@ func (s *store) DeleteData(ctx context.Context, id, author string) (bool, error)
 		}
 
 		if isUsed {
-			return ErrIsLinked
+			return httperror.NewConflictError("The test data cannot be deleted because it is referenced by a test.")
 		}
 
 		// required to get the author in action log listener

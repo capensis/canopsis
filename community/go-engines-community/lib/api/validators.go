@@ -62,7 +62,7 @@ func RegisterValidators(
 		return nil, errors.New("unknown validator engine")
 	}
 
-	trans, err := libvalidator.NewTranslator(v)
+	trans, err := libvalidator.NewTranslator(v, validation.InvalidIDChars)
 	if err != nil {
 		return nil, err
 	}

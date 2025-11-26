@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -175,7 +176,7 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	if s.isDefaultCanopsisTheme(r.ID) {
-		return nil, ErrCanopsisDefaultTheme
+		return nil, httperror.NewForbiddenError("The predefined theme cannot be modified.")
 	}
 
 	doc := Document{
@@ -215,7 +216,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if s.isDefaultCanopsisTheme(id) {
-		return false, ErrCanopsisDefaultTheme
+		return false, httperror.NewForbiddenError("The predefined theme cannot be deleted.")
 	}
 
 	cfg, err := s.userInterfaceAdapter.GetConfig(ctx)
@@ -229,7 +230,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		deleted = 0
 
 		if cfg.DefaultColorTheme == id {
-			return ErrDefaultTheme
+			return httperror.NewForbiddenError("The default theme cannot be deleted.")
 		}
 
 		// required to get the author in action log listener.

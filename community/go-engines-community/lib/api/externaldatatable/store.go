@@ -12,6 +12,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -35,9 +36,9 @@ const (
 	mongoErrCodeNamespaceExists = 48
 )
 
-var linkedCollections = []string{
-	mongo.EventFilterRuleCollection,
-	mongo.LinkRuleMongoCollection,
+var linkedCollections = map[string]string{
+	"an event filter": mongo.EventFilterRuleCollection,
+	"a link rule":     mongo.LinkRuleMongoCollection,
 }
 
 type Store interface {
@@ -56,9 +57,9 @@ type Store interface {
 }
 
 func NewStore(dbClient mongo.DbClient, pgPoolProvider postgres.PoolProvider, dbExportClient mongo.DbClient, exportDecoder encoding.Decoder) Store {
-	linkedDbCollections := make([]mongo.DbCollection, len(linkedCollections))
-	for i, c := range linkedCollections {
-		linkedDbCollections[i] = dbClient.Collection(c)
+	linkedDbCollections := make(map[string]mongo.DbCollection, len(linkedCollections))
+	for k, v := range linkedCollections {
+		linkedDbCollections[k] = dbClient.Collection(v)
 	}
 
 	return &store{
@@ -80,7 +81,7 @@ type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
 	dbWidgetCollection    mongo.DbCollection
-	linkedDbCollections   []mongo.DbCollection
+	linkedDbCollections   map[string]mongo.DbCollection
 	pgPoolProvider        postgres.PoolProvider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -392,16 +393,12 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 		}
 
 		if table.FromConfig {
-			return ErrConfigNotDeletable
+			return httperror.NewForbiddenError("This table is defined in configuration and cannot be deleted.")
 		}
 
-		isLinked, err := isTableLinked(ctx, id, s.dbWidgetCollection, s.linkedDbCollections)
+		err = isTableLinked(ctx, id, s.dbWidgetCollection, s.linkedDbCollections)
 		if err != nil {
 			return err
-		}
-
-		if isLinked {
-			return ErrLinkedNotDeletable
 		}
 
 		// required to get the author in action log listener.
@@ -1593,32 +1590,32 @@ func GetRefParametersLookups() []bson.M {
 	}
 }
 
-func isTableLinked(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections []mongo.DbCollection) (bool, error) {
+func isTableLinked(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections map[string]mongo.DbCollection) error {
 	err := dbWidgetCollection.
 		FindOne(ctx, bson.M{"type": view.WidgetTypeExternalData, "parameters.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
 		Err()
 	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-		return false, err
+		return err
 	}
 
 	if err == nil {
-		return true, nil
+		return httperror.NewConflictError("The table cannot be deleted because it is referenced by a widget.")
 	}
 
-	for _, c := range linkedDbCollections {
+	for k, c := range linkedDbCollections {
 		err = c.
 			FindOne(ctx, bson.M{"external_data.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
 			Err()
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, err
+			return err
 		}
 
 		if err == nil {
-			return true, nil
+			return httperror.NewConflictError("The table cannot be deleted because it is referenced by " + k + ".")
 		}
 	}
 
-	return false, nil
+	return nil
 }
 
 func getIntValue(v interface{}) (int64, bool) {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -192,7 +193,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (*Entity, error) 
 			}
 
 			if c > 0 {
-				return ErrComponent
+				return httperror.NewConflictError("The component cannot be deleted because it is referenced by a resource.")
 			}
 		}
 
@@ -201,7 +202,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (*Entity, error) 
 			"v.resolved": nil,
 		}).Err()
 		if err == nil {
-			return ErrLinkedEntityToAlarm
+			return httperror.NewConflictError("The entity cannot be deleted because it is referenced by an alarm.")
 		}
 
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {

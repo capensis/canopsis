@@ -7,7 +7,6 @@ import (
 	"strings"
 	"unicode"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/text/runes"
@@ -40,7 +39,8 @@ func GetICS(store Store, service Service, errorResponder httperror.Responder) gi
 		}
 
 		if pbh == nil {
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			errorResponder.Respond(c, httperror.ErrNotFound)
+
 			return
 		}
 

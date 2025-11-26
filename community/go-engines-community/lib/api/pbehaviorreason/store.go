@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -195,7 +196,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	}
 
 	if isLinkedToPbehavior {
-		return false, ErrLinkedReasonToPbehavior
+		return false, httperror.NewConflictError("The reason cannot be deleted because it is referenced by a pbehavior.")
 	}
 
 	isLinkedToAction, err := s.isLinkedToAction(ctx, id)
@@ -204,7 +205,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	}
 
 	if isLinkedToAction {
-		return false, ErrLinkedReasonToAction
+		return false, httperror.NewConflictError("The reason cannot be deleted because it is referenced by an action scenario.")
 	}
 
 	var deleted int64
