@@ -19,8 +19,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
@@ -29,6 +30,7 @@ import (
 	libsectls "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	saml2 "github.com/russellhaering/gosaml2"
 	samltypes "github.com/russellhaering/gosaml2/types"
@@ -57,6 +59,7 @@ type provider struct {
 	config             security.SamlConfig
 	tokenService       apisecurity.TokenService
 	maintenanceAdapter config.MaintenanceAdapter
+	errorResponder     httperror.Responder
 	logger             zerolog.Logger
 	keyStore           dsig.X509KeyStore
 	acsUrl             string
@@ -78,6 +81,7 @@ func NewProvider(
 	config security.SamlConfig,
 	tokenService apisecurity.TokenService,
 	maintenanceAdapter config.MaintenanceAdapter,
+	errorResponder httperror.Responder,
 	logger zerolog.Logger,
 ) (Provider, error) {
 	if config.IdPMetadataUrl != "" && config.IdPMetadataXml != "" {
@@ -110,6 +114,7 @@ func NewProvider(
 		config:             config,
 		tokenService:       tokenService,
 		maintenanceAdapter: maintenanceAdapter,
+		errorResponder:     errorResponder,
 		logger:             logger,
 		keyStore:           dsig.TLSCertKeyStore(keyPair),
 		acsUrl:             parsedSamlURL.JoinPath("acs").String(),
@@ -279,7 +284,7 @@ func (p *provider) isServiceProviderAvailable(c *gin.Context) bool {
 		err := p.loadUrlMetadata(c)
 		if err != nil {
 			p.logger.Warn().Str("error", err.Error()).Msg("failed to load IdP metadata")
-			c.AbortWithStatus(http.StatusServiceUnavailable)
+			p.errorResponder.Respond(c, httperror.ErrServiceUnavailable)
 
 			return false
 		}
@@ -335,14 +340,16 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 		}
 
 		if p.samlSP.IdentityProviderSSOURL == "" {
-			c.AbortWithStatus(http.StatusForbidden)
+			p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 
 		request := samlLoginRequest{}
 
-		if err := c.ShouldBindQuery(&request); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		if err := validation.BindQuery(c, &request); err != nil {
+			p.errorResponder.Respond(c, err)
+
 			return
 		}
 
@@ -358,7 +365,9 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 
 			if err != nil {
 				p.logger.Err(err).Msg("samlAuthHandler: BuildAuthRequestDocument error")
-				panic(err)
+				p.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			el := authRequest.SelectElement("AuthnRequest")
@@ -368,7 +377,9 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 			authUrl, err := p.samlSP.BuildAuthURLRedirect(request.RelayState, authRequest)
 			if err != nil {
 				p.logger.Err(err).Msg("samlAuthHandler: parse IdentityProviderSSOURL error")
-				panic(err)
+				p.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			c.Redirect(http.StatusPermanentRedirect, authUrl)
@@ -378,7 +389,9 @@ func (p *provider) SamlAuthHandler() gin.HandlerFunc {
 			b, err := p.samlSP.BuildAuthBodyPost(request.RelayState)
 			if err != nil {
 				p.logger.Err(err).Msg("samlAuthHandler: BuildAuthBodyPost error")
-				panic(err)
+				p.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			c.Data(http.StatusOK, gin.MIMEHTML, b)
@@ -398,45 +411,68 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 
 		samlResponse, exists := c.GetPostForm("SAMLResponse")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("SAMLResponse doesn't exist")))
+			err := validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "SAMLResponse", "SAMLResponse")},
+				nil,
+			)
+
+			p.errorResponder.Respond(c, err)
+
 			return
 		}
 
 		relayState, exists := c.GetPostForm("RelayState")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("RelayState doesn't exist")))
+			err := validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "RelayState", "RelayState")},
+				nil,
+			)
+
+			p.errorResponder.Respond(c, err)
+
 			return
 		}
 
 		relayUrl, err := url.Parse(relayState)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("RelayState is not a valid url")))
+			err = validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("url", "RelayState", "RelayState")},
+				nil,
+			)
+
+			p.errorResponder.Respond(c, err)
+
 			return
 		}
 
 		assertionInfo, err := p.samlSP.RetrieveAssertionInfo(samlResponse)
 		if err != nil {
 			p.logger.Err(err).Msg("assertion is not valid")
-			c.AbortWithStatus(http.StatusForbidden)
+			p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 
 		if assertionInfo.WarningInfo.InvalidTime {
 			p.logger.Err(errors.New("invalid time")).Msg("assertion is not valid")
-			c.AbortWithStatus(http.StatusForbidden)
+			p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 
 		if assertionInfo.WarningInfo.NotInAudience {
 			p.logger.Err(errors.New("not in audience")).Msg("assertion is not valid")
-			c.AbortWithStatus(http.StatusForbidden)
+			p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 
 		user, err := p.userProvider.FindByExternalSource(c, assertionInfo.NameID, security.SourceSaml)
 		if err != nil {
 			p.logger.Err(err).Msg("samlAcsHandler: userProvider FindByExternalSource error")
-			panic(err)
+			p.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if user == nil {
@@ -446,7 +482,8 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 				return
 			}
 		} else if !user.IsEnabled {
-			c.AbortWithStatus(http.StatusForbidden)
+			p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		} else if !p.updateUser(c, relayUrl, assertionInfo, user) {
 			return
@@ -454,24 +491,31 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 
 		maintenanceConf, err := p.maintenanceAdapter.GetConfig(c)
 		if err != nil {
-			panic(err)
+			p.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if maintenanceConf.Enabled {
 			ok, err := p.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
 			if err != nil {
-				panic(err)
+				p.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				p.errorResponder.Respond(c, httperror.ErrMaintenance)
+
 				return
 			}
 		}
 
 		err = p.enforcer.LoadPolicy()
 		if err != nil {
-			panic(fmt.Errorf("reload enforcer error: %w", err))
+			p.errorResponder.Respond(c, fmt.Errorf("reload enforcer error: %w", err))
+
+			return
 		}
 
 		var accessToken string
@@ -481,7 +525,9 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 			accessToken, err = p.tokenService.CreateWithExpiration(c, *user, security.AuthMethodSaml, *assertionInfo.SessionNotOnOrAfter)
 		}
 		if err != nil {
-			panic(err)
+			p.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		query := relayUrl.Query()
@@ -516,39 +562,62 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 		}
 
 		if p.samlSP.IdentityProviderSLOURL == "" {
-			c.AbortWithStatus(http.StatusForbidden)
+			p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 
 		samlRequest, exists := c.GetQuery("SAMLRequest")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("SAMLRequest doesn't exist")))
+			err := validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "SAMLRequest", "SAMLRequest")},
+				nil,
+			)
+
+			p.errorResponder.Respond(c, err)
+
 			return
 		}
 
 		relayState, exists := c.GetQuery("RelayState")
 		if !exists {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(errors.New("RelayState doesn't exist")))
+			err := validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "RelayState", "RelayState")},
+				nil,
+			)
+
+			p.errorResponder.Respond(c, err)
+
 			return
 		}
 
 		request, err := p.samlSP.ValidateEncodedLogoutRequestPOST(samlRequest)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			err = validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("invalid", "SAMLRequest", "SAMLRequest")},
+				nil,
+			)
+
+			p.errorResponder.Respond(c, err)
+
 			return
 		}
 
 		user, err := p.userProvider.FindByExternalSource(c, request.NameID.Value, security.SourceSaml)
 		if err != nil {
 			p.logger.Err(err).Msg("samlSloHandler: userProvider FindByExternalSource error")
-			panic(err)
+			p.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if user == nil {
 			responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
 				p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
-				panic(err)
+				p.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			c.Redirect(http.StatusPermanentRedirect, responseUrl.String())
@@ -560,7 +629,9 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 			responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
 				p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
-				panic(err)
+				p.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			c.Redirect(http.StatusPermanentRedirect, responseUrl.String())
@@ -572,7 +643,9 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 			responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeUnknownPrincipal, request.ID, relayState)
 			if err != nil {
 				p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
-				panic(err)
+				p.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			c.Redirect(http.StatusPermanentRedirect, responseUrl.String())
@@ -582,7 +655,9 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 		responseUrl, err := p.buildLogoutResponseUrl(saml2.StatusCodeSuccess, request.ID, relayState)
 		if err != nil {
 			p.logger.Err(err).Msg("samlSloHandler: buildLogoutResponseUrl error")
-			panic(err)
+			p.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		c.Redirect(http.StatusPermanentRedirect, responseUrl.String())
@@ -663,7 +738,9 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 			return nil, false
 		}
 
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return nil, false
 	}
 
 	user := &security.User{
@@ -680,7 +757,9 @@ func (p *provider) createUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		panic(fmt.Errorf("failed to save saml user with external_id = %s: %w", user.ExternalID, err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to save saml user with external_id = %s: %w", user.ExternalID, err))
+
+		return nil, false
 	}
 
 	return user, true
@@ -697,7 +776,9 @@ func (p *provider) updateUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 			return false
 		}
 
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return false
 	}
 
 	user.Name = p.getAssocAttribute(assertionInfo.Values, security.UserName, user.Name)
@@ -708,7 +789,9 @@ func (p *provider) updateUser(c *gin.Context, relayUrl *url.URL, assertionInfo *
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		panic(fmt.Errorf("failed to update saml user with external_id = %s: %w", user.ExternalID, err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to update saml user with external_id = %s: %w", user.ExternalID, err))
+
+		return false
 	}
 
 	return true

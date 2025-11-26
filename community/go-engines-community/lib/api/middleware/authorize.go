@@ -1,10 +1,7 @@
 package middleware
 
 import (
-	"net/http"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -38,7 +35,8 @@ func Authorize(
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 
@@ -74,6 +72,6 @@ func AuthorizeAtLeastOnePerm(
 			}
 		}
 
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		errorResponder.Respond(c, httperror.NewForbiddenError(""))
 	}
 }

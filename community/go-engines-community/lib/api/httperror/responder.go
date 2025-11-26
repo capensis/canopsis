@@ -18,7 +18,26 @@ import (
 
 var ErrNotFound = errors.New("not found")
 var ErrUnauthorized = errors.New("unauthorized")
-var ErrForbidden = errors.New("forbidden")
+var ErrMethodNotAllowed = errors.New("method not allowed")
+var ErrRequestEntityTooLarge = errors.New("request entity too large")
+var ErrServiceUnavailable = errors.New("service unavailable")
+var ErrMaintenance = errors.New("maintenance")
+
+type ConflictError struct {
+	Message string
+}
+
+func (e *ConflictError) Error() string {
+	return e.Message
+}
+
+type ForbiddenError struct {
+	Message string
+}
+
+func (e *ForbiddenError) Error() string {
+	return e.Message
+}
 
 type Responder interface {
 	// Respond calls c.Abort() and writes response code and body based on error.
@@ -30,6 +49,14 @@ type Responder interface {
 type responder struct {
 	trans  validation.ErrorTranslator
 	logger zerolog.Logger
+}
+
+func NewConflictError(msg string) *ConflictError {
+	return &ConflictError{Message: msg}
+}
+
+func NewForbiddenError(msg string) *ForbiddenError {
+	return &ForbiddenError{Message: msg}
 }
 
 func NewResponder(trans validation.ErrorTranslator, logger zerolog.Logger) Responder {
@@ -56,13 +83,29 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 	}
 
 	var code int
+	var msg string
+	var forbiddenErr *ForbiddenError
+	var conflictErr *ConflictError
 	logLvl := zerolog.DebugLevel
 	if errors.Is(err, ErrNotFound) {
 		code = http.StatusNotFound
 	} else if errors.Is(err, ErrUnauthorized) {
 		code = http.StatusUnauthorized
-	} else if errors.Is(err, ErrForbidden) {
+	} else if errors.Is(err, ErrMethodNotAllowed) {
+		code = http.StatusMethodNotAllowed
+	} else if errors.Is(err, ErrServiceUnavailable) {
+		code = http.StatusServiceUnavailable
+	} else if errors.Is(err, ErrMaintenance) {
+		code = http.StatusServiceUnavailable
+		msg = "The service is under maintenance. Please try again later."
+	} else if errors.Is(err, ErrRequestEntityTooLarge) {
+		code = http.StatusRequestEntityTooLarge
+	} else if errors.As(err, &forbiddenErr) {
 		code = http.StatusForbidden
+		msg = forbiddenErr.Message
+	} else if errors.As(err, &conflictErr) {
+		code = http.StatusConflict
+		msg = conflictErr.Message
 	} else if errors.Is(err, validation.ErrInvalidRequestBody) {
 		code = http.StatusBadRequest
 	} else if errors.Is(err, authctx.ErrNotFound) {
@@ -90,6 +133,9 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 	ar := fastjson.Arena{}
 	res = ar.NewObject()
 	res.Set("error", ar.NewString(http.StatusText(code)))
+	if msg != "" {
+		res.Set("message", ar.NewString(msg))
+	}
 
 	return code, res
 }

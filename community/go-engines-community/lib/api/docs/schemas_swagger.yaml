@@ -1446,18 +1446,6 @@ definitions:
       val:
         type: integer
     type: object
-  common.ErrorResponse:
-    properties:
-      error:
-        type: string
-    type: object
-  common.ValidationErrorResponse:
-    properties:
-      errors:
-        additionalProperties:
-          type: string
-        type: object
-    type: object
   config.EngineParameters:
     properties:
       enabled:

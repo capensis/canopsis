@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"strings"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -101,7 +100,8 @@ func (a *api) Login(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 
@@ -121,7 +121,8 @@ func (a *api) Login(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+			a.errorResponder.Respond(c, httperror.ErrMaintenance)
+
 			return
 		}
 	}
@@ -141,7 +142,8 @@ func (a *api) Login(c *gin.Context) {
 func (a *api) Logout(c *gin.Context) {
 	tokenString := getToken(c)
 	if tokenString == "" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 	ok, err := a.tokenService.Delete(c, tokenString)
@@ -152,7 +154,8 @@ func (a *api) Logout(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 
@@ -178,7 +181,8 @@ func (a *api) GetLoggedUserCount(c *gin.Context) {
 func (a *api) GetFileAccess(c *gin.Context) {
 	tokenString := getToken(c)
 	if tokenString == "" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 
@@ -197,7 +201,8 @@ func (a *api) GetFileAccess(c *gin.Context) {
 	}
 
 	if user == nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+		a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 		return
 	}
 

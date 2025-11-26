@@ -6,7 +6,6 @@ import (
 	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -82,7 +81,8 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 		}
 
 		if user == nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+			a.errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 			return
 		}
 
@@ -102,7 +102,8 @@ func (a *api) LoginHandler() gin.HandlerFunc {
 			}
 
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+				a.errorResponder.Respond(c, httperror.ErrMaintenance)
+
 				return
 			}
 		}
