@@ -61,15 +61,15 @@ Canopsis est une solution d’hypervision conçue pour **centraliser, corréler 
     - [Widgets](guide-utilisation/interface/widgets/)
 
 === "Administrateurs"
-    - [Installation & configuration](guide-administration/)
-    - [Menu Administration](guide-utilisation/menu-administration)
-    - [Sécurité & permissions](guide-administration/securite/)
-    - [Maintenance](guide-administration/maintenance/)
+    - [Installation & configuration](guide-administration/installation/)
+    - [Menu Administration](guide-utilisation/#menu-administration)
+    - [Architecture interne](guide-administration/architecture-interne/)
+    - [Administration avancée des composants de Canopsis](guide-administration/administration-avancee/)
 
 === "Développeurs & intégrateurs"
-    - [Développement](guide-developpement/)
+    - [Guide de Développement](guide-developpement/)
     - [Structure des événements](guide-developpement/structures/)
-    - [API REST](guide-developpement/api/)
+    - [API REST](guide-developpement/#apiv4)
 
 ---
 
