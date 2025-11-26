@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
@@ -222,7 +223,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 	if tabInfo.IsPrivate && tabInfo.Author != r.Author {
 		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
+			validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
 			r,
 		)
 	}
@@ -234,10 +235,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		}
 
 		if !ok {
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
-				r,
-			)
+			return nil, httperror.NewForbiddenError("")
 		}
 	}
 
@@ -523,7 +521,7 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 
 		if tabInfo.IsPrivate && tabInfo.Author != r.Author {
 			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
 				r,
 			)
 		}
@@ -535,10 +533,7 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 			}
 
 			if !ok {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
-					r,
-				)
+				return httperror.NewForbiddenError("")
 			}
 		}
 
@@ -606,7 +601,10 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			if tabId == "" {
 				tabId = w.Tab
 			} else if tabId != w.Tab {
-				return ValidationError{error: errors.New("widgets are related to different view tabs")}
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_applicable", "items", "items")},
+					nil,
+				)
 			}
 		}
 
@@ -615,7 +613,10 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			return err
 		}
 		if count != int64(len(items)) {
-			return ValidationError{error: errors.New("widgets are missing")}
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10))},
+				nil,
+			)
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(widgets))

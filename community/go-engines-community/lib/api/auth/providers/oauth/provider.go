@@ -12,8 +12,9 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/auth"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libhttp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -50,6 +51,7 @@ type provider struct {
 	name               string
 	source             string
 	maxResponseSize    int64
+	errorResponder     httperror.Responder
 
 	// only for OpenID type of providers
 	oidcMx                 sync.Mutex
@@ -71,6 +73,7 @@ func NewProvider(
 	tokenService apisecurity.TokenService,
 	logger zerolog.Logger,
 	maxResponseSize int64,
+	errorResponder httperror.Responder,
 ) Provider {
 	p := &provider{
 		name:               name,
@@ -95,6 +98,7 @@ func NewProvider(
 		config:          config,
 		source:          name,
 		maxResponseSize: maxResponseSize,
+		errorResponder:  errorResponder,
 		logger:          logger,
 	}
 
@@ -139,7 +143,7 @@ func (p *provider) isOpenIDProviderAvailable(c *gin.Context) bool {
 		err := p.loadOpenIDMetadata(c)
 		if err != nil {
 			p.logger.Warn().Str("error", err.Error()).Msg("failed to load openid metadata")
-			c.AbortWithStatus(http.StatusServiceUnavailable)
+			p.errorResponder.Respond(c, httperror.ErrServiceUnavailable)
 
 			return false
 		}
@@ -162,14 +166,17 @@ func (p *provider) Login(c *gin.Context) {
 	}
 
 	request := loginRequest{}
-	if err := c.ShouldBindQuery(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.BindQuery(c, &request); err != nil {
+		p.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	session, err := p.store.Get(c.Request, oauthSessionPrefix+p.name)
 	if err != nil {
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	options := make([]oauth2.AuthCodeOption, 0, 2)
@@ -184,7 +191,9 @@ func (p *provider) Login(c *gin.Context) {
 	if p.config.OpenID {
 		nonce, err := utils.RandBase64String(randomBytesNumber)
 		if err != nil {
-			panic(fmt.Errorf("failed to generate nonce: %w", err))
+			p.errorResponder.Respond(c, fmt.Errorf("failed to generate nonce: %w", err))
+
+			return
 		}
 
 		session.Values["nonce"] = nonce
@@ -193,7 +202,9 @@ func (p *provider) Login(c *gin.Context) {
 
 	state, err := utils.RandBase64String(randomBytesNumber)
 	if err != nil {
-		panic(fmt.Errorf("failed to generate state: %w", err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to generate state: %w", err))
+
+		return
 	}
 
 	session.Values["state"] = state
@@ -202,7 +213,9 @@ func (p *provider) Login(c *gin.Context) {
 
 	err = session.Save(c.Request, c.Writer)
 	if err != nil {
-		panic(fmt.Errorf("failed to save session: %w", err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to save session: %w", err))
+
+		return
 	}
 
 	c.Redirect(http.StatusPermanentRedirect, p.oauth2Config.AuthCodeURL(state, options...))
@@ -219,43 +232,59 @@ func (p *provider) Callback(c *gin.Context) {
 
 	session, err := p.store.Get(c.Request, oauthSessionPrefix+p.name)
 	if err != nil {
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if len(session.Values) == 0 {
-		panic(errors.New("session is empty"))
+		p.errorResponder.Respond(c, errors.New("session is empty"))
+
+		return
 	}
 
 	// expire auth session
 	session.Options.MaxAge = -1
 	err = session.Save(c.Request, c.Writer)
 	if err != nil {
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	redirectRaw, ok := session.Values["redirect"]
 	if !ok {
-		panic(errors.New("redirect url not found"))
+		p.errorResponder.Respond(c, errors.New("redirect url not found"))
+
+		return
 	}
 
 	redirectStr, ok := redirectRaw.(string)
 	if !ok {
-		panic(errors.New("redirect url should be a string"))
+		p.errorResponder.Respond(c, errors.New("redirect url should be a string"))
+
+		return
 	}
 
 	redirectUrl, err := url.Parse(redirectStr)
 	if err != nil {
-		panic(fmt.Errorf("redirect string is not an URL: %w", err))
+		p.errorResponder.Respond(c, fmt.Errorf("redirect string is not an URL: %w", err))
+
+		return
 	}
 
 	stateRaw, ok := session.Values["state"]
 	if !ok {
-		panic(errors.New("state not found"))
+		p.errorResponder.Respond(c, errors.New("state not found"))
+
+		return
 	}
 
 	state, ok := stateRaw.(string)
 	if !ok {
-		panic(errors.New("state should be a string"))
+		p.errorResponder.Respond(c, errors.New("state should be a string"))
+
+		return
 	}
 
 	if c.Query("state") != state {
@@ -270,12 +299,16 @@ func (p *provider) Callback(c *gin.Context) {
 	if p.config.PKCE {
 		verifierRaw, ok := session.Values["pkce_verifier"]
 		if !ok {
-			panic(errors.New("pkce_verifier not found"))
+			p.errorResponder.Respond(c, errors.New("pkce_verifier not found"))
+
+			return
 		}
 
 		verifier, ok := verifierRaw.(string)
 		if !ok {
-			panic(errors.New("pkce_verifier should be a string"))
+			p.errorResponder.Respond(c, errors.New("pkce_verifier should be a string"))
+
+			return
 		}
 
 		options = append(options, oauth2.VerifierOption(verifier))
@@ -301,7 +334,9 @@ func (p *provider) Callback(c *gin.Context) {
 	ctx := oidc.ClientContext(c, p.client)
 	oauth2Token, err := p.oauth2Config.Exchange(ctx, code, options...)
 	if err != nil {
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	var userID string
@@ -310,17 +345,23 @@ func (p *provider) Callback(c *gin.Context) {
 	if !p.config.OpenID {
 		userID, userInfo, err = p.getUserInfoOAuth2(ctx, oauth2Token)
 		if err != nil {
-			panic(fmt.Errorf("failed to get user info: %w", err))
+			p.errorResponder.Respond(c, fmt.Errorf("failed to get user info: %w", err))
+
+			return
 		}
 	} else {
 		nonceRaw, ok := session.Values["nonce"]
 		if !ok {
-			panic(errors.New("nonce not found"))
+			p.errorResponder.Respond(c, errors.New("nonce not found"))
+
+			return
 		}
 
 		nonce, ok := nonceRaw.(string)
 		if !ok {
-			panic(errors.New("nonce should be a string"))
+			p.errorResponder.Respond(c, errors.New("nonce should be a string"))
+
+			return
 		}
 
 		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
@@ -348,7 +389,9 @@ func (p *provider) Callback(c *gin.Context) {
 
 		userID, userInfo, err = p.getUserInfoOpenID(ctx, oauth2Token, idToken)
 		if err != nil {
-			panic(fmt.Errorf("failed to get user info: %w", err))
+			p.errorResponder.Respond(c, fmt.Errorf("failed to get user info: %w", err))
+
+			return
 		}
 	}
 
@@ -361,7 +404,9 @@ func (p *provider) Callback(c *gin.Context) {
 
 	user, err := p.userProvider.FindByExternalSource(ctx, userID, p.source)
 	if err != nil {
-		panic(fmt.Errorf("failed to get user by external source: %w", err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to get user by external source: %w", err))
+
+		return
 	}
 
 	if user == nil {
@@ -370,7 +415,8 @@ func (p *provider) Callback(c *gin.Context) {
 			return
 		}
 	} else if !user.IsEnabled {
-		c.AbortWithStatus(http.StatusForbidden)
+		p.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	} else if !p.updateUser(c, redirectUrl, user, userInfo) {
 		return
@@ -378,22 +424,29 @@ func (p *provider) Callback(c *gin.Context) {
 
 	err = p.enforcer.LoadPolicy()
 	if err != nil {
-		panic(fmt.Errorf("reload enforcer error: %w", err))
+		p.errorResponder.Respond(c, fmt.Errorf("reload enforcer error: %w", err))
+
+		return
 	}
 
 	maintenanceConf, err := p.maintenanceAdapter.GetConfig(ctx)
 	if err != nil {
-		panic(fmt.Errorf("failed to get maintenance config: %w", err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to get maintenance config: %w", err))
+
+		return
 	}
 
 	if maintenanceConf.Enabled {
 		ok, err = p.enforcer.Enforce(user.ID, apisecurity.PermMaintenance, model.PermissionCan)
 		if err != nil {
-			panic(fmt.Errorf("enforcer failed: %w", err))
+			p.errorResponder.Respond(c, fmt.Errorf("enforcer failed: %w", err))
+
+			return
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+			p.errorResponder.Respond(c, httperror.ErrMaintenance)
+
 			return
 		}
 	}
@@ -406,7 +459,9 @@ func (p *provider) Callback(c *gin.Context) {
 	}
 
 	if err != nil {
-		panic(fmt.Errorf("failed to create token: %w", err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to create token: %w", err))
+
+		return
 	}
 
 	query := redirectUrl.Query()
@@ -427,7 +482,9 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, externalID s
 			return nil, false
 		}
 
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return nil, false
 	}
 
 	user := &security.User{
@@ -444,7 +501,9 @@ func (p *provider) createUser(c *gin.Context, redirectUrl *url.URL, externalID s
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		panic(fmt.Errorf("failed to save openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to save openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
+
+		return nil, false
 	}
 
 	return user, true
@@ -461,7 +520,9 @@ func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *securi
 			return false
 		}
 
-		panic(err)
+		p.errorResponder.Respond(c, err)
+
+		return false
 	}
 
 	user.Name = p.getAssocAttribute(userInfo, security.UserName, user.Name)
@@ -472,7 +533,9 @@ func (p *provider) updateUser(c *gin.Context, redirectUrl *url.URL, user *securi
 
 	err = p.userProvider.Save(c, user)
 	if err != nil {
-		panic(fmt.Errorf("failed to update openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
+		p.errorResponder.Respond(c, fmt.Errorf("failed to update openid/oauth2 user with external_id = %s: %w", user.ExternalID, err))
+
+		return false
 	}
 
 	return true

@@ -7,6 +7,7 @@ import (
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -196,10 +197,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 		}
 
 		if oldRole.ID == security.RoleAdmin {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("access_role", "_id", "_id")},
-				nil,
-			)
+			return httperror.NewForbiddenError("The admin role cannot be modified.")
 		}
 
 		if oldRole.Name != r.Name {
@@ -252,10 +250,7 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 		}
 
 		if oldRole.ID == security.RoleAdmin {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("access_role", "ID", "ID")},
-				r,
-			)
+			return httperror.NewForbiddenError("The admin role cannot be modified.")
 		}
 
 		updateRes, err := s.dbCollection.UpdateOne(ctx,
@@ -280,7 +275,7 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if id == security.RoleAdmin {
-		return false, ErrDeleteAdminRole
+		return false, httperror.NewForbiddenError("The admin role cannot be deleted.")
 	}
 
 	var deleted int64
@@ -288,8 +283,12 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 		deleted = 0
 
 		err := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
-		if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return cmp.Or(err, ErrLinkedToUser)
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		if err == nil {
+			return httperror.NewConflictError("The role cannot be deleted because it is referenced by a user.")
 		}
 
 		// required to get the author in action log listener.

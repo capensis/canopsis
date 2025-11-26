@@ -8,9 +8,11 @@ import (
 	"io"
 	"mime"
 	"mime/multipart"
+	"strconv"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -203,7 +205,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	}
 
 	if isLinked {
-		return false, ErrLinkedException
+		return false, httperror.NewConflictError("The exception cannot be deleted because it is referenced by a pbehavior.")
 	}
 
 	var deleted int64
@@ -507,7 +509,7 @@ func (s *store) transformRequestToDoc(ctx context.Context, r EditRequest) (*pbeh
 	exception.Name = r.Name
 	exception.Description = r.Description
 	exception.Author = r.Author
-	exception.Exdates, err = s.transformExdatesRequestToModel(ctx, r.Exdates)
+	exception.Exdates, err = s.transformExdatesRequestToModel(ctx, r)
 	if err != nil {
 		return nil, err
 	}
@@ -515,14 +517,14 @@ func (s *store) transformRequestToDoc(ctx context.Context, r EditRequest) (*pbeh
 	return &exception, nil
 }
 
-func (s *store) transformExdatesRequestToModel(ctx context.Context, r []ExdateRequest) ([]pbehavior.Exdate, error) {
-	if len(r) == 0 {
+func (s *store) transformExdatesRequestToModel(ctx context.Context, r EditRequest) ([]pbehavior.Exdate, error) {
+	if len(r.Exdates) == 0 {
 		return []pbehavior.Exdate{}, nil
 	}
 
-	pbhTypes := make([]string, len(r))
-	for i := range r {
-		pbhTypes[i] = r[i].Type
+	pbhTypes := make([]string, len(r.Exdates))
+	for i := range r.Exdates {
+		pbhTypes[i] = r.Exdates[i].Type
 	}
 
 	res, err := s.typeDbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": pbhTypes}})
@@ -543,17 +545,20 @@ func (s *store) transformExdatesRequestToModel(ctx context.Context, r []ExdateRe
 		}
 	}
 
-	exdates := make([]pbehavior.Exdate, len(r))
-	for i := range r {
-		t, ok := typesByID[r[i].Type]
+	exdates := make([]pbehavior.Exdate, len(r.Exdates))
+	for i := range r.Exdates {
+		t, ok := typesByID[r.Exdates[i].Type]
 		if !ok {
-			return nil, ErrTypeNotExists
+			return nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Exdates."+strconv.Itoa(i)+".Type")},
+				r,
+			)
 		}
 
 		exdates[i] = pbehavior.Exdate{
 			Exdate: types.Exdate{
-				Begin: r[i].Begin,
-				End:   r[i].End,
+				Begin: r.Exdates[i].Begin,
+				End:   r.Exdates[i].End,
 			},
 			Type: t.ID,
 		}

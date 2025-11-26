@@ -2,11 +2,9 @@ package widget
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -54,7 +52,8 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if widget == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -104,7 +103,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if widget == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -127,7 +127,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -154,7 +155,8 @@ func (a *api) Copy(c *gin.Context) {
 	}
 
 	if widget == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -190,24 +192,21 @@ func (a *api) UpdateGridPositions(c *gin.Context) {
 	}
 
 	if !ok {
-		c.JSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
 	ok, err = a.store.UpdateGridPositions(c, request.Items)
 	if err != nil {
-		valErr := ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 

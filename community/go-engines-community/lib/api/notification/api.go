@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -69,7 +68,8 @@ func (a *api) List(c *gin.Context) {
 func (a *api) GetSettings(c *gin.Context) {
 	notification, err := a.store.GetSettings(c)
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	} else if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -93,7 +93,8 @@ func (a *api) UpdateSettings(c *gin.Context) {
 
 	notification, err := a.store.UpdateSettings(c, request)
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	} else if err != nil {
 		a.errorResponder.Respond(c, err)

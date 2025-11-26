@@ -14,6 +14,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -62,9 +63,9 @@ func NewImportWorker(
 	jobPublisher workers.JobPublisher,
 	logger zerolog.Logger,
 ) ImportWorker {
-	linkedDbCollections := make([]mongo.DbCollection, len(linkedCollections))
-	for i, c := range linkedCollections {
-		linkedDbCollections[i] = dbClient.Collection(c)
+	linkedDbCollections := make(map[string]mongo.DbCollection, len(linkedCollections))
+	for k, v := range linkedCollections {
+		linkedDbCollections[k] = dbClient.Collection(v)
 	}
 
 	return &importWorker{
@@ -91,7 +92,7 @@ type importWorker struct {
 	dbCollection            mongo.DbCollection
 	dbImportCollection      mongo.DbCollection
 	dbWidgetCollection      mongo.DbCollection
-	linkedDbCollections     []mongo.DbCollection
+	linkedDbCollections     map[string]mongo.DbCollection
 	pgPoolProvider          postgres.PoolProvider
 	tmpImportDir            string
 	jobPublisher            workers.JobPublisher
@@ -127,10 +128,7 @@ func (w *importWorker) CreateImportJob(ctx context.Context, id string, separator
 	err := w.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&externalDataTable)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return job, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "_id", "_id")},
-				nil,
-			)
+			return job, httperror.ErrNotFound
 		}
 
 		return job, err
@@ -1316,9 +1314,13 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	isLinked := false
 	var err error
 	if len(t.ColumnConfigs) > 0 {
-		isLinked, err = isTableLinked(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
+		err = isTableLinked(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
 		if err != nil {
-			return err
+			var confErr *httperror.ConflictError
+			isLinked = errors.As(err, &confErr)
+			if !isLinked {
+				return err
+			}
 		}
 	}
 

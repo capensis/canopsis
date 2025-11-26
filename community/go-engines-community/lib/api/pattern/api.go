@@ -7,7 +7,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -17,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -76,7 +76,8 @@ func (a *api) Create(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
@@ -139,7 +140,8 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if pattern == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -173,17 +175,28 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if pattern == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
 	if pattern.Type != request.Type {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"type": "Type cannot be changed"}})
+		err = validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("unchangeable", "Type", "Type")},
+			request,
+		)
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	if pattern.IsCorporate != *request.IsCorporate {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"is_corporate": "IsCorporate cannot be changed"}})
+		err = validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("unchangeable", "IsCorporate", "IsCorporate")},
+			request,
+		)
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -196,7 +209,8 @@ func (a *api) Update(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
@@ -209,7 +223,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if pattern == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -232,7 +247,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if pattern == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -245,7 +261,8 @@ func (a *api) Delete(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
@@ -258,7 +275,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -293,7 +311,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		}
 
 		if pattern.IsCorporate && !canDeleteCorporate {
-			return "", httperror.ErrForbidden
+			return "", httperror.NewForbiddenError("")
 		}
 
 		ok, err := a.store.Delete(c, *pattern, userID)
