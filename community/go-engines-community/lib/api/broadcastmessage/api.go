@@ -141,7 +141,14 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -162,11 +169,7 @@ func (a *api) Delete(c *gin.Context) {
 // GetActive
 // @Success 200 {array} Response
 func (a *api) GetActive(c *gin.Context) {
-	userID := ""
-	if v, ok := c.Get(authctx.UserKey); ok {
-		userID, _ = v.(string)
-	}
-
+	userID, _ := authctx.GetUserKey(c) // the endpoint doesn't require authentication
 	res, err := a.store.GetActive(c, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -178,7 +181,12 @@ func (a *api) GetActive(c *gin.Context) {
 }
 
 func (a *api) Read(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ok, err := a.store.Read(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)

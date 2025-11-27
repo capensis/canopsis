@@ -31,9 +31,15 @@ func NewApi(store Store, errorResponder httperror.Responder) crud.API {
 func (a *api) List(c *gin.Context) {
 	var query ListRequest
 	query.Query = pagination.GetDefaultQuery()
-	query.UserID = c.MustGet(authctx.UserKey).(string)
+	var err error
+	query.UserID, err = authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
 
-	if err := validation.Bind(c, &query); err != nil {
+		return
+	}
+
+	if err = validation.Bind(c, &query); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -134,7 +140,14 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
 	if err != nil {
 		if errors.Is(err, ErrLinkedToView) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))

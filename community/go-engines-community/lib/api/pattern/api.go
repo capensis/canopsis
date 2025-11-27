@@ -66,7 +66,14 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	if *request.IsCorporate {
-		ok, err := a.enforcer.Enforce(c.MustGet(authctx.UserKey).(string), apisecurity.PermCorporatePattern, model.PermissionCan)
+		userID, err := authctx.GetUserKey(c)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
+
+			return
+		}
+
+		ok, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 		if err != nil {
 			a.errorResponder.Respond(c, err)
 
@@ -107,7 +114,14 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	aggregationResult, err := a.store.Find(c, request, c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	aggregationResult, err := a.store.Find(c, request, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -121,7 +135,14 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	pattern, err := a.store.GetByID(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	pattern, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -140,7 +161,12 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := EditRequest{
 		ID: c.Param("id"),
 	}
@@ -208,7 +234,12 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	pattern, err := a.store.GetByID(c, c.Param("id"), userID)
 	if err != nil {
@@ -254,7 +285,12 @@ func (a *api) Delete(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	canDeleteCorporate, err := a.enforcer.Enforce(userID, apisecurity.PermCorporatePattern, model.PermissionCan)
 	if err != nil {

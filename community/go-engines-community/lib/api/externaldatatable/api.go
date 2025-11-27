@@ -183,7 +183,14 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("table"), c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("table"), userID)
 	if err != nil {
 		if errors.Is(err, ErrConfigNotDeletable) || errors.Is(err, ErrLinkedNotDeletable) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -458,7 +465,12 @@ func (a *api) Export(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	task, err := a.exportTaskCreator.Create(c, export.TaskParameters{
 		Type:           "externaldata",
 		Parameters:     string(params),

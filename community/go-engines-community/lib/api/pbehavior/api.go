@@ -300,7 +300,14 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, recomputeInherited, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, recomputeInherited, err := a.store.Delete(c, id, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -325,7 +332,14 @@ func (a *api) DeleteByName(c *gin.Context) {
 		return
 	}
 
-	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	id, recomputeInherited, err := a.store.DeleteByName(c, request.Name, userID)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -396,7 +410,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	recomputeInherited := false
 
 	ids := make([]string, 0)
@@ -421,8 +440,18 @@ func (a *api) BulkDelete(c *gin.Context) {
 // BulkEntityCreate
 // @Param body body []BulkEntityCreateRequestItem true "body"
 func (a *api) BulkEntityCreate(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
-	username := c.MustGet(authctx.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityCreateRequestItem) (string, error) {
 		pbh, err := a.store.EntityInsert(c, request)
@@ -448,8 +477,18 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 // BulkEntityDelete
 // @Param body body []BulkEntityDeleteRequestItem true "body"
 func (a *api) BulkEntityDelete(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
-	username := c.MustGet(authctx.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityDeleteRequestItem) (string, error) {
 		id, err := a.store.EntityDelete(c, request)

@@ -2,11 +2,13 @@ package middleware
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"reflect"
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	mock_httperror "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/httperror"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/mock/gomock"
@@ -34,13 +36,14 @@ func TestProvideAuthorizedIds_GivenAuthorizedUser_ShouldReturnIds(t *testing.T) 
 			{role, obj1, "testanotheract"},
 			{role, obj2, act},
 		}, nil)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
-		c.Set(authctx.UserKey, subj)
+		authctx.SetUserKey(c, subj)
 	})
 	router.GET(
 		okURL,
-		ProvideAuthorizedIds(act, mockEnforcer, nil),
+		ProvideAuthorizedIds(act, mockEnforcer, nil, mockErrResponder),
 		func(c *gin.Context) {
 			ids, _ := c.Get(AuthorizedIds)
 			c.JSON(http.StatusOK, ids)
@@ -73,10 +76,18 @@ func TestProvideAuthorizedIds_GivenNoUser_ShouldReturnUnauthorizedError(t *testi
 		EXPECT().
 		GetRolesForUser(gomock.Any()).
 		Times(0)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Any()).Do(func(c *gin.Context, err error) {
+		if errors.Is(err, authctx.ErrNotFound) {
+			c.AbortWithStatus(expectedCode)
+		} else {
+			c.AbortWithStatus(http.StatusInternalServerError)
+		}
+	})
 	router := gin.New()
 	router.GET(
 		okURL,
-		ProvideAuthorizedIds(act, mockEnforcer, nil),
+		ProvideAuthorizedIds(act, mockEnforcer, nil, mockErrResponder),
 		okHandler,
 	)
 
@@ -101,13 +112,14 @@ func TestProvideAuthorizedIds_GivenNotAuthorizedUser_ShouldReturnEmpty(t *testin
 		EXPECT().
 		GetPermissionsForUser(gomock.Any()).
 		Times(0)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
-		c.Set(authctx.UserKey, subj)
+		authctx.SetUserKey(c, subj)
 	})
 	router.GET(
 		okURL,
-		ProvideAuthorizedIds(act, mockEnforcer, nil),
+		ProvideAuthorizedIds(act, mockEnforcer, nil, mockErrResponder),
 		func(c *gin.Context) {
 			ids, _ := c.Get(AuthorizedIds)
 			c.JSON(http.StatusOK, ids)

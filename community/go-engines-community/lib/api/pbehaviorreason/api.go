@@ -157,7 +157,14 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
 	if err != nil {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {

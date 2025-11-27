@@ -5,6 +5,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
@@ -19,22 +20,21 @@ func Authorize(
 	obj string,
 	act string,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawSubj, ok := c.Get(authctx.UserKey)
-		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-			return
-		}
+		subj, err := authctx.GetUserKey(c)
+		if err != nil {
+			errorResponder.Respond(c, err)
 
-		subj, ok := rawSubj.(string)
-		if !ok {
-			panic("user key is not a string")
+			return
 		}
 
 		ok, err := enforcer.Enforce(subj, obj, act)
 		if err != nil {
-			panic(err)
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -50,23 +50,22 @@ func Authorize(
 func AuthorizeAtLeastOnePerm(
 	permChecks []apisecurity.PermCheck,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		rawSubj, ok := c.Get(authctx.UserKey)
-		if !ok {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
-			return
-		}
+		subj, err := authctx.GetUserKey(c)
+		if err != nil {
+			errorResponder.Respond(c, err)
 
-		subj, ok := rawSubj.(string)
-		if !ok {
-			panic("user key is not a string")
+			return
 		}
 
 		for _, permCheck := range permChecks {
 			ok, err := enforcer.Enforce(subj, permCheck.Obj, permCheck.Act)
 			if err != nil {
-				panic(err)
+				errorResponder.Respond(c, err)
+
+				return
 			}
 
 			if ok {
