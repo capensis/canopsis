@@ -18,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -32,7 +31,6 @@ type api struct {
 	store          Store
 	enforcer       security.Enforcer
 	errorResponder httperror.Responder
-	logger         zerolog.Logger
 
 	configProvider config.UserInterfaceConfigProvider
 }
@@ -42,13 +40,11 @@ func NewApi(
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
 	errorResponder httperror.Responder,
-	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:          store,
 		enforcer:       enforcer,
 		errorResponder: errorResponder,
-		logger:         logger,
 
 		configProvider: configProvider,
 	}
@@ -301,21 +297,29 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		pattern, err := a.store.GetByID(c, request.ID, userID)
-		if err != nil || pattern == nil {
+		if err != nil {
 			return "", err
+		}
+
+		if pattern == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		if pattern.IsCorporate && !canDeleteCorporate {
-			return "", bulk.ErrUnauthorized
+			return "", httperror.ErrForbidden
 		}
 
 		ok, err := a.store.Delete(c, *pattern, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return pattern.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // CountAlarms

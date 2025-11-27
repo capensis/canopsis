@@ -475,7 +475,6 @@ func Default(
 			exdataImportWorker,
 			services.NotificationStore,
 			services.ExternalDataContainer,
-			workersRunner,
 			tplTestTypePermMapping,
 			logger,
 		)

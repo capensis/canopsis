@@ -283,6 +283,18 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 				types.LocaleFr: "{0} contient une valeur qui n’est pas applicable",
 			},
 		},
+		"admin_role": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains a role that the current user is not permitted to assign",
+				types.LocaleFr: "{0} contient un rôle que l'utilisateur actuel n'est pas autorisé à attribuer",
+			},
+		},
+		"admin_user": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains a user that the current user is not permitted to edit",
+				types.LocaleFr: "{0} contient un utilisateur que l'utilisateur actuel n'est pas autorisé à modifier",
+			},
+		},
 	}
 }
 

@@ -18,7 +18,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -44,7 +43,6 @@ type api struct {
 	computeChan    chan<- rpc.PbehaviorRecomputeEvent
 	jobPublisher   workers.JobPublisher
 	errorResponder httperror.Responder
-	logger         zerolog.Logger
 }
 
 func NewApi(
@@ -53,7 +51,6 @@ func NewApi(
 	computeChan chan<- rpc.PbehaviorRecomputeEvent,
 	jobPublisher workers.JobPublisher,
 	errorResponder httperror.Responder,
-	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:          store,
@@ -61,7 +58,6 @@ func NewApi(
 		computeChan:    computeChan,
 		jobPublisher:   jobPublisher,
 		errorResponder: errorResponder,
-		logger:         logger,
 	}
 }
 
@@ -372,7 +368,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		recomputeInherited = recomputeInherited || pbh.Inherited
 
 		return pbh.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
@@ -388,8 +384,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		pbh, curRecomputeInherited, err := a.store.Update(c, UpdateRequest(request))
-		if err != nil || pbh == nil {
+		if err != nil {
 			return "", err
+		}
+
+		if pbh == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		if _, ok := exists[pbh.ID]; !ok {
@@ -400,7 +400,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		recomputeInherited = recomputeInherited || curRecomputeInherited
 
 		return pbh.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
@@ -421,8 +421,12 @@ func (a *api) BulkDelete(c *gin.Context) {
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, curRecomputeInherited, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
 		}
 
 		ids = append(ids, request.ID)
@@ -430,7 +434,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		recomputeInherited = recomputeInherited || curRecomputeInherited
 
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{Ids: ids, RecomputeInherited: recomputeInherited})
@@ -455,14 +459,18 @@ func (a *api) BulkEntityCreate(c *gin.Context) {
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityCreateRequestItem) (string, error) {
 		pbh, err := a.store.EntityInsert(c, request)
-		if err != nil || pbh == nil {
+		if err != nil {
 			return "", err
+		}
+
+		if pbh == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		ids = append(ids, pbh.ID)
 
 		return pbh.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -492,14 +500,18 @@ func (a *api) BulkEntityDelete(c *gin.Context) {
 	ids := make([]string, 0)
 	bulk.Handler(c, func(request BulkEntityDeleteRequestItem) (string, error) {
 		id, err := a.store.EntityDelete(c, request)
-		if err != nil || id == "" {
+		if err != nil {
 			return "", err
+		}
+
+		if id == "" {
+			return "", httperror.ErrNotFound
 		}
 
 		ids = append(ids, id)
 
 		return id, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	if len(ids) > 0 {
 		a.sendComputeTask(rpc.PbehaviorRecomputeEvent{
@@ -530,8 +542,12 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 		},
 		func(request BulkConnectorCreateRequestItem) (string, error) {
 			pbh, err := a.store.ConnectorCreate(c, request)
-			if err != nil || pbh == nil {
+			if err != nil {
 				return "", err
+			}
+
+			if pbh == nil {
+				return "", httperror.ErrNotFound
 			}
 
 			if _, ok := exists[pbh.ID]; !ok {
@@ -544,7 +560,7 @@ func (a *api) BulkConnectorCreate(c *gin.Context) {
 
 			return pbh.ID, nil
 		},
-		a.logger,
+		a.errorResponder,
 	)
 
 	for origin, ids := range idsByOrigin {
@@ -575,8 +591,12 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 		},
 		func(request BulkConnectorDeleteRequestItem) (string, error) {
 			id, err := a.store.ConnectorDelete(c, request)
-			if err != nil || id == "" {
+			if err != nil {
 				return "", err
+			}
+
+			if id == "" {
+				return "", httperror.ErrNotFound
 			}
 
 			if _, ok := exists[id]; !ok {
@@ -586,7 +606,7 @@ func (a *api) BulkConnectorDelete(c *gin.Context) {
 
 			return id, nil
 		},
-		a.logger,
+		a.errorResponder,
 	)
 
 	for origin, ids := range idsByOrigin {
@@ -650,8 +670,12 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 				return "", common.NewValidationError("action", "Action must be one of ["+BulkConnectorActionCreate+" "+BulkConnectorActionDelete+"].")
 			}
 
-			if err != nil || id == "" {
+			if err != nil {
 				return "", err
+			}
+
+			if id == "" {
+				return "", httperror.ErrNotFound
 			}
 
 			if _, ok := exists[id]; !ok {
@@ -661,7 +685,7 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 
 			return id, nil
 		},
-		a.logger,
+		a.errorResponder,
 	)
 
 	for origin, ids := range idsByOrigin {

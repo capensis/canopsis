@@ -12,7 +12,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -24,18 +23,12 @@ type API interface {
 type api struct {
 	store          Store
 	errorResponder httperror.Responder
-	logger         zerolog.Logger
 }
 
-func NewApi(
-	store Store,
-	errorResponder httperror.Responder,
-	logger zerolog.Logger,
-) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
 		store:          store,
 		errorResponder: errorResponder,
-		logger:         logger,
 	}
 }
 
@@ -186,12 +179,16 @@ func (a *api) BulkUpdatePermissions(c *gin.Context) {
 	}
 	bulk.Handler(c, func(request BulkUpdatePermissionsRequestItem) (string, error) {
 		ok, err := a.store.UpdatePermissions(c, request, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // ListTemplates

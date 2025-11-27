@@ -100,7 +100,7 @@ func benchmarkBulkConnectorEdit_givenNCreateItems(b *testing.B, itemCount int) {
 	authorProvider := author.NewProvider(&config.BaseApiConfigProvider{})
 	store := pbehavior.NewStore(dbClient, nil, nil, nil, nil, nil, authorProvider, nil, nil, nil)
 	errorResponder := httperror.NewResponder(validation.NewErrorTranslator(trans, zerolog.Nop()), zerolog.Nop())
-	api := pbehavior.NewApi(store, nil, ch, nil, errorResponder, zerolog.Nop())
+	api := pbehavior.NewApi(store, nil, ch, nil, errorResponder)
 	reqBodies := make([]io.ReadCloser, b.N)
 	now := time.Now().Unix()
 	tomorrow := time.Now().AddDate(0, 0, 1).Unix()
