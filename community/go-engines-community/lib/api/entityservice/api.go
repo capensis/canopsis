@@ -276,7 +276,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		serviceIDs = append(serviceIDs, service.ID)
 
 		return service.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, serviceIDs...)
 }
 
@@ -286,8 +286,12 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	serviceIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		service, serviceChanges, err := a.store.Update(c, UpdateRequest(request))
-		if err != nil || service == nil {
+		if err != nil {
 			return "", err
+		}
+
+		if service == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		if service.Enabled || serviceChanges.IsToggled {
@@ -302,7 +306,7 @@ func (a *api) BulkUpdate(c *gin.Context) {
 		serviceIDs = append(serviceIDs, service.ID)
 
 		return service.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, serviceIDs...)
 }
 
@@ -319,8 +323,12 @@ func (a *api) BulkDelete(c *gin.Context) {
 	serviceIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
 		}
 
 		a.sendChangeMsg(entityservice.ChangeEntityMessage{
@@ -332,7 +340,7 @@ func (a *api) BulkDelete(c *gin.Context) {
 		serviceIDs = append(serviceIDs, request.ID)
 
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	a.metricMetaUpdater.DeleteById(c, serviceIDs...)
 }

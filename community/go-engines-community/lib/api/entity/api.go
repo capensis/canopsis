@@ -378,8 +378,12 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 
 	bulk.Handler(c, func(request BulkToggleRequestItem) (string, error) {
 		isToggled, simplifiedEntity, err := a.store.Toggle(c, request.ID, userID, enabled)
-		if err != nil || simplifiedEntity.ID == "" {
+		if err != nil {
 			return "", err
+		}
+
+		if simplifiedEntity.ID == "" {
+			return "", httperror.ErrNotFound
 		}
 
 		if isToggled {
@@ -405,7 +409,7 @@ func (a *api) toggle(c *gin.Context, enabled bool) {
 		}
 
 		return simplifiedEntity.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 func (a *api) sendChangeMessage(msg entityservice.ChangeEntityMessage) {
