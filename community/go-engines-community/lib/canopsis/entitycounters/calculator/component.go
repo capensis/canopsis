@@ -60,7 +60,7 @@ func (s *componentCountersCalculator) RecomputeCounters(ctx context.Context, com
 	}
 
 	if counters.Rule.InheritedEntityPattern != nil {
-		patternMongoQuery, err := db.EntityPatternToMongoQuery(*counters.Rule.InheritedEntityPattern, "")
+		patternMongoQuery, err := db.EntityPatternToMongoQuery(counters.Rule.InheritedEntityPattern, "")
 		if err != nil {
 			return 0, err
 		}

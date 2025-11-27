@@ -27,12 +27,13 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/match"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/usernotification"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/http"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -64,7 +65,7 @@ type store struct {
 	transformer             patternfields.Transformer
 	authorProvider          author.Provider
 	notificationStore       usernotification.Store
-	tplValidator            validator.Validator
+	tplValidator            tplvalidator.Validator
 	tplExecutor             libtemplate.Executor
 	tplConfigProvider       config.TemplateConfigProvider
 	externalDataContainer   *externaldata.GetterContainer
@@ -83,7 +84,7 @@ func NewStore(
 	authorProvider author.Provider,
 	transformer patternfields.Transformer,
 	notificationStore usernotification.Store,
-	tplValidator validator.Validator,
+	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
 	externalDataContainer *externaldata.GetterContainer,
@@ -149,7 +150,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, &model)
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, request, &model)
 		if err != nil {
 			return err
 		}
@@ -285,7 +286,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, &model)
+		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, request, &model)
 		if err != nil {
 			return err
 		}
@@ -460,12 +461,6 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		return nil, nil
 	}
 
-	var err error
-	r.Rule.EntityRequest, err = s.transformer.TransformEntityRequest(ctx, r.Rule.EntityRequest)
-	if err != nil {
-		return nil, err
-	}
-
 	tplData, exdataTestData, err := s.getTplData(ctx, r)
 	if err != nil {
 		return nil, err
@@ -543,16 +538,10 @@ func (s *store) getResponseLookups() []bson.M {
 	return pipeline
 }
 
-func (s *store) transformEntityPatternRequestToModel(ctx context.Context, r patternfields.EntityRequest, model *eventfilter.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r)
-	if err != nil {
-		return err
-	}
+func (s *store) transformEntityPatternRequestToModel(ctx context.Context, er patternfields.EntityRequest, r any, model *eventfilter.Rule) (err error) {
+	model.EntityPatternFields, model.Aliases, err = s.transformer.TransformEntityRequest(ctx, er, r, s.dbCollection.Name())
 
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModel()
-
-	return nil
+	return err
 }
 
 func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.Template, map[int]template.ResponseTestData, error) {
@@ -632,6 +621,25 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 		if !matched {
 			return tplData, nil, common.NewValidationError("testdata.event", "Event is not matched to event pattern.")
 		}
+	}
+
+	patterns, err := s.transformer.FetchCorporatePatterns(ctx, r.Rule.CorporateEntityPattern)
+	if err != nil {
+		return tplData, nil, err
+	}
+
+	aliases, err := s.transformer.FetchAliases(ctx, patternfields.GetAliases(r.Rule.EntityPattern))
+	if err != nil {
+		return tplData, nil, err
+	}
+
+	var valErrs, applyErrs validator.ValidationErrors
+	r.Rule.EntityRequest, _, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.Rule.EntityRequest, patterns, "Rule", "CorporateEntityPattern")
+	valErrs = append(valErrs, applyErrs...)
+	r.Rule.EntityPattern, _, applyErrs = s.transformer.ApplyAliases(r.Rule.EntityPattern, aliases, "Rule", "EntityPattern")
+	valErrs = append(valErrs, applyErrs...)
+	if len(valErrs) > 0 {
+		return tplData, nil, validation.NewError(valErrs, r)
 	}
 
 	var entityPattern pattern.Entity

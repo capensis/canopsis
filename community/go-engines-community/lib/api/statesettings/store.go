@@ -16,6 +16,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -120,22 +121,19 @@ func (s *store) Find(ctx context.Context, query FilteredQuery) (*AggregationResu
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-
-	r.ID = utils.NewID()
-	r.Created = &now
-	r.Updated = &now
-
 	var response *Response
-
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		model, err := s.transformRequestToModel(ctx, r)
 		if err != nil {
 			return err
 		}
 
-		_, err = s.dbCollection.InsertOne(ctx, r)
+		model.ID = utils.NewID()
+		model.Created = &now
+		model.Updated = &now
+		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
 				return s.dupErrorParser.Parse(err, Response{})
@@ -156,7 +154,8 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			}
 		}
 
-		response, err = s.GetByID(ctx, r.ID)
+		response, err = s.GetByID(ctx, model.ID)
+
 		return err
 	})
 	if err != nil {
@@ -179,29 +178,19 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
 	var response *Response
 	var oldVersion statesetting.StateSetting
-
-	r.Updated = &now
-
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r, &r.StateSetting)
+		model, err := s.transformRequestToModel(ctx, r)
 		if err != nil {
 			return err
 		}
 
-		unset := make(bson.M)
-		switch r.Method {
-		case statesetting.MethodDependencies:
-			unset["inherited_entity_pattern"] = 1
-		case statesetting.MethodInherited:
-			unset["state_thresholds"] = 1
-		}
-
+		model.Updated = &now
 		err = s.dbCollection.FindOneAndUpdate(
 			ctx,
 			bson.M{"_id": r.ID},
-			bson.M{"$set": r, "$unset": unset},
+			bson.M{"$set": model},
 			options.FindOneAndUpdate().SetReturnDocument(options.Before),
 		).Decode(&oldVersion)
 		if err != nil {
@@ -318,49 +307,146 @@ func (s *store) updateNotify(ctx context.Context) error {
 	return err
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *StateSetting) error {
-	uniqueAliasesMap := make(map[string]bool)
-	uniqueAliases := make([]string, 0)
+func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (statesetting.StateSetting, error) {
+	model := statesetting.StateSetting{
+		Method:   r.Method,
+		Enabled:  r.Enabled,
+		Priority: r.Priority,
+	}
+	if r.Title != nil {
+		model.Title = *r.Title
+	}
 
-	if r.EntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
-			EntityPattern: *r.EntityPattern,
-		})
-		if err != nil {
-			return err
+	if r.Type != nil {
+		model.Type = *r.Type
+	}
+
+	if r.StateThresholds != nil {
+		model.StateThresholds = &statesetting.StateThresholds{}
+		if r.StateThresholds.OK != nil {
+			model.StateThresholds.OK = &statesetting.StateThreshold{
+				Method: r.StateThresholds.OK.Method,
+				State:  r.StateThresholds.OK.State,
+				Cond:   r.StateThresholds.OK.Cond,
+				Value:  r.StateThresholds.OK.Value,
+			}
+		}
+		if r.StateThresholds.Minor != nil {
+			model.StateThresholds.Minor = &statesetting.StateThreshold{
+				Method: r.StateThresholds.Minor.Method,
+				State:  r.StateThresholds.Minor.State,
+				Cond:   r.StateThresholds.Minor.Cond,
+				Value:  r.StateThresholds.Minor.Value,
+			}
 		}
 
-		model.EntityPattern = &transformedEntityPatternRequest.EntityPattern
+		if r.StateThresholds.Major != nil {
+			model.StateThresholds.Major = &statesetting.StateThreshold{
+				Method: r.StateThresholds.Major.Method,
+				State:  r.StateThresholds.Major.State,
+				Cond:   r.StateThresholds.Major.Cond,
+				Value:  r.StateThresholds.Major.Value,
+			}
+		}
 
-		for _, alias := range transformedEntityPatternRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
+		if r.StateThresholds.Critical != nil {
+			model.StateThresholds.Critical = &statesetting.StateThreshold{
+				Method: r.StateThresholds.Critical.Method,
+				State:  r.StateThresholds.Critical.State,
+				Cond:   r.StateThresholds.Critical.Cond,
+				Value:  r.StateThresholds.Critical.Value,
 			}
 		}
 	}
 
-	if r.InheritedEntityPattern != nil {
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
-			EntityPattern: *r.InheritedEntityPattern,
-		})
-		if err != nil {
-			return err
-		}
-
-		model.InheritedEntityPattern = &transformedEntityPatternRequest.EntityPattern
-
-		for _, alias := range transformedEntityPatternRequest.Aliases {
-			if !uniqueAliasesMap[alias] {
-				uniqueAliasesMap[alias] = true
-				uniqueAliases = append(uniqueAliases, alias)
-			}
+	if r.JUnitThresholds != nil {
+		model.JUnitThresholds = &statesetting.JUnitThresholds{
+			Skipped: statesetting.JUnitThreshold{
+				Minor:    *r.JUnitThresholds.Skipped.Minor,
+				Major:    *r.JUnitThresholds.Skipped.Major,
+				Critical: *r.JUnitThresholds.Skipped.Critical,
+				Type:     *r.JUnitThresholds.Skipped.Type,
+			},
+			Errors: statesetting.JUnitThreshold{
+				Minor:    *r.JUnitThresholds.Errors.Minor,
+				Major:    *r.JUnitThresholds.Errors.Major,
+				Critical: *r.JUnitThresholds.Errors.Critical,
+				Type:     *r.JUnitThresholds.Errors.Type,
+			},
+			Failures: statesetting.JUnitThreshold{
+				Minor:    *r.JUnitThresholds.Failures.Minor,
+				Major:    *r.JUnitThresholds.Failures.Major,
+				Critical: *r.JUnitThresholds.Failures.Critical,
+				Type:     *r.JUnitThresholds.Failures.Type,
+			},
 		}
 	}
 
-	model.Aliases = uniqueAliases
+	patterns, err := s.transformer.FetchCorporatePatterns(ctx,
+		r.CorporateEntityPattern,
+		r.CorporateInheritedEntityPattern,
+	)
+	if err != nil {
+		return model, err
+	}
 
-	return nil
+	aliases, err := s.transformer.FetchAliases(ctx, append(
+		patternfields.GetAliases(r.EntityPattern),
+		patternfields.GetAliases(r.InheritedEntityPattern)...,
+	))
+	if err != nil {
+		return model, err
+	}
+
+	aliasPropMap := make(map[string]bool)
+	var applyAliasPropIDs []string
+	var valErrs, applyErrs validator.ValidationErrors
+	if r.CorporateEntityPattern != "" {
+		r.EntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns)
+	} else if r.EntityPattern != nil {
+		r.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases)
+	}
+
+	valErrs = append(valErrs, applyErrs...)
+	for _, id := range applyAliasPropIDs {
+		aliasPropMap[id] = true
+	}
+
+	inheritedEntityRequest := patternfields.EntityRequest{
+		EntityPattern:          r.InheritedEntityPattern,
+		CorporateEntityPattern: r.CorporateInheritedEntityPattern,
+	}
+	if r.CorporateInheritedEntityPattern != "" {
+		inheritedEntityRequest, applyAliasPropIDs, applyErrs = s.transformer.ApplyEntityCorporatePattern(inheritedEntityRequest, patterns, "CorporateInheritedEntityPattern")
+	} else if r.InheritedEntityPattern != nil {
+		inheritedEntityRequest.EntityPattern, applyAliasPropIDs, applyErrs = s.transformer.ApplyAliases(inheritedEntityRequest.EntityPattern, aliases, "InheritedEntityPattern")
+	}
+
+	valErrs = append(valErrs, applyErrs...)
+	for _, id := range applyAliasPropIDs {
+		aliasPropMap[id] = true
+	}
+
+	if len(valErrs) > 0 {
+		return model, validation.NewError(valErrs, r)
+	}
+
+	r.InheritedEntityPatternRequest = InheritedEntityPatternRequest{
+		InheritedEntityPattern:          inheritedEntityRequest.EntityPattern,
+		CorporateInheritedEntityPattern: inheritedEntityRequest.CorporateEntityPattern,
+		CorporatePattern:                inheritedEntityRequest.CorporatePattern,
+	}
+
+	aliasPropIDs := make([]string, 0, len(aliasPropMap))
+	for id := range aliasPropMap {
+		aliasPropIDs = append(aliasPropIDs, id)
+	}
+
+	model.Aliases = aliasPropIDs
+	model.EntityPatternFields = r.EntityRequest.ToModelWithoutFields(s.dbCollection.Name())
+	model.InheritedEntityPatternFields = r.InheritedEntityPatternRequest.ToModelWithoutFields(s.dbCollection.Name())
+
+	return model, nil
 }
 
 func addEditableAndDeletableFields() bson.M {

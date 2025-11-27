@@ -201,27 +201,10 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *flappingrule.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r.EntityRequest)
-	if err != nil {
-		return err
-	}
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *flappingrule.Rule) (err error) {
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.dbCollection.Name())
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, r.AlarmRequest)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInEntityPattern(mongo.FlappingRuleMongoCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
-		patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.FlappingRuleMongoCollection),
-	)
-
-	return nil
+	return err
 }
 
 func transformRequestToModel(r EditRequest) flappingrule.Rule {

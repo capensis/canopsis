@@ -147,7 +147,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	doc.Comments = make([]pbehavior.Comment, 0)
 	doc.RRuleEnd = rruleEnd
 	if r.ExecPattern {
-		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return nil, err
 		}
@@ -164,7 +164,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return err
 		}
@@ -279,7 +279,7 @@ func (s *store) CalendarByEntityID(ctx context.Context, entity libtypes.Entity, 
 		}
 	}
 
-	sort.Slice(res, sortCalendarResponse(res))
+	sort.Slice(res, s.sortCalendarResponse(res))
 
 	return res, nil
 }
@@ -399,7 +399,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 	}
 
 	if r.ExecPattern {
-		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return nil, false, err
 		}
@@ -447,7 +447,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 			}
 		}
 
-		err = s.transformPatternRequestToModel(ctx, r.EntityRequest, &doc)
+		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
 			return err
 		}
@@ -576,27 +576,24 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 			}
 		}
 
-		corpPattern := ""
-		if r.CorporateEntityPattern != nil {
-			corpPattern = *r.CorporateEntityPattern
-		}
+		if r.CorporateEntityPattern != nil || r.EntityPattern != nil {
+			corpPattern := ""
+			if r.CorporateEntityPattern != nil {
+				corpPattern = *r.CorporateEntityPattern
+			}
 
-		transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
-			CorporateEntityPattern: corpPattern,
-			EntityPattern:          r.EntityPattern,
-		})
-		if err != nil {
-			return err
-		}
+			epf, aliases, err := s.transformPatternRequestToModel(ctx, patternfields.EntityRequest{
+				CorporateEntityPattern: corpPattern,
+				EntityPattern:          r.EntityPattern,
+			}, r)
+			if err != nil {
+				return err
+			}
 
-		if r.CorporateEntityPattern != nil {
-			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
-			set["corporate_entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.ID
-			set["corporate_entity_pattern_title"] = transformedEntityPatternRequest.CorporatePattern.Title
-		} else if r.EntityPattern != nil {
-			set["entity_pattern"] = transformedEntityPatternRequest.EntityPattern.RemoveFields(patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
-			unset["corporate_entity_pattern"] = ""
-			unset["corporate_entity_pattern_title"] = ""
+			set["aliases"] = aliases
+			set["entity_pattern"] = epf.EntityPattern
+			set["corporate_entity_pattern"] = epf.CorporateEntityPattern
+			set["corporate_entity_pattern_title"] = epf.CorporateEntityPatternTitle
 		}
 
 		update := bson.M{"$set": set}
@@ -1380,7 +1377,7 @@ func (s *store) execPattern(ctx context.Context, entityPattern pattern.Entity) (
 	return res.Count, max(time.Since(start).Milliseconds(), 1), nil
 }
 
-func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
+func (s *store) sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 	return func(i, j int) bool {
 		if response[i].From.Before(response[j].From) {
 			return true
@@ -1410,16 +1407,6 @@ func sortCalendarResponse(response []CalendarResponse) func(i, j int) bool {
 	}
 }
 
-func (s *store) transformPatternRequestToModel(ctx context.Context, r patternfields.EntityRequest, model *pbehavior.PBehavior) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection),
-	)
-
-	return nil
+func (s *store) transformPatternRequestToModel(ctx context.Context, er patternfields.EntityRequest, r any) (epf savedpattern.EntityPatternFields, aliasPropIDs []string, err error) {
+	return s.transformer.TransformEntityRequest(ctx, er, r, s.dbCollection.Name())
 }

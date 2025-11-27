@@ -12,8 +12,6 @@ type PbehaviorRequest struct {
 	CorporatePbehaviorPattern string                `json:"corporate_pbehavior_pattern"`
 
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
-	IsPrivate        bool                      `json:"-"`
-	User             string                    `json:"-"`
 }
 
 func (r PbehaviorRequest) ToModel() savedpattern.PbehaviorPatternFields {
