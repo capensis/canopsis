@@ -125,9 +125,7 @@ func NewStore(
 		exdataTplVars:           exdataTplVars,
 		configTplVars:           configTplVars,
 		configCopyVars:          configCopyVars,
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id": "ID already exists.",
-		}),
+		dupErrorParser:          validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -159,7 +157,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 		_, err = s.dbCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, model)
 			}
 
 			return err

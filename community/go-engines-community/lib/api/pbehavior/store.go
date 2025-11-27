@@ -119,11 +119,8 @@ func NewStore(
 		defaultSortBy:                 "created",
 		entitiesDefaultSearchByFields: []string{"_id", "name", "type"},
 		entitiesDefaultSortBy:         "_id",
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"_id":  "ID already exists.",
-			"name": "Name already exists.",
-		}),
-		workers: 10,
+		dupErrorParser:                validation.NewDuplicateErrorParser(),
+		workers:                       10,
 	}
 }
 
@@ -175,7 +172,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, doc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -460,7 +457,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -610,7 +607,7 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		_, err = s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, update)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -796,7 +793,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -957,7 +954,7 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 		).Decode(&findDoc)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
