@@ -151,6 +151,7 @@ func (p *mongoProvider) findByFilter(ctx context.Context, match bson.M) (*securi
 		{"$match": match},
 		{"$addFields": bson.M{
 			"username": "$name",
+			"language": "$ui_language",
 		}},
 		{"$addFields": bson.M{
 			"display_name": p.getDisplayNameQuery(),

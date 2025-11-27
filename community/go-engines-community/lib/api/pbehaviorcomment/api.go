@@ -5,6 +5,8 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,14 +16,14 @@ type API interface {
 }
 
 type api struct {
-	store Store
+	store          Store
+	errorResponder httperror.Responder
 }
 
-func NewApi(
-	store Store,
-) API {
+func NewApi(store Store, errorResponder httperror.Responder) API {
 	return &api{
-		store: store,
+		store:          store,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -31,8 +33,8 @@ func NewApi(
 func (a *api) Create(c *gin.Context) {
 	var request Request
 
-	if err := c.ShouldBindJSON(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -44,7 +46,9 @@ func (a *api) Create(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if response == nil {
@@ -63,7 +67,9 @@ func (a *api) Delete(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

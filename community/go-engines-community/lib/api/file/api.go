@@ -7,7 +7,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -20,16 +22,18 @@ type API interface {
 	Delete(*gin.Context)
 }
 
-func NewApi(enforcer security.Enforcer, store Store) API {
+func NewApi(enforcer security.Enforcer, store Store, errorResponder httperror.Responder) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
 	}
 }
 
 type api struct {
-	enforcer security.Enforcer
-	store    Store
+	enforcer       security.Enforcer
+	store          Store
+	errorResponder httperror.Responder
 }
 
 // Create
@@ -42,8 +46,9 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	request := CreateRequest{}
-	if err := c.ShouldBindQuery(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.BindQuery(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -55,7 +60,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusOK, res)
@@ -64,7 +71,9 @@ func (a *api) Create(c *gin.Context) {
 func (a *api) Get(c *gin.Context) {
 	m, err := a.store.Get(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if m == nil {
@@ -76,7 +85,9 @@ func (a *api) Get(c *gin.Context) {
 		user := c.MustGet(authctx.UserKey)
 		ok, err := a.enforcer.Enforce(user, apisecurity.ObjFile, model.PermissionRead)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -104,7 +115,9 @@ func (a *api) List(c *gin.Context) {
 
 	res, err := a.store.List(c, ids)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if len(res) == 0 {
@@ -117,7 +130,9 @@ func (a *api) List(c *gin.Context) {
 			user := c.MustGet(authctx.UserKey)
 			ok, err := a.enforcer.Enforce(user, apisecurity.ObjFile, model.PermissionRead)
 			if err != nil {
-				panic(err)
+				a.errorResponder.Respond(c, err)
+
+				return
 			}
 
 			if !ok {
@@ -135,7 +150,9 @@ func (a *api) List(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

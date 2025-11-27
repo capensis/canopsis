@@ -46,6 +46,7 @@ import (
 	libsecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/gin-gonic/gin/binding"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	"github.com/go-playground/validator/v10/non-standard/validators"
 )
@@ -55,22 +56,26 @@ func RegisterValidators(
 	secConfig libsecurity.Config,
 	enforcer libsecurity.Enforcer,
 	tplExecutor libtemplate.Executor,
-) error {
+) (*ut.UniversalTranslator, error) {
 	v, ok := binding.Validator.Engine().(*validator.Validate)
 	if !ok {
-		return errors.New("unknown validator engine")
+		return nil, errors.New("unknown validator engine")
 	}
 
-	libvalidator.RegisterTranslations(v)
-	err := registerTagValidations(v, tplExecutor)
+	trans, err := libvalidator.NewTranslator(v)
 	if err != nil {
-		return err
+		return nil, err
+	}
+
+	err = registerTagValidations(v, tplExecutor)
+	if err != nil {
+		return nil, err
 	}
 
 	v.RegisterCustomTypeFunc(validation.ValidateCpsTimeType, datetime.CpsTime{})
 	registerStructValidations(v, client, secConfig, enforcer, tplExecutor)
 
-	return nil
+	return trans, nil
 }
 
 func registerTagValidations(v *validator.Validate, tplExecutor libtemplate.Executor) error {

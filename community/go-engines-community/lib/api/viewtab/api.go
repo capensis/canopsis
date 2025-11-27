@@ -6,6 +6,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -21,17 +23,20 @@ type API interface {
 }
 
 type api struct {
-	store    Store
-	enforcer security.Enforcer
+	store          Store
+	enforcer       security.Enforcer
+	errorResponder httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -40,7 +45,9 @@ func NewApi(
 func (a *api) Get(c *gin.Context) {
 	tab, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if tab == nil {
@@ -56,8 +63,9 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := CreateRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -69,7 +77,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, tab)
@@ -83,14 +93,17 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	tab, err := a.store.Update(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if tab == nil {
@@ -109,7 +122,9 @@ func (a *api) Delete(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -127,8 +142,9 @@ func (a *api) Copy(c *gin.Context) {
 	id := c.Param("id")
 	request := CreateRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -140,7 +156,9 @@ func (a *api) Copy(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if tab == nil {
@@ -155,14 +173,17 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditPositionRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	tabs, err := a.store.Find(c, request.Items)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if len(tabs) != len(request.Items) {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -176,7 +197,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 
 		ok, err := a.enforcer.Enforce(userID, tab.View, model.PermissionUpdate)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if !ok {
@@ -192,7 +215,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

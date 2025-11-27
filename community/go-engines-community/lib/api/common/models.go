@@ -56,7 +56,7 @@ func TransformValidationErrors(errs validator.ValidationErrors, request interfac
 	var res ValidationErrorResponse
 	res.Errors = make(map[string]string)
 	for _, fe := range errs {
-		field := transformNamespace(fe.Namespace(), request)
+		field := transformNamespace(fe.StructNamespace(), request)
 		res.Errors[field] = libvalidator.TranslateError(fe)
 	}
 
@@ -68,7 +68,7 @@ func NewValidationErrorFastJsonValue(ar *fastjson.Arena, err error, request inte
 	if errors.As(err, &validatorErrs) {
 		value := ar.NewObject()
 		for _, fe := range validatorErrs {
-			field := transformNamespace(fe.Namespace(), request)
+			field := transformNamespace(fe.StructNamespace(), request)
 			value.Set(field, ar.NewString(libvalidator.TranslateError(fe)))
 		}
 

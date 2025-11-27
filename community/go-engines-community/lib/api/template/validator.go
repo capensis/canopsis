@@ -44,36 +44,36 @@ func (v *Validator) ValidateEditTestRequest(sl validator.StructLevel) {
 		case TypeTestEventFilterRule,
 			TypeTestActionScenario:
 			if r.Data.Event == "" {
-				sl.ReportError(r.Data.Event, "Data.Event", "Event", "required", "")
+				sl.ReportError(r.Data.Event, "Event", "Data.Event", "required", "")
 			}
 		case TypeTestLinkRule:
 			if r.Data.Alarm == "" && r.Data.Entity == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required_or", "Entity")
-				sl.ReportError(r.Data.Entity, "Data.Entity", "Entity", "required_or", "Alarm")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required_or", "Entity")
+				sl.ReportError(r.Data.Entity, "Entity", "Data.Entity", "required_or", "Alarm")
 			}
 		case TypeTestDynamicInfosRule:
 			if r.Data.Alarm == "" && r.Data.Event == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required_or", "Event")
-				sl.ReportError(r.Data.Event, "Data.Event", "Event", "required_or", "Alarm")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required_or", "Event")
+				sl.ReportError(r.Data.Event, "Event", "Data.Event", "required_or", "Alarm")
 			}
 		case TypeTestWidget,
 			TypeTestInstruction,
 			TypeTestJob,
 			TypeTestMetaAlarmRule:
 			if r.Data.Alarm == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required", "")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required", "")
 			}
 		case TypeTestDeclareTicketRule:
 			if r.Data.Alarm == "" {
-				sl.ReportError(r.Data.Alarm, "Data.Alarm", "Alarm", "required", "")
+				sl.ReportError(r.Data.Alarm, "Alarm", "Data.Alarm", "required", "")
 			}
 
 			if len(r.Data.Responses) == 0 {
-				sl.ReportError(r.Data.Responses, "Data.Responses", "Responses", "required", "")
+				sl.ReportError(r.Data.Responses, "Responses", "Data.Responses", "required", "")
 			}
 		case TypeTestWebhookTokenRule:
 			if r.Data.Response == "" {
-				sl.ReportError(r.Data.Response, "Data.Response", "Response", "required", "")
+				sl.ReportError(r.Data.Response, "Response", "Data.Response", "required", "")
 			}
 		default:
 			sl.ReportError(r.Type, "Type", "Type", "invalid", "")
@@ -87,7 +87,7 @@ func (v *Validator) ValidateEditTestRequest(sl validator.StructLevel) {
 		}
 
 		if !ok {
-			sl.ReportError(r.Data.User, "Data.User", "User", "unauth", "")
+			sl.ReportError(r.Data.User, "User", "Data.User", "unauth", "")
 		}
 	}
 }

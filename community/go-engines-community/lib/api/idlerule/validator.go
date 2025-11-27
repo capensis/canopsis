@@ -115,7 +115,7 @@ func (v *Validator) validateAlarmRule(sl validator.StructLevel, r EditRequest) {
 		}
 
 		if !found {
-			sl.ReportError(r.Operation.Type, "Operation.Type", "Type", "oneof", param)
+			sl.ReportError(r.Operation.Type, "Type", "Operation.Type", "oneof", param)
 		}
 
 		v.validateOperationParametersRequest(sl, r.Operation.Type, r.Operation.Parameters)
@@ -158,7 +158,7 @@ func (v *Validator) validateDisableDuringPeriods(sl validator.StructLevel, disab
 		}
 
 		if !found {
-			sl.ReportError(disableDuringPeriods, "DisableDuringPeriods", "disableDuringPeriods", "oneof", param)
+			sl.ReportError(disableDuringPeriods, "DisableDuringPeriods", "DisableDuringPeriods", "oneof", param)
 		}
 	}
 }
@@ -167,11 +167,11 @@ func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel,
 	switch t {
 	case types.ActionTypeAssocTicket:
 		if params.Ticket == "" {
-			sl.ReportError(params.Ticket, "Operation.Parameters.Ticket", "Ticket", "required", "")
+			sl.ReportError(params.Ticket, "Ticket", "Operation.Parameters.Ticket", "required", "")
 		}
 	case types.ActionTypeChangeState:
 		if params.State == nil {
-			sl.ReportError(params.State, "Operation.Parameters.State", "State", "required", "")
+			sl.ReportError(params.State, "State", "Operation.Parameters.State", "required", "")
 		} else {
 			validTypes := []types.CpsNumber{
 				types.AlarmStateOK,
@@ -196,54 +196,54 @@ func (v *Validator) validateOperationParametersRequest(sl validator.StructLevel,
 			}
 
 			if !found {
-				sl.ReportError(params.State, "Operation.Parameters.State", "State", "oneof", param)
+				sl.ReportError(params.State, "State", "Operation.Parameters.State", "oneof", param)
 			}
 		}
 	case types.ActionTypeSnooze:
 		if params.Duration == nil {
-			sl.ReportError(params.Duration, "Operation.Parameters.Duration", "Duration", "required", "")
+			sl.ReportError(params.Duration, "Duration", "Operation.Parameters.Duration", "required", "")
 		}
 	case types.ActionTypePbehavior:
 		if params.Name == "" {
-			sl.ReportError(params.Name, "Operation.Parameters.Name", "Name", "required", "")
+			sl.ReportError(params.Name, "Name", "Operation.Parameters.Name", "required", "")
 		}
 		if params.Reason == "" {
-			sl.ReportError(params.Reason, "Operation.Parameters.Reason", "Reason", "required", "")
+			sl.ReportError(params.Reason, "Reason", "Operation.Parameters.Reason", "required", "")
 		}
 		if params.Type == "" {
-			sl.ReportError(params.Type, "Operation.Parameters.Type", "Type", "required", "")
+			sl.ReportError(params.Type, "Type", "Operation.Parameters.Type", "required", "")
 		}
 		// Validate rrule
 		if params.RRule != "" {
 			_, err := rrule.StrToROption(params.RRule)
 			if err != nil {
-				sl.ReportError(params.RRule, "Operation.Parameters.RRule", "RRule", "rrule", "")
+				sl.ReportError(params.RRule, "RRule", "Operation.Parameters.RRule", "rrule", "")
 			}
 		}
 
 		// Validate time
 		if params.Tstart == nil && params.Tstop != nil {
-			sl.ReportError(params.Tstart, "Operation.Parameters.Tstart", "Tstart", "required_with", "Tstop")
+			sl.ReportError(params.Tstart, "Tstart", "Operation.Parameters.Tstart", "required_with", "Tstop")
 		}
 		if params.Tstart != nil && params.Tstop == nil {
-			sl.ReportError(params.Tstop, "Operation.Parameters.Tstop", "Tstop", "required_with", "Tstart")
+			sl.ReportError(params.Tstop, "Tstop", "Operation.Parameters.Tstop", "required_with", "Tstart")
 		}
 		if params.Duration == nil && params.StartOnTrigger != nil && *params.StartOnTrigger {
-			sl.ReportError(params.Duration, "Operation.Parameters.Duration", "Duration", "required_with", "StartOnTrigger")
+			sl.ReportError(params.Duration, "Duration", "Operation.Parameters.Duration", "required_with", "StartOnTrigger")
 		}
 		if params.Duration != nil && (params.StartOnTrigger == nil || !*params.StartOnTrigger) {
-			sl.ReportError(params.StartOnTrigger, "Operation.Parameters.StartOnTrigger", "StartOnTrigger", "required_with", "Duration")
+			sl.ReportError(params.StartOnTrigger, "StartOnTrigger", "Operation.Parameters.StartOnTrigger", "required_with", "Duration")
 		}
 		if params.Tstart == nil && params.Tstop == nil && params.Duration == nil && (params.StartOnTrigger == nil || !*params.StartOnTrigger) {
-			sl.ReportError(params.Tstart, "Operation.Parameters.Tstart", "Tstart", "required_or", "StartOnTrigger")
-			sl.ReportError(params.StartOnTrigger, "Operation.Parameters.StartOnTrigger", "StartOnTrigger", "required_or", "Tstart")
+			sl.ReportError(params.Tstart, "Tstart", "Operation.Parameters.Tstart", "required_or", "StartOnTrigger")
+			sl.ReportError(params.StartOnTrigger, "StartOnTrigger", "Operation.Parameters.StartOnTrigger", "required_or", "Tstart")
 		}
 		if params.Tstart != nil && params.StartOnTrigger != nil && *params.StartOnTrigger {
-			sl.ReportError(params.Tstart, "Operation.Parameters.Tstart", "Tstart", "required_or", "StartOnTrigger")
-			sl.ReportError(params.StartOnTrigger, "Operation.Parameters.StartOnTrigger", "StartOnTrigger", "required_or", "Tstart")
+			sl.ReportError(params.Tstart, "Tstart", "Operation.Parameters.Tstart", "required_or", "StartOnTrigger")
+			sl.ReportError(params.StartOnTrigger, "StartOnTrigger", "Operation.Parameters.StartOnTrigger", "required_or", "Tstart")
 		}
 		if params.Tstart != nil && params.Tstop != nil && params.Tstop.Before(*params.Tstart) {
-			sl.ReportError(params.Tstop, "Operation.Parameters.Tstop", "Tstop", "gtfield", "Tstart")
+			sl.ReportError(params.Tstop, "Tstop", "Operation.Parameters.Tstop", "gtfield", "Tstart")
 		}
 	}
 }

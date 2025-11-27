@@ -6,7 +6,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
@@ -31,13 +33,20 @@ type API interface {
 type api struct {
 	store                  Store
 	templateConfigProvider config.TemplateConfigProvider
+	errorResponder         httperror.Responder
 	logger                 zerolog.Logger
 }
 
-func NewAPI(store Store, templateConfigProvider config.TemplateConfigProvider, logger zerolog.Logger) API {
+func NewAPI(
+	store Store,
+	templateConfigProvider config.TemplateConfigProvider,
+	errorResponder httperror.Responder,
+	logger zerolog.Logger,
+) API {
 	return &api{
 		store:                  store,
 		templateConfigProvider: templateConfigProvider,
+		errorResponder:         errorResponder,
 		logger:                 logger,
 	}
 }
@@ -51,8 +60,8 @@ func (a *api) GetEnvVars(c *gin.Context) {
 // @Success 200 {object} DataResponse
 func (a *api) CreateData(c *gin.Context) {
 	r := EditDataRequest{}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -66,7 +75,9 @@ func (a *api) CreateData(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, res)
@@ -77,8 +88,8 @@ func (a *api) CreateData(c *gin.Context) {
 func (a *api) ListData(c *gin.Context) {
 	var r ListDataRequest
 	r.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -92,7 +103,9 @@ func (a *api) ListData(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, &aggregationResult)
@@ -104,7 +117,9 @@ func (a *api) ListData(c *gin.Context) {
 func (a *api) GetData(c *gin.Context) {
 	res, err := a.store.GetData(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res.ID == "" {
@@ -123,8 +138,8 @@ func (a *api) UpdateData(c *gin.Context) {
 	r := EditDataRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -138,7 +153,9 @@ func (a *api) UpdateData(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res.ID == "" {
@@ -160,7 +177,9 @@ func (a *api) DeleteData(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
@@ -176,8 +195,8 @@ func (a *api) DeleteData(c *gin.Context) {
 // @Success 200 {object} TestResponse
 func (a *api) CreateTest(c *gin.Context) {
 	r := EditTestRequest{}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -191,7 +210,9 @@ func (a *api) CreateTest(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, res)
@@ -202,8 +223,8 @@ func (a *api) CreateTest(c *gin.Context) {
 func (a *api) ListTest(c *gin.Context) {
 	var r ListTestRequest
 	r.Query = pagination.GetDefaultQuery()
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -218,7 +239,9 @@ func (a *api) ListTest(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	res := pagination.NewResponse(r.Query, &aggregationResult)
@@ -231,7 +254,9 @@ func (a *api) GetTest(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	res, err := a.store.GetTest(c, c.Param("id"), userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res.ID == "" {
@@ -250,8 +275,8 @@ func (a *api) UpdateTest(c *gin.Context) {
 	r := EditTestRequest{
 		ID: c.Param("id"),
 	}
-	if err := c.ShouldBind(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, r))
+	if err := validation.Bind(c, &r); err != nil {
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -265,7 +290,9 @@ func (a *api) UpdateTest(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if res.ID == "" {
@@ -281,7 +308,9 @@ func (a *api) DeleteTest(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	ok, err := a.store.DeleteTest(c, c.Param("id"), userID)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {

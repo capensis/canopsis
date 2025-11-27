@@ -8,6 +8,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
@@ -25,17 +27,20 @@ type API interface {
 }
 
 type api struct {
-	store    Store
-	enforcer security.Enforcer
+	store          Store
+	enforcer       security.Enforcer
+	errorResponder httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	enforcer security.Enforcer,
+	errorResponder httperror.Responder,
 ) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
+		store:          store,
+		enforcer:       enforcer,
+		errorResponder: errorResponder,
 	}
 }
 
@@ -44,7 +49,9 @@ func NewApi(
 func (a *api) Get(c *gin.Context) {
 	view, err := a.store.GetOneBy(c, c.Param("id"))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if view == nil {
@@ -60,8 +67,9 @@ func (a *api) Get(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
 	request := EditRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -73,7 +81,9 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.JSON(http.StatusCreated, view)
@@ -87,8 +97,9 @@ func (a *api) Update(c *gin.Context) {
 		ID: c.Param("id"),
 	}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -100,7 +111,9 @@ func (a *api) Update(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if view == nil {
@@ -114,7 +127,9 @@ func (a *api) Update(c *gin.Context) {
 func (a *api) Delete(c *gin.Context) {
 	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -130,8 +145,9 @@ func (a *api) Delete(c *gin.Context) {
 // @Success 201 {object} Response
 func (a *api) Copy(c *gin.Context) {
 	request := EditRequest{}
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -143,7 +159,9 @@ func (a *api) Copy(c *gin.Context) {
 			return
 		}
 
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if view == nil {
@@ -160,8 +178,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	request := EditPositionRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -169,7 +188,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		for _, view := range item.Views {
 			ok, err := a.enforcer.Enforce(userID, view, model.PermissionUpdate)
 			if err != nil {
-				panic(err)
+				a.errorResponder.Respond(c, err)
+
+				return
 			}
 			if !ok {
 				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
@@ -180,7 +201,9 @@ func (a *api) UpdatePositions(c *gin.Context) {
 
 	ok, err := a.store.UpdatePositions(c, request)
 	if err != nil {
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	if !ok {
@@ -197,8 +220,9 @@ func (a *api) Import(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	request := ImportRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -212,7 +236,9 @@ func (a *api) Import(c *gin.Context) {
 			}
 			ok, err := a.enforcer.Enforce(userID, view.ID, model.PermissionUpdate)
 			if err != nil {
-				panic(err)
+				a.errorResponder.Respond(c, err)
+
+				return
 			}
 			if !ok {
 				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
@@ -232,7 +258,9 @@ func (a *api) Import(c *gin.Context) {
 			})
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.Status(http.StatusNoContent)
@@ -245,8 +273,9 @@ func (a *api) Export(c *gin.Context) {
 	userID := c.MustGet(authctx.UserKey).(string)
 	request := ExportRequest{}
 
-	if err := c.ShouldBind(&request); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+	if err := validation.Bind(c, &request); err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -254,7 +283,9 @@ func (a *api) Export(c *gin.Context) {
 		for _, view := range group.Views {
 			ok, err := a.enforcer.Enforce(userID, view, model.PermissionRead)
 			if err != nil {
-				panic(err)
+				a.errorResponder.Respond(c, err)
+
+				return
 			}
 			if !ok {
 				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
@@ -265,7 +296,9 @@ func (a *api) Export(c *gin.Context) {
 	for _, view := range request.Views {
 		ok, err := a.enforcer.Enforce(userID, view, model.PermissionRead)
 		if err != nil {
-			panic(err)
+			a.errorResponder.Respond(c, err)
+
+			return
 		}
 		if !ok {
 			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
@@ -284,7 +317,9 @@ func (a *api) Export(c *gin.Context) {
 			})
 			return
 		}
-		panic(err)
+		a.errorResponder.Respond(c, err)
+
+		return
 	}
 
 	c.Header("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, fmt.Sprintf("views-%s.json", time.Now().Format("2006-01-02T15-04-05"))))
