@@ -183,14 +183,14 @@ func (s *store) GetDependencies(ctx context.Context, r ContextGraphRequest, user
 			return nil, err
 		}
 		if ec.Rule != nil {
-			var entityPattern *pattern.Entity
+			var entityPattern pattern.Entity
 			switch ec.Rule.Method {
 			case statesetting.MethodInherited, statesetting.MethodDependencies:
 				entityPattern = ec.Rule.InheritedEntityPattern
 			}
 			if entityPattern != nil {
 				var patternMongoQuery bson.M
-				patternMongoQuery, err = db.EntityPatternToMongoQuery(*entityPattern, "")
+				patternMongoQuery, err = db.EntityPatternToMongoQuery(entityPattern, "")
 				if err != nil {
 					return nil, err
 				}
@@ -371,13 +371,11 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			}
 		}
 
-		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityRequest)
+		var err error
+		service.EntityPatternFields, service.Aliases, err = s.transformEntityPatternRequest(ctx, request.EntityRequest, request)
 		if err != nil {
 			return err
 		}
-
-		service.Aliases = aliases
-		service.EntityPatternFields = transformedEntityPattern
 
 		_, err = s.dbCollection.InsertOne(ctx, service)
 		if err != nil {
@@ -455,7 +453,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 			}
 		}
 
-		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityRequest)
+		transformedEntityPattern, aliases, err := s.transformEntityPatternRequest(ctx, request.EntityRequest, request)
 		if err != nil {
 			return err
 		}
@@ -593,15 +591,8 @@ func (s *store) findUser(ctx context.Context, id string) (link.User, error) {
 	return user, errors.New("user not found")
 }
 
-func (s *store) transformEntityPatternRequest(ctx context.Context, r patternfields.EntityRequest) (savedpattern.EntityPatternFields, []string, error) {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r)
-	if err != nil {
-		return savedpattern.EntityPatternFields{}, nil, err
-	}
-
-	transformedPattern := transformedEntityPatternRequest.ToModelWithoutFields(patternfields.GetForbiddenFieldsInEntityPattern(mongo.EntityMongoCollection))
-
-	return transformedPattern, transformedEntityPatternRequest.Aliases, nil
+func (s *store) transformEntityPatternRequest(ctx context.Context, er patternfields.EntityRequest, r any) (savedpattern.EntityPatternFields, []string, error) {
+	return s.transformer.TransformEntityRequest(ctx, er, r, s.dbCollection.Name())
 }
 
 func transformInfos(request EditRequest) map[string]types.Info {

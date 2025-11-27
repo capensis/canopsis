@@ -289,16 +289,11 @@ func (w *worker) parseEntities(
 				continue
 			}
 
-			transformedEntityPatternRequest, err := w.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
-				EntityPattern: ci.EntityPattern,
-			})
+			ci.EntityPattern, ci.Aliases, err = w.transformer.TransformAliases(ctx, ci.EntityPattern, ci)
 			if err != nil {
 				w.logger.Warn().Str("entity_name", ci.Name).Msgf("failed to transform entity pattern: %v, skip", err)
 				continue
 			}
-
-			ci.EntityPattern = transformedEntityPatternRequest.EntityPattern
-			ci.Aliases = transformedEntityPatternRequest.Aliases
 		}
 
 		categoryID := ""
