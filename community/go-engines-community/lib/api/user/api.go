@@ -57,7 +57,21 @@ func (a *api) List(c *gin.Context) {
 		return
 	}
 
-	users, err := a.store.Find(c, query, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	users, err := a.store.Find(c, query, userID, roleIDs)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
 
@@ -97,7 +111,14 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Insert(c, request, c.MustGet(authctx.Roles).([]string))
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	user, err := a.store.Insert(c, request, roleIDs)
 	if err != nil {
 		if errors.Is(err, ErrNotAdminCreateAdmin) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
@@ -133,7 +154,21 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(c, request, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	user, err := a.store.Update(c, request, userID, roleIDs)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -176,7 +211,21 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Patch(c, request, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	user, err := a.store.Patch(c, request, userID, roleIDs)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -207,7 +256,21 @@ func (a *api) Patch(c *gin.Context) {
 
 func (a *api) Delete(c *gin.Context) {
 	id := c.Param("id")
-	ok, err := a.store.Delete(c, id, c.MustGet(authctx.UserKey).(string), c.MustGet(authctx.Roles).([]string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	roleIDs, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, id, userID, roleIDs)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
@@ -240,7 +303,12 @@ func (a *api) Delete(c *gin.Context) {
 // @Param body body []CreateRequest true "body"
 func (a *api) BulkCreate(c *gin.Context) {
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(authctx.Roles).([]string)
+	requestRoles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		user, err := a.store.Insert(c, request, requestRoles)
@@ -261,9 +329,19 @@ func (a *api) BulkCreate(c *gin.Context) {
 // BulkUpdate
 // @Param body body []BulkUpdateRequestItem true "body"
 func (a *api) BulkUpdate(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(authctx.Roles).([]string)
+	requestRoles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		user, err := a.store.Update(c, UpdateRequest(request), userID, requestRoles)
@@ -285,8 +363,18 @@ func (a *api) BulkUpdate(c *gin.Context) {
 // BulkDelete
 // @Param body body []BulkDeleteRequestItem true "body"
 func (a *api) BulkDelete(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
-	roles := c.MustGet(authctx.Roles).([]string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	roles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID, userID, roles)
@@ -308,9 +396,19 @@ func (a *api) BulkDelete(c *gin.Context) {
 // BulkPatch
 // @Param body body []BulkPatchRequestItem true "body"
 func (a *api) BulkPatch(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	userIDs := make([]string, 0)
-	requestRoles := c.MustGet(authctx.Roles).([]string)
+	requestRoles, err := authctx.GetRoles(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	bulk.Handler(c, func(request BulkPatchRequestItem) (string, error) {
 		user, err := a.store.Patch(c, PatchRequest(request), userID, requestRoles)

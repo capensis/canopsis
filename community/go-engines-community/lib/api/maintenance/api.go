@@ -40,7 +40,12 @@ func (a *api) Maintenance(c *gin.Context) {
 		return
 	}
 
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	// can be sure that enabled is not nil after ShouldBindJSON, because of binding=required
 	if *r.Enabled {

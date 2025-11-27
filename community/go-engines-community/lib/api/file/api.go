@@ -82,8 +82,14 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if !m.IsPublic {
-		user := c.MustGet(authctx.UserKey)
-		ok, err := a.enforcer.Enforce(user, apisecurity.ObjFile, model.PermissionRead)
+		userID, err := authctx.GetUserKey(c)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
+
+			return
+		}
+
+		ok, err := a.enforcer.Enforce(userID, apisecurity.ObjFile, model.PermissionRead)
 		if err != nil {
 			a.errorResponder.Respond(c, err)
 
@@ -127,8 +133,14 @@ func (a *api) List(c *gin.Context) {
 
 	for _, f := range res {
 		if !f.IsPublic {
-			user := c.MustGet(authctx.UserKey)
-			ok, err := a.enforcer.Enforce(user, apisecurity.ObjFile, model.PermissionRead)
+			userID, err := authctx.GetUserKey(c)
+			if err != nil {
+				a.errorResponder.Respond(c, err)
+
+				return
+			}
+
+			ok, err := a.enforcer.Enforce(userID, apisecurity.ObjFile, model.PermissionRead)
 			if err != nil {
 				a.errorResponder.Respond(c, err)
 

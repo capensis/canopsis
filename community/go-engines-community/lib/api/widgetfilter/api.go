@@ -43,7 +43,12 @@ func NewApi(
 // List
 // @Success 200 {object} pagination.ListResponse{data=[]Response}
 func (a *api) List(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	var r ListRequest
 	r.Query = pagination.GetDefaultQuery()
 
@@ -79,7 +84,12 @@ func (a *api) List(c *gin.Context) {
 // Get
 // @Success 200 {object} Response
 func (a *api) Get(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	id := c.Param("id")
 	ok, _, err := a.checkAccess(c, id, userID, model.PermissionRead)
 	if err != nil {
@@ -111,7 +121,12 @@ func (a *api) Get(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := CreateRequest{}
 
 	if err := validation.Bind(c, &request); err != nil {
@@ -126,7 +141,6 @@ func (a *api) Create(c *gin.Context) {
 		perm = model.PermissionRead
 	}
 
-	var err error
 	granted, request.IsPrivate, err = a.checkAccessByWidget(c, request.Widget, userID, perm)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -173,7 +187,12 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := UpdateRequest{
 		ID: c.Param("id"),
 	}
@@ -190,7 +209,6 @@ func (a *api) Update(c *gin.Context) {
 		perm = model.PermissionRead
 	}
 
-	var err error
 	granted, request.IsPrivate, err = a.checkAccess(c, request.ID, userID, perm)
 	if err != nil {
 		a.errorResponder.Respond(c, err)
@@ -255,7 +273,12 @@ func (a *api) Update(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	id := c.Param("id")
 
 	filter, err := a.store.GetOneBy(c, id, userID)
@@ -316,7 +339,12 @@ func (a *api) Delete(c *gin.Context) {
 }
 
 func (a *api) UpdatePositions(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := EditPositionRequest{}
 
 	if err := validation.Bind(c, &request); err != nil {

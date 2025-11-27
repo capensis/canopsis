@@ -175,7 +175,14 @@ func (a *api) Get(c *gin.Context) {
 }
 
 func (a *api) Delete(c *gin.Context) {
-	ok, err := a.store.Delete(c, c.Param("id"), c.MustGet(authctx.UserKey).(string))
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	ok, err := a.store.Delete(c, c.Param("id"), userID)
 
 	if err != nil {
 		if errors.Is(err, ErrLinkedException) {
@@ -230,7 +237,14 @@ func (a *api) Import(c *gin.Context) {
 		return
 	}
 
-	exception, err := a.store.Import(c, name, pbhType, c.MustGet(authctx.UserKey).(string), f, fh)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+
+	exception, err := a.store.Import(c, name, pbhType, userID, f, fh)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
