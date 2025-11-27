@@ -58,8 +58,18 @@ func (a *api) List(c *gin.Context) {
 // @Param body body Request true "body"
 // @Success 201 {object} Response
 func (a *api) Create(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
-	username := c.MustGet(authctx.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	var request Request
 
@@ -93,8 +103,18 @@ func (a *api) Create(c *gin.Context) {
 // @Param body body UpdateRequest true "body"
 // @Success 200 {object} Response
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
-	username := c.MustGet(authctx.Username).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
+	username, err := authctx.GetUsername(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	request := UpdateRequest{
 		ID: c.Param("id"),

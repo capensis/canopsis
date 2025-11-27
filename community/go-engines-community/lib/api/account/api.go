@@ -30,7 +30,12 @@ type api struct {
 // Me
 // @Success 200 {object} User
 func (a *api) Me(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 
 	user, err := a.store.GetOneBy(c, userID)
 	if err != nil {
@@ -51,7 +56,12 @@ func (a *api) Me(c *gin.Context) {
 // @Param body body EditRequest true "body"
 // @Success 200 {object} User
 func (a *api) Update(c *gin.Context) {
-	userID := c.MustGet(authctx.UserKey).(string)
+	userID, err := authctx.GetUserKey(c)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
+		return
+	}
 	request := EditRequest{
 		ID: userID,
 		// author is needed for action logs, in that case the user modifies himself, so he's the author.

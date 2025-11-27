@@ -6,6 +6,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -20,7 +21,12 @@ import (
 // It checks session and retrieves user using provider.
 // It checks auth only if session exists.
 // Deprecated : don't use session.
-func SessionAuth(db mongo.DbClient, configProvider config.ApiConfigProvider, store sessions.Store) gin.HandlerFunc {
+func SessionAuth(
+	db mongo.DbClient,
+	configProvider config.ApiConfigProvider,
+	store sessions.Store,
+	errorResponder httperror.Responder,
+) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		session, err := store.Get(c.Request, security.SessionKey)
 
@@ -30,7 +36,10 @@ func SessionAuth(db mongo.DbClient, configProvider config.ApiConfigProvider, sto
 				c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
 				return
 			}
-			panic(err)
+
+			errorResponder.Respond(c, err)
+
+			return
 		}
 
 		if val, ok := session.Values["user"]; ok {
@@ -39,7 +48,9 @@ func SessionAuth(db mongo.DbClient, configProvider config.ApiConfigProvider, sto
 				user, err := provider.FindByID(c, userID)
 
 				if err != nil {
-					panic(err)
+					errorResponder.Respond(c, err)
+
+					return
 				}
 
 				if user == nil {
@@ -49,12 +60,15 @@ func SessionAuth(db mongo.DbClient, configProvider config.ApiConfigProvider, sto
 
 				// The user credentials was found, set user's id to key UserKey in this context,
 				// the user's id can be read later using c.MustGet(auth.UserKey).
-				c.Set(authctx.UserKey, user.ID)
-				c.Set(authctx.Username, user.DisplayName)
-				c.Set(authctx.Roles, user.Roles)
-				c.Set(authctx.ApiKey, user.AuthApiKey)
+				authctx.SetUsername(c, user.DisplayName)
+				authctx.SetUserKey(c, user.ID)
+				authctx.SetRoles(c, user.Roles)
+				authctx.SetAPIKey(c, user.AuthApiKey)
+				authctx.SetLocale(c, user.Language)
 			} else {
-				panic("user key is not string")
+				errorResponder.Respond(c, err)
+
+				return
 			}
 		}
 

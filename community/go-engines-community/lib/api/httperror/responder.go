@@ -1,5 +1,7 @@
 package httperror
 
+//go:generate go tool go.uber.org/mock/mockgen -destination=../../../mocks/lib/api/httperror/httperror.go git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror Responder
+
 import (
 	"context"
 	"errors"
@@ -52,6 +54,8 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 		code = http.StatusNotFound
 	} else if errors.Is(err, validation.ErrInvalidRequestBody) {
 		code = http.StatusBadRequest
+	} else if errors.Is(err, authctx.ErrNotFound) {
+		code = http.StatusUnauthorized
 	} else if errors.Is(err, context.Canceled) {
 		code = http.StatusRequestTimeout
 		logLvl = zerolog.WarnLevel
@@ -80,15 +84,13 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 }
 
 // getValErrResponse translates validation errors and returns response body.
-func (r *responder) getValErrResponse(c *gin.Context, err *validation.Error) *fastjson.Value {
-	var locale string
-	if v, ok := c.Get(authctx.Locale); ok {
-		if locale, ok = v.(string); !ok {
-			r.logger.Error().Msgf("value %s=%v is not string", authctx.Locale, v)
-		}
+func (r *responder) getValErrResponse(c *gin.Context, valErr *validation.Error) *fastjson.Value {
+	locale, err := authctx.GetLocale(c)
+	if err != nil {
+		r.logger.Debug().Err(err).Msg("cannot get locale from context, use default locale")
 	}
 
-	errTrans := r.trans.Translate(locale, err)
+	errTrans := r.trans.Translate(locale, valErr)
 	ar := fastjson.Arena{}
 	errsObj := ar.NewObject()
 	for k, v := range errTrans {
