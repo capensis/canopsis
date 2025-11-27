@@ -5,6 +5,7 @@ package httperror
 import (
 	"context"
 	"errors"
+	"fmt"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
@@ -45,9 +46,13 @@ func (r *responder) Respond(c *gin.Context, err error) {
 }
 
 func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value) {
+	var res *fastjson.Value
 	valErr := &validation.Error{}
 	if errors.As(err, &valErr) {
-		return http.StatusBadRequest, r.getValErrResponse(c, valErr)
+		res, err = r.getValErrResponse(c, valErr)
+		if err == nil {
+			return http.StatusBadRequest, res
+		}
 	}
 
 	var code int
@@ -83,20 +88,24 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 		Msg("unexpected error during http request")
 
 	ar := fastjson.Arena{}
-	res := ar.NewObject()
+	res = ar.NewObject()
 	res.Set("error", ar.NewString(http.StatusText(code)))
 
 	return code, res
 }
 
 // getValErrResponse translates validation errors and returns response body.
-func (r *responder) getValErrResponse(c *gin.Context, valErr *validation.Error) *fastjson.Value {
+func (r *responder) getValErrResponse(c *gin.Context, valErr *validation.Error) (*fastjson.Value, error) {
 	locale, err := authctx.GetLocale(c)
 	if err != nil {
 		r.logger.Debug().Err(err).Msg("cannot get locale from context, use default locale")
 	}
 
-	errTrans := r.trans.Translate(locale, valErr)
+	errTrans, err := r.trans.Translate(locale, valErr)
+	if err != nil {
+		return nil, fmt.Errorf("cannot translate validation error: %w", err)
+	}
+
 	ar := fastjson.Arena{}
 	errsObj := ar.NewObject()
 	for k, v := range errTrans {
@@ -106,5 +115,5 @@ func (r *responder) getValErrResponse(c *gin.Context, valErr *validation.Error) 
 	res := ar.NewObject()
 	res.Set("errors", errsObj)
 
-	return res
+	return res, nil
 }

@@ -1,6 +1,7 @@
 package validation
 
 import (
+	"fmt"
 	"strings"
 
 	ut "github.com/go-playground/universal-translator"
@@ -8,7 +9,7 @@ import (
 )
 
 type ErrorTranslator interface {
-	Translate(locale string, err *Error) ErrorsTranslations
+	Translate(locale string, err *Error) (ErrorsTranslations, error)
 }
 
 type ErrorsTranslations map[string]string
@@ -25,9 +26,9 @@ type errorTranslator struct {
 	logger zerolog.Logger
 }
 
-func (t *errorTranslator) Translate(locale string, err *Error) ErrorsTranslations {
+func (t *errorTranslator) Translate(locale string, err *Error) (ErrorsTranslations, error) {
 	if err == nil {
-		return nil
+		return nil, nil
 	}
 
 	var trans ut.Translator
@@ -45,11 +46,15 @@ func (t *errorTranslator) Translate(locale string, err *Error) ErrorsTranslation
 	res := make(ErrorsTranslations, len(err.errors))
 	for _, fe := range err.errors {
 		ns := err.TransformNamespace(fe.StructNamespace())
+		if ns == "" {
+			return nil, fmt.Errorf("cannot resolve namespace for %s: %w", fe.StructNamespace(), err)
+		}
+
 		m := fe.Translate(trans)
 		// remove field name from the beginning of the error manually because the lib doesn't allow to control it
 		m = strings.TrimPrefix(m, fe.Field()+" ")
 		res[ns] = m
 	}
 
-	return res
+	return res, nil
 }

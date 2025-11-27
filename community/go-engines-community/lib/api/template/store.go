@@ -73,9 +73,7 @@ func NewStore(
 			TypeTestMetaAlarmRule:     mongo.MetaAlarmRulesMongoCollection,
 			TypeTestWebhookTokenRule:  mongo.WebhookTokenRuleCollection,
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name": "Name already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -184,7 +182,7 @@ func (s *store) CreateData(ctx context.Context, r EditDataRequest) (DataResponse
 		_, err := s.testDataCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err
@@ -225,7 +223,7 @@ func (s *store) UpdateData(ctx context.Context, r EditDataRequest) (DataResponse
 		_, err = s.testDataCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err
@@ -427,7 +425,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		_, err = s.testCollection.InsertOne(ctx, model)
 		if err != nil {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err
@@ -497,7 +495,7 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		)
 		if err != nil || updateRes.MatchedCount == 0 {
 			if mongodriver.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, res)
 			}
 
 			return err

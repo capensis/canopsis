@@ -68,10 +68,7 @@ func NewStore(
 			dbClient.Collection(libmongo.MetaAlarmRulesMongoCollection),
 			dbClient.Collection(libmongo.ScenarioCollection),
 		},
-		dupErrorParser: validation.NewDuplicateErrorParser(map[string]string{
-			"name":  "Name already exists.",
-			"alias": "Alias already exists.",
-		}),
+		dupErrorParser: validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -90,7 +87,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
@@ -190,7 +187,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 
 			if mongo.IsDuplicateKeyError(err) {
-				return s.dupErrorParser.Parse(err)
+				return s.dupErrorParser.Parse(err, Response{})
 			}
 
 			return err
