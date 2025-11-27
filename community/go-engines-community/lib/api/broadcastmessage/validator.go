@@ -20,7 +20,7 @@ func (v *baseValidator) Validate(ctx context.Context, sl validator.StructLevel) 
 	if r.ID != "" {
 		err := v.dbClient.Collection(mongo.BroadcastMessageCollection).FindOne(ctx, bson.M{"_id": r.ID}).Err()
 		if err == nil {
-			sl.ReportError("_id", "ID", "ID", "unique", "")
+			sl.ReportError("_id", "ID", "ID", "exist", "")
 		} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 			panic(err)
 		}

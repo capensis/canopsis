@@ -152,14 +152,14 @@ func (v *baseValidator) validateEditRequest(ctx context.Context, sl validator.St
 		err := v.dbCollection.FindOne(ctx, bson.M{"_id": r.Name}).Decode(&res)
 		if err == nil {
 			if res.ID != id {
-				sl.ReportError(r.Name, "Name", "Name", "unique", "")
+				sl.ReportError(r.Name, "Name", "Name", "exist", "")
 			}
 		} else if errors.Is(err, mongodriver.ErrNoDocuments) {
 			// Check unique by name
 			err := v.dbCollection.FindOne(ctx, bson.M{"name": r.Name}).Decode(&res)
 			if err == nil {
 				if res.ID != id {
-					sl.ReportError(r.Name, "Name", "Name", "unique", "")
+					sl.ReportError(r.Name, "Name", "Name", "exist", "")
 				}
 			} else if !errors.Is(err, mongodriver.ErrNoDocuments) {
 				panic(err)

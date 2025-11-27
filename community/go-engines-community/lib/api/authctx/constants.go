@@ -8,4 +8,6 @@ const (
 	ApiKey = "api_key"
 	// Roles is the context name for user's roles
 	Roles = "roles"
+	// Locale is the context name for user's preferred locale.
+	Locale = "locale"
 )
