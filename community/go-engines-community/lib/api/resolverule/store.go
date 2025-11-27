@@ -214,25 +214,8 @@ func (s *store) transformRequestToDocument(r EditRequest) resolverule.Rule {
 	}
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *resolverule.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, r.EntityRequest)
-	if err != nil {
-		return err
-	}
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *resolverule.Rule) (err error) {
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.dbCollection.Name())
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, r.AlarmRequest)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInEntityPattern(mongo.ResolveRuleMongoCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
-		patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.ResolveRuleMongoCollection),
-	)
-
-	return nil
+	return err
 }

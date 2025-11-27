@@ -131,7 +131,7 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 			continue
 		}
 
-		matched, err := match.MatchEntityPattern(*a.componentRules[idx].EntityPattern, entity)
+		matched, err := match.MatchEntityPattern(a.componentRules[idx].EntityPattern, entity)
 		if err != nil {
 			return false, err
 		}
@@ -181,7 +181,7 @@ func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, pr
 			continue
 		}
 
-		matched, err := match.MatchEntityPattern(*a.serviceRules[idx].EntityPattern, entity)
+		matched, err := match.MatchEntityPattern(a.serviceRules[idx].EntityPattern, entity)
 		if err != nil {
 			return false, err
 		}

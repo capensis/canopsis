@@ -185,7 +185,7 @@ func (s *store) Create(ctx context.Context, r CreateRequest) (*Response, error) 
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r.EntityRequest, r.AlarmRequest, &tag)
+		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &tag)
 		if err != nil {
 			return err
 		}
@@ -261,7 +261,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 				return common.NewValidationError("alarm_pattern", "AlarmPattern or EntityPattern is required.")
 			}
 
-			err = s.transformPatternRequestsToModel(ctx, r.EntityRequest, r.AlarmRequest, &tag)
+			err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &tag)
 			if err != nil {
 				return err
 			}
@@ -307,30 +307,8 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	return deleted > 0, err
 }
 
-func (s *store) transformPatternRequestsToModel(
-	ctx context.Context,
-	entityPatternReq patternfields.EntityRequest,
-	alarmPatternReq patternfields.AlarmRequest,
-	model *alarmtag.AlarmTag,
-) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, entityPatternReq)
-	if err != nil {
-		return err
-	}
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *alarmtag.AlarmTag) (err error) {
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.collection.Name())
 
-	transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, alarmPatternReq)
-	if err != nil {
-		return err
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInEntityPattern(mongo.AlarmTagCollection),
-	)
-	model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInAlarmPattern(mongo.AlarmTagCollection),
-		patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.AlarmTagCollection),
-	)
-
-	return nil
+	return err
 }

@@ -13,8 +13,6 @@ type AlarmRequest struct {
 	CorporateAlarmPattern string        `json:"corporate_alarm_pattern"`
 
 	CorporatePattern savedpattern.SavedPattern `json:"-"`
-	IsPrivate        bool                      `json:"-"`
-	User             string                    `json:"-"`
 }
 
 func (r AlarmRequest) ToModel() savedpattern.AlarmPatternFields {
@@ -31,12 +29,15 @@ func (r AlarmRequest) ToModel() savedpattern.AlarmPatternFields {
 	}
 }
 
-func (r AlarmRequest) ToModelWithoutFields(forbiddenFields, onlyTimeAbsoluteFields []string) savedpattern.AlarmPatternFields {
+func (r AlarmRequest) ToModelWithoutFields(collectionName string) savedpattern.AlarmPatternFields {
 	if r.CorporatePattern.ID == "" {
 		return savedpattern.AlarmPatternFields{
 			AlarmPattern: r.AlarmPattern,
 		}
 	}
+
+	forbiddenFields := GetForbiddenFieldsInAlarmPattern(collectionName)
+	onlyTimeAbsoluteFields := GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collectionName)
 
 	return savedpattern.AlarmPatternFields{
 		AlarmPattern:               r.CorporatePattern.AlarmPattern.RemoveFields(forbiddenFields, onlyTimeAbsoluteFields),

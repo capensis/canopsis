@@ -8,10 +8,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -471,51 +473,52 @@ func transformEditRequestToModel(request EditRequest) view.WidgetFilter {
 }
 
 func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *view.WidgetFilter) error {
-	transformedAlarmPattern, err := s.transformer.TransformAlarmRequest(ctx, patternfields.AlarmRequest{
-		AlarmPattern:          r.AlarmPattern,
-		CorporateAlarmPattern: r.CorporateAlarmPattern,
-		IsPrivate:             *r.IsUserPreference,
-		User:                  r.Author,
-	})
+	patternIDs := []string{
+		r.CorporateEntityPattern,
+		r.CorporateAlarmPattern,
+		r.CorporatePbehaviorPattern,
+		r.CorporateWeatherServicePattern,
+	}
+
+	var patterns patternfields.Patterns
+	var err error
+	if *r.IsUserPreference {
+		patterns, err = s.transformer.FetchPatternsByUser(ctx, r.Author, patternIDs...)
+	} else {
+		patterns, err = s.transformer.FetchCorporatePatterns(ctx, patternIDs...)
+	}
+
 	if err != nil {
 		return err
 	}
 
-	transformedEntityPattern, err := s.transformer.TransformEntityRequest(ctx, patternfields.EntityRequest{
-		EntityPattern:          r.EntityPattern,
-		CorporateEntityPattern: r.CorporateEntityPattern,
-		IsPrivate:              *r.IsUserPreference,
-		User:                   r.Author,
-	})
+	aliases, err := s.transformer.FetchAliases(ctx, patternfields.GetAliases(r.EntityPattern))
 	if err != nil {
 		return err
 	}
 
-	transformedPbehaviorPattern, err := s.transformer.TransformPbehaviorRequest(ctx, patternfields.PbehaviorRequest{
-		PbehaviorPattern:          r.PbehaviorPattern,
-		CorporatePbehaviorPattern: r.CorporatePbehaviorPattern,
-		IsPrivate:                 *r.IsUserPreference,
-		User:                      r.Author,
-	})
-	if err != nil {
-		return err
+	var valErrs, applyErrs validator.ValidationErrors
+	r.AlarmRequest, applyErrs = s.transformer.ApplyAlarmCorporatePattern(r.AlarmRequest, patterns)
+	valErrs = append(valErrs, applyErrs...)
+	if r.CorporateEntityPattern != "" {
+		r.EntityRequest, model.Aliases, applyErrs = s.transformer.ApplyEntityCorporatePattern(r.EntityRequest, patterns)
+	} else if r.EntityPattern != nil {
+		r.EntityPattern, model.Aliases, applyErrs = s.transformer.ApplyAliases(r.EntityPattern, aliases)
 	}
 
-	transformedWeatherPattern, err := s.transformer.TransformWeatherServiceRequest(ctx, patternfields.WeatherServiceRequest{
-		WeatherServicePattern:          r.WeatherServicePattern,
-		CorporateWeatherServicePattern: r.CorporateWeatherServicePattern,
-		IsPrivate:                      *r.IsUserPreference,
-		User:                           r.Author,
-	})
-	if err != nil {
-		return err
+	valErrs = append(valErrs, applyErrs...)
+	r.PbehaviorRequest, applyErrs = s.transformer.ApplyPbehaviorCorporatePattern(r.PbehaviorRequest, patterns)
+	valErrs = append(valErrs, applyErrs...)
+	r.WeatherServiceRequest, applyErrs = s.transformer.ApplyServiceWeatherCorporatePattern(r.WeatherServiceRequest, patterns)
+	valErrs = append(valErrs, applyErrs...)
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, r)
 	}
 
-	model.Aliases = transformedEntityPattern.Aliases
-	model.AlarmPatternFields = transformedAlarmPattern.ToModel()
-	model.EntityPatternFields = transformedEntityPattern.ToModel()
-	model.PbehaviorPatternFields = transformedPbehaviorPattern.ToModel()
-	model.WeatherServicePatternFields = transformedWeatherPattern.ToModel()
+	model.AlarmPatternFields = r.AlarmRequest.ToModel()
+	model.EntityPatternFields = r.EntityRequest.ToModel()
+	model.PbehaviorPatternFields = r.PbehaviorRequest.ToModel()
+	model.WeatherServicePatternFields = r.WeatherServiceRequest.ToModel()
 
 	return nil
 }

@@ -487,7 +487,7 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (lin
 		return link.Rule{}, err
 	}
 
-	rule := link.Rule{
+	return link.Rule{
 		Name:         r.Name,
 		Type:         r.Type,
 		Enabled:      *r.Enabled,
@@ -495,44 +495,13 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (lin
 		SourceCode:   r.SourceCode,
 		ExternalData: externalData,
 		Author:       r.Author,
-		EntityPatternFields: r.EntityRequest.ToModelWithoutFields(
-			patternfields.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
-		),
-	}
-	if r.Type == link.TypeAlarm {
-		rule.AlarmPatternFields = r.AlarmRequest.ToModelWithoutFields(
-			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-		)
-	}
-
-	return rule, nil
+	}, nil
 }
 
-func (s *store) transformPatternRequestsToModel(ctx context.Context, req EditRequest, model *link.Rule) error {
-	transformedEntityPatternRequest, err := s.transformer.TransformEntityRequest(ctx, req.EntityRequest)
-	if err != nil {
-		return err
-	}
+func (s *store) transformPatternRequestsToModel(ctx context.Context, r EditRequest, model *link.Rule) (err error) {
+	model.AlarmPatternFields, model.EntityPatternFields, model.Aliases, err = s.transformer.TransformAlarmAndEntityRequest(ctx, r.AlarmRequest, r.EntityRequest, r, s.collection.Name())
 
-	if req.Type == link.TypeAlarm {
-		transformedAlarmPatternRequest, err := s.transformer.TransformAlarmRequest(ctx, req.AlarmRequest)
-		if err != nil {
-			return err
-		}
-
-		model.AlarmPatternFields = transformedAlarmPatternRequest.ToModelWithoutFields(
-			patternfields.GetForbiddenFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-			patternfields.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(mongo.LinkRuleMongoCollection),
-		)
-	}
-
-	model.Aliases = transformedEntityPatternRequest.Aliases
-	model.EntityPatternFields = transformedEntityPatternRequest.ToModelWithoutFields(
-		patternfields.GetForbiddenFieldsInEntityPattern(mongo.LinkRuleMongoCollection),
-	)
-
-	return nil
+	return err
 }
 
 func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, []link.AlarmWithData, []link.EntityWithData, error) {

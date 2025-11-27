@@ -3,22 +3,29 @@ package statesettings
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/statesetting"
 )
 
 type EditRequest struct {
 	ID           string `json:"-" bson:"_id"`
 	StateSetting `bson:"inline"`
 
-	Author  string            `json:"author,omitempty" bson:"author,omitempty" swaggerignore:"true"`
-	Created *datetime.CpsTime `json:"-" bson:"created,omitempty"`
-	Updated *datetime.CpsTime `json:"-" bson:"updated,omitempty"`
+	patternfields.EntityRequest
+	InheritedEntityPatternRequest
+
+	Author string `json:"author,omitempty" bson:"author,omitempty" swaggerignore:"true"`
 }
 
 type Response struct {
 	ID           string `json:"_id" bson:"_id"`
 	StateSetting `bson:"inline"`
+
+	savedpattern.EntityPatternFields          `bson:",inline"`
+	statesetting.InheritedEntityPatternFields `bson:",inline"`
 
 	Author    *author.Author    `json:"author,omitempty" bson:"author,omitempty"`
 	Created   *datetime.CpsTime `json:"created,omitempty" bson:"created,omitempty" swaggertype:"integer"`
@@ -36,19 +43,15 @@ type StateSetting struct {
 	Method string `json:"method" bson:"method" binding:"required"`
 
 	// Service and component state setting only fields
-	Title                  *string          `json:"title,omitempty" bson:"title,omitempty"`
-	Enabled                *bool            `json:"enabled,omitempty" bson:"enabled,omitempty"`
-	Priority               int64            `json:"priority" bson:"priority" binding:"min=0"`
-	EntityPattern          *pattern.Entity  `json:"entity_pattern,omitempty" bson:"entity_pattern,omitempty"`
-	InheritedEntityPattern *pattern.Entity  `json:"inherited_entity_pattern,omitempty" bson:"inherited_entity_pattern,omitempty"`
-	StateThresholds        *StateThresholds `json:"state_thresholds,omitempty" bson:"state_thresholds,omitempty"`
-	Type                   *string          `json:"type,omitempty" bson:"type,omitempty" binding:"required_if=Method inherited,required_if=Method dependencies,omitempty,oneof=component service"`
+	Title    *string `json:"title,omitempty" bson:"title,omitempty"`
+	Enabled  *bool   `json:"enabled,omitempty" bson:"enabled,omitempty"`
+	Priority int64   `json:"priority" bson:"priority" binding:"min=0"`
+
+	StateThresholds *StateThresholds `json:"state_thresholds,omitempty" bson:"state_thresholds,omitempty"`
+	Type            *string          `json:"type,omitempty" bson:"type,omitempty" binding:"required_if=Method inherited,required_if=Method dependencies,omitempty,oneof=component service"`
 
 	// JUnit state setting only field
 	JUnitThresholds *JUnitThresholds `json:"junit_thresholds,omitempty" bson:"junit_thresholds,omitempty"`
-
-	// Aliases is used to ease find by entity info property api.
-	Aliases []string `bson:"aliases" json:"-"`
 }
 
 type StateThresholds struct {
@@ -87,6 +90,29 @@ type JUnitThresholds struct {
 	Skipped  JUnitThreshold `json:"skipped" bson:"skipped" binding:"required"`
 	Errors   JUnitThreshold `json:"errors" bson:"errors" binding:"required"`
 	Failures JUnitThreshold `json:"failures" bson:"failures" binding:"required"`
+}
+
+type InheritedEntityPatternRequest struct {
+	InheritedEntityPattern          pattern.Entity `json:"inherited_entity_pattern" binding:"entity_pattern"`
+	CorporateInheritedEntityPattern string         `json:"corporate_inherited_entity_pattern"`
+
+	CorporatePattern savedpattern.SavedPattern `json:"-"`
+}
+
+func (r InheritedEntityPatternRequest) ToModelWithoutFields(collectionName string) statesetting.InheritedEntityPatternFields {
+	if r.CorporatePattern.ID == "" {
+		return statesetting.InheritedEntityPatternFields{
+			InheritedEntityPattern: r.InheritedEntityPattern,
+		}
+	}
+
+	forbiddenFields := patternfields.GetForbiddenFieldsInEntityPattern(collectionName)
+
+	return statesetting.InheritedEntityPatternFields{
+		InheritedEntityPattern:               r.CorporatePattern.EntityPattern.RemoveFields(forbiddenFields),
+		CorporateInheritedEntityPattern:      r.CorporatePattern.ID,
+		CorporateInheritedEntityPatternTitle: r.CorporatePattern.Title,
+	}
 }
 
 type AggregationResult struct {
