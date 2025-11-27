@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/metrics"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 )
 
 type API interface {
@@ -23,25 +22,20 @@ type API interface {
 }
 
 type api struct {
-	store          Store
-	errorResponder httperror.Responder
-	logger         zerolog.Logger
-
+	store             Store
 	metricMetaUpdater metrics.MetaUpdater
+	errorResponder    httperror.Responder
 }
 
 func NewApi(
 	store Store,
 	metricMetaUpdater metrics.MetaUpdater,
 	errorResponder httperror.Responder,
-	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:          store,
-		errorResponder: errorResponder,
-		logger:         logger,
-
+		store:             store,
 		metricMetaUpdater: metricMetaUpdater,
+		errorResponder:    errorResponder,
 	}
 }
 
@@ -120,11 +114,6 @@ func (a *api) Create(c *gin.Context) {
 
 	user, err := a.store.Insert(c, request, roleIDs)
 	if err != nil {
-		if errors.Is(err, ErrNotAdminCreateAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -168,17 +157,12 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Update(c, request, userID, roleIDs)
+	user, err := a.store.Update(c, BulkUpdateRequestItem(request), userID, roleIDs)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
-			return
-		}
-
-		if errors.Is(err, ErrNotAdminUpdateAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
@@ -225,17 +209,12 @@ func (a *api) Patch(c *gin.Context) {
 		return
 	}
 
-	user, err := a.store.Patch(c, request, userID, roleIDs)
+	user, err := a.store.Patch(c, BulkPatchRequestItem(request), userID, roleIDs)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
-			return
-		}
-
-		if errors.Is(err, ErrNotAdminUpdateAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
@@ -270,17 +249,12 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 
-	ok, err := a.store.Delete(c, id, userID, roleIDs)
+	ok, err := a.store.Delete(c, BulkDeleteRequestItem{ID: id}, userID, roleIDs)
 	if err != nil {
 		valErr := common.ValidationError{}
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
 
-			return
-		}
-
-		if errors.Is(err, ErrNotAdminDeleteAdmin) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
 		}
 
@@ -313,16 +287,12 @@ func (a *api) BulkCreate(c *gin.Context) {
 	bulk.Handler(c, func(request CreateRequest) (string, error) {
 		user, err := a.store.Insert(c, request, requestRoles)
 		if err != nil {
-			if errors.Is(err, ErrNotAdminCreateAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
 			return "", err
 		}
 
 		userIDs = append(userIDs, user.ID)
 		return user.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }
 
@@ -344,19 +314,19 @@ func (a *api) BulkUpdate(c *gin.Context) {
 	}
 
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
-		user, err := a.store.Update(c, UpdateRequest(request), userID, requestRoles)
-		if err != nil || user == nil {
-			if errors.Is(err, ErrNotAdminUpdateAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
+		user, err := a.store.Update(c, request, userID, requestRoles)
+		if err != nil {
 			return "", err
+		}
+
+		if user == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		userIDs = append(userIDs, user.ID)
 
 		return user.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }
 
@@ -377,18 +347,18 @@ func (a *api) BulkDelete(c *gin.Context) {
 	}
 	userIDs := make([]string, 0)
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
-		ok, err := a.store.Delete(c, request.ID, userID, roles)
-		if err != nil || !ok {
-			if errors.Is(err, ErrNotAdminDeleteAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
+		ok, err := a.store.Delete(c, request, userID, roles)
+		if err != nil {
 			return "", err
+		}
+
+		if !ok {
+			return "", httperror.ErrNotFound
 		}
 
 		userIDs = append(userIDs, request.ID)
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 
 	a.metricMetaUpdater.DeleteById(c, userIDs...)
 }
@@ -411,18 +381,18 @@ func (a *api) BulkPatch(c *gin.Context) {
 	}
 
 	bulk.Handler(c, func(request BulkPatchRequestItem) (string, error) {
-		user, err := a.store.Patch(c, PatchRequest(request), userID, requestRoles)
-		if err != nil || user == nil {
-			if errors.Is(err, ErrNotAdminUpdateAdmin) {
-				return "", bulk.BadRequestError{Err: err}
-			}
-
+		user, err := a.store.Patch(c, request, userID, requestRoles)
+		if err != nil {
 			return "", err
+		}
+
+		if user == nil {
+			return "", httperror.ErrNotFound
 		}
 
 		userIDs = append(userIDs, user.ID)
 
 		return user.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 	a.metricMetaUpdater.UpdateById(c, userIDs...)
 }

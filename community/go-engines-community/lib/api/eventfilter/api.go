@@ -14,7 +14,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
@@ -32,20 +31,17 @@ type api struct {
 	store          Store
 	mongoExporter  dbexport.Exporter
 	errorResponder httperror.Responder
-	logger         zerolog.Logger
 }
 
 func NewApi(
 	store Store,
 	mongoExporter dbexport.Exporter,
 	errorResponder httperror.Responder,
-	logger zerolog.Logger,
 ) API {
 	return &api{
 		store:          store,
 		mongoExporter:  mongoExporter,
 		errorResponder: errorResponder,
-		logger:         logger,
 	}
 }
 
@@ -190,7 +186,7 @@ func (a *api) BulkCreate(c *gin.Context) {
 		}
 
 		return eventfilter.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkUpdate
@@ -198,12 +194,16 @@ func (a *api) BulkCreate(c *gin.Context) {
 func (a *api) BulkUpdate(c *gin.Context) {
 	bulk.Handler(c, func(request BulkUpdateRequestItem) (string, error) {
 		eventfilter, err := a.store.Update(c, UpdateRequest(request))
-		if err != nil || eventfilter == nil {
+		if err != nil {
 			return "", err
 		}
 
+		if eventfilter == nil {
+			return "", httperror.ErrNotFound
+		}
+
 		return eventfilter.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // BulkDelete
@@ -218,12 +218,16 @@ func (a *api) BulkDelete(c *gin.Context) {
 
 	bulk.Handler(c, func(request BulkDeleteRequestItem) (string, error) {
 		ok, err := a.store.Delete(c, request.ID, userID)
-		if err != nil || !ok {
+		if err != nil {
 			return "", err
 		}
 
+		if !ok {
+			return "", httperror.ErrNotFound
+		}
+
 		return request.ID, nil
-	}, a.logger)
+	}, a.errorResponder)
 }
 
 // ListFailures
