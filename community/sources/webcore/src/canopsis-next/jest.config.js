@@ -32,7 +32,7 @@ module.exports = {
     '^.+\\.(jpg|jpeg|png)$': '<rootDir>/tests/unit/jest.assets.js',
   },
   transformIgnorePatterns: [
-    '<rootDir>/node_modules/(?!(vue-tour|monaco-editor|vuetify/lib)/.*)',
+    '<rootDir>/node_modules/(?!(vue-tour|monaco-editor|vuetify/lib|jodit)/.*)',
   ],
   moduleNameMapper: {
     '^.+\\.styl(us)?$': '<rootDir>/tests/unit/mocks/styleMock.js',
@@ -42,6 +42,7 @@ module.exports = {
     '^vue$': 'vue/dist/vue.common.dev.js',
     '^mermaid$': '<rootDir>/node_modules/mermaid/dist/mermaid.js',
     '^monaco-mermaid$': '<rootDir>/node_modules/mermaid/dist/mermaid.js',
+    '^jodit$': '<rootDir>/node_modules/jodit/esm/index.js',
     '^./assets$': '<rootDir>/tests/unit/mocks/flowchartAssets.js',
     '@/assets/images/engineering.svg': '<rootDir>/tests/unit/mocks/flowchartAssets.js',
     './components/icons': '<rootDir>/tests/unit/mocks/vuetifyIcons.js',
