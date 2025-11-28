@@ -9,20 +9,16 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/eventfilter"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/externaldata"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"github.com/teambition/rrule-go"
-	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 type Validator struct {
-	dbClient         mongo.DbClient
 	templateExecutor template.Executor
 }
 
-func NewValidator(client mongo.DbClient, templateExecutor template.Executor) *Validator {
+func NewValidator(templateExecutor template.Executor) *Validator {
 	return &Validator{
-		dbClient:         client,
 		templateExecutor: templateExecutor,
 	}
 }
@@ -126,14 +122,6 @@ func (v *Validator) ValidateEditRequest(ctx context.Context, sl validator.Struct
 		sl.ReportError(r.RRule, "RRule", "RRule", "rrule", "")
 	}
 
-	ok, err := v.checkExceptions(ctx, r.Exceptions)
-	if err != nil {
-		panic(err)
-	}
-	if !ok {
-		sl.ReportError(r.Exceptions, "Exceptions", "Exceptions", "not_exist", "")
-	}
-
 	apiexternaldata.ValidateRefParameters(sl, v.templateExecutor, r.ExternalData, []string{externaldata.RefTypeAPI, externaldata.RefTypeTable})
 }
 
@@ -173,18 +161,4 @@ func (v *Validator) ValidateTemplateRuleRequest(sl validator.StructLevel) {
 func (v *Validator) checkRrule(r string) bool {
 	_, err := rrule.StrToROption(r)
 	return err == nil
-}
-
-func (v *Validator) checkExceptions(ctx context.Context, exceptions []string) (bool, error) {
-	if len(exceptions) == 0 {
-		return true, nil
-	}
-	count, err := v.dbClient.
-		Collection(mongo.PbehaviorExceptionMongoCollection).
-		CountDocuments(ctx, bson.M{"_id": bson.M{"$in": exceptions}})
-	if err != nil {
-		return false, err
-	}
-
-	return count == int64(len(exceptions)), nil
 }

@@ -11,6 +11,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
@@ -19,6 +20,7 @@ import (
 	libtypes "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
+	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -586,6 +588,20 @@ func (s *store) getAuthorizedTestTypes(userID string) ([]int, error) {
 }
 
 func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTest *TestModel) (*libtypes.AlarmWithEntityField, *libtypes.Entity, error) {
+	if r.Data.User != "" {
+		ok, err := s.enforcer.Enforce(r.Author, apisecurity.PermAcl, securitymodel.PermissionRead)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		if !ok {
+			return nil, nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "User", "Data.User")},
+				r,
+			)
+		}
+	}
+
 	var alarm *libtypes.AlarmWithEntityField
 	var entity *libtypes.Entity
 	if r.Data.Event != "" {

@@ -3,22 +3,11 @@ package template
 import (
 	"encoding/json"
 
-	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
-	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/go-playground/validator/v10"
 )
 
-type Validator struct {
-	enforcer security.Enforcer
-}
-
-func NewValidator(enforcer security.Enforcer) *Validator {
-	return &Validator{enforcer: enforcer}
-}
-
-func (v *Validator) ValidateEditDataRequest(sl validator.StructLevel) {
+func ValidateEditDataRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditDataRequest)
 	if r.Type != nil && *r.Type == TypeTestDataEvent && r.Body != nil {
 		b, err := json.Marshal(r.Body)
@@ -36,7 +25,7 @@ func (v *Validator) ValidateEditDataRequest(sl validator.StructLevel) {
 	}
 }
 
-func (v *Validator) ValidateEditTestRequest(sl validator.StructLevel) {
+func ValidateEditTestRequest(sl validator.StructLevel) {
 	r := sl.Current().Interface().(EditTestRequest)
 
 	if r.Type != nil {
@@ -77,17 +66,6 @@ func (v *Validator) ValidateEditTestRequest(sl validator.StructLevel) {
 			}
 		default:
 			sl.ReportError(r.Type, "Type", "Type", "invalid", "")
-		}
-	}
-
-	if r.Data.User != "" {
-		ok, err := v.enforcer.Enforce(r.Author, apisecurity.PermAcl, securitymodel.PermissionRead)
-		if err != nil {
-			panic(err)
-		}
-
-		if !ok {
-			sl.ReportError(r.Data.User, "User", "Data.User", "unauth", "")
 		}
 	}
 }

@@ -10,10 +10,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -47,6 +49,8 @@ func NewStore(
 		shareTokenCollection:   dbClient.Collection(mongo.ShareTokenMongoCollection),
 		notificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
 		tplTestCollection:      dbClient.Collection(mongo.TemplateTestCollection),
+		colorThemeCollection:   dbClient.Collection(mongo.ColorThemeCollection),
+		roleCollection:         dbClient.Collection(mongo.RoleCollection),
 
 		passwordEncoder: passwordEncoder,
 		websocketStore:  websocketStore,
@@ -55,6 +59,7 @@ func NewStore(
 
 		defaultSearchByFields: []string{"_id", "name", "firstname", "lastname", "roles.name"},
 		defaultSortBy:         "name",
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -71,6 +76,8 @@ type store struct {
 	shareTokenCollection   mongo.DbCollection
 	notificationCollection mongo.DbCollection
 	tplTestCollection      mongo.DbCollection
+	colorThemeCollection   mongo.DbCollection
+	roleCollection         mongo.DbCollection
 
 	passwordEncoder password.Encoder
 	websocketStore  websocket.Store
@@ -79,6 +86,7 @@ type store struct {
 
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s *store) Find(ctx context.Context, r ListRequest, curUserID string, requestRoles []string) (*AggregationResult, error) {
@@ -219,8 +227,18 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 	var user *User
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+
+		err = s.validateEditRequest(ctx, r.EditRequest, "")
+		if err != nil {
+			return err
+		}
+
 		_, err = s.userCollection.InsertOne(ctx, insertDoc)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Role{})
+			}
+
 			return err
 		}
 
@@ -251,6 +269,11 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
+		err = s.validateEditRequest(ctx, r.EditRequest, r.ID)
+		if err != nil {
+			return err
+		}
+
 		onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
@@ -261,7 +284,6 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 		}
 
 		var prevUser security.User
-
 		err = s.userCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevUser)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -288,6 +310,10 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Role{})
+			}
+
 			return err
 		}
 
@@ -318,6 +344,28 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
+		err = validation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+		if err != nil {
+			return err
+		}
+
+		err = validation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+		if err != nil {
+			return err
+		}
+
+		err = validation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
+		if err != nil {
+			return err
+		}
+
+		if r.Name != nil {
+			err = s.validateName(ctx, *r.Name, r.ID, r)
+			if err != nil {
+				return err
+			}
+		}
+
 		onlyOneAdmin, lastAdminID, err := s.checkLastAdmin(ctx)
 		if err != nil {
 			return err
@@ -355,6 +403,10 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 			bson.M{"$set": updateDoc},
 		)
 		if err != nil || res.MatchedCount == 0 {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, Role{})
+			}
+
 			return err
 		}
 
@@ -601,6 +653,49 @@ func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.
 	pipeline = append(pipeline, authorProvider.Pipeline()...)
 
 	return pipeline
+}
+
+func (s *store) validateEditRequest(ctx context.Context, r EditRequest, id string) error {
+	err := validation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+	if err != nil {
+		return err
+	}
+
+	err = validation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+	if err != nil {
+		return err
+	}
+
+	err = validation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
+	if err != nil {
+		return err
+	}
+
+	return s.validateName(ctx, r.Name, id, r)
+}
+
+func (s *store) validateName(ctx context.Context, name, id string, r any) error {
+	q := bson.M{"$or": []bson.M{
+		{"name": name},
+		{"_id": name},
+	}}
+	if id != "" {
+		q["_id"] = bson.M{"$ne": id}
+	}
+
+	err := s.userCollection.FindOne(ctx, q).Err()
+	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		return err
+	}
+
+	if err == nil {
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
+			r,
+		)
+	}
+
+	return nil
 }
 
 func getRolePipeline() []bson.M {

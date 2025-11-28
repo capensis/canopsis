@@ -7,6 +7,7 @@ import (
 
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
@@ -22,18 +23,20 @@ type Store interface {
 }
 
 type store struct {
-	dbClient          mongo.DbClient
-	dbCollection      mongo.DbCollection
-	alarmDbCollection mongo.DbCollection
-	basicTypes        []string
+	dbClient             mongo.DbClient
+	dbCollection         mongo.DbCollection
+	alarmDbCollection    mongo.DbCollection
+	categoryDbCollection mongo.DbCollection
+	basicTypes           []string
 }
 
 func NewStore(db mongo.DbClient) Store {
 	return &store{
-		dbClient:          db,
-		dbCollection:      db.Collection(mongo.EntityMongoCollection),
-		alarmDbCollection: db.Collection(mongo.AlarmMongoCollection),
-		basicTypes:        []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
+		dbClient:             db,
+		dbCollection:         db.Collection(mongo.EntityMongoCollection),
+		alarmDbCollection:    db.Collection(mongo.AlarmMongoCollection),
+		categoryDbCollection: db.Collection(mongo.EntityCategoryMongoCollection),
+		basicTypes:           []string{types.EntityTypeResource, types.EntityTypeComponent, types.EntityTypeConnector},
 	}
 }
 
@@ -101,6 +104,11 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		isToggled = false
 		updatedEntity = nil
+
+		err := validation.ValidateExist(ctx, s.categoryDbCollection, r, "Category", r.Category)
+		if err != nil {
+			return err
+		}
 
 		oldEntity := Entity{}
 		cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
