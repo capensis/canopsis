@@ -56,6 +56,13 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 	authorProvider := author.NewProvider(config.NewApiConfigProvider(cfg, logger))
 	pbhTypeComputer := pbehavior.NewTypeComputer(pbehavior.NewModelProvider(dbClient, authorProvider), json.NewDecoder())
 	frameDuration := time.Duration(options.FrameDuration) * time.Minute
+	// longTimeoutClient should be used by compute intervals only
+	longTimeoutClient := m.DepMongoClient(ctx, mongo.ClientOptions{
+		RetryCount:      cfg.Global.ReconnectRetries,
+		MinRetryTimeout: cfg.Global.GetReconnectTimeout(),
+		ClientTimeout:   frameDuration,
+		ReadPreference:  mongo.SecondaryPreferred(),
+	})
 	eventManager := pbehavior.NewEventManager(libevent.NewGenerator(canopsis.PBehaviorConnector, canopsis.PBehaviorConnector))
 
 	healthCheckCfg, err := config.NewHealthCheckAdapter(dbClient).GetConfig(ctx)
@@ -81,15 +88,15 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 		TimezoneConfigProvider: timezoneConfigProvider,
 		Logger:                 logger,
 	}
+	pbhLongTimeoutService := pbehavior.NewService(longTimeoutClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
 	enginePbehavior := engine.New(
 		func(ctx context.Context) error {
 			runInfoPeriodicalWorker.Work(ctx)
-			pbhService := pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger)
 
 			now := time.Now()
 			newSpan := timespan.New(now, now.Add(frameDuration))
-			resolver, count, err := pbhService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
+			resolver, count, err := pbhLongTimeoutService.Compute(ctx, newSpan, timezoneConfigProvider.Get().Location)
 			if err != nil {
 				return fmt.Errorf("compute pbehavior's frames failed: %w", err)
 			}
@@ -116,6 +123,11 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			err := dbClient.Disconnect(context.WithoutCancel(ctx))
 			if err != nil {
 				logger.Error().Err(err).Msg("failed to close mongo connection")
+			}
+
+			err = longTimeoutClient.Disconnect(context.WithoutCancel(ctx))
+			if err != nil {
+				logger.Err(err).Msg("failed to close mongo connection")
 			}
 
 			err = amqpConnection.Close()
@@ -203,7 +215,7 @@ func NewEnginePBehavior(ctx context.Context, options Options, logger zerolog.Log
 			TechMetricsSender:        techMetricsSender,
 			ChannelPub:               amqpChannel,
 			PeriodicalInterval:       options.PeriodicalWaitTime,
-			PbhService:               pbehavior.NewService(dbClient, pbhTypeComputer, pbhStore, pbhLockerClient, logger),
+			PbhService:               pbhLongTimeoutService,
 			AlarmAdapter:             alarm.NewAdapter(dbClient),
 			EntityAdapter:            entity.NewAdapter(dbClient),
 			EventManager:             eventManager,
