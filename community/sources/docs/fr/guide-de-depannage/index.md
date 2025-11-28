@@ -11,6 +11,9 @@ Il comporte les sections suivantes :
 - [amqp2tty : Analyse temps réel des flux AMQP](amqp2tty/)  
 - [Vérification d'envoi d'un événement](troubleshooting-evenement/)
 
+## Aide au support
+
+- [Pprof](outil-de-support/pprof.md)
 
 ## Métriques techniques
 
