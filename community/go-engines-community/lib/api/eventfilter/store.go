@@ -61,6 +61,7 @@ type store struct {
 	dbEntityCollection      mongo.DbCollection
 	dbTplDataCollection     mongo.DbCollection
 	dbTplTestCollection     mongo.DbCollection
+	dbExceptionCollection   mongo.DbCollection
 	transformer             patternfields.Transformer
 	authorProvider          author.Provider
 	notificationStore       usernotification.Store
@@ -111,6 +112,7 @@ func NewStore(
 		dbEntityCollection:      dbClient.Collection(mongo.EntityMongoCollection),
 		dbTplDataCollection:     dbClient.Collection(mongo.TemplateTestDataCollection),
 		dbTplTestCollection:     dbClient.Collection(mongo.TemplateTestCollection),
+		dbExceptionCollection:   dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
 		transformer:             transformer,
 		authorProvider:          authorProvider,
 		notificationStore:       notificationStore,
@@ -148,6 +150,11 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		err = validation.ValidateExist(ctx, s.dbExceptionCollection, request, "Exceptions", request.Exceptions)
+		if err != nil {
+			return err
+		}
 
 		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, request, &model)
 		if err != nil {
@@ -284,6 +291,11 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	var response *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		err = validation.ValidateExist(ctx, s.dbExceptionCollection, request, "Exceptions", request.Exceptions)
+		if err != nil {
+			return err
+		}
 
 		err = s.transformEntityPatternRequestToModel(ctx, request.EntityRequest, request, &model)
 		if err != nil {

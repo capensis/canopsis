@@ -56,6 +56,7 @@ type store struct {
 	entityCounters            mongo.DbCollection
 	userDbCollection          mongo.DbCollection
 	stateSettingDbCollection  mongo.DbCollection
+	categoryDbCollection      mongo.DbCollection
 	transformer               patternfields.Transformer
 	linkGenerator             link.Generator
 	enableSameServiceNames    bool
@@ -85,6 +86,7 @@ func NewStore(
 		entityCounters:            db.Collection(mongo.EntityCountersCollection),
 		userDbCollection:          db.Collection(mongo.UserCollection),
 		stateSettingDbCollection:  db.Collection(mongo.StateSettingsMongoCollection),
+		categoryDbCollection:      db.Collection(mongo.EntityCategoryMongoCollection),
 		transformer:               transformer,
 		linkGenerator:             linkGenerator,
 		enableSameServiceNames:    enableSameServiceNames,
@@ -353,6 +355,11 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
+		err := validation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
+		if err != nil {
+			return err
+		}
+
 		if !s.enableSameServiceNames {
 			err := s.dbCollection.FindOne(ctx, bson.M{
 				"name":         service.Name,
@@ -371,7 +378,6 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 			}
 		}
 
-		var err error
 		service.EntityPatternFields, service.Aliases, err = s.transformEntityPatternRequest(ctx, request.EntityRequest, request)
 		if err != nil {
 			return err
@@ -433,6 +439,11 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		service = nil
 		serviceChanges = ServiceChanges{}
 		oldValues := entityservice.EntityService{}
+
+		err := validation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
+		if err != nil {
+			return err
+		}
 
 		if !s.enableSameServiceNames {
 			err := s.dbCollection.FindOne(ctx, bson.M{
