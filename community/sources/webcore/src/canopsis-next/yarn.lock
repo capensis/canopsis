@@ -5798,7 +5798,7 @@ __metadata:
     jest-image-snapshot: "npm:^4.5.1"
     jest-localstorage-mock: "npm:^2.2.0"
     jest-snapshot: "npm:^29.7.0"
-    jodit: "npm:^3.2.38"
+    jodit: "npm:^4.7.9"
     jspdf: "npm:^2.5.1"
     leaflet: "npm:^1.9.4"
     leaflet-gesture-handling: "npm:^1.2.2"
@@ -12484,10 +12484,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jodit@npm:^3.2.38":
-  version: 3.2.38
-  resolution: "jodit@npm:3.2.38"
-  checksum: 10c0/59839b119cb84f743c614c3116a55f07b743bd1f6f0af0d9fde126399f3556e201367fd554f98da1d1518b8c922261beb73bef946a3325b33f34727b67eacb90
+"jodit@npm:^4.7.9":
+  version: 4.7.9
+  resolution: "jodit@npm:4.7.9"
+  checksum: 10c0/e775070589ca00eed67c0942ca05746a7877e1c2667f1b7cddfd7b137e5ae7ccbd08d6b3f9d076d18242f42fcc62a1a2984b8189279426ecde0c3bbf1508ad2b
   languageName: node
   linkType: hard
 
