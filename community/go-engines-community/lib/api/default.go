@@ -194,7 +194,7 @@ func Default(
 	sessionStore.Options.Secure = flags.SecureSession
 	services.ApiConfigProvider = config.NewApiConfigProvider(cfg, logger)
 	tplExecutor := template.NewExecutor(services.TemplateConfigProvider, services.TimezoneConfigProvider)
-	uniTrans, err := RegisterValidators(primaryDbClient, securityConfig, services.Enforcer, tplExecutor)
+	uniTrans, err := RegisterValidators(securityConfig, tplExecutor)
 	if err != nil {
 		return nil, services, fmt.Errorf("cannot register request validators: %w", err)
 	}
