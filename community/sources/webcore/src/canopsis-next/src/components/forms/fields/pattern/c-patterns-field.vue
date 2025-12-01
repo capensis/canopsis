@@ -450,9 +450,27 @@ export default {
     },
 
     showPatternEntities() {
-      this.showEntitiesModalByPatterns({
+      const patterns = {
         entity_pattern: formGroupsToPatternRulesQuery(this.value.entity_pattern.groups),
-      });
+      };
+
+      if (this.withPbehavior) {
+        patterns.pbehavior_pattern = formGroupsToPatternRulesQuery(this.value.pbehavior_pattern.groups);
+      }
+
+      if (this.withEvent) {
+        patterns.event_pattern = formGroupsToPatternRulesQuery(this.value.event_pattern.groups);
+      }
+
+      if (this.withTotalEntity) {
+        patterns.total_entity_pattern = formGroupsToPatternRulesQuery(this.value.total_entity_pattern.groups);
+      }
+
+      if (this.withServiceWeather) {
+        patterns.weather_service_pattern = formGroupsToPatternRulesQuery(this.value.weather_service_pattern.groups);
+      }
+
+      this.showEntitiesModalByPatterns(patterns);
     },
 
     async checkFilter() {
