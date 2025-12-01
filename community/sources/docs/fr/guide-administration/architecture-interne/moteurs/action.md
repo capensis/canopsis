@@ -4,7 +4,7 @@
 
 Le moteur ACTION a pour objectif d'élaborer des scénarios en fonction de déclencheurs. Ce moteur permet de mettre en place des réactions automatisées suite à des événements dans Canopsis. Ce moteur est disponible en édition Community.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les scénarios](../../../../guide-utilisation/menu-exploitation/scenarios/).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les scénarios](../../../guide-utilisation/menu-exploitation/scenarios.md).
 
 ## Options de démarrage
 
@@ -37,4 +37,4 @@ Cette commande lance le moteur ACTION en mode debug, avec 15 workers pour l'exé
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-action/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-action.md)

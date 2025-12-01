@@ -107,5 +107,5 @@ Canopsis permet d’émettre des notifications vers différents outils à partir
 
 | **Nom** | **Édition** | **Supporté** *(dans le cadre de mise à jour)* | **Compatibilité Canopsis** |
 |:-----:|:---------:|:----------:|:-----------:|
-| [Publication d’évènement](../guide-developpement/index.md#api) | Community | Oui | Version ≥ 3 |
+| [Publication d’évènement](../guide-developpement/index.md#documentation-des-api) | Community | Oui | Version ≥ 3 |
 | [Manipulation de comportements périodiques](../guide-utilisation/interface/pbehaviors/index.md) | Community | Oui | Version ≥ 3 |
