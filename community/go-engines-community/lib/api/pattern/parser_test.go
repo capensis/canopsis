@@ -390,7 +390,7 @@ func TestParseLiterals(t *testing.T) {
 				t.Fatalf("Failed to parse pattern %q: %v", tc.pattern, err)
 			}
 
-			literals, err := ParseLiterals(parsedTree)
+			literals, err := parseLiterals(parsedTree)
 			if err != nil {
 				if !tc.expectedError {
 					t.Fatalf("expected no error, got %v", err)
