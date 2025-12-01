@@ -35,6 +35,7 @@
       :alarm-attributes="alarmPatternAttributes"
       :entity-attributes="entityPatternAttributes"
       :with-alarm="isAlarmType"
+      :entity-counters-type="!isAlarmType"
       some-required
       with-entity
     />
