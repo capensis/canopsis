@@ -23,6 +23,10 @@ type API interface {
 	BulkDelete(c *gin.Context)
 	CountAlarms(c *gin.Context)
 	CountEntities(c *gin.Context)
+	Optimize(c *gin.Context)
+	OptimizeStatus(c *gin.Context)
+	OptimizeAccept(c *gin.Context)
+	OptimizeCancel(c *gin.Context)
 }
 
 type api struct {
@@ -31,18 +35,21 @@ type api struct {
 	logger   zerolog.Logger
 
 	configProvider config.UserInterfaceConfigProvider
+	optimizeWorker OptimizeWorker
 }
 
 func NewApi(
 	store Store,
 	configProvider config.UserInterfaceConfigProvider,
 	enforcer security.Enforcer,
+	optimizeWorker OptimizeWorker,
 	logger zerolog.Logger,
 ) API {
 	return &api{
-		store:    store,
-		enforcer: enforcer,
-		logger:   logger,
+		store:          store,
+		enforcer:       enforcer,
+		optimizeWorker: optimizeWorker,
+		logger:         logger,
 
 		configProvider: configProvider,
 	}
@@ -310,4 +317,79 @@ func (a *api) CountEntities(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, res)
+}
+
+// Optimize
+// @Param body body OptimizeRequest true "body"
+// @Success 200 {object} OptimizeJob
+func (a *api) Optimize(c *gin.Context) {
+	request := OptimizeRequest{}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	job, err := a.optimizeWorker.CreateJob(c, request)
+	if err != nil {
+		panic(err)
+	}
+
+	c.JSON(http.StatusOK, job)
+}
+
+// OptimizeStatus
+// @Success 200 {array} OptimizeJob
+func (a *api) OptimizeStatus(c *gin.Context) {
+	job, err := a.optimizeWorker.GetJob(c, c.Param("id"))
+	if err != nil {
+		panic(err)
+	}
+
+	if job.ID == "" {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusOK, job)
+}
+
+// OptimizeAccept
+// @Param body body OptimizeAcceptRequest true "body"
+// @Success 200 {object} OptimizeJob
+func (a *api) OptimizeAccept(c *gin.Context) {
+	request := OptimizeAcceptRequest{
+		ID: c.Param("id"),
+	}
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrorResponse(err, request))
+		return
+	}
+
+	job, err := a.optimizeWorker.UpdateJob(c, request)
+	if err != nil {
+		panic(err)
+	}
+
+	if job.ID == "" {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
+}
+
+// OptimizeCancel
+// @Success 204
+func (a *api) OptimizeCancel(c *gin.Context) {
+	ok, err := a.optimizeWorker.DeleteJob(c, c.Param("id"))
+	if err != nil {
+		panic(err)
+	}
+
+	if !ok {
+		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		return
+	}
+
+	c.JSON(http.StatusNoContent, nil)
 }

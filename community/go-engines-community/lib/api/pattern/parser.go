@@ -15,8 +15,16 @@ var ErrTooLongLiteral = fmt.Errorf("literal is too long, max length is %d", lite
 var ErrTooLongGroup = fmt.Errorf("literal group is too long, max length is %d", groupSizeLimit)
 var ErrRegexpNotSupported = errors.New("regexp is not supported")
 
-// ParseLiterals extracts all relevant literals from a regex pattern
-func ParseLiterals(re *syntax.Regexp) ([][]string, error) {
+// parseLiterals extracts literal strings from a parsed regular expression syntax tree.
+//
+// This function should only be used in the context of entity pattern regexp conditions optimization,
+// where the extracted literal groups are used to generate faster conditions (such as exact matches).
+// That can leverage database indexes before applying the full regexp match.
+//
+// The function returns a slice of slices ([][]string) where:
+//   - The outer slice represents different sets of literals, each set may be related to a specific entity field
+//   - Each inner slice contains all possible literal values for that set
+func parseLiterals(re *syntax.Regexp) ([][]string, error) {
 	var literalGroups [][]string
 
 	switch re.Op {
@@ -31,7 +39,7 @@ func ParseLiterals(re *syntax.Regexp) ([][]string, error) {
 		var buildingGroup bool
 
 		for _, sub := range re.Sub {
-			subLiteralGroups, err := ParseLiterals(sub)
+			subLiteralGroups, err := parseLiterals(sub)
 			if err != nil {
 				return nil, err
 			}
@@ -73,7 +81,7 @@ func ParseLiterals(re *syntax.Regexp) ([][]string, error) {
 		if re.Op == syntax.OpCapture && len(re.Sub) > 0 {
 			var err error
 
-			literalGroups, err = ParseLiterals(re.Sub[0])
+			literalGroups, err = parseLiterals(re.Sub[0])
 			if err != nil {
 				return nil, err
 			}
@@ -84,7 +92,7 @@ func ParseLiterals(re *syntax.Regexp) ([][]string, error) {
 		uniqueLiteralsByGroup := make(map[string]bool)
 
 		for _, sub := range re.Sub {
-			subGroups, err := ParseLiterals(sub)
+			subGroups, err := parseLiterals(sub)
 			if err != nil {
 				return nil, err
 			}
