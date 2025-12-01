@@ -4,7 +4,7 @@
     align-center
   >
     <v-chip
-      color="info"
+      color="info darken-1"
       small
     >
       <strong>{{ $t('pattern.suggestions') }}</strong>
