@@ -13,7 +13,8 @@ Il comporte les sections suivantes :
 
 ## Aide au support
 
-- [Outil de support](outil-de-support/index.md)
+- [Outil de support](outil-de-support/outil-de-support.md)
+- [Pprof](outil-de-support/pprof.md)
 
 ## Métriques techniques
 
