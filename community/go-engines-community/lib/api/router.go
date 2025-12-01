@@ -142,6 +142,7 @@ func RegisterRoutes(
 	eventGenerator libevent.Generator,
 	securityConfig libsecurity.Config,
 	exdataImportWorker externaldatatable.ImportWorker,
+	patternOptimizeWorker pattern.OptimizeWorker,
 	notifStore usernotification.Store,
 	externalDataContainer *externaldata.GetterContainer,
 	workersRunner *workers.Runner,
@@ -1693,8 +1694,8 @@ func RegisterRoutes(
 			middleware.Authorize(apisecurity.ObjIdleRule, model.PermissionRead, enforcer),
 			idleRuleAPI.DBExport)
 
-		patternAPI := pattern.NewApi(pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger),
-			userInterfaceConfig, enforcer, logger)
+		patternStore := pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, common.NewPatternFieldsTransformer(primaryDbClient), logger)
+		patternAPI := pattern.NewApi(patternStore, userInterfaceConfig, enforcer, patternOptimizeWorker, logger)
 		patternRouter := protected.Group("/patterns")
 		{
 			patternRouter.Use(middleware.OnlyAuth())
@@ -1730,6 +1731,26 @@ func RegisterRoutes(
 			"/patterns-entities-count",
 			middleware.OnlyAuth(),
 			patternAPI.CountEntities,
+		)
+		protected.POST(
+			"/patterns-entities-optimize",
+			middleware.OnlyAuth(),
+			patternAPI.Optimize,
+		)
+		protected.GET(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(),
+			patternAPI.OptimizeStatus,
+		)
+		protected.PUT(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(),
+			patternAPI.OptimizeAccept,
+		)
+		protected.DELETE(
+			"/patterns-entities-optimize/:id",
+			middleware.OnlyAuth(),
+			patternAPI.OptimizeCancel,
 		)
 
 		linkRuleAPI := linkrule.NewApi(

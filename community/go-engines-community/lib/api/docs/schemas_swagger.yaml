@@ -1847,6 +1847,8 @@ definitions:
         items:
           type: string
         type: array
+      negative_entity_pattern:
+        type: string
       no_events:
         type: boolean
       search:
@@ -4271,6 +4273,40 @@ definitions:
         description: 'FieldType is only defined for custom fields, ex: infos.'
         type: string
     type: object
+  pattern.OptimizeAcceptRequest:
+    properties:
+      accept:
+        type: boolean
+      index:
+        type: integer
+    required:
+    - accept
+    - index
+    type: object
+  pattern.OptimizeJob:
+    properties:
+      _id:
+        type: string
+      accepted_suggestion:
+        type: integer
+      fail_reason:
+        type: string
+      status:
+        type: integer
+      suggestions:
+        items:
+          $ref: '#/definitions/pattern.Suggestion'
+        type: array
+    type: object
+  pattern.OptimizeRequest:
+    properties:
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+    type: object
   pattern.Response:
     properties:
       _id:
@@ -4311,6 +4347,19 @@ definitions:
             $ref: '#/definitions/pattern.FieldCondition'
           type: array
         type: array
+    type: object
+  pattern.Suggestion:
+    properties:
+      difference:
+        type: integer
+      entity_pattern:
+        items:
+          items:
+            $ref: '#/definitions/pattern.FieldCondition'
+          type: array
+        type: array
+      found_entities:
+        type: integer
     type: object
   pbehavior.BulkConnectorCreateRequestItem:
     properties:

@@ -7,6 +7,21 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 )
 
+const (
+	OptimizeStatusCreated = iota
+	OptimizeStatusRunning
+	OptimizeStatusSucceeded
+	OptimizeStatusFailed
+	OptimizeStatusAccepted
+	OptimizeStatusRejected
+)
+
+const (
+	EntityFieldComponent = "component"
+	EntityFieldName      = "name"
+	EntityInfosPrefix    = "infos."
+)
+
 type ListRequest struct {
 	pagination.FilteredQuery
 	SortBy    string `json:"sort_by" form:"sort_by" binding:"oneoforempty=_id title author.name author.display_name created updated"`
@@ -82,4 +97,37 @@ type CountResponse struct {
 	Count     int64 `bson:"count" json:"count"`
 	OverLimit bool  `bson:"-" json:"over_limit"`
 	Millisecs int64 `json:"ms"`
+}
+
+type OptimizeRequest struct {
+	EntityPattern pattern.Entity `json:"entity_pattern" binding:"entity_pattern"`
+}
+
+type Suggestion struct {
+	EntityPattern pattern.Entity `json:"entity_pattern"`
+	FoundEntities int            `json:"found_entities"`
+	Difference    int            `json:"difference"`
+}
+
+type OptimizeJob struct {
+	ID                 string            `bson:"_id" json:"_id"`
+	Status             int               `bson:"status" json:"status"`
+	EntityPattern      pattern.Entity    `bson:"entity_pattern" json:"-"`
+	Created            datetime.CpsTime  `bson:"created" json:"-"`
+	LastPing           *datetime.CpsTime `bson:"last_ping" json:"-"`
+	Retries            int64             `bson:"retries" json:"-"`
+	Suggestions        []Suggestion      `bson:"suggestions" json:"suggestions"`
+	FailReason         string            `bson:"fail_reason,omitempty" json:"fail_reason,omitempty"`
+	AcceptedSuggestion *int              `bson:"accepted_suggestion,omitempty" json:"accepted_suggestion,omitempty"`
+}
+
+type OptimizeAcceptRequest struct {
+	ID     string `json:"-"`
+	Index  *int   `json:"index" binding:"required"`
+	Accept *bool  `json:"accept" binding:"required"`
+}
+
+type LiteralFieldStats struct {
+	FieldName         string `bson:"k"`
+	LiteralFoundTimes int    `bson:"v"`
 }

@@ -109,6 +109,10 @@ func (q *MongoQueryBuilder) CreateListAggregationPipeline(ctx context.Context, r
 	if err != nil {
 		return nil, err
 	}
+	err = q.handleNegativeEntityPattern(ctx, r.ListRequest)
+	if err != nil {
+		return nil, err
+	}
 	q.handleFilter(r.ListRequest)
 	q.handleSort(r.SortRequest)
 
@@ -375,6 +379,36 @@ func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListReque
 
 	if len(entityPatternQuery) > 0 {
 		q.entityMatch = append(q.entityMatch, bson.M{"$match": entityPatternQuery})
+	}
+
+	return nil
+}
+
+func (q *MongoQueryBuilder) handleNegativeEntityPattern(ctx context.Context, r ListRequest) error {
+	if r.NegativeEntityPattern == "" {
+		return nil
+	}
+
+	var negativeEntityPattern pattern.Entity
+	err := json.Unmarshal([]byte(r.NegativeEntityPattern), &negativeEntityPattern)
+	if err != nil {
+		return common.NewValidationError("negate_entity_pattern", "NegativeEntityPattern is invalid.")
+	}
+
+	transformedNegativeEntityPattern, err := q.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		EntityPattern: negativeEntityPattern,
+	})
+	if err != nil {
+		return err
+	}
+
+	negativeEntityPatternQuery, err := db.EntityPatternToNegativeMongoQuery(transformedNegativeEntityPattern.EntityPattern, "")
+	if err != nil {
+		return common.NewValidationError("negate_entity_pattern", "NegativeEntityPattern is invalid.")
+	}
+
+	if len(negativeEntityPatternQuery) > 0 {
+		q.entityMatch = append(q.entityMatch, bson.M{"$match": negativeEntityPatternQuery})
 	}
 
 	return nil
