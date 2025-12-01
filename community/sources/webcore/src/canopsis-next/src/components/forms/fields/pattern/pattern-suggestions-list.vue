@@ -17,8 +17,8 @@
         >
           <pattern-suggestion-tab
             :number="index + 1"
-            :entities-count="suggestion.entitiesCount"
             :active="index === activeSuggestionIndex"
+            :suggestion="suggestion"
           />
         </v-tab>
       </v-tabs>
@@ -79,22 +79,9 @@ export default {
     padding: 0;
     overflow: hidden;
 
-    .pattern-suggestions__tabs__number {
-      height: 100%;
-      padding: 0 16px;
-      background-color: var(--v-info-background-base);
-      color: var(--v-text-light-primary);
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
     &, &:before {
       border-top-left-radius: 10px;
       border-top-right-radius: 10px;
-    }
-
-    &--active .pattern-suggestions__tabs__number {
-      background-color: var(--v-success-base);
-      color: var(--v-text-dark-primary);
     }
   }
 
