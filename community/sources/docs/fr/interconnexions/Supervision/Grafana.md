@@ -8,8 +8,8 @@ Lorsqu’une condition d’alerte est remplie, Grafana envoie une notification v
 
 Il est possible d'utiliser un **webhook** ou un **Alertmanager Prometheus** comme canal de notification : 
 
-- **[Contact point Webhook](./#contact-point-webhook)** : Grafana envoie directement l'alerte au connecteur Prometheus de Canopsis ; 
-- **[Contact point Alertmanager](./#contact-point-alertmanager)** : Grafana envoie l'alerte à l’Alertmanager, qui la transmet ensuite au connecteur Prometheus.
+- **[Contact point Webhook](#contact-point-webhook)** : Grafana envoie directement l'alerte au connecteur Prometheus de Canopsis ; 
+- **[Contact point Alertmanager](#contact-point-alertmanager)** : Grafana envoie l'alerte à l’Alertmanager, qui la transmet ensuite au connecteur Prometheus.
 
 Pour permettre à Canopsis de recevoir ces alertes, il est **nécessaire** de disposer du [connecteur Prometheus de Canopsis](../Supervision/Prometheus.md).
 
@@ -21,7 +21,7 @@ Sur votre instance Grafana, se rendre dans :
 
 `Alerting` &rarr; `Contact points` &rarr; `Manage contact points` puis `Create contact point`.
 
-Ensuite, compléter les différents champs pour joindre le [endpoint du connecteur Prometheus](../Prometheus/#configuration-prometheus), exemple :
+Ensuite, compléter les différents champs pour joindre le [endpoint du connecteur Prometheus](Prometheus.md#configuration-prometheus), exemple :
 
 ![Contact point webhook](./img/Grafana-contact-point-webhook.png)
 

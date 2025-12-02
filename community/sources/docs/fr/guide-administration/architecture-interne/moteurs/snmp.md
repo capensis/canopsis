@@ -4,7 +4,7 @@
 
 Le moteur SNMP a pour objectif de convertir les trap SNMP reçus du connecteur SNMP en événements Canopsis. Ce moteur est disponible uniquement en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp/).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les règles SNMP](../../../guide-utilisation/menu-exploitation/regles-snmp.md).
 
 ## Options de démarrage
 
