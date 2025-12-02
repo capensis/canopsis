@@ -48,6 +48,10 @@ Dans la vue principale, les boutons d'action rapides permettent d'éditer et/ou 
 
 ## Jetons partagés
 
-La liste des [vues partagées](../../notes-de-version/22.10.0.md#vues-partagees) est disponible sur cette page.
+La liste des *vues partagées* est disponible sur cette page.
+
+Il s'agit des vues qui ont été partagées avec un jeton d'accès, au moyen du bouton « Créer un lien de partage » :material-share-variant:.
+
+L'interface de gestion donne la possibilité de révoquer les jetons correspondants quand vous le souhaitez.
 
 ![Liste jetons](./img/utilisateurs_liste_jetons.png)

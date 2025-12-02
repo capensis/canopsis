@@ -1,7 +1,9 @@
 # Widgets graphiques
 
-Les widgets graphiques permettent de visualiser des métriques sous forme de graphiques pour analyser l’état et suivre l’évolution du système d’information.  
-Ils supportent plusieurs types de rendus : histogramme, graphique en ligne, diagramme circulaire (camembert) et valeurs numériques.  
+Les widgets graphiques permettent de visualiser des métriques sous forme de graphiques pour analyser l’état et suivre l’évolution du système d’information.
+
+Ils supportent plusieurs types de rendus : histogramme, graphique en ligne, diagramme circulaire (camembert) et valeurs numériques.
+
 Les données affichées peuvent provenir de métriques internes à Canopsis (nombre d’alarmes, taux d’ack, etc.) ou de métriques externes issues d’événements (au format perf_data).
 
 Chaque widget est personnalisable (période, méthode de calcul, comparaison temporelle, couleurs…) pour répondre à des besoins d’analyse ponctuelle ou continue.
@@ -63,7 +65,7 @@ Les métriques externes peuvent être envoyées via des événements Canopsis co
 "perf_data": "cpu=20%;80;90;0;100"
 ```
 
-Elles sont traitées et enregistrées dans TimescaleDB avec les informations suivantes :  
+Elles sont traitées et enregistrées dans TimescaleDB avec les informations suivantes :
 
 - `metric_label`
 - `entity_id`
@@ -71,7 +73,7 @@ Elles sont traitées et enregistrées dans TimescaleDB avec les informations sui
 - `value`
 - `unit`
 
-Les unités supportées sont :  
+Les unités supportées sont :
 
 - **%** : pourcentage
 - **s, ms, us** : secondes, millisecondes, microsecondes
@@ -96,8 +98,8 @@ Pour toutes les métriques (internes et externes), différentes méthodes de cal
 
 Les graphiques peuvent être affichés directement dans :
 
-- Le [**bac à alarmes**](../bac-a-alarmes/)
-- L’[**explorateur de contexte**](../contexte)
+- Le [**bac à alarmes**](../bac-a-alarmes/index.md)
+- L’[**explorateur de contexte**](../contexte/index.md)
 
 Ils s’affichent dans un onglet `Graphiques` si des métriques externes ont été collectées pour l’alarme ou l’entité.
 
@@ -106,6 +108,7 @@ Les types de graphes supportés ici sont :
 - Histogramme
 - Graphique en ligne
 - Nombre
+
 _(Pas de diagramme circulaire pour ces vues)_
 
 
@@ -121,24 +124,21 @@ _(Pas de diagramme circulaire pour ces vues)_
 - Par défaut, les **métriques internes** sont conservées 1 an
 - Les **métriques externes** sont conservées 6 mois
 
-La politique de rétention peut être ajustée dans les [paramètres de stockage](../../../menu-administration/parametres-de-stockage/)
-
-
-
+La politique de rétention peut être ajustée dans les [paramètres de stockage](../../../menu-administration/parametres-de-stockage.md)
 
 ## Cas d’usage supportés
 
 - Une entité avec **une seule métrique** → un graphe unique
 - Une entité avec **plusieurs métriques sur un même graphe**
 - Une entité avec **plusieurs métriques sur plusieurs graphes distincts**
-- Les métriques peuvent être ajoutées :  
-  - une par une
-  - ou automatiquement par **masque (regexp)** avec la fonction *auto add*
+- Les métriques peuvent être ajoutées :
 
+    * une par une
+    * ou automatiquement par **masque (regexp)** avec la fonction *auto add*
 
 ## Intégration avec les événements `perf_data`
 
-Pour exploiter des métriques dans Canopsis via des événements (ex : venant des [connecteurs](../../../../interconnexions/)), le champ `perf_data` doit suivre ce format :
+Pour exploiter des métriques dans Canopsis via des événements (ex : venant des [connecteurs](../../../../interconnexions/index.md)), le champ `perf_data` doit suivre ce format :
 
 ```text
 'label'=value[UOM];[warn];[crit];[min];[max]
@@ -226,7 +226,7 @@ L'échantillonage permet d'appliquer cette fonction sur une période données : 
 #### Filtres
 
 Ce paramètre permet de définir les filtres pour lesquels vous souhaitez des métriques.
-Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/).
+Pour plus de détails sur les filtres et leur création, voir la partie sur [les filtres](../../patterns/index.md).
 
 Pour créer un filtre, cliquez sur le bouton 'Ajouter'. Une fenêtre de création de filtre s'ouvre alors.
 Vous avez la possibilité d'éditer ou de supprimer des filtres existants.
@@ -238,5 +238,4 @@ Cette option permet d'afficher un graphique fantôme pour comparer les valeurs a
 #### Tendance (pour les Nombres)
 
 Une flêche ↑ ou ↓ est affcihée en fonction de la tendance.
-
 

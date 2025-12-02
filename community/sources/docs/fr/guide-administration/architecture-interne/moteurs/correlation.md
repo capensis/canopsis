@@ -4,7 +4,7 @@
 
 Le moteur Corrélation a pour objectif de gérer les méta-alarmes à partir de règles définies. Ce moteur permet de créer des corrélations entre différentes alarmes pour générer des méta-alarmes plus pertinentes pour les utilisateurs. Ce moteur est disponible uniquement en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les règles de méta-alarme](../../../../guide-utilisation/menu-exploitation/regles-metaalarme/).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les règles de méta-alarme](../../../guide-utilisation/menu-exploitation/regles-metaalarme.md).
 
 ## Options de démarrage
 
@@ -33,4 +33,4 @@ Cette commande lance le moteur Corrélation en mode debug, avec 6 workers pour l
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-correlation/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-correlation.md)
