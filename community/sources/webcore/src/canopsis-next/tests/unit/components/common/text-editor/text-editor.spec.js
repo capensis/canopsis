@@ -25,7 +25,7 @@ const selectEditorImageTextInput = wrapper => selectEditorTabsWrapper(wrapper)
 const selectEditorImageInsetButton = wrapper => selectEditorTabsWrapper(wrapper)
   .findAll('button');
 const selectVariablesMenu = wrapper => wrapper.find('variables-menu-stub');
-const selectVariablesButton = wrapper => wrapper.find('.jodit-ui-group__-x- button');
+const selectVariablesButton = wrapper => wrapper.find('.jodit-ui-group__variables button');
 
 describe('text-editor', () => {
   const XMLHttpRequest = mockXMLHttpRequest();
@@ -132,6 +132,7 @@ describe('text-editor', () => {
     await flushPromises();
 
     const variablesButton = selectVariablesButton(wrapper);
+
     jest.spyOn(variablesButton.element, 'getBoundingClientRect').mockImplementation(() => ({
       top: 100,
       left: 100,

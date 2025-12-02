@@ -1,5 +1,5 @@
 import { isString, isFunction } from 'lodash';
-import { ref, computed, onBeforeUnmount } from 'vue';
+import { ref, computed, onBeforeUnmount, unref } from 'vue';
 import { Ajax } from 'jodit/esm/core/request';
 import { ajaxInstances } from 'jodit/esm/modules/uploader/helpers/send';
 
@@ -8,8 +8,12 @@ import { FILE_BASE_URL, LOCAL_STORAGE_ACCESS_TOKEN_KEY } from '@/config';
 import localStorageService from '@/services/local-storage';
 
 import { matchPayloadVariableBySelection } from '@/helpers/payload-json';
+import { hasAtLeastOneVariable } from '@/helpers/variables';
 
 import { useI18n } from '@/hooks/i18n';
+
+// eslint-disable-next-line import/no-webpack-loader-syntax
+import VariablesIcon from '!!svg-inline-loader?modules!@/assets/images/variables.svg';
 
 /**
  * Hook for managing text editor upload functionality.
@@ -45,7 +49,7 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
    * @returns {Promise<Object>} Promise that resolves with upload response or error.
    */
   const customUploadFunction = (request, showProgress) => {
-    const { uploader } = editor.value;
+    const { uploader } = unref(editor);
     const { fileValidator: uploaderFileValidator } = uploader.options ?? {};
 
     if (uploaderFileValidator) {
@@ -85,13 +89,17 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
       contentType: uploader.o.contentType.call(uploader, request),
       withCredentials: uploader.o.withCredentials || false,
     });
+
     let instances = ajaxInstances.get(uploader);
+
     if (!instances) {
       instances = new Set();
       ajaxInstances.set(uploader, instances);
     }
+
     instances.add(ajax);
     uploader.j.e.one('beforeDestruct', ajax.destruct);
+
     return ajax
       .send()
       .then(resp => resp.json())
@@ -147,12 +155,13 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
    * @throws {Error} Throws error if file exceeds maximum size.
    */
   const fileValidator = (file) => {
-    if (!maxFileSize) {
+    const maxSize = unref(maxFileSize);
+    if (!maxSize) {
       return;
     }
 
-    if (file instanceof File && file.size > maxFileSize) {
-      throw new Error(t('validation.messages.size', [null, maxFileSize / 1024]));
+    if (file instanceof File && file.size > maxSize) {
+      throw new Error(t('validation.messages.size', [null, maxSize / 1024]));
     }
   };
 
@@ -171,7 +180,8 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
           : ['a', 'href'];
 
         const attrValue = isString(file) ? file : response.baseurl + file._id;
-        const elm = editor.value.createInside.element(tagName);
+        const unwrappedEditor = unref(editor);
+        const elm = unwrappedEditor.createInside.element(tagName);
 
         elm.setAttribute(attr, attrValue);
 
@@ -182,9 +192,9 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
         }
 
         if (tagName === 'img') {
-          editor.value.selection.insertImage(elm, null, editor.value.options.imageDefaultWidth);
+          unwrappedEditor.selection.insertImage(elm, null, unwrappedEditor.options.imageDefaultWidth);
         } else {
-          editor.value.selection.insertNode(elm);
+          unwrappedEditor.selection.insertNode(elm);
         }
       });
     }
@@ -194,7 +204,7 @@ export const useTextEditorUpload = ({ editor, isPublic, maxFileSize }) => {
     enableDragAndDropFileToEditor: true,
     insertImageAsBase64URI: false,
     format: 'json',
-    url: `${FILE_BASE_URL}?public=${isPublic}`,
+    url: `${FILE_BASE_URL}?public=${unref(isPublic)}`,
     headers: { Authorization: `Bearer ${localStorageService.get(LOCAL_STORAGE_ACCESS_TOKEN_KEY)}` },
     customUploadFunction,
     getMessage,
@@ -237,7 +247,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
     y: 0,
   });
 
-  const hasVariables = computed(() => variables?.length);
+  const hasVariables = computed(() => hasAtLeastOneVariable(unref(variables)));
 
   /**
    * Extracts variable value from a variable group match result.
@@ -259,7 +269,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
    * Updates variablesMenuValue and adjusts selection to match the complete variable.
    */
   const selectVariableValueByCursor = () => {
-    const selection = editor.value.selection?.sel ?? {};
+    const selection = unref(editor).selection?.sel ?? {};
     const { anchorNode, anchorOffset, focusOffset } = selection;
 
     if (!anchorNode) {
@@ -288,7 +298,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
       range.setStart(anchorNode, start);
       range.setEnd(anchorNode, end);
 
-      editor.value.selection.selectRange(range);
+      unref(editor).selection.selectRange(range);
     }
   };
 
@@ -374,7 +384,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
    */
   const pasteVariable = (variable) => {
     selectVariableValueByCursor();
-    const selection = editor.value.selection?.sel ?? {};
+    const selection = unref(editor).selection?.sel ?? {};
     const { focusNode } = selection;
 
     if (!focusNode) {
@@ -400,20 +410,22 @@ export const useTextEditorVariables = ({ editor, variables }) => {
     insertTextNode(range, textToInsert);
     selection.removeAllRanges();
     selection.addRange(range);
-    editor.value.selection.selectRange(range);
+    unref(editor).selection.selectRange(range);
 
     closeVariablesMenu();
   };
 
   const variablesButton = computed(() => ({
-    name: '(x)',
+    name: 'variables',
     mode: 3,
     exec: showVariablesMenu,
   }));
 
-  onBeforeUnmount(() => {
-    document.removeEventListener('selectionchange', selectVariableValueByCursor);
-  });
+  const variablesExtraIcon = computed(() => ({
+    variables: `<i class="material-icons v-icon v-icon--small" style="width: 18px; height: 18px;">${VariablesIcon}</i>`,
+  }));
+
+  onBeforeUnmount(() => document.removeEventListener('selectionchange', selectVariableValueByCursor));
 
   return {
     hasVariables,
@@ -422,6 +434,7 @@ export const useTextEditorVariables = ({ editor, variables }) => {
     variablesMenuPosition,
     variablesButton,
     pasteVariable,
+    variablesExtraIcon,
     closeVariablesMenu,
   };
 };
