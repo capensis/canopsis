@@ -45,6 +45,7 @@ module.exports = {
     '^jodit$': '<rootDir>/node_modules/jodit/esm/index.js',
     '^./assets$': '<rootDir>/tests/unit/mocks/flowchartAssets.js',
     '@/assets/images/engineering.svg': '<rootDir>/tests/unit/mocks/flowchartAssets.js',
+    '@/assets/images/variables.svg': '<rootDir>/tests/unit/mocks/textEditorVariables.js',
     './components/icons': '<rootDir>/tests/unit/mocks/vuetifyIcons.js',
   },
   snapshotSerializers: ['<rootDir>/tests/unit/jest.serializer-vue'],
