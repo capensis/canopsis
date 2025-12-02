@@ -134,3 +134,33 @@ export const varsChildrenToVariablesProcess = (children = []) => children.map(({
 export const varsToVariables = (templateVars = {}) => (
   mapValues(templateVars, varsChildrenToVariablesProcess)
 );
+
+/**
+ * Checks if a variables list has at least one variable.
+ *
+ * Recursively checks nested variable structures to determine if any variable exists.
+ *
+ * @param {Array} [variables=[]] - Array of variable objects to check.
+ * @returns {boolean} True if at least one variable exists, false otherwise.
+ *
+ * @example
+ * hasAtLeastOneVariable([]);
+ * // Returns: false
+ *
+ * hasAtLeastOneVariable([{ text: 'name', value: 'John' }]);
+ * // Returns: true
+ *
+ * hasAtLeastOneVariable([{ text: 'user', variables: [] }]);
+ * // Returns: false
+ *
+ * hasAtLeastOneVariable([{ text: 'user', variables: [{ text: 'name', value: 'John' }] }]);
+ * // Returns: true
+ */
+export const hasAtLeastOneVariable = (variables = []) => (
+  !variables.length
+    ? false
+    : variables.some((variable = {}) => (
+      variable.variables
+        ? hasAtLeastOneVariable(variable.variables)
+        : true
+    )));
