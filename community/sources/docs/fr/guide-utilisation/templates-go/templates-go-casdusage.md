@@ -94,7 +94,7 @@ Microsoft Teams utilise le format de carte adaptative pour les notifications. Le
 
 **À noter:**  
 
-* La variable `.Env.CanopsisURL` doit être définie dans le fichier [Canopsis.toml](../../../../guide-administration/administration-avancee/modification-canopsis-toml/#section-canopsistemplatevars)
+* La variable `.Env.CanopsisURL` doit être définie dans le fichier [Canopsis.toml](../../guide-administration/administration-avancee/modification-canopsis-toml.md#section-canopsistemplatevars)
 * La fonction `replace` avec `\n` permet d'améliorer le formatage du texte dans Teams. Notez également que l'interface de Canopsis se chargera de protéger les backslashs.
 
 ## 2. Notification Mattermost

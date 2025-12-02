@@ -1,7 +1,7 @@
 # Outil de support
 
 Lorsqu'un cas de support se présente sur un environnement Canopsis, plusieurs pistes peuvent être explorées.  
-Il vous est alors demandé de consulter 
+Il vous est alors demandé de consulter :
 
 * Les logs des moteurs
 * Les dernières modifications réalisées au niveau des règles de gestion (comportements périodiques, règles d'eventfilter, scénarios, etc.)
@@ -12,11 +12,11 @@ Il vous est alors demandé de consulter
 Canopsis met désormais à disposition un outil d'aide au support dont les premières fonctionnalités sont :
 
 * Export de données MongoDB et TimescaleDB
-* Export des [Métriques techniques](../../guide-de-depannage/metriques-techniques/)
+* Export des [Métriques techniques][metriques-techniques]
 * Export de métriques spécifiques à RabbitMQ
 * Visualisation des données exportées sous forme de dashboards Grafana
 
-![dashboard_tech_metrcis](./img/dashboard_tech_metrics_1.png)
+![dashboard_tech_metrics](./img/dashboard_tech_metrics_1.png)
 
 
 [TOC]
@@ -25,7 +25,7 @@ Canopsis met désormais à disposition un outil d'aide au support dont les premi
 
 ### Action log
 
-Toutes les modifications de règles de gestion au sein de Canopsis sont soumises à des enregistrements dans une table TimescaleDB `action_log`.  
+Toutes les modifications de règles de gestion au sein de Canopsis sont soumises à des enregistrements dans une table TimescaleDB `action_log`.
 
 Les données sont représentées avec la structure suivante :
 
@@ -46,15 +46,15 @@ SELECT * FROM action_log;
 ```
 
 !!! tip "Astuce"
-    Si vous utilisez un environnement Docker, vous pouvez exécuter cette requête avec la commande suivante : 
-    
+    Si vous utilisez un environnement Docker, vous pouvez exécuter cette requête avec la commande suivante :
+
     ```sh
     CPS_EDITION=pro docker compose exec timescaledb psql postgresql://cpspostgres:canopsis@timescaledb:5432/canopsis -c "SELECT * FROM action_log"
     ```
 
 
 | id | type | value_type  | value_id | author                               | time                | data |
-| -- | ---- | ----------- | -------- | ------------------------------------ | ------------------- | ---- | 
+| -- | ---- | ----------- | -------- | ------------------------------------ | ------------------- | ---- |
 | 14 | 0    | eventfilter | regle1   | e641bcd8-16d4-471d-be36-78061c9a3004 | 2024-10-30 13:12:22 | {"_id": "regle1", "type": "drop", "rrule": "", "author": "e641bcd8-16d4-471d-be36-78061c9a3004", "config": {}, "created": 1730293942, "enabled": true, "exdates": [], "updated": 1730293942, "priority": 0, "exceptions": [], "description": "regle1", "event_pattern": [[{"cond": {"type": "eq", "value": "aa"}, "field": "component"}]], "external_data": null, "entity_pattern": [], "resolved_exdates": null, "corporate_entity_pattern": "", "corporate_entity_pattern_title": ""} |
 
 Voici une liste non exhaustive des différents "value_type" que vous pourrez retrouver dans l'export :
@@ -63,12 +63,12 @@ Voici une liste non exhaustive des différents "value_type" que vous pourrez ret
 
 ### Métriques techniques
 
-Les Métriques techniques sont décrites dans cette [documentation](../../guide-de-depannage/metriques-techniques/).  
+Les Métriques techniques sont décrites dans [cette documentation][metriques-techniques].
 
 ### Métriques RabbitMQ
 
-La récupération des métriques spécifiques à RabbitMQ s'appuie sur une service tiers, Prometheus. 
-Ce service Prometheus n'est pour le moment pas intgéré de base dans une distribution Canopsis.  
+La récupération des métriques spécifiques à RabbitMQ s'appuie sur une service tiers, Prometheus.
+Ce service Prometheus n'est pour le moment pas intgéré de base dans une distribution Canopsis.
 
 Voici néanmoins un exemple de configuration de celui-ci :
 
@@ -111,7 +111,7 @@ scrape_configs:
 ```
 
 Le fichier de configuration de RabbitMQ doit également être modifié pour prendre en compte la directive "prometheus.return_per_object_metrics".  
-Le fichier `./files-pro/rabbitmq/rabbitmq.conf` doit donc contenir : 
+Le fichier `./files-pro/rabbitmq/rabbitmq.conf` doit donc contenir :
 
 ```
 prometheus.return_per_object_metrics = true`
@@ -147,7 +147,7 @@ Grâce à ces configurations, vous serez en mesure d'activer l'export des métri
 ### Dumps de bases de données
 
 Dans l'archive générée par l'outil de support, vous trouvez également un dump des bases de données MongoDB et TimescaleDB.  
-Ces dumps contiennent par défaut l'ensemble des données contenues dans vos bases. [Certaines options](#description-des-options-dexport) vous permettent d'exclure des collections ou tables des dumps.  
+Ces dumps contiennent par défaut l'ensemble des données contenues dans vos bases. [Certaines options](#description-des-options-dexport) vous permettent d'exclure des collections ou tables des dumps.
 
 Dans tous les cas, vous devez avoir en tête certaines informations importantes :
 
@@ -158,18 +158,18 @@ Les données du référentiel interne de Canopsis et des alarmes sont présentes
 * Lorsque vous restaurez un dump sur un environnement, posez vous la question des règles de scénarios et de remédiations.
 
 Les scénarios avec des étapes de type **webhook** peuvent en effet appeler des services tiers (création de ticket, main courante, etc.).  
-Lors de l'exécution d'un [trigger](../../guide-administration/architecture-interne/triggers/), un appel vers ces services tiers pourrait être effectué.  
+Lors de l'exécution d'un [trigger](../../guide-administration/architecture-interne/triggers.md), un appel vers ces services tiers pourrait être effectué.  
 Nous recommandons dans ce cas de désactiver les scénarios juste après avoir restauré un dump.
 
-Exemple : 
+Exemple :
 
 ```sh
 rs0:PRIMARY> db.action_scenario.updateMany({},{$set : { "enabled" : false}})
 ```
 
-Pour les jobs de remédiation, le principe est le même. Un job d'un de vos ordonnanceurs pourrait être exécuté. Nous vous recommandons alors de désactiver les consignes. 
+Pour les jobs de remédiation, le principe est le même. Un job d'un de vos ordonnanceurs pourrait être exécuté. Nous vous recommandons alors de désactiver les consignes.
 
-Exemple : 
+Exemple :
 
 ```sh
 rs0:PRIMARY> db.instructions.updateMany({},{$set : { "enabled" : false}})
@@ -190,7 +190,7 @@ L'outil d'export peut être lancé avec plusieurs options qui sont présentées 
 * `--without-tech-metrics`
 
     -	**Action:** Exclut les "métriques techniques" de l'export.
-    -	**Description:** Les [Métriques techniques](../../guide-de-depannage/metriques-techniques/) permettent d'effectuer des analyses poussées sur les temps de traitement des événements dans chaque moteur, les consommations de ressources, etc. 
+    -	**Description:** Les [Métriques techniques][metriques-techniques] permettent d'effectuer des analyses poussées sur les temps de traitement des événements dans chaque moteur, les consommations de ressources, etc.
 
 * `--without-rabbitmq-metrics`
 
@@ -254,8 +254,8 @@ L'outil d'export peut être lancé avec plusieurs options qui sont présentées 
 
 === "Docker Compose"
 
-    Le fichier de référence `docker-compose.override.yml` contient la section suivante 
-    
+    Le fichier de référence `docker-compose.override.yml` contient la section suivante :
+
     ```yml
     export:
         <<: *initial_config_base
@@ -275,10 +275,10 @@ L'outil d'export peut être lancé avec plusieurs options qui sont présentées 
     ```sh
     CPS_EDITION=pro docker compose --profile support up -d export
     ```
-    
+
     Le résultat de l'opération sera visible dans le répertoire `export-support` dans lequel vous trouverez une archive au format tar.gz.
-    
-    Si vous avez activé les [Métriques RabbitMQ](#metriques-rabbitmq), alors vous devez modifier la configuration du service d'export comme suit : 
+
+    Si vous avez activé les [Métriques RabbitMQ](#metriques-rabbitmq), alors vous devez modifier la configuration du service d'export comme suit :
 
     ```yml
     export:
@@ -287,7 +287,7 @@ L'outil d'export peut être lancé avec plusieurs options qui sont présentées 
           - support
         image: ${DOCKER_REPOSITORY}${CPS_EDITION}/canopsis-support-tool-export:${CANOPSIS_IMAGE_TAG}
         environment:
-          - PROMETHEUS_DATA_DIR=/prometheus    
+          - PROMETHEUS_DATA_DIR=/prometheus
           - CPS_PROMETHEUS_URL=http://prometheus:9090
         volumes:
           - ./export-support:/export
@@ -405,9 +405,9 @@ DOCKER_REPOSITORY=docker.canopsis.net/docker
 #### Lancement d'un import
 
 L'archive précédemment exportée doit être placée dans le répertoire `./files/archive`.  
-**Seule une archive** peut être présente dans ce répertoire.  
+**Seule une archive** peut être présente dans ce répertoire.
 
-Notez également que l'import d'un snapshot Prometheus peut prendre plus d'une minute dans certains cas. 
+Notez également que l'import d'un snapshot Prometheus peut prendre plus d'une minute dans certains cas.
 Si le dashboard RabbitMQ est vide, il se peut que le snapshot soit en cours d'import.
 
 ```sh
@@ -422,7 +422,7 @@ docker compose up -d
 ### Dashboards
 
 Lorsque vous avez démarré l'environnement d'import, un service Grafana a été démarré sur le port 3002.  
-Vous pouvez y accéder avec votre navigateur.  
+Vous pouvez y accéder avec votre navigateur.
 
 L'authentification suivante est requise : admin/canopsis
 
@@ -440,3 +440,5 @@ Une fois authentifié, vous accédez à un répertoire de dahsboards `support` d
 **Tech metrics**
 
 ![dashboard_tech-metrics](./img/dashboard_tech-metrics.png)
+
+[metriques-techniques]: ../metriques-techniques/index.md
