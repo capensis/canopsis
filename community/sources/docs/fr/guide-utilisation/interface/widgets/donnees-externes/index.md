@@ -1,11 +1,11 @@
 # Données externes
 
-Le widget Données externes permet d'afficher, consulter et manipuler des [collections de données](../../../menu-exploitation/donnees-externes/) structurées préalablement déclarées dans Canopsis.  
+Le widget Données externes permet d'afficher, consulter et manipuler des [collections de données][donnees-externes] structurées préalablement déclarées dans Canopsis.  
 Ces données sont souvent utilisées pour enrichir dynamiquement les alarmes ou entités via les mécanismes d'enrichissement externe.
 
-Dans le cas où les données d'enrichissement doivent être gérées par des utilisateurs et non des administrateurs de Canopsis, l'interface web met à disposition un widget "Données externes".  
+Dans le cas où les données d'enrichissement doivent être gérées par des utilisateurs et non des administrateurs de Canopsis, l'interface web met à disposition un widget "Données externes".
 
-Ce widget reprend les fonctionnalités principales abordées dans [cette documentation](../../../menu-exploitation/donnees-externes/), à savoir :
+Ce widget reprend les fonctionnalités principales abordées dans [cette documentation][donnees-externes], à savoir :
 
 * Import de données via fichiers CSV
 * Manipulation des enregistrements
@@ -99,3 +99,5 @@ Dans Canopsis, il existe 3 densités de table qui permettent de jouer sur le nom
 #### Exporter CSV
 
 Les entités sont exportables au format CSV. Ce menu permet de sélectionner les colonnes que vous souhaitez exporter.
+
+[donnees-externes]: ../../../menu-exploitation/donnees-externes.md

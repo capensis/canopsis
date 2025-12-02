@@ -4,12 +4,13 @@
 
 Le moteur AXE a pour objectif de gérer les alarmes. Il est au cœur du système de gestion d'alarmes de Canopsis. Ce moteur est disponible en édition Community.
 
-Pour plus d'informations sur les fonctionnalités, consultez :  
-- [Guide d'utilisation](../../../../guide-utilisation/)  
-- [Règles d'inactivité](../../../../guide-utilisation/menu-exploitation/regles-inactivite/)  
-- [Règles BAGOT](../../../../guide-utilisation/menu-exploitation/regles-bagot/)  
-- [Règles de résolution](../../../../guide-utilisation/menu-exploitation/regles-resolution/)  
-- [Gestion des tags](../../../../guide-utilisation/menu-administration/gestion-des-tags/)  
+Pour plus d'informations sur les fonctionnalités, consultez :
+
+- [Guide d'utilisation](../../../guide-utilisation/index.md)
+- [Règles d'inactivité](../../../guide-utilisation/menu-exploitation/regles-inactivite.md)
+- [Règles de bagot](../../../guide-utilisation/menu-exploitation/regles-bagot.md)
+- [Règles de résolution](../../../guide-utilisation/menu-exploitation/regles-resolution.md)
+- [Gestion des tags](../../../guide-utilisation/menu-administration/gestion-des-tags.md)
 
 ## Options de démarrage
 
@@ -43,4 +44,4 @@ Cette commande lance le moteur AXE en mode debug, avec 8 workers pour les évén
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-axe/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-axe.md)

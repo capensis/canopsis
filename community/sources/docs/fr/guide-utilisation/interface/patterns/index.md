@@ -3,7 +3,7 @@
 Les **patterns** (aussi appelés filtres) sont au coeur de Canopsis.  
 Ils permettent de **filtrer dynamiquement les alarmes, les entités, les événements**, ou d'autres objets du système.
 
-Ils sont utilisés dans de nombreuses vues de l'interface graphique, dans les [moteurs](../../../guide-administration/architecture-interne/moteurs), ainsi que dans les API.
+Ils sont utilisés dans de nombreuses vues de l'interface graphique, dans les [moteurs](../../../guide-administration/architecture-interne/moteurs/index.md), ainsi que dans les API.
 
 ## Fonctionnement général
 
@@ -13,11 +13,12 @@ L’interface graphique de Canopsis propose un **éditeur de filtres** avec :
 * Un **mode avancé** permettant d’écrire directement le filtre en JSON.
 
 Consultez la documentation de référence sur les filtres ici :  
-[Guide Développement — Filtres](../../../guide-developpement/filtres/)
+[Guide Développement — Filtres](../../../guide-developpement/filtres/index.md)
 
 ## Structure d’un filtre
 
 Un filtre est généralement un objet JSON composé de :
+
 - **champ** : le champ sur lequel porte le test (ex. `Nom du connecteur`, `Criticité`, `Tag`)
 - **opérateur** : l’opération à effectuer (`Egal`, `Contient`, `Commence par`, `Expression régulière`, etc.)
 - **valeur** : la valeur de comparaison

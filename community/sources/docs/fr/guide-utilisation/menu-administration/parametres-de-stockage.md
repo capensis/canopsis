@@ -1,9 +1,10 @@
 # Paramètres de stockage
 
-Certaines données accumulées dans Canopsis peuvent être régulées par une politique de stockage.  
+Certaines données accumulées dans Canopsis peuvent être régulées par une politique de stockage.
 
 !!! Note
-    Cette politique de stockage est appliquée une fois par semaine. Vous pouvez définir le jour et l'heure d'exécution dans le fichier de configuration `canopsis.toml`
+    Cette politique de stockage est appliquée une fois par semaine. Vous pouvez définir le jour et l'heure d'exécution dans le fichier de configuration `canopsis.toml`.
+
     ```ini
     [Canopsis.data_storage]
     TimeToExecute = "Sunday,23"
@@ -64,7 +65,7 @@ La suppression des alarmes résolues est quant à elle définitive et a lieu apr
 
 Par ailleurs, les alarmes `ouvertes` (collection `periodical_alarm`) et les alarmes `résolues` (collection `resolved`) ne sont désormais plus stockées dans le même espace pour garantir la performance d'accès aux alarmes en cours.  
 
-Le paramètre `TimeToKeepResolvedAlarms` permet de définir le délai à partir duquel une alarme résolue passera de la collection `ouvertes` à la collection `résolues`
+Le paramètre `TimeToKeepResolvedAlarms` permet de définir le délai à partir duquel une alarme résolue passera de la collection « ouvertes » à la collection « résolues »
 
 Ce paramètre se situe dans le fichier de configuration `canopsis.toml`.
 
@@ -98,8 +99,8 @@ Il est ensuite possible de la supprimer définitivement depuis cette archive.
 
 ### Archiver les entités non liées
 
-Les entités qui n'ont reçu aucun événement depuis un certain délai, ou dont last_event_date est null, sont considérées comme abandonnées.  
-Elles peuvent alors être déplacées de la collection default_entities vers la collection archived_entities.
+Les entités qui n'ont reçu aucun événement depuis un certain délai, ou dont `last_event_date` est null, sont considérées comme abandonnées.  
+Elles peuvent alors être déplacées de la collection `default_entities` vers la collection `archived_entities`.
 
 Cette opération peut être effectuée :
 
@@ -176,22 +177,22 @@ Les tables TimescaleDB concernées sont :
 
 ## Métriques externes
 
-Les métriques externes issues des événements ([perf_data](../../../guide-developpement/structures/#detail-par-type-devenement)) sont stockées dans la table TimescaleDB `perf_data`.  
+Les métriques externes issues des événements ([perf_data](../../guide-developpement/structures/index.md#detail-par-type-devenement)) sont stockées dans la table TimescaleDB `perf_data`.  
 Elles sont conservées pendant la durée définie.  
 Au-delà de ce délai, elles sont automatiquement supprimées, y compris leurs éventuels agrégats.
 
 ## Filtres d'événements
 
-Lorsque des filtres d'événements génèrent des [erreurs](../../menu-exploitation/filtres-evenements/#gestion-des-erreurs), celles-ci sont stockées dans la collection `eventfilter_failure`.  
+Lorsque des filtres d'événements génèrent des [erreurs](../menu-exploitation/filtres-evenements.md#gestion-des-erreurs), celles-ci sont stockées dans la collection `eventfilter_failure`.  
 Ces messages d'erreur sont conservés pendant la durée configurée.
 Une fois ce délai atteint, ils sont automatiquement supprimés.
 
 ## Tags externes
 
-Les [tags](../gestion-des-tags/#tags-presents-dans-les-evenements) créés à partir d'événements sont conservés dans la collection `alarm_tag`.  
-Si leur last_event_date est plus ancien que le délai configuré, ces tags sont supprimés, et leurs couleurs associées sont également nettoyées de la collection `alarm_tag_color`.
+Les [tags](gestion-des-tags.md#tags-presents-dans-les-evenements) créés à partir d'événements sont conservés dans la collection `alarm_tag`.  
+Si leur `last_event_date` est plus ancien que le délai configuré, ces tags sont supprimés, et leurs couleurs associées sont également nettoyées de la collection `alarm_tag_color`.
 
-## Enregistrements d'événements 
+## Enregistrements d'événements
 
-Les [enregistrements d'événements](../enregistrements-d-evenements/) permettent de rejouer ou analyser a posteriori certains flux d'événements.  
-Ils sont conservés jusqu'à ce que la durée configurée soit atteinte, puis ils sont automatiquement supprimés de la collection `event_records`.  
+Les [enregistrements d'événements](enregistrements-d-evenements.md) permettent de rejouer ou analyser a posteriori certains flux d'événements.  
+Ils sont conservés jusqu'à ce que la durée configurée soit atteinte, puis ils sont automatiquement supprimés de la collection `event_records`.
