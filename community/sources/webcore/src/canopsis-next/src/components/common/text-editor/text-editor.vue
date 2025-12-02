@@ -54,6 +54,29 @@ import { useI18n } from '@/hooks/i18n';
 import { useTextEditorUpload, useTextEditorVariables } from './hooks/text-editor';
 import VariablesMenu from './variables-menu.vue';
 
+const JODIT_TO_MATERIAL_ICONS_MAP = {
+  source: 'code',
+  bold: 'format_bold',
+  italic: 'format_italic',
+  strikethrough: 'strikethrough_s',
+  underline: 'format_underlined',
+  ul: 'format_list_bulleted',
+  ol: 'format_list_numbered',
+  font: 'font_download',
+  fontsize: 'text_fields',
+  brush: 'format_paint',
+  paragraph: 'notes',
+  image: 'image',
+  table: 'table_chart',
+  link: 'link',
+  left: 'format_align_left',
+  center: 'format_align_center',
+  right: 'format_align_right',
+  justify: 'format_align_justify',
+  undo: 'undo',
+  redo: 'redo',
+};
+
 export default {
   components: { VariablesMenu },
   props: {
@@ -134,6 +157,7 @@ export default {
       variablesMenuValue,
       variablesMenuPosition,
       variablesButton,
+      variablesExtraIcon,
       pasteVariable,
       closeVariablesMenu,
     } = useTextEditorVariables({
@@ -150,10 +174,21 @@ export default {
         },
         toolbarSticky: false,
         addNewLine: false,
+        showCharsCounter: false,
+        showWordsCounter: false,
+        showXPathInStatusbar: false,
         hidePoweredByJodit: true,
         controls: controlsOptions.value,
         uploader: uploaderOptions.value,
         sourceEditor: 'ace',
+        extraIcons: { ...variablesExtraIcon.value },
+        getIcon(name) {
+          if (JODIT_TO_MATERIAL_ICONS_MAP[name]) {
+            return `<i class="material-icons v-icon v-icon--small" style="font-size: 18px;">${JODIT_TO_MATERIAL_ICONS_MAP[name]}</i>`;
+          }
+
+          return '';
+        },
         sourceEditorCDNUrlsJS: [
           `${BASE_URL}scripts/libs/ace/1.43.3/ace.js`,
         ],
@@ -246,6 +281,8 @@ export default {
 
 <style lang="scss">
 .text-editor {
+  --jd-font-default: 'Roboto', sans-serif;
+
   &__details {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -266,6 +303,27 @@ export default {
 
   .jodit-progress-bar div {
     background: var(--v-primary-base);
+  }
+
+  .jodit-icon {
+    color: var(--jd-color-icon);
+  }
+
+  .jodit-ui-button_variant_primary {
+    background-color: var(--v-primary-base);
+    text-transform: uppercase;
+
+    .jodit-ui-button__text {
+      color: #ffffff !important;
+    }
+
+    &:hover:not([disabled]) {
+      background-color: var(--v-primary-darken1);
+
+      .jodit-ui-button__text {
+        background-color: unset;
+      }
+    }
   }
 }
 
