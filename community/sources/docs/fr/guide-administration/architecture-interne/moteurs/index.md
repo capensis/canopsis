@@ -71,7 +71,7 @@ class exch.events,exch.snmp rabbit-orange
 !!! info "Informations techniques supplémentaires"
 
     Nous publions à titre d'informations des schémas d'interactions entre moteurs.  
-    [EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/all-engines/)
+    [EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/all-engines.md)
 
 {%
     include-markdown "./liste-moteurs-et-services.md"

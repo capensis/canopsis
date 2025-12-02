@@ -342,29 +342,40 @@ func (w *worker) parseEntities(
 
 		cursor, err := w.entityCollection.Aggregate(ctx, []bson.M{
 			{"$match": findCriteria},
-			{"$graphLookup": bson.M{
-				"from":                    libmongo.EntityMongoCollection,
-				"startWith":               "$_id",
-				"connectFromField":        "_id",
-				"connectToField":          "component",
-				"as":                      "resources",
-				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
-				"maxDepth":                0,
+			{"$lookup": bson.M{
+				"from":         libmongo.EntityMongoCollection,
+				"localField":   "_id",
+				"foreignField": "component",
+				"as":           "resources",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"type":         types.EntityTypeResource,
+						"enabled":      true,
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{"_id": 1}},
+				},
 			}},
 			{"$addFields": bson.M{
 				"resources": bson.M{"$map": bson.M{"input": "$resources", "in": "$$this._id"}},
 			}},
 		})
 		if err != nil {
-			return res, err
+			return res, fmt.Errorf("failed to find an existing entity %+v: %w", findCriteria, err)
 		}
 		if cursor.Next(ctx) {
 			err = cursor.Decode(&oldEntity)
 			if err != nil {
 				_ = cursor.Close(ctx)
-				return res, err
+				return res, fmt.Errorf("failed to decode an existing entity %+v: %w", findCriteria, err)
 			}
 		}
+
+		if err = cursor.Err(); err != nil {
+			_ = cursor.Close(ctx)
+			return res, fmt.Errorf("cursor error when finding an existing entity %+v: %w", findCriteria, err)
+		}
+
 		err = cursor.Close(ctx)
 		if err != nil {
 			return res, err
