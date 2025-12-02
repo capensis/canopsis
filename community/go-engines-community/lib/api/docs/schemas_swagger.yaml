@@ -2881,13 +2881,8 @@ definitions:
             * `4` - type string_array
             * `5` - type datetime
             * `6` - type timestamp
-        enum:
-        - 1
-        - 2
-        - 3
-        - 4
-        - 5
-        - 6
+        maximum: 6
+        minimum: 1
         type: integer
     required:
     - name
