@@ -110,24 +110,30 @@ type Suggestion struct {
 }
 
 type OptimizeJob struct {
-	ID                 string            `bson:"_id" json:"_id"`
-	Status             int               `bson:"status" json:"status"`
-	EntityPattern      pattern.Entity    `bson:"entity_pattern" json:"-"`
-	Created            datetime.CpsTime  `bson:"created" json:"-"`
-	LastPing           *datetime.CpsTime `bson:"last_ping" json:"-"`
-	Retries            int64             `bson:"retries" json:"-"`
-	Suggestions        []Suggestion      `bson:"suggestions" json:"suggestions"`
-	FailReason         string            `bson:"fail_reason,omitempty" json:"fail_reason,omitempty"`
-	AcceptedSuggestion *int              `bson:"accepted_suggestion,omitempty" json:"accepted_suggestion,omitempty"`
+	ID                    string                 `bson:"_id" json:"_id"`
+	Status                int                    `bson:"status" json:"status"`
+	EntityPattern         pattern.Entity         `bson:"entity_pattern" json:"-"`
+	Created               datetime.CpsTime       `bson:"created" json:"-"`
+	LastPing              *datetime.CpsTime      `bson:"last_ping" json:"-"`
+	Retries               int64                  `bson:"retries" json:"-"`
+	Suggestions           []Suggestion           `bson:"suggestions" json:"suggestions"`
+	OptimizedFieldRegexps []OptimizedFieldRegexp `bson:"optimized_field_regexps" json:"optimized_field_regexps"`
+	FailReason            string                 `bson:"fail_reason,omitempty" json:"fail_reason,omitempty"`
+	AcceptedSuggestion    *int                   `bson:"accepted_suggestion,omitempty" json:"accepted_suggestion,omitempty"`
 }
 
 type OptimizeAcceptRequest struct {
 	ID     string `json:"-"`
-	Index  *int   `json:"index" binding:"required"`
+	Index  *int   `json:"index" binding:"required_if=Accept true"`
 	Accept *bool  `json:"accept" binding:"required"`
 }
 
 type LiteralFieldStats struct {
 	FieldName         string `bson:"k"`
 	LiteralFoundTimes int    `bson:"v"`
+}
+
+type OptimizedFieldRegexp struct {
+	Field  string `bson:"field" json:"field"`
+	Regexp string `bson:"regexp" json:"regexp"`
 }
