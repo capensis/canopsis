@@ -52,7 +52,7 @@
       {{ item.last_alarm_date | timezone(timezone) }}
     </template>
     <template #pattern_ms="{ item }">
-      {{ item.pattern_ms | duration }}
+      {{ item.pattern_ms | duration(durationFormat, millisecondUnit) }}
     </template>
     <template #pattern_exec_at="{ item }">
       {{ item.pattern_exec_at | timezone(timezone) }}
@@ -94,12 +94,16 @@
 <script>
 import { computed } from 'vue';
 
+import {
+  ADVANCED_SEARCH_DATE_CONDITIONS,
+  PBEHAVIOR_LIST_FIELDS,
+  PATTERN_DURATION_FORMAT,
+  TIME_UNITS,
+} from '@/constants';
+
 import { useI18n } from '@/hooks/i18n';
 
 import { usePbehaviorDateFormat } from '@/components/other/pbehavior/pbehaviors/hooks/pbehavior-date-format';
-
-import { ADVANCED_SEARCH_DATE_CONDITIONS } from '@/constants/advanced-search';
-import { PBEHAVIOR_LIST_FIELDS } from '@/constants/pbehavior';
 
 import PbehaviorsMassActionsPanel from './actions/pbehaviors-mass-actions-panel.vue';
 import PbehaviorActions from './partials/pbehavior-actions.vue';
@@ -153,6 +157,9 @@ export default {
     },
   },
   setup() {
+    const durationFormat = PATTERN_DURATION_FORMAT;
+    const millisecondUnit = TIME_UNITS.millisecond;
+
     const { t, tc } = useI18n();
     const { timezone, shownUserTimezone, formatIntervalDate, formatRruleEndDate } = usePbehaviorDateFormat();
 
@@ -204,6 +211,9 @@ export default {
     ));
 
     return {
+      durationFormat,
+      millisecondUnit,
+
       timezone,
       shownUserTimezone,
       headers,
