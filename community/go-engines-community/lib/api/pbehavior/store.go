@@ -590,6 +590,12 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 			return err
 		}
 
+		if len(transformedEntityPatternRequest.Aliases) > 0 {
+			set["aliases"] = transformedEntityPatternRequest.Aliases
+		} else {
+			unset["aliases"] = ""
+		}
+
 		if r.CorporateEntityPattern != nil {
 			set["entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.EntityPattern.RemoveFields(common.GetForbiddenFieldsInEntityPattern(mongo.PbehaviorMongoCollection))
 			set["corporate_entity_pattern"] = transformedEntityPatternRequest.CorporatePattern.ID
@@ -1020,6 +1026,14 @@ func (s *store) ExecPatternAndUpdate(ctx context.Context, id string, pattern pat
 	conf := s.userInterfaceConfigProvider.Get()
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(conf.CheckCountRequestTimeout)*time.Second)
 	defer cancel()
+
+	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
+		EntityPattern: pattern,
+	})
+	if err != nil {
+		return nil, err
+	}
+
 	updateStats := false
 	if id != "" {
 		pbh, err := s.GetOneBy(ctx, id)
@@ -1027,10 +1041,10 @@ func (s *store) ExecPatternAndUpdate(ctx context.Context, id string, pattern pat
 			return nil, err
 		}
 
-		updateStats = reflect.DeepEqual(pbh.EntityPattern, pattern)
+		updateStats = reflect.DeepEqual(pbh.EntityPattern, transformedEntityPatternRequest.EntityPattern)
 	}
 
-	count, ms, err := s.execPattern(ctx, pattern)
+	count, ms, err := s.execPattern(ctx, transformedEntityPatternRequest.EntityPattern)
 	if err != nil {
 		return nil, err
 	}
