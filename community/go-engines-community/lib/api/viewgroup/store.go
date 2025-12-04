@@ -8,10 +8,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -291,6 +293,19 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	var response *ViewGroup
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		err := s.dbCollection.FindOne(ctx, bson.M{"title": r.Title, "is_private": false}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		if err == nil {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("exist", "Title", "Title")},
+				r,
+			)
+		}
+
 		position, err := s.getNextPosition(ctx)
 		if err != nil {
 			return err
@@ -316,6 +331,22 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 	var response *ViewGroup
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
+
+		err := s.dbCollection.FindOne(ctx, bson.M{
+			"_id":        bson.M{"$ne": r.ID},
+			"title":      r.Title,
+			"is_private": false,
+		}).Err()
+		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+			return err
+		}
+
+		if err == nil {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("exist", "Title", "Title")},
+				r,
+			)
+		}
 
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": bson.M{
 			"title":   r.Title,

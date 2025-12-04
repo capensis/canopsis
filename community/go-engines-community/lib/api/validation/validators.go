@@ -2,7 +2,6 @@ package validation
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
@@ -16,7 +15,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
-	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const (
@@ -66,7 +64,7 @@ func ValidateOneOfOrEmpty(fl validator.FieldLevel) bool {
 	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
 		v = strconv.FormatUint(field.Uint(), 10)
 	default:
-		panic(fmt.Sprintf("Bad field type %T", field.Interface()))
+		return false
 	}
 
 	if v == "" {
@@ -163,49 +161,48 @@ type FieldValidator interface {
 	Validate(ctx context.Context, sl validator.StructLevel)
 }
 
-func NewExistFieldValidator(
-	db mongo.DbClient,
-	collection string,
-	field string,
-) FieldValidator {
-	return &existFieldValidator{
-		dbClient:     db,
-		dbCollection: db.Collection(collection),
-		field:        field,
-	}
-}
-
-type existFieldValidator struct {
-	dbClient     mongo.DbClient
-	dbCollection mongo.DbCollection
-	field        string
-}
-
-func (v *existFieldValidator) Validate(ctx context.Context, sl validator.StructLevel) {
-	field := sl.Current().FieldByName(v.field)
-	if !field.IsValid() {
-		panic("request does not have field " + v.field)
-	}
-	val, ok := field.Interface().(string)
-	if !ok {
-		panic(fmt.Sprintf("request field %s is not string", v.field))
-	}
-
-	if val == "" {
-		return
-	}
-
-	var found struct {
-		ID string `bson:"_id"`
-	}
-	err := v.dbCollection.FindOne(ctx, bson.M{"_id": val}).Decode(&found)
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			sl.ReportError(val, v.field, v.field, "not_exist", "")
-		} else {
-			panic(err)
+func ValidateExist(ctx context.Context, collection mongo.DbCollection, request any, field string, value any) error {
+	var q bson.M
+	var expectedCount int64
+	switch v := value.(type) {
+	case string:
+		if v == "" {
+			return nil
 		}
+
+		q = bson.M{"_id": value}
+		expectedCount = 1
+	case *string:
+		if v == nil || *v == "" {
+			return nil
+		}
+
+		q = bson.M{"_id": value}
+		expectedCount = 1
+	case []string:
+		if len(v) == 0 {
+			return nil
+		}
+
+		q = bson.M{"_id": bson.M{"$in": value}}
+		expectedCount = int64(len(v))
+	default:
+		return fmt.Errorf("unsupported type: %T, collection %q, field %q, request %+v", value, collection.Name(), field, request)
 	}
+
+	count, err := collection.CountDocuments(ctx, q)
+	if err != nil {
+		return err
+	}
+
+	if count != expectedCount {
+		return NewError(
+			validator.ValidationErrors{NewFieldError("not_exist", field, field)},
+			request,
+		)
+	}
+
+	return nil
 }
 
 func ValidateInfoValue(fl validator.FieldLevel) bool {
