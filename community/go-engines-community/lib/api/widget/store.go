@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
@@ -214,8 +213,18 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		return nil, err
 	}
 
+	if tabInfo.ID == "" {
+		return nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
+			r,
+		)
+	}
+
 	if tabInfo.IsPrivate && tabInfo.Author != r.Author {
-		return nil, common.NewValidationError("tab", "Tab is private.")
+		return nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
+			r,
+		)
 	}
 
 	if !tabInfo.IsPrivate {
@@ -225,7 +234,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		}
 
 		if !ok {
-			return nil, common.NewValidationError("tab", "Can't modify a tab.")
+			return nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
+				r,
+			)
 		}
 	}
 
@@ -502,8 +514,18 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 			return err
 		}
 
+		if tabInfo.ID == "" {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
+				r,
+			)
+		}
+
 		if tabInfo.IsPrivate && tabInfo.Author != r.Author {
-			return common.NewValidationError("tab", "Tab is private.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
+				r,
+			)
 		}
 
 		if !tabInfo.IsPrivate {
@@ -513,7 +535,10 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 			}
 
 			if !ok {
-				return common.NewValidationError("tab", "Can't modify a tab.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_accessible", "Tab", "Tab")},
+					r,
+				)
 			}
 		}
 
@@ -624,12 +649,22 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 
 	if r.TestData.Alarm == "" {
 		if alarm.Alarm.ID == "" {
-			return nil, common.NewValidationError("testdata.alarm", "Alarm is missing.")
+			return nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "Alarm", "TestData.Alarm")},
+				r,
+			)
 		}
 	} else if r.TestData.Alarm != alarm.Alarm.ID { // keep snapshot from the test
 		alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
 		if err != nil {
 			return nil, err
+		}
+
+		if alarm.Alarm.ID == "" {
+			return nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Alarm", "TestData.Alarm")},
+				r,
+			)
 		}
 	}
 
@@ -669,7 +704,7 @@ func (s *store) getTabPrivacySettings(ctx context.Context, tabID string) (apisec
 
 	err := s.tabCollection.FindOne(ctx, bson.M{"_id": tabID}).Decode(&tabInfo)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return tabInfo, common.NewValidationError("tab", "Tab doesn't exist.")
+		return tabInfo, nil
 	}
 
 	return tabInfo, err
@@ -828,7 +863,10 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			}).Decode(&tpl)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return common.NewValidationError("parameters."+parameter+"Template", "Template doesn't exist.")
+					return validation.NewError(
+						validator.ValidationErrors{validation.NewFieldError("not_exist", parameter+"Template", "parameters."+parameter+"Template")},
+						nil,
+					)
 				}
 
 				return err
@@ -875,7 +913,7 @@ func (s *store) findAlarm(ctx context.Context, alarmID string) (types.AlarmWithE
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return types.AlarmWithEntity{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+		return types.AlarmWithEntity{}, nil
 	}
 
 	var alarm types.AlarmWithEntity

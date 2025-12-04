@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
@@ -159,13 +158,6 @@ func (a *api) Update(c *gin.Context) {
 
 	user, err := a.store.Update(c, BulkUpdateRequestItem(request), userID, roleIDs)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -211,13 +203,6 @@ func (a *api) Patch(c *gin.Context) {
 
 	user, err := a.store.Patch(c, BulkPatchRequestItem(request), userID, roleIDs)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -251,13 +236,6 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, BulkDeleteRequestItem{ID: id}, userID, roleIDs)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

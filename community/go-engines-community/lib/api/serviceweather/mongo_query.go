@@ -10,9 +10,9 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/pattern/db"
@@ -20,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -226,7 +227,12 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filters."+strconv.Itoa(i), "Filter doesn't exist.")
+				iStr := strconv.Itoa(i)
+
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_exist", iStr, "Filters."+iStr)},
+					r,
+				)
 			}
 
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
@@ -235,7 +241,12 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		if len(filter.EntityPattern) == 0 && len(filter.WeatherServicePattern) == 0 ||
 			len(filter.AlarmPattern) > 0 ||
 			len(filter.PbehaviorPattern) > 0 {
-			return common.NewValidationError("filters."+strconv.Itoa(i), "Filter cannot be applied.")
+			iStr := strconv.Itoa(i)
+
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_applicable", iStr, "Filters."+iStr)},
+				r,
+			)
 		}
 
 		err = q.handleEntityPattern(filter.EntityPattern)
@@ -257,11 +268,17 @@ func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
 		var entityPattern pattern.Entity
 		err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
 		if err != nil {
-			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("entity_pattern", "EntityPattern", "EntityPattern")},
+				r,
+			)
 		}
 		err = q.handleEntityPattern(entityPattern)
 		if err != nil {
-			return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("entity_pattern", "EntityPattern", "EntityPattern")},
+				r,
+			)
 		}
 	}
 
@@ -269,11 +286,17 @@ func (q *MongoQueryBuilder) handlePatterns(r ListRequest) error {
 		var weatherPattern pattern.WeatherServicePattern
 		err := json.Unmarshal([]byte(r.WeatherServicePattern), &weatherPattern)
 		if err != nil {
-			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("weather_service_pattern", "WeatherServicePattern", "WeatherServicePattern")},
+				r,
+			)
 		}
 		err = q.handleWeatherServicePattern(weatherPattern)
 		if err != nil {
-			return common.NewValidationError("weather_service_pattern", "WeatherServicePattern is invalid.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("weather_service_pattern", "WeatherServicePattern", "WeatherServicePattern")},
+				r,
+			)
 		}
 	}
 

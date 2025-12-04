@@ -1,7 +1,6 @@
 package serviceweather
 
 import (
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
@@ -43,12 +42,6 @@ func (a *api) List(c *gin.Context) {
 
 	aggregationResult, err := a.store.Find(c, query)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
