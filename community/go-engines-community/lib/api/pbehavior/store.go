@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strconv"
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
@@ -16,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apipattern "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pattern"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pbehaviorexception"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -69,11 +71,14 @@ type Store interface {
 }
 
 type store struct {
-	dbClient           mongo.DbClient
-	readDbClient       mongo.DbClient
-	redisClient        redis.Cmdable
-	dbCollection       mongo.DbCollection
-	entityDbCollection mongo.DbCollection
+	dbClient              mongo.DbClient
+	readDbClient          mongo.DbClient
+	redisClient           redis.Cmdable
+	dbCollection          mongo.DbCollection
+	entityDbCollection    mongo.DbCollection
+	typeDbCollection      mongo.DbCollection
+	reasonDbCollection    mongo.DbCollection
+	exceptionDbCollection mongo.DbCollection
 
 	authorProvider         author.Provider
 	entityTypeResolver     pbehavior.EntityTypeResolver
@@ -108,6 +113,9 @@ func NewStore(
 		dbClient:                      dbClient,
 		dbCollection:                  dbClient.Collection(mongo.PbehaviorMongoCollection),
 		entityDbCollection:            dbClient.Collection(mongo.EntityMongoCollection),
+		typeDbCollection:              dbClient.Collection(mongo.PbehaviorTypeMongoCollection),
+		reasonDbCollection:            dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
+		exceptionDbCollection:         dbClient.Collection(mongo.PbehaviorExceptionMongoCollection),
 		readDbClient:                  readDbClient,
 		redisClient:                   redisClient,
 		entityTypeResolver:            entityTypeResolver,
@@ -164,6 +172,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	var pbh *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
 
 		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
 		if err != nil {
@@ -425,6 +438,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		pbh = nil
 		recomputeInherited = false
 
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
 		prevPbh := pbehavior.PBehavior{}
 		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
 		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -570,14 +588,107 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		pbh = nil
 		recomputeInherited = false
 
-		prevPbh := pbehavior.PBehavior{}
-		err := s.dbCollection.FindOne(ctx, bson.M{"_id": r.ID}).Decode(&prevPbh)
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		var foundType pbehavior.Type
+		var err error
+		if r.Type != nil {
+			foundType, err = s.findType(ctx, *r.Type)
+			if err != nil {
+				return err
+			}
+
+			if foundType.ID == "" {
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Type")},
+					r,
+				)
+			}
+		}
+
+		err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+		if err != nil {
 			return err
 		}
 
-		recomputeInherited = prevPbh.Inherited
+		err = validation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
+		if err != nil {
+			return err
+		}
 
+		valErrs, err := s.validateExdates(ctx, r.Exdates)
+		if err != nil {
+			return err
+		}
+
+		if len(valErrs) > 0 {
+			return validation.NewError(valErrs, r)
+		}
+
+		prevPbh := struct {
+			pbehavior.PBehavior `bson:",inline"`
+			pbehavior.Type      `bson:"type"`
+		}{}
+		cursor, err := s.dbCollection.Aggregate(ctx, []bson.M{
+			{"$match": bson.M{"_id": r.ID}},
+			{"$lookup": bson.M{
+				"from":         mongo.PbehaviorTypeMongoCollection,
+				"localField":   "type_",
+				"foreignField": "_id",
+				"as":           "type",
+			}},
+			{"$unwind": "$type"},
+		})
+		if err != nil {
+			return err
+		}
+
+		defer cursor.Close(ctx)
+		if !cursor.Next(ctx) {
+			return nil
+		}
+
+		err = cursor.Decode(&prevPbh)
+		if err != nil {
+			return err
+		}
+
+		if err = cursor.Err(); err != nil {
+			return err
+		}
+
+		stopValErr := validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("required", "Stop", "Stop")},
+			r,
+		)
+		if r.Stop.isSet {
+			if r.Stop.val == nil {
+				cannonicalType := ""
+				if foundType.ID != "" {
+					cannonicalType = foundType.Type
+				} else {
+					cannonicalType = prevPbh.Type.Type
+				}
+
+				if cannonicalType != pbehavior.TypePause {
+					return stopValErr
+				}
+			}
+		} else if foundType.ID != "" && foundType.Type != pbehavior.TypePause && prevPbh.Stop == nil {
+			return stopValErr
+		}
+
+		if r.Start != nil && !r.Stop.isSet && prevPbh.Stop != nil && *r.Start >= prevPbh.Stop.Unix() {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldErrorWithParam("ltfield", "Start", "Start", "Stop")},
+				r,
+			)
+		} else if r.Start == nil && r.Stop.isSet && r.Stop.val != nil && prevPbh.Start.Unix() >= *r.Stop.val {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldErrorWithParam("gtfield", "Stop", "Stop", "Start")},
+				r,
+			)
+		}
+
+		recomputeInherited = prevPbh.Inherited
 		if prevPbh.Origin != "" {
 			if len(prevPbh.Entities) > 0 {
 				return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
@@ -819,6 +930,31 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 	var pbh *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		t, err := s.findType(ctx, r.Type)
+		if err != nil {
+			return err
+		}
+
+		if t.ID == "" {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Type")},
+				r,
+			)
+		}
+
+		if r.Stop == nil && t.Type != pbehavior.TypePause {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "Stop", "Stop")},
+				r,
+			)
+		}
+
+		err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+		if err != nil {
+			return err
+		}
+
 		updateRes, err := s.dbCollection.UpdateOne(ctx,
 			bson.M{
 				"origin": r.Origin,
@@ -939,8 +1075,19 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 	var pbh *Response
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
+
+		err := validation.ValidateExist(ctx, s.typeDbCollection, r, "Type", r.Type)
+		if err != nil {
+			return err
+		}
+
+		err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+		if err != nil {
+			return err
+		}
+
 		var findDoc pbehavior.PBehavior
-		err := s.dbCollection.FindOneAndUpdate(ctx,
+		err = s.dbCollection.FindOneAndUpdate(ctx,
 			bson.M{
 				"origin":           r.Origin,
 				"tstart":           r.Start,
@@ -1455,4 +1602,103 @@ func (s *store) sortCalendarResponse(response []CalendarResponse) func(i, j int)
 
 func (s *store) transformPatternRequestToModel(ctx context.Context, er patternfields.EntityRequest, r any) (epf savedpattern.EntityPatternFields, aliasPropIDs []string, err error) {
 	return s.transformer.TransformEntityRequest(ctx, er, r, s.dbCollection.Name())
+}
+
+func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
+	t, err := s.findType(ctx, r.Type)
+	if err != nil {
+		return err
+	}
+
+	if t.ID == "" {
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Type")},
+			r,
+		)
+	}
+
+	if r.Stop == nil && t.Type != pbehavior.TypePause {
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("required", "Stop", "Stop")},
+			r,
+		)
+	}
+
+	err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+	if err != nil {
+		return err
+	}
+
+	err = validation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
+	if err != nil {
+		return err
+	}
+
+	valErrs, err := s.validateExdates(ctx, r.Exdates)
+	if err != nil {
+		return err
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, r)
+	}
+
+	return nil
+}
+
+func (s *store) findType(ctx context.Context, id string) (pbehavior.Type, error) {
+	t := pbehavior.Type{}
+	err := s.typeDbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&t)
+	if err != nil {
+		if errors.Is(err, mongodriver.ErrNoDocuments) {
+			return t, nil
+		}
+
+		return t, err
+	}
+
+	return t, nil
+}
+
+func (s *store) validateExdates(ctx context.Context, exdates []pbehaviorexception.ExdateRequest) (validator.ValidationErrors, error) {
+	if len(exdates) == 0 {
+		return nil, nil
+	}
+
+	ids := make([]string, len(exdates))
+	for i, v := range exdates {
+		ids[i] = v.Type
+	}
+
+	cursor, err := s.typeDbCollection.Find(ctx, bson.M{"_id": bson.M{"$in": ids}}, options.Find().SetProjection(bson.M{"_id": 1}))
+	if err != nil {
+		return nil, fmt.Errorf("cannot find types: %w", err)
+	}
+
+	defer cursor.Close(ctx)
+	found := make(map[string]bool, len(ids))
+	for cursor.Next(ctx) {
+		t := struct {
+			ID string `bson:"_id"`
+		}{}
+		err = cursor.Decode(&t)
+		if err != nil {
+			return nil, fmt.Errorf("cannot decode type: %w", err)
+		}
+
+		found[t.ID] = true
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, fmt.Errorf("cannot fetch types: %w", err)
+	}
+
+	var fieldErrs validator.ValidationErrors
+	for i, v := range exdates {
+		if !found[v.Type] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Exdates."+strconv.Itoa(i)+".Type"))
+		}
+	}
+
+	return fieldErrs, nil
 }

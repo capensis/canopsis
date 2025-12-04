@@ -8,6 +8,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -23,6 +24,8 @@ type Store interface {
 type store struct {
 	client               mongo.DbClient
 	userCollection       mongo.DbCollection
+	viewCollection       mongo.DbCollection
+	colorThemeCollection mongo.DbCollection
 	passwordEncoder      password.Encoder
 	authorProvider       author.Provider
 	userInterfaceAdapter config.UserInterfaceAdapter
@@ -33,6 +36,8 @@ func NewStore(db mongo.DbClient, pe password.Encoder, ap author.Provider, uia co
 	return &store{
 		client:               db,
 		userCollection:       db.Collection(mongo.UserCollection),
+		viewCollection:       db.Collection(mongo.ViewMongoCollection),
+		colorThemeCollection: db.Collection(mongo.ColorThemeCollection),
 		passwordEncoder:      pe,
 		authorProvider:       ap,
 		userInterfaceAdapter: uia,
@@ -231,6 +236,17 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*User, error) {
 	var user *User
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
+
+		err := validation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+		if err != nil {
+			return err
+		}
+
+		err = validation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+		if err != nil {
+			return err
+		}
+
 		updateDoc, err := r.getUpdateBson(s.passwordEncoder)
 		if err != nil {
 			return err

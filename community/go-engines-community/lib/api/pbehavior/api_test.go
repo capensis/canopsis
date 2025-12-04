@@ -32,13 +32,9 @@ import (
 var trans *ut.UniversalTranslator
 
 func init() {
-	dbClient, err := mongo.NewClient(context.Background())
-	if err != nil {
-		panic(err)
-	}
-
 	tplExecutor := template.NewExecutor(config.NewTemplateConfigProvider(config.CanopsisConf{}, zerolog.Nop()), config.NewTimezoneConfigProvider(config.CanopsisConf{}, zerolog.Nop()))
-	trans, err = libapi.RegisterValidators(dbClient, security.Config{}, nil, tplExecutor)
+	var err error
+	trans, err = libapi.RegisterValidators(security.Config{}, tplExecutor)
 	if err != nil {
 		panic(err)
 	}

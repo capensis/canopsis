@@ -59,6 +59,8 @@ type store struct {
 	tplDataCollection         mongo.DbCollection
 	tplTestCollection         mongo.DbCollection
 	entityInfosPropCollection mongo.DbCollection
+	pbhTypeCollection         mongo.DbCollection
+	pbhReasonCollection       mongo.DbCollection
 	transformer               patternfields.Transformer
 	authorProvider            author.Provider
 	tplValidator              tplvalidator.Validator
@@ -139,6 +141,8 @@ func NewStore(
 		tplDataCollection:         db.Collection(mongo.TemplateTestDataCollection),
 		tplTestCollection:         db.Collection(mongo.TemplateTestCollection),
 		entityInfosPropCollection: db.Collection(mongo.EntityInfosPropertyCollection),
+		pbhTypeCollection:         db.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:       db.Collection(mongo.PbehaviorReasonMongoCollection),
 		transformer:               transformer,
 		authorProvider:            authorProvider,
 		tplValidator:              tplValidator,
@@ -229,6 +233,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Scenario, error) 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
 
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
+
 		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.EditRequest)
 		if err != nil {
 			return err
@@ -269,6 +278,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Scenario, error) 
 
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		result = nil
+
+		err = s.validateEditRequest(ctx, r.EditRequest)
+		if err != nil {
+			return err
+		}
 
 		model.Actions, model.Aliases, err = s.transformActionRequestToModel(ctx, r.EditRequest)
 		if err != nil {
@@ -777,6 +791,85 @@ func (s *store) validateAuthorTpl(
 	}
 
 	return &res, additionalData, nil
+}
+
+func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
+	var fieldErrs validator.ValidationErrors
+
+	pbhTypeIDs := make([]string, 0)
+	pbhReasonIDs := make([]string, 0)
+	for _, a := range r.Actions {
+		if a.Parameters.Type != "" {
+			pbhTypeIDs = append(pbhTypeIDs, a.Parameters.Type)
+		}
+
+		if a.Parameters.Reason != "" {
+			pbhReasonIDs = append(pbhReasonIDs, a.Parameters.Reason)
+		}
+	}
+
+	var foundTypes, foundReasons map[string]bool
+	if len(pbhTypeIDs) > 0 {
+		cursor, err := s.pbhTypeCollection.Find(ctx, bson.M{"_id": bson.M{"$in": pbhTypeIDs}}, options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return fmt.Errorf("cannot find types: %w", err)
+		}
+
+		foundTypes, err = s.fetchIDs(ctx, cursor)
+		if err != nil {
+			return fmt.Errorf("cannot fetch types: %w", err)
+		}
+	}
+
+	if len(pbhReasonIDs) > 0 {
+		cursor, err := s.pbhReasonCollection.Find(ctx, bson.M{"_id": bson.M{"$in": pbhReasonIDs}}, options.Find().SetProjection(bson.M{"_id": 1}))
+		if err != nil {
+			return fmt.Errorf("cannot find reasons: %w", err)
+		}
+
+		foundReasons, err = s.fetchIDs(ctx, cursor)
+		if err != nil {
+			return fmt.Errorf("cannot fetch reasons: %w", err)
+		}
+	}
+
+	for i, a := range r.Actions {
+		if a.Parameters.Type != "" && !foundTypes[a.Parameters.Type] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Type", "Actions."+strconv.Itoa(i)+".Parameters.Type"))
+		}
+
+		if a.Parameters.Reason != "" && !foundReasons[a.Parameters.Reason] {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", "Reason", "Actions."+strconv.Itoa(i)+".Parameters.Reason"))
+		}
+	}
+
+	if len(fieldErrs) != 0 {
+		return validation.NewError(fieldErrs, r)
+	}
+
+	return nil
+}
+
+func (s *store) fetchIDs(ctx context.Context, cursor mongo.Cursor) (map[string]bool, error) {
+	found := make(map[string]bool)
+	defer cursor.Close(ctx)
+	for cursor.Next(ctx) {
+		v := struct {
+			ID string `bson:"_id"`
+		}{}
+		err := cursor.Decode(&v)
+		if err != nil {
+			return nil, err
+		}
+
+		found[v.ID] = true
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+
+	return found, nil
 }
 
 func getNestedObjectsPipeline() []bson.M {
