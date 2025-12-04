@@ -2,8 +2,8 @@ package pbehaviorexception
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -13,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/rpc"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 )
 
@@ -81,12 +82,6 @@ func (a *api) Create(c *gin.Context) {
 
 	res, err := a.store.Insert(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
-
 		if errors.Is(err, ErrTypeNotExists) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
@@ -121,12 +116,6 @@ func (a *api) Update(c *gin.Context) {
 
 	res, err := a.store.Update(c, request)
 	if err != nil {
-		validationErr := common.ValidationError{}
-		if errors.As(err, &validationErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationErr.ValidationErrorResponse())
-			return
-		}
-
 		if errors.Is(err, ErrTypeNotExists) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 			return
@@ -209,30 +198,36 @@ func (a *api) Import(c *gin.Context) {
 	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationError("file", "File is missing.").ValidationErrorResponse())
-			return
+			err = validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "file", "file")},
+				nil,
+			)
 		}
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "request has invalid structure"})
+
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
+
 	defer f.Close()
 
 	name := c.Request.FormValue("name")
 	pbhType := c.Request.FormValue("type")
-	valErrors := make(map[string]string)
+	valErrs := make(validator.ValidationErrors, 0)
 	if a.maxFileSize > 0 && uint64(fh.Size) > a.maxFileSize {
-		valErrors["file"] = fmt.Sprintf("File size %d exceeds limit %d", fh.Size, a.maxFileSize)
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("filesize", "file", "file", strconv.FormatUint(a.maxFileSize, 10)))
 	}
 
 	if name == "" {
-		valErrors["name"] = "Name is missing."
-	}
-	if pbhType == "" {
-		valErrors["type"] = "Type is missing."
+		valErrs = append(valErrs, validation.NewFieldError("required", "name", "name"))
 	}
 
-	if len(valErrors) > 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrors(valErrors).ValidationErrorResponse())
+	if pbhType == "" {
+		valErrs = append(valErrs, validation.NewFieldError("required", "type", "type"))
+	}
+
+	if len(valErrs) > 0 {
+		a.errorResponder.Respond(c, validation.NewError(valErrs, nil))
 
 		return
 	}
@@ -246,11 +241,6 @@ func (a *api) Import(c *gin.Context) {
 
 	exception, err := a.store.Import(c, name, pbhType, userID, f, fh)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return

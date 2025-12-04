@@ -7,7 +7,6 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -216,7 +215,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 
 	if slices.Contains(r.Roles, security.RoleAdmin) && !slices.Contains(requestRoles, security.RoleAdmin) {
 		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("admin_role", "Roles", "Roles")},
+			validator.ValidationErrors{validation.NewFieldError("assign_role", "Roles", "Roles")},
 			r,
 		)
 	}
@@ -242,7 +241,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 
 func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
-		return nil, common.NewValidationError("enable", "user cannot disable itself")
+		return nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_applicable", "IsEnabled", "IsEnabled")},
+			r,
+		)
 	}
 
 	updateDoc, err := r.getBson(s.passwordEncoder)
@@ -263,7 +265,10 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 
 		if onlyOneAdmin && lastAdminID == r.ID {
 			if !slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "last admin cannot be edited")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_applicable", "Roles", "Roles")},
+					r,
+				)
 			}
 		}
 
@@ -281,14 +286,14 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
 				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("admin_user", "ID", "ID")},
+					validator.ValidationErrors{validation.NewFieldError("access_user", "ID", "ID")},
 					r,
 				)
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
 				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("admin_role", "Roles", "Roles")},
+					validator.ValidationErrors{validation.NewFieldError("assign_role", "Roles", "Roles")},
 					r,
 				)
 			}
@@ -317,7 +322,10 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 
 func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
-		return nil, common.NewValidationError("enable", "user cannot disable itself")
+		return nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_applicable", "IsEnabled", "IsEnabled")},
+			r,
+		)
 	}
 
 	updateDoc, err := r.getBson(s.passwordEncoder)
@@ -338,7 +346,10 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 
 		if onlyOneAdmin && lastAdminID == r.ID {
 			if !slices.Contains(r.Roles, security.RoleAdmin) {
-				return common.NewValidationError("roles", "last admin cannot be edited")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_applicable", "Roles", "Roles")},
+					r,
+				)
 			}
 		}
 
@@ -356,14 +367,14 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
 				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("admin_user", "ID", "ID")},
+					validator.ValidationErrors{validation.NewFieldError("access_user", "ID", "ID")},
 					r,
 				)
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
 				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("admin_role", "Roles", "Roles")},
+					validator.ValidationErrors{validation.NewFieldError("assign_role", "Roles", "Roles")},
 					r,
 				)
 			}
@@ -427,7 +438,10 @@ func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, i
 func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error) {
 	id := r.ID
 	if id == userID {
-		return false, common.NewValidationError("_id", "user cannot delete itself")
+		return false, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_accessible", "_id", "_id")},
+			nil,
+		)
 	}
 
 	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
@@ -450,7 +464,7 @@ func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID stri
 
 		if slices.Contains(prevUser.Roles, security.RoleAdmin) && !isAdminRequest {
 			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("admin_user", "ID", "ID")},
+				validator.ValidationErrors{validation.NewFieldError("access_user", "ID", "ID")},
 				r,
 			)
 		}

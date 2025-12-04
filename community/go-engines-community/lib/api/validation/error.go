@@ -38,7 +38,7 @@ func (e *Error) Error() string {
 // - EditRequest.Duration.Value -> duration.value
 func (e *Error) TransformNamespace(ns string) string {
 	if ns == "" || !e.rvValidatedStruct.IsValid() {
-		return ""
+		return ns
 	}
 
 	// remove brackets
