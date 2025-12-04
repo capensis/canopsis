@@ -6,7 +6,6 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	libpriority "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
@@ -16,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -159,7 +159,10 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 	for _, p := range prioritiesOfDefaultTypes {
 		if p == doc.Priority {
-			return nil, common.NewValidationError("priority", "Priority is taken by default type.")
+			return nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_applicable", "Priority", "Priority")},
+				r,
+			)
 		}
 	}
 
@@ -234,11 +237,17 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		}
 
 		if isTaken && !isDefault {
-			return common.NewValidationError("priority", "Priority is taken by default type.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_applicable", "Priority", "Priority")},
+				r,
+			)
 		}
 
 		if doc.IconName == "" && (!isDefault || doc.Type != pbehavior.TypeActive) {
-			return common.NewValidationError("icon_name", "IconName is missing.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "IconName", "IconName")},
+				r,
+			)
 		}
 
 		if isDefault {

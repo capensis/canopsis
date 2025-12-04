@@ -6,10 +6,10 @@ import (
 	"fmt"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/viewtab"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/savedpattern"
@@ -18,6 +18,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -116,8 +117,18 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			return err
 		}
 
+		if group.ID == "" {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Group", "Group")},
+				r,
+			)
+		}
+
 		if group.IsPrivate && group.Author != r.Author {
-			return common.NewValidationError("group", "Group is private.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "Group", "Group")},
+				r,
+			)
 		}
 
 		if !group.IsPrivate {
@@ -128,7 +139,10 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			}
 
 			if !ok {
-				return common.NewValidationError("group", "Group is public.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_accessible", "Group", "Group")},
+					r,
+				)
 			}
 		}
 
@@ -208,12 +222,25 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
+		if group.ID == "" {
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Group", "Group")},
+				r,
+			)
+		}
+
 		if group.IsPrivate && (!oldView.IsPrivate || group.Author != r.Author) {
-			return common.NewValidationError("group", "Group is private.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "Group", "Group")},
+				r,
+			)
 		}
 
 		if !group.IsPrivate && oldView.IsPrivate {
-			return common.NewValidationError("group", "Group is public.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_applicable", "Group", "Group")},
+				r,
+			)
 		}
 
 		now := datetime.NewCpsTime()
@@ -1192,7 +1219,7 @@ func (s *store) getGroupPrivacySettings(ctx context.Context, groupID string) (ap
 
 	err := s.groupCollection.FindOne(ctx, bson.M{"_id": groupID}).Decode(&group)
 	if err != nil && errors.Is(err, mongodriver.ErrNoDocuments) {
-		return group, common.NewValidationError("group", "Group doesn't exist.")
+		return group, nil
 	}
 
 	return group, err

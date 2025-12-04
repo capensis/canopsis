@@ -68,13 +68,6 @@ func (a *api) CreateData(c *gin.Context) {
 
 	res, err := a.store.CreateData(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -96,13 +89,6 @@ func (a *api) ListData(c *gin.Context) {
 
 	aggregationResult, err := a.store.FindData(c, r)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -146,13 +132,6 @@ func (a *api) UpdateData(c *gin.Context) {
 
 	res, err := a.store.UpdateData(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -208,13 +187,6 @@ func (a *api) CreateTest(c *gin.Context) {
 
 	res, err := a.store.CreateTest(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -242,13 +214,6 @@ func (a *api) ListTest(c *gin.Context) {
 	}
 	aggregationResult, err := a.store.FindTest(c, r, userID)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -298,13 +263,6 @@ func (a *api) UpdateTest(c *gin.Context) {
 
 	res, err := a.store.UpdateTest(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

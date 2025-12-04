@@ -7,7 +7,6 @@ import (
 	"sort"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -16,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -196,11 +196,17 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 		}
 
 		if oldRole.ID == security.RoleAdmin {
-			return common.NewValidationError("name", "Admin cannot be updated.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("access_role", "_id", "_id")},
+				nil,
+			)
 		}
 
 		if oldRole.Name != r.Name {
-			return common.NewValidationError("name", "Name cannot be changed.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("unchangeable", "Name", "Name")},
+				r,
+			)
 		}
 
 		res, err := s.dbCollection.UpdateOne(ctx,
@@ -246,7 +252,10 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 		}
 
 		if oldRole.ID == security.RoleAdmin {
-			return common.NewValidationError("_id", "Admin cannot be updated.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("access_role", "ID", "ID")},
+				r,
+			)
 		}
 
 		updateRes, err := s.dbCollection.UpdateOne(ctx,

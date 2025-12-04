@@ -8,7 +8,6 @@ import (
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -499,7 +498,10 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+				return nil, nil, nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_exist", "Test", "TestData.Test")},
+					r,
+				)
 			}
 
 			return nil, nil, nil, err
@@ -515,7 +517,10 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 	}
 
 	if eventDataID == "" {
-		return nil, nil, nil, common.NewValidationError("testdata.event", "Event is missing.")
+		return nil, nil, nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("required", "Event", "TestData.Event")},
+			r,
+		)
 	}
 
 	event, err := template.GetEventData(ctx, s.tplDataCollection, eventDataID, s.encoder, s.decoder)
@@ -524,13 +529,21 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 	}
 
 	if event == nil {
-		return nil, nil, nil, common.NewValidationError("testdata.event", "Event doesn't exist.")
+		return nil, nil, nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_exist", "Event", "TestData.Event")},
+			r,
+		)
 	}
 
 	var whTestData map[int]template.ResponseTestData
 	if len(whTestDataIDs) > 0 {
 		if len(whTestDataIDs) > len(r.Rule.Actions) {
-			return nil, nil, nil, common.NewValidationError("testdata.responses."+strconv.Itoa(len(r.Rule.Actions)), "Response is redundant.")
+			iStr := strconv.Itoa(len(r.Rule.Actions))
+
+			return nil, nil, nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("must_be_empty", iStr, "TestData.Responses."+iStr)},
+				r,
+			)
 		}
 
 		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, whTestDataIDs)
@@ -539,13 +552,31 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 		}
 
 		if len(whTestData) == 0 {
-			return nil, nil, nil, common.NewValidationError("testdata.responses", "Responses don't exist.")
+			return nil, nil, nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "Responses", "TestData.Responses")},
+				r,
+			)
 		}
 	}
 
-	alarm, err := s.findAlarm(ctx, event.GetEID())
+	entityID := event.GetEID()
+	if entityID == "" {
+		return nil, nil, nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("entity_not_exist", "Event", "TestData.Event")},
+			r,
+		)
+	}
+
+	alarm, err := s.findAlarm(ctx, entityID)
 	if err != nil {
 		return nil, nil, nil, err
+	}
+
+	if alarm.ID == "" {
+		return nil, nil, nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("alarm_not_exist", "Event", "TestData.Event")},
+			r,
+		)
 	}
 
 	return event, &alarm, whTestData, nil
@@ -553,17 +584,13 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 
 // findAlarm fetches alarm with meta-alarm children and related entities.
 func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlarm, error) {
-	if entityID == "" {
-		return webhook.TplAlarm{}, common.NewValidationError("testdata.event", "Corresponding entity cannot be found.")
-	}
-
 	id := struct {
 		ID string `bson:"_id"`
 	}{}
 	err := s.alarmCollection.FindOne(ctx, bson.M{"d": entityID}, options.FindOne().SetSort(bson.M{"t": -1}).SetProjection(bson.M{"_id": 1})).Decode(&id)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return webhook.TplAlarm{}, common.NewValidationError("testdata.event", "Corresponding alarm doesn't exist.")
+			return webhook.TplAlarm{}, nil
 		}
 
 		return webhook.TplAlarm{}, err
@@ -576,7 +603,7 @@ func (s *store) findAlarm(ctx context.Context, entityID string) (webhook.TplAlar
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return webhook.TplAlarm{}, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+		return webhook.TplAlarm{}, nil
 	}
 
 	var alarm webhook.TplAlarm
@@ -644,12 +671,18 @@ func (s *store) validateActionTpls(
 			if td, ok := whTestData[i]; ok {
 				b, err := s.encoder.Encode(td.Body)
 				if err != nil {
-					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not a JSON.")
+					return nil, validation.NewError(
+						validator.ValidationErrors{validation.NewFieldError("not_json", iStr, "TestData.Responses."+iStr)},
+						r,
+					)
 				}
 
 				flatten, _, err := http.FlattenJSON(b)
 				if err != nil {
-					return nil, common.NewValidationError("testdata.responses."+iStr, "Response is not JSON.")
+					return nil, validation.NewError(
+						validator.ValidationErrors{validation.NewFieldError("not_json", iStr, "TestData.Responses."+iStr)},
+						r,
+					)
 				}
 
 				whHeader = td.Headers
@@ -658,7 +691,10 @@ func (s *store) validateActionTpls(
 					whResponseMap[iStr+"."+k] = v
 				}
 			} else {
-				return nil, common.NewValidationError("testdata.responses."+iStr, "Response is missing.")
+				return nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("required", iStr, "TestData.Responses."+iStr)},
+					r,
+				)
 			}
 
 			if a.Parameters.DeclareTicket != nil {
@@ -693,7 +729,12 @@ func (s *store) validateActionTpls(
 			}
 
 			if _, ok := whTestData[i]; ok {
-				return nil, common.NewValidationError("testdata.responses."+strconv.Itoa(i), "Response is redundant.")
+				iStr := strconv.Itoa(i)
+
+				return nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("must_be_empty", iStr, "TestData.Responses."+iStr)},
+					r,
+				)
 			}
 		}
 	}

@@ -374,10 +374,10 @@ func registerDeprecatedTranslations(v *validator.Validate, trans ut.Translator) 
 		t, _ := ut.T("unauth", fe.Field(), fe.Param())
 		return t
 	})
-	_ = v.RegisterTranslation("must_be_string", trans, func(ut ut.Translator) error {
-		return ut.Add("must_be_string", "{0} must be a string.", true)
+	_ = v.RegisterTranslation("value_string", trans, func(ut ut.Translator) error {
+		return ut.Add("value_string", "{0} must be a string.", true)
 	}, func(ut ut.Translator, fe validator.FieldError) string {
-		t, _ := ut.T("must_be_string", fe.Field(), fe.Param())
+		t, _ := ut.T("value_string", fe.Field(), fe.Param())
 		return t
 	})
 }

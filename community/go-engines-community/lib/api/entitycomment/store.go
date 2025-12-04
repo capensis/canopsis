@@ -4,12 +4,13 @@ import (
 	"context"
 	"errors"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -80,7 +81,10 @@ func (s *store) Insert(ctx context.Context, r Request, userID, username string) 
 		return nil, err
 	}
 	if entity.Type != types.EntityTypeService && entity.Type != types.EntityTypeResource {
-		return nil, common.NewValidationError("entity", "Invalid entity type.")
+		return nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("type", "Entity", "Entity")},
+			r,
+		)
 	}
 	comm := types.EntityComment{
 		ID:        utils.NewID(),

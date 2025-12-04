@@ -2,10 +2,8 @@ package bulk
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
@@ -72,25 +70,6 @@ func Handler[T any](
 
 		id, err := f(req)
 		if err != nil {
-			// todo remove after common.ValidationError is removed
-			valErr := common.ValidationError{}
-			if errors.As(err, &valErr) {
-				itemRes := ar.NewObject()
-				itemRes.Set("status", ar.NewNumberInt(http.StatusBadRequest))
-				itemRes.Set("item", item)
-				errVal := common.NewValidationErrorFastJsonValue(&ar, valErr, req)
-				if errVal.Type() == fastjson.TypeString {
-					itemRes.Set("error", errVal)
-				}
-
-				if errVal.Type() == fastjson.TypeObject {
-					itemRes.Set("errors", errVal)
-				}
-
-				res.SetArrayItem(idx, itemRes)
-				continue
-			}
-
 			res.SetArrayItem(idx, getErrResponseItem(c, err, item, responder, &ar))
 			continue
 		}
@@ -189,25 +168,6 @@ func HandlerWithGrouping[T any](
 		id, err := procReq(req)
 		if err != nil {
 			for idx, item := range g.Items {
-				// todo remove after common.ValidationError is removed
-				valErr := common.ValidationError{}
-				if errors.As(err, &valErr) {
-					itemRes := ar.NewObject()
-					itemRes.Set("status", ar.NewNumberInt(http.StatusBadRequest))
-					itemRes.Set("item", item)
-					errVal := common.NewValidationErrorFastJsonValue(&ar, valErr, req)
-					if errVal.Type() == fastjson.TypeString {
-						itemRes.Set("error", errVal)
-					}
-
-					if errVal.Type() == fastjson.TypeObject {
-						itemRes.Set("errors", errVal)
-					}
-
-					res.SetArrayItem(idx, itemRes)
-					continue
-				}
-
 				res.SetArrayItem(idx, getErrResponseItem(c, err, item, responder, &ar))
 			}
 

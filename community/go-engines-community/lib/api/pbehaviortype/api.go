@@ -100,12 +100,6 @@ func (a *api) Create(c *gin.Context) {
 			return
 		}
 
-		var fieldValErr common.ValidationError
-		if errors.As(err, &fieldValErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, fieldValErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -139,12 +133,6 @@ func (a *api) Update(c *gin.Context) {
 		var valErr ValidationError
 		if errors.As(err, &valErr) {
 			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
-
-		var fieldValErr common.ValidationError
-		if errors.As(err, &fieldValErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, fieldValErr.ValidationErrorResponse())
 			return
 		}
 

@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -301,7 +300,10 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return common.NewValidationError("filters."+strconv.Itoa(i), "Filter doesn't exist.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_exist", strconv.Itoa(i), "Filters."+strconv.Itoa(i))},
+					r,
+				)
 			}
 
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
@@ -309,7 +311,10 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r ListReques
 
 		if len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 && len(filter.AlarmPattern) == 0 ||
 			len(filter.WeatherServicePattern) > 0 {
-			return common.NewValidationError("filters."+strconv.Itoa(i), "Filter cannot be applied.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_applicable", strconv.Itoa(i), "Filters."+strconv.Itoa(i))},
+				r,
+			)
 		}
 
 		entityPatternQuery, err := db.EntityPatternToMongoQuery(filter.EntityPattern, "")
@@ -362,7 +367,10 @@ func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListReque
 	var entityPattern pattern.Entity
 	err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
 	if err != nil {
-		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("entity_pattern", "EntityPattern", "EntityPattern")},
+			r,
+		)
 	}
 
 	aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(entityPattern))
@@ -386,7 +394,10 @@ func (q *MongoQueryBuilder) handleEntityPattern(ctx context.Context, r ListReque
 
 	entityPatternQuery, err := db.EntityPatternToMongoQuery(entityPattern, "")
 	if err != nil {
-		return common.NewValidationError("entity_pattern", "EntityPattern is invalid.")
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("entity_pattern", "EntityPattern", "EntityPattern")},
+			r,
+		)
 	}
 
 	if len(entityPatternQuery) > 0 {

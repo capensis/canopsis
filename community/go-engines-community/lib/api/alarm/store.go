@@ -10,7 +10,6 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity/dbquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -26,6 +25,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -775,7 +775,10 @@ func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string, 
 			return nil, false, nil
 		}
 		if errors.Is(err, link.ErrNotMatchedAlarm) {
-			return nil, false, common.NewValidationError("ids", "Alarms aren't matched to rule.")
+			return nil, false, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("rulematch", "ids", "ids")},
+				nil,
+			)
 		}
 		return nil, false, err
 	}

@@ -9,7 +9,6 @@ import (
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
@@ -24,11 +23,12 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/link"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/request"
 	libtemplate "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
+	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -64,7 +64,7 @@ type store struct {
 	entityInfosPropCollection mongo.DbCollection
 	authorProvider            author.Provider
 	transformer               patternfields.Transformer
-	tplValidator              validator.Validator
+	tplValidator              tplvalidator.Validator
 	tplExecutor               libtemplate.Executor
 	tplConfigProvider         config.TemplateConfigProvider
 	externalDataContainer     *externaldata.GetterContainer
@@ -83,7 +83,7 @@ func NewStore(
 	dbClient mongo.DbClient,
 	authorProvider author.Provider,
 	transformer patternfields.Transformer,
-	tplValidator validator.Validator,
+	tplValidator tplvalidator.Validator,
 	tplExecutor libtemplate.Executor,
 	tplConfigProvider config.TemplateConfigProvider,
 	externalDataContainer *externaldata.GetterContainer,
@@ -516,7 +516,10 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return user, nil, nil, common.NewValidationError("testdata.test", "Test doesn't exist.")
+				return user, nil, nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_exist", "Test", "TestData.Test")},
+					r,
+				)
 			}
 
 			return user, nil, nil, err
@@ -552,7 +555,10 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 		}
 
 		if !ok {
-			return user, nil, nil, common.NewValidationError("testdata.user", "User is not accessible.")
+			return user, nil, nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_accessible", "User", "TestData.User")},
+				r,
+			)
 		}
 	}
 
@@ -561,27 +567,54 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 		return user, nil, nil, err
 	}
 
+	if user.Username == "" {
+		return user, nil, nil, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("not_exist", "User", "TestData.User")},
+			r,
+		)
+	}
+
 	switch r.Rule.Type {
 	case link.TypeAlarm:
 		if r.TestData.Alarm == "" {
 			if alarm.ID == "" {
-				return user, nil, nil, common.NewValidationError("testdata.alarm", "Alarm is missing.")
+				return user, nil, nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("required", "Alarm", "TestData.Alarm")},
+					r,
+				)
 			}
 		} else if r.TestData.Alarm != alarm.ID { // keep snapshot from the test
 			alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
 			if err != nil {
 				return user, nil, nil, err
 			}
+
+			if alarm.ID == "" {
+				return user, nil, nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_exist", "Alarm", "TestData.Alarm")},
+					r,
+				)
+			}
 		}
 	case link.TypeEntity:
 		if r.TestData.Entity == "" {
 			if entity.ID == "" {
-				return user, nil, nil, common.NewValidationError("testdata.entity", "Entity is missing.")
+				return user, nil, nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("required", "Entity", "TestData.Entity")},
+					r,
+				)
 			}
 		} else if r.TestData.Entity != entity.ID { // keep snapshot from the test
 			entity, err = s.findEntity(ctx, r.TestData.Entity)
 			if err != nil {
 				return user, nil, nil, err
+			}
+
+			if entity.ID == "" {
+				return user, nil, nil, validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("not_exist", "Entity", "TestData.Entity")},
+					r,
+				)
 			}
 		}
 	}
@@ -623,7 +656,7 @@ func (s *store) findAlarm(ctx context.Context, alarmID string) (link.AlarmWithDa
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return res, common.NewValidationError("testdata.alarm", "Alarm doesn't exist.")
+		return res, nil
 	}
 
 	err = cursor.Decode(&res)
@@ -643,7 +676,7 @@ func (s *store) findEntity(ctx context.Context, entityID string) (link.EntityWit
 	err := s.entityCollection.FindOne(ctx, bson.M{"_id": entityID}).Decode(&res)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return res, common.NewValidationError("testdata.entity", "Entity doesn't exist.")
+			return res, nil
 		}
 
 		return res, fmt.Errorf("cannot fetch entities: %w", err)
@@ -664,7 +697,7 @@ func (s *store) findUser(ctx context.Context, userID string) (link.User, error) 
 
 	defer cursor.Close(ctx)
 	if !cursor.Next(ctx) {
-		return user, common.NewValidationError("testdata.user", "User doesn't exist.")
+		return user, nil
 	}
 
 	err = cursor.Decode(&user)
@@ -773,7 +806,7 @@ func (s *store) validateExdataTpls(
 				alarms[j].ExternalData = make(map[string]any, len(r.Rule.ExternalData))
 			}
 
-			alarms[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, alarms[j], "rule.external_data."+strconv.Itoa(i))
+			alarms[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, alarms[j], i, r)
 			if err != nil {
 				return nil, nil, nil, err
 			}
@@ -784,7 +817,7 @@ func (s *store) validateExdataTpls(
 				entities[j].ExternalData = make(map[string]any, len(r.Rule.ExternalData))
 			}
 
-			entities[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, entities[j], "rule.external_data."+strconv.Itoa(i))
+			entities[j].ExternalData[d.Reference], err = s.processTableExdata(ctx, d, entities[j], i, r)
 			if err != nil {
 				return nil, nil, nil, err
 			}
@@ -798,7 +831,8 @@ func (s *store) processTableExdata(
 	ctx context.Context,
 	d template.TemplateRefParameters,
 	tplData any,
-	field string,
+	idx int,
+	r TemplateRequest,
 ) (any, error) {
 	getter, ok := s.externalDataContainer.Get(d.Type)
 	if !ok {
@@ -838,7 +872,11 @@ func (s *store) processTableExdata(
 		getterTplErr := &externaldata.GetterTplError{}
 		getterErr := &externaldata.GetterError{}
 		if errors.As(err, &getterTplErr) || errors.As(err, &getterErr) {
-			return nil, common.NewValidationError(field, err.Error())
+			idxStr := strconv.Itoa(idx)
+			return nil, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_applicable", idxStr, "Rule.ExternalData."+idxStr)},
+				r,
+			)
 		}
 
 		return nil, err

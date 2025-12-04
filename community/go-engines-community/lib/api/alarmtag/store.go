@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
@@ -16,6 +15,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -258,7 +258,10 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 		case alarmtag.TypeInternal:
 			if len(r.EntityPattern) == 0 && r.CorporateEntityPattern == "" &&
 				len(r.AlarmPattern) == 0 && r.CorporateAlarmPattern == "" {
-				return common.NewValidationError("alarm_pattern", "AlarmPattern or EntityPattern is required.")
+				return validation.NewError(
+					validator.ValidationErrors{validation.NewFieldError("required", "AlarmPattern", "AlarmPattern")},
+					r,
+				)
 			}
 
 			err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &tag)

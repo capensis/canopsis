@@ -1,13 +1,13 @@
 package icon
 
 import (
-	"errors"
-	"fmt"
 	"mime"
 	"mime/multipart"
 	"net/http"
 	"path"
 	"slices"
+	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
@@ -17,6 +17,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 const (
@@ -77,21 +78,16 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 
-	mimeType, valErr := a.validateFile(request.File)
-	if valErr != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+	mimeType, err := a.validateFile(request.File)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	request.MimeType = mimeType
 	res, err := a.store.Create(c, request)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -162,21 +158,16 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 
-	mimeType, valErr := a.validateFile(request.File)
-	if valErr != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+	mimeType, err := a.validateFile(request.File)
+	if err != nil {
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
 	request.MimeType = mimeType
 	res, err := a.store.Update(c, request)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -215,23 +206,16 @@ func (a *api) Patch(c *gin.Context) {
 	}
 
 	if request.File != nil {
-		mimeType, valErr := a.validateFile(request.File)
-		if valErr != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
+		request.MimeType, err = a.validateFile(request.File)
+		if err != nil {
+			a.errorResponder.Respond(c, err)
+
 			return
 		}
-
-		request.MimeType = mimeType
 	}
 
 	res, err := a.store.Patch(c, request)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -277,16 +261,20 @@ func (a *api) Delete(c *gin.Context) {
 	c.Status(http.StatusNoContent)
 }
 
-func (a *api) validateFile(file *multipart.FileHeader) (string, *common.ValidationError) {
+func (a *api) validateFile(file *multipart.FileHeader) (string, error) {
 	if uint64(file.Size) > a.maxSize {
-		err := common.NewValidationError("file", fmt.Sprintf("File size %d exceeds limit %d", file.Size, a.maxSize))
-		return "", &err
+		return "", validation.NewError(
+			validator.ValidationErrors{validation.NewFieldErrorWithParam("filesize", "file", "file", strconv.FormatUint(a.maxSize, 10))},
+			nil,
+		)
 	}
 
 	mimeType := mime.TypeByExtension(path.Ext(file.Filename))
 	if !slices.Contains(a.mimeTypes, mimeType) {
-		err := common.NewValidationError("file", "Invalid mime type: "+mimeType)
-		return "", &err
+		return "", validation.NewError(
+			validator.ValidationErrors{validation.NewFieldErrorWithParam("filetype", "file", "file", strings.Join(a.mimeTypes, " "))},
+			nil,
+		)
 	}
 
 	return mimeType, nil

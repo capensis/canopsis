@@ -94,11 +94,6 @@ func (a *api) List(c *gin.Context) {
 	}
 	aggregationResult, err := a.store.Find(c, r, userID)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -491,11 +486,6 @@ func (a *api) GetLinks(c *gin.Context) {
 	}
 	links, ok, err := a.store.GetLinks(c, c.Param("id"), r.Ids, userID)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -523,12 +513,6 @@ func (a *api) GetDisplayNames(c *gin.Context) {
 
 	aggregationResult, err := a.store.GetDisplayNames(c, r)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

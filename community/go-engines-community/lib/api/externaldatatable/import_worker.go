@@ -14,7 +14,6 @@ import (
 	"time"
 	"unicode/utf8"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/workers"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
@@ -23,6 +22,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
+	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/zerolog"
@@ -127,7 +127,10 @@ func (w *importWorker) CreateImportJob(ctx context.Context, id string, separator
 	err := w.dbCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&externalDataTable)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return job, common.NewValidationError("_id", "ID doesn't exist.")
+			return job, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "_id", "_id")},
+				nil,
+			)
 		}
 
 		return job, err
@@ -543,7 +546,10 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 	}
 
 	if len(columnTags) != len(job.ColumnConfigs) {
-		return false, common.NewValidationError("column_tags", "ColumnTags must contain "+strconv.Itoa(len(job.ColumnConfigs))+" items.")
+		return false, validation.NewError(
+			validator.ValidationErrors{validation.NewFieldErrorWithParam("slicelen", "column_tags", "column_tags", strconv.Itoa(len(job.ColumnConfigs)))},
+			nil,
+		)
 	}
 
 	for i, columnTag := range columnTags {
@@ -1324,10 +1330,16 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	columns, err := r.Read()
 	if err != nil {
 		if errors.Is(err, io.EOF) {
-			return common.NewValidationError("file", "File is empty.")
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "file", "file")},
+				nil,
+			)
 		}
 
-		return common.NewValidationError("file", "File is invalid.")
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("invalid", "file", "file")},
+			nil,
+		)
 	}
 
 	invalidCols := make([]string, 0)
@@ -1340,7 +1352,10 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	if len(invalidCols) > 0 {
-		return common.NewValidationError("file", "Fields ["+strings.Join(invalidCols, ",")+"] in file are invalid.")
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " "))},
+			nil,
+		)
 	}
 
 	missingCols := make([]string, 0)
@@ -1353,7 +1368,10 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	if len(missingCols) > 0 {
-		return common.NewValidationError("file", "Fields ["+strings.Join(missingCols, ",")+"] in file are missing.")
+		return validation.NewError(
+			validator.ValidationErrors{validation.NewFieldErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " "))},
+			nil,
+		)
 	}
 
 	_, err = f.Seek(0, io.SeekStart)

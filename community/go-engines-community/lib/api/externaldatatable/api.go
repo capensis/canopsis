@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -19,6 +20,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -86,13 +88,6 @@ func (a *api) Create(c *gin.Context) {
 
 	res, err := a.store.Create(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -157,13 +152,6 @@ func (a *api) Update(c *gin.Context) {
 
 	res, err := a.store.Update(c, r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -215,43 +203,43 @@ func (a *api) Import(c *gin.Context) {
 	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationError("file", "File is missing.").ValidationErrorResponse())
-
-			return
+			err = validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("required", "file", "file")},
+				nil,
+			)
 		}
 
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "request has invalid structure"})
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	defer f.Close()
-	valErrors := make(map[string]string)
+	valErrs := make(validator.ValidationErrors, 0)
 	if a.maxFileSize > 0 && uint64(fh.Size) > a.maxFileSize {
-		valErrors["file"] = fmt.Sprintf("File size %d exceeds limit %d", fh.Size, a.maxFileSize)
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("filesize", "file", "file", strconv.FormatUint(a.maxFileSize, 10)))
 	}
 
 	separatorStr := c.Request.FormValue("separator")
 	separator, ok := a.exportSeparators[separatorStr]
 	if separatorStr != "" && !ok {
-		valErrors["separator"] = "Separator must be one of [comma semicolon tab space] or empty."
+		valErrParams := make([]string, 0, len(a.exportSeparators))
+		for k := range a.exportSeparators {
+			valErrParams = append(valErrParams, k)
+		}
+
+		slices.Sort(valErrParams)
+		valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneoforempty", "separator", "separator", strings.Join(valErrParams, " ")))
 	}
 
-	if len(valErrors) > 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrors(valErrors).ValidationErrorResponse())
+	if len(valErrs) > 0 {
+		a.errorResponder.Respond(c, validation.NewError(valErrs, nil))
 
 		return
 	}
 
 	job, err := a.importWorker.CreateImportJob(c, id, separator, f)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -274,13 +262,6 @@ func (a *api) Preview(c *gin.Context) {
 
 	job, err := a.importWorker.CreatePreviewJob(c, id, r)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -338,13 +319,6 @@ func (a *api) ImportData(c *gin.Context) {
 
 	aggregationResult, err := a.store.FindPreviewData(c, job, r)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -366,13 +340,6 @@ func (a *api) ImportComplete(c *gin.Context) {
 
 	ok, err := a.importWorker.CompleteJob(c, c.Param("id"), r.ColumnTags)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -420,26 +387,22 @@ func (a *api) Export(c *gin.Context) {
 			hasCol[column] = true
 		}
 
-		valErrMsgs := make(map[string]string)
+		valErrs := make(validator.ValidationErrors, 0)
+		valErrParam := strings.Join(columns, " ")
 		for i, v := range r.SearchBy {
 			if !hasCol[v] {
-				valErrMsgs["search_by."+strconv.Itoa(i)] = "SearchBy"
+				valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneof", strconv.Itoa(i), "SearchBy."+strconv.Itoa(i), valErrParam))
 			}
 		}
 
 		for i, f := range r.Fields {
 			if !hasCol[f.Name] {
-				valErrMsgs["fields."+strconv.Itoa(i)+".name"] = "Name"
+				valErrs = append(valErrs, validation.NewFieldErrorWithParam("oneof", "Name", "Fields."+strconv.Itoa(i)+".Name", valErrParam))
 			}
 		}
 
-		if len(valErrMsgs) > 0 {
-			errMsg := " must be one of [" + strings.Join(columns, " ") + "]."
-			for k := range valErrMsgs {
-				valErrMsgs[k] += errMsg
-			}
-
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewValidationErrors(valErrMsgs).ValidationErrorResponse())
+		if len(valErrs) > 0 {
+			a.errorResponder.Respond(c, validation.NewError(valErrs, r))
 
 			return
 		}
@@ -539,13 +502,6 @@ func (a *api) CreateData(c *gin.Context) {
 
 	res, err := a.store.CreateData(c, c.Param("table"), r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -584,13 +540,6 @@ func (a *api) ListData(c *gin.Context) {
 
 	aggregationResult, err := a.store.FindData(c, table.getDBTableName(), table.Type, table.ColumnConfigs, r)
 	if err != nil {
-		valErr := common.ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, valErr.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -627,13 +576,6 @@ func (a *api) UpdateData(c *gin.Context) {
 
 	res, err := a.store.UpdateData(c, c.Param("table"), c.Param("id"), r)
 	if err != nil {
-		validationError := common.ValidationError{}
-		if errors.As(err, &validationError) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, validationError.ValidationErrorResponse())
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
