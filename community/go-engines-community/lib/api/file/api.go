@@ -5,13 +5,13 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -40,12 +40,13 @@ type api struct {
 func (a *api) Create(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: "Files are missing."})
+		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
 		return
 	}
 
 	request := CreateRequest{}
-	if err := validation.BindQuery(c, &request); err != nil {
+	if err = validation.BindQuery(c, &request); err != nil {
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -70,7 +71,8 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if m == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -90,7 +92,8 @@ func (a *api) Get(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
@@ -105,9 +108,11 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) List(c *gin.Context) {
 	ids := c.QueryArray("id")
 	if len(ids) == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{
-			"id": "ID is missing.",
-		}})
+		err := validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("required", "id", "id")},
+			nil,
+		)
+		a.errorResponder.Respond(c, err)
 
 		return
 	}
@@ -120,7 +125,8 @@ func (a *api) List(c *gin.Context) {
 	}
 
 	if len(res) == 0 {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -141,7 +147,8 @@ func (a *api) List(c *gin.Context) {
 			}
 
 			if !ok {
-				c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+				a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 				return
 			}
 
@@ -161,7 +168,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !ok {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 

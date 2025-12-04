@@ -10,8 +10,8 @@ import (
 
 	libamqp "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/amqp"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"github.com/gin-gonic/gin"
@@ -50,7 +50,8 @@ func (a *api) Send(c *gin.Context) {
 
 	if mediatype, _, err := mime.ParseMediaType(c.GetHeader("content-type")); err == nil && mediatype == binding.MIMEPOSTForm {
 		if err = c.Request.ParseForm(); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
 			return
 		}
 
@@ -65,20 +66,23 @@ func (a *api) Send(c *gin.Context) {
 
 		raw, err = json.Marshal(formData)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			a.errorResponder.Respond(c, err)
+
 			return
 		}
 	} else {
 		raw, err = c.GetRawData()
 		if err != nil {
-			c.JSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			a.errorResponder.Respond(c, err)
+
 			return
 		}
 	}
 
 	jsonValue, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
 		return
 	}
 	response := fastjson.MustParse(`{}`)
@@ -122,7 +126,9 @@ func (a *api) Send(c *gin.Context) {
 	case fastjson.TypeArray:
 		values, err = jsonValue.Array()
 		if err != nil {
-			break
+			a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
+			return
 		}
 
 		var sentIdx, failedIdx int
@@ -139,11 +145,8 @@ func (a *api) Send(c *gin.Context) {
 			sentIdx++
 		}
 	default:
-		err = errors.New("the body should be an object or an array")
-	}
+		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
 
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
 		return
 	}
 

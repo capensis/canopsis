@@ -12,7 +12,6 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -129,7 +128,7 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if res.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -158,7 +157,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if res.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -176,19 +175,13 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, c.Param("table"), userID)
 	if err != nil {
-		if errors.Is(err, ErrConfigNotDeletable) || errors.Is(err, ErrLinkedNotDeletable) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -268,7 +261,7 @@ func (a *api) Preview(c *gin.Context) {
 	}
 
 	if job.ID == "" {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -287,7 +280,7 @@ func (a *api) ImportStatus(c *gin.Context) {
 	}
 
 	if job.ID == "" {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -312,7 +305,7 @@ func (a *api) ImportData(c *gin.Context) {
 	}
 
 	if job.ID == "" || job.Status != ImportStatusSucceeded && job.Status != ImportStatusPreviewSucceeded && job.Status != ImportStatusPreviewFailed {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -346,7 +339,7 @@ func (a *api) ImportComplete(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -374,7 +367,7 @@ func (a *api) Export(c *gin.Context) {
 	}
 
 	if t.ID == "" {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -462,7 +455,8 @@ func (a *api) ExportStatus(c *gin.Context) {
 	}
 
 	if t == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -482,7 +476,7 @@ func (a *api) ExportDownload(c *gin.Context) {
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -508,7 +502,7 @@ func (a *api) CreateData(c *gin.Context) {
 	}
 
 	if len(res) == 0 {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -533,7 +527,7 @@ func (a *api) ListData(c *gin.Context) {
 	}
 
 	if table.ID == "" {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -558,7 +552,7 @@ func (a *api) GetData(c *gin.Context) {
 	}
 
 	if len(res) == 0 {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -582,7 +576,7 @@ func (a *api) UpdateData(c *gin.Context) {
 	}
 
 	if len(res) == 0 {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -599,7 +593,7 @@ func (a *api) DeleteData(c *gin.Context) {
 	}
 
 	if table.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -612,7 +606,7 @@ func (a *api) DeleteData(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -631,7 +625,7 @@ func (a *api) BulkDeleteData(c *gin.Context) {
 	}
 
 	if table.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}
@@ -659,7 +653,7 @@ func (a *api) GetSchema(c *gin.Context) {
 	}
 
 	if t.ID == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}

@@ -124,7 +124,7 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"not_exist": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} doesn't exist",
-				types.LocaleFr: "{0} n’existe pas",
+				types.LocaleFr: "{0} n'existe pas",
 			},
 		},
 		"oneoforempty": {
@@ -142,13 +142,13 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"alarm_pattern": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid alarm pattern",
-				types.LocaleFr: "{0} doit être un modèle d’alarme valide",
+				types.LocaleFr: "{0} doit être un modèle d'alarme valide",
 			},
 		},
 		"entity_pattern": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid entity pattern",
-				types.LocaleFr: "{0} doit être un modèle d’entité valide",
+				types.LocaleFr: "{0} doit être un modèle d'entité valide",
 			},
 		},
 		"pbehavior_pattern": {
@@ -160,7 +160,7 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"event_pattern": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid event pattern",
-				types.LocaleFr: "{0} doit être un modèle d’événement valide",
+				types.LocaleFr: "{0} doit être un modèle d'événement valide",
 			},
 		},
 		"weather_service_pattern": {
@@ -184,13 +184,13 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"entity_not_exist": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} has no associated entity",
-				types.LocaleFr: "{0} n’a aucune entité associée",
+				types.LocaleFr: "{0} n'a aucune entité associée",
 			},
 		},
 		"alarm_not_exist": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} has no associated alarm",
-				types.LocaleFr: "{0} n’a aucune alarme associée",
+				types.LocaleFr: "{0} n'a aucune alarme associée",
 			},
 		},
 		"not_json": {
@@ -209,6 +209,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid timezone",
 				types.LocaleFr: "{0} doit être un fuseau horaire valide",
+			},
+		},
+		"time_format": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} must be a valid time format",
+				types.LocaleFr: "{0} doit être dans un format d'heure valide",
 			},
 		},
 		"rrule": {
@@ -286,7 +292,7 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"not_approver": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a valid profile with approval permissions",
-				types.LocaleFr: "{0} doit être un profil valide disposant des permissions d’approbation",
+				types.LocaleFr: "{0} doit être un profil valide disposant des permissions d'approbation",
 			},
 		},
 		"invalid": {
@@ -304,31 +310,13 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"not_applicable": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} contains a value that is not applicable",
-				types.LocaleFr: "{0} contient une valeur qui n’est pas applicable",
+				types.LocaleFr: "{0} contient une valeur qui n'est pas applicable",
 			},
 		},
 		"not_accessible": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} contains a value that is not accessible",
-				types.LocaleFr: "{0} contient une valeur qui n’est pas accessible",
-			},
-		},
-		"assign_role": {
-			translations: map[string]string{
-				types.LocaleEn: "{0} contains a role that the current user is not permitted to assign",
-				types.LocaleFr: "{0} contient un rôle que l'utilisateur actuel n'est pas autorisé à attribuer",
-			},
-		},
-		"access_user": {
-			translations: map[string]string{
-				types.LocaleEn: "{0} contains a user that the current user is not permitted to edit",
-				types.LocaleFr: "{0} contient un utilisateur que l'utilisateur actuel n'est pas autorisé à modifier",
-			},
-		},
-		"access_role": {
-			translations: map[string]string{
-				types.LocaleEn: "{0} contains a role that the current user is not permitted to edit",
-				types.LocaleFr: "{0} contient un rôle que l’utilisateur actuel n’est pas autorisé à modifier",
+				types.LocaleFr: "{0} contient une valeur qui n'est pas accessible",
 			},
 		},
 		"filesize": {
@@ -340,25 +328,19 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"filetype": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be a file of one of the following types [{1}]",
-				types.LocaleFr: "{0} doit être un fichier d’un des types suivants [{1}]",
+				types.LocaleFr: "{0} doit être un fichier d'un des types suivants [{1}]",
 			},
 		},
 		"type": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must be of a valid type",
-				types.LocaleFr: "{0} doit être d’un type valide",
+				types.LocaleFr: "{0} doit être d'un type valide",
 			},
 		},
 		"rulematch": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must match the rule",
 				types.LocaleFr: "{0} doit correspondre à la règle",
-			},
-		},
-		"linked": {
-			translations: map[string]string{
-				types.LocaleEn: "{0} must not be linked to another object",
-				types.LocaleFr: "{0} ne doit pas être lié à un autre objet",
 			},
 		},
 		"allchildren": {
@@ -370,7 +352,7 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 		"disabled": {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must not contain a disabled object",
-				types.LocaleFr: "{0} ne doit pas contenir d’objet désactivé",
+				types.LocaleFr: "{0} ne doit pas contenir d'objet désactivé",
 			},
 		},
 		"unchangeable": {
@@ -401,6 +383,12 @@ func getTagTranslations(invalidIDChars string) map[string]tagTransConfig {
 			translations: map[string]string{
 				types.LocaleEn: "{0} must contain columns [{1}]",
 				types.LocaleFr: "{0} doit contenir toutes les colonnes [{1}]",
+			},
+		},
+		"invalidpayload": {
+			translations: map[string]string{
+				types.LocaleEn: "{0} contains a payload that cannot be executed",
+				types.LocaleFr: "{0} contient une charge utile qui ne peut pas être exécutée",
 			},
 		},
 	}

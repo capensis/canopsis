@@ -4,13 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
-	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"github.com/gin-gonic/gin"
 	"github.com/valyala/fastjson"
@@ -60,7 +58,6 @@ func SetAuthor(errorResponder httperror.Responder) func(c *gin.Context) {
 func PreProcessBulk(configProvider config.ApiConfigProvider, errorResponder httperror.Responder, addAuthor bool) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		var ar fastjson.Arena
-
 		raw, err := c.GetRawData()
 		if err != nil {
 			errorResponder.Respond(c, err)
@@ -75,19 +72,22 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, errorResponder http
 
 		jsonValue, err := fastjson.ParseBytes(raw)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
 			return
 		}
 
 		rawObjects, err := jsonValue.Array()
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+			errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
 			return
 		}
 
 		bulkMaxSize := configProvider.Get().BulkMaxSize
 		if len(rawObjects) > bulkMaxSize {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(fmt.Errorf("number of elements shouldn't be greater than %d", bulkMaxSize)))
+			errorResponder.Respond(c, httperror.ErrRequestEntityTooLarge)
+
 			return
 		}
 

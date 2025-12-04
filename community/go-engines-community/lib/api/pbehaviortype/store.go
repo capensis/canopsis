@@ -6,6 +6,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	libpriority "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/priority"
@@ -276,7 +277,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 			}
 
 			if result.MatchedCount == 0 {
-				return ErrDefaultType
+				return httperror.NewForbiddenError("The default type cannot be modified.")
 			}
 		} else {
 			err = libpriority.UpdateFollowing(ctx, s.dbCollection, doc.ID, doc.Priority)
@@ -307,29 +308,35 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
+
 	if isDefault {
-		return false, ErrDefaultType
+		return false, httperror.NewForbiddenError("The default type cannot be deleted.")
 	}
+
 	isLinkedToPbh, err := s.isLinkedToPbehavior(ctx, id)
 	if err != nil {
 		return false, err
 	}
+
 	if isLinkedToPbh {
-		return false, ErrLinkedTypeToPbehavior
+		return false, httperror.NewConflictError("The type cannot be deleted because it is referenced by a pbehavior.")
 	}
+
 	isLinkedToException, err := s.isLinkedToException(ctx, id)
 	if err != nil {
 		return false, err
 	}
+
 	if isLinkedToException {
-		return false, ErrLinkedTypeToException
+		return false, httperror.NewConflictError("The type cannot be deleted because it is referenced by an exception.")
 	}
+
 	isLinkedToAction, err := s.isLinkedToAction(ctx, id)
 	if err != nil {
 		return false, err
 	}
 	if isLinkedToAction {
-		return false, ErrLinkedToActionType
+		return false, httperror.NewConflictError("The type cannot be deleted because it is referenced by an action scenario.")
 	}
 
 	var deleted int64

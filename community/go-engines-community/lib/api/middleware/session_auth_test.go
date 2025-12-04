@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -137,6 +138,9 @@ func TestSessionAuth_GivenInvalidUserSession_ShouldReturnUnauthorizedError(t *te
 		Collection(gomock.Any()).
 		Return(mockDbCollection)
 	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Eq(httperror.ErrUnauthorized)).Do(func(c *gin.Context, err error) {
+		c.AbortWithStatus(expectedCode)
+	})
 	router := gin.New()
 	router.GET(
 		okURL,
