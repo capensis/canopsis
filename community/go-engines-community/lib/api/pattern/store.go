@@ -96,6 +96,7 @@ func NewStore(
 			mongo.LinkRuleMongoCollection,
 			mongo.AlarmTagCollection,
 			mongo.StateSettingsMongoCollection,
+			mongo.ScenarioCollection,
 		},
 
 		pbhComputeChan:           pbhComputeChan,
@@ -251,14 +252,12 @@ func (s *store) Update(ctx context.Context, request EditRequest) (*Response, err
 			return err
 		}
 
-		removedAliases := s.getRemovedAliases(prevPattern.Aliases, model.Aliases)
-
 		response, err = s.GetByID(ctx, model.ID, model.Author)
 		if err != nil || response == nil {
 			return err
 		}
 
-		err = s.updateLinkedModels(ctx, *response, request.Author, removedAliases)
+		err = s.updateLinkedModels(ctx, *response, request.Author, prevPattern.Aliases, model.Aliases)
 		if err != nil {
 			return err
 		}
@@ -332,162 +331,211 @@ func (s *store) Delete(ctx context.Context, pattern Response, userID string) (bo
 	return deleted > 0, nil
 }
 
-func (s *store) getRemovedAliases(prevAliases, curAliases []string) []string {
-	if len(prevAliases) == 0 {
-		return []string{}
+func (s *store) getNewAliases(prev, cur []string) []string {
+	if len(prev) == 0 || len(cur) == 0 {
+		return cur
 	}
 
-	curAliasesLen := len(curAliases)
-	if curAliasesLen == 0 {
-		return prevAliases
+	prevMap := make(map[string]bool, len(prev))
+	for _, v := range prev {
+		prevMap[v] = true
 	}
 
-	curAliasesMap := make(map[string]bool, curAliasesLen)
-	for _, alias := range curAliases {
-		curAliasesMap[alias] = true
-	}
-
-	removedAliases := make([]string, 0)
-	for _, alias := range prevAliases {
-		if !curAliasesMap[alias] {
-			removedAliases = append(removedAliases, alias)
+	added := make([]string, 0)
+	for _, v := range cur {
+		if !prevMap[v] {
+			added = append(added, v)
 		}
 	}
 
-	return removedAliases
+	return added
 }
 
-func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string, removedAliases []string) error {
+func (s *store) updateLinkedModels(ctx context.Context, pattern Response, author string, prevAliases, newAliases []string) error {
 	if !pattern.IsCorporate {
 		return nil
 	}
 
-	var filter bson.M
 	switch pattern.Type {
 	case savedpattern.TypeAlarm:
-		filter = bson.M{"corporate_alarm_pattern": pattern.ID}
+		return s.updateLinkedModelsOnAlarmUpdate(ctx, pattern, author)
 	case savedpattern.TypeEntity:
-		filter = bson.M{"corporate_entity_pattern": pattern.ID}
+		return s.updateLinkedModelsOnEntityUpdate(ctx, pattern, author, prevAliases, newAliases)
 	case savedpattern.TypePbehavior:
-		filter = bson.M{"corporate_pbehavior_pattern": pattern.ID}
+		return s.updateLinkedModelsOnPbehaviorUpdate(ctx, pattern, author)
 	case savedpattern.TypeWeatherService:
-		filter = bson.M{"corporate_weather_service_pattern": pattern.ID}
+		return s.updateLinkedModelsOnWeatherServiceUpdate(ctx, pattern, author)
 	default:
 		return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
 	}
+}
 
+func (s *store) updateLinkedModelsOnEntityUpdate(ctx context.Context, pattern Response, author string, prevAliases, newAliases []string) error {
+	addedAliases := s.getNewAliases(prevAliases, newAliases)
 	for _, collection := range s.linkedCollections {
-		set := bson.M{
-			"updated": datetime.NewCpsTime(),
-			"author":  author,
-		}
+		switch collection {
+		case mongo.ScenarioCollection:
+			filter := bson.M{"actions.corporate_entity_pattern": pattern.ID}
+			set := bson.M{
+				"actions": bson.M{"$map": bson.M{
+					"input": "$actions",
+					"in": bson.M{"$cond": bson.M{
+						"if": bson.M{"$eq": bson.A{"$$this.corporate_entity_pattern", pattern.ID}},
+						"then": bson.M{"$mergeObjects": bson.A{
+							"$$this",
+							bson.M{
+								"entity_pattern": pattern.EntityPattern.RemoveFields(
+									common.GetForbiddenFieldsInEntityPattern(collection),
+								),
+								"corporate_entity_pattern_title": pattern.Title,
+							},
+						}},
+						"else": "$$this",
+					}},
+				}},
+				"updated": datetime.NewCpsTime(),
+				"author":  author,
+			}
+			// cannot clean removed aliases because they can be used in another entity pattern from the same document
+			if len(addedAliases) > 0 {
+				set["aliases"] = bson.M{"$setUnion": bson.A{
+					bson.M{"$ifNull": bson.A{"$aliases", bson.A{}}},
+					addedAliases,
+				}}
+			}
 
-		switch pattern.Type {
-		case savedpattern.TypeAlarm:
-			set["alarm_pattern"] = pattern.AlarmPattern.RemoveFields(
-				common.GetForbiddenFieldsInAlarmPattern(collection),
-				common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
-			)
-			set["corporate_alarm_pattern_title"] = pattern.Title
-		case savedpattern.TypeEntity:
-			set["entity_pattern"] = pattern.EntityPattern.RemoveFields(
-				common.GetForbiddenFieldsInEntityPattern(collection),
-			)
-			set["corporate_entity_pattern_title"] = pattern.Title
-		case savedpattern.TypePbehavior:
-			set["pbehavior_pattern"] = pattern.PbehaviorPattern
-			set["corporate_pbehavior_pattern_title"] = pattern.Title
-		case savedpattern.TypeWeatherService:
-			set["weather_service_pattern"] = pattern.WeatherServicePattern
-			set["corporate_weather_service_pattern_title"] = pattern.Title
+			_, err := s.client.Collection(collection).UpdateMany(ctx, filter, []bson.M{{"$set": set}})
+			if err != nil {
+				return fmt.Errorf("cannot update entity pattern: %w", err)
+			}
+		case mongo.MetaAlarmRulesMongoCollection,
+			mongo.StateSettingsMongoCollection:
+			var fields []string
+			if collection == mongo.MetaAlarmRulesMongoCollection {
+				fields = []string{"entity_pattern", "total_entity_pattern"}
+			} else {
+				fields = []string{"entity_pattern", "inherited_entity_pattern"}
+			}
+
+			for _, f := range fields {
+				filter := bson.M{"corporate_" + f: pattern.ID}
+				set := bson.M{
+					f: pattern.EntityPattern.RemoveFields(
+						common.GetForbiddenFieldsInEntityPattern(collection),
+					),
+					"corporate_" + f + "_title": pattern.Title,
+					"updated":                   datetime.NewCpsTime(),
+					"author":                    author,
+				}
+				// cannot clean removed aliases because they can be used in another entity pattern from the same document
+				if len(addedAliases) > 0 {
+					set["aliases"] = bson.M{"$setUnion": bson.A{
+						bson.M{"$ifNull": bson.A{"$aliases", bson.A{}}},
+						addedAliases,
+					}}
+				}
+
+				_, err := s.client.Collection(collection).UpdateMany(ctx, filter, []bson.M{{"$set": set}})
+				if err != nil {
+					return fmt.Errorf("cannot update entity pattern: %w", err)
+				}
+			}
 		default:
-			return fmt.Errorf("unknown pattern type id=%s: %q", pattern.ID, pattern.Type)
-		}
-
-		update := bson.M{"$set": set}
-
-		if len(removedAliases) > 0 {
-			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
-		}
-
-		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
-		if err != nil {
-			return err
+			filter := bson.M{"corporate_entity_pattern": pattern.ID}
+			update := bson.M{"$set": bson.M{
+				"entity_pattern": pattern.EntityPattern.RemoveFields(
+					common.GetForbiddenFieldsInEntityPattern(collection),
+				),
+				"corporate_entity_pattern_title": pattern.Title,
+				"aliases":                        newAliases, // can set newAliases because a document contains only one entity pattern
+				"updated":                        datetime.NewCpsTime(),
+				"author":                         author,
+			}}
+			_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
+			if err != nil {
+				return fmt.Errorf("cannot update entity pattern: %w", err)
+			}
 		}
 	}
 
-	switch pattern.Type {
-	case savedpattern.TypeEntity:
-		update := bson.M{}
-		if len(removedAliases) > 0 {
-			update["$pull"] = bson.M{"aliases": bson.M{"$in": removedAliases}}
-		}
+	return nil
+}
 
-		metaAlarmRulesCollection := mongo.MetaAlarmRulesMongoCollection
-		update["$set"] = bson.M{
-			"total_entity_pattern": pattern.EntityPattern.RemoveFields(
-				common.GetForbiddenFieldsInEntityPattern(metaAlarmRulesCollection),
-			),
-			"corporate_total_entity_pattern_title": pattern.Title,
-			"updated":                              datetime.NewCpsTime(),
-			"author":                               author,
-		}
-
-		_, err := s.client.Collection(metaAlarmRulesCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, update)
-		if err != nil {
-			return err
-		}
-
-		scenarioCollection := mongo.ScenarioCollection
-		update["$set"] = bson.M{
-			"actions.$[action].entity_pattern": pattern.EntityPattern.RemoveFields(
-				common.GetForbiddenFieldsInEntityPattern(scenarioCollection),
-			),
-			"actions.$[action].corporate_entity_pattern_title": pattern.Title,
-			"updated": datetime.NewCpsTime(),
-			"author":  author,
-		}
-
-		_, err = s.client.Collection(scenarioCollection).UpdateMany(ctx,
-			bson.M{"actions.corporate_entity_pattern": pattern.ID},
-			update,
-			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
-		)
-		if err != nil {
-			return err
-		}
-
-		stateSettingRulesCollection := mongo.StateSettingsMongoCollection
-		update["$set"] = bson.M{
-			"inherited_entity_pattern": pattern.EntityPattern.RemoveFields(
-				common.GetForbiddenFieldsInEntityPattern(stateSettingRulesCollection),
-			),
-			"corporate_inherited_entity_pattern_title": pattern.Title,
-			"updated": datetime.NewCpsTime(),
-			"author":  author,
-		}
-
-		_, err = s.client.Collection(stateSettingRulesCollection).UpdateMany(ctx, bson.M{"corporate_inherited_entity_pattern": pattern.ID}, update)
-		if err != nil {
-			return err
-		}
-	case savedpattern.TypeAlarm:
-		scenarioCollection := mongo.ScenarioCollection
-		_, err := s.client.Collection(scenarioCollection).UpdateMany(ctx,
-			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
-			bson.M{"$set": bson.M{
+func (s *store) updateLinkedModelsOnAlarmUpdate(ctx context.Context, pattern Response, author string) error {
+	for _, collection := range s.linkedCollections {
+		var filter, update bson.M
+		var opts *options.UpdateManyOptionsBuilder
+		switch collection {
+		case mongo.ScenarioCollection:
+			filter = bson.M{
+				"actions.corporate_alarm_pattern": pattern.ID,
+			}
+			update = bson.M{"$set": bson.M{
 				"actions.$[action].alarm_pattern": pattern.AlarmPattern.RemoveFields(
-					common.GetForbiddenFieldsInAlarmPattern(scenarioCollection),
-					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(scenarioCollection),
+					common.GetForbiddenFieldsInAlarmPattern(collection),
+					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
 				),
 				"actions.$[action].corporate_alarm_pattern_title": pattern.Title,
 				"updated": datetime.NewCpsTime(),
 				"author":  author,
-			}},
-			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_alarm_pattern": pattern.ID}}),
-		)
+			}}
+			opts = options.UpdateMany().SetArrayFilters([]any{bson.M{
+				"action.corporate_alarm_pattern": pattern.ID,
+			}})
+		default:
+			filter = bson.M{
+				"corporate_alarm_pattern": pattern.ID,
+			}
+			update = bson.M{"$set": bson.M{
+				"alarm_pattern": pattern.AlarmPattern.RemoveFields(
+					common.GetForbiddenFieldsInAlarmPattern(collection),
+					common.GetOnlyAbsoluteTimeCondFieldsInAlarmPattern(collection),
+				),
+				"corporate_alarm_pattern_title": pattern.Title,
+				"updated":                       datetime.NewCpsTime(),
+				"author":                        author,
+			}}
+		}
+
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update, opts)
 		if err != nil {
-			return err
+			return fmt.Errorf("cannot update alarm pattern: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *store) updateLinkedModelsOnPbehaviorUpdate(ctx context.Context, pattern Response, author string) error {
+	filter := bson.M{"corporate_pbehavior_pattern": pattern.ID}
+	update := bson.M{"$set": bson.M{
+		"pbehavior_pattern":                 pattern.PbehaviorPattern,
+		"corporate_pbehavior_pattern_title": pattern.Title,
+		"updated":                           datetime.NewCpsTime(),
+		"author":                            author,
+	}}
+	for _, collection := range s.linkedCollections {
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
+		if err != nil {
+			return fmt.Errorf("cannot update pbehavior pattern: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (s *store) updateLinkedModelsOnWeatherServiceUpdate(ctx context.Context, pattern Response, author string) error {
+	filter := bson.M{"corporate_weather_service_pattern": pattern.ID}
+	update := bson.M{"$set": bson.M{
+		"weather_service_pattern":                 pattern.WeatherServicePattern,
+		"corporate_weather_service_pattern_title": pattern.Title,
+		"updated": datetime.NewCpsTime(),
+		"author":  author,
+	}}
+	for _, collection := range s.linkedCollections {
+		_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
+		if err != nil {
+			return fmt.Errorf("cannot update weather service pattern: %w", err)
 		}
 	}
 
@@ -499,100 +547,83 @@ func (s *store) cleanLinkedModels(ctx context.Context, pattern Response, author 
 		return nil
 	}
 
-	f := ""
+	field := ""
 	switch pattern.Type {
 	case savedpattern.TypeAlarm:
-		f = "corporate_alarm_pattern"
+		field = "corporate_alarm_pattern"
 	case savedpattern.TypeEntity:
-		f = "corporate_entity_pattern"
+		field = "corporate_entity_pattern"
 	case savedpattern.TypePbehavior:
-		f = "corporate_pbehavior_pattern"
+		field = "corporate_pbehavior_pattern"
 	case savedpattern.TypeWeatherService:
-		f = "corporate_weather_service_pattern"
+		field = "corporate_weather_service_pattern"
 	default:
 		return fmt.Errorf("unknown pattern type for deleted pattern id=%s: %q", pattern.ID, pattern.Type)
 	}
 
 	for _, collection := range s.linkedCollections {
-		_, err := s.client.Collection(collection).UpdateMany(ctx, bson.M{f: pattern.ID}, bson.M{
-			"$set": bson.M{
-				"updated": datetime.NewCpsTime(),
-				"author":  author,
-			},
-			"$unset": bson.M{
-				f:            "",
-				f + "_title": "",
-			},
-		})
-		if err != nil {
-			return err
-		}
-	}
-
-	switch pattern.Type {
-	case savedpattern.TypeEntity:
-		_, err := s.client.Collection(mongo.MetaAlarmRulesMongoCollection).UpdateMany(ctx, bson.M{"corporate_total_entity_pattern": pattern.ID}, bson.M{
-			"$set": bson.M{
-				"updated": datetime.NewCpsTime(),
-				"author":  author,
-			},
-			"$unset": bson.M{
-				"corporate_total_entity_pattern":       "",
-				"corporate_total_entity_pattern_title": "",
-			},
-		})
-		if err != nil {
-			return err
-		}
-
-		_, err = s.client.Collection(mongo.ScenarioCollection).UpdateMany(ctx,
-			bson.M{"actions.corporate_entity_pattern": pattern.ID},
-			bson.M{
+		switch collection {
+		case mongo.ScenarioCollection:
+			filter := bson.M{"actions." + field: pattern.ID}
+			update := bson.M{
 				"$set": bson.M{
 					"updated": datetime.NewCpsTime(),
 					"author":  author,
 				},
 				"$unset": bson.M{
-					"actions.$[action].corporate_entity_pattern":       "",
-					"actions.$[action].corporate_entity_pattern_title": "",
+					"actions.$[action]." + field:            "",
+					"actions.$[action]." + field + "_title": "",
 				},
-			},
-			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_entity_pattern": pattern.ID}}),
-		)
-		if err != nil {
-			return err
-		}
+			}
+			opts := options.UpdateMany().SetArrayFilters([]any{bson.M{"action." + field: pattern.ID}})
+			_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update, opts)
+			if err != nil {
+				return fmt.Errorf("cannot clean linked models: %w", err)
+			}
+		case mongo.MetaAlarmRulesMongoCollection,
+			mongo.StateSettingsMongoCollection:
+			fields := []string{field}
+			if pattern.Type == savedpattern.TypeEntity {
+				if collection == mongo.MetaAlarmRulesMongoCollection {
+					fields = append(fields, "corporate_total_entity_pattern")
+				} else {
+					fields = append(fields, "corporate_inherited_entity_pattern")
+				}
+			}
 
-		_, err = s.client.Collection(mongo.StateSettingsMongoCollection).UpdateMany(ctx, bson.M{"corporate_inherited_entity_pattern": pattern.ID}, bson.M{
-			"$set": bson.M{
-				"updated": datetime.NewCpsTime(),
-				"author":  author,
-			},
-			"$unset": bson.M{
-				"corporate_inherited_entity_pattern":       "",
-				"corporate_inherited_entity_pattern_title": "",
-			},
-		})
-		if err != nil {
-			return err
-		}
-	case savedpattern.TypeAlarm:
-		_, err := s.client.Collection(mongo.ScenarioCollection).UpdateMany(ctx,
-			bson.M{"actions.corporate_alarm_pattern": pattern.ID},
-			bson.M{
+			for _, field := range fields {
+				filter := bson.M{field: pattern.ID}
+				update := bson.M{
+					"$set": bson.M{
+						"updated": datetime.NewCpsTime(),
+						"author":  author,
+					},
+					"$unset": bson.M{
+						field:            "",
+						field + "_title": "",
+					},
+				}
+				_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
+				if err != nil {
+					return fmt.Errorf("cannot clean linked models: %w", err)
+				}
+			}
+		default:
+			filter := bson.M{field: pattern.ID}
+			update := bson.M{
 				"$set": bson.M{
 					"updated": datetime.NewCpsTime(),
 					"author":  author,
 				},
 				"$unset": bson.M{
-					"actions.$[action].corporate_alarm_pattern":       "",
-					"actions.$[action].corporate_alarm_pattern_title": "",
+					field:            "",
+					field + "_title": "",
 				},
-			},
-			options.UpdateMany().SetArrayFilters([]any{bson.M{"action.corporate_alarm_pattern": pattern.ID}}),
-		)
-		if err != nil {
-			return err
+			}
+			_, err := s.client.Collection(collection).UpdateMany(ctx, filter, update)
+			if err != nil {
+				return fmt.Errorf("cannot clean linked models: %w", err)
+			}
 		}
 	}
 
