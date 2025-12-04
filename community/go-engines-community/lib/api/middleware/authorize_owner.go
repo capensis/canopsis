@@ -3,10 +3,8 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"github.com/gin-gonic/gin"
@@ -46,10 +44,12 @@ func AuthorizeOwnership(strategy security.OwnershipStrategy, errorResponder http
 		case security.OwnershipPublic, security.OwnershipOwner:
 			break
 		case security.OwnershipNotOwner:
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		case security.OwnershipNotFound:
-			c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+			errorResponder.Respond(c, httperror.ErrNotFound)
+
 			return
 		default:
 			errorResponder.Respond(c, fmt.Errorf("unexpected ownership: %d", ownership))

@@ -3,7 +3,6 @@ package techmetrics
 import (
 	"net/http"
 
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -87,7 +86,8 @@ func (a *api) StartExport(c *gin.Context) {
 	}
 
 	if task.ID == 0 {
-		c.JSON(http.StatusBadRequest, common.ErrorResponse{Error: "Already in progress"})
+		a.errorResponder.Respond(c, httperror.NewConflictError("The job is already running."))
+
 		return
 	}
 
@@ -136,7 +136,8 @@ func (a *api) DownloadExport(c *gin.Context) {
 	}
 
 	if task.ID == 0 || task.Status != TaskStatusSucceeded || task.Filepath == "" {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 

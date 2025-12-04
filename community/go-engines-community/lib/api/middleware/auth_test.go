@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	mock_httperror "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/httperror"
@@ -120,8 +121,6 @@ func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T
 	mockMaintenanceAdapter.EXPECT().GetConfig(gomock.Any()).Return(config.MaintenanceConf{}, nil).AnyTimes()
 
 	enforcer := mock_security.NewMockEnforcer(ctrl)
-	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
-
 	expectedCode := http.StatusUnauthorized
 	req := httptest.NewRequest(http.MethodGet, okURL, nil)
 	mockProvider := mock_security.NewMockHttpProvider(ctrl)
@@ -129,6 +128,10 @@ func TestAuth_GivenInvalidCredentials_ShouldReturnUnauthorizedError(t *testing.T
 		EXPECT().
 		Auth(gomock.Eq(req)).
 		Return(nil, nil, true)
+	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Eq(httperror.ErrUnauthorized)).Do(func(c *gin.Context, err error) {
+		c.AbortWithStatus(expectedCode)
+	})
 	router := gin.New()
 	router.GET(
 		okURL,

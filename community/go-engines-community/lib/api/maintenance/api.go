@@ -1,11 +1,9 @@
 package maintenance
 
 import (
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
@@ -67,11 +65,6 @@ func (a *api) Maintenance(c *gin.Context) {
 	}
 
 	if err != nil {
-		if errors.Is(err, ErrEnabled) || errors.Is(err, ErrDisabled) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return

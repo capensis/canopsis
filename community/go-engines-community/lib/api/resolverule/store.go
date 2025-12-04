@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
@@ -183,7 +184,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	if id == resolverule.DefaultRule {
-		return false, ErrDefaultRule
+		return false, httperror.NewForbiddenError("The default rule cannot be deleted.")
 	}
 
 	var deleted int64

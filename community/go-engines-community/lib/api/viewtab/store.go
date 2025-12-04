@@ -3,8 +3,10 @@ package viewtab
 import (
 	"context"
 	"errors"
+	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/widget"
@@ -196,7 +198,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
 			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
 				r,
 			)
 		}
@@ -208,10 +210,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 			}
 
 			if !ok {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
-					r,
-				)
+				return httperror.NewForbiddenError("")
 			}
 		}
 
@@ -285,7 +284,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 			return err
 		}
 		if isLinked {
-			return ValidationError{err: errors.New("view tab is linked to playlist")}
+			return httperror.NewConflictError("The tab cannot be deleted because it is referenced by a playlist.")
 		}
 
 		// required to get the author in action log listener.
@@ -330,7 +329,7 @@ func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Respo
 
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
 			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
+				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
 				r,
 			)
 		}
@@ -342,10 +341,7 @@ func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Respo
 			}
 
 			if !ok {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_accessible", "View", "View")},
-					r,
-				)
+				return httperror.NewForbiddenError("")
 			}
 		}
 
@@ -422,7 +418,10 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 		if viewId == "" {
 			viewId = tab.View
 		} else if viewId != tab.View {
-			return false, ValidationError{err: errors.New("view tabs are related to different views")}
+			return false, validation.NewError(
+				validator.ValidationErrors{validation.NewFieldError("not_applicable", "items", "items")},
+				nil,
+			)
 		}
 	}
 
@@ -434,7 +433,10 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 			return err
 		}
 		if count != int64(len(tabs)) {
-			return ValidationError{err: errors.New("view tabs are missing")}
+			return validation.NewError(
+				validator.ValidationErrors{validation.NewFieldErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10))},
+				nil,
+			)
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(tabs))

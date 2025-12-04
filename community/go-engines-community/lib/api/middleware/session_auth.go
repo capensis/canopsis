@@ -2,10 +2,8 @@ package middleware
 
 import (
 	"errors"
-	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -33,7 +31,8 @@ func SessionAuth(
 		if err != nil {
 			if errors.As(err, &securecookie.MultiError{}) ||
 				errors.Is(err, libsession.ErrNoSession) {
-				c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+				errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 				return
 			}
 
@@ -54,7 +53,8 @@ func SessionAuth(
 				}
 
 				if user == nil {
-					c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+					errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 					return
 				}
 

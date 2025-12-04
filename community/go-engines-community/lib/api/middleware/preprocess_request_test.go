@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	mock_httperror "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/httperror"
 	"github.com/gin-gonic/gin"
@@ -148,6 +149,9 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 	body, _ := json.Marshal(valid)
 	req := httptest.NewRequest(http.MethodPost, okURL, bytes.NewReader(body))
 	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Eq(httperror.ErrRequestEntityTooLarge)).Do(func(c *gin.Context, err error) {
+		c.AbortWithStatus(http.StatusRequestEntityTooLarge)
+	})
 	router := gin.New()
 	router.POST(
 		okURL,
@@ -185,7 +189,7 @@ func TestPreProcessBulk_ShouldCheckBulkSize(t *testing.T) {
 
 	w = httptest.NewRecorder()
 	router.ServeHTTP(w, req)
-	if w.Code != http.StatusBadRequest {
-		t.Errorf("expected code: %v but got %v", http.StatusBadRequest, w.Code)
+	if w.Code != http.StatusRequestEntityTooLarge {
+		t.Errorf("expected code: %v but got %v", http.StatusRequestEntityTooLarge, w.Code)
 	}
 }

@@ -7,14 +7,13 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -214,10 +213,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 	}
 
 	if slices.Contains(r.Roles, security.RoleAdmin) && !slices.Contains(requestRoles, security.RoleAdmin) {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("assign_role", "Roles", "Roles")},
-			r,
-		)
+		return nil, httperror.NewForbiddenError("You cannot assign yourself the admin role.")
 	}
 
 	var user *User
@@ -241,10 +237,7 @@ func (s *store) Insert(ctx context.Context, r CreateRequest, requestRoles []stri
 
 func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_applicable", "IsEnabled", "IsEnabled")},
-			r,
-		)
+		return nil, httperror.NewForbiddenError("You cannot disable your own account.")
 	}
 
 	updateDoc, err := r.getBson(s.passwordEncoder)
@@ -263,13 +256,8 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 			return err
 		}
 
-		if onlyOneAdmin && lastAdminID == r.ID {
-			if !slices.Contains(r.Roles, security.RoleAdmin) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_applicable", "Roles", "Roles")},
-					r,
-				)
-			}
+		if onlyOneAdmin && lastAdminID == r.ID && !slices.Contains(r.Roles, security.RoleAdmin) {
+			return httperror.NewForbiddenError("You cannot remove the last admin role from yourself. At least one admin must remain.")
 		}
 
 		var prevUser security.User
@@ -285,17 +273,11 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("access_user", "ID", "ID")},
-					r,
-				)
+				return httperror.NewForbiddenError("You do not have permission to update an admin user.")
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("assign_role", "Roles", "Roles")},
-					r,
-				)
+				return httperror.NewForbiddenError("You cannot assign yourself the admin role.")
 			}
 		}
 
@@ -322,10 +304,7 @@ func (s *store) Update(ctx context.Context, r BulkUpdateRequestItem, curUserID s
 
 func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID string, requestRoles []string) (*User, error) {
 	if r.ID == curUserID && r.IsEnabled != nil && !*r.IsEnabled {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_applicable", "IsEnabled", "IsEnabled")},
-			r,
-		)
+		return nil, httperror.NewForbiddenError("You cannot disable your own account.")
 	}
 
 	updateDoc, err := r.getBson(s.passwordEncoder)
@@ -344,13 +323,8 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 			return err
 		}
 
-		if onlyOneAdmin && lastAdminID == r.ID {
-			if !slices.Contains(r.Roles, security.RoleAdmin) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_applicable", "Roles", "Roles")},
-					r,
-				)
-			}
+		if onlyOneAdmin && lastAdminID == r.ID && !slices.Contains(r.Roles, security.RoleAdmin) {
+			return httperror.NewForbiddenError("You cannot remove the last admin role from yourself. At least one admin must remain.")
 		}
 
 		var prevUser security.User
@@ -366,17 +340,11 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 
 		if !isAdminRequest {
 			if slices.Contains(prevUser.Roles, security.RoleAdmin) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("access_user", "ID", "ID")},
-					r,
-				)
+				return httperror.NewForbiddenError("You do not have permission to update an admin user.")
 			}
 
 			if slices.Contains(r.Roles, security.RoleAdmin) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("assign_role", "Roles", "Roles")},
-					r,
-				)
+				return httperror.NewForbiddenError("You cannot assign yourself the admin role.")
 			}
 		}
 
@@ -438,10 +406,7 @@ func (s *store) filterIdpFields(updateDoc bson.M, source string, requestRoles, i
 func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID string, requestRoles []string) (bool, error) {
 	id := r.ID
 	if id == userID {
-		return false, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_accessible", "_id", "_id")},
-			nil,
-		)
+		return false, httperror.NewForbiddenError("You cannot delete your own account.")
 	}
 
 	isAdminRequest := slices.Contains(requestRoles, security.RoleAdmin)
@@ -463,10 +428,7 @@ func (s *store) Delete(ctx context.Context, r BulkDeleteRequestItem, userID stri
 		}
 
 		if slices.Contains(prevUser.Roles, security.RoleAdmin) && !isAdminRequest {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("access_user", "ID", "ID")},
-				r,
-			)
+			return httperror.NewForbiddenError("You do not have permission to delete an admin user.")
 		}
 
 		deleted, err = s.userCollection.DeleteOne(ctx, bson.M{"_id": id})
