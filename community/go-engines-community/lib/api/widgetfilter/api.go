@@ -2,11 +2,9 @@ package widgetfilter
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -15,6 +13,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -66,7 +65,8 @@ func (a *api) List(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
@@ -99,7 +99,8 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
@@ -110,7 +111,8 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 	if filter == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -149,7 +151,8 @@ func (a *api) Create(c *gin.Context) {
 	}
 
 	if !granted {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
@@ -162,7 +165,8 @@ func (a *api) Create(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
@@ -211,7 +215,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if !granted {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
@@ -224,7 +229,8 @@ func (a *api) Update(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
@@ -236,12 +242,18 @@ func (a *api) Update(c *gin.Context) {
 		return
 	}
 	if filter == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
 	if filter.IsUserPreference != *request.IsUserPreference {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"is_user_preference": "IsUserPreference cannot be changed"}})
+		err = validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("unchangeable", "IsUserPreference", "IsUserPreference")},
+			request,
+		)
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -253,7 +265,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if filter == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -276,7 +289,8 @@ func (a *api) Delete(c *gin.Context) {
 		return
 	}
 	if filter == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -293,7 +307,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !granted {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
@@ -306,7 +321,8 @@ func (a *api) Delete(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
@@ -319,7 +335,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -342,7 +359,12 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	if len(request.Items) == 0 {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"items": "Cannot be blank"}})
+		err = validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("required", "Items", "Items")},
+			request,
+		)
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -354,7 +376,8 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		return
 	}
 	if firstFilter == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -372,7 +395,8 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	if !granted {
-		c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+		a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 		return
 	}
 
@@ -385,25 +409,22 @@ func (a *api) UpdatePositions(c *gin.Context) {
 		}
 
 		if !ok {
-			c.AbortWithStatusJSON(http.StatusForbidden, common.ForbiddenResponse)
+			a.errorResponder.Respond(c, httperror.NewForbiddenError(""))
+
 			return
 		}
 	}
 
 	ok, err := a.store.UpdatePositions(c, request.Items, firstFilter.Widget, userID, isUserPreference)
 	if err != nil {
-		valErr := ValidationError{}
-		if errors.As(err, &valErr) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.ErrorResponse{Error: err.Error()})
-			return
-		}
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 

@@ -14,14 +14,14 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	libvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/validator"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 const (
-	MaxIDLength = 255
+	MaxIDLength    = 255
+	InvalidIDChars = "/?.$"
 
 	tableNameRegexString = `^[a-zA-Z_]\w+$`
 	tableNameMaxLen      = 63
@@ -101,7 +101,7 @@ func ValidateID(fl validator.FieldLevel) bool {
 		return true
 	}
 
-	return !strings.ContainsAny(v, libvalidator.InvalidIDChars) && len(v) <= MaxIDLength
+	return !strings.ContainsAny(v, InvalidIDChars) && len(v) <= MaxIDLength
 }
 
 func ValidateTimeFormat(fl validator.FieldLevel) bool {

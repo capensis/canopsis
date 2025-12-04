@@ -1,10 +1,7 @@
 package middleware
 
 import (
-	"net/http"
-
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
@@ -32,7 +29,8 @@ func Auth(
 
 			if ok {
 				if user == nil {
-					c.AbortWithStatusJSON(http.StatusUnauthorized, common.UnauthorizedResponse)
+					errorResponder.Respond(c, httperror.ErrUnauthorized)
+
 					return
 				}
 
@@ -52,7 +50,8 @@ func Auth(
 					}
 
 					if !ok {
-						c.AbortWithStatusJSON(http.StatusServiceUnavailable, common.CanopsisUnderMaintenanceResponse)
+						errorResponder.Respond(c, httperror.ErrMaintenance)
+
 						return
 					}
 				}

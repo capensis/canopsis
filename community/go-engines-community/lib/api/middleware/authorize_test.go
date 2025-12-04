@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	mock_httperror "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/api/httperror"
 	mock_security "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/mocks/lib/security"
 	"github.com/gin-gonic/gin"
@@ -76,6 +77,9 @@ func TestAuthorize_GivenNotAuthorizedUser_ShouldForbiddenError(t *testing.T) {
 		Enforce(subj, obj, act).
 		Return(false, nil)
 	mockErrResponder := mock_httperror.NewMockResponder(ctrl)
+	mockErrResponder.EXPECT().Respond(gomock.Any(), gomock.Eq(httperror.NewForbiddenError(""))).Do(func(c *gin.Context, err error) {
+		c.AbortWithStatus(expectedCode)
+	})
 	router := gin.New()
 	router.Use(func(c *gin.Context) {
 		authctx.SetUserKey(c, subj)

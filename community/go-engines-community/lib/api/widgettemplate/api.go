@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 )
 
 func NewApi(store Store, errorResponder httperror.Responder) crud.API {
@@ -58,7 +58,8 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if tpl == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -109,12 +110,18 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if tpl == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
 	if tpl.Type != request.Type {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.ValidationErrorResponse{Errors: map[string]string{"type": "Type cannot be changed"}})
+		err = validation.NewError(
+			validator.ValidationErrors{validation.NewFieldError("unchangeable", "Type", "Type")},
+			request,
+		)
+		a.errorResponder.Respond(c, err)
+
 		return
 	}
 
@@ -126,7 +133,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if tpl == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -149,7 +157,8 @@ func (a *api) Delete(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 

@@ -108,6 +108,7 @@ func NewSecurity(
 
 		apiConfigProvider:  apiConfigProvider,
 		maintenanceAdapter: maintenanceAdapter,
+		errorResponder:     errorResponder,
 	}
 }
 
@@ -167,11 +168,11 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 				roleprovider.NewRoleProvider(client),
 			)
 
-			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig))
-			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter)) //nolint: contextcheck
+			router.GET("/api/v4/cas/login", cas.LoginHandler(casConfig, s.errorResponder))
+			router.GET("/api/v4/cas/loggedin", cas.CallbackHandler(p, s.enforcer, s.GetTokenService(), s.maintenanceAdapter, s.errorResponder)) //nolint: contextcheck
 		case libsecurity.AuthMethodSaml:
 			p, err := saml.NewProvider(ctx, s.newUserProvider(), roleprovider.NewRoleProvider(client), s.sessionStore,
-				s.enforcer, s.config.Security.Saml, s.GetTokenService(), s.maintenanceAdapter, s.logger)
+				s.enforcer, s.config.Security.Saml, s.GetTokenService(), s.maintenanceAdapter, s.errorResponder, s.logger)
 			if err != nil {
 				s.logger.Err(err).Msg("RegisterCallbackRoutes: failed to create saml provider")
 				panic(err)
@@ -208,6 +209,7 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 					s.GetTokenService(),
 					s.logger,
 					s.globalConfig.Global.MaxExternalResponseSize,
+					s.errorResponder,
 				)
 
 				router.GET("/api/v4/oauth/"+name+"/login", p.Login)

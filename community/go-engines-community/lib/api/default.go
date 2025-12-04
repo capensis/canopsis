@@ -15,7 +15,6 @@ import (
 	alarmapi "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/alarm"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/broadcastmessage"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/contextgraph"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/docs"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
@@ -501,10 +500,10 @@ func Default(
 	}
 
 	api.AddNoRoute(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		services.ErrorResponder.Respond(c, httperror.ErrNotFound)
 	})
 	api.AddNoMethod(func(c *gin.Context) {
-		c.AbortWithStatusJSON(http.StatusMethodNotAllowed, common.MethodNotAllowedResponse)
+		services.ErrorResponder.Respond(c, httperror.ErrMethodNotAllowed)
 	})
 	api.SetWebsocketHub(websocketHub)
 

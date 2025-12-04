@@ -1,12 +1,10 @@
 package role
 
 import (
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/bulk"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/crud"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -65,7 +63,8 @@ func (a *api) Get(c *gin.Context) {
 		return
 	}
 	if role == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -90,7 +89,8 @@ func (a *api) Create(c *gin.Context) {
 		return
 	}
 	if role == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -117,7 +117,8 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if role == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -135,19 +136,13 @@ func (a *api) Delete(c *gin.Context) {
 
 	ok, err := a.store.Delete(c, id, userID)
 	if err != nil {
-		if errors.Is(err, ErrLinkedToUser) || errors.Is(err, ErrDeleteAdminRole) {
-			c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
-
-			return
-		}
-
 		a.errorResponder.Respond(c, err)
 
 		return
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
 
 		return
 	}

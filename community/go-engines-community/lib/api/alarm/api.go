@@ -2,19 +2,15 @@ package alarm
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/authctx"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/encoding"
 	"github.com/gin-gonic/gin"
-	"github.com/gin-gonic/gin/binding"
-	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	"github.com/valyala/fastjson"
 )
@@ -120,7 +116,8 @@ func (a *api) Get(c *gin.Context) {
 	}
 
 	if alarm == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -151,7 +148,8 @@ func (a *api) GetOpen(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -176,13 +174,15 @@ func (a *api) GetDetails(c *gin.Context) {
 
 	jsonValue, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
 		return
 	}
 
 	rawObjects, err := jsonValue.Array()
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, common.NewErrorResponse(err))
+		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+
 		return
 	}
 
@@ -197,46 +197,36 @@ func (a *api) GetDetails(c *gin.Context) {
 	for idx, rawObject := range rawObjects {
 		object, err := rawObject.Object()
 		if err != nil {
-			response[idx].Status = http.StatusBadRequest
-			response[idx].Error = err.Error()
+			response[idx] = a.getDetailErrRes(c, err)
 			continue
 		}
 
 		var request DetailsRequest
 		err = json.Unmarshal(object.MarshalTo(nil), &request)
 		if err != nil {
-			response[idx].Status = http.StatusBadRequest
-			response[idx].Error = err.Error()
+			response[idx] = a.getDetailErrRes(c, err)
 			continue
 		}
 
 		request.Format()
-		err = binding.Validator.ValidateStruct(request)
+		err = validation.ValidateStruct(&request)
 		if err != nil {
+			response[idx] = a.getDetailErrRes(c, err)
 			response[idx].ID = request.ID
-			response[idx].Status = http.StatusBadRequest
-			var errs validator.ValidationErrors
-			if errors.As(err, &errs) {
-				response[idx].Errors = common.TransformValidationErrors(errs, request).Errors
-			} else {
-				response[idx].Error = "Request has invalid structure"
-			}
 			continue
 		}
 
 		details, err := a.store.GetDetails(c, request, userID)
 		if err != nil {
+			response[idx] = a.getDetailErrRes(c, err)
 			response[idx].ID = request.ID
-			response[idx].Status = http.StatusInternalServerError
-			response[idx].Error = common.InternalServerErrorResponse.Error
 			a.logger.Err(err).Str("ID", request.ID).Msg("cannot fetch alarm details")
 			continue
 		}
 
 		if details == nil {
+			response[idx] = a.getDetailErrRes(c, httperror.ErrNotFound)
 			response[idx].ID = request.ID
-			response[idx].Status = http.StatusNotFound
-			response[idx].Error = common.NotFoundResponse.Error
 			continue
 		}
 
@@ -274,7 +264,8 @@ func (a *api) ListByService(c *gin.Context) {
 	}
 
 	if aggregationResult == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -308,7 +299,8 @@ func (a *api) ListByComponent(c *gin.Context) {
 	}
 
 	if aggregationResult == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -342,7 +334,8 @@ func (a *api) ResolvedList(c *gin.Context) {
 	}
 
 	if aggregationResult == nil {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -439,7 +432,8 @@ func (a *api) GetExport(c *gin.Context) {
 	}
 
 	if t == nil {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -459,7 +453,8 @@ func (a *api) DownloadExport(c *gin.Context) {
 	}
 
 	if t == nil || t.Status != export.TaskStatusSucceeded {
-		c.JSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -492,7 +487,8 @@ func (a *api) GetLinks(c *gin.Context) {
 	}
 
 	if !ok {
-		c.AbortWithStatusJSON(http.StatusNotFound, common.NotFoundResponse)
+		a.errorResponder.Respond(c, httperror.ErrNotFound)
+
 		return
 	}
 
@@ -520,4 +516,20 @@ func (a *api) GetDisplayNames(c *gin.Context) {
 
 	res := pagination.NewResponse(r.Query, aggregationResult)
 	c.JSON(http.StatusOK, res)
+}
+
+func (a *api) getDetailErrRes(c *gin.Context, err error) DetailsResponse {
+	res := DetailsResponse{}
+	status, itemRes := a.errorResponder.GetResponse(c, err)
+	res.Status = status
+	if errVal := itemRes.GetStringBytes("error"); errVal != nil {
+		res.Error = string(errVal)
+	} else if errsVal := itemRes.GetObject("errors"); errsVal != nil {
+		res.Errors = make(map[string]string, errsVal.Len())
+		errsVal.Visit(func(key []byte, v *fastjson.Value) {
+			res.Errors[string(key)] = string(v.GetStringBytes())
+		})
+	}
+
+	return res
 }
