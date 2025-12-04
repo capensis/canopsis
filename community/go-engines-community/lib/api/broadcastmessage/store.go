@@ -9,6 +9,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -42,6 +43,7 @@ func NewStore(
 		authorProvider:        authorProvider,
 		defaultSortBy:         "_id",
 		defaultSearchByFields: []string{"_id", "message"},
+		dupErrorParser:        validation.NewDuplicateErrorParser(),
 	}
 }
 
@@ -53,11 +55,11 @@ type store struct {
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
+	dupErrorParser        validation.DuplicateErrorParser
 }
 
 func (s store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-
 	r.ID = cmp.Or(r.ID, utils.NewID())
 	r.Created = &now
 	r.Updated = &now
@@ -69,10 +71,15 @@ func (s store) Insert(ctx context.Context, r CreateRequest) (*Response, error) {
 
 		_, err := s.dbCollection.InsertOne(ctx, r)
 		if err != nil {
+			if mongodriver.IsDuplicateKeyError(err) {
+				return s.dupErrorParser.Parse(err, r)
+			}
+
 			return err
 		}
 
 		resp, err = s.GetByID(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {

@@ -5,6 +5,8 @@ import (
 	"context"
 	"errors"
 	"sort"
+	"strconv"
+	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
@@ -41,6 +43,8 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 		dbUserCollection:         dbClient.Collection(mongo.UserCollection),
 		dbTemplateCollection:     dbClient.Collection(mongo.RoleTemplateCollection),
 		dbNotificationCollection: dbClient.Collection(mongo.UserNotificationCollection),
+		dbViewCollection:         dbClient.Collection(mongo.ViewMongoCollection),
+		dbColorThemeCollection:   dbClient.Collection(mongo.ColorThemeCollection),
 		defaultSearchByFields:    []string{"_id", "name", "description"},
 		defaultSortBy:            "name",
 		authorProvider:           authorProvider,
@@ -55,6 +59,8 @@ type store struct {
 	dbUserCollection         mongo.DbCollection
 	dbTemplateCollection     mongo.DbCollection
 	dbNotificationCollection mongo.DbCollection
+	dbViewCollection         mongo.DbCollection
+	dbColorThemeCollection   mongo.DbCollection
 	defaultSearchByFields    []string
 	defaultSortBy            string
 
@@ -139,9 +145,14 @@ func (s *store) GetOneBy(ctx context.Context, id string) (*Response, error) {
 
 func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-	perms, widgetPerms, err := getPermissions(ctx, s.dbPermissionCollection, r.Permissions)
+	perms, widgetPerms, err := s.getPermissions(ctx, r.Permissions)
 	if err != nil {
 		return nil, err
+	}
+
+	valErrs := s.validatePermissions(perms, r.Type, r.Permissions)
+	if len(valErrs) > 0 {
+		return nil, validation.NewError(valErrs, r)
 	}
 
 	id := utils.NewID()
@@ -150,7 +161,17 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
 
-		_, err := s.dbCollection.InsertOne(ctx, bson.M{
+		err = validation.ValidateExist(ctx, s.dbViewCollection, r, "DefaultView", r.DefaultView)
+		if err != nil {
+			return err
+		}
+
+		err = validation.ValidateExist(ctx, s.dbColorThemeCollection, r, "UITheme", r.UITheme)
+		if err != nil {
+			return err
+		}
+
+		_, err = s.dbCollection.InsertOne(ctx, bson.M{
 			"_id":         id,
 			"type":        r.Type,
 			"name":        r.Name,
@@ -183,14 +204,30 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 
 func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response, error) {
 	now := datetime.NewCpsTime()
-	perms, widgetPerms, err := getPermissions(ctx, s.dbPermissionCollection, r.Permissions)
+	perms, widgetPerms, err := s.getPermissions(ctx, r.Permissions)
 	if err != nil {
 		return nil, err
+	}
+
+	valErrs := s.validatePermissions(perms, r.Type, r.Permissions)
+	if len(valErrs) > 0 {
+		return nil, validation.NewError(valErrs, r)
 	}
 
 	var role *Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
+
+		err = validation.ValidateExist(ctx, s.dbViewCollection, r, "DefaultView", r.DefaultView)
+		if err != nil {
+			return err
+		}
+
+		err = validation.ValidateExist(ctx, s.dbColorThemeCollection, r, "UITheme", r.UITheme)
+		if err != nil {
+			return err
+		}
+
 		oldRole, err := s.GetOneBy(ctx, id)
 		if err != nil || oldRole == nil {
 			return err
@@ -236,7 +273,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 
 func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRequestItem, userID string) (bool, error) {
 	now := datetime.NewCpsTime()
-	perms, widgetPerms, err := getPermissions(ctx, s.dbPermissionCollection, r.Permissions)
+	perms, widgetPerms, err := s.getPermissions(ctx, r.Permissions)
 	if err != nil {
 		return false, err
 	}
@@ -251,6 +288,11 @@ func (s *store) UpdatePermissions(ctx context.Context, r BulkUpdatePermissionsRe
 
 		if oldRole.ID == security.RoleAdmin {
 			return httperror.NewForbiddenError("The admin role cannot be modified.")
+		}
+
+		valErrs := s.validatePermissions(perms, oldRole.Type, r.Permissions)
+		if len(valErrs) > 0 {
+			return validation.NewError(valErrs, r)
 		}
 
 		updateRes, err := s.dbCollection.UpdateOne(ctx,
@@ -370,6 +412,184 @@ func (s *store) GetTemplates(ctx context.Context) ([]Template, error) {
 	}
 
 	return tpls, nil
+}
+
+func (s *store) getPermissions(ctx context.Context, rolePermissions map[string][]string) (map[string]Permission, map[string][]Permission, error) {
+	ids := make([]string, 0)
+	for id := range rolePermissions {
+		ids = append(ids, id)
+	}
+
+	cursor, err := s.dbPermissionCollection.Aggregate(ctx, []bson.M{
+		{"$match": bson.M{
+			"_id":    bson.M{"$in": ids},
+			"hidden": bson.M{"$in": bson.A{false, nil}},
+		}},
+		{"$replaceRoot": bson.M{"newRoot": bson.M{
+			"_id":  "$_id",
+			"perm": "$$ROOT",
+		}}},
+		{"$lookup": bson.M{
+			"from":         mongo.ViewTabMongoCollection,
+			"localField":   "_id",
+			"foreignField": "view",
+			"as":           "viewtabs",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"view": bson.M{"$ne": nil}}},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$viewtabs", "preserveNullAndEmptyArrays": true}},
+		{"$lookup": bson.M{
+			"from":         mongo.WidgetMongoCollection,
+			"localField":   "viewtabs._id",
+			"foreignField": "tab",
+			"as":           "widgets",
+			"pipeline": []bson.M{
+				{"$match": bson.M{"tab": bson.M{"$ne": nil}}},
+			},
+		}},
+		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
+		{"$group": bson.M{
+			"_id":          "$_id",
+			"perm":         bson.M{"$first": "$perm"},
+			"widget_types": bson.M{"$addToSet": "$widgets.type"},
+		}},
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	defer cursor.Close(ctx)
+	permissions := make(map[string]Permission, len(rolePermissions))
+	uniqueWidgetTypes := make(map[string]struct{})
+	widgetTypesByViewID := make(map[string][]string)
+	for cursor.Next(ctx) {
+		perm := struct {
+			Perm        Permission `bson:"perm"`
+			WidgetTypes []string   `bson:"widget_types"`
+		}{}
+		err := cursor.Decode(&perm)
+		if err != nil {
+			return nil, nil, err
+		}
+
+		permissions[perm.Perm.ID] = perm.Perm
+		if len(perm.WidgetTypes) > 0 {
+			widgetTypesByViewID[perm.Perm.ID] = perm.WidgetTypes
+			for _, widgetType := range perm.WidgetTypes {
+				uniqueWidgetTypes[widgetType] = struct{}{}
+			}
+		}
+	}
+
+	if err := cursor.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	widgetPermissionsByViewID := make(map[string][]Permission, len(widgetTypesByViewID))
+	if len(uniqueWidgetTypes) > 0 {
+		widgetTypes := make([]string, 0, len(uniqueWidgetTypes))
+		for widgetType := range uniqueWidgetTypes {
+			widgetTypes = append(widgetTypes, widgetType)
+		}
+
+		widgetPermCursor, err := s.dbPermissionCollection.Find(ctx, bson.M{"_id": bson.M{"$in": widgetTypes}})
+		if err != nil {
+			return nil, nil, err
+		}
+
+		defer widgetPermCursor.Close(ctx)
+		widgetPermissions := make(map[string]Permission, len(uniqueWidgetTypes))
+		for widgetPermCursor.Next(ctx) {
+			perm := Permission{}
+			err := widgetPermCursor.Decode(&perm)
+			if err != nil {
+				return nil, nil, err
+			}
+
+			widgetPermissions[perm.ID] = perm
+		}
+
+		if err := widgetPermCursor.Err(); err != nil {
+			return nil, nil, err
+		}
+
+		for viewID, types := range widgetTypesByViewID {
+			for _, t := range types {
+				if perm, ok := widgetPermissions[t]; ok {
+					widgetPermissionsByViewID[viewID] = append(widgetPermissionsByViewID[viewID], perm)
+				}
+			}
+		}
+	}
+
+	return permissions, widgetPermissionsByViewID, nil
+}
+
+func (s *store) validatePermissions(perms map[string]Permission, roleType string, permissions map[string][]string) validator.ValidationErrors {
+	if len(permissions) == 0 {
+		return nil
+	}
+
+	var fieldErrs validator.ValidationErrors
+	for id, actions := range permissions {
+		switch roleType {
+		case TypeUI:
+			if strings.HasPrefix(id, PermissionAPIPrefix) {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_ui_perm", id, "Permissions."+id))
+				continue
+			}
+		case TypeAPI:
+			if !strings.HasPrefix(id, PermissionAPIPrefix) {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("not_api_perm", id, "Permissions."+id))
+				continue
+			}
+		}
+
+		if perm, ok := perms[id]; ok {
+			var validActions []string
+			switch perm.Type {
+			case "":
+				if len(actions) > 0 {
+					fieldErrs = append(fieldErrs, validation.NewFieldError("must_be_empty", id, "Permissions."+id))
+				}
+			case securitymodel.ObjectTypeCRUD:
+				validActions = []string{
+					securitymodel.PermissionCreate,
+					securitymodel.PermissionRead,
+					securitymodel.PermissionUpdate,
+					securitymodel.PermissionDelete,
+				}
+			case securitymodel.ObjectTypeRW:
+				validActions = []string{
+					securitymodel.PermissionRead,
+					securitymodel.PermissionUpdate,
+					securitymodel.PermissionDelete,
+				}
+			}
+
+			if len(validActions) > 0 {
+				for i, action := range actions {
+					found := false
+					for _, v := range validActions {
+						if action == v {
+							found = true
+							break
+						}
+					}
+
+					if !found {
+						iStr := strconv.Itoa(i)
+						fieldErrs = append(fieldErrs, validation.NewFieldErrorWithParam("oneof", iStr, "Permissions."+id+"."+iStr, strings.Join(validActions, " ")))
+					}
+				}
+			}
+		} else {
+			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", id, "Permissions."+id))
+		}
+	}
+
+	return fieldErrs
 }
 
 func getNestedObjectsPipeline() []bson.M {
@@ -546,116 +766,4 @@ func transformPermissionsToDoc(rolePermissions map[string][]string, permissions 
 	}
 
 	return doc
-}
-
-func getPermissions(ctx context.Context, permissionCollection mongo.DbCollection, rolePermissions map[string][]string) (map[string]Permission, map[string][]Permission, error) {
-	ids := make([]string, 0)
-	for id := range rolePermissions {
-		ids = append(ids, id)
-	}
-
-	cursor, err := permissionCollection.Aggregate(ctx, []bson.M{
-		{"$match": bson.M{
-			"_id":    bson.M{"$in": ids},
-			"hidden": bson.M{"$in": bson.A{false, nil}},
-		}},
-		{"$replaceRoot": bson.M{"newRoot": bson.M{
-			"_id":  "$_id",
-			"perm": "$$ROOT",
-		}}},
-		{"$lookup": bson.M{
-			"from":         mongo.ViewTabMongoCollection,
-			"localField":   "_id",
-			"foreignField": "view",
-			"as":           "viewtabs",
-			"pipeline": []bson.M{
-				{"$match": bson.M{"view": bson.M{"$ne": nil}}},
-			},
-		}},
-		{"$unwind": bson.M{"path": "$viewtabs", "preserveNullAndEmptyArrays": true}},
-		{"$lookup": bson.M{
-			"from":         mongo.WidgetMongoCollection,
-			"localField":   "viewtabs._id",
-			"foreignField": "tab",
-			"as":           "widgets",
-			"pipeline": []bson.M{
-				{"$match": bson.M{"tab": bson.M{"$ne": nil}}},
-			},
-		}},
-		{"$unwind": bson.M{"path": "$widgets", "preserveNullAndEmptyArrays": true}},
-		{"$group": bson.M{
-			"_id":          "$_id",
-			"perm":         bson.M{"$first": "$perm"},
-			"widget_types": bson.M{"$addToSet": "$widgets.type"},
-		}},
-	})
-	if err != nil {
-		return nil, nil, err
-	}
-
-	defer cursor.Close(ctx)
-	permissions := make(map[string]Permission, len(rolePermissions))
-	uniqueWidgetTypes := make(map[string]struct{})
-	widgetTypesByViewID := make(map[string][]string)
-	for cursor.Next(ctx) {
-		perm := struct {
-			Perm        Permission `bson:"perm"`
-			WidgetTypes []string   `bson:"widget_types"`
-		}{}
-		err := cursor.Decode(&perm)
-		if err != nil {
-			return nil, nil, err
-		}
-
-		permissions[perm.Perm.ID] = perm.Perm
-		if len(perm.WidgetTypes) > 0 {
-			widgetTypesByViewID[perm.Perm.ID] = perm.WidgetTypes
-			for _, widgetType := range perm.WidgetTypes {
-				uniqueWidgetTypes[widgetType] = struct{}{}
-			}
-		}
-	}
-
-	if err := cursor.Err(); err != nil {
-		return nil, nil, err
-	}
-
-	widgetPermissionsByViewID := make(map[string][]Permission, len(widgetTypesByViewID))
-	if len(uniqueWidgetTypes) > 0 {
-		widgetTypes := make([]string, 0, len(uniqueWidgetTypes))
-		for widgetType := range uniqueWidgetTypes {
-			widgetTypes = append(widgetTypes, widgetType)
-		}
-
-		widgetPermCursor, err := permissionCollection.Find(ctx, bson.M{"_id": bson.M{"$in": widgetTypes}})
-		if err != nil {
-			return nil, nil, err
-		}
-
-		defer widgetPermCursor.Close(ctx)
-		widgetPermissions := make(map[string]Permission, len(uniqueWidgetTypes))
-		for widgetPermCursor.Next(ctx) {
-			perm := Permission{}
-			err := widgetPermCursor.Decode(&perm)
-			if err != nil {
-				return nil, nil, err
-			}
-
-			widgetPermissions[perm.ID] = perm
-		}
-
-		if err := widgetPermCursor.Err(); err != nil {
-			return nil, nil, err
-		}
-
-		for viewID, types := range widgetTypesByViewID {
-			for _, t := range types {
-				if perm, ok := widgetPermissions[t]; ok {
-					widgetPermissionsByViewID[viewID] = append(widgetPermissionsByViewID[viewID], perm)
-				}
-			}
-		}
-	}
-
-	return permissions, widgetPermissionsByViewID, nil
 }

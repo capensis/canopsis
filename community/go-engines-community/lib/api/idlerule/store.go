@@ -29,6 +29,8 @@ type Store interface {
 type store struct {
 	dbClient              mongo.DbClient
 	collection            mongo.DbCollection
+	pbhTypeCollection     mongo.DbCollection
+	pbhReasonCollection   mongo.DbCollection
 	authorProvider        author.Provider
 	transformer           patternfields.Transformer
 	defaultSearchByFields []string
@@ -40,6 +42,8 @@ func NewStore(db mongo.DbClient, authorProvider author.Provider, transformer pat
 	return &store{
 		dbClient:              db,
 		collection:            db.Collection(mongo.IdleRuleMongoCollection),
+		pbhTypeCollection:     db.Collection(mongo.PbehaviorTypeMongoCollection),
+		pbhReasonCollection:   db.Collection(mongo.PbehaviorReasonMongoCollection),
 		authorProvider:        authorProvider,
 		transformer:           transformer,
 		defaultSearchByFields: []string{"_id", "name", "description", "author.name"},
@@ -115,6 +119,18 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
+		if r.Operation != nil {
+			err := validation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
+			if err != nil {
+				return err
+			}
+
+			err = validation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
+			if err != nil {
+				return err
+			}
+		}
+
 		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &rule)
 		if err != nil {
 			return err
@@ -154,7 +170,17 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		err := s.transformPatternRequestsToModel(ctx, r.EditRequest, &model)
+		err := validation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
+		if err != nil {
+			return err
+		}
+
+		err = validation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
+		if err != nil {
+			return err
+		}
+
+		err = s.transformPatternRequestsToModel(ctx, r.EditRequest, &model)
 		if err != nil {
 			return err
 		}
