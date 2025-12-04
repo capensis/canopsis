@@ -725,10 +725,10 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
     kubectl exec canopsis-timescaledb-0 -- pg_restore --dbname=postgresql://cpspostgres:canopsis@canopsis-timescaledb-0:5432/canopsis --no-owner -Ft -v /tmp/postgres_canopsis_dump.tar
     ```
 
-    Suppresion du Statefulset :
+    Suppression du Statefulset :
 
     ```sh
-    kubectl get pvc --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
+    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep timescaledb | xargs kubectl delete statefulset
     ```
 
     ### Mise à jour de MongoDB
@@ -795,7 +795,7 @@ Des sauvegardes sont toujours recommandées, qu'elles soient régulières ou lor
 
     Suppression du Statefulset :
     ```sh
-    kubectl delete statefulset canopsis-mongodb
+    kubectl get statefulset --no-headers=true | awk '{print $1}' | grep mongo | xargs kubectl delete statefulset
     ```
 
     ## Mise à jour de RabbitMQ
