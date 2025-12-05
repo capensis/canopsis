@@ -136,7 +136,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 			// check the api_view create permission here, because user might not have it while having private views permission.
 			ok, err := s.enforcer.Enforce(r.Author, apisecurity.ObjView, securitymodel.PermissionCreate)
 			if err != nil {
-				panic(err)
+				return err
 			}
 
 			if !ok {
