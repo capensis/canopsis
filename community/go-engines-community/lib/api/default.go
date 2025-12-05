@@ -418,8 +418,8 @@ func Default(
 
 	stateSettingsUpdatesChan := make(chan statesetting.RuleUpdatedMessage)
 
-	api.AddRouter(func(router *gin.Engine) {
-		router.Use(middleware.Logger(logger, flags.LogBody, flags.LogBodyOnError))
+	api.AddRouter(func(router *gin.Engine) error {
+		router.Use(middleware.Logger(services.ErrorResponder, logger, flags.LogBody, flags.LogBodyOnError))
 		router.Use(middleware.Recovery(logger))
 		router.Use(middleware.CacheControl())
 
@@ -435,7 +435,7 @@ func Default(
 			})
 		})
 
-		RegisterRoutes(
+		return RegisterRoutes(
 			ctx,
 			cfg,
 			router,
@@ -479,10 +479,12 @@ func Default(
 		)
 	})
 	if flags.EnableDocs {
-		api.AddRouter(func(router *gin.Engine) {
+		api.AddRouter(func(router *gin.Engine) error {
 			router.GET("/swagger/*filepath", func(c *gin.Context) {
 				c.FileFromFS("swaggerui/"+c.Param("filepath"), http.FS(docsUiFile))
 			})
+
+			return nil
 		})
 		if !overrideDocs {
 			content, err := docsFile.ReadFile("docs/swagger.yaml")
@@ -493,8 +495,10 @@ func Default(
 			if err != nil {
 				return nil, services, fmt.Errorf("cannot read swagger: %w", err)
 			}
-			api.AddRouter(func(router *gin.Engine) {
+			api.AddRouter(func(router *gin.Engine) error {
 				router.GET("/swagger.yaml", docs.GetHandler(services.ErrorResponder, schemasContent, content))
+
+				return nil
 			})
 		}
 	}

@@ -3,20 +3,22 @@ package middleware
 import (
 	"net/http"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"github.com/gin-gonic/gin"
 )
 
 // ReloadEnforcerPolicyOnChange loads security policy if request changes policy.
-func ReloadEnforcerPolicyOnChange(enforcer security.Enforcer) gin.HandlerFunc {
+func ReloadEnforcerPolicyOnChange(enforcer security.Enforcer, errorResponder httperror.Responder) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		s := c.Writer.Status()
 		switch s {
 		case http.StatusOK, http.StatusNoContent, http.StatusCreated, http.StatusMultiStatus:
 			err := enforcer.LoadPolicy()
-
 			if err != nil {
-				panic(err)
+				errorResponder.Respond(c, err)
+
+				return
 			}
 		}
 
