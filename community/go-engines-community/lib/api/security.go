@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"crypto/tls"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -42,7 +43,7 @@ type Security interface {
 	// GetAuthProviders creates providers which are used in auth API request.
 	GetAuthProviders() []libsecurity.Provider
 	// RegisterCallbackRoutes registers callback routes for auth methods.
-	RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient, sessionStore sessions.Store)
+	RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient, sessionStore sessions.Store) error
 	// GetAuthMiddleware returns corresponding config auth middlewares.
 	GetAuthMiddleware() []gin.HandlerFunc
 	// GetFileAuthMiddleware returns auth middleware for files.
@@ -144,7 +145,7 @@ func (s *security) GetAuthProviders() []libsecurity.Provider {
 	return res
 }
 
-func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient, sessionStore sessions.Store) {
+func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRouter, client mongo.DbClient, sessionStore sessions.Store) error {
 	for _, v := range s.config.Security.AuthProviders {
 		switch v {
 		case libsecurity.AuthMethodCas:
@@ -174,8 +175,7 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 			p, err := saml.NewProvider(ctx, s.newUserProvider(), roleprovider.NewRoleProvider(client), s.sessionStore,
 				s.enforcer, s.config.Security.Saml, s.GetTokenService(), s.maintenanceAdapter, s.errorResponder, s.logger)
 			if err != nil {
-				s.logger.Err(err).Msg("RegisterCallbackRoutes: failed to create saml provider")
-				panic(err)
+				return fmt.Errorf("RegisterCallbackRoutes: failed to create saml provider: %w", err)
 			}
 
 			router.GET("/api/v4/saml/metadata", p.SamlMetadataHandler())
@@ -217,6 +217,8 @@ func (s *security) RegisterCallbackRoutes(ctx context.Context, router gin.IRoute
 			}
 		}
 	}
+
+	return nil
 }
 
 func (s *security) GetAuthMiddleware() []gin.HandlerFunc {
