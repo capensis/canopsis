@@ -512,14 +512,16 @@ html {
     .v-expansion-panel-header,
     .v-card,
     .v-data-table,
-    .v-data-table tbody tr {
+    .v-data-table tbody tr,
+    .treeview-data-table {
       // For selictivity
       background-color: var(--v-application-background-darken1) !important;
       border-color: var(--v-application-background-darken1) !important;
     }
 
     .v-expansion-panel-header,
-    .v-icon {
+        :not(.v-btn__content:has(.v-icon), .v-pagination__navigation:has(.v-icon),
+          .v-input--selection-controls__input:has(.v-icon)) > .v-icon:not(button, .success--text, .primary--text, .error--text) {
       color: var(--v-application-background-darken4) !important;
     }
   }

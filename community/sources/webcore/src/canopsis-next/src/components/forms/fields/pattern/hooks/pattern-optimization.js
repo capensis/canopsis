@@ -1,123 +1,263 @@
-import { isNull } from 'lodash';
-import { computed, ref, unref } from 'vue';
+import { cloneDeep } from 'lodash';
+import {
+  computed,
+  ref,
+  unref,
+  inject,
+  onMounted,
+  onBeforeUnmount,
+} from 'vue';
 
-import { MODALS, PATTERN_OPERATORS } from '@/constants';
+import {
+  MODALS,
+  PATTERN_OPERATORS,
+  PATTERN_OPTIMIZATION_STATUSES,
+  PATTERNS_FIELDS,
+  ENTITY_PATTERN_FIELDS,
+  PATTERN_TYPES,
+} from '@/constants';
+
+import Observer from '@/services/observer';
+
+import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
+import { formFilterToPatterns } from '@/helpers/entities/filter/form';
+import { isOmitEqual } from '@/helpers/collection';
 
 import { useModals } from '@/hooks/modals';
-import { usePendingHandler } from '@/hooks/query/pending';
+import { usePollingWithPending } from '@/hooks/polling';
+import { useValidator } from '@/hooks/validator/validator';
+import { useModelField } from '@/hooks/form/model-field';
+import { usePatternEntitiesOptimize } from '@/hooks/store/modules/pattern-entities-optimize';
 
-export const usePatternOptimization = (value) => {
+/**
+ * Composable hook for managing pattern optimization functionality
+ *
+ * Handles pattern optimization process including:
+ * - Starting and polling optimization requests
+ * - Managing optimization state and suggestions
+ * - Applying and rejecting optimization suggestions
+ * - Showing entity comparison modals
+ * - Tracking applied suggestions for form submission
+ *
+ * @param {Ref|Object} value - Reactive form value containing pattern data
+ * @param {Function} emit - Vue emit function for updating parent component
+ *
+ * @returns {Object} Pattern optimization API
+ * @returns {Ref<boolean>} returns.pending - Whether optimization is currently in progress
+ * @returns {ComputedRef<string>} returns.failedReason - Reason for optimization failure, if any
+ * @returns {ComputedRef<boolean>} returns.successful - Whether optimization completed successfully
+ * @returns {ComputedRef<Array>} returns.suggestions - Array of optimization suggestions
+ * @returns {ComputedRef<Array>} returns.optimizedFieldsRegexps - Array of optimized field regexps
+ * @returns {ComputedRef<boolean>} returns.mayHaveOptimizationSuggestions - Whether pattern may have suggestions
+ * @returns {Function} returns.tryOptimization - Starts pattern optimization process
+ * @returns {Function} returns.cancelOptimization - Cancels ongoing optimization process
+ * @returns {Function} returns.applySuggestion - Applies a specific optimization suggestion
+ * @returns {Function} returns.rejectAllSuggestions - Rejects all suggestions and resets optimization state
+ * @returns {Function} returns.showEntitiesComparisonModal - Shows modal comparing current pattern with suggestion
+ */
+export const usePatternOptimization = (value, emit) => {
   const modals = useModals();
+  const validator = useValidator();
+  const { updateModel } = useModelField({ value }, emit);
 
-  const status = ref(null);
-  const suggestions = ref([]);
+  const afterSubmitObserver = inject('$afterSubmitObserver', new Observer());
 
-  const isOptimizing = computed(() => !isNull(status.value));
+  const {
+    optimizeEntities,
+    fetchOptimizeEntitiesStatus,
+    updateOptimization,
+    removeOptimization,
+  } = usePatternEntitiesOptimize();
 
-  const hasRegexpPatterns = computed(() => (
-    Object.values(unref(value)).some(({ groups = [] }) => (
-      groups.some(group => (
-        group.rules.some(rule => rule.operator === PATTERN_OPERATORS.regexp)
+  const appliedOptimizations = ref([]);
+
+  const optimization = ref(null);
+  const optimizationPattern = ref(null);
+
+  const failedReason = computed(() => optimization.value?.failed_reason);
+  const successful = computed(() => optimization.value?.status === PATTERN_OPTIMIZATION_STATUSES.success);
+  const suggestions = computed(() => (optimization.value?.suggestions ?? []));
+  const currentPattern = computed(() => formFilterToPatterns(unref(value), [PATTERNS_FIELDS.entity], false));
+  const optimizedFieldsRegexps = computed(() => optimization.value?.optimized_field_regexps ?? []);
+
+  const originalValue = cloneDeep(unref(value));
+
+  const hasChanges = computed(() => !isOmitEqual(unref(value), originalValue, ['title']));
+
+  const hasRegexpInfos = computed(() => {
+    const { [PATTERNS_FIELDS.entity]: entityPattern } = unref(value);
+
+    return entityPattern?.groups?.some?.(group => (
+      group.rules.some(rule => (
+        rule.operator === PATTERN_OPERATORS.regexp
+        && rule.attribute === ENTITY_PATTERN_FIELDS.infos
       ))
-    ))
-  ));
+    ));
+  });
 
-  // TODO: replace it to usePolling hook for status checking
-  const { pending, handler: tryOptimization } = usePendingHandler(async () => {
-    const response = {
-      status: 2,
-      suggestions: [
-        {
-          entity_pattern: [
-            [
-              {
-                field: 'infos.CSU_ID',
-                field_type: 'string',
-                cond: {
-                  type: 'eq',
-                  value: 'DO0011TVD0',
-                },
-              },
-            ],
-          ],
-          found_entities: 218,
-          difference: 0,
-        },
-        {
-          entity_pattern: [
-            [
-              {
-                field: 'component',
-                cond: {
-                  type: 'eq',
-                  value: 'DO0011TVD0',
-                },
-              },
-            ],
-          ],
-          found_entities: 1,
-          difference: 217,
-        },
-        {
-          entity_pattern: [
-            [
-              {
-                field: 'name',
-                cond: {
-                  type: 'eq',
-                  value: 'DO0011TVD0',
-                },
-              },
-            ],
-          ],
-          found_entities: 1,
-          difference: 217,
-        },
-        {
-          entity_pattern: [
-            [
-              {
-                field: 'infos.ticket_on_asset',
-                field_type: 'string',
-                cond: {
-                  type: 'eq',
-                  value: 'DO0011TVD0',
-                },
-              },
-            ],
-          ],
-          found_entities: 1,
-          difference: 217,
-        },
-      ],
-    };
+  const mayHaveOptimizationSuggestions = computed(() => hasRegexpInfos.value && hasChanges.value);
 
-    status.value = response.status;
-    suggestions.value = response.suggestions;
+  const { pending, poll, cancel } = usePollingWithPending({
+    startHandler: async () => {
+      optimizationPattern.value = cloneDeep(currentPattern.value);
+
+      const response = await optimizeEntities({
+        data: currentPattern.value,
+      });
+
+      optimization.value = response;
+
+      return response;
+    },
+    processHandler: async ({ _id: id }, resolve) => {
+      const response = await fetchOptimizeEntitiesStatus({
+        id,
+      });
+
+      optimization.value = response;
+
+      if (
+        [
+          PATTERN_OPTIMIZATION_STATUSES.success,
+          PATTERN_OPTIMIZATION_STATUSES.failed,
+        ].includes(response.status)
+      ) {
+        return resolve(response);
+      }
+
+      return response;
+    },
   });
 
   /**
-     * Opens entities comparison modal for pattern optimization
-     */
-  const showEntitiesComparisonModal = () => modals.show({
-    name: MODALS.entitiesComparison,
-  });
-
-  /**
-   * Cancels pattern optimization process
+   * Rejects all pattern optimization suggestions and resets optimization state
+   *
+   * Clears the optimization object, effectively dismissing all suggestions.
    */
-  const cancelOptimization = () => {
-    // TODO: implement cancel optimization logic
+  const rejectAllSuggestions = () => optimization.value = null;
+
+  /**
+   * Starts pattern optimization process
+   *
+   * Validates form fields (excluding title) and initiates optimization polling.
+   * Sets optimization state to failed if validation fails or an error occurs.
+   */
+  const tryOptimization = async () => {
+    try {
+      rejectAllSuggestions();
+
+      const fieldsWithoutTitle = validator.fields.items.filter(({ name }) => name !== 'title');
+      const isValid = await validator.validateAll(fieldsWithoutTitle);
+
+      if (!isValid) {
+        return;
+      }
+
+      optimization.value = await poll();
+    } catch (err) {
+      console.error(err);
+
+      optimization.value = {
+        status: PATTERN_OPTIMIZATION_STATUSES.failed,
+        failed_reason: err.message,
+      };
+    }
   };
 
+  /**
+   * Cancels ongoing pattern optimization process
+   *
+   * Stops polling, removes optimization request from server if exists,
+   * and resets optimization state and applied suggestion index.
+   */
+  const cancelOptimization = () => {
+    cancel();
+
+    if (optimization.value?._id) {
+      removeOptimization({ id: optimization.value._id });
+    }
+
+    rejectAllSuggestions();
+  };
+
+  /**
+   * Applies a pattern optimization suggestion
+   *
+   * Converts suggestion pattern to form format, updates the form model,
+   * tracks the applied suggestion index, and rejects all suggestions.
+   *
+   * @param {number} index - The index of the suggestion in the suggestions array
+   */
+  const applySuggestion = (index) => {
+    const entityPattern = patternToForm({
+      type: PATTERN_TYPES.entity,
+      [PATTERNS_FIELDS.entity]: suggestions.value[index][PATTERNS_FIELDS.entity],
+    });
+
+    appliedOptimizations.value.push({
+      index,
+      id: optimization.value?._id,
+    });
+
+    updateModel({
+      ...unref(value),
+      [PATTERNS_FIELDS.entity]: entityPattern,
+    });
+
+    rejectAllSuggestions();
+  };
+
+  /**
+   * Shows modal with entities comparison between current pattern and suggestion
+   *
+   * Opens entities comparison modal displaying differences between
+   * current pattern and the provided suggestion pattern.
+   *
+   * @param {Object} suggestion - The suggestion object containing pattern groups
+   */
+  const showEntitiesComparisonModal = suggestion => modals.show({
+    name: MODALS.entitiesComparison,
+    config: {
+      currentPattern: currentPattern.value[PATTERNS_FIELDS.entity],
+      suggestionPattern: formGroupsToPatternRules(suggestion?.groups ?? []),
+    },
+  });
+
+  /**
+   * Handles form submission callback
+   *
+   * Updates optimization request on server to mark applied suggestion as accepted
+   * if a suggestion was applied and optimization request exists.
+   */
+  const afterSubmit = () => {
+    if (appliedOptimizations.value?.length) {
+      appliedOptimizations.value.forEach(({ id, index }) => (
+        updateOptimization({
+          id,
+          data: {
+            accept: true,
+            index,
+          },
+        })
+      ));
+    }
+  };
+
+  onMounted(() => afterSubmitObserver?.register?.(afterSubmit));
+  onBeforeUnmount(() => afterSubmitObserver?.unregister?.(afterSubmit));
+
   return {
-    isOptimizing,
     pending,
+    failedReason,
+    successful,
     suggestions,
-    failed: false,
-    hasRegexpPatterns,
-    showEntitiesComparisonModal,
+    optimizedFieldsRegexps,
+    mayHaveOptimizationSuggestions,
+
     tryOptimization,
     cancelOptimization,
+    applySuggestion,
+    rejectAllSuggestions,
+    showEntitiesComparisonModal,
   };
 };

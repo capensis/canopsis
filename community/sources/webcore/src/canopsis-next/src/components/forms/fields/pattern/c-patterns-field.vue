@@ -1,8 +1,10 @@
 <template>
   <div class="c-patterns-field__wrapper">
     <pattern-optimization-progress
-      v-if="false"
+      v-if="optimizationPending || optimizationFailedReason"
+      :failed-reason="optimizationFailedReason"
       @cancel:optimization="cancelOptimization"
+      @try:optimization="tryOptimization"
     />
     <v-layout
       class="c-patterns-field"
@@ -105,11 +107,25 @@
           @input="errors.remove(preparedServiceWeatherName)"
         />
       </c-collapse-panel>
-      <pattern-suggestions
-        v-if="isOptimizing"
-        :suggestions="suggestions"
+
+      <pattern-try-optimization
+        v-if="mayHaveOptimizationSuggestions && !optimizationSuccessful && !optimizationPending"
+        @try:optimization="tryOptimization"
       />
-      <pattern-try-optimization v-if="hasRegexpPatterns && !isOptimizing" @try:optimization="tryOptimization" />
+
+      <pattern-suggestions
+        v-if="optimizationSuggestions.length"
+        :suggestions="optimizationSuggestions"
+        :patterns="value.entity_pattern"
+        :entity-attributes="entityAttributes"
+        :optimized-fields-regexps="optimizedFieldsRegexps"
+        @apply:suggestion="applySuggestion"
+        @reject:all="rejectAllSuggestions"
+        @show:entities-comparison="showEntitiesComparisonModal"
+      />
+      <c-alert v-else-if="optimizationSuccessful" type="warning">
+        <span v-html="$t('pattern.optimizationSuggestionsWasntFound')" class="font-weight-regular" />
+      </c-alert>
       <c-alert
         :value="allOverLimit"
         type="warning"
@@ -327,7 +343,7 @@ export default {
       default: '',
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const { t } = useI18n();
     const validator = useValidator();
 
@@ -507,12 +523,18 @@ export default {
     });
 
     const {
-      isOptimizing,
-      hasRegexpPatterns,
-      suggestions,
+      pending: optimizationPending,
+      suggestions: optimizationSuggestions,
+      failedReason: optimizationFailedReason,
+      successful: optimizationSuccessful,
+      optimizedFieldsRegexps,
+      mayHaveOptimizationSuggestions,
       tryOptimization,
       cancelOptimization,
-    } = usePatternOptimization(toRef(props, 'value'));
+      applySuggestion,
+      rejectAllSuggestions,
+      showEntitiesComparisonModal,
+    } = usePatternOptimization(toRef(props, 'value'), emit);
 
     return {
       counters,
@@ -525,7 +547,7 @@ export default {
       preparedServiceWeatherName,
       hasPatterns,
       isPatternRequired,
-      hasRegexpPatterns,
+      mayHaveOptimizationSuggestions,
       patternNamesToFields,
       alarmPatternOutlineColor,
       entityPatternOutlineColor,
@@ -545,10 +567,17 @@ export default {
       showPatternAlarms,
       showPatternEntities,
       checkFilter,
+
+      optimizationPending,
+      optimizationSuggestions,
+      optimizationFailedReason,
+      optimizationSuccessful,
+      optimizedFieldsRegexps,
       tryOptimization,
       cancelOptimization,
-      suggestions,
-      isOptimizing,
+      applySuggestion,
+      rejectAllSuggestions,
+      showEntitiesComparisonModal,
     };
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <c-collapse-panel class="c-alternative-bg-panel" expanded>
     <template #header>
-      <span class="font-weight-medium text-uppercase">{{ title }}</span>
+      <span class="font-weight-medium text-uppercase">{{ title }} - {{ meta.total_count ?? '' }}</span>
     </template>
     <entities-list-table-with-pagination
       :widget="widget"
@@ -39,8 +39,12 @@ export default {
       type: String,
       default: '',
     },
+    initialQuery: {
+      type: Object,
+      default: () => ({}),
+    },
   },
-  setup() {
+  setup(props) {
     const { t } = useI18n();
 
     const entities = ref([]);
@@ -54,12 +58,14 @@ export default {
       updateQuery,
       fetchHandlerWithQuery: fetchList,
     } = usePendingWithLocalQuery({
-      initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT },
+      initialQuery: { page: 1, itemsPerPage: PAGINATION_LIMIT, ...props.initialQuery },
       fetchHandler: async (fetchQuery) => {
         const response = await fetchContextEntitiesListWithoutStore({
           params: {
             limit: fetchQuery.itemsPerPage,
             page: fetchQuery.page,
+            entity_pattern: fetchQuery.entity_pattern,
+            negative_entity_pattern: fetchQuery.negative_entity_pattern,
           },
         });
 

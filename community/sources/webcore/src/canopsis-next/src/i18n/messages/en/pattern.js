@@ -28,7 +28,7 @@ export default {
   tryOptimization: 'Try optimization',
   tryOptimizationHint: 'Try optimization of Regexp to speed up the query<br><span class="font-weight-regular">Regexp queries usually work slower than normal queries.</span>',
   optimizationInProgress: 'Optimization in progress...',
-  optimizationFailed: 'Optimization failed : server error',
+  optimizationFailed: 'Optimization failed : {reason}',
   cancelOptimization: 'Cancel optimization',
   suggestions: 'Suggestions',
   rejectAllSuggestions: 'REJECT ALL SUGGESTIONS',
@@ -37,6 +37,7 @@ export default {
   seeRecordsComparison: 'See records comparison',
   conditionsOptimized: 'The following conditions were optimized:',
   applyThisSuggestion: 'APPLY THIS SUGGESTION',
+  optimizationSuggestionsWasntFound: 'No <strong>regexp</strong> optimization suggestions found',
   errors: {
     ruleRequired: 'Please add at least one rule',
     groupRequired: 'Please add at least one group',

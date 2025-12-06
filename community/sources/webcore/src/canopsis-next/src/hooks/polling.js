@@ -17,6 +17,8 @@ import { usePendingHandler } from '@/hooks/query/pending';
  */
 export const usePolling = ({ startHandler, processHandler, endHandler = v => v, interval = 2000 }) => {
   let cancelWait = () => {};
+  let finished = false;
+  let cancelled = false;
 
   /**
    * Function to wait for the process to complete
@@ -25,9 +27,6 @@ export const usePolling = ({ startHandler, processHandler, endHandler = v => v, 
    * @returns {Promise} Promise that resolves when the process is completed
    */
   const wait = options => new Promise((resolve, reject) => {
-    let finished = false;
-    let cancelled = false;
-
     const customResolve = (...args) => {
       finished = true;
 
@@ -72,7 +71,14 @@ export const usePolling = ({ startHandler, processHandler, endHandler = v => v, 
    * @returns {Promise} Promise that resolves when the polling process is completed
    */
   const poll = async (...args) => {
+    finished = false;
+    cancelled = false;
+
     const startResponse = await startHandler(...args);
+
+    if (cancelled) {
+      return startResponse;
+    }
 
     const waitResponse = await wait({ ...startResponse, ...args });
 
@@ -82,6 +88,36 @@ export const usePolling = ({ startHandler, processHandler, endHandler = v => v, 
   const cancel = () => cancelWait();
 
   return {
+    poll,
+    cancel,
+  };
+};
+
+/**
+ * Hook to handle polling with pending state tracking
+ *
+ * @param {Object} options - Options for polling with pending state tracking
+ * @param {Function} options.startHandler - Function to start the polling process
+ * @param {Function} options.processHandler - Function to process the polling
+ * @param {Function} options.endHandler - Function to handle the end of polling
+ * @param {number} options.interval - Interval in milliseconds for polling
+ * @param {boolean} [options.initialPending = false] - Initial value for the pending state
+ * @returns {Object} Object containing the polling function and the pending state
+ * @property {Ref<boolean>} pending - Reactive reference to the pending state
+ * @property {Function} poll - Function to start polling with pending state tracking
+ */
+export const usePollingWithPending = ({
+  startHandler,
+  processHandler,
+  endHandler,
+  interval,
+  initialPending = false,
+}) => {
+  const { poll: basicPoll, cancel } = usePolling({ startHandler, processHandler, endHandler, interval });
+  const { pending, handler: poll } = usePendingHandler(basicPoll, initialPending);
+
+  return {
+    pending,
     poll,
     cancel,
   };

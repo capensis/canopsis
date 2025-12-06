@@ -1,26 +1,26 @@
 <template>
-  <div v-if="suggestions.length">
+  <div
+    v-if="suggestions.length"
+    :class="{ 'pattern-suggestions--active-difference': hasDifference }"
+    class="pattern-suggestions"
+  >
     <v-layout
-      class="mb-4"
       align-center
       wrap
     >
       <v-tabs
         v-model="activeSuggestionIndex"
-        slider-color="success"
         class="pattern-suggestions__tabs"
         hide-slider
       >
-        <v-tab
+        <pattern-suggestion-tab
           v-for="(suggestion, index) in suggestions"
           :key="index"
-        >
-          <pattern-suggestion-tab
-            :number="index + 1"
-            :active="index === activeSuggestionIndex"
-            :suggestion="suggestion"
-          />
-        </v-tab>
+          :number="index + 1"
+          :active="index === activeSuggestionIndex"
+          :suggestion="suggestion"
+          @show:entities-comparison="showEntitiesComparisonModal"
+        />
       </v-tabs>
     </v-layout>
 
@@ -32,8 +32,9 @@
       >
         <pattern-suggestion-content
           :suggestion="suggestion"
-          :index="index"
-          @apply="handleApply"
+          :entity-attributes="entityAttributes"
+          :optimized-fields-regexps="optimizedFieldsRegexps"
+          @apply="apply(index)"
         />
       </v-tab-item>
     </v-tabs-items>
@@ -41,7 +42,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 import PatternSuggestionTab from './pattern-suggestion-tab.vue';
 import PatternSuggestionContent from './pattern-suggestion-content.vue';
@@ -56,42 +57,67 @@ export default {
       type: Array,
       default: () => [],
     },
+    entityAttributes: {
+      type: Array,
+      default: () => [],
+    },
+    optimizedFieldsRegexps: {
+      type: Array,
+      default: () => [],
+    },
   },
-  setup() {
+  setup(props, { emit }) {
     const activeSuggestionIndex = ref(0);
+
+    const hasDifference = computed(() => props.suggestions[activeSuggestionIndex.value]?.difference);
+
+    const apply = index => emit('apply', index);
+    const showEntitiesComparisonModal = suggestion => emit('show:entities-comparison', suggestion);
 
     return {
       activeSuggestionIndex,
+      hasDifference,
+      apply,
+      showEntitiesComparisonModal,
     };
-  },
-  methods: {
-    handleApply(suggestion, index) {
-      this.$emit('apply', suggestion, index);
-    },
   },
 };
 </script>
 
 <style lang="scss">
-.pattern-suggestions__tabs {
-  .v-tab {
-    min-width: 0;
-    padding: 0;
-    overflow: hidden;
+.pattern-suggestions {
+  --pattern-border-primary: var(--v-primary-base);
+  --pattern-border-info: var(--v-info-base);
 
-    &, &:before {
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
+  .theme--dark & {
+    --pattern-border-primary: var(--v-primary-base);
+    --pattern-border-info: var(--v-info-base);
+  }
+
+  .theme--light & {
+    &__content, &__tab {
+      background-color: var(--v-background-darken1);
     }
   }
 
-  .v-tabs-bar__content {
-    column-gap: 12px;
+  .theme--dark & {
+    &__content, &__tab {
+      background-color: var(--v-background-lighten1);
+    }
   }
 
-  &__found {
-    overflow-wrap: normal;
-    white-space: nowrap;
+  &__pattern {
+    margin-top: 16px;
   }
-}
+
+  &__tabs  {
+    position: relative;
+    top: 2px;
+    z-index: 2;
+
+    .v-tabs-bar__content {
+      column-gap: 12px;
+    }
+  }
+  }
 </style>
