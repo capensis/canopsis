@@ -1159,7 +1159,7 @@ export default {
   entitiesComparison: {
     title: 'Pattern entities comparison',
     infoMessage: 'Counts may differ because of 2 reasons :\n<span class="font-weight-regular">1. changes happened in Canopsis during the check (some if initially filtered entity changed and do not fit the pattern anymore)</span>\n<span class="font-weight-regular">2. suggested pattern isn\'t correct</span>\n<span>You can run the check again to be sure.</span>',
-    foundInCurrent: 'FOUND IN CURRENT, NOT FOUND IN SUGGESTION PATTERN - {count}',
-    foundInSuggestion: 'FOUND IN SUGGESTION, NOT FOUND IN CURRENT PATTERN - {count}',
+    foundInCurrent: 'FOUND IN CURRENT, NOT FOUND IN SUGGESTION PATTERN',
+    foundInSuggestion: 'FOUND IN SUGGESTION, NOT FOUND IN CURRENT PATTERN',
   },
 };

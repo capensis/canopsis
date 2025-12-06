@@ -12,5 +12,13 @@ export default {
     fetchOptimizeStatus(context, { id }) {
       return request.get(`${API_ROUTES.pattern.entitiesOptimize}/${id}`);
     },
+
+    update(context, { id, data }) {
+      return request.put(`${API_ROUTES.pattern.entitiesOptimize}/${id}`, data);
+    },
+
+    remove(context, { id }) {
+      return request.delete(`${API_ROUTES.pattern.entitiesOptimize}/${id}`);
+    },
   },
 };
