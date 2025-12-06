@@ -12,7 +12,7 @@
     <v-btn
       color="error"
       outlined
-      @click="handleRejectAll"
+      @click="rejectAll"
     >
       <v-icon class="mr-2">
         close
@@ -25,12 +25,10 @@
 <script>
 export default {
   setup(props, { emit }) {
-    const handleRejectAll = () => {
-      emit('reject-all');
-    };
+    const rejectAll = () => emit('reject:all');
 
     return {
-      handleRejectAll,
+      rejectAll,
     };
   },
 };

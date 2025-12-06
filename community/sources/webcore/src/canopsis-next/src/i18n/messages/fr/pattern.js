@@ -28,7 +28,7 @@ export default {
   tryOptimization: 'Essayer l\'optimisation',
   tryOptimizationHint: 'Essayez d\'optimiser la Regexp pour accélérer la requête<br><span class="font-weight-regular">Les requêtes Regexp fonctionnent généralement plus lentement que les requêtes normales.</span>',
   optimizationInProgress: 'Optimisation en cours...',
-  optimizationFailed: 'Optimisation échouée : erreur serveur',
+  optimizationFailed: 'Optimisation échouée : {reason}',
   cancelOptimization: 'Annuler l\'optimisation',
   suggestions: 'Suggestions',
   rejectAllSuggestions: 'REJETER TOUTES LES SUGGESTIONS',
@@ -37,6 +37,7 @@ export default {
   seeRecordsComparison: 'Voir la comparaison des enregistrements',
   conditionsOptimized: 'Les conditions suivantes ont été optimisées :',
   applyThisSuggestion: 'APPLIQUER CETTE SUGGESTION',
+  optimizationSuggestionsWasntFound: 'Aucune suggestion d\'optimisation <strong>regexp</strong> trouvée',
   errors: {
     ruleRequired: 'Veuillez ajouter au moins une règle',
     groupRequired: 'Veuillez ajouter au moins un groupe',

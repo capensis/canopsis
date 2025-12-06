@@ -19,10 +19,11 @@ const usePatternEntitiesOptimizeStoreModule = () => useStoreModuleHooks('pattern
  * @returns {Object} An object containing entities optimize actions:
  * @property {Function} optimize - Action to optimize entities
  * @property {Function} fetchOptimizeStatus - Action to fetch optimize status by id
+ * @property {Function} remove - Action to remove optimize by id
  *
  * @example
  * // Usage in a component
- * const { optimize, fetchOptimizeStatus } = usePatternEntitiesOptimize();
+ * const { optimize, fetchOptimizeStatus, remove } = usePatternEntitiesOptimize();
  * const result = await optimize({ data: { patterns: [...] } });
  * const status = await fetchOptimizeStatus({ id: 'task-id' });
  */
@@ -30,8 +31,10 @@ export const usePatternEntitiesOptimize = () => {
   const { useActions } = usePatternEntitiesOptimizeStoreModule();
 
   const actions = useActions({
-    optimize: 'optimize',
-    fetchOptimizeStatus: 'fetchOptimizeStatus',
+    optimizeEntities: 'optimize',
+    fetchOptimizeEntitiesStatus: 'fetchOptimizeStatus',
+    updateOptimization: 'update',
+    removeOptimization: 'remove',
   });
 
   return {
