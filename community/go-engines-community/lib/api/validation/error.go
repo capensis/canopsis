@@ -18,6 +18,24 @@ func NewError(errors validator.ValidationErrors, validatedStruct any) *Error {
 	}
 }
 
+func NewSingleError(tag, field, namespace string, validatedStruct any) *Error {
+	return NewError(
+		validator.ValidationErrors{
+			NewFieldError(tag, field, namespace),
+		},
+		validatedStruct,
+	)
+}
+
+func NewSingleErrorWithParam(tag, field, namespace, param string, validatedStruct any) *Error {
+	return NewError(
+		validator.ValidationErrors{
+			NewFieldErrorWithParam(tag, field, namespace, param),
+		},
+		validatedStruct,
+	)
+}
+
 type Error struct {
 	errors validator.ValidationErrors
 	// rvValidatedStruct is used to transform struct namespace to json|form tag namespace.

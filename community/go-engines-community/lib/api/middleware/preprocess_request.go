@@ -72,14 +72,14 @@ func PreProcessBulk(configProvider config.ApiConfigProvider, errorResponder http
 
 		jsonValue, err := fastjson.ParseBytes(raw)
 		if err != nil {
-			errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+			errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 			return
 		}
 
 		rawObjects, err := jsonValue.Array()
 		if err != nil {
-			errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+			errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 			return
 		}

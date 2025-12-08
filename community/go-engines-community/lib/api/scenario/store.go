@@ -512,10 +512,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Test", "TestData.Test")},
-					r,
-				)
+				return nil, nil, nil, validation.NewSingleError("not_exist", "Test", "TestData.Test", r)
 			}
 
 			return nil, nil, nil, err
@@ -531,10 +528,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 	}
 
 	if eventDataID == "" {
-		return nil, nil, nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("required", "Event", "TestData.Event")},
-			r,
-		)
+		return nil, nil, nil, validation.NewSingleError("required", "Event", "TestData.Event", r)
 	}
 
 	event, err := template.GetEventData(ctx, s.tplDataCollection, eventDataID, s.encoder, s.decoder)
@@ -543,10 +537,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 	}
 
 	if event == nil {
-		return nil, nil, nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_exist", "Event", "TestData.Event")},
-			r,
-		)
+		return nil, nil, nil, validation.NewSingleError("not_exist", "Event", "TestData.Event", r)
 	}
 
 	var whTestData map[int]template.ResponseTestData
@@ -554,10 +545,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 		if len(whTestDataIDs) > len(r.Rule.Actions) {
 			iStr := strconv.Itoa(len(r.Rule.Actions))
 
-			return nil, nil, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("must_be_empty", iStr, "TestData.Responses."+iStr)},
-				r,
-			)
+			return nil, nil, nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
 		}
 
 		whTestData, err = template.GetResponseData(ctx, s.tplDataCollection, whTestDataIDs)
@@ -566,19 +554,13 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 		}
 
 		if len(whTestData) == 0 {
-			return nil, nil, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Responses", "TestData.Responses")},
-				r,
-			)
+			return nil, nil, nil, validation.NewSingleError("not_exist", "Responses", "TestData.Responses", r)
 		}
 	}
 
 	entityID := event.GetEID()
 	if entityID == "" {
-		return nil, nil, nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("entity_not_exist", "Event", "TestData.Event")},
-			r,
-		)
+		return nil, nil, nil, validation.NewSingleError("entity_not_exist", "Event", "TestData.Event", r)
 	}
 
 	alarm, err := s.findAlarm(ctx, entityID)
@@ -587,10 +569,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (*types.Event
 	}
 
 	if alarm.ID == "" {
-		return nil, nil, nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("alarm_not_exist", "Event", "TestData.Event")},
-			r,
-		)
+		return nil, nil, nil, validation.NewSingleError("alarm_not_exist", "Event", "TestData.Event", r)
 	}
 
 	return event, &alarm, whTestData, nil
@@ -685,18 +664,12 @@ func (s *store) validateActionTpls(
 			if td, ok := whTestData[i]; ok {
 				b, err := s.encoder.Encode(td.Body)
 				if err != nil {
-					return nil, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("not_json", iStr, "TestData.Responses."+iStr)},
-						r,
-					)
+					return nil, validation.NewSingleError("not_json", iStr, "TestData.Responses."+iStr, r)
 				}
 
 				flatten, _, err := http.FlattenJSON(b)
 				if err != nil {
-					return nil, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("not_json", iStr, "TestData.Responses."+iStr)},
-						r,
-					)
+					return nil, validation.NewSingleError("not_json", iStr, "TestData.Responses."+iStr, r)
 				}
 
 				whHeader = td.Headers
@@ -705,10 +678,7 @@ func (s *store) validateActionTpls(
 					whResponseMap[iStr+"."+k] = v
 				}
 			} else {
-				return nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("required", iStr, "TestData.Responses."+iStr)},
-					r,
-				)
+				return nil, validation.NewSingleError("required", iStr, "TestData.Responses."+iStr, r)
 			}
 
 			if a.Parameters.DeclareTicket != nil {
@@ -745,10 +715,7 @@ func (s *store) validateActionTpls(
 			if _, ok := whTestData[i]; ok {
 				iStr := strconv.Itoa(i)
 
-				return nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("must_be_empty", iStr, "TestData.Responses."+iStr)},
-					r,
-				)
+				return nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
 			}
 		}
 	}

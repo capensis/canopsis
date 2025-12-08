@@ -6,7 +6,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -33,6 +33,8 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 	return &store{
 		dbClient:              dbClient,
 		dbCollection:          dbClient.Collection(mongo.PbehaviorReasonMongoCollection),
+		dbPbhCollection:       dbClient.Collection(mongo.PbehaviorMongoCollection),
+		dbScenarioCollection:  dbClient.Collection(mongo.ScenarioCollection),
 		authorProvider:        authorProvider,
 		defaultSearchByFields: []string{"_id", "name", "description"},
 		defaultSortBy:         "created",
@@ -44,6 +46,8 @@ func NewStore(dbClient mongo.DbClient, authorProvider author.Provider) Store {
 type store struct {
 	dbClient              mongo.DbClient
 	dbCollection          mongo.DbCollection
+	dbPbhCollection       mongo.DbCollection
+	dbScenarioCollection  mongo.DbCollection
 	authorProvider        author.Provider
 	defaultSearchByFields []string
 	defaultSortBy         string
@@ -190,28 +194,14 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	isLinkedToPbehavior, err := s.IsLinkedToPbehavior(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	if isLinkedToPbehavior {
-		return false, httperror.NewConflictError("The reason cannot be deleted because it is referenced by a pbehavior.")
-	}
-
-	isLinkedToAction, err := s.isLinkedToAction(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	if isLinkedToAction {
-		return false, httperror.NewConflictError("The reason cannot be deleted because it is referenced by an action scenario.")
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		err := s.validateDeleteRequest(ctx, id)
+		if err != nil {
+			return err
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
@@ -228,9 +218,7 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 
 // IsLinkedToPbehavior checks if there is pbehavior with linked reason.
 func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error) {
-	res := s.dbClient.
-		Collection(mongo.PbehaviorMongoCollection).
-		FindOne(ctx, bson.M{"reason": id})
+	res := s.dbPbhCollection.FindOne(ctx, bson.M{"reason": id})
 	if err := res.Err(); err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
 			return false, nil
@@ -242,25 +230,22 @@ func (s *store) IsLinkedToPbehavior(ctx context.Context, id string) (bool, error
 	return true, nil
 }
 
-func (s *store) isLinkedToAction(ctx context.Context, id string) (bool, error) {
-	res := s.dbClient.
-		Collection(mongo.ScenarioCollection).
-		FindOne(ctx, bson.M{
-			"actions": bson.M{
-				"$elemMatch": bson.M{
-					"type":              types.ActionTypePbehavior,
-					"parameters.reason": id,
-				},
-			}})
-	if err := res.Err(); err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
-		}
-
-		return false, err
+func (s *store) validateDeleteRequest(ctx context.Context, id string) error {
+	err := dbvalidation.ValidateLinkedReference(ctx, s.dbPbhCollection, bson.M{
+		"reason": id,
+	}, "reason", "a pbehavior")
+	if err != nil {
+		return err
 	}
 
-	return true, nil
+	return dbvalidation.ValidateLinkedReference(ctx, s.dbScenarioCollection, bson.M{
+		"actions": bson.M{
+			"$elemMatch": bson.M{
+				"type":              types.ActionTypePbehavior,
+				"parameters.reason": id,
+			},
+		},
+	}, "reason", "an action scenario")
 }
 
 func transformModelToDoc(r EditRequest) *pbehavior.Reason {

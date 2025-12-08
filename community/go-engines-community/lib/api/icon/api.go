@@ -16,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/websocket"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 const (
@@ -266,18 +265,12 @@ func (a *api) Delete(c *gin.Context) {
 
 func (a *api) validateFile(file *multipart.FileHeader) (string, error) {
 	if uint64(file.Size) > a.maxSize {
-		return "", validation.NewError(
-			validator.ValidationErrors{validation.NewFieldErrorWithParam("filesize", "file", "file", strconv.FormatUint(a.maxSize, 10))},
-			nil,
-		)
+		return "", validation.NewSingleErrorWithParam("filesize", "file", "file", strconv.FormatUint(a.maxSize, 10), nil)
 	}
 
 	mimeType := mime.TypeByExtension(path.Ext(file.Filename))
 	if !slices.Contains(a.mimeTypes, mimeType) {
-		return "", validation.NewError(
-			validator.ValidationErrors{validation.NewFieldErrorWithParam("filetype", "file", "file", strings.Join(a.mimeTypes, " "))},
-			nil,
-		)
+		return "", validation.NewSingleErrorWithParam("filetype", "file", "file", strings.Join(a.mimeTypes, " "), nil)
 	}
 
 	return mimeType, nil

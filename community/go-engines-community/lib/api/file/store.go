@@ -11,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/file"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -167,10 +166,7 @@ func (s *store) validateFormRequest(form *multipart.Form) ([]*multipart.FileHead
 	for field, headers := range form.File {
 		for _, header := range headers {
 			if s.maxSize > 0 && uint64(header.Size) > s.maxSize {
-				return nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldErrorWithParam("filesize", field, field, strconv.FormatUint(s.maxSize, 10))},
-					nil,
-				)
+				return nil, validation.NewSingleErrorWithParam("filesize", field, field, strconv.FormatUint(s.maxSize, 10), nil)
 			}
 
 			files = append(files, header)

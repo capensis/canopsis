@@ -16,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -656,10 +655,7 @@ func (a *api) BulkConnectorEdit(c *gin.Context) {
 					Comment:  request.Comment,
 				})
 			default:
-				return "", validation.NewError(
-					validator.ValidationErrors{validation.NewFieldErrorWithParam("oneof", "Action", "Action", BulkConnectorActionCreate+" "+BulkConnectorActionDelete)},
-					request,
-				)
+				return "", validation.NewSingleErrorWithParam("oneof", "Action", "Action", BulkConnectorActionCreate+" "+BulkConnectorActionDelete, request)
 			}
 
 			if err != nil {

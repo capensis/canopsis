@@ -9,7 +9,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 func NewApi(store Store, errorResponder httperror.Responder) crud.API {
@@ -116,10 +115,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if tpl.Type != request.Type {
-		err = validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("unchangeable", "Type", "Type")},
-			request,
-		)
+		err = validation.NewSingleError("unchangeable", "Type", "Type", request)
 		a.errorResponder.Respond(c, err)
 
 		return

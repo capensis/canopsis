@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/export"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
@@ -279,17 +280,11 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 	}
 
 	if oldTable.Type != *r.Type {
-		return res, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("unchangeable", "Type", "Type")},
-			r,
-		)
+		return res, validation.NewSingleError("unchangeable", "Type", "Type", r)
 	}
 
 	if len(oldTable.ColumnConfigs) != len(r.ColumnTags) {
-		return res, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldErrorWithParam("slicelen", "ColumnTags", "ColumnTags", strconv.Itoa(len(oldTable.ColumnConfigs)))},
-			r,
-		)
+		return res, validation.NewSingleErrorWithParam("slicelen", "ColumnTags", "ColumnTags", strconv.Itoa(len(oldTable.ColumnConfigs)), r)
 	}
 
 	updatedColumnConfigs := make([]externaldata.ColumnConfig, 0, len(oldTable.ColumnConfigs))
@@ -300,10 +295,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 
 	if oldTable.Name != r.Name {
 		if oldTable.FromConfig {
-			return res, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("unchangeable", "Name", "Name")},
-				r,
-			)
+			return res, validation.NewSingleError("unchangeable", "Name", "Name", r)
 		}
 
 		switch oldTable.Type {
@@ -315,10 +307,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 			if err != nil {
 				commErr := mongodriver.CommandError{}
 				if errors.As(err, &commErr) && commErr.Code == mongoErrCodeNamespaceExists {
-					return res, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
-						r,
-					)
+					return res, validation.NewSingleError("exist", "Name", "Name", r)
 				}
 
 				return res, fmt.Errorf("failed to rename mongo collection: %w", err)
@@ -333,10 +322,7 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (Table, error) {
 			if err != nil {
 				pgErr := &pgconn.PgError{}
 				if errors.As(err, &pgErr) && pgErr.Code == pgErrCodeDuplicateTable {
-					return res, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
-						r,
-					)
+					return res, validation.NewSingleError("exist", "Name", "Name", r)
 				}
 
 				return res, fmt.Errorf("failed to rename postgres table: %w", err)
@@ -396,7 +382,7 @@ func (s *store) Delete(ctx context.Context, id, author string) (bool, error) {
 			return httperror.NewForbiddenError("This table is defined in configuration and cannot be deleted.")
 		}
 
-		err = isTableLinked(ctx, id, s.dbWidgetCollection, s.linkedDbCollections)
+		err = validateDeleteRequest(ctx, id, s.dbWidgetCollection, s.linkedDbCollections)
 		if err != nil {
 			return err
 		}
@@ -973,10 +959,7 @@ func (s *store) createMongoCollection(ctx context.Context, name string, r EditRe
 	}
 
 	if len(collections) == 1 {
-		return validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
-			r,
-		)
+		return validation.NewSingleError("exist", "Name", "Name", r)
 	}
 
 	err = s.dbClient.CreateCollection(ctx, collName)
@@ -1008,10 +991,7 @@ func (s *store) createPostgresTable(ctx context.Context, name string, r EditRequ
 	if err != nil {
 		pgErr := &pgconn.PgError{}
 		if errors.As(err, &pgErr) && pgErr.Code == pgErrCodeDuplicateTable {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
-				r,
-			)
+			return validation.NewSingleError("exist", "Name", "Name", r)
 		}
 
 		return fmt.Errorf("failed to create postgres table: %w", err)
@@ -1590,28 +1570,21 @@ func GetRefParametersLookups() []bson.M {
 	}
 }
 
-func isTableLinked(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections map[string]mongo.DbCollection) error {
-	err := dbWidgetCollection.
-		FindOne(ctx, bson.M{"type": view.WidgetTypeExternalData, "parameters.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
-		Err()
-	if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+func validateDeleteRequest(ctx context.Context, id string, dbWidgetCollection mongo.DbCollection, linkedDbCollections map[string]mongo.DbCollection) error {
+	err := dbvalidation.ValidateLinkedReference(ctx, dbWidgetCollection, bson.M{
+		"type":             view.WidgetTypeExternalData,
+		"parameters.table": id,
+	}, "table", "a widget")
+	if err != nil {
 		return err
 	}
 
-	if err == nil {
-		return httperror.NewConflictError("The table cannot be deleted because it is referenced by a widget.")
-	}
-
 	for k, c := range linkedDbCollections {
-		err = c.
-			FindOne(ctx, bson.M{"external_data.table": id}, options.FindOne().SetProjection(bson.M{"_id": 1})).
-			Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		err = dbvalidation.ValidateLinkedReference(ctx, c, bson.M{
+			"external_data.table": id,
+		}, "table", k)
+		if err != nil {
 			return err
-		}
-
-		if err == nil {
-			return httperror.NewConflictError("The table cannot be deleted because it is referenced by " + k + ".")
 		}
 	}
 

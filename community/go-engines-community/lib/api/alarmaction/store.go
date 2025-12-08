@@ -13,7 +13,6 @@ import (
 	libevent "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/event"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	libmongo "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/go-playground/validator/v10"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
@@ -120,10 +119,7 @@ func (s *store) AckRemove(ctx context.Context, id string, r Request, userID, use
 func (s *store) Snooze(ctx context.Context, id string, r SnoozeRequest, userID, username string) (bool, error) {
 	d, err := r.Duration.To(datetime.DurationUnitSecond)
 	if err != nil {
-		return false, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("invalid", "Duration", "Duration")},
-			r,
-		)
+		return false, validation.NewSingleError("invalid", "Duration", "Duration", r)
 	}
 
 	alarm, err := s.findAlarm(ctx, bson.M{"_id": id, "v.snooze": nil})

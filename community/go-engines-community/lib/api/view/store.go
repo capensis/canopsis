@@ -119,17 +119,11 @@ func (s *store) Insert(ctx context.Context, r EditRequest, withDefaultTab bool) 
 		}
 
 		if group.ID == "" {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Group", "Group")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
 		}
 
 		if group.IsPrivate && group.Author != r.Author {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Group", "Group")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
 		}
 
 		if !group.IsPrivate {
@@ -221,17 +215,11 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		if group.ID == "" {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Group", "Group")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
 		}
 
 		if group.IsPrivate && group.Author != r.Author {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Group", "Group")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "Group", "Group", r)
 		}
 
 		if group.IsPrivate && !oldView.IsPrivate {
@@ -511,10 +499,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(views) != len(r.Views) {
-			return ExportResponse{}, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Views", "Views")},
-				r,
-			)
+			return ExportResponse{}, validation.NewSingleError("not_exist", "Views", "Views", r)
 		}
 	}
 	if len(r.Groups) > 0 {
@@ -582,10 +567,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 		}
 
 		if len(groups) != len(r.Groups) {
-			return ExportResponse{}, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Groups", "Groups")},
-				r,
-			)
+			return ExportResponse{}, validation.NewSingleError("not_exist", "Groups", "Groups", r)
 		}
 
 		for i, group := range groups {
@@ -600,10 +582,7 @@ func (s *store) Export(ctx context.Context, r ExportRequest) (ExportResponse, er
 			if len(groups[i].Views) != len(viewsByGroup[group.ID]) {
 				iStr := strconv.Itoa(i)
 
-				return ExportResponse{}, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_applicable", iStr, "Groups."+iStr)},
-					r,
-				)
+				return ExportResponse{}, validation.NewSingleError("not_applicable", iStr, "Groups."+iStr, r)
 			}
 
 			groups[i].ID = ""
@@ -694,10 +673,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 			if g.ID == "" || !existedGroupIds[g.ID] {
 				groupID = utils.NewID()
 				if g.Title == "" {
-					return validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("required", "Title", "Items."+strconv.Itoa(gi)+".Title")},
-						r,
-					)
+					return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Title", r)
 				}
 				newGroups = append(newGroups, libview.Group{
 					ID:       groupID,
@@ -720,10 +696,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 					}
 
 					if v.Title == "" {
-						return validation.NewError(
-							validator.ValidationErrors{validation.NewFieldError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Title")},
-							r,
-						)
+						return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Title", r)
 					}
 
 					viewID := utils.NewID()
@@ -748,10 +721,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 					if v.Tabs != nil {
 						for ti, tab := range *v.Tabs {
 							if tab.Title == "" {
-								return validation.NewError(
-									validator.ValidationErrors{validation.NewFieldError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Title")},
-									r,
-								)
+								return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Title", r)
 							}
 
 							tabId := utils.NewID()
@@ -768,10 +738,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 							if tab.Widgets != nil {
 								for wi, widget := range *tab.Widgets {
 									if widget.Type == "" {
-										return validation.NewError(
-											validator.ValidationErrors{validation.NewFieldError("required", "Type", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Type")},
-											r,
-										)
+										return validation.NewSingleError("required", "Type", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Type", r)
 									}
 
 									widgetId := utils.NewID()
@@ -779,10 +746,7 @@ func (s *store) Import(ctx context.Context, r ImportRequest, userID string) erro
 
 									for fi, filter := range widget.Filters {
 										if filter.Title == "" {
-											return validation.NewError(
-												validator.ValidationErrors{validation.NewFieldError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Filters."+strconv.Itoa(fi)+".Title")},
-												r,
-											)
+											return validation.NewSingleError("required", "Title", "Items."+strconv.Itoa(gi)+".Views."+strconv.Itoa(vi)+".Tabs."+strconv.Itoa(ti)+".Widgets."+strconv.Itoa(wi)+".Filters."+strconv.Itoa(fi)+".Title", r)
 										}
 										if len(filter.AlarmPattern) == 0 && len(filter.EntityPattern) == 0 && len(filter.PbehaviorPattern) == 0 {
 											ns := "Items." + strconv.Itoa(gi) + ".Views." + strconv.Itoa(vi) + ".Tabs." + strconv.Itoa(ti) + ".Widgets." + strconv.Itoa(wi) + ".Filters." + strconv.Itoa(fi)
