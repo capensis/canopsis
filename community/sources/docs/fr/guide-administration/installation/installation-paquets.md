@@ -610,6 +610,7 @@ l'édition choisie.
                            canopsis-engine-go@engine-pbehavior.service \
                            canopsis-engine-go@engine-remediation.service \
                            canopsis-engine-go@engine-webhook.service \
+                           canopsis-engine-go@engine-events-recorder.service \
                            canopsis-service@canopsis-api.service \
                            canopsis-engine-python-snmp.service \
                            canopsis.service
