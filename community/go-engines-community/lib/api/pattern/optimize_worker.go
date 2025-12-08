@@ -124,7 +124,7 @@ func (w *optimizeWorker) ProcessJob(ctx context.Context, id string) (resErr erro
 
 		var update bson.M
 
-		suggestions, optimizedFieldRegexps, err := w.optimize(gCtx, job)
+		result, err := w.optimize(gCtx, job)
 		if err != nil {
 			if mongo.IsConnectionError(err) {
 				return err
@@ -143,8 +143,10 @@ func (w *optimizeWorker) ProcessJob(ctx context.Context, id string) (resErr erro
 			update = bson.M{
 				"$set": bson.M{
 					"status":                  OptimizeStatusSucceeded,
-					"suggestions":             suggestions,
-					"optimized_field_regexps": optimizedFieldRegexps,
+					"suggestions":             result.Suggestions,
+					"optimized_field_regexps": result.OptimizedFieldRegexps,
+					"original_pattern_ms":     result.OriginalPatternMS,
+					"original_pattern_count":  result.OriginalPatternCount,
 				},
 			}
 		}
@@ -203,15 +205,22 @@ func (w *optimizeWorker) ProcessJob(ctx context.Context, id string) (resErr erro
 	return g.Wait()
 }
 
-func (w *optimizeWorker) optimize(ctx context.Context, job OptimizeJob) ([]Suggestion, []OptimizedFieldRegexp, error) {
-	initEntityIDs, err := w.store.GetEntityIDs(ctx, job.EntityPattern)
+func (w *optimizeWorker) optimize(ctx context.Context, job OptimizeJob) (OptimizeResult, error) {
+	initEntityIDs, duration, err := w.store.GetEntityIDs(ctx, job.EntityPattern)
 	if err != nil {
-		return nil, nil, err
+		return OptimizeResult{}, err
+	}
+
+	res := OptimizeResult{
+		OriginalPatternMS:     duration,
+		OriginalPatternCount:  len(initEntityIDs),
+		Suggestions:           make([]Suggestion, 0),
+		OptimizedFieldRegexps: make([]OptimizedFieldRegexp, 0),
 	}
 
 	// if an initial pattern doesn't return any entity, it makes impossible to make any suggestion.
 	if len(initEntityIDs) == 0 {
-		return []Suggestion{}, []OptimizedFieldRegexp{}, nil
+		return res, nil
 	}
 
 	allOptimizedFieldRegexpsMap := make(map[string]map[string]bool)
@@ -222,7 +231,7 @@ func (w *optimizeWorker) optimize(ctx context.Context, job OptimizeJob) ([]Sugge
 		var optimizedFieldRegexps []OptimizedFieldRegexp
 		fieldSuggestions[idx], optimizedFieldRegexps, err = w.suggestFieldConditions(ctx, conditions)
 		if err != nil {
-			return nil, nil, fmt.Errorf("failed to suggest field conditions: %w", err)
+			return OptimizeResult{}, fmt.Errorf("failed to suggest field conditions: %w", err)
 		}
 
 		for _, optimizedFieldRegexp := range optimizedFieldRegexps {
@@ -244,14 +253,14 @@ func (w *optimizeWorker) optimize(ctx context.Context, job OptimizeJob) ([]Sugge
 
 	// if no optimization fields, then there is no need to suggest anything.
 	if len(allOptimizedFieldRegexps) == 0 {
-		return []Suggestion{}, []OptimizedFieldRegexp{}, nil
+		return res, nil
 	}
 
 	g, gCtx := errgroup.WithContext(ctx)
 	results := make([]Suggestion, len(suggestedPatterns))
 	for i := 0; i < len(suggestedPatterns); i++ {
 		g.Go(func() error {
-			candidateEntityIDs, err := w.store.GetEntityIDs(gCtx, suggestedPatterns[i])
+			candidateEntityIDs, _, err := w.store.GetEntityIDs(gCtx, suggestedPatterns[i])
 			if err != nil {
 				return fmt.Errorf("failed to get entity IDs by a suggested pattern: %w", err)
 			}
@@ -268,14 +277,17 @@ func (w *optimizeWorker) optimize(ctx context.Context, job OptimizeJob) ([]Sugge
 
 	err = g.Wait()
 	if err != nil {
-		return nil, nil, err
+		return OptimizeResult{}, err
 	}
 
 	slices.SortFunc(results, func(l, r Suggestion) int {
 		return l.Difference - r.Difference
 	})
 
-	return results[:min(len(results), maxReturnedSuggestions)], allOptimizedFieldRegexps, nil
+	res.Suggestions = results[:min(len(results), maxReturnedSuggestions)]
+	res.OptimizedFieldRegexps = allOptimizedFieldRegexps
+
+	return res, nil
 }
 
 func (w *optimizeWorker) suggestFieldConditions(ctx context.Context, initConditions []pattern.FieldCondition) ([][]pattern.FieldCondition, []OptimizedFieldRegexp, error) {

@@ -37,7 +37,7 @@ type Store interface {
 	CountAlarms(ctx context.Context, r CountRequest, maxCount int64) (CountAlarmsResponse, error)
 	CountEntities(ctx context.Context, r CountRequest, maxCount int64) (CountEntitiesResponse, error)
 	GetLiteralsFieldStats(ctx context.Context, allLiterals []string) (map[string][]LiteralFieldStats, error)
-	GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, error)
+	GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, int64, error)
 }
 
 type store struct {
@@ -1114,18 +1114,20 @@ func (s *store) GetLiteralsFieldStats(ctx context.Context, allLiterals []string)
 	return fieldStats, nil
 }
 
-func (s *store) GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, error) {
+func (s *store) GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) ([]string, int64, error) {
 	transformedEntityPatternRequest, err := s.transformer.TransformEntityPatternFieldsRequest(ctx, common.EntityPatternFieldsRequest{
 		EntityPattern: entityPattern,
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to transform entity pattern: %w", err)
+		return nil, 0, fmt.Errorf("failed to transform entity pattern: %w", err)
 	}
 
 	entityPatternQuery, err := db.EntityPatternToMongoQuery(transformedEntityPatternRequest.EntityPattern, "")
 	if err != nil {
-		return nil, fmt.Errorf("failed to transform entity pattern to mongo query: %w", err)
+		return nil, 0, fmt.Errorf("failed to transform entity pattern to mongo query: %w", err)
 	}
+
+	start := time.Now()
 
 	cursor, err := s.readClient.Collection(mongo.EntityMongoCollection).Aggregate(ctx, []bson.M{
 		{
@@ -1136,10 +1138,12 @@ func (s *store) GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) 
 		},
 	})
 	if err != nil {
-		return nil, fmt.Errorf("failed to get entity ids: %w", err)
+		return nil, 0, fmt.Errorf("failed to get entity ids: %w", err)
 	}
 
 	defer cursor.Close(ctx)
+
+	end := time.Since(start)
 
 	var entityIDs []string
 
@@ -1150,15 +1154,15 @@ func (s *store) GetEntityIDs(ctx context.Context, entityPattern pattern.Entity) 
 
 		err = cursor.Decode(&doc)
 		if err != nil {
-			return nil, fmt.Errorf("failed to decode entity ids: %w", err)
+			return nil, 0, fmt.Errorf("failed to decode entity ids: %w", err)
 		}
 
 		entityIDs = append(entityIDs, doc.ID)
 	}
 
 	if err = cursor.Err(); err != nil {
-		return nil, fmt.Errorf("failed to process entity ids cursor correctly: %w", err)
+		return nil, 0, fmt.Errorf("failed to process entity ids cursor correctly: %w", err)
 	}
 
-	return entityIDs, nil
+	return entityIDs, max(end.Milliseconds(), 1), nil
 }

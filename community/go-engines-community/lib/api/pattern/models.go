@@ -118,6 +118,8 @@ type OptimizeJob struct {
 	Retries               int64                  `bson:"retries" json:"-"`
 	Suggestions           []Suggestion           `bson:"suggestions" json:"suggestions"`
 	OptimizedFieldRegexps []OptimizedFieldRegexp `bson:"optimized_field_regexps" json:"optimized_field_regexps"`
+	OriginalPatternMS     int64                  `bson:"original_pattern_ms" json:"original_pattern_ms"`
+	OriginalPatternCount  int                    `bson:"original_pattern_count" json:"original_pattern_count"`
 	FailReason            string                 `bson:"fail_reason,omitempty" json:"fail_reason,omitempty"`
 	AcceptedSuggestion    *int                   `bson:"accepted_suggestion,omitempty" json:"accepted_suggestion,omitempty"`
 }
@@ -136,4 +138,11 @@ type LiteralFieldStats struct {
 type OptimizedFieldRegexp struct {
 	Field  string `bson:"field" json:"field"`
 	Regexp string `bson:"regexp" json:"regexp"`
+}
+
+type OptimizeResult struct {
+	Suggestions           []Suggestion
+	OptimizedFieldRegexps []OptimizedFieldRegexp
+	OriginalPatternMS     int64
+	OriginalPatternCount  int
 }
