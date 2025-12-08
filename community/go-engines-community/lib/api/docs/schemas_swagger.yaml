@@ -6138,6 +6138,10 @@ definitions:
     type: object
   statesettings.EditRequest:
     properties:
+      corporate_entity_pattern:
+        type: string
+      corporate_inherited_entity_pattern:
+        type: string
       enabled:
         type: boolean
       entity_pattern:
@@ -6220,6 +6224,14 @@ definitions:
         type: string
       author:
         $ref: '#/definitions/author.Author'
+      corporate_entity_pattern:
+        type: string
+      corporate_entity_pattern_title:
+        type: string
+      corporate_inherited_entity_pattern:
+        type: string
+      corporate_inherited_entity_pattern_title:
+        type: string
       created:
         type: integer
       deletable:
