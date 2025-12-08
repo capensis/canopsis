@@ -7,8 +7,8 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/role"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
@@ -237,12 +237,12 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*User, error) {
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
-		err := validation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+		err := dbvalidation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
 		if err != nil {
 			return err
 		}
 
-		err = validation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+		err = dbvalidation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
 		if err != nil {
 			return err
 		}

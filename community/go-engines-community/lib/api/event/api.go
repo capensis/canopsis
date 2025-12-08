@@ -50,7 +50,7 @@ func (a *api) Send(c *gin.Context) {
 
 	if mediatype, _, err := mime.ParseMediaType(c.GetHeader("content-type")); err == nil && mediatype == binding.MIMEPOSTForm {
 		if err = c.Request.ParseForm(); err != nil {
-			a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+			a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 			return
 		}
@@ -81,7 +81,7 @@ func (a *api) Send(c *gin.Context) {
 
 	jsonValue, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+		a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}
@@ -126,7 +126,7 @@ func (a *api) Send(c *gin.Context) {
 	case fastjson.TypeArray:
 		values, err = jsonValue.Array()
 		if err != nil {
-			a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+			a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 			return
 		}
@@ -145,7 +145,7 @@ func (a *api) Send(c *gin.Context) {
 			sentIdx++
 		}
 	default:
-		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+		a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}

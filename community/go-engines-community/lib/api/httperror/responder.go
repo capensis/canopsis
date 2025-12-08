@@ -67,12 +67,17 @@ func NewResponder(trans validation.ErrorTranslator, logger zerolog.Logger) Respo
 }
 
 func (r *responder) Respond(c *gin.Context, err error) {
-	code, res := r.GetResponse(c, err)
+	code, res := r.buildResponse(c, err)
 	c.Abort()
 	c.Data(code, gin.MIMEJSON, res.MarshalTo(nil))
 }
 
 func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value) {
+	// delegate to private method to adjust CallerSkipFrame(2)
+	return r.buildResponse(c, err)
+}
+
+func (r *responder) buildResponse(c *gin.Context, err error) (int, *fastjson.Value) {
 	var res *fastjson.Value
 	valErr := &validation.Error{}
 	if errors.As(err, &valErr) {
@@ -84,6 +89,7 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 
 	var code int
 	var msg string
+	var invalidReqErr *validation.InvalidRequestBodyError
 	var forbiddenErr *ForbiddenError
 	var conflictErr *ConflictError
 	logLvl := zerolog.DebugLevel
@@ -106,8 +112,9 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 	} else if errors.As(err, &conflictErr) {
 		code = http.StatusConflict
 		msg = conflictErr.Message
-	} else if errors.Is(err, validation.ErrInvalidRequestBody) {
+	} else if errors.As(err, &invalidReqErr) {
 		code = http.StatusBadRequest
+		logLvl = zerolog.WarnLevel
 	} else if errors.Is(err, authctx.ErrNotFound) {
 		code = http.StatusUnauthorized
 	} else if errors.Is(err, context.Canceled) {
@@ -124,6 +131,7 @@ func (r *responder) GetResponse(c *gin.Context, err error) (int, *fastjson.Value
 	}
 
 	r.logger.WithLevel(logLvl).
+		CallerSkipFrame(2).
 		Err(err).
 		Str("uri", c.Request.RequestURI).
 		Str("method", c.Request.Method).

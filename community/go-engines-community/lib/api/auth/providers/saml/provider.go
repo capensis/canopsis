@@ -30,7 +30,6 @@ import (
 	libsectls "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/tls"
 	"github.com/beevik/etree"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	saml2 "github.com/russellhaering/gosaml2"
 	samltypes "github.com/russellhaering/gosaml2/types"
@@ -411,10 +410,7 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 
 		samlResponse, exists := c.GetPostForm("SAMLResponse")
 		if !exists {
-			err := validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "SAMLResponse", "SAMLResponse")},
-				nil,
-			)
+			err := validation.NewSingleError("required", "SAMLResponse", "SAMLResponse", nil)
 
 			p.errorResponder.Respond(c, err)
 
@@ -423,10 +419,7 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 
 		relayState, exists := c.GetPostForm("RelayState")
 		if !exists {
-			err := validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "RelayState", "RelayState")},
-				nil,
-			)
+			err := validation.NewSingleError("required", "RelayState", "RelayState", nil)
 
 			p.errorResponder.Respond(c, err)
 
@@ -435,10 +428,7 @@ func (p *provider) SamlAcsHandler() gin.HandlerFunc {
 
 		relayUrl, err := url.Parse(relayState)
 		if err != nil {
-			err = validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("url", "RelayState", "RelayState")},
-				nil,
-			)
+			err = validation.NewSingleError("url", "RelayState", "RelayState", nil)
 
 			p.errorResponder.Respond(c, err)
 
@@ -569,10 +559,7 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 
 		samlRequest, exists := c.GetQuery("SAMLRequest")
 		if !exists {
-			err := validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "SAMLRequest", "SAMLRequest")},
-				nil,
-			)
+			err := validation.NewSingleError("required", "SAMLRequest", "SAMLRequest", nil)
 
 			p.errorResponder.Respond(c, err)
 
@@ -581,10 +568,7 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 
 		relayState, exists := c.GetQuery("RelayState")
 		if !exists {
-			err := validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "RelayState", "RelayState")},
-				nil,
-			)
+			err := validation.NewSingleError("required", "RelayState", "RelayState", nil)
 
 			p.errorResponder.Respond(c, err)
 
@@ -593,10 +577,7 @@ func (p *provider) SamlSloHandler() gin.HandlerFunc {
 
 		request, err := p.samlSP.ValidateEncodedLogoutRequestPOST(samlRequest)
 		if err != nil {
-			err = validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("invalid", "SAMLRequest", "SAMLRequest")},
-				nil,
-			)
+			err = validation.NewSingleError("invalid", "SAMLRequest", "SAMLRequest", nil)
 
 			p.errorResponder.Respond(c, err)
 
