@@ -1,8 +1,6 @@
 package validation
 
 import (
-	"context"
-	"fmt"
 	"reflect"
 	"regexp"
 	"strconv"
@@ -12,9 +10,7 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"github.com/go-playground/validator/v10"
-	"go.mongodb.org/mongo-driver/v2/bson"
 )
 
 const (
@@ -155,54 +151,6 @@ func ValidateTemplate(templateExecutor template.Executor) validator.Func {
 
 func IsTableName(s string) bool {
 	return tableNameRegex.MatchString(s) && len(s) <= tableNameMaxLen
-}
-
-type FieldValidator interface {
-	Validate(ctx context.Context, sl validator.StructLevel)
-}
-
-func ValidateExist(ctx context.Context, collection mongo.DbCollection, request any, field string, value any) error {
-	var q bson.M
-	var expectedCount int64
-	switch v := value.(type) {
-	case string:
-		if v == "" {
-			return nil
-		}
-
-		q = bson.M{"_id": value}
-		expectedCount = 1
-	case *string:
-		if v == nil || *v == "" {
-			return nil
-		}
-
-		q = bson.M{"_id": value}
-		expectedCount = 1
-	case []string:
-		if len(v) == 0 {
-			return nil
-		}
-
-		q = bson.M{"_id": bson.M{"$in": value}}
-		expectedCount = int64(len(v))
-	default:
-		return fmt.Errorf("unsupported type: %T, collection %q, field %q, request %+v", value, collection.Name(), field, request)
-	}
-
-	count, err := collection.CountDocuments(ctx, q)
-	if err != nil {
-		return err
-	}
-
-	if count != expectedCount {
-		return NewError(
-			validator.ValidationErrors{NewFieldError("not_exist", field, field)},
-			request,
-		)
-	}
-
-	return nil
 }
 
 func ValidateInfoValue(fl validator.FieldLevel) bool {

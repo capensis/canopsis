@@ -28,7 +28,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -516,10 +515,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return user, nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Test", "TestData.Test")},
-					r,
-				)
+				return user, nil, nil, validation.NewSingleError("not_exist", "Test", "TestData.Test", r)
 			}
 
 			return user, nil, nil, err
@@ -555,10 +551,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 		}
 
 		if !ok {
-			return user, nil, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "User", "TestData.User")},
-				r,
-			)
+			return user, nil, nil, validation.NewSingleError("not_accessible", "User", "TestData.User", r)
 		}
 	}
 
@@ -568,20 +561,14 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 	}
 
 	if user.Username == "" {
-		return user, nil, nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_exist", "User", "TestData.User")},
-			r,
-		)
+		return user, nil, nil, validation.NewSingleError("not_exist", "User", "TestData.User", r)
 	}
 
 	switch r.Rule.Type {
 	case link.TypeAlarm:
 		if r.TestData.Alarm == "" {
 			if alarm.ID == "" {
-				return user, nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("required", "Alarm", "TestData.Alarm")},
-					r,
-				)
+				return user, nil, nil, validation.NewSingleError("required", "Alarm", "TestData.Alarm", r)
 			}
 		} else if r.TestData.Alarm != alarm.ID { // keep snapshot from the test
 			alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
@@ -590,19 +577,13 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 			}
 
 			if alarm.ID == "" {
-				return user, nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Alarm", "TestData.Alarm")},
-					r,
-				)
+				return user, nil, nil, validation.NewSingleError("not_exist", "Alarm", "TestData.Alarm", r)
 			}
 		}
 	case link.TypeEntity:
 		if r.TestData.Entity == "" {
 			if entity.ID == "" {
-				return user, nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("required", "Entity", "TestData.Entity")},
-					r,
-				)
+				return user, nil, nil, validation.NewSingleError("required", "Entity", "TestData.Entity", r)
 			}
 		} else if r.TestData.Entity != entity.ID { // keep snapshot from the test
 			entity, err = s.findEntity(ctx, r.TestData.Entity)
@@ -611,10 +592,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (link.User, [
 			}
 
 			if entity.ID == "" {
-				return user, nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Entity", "TestData.Entity")},
-					r,
-				)
+				return user, nil, nil, validation.NewSingleError("not_exist", "Entity", "TestData.Entity", r)
 			}
 		}
 	}
@@ -873,10 +851,7 @@ func (s *store) processTableExdata(
 		getterErr := &externaldata.GetterError{}
 		if errors.As(err, &getterTplErr) || errors.As(err, &getterErr) {
 			idxStr := strconv.Itoa(idx)
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_applicable", idxStr, "Rule.ExternalData."+idxStr)},
-				r,
-			)
+			return nil, validation.NewSingleError("not_applicable", idxStr, "Rule.ExternalData."+idxStr, r)
 		}
 
 		return nil, err

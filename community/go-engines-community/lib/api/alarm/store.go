@@ -25,7 +25,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -775,10 +774,7 @@ func (s *store) GetLinks(ctx context.Context, ruleId string, alarmIds []string, 
 			return nil, false, nil
 		}
 		if errors.Is(err, link.ErrNotMatchedAlarm) {
-			return nil, false, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("rulematch", "ids", "ids")},
-				nil,
-			)
+			return nil, false, validation.NewSingleError("rulematch", "ids", "ids", nil)
 		}
 		return nil, false, err
 	}

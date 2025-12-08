@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	apiexternaldata "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/externaldatatable"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/logger"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
@@ -151,7 +152,7 @@ func (s *store) Insert(ctx context.Context, request CreateRequest) (*Response, e
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err = validation.ValidateExist(ctx, s.dbExceptionCollection, request, "Exceptions", request.Exceptions)
+		err = dbvalidation.ValidateExist(ctx, s.dbExceptionCollection, request, "Exceptions", request.Exceptions)
 		if err != nil {
 			return err
 		}
@@ -292,7 +293,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, e
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err = validation.ValidateExist(ctx, s.dbExceptionCollection, request, "Exceptions", request.Exceptions)
+		err = dbvalidation.ValidateExist(ctx, s.dbExceptionCollection, request, "Exceptions", request.Exceptions)
 		if err != nil {
 			return err
 		}
@@ -566,10 +567,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 			Decode(&test)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return tplData, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Test", "TestData.Test")},
-					r,
-				)
+				return tplData, nil, validation.NewSingleError("not_exist", "Test", "TestData.Test", r)
 			}
 
 			return tplData, nil, err
@@ -585,10 +583,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 	}
 
 	if eventDataID == "" {
-		return tplData, nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("required", "Event", "TestData.Event")},
-			r,
-		)
+		return tplData, nil, validation.NewSingleError("required", "Event", "TestData.Event", r)
 	}
 
 	event, err := template.GetEventData(ctx, s.dbTplDataCollection, eventDataID, s.encoder, s.decoder)
@@ -597,10 +592,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 	}
 
 	if event == nil {
-		return tplData, nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_exist", "Event", "TestData.Event")},
-			r,
-		)
+		return tplData, nil, validation.NewSingleError("not_exist", "Event", "TestData.Event", r)
 	}
 
 	var exdataTestData map[int]template.ResponseTestData
@@ -608,10 +600,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 		if len(exdataTestDataIDs) > len(r.Rule.ExternalData) {
 			iStr := strconv.Itoa(len(r.Rule.ExternalData))
 
-			return tplData, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("must_be_empty", iStr, "TestData.Responses."+iStr)},
-				r,
-			)
+			return tplData, nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
 		}
 
 		exdataTestData, err = template.GetResponseData(ctx, s.dbTplDataCollection, exdataTestDataIDs)
@@ -620,10 +609,7 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 		}
 
 		if len(exdataTestData) == 0 {
-			return tplData, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Response", "TestData.Response")},
-				r,
-			)
+			return tplData, nil, validation.NewSingleError("not_exist", "Response", "TestData.Response", r)
 		}
 	}
 
@@ -643,17 +629,11 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 	if len(r.Rule.EventPattern) > 0 {
 		matched, eventRegexMatches, err = match.MatchEventPatternWithRegexMatches(r.Rule.EventPattern, event)
 		if err != nil {
-			return tplData, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("event_pattern", "EventPattern", "Rule.EventPattern")},
-				r,
-			)
+			return tplData, nil, validation.NewSingleError("event_pattern", "EventPattern", "Rule.EventPattern", r)
 		}
 
 		if !matched {
-			return tplData, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("rulematch", "Event", "TestData.Event")},
-				r,
-			)
+			return tplData, nil, validation.NewSingleError("rulematch", "Event", "TestData.Event", r)
 		}
 	}
 
@@ -685,25 +665,16 @@ func (s *store) getTplData(ctx context.Context, r TemplateRequest) (eventfilter.
 
 	if len(entityPattern) > 0 {
 		if entity.ID == "" {
-			return tplData, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("entity_not_exist", "Event", "TestData.Event")},
-				r,
-			)
+			return tplData, nil, validation.NewSingleError("entity_not_exist", "Event", "TestData.Event", r)
 		}
 
 		matched, entityRegexMatches, err = match.MatchEntityPatternWithRegexMatches(entityPattern, &entity)
 		if err != nil {
-			return tplData, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("entity_pattern", "EntityPattern", "Rule.EntityPattern")},
-				r,
-			)
+			return tplData, nil, validation.NewSingleError("entity_pattern", "EntityPattern", "Rule.EntityPattern", r)
 		}
 
 		if !matched {
-			return tplData, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("rulematch", "Event", "TestData.Event")},
-				r,
-			)
+			return tplData, nil, validation.NewSingleError("rulematch", "Event", "TestData.Event", r)
 
 		}
 	}
@@ -770,10 +741,7 @@ func (s *store) validateExdataTpls(
 			if _, ok := exdataTestData[i]; ok {
 				iStr := strconv.Itoa(i)
 
-				return nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("must_be_empty", iStr, "TestData.Responses."+iStr)},
-					r,
-				)
+				return nil, nil, validation.NewSingleError("must_be_empty", iStr, "TestData.Responses."+iStr, r)
 			}
 		case externaldata.RefTypeAPI:
 			if d.Request != nil {
@@ -793,20 +761,14 @@ func (s *store) validateExdataTpls(
 				if err != nil {
 					iStr := strconv.Itoa(i)
 
-					return nil, nil, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("not_json", iStr, "TestData.Responses."+iStr)},
-						r,
-					)
+					return nil, nil, validation.NewSingleError("not_json", iStr, "TestData.Responses."+iStr, r)
 				}
 
 				flatten, basicRes, err := http.FlattenJSON(b)
 				if err != nil {
 					iStr := strconv.Itoa(i)
 
-					return nil, nil, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("not_json", iStr, "TestData.Responses."+iStr)},
-						r,
-					)
+					return nil, nil, validation.NewSingleError("not_json", iStr, "TestData.Responses."+iStr, r)
 				}
 
 				if flatten == nil {
@@ -817,10 +779,7 @@ func (s *store) validateExdataTpls(
 			} else {
 				iStr := strconv.Itoa(i)
 
-				return nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("required", iStr, "TestData.Responses."+iStr)},
-					r,
-				)
+				return nil, nil, validation.NewSingleError("required", iStr, "TestData.Responses."+iStr, r)
 			}
 		}
 	}
@@ -845,10 +804,7 @@ func (s *store) validateConfigTpls(
 				if !ok {
 					iStr := strconv.Itoa(i)
 
-					return nil, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("value_string", "Value", "Rule.Config.Actions."+iStr+".Value")},
-						r,
-					)
+					return nil, validation.NewSingleError("value_string", "Value", "Rule.Config.Actions."+iStr+".Value", r)
 				}
 
 				response["config.actions."+strconv.Itoa(i)+".value"], err = s.validateTpl(val, tplData, r)
@@ -937,10 +893,7 @@ func (s *store) processTableExdata(
 		if errors.As(err, &getterTplErr) || errors.As(err, &getterErr) {
 			idxStr := strconv.Itoa(idx)
 
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_applicable", idxStr, "Rule.ExternalData."+idxStr)},
-				r,
-			)
+			return nil, validation.NewSingleError("not_applicable", idxStr, "Rule.ExternalData."+idxStr, r)
 		}
 
 		return nil, err
@@ -957,10 +910,7 @@ func (s *store) validateTpl(str string, data eventfilter.Template, r TemplateReq
 
 	// if only Event is provided but Entity is used in templates
 	if response.Err != nil && strings.Contains(response.Err.Message, tplValErrNoEntity) && data.Event.Entity == nil {
-		return response, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("entity_not_exist", "Event", "TestData.Event")},
-			r,
-		)
+		return response, validation.NewSingleError("entity_not_exist", "Event", "TestData.Event", r)
 	}
 
 	return response, nil

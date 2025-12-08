@@ -5,8 +5,6 @@ import (
 	"reflect"
 	"regexp"
 	"strings"
-
-	"github.com/go-playground/validator/v10"
 )
 
 type duplicateErrorParser struct {
@@ -30,10 +28,7 @@ func (p *duplicateErrorParser) Parse(err error, validatedStruct any) error {
 		rt := reflect.ValueOf(validatedStruct).Type()
 		rf := p.findStructFieldByTag(rt, "bson", field)
 		if rf != nil {
-			return NewError(
-				validator.ValidationErrors{NewFieldError("exist", rf.Name, rf.Name)},
-				validatedStruct,
-			)
+			return NewSingleError("exist", rf.Name, rf.Name, validatedStruct)
 		}
 	}
 
