@@ -691,10 +691,7 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 		err := q.filterCollection.FindOne(ctx, bson.M{"_id": id}).Decode(&filter)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", strconv.Itoa(i), "Filters."+strconv.Itoa(i))},
-					r,
-				)
+				return validation.NewSingleError("not_exist", strconv.Itoa(i), "Filters."+strconv.Itoa(i), r)
 			}
 
 			return fmt.Errorf("cannot fetch widget filter: %w", err)
@@ -702,34 +699,22 @@ func (q *MongoQueryBuilder) handleWidgetFilter(ctx context.Context, r FilterRequ
 
 		if len(filter.AlarmPattern) == 0 && len(filter.PbehaviorPattern) == 0 && len(filter.EntityPattern) == 0 ||
 			len(filter.WeatherServicePattern) > 0 {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_applicable", strconv.Itoa(i), "Filters."+strconv.Itoa(i))},
-				r,
-			)
+			return validation.NewSingleError("not_applicable", strconv.Itoa(i), "Filters."+strconv.Itoa(i), r)
 		}
 
 		err = q.handleAlarmPattern(filter.AlarmPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("filter_alarm_pattern", strconv.Itoa(i), "Filters."+strconv.Itoa(i))},
-				r,
-			)
+			return validation.NewSingleError("filter_alarm_pattern", strconv.Itoa(i), "Filters."+strconv.Itoa(i), r)
 		}
 
 		err = q.handlePbehaviorPattern(filter.PbehaviorPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("filter_pbehavior_pattern", strconv.Itoa(i), "Filters."+strconv.Itoa(i))},
-				r,
-			)
+			return validation.NewSingleError("filter_pbehavior_pattern", strconv.Itoa(i), "Filters."+strconv.Itoa(i), r)
 		}
 
 		err = q.handleEntityPattern(filter.EntityPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("filter_entity_pattern", strconv.Itoa(i), "Filters."+strconv.Itoa(i))},
-				r,
-			)
+			return validation.NewSingleError("filter_entity_pattern", strconv.Itoa(i), "Filters."+strconv.Itoa(i), r)
 		}
 	}
 
@@ -741,17 +726,11 @@ func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest)
 		var alarmPattern pattern.Alarm
 		err := json.Unmarshal([]byte(r.AlarmPattern), &alarmPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("alarm_pattern", "AlarmPattern", "AlarmPattern")},
-				r,
-			)
+			return validation.NewSingleError("alarm_pattern", "AlarmPattern", "AlarmPattern", r)
 		}
 		err = q.handleAlarmPattern(alarmPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("alarm_pattern", "AlarmPattern", "AlarmPattern")},
-				r,
-			)
+			return validation.NewSingleError("alarm_pattern", "AlarmPattern", "AlarmPattern", r)
 		}
 	}
 
@@ -759,17 +738,11 @@ func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest)
 		var pbehaviorPattern pattern.PbehaviorInfo
 		err := json.Unmarshal([]byte(r.PbehaviorPattern), &pbehaviorPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern")},
-				r,
-			)
+			return validation.NewSingleError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern", r)
 		}
 		err = q.handlePbehaviorPattern(pbehaviorPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern")},
-				r,
-			)
+			return validation.NewSingleError("pbehavior_pattern", "PbehaviorPattern", "PbehaviorPattern", r)
 		}
 	}
 
@@ -777,10 +750,7 @@ func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest)
 		var entityPattern pattern.Entity
 		err := json.Unmarshal([]byte(r.EntityPattern), &entityPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("entity_pattern", "EntityPattern", "EntityPattern")},
-				r,
-			)
+			return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
 		}
 
 		aliases, err := q.transformer.FetchAliases(ctx, patternfields.GetAliases(entityPattern))
@@ -804,10 +774,7 @@ func (q *MongoQueryBuilder) handlePatterns(ctx context.Context, r FilterRequest)
 
 		err = q.handleEntityPattern(entityPattern)
 		if err != nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("entity_pattern", "EntityPattern", "EntityPattern")},
-				r,
-			)
+			return validation.NewSingleError("entity_pattern", "EntityPattern", "EntityPattern", r)
 		}
 	}
 

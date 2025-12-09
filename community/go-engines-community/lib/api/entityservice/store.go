@@ -8,6 +8,7 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/template"
@@ -25,7 +26,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
@@ -355,7 +355,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		response = nil
 
-		err := validation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
+		err := dbvalidation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
 		if err != nil {
 			return err
 		}
@@ -367,10 +367,7 @@ func (s *store) Create(ctx context.Context, request CreateRequest) (*Response, e
 				"soft_deleted": nil,
 			}).Err()
 			if err == nil {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
-					Response{},
-				)
+				return validation.NewSingleError("exist", "Name", "Name", Response{})
 			}
 
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {
@@ -440,7 +437,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 		serviceChanges = ServiceChanges{}
 		oldValues := entityservice.EntityService{}
 
-		err := validation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
+		err := dbvalidation.ValidateExist(ctx, s.categoryDbCollection, request, "Category", request.Category)
 		if err != nil {
 			return err
 		}
@@ -453,10 +450,7 @@ func (s *store) Update(ctx context.Context, request UpdateRequest) (*Response, S
 				"soft_deleted": nil,
 			}).Err()
 			if err == nil {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
-					Response{},
-				)
+				return validation.NewSingleError("exist", "Name", "Name", Response{})
 			}
 
 			if !errors.Is(err, mongodriver.ErrNoDocuments) {

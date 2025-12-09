@@ -174,14 +174,14 @@ func (a *api) GetDetails(c *gin.Context) {
 
 	jsonValue, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+		a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}
 
 	rawObjects, err := jsonValue.Array()
 	if err != nil {
-		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+		a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}

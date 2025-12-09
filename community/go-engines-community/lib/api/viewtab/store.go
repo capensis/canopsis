@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	apisecurity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -16,7 +17,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -190,17 +190,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 		}
 
 		if viewInfo.ID == "" {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "View", "View", r)
 		}
 
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "View", "View", r)
 		}
 
 		if !viewInfo.IsPrivate {
@@ -279,12 +273,12 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	res := false
 	err := s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		res = false
-		isLinked, err := s.isLinked(ctx, id)
+
+		err := dbvalidation.ValidateLinkedReference(ctx, s.playlistCollection, bson.M{
+			"tabs_list": id,
+		}, "tab", "a playlist")
 		if err != nil {
 			return err
-		}
-		if isLinked {
-			return httperror.NewConflictError("The tab cannot be deleted because it is referenced by a playlist.")
 		}
 
 		// required to get the author in action log listener.
@@ -321,17 +315,11 @@ func (s *store) Copy(ctx context.Context, tabID string, r CreateRequest) (*Respo
 		}
 
 		if viewInfo.ID == "" {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "View", "View", r)
 		}
 
 		if viewInfo.IsPrivate && viewInfo.Author != r.Author {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "View", "View")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "View", "View", r)
 		}
 
 		if !viewInfo.IsPrivate {
@@ -418,10 +406,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 		if viewId == "" {
 			viewId = tab.View
 		} else if viewId != tab.View {
-			return false, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_applicable", "items", "items")},
-				nil,
-			)
+			return false, validation.NewSingleError("not_applicable", "items", "items", nil)
 		}
 	}
 
@@ -433,10 +418,7 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 			return err
 		}
 		if count != int64(len(tabs)) {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10))},
-				nil,
-			)
+			return validation.NewSingleErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10), nil)
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(tabs))
@@ -456,18 +438,6 @@ func (s *store) UpdatePositions(ctx context.Context, tabs []Response) (bool, err
 	})
 
 	return res, err
-}
-
-func (s *store) isLinked(ctx context.Context, id string) (bool, error) {
-	err := s.playlistCollection.FindOne(ctx, bson.M{"tabs_list": id}).Err()
-	if err != nil {
-		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, nil
-		}
-		return false, err
-	}
-
-	return true, nil
 }
 
 func (s *store) deleteWidgets(ctx context.Context, id, userID string) error {

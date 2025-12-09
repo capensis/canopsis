@@ -5,6 +5,7 @@ import (
 	"context"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
@@ -120,12 +121,12 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Rule, error) {
 		idleRule = nil
 
 		if r.Operation != nil {
-			err := validation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
+			err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
 			if err != nil {
 				return err
 			}
 
-			err = validation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
+			err = dbvalidation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
 			if err != nil {
 				return err
 			}
@@ -170,12 +171,12 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Rule, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		idleRule = nil
 
-		err := validation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
+		err := dbvalidation.ValidateExist(ctx, s.pbhTypeCollection, r, "Operation.Parameters.Type", r.Operation.Parameters.Type)
 		if err != nil {
 			return err
 		}
 
-		err = validation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
+		err = dbvalidation.ValidateExist(ctx, s.pbhReasonCollection, r, "Operation.Parameters.Reason", r.Operation.Parameters.Reason)
 		if err != nil {
 			return err
 		}

@@ -7,6 +7,7 @@ import (
 	"slices"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -15,7 +16,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/password"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -344,17 +344,17 @@ func (s *store) Patch(ctx context.Context, r BulkPatchRequestItem, curUserID str
 	err = s.client.WithTransaction(ctx, func(ctx context.Context) error {
 		user = nil
 
-		err = validation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+		err = dbvalidation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
 		if err != nil {
 			return err
 		}
 
-		err = validation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+		err = dbvalidation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
 		if err != nil {
 			return err
 		}
 
-		err = validation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
+		err = dbvalidation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
 		if err != nil {
 			return err
 		}
@@ -656,17 +656,17 @@ func (s *store) getNestedObjectsPipeline(authorProvider author.Provider) []bson.
 }
 
 func (s *store) validateEditRequest(ctx context.Context, r EditRequest, id string) error {
-	err := validation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
+	err := dbvalidation.ValidateExist(ctx, s.viewCollection, r, "DefaultView", r.DefaultView)
 	if err != nil {
 		return err
 	}
 
-	err = validation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
+	err = dbvalidation.ValidateExist(ctx, s.colorThemeCollection, r, "UITheme", r.UITheme)
 	if err != nil {
 		return err
 	}
 
-	err = validation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
+	err = dbvalidation.ValidateExist(ctx, s.roleCollection, r, "Roles", r.Roles)
 	if err != nil {
 		return err
 	}
@@ -689,10 +689,7 @@ func (s *store) validateName(ctx context.Context, name, id string, r any) error 
 	}
 
 	if err == nil {
-		return validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("exist", "Name", "Name")},
-			r,
-		)
+		return validation.NewSingleError("exist", "Name", "Name", r)
 	}
 
 	return nil

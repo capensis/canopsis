@@ -2,10 +2,9 @@ package entitycategory
 
 import (
 	"context"
-	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -170,19 +169,17 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	err := s.entityCollection.FindOne(ctx, bson.M{"category": id, "soft_deleted": bson.M{"$exists": false}}).Err()
-	if err != nil {
-		if !errors.Is(err, mongodriver.ErrNoDocuments) {
-			return false, err
-		}
-	} else {
-		return false, httperror.NewConflictError("The category cannot be deleted because it is referenced by an entity.")
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		err := dbvalidation.ValidateLinkedReference(ctx, s.entityCollection, bson.M{
+			"category":     id,
+			"soft_deleted": bson.M{"$exists": false},
+		}, "category", "an entity")
+		if err != nil {
+			return err
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})

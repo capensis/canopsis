@@ -2,18 +2,15 @@ package entitybasic
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"go.mongodb.org/mongo-driver/v2/bson"
-	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 type Store interface {
@@ -105,7 +102,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Entity, bool, error
 		isToggled = false
 		updatedEntity = nil
 
-		err := validation.ValidateExist(ctx, s.categoryDbCollection, r, "Category", r.Category)
+		err := dbvalidation.ValidateExist(ctx, s.categoryDbCollection, r, "Category", r.Category)
 		if err != nil {
 			return err
 		}
@@ -195,25 +192,20 @@ func (s *store) Delete(ctx context.Context, id, userID string) (*Entity, error) 
 		}
 
 		if entity.Type == types.EntityTypeComponent {
-			c, err := s.dbCollection.CountDocuments(ctx, bson.M{"component": entity.ID, "type": types.EntityTypeResource})
+			err = dbvalidation.ValidateLinkedReference(ctx, s.dbCollection, bson.M{
+				"component": entity.ID,
+				"type":      types.EntityTypeResource,
+			}, "component", "a resource")
 			if err != nil {
 				return err
 			}
-
-			if c > 0 {
-				return httperror.NewConflictError("The component cannot be deleted because it is referenced by a resource.")
-			}
 		}
 
-		err = s.alarmDbCollection.FindOne(ctx, bson.M{
+		err = dbvalidation.ValidateLinkedReference(ctx, s.alarmDbCollection, bson.M{
 			"d":          entity.ID,
 			"v.resolved": nil,
-		}).Err()
-		if err == nil {
-			return httperror.NewConflictError("The entity cannot be deleted because it is referenced by an alarm.")
-		}
-
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		}, "entity", "an alarm")
+		if err != nil {
 			return err
 		}
 

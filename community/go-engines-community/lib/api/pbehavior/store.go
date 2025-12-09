@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	libentity "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/entity"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
@@ -450,44 +451,9 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, bool, e
 		}
 
 		recomputeInherited = prevPbh.Inherited
-
-		if prevPbh.Origin != "" {
-			if len(prevPbh.Entities) > 0 {
-				return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
-			}
-
-			var fieldErrs validator.ValidationErrors
-			if !*r.Enabled {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Enabled", "Enabled"))
-			}
-
-			if r.RRule != "" {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "RRule", "RRule"))
-			}
-
-			if r.Timezone != "" {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Timezone", "Timezone"))
-			}
-
-			if len(r.Exdates) > 0 {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exdates", "Exdates"))
-			}
-
-			if len(r.Exceptions) > 0 {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exceptions", "Exceptions"))
-			}
-
-			if r.CorporateEntityPattern != "" {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "CorporateEntityPattern", "CorporateEntityPattern"))
-			}
-
-			if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "EntityPattern", "EntityPattern"))
-			}
-
-			if len(fieldErrs) > 0 {
-				return validation.NewError(fieldErrs, r)
-			}
+		err = s.validateUpdateRequest(r, prevPbh)
+		if err != nil {
+			return err
 		}
 
 		doc.EntityPatternFields, doc.Aliases, err = s.transformPatternRequestToModel(ctx, r.EntityRequest, r)
@@ -588,41 +554,6 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 		pbh = nil
 		recomputeInherited = false
 
-		var foundType pbehavior.Type
-		var err error
-		if r.Type != nil {
-			foundType, err = s.findType(ctx, *r.Type)
-			if err != nil {
-				return err
-			}
-
-			if foundType.ID == "" {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Type")},
-					r,
-				)
-			}
-		}
-
-		err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
-		if err != nil {
-			return err
-		}
-
-		err = validation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
-		if err != nil {
-			return err
-		}
-
-		valErrs, err := s.validateExdates(ctx, r.Exdates)
-		if err != nil {
-			return err
-		}
-
-		if len(valErrs) > 0 {
-			return validation.NewError(valErrs, r)
-		}
-
 		prevPbh := struct {
 			pbehavior.PBehavior `bson:",inline"`
 			pbehavior.Type      `bson:"type"`
@@ -655,81 +586,12 @@ func (s *store) UpdateByPatch(ctx context.Context, r PatchRequest) (*Response, b
 			return err
 		}
 
-		stopValErr := validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("required", "Stop", "Stop")},
-			r,
-		)
-		if r.Stop.isSet {
-			if r.Stop.val == nil {
-				cannonicalType := ""
-				if foundType.ID != "" {
-					cannonicalType = foundType.Type
-				} else {
-					cannonicalType = prevPbh.Type.Type
-				}
-
-				if cannonicalType != pbehavior.TypePause {
-					return stopValErr
-				}
-			}
-		} else if foundType.ID != "" && foundType.Type != pbehavior.TypePause && prevPbh.Stop == nil {
-			return stopValErr
-		}
-
-		if r.Start != nil && !r.Stop.isSet && prevPbh.Stop != nil && *r.Start >= prevPbh.Stop.Unix() {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldErrorWithParam("ltfield", "Start", "Start", "Stop")},
-				r,
-			)
-		} else if r.Start == nil && r.Stop.isSet && r.Stop.val != nil && prevPbh.Start.Unix() >= *r.Stop.val {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldErrorWithParam("gtfield", "Stop", "Stop", "Start")},
-				r,
-			)
+		err = s.validatePatchRequest(ctx, r, prevPbh.PBehavior, prevPbh.Type)
+		if err != nil {
+			return err
 		}
 
 		recomputeInherited = prevPbh.Inherited
-		if prevPbh.Origin != "" {
-			if len(prevPbh.Entities) > 0 {
-				return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
-			}
-
-			var fieldErrs validator.ValidationErrors
-			if r.Enabled != nil && !*r.Enabled {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Enabled", "Enabled"))
-			}
-
-			if r.RRule != nil && *r.RRule != "" {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "RRule", "RRule"))
-			}
-
-			if r.Timezone != nil && *r.Timezone != "" {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Timezone", "Timezone"))
-			}
-
-			if len(r.Exdates) > 0 {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exdates", "Exdates"))
-			}
-
-			if len(r.Exceptions) > 0 {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "Exceptions", "Exceptions"))
-			}
-
-			if r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "" {
-				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "CorporateEntityPattern", "CorporateEntityPattern"))
-			}
-
-			if r.EntityPattern != nil {
-				if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
-					fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", "EntityPattern", "EntityPattern"))
-				}
-			}
-
-			if len(fieldErrs) > 0 {
-				return validation.NewError(fieldErrs, r)
-			}
-		}
-
 		if r.CorporateEntityPattern != nil || r.EntityPattern != nil {
 			corpPattern := ""
 			if r.CorporateEntityPattern != nil {
@@ -937,20 +799,14 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		}
 
 		if t.ID == "" {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Type")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "Type", "Type", r)
 		}
 
 		if r.Stop == nil && t.Type != pbehavior.TypePause {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "Stop", "Stop")},
-				r,
-			)
+			return validation.NewSingleError("required", "Stop", "Stop", r)
 		}
 
-		err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+		err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
 		if err != nil {
 			return err
 		}
@@ -976,10 +832,7 @@ func (s *store) EntityInsert(ctx context.Context, r BulkEntityCreateRequestItem)
 		}
 
 		if updateRes.UpsertedCount == 0 {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("exist", "Origin", "Origin")},
-				r,
-			)
+			return validation.NewSingleError("exist", "Origin", "Origin", r)
 		}
 
 		pbh, err = s.GetOneBy(ctx, doc.ID)
@@ -1076,12 +929,12 @@ func (s *store) ConnectorCreate(ctx context.Context, r BulkConnectorCreateReques
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		pbh = nil
 
-		err := validation.ValidateExist(ctx, s.typeDbCollection, r, "Type", r.Type)
+		err := dbvalidation.ValidateExist(ctx, s.typeDbCollection, r, "Type", r.Type)
 		if err != nil {
 			return err
 		}
 
-		err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+		err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
 		if err != nil {
 			return err
 		}
@@ -1611,25 +1464,19 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 	}
 
 	if t.ID == "" {
-		return validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Type")},
-			r,
-		)
+		return validation.NewSingleError("not_exist", "Type", "Type", r)
 	}
 
 	if r.Stop == nil && t.Type != pbehavior.TypePause {
-		return validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("required", "Stop", "Stop")},
-			r,
-		)
+		return validation.NewSingleError("required", "Stop", "Stop", r)
 	}
 
-	err = validation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+	err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
 	if err != nil {
 		return err
 	}
 
-	err = validation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
+	err = dbvalidation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
 	if err != nil {
 		return err
 	}
@@ -1641,6 +1488,126 @@ func (s *store) validateEditRequest(ctx context.Context, r EditRequest) error {
 
 	if len(valErrs) > 0 {
 		return validation.NewError(valErrs, r)
+	}
+
+	return nil
+}
+
+func (s *store) validateUpdateRequest(r UpdateRequest, prevPbh pbehavior.PBehavior) error {
+	if prevPbh.Origin != "" {
+		if len(prevPbh.Entities) > 0 {
+			return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
+		}
+
+		var fieldErrs validator.ValidationErrors
+		check := func(field string, cond bool) {
+			if cond {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", field, field))
+			}
+		}
+
+		check("Enabled", !*r.Enabled)
+		check("RRule", r.RRule != "")
+		check("Timezone", r.Timezone != "")
+		check("Exdates", len(r.Exdates) > 0)
+		check("Exceptions", len(r.Exceptions) > 0)
+		check("CorporateEntityPattern", r.CorporateEntityPattern != "")
+		if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+			check("EntityPattern", true)
+		}
+
+		if len(fieldErrs) > 0 {
+			return validation.NewError(fieldErrs, r)
+		}
+	}
+
+	return nil
+}
+
+func (s *store) validatePatchRequest(ctx context.Context, r PatchRequest, prevPbh pbehavior.PBehavior, prevType pbehavior.Type) error {
+	var newType pbehavior.Type
+	var err error
+	if r.Type != nil {
+		newType, err = s.findType(ctx, *r.Type)
+		if err != nil {
+			return err
+		}
+
+		if newType.ID == "" {
+			return validation.NewSingleError("not_exist", "Type", "Type", r)
+		}
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.reasonDbCollection, r, "Reason", r.Reason)
+	if err != nil {
+		return err
+	}
+
+	err = dbvalidation.ValidateExist(ctx, s.exceptionDbCollection, r, "Exceptions", r.Exceptions)
+	if err != nil {
+		return err
+	}
+
+	valErrs, err := s.validateExdates(ctx, r.Exdates)
+	if err != nil {
+		return err
+	}
+
+	if len(valErrs) > 0 {
+		return validation.NewError(valErrs, r)
+	}
+
+	stopValErr := validation.NewSingleError("required", "Stop", "Stop", r)
+	if r.Stop.isSet {
+		if r.Stop.val == nil {
+			cannonicalType := ""
+			if newType.ID != "" {
+				cannonicalType = newType.Type
+			} else {
+				cannonicalType = prevType.Type
+			}
+
+			if cannonicalType != pbehavior.TypePause {
+				return stopValErr
+			}
+		}
+	} else if newType.ID != "" && newType.Type != pbehavior.TypePause && prevPbh.Stop == nil {
+		return stopValErr
+	}
+
+	if r.Start != nil && !r.Stop.isSet && prevPbh.Stop != nil && *r.Start >= prevPbh.Stop.Unix() {
+		return validation.NewSingleErrorWithParam("ltfield", "Start", "Start", "Stop", r)
+	} else if r.Start == nil && r.Stop.isSet && r.Stop.val != nil && prevPbh.Start.Unix() >= *r.Stop.val {
+		return validation.NewSingleErrorWithParam("gtfield", "Stop", "Stop", "Start", r)
+	}
+
+	if prevPbh.Origin != "" {
+		if len(prevPbh.Entities) > 0 {
+			return httperror.NewForbiddenError("The external pbehavior cannot be modified.")
+		}
+
+		var fieldErrs validator.ValidationErrors
+		check := func(field string, cond bool) {
+			if cond {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("unchangeable", field, field))
+			}
+		}
+
+		check("Enabled", r.Enabled != nil && !*r.Enabled)
+		check("RRule", r.RRule != nil && *r.RRule != "")
+		check("Timezone", r.Timezone != nil && *r.Timezone != "")
+		check("Exdates", len(r.Exdates) > 0)
+		check("Exceptions", len(r.Exceptions) > 0)
+		check("CorporateEntityPattern", r.CorporateEntityPattern != nil && *r.CorporateEntityPattern != "")
+		if r.EntityPattern != nil {
+			if diff := pretty.Compare(prevPbh.EntityPattern, r.EntityPattern); diff != "" {
+				check("EntityPattern", true)
+			}
+		}
+
+		if len(fieldErrs) > 0 {
+			return validation.NewError(fieldErrs, r)
+		}
 	}
 
 	return nil
