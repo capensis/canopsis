@@ -4,6 +4,7 @@ import {
   ref,
   unref,
   inject,
+  watch,
   onMounted,
   onBeforeUnmount,
 } from 'vue';
@@ -19,11 +20,13 @@ import {
 
 import Observer from '@/services/observer';
 
-import { formGroupsToPatternRules, patternToForm } from '@/helpers/entities/pattern/form';
+import { patternToForm } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
 import { isOmitEqual } from '@/helpers/collection';
 
+import { useI18n } from '@/hooks/i18n';
 import { useModals } from '@/hooks/modals';
+import { usePopups } from '@/hooks/popups';
 import { usePollingWithPending } from '@/hooks/polling';
 import { useValidator } from '@/hooks/validator/validator';
 import { useModelField } from '@/hooks/form/model-field';
@@ -56,7 +59,9 @@ import { usePatternEntitiesOptimize } from '@/hooks/store/modules/pattern-entiti
  * @returns {Function} returns.showEntitiesComparisonModal - Shows modal comparing current pattern with suggestion
  */
 export const usePatternOptimization = (value, emit) => {
+  const { t } = useI18n();
   const modals = useModals();
+  const popups = usePopups();
   const validator = useValidator();
   const { updateModel } = useModelField({ value }, emit);
 
@@ -79,6 +84,13 @@ export const usePatternOptimization = (value, emit) => {
   const suggestions = computed(() => (optimization.value?.suggestions ?? []));
   const currentPattern = computed(() => formFilterToPatterns(unref(value), [PATTERNS_FIELDS.entity], false));
   const optimizedFieldsRegexps = computed(() => optimization.value?.optimized_field_regexps ?? []);
+  const originalCounter = computed(() => (optimization.value
+    ? ({
+      ms: optimization.value.original_pattern_ms ?? 0,
+      count: optimization.value.original_pattern_count ?? 0,
+    })
+    : null
+  ));
 
   const originalValue = cloneDeep(unref(value));
 
@@ -178,6 +190,11 @@ export const usePatternOptimization = (value, emit) => {
     }
 
     rejectAllSuggestions();
+
+    popups.info({
+      text: t('pattern.optimizationCancelled'),
+      autoClose: 5000,
+    });
   };
 
   /**
@@ -219,7 +236,7 @@ export const usePatternOptimization = (value, emit) => {
     name: MODALS.entitiesComparison,
     config: {
       currentPattern: currentPattern.value[PATTERNS_FIELDS.entity],
-      suggestionPattern: formGroupsToPatternRules(suggestion?.groups ?? []),
+      suggestionPattern: suggestion?.entity_pattern ?? [],
     },
   });
 
@@ -243,6 +260,8 @@ export const usePatternOptimization = (value, emit) => {
     }
   };
 
+  watch(value, rejectAllSuggestions);
+
   onMounted(() => afterSubmitObserver?.register?.(afterSubmit));
   onBeforeUnmount(() => afterSubmitObserver?.unregister?.(afterSubmit));
 
@@ -252,6 +271,7 @@ export const usePatternOptimization = (value, emit) => {
     successful,
     suggestions,
     optimizedFieldsRegexps,
+    originalCounter,
     mayHaveOptimizationSuggestions,
 
     tryOptimization,

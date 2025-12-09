@@ -1,6 +1,6 @@
 <template>
   <v-layout
-    class="pattern-suggestions gap-4"
+    class="pattern-suggestions__wrapper gap-2 pa-3"
     column
   >
     <pattern-suggestions-header @reject:all="rejectAll" />
@@ -51,3 +51,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.pattern-suggestions__wrapper {
+  border-radius: 10px;
+  border: 2px solid var(--v-info-base);
+}
+</style>
