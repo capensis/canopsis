@@ -14,7 +14,6 @@ import (
 	tplvalidator "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/template/validator"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/types"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -505,10 +504,7 @@ func GetAlarmDataFromTest(ctx context.Context, collection mongo.DbCollection, te
 	err := collection.FindOne(ctx, bson.M{"_id": testID, "type": ruleType, "rule._id": ruleID}).Decode(&test)
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return alarm, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "test", "testdata.test")},
-				nil,
-			)
+			return alarm, validation.NewSingleError("not_exist", "test", "testdata.test", nil)
 		}
 
 		return alarm, err

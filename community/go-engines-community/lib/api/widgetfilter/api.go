@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -248,10 +247,7 @@ func (a *api) Update(c *gin.Context) {
 	}
 
 	if filter.IsUserPreference != *request.IsUserPreference {
-		err = validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("unchangeable", "IsUserPreference", "IsUserPreference")},
-			request,
-		)
+		err = validation.NewSingleError("unchangeable", "IsUserPreference", "IsUserPreference", request)
 		a.errorResponder.Respond(c, err)
 
 		return
@@ -359,10 +355,7 @@ func (a *api) UpdatePositions(c *gin.Context) {
 	}
 
 	if len(request.Items) == 0 {
-		err = validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("required", "Items", "Items")},
-			request,
-		)
+		err = validation.NewSingleError("required", "Items", "Items", request)
 		a.errorResponder.Respond(c, err)
 
 		return

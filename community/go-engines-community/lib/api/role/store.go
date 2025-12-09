@@ -3,12 +3,12 @@ package role
 import (
 	"cmp"
 	"context"
-	"errors"
 	"sort"
 	"strconv"
 	"strings"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
@@ -161,12 +161,12 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
 
-		err = validation.ValidateExist(ctx, s.dbViewCollection, r, "DefaultView", r.DefaultView)
+		err = dbvalidation.ValidateExist(ctx, s.dbViewCollection, r, "DefaultView", r.DefaultView)
 		if err != nil {
 			return err
 		}
 
-		err = validation.ValidateExist(ctx, s.dbColorThemeCollection, r, "UITheme", r.UITheme)
+		err = dbvalidation.ValidateExist(ctx, s.dbColorThemeCollection, r, "UITheme", r.UITheme)
 		if err != nil {
 			return err
 		}
@@ -218,12 +218,12 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		role = nil
 
-		err = validation.ValidateExist(ctx, s.dbViewCollection, r, "DefaultView", r.DefaultView)
+		err = dbvalidation.ValidateExist(ctx, s.dbViewCollection, r, "DefaultView", r.DefaultView)
 		if err != nil {
 			return err
 		}
 
-		err = validation.ValidateExist(ctx, s.dbColorThemeCollection, r, "UITheme", r.UITheme)
+		err = dbvalidation.ValidateExist(ctx, s.dbColorThemeCollection, r, "UITheme", r.UITheme)
 		if err != nil {
 			return err
 		}
@@ -238,10 +238,7 @@ func (s *store) Update(ctx context.Context, id string, r EditRequest) (*Response
 		}
 
 		if oldRole.Name != r.Name {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("unchangeable", "Name", "Name")},
-				r,
-			)
+			return validation.NewSingleError("unchangeable", "Name", "Name", r)
 		}
 
 		res, err := s.dbCollection.UpdateOne(ctx,
@@ -324,13 +321,11 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
 
-		err := s.dbUserCollection.FindOne(ctx, bson.M{"roles": id}).Err()
-		if err != nil && !errors.Is(err, mongodriver.ErrNoDocuments) {
+		err := dbvalidation.ValidateLinkedReference(ctx, s.dbUserCollection, bson.M{
+			"roles": id,
+		}, "role", "a user")
+		if err != nil {
 			return err
-		}
-
-		if err == nil {
-			return httperror.NewConflictError("The role cannot be deleted because it is referenced by a user.")
 		}
 
 		// required to get the author in action log listener.
@@ -531,61 +526,73 @@ func (s *store) validatePermissions(perms map[string]Permission, roleType string
 		return nil
 	}
 
+	isAPIPerm := func(id string) bool {
+		return strings.HasPrefix(id, PermissionAPIPrefix)
+	}
+
+	allowedActions := map[string]map[string]bool{
+		securitymodel.ObjectTypeCRUD: {
+			securitymodel.PermissionCreate: true,
+			securitymodel.PermissionRead:   true,
+			securitymodel.PermissionUpdate: true,
+			securitymodel.PermissionDelete: true,
+		},
+		securitymodel.ObjectTypeRW: {
+			securitymodel.PermissionRead:   true,
+			securitymodel.PermissionUpdate: true,
+			securitymodel.PermissionDelete: true,
+		},
+	}
+	errParams := make(map[string]string)
+	for k, v := range allowedActions {
+		actions := make([]string, 0, len(v))
+		for a := range v {
+			actions = append(actions, a)
+		}
+
+		sort.Strings(actions)
+		errParams[k] = strings.Join(actions, " ")
+	}
+
 	var fieldErrs validator.ValidationErrors
 	for id, actions := range permissions {
+		// validate role type
 		switch roleType {
 		case TypeUI:
-			if strings.HasPrefix(id, PermissionAPIPrefix) {
+			if isAPIPerm(id) {
 				fieldErrs = append(fieldErrs, validation.NewFieldError("not_ui_perm", id, "Permissions."+id))
 				continue
 			}
 		case TypeAPI:
-			if !strings.HasPrefix(id, PermissionAPIPrefix) {
+			if !isAPIPerm(id) {
 				fieldErrs = append(fieldErrs, validation.NewFieldError("not_api_perm", id, "Permissions."+id))
 				continue
 			}
 		}
 
-		if perm, ok := perms[id]; ok {
-			var validActions []string
-			switch perm.Type {
-			case "":
-				if len(actions) > 0 {
-					fieldErrs = append(fieldErrs, validation.NewFieldError("must_be_empty", id, "Permissions."+id))
-				}
-			case securitymodel.ObjectTypeCRUD:
-				validActions = []string{
-					securitymodel.PermissionCreate,
-					securitymodel.PermissionRead,
-					securitymodel.PermissionUpdate,
-					securitymodel.PermissionDelete,
-				}
-			case securitymodel.ObjectTypeRW:
-				validActions = []string{
-					securitymodel.PermissionRead,
-					securitymodel.PermissionUpdate,
-					securitymodel.PermissionDelete,
-				}
-			}
-
-			if len(validActions) > 0 {
-				for i, action := range actions {
-					found := false
-					for _, v := range validActions {
-						if action == v {
-							found = true
-							break
-						}
-					}
-
-					if !found {
-						iStr := strconv.Itoa(i)
-						fieldErrs = append(fieldErrs, validation.NewFieldErrorWithParam("oneof", iStr, "Permissions."+id+"."+iStr, strings.Join(validActions, " ")))
-					}
-				}
-			}
-		} else {
+		// validate perm exists
+		perm, ok := perms[id]
+		if !ok {
 			fieldErrs = append(fieldErrs, validation.NewFieldError("not_exist", id, "Permissions."+id))
+			continue
+		}
+
+		// validate perm actions
+		if perm.Type == "" {
+			if len(actions) > 0 {
+				fieldErrs = append(fieldErrs, validation.NewFieldError("must_be_empty", id, "Permissions."+id))
+			}
+
+			continue
+		}
+
+		if valid := allowedActions[perm.Type]; len(valid) > 0 {
+			for i, action := range actions {
+				if !valid[action] {
+					iStr := strconv.Itoa(i)
+					fieldErrs = append(fieldErrs, validation.NewFieldErrorWithParam("oneof", iStr, "Permissions."+id+"."+iStr, errParams[perm.Type]))
+				}
+			}
 		}
 	}
 

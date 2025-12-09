@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -23,7 +23,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
 	ics "github.com/apognu/gocal"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -199,19 +198,16 @@ func (s *store) Update(ctx context.Context, r UpdateRequest) (*Response, error) 
 }
 
 func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
-	isLinked, err := s.IsLinked(ctx, id)
-	if err != nil {
-		return false, err
-	}
-
-	if isLinked {
-		return false, httperror.NewConflictError("The exception cannot be deleted because it is referenced by a pbehavior.")
-	}
-
 	var deleted int64
-
-	err = s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
+	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		deleted = 0
+
+		err := dbvalidation.ValidateLinkedReference(ctx, s.pbehaviorDbCollection, bson.M{
+			"exceptions": id,
+		}, "exception", "a pbehavior")
+		if err != nil {
+			return err
+		}
 
 		// required to get the author in action log listener.
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"author": userID}})
@@ -244,10 +240,7 @@ func (s *store) Import(ctx context.Context, name, pbhType, userID string, f mult
 	err := s.typeDbCollection.FindOne(ctx, bson.M{"_id": pbhType}).Err()
 	if err != nil {
 		if errors.Is(err, mongodriver.ErrNoDocuments) {
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "type", "type")},
-				nil,
-			)
+			return nil, validation.NewSingleError("not_exist", "type", "type", nil)
 		}
 		return nil, err
 	}
@@ -256,10 +249,7 @@ func (s *store) Import(ctx context.Context, name, pbhType, userID string, f mult
 		return nil, err
 	}
 	if err == nil {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("exist", "name", "name")},
-			nil,
-		)
+		return nil, validation.NewSingleError("exist", "name", "name", nil)
 	}
 
 	contentType := fh.Header.Get("Content-Type")
@@ -274,10 +264,7 @@ func (s *store) Import(ctx context.Context, name, pbhType, userID string, f mult
 	case "text/calendar":
 		return s.importICS(ctx, name, pbhType, userID, f)
 	default:
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_supported", "file", "file")},
-			nil,
-		)
+		return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 	}
 }
 
@@ -290,10 +277,7 @@ func (s *store) importJson(
 	d := json.NewDecoder(r)
 	err := d.Decode(&dates)
 	if err != nil {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_supported", "file", "file")},
-			nil,
-		)
+		return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 	}
 
 	location := s.timezoneConfigProvider.Get().Location
@@ -302,10 +286,7 @@ func (s *store) importJson(
 	for dateStr := range dates {
 		start, err := time.ParseInLocation(time.DateOnly, dateStr, location)
 		if err != nil {
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_supported", "file", "file")},
-				nil,
-			)
+			return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 		}
 		end := start.AddDate(0, 0, 1)
 		if end.Before(now.Time) {
@@ -322,10 +303,7 @@ func (s *store) importJson(
 	}
 
 	if len(exdates) == 0 {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("invalid", "file", "file")},
-			nil,
-		)
+		return nil, validation.NewSingleError("invalid", "file", "file", nil)
 	}
 
 	doc := pbehavior.Exception{
@@ -365,20 +343,14 @@ func (s *store) importICS(
 	cal.End = &intervalEnd
 	err := cal.Parse()
 	if err != nil {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_supported", "file", "file")},
-			nil,
-		)
+		return nil, validation.NewSingleError("not_supported", "file", "file", nil)
 	}
 
 	exdates := make([]pbehavior.Exdate, 0, len(cal.Events))
 	location := s.timezoneConfigProvider.Get().Location
 	for _, event := range cal.Events {
 		if event.Start == nil || event.End == nil {
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("invalid", "file", "file")},
-				nil,
-			)
+			return nil, validation.NewSingleError("invalid", "file", "file", nil)
 		}
 
 		start := adjustCalendarTime(*event.Start, location)
@@ -397,10 +369,7 @@ func (s *store) importICS(
 	}
 
 	if len(exdates) == 0 {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("invalid", "file", "file")},
-			nil,
-		)
+		return nil, validation.NewSingleError("invalid", "file", "file", nil)
 	}
 
 	doc := pbehavior.Exception{
@@ -549,10 +518,7 @@ func (s *store) transformExdatesRequestToModel(ctx context.Context, r EditReques
 	for i := range r.Exdates {
 		t, ok := typesByID[r.Exdates[i].Type]
 		if !ok {
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Type", "Exdates."+strconv.Itoa(i)+".Type")},
-				r,
-			)
+			return nil, validation.NewSingleError("not_exist", "Type", "Exdates."+strconv.Itoa(i)+".Type", r)
 		}
 
 		exdates[i] = pbehavior.Exdate{

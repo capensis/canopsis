@@ -196,10 +196,7 @@ func (a *api) Import(c *gin.Context) {
 	f, fh, err := c.Request.FormFile("file")
 	if err != nil {
 		if errors.Is(err, http.ErrMissingFile) {
-			err = validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "file", "file")},
-				nil,
-			)
+			err = validation.NewSingleError("required", "file", "file", nil)
 		}
 
 		a.errorResponder.Respond(c, err)

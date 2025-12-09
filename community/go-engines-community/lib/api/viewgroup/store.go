@@ -5,7 +5,7 @@ import (
 	"errors"
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/mongoquery"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
@@ -13,7 +13,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/view"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 )
@@ -300,10 +299,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 		}
 
 		if err == nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("exist", "Title", "Title")},
-				r,
-			)
+			return validation.NewSingleError("exist", "Title", "Title", r)
 		}
 
 		position, err := s.getNextPosition(ctx)
@@ -342,10 +338,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*ViewGroup, error) {
 		}
 
 		if err == nil {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("exist", "Title", "Title")},
-				r,
-			)
+			return validation.NewSingleError("exist", "Title", "Title", r)
 		}
 
 		res, err := s.dbCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": bson.M{
@@ -368,13 +361,11 @@ func (s *store) Delete(ctx context.Context, id, userID string) (bool, error) {
 	var deleted int64
 
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
-		err := s.dbViewCollection.FindOne(ctx, bson.M{"group_id": id}).Err()
+		err := dbvalidation.ValidateLinkedReference(ctx, s.dbViewCollection, bson.M{
+			"group_id": id,
+		}, "group", "a view")
 		if err != nil {
-			if !errors.Is(err, mongodriver.ErrNoDocuments) {
-				return err
-			}
-		} else {
-			return httperror.NewConflictError("The group cannot be deleted because it is referenced by a view.")
+			return err
 		}
 
 		// required to get the author in action log listener.
