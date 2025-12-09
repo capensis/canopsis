@@ -40,7 +40,6 @@
         :readonly="true"
         :disabled="true"
         with-type
-        @input="errors.remove(preparedEntityName)"
       />
     </div>
   </v-layout>

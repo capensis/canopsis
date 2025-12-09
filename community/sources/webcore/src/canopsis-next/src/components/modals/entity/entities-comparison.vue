@@ -48,18 +48,21 @@ export default {
   setup(props) {
     const { config } = useInnerModal(props);
 
+    const currentPattern = computed(() => JSON.stringify(config.value.currentPattern));
+    const suggestionPattern = computed(() => JSON.stringify(config.value.suggestionPattern));
+
     const currentOnlyTableInitialQuery = computed(() => ({
       page: 1,
       itemsPerPage: PAGINATION_LIMIT,
-      entity_pattern: config.value.currentPattern,
-      negative_entity_pattern: config.value.suggestionPattern,
+      entity_pattern: currentPattern.value,
+      negative_entity_pattern: suggestionPattern.value,
     }));
 
     const suggestionOnlyTableInitialQuery = computed(() => ({
       page: 1,
       itemsPerPage: PAGINATION_LIMIT,
-      entity_pattern: config.value.suggestionPattern,
-      negative_entity_pattern: config.value.currentPattern,
+      entity_pattern: suggestionPattern.value,
+      negative_entity_pattern: currentPattern.value,
     }));
 
     return {

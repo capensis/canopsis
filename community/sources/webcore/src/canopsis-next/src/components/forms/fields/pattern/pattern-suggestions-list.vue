@@ -112,7 +112,7 @@ export default {
 
   &__tabs  {
     position: relative;
-    top: 2px;
+    bottom: -2px;
     z-index: 2;
 
     .v-tabs-bar__content {

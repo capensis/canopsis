@@ -4,6 +4,7 @@
       v-if="optimizationPending || optimizationFailedReason"
       :failed-reason="optimizationFailedReason"
       @cancel:optimization="cancelOptimization"
+      @close:optimization="rejectAllSuggestions"
       @try:optimization="tryOptimization"
     />
     <v-layout
@@ -12,6 +13,7 @@
     >
       <c-collapse-panel
         v-if="withAlarm"
+        :expanded="expanded.alarm"
         :outline-color="alarmPatternOutlineColor"
         :title="alarmTitle || $t('common.alarmPatterns')"
       >
@@ -29,24 +31,37 @@
       </c-collapse-panel>
       <c-collapse-panel
         v-if="withEntity"
+        :expanded="expanded.entity"
         :outline-color="entityPatternOutlineColor"
         :title="entityTitle || $t('common.entityPatterns')"
       >
-        <c-entity-patterns-field
-          v-field="value.entity_pattern"
-          :required="isPatternRequired"
-          :disabled="disabled"
-          :readonly="readonly"
-          :name="preparedEntityName"
-          :attributes="entityAttributes"
-          :entity-types="entityTypes"
-          :counter="counters.entity_pattern"
-          with-type
-          @input="errors.remove(preparedEntityName)"
-        />
+        <pattern-field-suggestions-wrapper
+          :suggestions="optimizationSuggestions"
+          :patterns="value.entity_pattern"
+          :entity-attributes="entityAttributes"
+          :optimized-fields-regexps="optimizedFieldsRegexps"
+          :entities-count="counters.entity_pattern?.count"
+          @apply:suggestion="applySuggestion"
+          @reject:all="rejectAllSuggestions"
+          @show:entities-comparison="showEntitiesComparisonModal"
+        >
+          <c-entity-patterns-field
+            v-field="value.entity_pattern"
+            :required="isPatternRequired"
+            :disabled="disabled"
+            :readonly="readonly"
+            :name="preparedEntityName"
+            :attributes="entityAttributes"
+            :entity-types="entityTypes"
+            :counter="counters.entity_pattern ?? optimizationOriginalCounter"
+            with-type
+            @input="errors.remove(preparedEntityName)"
+          />
+        </pattern-field-suggestions-wrapper>
       </c-collapse-panel>
       <c-collapse-panel
         v-if="withPbehavior"
+        :expanded="expanded.pbehavior"
         :outline-color="pbehaviorPatternOutlineColor"
         :title="pbehaviorTitle || $t('common.pbehaviorPatterns')"
       >
@@ -63,6 +78,7 @@
       </c-collapse-panel>
       <c-collapse-panel
         v-if="withEvent"
+        :expanded="expanded.event"
         :outline-color="eventPatternOutlineColor"
         :title="eventTitle || $t('common.eventPatterns')"
       >
@@ -78,6 +94,7 @@
       </c-collapse-panel>
       <c-collapse-panel
         v-if="withTotalEntity"
+        :expanded="expanded.totalEntity"
         :outline-color="totalEntityPatternOutlineColor"
         :title="totalEntityTitle || $t('common.totalEntityPatterns')"
       >
@@ -94,6 +111,7 @@
       </c-collapse-panel>
       <c-collapse-panel
         v-if="withServiceWeather"
+        :expanded="expanded.serviceWeather"
         :outline-color="serviceWeatherPatternOutlineColor"
         :title="serviceWeatherTitle || $t('common.serviceWeatherPatterns')"
       >
@@ -113,17 +131,7 @@
         @try:optimization="tryOptimization"
       />
 
-      <pattern-suggestions
-        v-if="optimizationSuggestions.length"
-        :suggestions="optimizationSuggestions"
-        :patterns="value.entity_pattern"
-        :entity-attributes="entityAttributes"
-        :optimized-fields-regexps="optimizedFieldsRegexps"
-        @apply:suggestion="applySuggestion"
-        @reject:all="rejectAllSuggestions"
-        @show:entities-comparison="showEntitiesComparisonModal"
-      />
-      <c-alert v-else-if="optimizationSuccessful" type="warning">
+      <c-alert v-if="!optimizationSuggestions.length && optimizationSuccessful" type="warning">
         <span v-html="$t('pattern.optimizationSuggestionsWasntFound')" class="font-weight-regular" />
       </c-alert>
       <c-alert
@@ -173,22 +181,19 @@
 </template>
 
 <script>
-import { computed, toRef } from 'vue';
-import { isString, isEmpty } from 'lodash';
+import { computed, ref, toRef, watch } from 'vue';
+import { isString } from 'lodash';
 
 import { CSS_COLORS_VARS } from '@/config';
-import { PATTERNS_FIELDS, PATTERN_DURATION_FORMAT, TIME_UNITS } from '@/constants';
+import { PATTERNS_FIELDS } from '@/constants';
 
-import { sanitizeHtml } from '@/helpers/html';
 import {
   isValidPatternRule,
   formGroupsToPatternRules,
   formGroupsToPatternRulesQuery,
 } from '@/helpers/entities/pattern/form';
 import { formFilterToPatterns } from '@/helpers/entities/filter/form';
-import { convertDurationToString } from '@/helpers/date/duration';
 
-import { useI18n } from '@/hooks/i18n';
 import { useValidator } from '@/hooks/validator/validator';
 
 import { usePatternCountAlarmsModal } from './hooks/pattern-count-alarms-modal';
@@ -196,9 +201,9 @@ import { usePatternCountEntitiesModal } from './hooks/pattern-count-entities-mod
 import { usePatternCounters } from './hooks/pattern-counters';
 import { usePatternOptimization } from './hooks/pattern-optimization';
 import PatternCountMessage from './pattern-count-message.vue';
-import PatternSuggestions from './pattern-suggestions.vue';
 import PatternTryOptimization from './pattern-try-optimization.vue';
 import PatternOptimizationProgress from './pattern-optimization-progress.vue';
+import PatternFieldSuggestionsWrapper from './pattern-field-suggestions-wrapper.vue';
 
 /**
  * Generates a field pattern name by combining component name and field name
@@ -213,9 +218,9 @@ export default {
   inject: ['$validator'],
   components: {
     PatternCountMessage,
-    PatternSuggestions,
     PatternTryOptimization,
     PatternOptimizationProgress,
+    PatternFieldSuggestionsWrapper,
   },
   model: {
     prop: 'value',
@@ -344,11 +349,19 @@ export default {
     },
   },
   setup(props, { emit }) {
-    const { t } = useI18n();
     const validator = useValidator();
 
     const { showAlarmsModalByPatterns } = usePatternCountAlarmsModal();
     const { showEntitiesModalByPatterns } = usePatternCountEntitiesModal();
+
+    const expanded = ref({
+      alarm: false,
+      entity: false,
+      pbehavior: false,
+      event: false,
+      totalEntity: false,
+      serviceWeather: false,
+    });
 
     const preparedAlarmName = computed(() => (
       props.alarmName || getFieldPatternName(props.name, PATTERNS_FIELDS.alarm)
@@ -407,53 +420,22 @@ export default {
     });
 
     const patterns = computed(() => formFilterToPatterns(props.value, patternsFields.value));
+    const hasError = computed(() => (isPatternRequired.value && !hasPatterns.value));
 
-    const { counters, pending: countersPending, checkFilter } = usePatternCounters({
+    const {
+      counters,
+      pending: countersPending,
+      checkFilter,
+      hasAllInCounter,
+      allOverLimit,
+      allCount,
+      checkFilterMessages,
+    } = usePatternCounters({
       counterMethod: toRef(props, 'counterMethod'),
       entityCountersType: toRef(props, 'entityCountersType'),
+      bothCounters: toRef(props, 'bothCounters'),
+      hasError,
       patterns,
-    });
-
-    const hasError = computed(() => (isPatternRequired.value && !hasPatterns.value));
-    const hasAllInCounter = computed(() => (counters.value?.all?.count > 0));
-    const allOverLimit = computed(() => (counters.value?.all?.over_limit ?? false));
-    const allCount = computed(() => (counters.value?.all?.count ?? 0));
-
-    const checkFilterMessages = computed(() => {
-      if (hasError.value) {
-        return t('pattern.errors.required');
-      }
-
-      if (isEmpty(counters.value)) {
-        return '';
-      }
-
-      const alarmsCount = counters.value?.all?.count ?? 0;
-      const allDuration = convertDurationToString(
-        counters.value?.all?.ms,
-        PATTERN_DURATION_FORMAT,
-        TIME_UNITS.millisecond,
-      );
-      const durationMessage = t('pattern.searchTime', { duration: allDuration });
-
-      let message = '';
-
-      if (props.entityCountersType) {
-        const entitiesCount = counters.value?.entity_pattern?.count ?? 0;
-
-        message = t('pattern.entitiesCount', { entitiesCount });
-      } else if (props.bothCounters) {
-        const entitiesCount = counters.value?.entities?.count ?? 0;
-
-        message = t('pattern.alarmsEntitiesCount', {
-          alarmsCount,
-          entitiesCount,
-        });
-      } else {
-        message = t('pattern.alarmsCount', { alarmsCount });
-      }
-
-      return sanitizeHtml(`${message} / ${durationMessage}`);
     });
 
     /**
@@ -527,6 +509,7 @@ export default {
       suggestions: optimizationSuggestions,
       failedReason: optimizationFailedReason,
       successful: optimizationSuccessful,
+      originalCounter: optimizationOriginalCounter,
       optimizedFieldsRegexps,
       mayHaveOptimizationSuggestions,
       tryOptimization,
@@ -536,7 +519,14 @@ export default {
       showEntitiesComparisonModal,
     } = usePatternOptimization(toRef(props, 'value'), emit);
 
+    watch(optimizationSuggestions, (suggestions) => {
+      if (suggestions.length) {
+        expanded.value.entity = true;
+      }
+    });
+
     return {
+      expanded,
       counters,
       countersPending,
       preparedAlarmName,
@@ -572,6 +562,7 @@ export default {
       optimizationSuggestions,
       optimizationFailedReason,
       optimizationSuccessful,
+      optimizationOriginalCounter,
       optimizedFieldsRegexps,
       tryOptimization,
       cancelOptimization,

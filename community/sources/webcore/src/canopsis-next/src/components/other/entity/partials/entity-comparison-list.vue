@@ -51,7 +51,6 @@ export default {
     const meta = ref({});
 
     const { fetchContextEntitiesListWithoutStore } = useEntity();
-
     const {
       pending,
       query,

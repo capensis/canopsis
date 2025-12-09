@@ -17,8 +17,8 @@
         {{ $t('pattern.optimizationFailed', { reason: failedReason }) }}
       </span>
       <v-layout class="gap-2" justify-center>
-        <v-btn color="primary" outlined @click="cancelOptimization">
-          {{ $t('pattern.cancelOptimization') }}
+        <v-btn color="primary" outlined @click="closeOptimization">
+          {{ $t('common.close') }}
         </v-btn>
         <v-btn color="primary" @click="tryOptimization">
           {{ $t('common.tryAgain') }}
@@ -51,11 +51,13 @@ export default {
   },
   setup(props, { emit }) {
     const cancelOptimization = () => emit('cancel:optimization');
+    const closeOptimization = () => emit('close:optimization');
     const tryOptimization = () => emit('try:optimization');
 
     return {
-      tryOptimization,
       cancelOptimization,
+      closeOptimization,
+      tryOptimization,
     };
   },
 };
