@@ -47,14 +47,14 @@ func Handler[T any](
 
 	parsed, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		responder.Respond(c, validation.ErrInvalidRequestBody)
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}
 
 	items, err := parsed.Array()
 	if err != nil {
-		responder.Respond(c, validation.ErrInvalidRequestBody)
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}
@@ -125,14 +125,14 @@ func HandlerWithGrouping[T any](
 
 	parsed, err := fastjson.ParseBytes(raw)
 	if err != nil {
-		responder.Respond(c, validation.ErrInvalidRequestBody)
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}
 
 	items, err := parsed.Array()
 	if err != nil {
-		responder.Respond(c, validation.ErrInvalidRequestBody)
+		responder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}
@@ -186,12 +186,12 @@ func validateItem[T any](item *fastjson.Value) (T, error) {
 	var r T
 	obj, err := item.Object()
 	if err != nil {
-		return r, validation.ErrInvalidRequestBody
+		return r, validation.NewInvalidRequestBodyError(err)
 	}
 
 	err = json.Unmarshal(obj.MarshalTo(nil), &r)
 	if err != nil {
-		return r, validation.ErrInvalidRequestBody
+		return r, validation.NewInvalidRequestBodyError(err)
 	}
 
 	err = validation.ValidateStruct(r)

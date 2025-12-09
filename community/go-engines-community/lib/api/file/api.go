@@ -11,7 +11,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -40,7 +39,7 @@ type api struct {
 func (a *api) Create(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
-		a.errorResponder.Respond(c, validation.ErrInvalidRequestBody)
+		a.errorResponder.Respond(c, validation.NewInvalidRequestBodyError(err))
 
 		return
 	}
@@ -108,10 +107,7 @@ func (a *api) Get(c *gin.Context) {
 func (a *api) List(c *gin.Context) {
 	ids := c.QueryArray("id")
 	if len(ids) == 0 {
-		err := validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("required", "id", "id")},
-			nil,
-		)
+		err := validation.NewSingleError("required", "id", "id", nil)
 		a.errorResponder.Respond(c, err)
 
 		return

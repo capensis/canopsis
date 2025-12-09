@@ -7,7 +7,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/httperror"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 )
 
 type API interface {
@@ -49,10 +48,7 @@ func (a *api) Maintenance(c *gin.Context) {
 	// can be sure that enabled is not nil after ShouldBindJSON, because of binding=required
 	if *r.Enabled {
 		if r.Message == "" {
-			err = validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "Message", "Message")},
-				r,
-			)
+			err = validation.NewSingleError("required", "Message", "Message", r)
 
 			a.errorResponder.Respond(c, err)
 

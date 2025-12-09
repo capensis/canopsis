@@ -22,7 +22,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security"
 	securitymodel "git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/security/model"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	mongodriver "go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -108,18 +107,12 @@ func (s *store) FindData(ctx context.Context, r ListDataRequest) (AggregationDat
 		var eventPattern pattern.Event
 		err := s.decoder.Decode([]byte(r.EventPattern), &eventPattern)
 		if err != nil {
-			return res, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("event_pattern", "EventPattern", "EventPattern")},
-				r,
-			)
+			return res, validation.NewSingleError("event_pattern", "EventPattern", "EventPattern", r)
 		}
 
 		q, err := db.EventPatternToMongoQuery(eventPattern, "body")
 		if err != nil {
-			return res, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("event_pattern", "EventPattern", "EventPattern")},
-				r,
-			)
+			return res, validation.NewSingleError("event_pattern", "EventPattern", "EventPattern", r)
 		}
 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"$and": []bson.M{
@@ -226,10 +219,7 @@ func (s *store) UpdateData(ctx context.Context, r EditDataRequest) (DataResponse
 		}
 
 		if prev.Type != model.Type {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("unchangeable", "Type", "Type")},
-				r,
-			)
+			return validation.NewSingleError("unchangeable", "Type", "Type", r)
 		}
 
 		_, err = s.testDataCollection.UpdateOne(ctx, bson.M{"_id": r.ID}, bson.M{"$set": model})
@@ -294,10 +284,7 @@ func (s *store) FindTest(ctx context.Context, r ListTestRequest, userID string) 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"type": bson.M{"$in": types}}})
 	} else {
 		if !slices.Contains(types, *r.Type) {
-			return res, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "Type", "Type")},
-				r,
-			)
+			return res, validation.NewSingleError("not_accessible", "Type", "Type", r)
 		}
 
 		beforeLimit = append(beforeLimit, bson.M{"$match": bson.M{"type": r.Type}})
@@ -383,10 +370,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 	}
 
 	if !slices.Contains(types, *r.Type) {
-		return TestResponse{}, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_accessible", "Type", "Type")},
-			r,
-		)
+		return TestResponse{}, validation.NewSingleError("not_accessible", "Type", "Type", r)
 	}
 
 	now := datetime.NewCpsTime()
@@ -427,10 +411,7 @@ func (s *store) CreateTest(ctx context.Context, r EditTestRequest) (TestResponse
 			Decode(&rule)
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Rule", "Rule")},
-					r,
-				)
+				return validation.NewSingleError("not_exist", "Rule", "Rule", r)
 			}
 
 			return err
@@ -467,10 +448,7 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 	}
 
 	if !slices.Contains(types, *r.Type) {
-		return TestResponse{}, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_accessible", "Type", "Type")},
-			r,
-		)
+		return TestResponse{}, validation.NewSingleError("not_accessible", "Type", "Type", r)
 	}
 
 	now := datetime.NewCpsTime()
@@ -500,17 +478,11 @@ func (s *store) UpdateTest(ctx context.Context, r EditTestRequest) (TestResponse
 		}
 
 		if prev.Type != model.Type {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("unchangeable", "Type", "Type")},
-				r,
-			)
+			return validation.NewSingleError("unchangeable", "Type", "Type", r)
 		}
 
 		if prev.Rule.ID != r.Rule {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("unchangeable", "Rule", "Rule")},
-				r,
-			)
+			return validation.NewSingleError("unchangeable", "Rule", "Rule", r)
 		}
 
 		model.Rule = prev.Rule
@@ -595,10 +567,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 		}
 
 		if !ok {
-			return nil, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_accessible", "User", "Data.User")},
-				r,
-			)
+			return nil, nil, validation.NewSingleError("not_accessible", "User", "Data.User", r)
 		}
 	}
 
@@ -609,10 +578,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Event", "Data.Event")},
-					r,
-				)
+				return nil, nil, validation.NewSingleError("not_exist", "Event", "Data.Event", r)
 			}
 
 			return nil, nil, err
@@ -624,10 +590,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "Response", "Data.Response")},
-					r,
-				)
+				return nil, nil, validation.NewSingleError("not_exist", "Response", "Data.Response", r)
 			}
 
 			return nil, nil, err
@@ -654,10 +617,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 		}
 
 		if len(ids) != len(responses) {
-			return nil, nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Responses", "Data.Responses")},
-				r,
-			)
+			return nil, nil, validation.NewSingleError("not_exist", "Responses", "Data.Responses", r)
 		}
 	}
 
@@ -666,10 +626,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			options.FindOne().SetProjection(bson.M{"_id": 1})).Err()
 		if err != nil {
 			if errors.Is(err, mongodriver.ErrNoDocuments) {
-				return nil, nil, validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_exist", "User", "Data.User")},
-					r,
-				)
+				return nil, nil, validation.NewSingleError("not_exist", "User", "Data.User", r)
 			}
 
 			return nil, nil, err
@@ -685,10 +642,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 				options.FindOne().SetProjection(bson.M{"v.steps": 0})).Decode(alarm)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil, nil, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("not_exist", "Alarm", "Data.Alarm")},
-						r,
-					)
+					return nil, nil, validation.NewSingleError("not_exist", "Alarm", "Data.Alarm", r)
 				}
 
 				return nil, nil, err
@@ -704,10 +658,7 @@ func (s *store) validateTestData(ctx context.Context, r EditTestRequest, prevTes
 			err := s.entityCollection.FindOne(ctx, bson.M{"_id": r.Data.Entity}).Decode(entity)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return nil, nil, validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("not_exist", "Entity", "Data.Entity")},
-						r,
-					)
+					return nil, nil, validation.NewSingleError("not_exist", "Entity", "Data.Entity", r)
 				}
 
 				return nil, nil, err

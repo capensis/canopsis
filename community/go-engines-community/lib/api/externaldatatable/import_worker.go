@@ -23,7 +23,6 @@ import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/postgres"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/utils"
-	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/rs/zerolog"
@@ -544,10 +543,7 @@ func (w *importWorker) CompleteJob(ctx context.Context, id string, columnTags []
 	}
 
 	if len(columnTags) != len(job.ColumnConfigs) {
-		return false, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldErrorWithParam("slicelen", "column_tags", "column_tags", strconv.Itoa(len(job.ColumnConfigs)))},
-			nil,
-		)
+		return false, validation.NewSingleErrorWithParam("slicelen", "column_tags", "column_tags", strconv.Itoa(len(job.ColumnConfigs)), nil)
 	}
 
 	for i, columnTag := range columnTags {
@@ -1310,11 +1306,11 @@ func (w *importWorker) previewPostgres(ctx context.Context, job ImportJob) (map[
 	return errorInfo, nil
 }
 
-func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f multipart.File, separator rune) error {
+func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table, f io.ReadSeeker, separator rune) error {
 	isLinked := false
 	var err error
 	if len(t.ColumnConfigs) > 0 {
-		err = isTableLinked(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
+		err = validateDeleteRequest(ctx, t.ID, w.dbWidgetCollection, w.linkedDbCollections)
 		if err != nil {
 			var confErr *httperror.ConflictError
 			isLinked = errors.As(err, &confErr)
@@ -1332,16 +1328,10 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	columns, err := r.Read()
 	if err != nil {
 		if errors.Is(err, io.EOF) {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "file", "file")},
-				nil,
-			)
+			return validation.NewSingleError("required", "file", "file", nil)
 		}
 
-		return validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("invalid", "file", "file")},
-			nil,
-		)
+		return validation.NewSingleError("invalid", "file", "file", nil)
 	}
 
 	invalidCols := make([]string, 0)
@@ -1354,10 +1344,7 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	if len(invalidCols) > 0 {
-		return validation.NewError(
-			validator.ValidationErrors{validation.NewFieldErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " "))},
-			nil,
-		)
+		return validation.NewSingleErrorWithParam("invalidcols", "file", "file", strings.Join(invalidCols, " "), nil)
 	}
 
 	missingCols := make([]string, 0)
@@ -1370,10 +1357,7 @@ func (w *importWorker) validateColumns(ctx context.Context, t externaldata.Table
 	}
 
 	if len(missingCols) > 0 {
-		return validation.NewError(
-			validator.ValidationErrors{validation.NewFieldErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " "))},
-			nil,
-		)
+		return validation.NewSingleErrorWithParam("missingcols", "file", "file", strings.Join(missingCols, " "), nil)
 	}
 
 	_, err = f.Seek(0, io.SeekStart)

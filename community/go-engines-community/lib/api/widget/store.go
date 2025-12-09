@@ -215,17 +215,11 @@ func (s *store) Insert(ctx context.Context, r CreateRequest) (*Response, error) 
 	}
 
 	if tabInfo.ID == "" {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
-			r,
-		)
+		return nil, validation.NewSingleError("not_exist", "Tab", "Tab", r)
 	}
 
 	if tabInfo.IsPrivate && tabInfo.Author != r.Author {
-		return nil, validation.NewError(
-			validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
-			r,
-		)
+		return nil, validation.NewSingleError("not_exist", "Tab", "Tab", r)
 	}
 
 	if !tabInfo.IsPrivate {
@@ -513,17 +507,11 @@ func (s *store) Copy(ctx context.Context, widgetID string, r CreateRequest) (*Re
 		}
 
 		if tabInfo.ID == "" {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "Tab", "Tab", r)
 		}
 
 		if tabInfo.IsPrivate && tabInfo.Author != r.Author {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Tab", "Tab")},
-				r,
-			)
+			return validation.NewSingleError("not_exist", "Tab", "Tab", r)
 		}
 
 		if !tabInfo.IsPrivate {
@@ -601,10 +589,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			if tabId == "" {
 				tabId = w.Tab
 			} else if tabId != w.Tab {
-				return validation.NewError(
-					validator.ValidationErrors{validation.NewFieldError("not_applicable", "items", "items")},
-					nil,
-				)
+				return validation.NewSingleError("not_applicable", "items", "items", nil)
 			}
 		}
 
@@ -613,10 +598,7 @@ func (s *store) UpdateGridPositions(ctx context.Context, items []EditGridPositio
 			return err
 		}
 		if count != int64(len(items)) {
-			return validation.NewError(
-				validator.ValidationErrors{validation.NewFieldErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10))},
-				nil,
-			)
+			return validation.NewSingleErrorWithParam("slicelen", "items", "items", strconv.FormatInt(count, 10), nil)
 		}
 
 		writeModels := make([]mongodriver.WriteModel, len(widgets))
@@ -650,10 +632,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 
 	if r.TestData.Alarm == "" {
 		if alarm.Alarm.ID == "" {
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("required", "Alarm", "TestData.Alarm")},
-				r,
-			)
+			return nil, validation.NewSingleError("required", "Alarm", "TestData.Alarm", r)
 		}
 	} else if r.TestData.Alarm != alarm.Alarm.ID { // keep snapshot from the test
 		alarm, err = s.findAlarm(ctx, r.TestData.Alarm)
@@ -662,10 +641,7 @@ func (s *store) ValidateTemplates(ctx context.Context, r TemplateRequest) (map[s
 		}
 
 		if alarm.Alarm.ID == "" {
-			return nil, validation.NewError(
-				validator.ValidationErrors{validation.NewFieldError("not_exist", "Alarm", "TestData.Alarm")},
-				r,
-			)
+			return nil, validation.NewSingleError("not_exist", "Alarm", "TestData.Alarm", r)
 		}
 	}
 
@@ -864,10 +840,7 @@ func (s *store) transformTemplateFields(ctx context.Context, r *EditRequest) err
 			}).Decode(&tpl)
 			if err != nil {
 				if errors.Is(err, mongodriver.ErrNoDocuments) {
-					return validation.NewError(
-						validator.ValidationErrors{validation.NewFieldError("not_exist", parameter+"Template", "parameters."+parameter+"Template")},
-						nil,
-					)
+					return validation.NewSingleError("not_exist", parameter+"Template", "parameters."+parameter+"Template", nil)
 				}
 
 				return err

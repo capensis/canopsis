@@ -9,7 +9,7 @@ import (
 
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/colortheme"
-	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/validation"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/dbvalidation"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/config"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/mongo"
@@ -205,7 +205,7 @@ func (s *store) UpdateUserInterfaceConfig(ctx context.Context, model *UserInterf
 	err := s.dbClient.WithTransaction(ctx, func(ctx context.Context) error {
 		updatedModel = UserInterfaceConf{}
 
-		err := validation.ValidateExist(ctx, s.colorThemeCollection, model, "DefaultColorTheme", model.DefaultColorTheme)
+		err := dbvalidation.ValidateExist(ctx, s.colorThemeCollection, model, "DefaultColorTheme", model.DefaultColorTheme)
 		if err != nil {
 			return err
 		}
