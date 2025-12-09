@@ -30,6 +30,7 @@ export default {
   optimizationInProgress: 'Optimisation en cours...',
   optimizationFailed: 'Optimisation échouée : {reason}',
   cancelOptimization: 'Annuler l\'optimisation',
+  optimizationCancelled: 'L\'optimisation a été annulée',
   suggestions: 'Suggestions',
   rejectAllSuggestions: 'REJETER TOUTES LES SUGGESTIONS',
   foundEntities: 'trouvé: <strong>{count} entités</strong>',
