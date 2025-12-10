@@ -101,6 +101,7 @@ export default {
         console.error(err);
 
         const { status } = err.response || {};
+
         switch (status) {
           case RESPONSE_STATUSES.unauthorized:
             template.value = `<fragment>${t('handlebars.requestHelper.errors.unauthorized')}</fragment>`;
