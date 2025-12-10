@@ -41,7 +41,9 @@ describe('c-request-helper', () => {
   });
 
   afterEach(() => {
-    // Ensure window._handlebarsRequestHelper exists before component cleanup tries to delete from it
+    /**
+     * Ensure window._handlebarsRequestHelper exists before component cleanup tries to delete from it
+     */
     if (global.window && !global.window._handlebarsRequestHelper) {
       global.window._handlebarsRequestHelper = {};
     }
@@ -152,12 +154,10 @@ describe('c-request-helper', () => {
       propsData: { helperId },
     });
 
-    // Unmount before request completes
     wrapper.destroy();
 
     await flushPromises();
 
-    // Component should be destroyed and helper data cleaned up
     expect(global.window._handlebarsRequestHelper[helperId]).toBeUndefined();
   });
 
