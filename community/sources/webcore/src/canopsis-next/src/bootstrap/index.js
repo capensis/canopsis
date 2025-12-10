@@ -1,6 +1,8 @@
 import deepFreeze from 'deep-freeze';
 import WebFont from 'webfontloader';
 
+import '@material-design-icons/font/filled.css';
+
 import * as constants from '@/constants';
 import * as config from '@/config';
 
