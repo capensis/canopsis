@@ -29,7 +29,7 @@ import { computed } from 'vue';
 
 import { MODALS } from '@/constants';
 
-import { mapIds } from '@/helpers/array';
+import { pickIds, mapIds } from '@/helpers/array';
 import { pbehaviorToRequest } from '@/helpers/entities/pbehavior/form';
 
 import { useModals } from '@/hooks/modals';
@@ -144,7 +144,7 @@ export default {
       name: MODALS.confirmation,
       config: {
         action: async () => {
-          await bulkRemovePbehaviors({ data: mapIds(props.items) });
+          await bulkRemovePbehaviors({ data: pickIds(props.items) });
 
           return afterSubmit();
         },
