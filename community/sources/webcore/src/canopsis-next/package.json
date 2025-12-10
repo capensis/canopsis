@@ -65,6 +65,7 @@
     "vue": "^2.7.14",
     "vue-clipboard2": "^0.3.0",
     "vue-color": "^2.6.0",
+    "vue-fragment": "^1.6.0",
     "vue-fullscreen": "^2.6.2",
     "vue-i18n": "^7.6.0",
     "vue-mq": "^1.0.1",

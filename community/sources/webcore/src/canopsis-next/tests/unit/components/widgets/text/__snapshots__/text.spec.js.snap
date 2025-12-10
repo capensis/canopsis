@@ -19,30 +19,9 @@ exports[`text Renders \`text\` with request template 1`] = `
   class="position-relative"
 >
   <div>
-    <li>
-      <strong>
-        userId
-      </strong>
-      : 1
-    </li>
-    <li>
-      <strong>
-        title
-      </strong>
-      : test
-    </li>
-    <li>
-      <strong>
-        completed
-      </strong>
-      : false
-    </li>
-    <li>
-      <strong>
-        id
-      </strong>
-      : 201
-    </li>
+    <c-request-helper
+      helper-id="request-helper-696d5f1d19c"
+    />
   </div>
 </div>
 `;
