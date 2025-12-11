@@ -88,13 +88,13 @@
           :label="$t('theme.table.rowColor')"
         />
         <theme-enabled-color-picker-field
-          v-field="form.colors.table.shift_row_color"
+          v-field="form.colors.table.shift_row"
           :enable-label="$t('theme.table.shiftRowEnable')"
           :enable-help-text="$t('theme.table.shiftRowEnableHelpText')"
           :label="$t('theme.table.shiftRowColor')"
         />
         <theme-enabled-color-picker-field
-          v-field="form.colors.table.hover_row_color"
+          v-field="form.colors.table.hover_row"
           :enable-label="$t('theme.table.hoverRowEnable')"
           :label="$t('theme.table.hoverRowColor')"
         />
@@ -183,9 +183,9 @@ export default {
         },
       ];
 
-      if (props.form.colors.table.shift_row_color?.enabled) {
+      if (props.form.colors.table.shift_row?.enabled) {
         result.push({
-          backgroundColor: props.form.colors.table.shift_row_color.color,
+          backgroundColor: props.form.colors.table.shift_row.color,
           text: t('theme.table.shiftRowColor'),
         });
       }
