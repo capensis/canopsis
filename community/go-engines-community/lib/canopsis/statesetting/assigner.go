@@ -127,7 +127,7 @@ func (a *assigner) AssignStateSetting(ctx context.Context, entity *types.Entity,
 
 func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, prevStateMethodID string, commRegister mongo.CommandsRegister) (bool, error) {
 	for idx := range a.componentRules {
-		if a.componentRules[idx].EntityPattern == nil {
+		if len(a.componentRules[idx].EntityPattern) == 0 {
 			continue
 		}
 
@@ -177,7 +177,7 @@ func (a *assigner) assignToComponent(ctx context.Context, entity *types.Entity, 
 
 func (a *assigner) assignToService(ctx context.Context, entity *types.Entity, prevStateMethodID string, commRegister mongo.CommandsRegister) (bool, error) {
 	for idx := range a.serviceRules {
-		if a.serviceRules[idx].EntityPattern == nil {
+		if len(a.serviceRules[idx].EntityPattern) == 0 {
 			continue
 		}
 

@@ -122,7 +122,7 @@ func (s *entityServiceCountersCalculator) RecomputeCounters(ctx context.Context,
 		}
 
 		inherited := false
-		if counters.Rule != nil && counters.Rule.InheritedEntityPattern != nil {
+		if counters.Rule != nil && len(counters.Rule.InheritedEntityPattern) > 0 {
 			inherited, err = match.MatchEntityPattern(counters.Rule.InheritedEntityPattern, &depEnt.Entity)
 			if err != nil {
 				return nil, err
@@ -352,7 +352,7 @@ func (s *entityServiceCountersCalculator) calculateCounters(
 			return false, nil, err
 		}
 
-		if counters.Rule != nil && counters.Rule.InheritedEntityPattern != nil {
+		if counters.Rule != nil && len(counters.Rule.InheritedEntityPattern) > 0 {
 			calcData.Inherited, err = match.MatchEntityPattern(counters.Rule.InheritedEntityPattern, entity)
 			if err != nil {
 				return false, nil, err

@@ -2,6 +2,7 @@ package statesettings
 
 import (
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/author"
+	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/common"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/pagination"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/api/patternfields"
 	"git.canopsis.net/canopsis/canopsis-community/community/go-engines-community/lib/canopsis/datetime"
@@ -11,13 +12,13 @@ import (
 )
 
 type EditRequest struct {
-	ID           string `json:"-" bson:"_id"`
-	StateSetting `bson:"inline"`
+	ID string `json:"-"`
+	StateSetting
 
 	patternfields.EntityRequest
 	InheritedEntityPatternRequest
 
-	Author string `json:"author,omitempty" bson:"author,omitempty" swaggerignore:"true"`
+	Author string `json:"author,omitempty" swaggerignore:"true"`
 }
 
 type Response struct {
@@ -61,6 +62,19 @@ type StateThresholds struct {
 	OK       *StateThreshold `json:"ok,omitempty" bson:"ok,omitempty"`
 }
 
+func (t *StateThresholds) ToModel() *statesetting.StateThresholds {
+	if t == nil {
+		return nil
+	}
+
+	return &statesetting.StateThresholds{
+		Critical: t.Critical.ToModel(),
+		Major:    t.Major.ToModel(),
+		Minor:    t.Minor.ToModel(),
+		OK:       t.OK.ToModel(),
+	}
+}
+
 type StateThreshold struct {
 	// Possible method values.
 	//   * `number` - calculate by number of entities.
@@ -79,6 +93,19 @@ type StateThreshold struct {
 	Value int    `json:"value" bson:"value"`
 }
 
+func (t *StateThreshold) ToModel() *statesetting.StateThreshold {
+	if t == nil {
+		return nil
+	}
+
+	return &statesetting.StateThreshold{
+		Method: t.Method,
+		State:  t.State,
+		Cond:   t.Cond,
+		Value:  t.Value,
+	}
+}
+
 type JUnitThreshold struct {
 	Minor    *float64 `json:"minor" bson:"minor" binding:"required,numeric,gte=0,lte=100,ltefield=Major,ltefield=Critical"`
 	Major    *float64 `json:"major" bson:"major" binding:"required,numeric,gte=0,lte=100,ltefield=Critical"`
@@ -86,10 +113,59 @@ type JUnitThreshold struct {
 	Type     *int     `json:"type" bson:"type" binding:"required"`
 }
 
+func (t *JUnitThreshold) ToModel() *statesetting.JUnitThreshold {
+	if t == nil {
+		return nil
+	}
+
+	r := statesetting.JUnitThreshold{}
+	if t.Minor != nil {
+		r.Minor = *t.Minor
+	}
+
+	if t.Major != nil {
+		r.Major = *t.Major
+	}
+
+	if t.Critical != nil {
+		r.Critical = *t.Critical
+	}
+
+	if t.Type != nil {
+		r.Type = *t.Type
+	}
+
+	return &r
+}
+
 type JUnitThresholds struct {
-	Skipped  JUnitThreshold `json:"skipped" bson:"skipped" binding:"required"`
-	Errors   JUnitThreshold `json:"errors" bson:"errors" binding:"required"`
-	Failures JUnitThreshold `json:"failures" bson:"failures" binding:"required"`
+	Skipped  *JUnitThreshold `json:"skipped" bson:"skipped" binding:"required"`
+	Errors   *JUnitThreshold `json:"errors" bson:"errors" binding:"required"`
+	Failures *JUnitThreshold `json:"failures" bson:"failures" binding:"required"`
+}
+
+func (t *JUnitThresholds) ToModel() *statesetting.JUnitThresholds {
+	if t == nil {
+		return nil
+	}
+
+	r := statesetting.JUnitThresholds{}
+	s := t.Skipped.ToModel()
+	if s != nil {
+		r.Skipped = *s
+	}
+
+	e := t.Errors.ToModel()
+	if e != nil {
+		r.Errors = *e
+	}
+
+	f := t.Failures.ToModel()
+	if f != nil {
+		r.Failures = *f
+	}
+
+	return &r
 }
 
 type InheritedEntityPatternRequest struct {

@@ -150,14 +150,14 @@ func (l *listener) processRules(ctx context.Context, updatedRules map[string]Rul
 						return nil
 					}
 
-					if msg.NewPattern != nil {
+					if len(msg.NewPattern) > 0 {
 						err := l.processPattern(ctx, msg.NewPattern, msg.NewType)
 						if err != nil {
 							return err
 						}
 					}
 
-					if msg.OldPattern != nil {
+					if len(msg.OldPattern) > 0 {
 						err := l.processPattern(ctx, msg.OldPattern, msg.OldType)
 						if err != nil {
 							return err

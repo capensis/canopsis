@@ -1724,7 +1724,7 @@ func RegisterRoutes(
 			idleRuleAPI.DBExport)
 
 		patternAPI := pattern.NewApi(
-			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
+			pattern.NewStore(primaryDbClient, secondaryDbClient, pbhComputeChan, entityPublChan, stateSettingsUpdatesChan, authorProvider, patternfields.NewTransformer(primaryDbClient), logger),
 			userInterfaceConfig, enforcer, errorResponder)
 		patternRouter := protected.Group("/patterns")
 		{

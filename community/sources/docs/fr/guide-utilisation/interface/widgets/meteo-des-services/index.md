@@ -17,7 +17,7 @@ Exemple d'une tuile :
 
 ![Exemple d'une tuile - Météos de services](./img/exemple-tuile.png  "Exemple d'une tuile - Météo des services")
 
-Chaque **tuile** représente un [service](../../../services) et indique son état actuel, calculé en fonction des entités rattachées au service et de leur criticité.
+Chaque **tuile** représente un [service](../../../services/index.md) et indique son état actuel, calculé en fonction des entités rattachées au service et de leur criticité.
 
 L'état est basé sur :
 
@@ -34,36 +34,36 @@ ou
 #### Contenu personnalisable
 
 La tuile d'une météo possède une zone personnalisable grâce au [Template - Tuile](#template-tuile).  
-Différentes variables sont accessibles et peuvent être utilisées pour cette personnalisation.  
+Différentes variables sont accessibles et peuvent être utilisées pour cette personnalisation.
 
 #### Icônes
 
-_Icône principale_
+##### Icône principale
 
-L'icône principale représente l'état général du service sous-jacent.  
+L'icône principale représente l'état général du service sous-jacent.
 
-Il peut être équivalent à une sévérité avec les icônes :  
+Il peut être équivalent à une sévérité avec les icônes :
 
-* :material-weather-cloudy: : La sévérité du service est `Critique`
-* :material-account: : La sévérité du service est `Mineure` ou `Majeure`
-* :material-weather-sunny: : La sévirité du service est `OK`. 
+* :material-weather-cloudy: : la sévérité du service est *Critique* ;
+* :material-account: : la sévérité du service est *Mineure* ou *Majeure* ;
+* :material-weather-sunny: : la sévirité du service est *OK*.
 
 Le calcul de sévérité est réalisé selon un algorithme qui peut être :
 
-* La pire sévérité des dépendances du service; C'est le mode calcul utilisé par défaut.
-* Une règle de gestion définie par des [paramètres de calcul de sévérité](../../../menu-administration/parametres-de-calculd-etat-severite/)
+* La pire sévérité des dépendances du service – c'est le mode calcul utilisé par défaut ;
+* Une règle de gestion définie par des [paramètres de calcul de sévérité][param-state-settings].
 
-L'état général du service peut également être représenté par un comportement périodique
+L'état général du service peut également être représenté par une icône correspondant à un comportement périodique :
 
-* :material-wrench: : Le service ou toutes ses dépendances sont en comportement périodique de type "maintenance"
-* :material-pause: : Le service ou toutes ses dépendances sont en comportement périodique de type "pause"
-* :material-weather-night: : Le service ou toutes ses dépendances sont en comportement périodique de type "inactif"
-* Autre icône : Le service ou toutes ses dépendances sont en comportement périodique avec un type personnalisé
+* :material-wrench: : le service ou toutes ses dépendances sont en comportement périodique de type "maintenance" ;
+* :material-pause: : le service ou toutes ses dépendances sont en comportement périodique de type "pause" ;
+* :material-weather-night: : le service ou toutes ses dépendances sont en comportement périodique de type "inactif" ;
+* Autre icône : le service ou toutes ses dépendances sont en comportement périodique avec un type personnalisé.
 
-_Icône secondaire_
+##### Icône secondaire
 
 L'icône secondaire est une icône représentant un type de comportement périodique.  
-Il s'agit du type avec la priorité la plus haute actuellement appliqué aux dépendances du service.  
+Il s'agit du type avec la priorité la plus haute actuellement appliqué aux dépendances du service.
 
 #### Bac à alarmes
 
@@ -71,16 +71,16 @@ Sur la partie inférieure des tuiles, une indication "Voir les alarmes" est cliq
 
 #### La couleur
 
-La couleur d'une tuile réprésente soit la criticité, soit la priorité du service.  
+La couleur d'une tuile réprésente soit la criticité, soit la priorité du service.
 
 _Criticité_
 
-La couleur de la tuile correspond alors à la criticité du service. Elle est calculée selon une [règle de calcul de sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité/). Par défaut on considère la pire criticté des entités dépendantes.
+La couleur de la tuile correspond alors à la criticité du service. Elle est calculée selon une [règle de calcul de sévérité][param-state-settings]. Par défaut on considère la pire criticté des entités dépendantes.
 
 > **Exemple**
 >
-> Un service surveille deux entités, A et B:
-> 
+> Un service surveille deux entités, A et B :
+>
 > - A a une criticité "Mineure"
 > - B a une criticité de "Critique"
 >
@@ -92,9 +92,9 @@ La couleur de la tuile correspond à l'état d'impact du service. Cette valeur e
 
 > **Exemple**
 >
-> Un service surveille deux entités, A et B:
-> 
-> - A a un criticité "Mineure" (Valeur = 1) 
+> Un service surveille deux entités, A et B :
+>
+> - A a un criticité "Mineure" (Valeur = 1)
 > - B a une criticité "Critique" (Valeur = 3)
 > - Et le niveau d'impact du service est 5
 >
@@ -104,27 +104,25 @@ Voici la palette de couleurs correspondant à l'état d'impact :
 
 ![](./img/table-priorites.png)
 
-
 !!! info "Information"
-    Quelque que soit le paramètre retenu, la jauge de priorité est disponible sur la tuile. Elle indique tout simplement la valeur de la priorité actuelle du service.
-
+    Quel que soit le paramètre retenu, la jauge de priorité qui peut être affichée sur la tuile indiquera toujours la valeur de la *priorité* actuelle du service.
 
 #### Le point d'interrogation
 
-Cette icône cliquable permet l'affichage de la valeur de toutes les variables du service. 
+Cette icône cliquable permet l'affichage de la valeur de toutes les variables du service.
 
 Ces variables peuvent être utilisées dans l'édition des templates.
 
 #### Le clignotement
 
-Tant qu'une alarme non acquittée est présente sur une dépendance du service, la tuile "clignote".  
+Tant qu'une alarme non acquittée est présente sur une dépendance du service, la tuile "clignote".
 
 * La tuile clignote : il y a au moins une alarme non prise en charge
 * La tuile ne clignote pas : toutes les alarmes liées à ce service sont acquittées
 
 #### Compteurs
 
-La partie droite d'une tuile présente différents types de compteurs : 
+La partie droite d'une tuile présente différents types de compteurs :
 
 * Compteurs de comportements périodiques : nombre de comportements périodiques par type positionnés sur les dépendances du service
 * Compteurs d'alarmes : nombre d'alarmes par criticité présentes parmi les dépendances du service
@@ -135,7 +133,7 @@ Au clic sur une tuile de la météo des services, une fenêtre s'ouvre.
 
 Le contenu de cette fenêtre est configurable depuis les paramètres du widget.
 
-Celle-ci contient 
+Celle-ci contient :
 
 * La liste des entités surveillées
 * Les comportements périodiques associés au service
@@ -143,24 +141,23 @@ Celle-ci contient
 
 Au clic sur l'une des entités, plusieurs onglets sont présentés en fonction de l'état de la dépendance :
 
-- "Info" : Affiche les informations configurées dans le template des entités qui se trouve dans les paramètres avancés du widget. Ainsi que la listes des actions possibles.
+- "Info" : affiche les informations configurées dans le template des entités qui se trouve dans les paramètres avancés du widget, ainsi que la listes des actions possibles.
 
-![](./img/info-entite.png)
+    ![](./img/info-entite.png)
 
-- "Arbre de dépendances" : Affiche l'arbre de dépendances de l'entité sélectionnée.
+- "Arbre de dépendances" : affiche l'arbre de dépendances de l'entité sélectionnée.
 
-![](./img/arbre-dependances.png)
+    ![](./img/arbre-dependances.png)
 
-- "Comportements périodiques" : Affiche la liste des comportements périodiques impactants l'entité
+- "Comportements périodiques" : affiche la liste des comportements périodiques impactants l'entité.
 
-![](./img/comportements-periodiques.png)
+    ![](./img/comportements-periodiques.png)
 
 ### Les actions
 
 Dans la liste des entités affichées, des actions sont disponibles sur chacune d'entre elles. Les actions disponibles dépendent de l'état de l'entité.
 
-
-- :material-comment: *Commenter l'alarme* 
+- :material-comment: *Commenter l'alarme*
 - :material-check: *Acquitter l'alarme* / *Supprimer l’acquittement*
 - :material-note-plus: *Associer un ticket* / *Déclarer un ticket*
 - :material-pause: *Comportement périodique de type pause*
@@ -189,7 +186,7 @@ Un champ de texte vous permet de définir ce titre.
 
 Ce paramètre permet de définir le filtre à appliquer à la météo des services.
 Ce filtre permet de n'afficher qu'une partie des services.
-Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/).
+Pour plus de détails sur les filtres et leur création, voir la partie sur [Les filtres](../../patterns/index.md).
 
 ### Paramètres du bac à alarmes
 
@@ -218,12 +215,12 @@ Pour supprimer une colonne, cliquez dans la liste des colonnes sur la croix roug
 L'ordre des colonnes est modifiable par drag'n drop.
 
 !!! tip "Recommandation"
-    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres/#modeles-de-widgets) pour faciliter la maintenance générale.
+    Il est recommandé de définir un [modèle de colonnes/template](../../../menu-administration/parametres.md#modeles-de-widgets) pour faciliter la maintenance générale.
 
 
 ### Paramètres de l'arborescence des dépendances
 
-Ce paramètre est directement dépendant de la configuration de [calcul d'état/sévérité](../../../menu-administration/parametres-de-calculd-etat-sévérité/) réalisée.
+Ce paramètre est directement dépendant de la configuration de [calcul d'état/sévérité][params-state-settings] réalisée.
 
 | Option                                      | Signification |
 | ------------------------------------------- | ------------------ |
@@ -259,7 +256,7 @@ Vous pouvez choisir de présenter les dépendances avec leur sévérité ou leur
 
 Ce paramètre permet de personaliser les informations affichées à l'intérieur des tuiles de la météo des service.
 
-Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars/).
+Le langage utilisé ici est le [Handlebars](../../../cas-d-usage/template_handlebars.md).
 
 Cliquez sur le bouton 'Afficher/Editer'. Une fenêtre s'ouvre avec un éditeur de texte. Renseignez le template souhaité et cliquez sur 'Soumettre'.
 
@@ -343,11 +340,15 @@ Si cette option est cochée alors la mise en place d'un comportement périodique
 
 #### Type de modale
 
-* Plus d'infos : Le clic sur la tuile ouvre la modale
-* Bac à alarmes : Le bandeau "Voir les alarmes" est affiché
-* Les deux : Les deux options précédentes combinées
+* Plus d'infos : le clic sur la tuile ouvre la modale
+* Bac à alarmes : le bandeau "Voir les alarmes" est affiché
+* Les deux : les deux options précédentes combinées
 
 #### Paramètres d'état
 
-Vous avez la possibilité de définir l'aspect des tuiles lorsqu'une action est requise ou non.  
-Par exemple, si une alarme d'un service n'est pas acquittée, la tuile clignote. Elle peut également avoir une couleur spécifique dans ce cas.
+Vous avez la possibilité de définir l'aspect des tuiles lorsqu'une action est requise ou non.
+
+Par exemple, si une alarme d'un service n'est pas acquittée, le contenu de la tuile « clignote » légèrement.
+En complément ou au lieu de ce clignotement, la tuile peut également avoir une couleur et une icône principale spécifiques dans ce cas.
+
+[param-state-settings]: ../../../menu-administration/parametres-de-calculd-etat-sévérité.md

@@ -148,7 +148,7 @@ func (s *store) Insert(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+		if m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
@@ -211,7 +211,7 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 			return err
 		}
 
-		if r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited {
+		if m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited {
 			err = s.updateNotify(ctx)
 			if err != nil {
 				return err
@@ -219,13 +219,14 @@ func (s *store) Update(ctx context.Context, r EditRequest) (*Response, error) {
 		}
 
 		response, err = s.GetByID(ctx, r.ID)
+
 		return err
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	if response != nil && (r.Method == statesetting.MethodDependencies || r.Method == statesetting.MethodInherited) {
+	if response != nil && (m.Method == statesetting.MethodDependencies || m.Method == statesetting.MethodInherited) {
 		s.stateSettingsUpdatesChan <- statesetting.RuleUpdatedMessage{
 			ID:         response.ID,
 			NewPattern: response.EntityPattern,
@@ -314,9 +315,11 @@ func (s *store) updateNotify(ctx context.Context) error {
 
 func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (statesetting.StateSetting, error) {
 	model := statesetting.StateSetting{
-		Method:   r.Method,
-		Enabled:  r.Enabled,
-		Priority: r.Priority,
+		Method:          r.Method,
+		Enabled:         r.Enabled,
+		Priority:        r.Priority,
+		StateThresholds: r.StateThresholds.ToModel(),
+		JUnitThresholds: r.JUnitThresholds.ToModel(),
 	}
 	if r.Title != nil {
 		model.Title = *r.Title
@@ -324,67 +327,6 @@ func (s *store) transformRequestToModel(ctx context.Context, r EditRequest) (sta
 
 	if r.Type != nil {
 		model.Type = *r.Type
-	}
-
-	if r.StateThresholds != nil {
-		model.StateThresholds = &statesetting.StateThresholds{}
-		if r.StateThresholds.OK != nil {
-			model.StateThresholds.OK = &statesetting.StateThreshold{
-				Method: r.StateThresholds.OK.Method,
-				State:  r.StateThresholds.OK.State,
-				Cond:   r.StateThresholds.OK.Cond,
-				Value:  r.StateThresholds.OK.Value,
-			}
-		}
-		if r.StateThresholds.Minor != nil {
-			model.StateThresholds.Minor = &statesetting.StateThreshold{
-				Method: r.StateThresholds.Minor.Method,
-				State:  r.StateThresholds.Minor.State,
-				Cond:   r.StateThresholds.Minor.Cond,
-				Value:  r.StateThresholds.Minor.Value,
-			}
-		}
-
-		if r.StateThresholds.Major != nil {
-			model.StateThresholds.Major = &statesetting.StateThreshold{
-				Method: r.StateThresholds.Major.Method,
-				State:  r.StateThresholds.Major.State,
-				Cond:   r.StateThresholds.Major.Cond,
-				Value:  r.StateThresholds.Major.Value,
-			}
-		}
-
-		if r.StateThresholds.Critical != nil {
-			model.StateThresholds.Critical = &statesetting.StateThreshold{
-				Method: r.StateThresholds.Critical.Method,
-				State:  r.StateThresholds.Critical.State,
-				Cond:   r.StateThresholds.Critical.Cond,
-				Value:  r.StateThresholds.Critical.Value,
-			}
-		}
-	}
-
-	if r.JUnitThresholds != nil {
-		model.JUnitThresholds = &statesetting.JUnitThresholds{
-			Skipped: statesetting.JUnitThreshold{
-				Minor:    *r.JUnitThresholds.Skipped.Minor,
-				Major:    *r.JUnitThresholds.Skipped.Major,
-				Critical: *r.JUnitThresholds.Skipped.Critical,
-				Type:     *r.JUnitThresholds.Skipped.Type,
-			},
-			Errors: statesetting.JUnitThreshold{
-				Minor:    *r.JUnitThresholds.Errors.Minor,
-				Major:    *r.JUnitThresholds.Errors.Major,
-				Critical: *r.JUnitThresholds.Errors.Critical,
-				Type:     *r.JUnitThresholds.Errors.Type,
-			},
-			Failures: statesetting.JUnitThreshold{
-				Minor:    *r.JUnitThresholds.Failures.Minor,
-				Major:    *r.JUnitThresholds.Failures.Major,
-				Critical: *r.JUnitThresholds.Failures.Critical,
-				Type:     *r.JUnitThresholds.Failures.Type,
-			},
-		}
 	}
 
 	patterns, err := s.transformer.FetchCorporatePatterns(ctx,
