@@ -15,7 +15,7 @@ Ce widget supporte :
 * Le HTML standard pour une mise en forme fine
 * L’intégration de contenus externes via iframe
 
-La liste des [helpers disponibles](../../helpers/) permet d'enrichir dynamiquement le contenu affiché.
+La liste des [helpers disponibles](../../helpers/index.md) permet d'enrichir dynamiquement le contenu affiché.
 
 ![Texte](./img/texte.png  "Texte")
 

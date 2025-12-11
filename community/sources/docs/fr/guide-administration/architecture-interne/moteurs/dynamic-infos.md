@@ -4,7 +4,7 @@
 
 Le moteur DYNAMIC INFOS a pour objectif d'enrichir les alarmes avec des informations dynamiques. Ce moteur permet d'ajouter des informations contextuelles et pertinentes aux alarmes en fonction de règles configurées. Ce moteur est disponible uniquement en édition Pro.
 
-Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les informations dynamiques](../../../../guide-utilisation/menu-exploitation/informations-dynamiques/).
+Pour plus d'informations sur les fonctionnalités, consultez la [documentation sur les informations dynamiques](../../../guide-utilisation/menu-exploitation/informations-dynamiques.md).
 
 ## Options de démarrage
 
@@ -34,4 +34,4 @@ Cette commande lance le moteur DYNAMIC INFOS en mode debug, avec une mise à jou
 ## Schéma d'interactions
 
 Nous proposons des schémas d'interactions entre ce moteur et les autres composants de Canopsis.  
-[EN - View Engine Interaction Schemas](../../../../guide-developpement/schemas/engine-dynamic-infos/)
+[EN - View Engine Interaction Schemas](../../../guide-developpement/schemas/engine-dynamic-infos.md)

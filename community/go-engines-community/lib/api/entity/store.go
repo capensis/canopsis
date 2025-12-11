@@ -111,14 +111,15 @@ func (s *store) Toggle(ctx context.Context, id, userID string, enabled bool) (bo
 
 		cursor, err := s.mainCollection.Aggregate(ctx, []bson.M{
 			{"$match": bson.M{"_id": id}},
-			{"$graphLookup": bson.M{
-				"from":                    mongo.EntityMongoCollection,
-				"startWith":               "$_id",
-				"connectFromField":        "_id",
-				"connectToField":          "component",
-				"as":                      "resources",
-				"restrictSearchWithMatch": bson.M{"type": types.EntityTypeResource},
-				"maxDepth":                0,
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "_id",
+				"foreignField": "component",
+				"as":           "resources",
+				"pipeline": []bson.M{
+					{"$match": bson.M{"type": types.EntityTypeResource}},
+					{"$project": bson.M{"_id": 1}},
+				},
 			}},
 			{"$project": bson.M{
 				"_id":       1,
@@ -132,13 +133,15 @@ func (s *store) Toggle(ctx context.Context, id, userID string, enabled bool) (bo
 		if err != nil {
 			return err
 		}
-		if cursor.Next(ctx) {
-			err = cursor.Decode(&oldSimplifiedEntity)
-			if err != nil {
-				return err
-			}
-		} else {
+
+		defer cursor.Close(ctx)
+
+		if !cursor.Next(ctx) {
 			return nil
+		}
+
+		if err = cursor.Decode(&oldSimplifiedEntity); err != nil {
+			return err
 		}
 
 		_, err = s.mainCollection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{
@@ -198,24 +201,34 @@ func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphRe
 	switch entity.Type {
 	case types.EntityTypeResource:
 		pipeline = append(pipeline, []bson.M{
-			{"$graphLookup": bson.M{
-				"from":                    mongo.EntityMongoCollection,
-				"startWith":               "$component",
-				"connectFromField":        "component",
-				"connectToField":          "_id",
-				"as":                      "component",
-				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
-				"maxDepth":                0,
-			}},
-			{"$graphLookup": bson.M{
-				"from":                    mongo.EntityMongoCollection,
-				"startWith":               "$connector",
-				"connectFromField":        "connector",
-				"connectToField":          "_id",
-				"as":                      "connector",
-				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
-				"maxDepth":                0,
-			}},
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "component",
+				"foreignField": "_id",
+				"as":           "component",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{
+						"_id": 1,
+					}},
+				}},
+			},
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "connector",
+				"foreignField": "_id",
+				"as":           "connector",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{
+						"_id": 1,
+					}},
+				}},
+			},
 			{"$graphLookup": bson.M{
 				"from":                    mongo.EntityMongoCollection,
 				"startWith":               "$services",
@@ -235,27 +248,35 @@ func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphRe
 		}...)
 	case types.EntityTypeComponent:
 		pipeline = append(pipeline, []bson.M{
-			{"$graphLookup": bson.M{
-				"from":             mongo.EntityMongoCollection,
-				"startWith":        "$_id",
-				"connectFromField": "_id",
-				"connectToField":   "component",
-				"as":               "resources",
-				"restrictSearchWithMatch": bson.M{
-					"type":         types.EntityTypeResource,
-					"soft_deleted": bson.M{"$exists": false},
-				},
-				"maxDepth": 0,
-			}},
-			{"$graphLookup": bson.M{
-				"from":                    mongo.EntityMongoCollection,
-				"startWith":               "$connector",
-				"connectFromField":        "connector",
-				"connectToField":          "_id",
-				"as":                      "connector",
-				"restrictSearchWithMatch": bson.M{"soft_deleted": bson.M{"$exists": false}},
-				"maxDepth":                0,
-			}},
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "_id",
+				"foreignField": "component",
+				"as":           "resources",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"type":         types.EntityTypeResource,
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{
+						"_id": 1,
+					}},
+				}},
+			},
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "connector",
+				"foreignField": "_id",
+				"as":           "connector",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{
+						"_id": 1,
+					}},
+				}},
+			},
 			{"$graphLookup": bson.M{
 				"from":                    mongo.EntityMongoCollection,
 				"startWith":               "$services",
@@ -275,29 +296,35 @@ func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphRe
 		}...)
 	case types.EntityTypeConnector:
 		pipeline = append(pipeline, []bson.M{
-			{"$graphLookup": bson.M{
-				"from":             mongo.EntityMongoCollection,
-				"startWith":        "$_id",
-				"connectFromField": "_id",
-				"connectToField":   "connector",
-				"as":               "resources",
-				"restrictSearchWithMatch": bson.M{
-					"type":         types.EntityTypeResource,
-					"soft_deleted": bson.M{"$exists": false},
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "_id",
+				"foreignField": "connector",
+				"as":           "resources",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"type":         types.EntityTypeResource,
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{
+						"_id": 1,
+					}},
 				},
-				"maxDepth": 0,
 			}},
-			{"$graphLookup": bson.M{
-				"from":             mongo.EntityMongoCollection,
-				"startWith":        "$_id",
-				"connectFromField": "_id",
-				"connectToField":   "connector",
-				"as":               "components",
-				"restrictSearchWithMatch": bson.M{
-					"type":         types.EntityTypeComponent,
-					"soft_deleted": bson.M{"$exists": false},
+			{"$lookup": bson.M{
+				"from":         mongo.EntityMongoCollection,
+				"localField":   "_id",
+				"foreignField": "connector",
+				"as":           "components",
+				"pipeline": []bson.M{
+					{"$match": bson.M{
+						"type":         types.EntityTypeComponent,
+						"soft_deleted": bson.M{"$exists": false},
+					}},
+					{"$project": bson.M{
+						"_id": 1,
+					}},
 				},
-				"maxDepth": 0,
 			}},
 			{"$graphLookup": bson.M{
 				"from":                    mongo.EntityMongoCollection,
@@ -360,6 +387,10 @@ func (s *store) GetContextGraph(ctx context.Context, id string) (*ContextGraphRe
 			return nil, err
 		}
 		return &res, nil
+	}
+
+	if err = cursor.Err(); err != nil {
+		return nil, err
 	}
 
 	return nil, nil
