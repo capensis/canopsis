@@ -911,7 +911,7 @@ export default {
       description: 'Accès à la route API pour gérer les icônes',
     },
     [USERS_PERMISSIONS.api.general.view]: {
-      name: 'Gestion des vues',
+      name: 'Groupes de vues',
       description: 'Accès à la route API pour gérer les vues',
     },
 
